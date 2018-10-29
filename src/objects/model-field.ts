@@ -1,3 +1,5 @@
+import * as api from '../_index';
+
 export interface ModelField {
   id: string;
   hidden: boolean;

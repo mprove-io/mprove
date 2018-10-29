@@ -1,0 +1,122 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+      "tslint:recommended"
+  ],
+  "rulesDirectory": [],
+  "rules": {
+    "newline-per-chained-call": true,
+    "no-floating-promises": true,
+    "await-promise": true,
+    "promise-function-async": true,
+    "quotemark": [
+      true,
+      "single",
+      "avoid-escape"
+    ],
+    "no-consecutive-blank-lines": [
+      true,
+      2
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": false,
+        "singleline": "never"
+      }
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-module",
+      "check-operator",
+      "check-preblock",
+      "check-separator",
+      "check-type"
+    ],
+    "align": [
+      true,
+      "arguments",
+      "elements",
+      "members",
+      "parameters",
+      "statements"
+    ],
+    "no-namespace": true,
+    "no-var-keyword": true,
+    "max-line-length": [true, 120],
+    "variable-name": [true, "ban-keywords", "check-format"],
+    "member-access": [true, "no-public"],
+    "curly": true,
+    "no-unnecessary-initializer": true,
+
+    "ordered-imports": false,
+    "prefer-const": false,
+    "interface-name": false,
+    "object-literal-sort-keys": false,
+    "object-literal-shorthand": false,
+    "no-console": false,
+    "max-classes-per-file": false,
+    "no-empty": false,
+    "no-angle-bracket-type-assertion": false,
+    "arrow-parens": false,
+    "no-string-literal": false,
+    "object-literal-key-quotes": false,
+    "no-var-requires": false,
+
+    "no-switch-case-fall-through": true,
+    "no-shadowed-variable": [
+      true,
+      {
+        "class": true,
+        "enum": true,
+        "function": true,
+        "interface": true,
+        "namespace": true,
+        "typeAlias": true,
+        "typeParameter": true
+      }
+    ],
+    "class-name": true,
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "one-line": [
+      true,
+      "check-open-brace",
+      "check-catch",
+      "check-else",
+      "check-finally",
+      "check-whitespace"
+    ],
+    "semicolon": [
+      true,
+      "always",
+      "ignore-bound-class-methods"
+    ],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      },
+      {
+        "call-signature": "onespace",
+        "index-signature": "onespace",
+        "parameter": "onespace",
+        "property-declaration": "onespace",
+        "variable-declaration": "onespace"
+      }
+    ],
+    "no-internal-module": true,
+    "no-trailing-whitespace": true,
+    "no-null-keyword": false,
+
+    "jsdoc-format": true
+  }
+}
