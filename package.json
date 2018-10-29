@@ -8,13 +8,10 @@
     "url": "https://github.com/mprove-io/mprove-api.git"
   },
   "scripts": {
-    "start": "npm run build && npm run watch",
     "rimraf": "rimraf",
     "clean:dist": "npm run rimraf -- dist .awcache",
     "build": "npm run clean:dist && npm run build-ts && npm run lint",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve\"",
     "build-ts": "tsc",
-    "watch-ts": "tsc -w",
     "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts'",
     "format": "tsfmt -r --no-tslint --no-editorconfig --no-vscode --useTsconfig=./tsconfig.formatter.json"
   },
@@ -22,10 +19,6 @@
     "rimraf": "^2.6.2"
   },
   "devDependencies": {
-    "@types/node": "^9.4.6",
-    "concurrently": "^3.5.1",    
-    "nodemon": "^1.13.0",
-    "ts-node": "^5.0.0",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2",
     "typescript-formatter": "^7.0.0"
