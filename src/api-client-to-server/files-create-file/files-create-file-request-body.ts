@@ -1,8 +1,8 @@
 import * as api from '../../_index';
 
 export interface FilesCreateFileRequestBody {
-  info: api.ClientRequest;
+    info: api.ClientRequest;
 
-  // payload: api.FilesCreateFileRequestBodyPayload;
+    // payload: api.FilesCreateFileRequestBodyPayload;
 
 }

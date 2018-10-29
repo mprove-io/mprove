@@ -1,4 +1,4 @@
 export enum ProjectWeekStartEnum {
-  Sunday = <any> 'sunday',
-  Monday = <any> 'monday'
+    Sunday = <any>'sunday',
+    Monday = <any>'monday'
 }

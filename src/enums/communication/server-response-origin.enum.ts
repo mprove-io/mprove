@@ -1,3 +1,3 @@
 export enum ServerResponseOriginEnum {
-  Server = <any> 'server'
+    Server = <any>'server'
 }

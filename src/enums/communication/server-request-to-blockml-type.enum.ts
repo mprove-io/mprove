@@ -1,3 +1,3 @@
 export enum ServerRequestToBlockmlTypeEnum {
-  Request = <any> 'request'
+    Request = <any>'request'
 }

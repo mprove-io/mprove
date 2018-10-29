@@ -1,3 +1,3 @@
 export enum ServerRequestToBlockmlOriginEnum {
-  Server = <any> 'server'
+    Server = <any>'server'
 }

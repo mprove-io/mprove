@@ -1,3 +1,3 @@
 export enum BlockmlResponseOriginEnum {
-  Blockml = <any> 'blockml'
+    Blockml = <any>'blockml'
 }

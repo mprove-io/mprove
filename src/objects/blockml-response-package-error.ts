@@ -1,3 +1,3 @@
 export interface BlockmlResponsePackageError {
-  message: string;
+    message: string;
 }

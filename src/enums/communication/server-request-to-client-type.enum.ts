@@ -1,3 +1,3 @@
 export enum ServerRequestToClientTypeEnum {
-  Request = <any> 'request'
+    Request = <any>'request'
 }
