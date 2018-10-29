@@ -7,6 +7,6 @@ export interface SwError {
     error_id: string;
     type: string;
     message: string;
-    lines: Array<api.FileLine>;
+    lines: api.FileLine[];
     server_ts: number;
 }

@@ -6,12 +6,12 @@ export interface Model {
     struct_id: string;
     model_id: string;
     content: string;
-    access_users: Array<string>;
+    access_users: string[];
     label: string;
     gr?: string;
     hidden: boolean;
-    fields: Array<api.ModelField>;
-    nodes: Array<api.ModelNode>;
+    fields: api.ModelField[];
+    nodes: api.ModelNode[];
     server_ts: number;
     description?: string;
 }

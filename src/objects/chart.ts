@@ -8,8 +8,8 @@ export interface Chart {
     type: api.ChartTypeEnum;
     x_field: string;
     y_field: string;
-    y_fields: Array<string>;
-    hide_columns: Array<string>;
+    y_fields: string[];
+    hide_columns: string[];
     multi_field: string;
     value_field: string;
     previous_value_field: string;

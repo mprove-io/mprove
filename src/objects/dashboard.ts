@@ -6,12 +6,12 @@ export interface Dashboard {
     struct_id: string;
     dashboard_id: string;
     content: string;
-    access_users: Array<string>;
+    access_users: string[];
     title: string;
     gr?: string;
     hidden: boolean;
-    fields: Array<api.DashboardField>;
-    reports: Array<api.Report>;
+    fields: api.DashboardField[];
+    reports: api.Report[];
     temp: boolean;
     server_ts: number;
     description?: string;

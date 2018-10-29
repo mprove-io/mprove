@@ -4,9 +4,9 @@ export interface Query {
     query_id: string;
     project_id: string;
     struct_id: string;
-    pdt_deps: Array<string>;
-    pdt_deps_all: Array<string>;
-    sql: Array<string>;
+    pdt_deps: string[];
+    pdt_deps_all: string[];
+    sql: string[];
     is_pdt: boolean;
     pdt_id: string;
     status: api.QueryStatusEnum;

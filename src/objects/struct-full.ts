@@ -1,9 +1,9 @@
 import * as api from '../_index';
 
 export interface StructFull {
-    errors: Array<api.SwError>;
-    models: Array<api.Model>;
-    dashboards: Array<api.Dashboard>;
-    mconfigs: Array<api.Mconfig>;
-    queries: Array<api.Query>;
+    errors: api.SwError[];
+    models: api.Model[];
+    dashboards: api.Dashboard[];
+    mconfigs: api.Mconfig[];
+    queries: api.Query[];
 }

@@ -5,10 +5,10 @@ export interface Repo {
     repo_id: string;
     struct_id: string;
     udfs_content: string;
-    pdts_sorted: Array<string>;
-    nodes: Array<api.CatalogNode>;
+    pdts_sorted: string[];
+    nodes: api.CatalogNode[];
     status: api.RepoStatusEnum;
-    conflicts: Array<api.FileLine>;
+    conflicts: api.FileLine[];
     remote_url: string;
     remote_webhook: string;
     remote_public_key: string;

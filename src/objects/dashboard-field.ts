@@ -5,7 +5,7 @@ export interface DashboardField {
     hidden: boolean;
     label: string;
     result: api.DashboardFieldResultEnum;
-    fractions: Array<api.Fraction>;
+    fractions: api.Fraction[];
     description?: string;
     from_field?: string;
 }

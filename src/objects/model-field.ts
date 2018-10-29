@@ -9,7 +9,7 @@ export interface ModelField {
     sql_name: string;
     top_id: string;
     top_label: string;
-    force_dims: Array<string>;
+    force_dims: string[];
     description?: string;
     type?: api.ModelFieldTypeEnum;
     group_id?: string;

@@ -7,13 +7,13 @@ export interface Mconfig {
     repo_id: string;
     struct_id: string;
     model_id: string;
-    select: Array<string>;
-    sortings: Array<api.Sorting>;
+    select: string[];
+    sortings: api.Sorting[];
     sorts: string;
     timezone: string;
     limit: number;
-    filters: Array<api.Filter>;
-    charts: Array<api.Chart>;
+    filters: api.Filter[];
+    charts: api.Chart[];
     temp: boolean;
     server_ts: number;
 }

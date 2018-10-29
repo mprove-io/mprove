@@ -10,5 +10,5 @@ export interface ModelNode {
     field_file_name?: string;
     field_line_num?: number;
     hidden: boolean;
-    children?: Array<api.ModelNode>;
+    children?: api.ModelNode[];
 }

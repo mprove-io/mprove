@@ -5,5 +5,5 @@ export interface CatalogNode {
     is_folder: boolean;
     name: string;
     file_id?: string;
-    children?: Array<api.CatalogNode>;
+    children?: api.CatalogNode[];
 }
