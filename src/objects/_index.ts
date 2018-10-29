@@ -1,5 +1,4 @@
-export * from './blockml-response';
-export * from './blockml-response-package-error';
+export * from './communication/_index';
 export * from './catalog-file';
 export * from './catalog-node';
 export * from './chart';
@@ -22,10 +21,6 @@ export * from './query';
 export * from './query-estimate';
 export * from './repo';
 export * from './report';
-export * from './server-request-to-blockml';
-export * from './server-request-to-client';
-export * from './server-response';
-export * from './server-response-package-error';
 export * from './sorting';
 export * from './state';
 export * from './struct';
