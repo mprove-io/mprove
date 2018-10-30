@@ -17,4 +17,11 @@ export * from './multi-create-mconfig-and-query/_index';
 export * from './multi-get-dashboard-mconfigs-queries/_index';
 export * from './multi-set-live-queries/_index';
 export * from './pong/_index';
+export * from './projects-check-project-id-unique/_index';
+export * from './projects-create-project/_index';
+export * from './projects-delete-project/_index';
+export * from './projects-set-project-credentials/_index';
+export * from './projects-set-project-query-size-limit/_index';
+export * from './projects-set-project-timezone/_index';
+export * from './projects-set-project-week-start/_index';
 
