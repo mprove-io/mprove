@@ -24,4 +24,9 @@ export * from './projects-set-project-credentials/_index';
 export * from './projects-set-project-query-size-limit/_index';
 export * from './projects-set-project-timezone/_index';
 export * from './projects-set-project-week-start/_index';
+export * from './queries-cancel-queries/_index';
+export * from './queries-get-pdt-queries/_index';
+export * from './queries-get-query-with-dep-queries/_index';
+export * from './queries-run-queries/_index';
+export * from './queries-run-queries-dry/_index';
 
