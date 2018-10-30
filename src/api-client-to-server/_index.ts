@@ -1,10 +1,20 @@
+export * from './confirm/_index';
 export * from './files-create-file/_index';
 export * from './files-delete-file/_index';
 export * from './files-move-file/_index';
 export * from './files-save-file/_index';
-
 export * from './folders-create-folder/_index';
 export * from './folders-delete-folder/_index';
 export * from './folders-move-folder/_index';
 export * from './folders-rename-folder/_index';
+export * from './mconfigs-create-mconfig/_index';
+export * from './mconfigs-get-mconfig/_index';
+export * from './members-create-member/_index';
+export * from './members-delete-member/_index';
+export * from './members-edit-member/_index';
+export * from './multi-create-dashboard/_index';
+export * from './multi-create-mconfig-and-query/_index';
+export * from './multi-get-dashboard-mconfigs-queries/_index';
+export * from './multi-set-live-queries/_index';
+export * from './pong/_index';
 
