@@ -11,7 +11,7 @@
   "insertSpaceAfterSemicolonInForStatements": true,
   "insertSpaceBeforeAndAfterBinaryOperators": true,
   "insertSpaceAfterKeywordsInControlFlowStatements": true,
-  "insertSpaceAfterFunctionKeywordForAnonymousFunctions": true, // false
+  "insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
   "insertSpaceBeforeFunctionParenthesis": false,
   "insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
   "insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
