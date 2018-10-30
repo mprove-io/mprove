@@ -1,7 +1,7 @@
 import * as api from '../../_index';
 
 export interface TestRequestToServer {
-  origin: api.TestRequestToServerOriginEnum;
-  type: api.TestRequestToServerTypeEnum;
+  origin: api.CommunicationOriginEnum;
+  type: api.CommunicationTypeEnum;
   request_id: string;
 }
