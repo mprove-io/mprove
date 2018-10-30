@@ -6,7 +6,7 @@ export interface StateUpdateRequestBodyPayload {
   files: api.CatalogFile[];
   mconfigs: api.Mconfig[];
   members: api.Member[];
-  api: api.Model[];
+  models: api.Model[];
   projects: api.Project[];
   queries: api.Query[];
   repos: api.Repo[];
