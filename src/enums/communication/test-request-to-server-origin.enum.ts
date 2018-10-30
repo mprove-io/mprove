@@ -1,3 +1,3 @@
 export enum TestRequestToServerOriginEnum {
-  Test = <any> 'test'
+  Test = <any>'test'
 }

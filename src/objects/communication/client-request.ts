@@ -1,12 +1,12 @@
 import * as api from '../../_index';
 
 export interface ClientRequest {
-    type: api.ClientRequestTypeEnum;
+  type: api.ClientRequestTypeEnum;
 
-    origin: api.ClientRequestOriginEnum;
+  origin: api.ClientRequestOriginEnum;
 
-    request_id: string;
+  request_id: string;
 
-    init_id: string;
+  init_id: string;
 
 }

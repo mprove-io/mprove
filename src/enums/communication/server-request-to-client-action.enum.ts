@@ -1,4 +1,4 @@
 export enum ServerRequestToClientActionEnum {
-    StateUpdate = <any>'state.update',
-    Ping = <any>'ping'
+  StateUpdate = <any>'state.update',
+  Ping = <any>'ping'
 }

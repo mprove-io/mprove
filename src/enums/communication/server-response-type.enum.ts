@@ -1,3 +1,3 @@
 export enum ServerResponseTypeEnum {
-    Response = <any>'response'
+  Response = <any>'response'
 }

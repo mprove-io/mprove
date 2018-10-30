@@ -1,3 +1,3 @@
 export interface ServerResponsePackageError {
-    message: string;
+  message: string;
 }

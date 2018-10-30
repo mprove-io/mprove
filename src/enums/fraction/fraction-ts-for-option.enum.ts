@@ -1,4 +1,4 @@
 export enum FractionTsForOptionEnum {
-    For = <any>'for',
-    ForInfinity = <any>'for_infinity'
+  For = <any>'for',
+  ForInfinity = <any>'for_infinity'
 }

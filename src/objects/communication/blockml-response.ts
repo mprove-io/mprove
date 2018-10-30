@@ -1,14 +1,14 @@
 import * as api from '../../_index';
 
 export interface BlockmlResponse {
-    origin: api.BlockmlResponseOriginEnum;
+  origin: api.BlockmlResponseOriginEnum;
 
-    type: api.BlockmlResponseTypeEnum;
+  type: api.BlockmlResponseTypeEnum;
 
-    reply_to: string;
+  reply_to: string;
 
-    status: api.BlockmlResponseStatusEnum;
+  status: api.BlockmlResponseStatusEnum;
 
-    error: api.BlockmlResponsePackageError;
+  error: api.BlockmlResponsePackageError;
 
 }

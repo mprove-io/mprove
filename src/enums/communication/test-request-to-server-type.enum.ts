@@ -1,3 +1,3 @@
 export enum TestRequestToServerTypeEnum {
-  Request = <any> 'request'
+  Request = <any>'request'
 }

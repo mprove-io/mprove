@@ -1,4 +1,4 @@
 export enum UserStatusEnum {
-    Active = <any>'active',
-    Pending = <any>'pending'
+  Active = <any>'active',
+  Pending = <any>'pending'
 }
