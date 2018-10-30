@@ -29,4 +29,9 @@ export * from './queries-get-pdt-queries/_index';
 export * from './queries-get-query-with-dep-queries/_index';
 export * from './queries-run-queries/_index';
 export * from './queries-run-queries-dry/_index';
+export * from './repos-commit-repo/_index';
+export * from './repos-pull-repo/_index';
+export * from './repos-push-repo/_index';
+export * from './repos-regenerate-repo-remote-public-key/_index';
+export * from './repos-regenerate-repo-remote-webhook/_index';
 
