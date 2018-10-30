@@ -2,7 +2,6 @@ export * from './communication/_index';
 export * from './catalog-file';
 export * from './catalog-node';
 export * from './chart';
-export * from './client-request';
 export * from './cut';
 export * from './dashboard';
 export * from './dashboard-field';

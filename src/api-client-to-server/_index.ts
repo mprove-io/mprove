@@ -38,4 +38,9 @@ export * from './repos-revert-repo-to-last-commit/_index';
 export * from './repos-revert-repo-to-production/_index';
 export * from './repos-set-repo-remote-url/_index';
 export * from './state-get-state/_index';
+export * from './subscriptions-cancel-subscriptions/_index';
+export * from './subscriptions-switch-analytics-subscription-plan/_index';
+export * from './test-clean/_index';
+export * from './test-finish/_index';
+export * from './test-start/_index';
 

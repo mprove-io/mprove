@@ -11,3 +11,5 @@ export * from './server-request-to-client-type.enum';
 export * from './server-response-origin.enum';
 export * from './server-response-status.enum';
 export * from './server-response-type.enum';
+export * from './test-request-to-server-origin.enum';
+export * from './test-request-to-server-type.enum';
