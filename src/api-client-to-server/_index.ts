@@ -43,4 +43,8 @@ export * from './subscriptions-switch-analytics-subscription-plan/_index';
 export * from './test-clean/_index';
 export * from './test-finish/_index';
 export * from './test-start/_index';
+export * from './users-logout-user/_index';
+export * from './users-set-user-name/_index';
+export * from './users-set-user-picture/_index';
+export * from './users-set-user-timezone/_index';
 
