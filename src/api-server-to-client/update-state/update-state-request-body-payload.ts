@@ -1,6 +1,6 @@
 import * as api from '../../_index';
 
-export interface StateUpdateRequestBodyPayload {
+export interface UpdateStateRequestBodyPayload {
   dashboards: api.Dashboard[];
   errors: api.SwError[];
   files: api.CatalogFile[];

@@ -1,5 +1,5 @@
 import * as api from '../../_index';
 
-export interface TestCleanResponse200BodyPayload {
+export interface CleanDataResponse200BodyPayload {
   cleaned: boolean;
 }
