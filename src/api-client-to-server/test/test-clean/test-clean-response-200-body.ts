@@ -1,4 +1,4 @@
-import * as api from '../../_index';
+import * as api from '../../../_index';
 
 export interface TestCleanResponse200Body {
   info: api.ServerResponse;

@@ -1,4 +1,4 @@
-import * as api from '../../_index';
+import * as api from '../../../_index';
 
 export interface TestStartRequestBody {
   info: api.TestRequestToServer;
