@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { ConfirmRequestBodyPayload } from './confirm-request-body-payload';
 
 export interface ConfirmRequestBody {
-  info: api.ClientRequest;
-  payload: api.ConfirmRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: ConfirmRequestBodyPayload;
 }

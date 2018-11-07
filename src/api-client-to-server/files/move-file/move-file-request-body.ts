@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { MoveFileRequestBodyPayload } from './move-file-request-body-payload';
 
 export interface MoveFileRequestBody {
-  info: api.ClientRequest;
-  payload: api.MoveFileRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: MoveFileRequestBodyPayload;
 }

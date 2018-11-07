@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { RenameFolderRequestBodyPayload } from './rename-folder-request-body-payload';
 
 export interface RenameFolderRequestBody {
-  info: api.ClientRequest;
-  payload: api.RenameFolderRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: RenameFolderRequestBodyPayload;
 }

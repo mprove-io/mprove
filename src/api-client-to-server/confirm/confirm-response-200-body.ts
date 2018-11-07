@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { ConfirmResponse200BodyPayload } from './confirm-response-200-body-payload';
 
 export interface ConfirmResponse200Body {
-  info: api.ServerResponse;
-  payload: api.ConfirmResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: ConfirmResponse200BodyPayload;
 }

@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SaveFileResponse200BodyPayload } from './save-file-response-200-body-payload';
 
 export interface SaveFileResponse200Body {
-  info: api.ServerResponse;
-  payload: api.SaveFileResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: SaveFileResponse200BodyPayload;
 }

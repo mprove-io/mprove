@@ -1,7 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface MoveFileResponse200BodyPayload {
-  deleted_dev_file: api.CatalogFile;
-  new_dev_file: api.CatalogFile;
-  dev_struct: api.Struct;
+  deleted_dev_file: apiObjects.CatalogFile;
+  new_dev_file: apiObjects.CatalogFile;
+  dev_struct: apiObjects.Struct;
 }

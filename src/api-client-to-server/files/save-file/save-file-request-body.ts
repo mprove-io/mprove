@@ -1,6 +1,8 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SaveFileRequestBodyPayload } from './save-file-request-body-payload';
+
 
 export interface SaveFileRequestBody {
-  info: api.ClientRequest;
-  payload: api.SaveFileRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: SaveFileRequestBodyPayload;
 }

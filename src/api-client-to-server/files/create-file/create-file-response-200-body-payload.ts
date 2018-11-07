@@ -1,6 +1,6 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface CreateFileResponse200BodyPayload {
-  dev_repo: api.Repo;
-  created_dev_file: api.CatalogFile;
+  dev_repo: apiObjects.Repo;
+  created_dev_file: apiObjects.CatalogFile;
 }

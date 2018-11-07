@@ -26,4 +26,6 @@ export * from './struct';
 export * from './struct-full';
 export * from './subscription';
 export * from './sw-error';
+export * from './timezone';
+export * from './timezone-group';
 export * from './user';

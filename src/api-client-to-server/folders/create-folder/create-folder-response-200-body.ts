@@ -1,8 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CreateFolderResponse200BodyPayload } from './create-folder-response-200-body-payload';
 
 export interface CreateFolderResponse200Body {
-  info: api.ServerResponse;
-
-  payload: api.CreateFolderResponse200BodyPayload;
-
+  info: apiObjects.ServerResponse;
+  payload: CreateFolderResponse200BodyPayload;
 }

@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CreateFileRequestBodyPayload } from './create-file-request-body-payload';
 
 export interface CreateFileRequestBody {
-  info: api.ClientRequest;
-  payload: api.CreateFileRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: CreateFileRequestBodyPayload;
 }
