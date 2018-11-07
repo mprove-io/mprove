@@ -1,4 +1,6 @@
-import * as api from '../_index';
+import { Sorting } from './sorting';
+import { Filter } from './filter';
+import { Chart } from './chart';
 
 export interface Mconfig {
   mconfig_id: string;
@@ -8,12 +10,12 @@ export interface Mconfig {
   struct_id: string;
   model_id: string;
   select: string[];
-  sortings: api.Sorting[];
+  sortings: Sorting[];
   sorts: string;
   timezone: string;
   limit: number;
-  filters: api.Filter[];
-  charts: api.Chart[];
+  filters: Filter[];
+  charts: Chart[];
   temp: boolean;
   server_ts: number;
 }

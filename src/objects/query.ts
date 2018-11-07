@@ -1,4 +1,4 @@
-import * as api from '../_index';
+import * as apiEnums from '../enums/_index';
 
 export interface Query {
   query_id: string;
@@ -9,7 +9,7 @@ export interface Query {
   sql: string[];
   is_pdt: boolean;
   pdt_id: string;
-  status: api.QueryStatusEnum;
+  status: apiEnums.QueryStatusEnum;
   last_run_by: string;
   last_run_ts: number;
   last_cancel_ts: number;

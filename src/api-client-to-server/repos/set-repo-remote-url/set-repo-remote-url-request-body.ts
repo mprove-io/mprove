@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SetRepoRemoteUrlRequestBodyPayload } from './set-repo-remote-url-request-body-payload';
 
 export interface SetRepoRemoteUrlRequestBody {
-  info: api.ClientRequest;
-  payload: api.SetRepoRemoteUrlRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: SetRepoRemoteUrlRequestBodyPayload;
 }

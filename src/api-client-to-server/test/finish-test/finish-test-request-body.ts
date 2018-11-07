@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { FinishTestRequestBodyPayload } from './finish-test-request-body-payload';
 
 export interface FinishTestRequestBody {
-  info: api.TestRequestToServer;
-  payload: api.FinishTestRequestBodyPayload;
+  info: apiObjects.TestRequestToServer;
+  payload: FinishTestRequestBodyPayload;
 }

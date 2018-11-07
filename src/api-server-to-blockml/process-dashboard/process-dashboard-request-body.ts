@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { ProcessDashboardRequestBodyPayload } from './process-dashboard-request-body-payload';
 
 export interface ProcessDashboardRequestBody {
-  info: api.ServerRequestToBlockml;
-  payload: api.ProcessDashboardRequestBodyPayload;
+  info: apiObjects.ServerRequestToBlockml;
+  payload: ProcessDashboardRequestBodyPayload;
 }

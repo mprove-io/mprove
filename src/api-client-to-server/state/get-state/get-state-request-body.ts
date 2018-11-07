@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { GetStateRequestBodyPayload } from './get-state-request-body-payload';
 
 export interface GetStateRequestBody {
-  info: api.ClientRequest;
-  payload: api.GetStateRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: GetStateRequestBodyPayload;
 }

@@ -1,6 +1,6 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface GetStateResponse200BodyPayload {
   init_id: string;
-  state: api.State;
+  state: apiObjects.State;
 }

@@ -1,7 +1,7 @@
-import * as api from '../../_index';
+import * as apiEnums from '../../enums/_index';
 
 export interface ServerRequestToBlockml {
-  origin: api.CommunicationOriginEnum;
-  type: api.CommunicationTypeEnum;
+  origin: apiEnums.CommunicationOriginEnum;
+  type: apiEnums.CommunicationTypeEnum;
   request_id: string;
 }

@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SetUserNameResponse200BodyPayload } from './set-user-name-response-200-body-payload';
 
 export interface SetUserNameResponse200Body {
-  info: api.ServerResponse;
-  payload: api.SetUserNameResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: SetUserNameResponse200BodyPayload;
 }

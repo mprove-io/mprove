@@ -1,9 +1,10 @@
-import * as api from '../../_index';
+import * as apiEnums from '../../enums/_index';
+import { BlockmlResponsePackageError } from './blockml-response-package-error';
 
 export interface BlockmlResponse {
-  origin: api.CommunicationOriginEnum;
-  type: api.CommunicationTypeEnum;
+  origin: apiEnums.CommunicationOriginEnum;
+  type: apiEnums.CommunicationTypeEnum;
   reply_to: string;
-  status: api.BlockmlResponseStatusEnum;
-  error: api.BlockmlResponsePackageError;
+  status: apiEnums.BlockmlResponseStatusEnum;
+  error: BlockmlResponsePackageError;
 }

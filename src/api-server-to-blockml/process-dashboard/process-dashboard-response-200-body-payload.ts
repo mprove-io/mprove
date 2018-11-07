@@ -1,7 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
 
 export interface ProcessDashboardResponse200BodyPayload {
-  dashboard: api.Dashboard;
-  mconfigs: api.Mconfig[];
-  queries: api.Query[];
+  dashboard: apiObjects.Dashboard;
+  mconfigs: apiObjects.Mconfig[];
+  queries: apiObjects.Query[];
 }

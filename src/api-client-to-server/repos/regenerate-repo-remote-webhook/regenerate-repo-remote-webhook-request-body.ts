@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { RegenerateRepoRemoteWebhookRequestBodyPayload } from './regenerate-repo-remote-webhook-request-body-payload';
 
 export interface RegenerateRepoRemoteWebhookRequestBody {
-  info: api.ClientRequest;
-  payload: api.RegenerateRepoRemoteWebhookRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: RegenerateRepoRemoteWebhookRequestBodyPayload;
 }

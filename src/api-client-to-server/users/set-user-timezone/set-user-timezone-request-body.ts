@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SetUserTimezoneRequestBodyPayload } from './set-user-timezone-request-body-payload';
 
 export interface SetUserTimezoneRequestBody {
-  info: api.ClientRequest;
-  payload: api.SetUserTimezoneRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: SetUserTimezoneRequestBodyPayload;
 }

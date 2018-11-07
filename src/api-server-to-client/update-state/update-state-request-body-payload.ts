@@ -1,14 +1,14 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
 
 export interface UpdateStateRequestBodyPayload {
-  dashboards: api.Dashboard[];
-  errors: api.SwError[];
-  files: api.CatalogFile[];
-  mconfigs: api.Mconfig[];
-  members: api.Member[];
-  models: api.Model[];
-  projects: api.Project[];
-  queries: api.Query[];
-  repos: api.Repo[];
-  user: api.User;
+  dashboards: apiObjects.Dashboard[];
+  errors: apiObjects.SwError[];
+  files: apiObjects.CatalogFile[];
+  mconfigs: apiObjects.Mconfig[];
+  members: apiObjects.Member[];
+  models: apiObjects.Model[];
+  projects: apiObjects.Project[];
+  queries: apiObjects.Query[];
+  repos: apiObjects.Repo[];
+  user: apiObjects.User;
 }

@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { RevertRepoToLastCommitResponse200BodyPayload } from './revert-repo-to-last-commit-response-200-body-payload';
 
 export interface RevertRepoToLastCommitResponse200Body {
-  info: api.ServerResponse;
-  payload: api.RevertRepoToLastCommitResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: RevertRepoToLastCommitResponse200BodyPayload;
 }

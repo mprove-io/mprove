@@ -1,11 +1,11 @@
-import * as api from '../_index';
+import * as apiEnums from '../enums/_index';
 
 export interface Chart {
   chart_id: string;
   title: string;
   description?: string;
   is_valid: boolean;
-  type: api.ChartTypeEnum;
+  type: apiEnums.ChartTypeEnum;
   x_field: string;
   y_field: string;
   y_fields: string[];
@@ -29,13 +29,13 @@ export interface Chart {
   round_domains: boolean;
   show_grid_lines: boolean;
   timeline: boolean;
-  interpolation: api.ChartInterpolationEnum;
+  interpolation: apiEnums.ChartInterpolationEnum;
   auto_scale: boolean;
   doughnut: boolean;
   explode_slices: boolean;
   labels: boolean;
-  color_scheme: api.ChartColorSchemeEnum;
-  scheme_type: api.ChartSchemeTypeEnum;
+  color_scheme: apiEnums.ChartColorSchemeEnum;
+  scheme_type: apiEnums.ChartSchemeTypeEnum;
   page_size: number;
   arc_width: number;
   bar_padding: number;
@@ -56,9 +56,9 @@ export interface Chart {
   card_color: string;
   text_color: string;
   empty_color: string;
-  tile_width: api.ChartTileWidthEnum;
-  tile_height: api.ChartTileHeightEnum;
-  view_size: api.ChartViewSizeEnum;
+  tile_width: apiEnums.ChartTileWidthEnum;
+  tile_height: apiEnums.ChartTileHeightEnum;
+  view_size: apiEnums.ChartViewSizeEnum;
   view_width: number;
   view_height: number;
 }

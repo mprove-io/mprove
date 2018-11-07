@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { StartTestResponse200BodyPayload } from './start-test-response-200-body-payload';
 
 export interface StartTestResponse200Body {
-  info: api.ServerResponse;
-  payload: api.StartTestResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: StartTestResponse200BodyPayload;
 }

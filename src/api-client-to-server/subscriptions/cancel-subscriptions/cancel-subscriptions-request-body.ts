@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CancelSubscriptionsRequestBodyPayload } from './cancel-subscriptions-request-body-payload';
 
 export interface CancelSubscriptionsRequestBody {
-  info: api.ClientRequest;
-  payload: api.CancelSubscriptionsRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: CancelSubscriptionsRequestBodyPayload;
 }

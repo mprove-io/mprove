@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { RevertRepoToProductionResponse200BodyPayload } from './revert-repo-to-production-response-200-body-payload';
 
 export interface RevertRepoToProductionResponse200Body {
-  info: api.ServerResponse;
-  payload: api.RevertRepoToProductionResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: RevertRepoToProductionResponse200BodyPayload;
 }

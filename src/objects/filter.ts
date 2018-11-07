@@ -1,6 +1,6 @@
-import * as api from '../_index';
+import { Fraction } from './fraction';
 
 export interface Filter {
   field_id: string;
-  fractions: api.Fraction[];
+  fractions: Fraction[];
 }

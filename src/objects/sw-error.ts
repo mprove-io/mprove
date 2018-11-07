@@ -1,4 +1,4 @@
-import * as api from '../_index';
+import { FileLine } from './file-line';
 
 export interface SwError {
   project_id: string;
@@ -7,6 +7,6 @@ export interface SwError {
   error_id: string;
   type: string;
   message: string;
-  lines: api.FileLine[];
+  lines: FileLine[];
   server_ts: number;
 }

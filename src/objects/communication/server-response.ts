@@ -1,9 +1,10 @@
-import * as api from '../../_index';
+import * as apiEnums from '../../enums/_index';
+import { ServerResponsePackageError } from './server-response-package-error';
 
 export interface ServerResponse {
-  origin: api.CommunicationOriginEnum;
-  type: api.CommunicationTypeEnum;
+  origin: apiEnums.CommunicationOriginEnum;
+  type: apiEnums.CommunicationTypeEnum;
   reply_to: string;
-  status: api.ServerResponseStatusEnum;
-  error: api.ServerResponsePackageError;
+  status: apiEnums.ServerResponseStatusEnum;
+  error: ServerResponsePackageError;
 }

@@ -1,8 +1,8 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface RevertRepoToProductionResponse200BodyPayload {
-  deleted_dev_files: api.CatalogFile[];
-  changed_dev_files: api.CatalogFile[];
-  new_dev_files: api.CatalogFile[];
-  dev_struct: api.Struct;
+  deleted_dev_files: apiObjects.CatalogFile[];
+  changed_dev_files: apiObjects.CatalogFile[];
+  new_dev_files: apiObjects.CatalogFile[];
+  dev_struct: apiObjects.Struct;
 }

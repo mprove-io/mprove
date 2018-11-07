@@ -1,8 +1,11 @@
-import * as api from '../_index';
+import { SwError } from './sw-error';
+import { Model } from './model';
+import { Dashboard } from './dashboard';
+import { Repo } from './repo';
 
 export interface Struct {
-  errors: api.SwError[];
-  models: api.Model[];
-  dashboards: api.Dashboard[];
-  repo: api.Repo;
+  errors: SwError[];
+  models: Model[];
+  dashboards: Dashboard[];
+  repo: Repo;
 }

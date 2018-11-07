@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { RebuildStructRequestBodyPayload } from './rebuild-struct-request-body-payload';
 
 export interface RebuildStructRequestBody {
-  info: api.ServerRequestToBlockml;
-  payload: api.RebuildStructRequestBodyPayload;
+  info: apiObjects.ServerRequestToBlockml;
+  payload: RebuildStructRequestBodyPayload;
 }

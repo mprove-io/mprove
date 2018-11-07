@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { ProcessQueryRequestBodyPayload } from './process-query-request-body-payload';
 
 export interface ProcessQueryRequestBody {
-  info: api.ServerRequestToBlockml;
-  payload: api.ProcessQueryRequestBodyPayload;
+  info: apiObjects.ServerRequestToBlockml;
+  payload: ProcessQueryRequestBodyPayload;
 }

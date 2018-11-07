@@ -1,4 +1,4 @@
-import * as api from '../_index';
+import * as apiEnums from '../enums/_index';
 
 export interface User {
   user_id: string;
@@ -9,7 +9,7 @@ export interface User {
   picture_url_small: string;
   picture_url_big: string;
   timezone: string;
-  status: api.UserStatusEnum;
+  status: apiEnums.UserStatusEnum;
   deleted: boolean;
   server_ts: number;
 }

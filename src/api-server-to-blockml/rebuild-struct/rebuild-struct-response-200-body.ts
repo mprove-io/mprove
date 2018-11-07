@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { RebuildStructResponse200BodyPayload } from './rebuild-struct-response-200-body-payload';
 
 export interface RebuildStructResponse200Body {
-  info: api.BlockmlResponse;
-  payload: api.RebuildStructResponse200BodyPayload;
+  info: apiObjects.BlockmlResponse;
+  payload: RebuildStructResponse200BodyPayload;
 }

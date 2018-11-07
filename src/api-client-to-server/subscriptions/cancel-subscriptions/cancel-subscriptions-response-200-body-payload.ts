@@ -1,6 +1,6 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface CancelSubscriptionsResponse200BodyPayload {
-  project: api.Project;
-  subscriptions: api.Subscription[];
+  project: apiObjects.Project;
+  subscriptions: apiObjects.Subscription[];
 }

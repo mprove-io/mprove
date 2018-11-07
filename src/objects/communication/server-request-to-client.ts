@@ -1,9 +1,9 @@
-import * as api from '../../_index';
+import * as apiEnums from '../../enums/_index';
 
 export interface ServerRequestToClient {
-  origin: api.CommunicationOriginEnum;
-  type: api.CommunicationTypeEnum;
+  origin: apiEnums.CommunicationOriginEnum;
+  type: apiEnums.CommunicationTypeEnum;
   init_id: string;
   request_id: string;
-  action: api.ServerRequestToClientActionEnum;
+  action: apiEnums.ServerRequestToClientActionEnum;
 }

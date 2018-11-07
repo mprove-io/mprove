@@ -1,6 +1,5 @@
-import * as api from '../_index';
-
-export const timezones: api.TimezoneGroup[] = [
+import * as apiObjects from '../objects/_index';
+export const timezones: apiObjects.TimezoneGroup[] = [
   // {
   //   'group': 'US (Common)',
   //   'zones': [

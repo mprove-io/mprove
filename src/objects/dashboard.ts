@@ -1,4 +1,5 @@
-import * as api from '../_index';
+import { DashboardField } from './dashboard-field';
+import { Report } from './report';
 
 export interface Dashboard {
   project_id: string;
@@ -10,8 +11,8 @@ export interface Dashboard {
   title: string;
   gr?: string;
   hidden: boolean;
-  fields: api.DashboardField[];
-  reports: api.Report[];
+  fields: DashboardField[];
+  reports: Report[];
   temp: boolean;
   server_ts: number;
   description?: string;

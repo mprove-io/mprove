@@ -1,6 +1,6 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface SetUserNameResponse200BodyPayload {
-  user: api.User;
-  members: api.Member[];
+  user: apiObjects.User;
+  members: apiObjects.Member[];
 }

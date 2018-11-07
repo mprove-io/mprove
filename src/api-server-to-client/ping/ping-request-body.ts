@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { PingRequestBodyPayload } from './ping-request-body-payload';
 
 export interface PingRequestBody {
-  info: api.ServerRequestToClient;
-  payload: api.PingRequestBodyPayload;
+  info: apiObjects.ServerRequestToClient;
+  payload: PingRequestBodyPayload;
 }

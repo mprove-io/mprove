@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { LogoutUserRequestBodyPayload } from './logout-user-request-body-payload';
 
 export interface LogoutUserRequestBody {
-  info: api.ClientRequest;
-  payload: api.LogoutUserRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: LogoutUserRequestBodyPayload;
 }

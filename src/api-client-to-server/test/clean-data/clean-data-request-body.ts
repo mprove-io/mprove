@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CleanDataRequestBodyPayload } from './clean-data-request-body-payload';
 
 export interface CleanDataRequestBody {
-  info: api.TestRequestToServer;
-  payload: api.CleanDataRequestBodyPayload;
+  info: apiObjects.TestRequestToServer;
+  payload: CleanDataRequestBodyPayload;
 }

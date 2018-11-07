@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CleanDataResponse200BodyPayload } from './clean-data-response-200-body-payload';
 
 export interface CleanDataResponse200Body {
-  info: api.ServerResponse;
-  payload: api.CleanDataResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: CleanDataResponse200BodyPayload;
 }

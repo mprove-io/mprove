@@ -1,6 +1,6 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface SwitchAnalyticsSubscriptionPlanResponse200BodyPayload {
-  project: api.Project;
-  subscription: api.Subscription;
+  project: apiObjects.Project;
+  subscription: apiObjects.Subscription;
 }

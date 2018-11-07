@@ -1,4 +1,4 @@
-import * as api from '../_index';
+import * as apiEnums from '../enums/_index';
 
 export interface Project {
   project_id: string;
@@ -6,7 +6,7 @@ export interface Project {
   bq_project: string;
   client_email: string;
   query_size_limit: number;
-  week_start: api.ProjectWeekStartEnum;
+  week_start: apiEnums.ProjectWeekStartEnum;
   timezone: string;
   analytics_plan_id: number;
   analytics_max_plan_id: number;

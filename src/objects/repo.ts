@@ -1,4 +1,6 @@
-import * as api from '../_index';
+import * as apiEnums from '../enums/_index';
+import { CatalogNode } from './catalog-node';
+import { FileLine } from './file-line';
 
 export interface Repo {
   project_id: string;
@@ -6,9 +8,9 @@ export interface Repo {
   struct_id: string;
   udfs_content: string;
   pdts_sorted: string[];
-  nodes: api.CatalogNode[];
-  status: api.RepoStatusEnum;
-  conflicts: api.FileLine[];
+  nodes: CatalogNode[];
+  status: apiEnums.RepoStatusEnum;
+  conflicts: FileLine[];
   remote_url: string;
   remote_webhook: string;
   remote_public_key: string;

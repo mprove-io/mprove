@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SetUserNameRequestBodyPayload } from './set-user-name-request-body-payload';
 
 export interface SetUserNameRequestBody {
-  info: api.ClientRequest;
-  payload: api.SetUserNameRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: SetUserNameRequestBodyPayload;
 }

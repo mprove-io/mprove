@@ -1,4 +1,5 @@
-import * as api from '../_index';
+import { ModelField } from './model-field';
+import { ModelNode } from './model-node';
 
 export interface Model {
   project_id: string;
@@ -10,8 +11,8 @@ export interface Model {
   label: string;
   gr?: string;
   hidden: boolean;
-  fields: api.ModelField[];
-  nodes: api.ModelNode[];
+  fields: ModelField[];
+  nodes: ModelNode[];
   server_ts: number;
   description?: string;
 }

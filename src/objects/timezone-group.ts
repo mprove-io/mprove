@@ -1,6 +1,6 @@
-import * as api from '../_index';
+import { Timezone } from './timezone';
 
 export interface TimezoneGroup {
   group: string;
-  zones: api.Timezone[];
+  zones: Timezone[];
 }

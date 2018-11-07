@@ -1,5 +1,5 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface SetUserTimezoneResponse200BodyPayload {
-  user: api.User;
+  user: apiObjects.User;
 }

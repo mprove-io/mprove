@@ -1,6 +1,6 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
 
 export interface ProcessQueryResponse200BodyPayload {
-  query: api.Query;
-  mconfig: api.Mconfig;
+  query: apiObjects.Query;
+  mconfig: apiObjects.Mconfig;
 }

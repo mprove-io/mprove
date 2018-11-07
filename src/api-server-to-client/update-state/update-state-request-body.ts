@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { UpdateStateRequestBodyPayload } from './update-state-request-body-payload';
 
 export interface UpdateStateRequestBody {
-  info: api.ServerRequestToClient;
-  payload: api.UpdateStateRequestBodyPayload;
+  info: apiObjects.ServerRequestToClient;
+  payload: UpdateStateRequestBodyPayload;
 }
