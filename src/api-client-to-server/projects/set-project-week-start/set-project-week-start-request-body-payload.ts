@@ -1,7 +1,7 @@
-import * as api from '../../../_index';
+import * as apiEnums from '../../../enums/_index';
 
 export interface SetProjectWeekStartRequestBodyPayload {
   project_id: string;
-  week_start: api.ProjectWeekStartEnum;
+  week_start: apiEnums.ProjectWeekStartEnum;
   server_ts: number;
 }

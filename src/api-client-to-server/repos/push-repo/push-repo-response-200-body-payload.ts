@@ -1,9 +1,9 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface PushRepoResponse200BodyPayload {
-  deleted_prod_files: api.CatalogFile[];
-  changed_prod_files: api.CatalogFile[];
-  new_prod_files: api.CatalogFile[];
-  prod_struct: api.Struct;
-  dev_repo: api.Repo;
+  deleted_prod_files: apiObjects.CatalogFile[];
+  changed_prod_files: apiObjects.CatalogFile[];
+  new_prod_files: apiObjects.CatalogFile[];
+  prod_struct: apiObjects.Struct;
+  dev_repo: apiObjects.Repo;
 }

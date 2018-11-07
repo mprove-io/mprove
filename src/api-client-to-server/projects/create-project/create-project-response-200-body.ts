@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CreateProjectResponse200BodyPayload } from './create-project-response-200-body-payload';
 
 export interface CreateProjectResponse200Body {
-  info: api.ServerResponse;
-  payload: api.CreateProjectResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: CreateProjectResponse200BodyPayload;
 }

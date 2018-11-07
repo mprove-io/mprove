@@ -1,6 +1,9 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import {
+  SetProjectQuerySizeLimitRequestBodyPayload
+} from './set-project-query-size-limit-request-body-payload';
 
 export interface SetProjectQuerySizeLimitRequestBody {
-  info: api.ClientRequest;
-  payload: api.SetProjectQuerySizeLimitRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: SetProjectQuerySizeLimitRequestBodyPayload;
 }

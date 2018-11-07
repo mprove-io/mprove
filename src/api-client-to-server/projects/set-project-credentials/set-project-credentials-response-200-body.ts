@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SetProjectCredentialsResponse200BodyPayload } from './set-project-credentials-response-200-body-payload';
 
 export interface SetProjectCredentialsResponse200Body {
-  info: api.ServerResponse;
-  payload: api.SetProjectCredentialsResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: SetProjectCredentialsResponse200BodyPayload;
 }

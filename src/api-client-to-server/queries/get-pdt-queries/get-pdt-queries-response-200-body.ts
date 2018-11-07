@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { GetPdtQueriesResponse200BodyPayload } from './get-pdt-queries-response-200-body-payload';
 
 export interface GetPdtQueriesResponse200Body {
-  info: api.ServerResponse;
-  payload: api.GetPdtQueriesResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: GetPdtQueriesResponse200BodyPayload;
 }

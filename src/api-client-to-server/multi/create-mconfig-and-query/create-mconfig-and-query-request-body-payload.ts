@@ -1,6 +1,6 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface CreateMconfigAndQueryRequestBodyPayload {
-  mconfig: api.Mconfig;
-  query: api.Query;
+  mconfig: apiObjects.Mconfig;
+  query: apiObjects.Query;
 }

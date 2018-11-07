@@ -1,10 +1,10 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface CreateProjectResponse200BodyPayload {
-  project: api.Project;
-  member: api.Member;
-  dev_files: api.CatalogFile[];
-  prod_files: api.CatalogFile[];
-  dev_struct: api.Struct;
-  prod_struct: api.Struct;
+  project: apiObjects.Project;
+  member: apiObjects.Member;
+  dev_files: apiObjects.CatalogFile[];
+  prod_files: apiObjects.CatalogFile[];
+  dev_struct: apiObjects.Struct;
+  prod_struct: apiObjects.Struct;
 }

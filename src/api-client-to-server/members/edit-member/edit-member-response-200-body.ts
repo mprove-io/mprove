@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { EditMemberResponse200BodyPayload } from './edit-member-response-200-body-payload';
 
 export interface EditMemberResponse200Body {
-  info: api.ServerResponse;
-  payload: api.EditMemberResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: EditMemberResponse200BodyPayload;
 }

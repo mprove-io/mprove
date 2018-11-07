@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { RunQueriesDryResponse200BodyPayload } from './run-queries-dry-response-200-body-payload';
 
 export interface RunQueriesDryResponse200Body {
-  info: api.ServerResponse;
-  payload: api.RunQueriesDryResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: RunQueriesDryResponse200BodyPayload;
 }

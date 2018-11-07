@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { PushRepoRequestBodyPayload } from './push-repo-request-body-payload';
 
 export interface PushRepoRequestBody {
-  info: api.ClientRequest;
-  payload: api.PushRepoRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: PushRepoRequestBodyPayload;
 }

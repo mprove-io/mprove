@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { DeleteProjectResponse200BodyPayload } from './delete-project-response-200-body-payload';
 
 export interface DeleteProjectResponse200Body {
-  info: api.ServerResponse;
-  payload: api.DeleteProjectResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: DeleteProjectResponse200BodyPayload;
 }

@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CreateProjectRequestBodyPayload } from './create-project-request-body-payload';
 
 export interface CreateProjectRequestBody {
-  info: api.ClientRequest;
-  payload: api.CreateProjectRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: CreateProjectRequestBodyPayload;
 }

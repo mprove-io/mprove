@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { GetQueryWithDepQueriesRequestBodyPayload } from './get-query-with-dep-queries-request-body-payload';
 
 export interface GetQueryWithDepQueriesRequestBody {
-  info: api.ClientRequest;
-  payload: api.GetQueryWithDepQueriesRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: GetQueryWithDepQueriesRequestBodyPayload;
 }

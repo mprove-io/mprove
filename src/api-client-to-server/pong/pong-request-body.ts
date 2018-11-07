@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { PongRequestBodyPayload } from './pong-request-body-payload';
 
 export interface PongRequestBody {
-  info: api.ClientRequest;
-  payload: api.PongRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: PongRequestBodyPayload;
 }

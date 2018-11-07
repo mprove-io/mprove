@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { EditMemberRequestBodyPayload } from './edit-member-request-body-payload';
 
 export interface EditMemberRequestBody {
-  info: api.ClientRequest;
-  payload: api.EditMemberRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: EditMemberRequestBodyPayload;
 }

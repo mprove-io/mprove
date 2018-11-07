@@ -1,7 +1,8 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { PushRepoResponse200BodyPayload } from './push-repo-response-200-body-payload';
 
 
 export interface PushRepoResponse200Body {
-  info: api.ServerResponse;
-  payload: api.PushRepoResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: PushRepoResponse200BodyPayload;
 }

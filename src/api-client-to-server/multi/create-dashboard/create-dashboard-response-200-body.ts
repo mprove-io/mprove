@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CreateDashboardResponse200BodyPayload } from './create-dashboard-response-200-body-payload';
 
 export interface CreateDashboardResponse200Body {
-  info: api.ServerResponse;
-  payload: api.CreateDashboardResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: CreateDashboardResponse200BodyPayload;
 }

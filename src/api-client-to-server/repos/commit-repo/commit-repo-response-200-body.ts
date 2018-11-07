@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CommitRepoResponse200BodyPayload } from './commit-repo-response-200-body-payload';
 
 export interface CommitRepoResponse200Body {
-  info: api.ServerResponse;
-  payload: api.CommitRepoResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: CommitRepoResponse200BodyPayload;
 }

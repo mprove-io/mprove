@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CreateDashboardRequestBodyPayload } from './create-dashboard-request-body-payload';
 
 export interface CreateDashboardRequestBody {
-  info: api.ClientRequest;
-  payload: api.CreateDashboardRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: CreateDashboardRequestBodyPayload;
 }

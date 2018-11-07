@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CancelQueriesRequestBodyPayload } from './cancel-queries-request-body-payload';
 
 export interface CancelQueriesRequestBody {
-  info: api.ClientRequest;
-  payload: api.CancelQueriesRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: CancelQueriesRequestBodyPayload;
 }

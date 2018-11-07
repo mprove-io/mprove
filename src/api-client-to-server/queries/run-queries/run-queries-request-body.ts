@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { RunQueriesRequestBodyPayload } from './run-queries-request-body-payload';
 
 export interface RunQueriesRequestBody {
-  info: api.ClientRequest;
-  payload: api.RunQueriesRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: RunQueriesRequestBodyPayload;
 }

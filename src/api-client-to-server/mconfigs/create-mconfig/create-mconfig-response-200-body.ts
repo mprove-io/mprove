@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CreateMconfigResponse200BodyPayload } from './create-mconfig-response-200-body-payload';
 
 export interface CreateMconfigResponse200Body {
-  info: api.ServerResponse;
-  payload: api.CreateMconfigResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: CreateMconfigResponse200BodyPayload;
 }

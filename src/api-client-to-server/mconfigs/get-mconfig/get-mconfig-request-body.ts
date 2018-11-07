@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { GetMconfigRequestBodyPayload } from './get-mconfig-request-body-payload';
 
 export interface GetMconfigRequestBody {
-  info: api.ClientRequest;
-  payload: api.GetMconfigRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: GetMconfigRequestBodyPayload;
 }

@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CheckProjectIdUniqueResponse200BodyPayload } from './check-project-id-unique-response-200-body-payload';
 
 export interface CheckProjectIdUniqueResponse200Body {
-  info: api.ServerResponse;
-  payload: api.CheckProjectIdUniqueResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: CheckProjectIdUniqueResponse200BodyPayload;
 }

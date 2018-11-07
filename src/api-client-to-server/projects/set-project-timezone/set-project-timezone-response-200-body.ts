@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { SetProjectTimezoneResponse200BodyPayload } from './set-project-timezone-response-200-body-payload';
 
 export interface SetProjectTimezoneResponse200Body {
-  info: api.ServerResponse;
-  payload: api.SetProjectTimezoneResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: SetProjectTimezoneResponse200BodyPayload;
 }

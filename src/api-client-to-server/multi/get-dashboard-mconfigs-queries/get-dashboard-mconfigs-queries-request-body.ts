@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { GetDashboardMconfigsQueriesRequestBodyPayload } from './get-dashboard-mconfigs-queries-request-body-payload';
 
 export interface GetDashboardMconfigsQueriesRequestBody {
-  info: api.ClientRequest;
-  payload: api.GetDashboardMconfigsQueriesRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: GetDashboardMconfigsQueriesRequestBodyPayload;
 }

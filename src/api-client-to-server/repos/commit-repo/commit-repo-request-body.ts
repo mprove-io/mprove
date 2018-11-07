@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { CommitRepoRequestBodyPayload } from './commit-repo-request-body-payload';
 
 export interface CommitRepoRequestBody {
-  info: api.ClientRequest;
-  payload: api.CommitRepoRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: CommitRepoRequestBodyPayload;
 }

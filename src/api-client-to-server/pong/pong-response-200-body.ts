@@ -1,6 +1,7 @@
-import * as api from '../../_index';
+import * as apiObjects from '../../objects/_index';
+import { PongResponse200BodyPayload } from './pong-response-200-body-payload';
 
 export interface PongResponse200Body {
-  info: api.ServerResponse;
-  payload: api.PongResponse200BodyPayload;
+  info: apiObjects.ServerResponse;
+  payload: PongResponse200BodyPayload;
 }

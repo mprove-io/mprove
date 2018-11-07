@@ -1,5 +1,5 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface SetProjectQuerySizeLimitResponse200BodyPayload {
-  project: api.Project;
+  project: apiObjects.Project;
 }

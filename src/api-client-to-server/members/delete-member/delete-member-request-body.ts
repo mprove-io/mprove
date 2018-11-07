@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { DeleteMemberRequestBodyPayload } from './delete-member-request-body-payload';
 
 export interface DeleteMemberRequestBody {
-  info: api.ClientRequest;
-  payload: api.DeleteMemberRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: DeleteMemberRequestBodyPayload;
 }

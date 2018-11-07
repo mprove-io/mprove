@@ -1,7 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface RunQueriesDryResponse200BodyPayload {
   dry_id: string;
-  valid_estimates: api.QueryEstimate[];
-  error_queries: api.Query[];
+  valid_estimates: apiObjects.QueryEstimate[];
+  error_queries: apiObjects.Query[];
 }

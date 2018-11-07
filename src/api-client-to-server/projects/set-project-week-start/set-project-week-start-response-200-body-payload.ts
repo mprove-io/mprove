@@ -1,7 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
 
 export interface SetProjectWeekStartResponse200BodyPayload {
-  project: api.Project;
-  dev_struct: api.Struct;
-  prod_struct: api.Struct;
+  project: apiObjects.Project;
+  dev_struct: apiObjects.Struct;
+  prod_struct: apiObjects.Struct;
 }

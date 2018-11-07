@@ -1,6 +1,7 @@
-import * as api from '../../../_index';
+import * as apiObjects from '../../../objects/_index';
+import { PullRepoRequestBodyPayload } from './pull-repo-request-body-payload';
 
 export interface PullRepoRequestBody {
-  info: api.ClientRequest;
-  payload: api.PullRepoRequestBodyPayload;
+  info: apiObjects.ClientRequest;
+  payload: PullRepoRequestBodyPayload;
 }
