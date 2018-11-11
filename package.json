@@ -32,11 +32,6 @@
     "accessibility:run": "pa11y-ci --threshold 250",
     "compodoc": "compodoc -p src/tsconfig.app.json"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged && npm run test"
-    }
-  },
   "lint-staged": {
     "{src,e2e,cypress}/**/*.{ts,json,md,scss}": [
       "prettier --write",
