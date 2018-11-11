@@ -1,0 +1,9 @@
+<div class="sql-part">
+  <ace-editor class="sql-part__ace-editor"
+              name="sqlEditor"
+              [text]="text"
+              #editor>
+  </ace-editor>
+</div>
+
+<div *ngIf="sqlEditorTheme$ | async"></div>

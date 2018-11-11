@@ -1,0 +1,40 @@
+@mixin chart-editor-theme($theme) {
+  $sub-primary: map-get($theme, sub-primary);
+  $is-dark: map-get($theme, is-dark);
+
+  .chart-editor {
+    @if $is-dark == true {
+      background-color: mat-color($sub-primary, 800);
+      color: mat-contrast($sub-primary, 800);
+    } @else {
+      background-color: mat-color($sub-primary, 200);
+      color: mat-contrast($sub-primary, 200);
+    }
+
+    &__toolbar {
+      @if $is-dark != true {
+        background-color: #eee;
+      } @else {
+        background: #414141;
+      }
+    }
+
+    &__chart-option {
+      display: flex;
+    }
+
+    &__chart-icon {
+      margin-right: 10px;
+      @if $is-dark == true {
+        // filter: invert(100%);
+      } @else {
+        // filter: invert(0%);
+      }
+    }
+  }
+  .chart-inner {
+    @if $is-dark != true {
+      border-left: 1px solid #757575;
+    }
+  }
+}

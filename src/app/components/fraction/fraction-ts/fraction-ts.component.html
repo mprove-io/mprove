@@ -1,0 +1,372 @@
+<div fxLayout="row"
+     fxLayoutGap="20px"
+     fxLayoutAlign="start center">
+
+  <div fxFlex="40px"
+       class="ml-10">
+    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.Or)">OR</div>
+    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.And)">AND</div>
+  </div>
+
+  <mat-form-field>
+    <mat-select class="mp-fraction-type-select-width-230"
+                name="fractionTsType"
+                [(ngModel)]="fraction.type"
+                (selectionChange)="typeChange($event)">
+
+      <mat-option [value]="fractionTypeEnum.TsIsAnyValue"
+                  name="fractionTsTypeIsAnyValue">is any value</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsOnYear"
+                  name="fractionTsTypeIsOnYear">is on Year</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsOnMonth"
+                  name="fractionTsTypeIsOnMonth">is on Month</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsOnDay"
+                  name="fractionTsTypeIsOnDay">is on Day</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsOnHour"
+                  name="fractionTsTypeIsOnHour">is on Hour</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsOnMinute"
+                  name="fractionTsTypeIsOnMinute">is on Minute</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsInRange"
+                  name="fractionTsTypeIsInRange">is in range</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsBeforeDate"
+                  name="fractionTsTypeIsBeforeDate">is before</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsAfterDate"
+                  name="fractionTsTypeIsAfterDate">is after</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsBeforeRelative"
+                  name="fractionTsTypeIsBeforeRelative">is before (relative)</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsAfterRelative"
+                  name="fractionTsTypeIsAfterRelative">is after (relative)</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsInLast"
+                  name="fractionTsTypeIsInLast">is in last</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsNull"
+                  name="fractionTsTypeIsNull">is null</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.TsIsNotNull"
+                  name="fractionTsTypeIsNotNull">is not null</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <!--on-->
+  <dp-date-picker *ngIf="(fraction.type === fractionTypeEnum.TsIsOnYear)"
+                  name="fractionTsDate"
+                  [mode]="'daytime'"
+                  [theme]="'dp-material'"
+                  [config]="yearConfig"
+                  [(ngModel)]="date"
+                  [displayDate]="date"
+                  (close)="yearClosed()">
+  </dp-date-picker>
+
+  <dp-date-picker *ngIf="(fraction.type === fractionTypeEnum.TsIsOnMonth)"
+                  name="fractionTsDate"
+                  [mode]="'daytime'"
+                  [theme]="'dp-material'"
+                  [config]="monthConfig"
+                  [(ngModel)]="date"
+                  [displayDate]="date"
+                  (close)="monthClosed()">
+  </dp-date-picker>
+
+  <dp-date-picker *ngIf="(fraction.type === fractionTypeEnum.TsIsOnDay)"
+                  name="fractionTsDate"
+                  [mode]="'daytime'"
+                  [theme]="'dp-material'"
+                  [config]="dayConfig"
+                  [(ngModel)]="date"
+                  [displayDate]="date"
+                  (close)="dayClosed()">
+  </dp-date-picker>
+
+  <dp-date-picker *ngIf="(fraction.type === fractionTypeEnum.TsIsOnHour)"
+                  name="fractionTsDate"
+                  [mode]="'daytime'"
+                  [theme]="'dp-material'"
+                  [config]="hourConfig"
+                  [(ngModel)]="date"
+                  [displayDate]="date"
+                  (close)="hourClosed()">
+  </dp-date-picker>
+
+  <dp-date-picker *ngIf="(fraction.type === fractionTypeEnum.TsIsOnMinute)"
+                  name="fractionTsDate"
+                  [mode]="'daytime'"
+                  [theme]="'dp-material'"
+                  [config]="minuteConfig"
+                  [(ngModel)]="date"
+                  [displayDate]="date"
+                  (close)="minuteClosed()">
+  </dp-date-picker>
+
+  <!--range-->
+  <div *ngIf="fraction.type === fractionTypeEnum.TsIsInRange"
+       fxLayout="row"
+       fxLayoutGap="20px"
+       fxLayoutAlign="start center">
+
+    <dp-date-picker [mode]="'daytime'"
+                    name="fractionTsDate"
+                    [theme]="'dp-material'"
+                    [config]="minuteConfig"
+                    [(ngModel)]="date"
+                    [displayDate]="date"
+                    (close)="rangeFromClosed()">
+    </dp-date-picker>
+
+    <div>to</div>
+
+    <dp-date-picker [mode]="'daytime'"
+                    name="fractionTsDateTo"
+                    [theme]="'dp-material'"
+                    [config]="minuteConfig"
+                    [(ngModel)]="dateTo"
+                    [displayDate]="dateTo"
+                    (close)="rangeToClosed()">
+    </dp-date-picker>
+  </div>
+
+
+  <dp-date-picker *ngIf="(fraction.type === fractionTypeEnum.TsIsBeforeDate)"
+                  name="fractionTsDate"
+                  [mode]="'daytime'"
+                  [theme]="'dp-material'"
+                  [config]="minuteConfig"
+                  [(ngModel)]="date"
+                  [displayDate]="date"
+                  (close)="beforeDateClosed()">
+  </dp-date-picker>
+
+  <dp-date-picker *ngIf="(fraction.type === fractionTypeEnum.TsIsAfterDate)"
+                  name="fractionTsDate"
+                  [mode]="'daytime'"
+                  [theme]="'dp-material'"
+                  [config]="minuteConfig"
+                  [(ngModel)]="date"
+                  [displayDate]="date"
+                  (close)="afterDateClosed()">
+  </dp-date-picker>
+
+  <!--relative-->
+  <div *ngIf="(fraction.type === fractionTypeEnum.TsIsBeforeRelative)
+         || (fraction.type === fractionTypeEnum.TsIsAfterRelative)"
+       fxLayout="row"
+       fxLayoutGap="20px"
+       fxLayoutAlign="start center">
+
+    <form [formGroup]="relativeValueForm">
+      <mat-form-field class="mp-fraction-relative-value-width-50">
+        <input matInput
+               type="number"
+               name="fractionTsRelativeValue"
+               formControlName="relativeValue"
+               (blur)="relativeValueBlur(relativeValueForm.controls['relativeValue'])">
+        <mat-error>
+          <m-validation-msg [errors]="relativeValueForm.controls['relativeValue'].errors"></m-validation-msg>
+        </mat-error>
+      </mat-form-field>
+    </form>
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="fraction.ts_relative_unit"
+                  name="fractionTsRelativeUnit"
+                  (selectionChange)="relativeUnitChange($event)">
+
+        <mat-option [value]="fractionTsRelativeUnitEnum.Years"
+                    name="fractionTsRelativeUnitYears">Years</mat-option>
+
+        <mat-option [value]="fractionTsRelativeUnitEnum.Quarters"
+                    name="fractionTsRelativeUnitQuarters">Quarters</mat-option>
+
+        <mat-option [value]="fractionTsRelativeUnitEnum.Months"
+                    name="fractionTsRelativeUnitMonths">Months</mat-option>
+
+        <mat-option [value]="fractionTsRelativeUnitEnum.Weeks"
+                    name="fractionTsRelativeUnitWeeks">Weeks</mat-option>
+
+        <mat-option [value]="fractionTsRelativeUnitEnum.Days"
+                    name="fractionTsRelativeUnitDays">Days</mat-option>
+
+        <mat-option [value]="fractionTsRelativeUnitEnum.Hours"
+                    name="fractionTsRelativeUnitHours">Hours</mat-option>
+
+        <mat-option [value]="fractionTsRelativeUnitEnum.Minutes"
+                    name="fractionTsRelativeUnitMinutes">Minutes</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="fraction.ts_relative_complete_option"
+                  name="fractionTsRelativeCompleteOption"
+                  (selectionChange)="relativeCompleteChange($event)">
+
+        <mat-option [value]="fractionTsRelativeCompleteOptionEnum.Complete"
+                    name="fractionTsRelativeCompleteOptionComplete">complete</mat-option>
+
+        <mat-option [value]="fractionTsRelativeCompleteOptionEnum.Incomplete"
+                    name="fractionTsRelativeCompleteOptionIncomplete">incomplete</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="fraction.ts_relative_when_option"
+                  name="fractionTsRelativeWhenOption"
+                  (selectionChange)="relativeWhenChange($event)">
+
+        <mat-option [value]="fractionTsRelativeWhenOptionEnum.Ago"
+                    name="fractionTsRelativeWhenOptionAgo">ago</mat-option>
+
+        <mat-option [value]="fractionTsRelativeWhenOptionEnum.InFuture"
+                    name="fractionTsRelativeWhenOptionInFuture">in future</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+
+  <!--for-->
+  <div *ngIf="(fraction.type === fractionTypeEnum.TsIsBeforeDate)
+    || (fraction.type === fractionTypeEnum.TsIsAfterDate)
+    || (fraction.type === fractionTypeEnum.TsIsBeforeRelative)
+    || (fraction.type === fractionTypeEnum.TsIsAfterRelative)"
+       fxLayout="row"
+       fxLayoutGap="20px"
+       fxLayoutAlign="start center">
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="fraction.ts_for_option"
+                  name="fractionTsForOption"
+                  (selectionChange)="forOptionChange($event)">
+
+        <mat-option [value]="fractionTsForOptionEnum.For"
+                    name="fractionTsForOptionFor">for</mat-option>
+
+        <mat-option [value]="fractionTsForOptionEnum.ForInfinity"
+                    name="fractionTsForOptionForInfinity">for infinity</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <form *ngIf="fraction.ts_for_option === fractionTsForOptionEnum.For"
+          [formGroup]="forValueForm">
+      <mat-form-field class="mp-fraction-for-value-width-50">
+        <input matInput
+               type="number"
+               name="fractionTsForValue"
+               formControlName="forValue"
+               (blur)="forValueBlur(forValueForm.controls['forValue'])">
+        <mat-error>
+          <m-validation-msg [errors]="forValueForm.controls['forValue'].errors"></m-validation-msg>
+        </mat-error>
+      </mat-form-field>
+    </form>
+
+    <mat-form-field *ngIf="fraction.ts_for_option === fractionTsForOptionEnum.For">
+      <mat-select [(ngModel)]="fraction.ts_for_unit"
+                  name="fractionTsForUnit"
+                  (selectionChange)="forUnitChange($event)">
+
+        <mat-option [value]="fractionTsForUnitEnum.Years"
+                    name="fractionTsForUnitYears">Years</mat-option>
+
+        <mat-option [value]="fractionTsForUnitEnum.Quarters"
+                    name="fractionTsForUnitQuarters">Quarters</mat-option>
+
+        <mat-option [value]="fractionTsForUnitEnum.Months"
+                    name="fractionTsForUnitMonths">Months</mat-option>
+
+        <mat-option [value]="fractionTsForUnitEnum.Weeks"
+                    name="fractionTsForUnitWeeks">Weeks</mat-option>
+
+        <mat-option [value]="fractionTsForUnitEnum.Days"
+                    name="fractionTsForUnitDays">Days</mat-option>
+
+        <mat-option [value]="fractionTsForUnitEnum.Hours"
+                    name="fractionTsForUnitHours">Hours</mat-option>
+
+        <mat-option [value]="fractionTsForUnitEnum.Minutes"
+                    name="fractionTsForUnitMinutes">Minutes</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+
+  <!--last-->
+  <div *ngIf="(fraction.type === fractionTypeEnum.TsIsInLast)"
+       fxLayout="row"
+       fxLayoutGap="20px"
+       fxLayoutAlign="start center">
+
+    <form [formGroup]="lastValueForm">
+      <mat-form-field class="mp-fraction-last-value-width-50">
+        <input matInput
+               name="fractionTsLastValue"
+               type="number"
+               formControlName="lastValue"
+               (blur)="lastValueBlur(lastValueForm.controls['lastValue'])">
+        <mat-error>
+          <m-validation-msg [errors]="lastValueForm.controls['lastValue'].errors"></m-validation-msg>
+        </mat-error>
+      </mat-form-field>
+    </form>
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="fraction.ts_last_unit"
+                  name="fractionTsLastUnit"
+                  (selectionChange)="lastUnitChange($event)">
+
+        <mat-option [value]="fractionTsLastUnitEnum.Years"
+                    name="fractionTsLastUnitYears">Years</mat-option>
+
+        <mat-option [value]="fractionTsLastUnitEnum.Quarters"
+                    name="fractionTsLastUnitQuarters">Quarters</mat-option>
+
+        <mat-option [value]="fractionTsLastUnitEnum.Months"
+                    name="fractionTsLastUnitMonths">Months</mat-option>
+
+        <mat-option [value]="fractionTsLastUnitEnum.Weeks"
+                    name="fractionTsLastUnitWeeks">Weeks</mat-option>
+
+        <mat-option [value]="fractionTsLastUnitEnum.Days"
+                    name="fractionTsLastUnitDays">Days</mat-option>
+
+        <mat-option [value]="fractionTsLastUnitEnum.Hours"
+                    name="fractionTsLastUnitHours">Hours</mat-option>
+
+        <mat-option [value]="fractionTsLastUnitEnum.Minutes"
+                    name="fractionTsLastUnitMinutes">Minutes</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select class="mp-fraction-last-complete-option-width-230"
+                  name="fractionTsLastCompleteOption"
+                  [(ngModel)]="fraction.ts_last_complete_option"
+                  (selectionChange)="lastCompleteChange($event)">
+
+        <mat-option [value]="fractionTsLastCompleteOptionEnum.Complete"
+                    name="fractionTsLastCompleteOptionComplete">complete</mat-option>
+
+        <mat-option [value]="fractionTsLastCompleteOptionEnum.CompletePlusCurrent"
+                    name="fractionTsLastCompleteOptionCompletePlusCurrent">complete plus current</mat-option>
+
+        <mat-option [value]="fractionTsLastCompleteOptionEnum.Incomplete"
+                    name="fractionTsLastCompleteOptionIncomplete">incomplete</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+
+  <!--TsIsNull-->
+  <!--TsIsNotNull-->
+</div>
+<div *ngIf="weekStart$ | async"></div>

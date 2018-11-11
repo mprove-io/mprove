@@ -1,0 +1,41 @@
+<div class="mp-min-width-1 mp-max-width-1">
+
+  <mat-toolbar color="primary">New File</mat-toolbar>
+
+  <form [formGroup]="newFileForm"
+        (ngSubmit)="onSubmit(newFileForm.value)">
+
+    <br>
+
+    <mat-form-field>
+      <input matInput
+             type="text"
+             class="mp-full-width"
+             name="newFileDialogName"
+             id="nameInput"
+             formControlName="name"
+             placeholder="Name"
+             required>
+      <mat-error>
+        <m-validation-msg [errors]="newFileForm.controls['name'].errors"></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <br>
+    <br>
+
+    <button type="submit"
+            color="primary"
+            name="newFileDialogCreate"
+            mat-raised-button
+            [disabled]="!newFileForm.valid">Create
+    </button>
+
+    <button type="reset"
+            class="mp-cancel"
+            mat-raised-button
+            (click)="dialogRef.close()">Cancel
+    </button>
+
+  </form>
+</div>

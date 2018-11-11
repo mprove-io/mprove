@@ -1,0 +1,106 @@
+<div fxHide.lt-md>
+
+  <button mat-button
+          class="space__button_hover_primary"
+          name="projectSetupMenu"
+          [matMenuTriggerFor]="projectSetupMenu">
+
+    <div fxLayout="row"
+         fxLayoutAlign="start center">
+      <div class="mat-button__text">{{layoutProjectId$ | async | capitalize}}</div>
+    </div>
+  </button>
+
+  <mat-menu xPosition="before"
+            yPosition="below"
+            #projectSetupMenu="matMenu">
+    <div class="menu">
+      <div class="menu__options">
+
+        <div class="menu__options-group">
+          <div class="menu__options-title">{{layoutProjectId$ | async | capitalize}} Project</div>
+
+          <button mat-menu-item
+                  [disabled]="(isDemo$ | async) || !(isAdmin$ | async)"
+                  [routerLink]="['/project', layoutProjectId$ | async, 'billing']">
+            <mat-icon>payment</mat-icon>Billing
+          </button>
+
+          <button mat-menu-item
+                  [disabled]="isDemo$ | async"
+                  [routerLink]="['/project', layoutProjectId$ | async, 'settings']">
+            <mat-icon>settings</mat-icon>Settings
+          </button>
+
+          <button mat-menu-item
+                  [disabled]="isDemo$ | async"
+                  [routerLink]="['/project', layoutProjectId$ | async, 'team']">
+            <mat-icon>people</mat-icon>Team
+          </button>
+
+          <button mat-menu-item
+                  [routerLink]="['/project', layoutProjectId$ | async, 'mode', mode$ | async, 'pdts']">
+            <mat-icon svgIcon="pdts"
+                      class="pdts-icon"></mat-icon>PDTs
+          </button>
+
+          <button mat-menu-item
+                  [disabled]="!(isEditor$ | async)"
+                  [routerLink]="['/project',  layoutProjectId$ | async, 'remote']">
+            <mat-icon svgIcon="git"></mat-icon>Remote
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </mat-menu>
+</div>
+
+<!-- mobile -->
+<div fxHide.gt-sm>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Project
+        </mat-panel-title>
+        <mat-panel-description>
+          {{layoutProjectId$ | async | capitalize}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <button mat-menu-item
+              [disabled]="(isDemo$ | async) || !(isAdmin$ | async)"
+              [routerLink]="['/project', layoutProjectId$ | async, 'billing']">
+        <mat-icon>payment</mat-icon>Billing
+      </button>
+
+      <button mat-menu-item
+              [disabled]="(isDemo$ | async) || !(isAdmin$ | async)"
+              [routerLink]="['/project', layoutProjectId$ | async, 'settings']">
+        <mat-icon>settings</mat-icon>Settings
+      </button>
+
+      <button mat-menu-item
+              [disabled]="isDemo$ | async"
+              [routerLink]="['/project', layoutProjectId$ | async, 'team']">
+        <mat-icon>people</mat-icon>Team
+      </button>
+
+      <button mat-menu-item
+              [disabled]="isDemo$ | async"
+              [routerLink]="['/project', layoutProjectId$ | async, 'mode', mode$ | async, 'pdts']">
+        <mat-icon svgIcon="pdts"
+                  class="pdts-icon"></mat-icon>PDTs
+      </button>
+
+      <button mat-menu-item
+              [disabled]="!(isEditor$ | async)"
+              [routerLink]="['/project',  layoutProjectId$ | async, 'remote']">
+        <mat-icon svgIcon="git"></mat-icon>Remote
+      </button>
+
+
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

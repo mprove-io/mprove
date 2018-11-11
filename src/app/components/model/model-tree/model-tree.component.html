@@ -1,0 +1,80 @@
+<div class="model-tree">
+  <tree-root #itemsTree
+             [nodes]="nodes"
+             [options]="treeOptions">
+    <ng-template #treeNodeTemplate
+                 let-node="node"
+                 let-index="index">
+
+      <div fxLayout="row"
+           fxLayoutAlign="start center"
+           name="modelTreeItem"
+           class="model-tree__file_clickable"
+           [class.model-tree__file-default]="node.isLeaf && !node.data.is_field"
+           [ngClass]="{
+           'model-tree__file-root': node.isRoot,
+           'model-tree__file-active': node.data.is_field && node.data.field.is_selected,
+           'model-tree__file_hover': !node.hasChildren
+           }"
+           (click)="nodeOnClick(node)">
+
+        <div class="model-tree__file-inner">
+
+          <div fxFlex
+               fxLayout="row"
+               fxLayoutAlign="space-between center"
+               [class.model-tree__file-name_offset-left_10]="node.hasChildren">
+
+            <div class="model-tree__child-{{node.data.node_class}} model-tree__node-{{node.data.id | extension}}"
+                 name="modelTreeItemName">
+              {{ node.data.label | capitalize}}
+
+            </div>
+
+            <div *ngIf="node.isRoot && node.data[countSelectedItemsKey] > 0"
+                 class="model-tree__filter-count">
+              {{node.data[countSelectedItemsKey]}}
+            </div>
+
+            <mat-icon *ngIf="node.data.description"
+                      class="info-icon"
+                      [matTooltip]="node.data.description"
+                      [matTooltipShowDelay]="appConfig.tooltipDelay"
+                      [matTooltipPosition]="'below'">info_outline
+            </mat-icon>
+
+            <button mat-raised-button
+                    *ngIf="node.data.is_field"
+                    class="model-tree__filter-button"
+                    name="modelTreeFilter"
+                    [disabled]="node.data.field.field_class === fieldClassEnum.Filter"
+                    [ngClass]="{
+                'model-tree__filter-button_hidden': !node.data.field.is_filtered,
+                'model-tree__filter-button_disabled': node.data.field.field_class === fieldClassEnum.Filter
+              }"
+                    [color]="node.data.field.is_filtered ? 'accent' : 'default'"
+                    (click)="toggleFilter(node, $event)">
+              Filter
+            </button>
+
+
+
+            <button mat-button
+                    *ngIf="node.data.is_field"
+                    class="mat-flat-fab folder-btn"
+                    (click)="goToFile(node.data.field_file_name, node.data.field_line_num)">
+              <mat-icon class="folder-open">folder_open</mat-icon>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </tree-root>
+</div>
+
+<div *ngIf="joinAs$ | async"></div>
+<div *ngIf="modelId$ | async"></div>
+<div *ngIf="nodes$ | async"></div>
+<div *ngIf="modelFields$ | async"></div>
+<div *ngIf="fields$ | async"></div>

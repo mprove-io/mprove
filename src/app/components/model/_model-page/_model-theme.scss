@@ -1,0 +1,43 @@
+@mixin model-theme($theme) {
+  $is-dark: map-get($theme, is-dark);
+  $primary: map-get($theme, primary);
+
+  .model {
+    &__pdts_color_grey {
+      @if $is-dark == true {
+        color: rgba(255,255,255,0.45);
+      } @else {
+        color: rgba(0,0,0,0.45);
+      }
+    }
+
+    &__go-to-file {
+      @if $is-dark == true {
+        background-color: #212121;
+      }
+    }
+  }
+}
+.dark-theme {
+  .mat-expansion-panel-header {
+    .mat-menu-item,
+    .mat-button {
+      color: #fff !important;
+    }
+  }
+}
+.model__panel_text-overflow_ellipsis {
+  color: rgba(0,0,0,.45);
+  font-size: 16px;
+}
+.dark-theme {
+  .model__panel_text-overflow_ellipsis {
+    color: rgba(255,255,255,.8);   
+  }
+}
+.model__timer {
+  color: rgba(0,0,0,.45);
+}
+.dark-theme .model__timer {
+  color: rgba(255,255,255,.8);
+}

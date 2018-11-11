@@ -1,0 +1,59 @@
+@mixin dashboard-theme($theme) {
+  $primary: map-get($theme, primary);
+  $is-dark: map-get($theme, is-dark);
+
+  .dashboard {
+    &__go-to-file {
+      @if $is-dark == true {
+        background-color: #212121;
+      }
+    }
+    
+    &__report {
+      @if $is-dark == true {
+        color: rgba(255,255,255,.8);
+      } @else {
+        color: rgba(0,0,0,.45);
+      }
+    }
+  }
+
+  .running__text {
+    @if $is-dark == true {
+      color: rgba(255,255,255,.8);
+    }
+  }
+}
+
+.dashboard-dark {
+  .mat-grid-list {
+    background: #1B1E27;
+  }
+}
+
+@mixin dashboardStyle(
+  $gridBackground,
+  $columnBackground,
+  $columnColor) {
+
+  .dashboard__grid-background {
+    background-color: $gridBackground;
+  }
+  
+  .dashboard__column-background {
+    background-color: $columnBackground;
+    color: $columnColor;
+  }
+}
+
+.dashboard-dark {
+  @include dashboardStyle(#393945, #1B1E27, #fff);
+}
+
+.dashboard-light {
+  @include dashboardStyle(#f2f2f2, #fff, #000);
+}
+
+.running__text {
+  color: rgba(0,0,0,.45);
+}

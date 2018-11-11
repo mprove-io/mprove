@@ -1,0 +1,15 @@
+:host /deep/ {
+  .myMarker {
+    position: absolute;
+    background: rgba(200, 44, 44, 0.5);
+    z-index: 20
+  }
+
+  .pdt-sql {
+    &__ace-editor {
+      height:100%;
+      width:100%;
+      overflow: auto;
+    }
+  }
+}

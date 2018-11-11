@@ -1,0 +1,30 @@
+@mixin repo-theme($theme) {
+  $sub-primary: map-get($theme, sub-primary);
+  $is-dark: map-get($theme, is-dark);
+
+  .repo {
+    &_border_bottom {
+      @if $is-dark == true {
+        border-bottom: 1px solid mat-color($sub-primary, 600);
+      } @else {
+        border-bottom: 1px solid mat-color($sub-primary, 400);
+      }
+    }
+
+    &_border_right {
+      @if $is-dark == true {
+        border-right: 1px solid mat-color($sub-primary, 600);
+      } @else {
+        border-right: 1px solid mat-color($sub-primary, 400);
+      }
+    }
+
+    &_border_left {
+      @if $is-dark == true {
+        border-left: 1px solid mat-color($sub-primary, 600);
+      } @else {
+        border-left: 1px solid mat-color($sub-primary, 400);
+      }
+    }
+  }
+}

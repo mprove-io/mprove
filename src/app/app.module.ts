@@ -1,35 +1,124 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+import { BrowserModule, Title } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PreloadAllModules, RouterModule } from '@angular/router';
+import { JwtModule } from '@auth0/angular-jwt';
+import { EffectsModule } from '@ngrx/effects';
+import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreModule } from '@ngrx/store';
+import { AceEditorModule } from 'ng2-ace-editor';
+import { ClipboardModule } from 'ngx-clipboard';
+import * as Raven from 'raven-js';
+import { APP_DIALOGS } from 'src/app/app-dialogs';
+import { APP_EFFECTS } from 'src/app/app-effects';
+import { APP_META_REDUCERS_ARRAY } from 'src/app/app-meta-reducers-array';
+import { APP_PROVIDERS } from 'src/app/app-providers';
+import { APP_REDUCERS_OBJECT } from 'src/app/app-reducers-object';
+import { APP_ROUTES } from 'src/app/app-routes';
+import { AppComponent } from 'src/app/app.component';
+import * as components from 'src/app/components/_index';
+import * as directives from 'src/app/directives/_index';
+import * as helper from 'src/app/helper/_index';
+import { MyCovalentModule } from 'src/app/modules/my-covalent.module';
+import { MyMaterialModule } from 'src/app/modules/my-material.module';
+import { SharedModule } from 'src/app/modules/shared.module';
+import { SpaceModule } from 'src/app/modules/space.module';
+import { ValidationMsgModule } from 'src/app/modules/validation-msg.module';
 
-import { SharedModule } from '@app/shared';
-import { CoreModule } from '@app/core';
+const main = MAIN;
 
-import { SettingsModule } from './settings';
-import { StaticModule } from './static';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+// let options2 = { 'release': 'a2.1.0', 'autoBreadcrumbs': { 'xhr': false } };
+// Raven
+//   .config('https://dce19ce2043947e4943a09a2255336d8@sentry.io/121453', options2)
+//   .install();
+if (main) {
+  Raven
+    .config('https://3f5855e2b10b4c4c8b786ff69c1fe3a6@sentry.io/1208233')
+    .install();
+}
 
 @NgModule({
-  imports: [
-    // angular
-    BrowserAnimationsModule,
-    BrowserModule,
-
-    // core & shared
-    CoreModule,
-    SharedModule,
-
-    // features
-    StaticModule,
-    SettingsModule,
-
-    // app
-    AppRoutingModule
+  declarations: [
+    AppComponent,
+    components.SoftComponent,
+    directives.SingleClickDirective,
+    ...APP_DIALOGS
   ],
-  declarations: [AppComponent],
-  providers: [],
-  bootstrap: [AppComponent]
+  entryComponents: [
+    ...APP_DIALOGS
+  ],
+  imports: [
+    EffectsModule.forRoot(APP_EFFECTS),
+    MyMaterialModule,
+    AceEditorModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    SharedModule,
+    SpaceModule,
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        headerName: 'Authorization',
+        authScheme: 'Bearer ',
+        tokenGetter: helper.getToken, // for jwtInterceptor
+        whitelistedDomains: [
+          'localhost:3000',
+          'localhost:4000',
+          'localhost:4200',
+          'localhost:4201',
+          'localhost:8088',
+          'localhost:8080',
+          'mprove.iconiux.com',
+          't.mprove.io',
+          'e2e.mprove.io',
+          'mprove.io',
+        ]
+      }
+    }),
+    MyCovalentModule,
+    ClipboardModule,
+    ValidationMsgModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    CommonModule,
+    StoreModule.forRoot(APP_REDUCERS_OBJECT, { metaReducers: APP_META_REDUCERS_ARRAY }),
+    RouterModule.forRoot(APP_ROUTES, { useHash: false, preloadingStrategy: PreloadAllModules }),
+    StoreRouterConnectingModule.forRoot({
+      /*
+        They stateKey defines the name of the state used by the router-store reducer.
+        This matches the key defined in the map of reducers
+      */
+      stateKey: 'router',
+    }),
+  ],
+  bootstrap: [
+    AppComponent
+  ],
+  providers: [
+    {
+      provide: RouterStateSerializer,
+      useClass: helper.NgrxCustomRouterStateSerializer
+    },
+    Title,
+    {
+      provide: ErrorStateMatcher,
+      useClass: ShowOnDirtyErrorStateMatcher
+    },
+    ...APP_PROVIDERS, // ...?
+    // {
+    //   provide: ErrorHandler,
+    //   useClass: services.MyErrorHandler
+    // }
+  ],
+  exports: [
+    AppComponent
+  ],
 })
-export class AppModule {}
+
+export class AppModule { }
+

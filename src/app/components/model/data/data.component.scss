@@ -1,0 +1,34 @@
+:host {
+  display: block;
+  height: 100%;
+}
+.query-data {
+  &__table {
+    height: calc(100% - 70px);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__empty-title {
+    text-align: center;
+  }
+}
+.limit-form {
+  .mat-form-field {
+    width: 90px;
+  }
+}
+/deep/.table-row-col {
+  padding-top: 10px;
+  padding-bottom: 15px;
+  .mat-form-field-infix {
+    width: 90px;
+  }
+  .mat-select {
+    width: 100% !important;
+  }
+}
+.m-drag-table {
+  overflow: visible !important;
+}

@@ -1,0 +1,45 @@
+<div [ngSwitch]="fieldResult"
+     class="ml-10">
+
+  <m-fraction-number *ngSwitchCase="modelFieldResultEnum.Number"
+                     [fraction]="fraction"
+                     [isFirst]="isFirst"
+                     (fractionChange)="fractionChange($event)"></m-fraction-number>
+
+  <m-fraction-string *ngSwitchCase="modelFieldResultEnum.String"
+                     [fraction]="fraction"
+                     [isFirst]="isFirst"
+                     (fractionChange)="fractionChange($event)"></m-fraction-string>
+
+  <m-fraction-day-of-week *ngSwitchCase="modelFieldResultEnum.DayOfWeek"
+                          [fraction]="fraction"
+                          [isFirst]="isFirst"
+                          (fractionChange)="fractionChange($event)"></m-fraction-day-of-week>
+
+  <m-fraction-day-of-week-index *ngSwitchCase="modelFieldResultEnum.DayOfWeekIndex"
+                                [fraction]="fraction"
+                                [isFirst]="isFirst"
+                                (fractionChange)="fractionChange($event)"></m-fraction-day-of-week-index>
+
+  <m-fraction-month-name *ngSwitchCase="modelFieldResultEnum.MonthName"
+                         [fraction]="fraction"
+                         [isFirst]="isFirst"
+                         (fractionChange)="fractionChange($event)"></m-fraction-month-name>
+
+  <m-fraction-quarter-of-year *ngSwitchCase="modelFieldResultEnum.QuarterOfYear"
+                              [fraction]="fraction"
+                              [isFirst]="isFirst"
+                              (fractionChange)="fractionChange($event)"></m-fraction-quarter-of-year>
+
+  <m-fraction-ts *ngSwitchCase="modelFieldResultEnum.Ts"
+                 [fraction]="fraction"
+                 [isFirst]="isFirst"
+                 (fractionChange)="fractionChange($event)"></m-fraction-ts>
+
+  <m-fraction-yesno *ngSwitchCase="modelFieldResultEnum.Yesno"
+                    [fraction]="fraction"
+                    [isFirst]="isFirst"
+                    (fractionChange)="fractionChange($event)"></m-fraction-yesno>
+
+
+</div>

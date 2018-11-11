@@ -1,0 +1,52 @@
+<button mat-button
+        class="user-block"
+        [mat-menu-trigger-for]="menu"
+        name="userMenu">
+  <!-- <div class="user-block__info">
+    <div class="user-block__project">{{userFirstName$ | async | capitalize}}</div>
+    <div class="user-block__name"> {{userLastName$ | async | capitalize}}</div>
+  </div> -->
+  <div class="user-block__avatar">
+    <img *ngIf="(userPictureUrlBig$ | async); else defaultPhoto"
+         class="user-avatar-img"
+         [src]='dynamicAssetsBaseUrl + (userPictureUrlBig$ | async)' />
+    <ng-template #defaultPhoto>
+      <i class="material-icons user-avatar-img_size">account_box</i>
+    </ng-template>
+  </div>
+</button>
+
+<mat-menu x-position="before"
+          y-position="below"
+          #menu="matMenu">
+  <div class="menu menu--user">
+    <div class="menu__options">
+
+      <div class="menu__options-group">
+        <div class="menu__options-title">
+          <span>Theme</span>
+          <span *ngIf="(themesAreRestricted$ | async)"
+                matTooltip="Theme change disabled on FREE plan"
+                [matTooltipShowDelay]="appConfig.tooltipDelay"
+                [matTooltipPosition]="'below'"> - Disabled</span>
+        </div>
+
+        <m-theme-picker></m-theme-picker>
+
+        <div class="menu__options-title">User</div>
+
+        <button mat-menu-item
+                [routerLink]="['/profile']"
+                routerLinkActive="active-link">
+          <mat-icon>person_outline</mat-icon>Profile
+        </button>
+
+        <button mat-menu-item class="mat-menu-item--logout"
+                (click)="logout()"
+                name="logoutButton">
+          <mat-icon svgIcon="logout" class="icon-logout"></mat-icon>Log Out</button>
+      </div>
+
+    </div>
+  </div>
+</mat-menu>

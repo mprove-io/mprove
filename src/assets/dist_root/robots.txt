@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /
+
+Allow: /$
+Allow: /product/
+Allow: /docs/getting-started/
+Allow: /docs/analytics-blockml/
+
+Sitemap: https://mprove.io/sitemap.txt

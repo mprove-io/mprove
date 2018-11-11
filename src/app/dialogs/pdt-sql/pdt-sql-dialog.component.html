@@ -1,0 +1,16 @@
+<div class="pdt-sql mp-min-width-3 mp-max-width-3">
+
+  <mat-toolbar>
+    <a>{{data.pdt_id}}</a>
+
+  </mat-toolbar>
+
+
+  <div fxLayout="column">
+    <ace-editor fxFlex="700px"
+                [text]="data.sql"
+                #editor
+                class="pdt-sql__ace-editor">
+    </ace-editor>
+  </div>
+</div>

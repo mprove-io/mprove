@@ -1,0 +1,20 @@
+<div class="mp-min-width-2 mp-max-width-3">
+
+  <mat-toolbar color="primary">Delete {{data.file.name}} file</mat-toolbar>
+
+  <br>
+  <p>Are you sure you wish to delete {{data.file.path.join('/')}} file?</p>
+  <br>
+
+  <button type="submit"
+          color="warn"
+          mat-raised-button
+          (click)="onSubmit(); dialogRef.close()">Yes, Delete
+  </button>
+
+  <button type="reset"
+          class="mp-cancel"
+          mat-raised-button
+          (click)="dialogRef.close()">Cancel
+  </button>
+</div>

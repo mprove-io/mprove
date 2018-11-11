@@ -1,0 +1,149 @@
+<div fxLayout="row"
+     fxLayoutGap="20px"
+     fxLayoutAlign="start center">
+
+  <div fxFlex="40px"
+       class="ml-10">
+    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.Or)">OR</div>
+    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.And)">AND</div>
+  </div>
+
+  <mat-form-field>
+    <mat-select class="mp-fraction-type-select-width-230"
+                name="fractionNumberType"
+                [(ngModel)]="fraction.type"
+                (selectionChange)="typeChange($event)">
+
+      <mat-option [value]="fractionTypeEnum.NumberIsAnyValue"
+                  name="fractionNumberTypeIsAnyValue">is any value</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsEqualTo"
+                  name="fractionNumberTypeIsEqualTo">is equal to</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsGreaterThan"
+                  name="fractionNumberTypeIsGreaterThan">is greater than</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsGreaterThanOrEqualTo"
+                  name="fractionNumberTypeIsGreaterThanOrEqualTo">is greater than or equal to</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsLessThan"
+                  name="fractionNumberTypeIsLessThan">is less than</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsLessThanOrEqualTo"
+                  name="fractionNumberTypeIsLessThanOrEqualTo">is less than or equal to</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsBetween"
+                  name="fractionNumberTypeIsBetween">is between</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsNull"
+                  name="fractionNumberTypeIsNull">is null</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsNotEqualTo"
+                  name="fractionNumberTypeIsNotEqualTo">is not equal to</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsNotBetween"
+                  name="fractionNumberTypeIsNotBetween">is not between</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.NumberIsNotNull"
+                  name="fractionNumberTypeIsNotNull">is not null</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <form [formGroup]="numberValuesForm"
+        *ngIf="fraction.type === fractionTypeEnum.NumberIsEqualTo
+          || fraction.type === fractionTypeEnum.NumberIsNotEqualTo">
+
+    <mat-form-field>
+      <textarea matInput
+                name="fractionNumberValues"
+                type="text"
+                matTextareaAutosize
+                matAutosizeMinRows="2"
+                matAutosizeMaxRows="5"
+                formControlName="numberValues"
+                (blur)="numberValuesBlur(numberValuesForm.controls['numberValues'])"></textarea>
+      <mat-error>
+        <m-validation-msg [errors]="numberValuesForm.controls['numberValues'].errors"></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+  </form>
+
+
+  <form [formGroup]="numberSingleValueForm"
+        *ngIf="fraction.type === fractionTypeEnum.NumberIsGreaterThan
+          || fraction.type === fractionTypeEnum.NumberIsGreaterThanOrEqualTo
+          || fraction.type === fractionTypeEnum.NumberIsLessThan
+          || fraction.type === fractionTypeEnum.NumberIsLessThanOrEqualTo">
+
+    <mat-form-field>
+      <input matInput
+             name="fractionNumberSingleValue"
+             type="number"
+             formControlName="numberSingleValue"
+             (blur)="numberSingleValueBlur(numberSingleValueForm.controls['numberSingleValue'])">
+      <mat-error>
+        <m-validation-msg [errors]="numberSingleValueForm.controls['numberSingleValue'].errors"></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+  </form>
+
+  <mat-form-field *ngIf="fraction.type === fractionTypeEnum.NumberIsBetween
+    || fraction.type === fractionTypeEnum.NumberIsNotBetween">
+
+    <mat-select class="mp-fraction-between-select-width-180"
+                name="fractionNumberBetweenOption"
+                [(ngModel)]="fraction.number_between_option"
+                (selectionChange)="betweenOptionChange($event)">
+
+      <mat-option [value]="fractionNumberBetweenOptionEnum.Inclusive"
+                  name="fractionNumberBetweenOptionInclusive">[inclusive]</mat-option>
+
+      <mat-option [value]="fractionNumberBetweenOptionEnum.LeftInclusive"
+                  name="fractionNumberBetweenOptionLeftInclusive">[left inclusive)</mat-option>
+
+      <mat-option [value]="fractionNumberBetweenOptionEnum.RightInclusive"
+                  name="fractionNumberBetweenOptionRightInclusive">(right inclusive]</mat-option>
+
+      <mat-option [value]="fractionNumberBetweenOptionEnum.Exclusive"
+                  name="fractionNumberBetweenOptionExclusive">(exclusive)</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <form [formGroup]="numberBetweenForm"
+        *ngIf="fraction.type === fractionTypeEnum.NumberIsBetween
+          || fraction.type === fractionTypeEnum.NumberIsNotBetween">
+
+    <div fxLayout="row"
+         fxLayoutGap="20px"
+         fxLayoutAlign="start center">
+
+      <mat-form-field>
+        <input matInput
+               name="fractionNumberBetweenFirstValue"
+               type="number"
+               formControlName="numberBetweenFirstValue"
+               (blur)="numberBetweenFirstValueBlur(numberBetweenForm.controls['numberBetweenFirstValue'])">
+        <mat-error>
+          <m-validation-msg [errors]="numberBetweenForm.controls['numberBetweenFirstValue'].errors"></m-validation-msg>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput
+               name="fractionNumberBetweenSecondValue"
+               type="number"
+               formControlName="numberBetweenSecondValue"
+               (blur)="numberBetweenSecondValueBlur(numberBetweenForm.controls['numberBetweenSecondValue'])">
+        <mat-error>
+          <m-validation-msg [errors]="numberBetweenForm.controls['numberBetweenSecondValue'].errors"></m-validation-msg>
+        </mat-error>
+      </mat-form-field>
+
+    </div>
+  </form>
+
+
+  <!--NumberIsNull-->
+  <!--NumberIsNotNull-->
+</div>

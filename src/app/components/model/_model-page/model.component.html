@@ -1,0 +1,350 @@
+<div class="model"
+     fxLayout="column"
+     fxFlexFill>
+  <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
+    <button mat-button
+            fxHide.gt-sm
+            class="mobile-menu__button"
+            (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <span fxHide.lt-md
+          name="modelTitle">Model</span>
+
+    <button fxHide.lt-md
+            mat-raised-button
+            [disabled]=!fileId
+            class="model__go-to-file"
+            (click)="gotToFile()">{{modelLabel ? modelLabel : modelId}}</button>
+
+    <mat-icon fxHide.lt-md
+              *ngIf="modelDescription$ | async"
+              class="info-icon"
+              [matTooltip]="modelDescription$ | async"
+              [matTooltipShowDelay]="appConfig.tooltipDelay"
+              [matTooltipPosition]="'below'">info_outline
+    </mat-icon>
+
+
+
+    <span class="mr-10"
+          fxHide.lt-md>query</span>
+
+    <div fxHide.lt-md
+         *ngIf="dryTs && drySize && dryTsIsAfterLastRunTs"
+         fxLayout="row"
+         fxLayoutAlign="start center"
+         class="model__panel_width-third model__pdts_color_grey">
+
+      <div *ngIf="drySize !== 'need PDTs'"
+           class="model__panel_text-overflow_ellipsis"
+           matTooltip="Query will process {{drySize}} when run (checked by Run Dry {{dryTimeAgo$ | async}})"
+           [matTooltipShowDelay]="appConfig.tooltipDelay"
+           [matTooltipPosition]="'below'">
+        {{drySize}} - {{dryTimeAgo$ | async}}
+      </div>
+
+      <div *ngIf="drySize === 'need PDTs'"
+           class="model__panel_text-overflow_ellipsis"
+           matTooltip="Run Dry estimate needs PDTs to be created first (checked {{dryTimeAgo$ | async}})"
+           [matTooltipShowDelay]="appConfig.tooltipDelay"
+           [matTooltipPosition]="'below'">
+        need PDTs - {{dryTimeAgo$ | async}}
+      </div>
+
+
+    </div>
+
+
+    <ng-template tdLoading="dry"
+                 tdLoadingType="circular"
+                 tdLoadingMode="indeterminate"
+                 tdLoadingStrategy="replace"
+                 tdLoadingColor="primary">
+    </ng-template>
+    <div class="tdloading-size"></div>
+
+    <span class="example-fill-remaining-space"></span>
+
+    <div fxHide.lt-md
+         *ngIf="(queryStatus$ | async) === queryStatusEnum.Canceled"
+         fxLayout="row"
+         fxLayoutAlign="start center"
+         class="running__text">
+      <div>Canceled - {{cancelTimeAgo$ | async}}</div>
+    </div>
+
+    <div fxHide.lt-md
+         *ngIf="(queryStatus$ | async) === queryStatusEnum.Error"
+         fxLayout="row"
+         fxLayoutAlign="start center"
+         class="running__text">
+      <div>Error - {{errorTimeAgo$ | async}}</div>
+    </div>
+
+    <div fxHide.lt-md
+         *ngIf="(queryStatus$ | async) === queryStatusEnum.Completed"
+         fxLayout="row"
+         fxLayoutAlign="start center"
+         class="model__panel_width-third running__text">
+      <div class="model__panel_text-overflow_ellipsis">
+        <span>Completed - {{completeTimeAgo$ | async}}</span>
+
+        <!-- <span matTooltip="PDTs duration: {{residueDuration}}s, Query duration: {{calcDurationFloor}}s"
+                [matTooltipShowDelay]="appConfig.tooltipDelay"
+                [matTooltipPosition]="'below'">{{fullDurationFloor}}s
+          </span> -->
+
+        <span> - {{queryLastCompleteDuration}}s</span>
+        <span> - {{dataLength}} rows</span>
+      </div>
+    </div>
+
+    <div *ngIf="(queryStatus$ | async) === queryStatusEnum.Running ||
+                (queryStatus$ | async) === queryStatusEnum.Waiting"
+         fxLayout="row"
+         fxLayoutAlign="start center">
+      <ng-template tdLoading
+                   [tdLoadingUntil]="false"
+                   tdLoadingStrategy="replace">
+      </ng-template>
+      <div class="tdloading-size"></div>
+
+      <div fxLayout="row"
+           fxHide.lt-md>
+        <div class="model__timer">{{runSecondsAgo$ | async}}s</div>
+
+        <div *ngIf="(queryStatus$ | async) === queryStatusEnum.Running"
+             class="running__text ml-10">Running...</div>
+
+        <div *ngIf="(queryStatus$ | async) === queryStatusEnum.Waiting"
+             class="running__text ml-10">Waiting...</div>
+      </div>
+    </div>
+
+    <div class="model-timezone-wrapper">
+      <mat-form-field fxHide.lt-md
+                      *ngIf="!(queryNotSelected$ | async)"
+                      class="model__timezone"
+                      floatPlaceholder="never">
+        <mat-select placeholder="Time Zone"
+                    name="modelMconfigTimezone"
+                    class=""
+                    [(ngModel)]="mconfigTimezone"
+                    (selectionChange)="timezoneChange($event)">
+
+          <mat-option [value]="'UTC'"
+                      name="modelMconfigTimezoneOption">UTC</mat-option>
+          <ng-template ngFor
+                       let-tzGroup
+                       [ngForOf]="timeZones">
+            <ng-template ngFor
+                         let-tz
+                         [ngForOf]="tzGroup.zones">
+              <mat-option [value]="tz.value"
+                          name="modelMconfigTimezoneOption">{{tzGroup.group}} - {{tz.name}}</mat-option>
+            </ng-template>
+          </ng-template>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+
+
+    <button *ngIf="(queryStatus$ | async) === queryStatusEnum.Running ||
+                   (queryStatus$ | async) === queryStatusEnum.Waiting"
+            mat-raised-button
+            name="modelQueryCancel"
+            class="model-query-button"
+            color="primary"
+            [disabled]="(userId$ | async) !== (queryLastRunBy$ | async)"
+            (click)="cancel()">Cancel
+    </button>
+
+    <button *ngIf="(queryStatus$ | async) !== queryStatusEnum.Running &&
+                   (queryStatus$ | async) !== queryStatusEnum.Waiting"
+            name="modelQueryRun"
+            mat-raised-button
+            class="model-query-button"
+            [color]="(queryData$ | async) ? 'primary' : 'accent'"
+            [disabled]="(queryNotSelected$ | async) 
+            || !(queryServerTsMoreThanOne$ | async)
+            || (mconfigSelectFields.length === 0)"
+            (click)="run()">Run
+    </button>
+
+    <button fxHide.lt-md
+            mat-icon-button
+            name="modelQueryMenu"
+            [disabled]="queryNotSelected$ | async"
+            [matMenuTriggerFor]="queryMenu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <button mat-button
+            fxHide.gt-sm
+            class="mobile-menu__button mobile-menu__button-right"
+            (click)="sidenavRight.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+  </mat-toolbar>
+
+  <mat-sidenav-container (backdropClick)="close(); closeRight()">
+
+    <mat-sidenav #sidenav
+                 (keydown.escape)="close()"
+                 class="mat-sidenav"
+                 disableClose>
+      <m-model-tree></m-model-tree>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <div fxFlex="100%"
+           fxLayout="row">
+        <m-model-tree fxFlex="20%"
+                      fxHide.lt-md
+                      class="space_border_right"></m-model-tree>
+
+        <div fxFlex
+             class="mp-overflow-auto"
+             fxLayoutAlign="center center"
+             *ngIf="queryNotSelected$ | async; else routeOutlet">
+          <h3>Select some fields...</h3>
+        </div>
+
+        <ng-template #routeOutlet>
+          <div fxFlex
+               class="mp-overflow-auto filter-content">
+            <router-outlet (activate)="activateEvent($event)"
+                           (deactivate)="deactivateEvent($event)">
+            </router-outlet>
+          </div>
+        </ng-template>
+      </div>
+    </mat-sidenav-content>
+
+    <mat-sidenav #sidenavRight
+                 position="end"
+                 (keydown.escape)="closeRight()"
+                 class="mat-sidenav mat-sidenav-model"
+                 disableClose>
+
+      <mat-form-field *ngIf="!(queryNotSelected$ | async)"
+                      class="model__timezone"
+                      floatPlaceholder="never">
+        <mat-select placeholder="Time Zone"
+                    name="modelMconfigTimezoneMobile"
+                    class=""
+                    [(ngModel)]="mconfigTimezone"
+                    (selectionChange)="timezoneChange($event)">
+
+          <mat-option [value]="'UTC'"
+                      name="modelMconfigTimezoneOptionMobile">UTC</mat-option>
+          <ng-template ngFor
+                       let-tzGroup
+                       [ngForOf]="timeZones">
+            <ng-template ngFor
+                         let-tz
+                         [ngForOf]="tzGroup.zones">
+              <mat-option [value]="tz.value"
+                          name="modelMconfigTimezoneOptionMobile">{{tzGroup.group}} - {{tz.name}}</mat-option>
+            </ng-template>
+          </ng-template>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-menu-item
+              name="modelQueryMenuRunDryMobile"
+              [disabled]="!(queryServerTsMoreThanOne$ | async)"
+              (click)="runDry()">Run Dry (estimate data size)</button>
+      <button mat-menu-item
+              name="modelQueryMenuRefreshMobile"
+              [disabled]="!(queryServerTsMoreThanOne$ | async)"
+              (click)="runRefresh()">Refresh PDTs and Run</button>
+      <button mat-menu-item
+              name="modelQueryMenuClearSelectionMobile"
+              (click)="clearSelection()">Clear Selection</button>
+
+
+      <div *ngIf="(queryStatus$ | async) === queryStatusEnum.Canceled"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           class="running__text">
+        <div>Canceled - {{cancelTimeAgo$ | async}}</div>
+      </div>
+
+      <div *ngIf="(queryStatus$ | async) === queryStatusEnum.Error"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           class="running__text">
+        <div>Error - {{errorTimeAgo$ | async}}</div>
+      </div>
+
+      <div *ngIf="(queryStatus$ | async) === queryStatusEnum.Completed"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           class="model__panel_width-third running__text">
+        <div class="model__panel_text-overflow_ellipsis">
+          <span>Completed - {{completeTimeAgo$ | async}}</span>
+
+          <!-- <span matTooltip="PDTs duration: {{residueDuration}}s, Query duration: {{calcDurationFloor}}s"
+                [matTooltipShowDelay]="appConfig.tooltipDelay"
+                [matTooltipPosition]="'below'"> - {{fullDurationFloor}}s
+          </span> -->
+          <span> - {{queryLastCompleteDuration}}s</span>
+          <span> - {{dataLength}} rows</span>
+        </div>
+      </div>
+
+      <div *ngIf="dryTs && drySize && dryTsIsAfterLastRunTs"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           class="model__panel_width-third model__pdts_color_grey">
+
+        <div *ngIf="drySize !== 'need PDTs'"
+             class="model__panel_text-overflow_ellipsis"
+             matTooltip="Query will process {{drySize}} when run (checked by Run Dry {{dryTimeAgo$ | async}})"
+             [matTooltipShowDelay]="appConfig.tooltipDelay"
+             [matTooltipPosition]="'below'">
+          {{drySize}} - {{dryTimeAgo$ | async}}
+        </div>
+
+        <div *ngIf="drySize === 'need PDTs'"
+             class="model__panel_text-overflow_ellipsis"
+             matTooltip="Run Dry estimate needs PDTs to be created first (checked {{dryTimeAgo$ | async}})"
+             [matTooltipShowDelay]="appConfig.tooltipDelay"
+             [matTooltipPosition]="'below'">
+          need PDTs - {{dryTimeAgo$ | async}}
+        </div>
+      </div>
+    </mat-sidenav>
+
+  </mat-sidenav-container>
+</div>
+
+<mat-menu #queryMenu="matMenu">
+
+  <button mat-menu-item
+          name="modelQueryMenuRunDry"
+          [disabled]="!(queryServerTsMoreThanOne$ | async)"
+          (click)="runDry()">Run Dry (estimate data size)</button>
+  <button mat-menu-item
+          name="modelQueryMenuRefresh"
+          [disabled]="!(queryServerTsMoreThanOne$ | async)"
+          (click)="runRefresh()">Refresh PDTs and Run</button>
+  <button mat-menu-item
+          name="modelQueryMenuClearSelection"
+          (click)="clearSelection()">Clear Selection</button>
+</mat-menu>
+
+<div *ngIf="mconfigSelectFields$ | async"></div>
+<div *ngIf="modelId$ | async"></div>
+<div *ngIf="modelLabel$ | async"></div>
+<div *ngIf="layoutDry$ | async"></div>
+<div *ngIf="queryLastRunTs$ | async"></div>
+<div *ngIf="queryLastCompleteDuration$ | async"></div>
+<div *ngIf="query$ | async"></div>
+<div *ngIf="mconfigTimezone$ | async"></div>
+<div *ngIf="fileId$ | async"></div>

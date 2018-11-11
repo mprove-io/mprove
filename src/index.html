@@ -1,89 +1,71 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
 <head>
+  <title>Mprove App</title>
+  <meta http-equiv="x-ua-compatible"
+        content="ie=edge">
+  <meta charset='utf-8'>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="shortcut icon"
+        href="/assets/app/favicon.ico"
+        type="image/x-icon">
+  <link rel="icon"
+        href="/assets/app/favicon.ico"
+        type="image/x-icon">
   <base href="/">
-  <title>AngularNgrxMaterialStarter</title>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:title" content="Angular NgRx Material Starter Project by @tomastrajan">
-  <meta property="og:description" content="Angular NgRx Material Starter project with all the best practices, features and usage examples">
-  <meta property="og:image" content="/angular-ngrx-material-starter/intro.3e2d7713f2cb475efa85.jpg">
-  <meta property="og:url" content="https://tomastrajan.github.io/angular-ngrx-material-starter">
-
-  <link rel="icon" type="image/png" href="./assets/logo.png">
-  <style type="text/css">
-    body, html {
-      height: 100%;
-    }
-    .app-loading {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-    }
-
-    .app-loading .spinner {
-      height: 200px;
-      width: 200px;
-      animation: rotate 2s linear infinite;
-      transform-origin: center center;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
-    }
-
-    .app-loading .spinner .path {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-      animation: dash 1.5s ease-in-out infinite;
-      stroke-linecap: round;
-      stroke: #ddd;
-    }
-
-    @keyframes rotate {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes dash {
-      0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-      }
-      50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
-      }
-      100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
-      }
+  <link href='https://fonts.googleapis.com/css?family=Roboto'
+        rel='stylesheet'
+        type='text/css'>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" />
+  <link rel="stylesheet"
+        href="styles.css" />
+  <style>
+    #str-dlls {
+      display: none
     }
   </style>
-</head>
-<body>
-  <anms-root>
-    <div class="app-loading">
-      <div class="logo">
-      <svg class="spinner" viewBox="25 25 50 50">
-        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
-      </svg>
-    </div>
-  </anms-root>
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-53234284-5', 'auto');
+  <script>
+    !function () {
+      var analytics = window.analytics = window.analytics || []; if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error("Segment snippet included twice."); else {
+      analytics.invoked = !0; analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on"]; analytics.factory = function (t) { return function () { var e = Array.prototype.slice.call(arguments); e.unshift(t); analytics.push(e); return analytics } }; for (var t = 0; t < analytics.methods.length; t++) { var e = analytics.methods[t]; analytics[e] = analytics.factory(e) } analytics.load = function (t, e) { var n = document.createElement("script"); n.type = "text/javascript"; n.async = !0; n.src = "https://cdn.segment.com/analytics.js/v1/" + t + "/analytics.min.js"; var a = document.getElementsByTagName("script")[0]; a.parentNode.insertBefore(n, a); analytics._loadOptions = e }; analytics.SNIPPET_VERSION = "4.1.0";
+        analytics.load("pOM0bb7XoX9D98yxHhdZ77esvFzCgJ22");
+      }
+    }();
   </script>
+
+</head>
+
+<body>
+  <m-app>
+    <div class="app_loader">
+
+      <img src="assets/app/mprove_logo_square_white.png"
+           width="80">
+
+    </div>
+
+  </m-app>
+  <script type="text/javascript"
+          src="hammer.min.js"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=console.*,Intl.~locale.en&gated=1"></script>
+  <% if (htmlWebpackPlugin.options.metadata.isDevServer) { %>
+    <!-- DLL files -->
+    <script src="/polyfill.dll.js"></script>
+    <script src="/vendor.dll.js"></script>
+    <% } %>
+      <script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+      <script type="text/javascript">
+        Paddle.Setup({
+          vendor: 19817
+        });
+      </script>
+
 </body>
+
 </html>

@@ -1,0 +1,39 @@
+<div class="mp-min-width-1 mp-max-width-1">
+
+  <mat-toolbar color="primary">Rename Folder</mat-toolbar>
+
+  <form [formGroup]="renameFolderForm"
+        (ngSubmit)="onSubmit(renameFolderForm.value); dialogRef.close()">
+
+    <br>
+
+    <mat-form-field>
+      <input matInput
+             type="text"
+             class="mp-full-width"
+             id="nameInput"
+             formControlName="name"
+             placeholder="Name"
+             required>
+      <mat-error>
+        <m-validation-msg [errors]="renameFolderForm.controls['name'].errors"></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <br>
+    <br>
+
+    <button type="submit"
+            color="primary"
+            mat-raised-button
+            [disabled]="!renameFolderForm.valid">Save
+    </button>
+
+    <button type="reset"
+            class="mp-cancel"
+            mat-raised-button
+            (click)="dialogRef.close()">Cancel
+    </button>
+
+  </form>
+</div>

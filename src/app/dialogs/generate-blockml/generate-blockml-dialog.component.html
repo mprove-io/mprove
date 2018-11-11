@@ -1,0 +1,25 @@
+<div class="mp-min-width-3 mp-max-width-3">
+
+  <mat-toolbar>
+    <a>Add this BlockML to reports section of dashboard file</a>
+
+    <span class="example-fill-remaining-space"></span>
+
+    <button mat-raised-button
+            color="accent"
+            ngxClipboard
+            [cbContent]="reportYaml">Copy to clipboard
+    </button>
+  </mat-toolbar>
+
+
+  <div fxLayout="column">
+    <ace-editor fxFlex="700px"
+                [text]="reportYaml"
+                #editor
+                class="generate-blockml__ace-editor">
+    </ace-editor>
+  </div>
+</div>
+
+<div *ngIf="fileEditorTheme$ | async"></div>

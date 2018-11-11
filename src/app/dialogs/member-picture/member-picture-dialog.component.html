@@ -1,0 +1,9 @@
+<h2 matDialogTitle>User Avatar</h2>
+<mat-dialog-content>
+  <img *ngIf="data.row.picture_url_big"
+       [src]="dynamicAssetsBaseUrl + data.row.picture_url_big">
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button
+          matDialogClose>Close</button>
+</mat-dialog-actions>

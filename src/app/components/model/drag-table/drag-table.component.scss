@@ -1,0 +1,86 @@
+.query-drag-table {
+  display: flex;
+  position: relative;
+  height: 100%;
+
+  &__data-table {
+    overflow-y: auto!important;
+  }
+
+  &__sort {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &-asc {
+      order: 1;
+    }
+
+    &-number {
+      text-align: center;
+      order: 2;
+    }
+
+    &-desc {
+      order: 3;
+    }
+
+    &-asc,
+    &-desc {
+      cursor: pointer;
+      // height: 13px!important;
+      // line-height: 13px;
+    }
+
+    &-asc,
+    &-desc {
+      cursor: pointer;
+    }
+  }
+
+  &__wrap {
+    position: relative;
+    padding: 0 28px;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.12);
+  }
+
+  &__th-drag {
+    position: fixed;
+    z-index: 1000;
+    display: block;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+  }
+
+  /deep/ {
+
+    thead > .td-data-table-row {
+      position: relative;
+    }
+
+    th[td-data-table-column] {
+      cursor: move;
+      box-shadow: none;
+
+      .td-data-table-heading {
+        height: 48px;
+        line-height: 48px;
+        width: 100%;
+        position: relative;
+        padding: 0;
+      }
+    }
+
+    td[td-data-table-cell] {
+      height: 19.8px;
+    }
+
+    th[td-data-table-column] {
+      border-right: none!important;
+    }
+
+    th[td-data-table-column]:last-child,
+    td[td-data-table-cell]:last-child{
+      border-right: none!important;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+.blockml {
+  &-sidenav {
+    height: 100%;
+    width: 20%;
+    &-button {
+      min-width: 1px;
+      position: relative;
+      left: -11px;
+    }
+  }
+  &-errors {
+    width: 20%;
+    height: 100%;
+    overflow: auto;
+  }
+  &-content {
+    flex: 1;
+    display: flex
+  }
+}
+.mobile-menu__button {
+  min-width: 1px;
+}
+.blockml-sidenav-right {
+  padding: 10px;
+  button {
+    margin-bottom: 15px;
+  }
+}
+.blockml-top-btn {
+  margin-left: 5px;
+  margin-right: 5px;
+}

@@ -1,0 +1,45 @@
+<h4>Next payment</h4>
+
+<mat-table #table
+           [dataSource]="dataSource">
+
+  <ng-container matColumnDef="payout_date">
+    <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.payout_date}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="subscription_id">
+    <mat-header-cell *matHeaderCellDef> Subscription ID </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.subscription_id}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="payment_id">
+    <mat-header-cell *matHeaderCellDef> Payment ID </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.payment_id}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="plan_id">
+    <mat-header-cell *matHeaderCellDef> Plan </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{getPlanNameById(element.plan_id)}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="amount">
+    <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.amount}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="is_paid">
+    <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.is_paid === 1 ? 'PAID' : 'PLANNED'}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="receipt_url">
+    <mat-header-cell *matHeaderCellDef> Receipt </mat-header-cell>
+    <mat-cell *matCellDef="let element"></mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<div *ngIf="selectedProjectAnalyticsPlans$ | async"></div>

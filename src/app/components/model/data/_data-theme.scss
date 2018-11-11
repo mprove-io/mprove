@@ -1,0 +1,5 @@
+@mixin query-data-theme($theme) {
+  $sub-primary: map-get($theme, sub-primary);
+  $is-dark: map-get($theme, is-dark);
+
+}

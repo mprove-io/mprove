@@ -1,0 +1,99 @@
+<div fxHide.lt-md>
+  <button mat-button
+          class="space__button_hover_primary"
+          [disabled]="(modelsLength$ | async) < 1"
+          [matMenuTriggerFor]="modelsMenu">
+
+    <div fxLayout="row"
+         fxLayoutAlign="start center">
+      <div class="mat-button__text">Models</div>
+      <mat-icon class="space__toolbar-icon">expand_more</mat-icon>
+    </div>
+
+  </button>
+
+  <mat-menu #modelsMenu="matMenu">
+
+    <ng-container *ngFor="let mainItem of modelGroups">
+      <button mat-menu-item
+              [matMenuTriggerFor]="sub_menu">{{ mainItem.gr | capitalize }}</button>
+      <mat-menu #sub_menu="matMenu">
+        <button *ngFor="let subItem of mainItem.models"
+                mat-menu-item
+                [routerLink]="['/project', projectId, 'mode', mode, 'model', subItem.model_id]">
+          {{ subItem.label | capitalize }}</button>
+      </mat-menu>
+    </ng-container>
+
+    <button mat-menu-item
+            *ngFor="let model of flatModels"
+            [routerLink]="['/project', projectId, 'mode', mode, 'model', model.model_id]">
+      {{model.label | capitalize}}
+    </button>
+  </mat-menu>
+</div>
+
+<!-- mobile -->
+<div fxHide.gt-sm>
+  <mat-accordion>
+    <mat-expansion-panel [disabled]="(modelsLength$ | async) < 1">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+
+          <div fxLayout="row"
+               fxLayoutAlign="start center">
+            <div>Models</div>
+          </div>
+
+        </mat-panel-title>
+        <mat-panel-description>
+          {{selectedModel ? selectedModel.label : ''}}
+        </mat-panel-description>
+
+      </mat-expansion-panel-header>
+
+
+      <mat-accordion *ngFor="let mainItem of modelGroups">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ mainItem.gr | capitalize }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <button *ngFor="let subItem of mainItem.models"
+                  mat-menu-item
+                  [routerLink]="['/project', projectId, 'mode', mode, 'model', subItem.model_id]">
+            {{ subItem.label | capitalize }}</button>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+
+
+      <mat-accordion *ngFor="let model of flatModels">
+        <mat-expansion-panel hideToggle="true"
+                             disabled="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+
+              <button mat-menu-item
+                      [routerLink]="['/project', projectId, 'mode', mode, 'model', model.model_id]">
+                {{model.label | capitalize}}
+              </button>
+
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+
+<!-- async -->
+<div *ngIf="selectedModel$ | async"></div>
+<div *ngIf="projectId$ | async"></div>
+<div *ngIf="mode$ | async"></div>
+<div *ngIf="models$ | async"></div>

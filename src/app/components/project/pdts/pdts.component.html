@@ -1,0 +1,103 @@
+<mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
+  {{selectedProjectId$ | async}} {{(isDev$ | async) ? 'Dev' : 'Prod'}} Permanent Derived Tables (PDTs)
+</mat-toolbar>
+
+<div class="pdts-table">
+  <td-data-table [data]="pdtsExtra"
+                 [columns]="columns"
+                 class="table--pdts">
+
+    <ng-template tdDataTableTemplate="pdt_deps"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <div layout="column">
+        <span flex
+              *ngFor="let dep of value">{{dep}}</span>
+      </div>
+    </ng-template>
+
+    <ng-template tdDataTableTemplate="show_sql"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <button mat-raised-button
+              (click)="showSql(row)"
+              name="showPdtSql">SQL</button>
+    </ng-template>
+
+    <ng-template tdDataTableTemplate="status"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <span flex
+            *ngIf="(value !== queryStatusEnum.Error)">{{ value }}</span>
+
+      <span flex
+            *ngIf="(value === queryStatusEnum.Error)"
+            class="pdts__error"
+            matTooltip="{{row.last_error_message}}"
+            [matTooltipShowDelay]="appConfig.tooltipDelay">{{ value }}
+      </span>
+    </ng-template>
+
+    <!-- <ng-template tdDataTableTemplate="is_completed"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <span flex>{{value ? 'Yes' : 'No'}}</span>
+    </ng-template> -->
+
+    <!-- <ng-template tdDataTableTemplate="completed_time_ago_from_now"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <span flex>{{ value ? value : 'never' }}</span>
+    </ng-template> -->
+
+    <ng-template tdDataTableTemplate="last_run_ts"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <span flex>{{ value === 1 ? 'never' : value }}</span>
+    </ng-template>
+
+    <ng-template tdDataTableTemplate="last_complete_ts"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <span flex>{{ value === 1 ? 'never' : value }}</span>
+    </ng-template>
+
+    <ng-template tdDataTableTemplate="menu"
+                 let-value="value"
+                 let-row="row"
+                 let-column="column">
+      <button mat-icon-button
+              [matMenuTriggerFor]="pdtMenu"
+              [matMenuTriggerData]="{r: row}"
+              name="pdtMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </ng-template>
+
+  </td-data-table>
+</div>
+
+<mat-menu #pdtMenu="matMenu">
+
+  <ng-template matMenuContent
+               let-r="r">
+
+    <button mat-menu-item
+            [disabled]="!(selectedProjectUserIsEditor$ | async)"
+            (click)="run(r.query_id)">Run</button>
+
+    <button mat-menu-item
+            [disabled]="!(selectedProjectUserIsEditor$ | async)"
+            (click)="runRefresh(r.query_id)">Refresh required PDTs and Run</button>
+  </ng-template>
+</mat-menu>
+
+<div *ngIf="pdtsExtra$ | async"></div>
+<!-- <div *ngIf="time$ | async"></div> -->

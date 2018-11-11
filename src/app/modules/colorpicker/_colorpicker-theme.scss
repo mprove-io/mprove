@@ -1,0 +1,50 @@
+$black: black;
+$primary: #106cc8 !default;
+$warn: #f44336 !default;
+@mixin colorpicker-theme($theme) {
+  $is-dark: map-get($theme, is-dark);
+
+  .color-picker-selector {
+    @if $is-dark == true {
+      .m-colorpicker-value {
+        color: rgba(255,255,255,.9);
+      }
+    }
+  }
+
+  .m-colorpicker-input {
+    @if $is-dark == true {
+      color: rgba(255,255,255,.9);
+      border-bottom: 1px solid rgba(255,255,255,.7);
+      &.input-focused {
+        .m-colorpicker-placeholder {
+          color: rgba(255,255,255,.9);
+        }
+      }
+    } @else {
+      color: rgba(black, 0.38);
+      border-bottom: 1px solid rgba(black, 0.12);
+    }
+  }
+
+  .type-policy {
+    background: rgba(white, 0.25);
+    .dark & {
+      background: rgba(black, 0.25);
+    }
+    &.active {
+      border-color: rgba(white, 0.5);
+      background: transparent;
+      .dark & {
+        border-color: rgba(black, 0.5);
+      }
+    }
+  }
+
+  .m-colorpicker-wrapper {
+    background-color: #fff;
+  }
+}
+.cdk-overlay-dark-backdrop {
+  background: rgba(black, 0.6);
+}

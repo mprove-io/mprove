@@ -1,0 +1,16 @@
+:host /deep/ {
+  .myMarker {
+    position: absolute;
+    background: rgba(200, 44, 44, 0.5);
+    z-index: 20
+  }
+
+  .sql-part {
+
+    &__ace-editor {
+      overflow: auto;
+      height:100%;
+      width:100%;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+.query {
+  &__error {
+    overflow: auto;
+    min-height: 80px;
+    max-height: 80px;
+    &-text {
+      display: flex;
+      align-items: center;
+      margin: 10px 16px;
+      word-break: break-all;
+    }
+    &-icon {
+      margin-right: 10px;
+    }
+  }
+  &__chart-icon {
+    margin: 12px 0;
+  }
+}
+.filter-toolbar {
+  position: absolute;
+  z-index: 10;
+  top: 0px;
+  width: 80%;
+  overflow-x: scroll;
+  @media(max-width: 959px) {
+    width: 100%;
+  }
+}

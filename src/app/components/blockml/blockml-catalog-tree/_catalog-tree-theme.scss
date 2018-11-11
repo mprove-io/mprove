@@ -1,0 +1,76 @@
+@mixin catalog-tree-theme($theme) {
+  $sub-primary: map-get($theme, sub-primary);
+  $primary: map-get($theme, primary);
+  $is-dark: map-get($theme, is-dark);
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+
+  m-catalog-tree {
+    @if $is-dark == true {
+      background-color: mat-color($sub-primary, 800);
+      color: mat-contrast($sub-primary, 800);
+    } @else {
+      background-color: mat-color($sub-primary, 200);
+      color: mat-contrast($sub-primary, 200);
+    }
+
+    .catalog-tree {
+      &__file_hover:not(.catalog-tree__file-active):hover {
+        @if $is-dark == true {
+          background-color: mat-color($background, hover)!important;
+        } @else {
+          background-color: mat-color($sub-primary, 100)!important;
+        }
+      }
+
+      &__menu-button {
+        @if $is-dark == true {
+          color: #fff;
+        }
+        &:hover {
+          color: mat-color($primary);
+        }
+      }
+
+      .node-content-wrapper-active,
+      .node-content-wrapper-focused {
+        color: mat-color($foreground, text);
+      }
+
+      .tree-node-leaf .node-content-wrapper-active,
+      .tree-node-leaf .node-content-wrapper-focused {
+        &:after {
+          @if $is-dark == true {
+            background-color: mat-color($sub-primary, 700)!important;
+          } @else {
+            background-color: #fff!important;
+          }
+        }
+      }
+
+      .toggle-children {
+        @if $is-dark == true {
+          background-image: url("/assets/app/collapsed-dark.svg");
+        } @else {
+          background-image: url("/assets/app/collapsed-light.svg");
+        }
+      }
+
+      .toggle-children-wrapper-expanded {
+        .toggle-children {
+          @if $is-dark == true {
+            background-image: url("/assets/app/expanded-dark.svg");
+          } @else {
+            background-image: url("/assets/app/expanded-light.svg");
+          }
+        }
+      }
+    }
+  }
+}
+m-catalog-tree .catalog-tree__menu-button.disableFileOptions:hover {
+  color: rgb(128,128,128);
+}
+m-catalog-tree .catalog-tree__menu-button.disableFolderOptions:hover {
+  color: rgb(128,128,128);
+}

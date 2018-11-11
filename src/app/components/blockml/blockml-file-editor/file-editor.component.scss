@@ -1,0 +1,26 @@
+:host {
+  width: 100%;
+
+  /deep/ {
+    .myMarker {
+      position: absolute;
+      background: rgba(200, 44, 44, 0.5);
+      z-index: 20
+    }
+  }
+
+  .file-editor {
+    &__ace-editor {
+      height:100%;
+      width:100%;
+      overflow: auto;
+    }
+    &__cancel {
+      margin-right: 10px;
+    }
+
+    &__action {
+      margin-right: 10px;
+    }
+  }
+}

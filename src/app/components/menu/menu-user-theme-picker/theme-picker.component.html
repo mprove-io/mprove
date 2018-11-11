@@ -1,0 +1,166 @@
+<div class="theme-picker__wrapper">
+  <div fxLayout="row"
+     class="theme-picker__divider">
+
+  <div fxFlex="60%"
+       class="theme-picker__title">Main theme</div>
+
+  <div fxFlex>
+    <div fxLayout="row"
+         fxFlexAlign="center"
+         class="theme-picker__colors">
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__light"
+                (click)="installMainTheme(userMainThemeEnum.Light)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="mainTheme === userMainThemeEnum.Light"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorLight"></span>
+        </button>
+      </div>
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__dark"
+                (click)="installMainTheme(userMainThemeEnum.Dark)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="mainTheme === userMainThemeEnum.Dark"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorDark"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div fxLayout="row"
+     class="theme-picker__divider">
+
+  <div fxFlex="60%"
+       class="theme-picker__title">Dashboard</div>
+
+  <div fxFlex>
+    <div fxLayout="row"
+         fxFlexAlign="center"
+         class="theme-picker__colors">
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__light"
+                (click)="installDashTheme(userDashThemeEnum.Light)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="dashTheme === userDashThemeEnum.Light"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorLight"></span>
+        </button>
+      </div>
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__dark"
+                (click)="installDashTheme(userDashThemeEnum.Dark)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="dashTheme === userDashThemeEnum.Dark"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorDark"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div fxLayout="row"
+     class="theme-picker__divider">
+
+  <div fxFlex="60%"
+       class="theme-picker__title">File Editor</div>
+
+  <div fxFlex>
+    <div fxLayout="row"
+         fxFlexAlign="center"
+         class="theme-picker__colors">
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__light"
+                (click)="installFileTheme(userFileThemeEnum.Light)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="fileTheme === userFileThemeEnum.Light"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorLight"></span>
+        </button>
+      </div>
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__dark"
+                (click)="installFileTheme(userFileThemeEnum.Dark)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="fileTheme === userFileThemeEnum.Dark"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorDark"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div fxLayout="row"
+     class="theme-picker__divider">
+
+  <div fxFlex="60%"
+       class="theme-picker__title">Sql Editor</div>
+
+  <div fxFlex>
+    <div fxLayout="row"
+         fxFlexAlign="center"
+         class="theme-picker__colors">
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__light"
+                (click)="installSqlTheme(userSqlThemeEnum.Light)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="sqlTheme === userSqlThemeEnum.Light"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorLight"></span>
+        </button>
+      </div>
+
+      <div class="theme-picker__colors-item">
+        <button mat-menu-item
+                [disabled]="themesAreRestricted$ | async"
+                class="theme-picker__item theme-picker__dark"
+                (click)="installSqlTheme(userSqlThemeEnum.Dark)">
+          <mat-icon class="mat-elevation-z2 theme-picker__chosen-icon"
+                    *ngIf="sqlTheme === userSqlThemeEnum.Dark"></mat-icon>
+          <span class="mat-elevation-z2 theme-picker__figure"
+                [style.background]="colorDark"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="mainTheme$ | async"></div>
+<div *ngIf="dashTheme$ | async"></div>
+<div *ngIf="fileTheme$ | async"></div>
+<div *ngIf="sqlTheme$ | async"></div>
+<div *ngIf="userMember$ | async"></div>
+</div>

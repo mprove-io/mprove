@@ -1,0 +1,141 @@
+$node-offset-negative: -30vw;
+$node-offset-positive: 30vw;
+$node-width: 60vw;
+
+:host {
+  overflow: auto;
+
+  /deep/ {
+    tree-viewport {
+      overflow: hidden;
+    }
+
+    tree-node-expander {
+      height: 0;
+    }
+
+    .tree-children {
+      overflow: visible;
+    }
+
+    .node-wrapper {
+      position: relative;
+      z-index: 10;
+      cursor: default;
+
+      &:hover .catalog-tree__menu-button {
+        display: flex;
+      }
+    }
+
+    .node-content-wrapper {
+      padding: 0;
+    }
+
+    .node-content-wrapper,
+    .node-content-wrapper-active,
+    .node-content-wrapper-focused {
+      cursor: pointer;
+      background: transparent!important;
+      box-shadow: none;
+      &:hover {
+        cursor: pointer;
+        background: transparent!important;
+        box-shadow: none;
+      }
+
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -30vw;
+        right: -30vw;
+        z-index: -1;
+      }
+    }
+
+    .toggle-children-wrapper {
+      padding: 2px 3px 5px 5px;
+    }
+
+    .toggle-children {
+      z-index: 100;
+      transform: scale(3)!important;
+    }
+
+    .toggle-children-placeholder {
+      display: none;
+    }
+
+    .node-drop-slot {
+      display: none;
+    }
+  }
+
+  .catalog-tree {
+    &__menu-button {
+      cursor: pointer;
+      display: none;
+      background-color: transparent;
+      border: none;
+      outline: none;
+      position: absolute;
+      right: 0;
+
+      mat-icon {
+        width: 15px;
+        height: 15px;
+        font-size: 17px;
+        line-height: 17px;
+      }
+    }
+
+    &__file_clickable {
+      cursor: pointer;
+      padding: 2px 5px;
+      position: relative;
+      width: $node-width;
+      left: $node-offset-negative;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    &__file-inner {
+      position: relative;
+      left: $node-offset-positive;
+    }
+
+    &__file-icon {
+      font-weight: bold;
+      position: absolute;
+
+      &_view {
+        color: #5dd0a8;
+      }
+
+      &_dashboard {
+        color: #5088a2;
+      }
+
+      &_model {
+        color: #d05d80;
+      }
+
+      &_udf {
+        color: #cc9741;
+      }
+    }
+
+    &__file-name_offset-left_20 {
+      margin-left: 20px;
+    }
+
+    &__file-name_offset-left_10 {
+      margin-left: 10px;
+    }
+  }
+}

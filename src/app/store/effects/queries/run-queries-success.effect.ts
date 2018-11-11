@@ -1,0 +1,24 @@
+import { Injectable } from '@angular/core';
+import { Actions, Effect } from '@ngrx/effects';
+import { Action } from '@ngrx/store';
+import { from, Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import * as actions from 'src/app/store/actions/_index';
+import * as actionTypes from 'src/app/store/action-types';
+
+@Injectable()
+export class RunQueriesSuccessEffect {
+
+  @Effect() runQueriesSuccess$: Observable<Action> = this.actions$
+    .ofType(actionTypes.RUN_QUERIES_SUCCESS)
+    .pipe(
+      mergeMap((action: actions.RunQueriesSuccessAction) => from([
+        new actions.UpdateQueriesStateAction(action.payload.running_queries),
+      ])
+      )
+    );
+
+  constructor(
+    private actions$: Actions) {
+  }
+}

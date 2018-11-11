@@ -1,0 +1,40 @@
+<div fxLayout="column"
+     fxFlexFill
+     class="query-data">
+  <div class="query-data__table">
+    <m-drag-table [columns]="mconfigSelectFields"
+                  [filteredData]="filteredData"
+                  (sort)="sort($event)"
+                  class="m-drag-table"></m-drag-table>
+    <h3 *ngIf="mconfigSelectFields.length === 0"
+        class="query-data__empty-title">Select some fields...</h3>
+
+    <h3 *ngIf="emptyData && mconfigSelectFields.length > 0"
+        class="query-data__empty-title">Run query to get data...</h3>
+  </div>
+
+  <div fxLayout="row"
+       class="table-row-col">
+    <form [formGroup]="limitForm"
+          class="limit-form ml-10">
+      <mat-form-field>
+        <input matInput
+               name="modelMconfigDataLimit"
+               placeholder="LIMIT"
+               type="number"
+               formControlName="limit"
+               (blur)="limitBlur(limitForm.controls['limit'])">
+        <mat-error>
+          <m-validation-msg [errors]="limitForm.controls['limit'].errors"></m-validation-msg>
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </div>
+  <div fxFlex></div>
+</div>
+
+<div *ngIf="mconfigSelectFields$ | async"></div>
+<div *ngIf="sortings$ | async"></div>
+<div *ngIf="mconfigLimit$ | async"></div>
+<div *ngIf="fields$ | async"></div>
+<div *ngIf="data$ | async"></div>

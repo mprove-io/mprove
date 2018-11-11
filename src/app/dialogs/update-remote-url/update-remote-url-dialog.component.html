@@ -1,0 +1,38 @@
+<div class="mp-min-width-2 mp-max-width-2">
+  <mat-toolbar color="primary">Remote Dev Repo SSH Url</mat-toolbar>
+
+  <form [formGroup]="updateUrlForm"
+        (ngSubmit)="onSubmit(updateUrlForm.value); dialogRef.close()">
+
+    <br>
+
+    <mat-form-field class="mp-full-width">
+      <input matInput
+             matTextareaAutosize
+             matAutosizeMinRows="8"
+             matAutosizeMaxRows="8"
+             id="urlInput"
+             formControlName="url"
+             placeholder="SSH URL">
+      <mat-error>
+        <m-validation-msg [errors]="updateUrlForm.controls['url'].errors"></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <br>
+    <br>
+
+    <button type="submit"
+            color="primary"
+            mat-raised-button
+            [disabled]="!updateUrlForm.valid">Save
+    </button>
+
+    <button type="reset"
+            class="mp-cancel"
+            mat-raised-button
+            (click)="dialogRef.close()">Cancel
+    </button>
+
+  </form>
+</div>

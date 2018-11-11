@@ -1,0 +1,24 @@
+@mixin forum-link-theme($theme) {
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+
+
+  .forum-link {
+    &__button_hover_primary {
+      &:hover {
+        color: mat-color($primary);
+      }
+
+      &:hover .mat-button-focus-overlay {
+        background-color: transparent!important;
+      }
+    }
+  }
+}
+.dark-theme .forum-link {
+  &__button_hover_primary {
+    &:hover {
+      color: #ff9800 !important; 
+    }
+  }
+}

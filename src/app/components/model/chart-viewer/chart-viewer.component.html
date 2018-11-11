@@ -1,0 +1,77 @@
+<div [ngClass]="{'chart-viewer-light': backgroundColor === 'light', 'chart-viewer-dark': backgroundColor === 'dark'}"
+     fxLayout="column"
+     fxFlexFill>
+
+  <div fxFlex
+       fxLayout="row"
+       fxLayoutAlign="start center"
+       class="chart-viewer__layout-background mp-overflow-auto">
+
+    <div fxFlex
+         fxLayout="row"
+         fxLayoutAlign="start center"
+         class="mp-overflow-auto">
+
+      <div fxFlex="41%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._1"></div>
+      <div fxFlex="33%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._2"></div>
+      <div fxFlex="25%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._3"></div>
+      <div fxFlex="16%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._4"></div>
+      <div fxFlex="8%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._5"></div>
+
+
+      <mat-grid-list fxFlex
+                     [cols]="visual.chart.tile_width === tileWidthEnum._1 ? 1 
+                  : visual.chart.tile_width === tileWidthEnum._2 ? 1 
+                  : visual.chart.tile_width === tileWidthEnum._3 ? 1 
+                  : visual.chart.tile_width === tileWidthEnum._4 ? 1 
+                  : visual.chart.tile_width === tileWidthEnum._5 ? 1 
+                  : 2"
+                     rowHeight="100px">
+        <mat-grid-tile [colspan]="visual.chart.tile_width === tileWidthEnum._1 ? 1 
+                    : visual.chart.tile_width === tileWidthEnum._2 ? 1 
+                    : visual.chart.tile_width === tileWidthEnum._3 ? 1 
+                    : visual.chart.tile_width === tileWidthEnum._4 ? 1 
+                    : visual.chart.tile_width === tileWidthEnum._5 ? 1 
+                    : 2"
+                       [rowspan]="visual.chart.tile_height/100">
+
+          <div fxLayout="column"
+               fxFlexFill>
+
+            <div fxFlex="96px"
+                 fxFlexAlign="stretch"
+                 fxLayout="column"
+                 fxLayoutAlign="center center">
+              <h6>{{visual.chart.title | capitalize}}</h6>
+            </div>
+
+            <div fxFlex
+                 fxLayout="column"
+                 fxFlexFill>
+              <m-visual fxFlex
+                        [visual]="visual"></m-visual>
+            </div>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+
+      <div fxFlex="41%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._1"></div>
+      <div fxFlex="33%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._2"></div>
+      <div fxFlex="25%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._3"></div>
+      <div fxFlex="16%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._4"></div>
+      <div fxFlex="8%"
+           *ngIf="visual.chart.tile_width === tileWidthEnum._5"></div>
+
+    </div>
+  </div>
+
+</div>

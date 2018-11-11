@@ -1,0 +1,29 @@
+<h2 matDialogTitle> Error </h2>
+
+<br>
+<p>If the problem persists, please contact </p>
+<p>
+  <b>support@mprove.io</b>
+</p>
+<br>
+
+<br>
+<p>event_id: {{eventId}}</p>
+<br>
+<p>name: {{name}}</p>
+<br>
+<p>message: {{message}}</p>
+<br>
+<br>
+
+<mat-dialog-actions>
+  <button mat-button
+          (click)="reloadClick()">Reload Site</button>
+
+  <button mat-button
+          (click)="forumClick()">Forum</button>
+
+  <button *ngIf="!main"
+          mat-button
+          (click)="okClick()">Ok</button>
+</mat-dialog-actions>

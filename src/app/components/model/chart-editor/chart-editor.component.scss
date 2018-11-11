@@ -1,0 +1,48 @@
+.chart-editor {
+  &__save-button {
+    min-width: 140px;
+  }
+  &__toolbar {
+    min-height: 64px;
+  }
+  &__color-picker {
+    border: none;
+    width: 20px;
+    cursor: pointer;
+    outline: none;
+    background-color: #000;
+  }
+  .vertical-space {
+    height: 20px;
+}
+}
+.chart-inner {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.chart-title__wrapper {
+  padding-top: 50px;
+}
+.query__chart-icon {
+  margin-right: 5px;
+}
+.mat-slide-toggle {
+ margin-bottom: 35px !important; 
+}
+/deep/ .mat-form-field-underline {
+  max-width: 360px;
+}
+/deep/ .mat-form-field-infix {
+  max-width: 360px;
+}
+/deep/ .cdk-overlay-pane > .mat-select-panel {
+  position: relative;
+  left: -25px;
+}
+/deep/.chart-editor__chart-option img {
+  position: relative;
+  top: 6px;
+}

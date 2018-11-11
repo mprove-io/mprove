@@ -1,0 +1,59 @@
+<div fxLayout="row"
+     fxLayoutGap="20px"
+     fxLayoutAlign="start center">
+
+  <div fxFlex="40px"
+       class="ml-10">
+    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.Or)">OR</div>
+    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.And)">AND</div>
+  </div>
+
+  <mat-form-field>
+    <mat-select class="mp-fraction-type-select-width-230"
+                name="fractionQuarterOfYearType"
+                [(ngModel)]="fraction.type"
+                (selectionChange)="typeChange($event)">
+
+      <mat-option [value]="fractionTypeEnum.QuarterOfYearIsAnyValue"
+                  name="fractionQuarterOfYearTypeIsAnyValue">is any value</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.QuarterOfYearIs"
+                  name="fractionQuarterOfYearTypeIs">is</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.QuarterOfYearIsNull"
+                  name="fractionQuarterOfYearTypeIsNull">is null</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.QuarterOfYearIsNot"
+                  name="fractionQuarterOfYearTypeIsNot">is not</mat-option>
+
+      <mat-option [value]="fractionTypeEnum.QuarterOfYearIsNotNull"
+                  name="fractionQuarterOfYearTypeIsNotNull">is not null</mat-option>
+
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="fraction.type === fractionTypeEnum.QuarterOfYearIs
+    || fraction.type === fractionTypeEnum.QuarterOfYearIsNot">
+
+    <mat-select [(ngModel)]="fraction.quarter_of_year_value"
+                name="fractionQuarterOfYearValue"
+                (selectionChange)="quarterOfYearValueChange($event)">
+
+      <mat-option [value]="fractionQuarterOfYearValueEnum.Q1"
+                  name="fractionQuarterOfYearValueQ1">Q1</mat-option>
+
+      <mat-option [value]="fractionQuarterOfYearValueEnum.Q2"
+                  name="fractionQuarterOfYearValueQ2">Q2</mat-option>
+
+      <mat-option [value]="fractionQuarterOfYearValueEnum.Q3"
+                  name="fractionQuarterOfYearValueQ3">Q3</mat-option>
+
+      <mat-option [value]="fractionQuarterOfYearValueEnum.Q4"
+                  name="fractionQuarterOfYearValueQ4">Q4</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <!--QuarterOfYearIsNull-->
+  <!--QuarterOfYearIsNotNull-->
+</div>

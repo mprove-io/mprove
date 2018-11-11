@@ -1,0 +1,40 @@
+import { Injectable } from '@angular/core';
+import { Actions, Effect } from '@ngrx/effects';
+import { Action, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
+import * as actions from 'src/app/store/actions/_index';
+import * as actionTypes from 'src/app/store/action-types';
+import * as interfaces from 'src/app/interfaces/_index';
+import * as selectors from 'src/app/store/selectors/_index';
+
+@Injectable()
+export class SetLiveQueriesSuccessEffect {
+
+
+  @Effect({ dispatch: false }) setLiveQueriesSuccess$: Observable<Action> = this.actions$
+    .ofType(actionTypes.SET_LIVE_QUERIES_SUCCESS)
+    .pipe(
+      tap((action: actions.SetLiveQueriesSuccessAction) => {
+        if (action.payload.live_queries.length > 0) {
+
+          let selectedProjectId: string;
+          this.store.select(selectors.getLayoutProjectId)
+            .pipe(take(1))
+            .subscribe(id => selectedProjectId = id);
+
+          this.store.dispatch(new actions.FilterQueriesStateAction(
+            {
+              project_id: selectedProjectId,
+              query_ids: action.payload.live_queries
+            }
+          ));
+        }
+      })
+    );
+
+  constructor(
+    private actions$: Actions,
+    private store: Store<interfaces.AppState>) {
+  }
+}

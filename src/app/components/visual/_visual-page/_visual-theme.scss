@@ -1,0 +1,251 @@
+@mixin visual-theme($theme) {
+  /**
+* Backgrounds
+*/
+  $color-bg-darkest: #13141b;
+  $color-bg-darker: #1b1e27;
+  $color-bg-dark: #232837;
+  $color-bg-med: #2f3646;
+  $color-bg-light: #455066;
+  $color-bg-lighter: #5b6882;
+
+  /**
+   * Text
+   */
+  $color-text-dark: #72809b;
+  $color-text-med-dark: #919db5;
+  $color-text-med: #a8b2c7;
+  $color-text-med-light: #d9dce1;
+  $color-text-light: #f0f1f6;
+  $color-text-lighter: #fff;
+
+  .visual {
+
+    &-light {
+
+      th[td-data-table-column],
+      td[td-data-table-cell] {
+          border-right: 1px solid rgba(0,0,0,0.12);
+      }
+
+      .visual-datatable__th-measure_background {
+        background-color: #fcad3473;
+      }
+
+      .visual-datatable__td-measure_background {
+        background-color: #ffa1001c;
+      }
+
+      .visual-datatable__th-dimension_background {
+        background-color: #60b8fd87;
+      }
+
+      .visual-datatable__td-dimension_background {
+        background-color: #0057bc12;
+      }
+
+      .visual-datatable__th-calculation_background {
+        background-color: #b400ff6e;
+      }
+
+      .visual-datatable__td-calculation_background {
+        background-color: #7407cb12;
+      }
+
+      .mat-caption {
+        color: #000 !important;
+
+        * {
+          color: #000 !important;
+        }
+      }
+
+      .td-data-table-row:nth-child(odd) {
+        background: #ffffff;
+      }
+
+      .td-data-table-row {
+        border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+      }
+
+      .visual__chart-icon {
+        color: #cdcdcd;
+      }
+    }
+
+    &-dark {
+
+      th[td-data-table-column],
+      td[td-data-table-cell] {
+        border-right: 1px solid rgba(255,255,255,0.12);
+      }
+
+      .visual-datatable__th-measure_background {
+        background-color: rgb(197, 143, 61);
+      }
+
+      .visual-datatable__td-measure_background {
+        background-color: rgb(152, 112, 52);
+      }
+
+      .visual-datatable__th-dimension_background {
+        background-color: rgb(24, 124, 204);
+      }
+
+      .visual-datatable__td-dimension_background {
+        background-color: rgb(58, 111, 152);
+      }
+
+      .visual-datatable__th-calculation_background {
+        background-color: #a018cc;
+      }
+
+      .visual-datatable__td-calculation_background {
+        background-color: #7d3a98;
+      }
+
+      .mat-caption {
+        color: #fff !important;
+
+        * {
+          color: #fff !important;
+        }
+      }
+
+      .td-data-table-row {
+        border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+      }
+
+      .ngx-charts {
+
+        text {
+          fill: $color-text-med;
+        }
+
+        .tooltip-anchor {
+          fill: rgb(255, 255, 255);
+        }
+
+        .gridline-path {
+          stroke: $color-bg-med;
+        }
+
+        .grid-panel {
+          &.odd {
+            rect {
+              fill: rgba(255, 255, 255, 0.05);
+            }
+          }
+        }
+
+        .force-directed-graph {
+          .edge {
+            stroke: $color-bg-light;
+          }
+        }
+
+        .number-card {
+          p {
+            color: $color-text-light;
+          }
+        }
+
+        .gauge {
+          .background-arc {
+            path {
+              fill: $color-bg-med;
+            }
+          }
+
+          .gauge-tick {
+            path {
+              stroke: $color-text-med;
+            }
+            text {
+              fill: $color-text-med;
+            }
+          }
+        }
+
+        .linear-gauge {
+          .background-bar {
+            path {
+              fill: $color-bg-med;
+            }
+          }
+
+          .units {
+            fill: $color-text-dark;
+          }
+        }
+
+        .timeline {
+          .brush-background {
+            fill: rgba(255, 255, 255, 0.05);
+          }
+
+          .brush {
+            .selection {
+              fill: rgba(255, 255, 255, 0.1);
+              stroke: #aaa;
+            }
+          }
+        }
+
+      }
+
+      .chart-legend {
+        .legend-labels {
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .legend-item {
+          &:hover {
+            color: #fff;
+          }
+        }
+
+        .legend-label {
+          &:hover {
+            color: #fff !important;
+          }
+
+          .active {
+            .legend-label-text {
+              color: #fff !important;
+            }
+          }
+        }
+
+        .scale-legend-label {
+          color: $color-text-med;
+        }
+      }
+
+      .advanced-pie-legend {
+        color: $color-text-med;
+
+        .legend-item {
+          &:hover {
+            color: #fff !important;
+          }
+        }
+      }
+
+      .number-card .number-card-label {
+        font-size: 0.8em;
+        color: $color-text-med;
+      }
+
+      .visual__chart-icon {
+        color: #393945;
+      }
+    }
+
+  }
+}
+  .visual {
+    &__not-valid {
+      color: #f44336;
+    }
+  }

@@ -1,0 +1,49 @@
+.settings {
+  padding: 30px 10px;
+  &__label {
+    font-size: 18px;
+    font-weight: bold;
+    flex: 0 0 300px;
+    margin-right: 40px;
+    text-align: right;
+    @media(max-width: 699px){
+      text-align: left;
+      margin-bottom: 15px;
+    }
+  }
+  &__value {
+    margin-right: 40px;
+    @media(max-width: 699px){
+      margin-bottom: 10px;
+    }
+  }
+  &__row {
+    display: flex;
+    margin-bottom: 50px;
+    align-items: center;
+    @media(max-width: 699px){
+      display: block;
+      margin-bottom: 30px;
+    }
+    &-delete {
+      max-width: 485px;
+      justify-content: flex-end;
+    }
+  }
+
+  &_padding {
+    padding: 15px;
+  }
+
+  /deep/ .mat-flat-fab {
+    margin-right: 10px;
+  }
+
+  /deep/ &__user-input {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+/deep/.settings-button-wrapper {
+  padding-left: 15px;
+}

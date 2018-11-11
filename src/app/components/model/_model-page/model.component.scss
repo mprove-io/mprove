@@ -1,0 +1,74 @@
+.model {
+
+  &__go-to-file {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  &__timezone-field_width_full {
+    width: 240px;
+  }
+
+  &__panel {
+    &_text-overflow_ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &-query-button {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+/deep/ .info-icon {
+  opacity: 0.5;
+  font-size: 19px !important;
+  margin-right: 10px;
+  cursor: default;
+}
+
+/deep/.model__pdts_color_grey {
+  font-size: 16px;
+}
+
+.model__timer {
+  font-size: 16px;
+}
+
+.running__text {
+  font-size: 16px;
+}
+.filter-content {
+  padding-top: 53px;
+}
+/deep/.model__timezone {
+
+  font-size: 14px;
+
+  .mat-form-field-label-wrapper {
+  display: none
+}
+}
+.mobile-menu__button {
+  min-width: 55px;
+  position: relative;
+  left: -10px;
+  &-right {
+    left:0;
+  }
+}
+.model-timezone-wrapper {
+  padding-left: 20px;
+  padding-right: 10px;
+}
+.mat-sidenav-model {
+    padding: 0 15px;
+}
+.model-loader {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+}
