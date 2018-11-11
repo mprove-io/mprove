@@ -1,10 +1,10 @@
 // tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
-import { getLayoutModelId } from 'src/app/store/selectors/get-layout/get-layout-model-id';
-import { getSelectedProjectModeRepoId } from 'src/app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-id';
-import { getSelectedProjectId } from 'src/app/store/selectors/get-selected-project/get-selected-project-id';
-import { getModelsState } from 'src/app/store/selectors/get-state/get-models-state';
-import * as api from 'src/app/api/_index';
+import { getLayoutModelId } from 'app/store/selectors/get-layout/get-layout-model-id';
+import { getSelectedProjectModeRepoId } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-id';
+import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
+import { getModelsState } from 'app/store/selectors/get-state/get-models-state';
+import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoModel = createSelector(
   getModelsState,

@@ -3,9 +3,9 @@ import { Actions, Effect } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { from, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import * as actionTypes from 'src/app/store/action-types';
-import * as actions from 'src/app/store/actions/_index';
-import * as helper from 'src/app/helper/_index';
+import * as actionTypes from 'app/store/action-types';
+import * as actions from 'app/store/actions/_index';
+import * as helper from 'app/helper/_index';
 
 @Injectable()
 export class ProcessStructsEffect {

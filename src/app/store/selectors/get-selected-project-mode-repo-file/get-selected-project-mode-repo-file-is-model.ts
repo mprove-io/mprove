@@ -1,8 +1,8 @@
 import { createSelector } from '@ngrx/store';
 // tslint:disable-next-line:max-line-length
-import { getSelectedProjectModeRepoFile } from 'src/app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
-import * as api from 'src/app/api/_index';
-import { MyRegex } from 'src/app/models/my-regex';
+import { getSelectedProjectModeRepoFile } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
+import * as api from 'app/api/_index';
+import { MyRegex } from 'app/models/my-regex';
 
 export const getSelectedProjectModeRepoFileIsModel = createSelector(
   getSelectedProjectModeRepoFile,

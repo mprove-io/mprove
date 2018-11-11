@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import * as actions from 'src/app/store/actions/_index';
-import * as api from 'src/app/api/_index';
-import * as interfaces from 'src/app/interfaces/_index';
+import * as actions from 'app/store/actions/_index';
+import * as api from 'app/api/_index';
+import * as interfaces from 'app/interfaces/_index';
 
 @Component({
   moduleId: module.id,

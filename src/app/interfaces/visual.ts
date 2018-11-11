@@ -1,4 +1,4 @@
-import * as api from 'src/app/api/_index';
+import * as api from 'app/api/_index';
 
 export interface Visual {
   query: api.Query;

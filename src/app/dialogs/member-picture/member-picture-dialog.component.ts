@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import * as configs from 'src/app/configs/_index';
+import * as configs from 'app/configs/_index';
 
 @Component({
   moduleId: module.id,

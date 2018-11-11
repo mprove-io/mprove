@@ -1,10 +1,10 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedMconfigFilters } from 'src/app/store/selectors/get-selected-mconfig/get-selected-mconfig-filters';
-import { getSelectedMconfigSelect } from 'src/app/store/selectors/get-selected-mconfig/get-selected-mconfig-select';
+import { getSelectedMconfigFilters } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig-filters';
+import { getSelectedMconfigSelect } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig-select';
 // tslint:disable-next-line:max-line-length
-import { getSelectedProjectModeRepoModel } from 'src/app/store/selectors/get-selected-project-mode-repo-model/get-selected-project-mode-repo-model';
-import * as api from 'src/app/api/_index';
-import * as interfaces from 'src/app/interfaces/_index';
+import { getSelectedProjectModeRepoModel } from 'app/store/selectors/get-selected-project-mode-repo-model/get-selected-project-mode-repo-model';
+import * as api from 'app/api/_index';
+import * as interfaces from 'app/interfaces/_index';
 
 export const getSelectedMconfigModelFieldsExtra = createSelector(
   getSelectedProjectModeRepoModel,

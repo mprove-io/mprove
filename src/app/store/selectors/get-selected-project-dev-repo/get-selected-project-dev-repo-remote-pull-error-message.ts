@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import * as api from 'src/app/api/_index';
+import * as api from 'app/api/_index';
 // tslint:disable-next-line:max-line-length
-import { getSelectedProjectDevRepo } from 'src/app/store/selectors/get-selected-project-dev-repo/get-selected-project-dev-repo';
+import { getSelectedProjectDevRepo } from 'app/store/selectors/get-selected-project-dev-repo/get-selected-project-dev-repo';
 
 export const getSelectedProjectDevRepoRemotePullErrorMessage = createSelector(
   getSelectedProjectDevRepo,

@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 import { Store } from '@ngrx/store';
-import * as actions from 'src/app/store/actions/_index';
-import * as interfaces from 'src/app/interfaces/_index';
-import { ValidationService } from 'src/app/services/validation.service';
+import * as actions from 'app/store/actions/_index';
+import * as interfaces from 'app/interfaces/_index';
+import { ValidationService } from 'app/services/validation.service';
 
 @Component({
   moduleId: module.id,

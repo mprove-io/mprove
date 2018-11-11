@@ -4,12 +4,12 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/auth.service';
-import { PrinterService } from 'src/app/services/printer.service';
-import * as actions from 'src/app/store/actions/_index';
-import * as enums from 'src/app/enums/_index';
-import * as interfaces from 'src/app/interfaces/_index';
-import * as selectors from 'src/app/store/selectors/_index';
+import { AuthService } from 'app/services/auth.service';
+import { PrinterService } from 'app/services/printer.service';
+import * as actions from 'app/store/actions/_index';
+import * as enums from 'app/enums/_index';
+import * as interfaces from 'app/interfaces/_index';
+import * as selectors from 'app/store/selectors/_index';
 
 @Injectable()
 export class StateResolver implements Resolve<Observable<boolean>> {

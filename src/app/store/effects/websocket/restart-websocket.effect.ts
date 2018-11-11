@@ -3,10 +3,10 @@ import { Actions, Effect } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import * as actions from 'src/app/store/actions/_index';
-import * as actionTypes from 'src/app/store/action-types';
-import * as interfaces from 'src/app/interfaces/_index';
-import * as selectors from 'src/app/store/selectors/_index';
+import * as actions from 'app/store/actions/_index';
+import * as actionTypes from 'app/store/action-types';
+import * as interfaces from 'app/interfaces/_index';
+import * as selectors from 'app/store/selectors/_index';
 
 @Injectable()
 export class RestartWebSocketEffect {

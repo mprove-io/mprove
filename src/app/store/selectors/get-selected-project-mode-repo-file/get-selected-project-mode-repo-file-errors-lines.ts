@@ -1,9 +1,9 @@
 import { createSelector } from '@ngrx/store';
 // tslint:disable-next-line:max-line-length
-import { getSelectedProjectModeRepoErrors } from 'src/app/store/selectors/get-selected-project-mode-repo-errors/get-selected-project-mode-repo-errors';
+import { getSelectedProjectModeRepoErrors } from 'app/store/selectors/get-selected-project-mode-repo-errors/get-selected-project-mode-repo-errors';
 // tslint:disable-next-line:max-line-length
-import { getSelectedProjectModeRepoFileId } from 'src/app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
-import * as api from 'src/app/api/_index';
+import { getSelectedProjectModeRepoFileId } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
+import * as api from 'app/api/_index';
 
 
 export const getSelectedProjectModeRepoFileErrorsLines = createSelector(

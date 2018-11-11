@@ -14,7 +14,9 @@
 @import '../node_modules/@covalent/core/common/platform.scss';
 @import '../node_modules/@covalent/core/theming/all-theme';
 @import '../node_modules/angular-tree-component/dist/angular-tree-component';
-@import '../node_modules/jquery-jcrop/css/jquery.Jcrop';
+// @import '../node_modules/jquery-jcrop/css/jquery.Jcrop';
+
+$mat-font-url: '../node_modules/@covalent/core/common/styles/font/';
 
 @include mat-core();
 

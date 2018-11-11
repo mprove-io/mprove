@@ -1,4 +1,4 @@
-import * as interfaces from 'src/app/interfaces/_index';
+import * as interfaces from 'app/interfaces/_index';
 
 export const authConfig: interfaces.AuthConfiguration = {
   clientID: 'yefb1L9FtIDQAvBgs5xrlC0Cyij4vngQ',

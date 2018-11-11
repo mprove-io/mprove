@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import { getLayoutChartId } from 'src/app/store/selectors/get-layout/get-layout-chart-id';
-import { getSelectedMconfigCharts } from 'src/app/store/selectors/get-selected-mconfig/get-selected-mconfig-charts';
-import * as api from 'src/app/api/_index';
+import { getLayoutChartId } from 'app/store/selectors/get-layout/get-layout-chart-id';
+import { getSelectedMconfigCharts } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig-charts';
+import * as api from 'app/api/_index';
 
 export const getSelectedMconfigChart = createSelector(
   getSelectedMconfigCharts,

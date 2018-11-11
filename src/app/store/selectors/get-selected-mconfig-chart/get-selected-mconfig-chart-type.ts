@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedMconfigChart } from 'src/app/store/selectors/get-selected-mconfig-chart/get-selected-mconfig-chart';
-import * as api from 'src/app/api/_index';
+import { getSelectedMconfigChart } from 'app/store/selectors/get-selected-mconfig-chart/get-selected-mconfig-chart';
+import * as api from 'app/api/_index';
 
 export const getSelectedMconfigChartType = createSelector(
   getSelectedMconfigChart,

@@ -9,10 +9,10 @@ import 'brace/theme/solarized_dark';
 import * as y from 'js-yaml';
 import { AceEditorComponent } from 'ng2-ace-editor';
 import { filter, take, tap } from 'rxjs/operators';
-import * as api from 'src/app/api/_index';
-import * as constants from 'src/app/constants/_index';
-import * as interfaces from 'src/app/interfaces/_index';
-import * as selectors from 'src/app/store/selectors/_index';
+import * as api from 'app/api/_index';
+import * as constants from 'app/constants/_index';
+import * as interfaces from 'app/interfaces/_index';
+import * as selectors from 'app/store/selectors/_index';
 
 @Component({
   moduleId: module.id,

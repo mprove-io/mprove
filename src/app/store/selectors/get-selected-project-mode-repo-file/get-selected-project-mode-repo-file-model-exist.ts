@@ -1,10 +1,10 @@
 // tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectModeRepoFile } from 'src/app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
-import { getSelectedProjectModeRepoFileIsModel } from 'src/app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-is-model';
-import { getSelectedProjectModeRepoStructModels } from 'src/app/store/selectors/get-selected-project-mode-repo-struct-models/get-selected-project-mode-repo-struct-models';
-import * as api from 'src/app/api/_index';
-import { MyRegex } from 'src/app/models/my-regex';
+import { getSelectedProjectModeRepoFile } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
+import { getSelectedProjectModeRepoFileIsModel } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-is-model';
+import { getSelectedProjectModeRepoStructModels } from 'app/store/selectors/get-selected-project-mode-repo-struct-models/get-selected-project-mode-repo-struct-models';
+import * as api from 'app/api/_index';
+import { MyRegex } from 'app/models/my-regex';
 
 export const getSelectedProjectModeRepoFileModelExist = createSelector(
   getSelectedProjectModeRepoFile,

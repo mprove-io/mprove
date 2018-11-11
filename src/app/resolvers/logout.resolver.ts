@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
-import * as enums from 'src/app/enums/_index';
-import * as services from 'src/app/services/_index';
+import * as enums from 'app/enums/_index';
+import * as services from 'app/services/_index';
 
 @Injectable()
 export class LogoutResolver implements Resolve<boolean> {

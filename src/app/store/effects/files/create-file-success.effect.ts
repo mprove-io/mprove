@@ -3,10 +3,10 @@ import { Actions, Effect } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { from, Observable } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
-import * as actionTypes from 'src/app/store/action-types';
-import * as actions from 'src/app/store/actions/_index';
-import * as enums from 'src/app/enums/_index';
-import * as services from 'src/app/services/_index';
+import * as actionTypes from 'app/store/action-types';
+import * as actions from 'app/store/actions/_index';
+import * as enums from 'app/enums/_index';
+import * as services from 'app/services/_index';
 
 @Injectable()
 export class CreateFileSuccessEffect {

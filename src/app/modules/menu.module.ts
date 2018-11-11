@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import * as components from 'src/app/components/_index';
-import { MyMaterialModule } from 'src/app/modules/my-material.module';
-import { SharedModule } from 'src/app/modules/shared.module';
-import { ValidationMsgModule } from 'src/app/modules/validation-msg.module';
+import * as components from 'app/components/_index';
+import { MyMaterialModule } from 'app/modules/my-material.module';
+import { SharedModule } from 'app/modules/shared.module';
+import { ValidationMsgModule } from 'app/modules/validation-msg.module';
 
 @NgModule({
   imports: [

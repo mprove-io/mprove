@@ -6,8 +6,8 @@ import * as fromRouter from '@ngrx/router-store';
  * notation packages up all of the exports into a single object.
  */
 import { ActionReducerMap } from '@ngrx/store';
-import * as interfaces from 'src/app/interfaces/_index';
-import * as reducers from 'src/app/store/reducers/_index';
+import * as interfaces from 'app/interfaces/_index';
+import * as reducers from 'app/store/reducers/_index';
 
 
 /**

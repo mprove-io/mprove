@@ -3,14 +3,14 @@ import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@a
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
-import * as actions from 'src/app/store/actions/_index';
-import * as enums from 'src/app/enums/_index';
-import * as interfaces from 'src/app/interfaces/_index';
-import * as selectors from 'src/app/store/selectors/_index';
-import { BackendService } from 'src/app/services/backend.service';
-import { LiveQueriesService } from 'src/app/services/live-queries.service';
-import { MyDialogService } from 'src/app/services/my-dialog.service';
-import { PrinterService } from 'src/app/services/printer.service';
+import * as actions from 'app/store/actions/_index';
+import * as enums from 'app/enums/_index';
+import * as interfaces from 'app/interfaces/_index';
+import * as selectors from 'app/store/selectors/_index';
+import { BackendService } from 'app/services/backend.service';
+import { LiveQueriesService } from 'app/services/live-queries.service';
+import { MyDialogService } from 'app/services/my-dialog.service';
+import { PrinterService } from 'app/services/printer.service';
 
 @Injectable()
 export class DashboardResolver implements Resolve<boolean | Observable<boolean>> {

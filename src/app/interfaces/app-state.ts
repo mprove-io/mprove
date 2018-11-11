@@ -1,10 +1,10 @@
 import * as fromRouter from '@ngrx/router-store';
-import * as api from 'src/app/api/_index';
-import { NgrxRouterStateUrl } from 'src/app/interfaces/ngrx-router-state-url';
-import { LayoutState } from 'src/app/interfaces/state/layout-state';
-import { UserState } from 'src/app/interfaces/state/user-state';
-import { WebSocketState } from 'src/app/interfaces/state/websocket-state';
-import { LqState } from 'src/app/interfaces/state/lq-state';
+import * as api from 'app/api/_index';
+import { NgrxRouterStateUrl } from 'app/interfaces/ngrx-router-state-url';
+import { LayoutState } from 'app/interfaces/state/layout-state';
+import { UserState } from 'app/interfaces/state/user-state';
+import { WebSocketState } from 'app/interfaces/state/websocket-state';
+import { LqState } from 'app/interfaces/state/lq-state';
 
 
 /**

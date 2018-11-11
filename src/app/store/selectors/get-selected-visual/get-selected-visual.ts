@@ -1,12 +1,12 @@
 // tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
-import { getSelectedMconfigChart } from 'src/app/store/selectors/get-selected-mconfig-chart/get-selected-mconfig-chart';
-import { getSelectedMconfig } from 'src/app/store/selectors/get-selected-mconfig/get-selected-mconfig';
-import { getSelectedProjectModeRepoModel } from 'src/app/store/selectors/get-selected-project-mode-repo-model/get-selected-project-mode-repo-model';
-import { getSelectedQuery } from 'src/app/store/selectors/get-selected-query/get-selected-query';
-import { getUserAlias } from 'src/app/store/selectors/get-user/get-user-alias';
-import * as api from 'src/app/api/_index';
-import * as interfaces from 'src/app/interfaces/_index';
+import { getSelectedMconfigChart } from 'app/store/selectors/get-selected-mconfig-chart/get-selected-mconfig-chart';
+import { getSelectedMconfig } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig';
+import { getSelectedProjectModeRepoModel } from 'app/store/selectors/get-selected-project-mode-repo-model/get-selected-project-mode-repo-model';
+import { getSelectedQuery } from 'app/store/selectors/get-selected-query/get-selected-query';
+import { getUserAlias } from 'app/store/selectors/get-user/get-user-alias';
+import * as api from 'app/api/_index';
+import * as interfaces from 'app/interfaces/_index';
 
 export const getSelectedVisual = createSelector(
   getSelectedMconfig,

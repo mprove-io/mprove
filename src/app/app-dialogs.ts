@@ -1,5 +1,5 @@
 // tslint:disable:max-line-length
-import * as dialogs from 'src/app/dialogs/_index';
+import * as dialogs from 'app/dialogs/_index';
 
 export const APP_DIALOGS = [
   dialogs.ErDialogComponent,

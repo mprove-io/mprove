@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
-import { getProjectsState } from 'src/app/store/selectors/get-state/get-projects-state';
-import * as api from 'src/app/api/_index';
+import { getProjectsState } from 'app/store/selectors/get-state/get-projects-state';
+import * as api from 'app/api/_index';
 
 export const getProjectsNotDeletedIds = createSelector(
   getProjectsState,

@@ -1,4 +1,4 @@
-import * as api from 'src/app/api/_index';
+import * as api from 'app/api/_index';
 
 export const roundEdgesChartTypes = [
   api.ChartTypeEnum.BarVertical,

@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
-import { getWebSocketState } from 'src/app/store/selectors/get-state/get-websocket-state';
-import * as interfaces from 'src/app/interfaces/_index';
+import { getWebSocketState } from 'app/store/selectors/get-state/get-websocket-state';
+import * as interfaces from 'app/interfaces/_index';
 
 export const getWebSocketInitId = createSelector(
   getWebSocketState,

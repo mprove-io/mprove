@@ -4,15 +4,15 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { interval as observableInterval, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import * as actions from 'src/app/store/actions/_index';
-import * as configs from 'src/app/configs/_index';
-import * as enums from 'src/app/enums/_index';
-import * as interfaces from 'src/app/interfaces/_index';
-import { MyError } from 'src/app/models/my-error';
-import * as selectors from 'src/app/store/selectors/_index';
-import { PrinterService } from 'src/app/services/printer.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { StateResolver } from 'src/app/resolvers/state.resolver';
+import * as actions from 'app/store/actions/_index';
+import * as configs from 'app/configs/_index';
+import * as enums from 'app/enums/_index';
+import * as interfaces from 'app/interfaces/_index';
+import { MyError } from 'app/models/my-error';
+import * as selectors from 'app/store/selectors/_index';
+import { PrinterService } from 'app/services/printer.service';
+import { AuthService } from 'app/services/auth.service';
+import { StateResolver } from 'app/resolvers/state.resolver';
 
 @Injectable()
 export class DoCheckService {

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import * as pipes from 'src/app/pipes/_index';
+import * as pipes from 'app/pipes/_index';
 
 const pipesArray = [
   pipes.CapitalizePipe,

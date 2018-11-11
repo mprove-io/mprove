@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { isNumeric } from 'rxjs/internal/util/isNumeric';
-import * as api from 'src/app/api/_index';
+import * as api from 'app/api/_index';
 
 @Injectable()
 export class DataService {

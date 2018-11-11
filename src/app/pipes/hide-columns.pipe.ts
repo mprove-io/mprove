@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import * as api from 'src/app/api/_index';
+import * as api from 'app/api/_index';
 
 @Pipe({ name: 'hideColumnsPipe' })
 

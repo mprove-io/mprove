@@ -4,8 +4,8 @@ import { Actions, Effect } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
-import * as api from 'src/app/api/_index';
-import * as actionTypes from 'src/app/store/action-types';
+import * as api from 'app/api/_index';
+import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class FailEffect {

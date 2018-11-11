@@ -1,9 +1,9 @@
 import { createSelector } from '@ngrx/store';
-import { getLayoutMode } from 'src/app/store/selectors/get-layout/get-layout-mode';
-import { getSelectedProjectRepos } from 'src/app/store/selectors/get-selected-project-repos/get-selected-project-repos';
-import { getUserId } from 'src/app/store/selectors/get-user/get-user-id';
-import * as api from 'src/app/api/_index';
-import * as enums from 'src/app/enums/_index';
+import { getLayoutMode } from 'app/store/selectors/get-layout/get-layout-mode';
+import { getSelectedProjectRepos } from 'app/store/selectors/get-selected-project-repos/get-selected-project-repos';
+import { getUserId } from 'app/store/selectors/get-user/get-user-id';
+import * as api from 'app/api/_index';
+import * as enums from 'app/enums/_index';
 
 export const getSelectedProjectModeRepo = createSelector(
   getSelectedProjectRepos,

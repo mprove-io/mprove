@@ -3,8 +3,8 @@ import { Actions, Effect } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import * as actions from 'src/app/store/actions/_index';
-import * as actionTypes from 'src/app/store/action-types';
+import * as actions from 'app/store/actions/_index';
+import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class PingReceivedEffect {

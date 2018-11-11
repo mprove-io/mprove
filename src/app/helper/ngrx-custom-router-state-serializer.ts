@@ -1,6 +1,6 @@
 import { RouterStateSnapshot } from '@angular/router';
 import { RouterStateSerializer } from '@ngrx/router-store';
-import * as interfaces from 'src/app/interfaces/_index';
+import * as interfaces from 'app/interfaces/_index';
 
 
 /**

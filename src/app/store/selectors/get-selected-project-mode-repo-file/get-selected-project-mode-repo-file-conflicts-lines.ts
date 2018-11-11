@@ -1,8 +1,8 @@
 import { createSelector } from '@ngrx/store';
 // tslint:disable-next-line:max-line-length
-import { getSelectedProjectModeRepoFileId } from 'src/app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
+import { getSelectedProjectModeRepoFileId } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
 // tslint:disable-next-line:max-line-length
-import { getSelectedProjectModeRepoConflicts } from 'src/app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-conflicts';
+import { getSelectedProjectModeRepoConflicts } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-conflicts';
 
 export const getSelectedProjectModeRepoFileConflictsLines = createSelector(
   getSelectedProjectModeRepoConflicts,

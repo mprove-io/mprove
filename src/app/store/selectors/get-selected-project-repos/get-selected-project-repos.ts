@@ -1,8 +1,8 @@
 // tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectId } from 'src/app/store/selectors/get-selected-project/get-selected-project-id';
-import { getReposState } from 'src/app/store/selectors/get-state/get-repos-state';
-import * as api from 'src/app/api/_index';
+import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
+import { getReposState } from 'app/store/selectors/get-state/get-repos-state';
+import * as api from 'app/api/_index';
 
 export const getSelectedProjectRepos = createSelector(
   getReposState,

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import * as guards from 'src/app/guards/_index';
-import * as resolvers from 'src/app/resolvers/_index';
-import * as components from 'src/app/components/_index';
+import * as guards from 'app/guards/_index';
+import * as resolvers from 'app/resolvers/_index';
+import * as components from 'app/components/_index';
 
 export const APP_ROUTES: Routes = [
   {

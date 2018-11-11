@@ -1,6 +1,6 @@
 import { ActionReducer } from '@ngrx/store';
-import * as actions from 'src/app/store/actions/_index';
-import * as actionTypes from 'src/app/store/action-types';
+import * as actions from 'app/store/actions/_index';
+import * as actionTypes from 'app/store/action-types';
 
 const host = window.location.host;
 

@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectId } from 'src/app/store/selectors/get-selected-project/get-selected-project-id';
-import { getMembersState } from 'src/app/store/selectors/get-state/get-members-state';
-import * as api from 'src/app/api/_index';
+import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
+import { getMembersState } from 'app/store/selectors/get-state/get-members-state';
+import * as api from 'app/api/_index';
 
 export const getSelectedProjectMembers = createSelector(
   getMembersState,

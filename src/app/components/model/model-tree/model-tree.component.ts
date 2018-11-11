@@ -3,12 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { IActionMapping, KEYS, TreeComponent, TreeNode } from 'angular-tree-component';
 import { debounceTime, filter, map, take, tap } from 'rxjs/operators';
-import * as actions from 'src/app/store/actions/_index';
-import * as api from 'src/app/api/_index';
-import * as configs from 'src/app/configs/_index';
-import * as interfaces from 'src/app/interfaces/_index';
-import * as selectors from 'src/app/store/selectors/_index';
-import * as services from 'src/app/services/_index';
+import * as actions from 'app/store/actions/_index';
+import * as api from 'app/api/_index';
+import * as configs from 'app/configs/_index';
+import * as interfaces from 'app/interfaces/_index';
+import * as selectors from 'app/store/selectors/_index';
+import * as services from 'app/services/_index';
 import { setTimeout } from 'timers';
 
 @Component({

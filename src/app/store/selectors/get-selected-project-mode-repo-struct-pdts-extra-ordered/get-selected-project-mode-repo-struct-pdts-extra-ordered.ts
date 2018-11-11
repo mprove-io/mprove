@@ -1,9 +1,9 @@
 // tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
-import * as api from 'src/app/api/_index';
-import * as interfaces from 'src/app/interfaces/_index';
-import { getQueriesState } from 'src/app/store/selectors/get-state/get-queries-state';
-import { getSelectedProjectModeRepoPdtsSorted } from 'src/app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-pdts-sorted';
+import * as api from 'app/api/_index';
+import * as interfaces from 'app/interfaces/_index';
+import { getQueriesState } from 'app/store/selectors/get-state/get-queries-state';
+import { getSelectedProjectModeRepoPdtsSorted } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-pdts-sorted';
 
 export const getSelectedProjectModeRepoStructPdtsExtraOrdered = createSelector(
   getQueriesState,

@@ -1,8 +1,8 @@
 import { TreeDraggedElement } from 'angular-tree-component';
-import * as configs from 'src/app/configs/_index';
-import * as guards from 'src/app/guards/_index';
-import * as resolvers from 'src/app/resolvers/_index';
-import * as services from 'src/app/services/_index';
+import * as configs from 'app/configs/_index';
+import * as guards from 'app/guards/_index';
+import * as resolvers from 'app/resolvers/_index';
+import * as services from 'app/services/_index';
 
 export const APP_PROVIDERS = [
   TreeDraggedElement,

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material';
-import * as api from 'src/app/api/_index';
-import * as services from 'src/app/services/_index';
+import * as api from 'app/api/_index';
+import * as services from 'app/services/_index';
 
 @Component({
   moduleId: module.id,

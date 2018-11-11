@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import * as api from 'src/app/api/_index';
-import * as interfaces from 'src/app/interfaces/_index';
+import * as api from 'app/api/_index';
+import * as interfaces from 'app/interfaces/_index';
 
 @Component({
   moduleId: module.id,

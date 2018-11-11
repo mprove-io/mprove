@@ -6,14 +6,14 @@ import { RouterModule } from '@angular/router';
 import { TreeModule } from 'angular-tree-component';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { ClipboardModule } from 'ngx-clipboard';
-import * as components from 'src/app/components/_index';
-import { ColorPickerModule } from 'src/app/modules/colorpicker/colorpicker.module';
-import { FractionModule } from 'src/app/modules/fraction.module';
-import { MyCovalentModule } from 'src/app/modules/my-covalent.module';
-import { MyMaterialModule } from 'src/app/modules/my-material.module';
-import { SharedModule } from 'src/app/modules/shared.module';
-import { ValidationMsgModule } from 'src/app/modules/validation-msg.module';
-import { VisualModule } from 'src/app/modules/visual.module';
+import * as components from 'app/components/_index';
+import { ColorPickerModule } from 'app/modules/colorpicker/colorpicker.module';
+import { FractionModule } from 'app/modules/fraction.module';
+import { MyCovalentModule } from 'app/modules/my-covalent.module';
+import { MyMaterialModule } from 'app/modules/my-material.module';
+import { SharedModule } from 'app/modules/shared.module';
+import { ValidationMsgModule } from 'app/modules/validation-msg.module';
+import { VisualModule } from 'app/modules/visual.module';
 
 @NgModule({
   imports: [

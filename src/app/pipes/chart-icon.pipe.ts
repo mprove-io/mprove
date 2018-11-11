@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import * as api from 'src/app/api/_index';
-import * as enums from 'src/app/enums/_index';
+import * as api from 'app/api/_index';
+import * as enums from 'app/enums/_index';
 
 @Pipe({ name: 'chartIcon' })
 export class ChartIconPipe implements PipeTransform {

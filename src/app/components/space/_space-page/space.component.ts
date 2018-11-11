@@ -2,8 +2,8 @@ import { Location } from '@angular/common';
 import { AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
-import * as enums from 'src/app/enums/_index';
-import * as services from 'src/app/services/_index';
+import * as enums from 'app/enums/_index';
+import * as services from 'app/services/_index';
 
 @Component({
   selector: 'm-space',
