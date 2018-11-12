@@ -2,8 +2,7 @@ import { ErrorHandler, Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import * as Raven from 'raven-js';
 import { MyDialogService } from 'app/services/my-dialog.service';
-
-const main = MAIN;
+import { environment } from '@env/environment';
 
 @Injectable()
 export class MyErrorHandler extends ErrorHandler {
@@ -29,7 +28,7 @@ export class MyErrorHandler extends ErrorHandler {
       };
     }
 
-    if (main === true) {
+    if (environment.canUseRaven === true) {
       Raven.captureException(err);
       err.data.event_id = Raven.lastEventId();
     }

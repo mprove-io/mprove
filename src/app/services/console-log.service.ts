@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import * as configs from 'app/configs/_index';
 import * as enums from 'app/enums/_index';
 import { IPrinter } from 'app/services/printer.service';
+import { environment } from '@env/environment';
 
 // Declare the console as an ambient value so that TypeScript doesn't complain.
 declare let console: any;
-
-const main = MAIN;
 
 // I log values to the ambient console object.
 @Injectable()
@@ -58,7 +57,8 @@ export class ConsoleLogService implements IPrinter {
 
   log(bus: any, ...args: any[]): void {
 
-    if ((<any>configs.printerConfig)[enums.busEnum[bus]] !== false && !main) { // logs if true or undefined
+    if ((<any>configs.printerConfig)[enums.busEnum[bus]] !== false &&
+      environment.canPrintToConsole === true) { // logs if true or undefined
 
       if (console && console.log) {
         console.log((<any>enums.busEnum)[enums.busEnum[bus]], ...args);

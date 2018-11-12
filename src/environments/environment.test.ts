@@ -3,8 +3,23 @@ const packageJson = require('../../package.json');
 export const environment = {
   appName: 'Mprove',
   envName: 'TEST',
+
+  local: false,
   production: false,
   test: true,
+
+  canUseRaven: false,
+  canClickOkOnErrorDialog: false, 
+  canPrintToConsole: false,
+  canUseStoreLogger: false,
+  canUseStoreFreeze: false,
+  canUseSegmentMetaReducer: false,
+
+  staticAssetsBaseUrl: 'http://localhost:8080',  
+  dynamicAssetsBaseUrl: 'http://localhost:8080',
+  httpUrl: 'http://localhost:8080/api/v1',
+  websocketUrl: 'ws://localhost:8080/api/v1/webchat/',  
+
   i18nPrefix: '',
   versions: {
     app: packageJson.version,

@@ -23,7 +23,7 @@
   <button mat-button
           (click)="forumClick()">Forum</button>
 
-  <button *ngIf="!main"
+  <button *ngIf="canClickOk"
           mat-button
           (click)="okClick()">Ok</button>
 </mat-dialog-actions>

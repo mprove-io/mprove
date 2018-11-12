@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-
-const main = MAIN;
+import { environment } from '@env/environment';
 
 @Component({
   moduleId: module.id,
@@ -16,7 +15,7 @@ export class ErDialogComponent implements OnInit {
   name: string;
   message: string;
 
-  main = main;
+  canClickOk = environment.canClickOkOnErrorDialog;
 
   constructor(
     public dialogRef: MatDialogRef<ErDialogComponent>,

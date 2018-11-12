@@ -1,7 +1,7 @@
 const express = require('express');
 const compression = require('compression');
 
-const CONTEXT = '/angular-ngrx-material-starter';
+const CONTEXT = '/web-app';
 const PORT = 4000;
 
 const app = express();
