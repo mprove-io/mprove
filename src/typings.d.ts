@@ -6,5 +6,3 @@ interface NodeModule {
 
 declare var Paddle: any;
 declare var analytics: any;
-
-declare module '*';
