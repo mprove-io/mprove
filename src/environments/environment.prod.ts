@@ -3,7 +3,7 @@ const packageJson = require('../../package.json');
 export const environment = {
   appName: 'Mprove',
   envName: 'PROD',
-  
+
   local: false,
   production: true,
   test: false,
@@ -17,7 +17,7 @@ export const environment = {
 
   dynamicAssetsBaseUrl: 'http://localhost:8080',
   httpUrl: 'http://localhost:8080/api/v1',
-  websocketUrl: 'ws://localhost:8080/api/v1/webchat/',  
+  websocketUrl: 'ws://localhost:8080/api/v1/webchat/',
 
   i18nPrefix: '/angular-ngrx-material-starter',
   versions: {

@@ -11,6 +11,14 @@ import { PrinterService } from 'app/services/printer.service';
 @Injectable()
 export class ValidationService {
 
+  constructor(
+    private backendService: BackendService,
+    private printer: PrinterService,
+    private router: Router
+  ) {
+
+  }
+
   static getValidatorErrorMessage(validatorName: string, validatorValue?: any) {
     let config = new Map([
       ['required', 'Required'],
@@ -94,14 +102,6 @@ export class ValidationService {
 
     return (control.value.length > 0 && control.value.length <= 1048576) ?
       null : { moreThenOneMB: true };
-  }
-
-  constructor(
-    private backendService: BackendService,
-    private printer: PrinterService,
-    private router: Router
-  ) {
-
   }
 
   projectNameCheck(control: FormControl) {
