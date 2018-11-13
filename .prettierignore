@@ -1,8 +1,2 @@
 package.json
-*.html
-*.scss
-*.css
-*.yaml
-*.json
-*.js
-*.md
+src/app/api

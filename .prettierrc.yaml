@@ -4,7 +4,7 @@
 arrowParens: avoid
 bracketSpacing: true
 # disableLanguages: ["vue"]
-endOfLine": lf # default: auto
+endOfLine: lf # default: auto
 # eslintIntegration: false
 htmlWhitespaceSensitivity: css
 # prettier.ignorePath: .prettierignore
