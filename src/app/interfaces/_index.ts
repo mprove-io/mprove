@@ -8,6 +8,7 @@ export * from './app-state';
 export * from './auth-configuration';
 export * from './dashboard-group';
 export * from './dry';
+export * from './environment';
 export * from './fraction-update';
 export * from './model-field-extra';
 export * from './model-group';

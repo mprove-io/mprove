@@ -1,6 +1,9 @@
-export const environment = {
+import * as interfaces from 'app/interfaces/_index';
+import * as enums from 'app/enums/_index';
+
+export const environment: interfaces.Environment = {
   appName: 'Mprove',
-  envName: 'LOCAL',
+  envName: enums.EnvNameEnum.LOCAL,
 
   local: true,
   production: false,
