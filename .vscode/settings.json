@@ -1,0 +1,50 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "typescript.referencesCodeLens.enabled": true,
+  "tslint.ignoreDefinitionFiles": false,
+  "TodoParser": {
+    "folderExclude": [
+      "node_modules",
+      "dist",
+      "todos"
+    ]
+  },
+  "cSpell.words": [
+    "backend",
+    "blockml",
+    "colorpicker",
+    "injectable",
+    "pdts",
+    "preloading",
+    "repos",
+    "sortings",
+    "timezones",
+    "validators",
+    "webhook",
+    "whitelisted",
+    "yesno",
+    "bahmutov",
+    "codelyzer",
+    "compodoc",
+    "devkit",
+    "devtools",
+    "fontawesome",
+    "fortawesome",
+    "hammerjs",
+    "jasminewd",
+    "jcrop",
+    "mprove",
+    "ngtools",
+    "polyfill",
+    "polyfills",
+    "preaccessibility",
+    "precy",
+    "swimlane",
+    "uglifyjs",
+    "webchat"
+  ]
+}
