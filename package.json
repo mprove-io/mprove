@@ -22,7 +22,7 @@
     "ci": "npm run clean && npm run format:test && ng lint && ng test --configuration=test --browsers ChromeTravisCi --code-coverage && ng e2e && npm run cy:ci && npm run accessibility && npm run build:prod -- --deploy-url /web-app/ --base-href /web-app",
     "release": "standard-version && git push --follow-tags origin master",
     "format:write": "prettier {src,e2e,cypress}/**/*.{ts,json,md,scss} --write",
-    "format:test": "prettier {src,e2e,cypress}/**/*.{ts,json,md,scss} --list-different",
+    "format:test": "prettier {src,e2e,cypress}/**/*.{ts} --list-different",
     "analyze": "npm run clean && npm run build:prod -- --stats-json && webpack-bundle-analyzer ./dist/stats.json",
     "cy:open": "cypress open",
     "cy:run": "cypress run",

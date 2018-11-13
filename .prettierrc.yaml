@@ -1,6 +1,23 @@
-useTabs: false
-printWidth: 80
-tabWidth: 2
-singleQuote: true
-trailingComma: none
+# see vscode settings prettier.*
+# https://github.com/prettier/prettier-vscode
+
+arrowParens: avoid
+bracketSpacing: true
+# disableLanguages: ["vue"]
+endOfLine": lf # default: auto
+# eslintIntegration: false
+htmlWhitespaceSensitivity: css
+# prettier.ignorePath: .prettierignore
+# jsxBracketSameLine: false
+# jsxSingleQuote: false
+# parser: babylon
+printWidth: 120 # default: 80
+proseWrap: preserve
+# requireConfig: false
 semi: true
+singleQuote: true # default: false
+# stylelintIntegration: false
+tabWidth: 2
+trailingComma: none
+# tslintIntegration: false
+useTabs: false
