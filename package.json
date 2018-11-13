@@ -8,7 +8,7 @@
     "docker-start": "ng serve  --host 0.0.0.0",
     "build": "ng build",
     "test": "npm run lint && ng test --configuration=test",
-    "lint": "ng lint",
+    "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts' 'e2e/**/*.ts'",
     "e2e": "ng e2e",
     "watch": "ng test --configuration=test --browsers ChromeHeadless --watch",
     "build:prod": "ng build --prod --vendor-chunk",
