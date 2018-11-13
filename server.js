@@ -3,7 +3,7 @@ const compression = require('compression');
 path = require('path');
 
 const CONTEXT = '/';
-const PORT = 8088;
+const PORT = 4200;
 
 const app = express();
 
