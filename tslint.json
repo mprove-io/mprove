@@ -1,5 +1,5 @@
 {
-  "extends": ["./tslint-base.json"],
+  "extends": ["tslint:recommended", "tslint-config-prettier", "./tslint-base.json"],
   "rules": {
   }
 }

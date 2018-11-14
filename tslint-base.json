@@ -1,5 +1,5 @@
 {
-  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "extends": [],
   "rules": {
     "arrow-return-shorthand": true,
     "callable-types": true,
@@ -86,10 +86,6 @@
       "check-separator",
       "check-type"
     ],
-    "quotemark": [
-      true,
-      "single"
-    ]  
-  
+    "quotemark": [true, "single"]
   }
 }
