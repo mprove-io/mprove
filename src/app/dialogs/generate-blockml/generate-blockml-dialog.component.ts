@@ -55,7 +55,6 @@ export class GenerateBlockmlDialogComponent implements OnInit, AfterViewInit {
           .replace(/^\s\s/g, '')
           .replace(/^\s\s\s\s[-]/g, '  -')
           .replace(/^\s\s\s\s\s\s[-]/g, '    -')
-          // tslint:disable-next-line:quotemark
           .replace(/'''/g, "'")
       )
       .slice(1)

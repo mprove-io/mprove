@@ -1,4 +1,3 @@
-// tslint:disable max-line-length
 import { Injectable, Injector } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import * as api from 'app/api/_index';

@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store';
-// tslint:disable-next-line:max-line-length
+
 import { getSelectedProjectModeRepoDashboardsNotTempNotHidden } from 'app/store/selectors/get-selected-project-mode-repo-dashboards/get-selected-project-mode-repo-dashboards-not-temp-not-hidden';
 import * as api from 'app/api/_index';
 

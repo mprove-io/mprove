@@ -1,4 +1,3 @@
-// tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
 import * as api from 'app/api/_index';
 import * as interfaces from 'app/interfaces/_index';

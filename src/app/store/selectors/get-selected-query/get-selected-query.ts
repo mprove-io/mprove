@@ -1,4 +1,3 @@
-// tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
 import { getLayoutQueryId } from 'app/store/selectors/get-layout/get-layout-query-id';
 import { getQueriesState } from 'app/store/selectors/get-state/get-queries-state';

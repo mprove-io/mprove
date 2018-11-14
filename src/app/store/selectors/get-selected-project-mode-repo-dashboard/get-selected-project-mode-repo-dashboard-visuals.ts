@@ -1,9 +1,9 @@
 import { createSelector } from '@ngrx/store';
-// tslint:disable-next-line:max-line-length
+
 import { getSelectedProjectModeRepoDashboardReports } from 'app/store/selectors/get-selected-project-mode-repo-dashboard/get-selected-project-mode-repo-dashboard-reports';
-// tslint:disable-next-line:max-line-length
+
 import { getSelectedProjectModeRepoId } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-id';
-// tslint:disable-next-line:max-line-length
+
 import { getSelectedProjectModeRepoStructId } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-struct-id';
 import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
 import { getMconfigsState } from 'app/store/selectors/get-state/get-mconfigs-state';

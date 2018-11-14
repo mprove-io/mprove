@@ -1,6 +1,6 @@
 import { createSelector } from '@ngrx/store';
 import { getLayoutDashboardId } from 'app/store/selectors/get-layout/get-layout-dashboard-id';
-// tslint:disable-next-line:max-line-length
+
 import { getSelectedProjectModeRepoId } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-id';
 import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
 import { getDashboardsState } from 'app/store/selectors/get-state/get-dashboards-state';

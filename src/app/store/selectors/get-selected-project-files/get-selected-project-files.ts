@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store';
-// tslint:disable-next-line:max-line-length
+
 import { getSelectedProjectModeRepoId } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-id';
 import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
 import { getFilesState } from 'app/store/selectors/get-state/get-files-state';

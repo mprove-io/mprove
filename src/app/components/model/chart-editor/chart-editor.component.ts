@@ -1273,7 +1273,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.barPaddingForm.valid &&
           this.xAxisLabelForm.valid &&
           this.yAxisLabelForm.valid &&
-          // tslint:disable-next-line:max-line-length
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleForm.valid &&

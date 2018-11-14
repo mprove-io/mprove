@@ -1,4 +1,3 @@
-// tslint:disable:max-line-length
 import * as dialogs from 'app/dialogs/_index';
 
 export const APP_DIALOGS = [

@@ -1,4 +1,3 @@
-// tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
 import { getSelectedProjectModeRepoFile } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
 import { getSelectedProjectModeRepoFileIsView } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-is-view';

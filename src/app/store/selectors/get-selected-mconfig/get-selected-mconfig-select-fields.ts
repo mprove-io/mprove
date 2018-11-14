@@ -1,6 +1,5 @@
 import { createSelector } from '@ngrx/store';
 import { getSelectedMconfigSelect } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig-select';
-// tslint:disable-next-line:max-line-length
 import { getSelectedProjectModeRepoModelFields } from 'app/store/selectors/get-selected-project-mode-repo-model/get-selected-project-mode-repo-model-fields';
 import * as api from 'app/api/_index';
 

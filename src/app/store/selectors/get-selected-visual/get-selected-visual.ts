@@ -1,4 +1,3 @@
-// tslint:disable:max-line-length
 import { createSelector } from '@ngrx/store';
 import { getSelectedMconfigChart } from 'app/store/selectors/get-selected-mconfig-chart/get-selected-mconfig-chart';
 import { getSelectedMconfig } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig';
