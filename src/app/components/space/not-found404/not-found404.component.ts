@@ -3,7 +3,7 @@ import * as services from 'app/services/_index';
 
 @Component({
   selector: 'm-not-found',
-  template: '<h3>Error 404: Not found</h3>'
+  templateUrl: './not-found404.component.html'
 })
 export class NotFound404Component {
   constructor(public pageTitle: services.PageTitleService) {
