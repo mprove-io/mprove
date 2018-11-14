@@ -8,15 +8,15 @@ export const getSelectedProjectThemesRestricted = createSelector(
   getSelectedProjectId,
   getSelectedProjectAnalyticsPlanId,
   (projectId: string, analyticsPlanId: number) => {
-
     let restricted = false;
 
-    if (projectId !== constants.DEMO &&
+    if (
+      projectId !== constants.DEMO &&
       projectId !== 'Mprove' &&
       projectId !== 'Wood' &&
       projectId !== 'futurama' &&
-      projectId !== 'Test') {
-
+      projectId !== 'Test'
+    ) {
       if (analyticsPlanId === 519436) {
         restricted = true;
       }

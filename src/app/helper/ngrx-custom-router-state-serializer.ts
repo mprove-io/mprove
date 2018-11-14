@@ -2,7 +2,6 @@ import { RouterStateSnapshot } from '@angular/router';
 import { RouterStateSerializer } from '@ngrx/router-store';
 import * as interfaces from 'app/interfaces/_index';
 
-
 /**
  * The RouterStateSerializer takes the current RouterStateSnapshot
  * and returns any pertinent information needed. The snapshot contains
@@ -14,7 +13,6 @@ import * as interfaces from 'app/interfaces/_index';
 
 export class NgrxCustomRouterStateSerializer
   implements RouterStateSerializer<interfaces.NgrxRouterStateUrl> {
-
   serialize(routerState: RouterStateSnapshot): interfaces.NgrxRouterStateUrl {
     const { url } = routerState;
     const queryParams = routerState.root.queryParams;

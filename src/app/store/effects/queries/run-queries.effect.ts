@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class RunQueriesEffect {
-
   @Effect() runQueries$: Observable<Action> = this.actions$
     .ofType(actionTypes.RUN_QUERIES)
     .pipe(
-      mergeMap((action: actions.RunQueriesAction) => this.backendService.runQueries(action.payload)
-        .pipe(
+      mergeMap((action: actions.RunQueriesAction) =>
+        this.backendService.runQueries(action.payload).pipe(
           map(body => new actions.RunQueriesSuccessAction(body.payload)),
           catchError(e => of(new actions.RunQueriesFailAction({ error: e })))
         )
@@ -23,6 +22,6 @@ export class RunQueriesEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class CreateMconfigAction implements Action {
   readonly type = actionTypes.CREATE_MCONFIG;
 
-  constructor(public payload: api.CreateMconfigRequestBodyPayload) {
-  }
+  constructor(public payload: api.CreateMconfigRequestBodyPayload) {}
 }

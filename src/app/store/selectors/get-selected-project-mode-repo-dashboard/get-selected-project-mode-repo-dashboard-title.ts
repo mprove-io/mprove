@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoDashboardTitle = createSelector(
   getSelectedProjectModeRepoDashboard,
-  (dashboard: api.Dashboard) => dashboard ? dashboard.title : undefined
+  (dashboard: api.Dashboard) => (dashboard ? dashboard.title : undefined)
 );

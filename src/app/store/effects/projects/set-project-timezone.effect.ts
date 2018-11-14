@@ -9,22 +9,23 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SetProjectTimezoneEffect {
-
   @Effect() setProjectTimezone$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_PROJECT_TIMEZONE)
     .pipe(
       mergeMap((action: actions.SetProjectTimezoneAction) =>
-        this.backendService.setProjectTimezone(action.payload)
-          .pipe(
-            map(body => new actions.SetProjectTimezoneSuccessAction(body.payload)),
-            catchError(e => of(new actions.SetProjectTimezoneFailAction({ error: e })))
+        this.backendService.setProjectTimezone(action.payload).pipe(
+          map(
+            body => new actions.SetProjectTimezoneSuccessAction(body.payload)
+          ),
+          catchError(e =>
+            of(new actions.SetProjectTimezoneFailAction({ error: e }))
           )
+        )
       )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

@@ -8,17 +8,15 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class RegenerateRepoRemoteWebhookSuccessEffect {
-
-  @Effect() regenerateRepoRemoteWebhookSuccess$: Observable<Action> = this.actions$
+  @Effect() regenerateRepoRemoteWebhookSuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.REGENERATE_REPO_REMOTE_WEBHOOK_SUCCESS)
     .pipe(
-      mergeMap((action: actions.RegenerateRepoRemoteWebhookSuccessAction) => from([
-        new actions.UpdateReposStateAction([action.payload.dev_repo]),
-      ])
+      mergeMap((action: actions.RegenerateRepoRemoteWebhookSuccessAction) =>
+        from([new actions.UpdateReposStateAction([action.payload.dev_repo])])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

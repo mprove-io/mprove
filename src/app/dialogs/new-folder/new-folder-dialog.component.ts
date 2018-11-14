@@ -14,47 +14,42 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'new-folder-dialog.component.html'
 })
 export class NewFolderDialogComponent implements OnInit {
-
   newFolderForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<NewFolderDialogComponent>,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { node_id: string },
-
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnInit() {
     this.buildForm();
   }
 
   buildForm(): void {
-
     this.newFolderForm = this.fb.group({
-      'name': [
+      name: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(20)
-        ])
-      ],
+        Validators.compose([Validators.required, Validators.maxLength(20)])
+      ]
     });
-
   }
 
   onSubmit(fv: any) {
-
     let repo: api.Repo;
-    this.store.select(selectors.getSelectedProjectModeRepo)
+    this.store
+      .select(selectors.getSelectedProjectModeRepo)
       .pipe(take(1))
-      .subscribe(x => repo = x);
+      .subscribe(x => (repo = x));
 
-    this.store.dispatch(new actions.CreateFolderAction({
-      project_id: repo.project_id,
-      repo_id: repo.repo_id,
-      node_id: this.data.node_id,
-      name: fv['name'],
-    }));
+    this.store.dispatch(
+      new actions.CreateFolderAction({
+        project_id: repo.project_id,
+        repo_id: repo.repo_id,
+        node_id: this.data.node_id,
+        name: fv['name']
+      })
+    );
   }
 }

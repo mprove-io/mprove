@@ -11,7 +11,6 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class UserLogoutEffect {
-
   @Effect() userLogout$: Observable<Action> = this.actions$
     .ofType(actionTypes.LOGOUT_USER)
     .pipe(
@@ -22,11 +21,10 @@ export class UserLogoutEffect {
         this.router.navigate(['soft']);
 
         if (this.auth.authenticated()) {
-          return this.backendService.logoutUser({ empty: true })
-            .pipe(
-              map(body => new actions.LogoutUserSuccessAction(body.payload)),
-              catchError(e => of(new actions.LogoutUserFailAction({ error: e })))
-            );
+          return this.backendService.logoutUser({ empty: true }).pipe(
+            map(body => new actions.LogoutUserSuccessAction(body.payload)),
+            catchError(e => of(new actions.LogoutUserFailAction({ error: e })))
+          );
         } else {
           return of({ type: 'EMPTY ACTION' });
         }
@@ -47,7 +45,5 @@ export class UserLogoutEffect {
     private store: Store<interfaces.AppState>,
     private auth: services.AuthService,
     private cookieService: services.CookieService
-  ) {
-  }
-
+  ) {}
 }

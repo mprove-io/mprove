@@ -8,17 +8,13 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SetRepoRemoteUrlSuccessEffect {
-
   @Effect() setRepoRemoteUrlSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_REPO_REMOTE_URL_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SetRepoRemoteUrlSuccessAction) => from([
-        new actions.UpdateReposStateAction([action.payload.dev_repo]),
-      ])
+      mergeMap((action: actions.SetRepoRemoteUrlSuccessAction) =>
+        from([new actions.UpdateReposStateAction([action.payload.dev_repo])])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

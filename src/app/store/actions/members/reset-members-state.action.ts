@@ -4,6 +4,5 @@ import * as actionTypes from 'app/store/action-types';
 export class ResetMembersStateAction implements Action {
   readonly type = actionTypes.RESET_MEMBERS_STATE;
 
-  constructor() {
-  }
+  constructor() {}
 }

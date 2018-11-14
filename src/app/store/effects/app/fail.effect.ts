@@ -9,7 +9,6 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class FailEffect {
-
   @Effect() fail$: Observable<Action> = this.actions$
     .ofType(
       actionTypes.GET_STATE_FAIL,
@@ -61,27 +60,29 @@ export class FailEffect {
       actionTypes.CONFIRM_FAIL,
       actionTypes.PONG_FAIL,
 
-      actionTypes.LOCK_SHOW_FAIL)
+      actionTypes.LOCK_SHOW_FAIL
+    )
     .pipe(
-      filter((action: any) =>
-        !action.payload.error.toString().includes('Request not sent because not authenticated')),
+      filter(
+        (action: any) =>
+          !action.payload.error
+            .toString()
+            .includes('Request not sent because not authenticated')
+      ),
       tap((action: any) => {
-
         if (
           action.payload.error &&
           action.payload.error.data &&
           action.payload.error.data.response &&
           action.payload.error.data.response.body &&
           action.payload.error.data.response.body.info &&
-          action.payload.error.data.response.body.info.status === api.ServerResponseStatusEnum.MaintenanceMode
+          action.payload.error.data.response.body.info.status ===
+            api.ServerResponseStatusEnum.MaintenanceMode
         ) {
-
           let url = this.router.routerState.snapshot.url;
 
           window.location.href = url;
-
         } else {
-
           let err = action.payload.error;
 
           if (!err.data) {
@@ -107,8 +108,5 @@ export class FailEffect {
       })
     );
 
-  constructor(
-    private actions$: Actions,
-    private router: Router) {
-  }
+  constructor(private actions$: Actions, private router: Router) {}
 }

@@ -4,8 +4,8 @@
  */
 import * as actions from 'app/store/actions/_index';
 
-export type LayoutActions
-  = actions.UpdateLayoutProjectIdAction
+export type LayoutActions =
+  | actions.UpdateLayoutProjectIdAction
   | actions.SetLayoutModeDevAction
   | actions.SetLayoutModeProdAction
   | actions.SetLayoutNeedSaveTrueAction
@@ -18,5 +18,4 @@ export type LayoutActions
   | actions.UpdateLayoutChartIdAction
   | actions.UpdateLayoutDryAction
   | actions.ResetLayoutStateAction
-  | actions.UpdateLayoutLastWebsocketMessageTimestampAction
-  ;
+  | actions.UpdateLayoutLastWebsocketMessageTimestampAction;

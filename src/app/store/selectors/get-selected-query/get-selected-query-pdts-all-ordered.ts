@@ -9,16 +9,11 @@ export const getSelectedQueryPdtsAllOrdered = createSelector(
   getSelectedQuery,
   getQueriesState, // getSelectedProjectModeRepoStructPdts,
   getSelectedProjectModeRepoPdtsSorted,
-  (
-    query: api.Query,
-    queries: api.Query[],
-    ptdsSorted: string[]) => {
-
+  (query: api.Query, queries: api.Query[], ptdsSorted: string[]) => {
     let queryPdtsOrdered: api.Query[] = [];
     let queryPdts: api.Query[] = [];
 
     if (query && queries && ptdsSorted && query.pdt_deps_all.length > 0) {
-
       query.pdt_deps_all.forEach(dep => {
         let queryPdt = queries.find(q => q.pdt_id === dep);
 

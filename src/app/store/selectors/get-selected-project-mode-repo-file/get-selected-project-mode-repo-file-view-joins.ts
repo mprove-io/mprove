@@ -11,11 +11,9 @@ export const getSelectedProjectModeRepoFileViewJoins = createSelector(
   getSelectedProjectModeRepoStructModels,
   getSelectedProjectModeRepoFileIsView,
   (selectedFile: api.CatalogFile, models: api.Model[], fileIsView) => {
+    let viewJoins: Array<{ model: api.Model; join_as: string }> = [];
 
-    let viewJoins: Array<{ model: api.Model, join_as: string }> = [];
-
-    if (selectedFile && models && (fileIsView !== undefined)) {
-
+    if (selectedFile && models && fileIsView !== undefined) {
       let r = MyRegex.CAPTURE_FILE_ID_AND_EXT().exec(selectedFile.name);
 
       if (r) {
@@ -23,14 +21,15 @@ export const getSelectedProjectModeRepoFileViewJoins = createSelector(
         let ext = r[2];
 
         models.forEach(model => {
-
           model.nodes.forEach(node => {
-            if (node.node_class === api.ModelNodeNodeClassEnum.Join && node.view_name === id) {
+            if (
+              node.node_class === api.ModelNodeNodeClassEnum.Join &&
+              node.view_name === id
+            ) {
               viewJoins.push({ model: model, join_as: node.id });
               return;
             }
           });
-
         });
       }
     }

@@ -8,10 +8,8 @@ export const getSelectedProjectRepos = createSelector(
   getReposState,
   getSelectedProjectId,
   (repos: api.Repo[], projectId: string) => {
-
     if (repos && projectId) {
       return repos.filter((repo: api.Repo) => repo.project_id === projectId);
-
     } else {
       return [];
     }

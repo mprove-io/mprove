@@ -12,15 +12,14 @@ export const getSelectedProjectModeRepoModel = createSelector(
   getSelectedProjectModeRepoId,
   getLayoutModelId,
   (models, projectId, repoId, modelId) => {
-
     if (models && projectId && repoId && modelId) {
-      let modelIndex = models.findIndex((model: api.Model) =>
-        model.model_id === modelId &&
-        model.project_id === projectId &&
-        model.repo_id === repoId
+      let modelIndex = models.findIndex(
+        (model: api.Model) =>
+          model.model_id === modelId &&
+          model.project_id === projectId &&
+          model.repo_id === repoId
       );
       return modelIndex >= 0 ? models[modelIndex] : undefined;
-
     } else {
       return undefined;
     }

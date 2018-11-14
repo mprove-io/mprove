@@ -6,14 +6,12 @@ import { environment } from '@env/environment';
 
 @Injectable()
 export class MyErrorHandler extends ErrorHandler {
-
   dialog: MatDialog = this.injector.get<MatDialog>(MatDialog);
 
   constructor(
     private injector: Injector,
-    private myDialogService: MyDialogService,
+    private myDialogService: MyDialogService
   ) {
-
     super();
   }
 

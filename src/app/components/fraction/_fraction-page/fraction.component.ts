@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
 import * as api from 'app/api/_index';
 
 @Component({
@@ -8,7 +14,6 @@ import * as api from 'app/api/_index';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionComponent {
-
   modelFieldResultEnum = api.ModelFieldResultEnum;
 
   @Input() fieldResult: api.ModelFieldResultEnum; // DashboardFieldResultEnum is the same as ModelFieldResultEnum
@@ -19,16 +24,13 @@ export class FractionComponent {
 
   @Output() fractionUpdate = new EventEmitter();
 
-  constructor() {
-  }
+  constructor() {}
 
   fractionChange(fraction: api.Fraction) {
     // console.log(fraction);
-    this.fractionUpdate.emit(
-      {
-        fraction: fraction,
-        fractionIndex: this.fractionIndex
-      }
-    );
+    this.fractionUpdate.emit({
+      fraction: fraction,
+      fractionIndex: this.fractionIndex
+    });
   }
 }

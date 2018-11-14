@@ -6,16 +6,13 @@ import * as api from 'app/api/_index';
 export const getSelectedMconfig = createSelector(
   getMconfigsState,
   getLayoutMconfigId,
-  (
-    mconfigs: api.Mconfig[],
-    mconfigId: string) => {
-
+  (mconfigs: api.Mconfig[], mconfigId: string) => {
     if (mconfigs && mconfigId) {
-
-      let mconfig = mconfigs.find((mc: api.Mconfig) => mc.mconfig_id === mconfigId);
+      let mconfig = mconfigs.find(
+        (mc: api.Mconfig) => mc.mconfig_id === mconfigId
+      );
 
       return mconfig ? mconfig : undefined;
-
     } else {
       return undefined;
     }

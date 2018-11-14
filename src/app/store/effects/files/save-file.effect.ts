@@ -9,20 +9,19 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SaveFileEffect {
-
   @Effect() saveFile$: Observable<Action> = this.actions$
     .ofType(actionTypes.SAVE_FILE)
     .pipe(
-      mergeMap((action: actions.SaveFileAction) => this.backendService.saveFile(action.payload)
-        .pipe(
+      mergeMap((action: actions.SaveFileAction) =>
+        this.backendService.saveFile(action.payload).pipe(
           map(body => new actions.SaveFileSuccessAction(body.payload)),
           catchError(e => of(new actions.SaveFileFailAction({ error: e })))
-        ))
+        )
+      )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

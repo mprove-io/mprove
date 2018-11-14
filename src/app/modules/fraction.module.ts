@@ -31,12 +31,8 @@ import { ValidationMsgModule } from 'app/modules/validation-msg.module';
     components.FractionDayOfWeekIndexComponent,
     components.FractionMonthNameComponent,
     components.FractionQuarterOfYearComponent,
-    components.FractionTsComponent,
+    components.FractionTsComponent
   ],
-  exports: [
-    components.FractionComponent
-  ]
+  exports: [components.FractionComponent]
 })
-
-export class FractionModule {
-}
+export class FractionModule {}

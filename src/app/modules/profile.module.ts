@@ -19,21 +19,17 @@ import { ValidationMsgModule } from 'app/modules/validation-msg.module';
     ValidationMsgModule,
     FormsModule,
     FlexLayoutModule,
-    MyCovalentModule,
+    MyCovalentModule
   ],
   declarations: [
     components.ProfileComponent,
     components.EditNameComponent,
-    components.UpdateUserTimezoneComponent,
+    components.UpdateUserTimezoneComponent
     // ImageUploadComponent,
   ],
   entryComponents: [
     // ImageUploadComponent
   ],
-  exports: [
-    components.ProfileComponent
-  ],
+  exports: [components.ProfileComponent]
 })
-
-export class ProfileModule {
-}
+export class ProfileModule {}

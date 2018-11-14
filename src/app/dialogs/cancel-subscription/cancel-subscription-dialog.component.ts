@@ -15,7 +15,6 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'cancel-subscription-dialog.component.html'
 })
 export class CancelSubscriptionDialogComponent implements OnInit, OnDestroy {
-
   selectedProject: api.Project;
   selectedProjectSub: Subscription;
 
@@ -24,14 +23,14 @@ export class CancelSubscriptionDialogComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<CancelSubscriptionDialogComponent>,
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-  }
-
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnInit(): void {
-    this.selectedProjectSub = this.store.select(selectors.getSelectedProject)
+    this.selectedProjectSub = this.store
+      .select(selectors.getSelectedProject)
       .pipe(filter(v => !!v))
-      .subscribe(x => this.selectedProject = x);
+      .subscribe(x => (this.selectedProject = x));
 
     this.buildForm();
   }
@@ -41,22 +40,20 @@ export class CancelSubscriptionDialogComponent implements OnInit, OnDestroy {
   }
 
   buildForm(): void {
-
     this.cancelSubscriptionForm = this.fb.group({
-      'cancelMessage': [
+      cancelMessage: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(255)
-        ])
-      ],
+        Validators.compose([Validators.required, Validators.maxLength(255)])
+      ]
     });
   }
 
   onSubmit(fv: any) {
-    this.store.dispatch(new actions.CancelSubscriptionsAction({
-      project_id: this.selectedProject.project_id,
-      cancel_message: fv['cancelMessage'],
-    }));
+    this.store.dispatch(
+      new actions.CancelSubscriptionsAction({
+        project_id: this.selectedProject.project_id,
+        cancel_message: fv['cancelMessage']
+      })
+    );
   }
 }

@@ -9,21 +9,24 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class RevertRepoToLastCommitEffect {
-
   @Effect() revertRepoToLastCommit$: Observable<Action> = this.actions$
     .ofType(actionTypes.REVERT_REPO_TO_LAST_COMMIT)
     .pipe(
       mergeMap((action: actions.RevertRepoToLastCommitAction) =>
-        this.backendService.revertRepoToLastCommit(action.payload)
-          .pipe(
-            map(body => new actions.RevertRepoToLastCommitSuccessAction(body.payload)),
-            catchError(e => of(new actions.RevertRepoToLastCommitFailAction({ error: e })))
+        this.backendService.revertRepoToLastCommit(action.payload).pipe(
+          map(
+            body =>
+              new actions.RevertRepoToLastCommitSuccessAction(body.payload)
+          ),
+          catchError(e =>
+            of(new actions.RevertRepoToLastCommitFailAction({ error: e }))
           )
+        )
       )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

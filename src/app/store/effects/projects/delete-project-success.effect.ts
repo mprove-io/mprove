@@ -9,20 +9,18 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class DeleteProjectSuccessEffect {
-
   @Effect() deleteProjectSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.DELETE_PROJECT_SUCCESS)
     .pipe(
-      mergeMap((action: actions.DeleteProjectSuccessAction) => from([
-        new actions.UpdateProjectsStateAction([action.payload.deleted_project]),
-      ])
+      mergeMap((action: actions.DeleteProjectSuccessAction) =>
+        from([
+          new actions.UpdateProjectsStateAction([
+            action.payload.deleted_project
+          ])
+        ])
       ),
       tap(() => this.router.navigate(['project-deleted']))
     );
 
-  constructor(
-    private actions$: Actions,
-    private router: Router) {
-  }
-
+  constructor(private actions$: Actions, private router: Router) {}
 }

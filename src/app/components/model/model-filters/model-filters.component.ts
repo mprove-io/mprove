@@ -14,31 +14,36 @@ import * as services from 'app/services/_index';
   templateUrl: 'model-filters.component.html',
   styleUrls: ['model-filters.component.scss']
 })
-
 export class ModelFiltersComponent {
-
   fields: api.ModelField[];
-  fields$ = this.store.select(selectors.getSelectedProjectModeRepoModelFields).pipe(filter(v => !!v), tap(
-    x => this.fields = x));
-
-  filters: api.Filter[] = [];
-  filters$ = this.store.select(selectors.getSelectedMconfigFilters)
+  fields$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModelFields)
     .pipe(
       filter(v => !!v),
-      tap(x => this.filters = JSON.parse(JSON.stringify(x)))
+      tap(x => (this.fields = x))
     );
+
+  filters: api.Filter[] = [];
+  filters$ = this.store.select(selectors.getSelectedMconfigFilters).pipe(
+    filter(v => !!v),
+    tap(x => (this.filters = JSON.parse(JSON.stringify(x))))
+  );
 
   constructor(
     private store: Store<interfaces.AppState>,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
     private structService: services.StructService,
-    private navigateService: services.NavigateService) {
-  }
+    private navigateService: services.NavigateService
+  ) {}
 
   getOrAndFractions(filt: api.Filter): api.Fraction[] {
     return [
-      ...filt.fractions.filter(fraction => fraction.operator === api.FractionOperatorEnum.Or),
-      ...filt.fractions.filter(fraction => fraction.operator === api.FractionOperatorEnum.And)
+      ...filt.fractions.filter(
+        fraction => fraction.operator === api.FractionOperatorEnum.Or
+      ),
+      ...filt.fractions.filter(
+        fraction => fraction.operator === api.FractionOperatorEnum.And
+      )
     ];
   }
 
@@ -51,7 +56,9 @@ export class ModelFiltersComponent {
     let fieldIndex = this.fields.findIndex(field => field.id === fieldId);
 
     return this.fields[fieldIndex].group_label
-      ? this.fields[fieldIndex].group_label + ' ' + this.fields[fieldIndex].label
+      ? this.fields[fieldIndex].group_label +
+          ' ' +
+          this.fields[fieldIndex].label
       : this.fields[fieldIndex].label;
   }
 
@@ -69,7 +76,6 @@ export class ModelFiltersComponent {
         ...newMconfig.filters.slice(0, filterIndex),
         ...newMconfig.filters.slice(filterIndex + 1)
       ];
-
     } else {
       // should remove fraction
       let fractions = this.getOrAndFractions(filt);
@@ -79,13 +85,9 @@ export class ModelFiltersComponent {
         ...fractions.slice(fractionIndex + 1)
       ];
 
-      let newFilter = Object.assign(
-        {},
-        filt,
-        {
-          fractions: newFractions,
-        }
-      );
+      let newFilter = Object.assign({}, filt, {
+        fractions: newFractions
+      });
 
       newMconfig.filters = [
         ...newMconfig.filters.slice(0, filterIndex),
@@ -96,12 +98,21 @@ export class ModelFiltersComponent {
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
-    this.store.dispatch(new actions.CreateMconfigAndQueryAction({
-      mconfig: newMconfig,
-      query: newQuery
-    }));
+    this.store.dispatch(
+      new actions.CreateMconfigAndQueryAction({
+        mconfig: newMconfig,
+        query: newQuery
+      })
+    );
 
-    setTimeout(() => this.navigateService.navigateSwitch(newMconfig.mconfig_id, newQuery.query_id), 1);
+    setTimeout(
+      () =>
+        this.navigateService.navigateSwitch(
+          newMconfig.mconfig_id,
+          newQuery.query_id
+        ),
+      1
+    );
   }
 
   addFraction(filt: api.Filter, filterIndex: number) {
@@ -111,18 +122,11 @@ export class ModelFiltersComponent {
 
     let fraction = this.structService.generateEmptyFraction();
 
-    let newFractions = [
-      ...fractions,
-      fraction,
-    ];
+    let newFractions = [...fractions, fraction];
 
-    let newFilter = Object.assign(
-      {},
-      filt,
-      {
-        fractions: newFractions,
-      }
-    );
+    let newFilter = Object.assign({}, filt, {
+      fractions: newFractions
+    });
 
     newMconfig.filters = [
       ...newMconfig.filters.slice(0, filterIndex),
@@ -132,27 +136,31 @@ export class ModelFiltersComponent {
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
-    this.store.dispatch(new actions.CreateMconfigAndQueryAction({
-      mconfig: newMconfig,
-      query: newQuery
-    }));
+    this.store.dispatch(
+      new actions.CreateMconfigAndQueryAction({
+        mconfig: newMconfig,
+        query: newQuery
+      })
+    );
 
     setTimeout(
-      () => this.navigateService.navigateSwitch(
-        newMconfig.mconfig_id,
-        newQuery.query_id),
-      1);
+      () =>
+        this.navigateService.navigateSwitch(
+          newMconfig.mconfig_id,
+          newQuery.query_id
+        ),
+      1
+    );
   }
 
   updateFraction(
     filt: api.Filter,
     filterIndex: number,
-    event: interfaces.FractionUpdate) {
-
+    event: interfaces.FractionUpdate
+  ) {
     let [newMconfig, newQuery] = this.structService.generateMconfigAndQuery();
 
     let fractions = this.getOrAndFractions(filt);
-
 
     let newFractions = [
       ...fractions.slice(0, event.fractionIndex),
@@ -160,13 +168,9 @@ export class ModelFiltersComponent {
       ...fractions.slice(event.fractionIndex + 1)
     ];
 
-    let newFilter = Object.assign(
-      {},
-      filt,
-      {
-        fractions: newFractions,
-      }
-    );
+    let newFilter = Object.assign({}, filt, {
+      fractions: newFractions
+    });
 
     newMconfig.filters = [
       ...newMconfig.filters.slice(0, filterIndex),
@@ -176,13 +180,21 @@ export class ModelFiltersComponent {
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
-    this.store.dispatch(new actions.CreateMconfigAndQueryAction({ mconfig: newMconfig, query: newQuery })); //
+    this.store.dispatch(
+      new actions.CreateMconfigAndQueryAction({
+        mconfig: newMconfig,
+        query: newQuery
+      })
+    ); //
 
     setTimeout(
-      () => this.navigateService.navigateSwitch(
-        newMconfig.mconfig_id,
-        newQuery.query_id),
-      1);
+      () =>
+        this.navigateService.navigateSwitch(
+          newMconfig.mconfig_id,
+          newQuery.query_id
+        ),
+      1
+    );
   }
 
   fractionHasDuplicates(filt: api.Filter, fraction: api.Fraction) {

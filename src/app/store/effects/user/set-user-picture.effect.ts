@@ -9,21 +9,21 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SetUserPictureEffect {
-
   @Effect() saveUserPicture$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_USER_PICTURE)
     .pipe(
-      mergeMap((action: actions.SetUserPictureAction) => this.backendService.setUserPicture(action.payload)
-        .pipe(
+      mergeMap((action: actions.SetUserPictureAction) =>
+        this.backendService.setUserPicture(action.payload).pipe(
           map(body => new actions.SetUserPictureSuccessAction(body.payload)),
-          catchError(e => of(new actions.SetUserPictureFailAction({ error: e })))
+          catchError(e =>
+            of(new actions.SetUserPictureFailAction({ error: e }))
+          )
         )
       )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

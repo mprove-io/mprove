@@ -15,13 +15,14 @@ const initialState: interfaces.LayoutState = {
   query_id: undefined,
   chart_id: undefined,
   dry: undefined,
-  last_ws_msg_ts: undefined,
+  last_ws_msg_ts: undefined
 };
 
-export function layoutReducer(state = initialState, action: types.LayoutActions): interfaces.LayoutState {
-
+export function layoutReducer(
+  state = initialState,
+  action: types.LayoutActions
+): interfaces.LayoutState {
   switch (action.type) {
-
     case actionTypes.UPDATE_LAYOUT_PROJECT_ID: {
       return Object.assign({}, state, { project_id: action.payload });
     }
@@ -81,6 +82,5 @@ export function layoutReducer(state = initialState, action: types.LayoutActions)
     default: {
       return state;
     }
-
   }
 }

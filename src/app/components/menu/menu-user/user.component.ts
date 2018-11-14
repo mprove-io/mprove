@@ -12,32 +12,40 @@ import * as selectors from 'app/store/selectors/_index';
   moduleId: module.id,
   selector: 'm-user',
   templateUrl: 'user.component.html',
-  styleUrls: ['./user.component.scss'],
+  styleUrls: ['./user.component.scss']
 })
-
 export class UserComponent {
-
   dynamicAssetsBaseUrl: string = configs.pathConfig.dynamicAssetsBaseUrl;
   staticAssetsBaseUrl: string = configs.pathConfig.staticAssetsBaseUrl;
 
-  userFirstName$ = this.store.select(selectors.getUserFirstName).pipe(filter(v => !!v));
+  userFirstName$ = this.store
+    .select(selectors.getUserFirstName)
+    .pipe(filter(v => !!v));
 
-  userLastName$ = this.store.select(selectors.getUserLastName).pipe(filter(v => !!v));
+  userLastName$ = this.store
+    .select(selectors.getUserLastName)
+    .pipe(filter(v => !!v));
 
-  userPictureUrlBig$ = this.store.select(selectors.getUserPictureUrlBig).pipe(filter(v => !!v));
+  userPictureUrlBig$ = this.store
+    .select(selectors.getUserPictureUrlBig)
+    .pipe(filter(v => !!v));
 
-  themesAreRestricted$ = this.store.select(selectors.getSelectedProjectThemesRestricted); // no filter here
+  themesAreRestricted$ = this.store.select(
+    selectors.getSelectedProjectThemesRestricted
+  ); // no filter here
 
   constructor(
     private store: Store<interfaces.AppState>,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
     iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer) {
-
+    sanitizer: DomSanitizer
+  ) {
     iconRegistry.addSvgIcon(
       'logout',
-      sanitizer.bypassSecurityTrustResourceUrl(this.staticAssetsBaseUrl + '/assets/app/icons/logout.svg'));
-
+      sanitizer.bypassSecurityTrustResourceUrl(
+        this.staticAssetsBaseUrl + '/assets/app/icons/logout.svg'
+      )
+    );
   }
 
   logout() {

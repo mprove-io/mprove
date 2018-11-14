@@ -10,18 +10,18 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'nav-blockml.component.html',
   styleUrls: ['nav-blockml.component.scss']
 })
-
 export class NavBlockmlComponent {
-
   projectId: string;
-  projectId$ = this.store.select(selectors.getLayoutProjectId).pipe(filter(v => !!v), tap(
-    x => this.projectId = x));
+  projectId$ = this.store.select(selectors.getLayoutProjectId).pipe(
+    filter(v => !!v),
+    tap(x => (this.projectId = x))
+  );
 
   mode: enums.LayoutModeEnum;
-  mode$ = this.store.select(selectors.getLayoutMode).pipe(filter(v => !!v), tap(
-    x => this.mode = x));
+  mode$ = this.store.select(selectors.getLayoutMode).pipe(
+    filter(v => !!v),
+    tap(x => (this.mode = x))
+  );
 
-  constructor(
-    private store: Store<interfaces.AppState>) {
-  }
+  constructor(private store: Store<interfaces.AppState>) {}
 }

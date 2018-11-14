@@ -1,7 +1,6 @@
 import * as actions from 'app/store/actions/_index';
 
-export type ProjectsActions
-  = actions.UpdateProjectsStateAction
+export type ProjectsActions =
+  | actions.UpdateProjectsStateAction
   | actions.RemoveProjectAction
-  | actions.ResetProjectsStateAction
-  ;
+  | actions.ResetProjectsStateAction;

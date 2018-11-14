@@ -17,14 +17,11 @@ export interface IPrinter {
 // specific logger implementation, like the ConsoleLogService (below).
 @Injectable()
 export class PrinterService implements IPrinter {
-
-  assert(...args: any[]): void { }
-  error(...args: any[]): void { }
-  group(...args: any[]): void { }
-  groupEnd(...args: any[]): void { }
-  info(...args: any[]): void { }
-  log(...args: any[]): void { }
-  warn(...args: any[]): void { }
-
+  assert(...args: any[]): void {}
+  error(...args: any[]): void {}
+  group(...args: any[]): void {}
+  groupEnd(...args: any[]): void {}
+  info(...args: any[]): void {}
+  log(...args: any[]): void {}
+  warn(...args: any[]): void {}
 }
-

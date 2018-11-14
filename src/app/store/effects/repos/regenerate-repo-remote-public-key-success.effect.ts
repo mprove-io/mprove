@@ -8,17 +8,15 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class RegenerateRepoRemotePublicKeySuccessEffect {
-
-  @Effect() regenerateRepoRemotePublicKeySuccess$: Observable<Action> = this.actions$
+  @Effect() regenerateRepoRemotePublicKeySuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.REGENERATE_REPO_REMOTE_PUBLIC_KEY_SUCCESS)
     .pipe(
-      mergeMap((action: actions.RegenerateRepoRemotePublicKeySuccessAction) => from([
-        new actions.UpdateReposStateAction([action.payload.dev_repo]),
-      ])
+      mergeMap((action: actions.RegenerateRepoRemotePublicKeySuccessAction) =>
+        from([new actions.UpdateReposStateAction([action.payload.dev_repo])])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

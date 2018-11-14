@@ -4,5 +4,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectClientEmail = createSelector(
   getSelectedProject,
-  (project: api.Project) => project ? project.client_email : undefined
+  (project: api.Project) => (project ? project.client_email : undefined)
 );

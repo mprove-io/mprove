@@ -4,5 +4,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedMconfigSelect = createSelector(
   getSelectedMconfig,
-  (mconfig: api.Mconfig) => mconfig ? mconfig.select : undefined
+  (mconfig: api.Mconfig) => (mconfig ? mconfig.select : undefined)
 );

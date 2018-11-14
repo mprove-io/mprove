@@ -8,11 +8,11 @@ export const getSelectedProjectUserIsAdmin = createSelector(
   getSelectedProjectMembers,
   getUserId,
   (members, userId) => {
-
     if (members && userId) {
-      let userIndex = members.findIndex((member: api.Member) => member.member_id === userId);
+      let userIndex = members.findIndex(
+        (member: api.Member) => member.member_id === userId
+      );
       return userIndex >= 0 ? members[userIndex].is_admin : undefined;
-
     } else {
       return undefined;
     }

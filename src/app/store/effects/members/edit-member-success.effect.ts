@@ -8,18 +8,13 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class EditMemberSuccessEffect {
-
   @Effect() editMemberSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.EDIT_MEMBER_SUCCESS)
     .pipe(
-      mergeMap((action: actions.EditMemberSuccessAction) => from([
-        new actions.UpdateMembersStateAction([action.payload.member]),
-      ])
+      mergeMap((action: actions.EditMemberSuccessAction) =>
+        from([new actions.UpdateMembersStateAction([action.payload.member])])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

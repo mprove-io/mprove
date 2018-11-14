@@ -4,6 +4,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SetUserPictureFailAction implements Action {
   readonly type = actionTypes.SET_USER_PICTURE_FAIL;
 
-  constructor(public payload: { error: any }) {
-  }
+  constructor(public payload: { error: any }) {}
 }

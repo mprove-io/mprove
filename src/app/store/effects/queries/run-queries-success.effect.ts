@@ -8,17 +8,15 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class RunQueriesSuccessEffect {
-
   @Effect() runQueriesSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.RUN_QUERIES_SUCCESS)
     .pipe(
-      mergeMap((action: actions.RunQueriesSuccessAction) => from([
-        new actions.UpdateQueriesStateAction(action.payload.running_queries),
-      ])
+      mergeMap((action: actions.RunQueriesSuccessAction) =>
+        from([
+          new actions.UpdateQueriesStateAction(action.payload.running_queries)
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

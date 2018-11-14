@@ -4,16 +4,13 @@ import { Directive, HostListener } from '@angular/core';
   selector: '[singleClick]'
 })
 export class SingleClickDirective {
-
-  constructor() { }
+  constructor() {}
 
   @HostListener('click', ['$event'])
   clickEvent(event: any) {
     event.srcElement.setAttribute('disabled', true);
-    setTimeout(
-      () => {
-        event.srcElement.removeAttribute('disabled');
-      },
-      500);
+    setTimeout(() => {
+      event.srcElement.removeAttribute('disabled');
+    }, 500);
   }
 }

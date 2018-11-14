@@ -9,14 +9,12 @@ import { ActionReducerMap } from '@ngrx/store';
 import * as interfaces from 'app/interfaces/_index';
 import * as reducers from 'app/store/reducers/_index';
 
-
 /**
  * Our state is composed of a map of action reducer functions.
  * These reducer functions are called with each dispatched action
  * and the current or initial state and return a new immutable state.
  */
 export const APP_REDUCERS_OBJECT: ActionReducerMap<interfaces.AppState> = {
-
   router: fromRouter.routerReducer,
 
   dashboards: reducers.dashboardsReducer,
@@ -33,5 +31,5 @@ export const APP_REDUCERS_OBJECT: ActionReducerMap<interfaces.AppState> = {
   subscriptions: reducers.subscriptionsReducer,
   user: reducers.userReducer,
   webSocket: reducers.webSocketReducer,
-  lq: reducers.lqReducer,
+  lq: reducers.lqReducer
 };

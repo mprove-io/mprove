@@ -8,18 +8,20 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SwitchAnalyticsSubscriptionPlanSuccessEffect {
-
-  @Effect() switchAnalyticsSubscriptionPlanSuccess$: Observable<Action> = this.actions$
+  @Effect() switchAnalyticsSubscriptionPlanSuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SwitchAnalyticsSubscriptionPlanSuccessAction) => from([
-        new actions.UpdateSubscriptionsStateAction([action.payload.subscription]),
-        new actions.UpdateProjectsStateAction([action.payload.project]),
-      ])
+      mergeMap((action: actions.SwitchAnalyticsSubscriptionPlanSuccessAction) =>
+        from([
+          new actions.UpdateSubscriptionsStateAction([
+            action.payload.subscription
+          ]),
+          new actions.UpdateProjectsStateAction([action.payload.project])
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

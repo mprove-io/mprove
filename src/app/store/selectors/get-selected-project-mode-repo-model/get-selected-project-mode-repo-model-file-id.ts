@@ -15,12 +15,13 @@ export const getSelectedProjectModeRepoModelFileId = createSelector(
     files: api.CatalogFile[],
     projectId: string,
     repoId: string,
-    modelId: string) => {
-
-    let file = files.find((f: api.CatalogFile) =>
-      f.project_id === projectId &&
-      f.repo_id === repoId &&
-      f.name === `${modelId}.model`
+    modelId: string
+  ) => {
+    let file = files.find(
+      (f: api.CatalogFile) =>
+        f.project_id === projectId &&
+        f.repo_id === repoId &&
+        f.name === `${modelId}.model`
     );
 
     return file ? file.file_id : undefined;

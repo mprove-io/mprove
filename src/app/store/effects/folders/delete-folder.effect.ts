@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class DeleteFolderEffect {
-
   @Effect() deleteFolder$: Observable<Action> = this.actions$
     .ofType(actionTypes.DELETE_FOLDER)
     .pipe(
-      mergeMap((action: actions.DeleteFolderAction) => this.backendService.deleteFolder(action.payload)
-        .pipe(
+      mergeMap((action: actions.DeleteFolderAction) =>
+        this.backendService.deleteFolder(action.payload).pipe(
           map(body => new actions.DeleteFolderSuccessAction(body.payload)),
           catchError(e => of(new actions.DeleteFolderFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class DeleteFolderEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

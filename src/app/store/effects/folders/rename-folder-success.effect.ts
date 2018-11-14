@@ -12,30 +12,36 @@ import * as selectors from 'app/store/selectors/_index';
 
 @Injectable()
 export class RenameFolderSuccessEffect {
-
   @Effect() renameFolderSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.RENAME_FOLDER_SUCCESS)
     .pipe(
       mergeMap((action: actions.RenameFolderSuccessAction) => {
-
         let selectedProjectId: string;
-        this.store.select(selectors.getLayoutProjectId)
+        this.store
+          .select(selectors.getLayoutProjectId)
           .pipe(take(1))
-          .subscribe(id => selectedProjectId = id);
+          .subscribe(id => (selectedProjectId = id));
 
         let selectedMode: enums.LayoutModeEnum;
-        this.store.select(selectors.getLayoutMode)
+        this.store
+          .select(selectors.getLayoutMode)
           .pipe(take(1))
-          .subscribe(x => selectedMode = x);
+          .subscribe(x => (selectedMode = x));
 
-        this.router.navigate(['/project', selectedProjectId, 'mode', selectedMode, 'blockml']);
+        this.router.navigate([
+          '/project',
+          selectedProjectId,
+          'mode',
+          selectedMode,
+          'blockml'
+        ]);
 
         return from([
           new actions.UpdateFilesStateAction([
             ...action.payload.deleted_folder_dev_files,
-            ...action.payload.new_folder_dev_files,
+            ...action.payload.new_folder_dev_files
           ]),
-          new actions.ProcessStructsAction([action.payload.dev_struct]),
+          new actions.ProcessStructsAction([action.payload.dev_struct])
         ]);
       })
     );
@@ -43,7 +49,6 @@ export class RenameFolderSuccessEffect {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private store: Store<interfaces.AppState>) {
-  }
-
+    private store: Store<interfaces.AppState>
+  ) {}
 }

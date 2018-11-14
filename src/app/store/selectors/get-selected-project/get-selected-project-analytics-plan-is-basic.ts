@@ -5,7 +5,6 @@ import { getSelectedProjectAnalyticsPlanId } from 'app/store/selectors/get-selec
 export const getSelectedProjectAnalyticsPlanIsBasic = createSelector(
   getSelectedProjectAnalyticsPlanId,
   (analyticsPlanId: number) => {
-
     return analyticsPlanId === 533802;
   }
 );

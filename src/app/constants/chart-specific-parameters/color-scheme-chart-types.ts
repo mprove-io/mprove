@@ -20,5 +20,5 @@ export const colorSchemeChartTypes = [
   api.ChartTypeEnum.TreeMap,
   api.ChartTypeEnum.NumberCard,
   api.ChartTypeEnum.Gauge,
-  api.ChartTypeEnum.GaugeLinear,
+  api.ChartTypeEnum.GaugeLinear
 ];

@@ -16,13 +16,14 @@ const initialState: interfaces.UserState = {
   server_ts: null,
 
   loading: false,
-  loaded: false,
+  loaded: false
 };
 
-export function userReducer(state = initialState, action: types.UserActions): interfaces.UserState {
-
+export function userReducer(
+  state = initialState,
+  action: types.UserActions
+): interfaces.UserState {
   switch (action.type) {
-
     case actionTypes.UPDATE_USER_STATE: {
       if (action.payload.server_ts > state.server_ts) {
         return Object.assign({}, state, action.payload, { loaded: true });
@@ -38,6 +39,5 @@ export function userReducer(state = initialState, action: types.UserActions): in
     default: {
       return state;
     }
-
   }
 }

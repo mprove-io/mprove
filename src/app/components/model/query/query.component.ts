@@ -17,7 +17,6 @@ import * as services from 'app/services/_index';
   styleUrls: ['./query.component.scss']
 })
 export class QueryComponent {
-
   chartTypeEnum = api.ChartTypeEnum;
   queryStatusEnum = api.QueryStatusEnum;
 
@@ -29,57 +28,63 @@ export class QueryComponent {
     {
       label: 'Data',
       link: 'data'
-    },
+    }
   ];
 
   activeLinkIndex: number;
 
   queryStatus: api.QueryStatusEnum;
-  queryStatus$ = this.store.select(selectors.getSelectedQueryStatus)
-    .pipe(
-      tap(x => this.queryStatus = x)
-    );
+  queryStatus$ = this.store
+    .select(selectors.getSelectedQueryStatus)
+    .pipe(tap(x => (this.queryStatus = x)));
 
-  queryId$ = this.store.select(selectors.getSelectedQueryId)
-    .pipe(
-      filter(v => !!v),
-      tap(queryId => {
-
-        this.liveQueriesService.setLiveQueries([queryId]); // we dont need to set live queries for dep pdts
-      })
-    );
+  queryId$ = this.store.select(selectors.getSelectedQueryId).pipe(
+    filter(v => !!v),
+    tap(queryId => {
+      this.liveQueriesService.setLiveQueries([queryId]); // we dont need to set live queries for dep pdts
+    })
+  );
 
   queryLastErrorMessage: string;
-  queryLastErrorMessage$ = this.store.select(selectors.getSelectedQueryLastErrorMessage)
+  queryLastErrorMessage$ = this.store
+    .select(selectors.getSelectedQueryLastErrorMessage)
     .pipe(
       // filter(v => !!v), // no filter
-      tap(x => this.queryLastErrorMessage = x)
+      tap(x => (this.queryLastErrorMessage = x))
       // tap(x => this.queryLastErrorMessage = x ? JSON.parse(x) : undefined)
     );
 
   filters: api.Filter[] = [];
-  filters$ = this.store.select(selectors.getSelectedMconfigFilters).pipe(filter(v => !!v), tap(
-    x => this.filters = x));
+  filters$ = this.store.select(selectors.getSelectedMconfigFilters).pipe(
+    filter(v => !!v),
+    tap(x => (this.filters = x))
+  );
 
   mconfig: api.Mconfig;
   mconfigFilterErrors: boolean = false;
-  mconfig$ = this.store.select(selectors.getSelectedMconfig).pipe(filter(v => !!v), tap(
-    x => {
+  mconfig$ = this.store.select(selectors.getSelectedMconfig).pipe(
+    filter(v => !!v),
+    tap(x => {
       this.mconfig = x;
-      this.mconfigFilterErrors = this.structService.mconfigHasFiltersWithDuplicateFractions(this.mconfig);
-    }
-  ));
+      this.mconfigFilterErrors = this.structService.mconfigHasFiltersWithDuplicateFractions(
+        this.mconfig
+      );
+    })
+  );
 
   charts: api.Chart[] = [];
-  charts$ = this.store.select(selectors.getSelectedMconfigCharts).pipe(filter(v => !!v), tap(
-    x => this.charts = x));
+  charts$ = this.store.select(selectors.getSelectedMconfigCharts).pipe(
+    filter(v => !!v),
+    tap(x => (this.charts = x))
+  );
 
   routerPath$ = this.router.events.pipe(
     filter(event => event instanceof NavigationEnd),
     tap((event: NavigationEnd) => {
       let path = event.urlAfterRedirects;
       this.selectTab(path);
-    }));
+    })
+  );
 
   constructor(
     private printer: services.PrinterService,
@@ -89,8 +94,8 @@ export class QueryComponent {
     private router: Router,
     private structService: services.StructService,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
-    private navigateMconfigService: services.NavigateService) {
-
+    private navigateMconfigService: services.NavigateService
+  ) {
     this.selectTab(router.url);
   }
 
@@ -119,11 +124,17 @@ export class QueryComponent {
         let chartIndex: number;
 
         let chartId: string;
-        this.store.select(selectors.getSelectedMconfigChartId).pipe(take(1)).subscribe(x => chartId = x);
+        this.store
+          .select(selectors.getSelectedMconfigChartId)
+          .pipe(take(1))
+          .subscribe(x => (chartId = x));
 
-        this.store.select(selectors.getSelectedMconfigCharts).pipe(take(1)).subscribe(charts => {
-          chartIndex = charts.findIndex(chart => chart.chart_id === chartId);
-        });
+        this.store
+          .select(selectors.getSelectedMconfigCharts)
+          .pipe(take(1))
+          .subscribe(charts => {
+            chartIndex = charts.findIndex(chart => chart.chart_id === chartId);
+          });
 
         this.activeLinkIndex = chartIndex + 3;
         break;
@@ -157,25 +168,39 @@ export class QueryComponent {
     newMconfig.charts = [...newMconfig.charts, newChart];
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    this.store.dispatch(new actions.CreateMconfigAction({ mconfig: newMconfig }));
+    this.store.dispatch(
+      new actions.CreateMconfigAction({ mconfig: newMconfig })
+    );
 
     setTimeout(
-      () => this.navigateMconfigService.navigateMconfigQueryChart(
-        newMconfig.mconfig_id,
-        newMconfig.query_id,
-        newChart.chart_id),
-      1);
+      () =>
+        this.navigateMconfigService.navigateMconfigQueryChart(
+          newMconfig.mconfig_id,
+          newMconfig.query_id,
+          newChart.chart_id
+        ),
+      1
+    );
   }
 
   activateEvent(event: any) {
-    this.printer.log(enums.busEnum.ACTIVATE_EVENT, 'from QueryComponent:', event);
+    this.printer.log(
+      enums.busEnum.ACTIVATE_EVENT,
+      'from QueryComponent:',
+      event
+    );
   }
 
   deactivateEvent(event: any) {
-    this.printer.log(enums.busEnum.DEACTIVATE_EVENT, 'from QueryComponent:', event);
+    this.printer.log(
+      enums.busEnum.DEACTIVATE_EVENT,
+      'from QueryComponent:',
+      event
+    );
   }
 
-  canDeactivate(): boolean { // used in component-deactivate-guard
+  canDeactivate(): boolean {
+    // used in component-deactivate-guard
     this.printer.log(enums.busEnum.CAN_DEACTIVATE_CHECK, 'from QueryComponent');
     this.store.dispatch(new actions.UpdateLayoutQueryIdAction(undefined));
     return true;

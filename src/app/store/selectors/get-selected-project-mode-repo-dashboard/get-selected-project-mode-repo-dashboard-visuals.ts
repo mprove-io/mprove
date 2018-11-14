@@ -32,14 +32,23 @@ export const getSelectedProjectModeRepoDashboardVisuals = createSelector(
     repoStructId: string,
     userAlias: string
   ) => {
-
-    if (reports && mconfigs && queries && models && projectId && repoId && userAlias) {
+    if (
+      reports &&
+      mconfigs &&
+      queries &&
+      models &&
+      projectId &&
+      repoId &&
+      userAlias
+    ) {
       let visuals: interfaces.Visual[] = [];
 
       let next: boolean = false;
 
       reports.forEach(report => {
-        if (next) { return; }
+        if (next) {
+          return;
+        }
 
         let query = queries.find(q => q.query_id === report.query_id);
 
@@ -55,11 +64,12 @@ export const getSelectedProjectModeRepoDashboardVisuals = createSelector(
           return;
         }
 
-        let model = models.find((m: api.Model) =>
-          m.model_id === mconfig.model_id &&
-          m.project_id === projectId &&
-          m.repo_id === repoId &&
-          m.struct_id === repoStructId
+        let model = models.find(
+          (m: api.Model) =>
+            m.model_id === mconfig.model_id &&
+            m.project_id === projectId &&
+            m.repo_id === repoId &&
+            m.struct_id === repoStructId
         );
 
         if (!model) {
@@ -73,23 +83,27 @@ export const getSelectedProjectModeRepoDashboardVisuals = createSelector(
         let selectMeasures: api.ModelField[] = [];
         let selectCalculations: api.ModelField[] = [];
 
-        mconfig.select.forEach(
-          (fieldId: string) => {
-            let field = model.fields.find(f => f.id === fieldId);
+        mconfig.select.forEach((fieldId: string) => {
+          let field = model.fields.find(f => f.id === fieldId);
 
-            if (field.field_class === api.ModelFieldFieldClassEnum.Dimension) {
-              selectDimensions.push(field);
-
-            } else if (field.field_class === api.ModelFieldFieldClassEnum.Measure) {
-              selectMeasures.push(field);
-
-            } else if (field.field_class === api.ModelFieldFieldClassEnum.Calculation) {
-              selectCalculations.push(field);
-            }
-
-            selectFields = [...selectDimensions, ...selectMeasures, ...selectCalculations];
+          if (field.field_class === api.ModelFieldFieldClassEnum.Dimension) {
+            selectDimensions.push(field);
+          } else if (
+            field.field_class === api.ModelFieldFieldClassEnum.Measure
+          ) {
+            selectMeasures.push(field);
+          } else if (
+            field.field_class === api.ModelFieldFieldClassEnum.Calculation
+          ) {
+            selectCalculations.push(field);
           }
-        );
+
+          selectFields = [
+            ...selectDimensions,
+            ...selectMeasures,
+            ...selectCalculations
+          ];
+        });
 
         visuals.push({
           query: query,
@@ -97,13 +111,13 @@ export const getSelectedProjectModeRepoDashboardVisuals = createSelector(
           chart: mconfig.charts[0],
           select_fields: selectFields,
           is_model_hidden: model.hidden,
-          has_access_to_model: (model.access_users.length === 0 ||
-            model.access_users.findIndex(element => element === userAlias) > -1)
+          has_access_to_model:
+            model.access_users.length === 0 ||
+            model.access_users.findIndex(element => element === userAlias) > -1
         });
       });
 
       return visuals;
-
     } else {
       return undefined;
     }

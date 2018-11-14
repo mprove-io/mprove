@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CreateMconfigEffect {
-
   @Effect() createMconfig$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_MCONFIG)
     .pipe(
-      mergeMap((action: actions.CreateMconfigAction) => this.backendService.createMconfig(action.payload)
-        .pipe(
+      mergeMap((action: actions.CreateMconfigAction) =>
+        this.backendService.createMconfig(action.payload).pipe(
           map(body => new actions.CreateMconfigSuccessAction(body.payload)),
           catchError(e => of(new actions.CreateMconfigFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class CreateMconfigEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

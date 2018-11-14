@@ -6,5 +6,5 @@ export const yScaleMaxChartTypes = [
   api.ChartTypeEnum.BarVerticalStacked,
   api.ChartTypeEnum.Line,
   api.ChartTypeEnum.Area,
-  api.ChartTypeEnum.AreaStacked,
+  api.ChartTypeEnum.AreaStacked
 ];

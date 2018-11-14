@@ -7,18 +7,17 @@ export const getSelectedProjectMembers = createSelector(
   getMembersState,
   getSelectedProjectId,
   (members: api.Member[], projectId: string) => {
-
     if (members && projectId) {
       return members
-        .filter((member: api.Member) => member.project_id === projectId && member.deleted === false)
+        .filter(
+          (member: api.Member) =>
+            member.project_id === projectId && member.deleted === false
+        )
         .map((member: api.Member) =>
-          Object.assign(
-            {},
-            member,
-            { name: member.first_name + ' ' + member.last_name }
-          )
+          Object.assign({}, member, {
+            name: member.first_name + ' ' + member.last_name
+          })
         );
-
     } else {
       return [];
     }

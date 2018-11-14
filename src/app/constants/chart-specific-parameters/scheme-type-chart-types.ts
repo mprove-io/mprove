@@ -12,5 +12,5 @@ export const schemeTypeChartTypes = [
   api.ChartTypeEnum.Line,
   api.ChartTypeEnum.Area,
   api.ChartTypeEnum.AreaStacked,
-  api.ChartTypeEnum.AreaNormalized,
+  api.ChartTypeEnum.AreaNormalized
 ];

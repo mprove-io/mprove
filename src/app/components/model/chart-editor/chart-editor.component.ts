@@ -1,5 +1,17 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ErrorStateMatcher, MatSelectChange } from '@angular/material';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
@@ -17,11 +29,9 @@ import { MColorChange } from 'app/modules/colorpicker/colorpicker';
   moduleId: module.id,
   selector: 'm-chart-editor',
   templateUrl: 'chart-editor.component.html',
-  styleUrls: ['chart-editor.component.scss'],
+  styleUrls: ['chart-editor.component.scss']
 })
-
 export class ChartEditorComponent implements OnInit, OnChanges {
-
   // data
   xFieldChartTypes = constants.xFieldChartTypes;
   yFieldChartTypes = constants.yFieldChartTypes;
@@ -76,7 +86,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   cardColorChartTypes = constants.cardColorChartTypes;
   textColorChartTypes = constants.textColorChartTypes;
   emptyColorChartTypes = constants.emptyColorChartTypes;
-
 
   chartIconEnum = enums.ChartIconEnum;
   chartTypeEnum = api.ChartTypeEnum;
@@ -160,7 +169,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     isErrorState: (control: FormControl | null) => {
       if (control) {
         return control.invalid;
-
       }
 
       return false;
@@ -172,9 +180,8 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     private structService: services.StructService,
     private myDialogService: services.MyDialogService,
     private fb: FormBuilder,
-    private navigateMconfigService: services.NavigateService,
-  ) {
-  }
+    private navigateMconfigService: services.NavigateService
+  ) {}
 
   ngOnInit() {
     this.buildForms();
@@ -219,13 +226,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildTitleForm() {
     this.titleForm = this.fb.group({
-      'title': [
+      title: [
         this.chart.title,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(255)
-        ])
-      ],
+        Validators.compose([Validators.required, Validators.maxLength(255)])
+      ]
     });
 
     this.title = this.titleForm.controls['title'];
@@ -233,13 +237,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildXAxisLabelForm() {
     this.xAxisLabelForm = this.fb.group({
-      'xAxisLabel': [
+      xAxisLabel: [
         this.chart.x_axis_label,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(255)
-        ])
-      ],
+        Validators.compose([Validators.required, Validators.maxLength(255)])
+      ]
     });
 
     this.xAxisLabel = this.xAxisLabelForm.controls['xAxisLabel'];
@@ -247,13 +248,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildYAxisLabelForm() {
     this.yAxisLabelForm = this.fb.group({
-      'yAxisLabel': [
+      yAxisLabel: [
         this.chart.y_axis_label,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(255)
-        ])
-      ],
+        Validators.compose([Validators.required, Validators.maxLength(255)])
+      ]
     });
 
     this.yAxisLabel = this.yAxisLabelForm.controls['yAxisLabel'];
@@ -261,7 +259,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildPageSizeForm() {
     this.pageSizeForm = this.fb.group({
-      'pageSize': [
+      pageSize: [
         this.chart.page_size,
         Validators.compose([
           Validators.required,
@@ -269,7 +267,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           Validators.min(0),
           Validators.maxLength(255)
         ])
-      ],
+      ]
     });
 
     this.pageSize = this.pageSizeForm.controls['pageSize'];
@@ -277,14 +275,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildArcWidthForm() {
     this.arcWidthForm = this.fb.group({
-      'arcWidth': [
+      arcWidth: [
         this.chart.arc_width,
         Validators.compose([
           Validators.required,
           services.ValidationService.numberValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.arcWidth = this.arcWidthForm.controls['arcWidth'];
@@ -292,14 +290,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildBarPaddingForm() {
     this.barPaddingForm = this.fb.group({
-      'barPadding': [
+      barPadding: [
         this.chart.bar_padding,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.barPadding = this.barPaddingForm.controls['barPadding'];
@@ -307,14 +305,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildGroupPaddingForm() {
     this.groupPaddingForm = this.fb.group({
-      'groupPadding': [
+      groupPadding: [
         this.chart.group_padding,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.groupPadding = this.groupPaddingForm.controls['groupPadding'];
@@ -322,14 +320,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildInnerPaddingForm() {
     this.innerPaddingForm = this.fb.group({
-      'innerPadding': [
+      innerPadding: [
         this.chart.inner_padding,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.innerPadding = this.innerPaddingForm.controls['innerPadding'];
@@ -337,29 +335,31 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildRangeFillOpacityForm() {
     this.rangeFillOpacityForm = this.fb.group({
-      'rangeFillOpacity': [
+      rangeFillOpacity: [
         this.chart.range_fill_opacity,
         Validators.compose([
           Validators.required,
           services.ValidationService.numberValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
-    this.rangeFillOpacity = this.rangeFillOpacityForm.controls['rangeFillOpacity'];
+    this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
+      'rangeFillOpacity'
+    ];
   }
 
   buildAngleSpanForm() {
     this.angleSpanForm = this.fb.group({
-      'angleSpan': [
+      angleSpan: [
         this.chart.angle_span,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.angleSpan = this.angleSpanForm.controls['angleSpan'];
@@ -367,13 +367,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildStartAngleForm() {
     this.startAngleForm = this.fb.group({
-      'startAngle': [
+      startAngle: [
         this.chart.start_angle,
         Validators.compose([
           Validators.required,
-          services.ValidationService.integerValidator,
+          services.ValidationService.integerValidator
         ])
-      ],
+      ]
     });
 
     this.startAngle = this.startAngleForm.controls['startAngle'];
@@ -381,12 +381,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildYScaleMinForm() {
     this.yScaleMinForm = this.fb.group({
-      'yScaleMin': [
+      yScaleMin: [
         this.chart.y_scale_min,
-        Validators.compose([
-          services.ValidationService.numberValidator,
-        ])
-      ],
+        Validators.compose([services.ValidationService.numberValidator])
+      ]
     });
 
     this.yScaleMin = this.yScaleMinForm.controls['yScaleMin'];
@@ -394,12 +392,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildYScaleMaxForm() {
     this.yScaleMaxForm = this.fb.group({
-      'yScaleMax': [
+      yScaleMax: [
         this.chart.y_scale_max,
-        Validators.compose([
-          services.ValidationService.numberValidator,
-        ])
-      ],
+        Validators.compose([services.ValidationService.numberValidator])
+      ]
     });
 
     this.yScaleMax = this.yScaleMaxForm.controls['yScaleMax'];
@@ -407,12 +403,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildXScaleMaxForm() {
     this.xScaleMaxForm = this.fb.group({
-      'xScaleMax': [
+      xScaleMax: [
         this.chart.x_scale_max,
-        Validators.compose([
-          services.ValidationService.numberValidator,
-        ])
-      ],
+        Validators.compose([services.ValidationService.numberValidator])
+      ]
     });
 
     this.xScaleMax = this.xScaleMaxForm.controls['xScaleMax'];
@@ -420,14 +414,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildBigSegmentsForm() {
     this.bigSegmentsForm = this.fb.group({
-      'bigSegments': [
+      bigSegments: [
         this.chart.big_segments,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
-          Validators.min(0),
+          Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.bigSegments = this.bigSegmentsForm.controls['bigSegments'];
@@ -435,14 +429,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildSmallSegmentsForm() {
     this.smallSegmentsForm = this.fb.group({
-      'smallSegments': [
+      smallSegments: [
         this.chart.small_segments,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
-          Validators.min(0),
+          Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.smallSegments = this.smallSegmentsForm.controls['smallSegments'];
@@ -450,13 +444,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildMinForm() {
     this.minForm = this.fb.group({
-      'min': [
+      min: [
         this.chart.min,
         Validators.compose([
           Validators.required,
-          services.ValidationService.integerValidator,
+          services.ValidationService.integerValidator
         ])
-      ],
+      ]
     });
 
     this.min = this.minForm.controls['min'];
@@ -464,13 +458,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildMaxForm() {
     this.maxForm = this.fb.group({
-      'max': [
+      max: [
         this.chart.max,
         Validators.compose([
           Validators.required,
-          services.ValidationService.integerValidator,
+          services.ValidationService.integerValidator
         ])
-      ],
+      ]
     });
 
     this.max = this.maxForm.controls['max'];
@@ -478,13 +472,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildUnitsForm() {
     this.unitsForm = this.fb.group({
-      'units': [
+      units: [
         this.chart.units,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(255)
-        ])
-      ],
+        Validators.compose([Validators.required, Validators.maxLength(255)])
+      ]
     });
 
     this.units = this.unitsForm.controls['units'];
@@ -492,13 +483,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildLegendTitleForm() {
     this.legendTitleForm = this.fb.group({
-      'legendTitle': [
+      legendTitle: [
         this.chart.legend_title,
         Validators.compose([
           // Validators.required,
           Validators.maxLength(255)
         ])
-      ],
+      ]
     });
 
     this.legendTitle = this.legendTitleForm.controls['legendTitle'];
@@ -506,14 +497,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildViewWidthForm() {
     this.viewWidthForm = this.fb.group({
-      'viewWidth': [
+      viewWidth: [
         this.chart.view_width,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.viewWidth = this.viewWidthForm.controls['viewWidth'];
@@ -521,14 +512,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   buildViewHeightForm() {
     this.viewHeightForm = this.fb.group({
-      'viewHeight': [
+      viewHeight: [
         this.chart.view_height,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
           Validators.min(0)
         ])
-      ],
+      ]
     });
 
     this.viewHeight = this.viewHeightForm.controls['viewHeight'];
@@ -539,32 +530,36 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   duplicateChart() {
     let newMconfig: api.Mconfig = this.structService.generateMconfig();
 
-    let newChart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-      }
-    );
+    let newChart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4()
+    });
 
     newMconfig.charts = [...newMconfig.charts, newChart];
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    this.store.dispatch(new actions.CreateMconfigAction({ mconfig: newMconfig }));
+    this.store.dispatch(
+      new actions.CreateMconfigAction({ mconfig: newMconfig })
+    );
 
     setTimeout(
-      () => this.navigateMconfigService.navigateMconfigQueryChart(
-        newMconfig.mconfig_id,
-        newMconfig.query_id,
-        newChart.chart_id),
-      1);
+      () =>
+        this.navigateMconfigService.navigateMconfigQueryChart(
+          newMconfig.mconfig_id,
+          newMconfig.query_id,
+          newChart.chart_id
+        ),
+      1
+    );
   }
 
   removeChart() {
     let newMconfig: api.Mconfig = this.structService.generateMconfig();
 
     let chartId: string;
-    this.store.select(selectors.getSelectedMconfigChartId).pipe(take(1)).subscribe(x => chartId = x);
+    this.store
+      .select(selectors.getSelectedMconfigChartId)
+      .pipe(take(1))
+      .subscribe(x => (chartId = x));
 
     let chartIndex = newMconfig.charts.findIndex(x => x.chart_id === chartId);
 
@@ -574,13 +569,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     ];
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    this.store.dispatch(new actions.CreateMconfigAction({ mconfig: newMconfig }));
+    this.store.dispatch(
+      new actions.CreateMconfigAction({ mconfig: newMconfig })
+    );
 
     setTimeout(
-      () => this.navigateMconfigService.navigateMconfigQueryData(
-        newMconfig.mconfig_id,
-        newMconfig.query_id),
-      1);
+      () =>
+        this.navigateMconfigService.navigateMconfigQueryData(
+          newMconfig.mconfig_id,
+          newMconfig.query_id
+        ),
+      1
+    );
   }
 
   openGenerateBlockmlDialog() {
@@ -591,28 +591,20 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   titleBlur() {
     if (this.title.value !== this.chart.title) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          title: this.title.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        title: this.title.value
+      });
 
       this.chartChange();
     }
   }
 
   typeChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        type: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      type: ev.value
+    });
 
     this.chartChange();
   }
@@ -620,66 +612,46 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   // data
 
   xFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        x_field: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      x_field: ev.value
+    });
 
     this.chartChange();
   }
 
   yFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        y_field: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      y_field: ev.value
+    });
 
     this.chartChange();
   }
 
   multiFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        multi_field: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      multi_field: ev.value
+    });
 
     this.chartChange();
   }
 
   valueFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        value_field: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      value_field: ev.value
+    });
 
     this.chartChange();
   }
 
   previousValueFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        previous_value_field: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      previous_value_field: ev.value
+    });
 
     this.chartChange();
   }
@@ -687,96 +659,68 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   // axis
 
   toggleXAxis() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        x_axis: !this.chart.x_axis // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      x_axis: !this.chart.x_axis // !
+    });
 
     this.chartChange();
   }
 
   toggleShowXAxisLabel() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        show_x_axis_label: !this.chart.show_x_axis_label // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      show_x_axis_label: !this.chart.show_x_axis_label // !
+    });
 
     this.chartChange();
   }
 
   xAxisLabelBlur() {
     if (this.xAxisLabel.value !== this.chart.x_axis_label) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          x_axis_label: this.xAxisLabel.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        x_axis_label: this.xAxisLabel.value
+      });
 
       this.chartChange();
     }
   }
 
   toggleYAxis() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        y_axis: !this.chart.y_axis // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      y_axis: !this.chart.y_axis // !
+    });
 
     this.chartChange();
   }
 
   toggleShowYAxisLabel() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        show_y_axis_label: !this.chart.show_y_axis_label // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      show_y_axis_label: !this.chart.show_y_axis_label // !
+    });
 
     this.chartChange();
   }
 
   yAxisLabelBlur() {
     if (this.yAxisLabel.value !== this.chart.y_axis_label) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          y_axis_label: this.yAxisLabel.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        y_axis_label: this.yAxisLabel.value
+      });
 
       this.chartChange();
     }
   }
 
   toggleShowAxis() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        show_axis: !this.chart.show_axis // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      show_axis: !this.chart.show_axis // !
+    });
 
     this.chartChange();
   }
@@ -784,210 +728,146 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   // options
 
   toggleAnimations() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        animations: !this.chart.animations // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      animations: !this.chart.animations // !
+    });
 
     this.chartChange();
   }
 
   toggleGradient() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        gradient: !this.chart.gradient // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      gradient: !this.chart.gradient // !
+    });
 
     this.chartChange();
   }
 
   toggleLegend() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        legend: !this.chart.legend // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      legend: !this.chart.legend // !
+    });
 
     this.chartChange();
   }
 
   toggleTooltipDisabled() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        tooltip_disabled: !this.chart.tooltip_disabled // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      tooltip_disabled: !this.chart.tooltip_disabled // !
+    });
 
     this.chartChange();
   }
 
   toggleRoundEdges() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        round_edges: !this.chart.round_edges // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      round_edges: !this.chart.round_edges // !
+    });
 
     this.chartChange();
   }
 
   toggleRoundDomains() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        round_domains: !this.chart.round_domains // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      round_domains: !this.chart.round_domains // !
+    });
 
     this.chartChange();
   }
 
   toggleShowGridLines() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        show_grid_lines: !this.chart.show_grid_lines // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      show_grid_lines: !this.chart.show_grid_lines // !
+    });
 
     this.chartChange();
   }
 
   toggleTimeline() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        timeline: !this.chart.timeline // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      timeline: !this.chart.timeline // !
+    });
 
     this.chartChange();
   }
 
   toggleAutoScale() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        auto_scale: !this.chart.auto_scale // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      auto_scale: !this.chart.auto_scale // !
+    });
 
     this.chartChange();
   }
 
   toggleDoughnut() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        doughnut: !this.chart.doughnut // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      doughnut: !this.chart.doughnut // !
+    });
 
     this.chartChange();
   }
 
   toggleExplodeSlices() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        explode_slices: !this.chart.explode_slices // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      explode_slices: !this.chart.explode_slices // !
+    });
 
     this.chartChange();
   }
 
   toggleLabels() {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        labels: !this.chart.labels // !
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      labels: !this.chart.labels // !
+    });
 
     this.chartChange();
   }
 
   interpolationChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        interpolation: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      interpolation: ev.value
+    });
 
     this.chartChange();
   }
 
   colorSchemeChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        color_scheme: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      color_scheme: ev.value
+    });
 
     this.chartChange();
   }
 
   schemeTypeChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        scheme_type: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      scheme_type: ev.value
+    });
 
     this.chartChange();
   }
 
   pageSizeBlur() {
     if (this.pageSize.value !== this.chart.page_size) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          page_size: this.pageSize.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        page_size: this.pageSize.value
+      });
 
       this.chartChange();
     }
@@ -995,31 +875,21 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   arcWidthBlur() {
     if (this.arcWidth.value !== this.chart.arc_width) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          arc_width: this.arcWidth.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        arc_width: this.arcWidth.value
+      });
 
       this.chartChange();
     }
-
-
   }
 
   barPaddingBlur() {
     if (this.barPadding.value !== this.chart.bar_padding) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          bar_padding: this.barPadding.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        bar_padding: this.barPadding.value
+      });
 
       this.chartChange();
     }
@@ -1027,14 +897,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   groupPaddingBlur() {
     if (this.groupPadding.value !== this.chart.group_padding) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          group_padding: this.groupPadding.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        group_padding: this.groupPadding.value
+      });
 
       this.chartChange();
     }
@@ -1042,14 +908,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   innerPaddingBlur() {
     if (this.innerPadding.value !== this.chart.inner_padding) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          inner_padding: this.innerPadding.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        inner_padding: this.innerPadding.value
+      });
 
       this.chartChange();
     }
@@ -1057,14 +919,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   rangeFillOpacityBlur() {
     if (this.rangeFillOpacity.value !== this.chart.range_fill_opacity) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          range_fill_opacity: this.rangeFillOpacity.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        range_fill_opacity: this.rangeFillOpacity.value
+      });
 
       this.chartChange();
     }
@@ -1072,14 +930,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   angleSpanBlur() {
     if (this.angleSpan.value !== this.chart.angle_span) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          angle_span: this.angleSpan.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        angle_span: this.angleSpan.value
+      });
 
       this.chartChange();
     }
@@ -1087,14 +941,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   startAngleBlur() {
     if (this.startAngle.value !== this.chart.start_angle) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          start_angle: this.startAngle.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        start_angle: this.startAngle.value
+      });
 
       this.chartChange();
     }
@@ -1102,14 +952,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   yScaleMinBlur() {
     if (this.yScaleMin.value !== this.chart.y_scale_min) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          y_scale_min: this.yScaleMin.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        y_scale_min: this.yScaleMin.value
+      });
 
       this.chartChange();
     }
@@ -1117,14 +963,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   yScaleMaxBlur() {
     if (this.yScaleMax.value !== this.chart.y_scale_max) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          y_scale_max: this.yScaleMax.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        y_scale_max: this.yScaleMax.value
+      });
 
       this.chartChange();
     }
@@ -1132,14 +974,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   xScaleMaxBlur() {
     if (this.xScaleMax.value !== this.chart.x_scale_max) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          x_scale_max: this.xScaleMax.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        x_scale_max: this.xScaleMax.value
+      });
 
       this.chartChange();
     }
@@ -1147,14 +985,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   bigSegmentsBlur() {
     if (this.bigSegments.value !== this.chart.big_segments) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          big_segments: this.bigSegments.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        big_segments: this.bigSegments.value
+      });
 
       this.chartChange();
     }
@@ -1162,14 +996,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   smallSegmentsBlur() {
     if (this.smallSegments.value !== this.chart.small_segments) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          small_segments: this.smallSegments.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        small_segments: this.smallSegments.value
+      });
 
       this.chartChange();
     }
@@ -1177,14 +1007,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   minBlur() {
     if (this.min.value !== this.chart.min) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          min: this.min.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        min: this.min.value
+      });
 
       this.chartChange();
     }
@@ -1192,14 +1018,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   maxBlur() {
     if (this.max.value !== this.chart.max) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          max: this.max.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        max: this.max.value
+      });
 
       this.chartChange();
     }
@@ -1207,14 +1029,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   unitsBlur() {
     if (this.units.value !== this.chart.units) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          units: this.units.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        units: this.units.value
+      });
 
       this.chartChange();
     }
@@ -1222,138 +1040,94 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   legendTitleBlur() {
     if (this.legendTitle.value !== this.chart.legend_title) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          legend_title: this.legendTitle.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        legend_title: this.legendTitle.value
+      });
 
       this.chartChange();
     }
   }
 
   bandColorChange(ev: MColorChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        band_color: ev.color
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      band_color: ev.color
+    });
 
-    setTimeout(
-      () => {
-        this.chartChange();
-      },
-      1);
+    setTimeout(() => {
+      this.chartChange();
+    }, 1);
   }
 
   cardColorChange(ev: any) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        card_color: ev.color
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      card_color: ev.color
+    });
 
-    setTimeout(
-      () => {
-        this.chartChange();
-      },
-      1);
+    setTimeout(() => {
+      this.chartChange();
+    }, 1);
   }
 
   textColorChange(ev: MColorChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        text_color: ev.color
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      text_color: ev.color
+    });
 
-    setTimeout(
-      () => {
-        this.chartChange();
-      },
-      1);
+    setTimeout(() => {
+      this.chartChange();
+    }, 1);
   }
 
   emptyColorChange(ev: MColorChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        empty_color: ev.color
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      empty_color: ev.color
+    });
 
-    setTimeout(
-      () => {
-        this.chartChange();
-      },
-      1);
+    setTimeout(() => {
+      this.chartChange();
+    }, 1);
   }
 
   // tile
 
   tileWidthChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        tile_width: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      tile_width: ev.value
+    });
 
     this.chartChange();
   }
 
   tileHeightChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        tile_height: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      tile_height: ev.value
+    });
 
     this.chartChange();
   }
 
   viewSizeChange(ev: MatSelectChange) {
-    this.chart = Object.assign(
-      {},
-      this.chart,
-      {
-        chart_id: uuid.v4(),
-        view_size: ev.value
-      }
-    );
+    this.chart = Object.assign({}, this.chart, {
+      chart_id: uuid.v4(),
+      view_size: ev.value
+    });
 
     this.chartChange();
   }
 
   viewWidthBlur() {
     if (this.viewWidth.value !== this.chart.view_width) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          view_width: this.viewWidth.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        view_width: this.viewWidth.value
+      });
 
       this.chartChange();
     }
@@ -1361,14 +1135,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   viewHeightBlur() {
     if (this.viewHeight.value !== this.chart.view_height) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          view_height: this.viewHeight.value
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        view_height: this.viewHeight.value
+      });
 
       this.chartChange();
     }
@@ -1386,27 +1156,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     let index = this.chart.y_fields.findIndex(x => x === id);
 
     if (index > -1) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          y_fields: [
-            ...this.chart.y_fields.slice(0, index),
-            ...this.chart.y_fields.slice(index + 1)
-          ]
-        }
-      );
-
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        y_fields: [
+          ...this.chart.y_fields.slice(0, index),
+          ...this.chart.y_fields.slice(index + 1)
+        ]
+      });
     } else {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          y_fields: [...this.chart.y_fields, id]
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        y_fields: [...this.chart.y_fields, id]
+      });
     }
 
     this.chartChange();
@@ -1416,27 +1177,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     let index = this.chart.hide_columns.findIndex(x => x === id);
 
     if (index > -1) {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          hide_columns: [
-            ...this.chart.hide_columns.slice(0, index),
-            ...this.chart.hide_columns.slice(index + 1)
-          ]
-        }
-      );
-
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        hide_columns: [
+          ...this.chart.hide_columns.slice(0, index),
+          ...this.chart.hide_columns.slice(index + 1)
+        ]
+      });
     } else {
-      this.chart = Object.assign(
-        {},
-        this.chart,
-        {
-          chart_id: uuid.v4(),
-          hide_columns: [...this.chart.hide_columns, id]
-        }
-      );
+      this.chart = Object.assign({}, this.chart, {
+        chart_id: uuid.v4(),
+        hide_columns: [...this.chart.hide_columns, id]
+      });
     }
 
     this.chartChange();
@@ -1450,7 +1202,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     let newMconfig: api.Mconfig = this.structService.generateMconfig();
 
     let chartId: string;
-    this.store.select(selectors.getSelectedMconfigChartId).pipe(take(1)).subscribe(x => chartId = x);
+    this.store
+      .select(selectors.getSelectedMconfigChartId)
+      .pipe(take(1))
+      .subscribe(x => (chartId = x));
 
     let chartIndex = newMconfig.charts.findIndex(x => x.chart_id === chartId);
 
@@ -1461,26 +1216,30 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     ];
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    this.store.dispatch(new actions.CreateMconfigAction({ mconfig: newMconfig }));
+    this.store.dispatch(
+      new actions.CreateMconfigAction({ mconfig: newMconfig })
+    );
 
     setTimeout(
-      () => this.navigateMconfigService.navigateMconfigQueryChart(
-        newMconfig.mconfig_id,
-        newMconfig.query_id,
-        this.chart.chart_id),
-      1);
+      () =>
+        this.navigateMconfigService.navigateMconfigQueryChart(
+          newMconfig.mconfig_id,
+          newMconfig.query_id,
+          this.chart.chart_id
+        ),
+      1
+    );
   }
 
   isChartValid() {
     switch (this.chart.type) {
-
       case api.ChartTypeEnum.Table: {
-
         if (
-          this.pageSizeForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid) {
+          this.pageSizeForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
+        ) {
           return true;
         }
 
@@ -1488,17 +1247,17 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarVertical: {
-
-        if (this.chart.x_field
-          && this.chart.y_field
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.yScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_field &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.yScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1507,16 +1266,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarHorizontal: {
-        if (this.chart.x_field
-          && this.chart.y_field
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_field &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
           // tslint:disable-next-line:max-line-length
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto || (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.xScaleMaxForm.valid
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.xScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1525,17 +1286,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarVerticalGrouped: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.groupPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.yScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.groupPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.yScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1544,17 +1306,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarHorizontalGrouped: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.groupPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.xScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.groupPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.xScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1563,16 +1326,17 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarVerticalStacked: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.yScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.yScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1581,16 +1345,17 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarHorizontalStacked: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.xScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.xScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1599,15 +1364,16 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarVerticalNormalized: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1616,15 +1382,16 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.BarHorizontalNormalized: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.barPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.barPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1633,13 +1400,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.Pie: {
-        if (this.chart.x_field
-          && this.chart.y_field
-          && this.legendTitleForm.valid
-          && this.arcWidthForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_field &&
+          this.legendTitleForm.valid &&
+          this.arcWidthForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1649,12 +1417,12 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
       case api.ChartTypeEnum.PieAdvanced: {
         if (
-          this.chart.x_field
-          && this.chart.y_field
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.legendTitleForm.valid
-          && this.titleForm.valid
+          this.chart.x_field &&
+          this.chart.y_field &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.legendTitleForm.valid &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1663,12 +1431,12 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
       case api.ChartTypeEnum.PieGrid: {
         if (
-          this.chart.x_field
-          && this.chart.y_field
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.legendTitleForm.valid
-          && this.titleForm.valid
+          this.chart.x_field &&
+          this.chart.y_field &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.legendTitleForm.valid &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1676,17 +1444,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.Line: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.rangeFillOpacityForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.yScaleMinForm.valid
-          && this.yScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.rangeFillOpacityForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.yScaleMinForm.valid &&
+          this.yScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1695,16 +1464,17 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.Area: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.yScaleMinForm.valid
-          && this.yScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.yScaleMinForm.valid &&
+          this.yScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1713,16 +1483,17 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.AreaStacked: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
-          && this.yScaleMinForm.valid
-          && this.yScaleMaxForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid &&
+          this.yScaleMinForm.valid &&
+          this.yScaleMaxForm.valid
         ) {
           return true;
         }
@@ -1731,14 +1502,15 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.AreaNormalized: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1747,15 +1519,16 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.HeatMap: {
-        if (this.chart.x_field
-          && this.chart.y_fields.length > 0
-          && this.legendTitleForm.valid
-          && this.innerPaddingForm.valid
-          && this.xAxisLabelForm.valid
-          && this.yAxisLabelForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_fields.length > 0 &&
+          this.legendTitleForm.valid &&
+          this.innerPaddingForm.valid &&
+          this.xAxisLabelForm.valid &&
+          this.yAxisLabelForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1765,12 +1538,12 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
       case api.ChartTypeEnum.TreeMap: {
         if (
-          this.chart.x_field
-          && this.chart.y_field
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.legendTitleForm.valid
-          && this.titleForm.valid
+          this.chart.x_field &&
+          this.chart.y_field &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.legendTitleForm.valid &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1778,11 +1551,12 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.NumberCard: {
-        if (this.chart.y_field
-          && this.innerPaddingForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.y_field &&
+          this.innerPaddingForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1791,18 +1565,19 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.Gauge: {
-        if (this.chart.x_field
-          && this.chart.y_field
-          && this.angleSpanForm.valid
-          && this.startAngleForm.valid
-          && this.bigSegmentsForm.valid
-          && this.smallSegmentsForm.valid
-          && this.minForm.valid
-          && this.maxForm.valid
-          && this.unitsForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.x_field &&
+          this.chart.y_field &&
+          this.angleSpanForm.valid &&
+          this.startAngleForm.valid &&
+          this.bigSegmentsForm.valid &&
+          this.smallSegmentsForm.valid &&
+          this.minForm.valid &&
+          this.maxForm.valid &&
+          this.unitsForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }
@@ -1811,13 +1586,14 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       }
 
       case api.ChartTypeEnum.GaugeLinear: {
-        if (this.chart.value_field
-          && this.minForm.valid
-          && this.maxForm.valid
-          && this.unitsForm.valid
-          && (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
-            (this.viewHeightForm.valid && this.viewWidthForm.valid))
-          && this.titleForm.valid
+        if (
+          this.chart.value_field &&
+          this.minForm.valid &&
+          this.maxForm.valid &&
+          this.unitsForm.valid &&
+          (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+            (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
+          this.titleForm.valid
         ) {
           return true;
         }

@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoStructId = createSelector(
   getSelectedProjectModeRepo,
-  (repo: api.Repo) => repo ? repo.struct_id : undefined
+  (repo: api.Repo) => (repo ? repo.struct_id : undefined)
 );

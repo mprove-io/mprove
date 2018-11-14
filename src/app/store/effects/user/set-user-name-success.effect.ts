@@ -8,18 +8,16 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SetUserNameSuccessEffect {
-
   @Effect() setUserNameSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_USER_NAME_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SetUserNameSuccessAction) => from([
-        new actions.UpdateUserStateAction(action.payload.user),
-        new actions.UpdateMembersStateAction(action.payload.members),
-      ])
+      mergeMap((action: actions.SetUserNameSuccessAction) =>
+        from([
+          new actions.UpdateUserStateAction(action.payload.user),
+          new actions.UpdateMembersStateAction(action.payload.members)
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

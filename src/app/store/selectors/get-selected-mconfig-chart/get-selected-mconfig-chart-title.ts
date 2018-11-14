@@ -4,5 +4,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedMconfigChartTitle = createSelector(
   getSelectedMconfigChart,
-  (chart: api.Chart) => chart ? chart.title : undefined
+  (chart: api.Chart) => (chart ? chart.title : undefined)
 );

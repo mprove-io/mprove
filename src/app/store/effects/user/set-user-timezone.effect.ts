@@ -9,21 +9,21 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SetUserTimezoneEffect {
-
   @Effect() setUserTimezone$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_USER_TIMEZONE)
     .pipe(
-      mergeMap((action: actions.SetUserTimezoneAction) => this.backendService.setUserTimezone(action.payload)
-        .pipe(
+      mergeMap((action: actions.SetUserTimezoneAction) =>
+        this.backendService.setUserTimezone(action.payload).pipe(
           map(body => new actions.SetUserTimezoneSuccessAction(body.payload)),
-          catchError(e => of(new actions.SetUserTimezoneFailAction({ error: e })))
+          catchError(e =>
+            of(new actions.SetUserTimezoneFailAction({ error: e }))
+          )
         )
       )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

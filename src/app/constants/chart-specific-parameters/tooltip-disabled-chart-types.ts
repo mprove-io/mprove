@@ -18,5 +18,5 @@ export const tooltipDisabledChartTypes = [
   api.ChartTypeEnum.AreaNormalized,
   api.ChartTypeEnum.HeatMap,
   api.ChartTypeEnum.TreeMap,
-  api.ChartTypeEnum.Gauge,
+  api.ChartTypeEnum.Gauge
 ];

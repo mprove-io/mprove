@@ -7,18 +7,15 @@ import * as api from 'app/api/_index';
 export const getSelectedProjectModeRepoStructModelsNotHidden = createSelector(
   getSelectedProjectModeRepoStructModels,
   getUserAlias,
-  (
-    models,
-    userAlias) => {
-
+  (models, userAlias) => {
     if (models && userAlias) {
-
-      return models.filter((model: api.Model) =>
-        models &&
-        !model.hidden &&
-        (model.access_users.length === 0 || model.access_users.findIndex(element => element === userAlias) > -1)
+      return models.filter(
+        (model: api.Model) =>
+          models &&
+          !model.hidden &&
+          (model.access_users.length === 0 ||
+            model.access_users.findIndex(element => element === userAlias) > -1)
       );
-
     } else {
       return [];
     }

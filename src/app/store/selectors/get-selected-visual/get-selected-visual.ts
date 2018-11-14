@@ -21,32 +21,32 @@ export const getSelectedVisual = createSelector(
     model: api.Model,
     userAlias: string
   ) => {
-
     if (mconfig && query && chart && model && userAlias) {
-
       let selectFields: api.ModelField[] = [];
 
       let selectDimensions: api.ModelField[] = [];
       let selectMeasures: api.ModelField[] = [];
       let selectCalculations: api.ModelField[] = [];
 
-      mconfig.select.forEach(
-        (fieldId: string) => {
-          let field = model.fields.find(f => f.id === fieldId);
+      mconfig.select.forEach((fieldId: string) => {
+        let field = model.fields.find(f => f.id === fieldId);
 
-          if (field.field_class === api.ModelFieldFieldClassEnum.Dimension) {
-            selectDimensions.push(field);
-
-          } else if (field.field_class === api.ModelFieldFieldClassEnum.Measure) {
-            selectMeasures.push(field);
-
-          } else if (field.field_class === api.ModelFieldFieldClassEnum.Calculation) {
-            selectCalculations.push(field);
-          }
-
-          selectFields = [...selectDimensions, ...selectMeasures, ...selectCalculations];
+        if (field.field_class === api.ModelFieldFieldClassEnum.Dimension) {
+          selectDimensions.push(field);
+        } else if (field.field_class === api.ModelFieldFieldClassEnum.Measure) {
+          selectMeasures.push(field);
+        } else if (
+          field.field_class === api.ModelFieldFieldClassEnum.Calculation
+        ) {
+          selectCalculations.push(field);
         }
-      );
+
+        selectFields = [
+          ...selectDimensions,
+          ...selectMeasures,
+          ...selectCalculations
+        ];
+      });
 
       let visual: interfaces.Visual = {
         query: query,
@@ -54,12 +54,12 @@ export const getSelectedVisual = createSelector(
         chart: chart,
         select_fields: selectFields,
         is_model_hidden: model.hidden,
-        has_access_to_model: (model.access_users.length === 0 ||
-          model.access_users.findIndex(element => element === userAlias) > -1)
+        has_access_to_model:
+          model.access_users.length === 0 ||
+          model.access_users.findIndex(element => element === userAlias) > -1
       };
 
       return visual;
-
     } else {
       return undefined;
     }

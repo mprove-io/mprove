@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CreateFolderEffect {
-
   @Effect() createFolder$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_FOLDER)
     .pipe(
-      mergeMap((action: actions.CreateFolderAction) => this.backendService.createFolder(action.payload)
-        .pipe(
+      mergeMap((action: actions.CreateFolderAction) =>
+        this.backendService.createFolder(action.payload).pipe(
           map(body => new actions.CreateFolderSuccessAction(body.payload)),
           catchError(e => of(new actions.CreateFolderFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class CreateFolderEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

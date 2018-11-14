@@ -12,16 +12,14 @@ import { ValidationService } from 'app/services/validation.service';
   templateUrl: 'new-project-dialog.component.html'
 })
 export class NewProjectDialogComponent implements OnInit {
-
   newProjectForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<NewProjectDialogComponent>,
     private fb: FormBuilder,
     private store: Store<interfaces.AppState>,
-    private validationService: ValidationService,
-  ) {
-  }
+    private validationService: ValidationService
+  ) {}
 
   ngOnInit() {
     this.buildForm();
@@ -29,12 +27,12 @@ export class NewProjectDialogComponent implements OnInit {
 
   buildForm() {
     this.newProjectForm = this.fb.group({
-      'projectName': [
+      projectName: [
         null,
         Validators.compose([
           Validators.required,
           Validators.minLength(4),
-          Validators.maxLength(255),
+          Validators.maxLength(255)
         ]),
         Validators.composeAsync([
           this.validationService.projectNameCheck.bind(this.validationService)
@@ -44,8 +42,10 @@ export class NewProjectDialogComponent implements OnInit {
   }
 
   onSubmit(fv: any) {
-    this.store.dispatch(new actions.CreateProjectAction({
-      project_id: fv['projectName'],
-    }));
+    this.store.dispatch(
+      new actions.CreateProjectAction({
+        project_id: fv['projectName']
+      })
+    );
   }
 }

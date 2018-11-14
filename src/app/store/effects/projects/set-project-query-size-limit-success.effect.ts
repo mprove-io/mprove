@@ -8,18 +8,15 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SetProjectQuerySizeLimitSuccessEffect {
-
-  @Effect() setProjectQuerySizeLimitSuccess$: Observable<Action> = this.actions$
+  @Effect() setProjectQuerySizeLimitSuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.SET_PROJECT_QUERY_SIZE_LIMIT_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SetProjectQuerySizeLimitSuccessAction) => from([
-        new actions.UpdateProjectsStateAction([action.payload.project]),
-      ])
+      mergeMap((action: actions.SetProjectQuerySizeLimitSuccessAction) =>
+        from([new actions.UpdateProjectsStateAction([action.payload.project])])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

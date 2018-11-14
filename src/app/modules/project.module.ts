@@ -27,7 +27,7 @@ import { ValidationMsgModule } from 'app/modules/validation-msg.module';
     ModelModule,
     DashboardModule,
     ValidationMsgModule,
-    FlexLayoutModule,
+    FlexLayoutModule
   ],
   declarations: [
     components.RemoteComponent,
@@ -41,14 +41,9 @@ import { ValidationMsgModule } from 'app/modules/validation-msg.module';
     components.NextPaymentComponent,
     components.PaymentsComponent,
     components.TeamComponent,
-    components.PdtsComponent,
+    components.PdtsComponent
   ],
-  entryComponents: [
-  ],
-  exports: [
-    components.ProjectComponent
-  ]
+  entryComponents: [],
+  exports: [components.ProjectComponent]
 })
-
-export class ProjectModule {
-}
+export class ProjectModule {}

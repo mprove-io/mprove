@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class PongEffect {
-
   @Effect() pong$: Observable<Action> = this.actions$
     .ofType(actionTypes.PONG)
     .pipe(
-      mergeMap((action: actions.PongAction) => this.backendService.pong(action.payload)
-        .pipe(
+      mergeMap((action: actions.PongAction) =>
+        this.backendService.pong(action.payload).pipe(
           map(body => new actions.PongSuccessAction()),
           catchError(e => of(new actions.PongFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class PongEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class PingReceivedAction implements Action {
   readonly type = actionTypes.PING_RECEIVED;
 
-  constructor(public payload: api.PingRequestBody) {
-  }
+  constructor(public payload: api.PingRequestBody) {}
 }

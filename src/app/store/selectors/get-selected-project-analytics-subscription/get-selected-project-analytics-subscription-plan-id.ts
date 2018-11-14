@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectAnalyticsSubscriptionPlanId = createSelector(
   getSelectedProjectAnalyticsSubscription,
-  (s: api.Subscription) => s ? s.plan_id : undefined
+  (s: api.Subscription) => (s ? s.plan_id : undefined)
 );

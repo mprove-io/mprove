@@ -5,6 +5,7 @@ import * as actionTypes from 'app/store/action-types';
 export class CreateMconfigAndQuerySuccessAction implements Action {
   readonly type = actionTypes.CREATE_MCONFIG_AND_QUERY_SUCCESS;
 
-  constructor(public payload: api.CreateMconfigAndQueryResponse200BodyPayload) {
-  }
+  constructor(
+    public payload: api.CreateMconfigAndQueryResponse200BodyPayload
+  ) {}
 }

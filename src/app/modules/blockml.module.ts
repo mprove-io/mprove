@@ -11,7 +11,6 @@ import { MyMaterialModule } from 'app/modules/my-material.module';
 import { SharedModule } from 'app/modules/shared.module';
 import { ValidationMsgModule } from 'app/modules/validation-msg.module';
 
-
 @NgModule({
   imports: [
     SharedModule,
@@ -23,20 +22,15 @@ import { ValidationMsgModule } from 'app/modules/validation-msg.module';
     ReactiveFormsModule,
     TreeModule,
     ValidationMsgModule,
-    MyCovalentModule,
+    MyCovalentModule
   ],
   declarations: [
     components.BlockMLComponent,
     components.CatalogTreeComponent,
     components.FileEditorComponent,
-    components.ErrorsComponent,
+    components.ErrorsComponent
   ],
-  entryComponents: [
-  ],
-  exports: [
-    components.BlockMLComponent
-  ]
+  entryComponents: [],
+  exports: [components.BlockMLComponent]
 })
-
-export class BlockMLModule {
-}
+export class BlockMLModule {}

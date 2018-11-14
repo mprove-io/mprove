@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
 import { MatSelectChange } from '@angular/material';
 import * as api from 'app/api/_index';
 
@@ -9,7 +15,6 @@ import * as api from 'app/api/_index';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionDayOfWeekComponent {
-
   fractionTypeEnum = api.FractionTypeEnum;
   fractionOperatorEnum = api.FractionOperatorEnum;
   fractionDayOfWeekValueEnum = api.FractionDayOfWeekValueEnum;
@@ -19,67 +24,69 @@ export class FractionDayOfWeekComponent {
 
   @Output() fractionChange = new EventEmitter();
 
-  constructor() {
-  }
+  constructor() {}
 
   typeChange(ev: MatSelectChange) {
     switch (ev.value) {
-
-      case (this.fractionTypeEnum.DayOfWeekIsAnyValue): {
+      case this.fractionTypeEnum.DayOfWeekIsAnyValue: {
         this.fraction = {
           type: ev.value,
           operator: api.FractionOperatorEnum.Or,
-          brick: `any`,
+          brick: `any`
         };
 
         this.emitFractionChange();
         break;
       }
 
-      case (this.fractionTypeEnum.DayOfWeekIs): {
-        let newDayOfWeekValue = this.fraction.day_of_week_value || api.FractionDayOfWeekValueEnum.Monday;
+      case this.fractionTypeEnum.DayOfWeekIs: {
+        let newDayOfWeekValue =
+          this.fraction.day_of_week_value ||
+          api.FractionDayOfWeekValueEnum.Monday;
 
         this.fraction = {
           type: ev.value,
           operator: api.FractionOperatorEnum.Or,
           day_of_week_value: newDayOfWeekValue,
-          brick: `${newDayOfWeekValue}`,
+          brick: `${newDayOfWeekValue}`
         };
 
         this.emitFractionChange();
         break;
       }
 
-      case (this.fractionTypeEnum.DayOfWeekIsNull): {
+      case this.fractionTypeEnum.DayOfWeekIsNull: {
         this.fraction = {
           type: ev.value,
           operator: api.FractionOperatorEnum.Or,
-          brick: `null`,
+          brick: `null`
         };
 
         this.emitFractionChange();
         break;
       }
 
-      case (this.fractionTypeEnum.DayOfWeekIsNot): {
-        let newDayOfWeekValue = this.fraction.day_of_week_value || api.FractionDayOfWeekValueEnum.Monday;
+      case this.fractionTypeEnum.DayOfWeekIsNot: {
+        let newDayOfWeekValue =
+          this.fraction.day_of_week_value ||
+          api.FractionDayOfWeekValueEnum.Monday;
 
         this.fraction = {
           type: ev.value,
           operator: api.FractionOperatorEnum.And,
           day_of_week_value: newDayOfWeekValue,
-          brick: `not ${newDayOfWeekValue}`,
+          brick: `not ${newDayOfWeekValue}`
         };
 
         this.emitFractionChange();
         break;
       }
 
-      case (this.fractionTypeEnum.DayOfWeekIsNotNull): {
+      case this.fractionTypeEnum.DayOfWeekIsNotNull: {
         this.fraction = {
           type: ev.value,
           operator: api.FractionOperatorEnum.And,
-          brick: `not null`,
+          brick: `not null`
         };
 
         this.emitFractionChange();
@@ -97,15 +104,14 @@ export class FractionDayOfWeekComponent {
         type: api.FractionTypeEnum.DayOfWeekIs,
         operator: api.FractionOperatorEnum.Or,
         day_of_week_value: ev.value,
-        brick: `${ev.value}`,
+        brick: `${ev.value}`
       };
-
     } else if (this.fraction.type === api.FractionTypeEnum.DayOfWeekIsNot) {
       this.fraction = {
         type: api.FractionTypeEnum.DayOfWeekIsNot,
         operator: api.FractionOperatorEnum.And,
         day_of_week_value: ev.value,
-        brick: `not ${ev.value}`,
+        brick: `not ${ev.value}`
       };
     }
 

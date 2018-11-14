@@ -18,7 +18,7 @@ import { SharedModule } from 'app/modules/shared.module';
     MenuModule,
     ProfileModule,
     ProjectModule,
-    RouterModule,
+    RouterModule
   ],
   declarations: [
     components.NavDevProdComponent,
@@ -30,12 +30,8 @@ import { SharedModule } from 'app/modules/shared.module';
     components.ProjectDeletedComponent,
     components.LoginComponent,
     components.LogoutComponent,
-    components.NotFound404Component,
+    components.NotFound404Component
   ],
-  exports: [
-    components.SpaceComponent
-  ]
+  exports: [components.SpaceComponent]
 })
-
-export class SpaceModule {
-}
+export class SpaceModule {}

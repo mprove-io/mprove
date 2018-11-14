@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class UpdateSubscriptionsStateAction implements Action {
   readonly type = actionTypes.UPDATE_SUBSCRIPTIONS_STATE;
 
-  constructor(public payload: api.Subscription[]) {
-  }
+  constructor(public payload: api.Subscription[]) {}
 }

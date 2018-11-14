@@ -14,79 +14,90 @@ import * as constants from 'app/constants/_index';
 
 @Injectable()
 export class UpdateMembersStateEffect {
+  @Effect({ dispatch: false }) updateMembersState$: Observable<
+    Action
+  > = this.actions$.ofType(actionTypes.UPDATE_MEMBERS_STATE).pipe(
+    tap((action: actions.UpdateMembersStateAction) => {
+      let userId: string;
+      this.store
+        .select(selectors.getUserId)
+        .pipe(take(1))
+        .subscribe(id => (userId = id));
 
-  @Effect({ dispatch: false }) updateMembersState$: Observable<Action> = this.actions$
-    .ofType(actionTypes.UPDATE_MEMBERS_STATE)
-    .pipe(
-      tap((action: actions.UpdateMembersStateAction) => {
+      let selectedProjectId: string;
+      this.store
+        .select(selectors.getLayoutProjectId)
+        .pipe(take(1))
+        .subscribe(id => (selectedProjectId = id));
 
-        let userId: string;
-        this.store.select(selectors.getUserId)
-          .pipe(take(1))
-          .subscribe(id => userId = id);
+      let storeMembers: api.Member[];
+      this.store
+        .select(selectors.getMembersState)
+        .pipe(take(1))
+        .subscribe(entities => (storeMembers = entities));
 
-        let selectedProjectId: string;
-        this.store.select(selectors.getLayoutProjectId)
-          .pipe(take(1))
-          .subscribe(id => selectedProjectId = id);
+      action.payload.forEach((payloadMember: api.Member) => {
+        // check if payloadMember is user && payloadMember updated state
+        if (
+          payloadMember.member_id === userId &&
+          storeMembers.findIndex(
+            storeMember => payloadMember.server_ts === storeMember.server_ts
+          ) >= 0
+        ) {
+          if (payloadMember.project_id === selectedProjectId) {
+            if (
+              payloadMember.is_editor === false ||
+              payloadMember.deleted === true
+            ) {
+              // set needSave False
+              this.store
+                .select(selectors.getLayoutNeedSave)
+                .pipe(take(1))
+                .subscribe(needSave => {
+                  if (needSave) {
+                    this.store.dispatch(
+                      new actions.SetLayoutNeedSaveFalseAction()
+                    );
+                  }
+                });
 
-        let storeMembers: api.Member[];
-        this.store.select(selectors.getMembersState)
-          .pipe(take(1))
-          .subscribe(entities => storeMembers = entities);
+              // navigate profile
+              this.router.navigate(['profile']);
 
-        action.payload.forEach((payloadMember: api.Member) => {
+              // set prod mode
+              let mode: enums.LayoutModeEnum;
+              this.store
+                .select(selectors.getLayoutMode)
+                .pipe(take(1))
+                .subscribe(x => (mode = x));
 
-          // check if payloadMember is user && payloadMember updated state
-          if (payloadMember.member_id === userId &&
-            storeMembers.findIndex(storeMember => payloadMember.server_ts === storeMember.server_ts) >= 0) {
-
-            if (payloadMember.project_id === selectedProjectId) {
-
-              if (payloadMember.is_editor === false || payloadMember.deleted === true) {
-
-                // set needSave False
-                this.store.select(selectors.getLayoutNeedSave)
-                  .pipe(take(1))
-                  .subscribe(needSave => {
-                    if (needSave) {
-                      this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
-                    }
-                  });
-
-                // navigate profile
-                this.router.navigate(['profile']);
-
-                // set prod mode
-                let mode: enums.LayoutModeEnum;
-                this.store.select(selectors.getLayoutMode)
-                  .pipe(take(1))
-                  .subscribe(x => mode = x);
-
-                if (mode === enums.LayoutModeEnum.Dev) {
-                  this.store.dispatch(new actions.SetLayoutModeProdAction());
-                }
-              }
-
-              if (payloadMember.deleted === true) {
-                // select Demo project
-                this.store.dispatch(new actions.UpdateLayoutProjectIdAction(constants.DEMO));
+              if (mode === enums.LayoutModeEnum.Dev) {
+                this.store.dispatch(new actions.SetLayoutModeProdAction());
               }
             }
 
             if (payloadMember.deleted === true) {
-              // remove project where user deleted
-              this.store.dispatch(new actions.RemoveProjectAction(payloadMember.project_id));
+              // select Demo project
+              this.store.dispatch(
+                new actions.UpdateLayoutProjectIdAction(constants.DEMO)
+              );
             }
           }
-        });
-      })
-    );
+
+          if (payloadMember.deleted === true) {
+            // remove project where user deleted
+            this.store.dispatch(
+              new actions.RemoveProjectAction(payloadMember.project_id)
+            );
+          }
+        }
+      });
+    })
+  );
 
   constructor(
     private actions$: Actions,
     private router: Router,
-    private store: Store<interfaces.AppState>) {
-  }
-
+    private store: Store<interfaces.AppState>
+  ) {}
 }

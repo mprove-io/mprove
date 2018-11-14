@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class UpdatePaymentsStateAction implements Action {
   readonly type = actionTypes.UPDATE_PAYMENTS_STATE;
 
-  constructor(public payload: api.Payment[]) {
-  }
+  constructor(public payload: api.Payment[]) {}
 }

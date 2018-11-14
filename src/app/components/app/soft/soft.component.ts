@@ -7,9 +7,7 @@ import * as services from 'app/services/_index';
   templateUrl: 'soft.component.html'
 })
 export class SoftComponent {
-
   constructor(public pageTitle: services.PageTitleService) {
-
     this.pageTitle.setTitle('Mprove');
   }
 }

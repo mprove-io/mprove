@@ -15,7 +15,6 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'switch-analytics-plan-dialog.component.html'
 })
 export class SwitchAnalyticsPlanDialogComponent implements OnInit, OnDestroy {
-
   selectedProject: api.Project;
   selectedProjectSub: Subscription;
 
@@ -25,19 +24,24 @@ export class SwitchAnalyticsPlanDialogComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<SwitchAnalyticsPlanDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnInit(): void {
-    this.selectedProjectSub = this.store.select(selectors.getSelectedProject)
+    this.selectedProjectSub = this.store
+      .select(selectors.getSelectedProject)
       .pipe(filter(v => !!v))
-      .subscribe(x => this.selectedProject = x);
+      .subscribe(x => (this.selectedProject = x));
 
     let plans: interfaces.AnalyticsPlan[];
 
-    this.store.select(selectors.getSelectedProjectAnalyticsPlans).subscribe(x => plans = x);
+    this.store
+      .select(selectors.getSelectedProjectAnalyticsPlans)
+      .subscribe(x => (plans = x));
 
-    this.toPlan = plans.find(p => p.analytics_plan_id === this.data.target_plan_id);
+    this.toPlan = plans.find(
+      p => p.analytics_plan_id === this.data.target_plan_id
+    );
   }
 
   ngOnDestroy() {
@@ -45,9 +49,11 @@ export class SwitchAnalyticsPlanDialogComponent implements OnInit, OnDestroy {
   }
 
   switchPlan() {
-    this.store.dispatch(new actions.SwitchAnalyticsSubscriptionPlanAction({
-      project_id: this.selectedProject.project_id,
-      analytics_plan_id: this.data.target_plan_id,
-    }));
+    this.store.dispatch(
+      new actions.SwitchAnalyticsSubscriptionPlanAction({
+        project_id: this.selectedProject.project_id,
+        analytics_plan_id: this.data.target_plan_id
+      })
+    );
   }
 }

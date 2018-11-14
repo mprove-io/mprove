@@ -15,8 +15,14 @@ import { environment } from '@env/environment';
  * the root meta-reducer. To add more meta-reducers, provide an array of meta-reducers
  * that will be composed to form the root meta-reducer.
  */
-export const APP_META_REDUCERS_ARRAY: Array<MetaReducer<interfaces.AppState>> = [
-  ...(environment.canUseSegmentMetaReducer === true ? [metaReducers.segmentMetaReducer] : []),
-  ...(environment.canUseStoreLogger === true ? [storeLogger({ collapsed: true })] : []),
-  ...(environment.canUseStoreFreeze === true ? [storeFreeze] : []),
+export const APP_META_REDUCERS_ARRAY: Array<
+  MetaReducer<interfaces.AppState>
+> = [
+  ...(environment.canUseSegmentMetaReducer === true
+    ? [metaReducers.segmentMetaReducer]
+    : []),
+  ...(environment.canUseStoreLogger === true
+    ? [storeLogger({ collapsed: true })]
+    : []),
+  ...(environment.canUseStoreFreeze === true ? [storeFreeze] : [])
 ];

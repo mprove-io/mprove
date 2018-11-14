@@ -10,29 +10,31 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CreateFileSuccessEffect {
-
   @Effect() createFileSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_FILE_SUCCESS)
     .pipe(
       tap((action: actions.CreateFileSuccessAction) => {
-        setTimeout(
-          () => {
-            this.printer.log(enums.busEnum.CREATE_FILE_SUCCESS_EFFECT, 'navigating created file...');
-            this.navigateService.navigateToFileLine(action.payload.created_dev_file.file_id);
-          },
-          1);
+        setTimeout(() => {
+          this.printer.log(
+            enums.busEnum.CREATE_FILE_SUCCESS_EFFECT,
+            'navigating created file...'
+          );
+          this.navigateService.navigateToFileLine(
+            action.payload.created_dev_file.file_id
+          );
+        }, 1);
       }),
-      mergeMap((action: actions.CreateFileSuccessAction) => from([
-        new actions.UpdateFilesStateAction([action.payload.created_dev_file]),
-        new actions.UpdateReposStateAction([action.payload.dev_repo]),
-      ])
+      mergeMap((action: actions.CreateFileSuccessAction) =>
+        from([
+          new actions.UpdateFilesStateAction([action.payload.created_dev_file]),
+          new actions.UpdateReposStateAction([action.payload.dev_repo])
+        ])
       )
     );
 
   constructor(
     private actions$: Actions,
     private printer: services.PrinterService,
-    private navigateService: services.NavigateService) {
-  }
-
+    private navigateService: services.NavigateService
+  ) {}
 }

@@ -5,6 +5,5 @@ import * as interfaces from 'app/interfaces/_index';
 export class UpdateLayoutDryAction implements Action {
   readonly type = actionTypes.UPDATE_LAYOUT_DRY;
 
-  constructor(public payload: interfaces.Dry) {
-  }
+  constructor(public payload: interfaces.Dry) {}
 }

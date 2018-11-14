@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectDevRepoRemotePublicKey = createSelector(
   getSelectedProjectDevRepo,
-  (repo: api.Repo) => repo ? repo.remote_public_key : undefined
+  (repo: api.Repo) => (repo ? repo.remote_public_key : undefined)
 );

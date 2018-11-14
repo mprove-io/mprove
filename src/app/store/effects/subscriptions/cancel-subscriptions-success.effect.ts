@@ -8,18 +8,20 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class CancelSubscriptionsSuccessEffect {
-
-  @Effect() cancelSubscriptionsSuccess$: Observable<Action> = this.actions$
+  @Effect() cancelSubscriptionsSuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.CANCEL_SUBSCRIPTIONS_SUCCESS)
     .pipe(
-      mergeMap((action: actions.CancelSubscriptionsSuccessAction) => from([
-        new actions.UpdateSubscriptionsStateAction(action.payload.subscriptions),
-        new actions.UpdateProjectsStateAction([action.payload.project]),
-      ])
+      mergeMap((action: actions.CancelSubscriptionsSuccessAction) =>
+        from([
+          new actions.UpdateSubscriptionsStateAction(
+            action.payload.subscriptions
+          ),
+          new actions.UpdateProjectsStateAction([action.payload.project])
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

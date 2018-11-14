@@ -16,20 +16,32 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import {
-  ControlValueAccessor,
-  NgControl
-} from '@angular/forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Overlay, OverlayRef, OverlayConfig, PositionStrategy } from '@angular/cdk/overlay';
+import {
+  Overlay,
+  OverlayRef,
+  OverlayConfig,
+  PositionStrategy
+} from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { ColorUtil, Rgba, Hsla, Hsva } from './color-util';
 
 export class SliderPosition {
-  constructor(public h: number, public s: number, public v: number, public a: number) { }
+  constructor(
+    public h: number,
+    public s: number,
+    public v: number,
+    public a: number
+  ) {}
 }
 export class SliderDimension {
-  constructor(public h: number, public s: number, public v: number, public a: number) { }
+  constructor(
+    public h: number,
+    public s: number,
+    public v: number,
+    public a: number
+  ) {}
 }
 
 export type Container = 'inline' | 'dialog';
@@ -77,8 +89,12 @@ export class ColorpickerSliderDirective {
   private listenerStop: any;
 
   constructor(private _element: ElementRef) {
-    this.listenerMove = (event: any) => { this.move(event); };
-    this.listenerStop = () => { this.stop(); };
+    this.listenerMove = (event: any) => {
+      this.move(event);
+    };
+    this.listenerStop = () => {
+      this.stop();
+    };
   }
 
   /**
@@ -93,8 +109,10 @@ export class ColorpickerSliderDirective {
 
     if (this.pointX !== undefined && this.pointY !== undefined) {
       this.change.emit({
-        s: x / width, v: (1 - y / height),
-        pointX: this.pointX, pointY: this.pointY
+        s: x / width,
+        v: 1 - y / height,
+        pointX: this.pointX,
+        pointY: this.pointY
       });
     } else if (this.pointX === undefined && this.pointY !== undefined) {
       this.change.emit({ v: y / height, rg: this.pointY });
@@ -140,8 +158,11 @@ export class ColorpickerSliderDirective {
    */
   getX(event: any) {
     let boundingClientRect = this._getNativeElement().getBoundingClientRect();
-    return (event.pageX !== undefined ? event.pageX : event.touches[0].pageX) -
-      boundingClientRect.left - window.pageXOffset;
+    return (
+      (event.pageX !== undefined ? event.pageX : event.touches[0].pageX) -
+      boundingClientRect.left -
+      window.pageXOffset
+    );
   }
 
   /**
@@ -150,8 +171,11 @@ export class ColorpickerSliderDirective {
    */
   getY(event: any) {
     let boundingClientRect = this._getNativeElement().getBoundingClientRect();
-    return (event.pageY !== undefined ? event.pageY : event.touches[0].pageY) -
-      boundingClientRect.top - window.pageYOffset;
+    return (
+      (event.pageY !== undefined ? event.pageY : event.touches[0].pageY) -
+      boundingClientRect.top -
+      window.pageYOffset
+    );
   }
 
   _getNativeElement(): HTMLElement {
@@ -163,7 +187,7 @@ export class ColorpickerSliderDirective {
  * Change event object emitted by MColorpicker.
  */
 export class MColorChange {
-  constructor(public source: MColorpicker, public color: string) { }
+  constructor(public source: MColorpicker, public color: string) {}
 }
 
 @Component({
@@ -172,16 +196,15 @@ export class MColorChange {
   templateUrl: './colorpicker.html',
   styleUrls: ['./colorpicker.scss'],
   host: {
-    'role': 'colorpicker',
+    role: 'colorpicker',
     '[id]': 'id',
     '[class.m-colorpicker-disabled]': 'disabled',
     '[attr.aria-label]': 'placeholder',
-    '[attr.aria-required]': 'required.toString()',
+    '[attr.aria-required]': 'required.toString()'
   },
   encapsulation: ViewEncapsulation.None
 })
 export class MColorpicker implements OnDestroy, ControlValueAccessor {
-
   private _portal: TemplatePortal<any>;
   private _overlayRef: OverlayRef;
   private _backdropSubscription: Subscription;
@@ -224,42 +247,57 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
   _isDark: boolean;
   isInputValidColor: boolean = false;
 
-  _onChange: (value: any) => void = () => { };
-  _onTouched = () => { };
+  _onChange: (value: any) => void = () => {};
+  _onTouched = () => {};
 
   @Input()
-  get color() { return this._color; }
-  set color(value: string) { this._color = value; }
+  get color() {
+    return this._color;
+  }
+  set color(value: string) {
+    this._color = value;
+  }
 
   /** Placeholder to be shown if no value has been selected. */
   @Input()
-  get placeholder() { return this._placeholder; }
-  set placeholder(value: string) { this._placeholder = value; }
+  get placeholder() {
+    return this._placeholder;
+  }
+  set placeholder(value: string) {
+    this._placeholder = value;
+  }
 
   @Input()
-  get required(): boolean { return this._required; }
-  set required(value) { this._required = coerceBooleanProperty(value); }
+  get required(): boolean {
+    return this._required;
+  }
+  set required(value) {
+    this._required = coerceBooleanProperty(value);
+  }
 
   /** Whether the component is disabled. */
   @Input()
-  get disabled() { return this._disabled; }
+  get disabled() {
+    return this._disabled;
+  }
   set disabled(value: any) {
     this._disabled = coerceBooleanProperty(value);
   }
   @Input('format') cFormat: string = 'hex';
   @Output('colorpickerChange') colorpickerChange = new EventEmitter<string>();
   /** Event emitted when the selected date has been changed by the user. */
-  @Output() change: EventEmitter<MColorChange> = new EventEmitter<MColorChange>();
+  @Output() change: EventEmitter<MColorChange> = new EventEmitter<
+    MColorChange
+  >();
   @Input() tabindex: number = 0;
-  @Input() id: string = 'm-colorpicker-' + (++nextId);
+  @Input() id: string = 'm-colorpicker-' + ++nextId;
 
   get value(): any {
     return this._innerValue;
-
   }
   /**
-  * set accessor including call the onchange callback
-  */
+   * set accessor including call the onchange callback
+   */
   set value(v: any) {
     if (v !== this._innerValue) {
       if (v) {
@@ -270,7 +308,9 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
   }
 
   @Input()
-  get container() { return this._container; }
+  get container() {
+    return this._container;
+  }
   set container(value: Container) {
     if (this._container !== value) {
       this._container = value || 'inline';
@@ -280,10 +320,12 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
 
   get setGradient() {
     return {
-      'background-image': 'linear-gradient(to right, transparent, transparent),' +
-        'linear-gradient(to left, ' + this.hexText + ', rgba(255, 255, 255, 0))'
+      'background-image':
+        'linear-gradient(to right, transparent, transparent),' +
+        'linear-gradient(to left, ' +
+        this.hexText +
+        ', rgba(255, 255, 255, 0))'
     };
-
   }
 
   /** Event emitted when the select has been opened. */
@@ -294,16 +336,22 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
 
   @ViewChild('portal') _templatePortal: TemplateRef<any>;
 
-  constructor(private _element: ElementRef, private _overlay: Overlay,
+  constructor(
+    private _element: ElementRef,
+    private _overlay: Overlay,
     private _viewContainerRef: ViewContainerRef,
-    private _util: ColorUtil, @Self() @Optional() public _control: NgControl) {
+    private _util: ColorUtil,
+    @Self() @Optional() public _control: NgControl
+  ) {
     this._created = false;
     if (this._control) {
       this._control.valueAccessor = this;
     }
   }
 
-  ngOnDestroy() { this.destroyPanel(); }
+  ngOnDestroy() {
+    this.destroyPanel();
+  }
 
   /** Whether or not the overlay panel is open. */
   get panelOpen(): boolean {
@@ -336,7 +384,9 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
     }
 
     this.update();
-    if (this.disabled) { return; }
+    if (this.disabled) {
+      return;
+    }
     if (!this._isColorpickerVisible) {
       this._initialColor = this.color;
       this.update();
@@ -348,7 +398,10 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
     this._createOverlay();
 
     if (!this._portal) {
-      this._portal = new TemplatePortal(this._templatePortal, this._viewContainerRef);
+      this._portal = new TemplatePortal(
+        this._templatePortal,
+        this._viewContainerRef
+      );
     }
 
     this._overlayRef.attach(this._portal);
@@ -398,52 +451,57 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
   */
 
   /**
-  * set saturation,lightness,hue,alpha,RGB value
-  * @param val
-  */
-  setSaturation(val: { v: number, rg: number }) {
+   * set saturation,lightness,hue,alpha,RGB value
+   * @param val
+   */
+  setSaturation(val: { v: number; rg: number }) {
     let hsla = this._util.hsva2hsla(this.hsva);
     hsla.s = val.v / val.rg;
     this.hsva = this._util.hsla2hsva(hsla);
     this.update();
   }
 
-  setLightness(val: { v: number, rg: number }) {
+  setLightness(val: { v: number; rg: number }) {
     let hsla = this._util.hsva2hsla(this.hsva);
     hsla.l = val.v / val.rg;
     this.hsva = this._util.hsla2hsva(hsla);
     this.update();
   }
 
-  setHue(val: { v: number, rg: number }) {
+  setHue(val: { v: number; rg: number }) {
     this.hsva.h = val.v / val.rg;
     this.update();
   }
 
-  setAlpha(val: { v: number, rg: number }) {
+  setAlpha(val: { v: number; rg: number }) {
     this.hsva.a = val.v / val.rg;
     this.update();
   }
 
-  setR(val: { v: number, rg: number }) {
+  setR(val: { v: number; rg: number }) {
     let rgba = this._util.hsvaToRgba(this.hsva);
     rgba.r = val.v / val.rg;
     this.hsva = this._util.rgbaToHsva(rgba);
     this.update();
   }
-  setG(val: { v: number, rg: number }) {
+  setG(val: { v: number; rg: number }) {
     let rgba = this._util.hsvaToRgba(this.hsva);
     rgba.g = val.v / val.rg;
     this.hsva = this._util.rgbaToHsva(rgba);
     this.update();
   }
-  setB(val: { v: number, rg: number }) {
+  setB(val: { v: number; rg: number }) {
     let rgba = this._util.hsvaToRgba(this.hsva);
     rgba.b = val.v / val.rg;
     this.hsva = this._util.rgbaToHsva(rgba);
     this.update();
   }
-  setSaturationAndBrightness(val: { s: number, v: number, pointX: number, pointY: number }) {
+  setSaturationAndBrightness(val: {
+    s: number;
+    v: number;
+    pointX: number;
+    pointY: number;
+  }) {
     this.hsva.s = val.s / val.pointX;
     this.hsva.v = val.v / val.pointY;
     this.update();
@@ -460,8 +518,8 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
   }
 
   /**
-  * deselect recent color and close popup
-  */
+   * deselect recent color and close popup
+   */
   cancelColor() {
     this._innerValue = this._initialColor;
     this.close();
@@ -470,9 +528,9 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
     return str.match(/^#[a-f0-9]{6}$/i) !== null;
   }
   /**
-     * set color
-     * @param value
-     */
+   * set color
+   * @param value
+   */
   setColorFromString(value: string) {
     if (!this.isValidColor(value)) {
       value = '#000000';
@@ -499,20 +557,33 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
   update() {
     let hsla = this._util.hsva2hsla(this.hsva);
     let rgba = this._util.denormalizeRGBA(this._util.hsvaToRgba(this.hsva));
-    let hueRgba = this._util.denormalizeRGBA(this._util.hsvaToRgba(
-      new Hsva(this.hsva.h, 1, 1, 1)));
+    let hueRgba = this._util.denormalizeRGBA(
+      this._util.hsvaToRgba(new Hsva(this.hsva.h, 1, 1, 1))
+    );
 
     this.alphaColor = 'rgb(' + rgba.r + ',' + rgba.g + ',' + rgba.b + ')';
-    this._hueSliderColor = 'rgb(' + hueRgba.r + ',' + hueRgba.g + ',' + hueRgba.b + ')';
-    this.hslaText = new Hsla(Math.round((hsla.h) * 360), Math.round(hsla.s * 100),
-      Math.round(hsla.l * 100), Math.round(hsla.a * 100) / 100);
-    this.rgbaText = new Rgba(rgba.r, rgba.g, rgba.b, Math.round(rgba.a * 100) / 100);
+    this._hueSliderColor =
+      'rgb(' + hueRgba.r + ',' + hueRgba.g + ',' + hueRgba.b + ')';
+    this.hslaText = new Hsla(
+      Math.round(hsla.h * 360),
+      Math.round(hsla.s * 100),
+      Math.round(hsla.l * 100),
+      Math.round(hsla.a * 100) / 100
+    );
+    this.rgbaText = new Rgba(
+      rgba.r,
+      rgba.g,
+      rgba.b,
+      Math.round(rgba.a * 100) / 100
+    );
     if (this.backColor) {
       this.hexText = this._util.hexText(rgba);
     }
     this.backColor = true;
-    let colorCode = Math.round((this.rgbaText.r * 299 + this.rgbaText.g * 587 +
-      this.rgbaText.b * 114) / 1000);
+    let colorCode = Math.round(
+      (this.rgbaText.r * 299 + this.rgbaText.g * 587 + this.rgbaText.b * 114) /
+        1000
+    );
     if (colorCode >= 128 || this.hsva.a < 0.35) {
       this.fontColor = 'black';
       this._isDark = true;
@@ -525,9 +596,12 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
       this.format++;
     }
     this.outputColor = this._util.outputFormat(this.hsva, this.cFormat);
-    this.slider = new SliderPosition((this.hsva.h) * this.sliderDim.h,
-      this.hsva.s * this.sliderDim.s - 7, (1 - this.hsva.v) * this.sliderDim.v - 7,
-      this.hsva.a * this.sliderDim.a);
+    this.slider = new SliderPosition(
+      this.hsva.h * this.sliderDim.h,
+      this.hsva.s * this.sliderDim.s - 7,
+      (1 - this.hsva.v) * this.sliderDim.v - 7,
+      this.hsva.a * this.sliderDim.a
+    );
     this._innerValue = this.outputColor;
   }
 
@@ -575,19 +649,25 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
     this.color = value;
   }
 
-  registerOnChange(fn: (value: any) => void): void { this._onChange = fn; }
+  registerOnChange(fn: (value: any) => void): void {
+    this._onChange = fn;
+  }
 
-  registerOnTouched(fn: () => {}): void { this._onTouched = fn; }
+  registerOnTouched(fn: () => {}): void {
+    this._onTouched = fn;
+  }
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 
   private _subscribeToBackdrop(): void {
-    this._backdropSubscription = this._overlayRef.backdropClick().subscribe(() => {
-      this._innerValue = this._initialColor;
-      this.close();
-    });
+    this._backdropSubscription = this._overlayRef
+      .backdropClick()
+      .subscribe(() => {
+        this._innerValue = this._initialColor;
+        this.close();
+      });
   }
 
   /**
@@ -603,7 +683,8 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
         config.backdropClass = 'cdk-overlay-transparent-backdrop';
         config.scrollStrategy = this._overlay.scrollStrategies.reposition();
       } else {
-        config.positionStrategy = this._overlay.position()
+        config.positionStrategy = this._overlay
+          .position()
           .global()
           .centerHorizontally()
           .centerVertically();
@@ -615,19 +696,25 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
 
   /** Create the popup PositionStrategy. */
   private _createPickerPositionStrategy(): PositionStrategy {
-    return this._overlay.position()
-      .connectedTo(this._element,
+    return this._overlay
+      .position()
+      .connectedTo(
+        this._element,
         { originX: 'start', originY: 'top' },
-        { overlayX: 'start', overlayY: 'top' })
+        { overlayX: 'start', overlayY: 'top' }
+      )
       .withFallbackPosition(
         { originX: 'end', originY: 'top' },
-        { overlayX: 'end', overlayY: 'top' })
+        { overlayX: 'end', overlayY: 'top' }
+      )
       .withFallbackPosition(
         { originX: 'start', originY: 'bottom' },
-        { overlayX: 'start', overlayY: 'bottom' })
+        { overlayX: 'start', overlayY: 'bottom' }
+      )
       .withFallbackPosition(
         { originX: 'end', originY: 'bottom' },
-        { overlayX: 'end', overlayY: 'bottom' });
+        { overlayX: 'end', overlayY: 'bottom' }
+      );
   }
 
   private _cleanUpSubscriptions(): void {
@@ -638,5 +725,4 @@ export class MColorpicker implements OnDestroy, ControlValueAccessor {
       this._positionSubscription.unsubscribe();
     }
   }
-
 }

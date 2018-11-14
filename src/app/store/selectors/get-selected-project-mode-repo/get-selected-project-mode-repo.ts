@@ -10,16 +10,19 @@ export const getSelectedProjectModeRepo = createSelector(
   getLayoutMode,
   getUserId,
   (repos: api.Repo[], mode: enums.LayoutModeEnum, userId: string) => {
-
     if (repos && mode && userId) {
       let repoIndex: number;
       if (mode === enums.LayoutModeEnum.Prod) {
-        repoIndex = repos.findIndex((repo: api.Repo) => repo.repo_id === enums.LayoutModeEnum.Prod.toString());
+        repoIndex = repos.findIndex(
+          (repo: api.Repo) =>
+            repo.repo_id === enums.LayoutModeEnum.Prod.toString()
+        );
       } else {
-        repoIndex = repos.findIndex((repo: api.Repo) => repo.repo_id === userId);
+        repoIndex = repos.findIndex(
+          (repo: api.Repo) => repo.repo_id === userId
+        );
       }
       return repoIndex >= 0 ? repos[repoIndex] : undefined;
-
     } else {
       return undefined;
     }

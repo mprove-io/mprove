@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class DeleteFileEffect {
-
   @Effect() deleteFile$: Observable<Action> = this.actions$
     .ofType(actionTypes.DELETE_FILE)
     .pipe(
-      mergeMap((action: actions.DeleteFileAction) => this.backendService.deleteFile(action.payload)
-        .pipe(
+      mergeMap((action: actions.DeleteFileAction) =>
+        this.backendService.deleteFile(action.payload).pipe(
           map(body => new actions.DeleteFileSuccessAction(body.payload)),
           catchError(e => of(new actions.DeleteFileFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class DeleteFileEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

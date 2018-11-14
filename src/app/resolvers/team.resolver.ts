@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterStateSnapshot
+} from '@angular/router';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -11,31 +16,34 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class TeamResolver implements Resolve<any> {
-
   constructor(
     private printer: services.PrinterService,
     private store: Store<interfaces.AppState>,
     private myDialogService: services.MyDialogService,
-    private router: Router) {
-  }
+    private router: Router
+  ) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     this.printer.log(enums.busEnum.TEAM_RESOLVER, 'starts...');
 
     let userId: string;
-    this.store.select(selectors.getUserId)
+    this.store
+      .select(selectors.getUserId)
       .pipe(take(1))
-      .subscribe(x => userId = x);
+      .subscribe(x => (userId = x));
 
     let projectId: string;
-    this.store.select(selectors.getSelectedProjectId)
+    this.store
+      .select(selectors.getSelectedProjectId)
       .pipe(take(1))
-      .subscribe(x => projectId = x);
+      .subscribe(x => (projectId = x));
 
     if (projectId === constants.DEMO && userId !== 'akalitenya@mprove.io') {
       this.router.navigate(['/profile']);
 
-      this.myDialogService.showAccessDeniedDialog({ message: 'Team page is not accessible on Demo project' });
+      this.myDialogService.showAccessDeniedDialog({
+        message: 'Team page is not accessible on Demo project'
+      });
       this.printer.log(enums.busEnum.TEAM_RESOLVER, `resolved (false)`);
       return of(false);
     }

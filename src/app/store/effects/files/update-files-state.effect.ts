@@ -14,59 +14,72 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class UpdateFilesStateEffect {
+  @Effect({ dispatch: false }) updateFilesState$: Observable<
+    Action
+  > = this.actions$.ofType(actionTypes.UPDATE_FILES_STATE).pipe(
+    tap((action: actions.UpdateFilesStateAction) => {
+      let selectedFile: api.CatalogFile;
+      this.store
+        .select(selectors.getSelectedProjectModeRepoFile)
+        .pipe(take(1))
+        .subscribe(file => (selectedFile = file));
 
-  @Effect({ dispatch: false }) updateFilesState$: Observable<Action> = this.actions$
-    .ofType(actionTypes.UPDATE_FILES_STATE)
-    .pipe(
-      tap((action: actions.UpdateFilesStateAction) => {
+      if (selectedFile) {
+        if (selectedFile.deleted) {
+          this.printer.log(
+            enums.busEnum.UPDATE_FILES_EFFECT,
+            'selected file deleted'
+          );
 
-        let selectedFile: api.CatalogFile;
-        this.store.select(selectors.getSelectedProjectModeRepoFile)
-          .pipe(take(1))
-          .subscribe(file => selectedFile = file);
+          // set needSave False
+          this.printer.log(
+            enums.busEnum.UPDATE_FILES_EFFECT,
+            'setting needSave false...'
+          );
 
-        if (selectedFile) {
-          if (selectedFile.deleted) {
+          this.store
+            .select(selectors.getLayoutNeedSave)
+            .pipe(take(1))
+            .subscribe(needSave => {
+              if (needSave) {
+                this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
+              }
+            });
 
-            this.printer.log(enums.busEnum.UPDATE_FILES_EFFECT, 'selected file deleted');
+          // navigate blockml
+          this.printer.log(
+            enums.busEnum.UPDATE_FILES_EFFECT,
+            'navigating blockml...'
+          );
 
-            // set needSave False
-            this.printer.log(enums.busEnum.UPDATE_FILES_EFFECT, 'setting needSave false...');
+          let selectedProjectId: string;
+          this.store
+            .select(selectors.getLayoutProjectId)
+            .pipe(take(1))
+            .subscribe(id => (selectedProjectId = id));
 
-            this.store.select(selectors.getLayoutNeedSave)
-              .pipe(take(1))
-              .subscribe(
-                needSave => {
-                  if (needSave) {
-                    this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
-                  }
-                }
-              );
+          let selectedMode: enums.LayoutModeEnum;
+          this.store
+            .select(selectors.getLayoutMode)
+            .pipe(take(1))
+            .subscribe(x => (selectedMode = x));
 
-            // navigate blockml
-            this.printer.log(enums.busEnum.UPDATE_FILES_EFFECT, 'navigating blockml...');
-
-            let selectedProjectId: string;
-            this.store.select(selectors.getLayoutProjectId)
-              .pipe(take(1))
-              .subscribe(id => selectedProjectId = id);
-
-            let selectedMode: enums.LayoutModeEnum;
-            this.store.select(selectors.getLayoutMode)
-              .pipe(take(1))
-              .subscribe(x => selectedMode = x);
-
-            this.router.navigate(['/project', selectedProjectId, 'mode', selectedMode, 'blockml']);
-          }
+          this.router.navigate([
+            '/project',
+            selectedProjectId,
+            'mode',
+            selectedMode,
+            'blockml'
+          ]);
         }
-      })
-    );
+      }
+    })
+  );
 
   constructor(
     private actions$: Actions,
     private printer: services.PrinterService,
     private router: Router,
-    private store: Store<interfaces.AppState>) {
-  }
-
+    private store: Store<interfaces.AppState>
+  ) {}
 }

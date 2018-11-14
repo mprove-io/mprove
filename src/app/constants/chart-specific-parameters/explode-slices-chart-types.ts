@@ -1,5 +1,3 @@
 import * as api from 'app/api/_index';
 
-export const explodeSlicesChartTypes = [
-  api.ChartTypeEnum.Pie,
-];
+export const explodeSlicesChartTypes = [api.ChartTypeEnum.Pie];

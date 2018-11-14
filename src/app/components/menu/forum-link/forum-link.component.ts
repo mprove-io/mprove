@@ -4,10 +4,8 @@ import { Component } from '@angular/core';
   moduleId: module.id,
   selector: 'm-forum-link',
   templateUrl: 'forum-link.component.html',
-  styleUrls: ['forum-link.component.scss'],
+  styleUrls: ['forum-link.component.scss']
 })
-
 export class ForumLinkComponent {
-
-  constructor() { }
+  constructor() {}
 }

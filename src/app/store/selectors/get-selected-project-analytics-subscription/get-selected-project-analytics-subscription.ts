@@ -7,10 +7,7 @@ import * as api from 'app/api/_index';
 export const getSelectedProjectAnalyticsSubscription = createSelector(
   getSubscriptionsState,
   getSelectedProjectAnalyticsSubscriptionId,
-  (
-    subscriptions: api.Subscription[],
-    projectSubscriptionId: number) => {
-
+  (subscriptions: api.Subscription[], projectSubscriptionId: number) => {
     return subscriptions.find(s => s.subscription_id === projectSubscriptionId);
   }
 );

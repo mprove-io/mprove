@@ -8,5 +8,5 @@ export const yFieldChartTypes = [
   api.ChartTypeEnum.PieGrid,
   api.ChartTypeEnum.TreeMap,
   api.ChartTypeEnum.NumberCard,
-  api.ChartTypeEnum.Gauge,
+  api.ChartTypeEnum.Gauge
 ];

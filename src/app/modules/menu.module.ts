@@ -16,7 +16,7 @@ import { ValidationMsgModule } from 'app/modules/validation-msg.module';
     FlexLayoutModule,
     ReactiveFormsModule,
     RouterModule,
-    ValidationMsgModule,
+    ValidationMsgModule
   ],
   declarations: [
     components.ProjectSetupComponent,
@@ -25,19 +25,16 @@ import { ValidationMsgModule } from 'app/modules/validation-msg.module';
     components.DocsLinkComponent,
     components.ForumLinkComponent,
     components.LogoComponent,
-    components.ThemePickerComponent,
+    components.ThemePickerComponent
   ],
-  entryComponents: [
-  ],
+  entryComponents: [],
   exports: [
     components.ProjectSetupComponent,
     components.ProjectSelectComponent,
     components.UserComponent,
     components.DocsLinkComponent,
     components.ForumLinkComponent,
-    components.LogoComponent,
+    components.LogoComponent
   ]
 })
-
-export class MenuModule {
-}
+export class MenuModule {}

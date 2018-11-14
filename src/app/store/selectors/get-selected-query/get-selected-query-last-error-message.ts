@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedQueryLastErrorMessage = createSelector(
   getSelectedQuery,
-  (query: api.Query) => query ? query.last_error_message : undefined
+  (query: api.Query) => (query ? query.last_error_message : undefined)
 );

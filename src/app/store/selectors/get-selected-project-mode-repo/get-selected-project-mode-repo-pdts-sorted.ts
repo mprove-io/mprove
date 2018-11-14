@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoPdtsSorted = createSelector(
   getSelectedProjectModeRepo,
-  (repo: api.Repo) => repo ? repo.pdts_sorted : undefined
+  (repo: api.Repo) => (repo ? repo.pdts_sorted : undefined)
 );

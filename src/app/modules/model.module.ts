@@ -30,7 +30,7 @@ import { VisualModule } from 'app/modules/visual.module';
     ReactiveFormsModule,
     TreeModule,
     VisualModule,
-    ValidationMsgModule,
+    ValidationMsgModule
   ],
   declarations: [
     components.ModelComponent,
@@ -44,14 +44,9 @@ import { VisualModule } from 'app/modules/visual.module';
     components.DragTableComponent,
     components.ChartComponent,
     components.ChartEditorComponent,
-    components.ChartViewerComponent,
+    components.ChartViewerComponent
   ],
-  entryComponents: [
-  ],
-  exports: [
-    components.ModelComponent
-  ]
+  entryComponents: [],
+  exports: [components.ModelComponent]
 })
-
-export class ModelModule {
-}
+export class ModelModule {}

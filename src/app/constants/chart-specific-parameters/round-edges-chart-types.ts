@@ -4,5 +4,5 @@ export const roundEdgesChartTypes = [
   api.ChartTypeEnum.BarVertical,
   api.ChartTypeEnum.BarVerticalGrouped,
   api.ChartTypeEnum.BarHorizontal,
-  api.ChartTypeEnum.BarHorizontalGrouped,
+  api.ChartTypeEnum.BarHorizontalGrouped
 ];

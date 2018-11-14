@@ -1,7 +1,12 @@
 import { AfterViewInit, Component, Inject, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { IActionMapping, KEYS, TreeComponent, TreeNode } from 'angular-tree-component';
+import {
+  IActionMapping,
+  KEYS,
+  TreeComponent,
+  TreeNode
+} from 'angular-tree-component';
 import { debounceTime, filter, map, take, tap } from 'rxjs/operators';
 import * as actions from 'app/store/actions/_index';
 import * as api from 'app/api/_index';
@@ -14,7 +19,7 @@ import * as services from 'app/services/_index';
   moduleId: module.id,
   selector: 'm-model-tree',
   templateUrl: 'model-tree.component.html',
-  styleUrls: ['model-tree.component.scss'],
+  styleUrls: ['model-tree.component.scss']
 })
 export class ModelTreeComponent implements AfterViewInit {
   countSelectedItemsKey = Symbol('count selected items in parent');
@@ -23,8 +28,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
   actionMapping: IActionMapping = {
     mouse: {
-      click: (tree, node, $event) => {
-      },
+      click: (tree, node, $event) => {}
     },
     keys: {
       [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.label}`)
@@ -33,52 +37,56 @@ export class ModelTreeComponent implements AfterViewInit {
 
   treeOptions = {
     actionMapping: this.actionMapping,
-    displayField: 'label',
+    displayField: 'label'
   };
 
   nodes: interfaces.ModelNodeField[];
-  nodes$ = this.store.select(selectors.getSelectedMconfigModelNodes)
-    .pipe(
-      filter(v => !!v),
-      map(x => JSON.parse(JSON.stringify(x))),
-      map(nodes => {
-        return nodes.map((item: interfaces.ModelNodeField) => {
-          return Object.assign(item, { [this.countSelectedItemsKey]: 0 });
-        });
-      }),
-      tap(x => {
-        x.forEach((item: interfaces.ModelNodeField) => this.parentNodeInfo(item, item.children));
-        this.nodes = x;
-      })
-    );
+  nodes$ = this.store.select(selectors.getSelectedMconfigModelNodes).pipe(
+    filter(v => !!v),
+    map(x => JSON.parse(JSON.stringify(x))),
+    map(nodes => {
+      return nodes.map((item: interfaces.ModelNodeField) => {
+        return Object.assign(item, { [this.countSelectedItemsKey]: 0 });
+      });
+    }),
+    tap(x => {
+      x.forEach((item: interfaces.ModelNodeField) =>
+        this.parentNodeInfo(item, item.children)
+      );
+      this.nodes = x;
+    })
+  );
 
   modelFields: api.ModelField[];
-  modelFields$ = this.store.select(selectors.getSelectedProjectModeRepoModelFields)
+  modelFields$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModelFields)
     .pipe(
       filter(v => !!v),
-      tap(x => this.modelFields = x)
+      tap(x => (this.modelFields = x))
     );
 
   fields: interfaces.ModelFieldExtra[];
-  fields$ = this.store.select(selectors.getSelectedMconfigModelFieldsExtra)
+  fields$ = this.store
+    .select(selectors.getSelectedMconfigModelFieldsExtra)
     .pipe(
       filter(v => !!v),
-      tap(x => this.fields = x)
+      tap(x => (this.fields = x))
     );
 
   joinAs: string;
-  joinAs$ = this.route.queryParams
-    .pipe(
-      tap(params => this.joinAs = params['joinAs'] ? params['joinAs'] : undefined)
-    );
+  joinAs$ = this.route.queryParams.pipe(
+    tap(
+      params => (this.joinAs = params['joinAs'] ? params['joinAs'] : undefined)
+    )
+  );
 
   modelId: string;
-  modelId$ = this.store.select(selectors.getSelectedProjectModeRepoModelId)
+  modelId$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModelId)
     .pipe(
       filter(v => !!v),
       debounceTime(1), // wait until nodes updated
       tap(x => {
-
         if (this.modelId && this.modelId !== x) {
           this.itemsTree.treeModel.collapseAll();
           this.expandFirstNode();
@@ -96,37 +104,31 @@ export class ModelTreeComponent implements AfterViewInit {
     private myDialogService: services.MyDialogService,
     private route: ActivatedRoute,
     private structService: services.StructService,
-    private navigateService: services.NavigateService) {
-  }
+    private navigateService: services.NavigateService
+  ) {}
 
   ngAfterViewInit() {
-    setTimeout(
-      () => {
+    setTimeout(() => {
+      this.filterHidden();
 
-        this.filterHidden();
+      let nodeJoin;
 
-        let nodeJoin;
+      if (this.joinAs) {
+        nodeJoin = this.itemsTree.treeModel.getNodeById(this.joinAs);
+      }
 
-        if (this.joinAs) {
-          nodeJoin = this.itemsTree.treeModel.getNodeById(this.joinAs);
-        }
-
-        if (nodeJoin) {
-          nodeJoin.expand();
-
-        } else {
-
-          this.expandFirstNode();
-        }
-      },
-      1);
+      if (nodeJoin) {
+        nodeJoin.expand();
+      } else {
+        this.expandFirstNode();
+      }
+    }, 1);
   }
 
   expandFirstNode() {
     let modelFirstNode = this.nodes[0];
 
     if (modelFirstNode) {
-
       let nodeStart = this.itemsTree.treeModel.getNodeById(modelFirstNode.id);
 
       if (nodeStart) {
@@ -135,7 +137,10 @@ export class ModelTreeComponent implements AfterViewInit {
     }
   }
 
-  parentNodeInfo(rootNode: any, nodeFieldArray: interfaces.ModelNodeField[]): void {
+  parentNodeInfo(
+    rootNode: any,
+    nodeFieldArray: interfaces.ModelNodeField[]
+  ): void {
     for (let item of nodeFieldArray) {
       if (item.is_field) {
         if (item.field.is_selected || item.field.is_filtered) {
@@ -150,10 +155,12 @@ export class ModelTreeComponent implements AfterViewInit {
 
   filterHidden() {
     this.itemsTree.treeModel.doForAll((node: TreeNode) => {
-
-      let hidden = node.parent && node.parent.parent
-        ? node.parent.parent.data.hidden || node.parent.data.hidden || node.data.hidden
-        : node.parent
+      let hidden =
+        node.parent && node.parent.parent
+          ? node.parent.parent.data.hidden ||
+            node.parent.data.hidden ||
+            node.data.hidden
+          : node.parent
           ? node.parent.data.hidden || node.data.hidden
           : node.data.hidden;
 
@@ -164,14 +171,15 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   nodeOnClick(node: TreeNode) {
-    if (node.data.is_field && node.data.field.field_class !== api.ModelFieldFieldClassEnum.Filter) {
-
+    if (
+      node.data.is_field &&
+      node.data.field.field_class !== api.ModelFieldFieldClassEnum.Filter
+    ) {
       let [newMconfig, newQuery] = this.structService.generateMconfigAndQuery();
 
       if (node.data.field.is_selected) {
         // field is active, should be removed
         newMconfig = this.removeField(newMconfig, node.data.id);
-
       } else {
         // field is not active, should be added to select (with force_dims)
         newMconfig.select = [...newMconfig.select, node.data.id];
@@ -189,7 +197,14 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       this.dispatchData(newMconfig, newQuery);
-      setTimeout(() => this.navigateService.navigateMconfigQueryData(newMconfig.mconfig_id, newQuery.query_id), 1);
+      setTimeout(
+        () =>
+          this.navigateService.navigateMconfigQueryData(
+            newMconfig.mconfig_id,
+            newQuery.query_id
+          ),
+        1
+      );
     } else if (node.hasChildren) {
       // not field and has children
       node.toggleExpanded();
@@ -200,7 +215,9 @@ export class ModelTreeComponent implements AfterViewInit {
     newMconfig = this.removeFieldFromSelect(newMconfig, fieldId);
     newMconfig = this.removeFieldFromSortings(newMconfig, fieldId);
 
-    newMconfig.charts = newMconfig.charts.map(chart => this.removeFieldFromChart(chart, fieldId));
+    newMconfig.charts = newMconfig.charts.map(chart =>
+      this.removeFieldFromChart(chart, fieldId)
+    );
 
     newMconfig.filters.forEach(x => {
       let field = this.fields.find(f => f.id === x.field_id);
@@ -232,7 +249,9 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   removeFieldFromSelect(newMconfig: api.Mconfig, fieldId: string) {
-    let fieldIndex = newMconfig.select.findIndex(selectId => selectId === fieldId);
+    let fieldIndex = newMconfig.select.findIndex(
+      selectId => selectId === fieldId
+    );
 
     newMconfig.select = [
       ...newMconfig.select.slice(0, fieldIndex),
@@ -254,7 +273,9 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   removeFieldFromSortings(newMconfig: api.Mconfig, fieldId: string) {
-    let fIndex = newMconfig.sortings.findIndex(sorting => sorting.field_id === fieldId);
+    let fIndex = newMconfig.sortings.findIndex(
+      sorting => sorting.field_id === fieldId
+    );
 
     if (fIndex >= 0) {
       // field should be removed from sortings and sorts
@@ -266,9 +287,13 @@ export class ModelTreeComponent implements AfterViewInit {
       let newSorts: string[] = [];
 
       newMconfig.sortings.forEach(sorting =>
-        sorting.desc ? newSorts.push(`${sorting.field_id} desc`) : newSorts.push(sorting.field_id));
+        sorting.desc
+          ? newSorts.push(`${sorting.field_id} desc`)
+          : newSorts.push(sorting.field_id)
+      );
 
-      newMconfig.sorts = newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
+      newMconfig.sorts =
+        newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
     }
 
     return newMconfig;
@@ -286,11 +311,9 @@ export class ModelTreeComponent implements AfterViewInit {
     }
 
     if (chart.y_fields && chart.y_fields.length > 0) {
-
       let index = chart.y_fields.findIndex(yId => yId === fieldId);
 
       if (index > -1) {
-
         newChart = Object.assign({}, newChart, {
           y_fields: [
             ...chart.y_fields.slice(0, index),
@@ -301,11 +324,9 @@ export class ModelTreeComponent implements AfterViewInit {
     }
 
     if (chart.hide_columns && chart.hide_columns.length > 0) {
-
       let index = chart.hide_columns.findIndex(hId => hId === fieldId);
 
       if (index > -1) {
-
         newChart = Object.assign({}, newChart, {
           hide_columns: [
             ...chart.hide_columns.slice(0, index),
@@ -324,11 +345,15 @@ export class ModelTreeComponent implements AfterViewInit {
     }
 
     if (chart.previous_value_field === fieldId) {
-      newChart = Object.assign({}, newChart, { previous_value_field: undefined });
+      newChart = Object.assign({}, newChart, {
+        previous_value_field: undefined
+      });
     }
 
     if (chart.is_valid) {
-      newChart = Object.assign({}, newChart, { is_valid: this.isChartPartValid(newChart) });
+      newChart = Object.assign({}, newChart, {
+        is_valid: this.isChartPartValid(newChart)
+      });
     }
 
     return newChart;
@@ -340,14 +365,14 @@ export class ModelTreeComponent implements AfterViewInit {
 
     if (node.data.field.is_filtered) {
       //  should be removed from filters
-      let filterIndex = newMconfig.filters.findIndex(filt => filt.field_id === node.data.id);
+      let filterIndex = newMconfig.filters.findIndex(
+        filt => filt.field_id === node.data.id
+      );
 
       newMconfig.filters = [
         ...newMconfig.filters.slice(0, filterIndex),
         ...newMconfig.filters.slice(filterIndex + 1)
       ];
-
-
     } else {
       //  should be added to filters
       let newFraction: api.Fraction;
@@ -355,12 +380,12 @@ export class ModelTreeComponent implements AfterViewInit {
       newFraction = {
         brick: 'any',
         operator: api.FractionOperatorEnum.Or,
-        type: api.FractionTypeEnum.StringIsAnyValue, // 'any'
+        type: api.FractionTypeEnum.StringIsAnyValue // 'any'
       };
 
       let newFilter: api.Filter = {
         field_id: node.data.field.id,
-        fractions: [newFraction],
+        fractions: [newFraction]
       };
 
       newMconfig.filters = [...newMconfig.filters, newFilter];
@@ -379,22 +404,35 @@ export class ModelTreeComponent implements AfterViewInit {
     }
 
     this.dispatchData(newMconfig, newQuery);
-    setTimeout(() => this.navigateService.navigateMconfigQueryFilters(newMconfig.mconfig_id, newQuery.query_id), 1);
+    setTimeout(
+      () =>
+        this.navigateService.navigateMconfigQueryFilters(
+          newMconfig.mconfig_id,
+          newQuery.query_id
+        ),
+      1
+    );
   }
 
   dispatchData(newMconfig: api.Mconfig, newQuery: api.Query) {
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
-    this.store.dispatch(new actions.CreateMconfigAndQueryAction({ mconfig: newMconfig, query: newQuery }));
+    this.store.dispatch(
+      new actions.CreateMconfigAndQueryAction({
+        mconfig: newMconfig,
+        query: newQuery
+      })
+    );
   }
 
   goToFile(fieldFileName: string, fieldLineNum: number): void {
     event.stopPropagation();
 
     let files: api.CatalogFile[] = [];
-    this.store.select(selectors.getSelectedProjectModeRepoFiles)
+    this.store
+      .select(selectors.getSelectedProjectModeRepoFiles)
       .pipe(take(1))
-      .subscribe(x => files = x);
+      .subscribe(x => (files = x));
 
     let file = files.find(f => f.name === fieldFileName);
 
@@ -403,19 +441,14 @@ export class ModelTreeComponent implements AfterViewInit {
 
   isChartPartValid(chart: api.Chart) {
     switch (chart.type) {
-
       case api.ChartTypeEnum.Table: {
-
         return true;
 
         // break;
       }
 
       case api.ChartTypeEnum.BarVertical: {
-
-        if (chart.x_field
-          && chart.y_field
-        ) {
+        if (chart.x_field && chart.y_field) {
           return true;
         }
 
@@ -423,9 +456,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.BarHorizontal: {
-        if (chart.x_field
-          && chart.y_field
-        ) {
+        if (chart.x_field && chart.y_field) {
           return true;
         }
 
@@ -433,9 +464,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.BarVerticalGrouped: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -443,9 +472,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.BarHorizontalGrouped: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -453,9 +480,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.BarVerticalStacked: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -463,9 +488,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.BarHorizontalStacked: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -473,9 +496,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.BarVerticalNormalized: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -483,9 +504,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.BarHorizontalNormalized: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -493,9 +512,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.Pie: {
-        if (chart.x_field
-          && chart.y_field
-        ) {
+        if (chart.x_field && chart.y_field) {
           return true;
         }
 
@@ -503,29 +520,21 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.PieAdvanced: {
-        if (
-          chart.x_field
-          && chart.y_field
-        ) {
+        if (chart.x_field && chart.y_field) {
           return true;
         }
         break;
       }
 
       case api.ChartTypeEnum.PieGrid: {
-        if (
-          chart.x_field
-          && chart.y_field
-        ) {
+        if (chart.x_field && chart.y_field) {
           return true;
         }
         break;
       }
 
       case api.ChartTypeEnum.Line: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -533,9 +542,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.Area: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -543,9 +550,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.AreaStacked: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -553,9 +558,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.AreaNormalized: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -563,9 +566,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.HeatMap: {
-        if (chart.x_field
-          && chart.y_fields.length > 0
-        ) {
+        if (chart.x_field && chart.y_fields.length > 0) {
           return true;
         }
 
@@ -573,10 +574,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.TreeMap: {
-        if (
-          chart.x_field
-          && chart.y_field
-        ) {
+        if (chart.x_field && chart.y_field) {
           return true;
         }
         break;
@@ -591,9 +589,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.Gauge: {
-        if (chart.x_field
-          && chart.y_field
-        ) {
+        if (chart.x_field && chart.y_field) {
           return true;
         }
 
@@ -601,8 +597,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
 
       case api.ChartTypeEnum.GaugeLinear: {
-        if (chart.value_field
-        ) {
+        if (chart.value_field) {
           return true;
         }
 

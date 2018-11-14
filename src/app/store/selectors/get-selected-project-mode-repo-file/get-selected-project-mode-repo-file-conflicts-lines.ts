@@ -8,17 +8,18 @@ export const getSelectedProjectModeRepoFileConflictsLines = createSelector(
   getSelectedProjectModeRepoConflicts,
   getSelectedProjectModeRepoFileId,
   (repoConflicts, fileId) => {
-
     if (repoConflicts && fileId) {
       let fileLines: number[] = [];
-      repoConflicts.filter(l => l.file_id === fileId).forEach(line => {
-        if (fileLines.findIndex(element => element === line.line_number) < 0) {
-          fileLines.push(line.line_number);
-        }
-      }
-      );
+      repoConflicts
+        .filter(l => l.file_id === fileId)
+        .forEach(line => {
+          if (
+            fileLines.findIndex(element => element === line.line_number) < 0
+          ) {
+            fileLines.push(line.line_number);
+          }
+        });
       return fileLines;
-
     } else {
       return [];
     }

@@ -15,7 +15,6 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'update-remote-url-dialog.component.html'
 })
 export class UpdateRemoteUrlDialogComponent implements OnInit, OnDestroy {
-
   selectedProject: api.Project;
   selectedProjectSub: Subscription;
 
@@ -24,13 +23,14 @@ export class UpdateRemoteUrlDialogComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<UpdateRemoteUrlDialogComponent>,
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnInit(): void {
-    this.selectedProjectSub = this.store.select(selectors.getSelectedProject)
+    this.selectedProjectSub = this.store
+      .select(selectors.getSelectedProject)
       .pipe(filter(v => !!v))
-      .subscribe(x => this.selectedProject = x);
+      .subscribe(x => (this.selectedProject = x));
 
     this.buildForm();
   }
@@ -40,31 +40,31 @@ export class UpdateRemoteUrlDialogComponent implements OnInit, OnDestroy {
   }
 
   buildForm(): void {
-
     this.updateUrlForm = this.fb.group({
-      'url': [
+      url: [
         null,
         Validators.compose([
           // do not add required
-          Validators.maxLength(255),
-        ]),
-      ],
+          Validators.maxLength(255)
+        ])
+      ]
     });
-
   }
 
   onSubmit(fv: any) {
-
     let devRepo: api.Repo;
-    this.store.select(selectors.getSelectedProjectDevRepo)
+    this.store
+      .select(selectors.getSelectedProjectDevRepo)
       .pipe(take(1))
-      .subscribe(x => devRepo = x);
+      .subscribe(x => (devRepo = x));
 
-    this.store.dispatch(new actions.SetRepoRemoteUrlAction({
-      project_id: devRepo.project_id,
-      repo_id: devRepo.repo_id,
-      server_ts: devRepo.server_ts,
-      remote_url: fv['url'],
-    }));
+    this.store.dispatch(
+      new actions.SetRepoRemoteUrlAction({
+        project_id: devRepo.project_id,
+        repo_id: devRepo.repo_id,
+        server_ts: devRepo.server_ts,
+        remote_url: fv['url']
+      })
+    );
   }
 }

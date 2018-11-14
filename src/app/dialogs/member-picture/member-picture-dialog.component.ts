@@ -8,14 +8,12 @@ import * as configs from 'app/configs/_index';
   templateUrl: 'member-picture-dialog.component.html'
 })
 export class MemberPictureDialogComponent {
-
   dynamicAssetsBaseUrl: string = configs.pathConfig.dynamicAssetsBaseUrl;
 
   constructor(
     public dialogRef: MatDialogRef<MemberPictureDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { row: any },
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: { row: any }
+  ) {}
 
-  onSubmit() {
-  }
+  onSubmit() {}
 }

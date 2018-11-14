@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectDevRepoRemoteNeedManualPull = createSelector(
   getSelectedProjectDevRepo,
-  (repo: api.Repo) => repo ? repo.remote_need_manual_pull : undefined
+  (repo: api.Repo) => (repo ? repo.remote_need_manual_pull : undefined)
 );

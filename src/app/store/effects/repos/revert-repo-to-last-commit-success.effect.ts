@@ -8,8 +8,9 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class RevertRepoToLastCommitSuccessEffect {
-
-  @Effect() revertRepoToLastCommitSuccess$: Observable<Action> = this.actions$
+  @Effect() revertRepoToLastCommitSuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.REVERT_REPO_TO_LAST_COMMIT_SUCCESS)
     .pipe(
       mergeMap((action: actions.RevertRepoToLastCommitSuccessAction) =>
@@ -17,13 +18,12 @@ export class RevertRepoToLastCommitSuccessEffect {
           new actions.UpdateFilesStateAction([
             ...action.payload.deleted_dev_files,
             ...action.payload.changed_dev_files,
-            ...action.payload.new_dev_files,
+            ...action.payload.new_dev_files
           ]),
-          new actions.ProcessStructsAction([action.payload.dev_struct]),
+          new actions.ProcessStructsAction([action.payload.dev_struct])
         ])
-      ));
+      )
+    );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

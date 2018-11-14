@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoServerTs = createSelector(
   getSelectedProjectModeRepo,
-  (repo: api.Repo) => repo ? repo.server_ts : undefined
+  (repo: api.Repo) => (repo ? repo.server_ts : undefined)
 );

@@ -9,17 +9,11 @@ export const getSelectedProjectModeRepoFiles = createSelector(
   getFilesState,
   getSelectedProjectId,
   getSelectedProjectModeRepoId,
-  (
-    files: api.CatalogFile[],
-    projectId: string,
-    repoId: string) => {
-
+  (files: api.CatalogFile[], projectId: string, repoId: string) => {
     if (files && projectId && repoId) {
-
-      return files.filter(file =>
-        file.project_id === projectId &&
-        file.repo_id === repoId);
-
+      return files.filter(
+        file => file.project_id === projectId && file.repo_id === repoId
+      );
     } else {
       return undefined;
     }

@@ -5,5 +5,6 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoIsNeedCommit = createSelector(
   getSelectedProjectModeRepo,
-  (repo: api.Repo) => repo ? repo.status === api.RepoStatusEnum.NeedCommit : undefined
+  (repo: api.Repo) =>
+    repo ? repo.status === api.RepoStatusEnum.NeedCommit : undefined
 );

@@ -7,16 +7,11 @@ import * as api from 'app/api/_index';
 export const getSelectedQuery = createSelector(
   getQueriesState,
   getLayoutQueryId,
-  (
-    queries: api.Query[],
-    queryId: string) => {
-
+  (queries: api.Query[], queryId: string) => {
     if (queries && queryId) {
-
       let query = queries.find((q: api.Query) => q.query_id === queryId);
 
       return query ? query : undefined;
-
     } else {
       return undefined;
     }

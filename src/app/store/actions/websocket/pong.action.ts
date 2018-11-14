@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class PongAction implements Action {
   readonly type = actionTypes.PONG;
 
-  constructor(public payload: api.PongRequestBodyPayload) {
-  }
+  constructor(public payload: api.PongRequestBodyPayload) {}
 }

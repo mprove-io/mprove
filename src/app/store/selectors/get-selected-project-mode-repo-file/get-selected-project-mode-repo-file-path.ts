@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoFilePath = createSelector(
   getSelectedProjectModeRepoFile,
-  (file: api.CatalogFile) => file ? file.path : undefined
+  (file: api.CatalogFile) => (file ? file.path : undefined)
 );

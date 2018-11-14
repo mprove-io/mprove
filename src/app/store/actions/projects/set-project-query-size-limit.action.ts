@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SetProjectQuerySizeLimitAction implements Action {
   readonly type = actionTypes.SET_PROJECT_QUERY_SIZE_LIMIT;
 
-  constructor(public payload: api.SetProjectQuerySizeLimitRequestBodyPayload) {
-  }
+  constructor(public payload: api.SetProjectQuerySizeLimitRequestBodyPayload) {}
 }

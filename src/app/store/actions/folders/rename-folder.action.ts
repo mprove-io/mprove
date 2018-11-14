@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class RenameFolderAction implements Action {
   readonly type = actionTypes.RENAME_FOLDER;
 
-  constructor(public payload: api.RenameFolderRequestBodyPayload) {
-  }
+  constructor(public payload: api.RenameFolderRequestBodyPayload) {}
 }

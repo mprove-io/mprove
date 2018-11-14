@@ -8,19 +8,16 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SetUserPictureSuccessEffect {
-
   @Effect() saveUserPictureSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_USER_PICTURE_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SetUserPictureSuccessAction) => from([
-        new actions.UpdateUserStateAction(action.payload.user),
-        new actions.UpdateMembersStateAction(action.payload.members),
-      ])
+      mergeMap((action: actions.SetUserPictureSuccessAction) =>
+        from([
+          new actions.UpdateUserStateAction(action.payload.user),
+          new actions.UpdateMembersStateAction(action.payload.members)
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

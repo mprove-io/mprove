@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
 import { MatSelectChange } from '@angular/material';
 import * as api from 'app/api/_index';
 
@@ -9,7 +15,6 @@ import * as api from 'app/api/_index';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionYesnoComponent {
-
   fractionTypeEnum = api.FractionTypeEnum;
   fractionOperatorEnum = api.FractionOperatorEnum;
   fractionYesnoValueEnum = api.FractionYesnoValueEnum;
@@ -19,31 +24,30 @@ export class FractionYesnoComponent {
 
   @Output() fractionChange = new EventEmitter();
 
-  constructor() {
-  }
+  constructor() {}
 
   typeChange(ev: MatSelectChange) {
     switch (ev.value) {
-
-      case (this.fractionTypeEnum.YesnoIsAnyValue): {
+      case this.fractionTypeEnum.YesnoIsAnyValue: {
         this.fraction = {
           type: ev.value,
           operator: api.FractionOperatorEnum.Or,
-          brick: `any`,
+          brick: `any`
         };
 
         this.emitFractionChange();
         break;
       }
 
-      case (this.fractionTypeEnum.YesnoIs): {
-        let newYesnoValue = this.fraction.yesno_value || api.FractionYesnoValueEnum.Yes;
+      case this.fractionTypeEnum.YesnoIs: {
+        let newYesnoValue =
+          this.fraction.yesno_value || api.FractionYesnoValueEnum.Yes;
 
         this.fraction = {
           type: ev.value,
           operator: api.FractionOperatorEnum.Or,
           yesno_value: newYesnoValue,
-          brick: `${newYesnoValue}`,
+          brick: `${newYesnoValue}`
         };
 
         this.emitFractionChange();
@@ -60,7 +64,7 @@ export class FractionYesnoComponent {
       type: api.FractionTypeEnum.YesnoIs,
       operator: api.FractionOperatorEnum.Or,
       yesno_value: ev.value,
-      brick: `${ev.value}`,
+      brick: `${ev.value}`
     };
 
     this.emitFractionChange();

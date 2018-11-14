@@ -12,42 +12,45 @@ import * as selectors from 'app/store/selectors/_index';
   selector: 'm-next-payment',
   templateUrl: 'next-payment.component.html'
 })
-
 export class NextPaymentComponent {
-
-
-  displayedColumns = ['payout_date', 'subscription_id', 'payment_id', 'plan_id', 'amount', 'is_paid', 'receipt_url'];
+  displayedColumns = [
+    'payout_date',
+    'subscription_id',
+    'payment_id',
+    'plan_id',
+    'amount',
+    'is_paid',
+    'receipt_url'
+  ];
   dataSource = new ExampleDataSource(this.store);
 
-
   selectedProjectAnalyticsPlans: interfaces.AnalyticsPlan[];
-  selectedProjectAnalyticsPlans$ = this.store.select(selectors.getSelectedProjectAnalyticsPlans).pipe(
-    tap(x => this.selectedProjectAnalyticsPlans = x));
+  selectedProjectAnalyticsPlans$ = this.store
+    .select(selectors.getSelectedProjectAnalyticsPlans)
+    .pipe(tap(x => (this.selectedProjectAnalyticsPlans = x)));
 
-  constructor(
-    private store: Store<interfaces.AppState>) {
-  }
+  constructor(private store: Store<interfaces.AppState>) {}
 
   getPlanNameById(planId: number) {
-    let plan = this.selectedProjectAnalyticsPlans.find(p => p.analytics_plan_id === planId);
+    let plan = this.selectedProjectAnalyticsPlans.find(
+      p => p.analytics_plan_id === planId
+    );
 
     return plan ? plan.name : 'Unknown';
   }
 }
 
 class ExampleDataSource extends DataSource<any> {
-
   constructor(private store: Store<interfaces.AppState>) {
     super();
   }
 
   connect(): Observable<api.Payment[]> {
-    return this.store.select(selectors.getSelectedProjectNextPayment)
-      .pipe(
-        filter(v => !!v),
-        map(p => [p])
-      );
+    return this.store.select(selectors.getSelectedProjectNextPayment).pipe(
+      filter(v => !!v),
+      map(p => [p])
+    );
   }
 
-  disconnect() { }
+  disconnect() {}
 }

@@ -12,8 +12,8 @@ export class RenameFolderEffect {
   @Effect() renameFolder$: Observable<Action> = this.actions$
     .ofType(actionTypes.RENAME_FOLDER)
     .pipe(
-      mergeMap((action: actions.RenameFolderAction) => this.backendService.renameFolder(action.payload)
-        .pipe(
+      mergeMap((action: actions.RenameFolderAction) =>
+        this.backendService.renameFolder(action.payload).pipe(
           map(body => new actions.RenameFolderSuccessAction(body.payload)),
           catchError(e => of(new actions.RenameFolderFailAction({ error: e })))
         )
@@ -22,7 +22,6 @@ export class RenameFolderEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

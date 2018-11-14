@@ -11,65 +11,44 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'nav-models.component.html',
   styleUrls: ['nav-models.component.scss']
 })
-
 export class NavModelsComponent {
-
   selectedModel: api.Model;
-  selectedModel$ = this.store.select(selectors.getSelectedProjectModeRepoModel)
-    .pipe( // no filter
-      tap(x => this.selectedModel = x)
+  selectedModel$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModel)
+    .pipe(
+      // no filter
+      tap(x => (this.selectedModel = x))
     );
 
   projectId: string;
-  projectId$ = this.store.select(selectors.getLayoutProjectId).pipe(filter(v => !!v), tap(
-    x => this.projectId = x));
+  projectId$ = this.store.select(selectors.getLayoutProjectId).pipe(
+    filter(v => !!v),
+    tap(x => (this.projectId = x))
+  );
 
   mode: enums.LayoutModeEnum;
-  mode$ = this.store.select(selectors.getLayoutMode).pipe(filter(v => !!v), tap(
-    x => this.mode = x));
+  mode$ = this.store.select(selectors.getLayoutMode).pipe(
+    filter(v => !!v),
+    tap(x => (this.mode = x))
+  );
 
-  modelsLength$ = this.store.select(selectors.getSelectedProjectModeRepoModelsNotHiddenLength); // no filter here
+  modelsLength$ = this.store.select(
+    selectors.getSelectedProjectModeRepoModelsNotHiddenLength
+  ); // no filter here
 
   modelGroups: interfaces.ModelGroup[] = [];
   flatModels: api.Model[] = [];
 
-  models$ = this.store.select(selectors.getSelectedProjectModeRepoStructModelsNotHidden).pipe(
-    filter(models => !!models),
-    map(models => models.sort(
-      (a, b) => {
-        let nameA = a.label.toLowerCase();
-        let nameB = b.label.toLowerCase();
-        if (nameA < nameB) { // sort string ascending
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-        return 0; // default return value (no sorting)
-      })),
-    tap(models => {
-
-      let flat: api.Model[] = [];
-      let modelGroupsMap: { [id: string]: api.Model[] } = {};
-      let modelGroupsArray: interfaces.ModelGroup[] = [];
-
-      models.forEach(m => {
-        if (m.gr) {
-          if (modelGroupsMap[m.gr]) {
-            modelGroupsMap[m.gr].push(m);
-          } else {
-            modelGroupsMap[m.gr] = [m];
-          }
-        } else {
-          flat.push(m);
-        }
-      });
-
-      Object.keys(modelGroupsMap).sort(
-        (a, b) => {
-          let nameA = a.toLowerCase();
-          let nameB = b.toLowerCase();
-          if (nameA < nameB) { // sort string ascending
+  models$ = this.store
+    .select(selectors.getSelectedProjectModeRepoStructModelsNotHidden)
+    .pipe(
+      filter(models => !!models),
+      map(models =>
+        models.sort((a, b) => {
+          let nameA = a.label.toLowerCase();
+          let nameB = b.label.toLowerCase();
+          if (nameA < nameB) {
+            // sort string ascending
             return -1;
           }
           if (nameA > nameB) {
@@ -77,18 +56,48 @@ export class NavModelsComponent {
           }
           return 0; // default return value (no sorting)
         })
-        .forEach(key => {
-          modelGroupsArray.push({
-            gr: key,
-            models: modelGroupsMap[key]
-          });
+      ),
+      tap(models => {
+        let flat: api.Model[] = [];
+        let modelGroupsMap: { [id: string]: api.Model[] } = {};
+        let modelGroupsArray: interfaces.ModelGroup[] = [];
+
+        models.forEach(m => {
+          if (m.gr) {
+            if (modelGroupsMap[m.gr]) {
+              modelGroupsMap[m.gr].push(m);
+            } else {
+              modelGroupsMap[m.gr] = [m];
+            }
+          } else {
+            flat.push(m);
+          }
         });
 
-      this.modelGroups = modelGroupsArray;
-      this.flatModels = flat;
-    }));
+        Object.keys(modelGroupsMap)
+          .sort((a, b) => {
+            let nameA = a.toLowerCase();
+            let nameB = b.toLowerCase();
+            if (nameA < nameB) {
+              // sort string ascending
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+            return 0; // default return value (no sorting)
+          })
+          .forEach(key => {
+            modelGroupsArray.push({
+              gr: key,
+              models: modelGroupsMap[key]
+            });
+          });
 
-  constructor(
-    private store: Store<interfaces.AppState>) {
-  }
+        this.modelGroups = modelGroupsArray;
+        this.flatModels = flat;
+      })
+    );
+
+  constructor(private store: Store<interfaces.AppState>) {}
 }

@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class UpdateReposStateAction implements Action {
   readonly type = actionTypes.UPDATE_REPOS_STATE;
 
-  constructor(public payload: api.Repo[]) {
-  }
+  constructor(public payload: api.Repo[]) {}
 }

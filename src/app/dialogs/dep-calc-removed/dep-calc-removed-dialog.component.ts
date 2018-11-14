@@ -5,15 +5,13 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
   moduleId: module.id,
   selector: 'm-dep-calc-removed-dialog',
   templateUrl: 'dep-calc-removed-dialog.component.html',
-  styleUrls: ['dep-calc-removed-dialog.component.scss'],
+  styleUrls: ['dep-calc-removed-dialog.component.scss']
 })
 export class DepCalcRemovedDialogComponent {
-
   constructor(
     public dialogRef: MatDialogRef<DepCalcRemovedDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {
-  }
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   okClick(): void {
     this.dialogRef.close();

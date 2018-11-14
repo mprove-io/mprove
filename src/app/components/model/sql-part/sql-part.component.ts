@@ -15,7 +15,7 @@ import * as selectors from 'app/store/selectors/_index';
   moduleId: module.id,
   selector: 'm-sql-part',
   templateUrl: 'sql-part.component.html',
-  styleUrls: ['sql-part.component.scss'],
+  styleUrls: ['sql-part.component.scss']
 })
 export class SqlPartComponent implements AfterViewInit {
   sqlEditorTheme: string = 'sqlserver';
@@ -24,19 +24,20 @@ export class SqlPartComponent implements AfterViewInit {
 
   @ViewChild('editor') editor: AceEditorComponent;
 
-  sqlEditorTheme$ = this.store.select(selectors.getSelectedProjectUserSqlTheme)
+  sqlEditorTheme$ = this.store
+    .select(selectors.getSelectedProjectUserSqlTheme)
     .pipe(
       filter(v => !!v),
       tap(x => {
-        this.sqlEditorTheme = (x === api.MemberSqlThemeEnum.Light) ? 'sqlserver' : 'solarized_dark';
-        if (this.editor !== null) { this.editor.setTheme(this.sqlEditorTheme); }
+        this.sqlEditorTheme =
+          x === api.MemberSqlThemeEnum.Light ? 'sqlserver' : 'solarized_dark';
+        if (this.editor !== null) {
+          this.editor.setTheme(this.sqlEditorTheme);
+        }
       })
     );
 
-  constructor(
-    private store: Store<interfaces.AppState>,
-  ) {
-  }
+  constructor(private store: Store<interfaces.AppState>) {}
 
   ngAfterViewInit() {
     this.editor.getEditor().gotoLine(1);
@@ -45,18 +46,18 @@ export class SqlPartComponent implements AfterViewInit {
     this.editor.getEditor().$blockScrolling = Infinity; // TODO: update ace later (1 instead of 2 by using this line)
     this.editor.getEditor().setFontSize(16);
 
-    this.editor.getEditor().renderer.$cursorLayer.element.style.display = 'none';
+    this.editor.getEditor().renderer.$cursorLayer.element.style.display =
+      'none';
 
     this.editor.setOptions({
       maxLines: Infinity,
       readOnly: true,
       highlightActiveLine: false,
-      highlightGutterLine: false,
+      highlightGutterLine: false
     });
 
     this.editor.setTheme(this.sqlEditorTheme);
 
     this.editor.setMode('sql');
   }
-
 }

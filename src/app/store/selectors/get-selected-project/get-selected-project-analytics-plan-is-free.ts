@@ -5,7 +5,6 @@ import { getSelectedProjectAnalyticsPlanId } from 'app/store/selectors/get-selec
 export const getSelectedProjectAnalyticsPlanIsFree = createSelector(
   getSelectedProjectAnalyticsPlanId,
   (analyticsPlanId: number) => {
-
     return analyticsPlanId === 519436;
   }
 );

@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SetUserNameEffect {
-
   @Effect() setUserName$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_USER_NAME)
     .pipe(
-      mergeMap((action: actions.SetUserNameAction) => this.backendService.setUserName(action.payload)
-        .pipe(
+      mergeMap((action: actions.SetUserNameAction) =>
+        this.backendService.setUserName(action.payload).pipe(
           map(body => new actions.SetUserNameSuccessAction(body.payload)),
           catchError(e => of(new actions.SetUserNameFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class SetUserNameEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

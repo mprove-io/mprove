@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class CreateDashboardSuccessAction implements Action {
   readonly type = actionTypes.CREATE_DASHBOARD_SUCCESS;
 
-  constructor(public payload: api.CreateDashboardResponse200BodyPayload) {
-  }
+  constructor(public payload: api.CreateDashboardResponse200BodyPayload) {}
 }

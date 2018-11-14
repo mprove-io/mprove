@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class UpdateUserStateAction implements Action {
   readonly type = actionTypes.UPDATE_USER_STATE;
 
-  constructor(public payload: api.User) {
-  }
+  constructor(public payload: api.User) {}
 }

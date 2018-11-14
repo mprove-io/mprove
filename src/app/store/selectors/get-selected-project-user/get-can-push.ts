@@ -8,10 +8,8 @@ export const getCanPush = createSelector(
   getSelectedProjectId,
   getUserId,
   (projectId, userId) => {
-
     if (projectId === constants.DEMO) {
       return userId === 'akalitenya@mprove.io';
-
     } else {
       return true;
     }

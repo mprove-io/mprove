@@ -10,15 +10,14 @@ import * as services from 'app/services/_index';
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent {
-
   constructor(
     private printer: services.PrinterService,
-    private loadingService: TdLoadingService) {
-
+    private loadingService: TdLoadingService
+  ) {
     this.loadingService.create({
       name: 'app',
       type: LoadingType.Circular,
-      mode: LoadingMode.Indeterminate,
+      mode: LoadingMode.Indeterminate
       // color: 'accent',
     });
   }
@@ -28,6 +27,10 @@ export class AppComponent {
   }
 
   deactivateEvent(event: any) {
-    this.printer.log(enums.busEnum.DEACTIVATE_EVENT, 'from AppComponent:', event);
+    this.printer.log(
+      enums.busEnum.DEACTIVATE_EVENT,
+      'from AppComponent:',
+      event
+    );
   }
 }

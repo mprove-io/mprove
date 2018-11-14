@@ -8,19 +8,20 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SetProjectCredentialsSuccessEffect {
-
-  @Effect() setProjectCredentialsSuccess$: Observable<Action> = this.actions$
+  @Effect() setProjectCredentialsSuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.SET_PROJECT_CREDENTIALS_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SetProjectCredentialsSuccessAction) => from([
-        new actions.UpdateProjectsStateAction([action.payload.project]),
-        new actions.ProcessStructsAction(action.payload.dev_and_prod_structs_or_empty),
-      ])
+      mergeMap((action: actions.SetProjectCredentialsSuccessAction) =>
+        from([
+          new actions.UpdateProjectsStateAction([action.payload.project]),
+          new actions.ProcessStructsAction(
+            action.payload.dev_and_prod_structs_or_empty
+          )
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

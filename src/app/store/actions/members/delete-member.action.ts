@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class DeleteMemberAction implements Action {
   readonly type = actionTypes.DELETE_MEMBER;
 
-  constructor(public payload: api.DeleteMemberRequestBodyPayload) {
-  }
+  constructor(public payload: api.DeleteMemberRequestBodyPayload) {}
 }

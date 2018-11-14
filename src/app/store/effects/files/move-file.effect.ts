@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class MoveFileEffect {
-
   @Effect() moveFile$: Observable<Action> = this.actions$
     .ofType(actionTypes.MOVE_FILE)
     .pipe(
-      mergeMap((action: actions.MoveFileAction) => this.backendService.moveFile(action.payload)
-        .pipe(
+      mergeMap((action: actions.MoveFileAction) =>
+        this.backendService.moveFile(action.payload).pipe(
           map(body => new actions.MoveFileSuccessAction(body.payload)),
           catchError(e => of(new actions.MoveFileFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class MoveFileEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

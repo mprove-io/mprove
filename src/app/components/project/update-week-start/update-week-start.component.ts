@@ -9,51 +9,56 @@ import * as selectors from 'app/store/selectors/_index';
 @Component({
   moduleId: module.id,
   selector: 'm-update-week-start',
-  templateUrl: 'update-week-start.component.html',
+  templateUrl: 'update-week-start.component.html'
 })
-
 export class UpdateWeekStartComponent implements OnChanges {
   @Input()
   selectedProject: api.Project;
   updateWeekStartForm: FormGroup = null;
 
-  selectedProjectUserIsAdmin$ = this.store.select(selectors.getSelectedProjectUserIsAdmin);
+  selectedProjectUserIsAdmin$ = this.store.select(
+    selectors.getSelectedProjectUserIsAdmin
+  );
 
   constructor(
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   weekStartEnumKeys(): string[] {
-    return Object.keys(api.ProjectWeekStartEnum).filter(item => !/^[A-Z].*$/.test(item));
+    return Object.keys(api.ProjectWeekStartEnum).filter(
+      item => !/^[A-Z].*$/.test(item)
+    );
   }
 
   ngOnChanges() {
     if (!this.updateWeekStartForm) {
       this.buildForm();
-
-    } else if (this.updateWeekStartForm.get('weekStart').value === this.selectedProject.week_start) {
+    } else if (
+      this.updateWeekStartForm.get('weekStart').value ===
+      this.selectedProject.week_start
+    ) {
       this.updateWeekStartForm.markAsPristine();
     }
   }
 
   buildForm() {
     this.updateWeekStartForm = this.fb.group({
-      'weekStart': [
+      weekStart: [
         this.selectedProject.week_start,
-        Validators.compose([
-          Validators.required,
-        ])
-      ],
+        Validators.compose([Validators.required])
+      ]
     });
   }
 
   onSubmit(form: FormGroup, fv: any) {
-    this.store.dispatch(new actions.SetProjectWeekStartAction({
-      project_id: this.selectedProject.project_id,
-      server_ts: this.selectedProject.server_ts,
-      week_start: fv['weekStart'],
-    }));
+    this.store.dispatch(
+      new actions.SetProjectWeekStartAction({
+        project_id: this.selectedProject.project_id,
+        server_ts: this.selectedProject.server_ts,
+        week_start: fv['weekStart']
+      })
+    );
   }
 
   onReset(form: FormGroup) {

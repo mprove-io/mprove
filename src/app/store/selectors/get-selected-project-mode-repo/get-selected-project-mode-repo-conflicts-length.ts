@@ -4,5 +4,5 @@ import { getSelectedProjectModeRepoConflicts } from 'app/store/selectors/get-sel
 
 export const getSelectedProjectModeRepoConflictsLength = createSelector(
   getSelectedProjectModeRepoConflicts,
-  conflicts => conflicts ? conflicts.length : undefined
+  conflicts => (conflicts ? conflicts.length : undefined)
 );

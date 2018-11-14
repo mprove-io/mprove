@@ -19,7 +19,7 @@ export enum ChartIconEnum {
   TreeMap = <any>'tree_map',
   NumberCard = <any>'number_card',
   Gauge = <any>'gauge',
-  GaugeLinear = <any>'gauge_linear',
+  GaugeLinear = <any>'gauge_linear'
 
   // Table = <any>'insert_chart',
   // BarVertical = <any>'bar_vertical',

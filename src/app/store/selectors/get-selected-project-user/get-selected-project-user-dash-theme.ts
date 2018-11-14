@@ -8,10 +8,9 @@ export const getSelectedProjectUserDashTheme = createSelector(
   getSelectedProjectMembers,
   getUserId,
   (members, userId) => {
-
     if (members && userId) {
-      return members.find((member: api.Member) => member.member_id === userId).dash_theme;
-
+      return members.find((member: api.Member) => member.member_id === userId)
+        .dash_theme;
     } else {
       return undefined;
     }

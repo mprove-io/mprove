@@ -13,8 +13,6 @@ const pipesArray = [
   imports: [],
   declarations: pipesArray,
   exports: pipesArray,
-  providers: pipesArray,
+  providers: pipesArray
 })
-
-export class SharedModule {
-}
+export class SharedModule {}

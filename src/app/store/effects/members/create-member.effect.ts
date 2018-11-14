@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CreateMemberEffect {
-
   @Effect() createMember$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_MEMBER)
     .pipe(
-      mergeMap((action: actions.CreateMemberAction) => this.backendService.createMember(action.payload)
-        .pipe(
+      mergeMap((action: actions.CreateMemberAction) =>
+        this.backendService.createMember(action.payload).pipe(
           map(body => new actions.CreateMemberSuccessAction(body.payload)),
           catchError(e => of(new actions.CreateMemberFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class CreateMemberEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

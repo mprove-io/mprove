@@ -8,5 +8,5 @@ export const barPaddingChartTypes = [
   api.ChartTypeEnum.BarHorizontal,
   api.ChartTypeEnum.BarHorizontalGrouped,
   api.ChartTypeEnum.BarHorizontalStacked,
-  api.ChartTypeEnum.BarHorizontalNormalized,
+  api.ChartTypeEnum.BarHorizontalNormalized
 ];

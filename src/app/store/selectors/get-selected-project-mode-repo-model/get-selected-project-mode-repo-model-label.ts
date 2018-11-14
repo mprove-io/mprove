@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoModelLabel = createSelector(
   getSelectedProjectModeRepoModel,
-  (model: api.Model) => model ? model.label : undefined
+  (model: api.Model) => (model ? model.label : undefined)
 );

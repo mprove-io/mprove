@@ -9,12 +9,10 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class RunQueriesDrySuccessEffect {
-
   @Effect() runQueriesDrySuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.RUN_QUERIES_DRY_SUCCESS)
     .pipe(
       mergeMap((action: actions.RunQueriesDrySuccessAction) => {
-
         let actionsArray = [];
 
         if (action.payload.error_queries.length > 0) {
@@ -23,14 +21,14 @@ export class RunQueriesDrySuccessEffect {
             new actions.UpdateLayoutDryAction({
               dry_id: action.payload.dry_id,
               valid_estimates: action.payload.valid_estimates
-            }),
+            })
           ];
         } else {
           actionsArray = [
             new actions.UpdateLayoutDryAction({
               dry_id: action.payload.dry_id,
               valid_estimates: action.payload.valid_estimates
-            }),
+            })
           ];
         }
 
@@ -39,9 +37,8 @@ export class RunQueriesDrySuccessEffect {
       tap(() => this.loadingService.resolve('dry'))
     );
 
-
   constructor(
     private actions$: Actions,
-    private loadingService: TdLoadingService) {
-  }
+    private loadingService: TdLoadingService
+  ) {}
 }

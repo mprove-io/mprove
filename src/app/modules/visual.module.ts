@@ -18,16 +18,8 @@ import { SharedModule } from 'app/modules/shared.module';
     RouterModule,
     NgxChartsModule
   ],
-  declarations: [
-    components.VisualComponent,
-  ],
-  entryComponents: [
-
-  ],
-  exports: [
-    components.VisualComponent
-  ]
+  declarations: [components.VisualComponent],
+  entryComponents: [],
+  exports: [components.VisualComponent]
 })
-
-export class VisualModule {
-}
+export class VisualModule {}

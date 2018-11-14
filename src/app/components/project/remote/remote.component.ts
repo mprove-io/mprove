@@ -15,72 +15,76 @@ import * as services from 'app/services/_index';
   styleUrls: ['remote.component.scss']
 })
 export class RemoteComponent implements OnDestroy {
-
   remoteUrl$ = this.store.select(selectors.getSelectedProjectDevRepoRemoteUrl); // no filter here
 
-  remoteWebhook$ = this.store.select(selectors.getSelectedProjectDevRepoRemoteWebhook); // no filter here
+  remoteWebhook$ = this.store.select(
+    selectors.getSelectedProjectDevRepoRemoteWebhook
+  ); // no filter here
 
-  remotePublicKey$ = this.store.select(selectors.getSelectedProjectDevRepoRemotePublicKey); // no filter here
+  remotePublicKey$ = this.store.select(
+    selectors.getSelectedProjectDevRepoRemotePublicKey
+  ); // no filter here
 
-  remotePushAccessIsOk$ = this.store.select(selectors.getSelectedProjectDevRepoRemotePushAccessIsOk)
+  remotePushAccessIsOk$ = this.store
+    .select(selectors.getSelectedProjectDevRepoRemotePushAccessIsOk)
     .pipe(filter(v => !!v));
 
-  remotePushErrorMessage$ =
-    this.store.select(selectors.getSelectedProjectDevRepoRemotePushErrorMessage); // no filter here
+  remotePushErrorMessage$ = this.store.select(
+    selectors.getSelectedProjectDevRepoRemotePushErrorMessage
+  ); // no filter here
 
-  remoteNeedManualPull$ = this.store.select(selectors.getSelectedProjectDevRepoRemoteNeedManualPull)
+  remoteNeedManualPull$ = this.store
+    .select(selectors.getSelectedProjectDevRepoRemoteNeedManualPull)
     .pipe(filter(v => !!v));
 
-  remotePullAccessIsOk$ = this.store.select(selectors.getSelectedProjectDevRepoRemotePullAccessIsOk)
+  remotePullAccessIsOk$ = this.store
+    .select(selectors.getSelectedProjectDevRepoRemotePullAccessIsOk)
     .pipe(filter(v => !!v));
 
-  remotePullErrorMessage$ =
-    this.store.select(selectors.getSelectedProjectDevRepoRemotePullErrorMessage); // no filter here
-
+  remotePullErrorMessage$ = this.store.select(
+    selectors.getSelectedProjectDevRepoRemotePullErrorMessage
+  ); // no filter here
 
   remoteLastPullTs: number;
-  remoteLastPullTs$ = this.store.select(selectors.getSelectedProjectDevRepoRemoteLastPullTs)
+  remoteLastPullTs$ = this.store
+    .select(selectors.getSelectedProjectDevRepoRemoteLastPullTs)
     .pipe(
       filter(v => !!v),
-      tap(x => this.remoteLastPullTs = x)
+      tap(x => (this.remoteLastPullTs = x))
     );
 
   remoteLastPushTs: number;
-  remoteLastPushTs$ = this.store.select(selectors.getSelectedProjectDevRepoRemoteLastPushTs)
+  remoteLastPushTs$ = this.store
+    .select(selectors.getSelectedProjectDevRepoRemoteLastPushTs)
     .pipe(
       filter(v => !!v),
-      tap(x => this.remoteLastPushTs = x)
+      tap(x => (this.remoteLastPushTs = x))
     );
 
+  lastPullTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => {
+      if (this.remoteLastPullTs > 1) {
+        return this.timeService.timeAgoFromNow(this.remoteLastPullTs);
+      } else {
+        return 'never';
+      }
+    })
+  );
 
-  lastPullTimeAgo$ = interval(1000)
-    .pipe(
-      startWith(0),
-      map(x => {
-        if (this.remoteLastPullTs > 1) {
-          return this.timeService.timeAgoFromNow(this.remoteLastPullTs);
+  lastPushTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => {
+      if (this.remoteLastPushTs > 1) {
+        return this.timeService.timeAgoFromNow(this.remoteLastPushTs);
+      } else {
+        return 'never';
+      }
+    })
+  );
 
-        } else {
-          return 'never';
-        }
-      })
-    );
-
-
-  lastPushTimeAgo$ = interval(1000)
-    .pipe(
-      startWith(0),
-      map(x => {
-        if (this.remoteLastPushTs > 1) {
-          return this.timeService.timeAgoFromNow(this.remoteLastPushTs);
-
-        } else {
-          return 'never';
-        }
-      })
-    );
-
-  selectedProjectId$ = this.store.select(selectors.getSelectedProjectId)
+  selectedProjectId$ = this.store
+    .select(selectors.getSelectedProjectId)
     .pipe(filter(v => !!v));
 
   titlePageSub: Subscription;
@@ -89,11 +93,9 @@ export class RemoteComponent implements OnDestroy {
     private store: Store<interfaces.AppState>,
     private myDialogService: services.MyDialogService,
     private pageTitleService: services.PageTitleService,
-    private timeService: services.TimeService,
+    private timeService: services.TimeService
   ) {
-
     this.titlePageSub = this.pageTitleService.setProjectSubtitle('Remote');
-
   }
 
   ngOnDestroy() {
@@ -105,30 +107,34 @@ export class RemoteComponent implements OnDestroy {
   }
 
   regenerateRemoteWebhook() {
-
     let devRepo: api.Repo;
-    this.store.select(selectors.getSelectedProjectDevRepo)
+    this.store
+      .select(selectors.getSelectedProjectDevRepo)
       .pipe(take(1))
-      .subscribe(x => devRepo = x);
+      .subscribe(x => (devRepo = x));
 
-    this.store.dispatch(new actions.RegenerateRepoRemoteWebhookAction({
-      project_id: devRepo.project_id,
-      repo_id: devRepo.repo_id,
-      server_ts: devRepo.server_ts
-    }));
+    this.store.dispatch(
+      new actions.RegenerateRepoRemoteWebhookAction({
+        project_id: devRepo.project_id,
+        repo_id: devRepo.repo_id,
+        server_ts: devRepo.server_ts
+      })
+    );
   }
 
   regenerateRemotePublicKey() {
-
     let devRepo: api.Repo;
-    this.store.select(selectors.getSelectedProjectDevRepo)
+    this.store
+      .select(selectors.getSelectedProjectDevRepo)
       .pipe(take(1))
-      .subscribe(x => devRepo = x);
+      .subscribe(x => (devRepo = x));
 
-    this.store.dispatch(new actions.RegenerateRepoRemotePublicKeyAction({
-      project_id: devRepo.project_id,
-      repo_id: devRepo.repo_id,
-      server_ts: devRepo.server_ts
-    }));
+    this.store.dispatch(
+      new actions.RegenerateRepoRemotePublicKeyAction({
+        project_id: devRepo.project_id,
+        repo_id: devRepo.repo_id,
+        server_ts: devRepo.server_ts
+      })
+    );
   }
 }

@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SetUserNameAction implements Action {
   readonly type = actionTypes.SET_USER_NAME;
 
-  constructor(public payload: api.SetUserNameRequestBodyPayload) {
-  }
+  constructor(public payload: api.SetUserNameRequestBodyPayload) {}
 }

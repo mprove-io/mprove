@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectDevRepoRemotePushAccessIsOk = createSelector(
   getSelectedProjectDevRepo,
-  (repo: api.Repo) => repo ? repo.remote_push_access_is_ok : undefined
+  (repo: api.Repo) => (repo ? repo.remote_push_access_is_ok : undefined)
 );

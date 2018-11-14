@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class UpdateFilesStateAction implements Action {
   readonly type = actionTypes.UPDATE_FILES_STATE;
 
-  constructor(public payload: api.CatalogFile[]) {
-  }
+  constructor(public payload: api.CatalogFile[]) {}
 }

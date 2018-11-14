@@ -9,14 +9,13 @@ import * as helper from 'app/helper/_index';
 
 @Injectable()
 export class ProcessStructsEffect {
-
   @Effect() processStructs$: Observable<Action> = this.actions$
     .ofType(actionTypes.PROCESS_STRUCTS)
     .pipe(
-      mergeMap((action: actions.ProcessStructsAction) => from(helper.processStructsHelper(action.payload)))
+      mergeMap((action: actions.ProcessStructsAction) =>
+        from(helper.processStructsHelper(action.payload))
+      )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

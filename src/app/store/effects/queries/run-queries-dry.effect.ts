@@ -9,21 +9,19 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class RunQueriesDryEffect {
-
   @Effect() runQueriesDry$: Observable<Action> = this.actions$
     .ofType(actionTypes.RUN_QUERIES_DRY)
     .pipe(
-      mergeMap((action: actions.RunQueriesDryAction) => this.backendService.runQueriesDry(action.payload)
-        .pipe(
+      mergeMap((action: actions.RunQueriesDryAction) =>
+        this.backendService.runQueriesDry(action.payload).pipe(
           map(body => new actions.RunQueriesDrySuccessAction(body.payload)),
           catchError(e => of(new actions.RunQueriesDryFailAction({ error: e })))
         )
       )
     );
 
-
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SetUserPictureAction implements Action {
   readonly type = actionTypes.SET_USER_PICTURE;
 
-  constructor(public payload: api.SetUserPictureRequestBodyPayload) {
-  }
+  constructor(public payload: api.SetUserPictureRequestBodyPayload) {}
 }

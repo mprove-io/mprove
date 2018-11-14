@@ -10,19 +10,22 @@ export const getSelectedProjectModeRepoFileDashboardExist = createSelector(
   getSelectedProjectModeRepoFile,
   getSelectedProjectModeRepoDashboardsNotTemp,
   getSelectedProjectModeRepoFileIsDashboard,
-  (selectedFile: api.CatalogFile, dashboards: api.Dashboard[], fileIsDashboard) => {
-
-    if (selectedFile && dashboards && (fileIsDashboard !== undefined)) {
-
+  (
+    selectedFile: api.CatalogFile,
+    dashboards: api.Dashboard[],
+    fileIsDashboard
+  ) => {
+    if (selectedFile && dashboards && fileIsDashboard !== undefined) {
       let r = MyRegex.CAPTURE_FILE_ID_AND_EXT().exec(selectedFile.name);
 
       if (r) {
         let id = r[1];
         let ext = r[2];
 
-        return fileIsDashboard ? dashboards.findIndex(d => d.dashboard_id === id) > -1 : false;
+        return fileIsDashboard
+          ? dashboards.findIndex(d => d.dashboard_id === id) > -1
+          : false;
       }
-
     } else {
       return undefined;
     }

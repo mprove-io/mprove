@@ -8,20 +8,17 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SaveFileSuccessEffect {
-
   @Effect() saveFileSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.SAVE_FILE_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SaveFileSuccessAction) => from([
-        new actions.UpdateFilesStateAction([action.payload.saved_dev_file]),
-        new actions.SetLayoutNeedSaveFalseAction(),  // special for this scenario
-        new actions.ProcessStructsAction([action.payload.dev_struct]),
-      ])
+      mergeMap((action: actions.SaveFileSuccessAction) =>
+        from([
+          new actions.UpdateFilesStateAction([action.payload.saved_dev_file]),
+          new actions.SetLayoutNeedSaveFalseAction(), // special for this scenario
+          new actions.ProcessStructsAction([action.payload.dev_struct])
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

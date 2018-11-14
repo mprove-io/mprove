@@ -12,22 +12,30 @@ import * as services from 'app/services/_index';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-
 export class SettingsComponent implements OnDestroy {
+  selectedProjectUserIsAdmin$ = this.store.select(
+    selectors.getSelectedProjectUserIsAdmin
+  );
 
-  selectedProjectUserIsAdmin$ = this.store.select(selectors.getSelectedProjectUserIsAdmin);
-
-  selectedProject$ = this.store.select(selectors.getSelectedProject).pipe(filter(v => !!v));
-  selectedProjectId$ = this.store.select(selectors.getSelectedProjectId).pipe(filter(v => !!v));
-  selectedProjectBqProject$ = this.store.select(selectors.getSelectedProjectBqProject).pipe(filter(v => !!v));
-  selectedProjectClientEmail$ = this.store.select(selectors.getSelectedProjectClientEmail).pipe(filter(v => !!v));
+  selectedProject$ = this.store
+    .select(selectors.getSelectedProject)
+    .pipe(filter(v => !!v));
+  selectedProjectId$ = this.store
+    .select(selectors.getSelectedProjectId)
+    .pipe(filter(v => !!v));
+  selectedProjectBqProject$ = this.store
+    .select(selectors.getSelectedProjectBqProject)
+    .pipe(filter(v => !!v));
+  selectedProjectClientEmail$ = this.store
+    .select(selectors.getSelectedProjectClientEmail)
+    .pipe(filter(v => !!v));
 
   pageTitleSub: Subscription;
 
   constructor(
     private store: Store<interfaces.AppState>,
     private pageTitle: services.PageTitleService,
-    private myDialogService: services.MyDialogService,
+    private myDialogService: services.MyDialogService
   ) {
     this.pageTitleSub = this.pageTitle.setProjectSubtitle('Settings');
   }

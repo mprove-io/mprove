@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class RunQueriesSuccessAction implements Action {
   readonly type = actionTypes.RUN_QUERIES_SUCCESS;
 
-  constructor(public payload: api.RunQueriesResponse200BodyPayload) {
-  }
+  constructor(public payload: api.RunQueriesResponse200BodyPayload) {}
 }

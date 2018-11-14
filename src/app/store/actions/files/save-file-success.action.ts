@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SaveFileSuccessAction implements Action {
   readonly type = actionTypes.SAVE_FILE_SUCCESS;
 
-  constructor(public payload: api.SaveFileResponse200BodyPayload) {
-  }
+  constructor(public payload: api.SaveFileResponse200BodyPayload) {}
 }

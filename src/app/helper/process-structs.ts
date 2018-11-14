@@ -15,9 +15,9 @@ export function processStructsHelper(structs: api.Struct[]) {
   });
 
   return [
-    new actions.UpdateReposStateAction(repos),           // 2
-    new actions.UpdateErrorsStateAction(errors),         // 3
-    new actions.UpdateModelsStateAction(models),         // 3
-    new actions.UpdateDashboardsStateAction(dashboards), // 5
+    new actions.UpdateReposStateAction(repos), // 2
+    new actions.UpdateErrorsStateAction(errors), // 3
+    new actions.UpdateModelsStateAction(models), // 3
+    new actions.UpdateDashboardsStateAction(dashboards) // 5
   ];
 }

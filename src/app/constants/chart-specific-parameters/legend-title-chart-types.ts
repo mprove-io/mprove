@@ -14,5 +14,5 @@ export const legendTitleChartTypes = [
   api.ChartTypeEnum.Area,
   api.ChartTypeEnum.AreaStacked,
   api.ChartTypeEnum.AreaNormalized,
-  api.ChartTypeEnum.Gauge,
+  api.ChartTypeEnum.Gauge
 ];

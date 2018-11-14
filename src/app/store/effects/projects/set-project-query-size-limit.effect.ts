@@ -9,21 +9,24 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SetProjectQuerySizeLimitEffect {
-
-  @Effect() setProjectQuerySizeLimit$: Observable<Action> = this.actions$
-    .ofType(actionTypes.SET_PROJECT_QUERY_SIZE_LIMIT).pipe(
-      mergeMap((action: actions.SetProjectQuerySizeLimitAction) =>
-        this.backendService.setProjectQuerySizeLimit(action.payload)
-          .pipe(
-            map(body => new actions.SetProjectQuerySizeLimitSuccessAction(body.payload)),
-            catchError(e => of(new actions.SetProjectQuerySizeLimitFailAction({ error: e })))
-          )
+  @Effect() setProjectQuerySizeLimit$: Observable<
+    Action
+  > = this.actions$.ofType(actionTypes.SET_PROJECT_QUERY_SIZE_LIMIT).pipe(
+    mergeMap((action: actions.SetProjectQuerySizeLimitAction) =>
+      this.backendService.setProjectQuerySizeLimit(action.payload).pipe(
+        map(
+          body =>
+            new actions.SetProjectQuerySizeLimitSuccessAction(body.payload)
+        ),
+        catchError(e =>
+          of(new actions.SetProjectQuerySizeLimitFailAction({ error: e }))
+        )
       )
-    );
+    )
+  );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

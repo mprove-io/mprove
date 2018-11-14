@@ -19,8 +19,7 @@ import * as services from 'app/services/_index';
   moduleId: module.id,
   selector: 'm-file-editor',
   templateUrl: 'file-editor.component.html',
-  styleUrls: ['file-editor.component.scss'],
-
+  styleUrls: ['file-editor.component.scss']
 })
 export class FileEditorComponent implements AfterViewInit {
   text: string = '';
@@ -35,15 +34,18 @@ export class FileEditorComponent implements AfterViewInit {
 
   needSave$ = this.store.select(selectors.getLayoutNeedSave); // no filter here
 
-  fileContent$ = this.store.select(selectors.getSelectedProjectModeRepoFileContent)
+  fileContent$ = this.store
+    .select(selectors.getSelectedProjectModeRepoFileContent)
     .pipe(
-      tap(x => this.text = x) // no filter here
+      tap(x => (this.text = x)) // no filter here
     );
 
-  fileLastPath$ = this.store.select(selectors.getSelectedProjectModeRepoFileLastPath)
+  fileLastPath$ = this.store
+    .select(selectors.getSelectedProjectModeRepoFileLastPath)
     .pipe(filter(v => !!v));
 
-  fileErrorsLines$ = this.store.select(selectors.getSelectedProjectModeRepoFileErrorsLines)
+  fileErrorsLines$ = this.store
+    .select(selectors.getSelectedProjectModeRepoFileErrorsLines)
     .pipe(
       filter(v => !!v),
       tap(x => {
@@ -53,64 +55,59 @@ export class FileEditorComponent implements AfterViewInit {
       })
     );
 
-  fileConflictsLines$ = this.store.select(selectors.getSelectedProjectModeRepoFileConflictsLines)
-    .pipe(
-      filter(v => !!v),
-      tap(
-        x => {
-          this.conflictsLines = x;
-          this.removeMarkers();
-          this.addMarkers();
-        })
-    );
-
-  fileEditorTheme$ = this.store.select(selectors.getSelectedProjectUserFileTheme)
+  fileConflictsLines$ = this.store
+    .select(selectors.getSelectedProjectModeRepoFileConflictsLines)
     .pipe(
       filter(v => !!v),
       tap(x => {
-        this.fileEditorTheme = (x === api.MemberFileThemeEnum.Light) ? 'chrome' : 'solarized_dark';
-        if (this.editor !== null) { this.editor.setTheme(this.fileEditorTheme); }
+        this.conflictsLines = x;
+        this.removeMarkers();
+        this.addMarkers();
       })
     );
 
+  fileEditorTheme$ = this.store
+    .select(selectors.getSelectedProjectUserFileTheme)
+    .pipe(
+      filter(v => !!v),
+      tap(x => {
+        this.fileEditorTheme =
+          x === api.MemberFileThemeEnum.Light ? 'chrome' : 'solarized_dark';
+        if (this.editor !== null) {
+          this.editor.setTheme(this.fileEditorTheme);
+        }
+      })
+    );
 
   line: number;
 
-  routeLine$ = this.route.queryParams
-    .pipe(
-      tap(params => {
-        this.line = Number(
-          params['line']
-            ? params['line']
-            : 1
-        );
+  routeLine$ = this.route.queryParams.pipe(
+    tap(params => {
+      this.line = Number(params['line'] ? params['line'] : 1);
 
-        setTimeout(
-          () => {
-            this.editor.getEditor().gotoLine(this.line);
-            this.editor.getEditor().navigateLineEnd();
-          },
-          1);
-      })
-    );
+      setTimeout(() => {
+        this.editor.getEditor().gotoLine(this.line);
+        this.editor.getEditor().navigateLineEnd();
+      }, 1);
+    })
+  );
 
-  fileId$ = this.store.select(selectors.getSelectedProjectModeRepoFileId)
-    .pipe(
-      filter(v => !!v),
-      tap((fileId: string) => {
+  fileId$ = this.store.select(selectors.getSelectedProjectModeRepoFileId).pipe(
+    filter(v => !!v),
+    tap((fileId: string) => {
+      setTimeout(() => {
+        this.editor.getEditor().gotoLine(this.line);
+        this.editor.getEditor().navigateLineEnd();
+      }, 1);
+    })
+  );
+  fileIsView$ = this.store.select(
+    selectors.getSelectedProjectModeRepoFileIsView
+  ); // no filter
 
-        setTimeout(
-          () => {
-            this.editor.getEditor().gotoLine(this.line);
-            this.editor.getEditor().navigateLineEnd();
-          },
-          1);
-      })
-    );
-  fileIsView$ = this.store.select(selectors.getSelectedProjectModeRepoFileIsView); // no filter
-
-  fileViewJoins: Array<{ model: api.Model, join_as: string }> = [];
-  fileViewJoins$ = this.store.select(selectors.getSelectedProjectModeRepoFileViewJoins)
+  fileViewJoins: Array<{ model: api.Model; join_as: string }> = [];
+  fileViewJoins$ = this.store
+    .select(selectors.getSelectedProjectModeRepoFileViewJoins)
     .pipe(
       filter(v => !!v),
       tap(x => {
@@ -118,31 +115,41 @@ export class FileEditorComponent implements AfterViewInit {
       })
     );
 
+  fileIsModel$ = this.store.select(
+    selectors.getSelectedProjectModeRepoFileIsModel
+  ); // no filter
+  fileIsDashboard$ = this.store.select(
+    selectors.getSelectedProjectModeRepoFileIsDashboard
+  ); // no filter
 
-  fileIsModel$ = this.store.select(selectors.getSelectedProjectModeRepoFileIsModel); // no filter
-  fileIsDashboard$ = this.store.select(selectors.getSelectedProjectModeRepoFileIsDashboard); // no filter
-
-  fileModelExist$ = this.store.select(selectors.getSelectedProjectModeRepoFileModelExist); // no filter
-  fileDashboardExist$ = this.store.select(selectors.getSelectedProjectModeRepoFileDashboardExist); // no filter
+  fileModelExist$ = this.store.select(
+    selectors.getSelectedProjectModeRepoFileModelExist
+  ); // no filter
+  fileDashboardExist$ = this.store.select(
+    selectors.getSelectedProjectModeRepoFileDashboardExist
+  ); // no filter
 
   constructor(
     private store: Store<interfaces.AppState>,
     private printer: services.PrinterService,
     private dialogService: services.DialogService,
     private navigateService: services.NavigateService,
-    private route: ActivatedRoute) {
-  }
+    private route: ActivatedRoute
+  ) {}
 
   ngAfterViewInit() {
-
     this.editor.getEditor().$blockScrolling = Infinity; // TODO: update ace later (1 instead of 2 by using this line)
     this.editor.getEditor().setFontSize(16);
 
     let modeIsDev: boolean;
-    this.store.select(selectors.getLayoutModeIsDev).pipe(take(1)).subscribe(x => modeIsDev = x);
+    this.store
+      .select(selectors.getLayoutModeIsDev)
+      .pipe(take(1))
+      .subscribe(x => (modeIsDev = x));
 
     if (!modeIsDev) {
-      this.editor.getEditor().renderer.$cursorLayer.element.style.display = 'none';
+      this.editor.getEditor().renderer.$cursorLayer.element.style.display =
+        'none';
     }
 
     this.editor.setOptions({
@@ -150,12 +157,11 @@ export class FileEditorComponent implements AfterViewInit {
       tabSize: 2,
       useSoftTabs: true,
       highlightActiveLine: modeIsDev,
-      highlightGutterLine: modeIsDev,
+      highlightGutterLine: modeIsDev
     });
 
     this.editor.setTheme(this.fileEditorTheme);
     this.editor.setMode('yaml');
-
 
     // this.editor.getEditor().setOptions({
     //   enableBasicAutocompletion: true
@@ -171,10 +177,10 @@ export class FileEditorComponent implements AfterViewInit {
   }
 
   goToFileModel(): void {
-    this.store.select(selectors.getSelectedProjectModeRepoFile)
+    this.store
+      .select(selectors.getSelectedProjectModeRepoFile)
       .pipe(take(1))
       .subscribe(selectedFile => {
-
         const [name, ext] = selectedFile.name.split('.');
 
         this.navigateService.navigateModel(name);
@@ -182,10 +188,10 @@ export class FileEditorComponent implements AfterViewInit {
   }
 
   goToFileDashboard(): void {
-    this.store.select(selectors.getSelectedProjectModeRepoFile)
+    this.store
+      .select(selectors.getSelectedProjectModeRepoFile)
       .pipe(take(1))
       .subscribe(selectedFile => {
-
         const [name, ext] = selectedFile.name.split('.');
 
         this.navigateService.navigateDashboard(name);
@@ -196,11 +202,13 @@ export class FileEditorComponent implements AfterViewInit {
     this.navigateService.navigateModel(modelId, joinAs);
   }
 
-
   removeMarkers() {
     let frontMarkers = this.editor.getEditor().session.getMarkers(true); // returns Object, not Array (wrong docs!)
     for (let id in frontMarkers) {
-      if (frontMarkers.hasOwnProperty(id) && frontMarkers[id].clazz === 'myMarker') {
+      if (
+        frontMarkers.hasOwnProperty(id) &&
+        frontMarkers[id].clazz === 'myMarker'
+      ) {
         this.editor.getEditor().session.removeMarker(frontMarkers[id].id);
       }
     }
@@ -208,49 +216,59 @@ export class FileEditorComponent implements AfterViewInit {
 
   addMarkers() {
     let repoIsNeedResolve: boolean;
-    this.store.select(selectors.getSelectedProjectModeRepoIsNeedResolve)
+    this.store
+      .select(selectors.getSelectedProjectModeRepoIsNeedResolve)
       .pipe(take(1))
-      .subscribe(x => repoIsNeedResolve = x);
+      .subscribe(x => (repoIsNeedResolve = x));
 
     let Range = require('brace').acequire('ace/range').Range;
 
     if (repoIsNeedResolve) {
       // conflicts markers
-      this.conflictsLines.forEach((cLine) => {
+      this.conflictsLines.forEach(cLine => {
         if (cLine !== 0) {
-          this.editor.getEditor().session.addMarker(
-            new Range((cLine - 1), 0, (cLine - 1), 1), 'myMarker', 'fullLine', true);
+          this.editor
+            .getEditor()
+            .session.addMarker(
+              new Range(cLine - 1, 0, cLine - 1, 1),
+              'myMarker',
+              'fullLine',
+              true
+            );
         }
       });
-
     } else {
       // errors markers
-      this.errorsLines.forEach((eLine) => {
+      this.errorsLines.forEach(eLine => {
         if (eLine !== 0) {
-          this.editor.getEditor().session.addMarker(
-            new Range((eLine - 1), 0, (eLine - 1), 1), 'myMarker', 'fullLine', true);
+          this.editor
+            .getEditor()
+            .session.addMarker(
+              new Range(eLine - 1, 0, eLine - 1, 1),
+              'myMarker',
+              'fullLine',
+              true
+            );
         }
       });
     }
   }
 
   onTextChanged(e: any) {
-
     if (!!e) {
       if (e !== this.text) {
         this.newText = e;
 
         this.removeMarkers();
 
-        this.store.select(selectors.getLayoutNeedSave)
+        this.store
+          .select(selectors.getLayoutNeedSave)
           .pipe(take(1))
           .subscribe(needSave => {
             if (!needSave) {
               this.store.dispatch(new actions.SetLayoutNeedSaveTrueAction());
             }
-          }
-          );
-
+          });
       } else {
         this.removeMarkers();
         this.addMarkers();
@@ -265,43 +283,45 @@ export class FileEditorComponent implements AfterViewInit {
 
   onSave() {
     let selectedFile: api.CatalogFile;
-    this.store.select(selectors.getSelectedProjectModeRepoFile)
+    this.store
+      .select(selectors.getSelectedProjectModeRepoFile)
       .pipe(take(1))
-      .subscribe(x => selectedFile = x);
+      .subscribe(x => (selectedFile = x));
 
-    this.store.dispatch(new actions.SaveFileAction(
-      {
+    this.store.dispatch(
+      new actions.SaveFileAction({
         project_id: selectedFile.project_id,
         repo_id: selectedFile.repo_id,
         file_id: selectedFile.file_id,
         server_ts: selectedFile.server_ts,
-        content: this.newText,
+        content: this.newText
       })
     );
   }
 
-  canDeactivate(): Promise<boolean> | boolean { // used in component-deactivate-guard
-    this.printer.log(enums.busEnum.CAN_DEACTIVATE_CHECK, 'from FileEditorComponent');
+  canDeactivate(): Promise<boolean> | boolean {
+    // used in component-deactivate-guard
+    this.printer.log(
+      enums.busEnum.CAN_DEACTIVATE_CHECK,
+      'from FileEditorComponent'
+    );
 
     let needSave: boolean;
-    this.store.select(selectors.getLayoutNeedSave)
+    this.store
+      .select(selectors.getLayoutNeedSave)
       .pipe(take(1))
-      .subscribe(x => needSave = x);
+      .subscribe(x => (needSave = x));
 
     if (needSave) {
-      return this.dialogService.confirm('Discard changes?').then(
-        answer => {
-          if (answer === true) {
-            this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
-            this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
-            return true;
-
-          } else {
-            return false;
-          }
+      return this.dialogService.confirm('Discard changes?').then(answer => {
+        if (answer === true) {
+          this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
+          this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
+          return true;
+        } else {
+          return false;
         }
-      );
-
+      });
     } else {
       this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
       return true;

@@ -7,7 +7,6 @@ import { MyRegex } from 'app/models/my-regex';
 export const getSelectedProjectModeRepoFileIsDashboard = createSelector(
   getSelectedProjectModeRepoFile,
   (selectedFile: api.CatalogFile) => {
-
     if (selectedFile) {
       let r = MyRegex.CAPTURE_FILE_ID_AND_EXT().exec(selectedFile.name);
 
@@ -20,7 +19,6 @@ export const getSelectedProjectModeRepoFileIsDashboard = createSelector(
       }
 
       return ext === 'dashboard';
-
     } else {
       return undefined;
     }

@@ -4,16 +4,8 @@ import { NgModule } from '@angular/core';
 import * as components from 'app/components/_index';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [
-    components.ValidationMsgComponent
-  ],
-  exports: [
-    components.ValidationMsgComponent
-  ]
+  imports: [CommonModule],
+  declarations: [components.ValidationMsgComponent],
+  exports: [components.ValidationMsgComponent]
 })
-
-export class ValidationMsgModule {
-}
+export class ValidationMsgModule {}

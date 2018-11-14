@@ -11,20 +11,14 @@ export const getSelectedProjectModeRepoStructModels = createSelector(
   getSelectedProjectId,
   getSelectedProjectModeRepoId,
   getSelectedProjectModeRepoStructId,
-  (
-    models,
-    projectId,
-    repoId,
-    repoStructId) => {
-
+  (models, projectId, repoId, repoStructId) => {
     if (models && projectId && repoId && repoStructId) {
-
-      return models.filter((model: api.Model) =>
-        model.project_id === projectId &&
-        model.repo_id === repoId &&
-        model.struct_id === repoStructId
+      return models.filter(
+        (model: api.Model) =>
+          model.project_id === projectId &&
+          model.repo_id === repoId &&
+          model.struct_id === repoStructId
       );
-
     } else {
       return [];
     }

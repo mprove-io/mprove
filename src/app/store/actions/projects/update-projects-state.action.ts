@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class UpdateProjectsStateAction implements Action {
   readonly type = actionTypes.UPDATE_PROJECTS_STATE;
 
-  constructor(public payload: api.Project[]) {
-  }
+  constructor(public payload: api.Project[]) {}
 }

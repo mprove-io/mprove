@@ -9,21 +9,24 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class RegenerateRepoRemoteWebhookEffect {
-
-  @Effect() regenerateRepoRemoteWebhook$: Observable<Action> = this.actions$
-    .ofType(actionTypes.REGENERATE_REPO_REMOTE_WEBHOOK)
-    .pipe(
-      mergeMap((action: actions.RegenerateRepoRemoteWebhookAction) =>
-        this.backendService.regenerateRepoRemoteWebhook(action.payload)
-          .pipe(
-            map(body => new actions.RegenerateRepoRemoteWebhookSuccessAction(body.payload)),
-            catchError(e => of(new actions.RegenerateRepoRemoteWebhookFailAction({ error: e })))
-          )
+  @Effect() regenerateRepoRemoteWebhook$: Observable<
+    Action
+  > = this.actions$.ofType(actionTypes.REGENERATE_REPO_REMOTE_WEBHOOK).pipe(
+    mergeMap((action: actions.RegenerateRepoRemoteWebhookAction) =>
+      this.backendService.regenerateRepoRemoteWebhook(action.payload).pipe(
+        map(
+          body =>
+            new actions.RegenerateRepoRemoteWebhookSuccessAction(body.payload)
+        ),
+        catchError(e =>
+          of(new actions.RegenerateRepoRemoteWebhookFailAction({ error: e }))
+        )
       )
-    );
+    )
+  );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

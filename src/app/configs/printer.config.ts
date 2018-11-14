@@ -40,5 +40,5 @@ export const printerConfig = {
 
   [enums.busEnum[enums.busEnum.ACTIVATE_EVENT]]: false,
   [enums.busEnum[enums.busEnum.DEACTIVATE_EVENT]]: false,
-  [enums.busEnum[enums.busEnum.CAN_DEACTIVATE_CHECK]]: false,
+  [enums.busEnum[enums.busEnum.CAN_DEACTIVATE_CHECK]]: false
 };

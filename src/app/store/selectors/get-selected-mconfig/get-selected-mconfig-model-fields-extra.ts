@@ -10,19 +10,20 @@ export const getSelectedMconfigModelFieldsExtra = createSelector(
   getSelectedProjectModeRepoModel,
   getSelectedMconfigSelect,
   getSelectedMconfigFilters,
-  (
-    model: api.Model,
-    select: string[],
-    filters: api.Filter[]) => {
-
+  (model: api.Model, select: string[], filters: api.Filter[]) => {
     let newFields: interfaces.ModelFieldExtra[] = [];
 
     if (model) {
-      newFields = model.fields
-        .map((field: api.ModelField) => Object.assign({}, field, {
-          is_selected: select ? select.findIndex(fieldId => field.id === fieldId) > -1 : false,
-          is_filtered: filters ? filters.findIndex(filter => field.id === filter.field_id) > -1 : false
-        }));
+      newFields = model.fields.map((field: api.ModelField) =>
+        Object.assign({}, field, {
+          is_selected: select
+            ? select.findIndex(fieldId => field.id === fieldId) > -1
+            : false,
+          is_filtered: filters
+            ? filters.findIndex(filter => field.id === filter.field_id) > -1
+            : false
+        })
+      );
     }
 
     return newFields.length > 0 ? newFields : undefined;

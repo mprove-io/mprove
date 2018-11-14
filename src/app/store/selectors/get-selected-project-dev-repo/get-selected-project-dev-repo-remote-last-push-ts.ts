@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectDevRepoRemoteLastPushTs = createSelector(
   getSelectedProjectDevRepo,
-  (repo: api.Repo) => repo ? repo.remote_last_push_ts : undefined
+  (repo: api.Repo) => (repo ? repo.remote_last_push_ts : undefined)
 );

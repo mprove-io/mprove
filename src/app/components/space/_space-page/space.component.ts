@@ -1,5 +1,12 @@
 import { Location } from '@angular/common';
-import { AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewChecked,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import * as enums from 'app/enums/_index';
@@ -11,7 +18,6 @@ import * as services from 'app/services/_index';
   styleUrls: ['./space.component.scss']
 })
 export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
-
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   private readonly LOGIN_URL: string = '/login';
@@ -22,8 +28,8 @@ export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
     private location: Location,
     private auth: services.AuthService,
     private doCheckService: services.DoCheckService,
-    private cdRef: ChangeDetectorRef) {
-  }
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.doCheckService.startCheck();
@@ -43,7 +49,6 @@ export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (pathArray.length === 2 && pathArray[1] === 'login') {
       localStorage.removeItem('redirect_url');
       this.auth.login();
-
     } else {
       this.router.navigate([this.LOGIN_URL]);
     }
@@ -58,10 +63,18 @@ export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   activateEvent(event: any) {
-    this.printer.log(enums.busEnum.ACTIVATE_EVENT, 'from SpaceComponent:', event);
+    this.printer.log(
+      enums.busEnum.ACTIVATE_EVENT,
+      'from SpaceComponent:',
+      event
+    );
   }
 
   deactivateEvent(event: any) {
-    this.printer.log(enums.busEnum.DEACTIVATE_EVENT, 'from SpaceComponent:', event);
+    this.printer.log(
+      enums.busEnum.DEACTIVATE_EVENT,
+      'from SpaceComponent:',
+      event
+    );
   }
 }

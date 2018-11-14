@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedQueryLastCancelTs = createSelector(
   getSelectedQuery,
-  (query: api.Query) => query ? query.last_cancel_ts : undefined
+  (query: api.Query) => (query ? query.last_cancel_ts : undefined)
 );

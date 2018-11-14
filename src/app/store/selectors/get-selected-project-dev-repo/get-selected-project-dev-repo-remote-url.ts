@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectDevRepoRemoteUrl = createSelector(
   getSelectedProjectDevRepo,
-  (repo: api.Repo) => repo ? repo.remote_url : undefined
+  (repo: api.Repo) => (repo ? repo.remote_url : undefined)
 );

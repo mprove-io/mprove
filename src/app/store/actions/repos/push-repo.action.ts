@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class PushRepoAction implements Action {
   readonly type = actionTypes.PUSH_REPO;
 
-  constructor(public payload: api.PushRepoRequestBodyPayload) {
-  }
+  constructor(public payload: api.PushRepoRequestBodyPayload) {}
 }

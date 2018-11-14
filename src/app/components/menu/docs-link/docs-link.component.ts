@@ -4,10 +4,8 @@ import { Component } from '@angular/core';
   moduleId: module.id,
   selector: 'm-docs-link',
   templateUrl: 'docs-link.component.html',
-  styleUrls: ['docs-link.component.scss'],
+  styleUrls: ['docs-link.component.scss']
 })
-
 export class DocsLinkComponent {
-
-  constructor() { }
+  constructor() {}
 }

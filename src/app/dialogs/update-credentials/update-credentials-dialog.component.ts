@@ -16,7 +16,6 @@ import { ValidationService } from 'app/services/validation.service';
   templateUrl: 'update-credentials-dialog.component.html'
 })
 export class UpdateCredentialsDialogComponent implements OnInit, OnDestroy {
-
   selectedProject: api.Project;
   selectedProjectSub: Subscription;
 
@@ -25,13 +24,14 @@ export class UpdateCredentialsDialogComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<UpdateCredentialsDialogComponent>,
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnInit(): void {
-    this.selectedProjectSub = this.store.select(selectors.getSelectedProject)
+    this.selectedProjectSub = this.store
+      .select(selectors.getSelectedProject)
       .pipe(filter(v => !!v))
-      .subscribe(x => this.selectedProject = x);
+      .subscribe(x => (this.selectedProject = x));
 
     this.buildForm();
   }
@@ -42,23 +42,24 @@ export class UpdateCredentialsDialogComponent implements OnInit, OnDestroy {
 
   buildForm(): void {
     this.updateCredentialsForm = this.fb.group({
-      'credentials': [
+      credentials: [
         null,
         Validators.compose([
           Validators.required,
           ValidationService.checkTextSize
         ])
-      ],
+      ]
     });
-
   }
 
   onSubmit(fv: any) {
-    this.store.dispatch(new actions.SetProjectCredentialsAction({
-      project_id: this.selectedProject.project_id,
-      server_ts: this.selectedProject.server_ts,
-      // credentials: 'abcd',
-      credentials: fv['credentials'],
-    }));
+    this.store.dispatch(
+      new actions.SetProjectCredentialsAction({
+        project_id: this.selectedProject.project_id,
+        server_ts: this.selectedProject.server_ts,
+        // credentials: 'abcd',
+        credentials: fv['credentials']
+      })
+    );
   }
 }

@@ -4,15 +4,15 @@ import * as types from 'app/types/_index';
 
 const initialState: interfaces.WebSocketState = {
   init_id: 'empty',
-  is_open: false,
+  is_open: false
 };
 
-export function webSocketReducer(state = initialState, action: types.WebSocketActions): interfaces.WebSocketState {
-
+export function webSocketReducer(
+  state = initialState,
+  action: types.WebSocketActions
+): interfaces.WebSocketState {
   switch (action.type) {
-
     case actionTypes.UPDATE_WEBSOCKET_INIT_ID: {
-
       return Object.assign({}, state, { init_id: action.payload });
     }
 
@@ -31,6 +31,5 @@ export function webSocketReducer(state = initialState, action: types.WebSocketAc
     default: {
       return state;
     }
-
   }
 }

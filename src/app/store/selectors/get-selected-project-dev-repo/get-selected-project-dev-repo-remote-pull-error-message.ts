@@ -5,5 +5,5 @@ import { getSelectedProjectDevRepo } from 'app/store/selectors/get-selected-proj
 
 export const getSelectedProjectDevRepoRemotePullErrorMessage = createSelector(
   getSelectedProjectDevRepo,
-  (repo: api.Repo) => repo ? repo.remote_pull_error_message : undefined
+  (repo: api.Repo) => (repo ? repo.remote_pull_error_message : undefined)
 );

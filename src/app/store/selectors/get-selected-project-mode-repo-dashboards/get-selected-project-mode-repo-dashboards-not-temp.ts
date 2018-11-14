@@ -12,20 +12,15 @@ export const getSelectedProjectModeRepoDashboardsNotTemp = createSelector(
   getSelectedProjectId,
   getSelectedProjectModeRepoId,
   getSelectedProjectModeRepoStructId,
-  (
-    dashboards,
-    projectId,
-    repoId,
-    repoStructId) => {
-
+  (dashboards, projectId, repoId, repoStructId) => {
     if (dashboards && projectId && repoId && repoStructId) {
-      return dashboards.filter((dashboard: api.Dashboard) =>
-        dashboard.project_id === projectId &&
-        dashboard.repo_id === repoId &&
-        dashboard.struct_id === repoStructId &&
-        !dashboard.temp
+      return dashboards.filter(
+        (dashboard: api.Dashboard) =>
+          dashboard.project_id === projectId &&
+          dashboard.repo_id === repoId &&
+          dashboard.struct_id === repoStructId &&
+          !dashboard.temp
       );
-
     } else {
       return [];
     }

@@ -17,10 +17,9 @@ import * as uuid from 'uuid';
   moduleId: module.id,
   selector: 'm-model',
   templateUrl: 'model.component.html',
-  styleUrls: ['model.component.scss'],
+  styleUrls: ['model.component.scss']
 })
 export class ModelComponent implements OnDestroy {
-
   @ViewChild('sidenav') sidenav: MatSidenav;
   @ViewChild('sidenavRight') sidenavRight: MatSidenav;
 
@@ -40,74 +39,66 @@ export class ModelComponent implements OnDestroy {
   userId$ = this.store.select(selectors.getUserId);
 
   queryLastRunBy$ = this.store.select(selectors.getSelectedQueryLastRunBy);
-  queryLastRunTs$ = this.store.select(selectors.getSelectedQueryLastRunTs)
-    .pipe(
-      filter(v => !!v),
-      tap(x => {
+  queryLastRunTs$ = this.store.select(selectors.getSelectedQueryLastRunTs).pipe(
+    filter(v => !!v),
+    tap(x => {
+      this.lastRunTs = x;
 
-        this.lastRunTs = x;
-
-        this.dryTsIsAfterLastRunTs = this.dryTs
-          ? this.dryTs > x
-          : false;
-      })
-    );
+      this.dryTsIsAfterLastRunTs = this.dryTs ? this.dryTs > x : false;
+    })
+  );
 
   queryStatus$ = this.store.select(selectors.getSelectedQueryStatus);
 
   queryLastCompleteDuration: number;
-  queryLastCompleteDuration$ = this.store.select(selectors.getSelectedQueryLastCompleteDuration)
+  queryLastCompleteDuration$ = this.store
+    .select(selectors.getSelectedQueryLastCompleteDuration)
     .pipe(
       tap(duration => {
-
-        let durationCeil = duration
-          ? Math.ceil(duration / 1000)
-          : 0;
+        let durationCeil = duration ? Math.ceil(duration / 1000) : 0;
 
         this.queryLastCompleteDuration = durationCeil;
       })
     );
 
-
   queryData$ = this.store.select(selectors.getSelectedQueryData);
-  queryServerTsMoreThanOne$ = this.store.select(selectors.getSelectedQueryServerTs)
-    .pipe(
-      map(x => x > 1)
-    );
+  queryServerTsMoreThanOne$ = this.store
+    .select(selectors.getSelectedQueryServerTs)
+    .pipe(map(x => x > 1));
 
   previousQueryId: string;
 
   query: api.Query;
-  query$ = this.store.select(selectors.getSelectedQuery)
-    .pipe(
-      tap(x => {
-        this.query = x;
+  query$ = this.store.select(selectors.getSelectedQuery).pipe(
+    tap(x => {
+      this.query = x;
 
-        if (x) {
-          this.dataLength = x.data ? JSON.parse(x.data).length : 0;
+      if (x) {
+        this.dataLength = x.data ? JSON.parse(x.data).length : 0;
 
-          this.calcDurationFloor = Math.floor(x.last_complete_duration / 1000);
+        this.calcDurationFloor = Math.floor(x.last_complete_duration / 1000);
 
-          this.fullDurationFloor = Math.floor((x.last_complete_ts - x.last_run_ts) / 1000);
+        this.fullDurationFloor = Math.floor(
+          (x.last_complete_ts - x.last_run_ts) / 1000
+        );
 
-          this.residueDuration = this.fullDurationFloor - this.calcDurationFloor;
+        this.residueDuration = this.fullDurationFloor - this.calcDurationFloor;
 
-
-          // will auto runDry once
-          if (x.server_ts > 1 && x.query_id !== this.previousQueryId) {
-            this.runDry();
-            this.previousQueryId = x.query_id;
-          }
-
-        } else {
-          this.drySize = null;
-          this.dryTs = null;
+        // will auto runDry once
+        if (x.server_ts > 1 && x.query_id !== this.previousQueryId) {
+          this.runDry();
+          this.previousQueryId = x.query_id;
         }
-      })
-    );
+      } else {
+        this.drySize = null;
+        this.dryTs = null;
+      }
+    })
+  );
 
   modelId: string;
-  modelId$ = this.store.select(selectors.getSelectedProjectModeRepoModelId)
+  modelId$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModelId)
     .pipe(
       tap(x => {
         this.modelId = x;
@@ -115,90 +106,85 @@ export class ModelComponent implements OnDestroy {
     );
 
   modelLabel: string;
-  modelLabel$ = this.store.select(selectors.getSelectedProjectModeRepoModelLabel)
+  modelLabel$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModelLabel)
     .pipe(
       tap(x => {
         this.modelLabel = x;
       })
     );
 
-  modelDescription$ = this.store.select(selectors.getSelectedProjectModeRepoModelDescription); // no filter here
+  modelDescription$ = this.store.select(
+    selectors.getSelectedProjectModeRepoModelDescription
+  ); // no filter here
 
   fileId: string = undefined;
-  fileId$ = this.store.select(selectors.getSelectedProjectModeRepoModelFileId)
-    .pipe(
-      tap(fileId => this.fileId = fileId)
-    );
+  fileId$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModelFileId)
+    .pipe(tap(fileId => (this.fileId = fileId)));
 
-  queryNotSelected$ = this.store.select(selectors.getSelectedQuery)
-    .pipe(
-      map(x => !x)
-    ); // no filter here
+  queryNotSelected$ = this.store
+    .select(selectors.getSelectedQuery)
+    .pipe(map(x => !x)); // no filter here
 
   mconfigSelectFields: api.ModelField[] = [];
-  mconfigSelectFields$ = this.store.select(selectors.getSelectedMconfigSelectFields)
-    .pipe( // no filter here
+  mconfigSelectFields$ = this.store
+    .select(selectors.getSelectedMconfigSelectFields)
+    .pipe(
+      // no filter here
       tap(x => {
         this.mconfigSelectFields = x;
       })
     );
 
+  layoutDry$ = this.store.select(selectors.getLayoutDry).pipe(
+    filter(v => !!v),
+    map(dry => {
+      if (this.dryId === dry.dry_id) {
+        let totalSize: number = 0;
 
-  layoutDry$ = this.store.select(selectors.getLayoutDry)
-    .pipe(
-      filter(v => !!v),
-      map(dry => {
-        if (this.dryId === dry.dry_id) {
+        dry.valid_estimates.forEach(v => {
+          totalSize = totalSize + v.estimate;
+        });
 
-          let totalSize: number = 0;
+        this.drySize = this.dataSizeService.getSize(totalSize);
+      }
+    })
+  );
 
-          dry.valid_estimates.forEach(v => {
-            totalSize = totalSize + v.estimate;
-          });
+  dryTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.timeAgoFromNow(this.dryTs))
+  );
 
-          this.drySize = this.dataSizeService.getSize(totalSize);
-        }
-      })
-    );
+  runSecondsAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.secondsAgoFromNow(this.query.last_run_ts))
+  );
 
-  dryTimeAgo$ = interval(1000)
-    .pipe(
-      startWith(0),
-      map(x => this.timeService.timeAgoFromNow(this.dryTs))
-    );
+  completeTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.timeAgoFromNow(this.query.last_complete_ts))
+  );
 
-  runSecondsAgo$ = interval(1000)
-    .pipe(
-      startWith(0),
-      map(x => this.timeService.secondsAgoFromNow(this.query.last_run_ts))
-    );
+  errorTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.timeAgoFromNow(this.query.last_error_ts))
+  );
 
-  completeTimeAgo$ = interval(1000)
-    .pipe(
-      startWith(0),
-      map(x => this.timeService.timeAgoFromNow(this.query.last_complete_ts))
-    );
-
-  errorTimeAgo$ = interval(1000)
-    .pipe(
-      startWith(0),
-      map(x => this.timeService.timeAgoFromNow(this.query.last_error_ts))
-    );
-
-  cancelTimeAgo$ = interval(1000)
-    .pipe(
-      startWith(0),
-      map(x => this.timeService.timeAgoFromNow(this.query.last_cancel_ts))
-    );
+  cancelTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.timeAgoFromNow(this.query.last_cancel_ts))
+  );
 
   mconfigTimezone: string;
-  mconfigTimezone$ = this.store.select(selectors.getSelectedMconfigTimezone)
+  mconfigTimezone$ = this.store
+    .select(selectors.getSelectedMconfigTimezone)
     .pipe(
       filter(v => !!v),
-      tap(
-        x => {
-          this.mconfigTimezone = x;
-        })
+      tap(x => {
+        this.mconfigTimezone = x;
+      })
     );
 
   timeZones = api.timezones;
@@ -218,8 +204,8 @@ export class ModelComponent implements OnDestroy {
     private timeService: services.TimeService,
     private dataSizeService: services.DataSizeService,
     private loadingService: TdLoadingService,
-    private pageTitle: services.PageTitleService) {
-
+    private pageTitle: services.PageTitleService
+  ) {
     this.pageTitleSub = this.pageTitle.setModelTitle();
   }
 
@@ -238,52 +224,75 @@ export class ModelComponent implements OnDestroy {
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
-    this.store.dispatch(new actions.CreateMconfigAndQueryAction({ mconfig: newMconfig, query: newQuery }));
+    this.store.dispatch(
+      new actions.CreateMconfigAndQueryAction({
+        mconfig: newMconfig,
+        query: newQuery
+      })
+    );
 
-    setTimeout(() => this.navigateService.navigateSwitch(newMconfig.mconfig_id, newQuery.query_id), 1);
+    setTimeout(
+      () =>
+        this.navigateService.navigateSwitch(
+          newMconfig.mconfig_id,
+          newQuery.query_id
+        ),
+      1
+    );
   }
 
   cancel() {
     let queryId: string;
-    this.store.select(selectors.getSelectedQueryId)
+    this.store
+      .select(selectors.getSelectedQueryId)
       .pipe(take(1))
-      .subscribe(x => queryId = x);
+      .subscribe(x => (queryId = x));
 
-    this.store.dispatch(new actions.CancelQueriesAction({ query_ids: [queryId] }));
+    this.store.dispatch(
+      new actions.CancelQueriesAction({ query_ids: [queryId] })
+    );
   }
 
   run() {
     let queryId: string;
-    this.store.select(selectors.getSelectedQueryId)
+    this.store
+      .select(selectors.getSelectedQueryId)
       .pipe(take(1))
-      .subscribe(x => queryId = x);
+      .subscribe(x => (queryId = x));
 
-    this.store.dispatch(new actions.RunQueriesAction({ query_ids: [queryId], refresh: false }));
+    this.store.dispatch(
+      new actions.RunQueriesAction({ query_ids: [queryId], refresh: false })
+    );
   }
 
   runRefresh() {
     let queryId: string;
-    this.store.select(selectors.getSelectedQueryId)
+    this.store
+      .select(selectors.getSelectedQueryId)
       .pipe(take(1))
-      .subscribe(x => queryId = x);
+      .subscribe(x => (queryId = x));
 
-    this.store.dispatch(new actions.RunQueriesAction({ query_ids: [queryId], refresh: true }));
+    this.store.dispatch(
+      new actions.RunQueriesAction({ query_ids: [queryId], refresh: true })
+    );
   }
 
   runDry() {
     this.loadingService.register('dry');
 
     this.drySize = null;
-    this.dryTs = Math.round((new Date()).getTime());
+    this.dryTs = Math.round(new Date().getTime());
 
     this.dryTsIsAfterLastRunTs = this.dryTs > this.lastRunTs;
 
     this.dryId = uuid.v4();
 
-    this.store.dispatch(new actions.RunQueriesDryAction({
-      dry_id: this.dryId,
-      query_ids: [this.query.query_id]
-    }));
+    this.store.dispatch(
+      new actions.RunQueriesDryAction({
+        dry_id: this.dryId,
+        query_ids: [this.query.query_id]
+      })
+    );
   }
 
   clearSelection() {
@@ -299,15 +308,27 @@ export class ModelComponent implements OnDestroy {
   }
 
   activateEvent(event: any) {
-    this.printer.log(enums.busEnum.ACTIVATE_EVENT, 'from ModelComponent:', event);
+    this.printer.log(
+      enums.busEnum.ACTIVATE_EVENT,
+      'from ModelComponent:',
+      event
+    );
   }
 
   deactivateEvent(event: any) {
-    this.printer.log(enums.busEnum.DEACTIVATE_EVENT, 'from ModelComponent:', event);
+    this.printer.log(
+      enums.busEnum.DEACTIVATE_EVENT,
+      'from ModelComponent:',
+      event
+    );
   }
 
-  canDeactivate(): boolean { // used in component-deactivate-guard
-    this.printer.log(enums.busEnum.CAN_DEACTIVATE_CHECK, 'from ModelComponent:');
+  canDeactivate(): boolean {
+    // used in component-deactivate-guard
+    this.printer.log(
+      enums.busEnum.CAN_DEACTIVATE_CHECK,
+      'from ModelComponent:'
+    );
     this.store.dispatch(new actions.UpdateLayoutModelIdAction(undefined));
     return true;
   }

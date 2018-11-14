@@ -6,7 +6,6 @@ import { UserState } from 'app/interfaces/state/user-state';
 import { WebSocketState } from 'app/interfaces/state/websocket-state';
 import { LqState } from 'app/interfaces/state/lq-state';
 
-
 /**
  * As mentioned, we treat each reducer like a table in a database. This means
  * our top level state interface is just a map of keys to inner state types.

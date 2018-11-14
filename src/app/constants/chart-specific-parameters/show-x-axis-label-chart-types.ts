@@ -13,5 +13,5 @@ export const showXAxisLabelChartTypes = [
   api.ChartTypeEnum.Area,
   api.ChartTypeEnum.AreaStacked,
   api.ChartTypeEnum.AreaNormalized,
-  api.ChartTypeEnum.HeatMap,
+  api.ChartTypeEnum.HeatMap
 ];

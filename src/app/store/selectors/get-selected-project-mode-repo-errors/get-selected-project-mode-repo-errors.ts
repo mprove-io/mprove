@@ -16,15 +16,15 @@ export const getSelectedProjectModeRepoErrors = createSelector(
     errors: api.SwError[],
     projectId: string,
     repoId: string,
-    repoStructId: string) => {
-
+    repoStructId: string
+  ) => {
     if (errors && projectId && repoId && repoStructId) {
-      return errors.filter(error =>
-        error.project_id === projectId &&
-        error.repo_id === repoId &&
-        error.struct_id === repoStructId
+      return errors.filter(
+        error =>
+          error.project_id === projectId &&
+          error.repo_id === repoId &&
+          error.struct_id === repoStructId
       );
-
     } else {
       return [];
     }

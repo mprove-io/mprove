@@ -5,6 +5,7 @@ import * as actionTypes from 'app/store/action-types';
 export class RevertRepoToProductionSuccessAction implements Action {
   readonly type = actionTypes.REVERT_REPO_TO_PRODUCTION_SUCCESS;
 
-  constructor(public payload: api.RevertRepoToProductionResponse200BodyPayload) {
-  }
+  constructor(
+    public payload: api.RevertRepoToProductionResponse200BodyPayload
+  ) {}
 }

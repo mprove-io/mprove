@@ -4,14 +4,15 @@ export const authConfig: interfaces.AuthConfiguration = {
   clientID: 'yefb1L9FtIDQAvBgs5xrlC0Cyij4vngQ',
   domain: 'mprove.auth0.com',
   options: {
-    autoclose: true,              // default false
+    autoclose: true, // default false
     // autofocus:                 // default depends on platform
     avatar: null,
     // closable:                  // default true
     // container:
     // language:
-    languageDictionary: {         // https://github.com/auth0/lock/blob/master/src/i18n/en.js
-      title: 'Mprove',
+    languageDictionary: {
+      // https://github.com/auth0/lock/blob/master/src/i18n/en.js
+      title: 'Mprove'
       // emailInputPlaceholder: "something@youremail.com",
     },
     // popupOptions: {
@@ -20,11 +21,12 @@ export const authConfig: interfaces.AuthConfiguration = {
     //   left: 200,
     //   top: 300
     // },
-    rememberLastLogin: true,      // default true
+    rememberLastLogin: true, // default true
 
     theme: {
       // primaryColor: '#31324F', // default #ea5323
-      logo: 'https://raw.githubusercontent.com/akalitenya/Other/master/mrove_logo_square_auth.png', // TODO: logo path
+      logo:
+        'https://raw.githubusercontent.com/akalitenya/Other/master/mrove_logo_square_auth.png', // TODO: logo path
       // authButtons: {
       //   'testConnection': {
       //     displayName: 'Test Conn',
@@ -37,7 +39,7 @@ export const authConfig: interfaces.AuthConfiguration = {
       //     foregroundColor: '#ffffff',
       //   }
       // },
-      labeledSubmitButton: true,  // default true
+      labeledSubmitButton: true // default true
     },
 
     socialButtonStyle: 'small',
@@ -48,11 +50,11 @@ export const authConfig: interfaces.AuthConfiguration = {
       // connectionScopes: {
       //   'facebook': ['scope1', 'scope2']
       // },
-      allowAutocomplete: false,   // default false
+      allowAutocomplete: false, // default false
       // allowedConnections:      // default to all enabled connections
-      allowShowPassword: true,    // default false
+      allowShowPassword: true, // default false
       params: {
-        scope: 'openid profile email',
+        scope: 'openid profile email'
         // state:
         // nonce:
       },
@@ -60,20 +62,20 @@ export const authConfig: interfaces.AuthConfiguration = {
       redirectUrl: '',
       // responseMode:
       responseType: 'token id_token',
-      sso: false,
+      sso: false
     },
 
-    popup: true,                  // not documented yet
+    popup: true, // not documented yet
 
     // additionalSignUpFields:
-    allowLogin: true,             // default true
-    allowForgotPassword: true,    // default true
-    allowSignUp: true,            // default true
+    allowLogin: true, // default true
+    allowForgotPassword: true, // default true
+    allowSignUp: true, // default true
     // defaultDatabaseConnection
     // initialScreen
-    loginAfterSignUp: true,      // default true
+    loginAfterSignUp: true, // default true
     // forgotPasswordLink
-    mustAcceptTerms: false,       // default false
+    mustAcceptTerms: false // default false
     // prefill: {
     //   email:
     //   username:

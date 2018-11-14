@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CreateProjectEffect {
-
   @Effect() createProject$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_PROJECT)
     .pipe(
-      mergeMap((action: actions.CreateProjectAction) => this.backendService.createProject(action.payload)
-        .pipe(
+      mergeMap((action: actions.CreateProjectAction) =>
+        this.backendService.createProject(action.payload).pipe(
           map(body => new actions.CreateProjectSuccessAction(body.payload)),
           catchError(e => of(new actions.CreateProjectFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class CreateProjectEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

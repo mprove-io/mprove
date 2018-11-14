@@ -8,23 +8,19 @@ import * as actions from 'app/store/actions/_index';
 
 @Injectable()
 export class MoveFileSuccessEffect {
-
   @Effect() moveFileSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.MOVE_FILE_SUCCESS)
     .pipe(
-      mergeMap((action: actions.MoveFileSuccessAction) => from([
-        new actions.UpdateFilesStateAction(
-          [
+      mergeMap((action: actions.MoveFileSuccessAction) =>
+        from([
+          new actions.UpdateFilesStateAction([
             action.payload.deleted_dev_file,
             action.payload.new_dev_file
           ]),
-        new actions.ProcessStructsAction([action.payload.dev_struct]),
-      ])
+          new actions.ProcessStructsAction([action.payload.dev_struct])
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

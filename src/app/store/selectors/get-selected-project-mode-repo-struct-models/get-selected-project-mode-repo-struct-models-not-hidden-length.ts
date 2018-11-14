@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoModelsNotHiddenLength = createSelector(
   getSelectedProjectModeRepoStructModelsNotHidden,
-  (models: api.Model[]) => models ? models.length : undefined
+  (models: api.Model[]) => (models ? models.length : undefined)
 );

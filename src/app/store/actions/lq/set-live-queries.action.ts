@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SetLiveQueriesAction implements Action {
   readonly type = actionTypes.SET_LIVE_QUERIES;
 
-  constructor(public payload: api.SetLiveQueriesRequestBodyPayload) {
-  }
+  constructor(public payload: api.SetLiveQueriesRequestBodyPayload) {}
 }

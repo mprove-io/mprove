@@ -3,13 +3,19 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+import {
+  ErrorStateMatcher,
+  ShowOnDirtyErrorStateMatcher
+} from '@angular/material';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PreloadAllModules, RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 import { EffectsModule } from '@ngrx/effects';
-import { RouterStateSerializer, StoreRouterConnectingModule } from '@ngrx/router-store';
+import {
+  RouterStateSerializer,
+  StoreRouterConnectingModule
+} from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { ClipboardModule } from 'ngx-clipboard';
@@ -36,9 +42,9 @@ import { environment } from '@env/environment';
 //   .config('https://dce19ce2043947e4943a09a2255336d8@sentry.io/121453', options2)
 //   .install();
 if (environment.canUseRaven === true) {
-  Raven
-    .config('https://3f5855e2b10b4c4c8b786ff69c1fe3a6@sentry.io/1208233')
-    .install();
+  Raven.config(
+    'https://3f5855e2b10b4c4c8b786ff69c1fe3a6@sentry.io/1208233'
+  ).install();
 }
 
 @NgModule({
@@ -48,9 +54,7 @@ if (environment.canUseRaven === true) {
     directives.SingleClickDirective,
     ...APP_DIALOGS
   ],
-  entryComponents: [
-    ...APP_DIALOGS
-  ],
+  entryComponents: [...APP_DIALOGS],
   imports: [
     EffectsModule.forRoot(APP_EFFECTS),
     MyMaterialModule,
@@ -75,7 +79,7 @@ if (environment.canUseRaven === true) {
           'mprove.iconiux.com',
           't.mprove.io',
           'e2e.mprove.io',
-          'mprove.io',
+          'mprove.io'
         ]
       }
     }),
@@ -85,19 +89,22 @@ if (environment.canUseRaven === true) {
     BrowserModule,
     BrowserAnimationsModule,
     CommonModule,
-    StoreModule.forRoot(APP_REDUCERS_OBJECT, { metaReducers: APP_META_REDUCERS_ARRAY }),
-    RouterModule.forRoot(APP_ROUTES, { useHash: false, preloadingStrategy: PreloadAllModules }),
+    StoreModule.forRoot(APP_REDUCERS_OBJECT, {
+      metaReducers: APP_META_REDUCERS_ARRAY
+    }),
+    RouterModule.forRoot(APP_ROUTES, {
+      useHash: false,
+      preloadingStrategy: PreloadAllModules
+    }),
     StoreRouterConnectingModule.forRoot({
       /*
         They stateKey defines the name of the state used by the router-store reducer.
         This matches the key defined in the map of reducers
       */
-      stateKey: 'router',
-    }),
+      stateKey: 'router'
+    })
   ],
-  bootstrap: [
-    AppComponent
-  ],
+  bootstrap: [AppComponent],
   providers: [
     {
       provide: RouterStateSerializer,
@@ -108,16 +115,12 @@ if (environment.canUseRaven === true) {
       provide: ErrorStateMatcher,
       useClass: ShowOnDirtyErrorStateMatcher
     },
-    ...APP_PROVIDERS, // ...?
+    ...APP_PROVIDERS // ...?
     // {
     //   provide: ErrorHandler,
     //   useClass: services.MyErrorHandler
     // }
   ],
-  exports: [
-    AppComponent
-  ],
+  exports: [AppComponent]
 })
-
-export class AppModule { }
-
+export class AppModule {}

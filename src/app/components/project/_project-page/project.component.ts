@@ -8,16 +8,22 @@ import * as services from 'app/services/_index';
   templateUrl: 'project.component.html',
   styleUrls: ['project.component.scss']
 })
-
 export class ProjectComponent {
-  constructor(private printer: services.PrinterService) {
-  }
+  constructor(private printer: services.PrinterService) {}
 
   activateEvent(event: any) {
-    this.printer.log(enums.busEnum.ACTIVATE_EVENT, 'from ProjectComponent:', event);
+    this.printer.log(
+      enums.busEnum.ACTIVATE_EVENT,
+      'from ProjectComponent:',
+      event
+    );
   }
 
   deactivateEvent(event: any) {
-    this.printer.log(enums.busEnum.DEACTIVATE_EVENT, 'from ProjectComponent:', event);
+    this.printer.log(
+      enums.busEnum.DEACTIVATE_EVENT,
+      'from ProjectComponent:',
+      event
+    );
   }
 }

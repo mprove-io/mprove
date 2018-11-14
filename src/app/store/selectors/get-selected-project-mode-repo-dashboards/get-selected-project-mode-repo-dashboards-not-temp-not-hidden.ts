@@ -7,16 +7,15 @@ import * as api from 'app/api/_index';
 export const getSelectedProjectModeRepoDashboardsNotTempNotHidden = createSelector(
   getSelectedProjectModeRepoDashboardsNotTemp,
   getUserAlias,
-  (
-    dashboards,
-    userAlias) => {
-
+  (dashboards, userAlias) => {
     if (dashboards && userAlias) {
-      return dashboards.filter((dashboard: api.Dashboard) =>
-        !dashboard.hidden &&
-        (dashboard.access_users.length === 0 || dashboard.access_users.findIndex(element => element === userAlias) > -1)
+      return dashboards.filter(
+        (dashboard: api.Dashboard) =>
+          !dashboard.hidden &&
+          (dashboard.access_users.length === 0 ||
+            dashboard.access_users.findIndex(element => element === userAlias) >
+              -1)
       );
-
     } else {
       return [];
     }

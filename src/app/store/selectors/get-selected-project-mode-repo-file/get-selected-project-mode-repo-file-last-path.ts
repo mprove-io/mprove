@@ -4,5 +4,5 @@ import { getSelectedProjectModeRepoFilePath } from 'app/store/selectors/get-sele
 
 export const getSelectedProjectModeRepoFileLastPath = createSelector(
   getSelectedProjectModeRepoFilePath,
-  path => path ? path[path.length - 1] : undefined
+  path => (path ? path[path.length - 1] : undefined)
 );

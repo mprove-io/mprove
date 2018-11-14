@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedQueryData = createSelector(
   getSelectedQuery,
-  (query: api.Query) => query ? query.data : undefined
+  (query: api.Query) => (query ? query.data : undefined)
 );

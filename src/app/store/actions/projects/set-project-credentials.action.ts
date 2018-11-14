@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SetProjectCredentialsAction implements Action {
   readonly type = actionTypes.SET_PROJECT_CREDENTIALS;
 
-  constructor(public payload: api.SetProjectCredentialsRequestBodyPayload) {
-  }
+  constructor(public payload: api.SetProjectCredentialsRequestBodyPayload) {}
 }

@@ -14,42 +14,45 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class UpdateModelsStateEffect {
+  @Effect({ dispatch: false }) updateModelsState$: Observable<
+    Action
+  > = this.actions$.ofType(actionTypes.UPDATE_MODELS_STATE).pipe(
+    tap((action: actions.UpdateModelsStateAction) => {
+      let selectedRepo: api.Repo;
+      this.store
+        .select(selectors.getSelectedProjectModeRepo)
+        .pipe(take(1))
+        .subscribe(x => (selectedRepo = x));
 
-  @Effect({ dispatch: false }) updateModelsState$: Observable<Action> = this.actions$
-    .ofType(actionTypes.UPDATE_MODELS_STATE)
-    .pipe(
-      tap((action: actions.UpdateModelsStateAction) => {
+      let selectedModel: api.Model;
+      this.store
+        .select(selectors.getSelectedProjectModeRepoModel)
+        .pipe(take(1))
+        .subscribe(model => (selectedModel = model));
 
-        let selectedRepo: api.Repo;
-        this.store.select(selectors.getSelectedProjectModeRepo)
-          .pipe(take(1))
-          .subscribe(x => selectedRepo = x);
+      if (selectedModel) {
+        // model updated before repo
+        if (selectedModel.struct_id !== selectedRepo.struct_id) {
+          this.printer.log(
+            enums.busEnum.UPDATE_MODELS_EFFECT,
+            'selected model struct_id mismatch'
+          );
 
-        let selectedModel: api.Model;
-        this.store.select(selectors.getSelectedProjectModeRepoModel)
-          .pipe(take(1))
-          .subscribe(model => selectedModel = model);
-
-        if (selectedModel) {
-
-          // model updated before repo
-          if (selectedModel.struct_id !== selectedRepo.struct_id) {
-
-            this.printer.log(enums.busEnum.UPDATE_MODELS_EFFECT, 'selected model struct_id mismatch');
-
-            // navigate profile
-            this.printer.log(enums.busEnum.UPDATE_MODELS_EFFECT, 'navigating profile...');
-            this.router.navigate(['profile']);
-          }
+          // navigate profile
+          this.printer.log(
+            enums.busEnum.UPDATE_MODELS_EFFECT,
+            'navigating profile...'
+          );
+          this.router.navigate(['profile']);
         }
-      })
-    );
+      }
+    })
+  );
 
   constructor(
     private actions$: Actions,
     private router: Router,
     private printer: services.PrinterService,
-    private store: Store<interfaces.AppState>) {
-  }
-
+    private store: Store<interfaces.AppState>
+  ) {}
 }

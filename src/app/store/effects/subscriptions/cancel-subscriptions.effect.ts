@@ -9,21 +9,23 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CancelSubscriptionsEffect {
-
   @Effect() cancelSubscriptions$: Observable<Action> = this.actions$
     .ofType(actionTypes.CANCEL_SUBSCRIPTIONS)
     .pipe(
       mergeMap((action: actions.CancelSubscriptionsAction) =>
-        this.backendService.cancelSubscriptions(action.payload)
-          .pipe(
-            map(body => new actions.CancelSubscriptionsSuccessAction(body.payload)),
-            catchError(e => of(new actions.CancelSubscriptionsFailAction({ error: e })))
+        this.backendService.cancelSubscriptions(action.payload).pipe(
+          map(
+            body => new actions.CancelSubscriptionsSuccessAction(body.payload)
+          ),
+          catchError(e =>
+            of(new actions.CancelSubscriptionsFailAction({ error: e }))
           )
+        )
       )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

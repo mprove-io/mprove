@@ -16,13 +16,12 @@ import * as services from 'app/services/_index';
   templateUrl: 'pdts.component.html',
   styleUrls: ['pdts.component.scss']
 })
-
 export class PdtsComponent {
-
   queryStatusEnum = api.QueryStatusEnum;
 
   pdtsExtra: interfaces.QueryExtra[];
-  pdtsExtra$ = this.store.select(selectors.getSelectedProjectModeRepoStructPdtsExtraOrdered)
+  pdtsExtra$ = this.store
+    .select(selectors.getSelectedProjectModeRepoStructPdtsExtraOrdered)
     .pipe(
       filter(v => !!v),
       tap(pdtsExtra => {
@@ -60,40 +59,49 @@ export class PdtsComponent {
     // { name: 'completed_time_ago_from_now', label: 'Last completed', width: 200 },
     { name: 'last_run_ts', label: 'last_run_ts', width: 200 },
     { name: 'last_complete_ts', label: 'last_complete_ts', width: 200 },
-    { name: 'extra_last_complete_duration_ceil', label: 'Duration', width: 100 },
-    { name: 'menu', label: 'Menu', width: 80 },
+    {
+      name: 'extra_last_complete_duration_ceil',
+      label: 'Duration',
+      width: 100
+    },
+    { name: 'menu', label: 'Menu', width: 80 }
   ];
 
-  selectedProjectId$ = this.store.select(selectors.getSelectedProjectId)
+  selectedProjectId$ = this.store
+    .select(selectors.getSelectedProjectId)
     .pipe(filter(v => !!v));
 
   isDev$ = this.store.select(selectors.getLayoutModeIsDev); // no filter here
 
-  selectedProjectUserIsEditor$ = this.store.select(selectors.getSelectedProjectUserIsEditor);
+  selectedProjectUserIsEditor$ = this.store.select(
+    selectors.getSelectedProjectUserIsEditor
+  );
 
   constructor(
     private printer: services.PrinterService,
     private store: Store<interfaces.AppState>,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
     private myDialogService: services.MyDialogService,
-    public pageTitle: services.PageTitleService) {
-
+    public pageTitle: services.PageTitleService
+  ) {
     this.pageTitle.setProjectSubtitle('Pdts');
   }
 
-  canDeactivate(): boolean { // used in component-deactivate-guard
-    this.printer.log(enums.busEnum.CAN_DEACTIVATE_CHECK, 'from DashboardComponent:', event);
+  canDeactivate(): boolean {
+    // used in component-deactivate-guard
+    this.printer.log(
+      enums.busEnum.CAN_DEACTIVATE_CHECK,
+      'from DashboardComponent:',
+      event
+    );
     // this.store.dispatch(new SetLiveQueriesAction({ live_queries: [], server_ts: this.lqServerTs }));
     return true;
   }
 
   showSql(row: interfaces.QueryExtraTime) {
-
     let sqlText = '';
 
-    row.sql.forEach(sqlLine =>
-      sqlText = sqlText.concat(...[sqlLine, '\n'])
-    );
+    row.sql.forEach(sqlLine => (sqlText = sqlText.concat(...[sqlLine, '\n'])));
 
     this.myDialogService.showPdtSqlDialog({
       pdt_id: row.pdt_id,
@@ -102,16 +110,20 @@ export class PdtsComponent {
   }
 
   run(queryId: string) {
-    this.store.dispatch(new actions.RunQueriesAction({
-      query_ids: [queryId],
-      refresh: false
-    }));
+    this.store.dispatch(
+      new actions.RunQueriesAction({
+        query_ids: [queryId],
+        refresh: false
+      })
+    );
   }
 
   runRefresh(queryId: string) {
-    this.store.dispatch(new actions.RunQueriesAction({
-      query_ids: [queryId],
-      refresh: true
-    }));
+    this.store.dispatch(
+      new actions.RunQueriesAction({
+        query_ids: [queryId],
+        refresh: true
+      })
+    );
   }
 }

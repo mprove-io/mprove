@@ -19,5 +19,5 @@ export const xFieldChartTypes = [
   api.ChartTypeEnum.HeatMap,
   api.ChartTypeEnum.TreeMap,
   api.ChartTypeEnum.NumberCard,
-  api.ChartTypeEnum.Gauge,
+  api.ChartTypeEnum.Gauge
 ];

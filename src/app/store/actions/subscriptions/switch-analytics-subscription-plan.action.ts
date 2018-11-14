@@ -5,6 +5,7 @@ import * as actionTypes from 'app/store/action-types';
 export class SwitchAnalyticsSubscriptionPlanAction implements Action {
   readonly type = actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN;
 
-  constructor(public payload: api.SwitchAnalyticsSubscriptionPlanRequestBodyPayload) {
-  }
+  constructor(
+    public payload: api.SwitchAnalyticsSubscriptionPlanRequestBodyPayload
+  ) {}
 }

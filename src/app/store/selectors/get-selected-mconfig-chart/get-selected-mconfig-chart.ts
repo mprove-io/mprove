@@ -7,11 +7,11 @@ export const getSelectedMconfigChart = createSelector(
   getSelectedMconfigCharts,
   getLayoutChartId,
   (charts: api.Chart[], chartId: string) => {
-
     if (charts && chartId) {
-      let chartIndex = charts.findIndex((chart: api.Chart) => chart.chart_id === chartId);
+      let chartIndex = charts.findIndex(
+        (chart: api.Chart) => chart.chart_id === chartId
+      );
       return chartIndex >= 0 ? charts[chartIndex] : undefined;
-
     } else {
       return undefined;
     }

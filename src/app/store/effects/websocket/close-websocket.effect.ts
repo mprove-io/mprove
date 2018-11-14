@@ -9,16 +9,18 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CloseWebSocketEffect {
-
-  @Effect({ dispatch: false }) closeWebSocket$: Observable<Action> = this.actions$
+  @Effect({ dispatch: false }) closeWebSocket$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.CLOSE_WEBSOCKET)
     .pipe(
-      tap((action: actions.CloseWebSocketAction) => this.myWebSocketService.close())
+      tap((action: actions.CloseWebSocketAction) =>
+        this.myWebSocketService.close()
+      )
     );
 
   constructor(
     private actions$: Actions,
-    private myWebSocketService: services.MyWebSocketService) {
-  }
-
+    private myWebSocketService: services.MyWebSocketService
+  ) {}
 }

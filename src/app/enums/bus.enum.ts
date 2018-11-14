@@ -41,5 +41,5 @@ export enum busEnum {
 
   ACTIVATE_EVENT = <any>'ActivateEvent:',
   DEACTIVATE_EVENT = <any>'DeactivateEvent:',
-  CAN_DEACTIVATE_CHECK = <any>'CanDeactivateCheck:',
+  CAN_DEACTIVATE_CHECK = <any>'CanDeactivateCheck:'
 }

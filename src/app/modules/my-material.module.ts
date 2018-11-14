@@ -68,15 +68,8 @@ const MATERIAL_MODULES: any[] = [
 ];
 
 @NgModule({
-  imports: [
-    MATERIAL_MODULES
-  ],
-  declarations: [
-  ],
-  exports: [
-    MATERIAL_MODULES
-  ]
+  imports: [MATERIAL_MODULES],
+  declarations: [],
+  exports: [MATERIAL_MODULES]
 })
-
-export class MyMaterialModule {
-}
+export class MyMaterialModule {}

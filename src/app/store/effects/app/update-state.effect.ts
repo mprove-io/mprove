@@ -8,16 +8,16 @@ import * as actions from 'app/store/actions/_index';
 
 @Injectable()
 export class UpdateStateEffect {
-
   @Effect() updateState$: Observable<Action> = this.actions$
     .ofType(actionTypes.UPDATE_STATE)
     .pipe(
       mergeMap((action: actions.UpdateStateAction) => {
-
         let nextActions = [];
 
         if (action.payload.projects.length > 0) {
-          nextActions.push(new actions.UpdateProjectsStateAction(action.payload.projects));
+          nextActions.push(
+            new actions.UpdateProjectsStateAction(action.payload.projects)
+          );
         }
 
         // if (action.payload.subscriptions.length > 0) {
@@ -25,7 +25,9 @@ export class UpdateStateEffect {
         // }
 
         if (action.payload.members.length > 0) {
-          nextActions.push(new actions.UpdateMembersStateAction(action.payload.members));
+          nextActions.push(
+            new actions.UpdateMembersStateAction(action.payload.members)
+          );
         }
 
         // if (action.payload.payments.length > 0) {
@@ -33,42 +35,56 @@ export class UpdateStateEffect {
         // }
 
         if (action.payload.files.length > 0) {
-          nextActions.push(new actions.UpdateFilesStateAction(action.payload.files));
+          nextActions.push(
+            new actions.UpdateFilesStateAction(action.payload.files)
+          );
         }
 
         if (action.payload.repos.length > 0) {
-          nextActions.push(new actions.UpdateReposStateAction(action.payload.repos));
+          nextActions.push(
+            new actions.UpdateReposStateAction(action.payload.repos)
+          );
         }
 
         if (action.payload.errors.length > 0) {
-          nextActions.push(new actions.UpdateErrorsStateAction(action.payload.errors));
+          nextActions.push(
+            new actions.UpdateErrorsStateAction(action.payload.errors)
+          );
         }
 
         if (action.payload.models.length > 0) {
-          nextActions.push(new actions.UpdateModelsStateAction(action.payload.models));
+          nextActions.push(
+            new actions.UpdateModelsStateAction(action.payload.models)
+          );
         }
 
         if (action.payload.queries.length > 0) {
-          nextActions.push(new actions.UpdateQueriesStateAction(action.payload.queries));
+          nextActions.push(
+            new actions.UpdateQueriesStateAction(action.payload.queries)
+          );
         }
 
         if (action.payload.mconfigs.length > 0) {
-          nextActions.push(new actions.UpdateMconfigsStateAction(action.payload.mconfigs));
+          nextActions.push(
+            new actions.UpdateMconfigsStateAction(action.payload.mconfigs)
+          );
         }
 
         if (action.payload.dashboards.length > 0) {
-          nextActions.push(new actions.UpdateDashboardsStateAction(action.payload.dashboards));
+          nextActions.push(
+            new actions.UpdateDashboardsStateAction(action.payload.dashboards)
+          );
         }
 
         if (action.payload.user) {
-          nextActions.push(new actions.UpdateUserStateAction(action.payload.user));
+          nextActions.push(
+            new actions.UpdateUserStateAction(action.payload.user)
+          );
         }
 
         return from(nextActions);
       })
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

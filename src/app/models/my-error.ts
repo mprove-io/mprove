@@ -1,5 +1,4 @@
 export class MyError extends Error {
-
   constructor(public data: any) {
     super();
 

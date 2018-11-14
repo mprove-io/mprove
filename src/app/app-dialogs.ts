@@ -21,5 +21,5 @@ export const APP_DIALOGS = [
   dialogs.DeleteFileDialogComponent,
   dialogs.GenerateBlockmlDialogComponent,
   dialogs.MemberPictureDialogComponent,
-  dialogs.AccessDeniedDialogComponent,
+  dialogs.AccessDeniedDialogComponent
 ];

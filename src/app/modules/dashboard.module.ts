@@ -10,7 +10,6 @@ import { MyMaterialModule } from 'app/modules/my-material.module';
 import { SharedModule } from 'app/modules/shared.module';
 import { VisualModule } from 'app/modules/visual.module';
 
-
 @NgModule({
   imports: [
     SharedModule,
@@ -21,19 +20,14 @@ import { VisualModule } from 'app/modules/visual.module';
     FlexLayoutModule,
     RouterModule,
     ReactiveFormsModule,
-    VisualModule,
+    VisualModule
   ],
   declarations: [
     components.DashboardComponent,
     components.DashboardFiltersComponent,
-    components.ReportTitleComponent,
+    components.ReportTitleComponent
   ],
-  entryComponents: [
-  ],
-  exports: [
-    components.DashboardComponent
-  ]
+  entryComponents: [],
+  exports: [components.DashboardComponent]
 })
-
-export class DashboardModule {
-}
+export class DashboardModule {}

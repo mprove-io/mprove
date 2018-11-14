@@ -4,5 +4,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectWeekStart = createSelector(
   getSelectedProject,
-  (project: api.Project) => project ? project.week_start : undefined
+  (project: api.Project) => (project ? project.week_start : undefined)
 );

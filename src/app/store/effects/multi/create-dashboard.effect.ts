@@ -9,20 +9,21 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CreateDashboardEffect {
-
   @Effect() createDashboard$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_DASHBOARD)
     .pipe(
-      mergeMap((action: actions.CreateDashboardAction) => this.backendService.createDashboard(action.payload)
-        .pipe(
+      mergeMap((action: actions.CreateDashboardAction) =>
+        this.backendService.createDashboard(action.payload).pipe(
           map(body => new actions.CreateDashboardSuccessAction(body.payload)),
-          catchError(e => of(new actions.CreateDashboardFailAction({ error: e })))
+          catchError(e =>
+            of(new actions.CreateDashboardFailAction({ error: e }))
+          )
         )
       )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

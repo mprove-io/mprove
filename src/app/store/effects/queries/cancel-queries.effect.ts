@@ -9,21 +9,19 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class CancelQueriesEffects {
-
   @Effect() cancelQueries$: Observable<Action> = this.actions$
     .ofType(actionTypes.CANCEL_QUERIES)
     .pipe(
-      mergeMap((action: actions.CancelQueriesAction) => this.backendService.cancelQueries(action.payload)
-        .pipe(
+      mergeMap((action: actions.CancelQueriesAction) =>
+        this.backendService.cancelQueries(action.payload).pipe(
           map(body => new actions.CancelQueriesSuccessAction(body.payload)),
           catchError(e => of(new actions.CancelQueriesFailAction({ error: e })))
         )
       )
     );
 
-
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

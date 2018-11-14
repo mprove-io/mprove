@@ -9,19 +9,21 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SetRepoRemoteUrlEffect {
-
   @Effect() setRepoRemoteUrl$: Observable<Action> = this.actions$
     .ofType(actionTypes.SET_REPO_REMOTE_URL)
     .pipe(
-      mergeMap((action: actions.SetRepoRemoteUrlAction) => this.backendService.setRepoRemoteUrl(action.payload).pipe(
-        map(body => new actions.SetRepoRemoteUrlSuccessAction(body.payload)),
-        catchError(e => of(new actions.SetRepoRemoteUrlFailAction({ error: e })))
-      )
+      mergeMap((action: actions.SetRepoRemoteUrlAction) =>
+        this.backendService.setRepoRemoteUrl(action.payload).pipe(
+          map(body => new actions.SetRepoRemoteUrlSuccessAction(body.payload)),
+          catchError(e =>
+            of(new actions.SetRepoRemoteUrlFailAction({ error: e }))
+          )
+        )
       )
     );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

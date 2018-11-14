@@ -7,11 +7,10 @@ import * as services from 'app/services/_index';
   templateUrl: 'login.component.html'
 })
 export class LoginComponent implements OnInit {
-
   constructor(
     private auth: services.AuthService,
-    public pageTitle: services.PageTitleService) {
-
+    public pageTitle: services.PageTitleService
+  ) {
     this.pageTitle.setTitle('Login | Mprove');
   }
 

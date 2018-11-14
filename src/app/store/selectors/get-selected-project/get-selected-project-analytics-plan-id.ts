@@ -4,5 +4,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectAnalyticsPlanId = createSelector(
   getSelectedProject,
-  (project: api.Project) => project ? project.analytics_plan_id : undefined
+  (project: api.Project) => (project ? project.analytics_plan_id : undefined)
 );

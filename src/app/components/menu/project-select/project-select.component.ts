@@ -9,39 +9,34 @@ import * as services from 'app/services/_index';
   moduleId: module.id,
   selector: 'm-project-select',
   templateUrl: 'project-select.component.html',
-  styleUrls: ['./project-select.component.scss'],
+  styleUrls: ['./project-select.component.scss']
 })
 export class ProjectSelectComponent {
+  layoutProjectId$ = this.store
+    .select(selectors.getLayoutProjectId)
+    .pipe(filter(v => !!v));
 
-  layoutProjectId$ = this.store.select(selectors.getLayoutProjectId)
-    .pipe(
-      filter(v => !!v)
-    );
-
-  projectsIds$ = this.store.select(selectors.getProjectsNotDeletedIds)
-    .pipe(
-      map(
-        projectIds => projectIds.sort(
-          (a, b) => {
-            let nameA = a.toLowerCase();
-            let nameB = b.toLowerCase();
-            if (nameA < nameB) { // sort string ascending
-              return -1;
-            }
-            if (nameA > nameB) {
-              return 1;
-            }
-            return 0; // default return value (no sorting)
-          }
-        )
-      )); // no filter here
+  projectsIds$ = this.store.select(selectors.getProjectsNotDeletedIds).pipe(
+    map(projectIds =>
+      projectIds.sort((a, b) => {
+        let nameA = a.toLowerCase();
+        let nameB = b.toLowerCase();
+        if (nameA < nameB) {
+          // sort string ascending
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0; // default return value (no sorting)
+      })
+    )
+  ); // no filter here
 
   constructor(
     private store: Store<interfaces.AppState>,
-    private myDialogService: services.MyDialogService,
-  ) {
-
-  }
+    private myDialogService: services.MyDialogService
+  ) {}
 
   openNewProjectDialog() {
     this.myDialogService.showNewProjectDialog();

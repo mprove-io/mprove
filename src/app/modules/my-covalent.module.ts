@@ -8,7 +8,6 @@ import {
   CovalentFileModule
 } from '@covalent/core';
 
-
 const COVALENT_MODULES: any[] = [
   CovalentCommonModule,
   CovalentDataTableModule,
@@ -19,15 +18,8 @@ const COVALENT_MODULES: any[] = [
 ];
 
 @NgModule({
-  imports: [
-    COVALENT_MODULES
-  ],
-  declarations: [
-  ],
-  exports: [
-    COVALENT_MODULES
-  ]
+  imports: [COVALENT_MODULES],
+  declarations: [],
+  exports: [COVALENT_MODULES]
 })
-
-export class MyCovalentModule {
-}
+export class MyCovalentModule {}

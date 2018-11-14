@@ -8,10 +8,9 @@ export const getSelectedProjectUserMainTheme = createSelector(
   getSelectedProjectMembers,
   getUserId,
   (members, userId) => {
-
     if (members && userId) {
-      return members.find((member: api.Member) => member.member_id === userId).main_theme;
-
+      return members.find((member: api.Member) => member.member_id === userId)
+        .main_theme;
     } else {
       return undefined;
     }

@@ -5,5 +5,6 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoIsNeedPush = createSelector(
   getSelectedProjectModeRepo,
-  (repo: api.Repo) => repo ? repo.status === api.RepoStatusEnum.NeedPush : undefined
+  (repo: api.Repo) =>
+    repo ? repo.status === api.RepoStatusEnum.NeedPush : undefined
 );

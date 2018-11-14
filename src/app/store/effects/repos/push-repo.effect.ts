@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class PushRepoEffect {
-
   @Effect() pushRepo$: Observable<Action> = this.actions$
     .ofType(actionTypes.PUSH_REPO)
     .pipe(
-      mergeMap((action: actions.PushRepoAction) => this.backendService.pushRepo(action.payload)
-        .pipe(
+      mergeMap((action: actions.PushRepoAction) =>
+        this.backendService.pushRepo(action.payload).pipe(
           map(body => new actions.PushRepoSuccessAction(body.payload)),
           catchError(e => of(new actions.PushRepoFailAction({ error: e })))
         )
@@ -23,6 +22,6 @@ export class PushRepoEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

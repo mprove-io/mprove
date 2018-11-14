@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class TimeService {
-
   timeAgoFromNow(ts: number) {
     let time = new Date(ts).getTime();
 
@@ -53,4 +52,3 @@ export class TimeService {
     return seconds;
   }
 }
-

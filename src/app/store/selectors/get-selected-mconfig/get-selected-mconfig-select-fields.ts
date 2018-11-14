@@ -11,28 +11,29 @@ export const getSelectedMconfigSelectFields = createSelector(
     let selectFields: api.ModelField[] = [];
 
     if (select && fields) {
-
       let selectDimensions: api.ModelField[] = [];
       let selectMeasures: api.ModelField[] = [];
       let selectCalculations: api.ModelField[] = [];
 
-      select.forEach(
-        (fieldId: string) => {
-          let field = fields.find(f => f.id === fieldId);
+      select.forEach((fieldId: string) => {
+        let field = fields.find(f => f.id === fieldId);
 
-          if (field.field_class === api.ModelFieldFieldClassEnum.Dimension) {
-            selectDimensions.push(field);
-
-          } else if (field.field_class === api.ModelFieldFieldClassEnum.Measure) {
-            selectMeasures.push(field);
-
-          } else if (field.field_class === api.ModelFieldFieldClassEnum.Calculation) {
-            selectCalculations.push(field);
-          }
-
-          selectFields = [...selectDimensions, ...selectMeasures, ...selectCalculations];
+        if (field.field_class === api.ModelFieldFieldClassEnum.Dimension) {
+          selectDimensions.push(field);
+        } else if (field.field_class === api.ModelFieldFieldClassEnum.Measure) {
+          selectMeasures.push(field);
+        } else if (
+          field.field_class === api.ModelFieldFieldClassEnum.Calculation
+        ) {
+          selectCalculations.push(field);
         }
-      );
+
+        selectFields = [
+          ...selectDimensions,
+          ...selectMeasures,
+          ...selectCalculations
+        ];
+      });
 
       return selectFields;
     }

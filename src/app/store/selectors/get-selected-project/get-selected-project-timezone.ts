@@ -4,5 +4,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectTimezone = createSelector(
   getSelectedProject,
-  (project: api.Project) => project ? project.timezone : undefined
+  (project: api.Project) => (project ? project.timezone : undefined)
 );

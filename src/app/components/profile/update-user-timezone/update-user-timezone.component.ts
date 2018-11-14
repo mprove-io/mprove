@@ -8,9 +8,8 @@ import * as interfaces from 'app/interfaces/_index';
 @Component({
   moduleId: module.id,
   selector: 'm-update-user-timezone',
-  templateUrl: 'update-user-timezone.component.html',
+  templateUrl: 'update-user-timezone.component.html'
 })
-
 export class UpdateUserTimezoneComponent implements OnChanges {
   @Input()
   user: api.User;
@@ -19,35 +18,36 @@ export class UpdateUserTimezoneComponent implements OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnChanges() {
     if (!this.updateUserTimezoneForm) {
       this.buildForm();
-
-    } else if (this.updateUserTimezoneForm.get('userTimezone').value === this.user.timezone) {
+    } else if (
+      this.updateUserTimezoneForm.get('userTimezone').value ===
+      this.user.timezone
+    ) {
       this.updateUserTimezoneForm.markAsPristine();
     }
   }
 
   buildForm() {
     this.updateUserTimezoneForm = this.fb.group({
-      'userTimezone': [
+      userTimezone: [
         this.user.timezone,
-        Validators.compose([
-          Validators.required,
-        ])
-      ],
+        Validators.compose([Validators.required])
+      ]
     });
   }
 
   onSubmit(form: FormGroup, fv: any) {
-    this.store.dispatch(new actions.SetUserTimezoneAction({
-      server_ts: this.user.server_ts,
-      timezone: fv['userTimezone'],
-    }));
+    this.store.dispatch(
+      new actions.SetUserTimezoneAction({
+        server_ts: this.user.server_ts,
+        timezone: fv['userTimezone']
+      })
+    );
   }
 
   onReset(form: FormGroup) {

@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class ConfirmEffect {
-
   @Effect() confirm$: Observable<Action> = this.actions$
     .ofType(actionTypes.CONFIRM)
     .pipe(
-      mergeMap((action: actions.ConfirmAction) => this.backendService.confirm(action.payload)
-        .pipe(
+      mergeMap((action: actions.ConfirmAction) =>
+        this.backendService.confirm(action.payload).pipe(
           map(body => new actions.ConfirmSuccessAction()),
           catchError(e => of(new actions.ConfirmFailAction({ error: e })))
         )
@@ -23,6 +22,6 @@ export class ConfirmEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

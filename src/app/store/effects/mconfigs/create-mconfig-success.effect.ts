@@ -8,18 +8,13 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class CreateMconfigSuccessEffect {
-
   @Effect() createMconfigSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_MCONFIG_SUCCESS)
     .pipe(
-      mergeMap((action: actions.CreateMconfigSuccessAction) => from([
-        new actions.UpdateMconfigsStateAction([action.payload.mconfig]),
-      ])
+      mergeMap((action: actions.CreateMconfigSuccessAction) =>
+        from([new actions.UpdateMconfigsStateAction([action.payload.mconfig])])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

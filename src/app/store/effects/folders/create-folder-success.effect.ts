@@ -8,18 +8,13 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class CreateFolderSuccessEffect {
-
   @Effect() createFolderSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_FOLDER_SUCCESS)
     .pipe(
-      mergeMap((action: actions.CreateFolderSuccessAction) => from([
-        new actions.UpdateReposStateAction([action.payload.dev_repo]),
-      ])
+      mergeMap((action: actions.CreateFolderSuccessAction) =>
+        from([new actions.UpdateReposStateAction([action.payload.dev_repo])])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

@@ -5,5 +5,5 @@ import { getSelectedProjectModeRepoDashboard } from 'app/store/selectors/get-sel
 
 export const getSelectedProjectModeRepoDashboardReports = createSelector(
   getSelectedProjectModeRepoDashboard,
-  (dashboard: api.Dashboard) => dashboard ? dashboard.reports : undefined
+  (dashboard: api.Dashboard) => (dashboard ? dashboard.reports : undefined)
 );

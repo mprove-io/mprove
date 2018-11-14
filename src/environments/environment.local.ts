@@ -18,5 +18,5 @@ export const environment: interfaces.Environment = {
 
   dynamicAssetsBaseUrl: 'http://localhost:8080',
   httpUrl: 'http://localhost:8080/api/v1',
-  websocketUrl: 'ws://localhost:8080/api/v1/webchat/',
+  websocketUrl: 'ws://localhost:8080/api/v1/webchat/'
 };

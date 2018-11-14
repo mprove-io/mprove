@@ -8,19 +8,21 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class CreateDashboardSuccessEffect {
-
   @Effect() createDashboardSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.CREATE_DASHBOARD_SUCCESS)
     .pipe(
-      mergeMap((action: actions.CreateDashboardSuccessAction) => from([
-        new actions.UpdateQueriesStateAction(action.payload.dashboard_queries),
-        new actions.UpdateMconfigsStateAction(action.payload.dashboard_mconfigs),
-        new actions.UpdateDashboardsStateAction([action.payload.dashboard]),
-      ])
+      mergeMap((action: actions.CreateDashboardSuccessAction) =>
+        from([
+          new actions.UpdateQueriesStateAction(
+            action.payload.dashboard_queries
+          ),
+          new actions.UpdateMconfigsStateAction(
+            action.payload.dashboard_mconfigs
+          ),
+          new actions.UpdateDashboardsStateAction([action.payload.dashboard])
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

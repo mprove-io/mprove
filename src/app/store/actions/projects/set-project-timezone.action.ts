@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class SetProjectTimezoneAction implements Action {
   readonly type = actionTypes.SET_PROJECT_TIMEZONE;
 
-  constructor(public payload: api.SetProjectTimezoneRequestBodyPayload) {
-  }
+  constructor(public payload: api.SetProjectTimezoneRequestBodyPayload) {}
 }

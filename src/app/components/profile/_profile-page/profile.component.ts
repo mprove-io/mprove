@@ -14,7 +14,7 @@ import * as services from 'app/services/_index';
   moduleId: module.id,
   selector: 'm-profile',
   templateUrl: 'profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnDestroy {
   url: any;
@@ -26,14 +26,17 @@ export class ProfileComponent implements OnDestroy {
   constructor(
     private store: Store<interfaces.AppState>,
     public dialog: MatDialog,
-    public pageTitle: services.PageTitleService) {
+    public pageTitle: services.PageTitleService
+  ) {
     this.pageTitle.setTitle('Profile');
 
-    this.userSub = this.store.select(selectors.getUserState).pipe(
-      filter(v => !!v))
+    this.userSub = this.store
+      .select(selectors.getUserState)
+      .pipe(filter(v => !!v))
       .subscribe(user => {
         this.user = user;
-        this.url = configs.pathConfig.dynamicAssetsBaseUrl + this.user.picture_url_big;
+        this.url =
+          configs.pathConfig.dynamicAssetsBaseUrl + this.user.picture_url_big;
       });
   }
 

@@ -9,16 +9,18 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class OpenWebSocketEffect {
-
-  @Effect({ dispatch: false }) openWebSocket$: Observable<Action> = this.actions$
+  @Effect({ dispatch: false }) openWebSocket$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.OPEN_WEBSOCKET)
     .pipe(
-      tap((action: actions.OpenWebSocketAction) => this.myWebSocketService.open())
+      tap((action: actions.OpenWebSocketAction) =>
+        this.myWebSocketService.open()
+      )
     );
 
   constructor(
     private actions$: Actions,
-    private myWebSocketService: services.MyWebSocketService) {
-  }
-
+    private myWebSocketService: services.MyWebSocketService
+  ) {}
 }

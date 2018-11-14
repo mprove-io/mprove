@@ -9,16 +9,12 @@ import * as uuid from 'uuid';
 
 @Injectable()
 export class StructService {
-
-  constructor(private store: Store<interfaces.AppState>) {
-  }
+  constructor(private store: Store<interfaces.AppState>) {}
 
   filterHasDuplicateFractions(filter: api.Filter) {
-
     let hasDuplicates = false;
 
     filter.fractions.forEach(fraction => {
-
       if (filter.fractions.filter(x => x.brick === fraction.brick).length > 1) {
         hasDuplicates = true;
       }
@@ -113,7 +109,7 @@ export class StructService {
       tile_height: api.ChartTileHeightEnum._500,
       view_size: api.ChartViewSizeEnum.Auto,
       view_width: 600,
-      view_height: 200,
+      view_height: 200
     };
   }
 
@@ -121,7 +117,10 @@ export class StructService {
     let newMconfigId = uuid.v4();
 
     let newQueryId: string;
-    this.store.select(selectors.getSelectedQueryId).pipe(take(1)).subscribe(x => newQueryId = x);
+    this.store
+      .select(selectors.getSelectedQueryId)
+      .pipe(take(1))
+      .subscribe(x => (newQueryId = x));
 
     let newMconfig = this.prepareEmptyOrCopyMconfig(newMconfigId, newQueryId);
 
@@ -144,42 +143,47 @@ export class StructService {
 
     let newMconfig: api.Mconfig;
     let newQuery: api.Query;
-    this.store.select(selectors.getMconfigsState).pipe(take(1)).subscribe(mconfigs => mconfigs.forEach(mconfig => {
-      if (mconfig.mconfig_id === mconfigId) {
+    this.store
+      .select(selectors.getMconfigsState)
+      .pipe(take(1))
+      .subscribe(mconfigs =>
+        mconfigs.forEach(mconfig => {
+          if (mconfig.mconfig_id === mconfigId) {
+            this.store
+              .select(selectors.getQueriesState)
+              .pipe(take(1))
+              .subscribe(queries =>
+                queries.forEach(query => {
+                  if (query.query_id === mconfig.query_id) {
+                    newQuery = Object.assign({}, query, {
+                      query_id: newQueryId,
+                      status:
+                        query.last_cancel_ts > query.last_complete_ts &&
+                        query.last_cancel_ts > query.last_error_ts
+                          ? api.QueryStatusEnum.Canceled
+                          : query.last_error_ts > query.last_complete_ts &&
+                            query.last_error_ts > query.last_cancel_ts
+                          ? api.QueryStatusEnum.Error
+                          : query.last_complete_ts > query.last_cancel_ts &&
+                            query.last_complete_ts > query.last_error_ts
+                          ? api.QueryStatusEnum.Completed
+                          : api.QueryStatusEnum.New,
+                      temp: true,
+                      server_ts: 1
+                    });
+                  }
+                })
+              );
 
-        this.store.select(selectors.getQueriesState).pipe(take(1)).subscribe(queries => queries.forEach(query => {
-          if (query.query_id === mconfig.query_id) {
-            newQuery = Object.assign(
-              {},
-              query,
-              {
-                query_id: newQueryId,
-                status: query.last_cancel_ts > query.last_complete_ts && query.last_cancel_ts > query.last_error_ts
-                  ? api.QueryStatusEnum.Canceled
-                  : query.last_error_ts > query.last_complete_ts && query.last_error_ts > query.last_cancel_ts
-                    ? api.QueryStatusEnum.Error
-                    : query.last_complete_ts > query.last_cancel_ts && query.last_complete_ts > query.last_error_ts
-                      ? api.QueryStatusEnum.Completed
-                      : api.QueryStatusEnum.New,
-                temp: true,
-                server_ts: 1
-              }
-            );
+            newMconfig = Object.assign({}, mconfig, {
+              mconfig_id: newMconfigId,
+              query_id: newQueryId,
+              temp: true,
+              server_ts: 1
+            });
           }
-        }));
-
-        newMconfig = Object.assign(
-          {},
-          mconfig,
-          {
-            mconfig_id: newMconfigId,
-            query_id: newQueryId,
-            temp: true,
-            server_ts: 1
-          }
-        );
-      }
-    }));
+        })
+      );
 
     this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
@@ -221,32 +225,55 @@ export class StructService {
       ts_relative_value: null,
       ts_relative_when_option: null,
       type: api.FractionTypeEnum.StringIsAnyValue, // 'any'
-      yesno_value: null,
+      yesno_value: null
     };
   }
 
-  private prepareEmptyOrCopyMconfig(newMconfigId: string, newQueryId: string): api.Mconfig {
-
+  private prepareEmptyOrCopyMconfig(
+    newMconfigId: string,
+    newQueryId: string
+  ): api.Mconfig {
     let projectId: string;
-    this.store.select(selectors.getLayoutProjectId).pipe(take(1)).subscribe(x => projectId = x);
+    this.store
+      .select(selectors.getLayoutProjectId)
+      .pipe(take(1))
+      .subscribe(x => (projectId = x));
 
     let repoId: string;
-    this.store.select(selectors.getSelectedProjectModeRepoId).pipe(take(1)).subscribe(x => repoId = x);
+    this.store
+      .select(selectors.getSelectedProjectModeRepoId)
+      .pipe(take(1))
+      .subscribe(x => (repoId = x));
 
     let structId: string;
-    this.store.select(selectors.getSelectedProjectModeRepoStructId).pipe(take(1)).subscribe(x => structId = x);
+    this.store
+      .select(selectors.getSelectedProjectModeRepoStructId)
+      .pipe(take(1))
+      .subscribe(x => (structId = x));
 
     let modelId: string;
-    this.store.select(selectors.getSelectedProjectModeRepoModelId).pipe(take(1)).subscribe(x => modelId = x);
+    this.store
+      .select(selectors.getSelectedProjectModeRepoModelId)
+      .pipe(take(1))
+      .subscribe(x => (modelId = x));
 
     let mconfig: api.Mconfig;
-    this.store.select(selectors.getSelectedMconfig).pipe(take(1)).subscribe(x => mconfig = x);
+    this.store
+      .select(selectors.getSelectedMconfig)
+      .pipe(take(1))
+      .subscribe(x => (mconfig = x));
 
     let projectTimezone: string;
-    this.store.select(selectors.getSelectedProjectTimezone).pipe(take(1)).subscribe(x => projectTimezone = x);
+    this.store
+      .select(selectors.getSelectedProjectTimezone)
+      .pipe(take(1))
+      .subscribe(x => (projectTimezone = x));
 
     let userTimezone: string;
-    this.store.select(selectors.getUserTimezone).pipe(take(1)).subscribe(x => userTimezone = x);
+    this.store
+      .select(selectors.getUserTimezone)
+      .pipe(take(1))
+      .subscribe(x => (userTimezone = x));
 
     let timezone = userTimezone === 'project' ? projectTimezone : userTimezone;
 
@@ -265,28 +292,30 @@ export class StructService {
       filters: [],
       charts: [],
       temp: true,
-      server_ts: 1,
+      server_ts: 1
     };
 
-    return Object.assign(
-      {},
-      mconfig || emptyMconfig,
-      {
-        mconfig_id: newMconfigId,
-        query_id: newQueryId,
-        temp: true,
-        deleted: false,
-        server_ts: 1
-      }
-    );
+    return Object.assign({}, mconfig || emptyMconfig, {
+      mconfig_id: newMconfigId,
+      query_id: newQueryId,
+      temp: true,
+      deleted: false,
+      server_ts: 1
+    });
   }
 
   private prepareEmptyQuery(newQueryId: string): api.Query {
     let projectId: string;
-    this.store.select(selectors.getLayoutProjectId).pipe(take(1)).subscribe(x => projectId = x);
+    this.store
+      .select(selectors.getLayoutProjectId)
+      .pipe(take(1))
+      .subscribe(x => (projectId = x));
 
     let structId: string;
-    this.store.select(selectors.getSelectedProjectModeRepoStructId).pipe(take(1)).subscribe(x => structId = x);
+    this.store
+      .select(selectors.getSelectedProjectModeRepoStructId)
+      .pipe(take(1))
+      .subscribe(x => (structId = x));
 
     return {
       query_id: newQueryId,
@@ -307,7 +336,7 @@ export class StructService {
       last_error_ts: 1,
       data: null,
       temp: true,
-      server_ts: 1,
+      server_ts: 1
     };
   }
 }

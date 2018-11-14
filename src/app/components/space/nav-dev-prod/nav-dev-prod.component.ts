@@ -12,46 +12,55 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'nav-dev-prod.component.html',
   styleUrls: ['nav-dev-prod.component.scss']
 })
-
 export class NavDevProdComponent {
-
   projectId: string;
-  projectId$ = this.store.select(selectors.getLayoutProjectId)
-    .pipe(
-      filter(v => !!v),
-      tap(
-        x => this.projectId = x)
-    );
+  projectId$ = this.store.select(selectors.getLayoutProjectId).pipe(
+    filter(v => !!v),
+    tap(x => (this.projectId = x))
+  );
 
-  selectedProjectUserIsEditor$ = this.store.select(selectors.getSelectedProjectUserIsEditor); // no filter here
+  selectedProjectUserIsEditor$ = this.store.select(
+    selectors.getSelectedProjectUserIsEditor
+  ); // no filter here
 
   needSave$ = this.store.select(selectors.getLayoutNeedSave); // no filter here
 
   layoutModeIsDev: boolean;
-  layoutModeIsDev$ = this.store.select(selectors.getLayoutModeIsDev) // no filter here
-    .pipe(
-      tap(x => this.layoutModeIsDev = x)
-    );
+  layoutModeIsDev$ = this.store
+    .select(selectors.getLayoutModeIsDev) // no filter here
+    .pipe(tap(x => (this.layoutModeIsDev = x)));
 
   mode: enums.LayoutModeEnum;
-  mode$ = this.store.select(selectors.getLayoutMode).pipe(filter(v => !!v), tap(
-    x => this.mode = x));
-
+  mode$ = this.store.select(selectors.getLayoutMode).pipe(
+    filter(v => !!v),
+    tap(x => (this.mode = x))
+  );
 
   constructor(
     private store: Store<interfaces.AppState>,
     private router: Router,
-    private printer: services.PrinterService) {
-  }
+    private printer: services.PrinterService
+  ) {}
 
   toggleMode() {
     this.printer.log(enums.busEnum.SPACE_COMPONENT_TOGGLE, 'toggling mode...');
 
     if (this.mode === enums.LayoutModeEnum.Dev) {
-      this.router.navigate(['/project', this.projectId, 'mode', enums.LayoutModeEnum.Prod, 'blockml']);
-
+      this.router.navigate([
+        '/project',
+        this.projectId,
+        'mode',
+        enums.LayoutModeEnum.Prod,
+        'blockml'
+      ]);
     } else {
-      this.router.navigate(['/project', this.projectId, 'mode', enums.LayoutModeEnum.Dev, 'blockml']);
+      this.router.navigate([
+        '/project',
+        this.projectId,
+        'mode',
+        enums.LayoutModeEnum.Dev,
+        'blockml'
+      ]);
     }
   }
 

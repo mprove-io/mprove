@@ -5,5 +5,5 @@ import { getSelectedProjectModeRepoErrors } from 'app/store/selectors/get-select
 
 export const getSelectedProjectModeRepoErrorsExist = createSelector(
   getSelectedProjectModeRepoErrors,
-  (errors: api.SwError[]) => errors ? errors.length > 0 : undefined
+  (errors: api.SwError[]) => (errors ? errors.length > 0 : undefined)
 );

@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class CreateMemberAction implements Action {
   readonly type = actionTypes.CREATE_MEMBER;
 
-  constructor(public payload: api.CreateMemberRequestBodyPayload) {
-  }
+  constructor(public payload: api.CreateMemberRequestBodyPayload) {}
 }

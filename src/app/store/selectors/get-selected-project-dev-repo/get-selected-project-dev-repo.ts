@@ -7,7 +7,6 @@ export const getSelectedProjectDevRepo = createSelector(
   getSelectedProjectRepos,
   getUserId,
   (projectRepos: api.Repo[], userId: string) => {
-
     let devRepo: api.Repo;
 
     if (projectRepos && userId) {

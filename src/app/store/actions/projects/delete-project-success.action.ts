@@ -5,6 +5,5 @@ import * as actionTypes from 'app/store/action-types';
 export class DeleteProjectSuccessAction implements Action {
   readonly type = actionTypes.DELETE_PROJECT_SUCCESS;
 
-  constructor(public payload: api.DeleteProjectResponse200BodyPayload) {
-  }
+  constructor(public payload: api.DeleteProjectResponse200BodyPayload) {}
 }

@@ -9,18 +9,19 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class GetStateEffect {
-
-  @Effect() getState$: Observable<Action> =
-    this.actions$.ofType(actionTypes.GET_STATE)
-      .pipe(
-        mergeMap((action: actions.GetStateAction) => this.backendService.getState(action.payload)
-          .pipe(
-            map(body => new actions.GetStateSuccessAction(body.payload)),
-            catchError(e => of(new actions.GetStateFailAction({ error: e })))
-          )));
+  @Effect() getState$: Observable<Action> = this.actions$
+    .ofType(actionTypes.GET_STATE)
+    .pipe(
+      mergeMap((action: actions.GetStateAction) =>
+        this.backendService.getState(action.payload).pipe(
+          map(body => new actions.GetStateSuccessAction(body.payload)),
+          catchError(e => of(new actions.GetStateFailAction({ error: e })))
+        )
+      )
+    );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

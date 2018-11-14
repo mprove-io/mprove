@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoModelFields = createSelector(
   getSelectedProjectModeRepoModel,
-  (model: api.Model) => model ? model.fields : undefined
+  (model: api.Model) => (model ? model.fields : undefined)
 );

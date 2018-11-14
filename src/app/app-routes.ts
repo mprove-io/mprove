@@ -6,24 +6,24 @@ import * as components from 'app/components/_index';
 export const APP_ROUTES: Routes = [
   {
     path: 'soft',
-    component: components.SoftComponent,
+    component: components.SoftComponent
   },
   {
     path: '',
     component: components.SpaceComponent,
     resolve: {
-      stateResolver: resolvers.StateResolver,
+      stateResolver: resolvers.StateResolver
     },
     children: [
       {
         path: 'login',
-        component: components.LoginComponent,
+        component: components.LoginComponent
       },
       {
         path: 'logout',
         component: components.LogoutComponent,
         resolve: {
-          logoutResolver: resolvers.LogoutResolver,
+          logoutResolver: resolvers.LogoutResolver
         }
       },
       {
@@ -34,60 +34,54 @@ export const APP_ROUTES: Routes = [
       {
         path: 'profile',
         component: components.ProfileComponent,
-        canActivate: [
-          guards.AuthCanActivateGuard
-        ],
+        canActivate: [guards.AuthCanActivateGuard]
       },
       {
         path: 'project/:projectId',
         component: components.ProjectComponent,
-        canActivate: [
-          guards.AuthCanActivateGuard
-        ],
+        canActivate: [guards.AuthCanActivateGuard],
         resolve: {
-          projectSelectedResolver: resolvers.ProjectResolver,
+          projectSelectedResolver: resolvers.ProjectResolver
         },
         children: [
           {
             path: 'team',
             component: components.TeamComponent,
             resolve: {
-              teamResolver: resolvers.TeamResolver,
+              teamResolver: resolvers.TeamResolver
             }
           },
           {
             path: 'settings',
             component: components.SettingsComponent,
             resolve: {
-              settingsResolver: resolvers.SettingsResolver,
+              settingsResolver: resolvers.SettingsResolver
             }
           },
           {
             path: 'remote',
-            component: components.RemoteComponent,
+            component: components.RemoteComponent
           },
           {
             path: 'billing',
             component: components.BillingComponent,
             resolve: {
-              teamResolver: resolvers.BillingResolver,
+              teamResolver: resolvers.BillingResolver
             }
           },
           {
             path: 'mode/:mode',
             component: components.RepoComponent,
             resolve: {
-              modeResolver: resolvers.ModeResolver,
+              modeResolver: resolvers.ModeResolver
             },
             children: [
               {
                 path: 'pdts',
                 component: components.PdtsComponent,
-                canDeactivate: [
-                  guards.ComponentDeactivateGuard
-                ],
+                canDeactivate: [guards.ComponentDeactivateGuard],
                 resolve: {
-                  fileSelectedResolver: resolvers.PDTResolver,
+                  fileSelectedResolver: resolvers.PDTResolver
                 }
               },
               {
@@ -97,43 +91,35 @@ export const APP_ROUTES: Routes = [
                   {
                     path: 'file/:fileId',
                     component: components.FileEditorComponent,
-                    canDeactivate: [
-                      guards.ComponentDeactivateGuard
-                    ],
+                    canDeactivate: [guards.ComponentDeactivateGuard],
                     resolve: {
-                      fileSelectedResolver: resolvers.FileResolver,
+                      fileSelectedResolver: resolvers.FileResolver
                     }
-                  },
+                  }
                 ]
               },
               {
                 path: 'model/:modelId',
                 component: components.ModelComponent,
-                canDeactivate: [
-                  guards.ComponentDeactivateGuard
-                ],
+                canDeactivate: [guards.ComponentDeactivateGuard],
                 resolve: {
-                  modelSelectedResolver: resolvers.ModelResolver,
+                  modelSelectedResolver: resolvers.ModelResolver
                 },
                 children: [
                   {
                     path: 'mconfig/:mconfigId',
                     component: components.MconfigComponent,
-                    canDeactivate: [
-                      guards.ComponentDeactivateGuard
-                    ],
+                    canDeactivate: [guards.ComponentDeactivateGuard],
                     resolve: {
-                      mconfigSelectedResolver: resolvers.MconfigResolver,
+                      mconfigSelectedResolver: resolvers.MconfigResolver
                     },
                     children: [
                       {
                         path: 'query/:queryId',
                         component: components.QueryComponent,
-                        canDeactivate: [
-                          guards.ComponentDeactivateGuard
-                        ],
+                        canDeactivate: [guards.ComponentDeactivateGuard],
                         resolve: {
-                          querySelectedResolver: resolvers.QueryResolver,
+                          querySelectedResolver: resolvers.QueryResolver
                         },
                         children: [
                           {
@@ -142,53 +128,47 @@ export const APP_ROUTES: Routes = [
                           },
                           {
                             path: 'sql',
-                            component: components.SqlComponent,
+                            component: components.SqlComponent
                           },
                           {
                             path: 'data',
-                            component: components.DataComponent,
+                            component: components.DataComponent
                           },
                           {
                             path: 'chart/:chartId',
                             component: components.ChartComponent,
-                            canDeactivate: [
-                              guards.ComponentDeactivateGuard
-                            ],
+                            canDeactivate: [guards.ComponentDeactivateGuard],
                             resolve: {
-                              chartSelectedResolver: resolvers.ChartResolver,
-                            },
-                          },
+                              chartSelectedResolver: resolvers.ChartResolver
+                            }
+                          }
                         ]
                       }
                     ]
-                  },
+                  }
                 ]
               },
               {
                 path: 'dashboard/:dashboardId',
                 component: components.DashboardComponent,
-                canDeactivate: [
-                  guards.ComponentDeactivateGuard
-                ],
+                canDeactivate: [guards.ComponentDeactivateGuard],
                 resolve: {
-                  modelSelectedResolver: resolvers.DashboardResolver,
-                },
+                  modelSelectedResolver: resolvers.DashboardResolver
+                }
               }
             ]
-          },
+          }
         ]
       },
       {
         path: 'project-deleted',
         component: components.ProjectDeletedComponent,
-        canActivate: [
-          guards.AuthCanActivateGuard
-        ],
+        canActivate: [guards.AuthCanActivateGuard]
       },
       {
         path: '**',
         component: components.NotFound404Component
-      },
+      }
     ]
-  },
+  }
 ];

@@ -16,5 +16,5 @@ export const gradientChartTypes = [
   api.ChartTypeEnum.AreaStacked,
   api.ChartTypeEnum.AreaNormalized,
   api.ChartTypeEnum.HeatMap,
-  api.ChartTypeEnum.TreeMap,
+  api.ChartTypeEnum.TreeMap
 ];

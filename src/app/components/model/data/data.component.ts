@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { filter, map, tap } from 'rxjs/operators';
 import * as actions from 'app/store/actions/_index';
@@ -14,55 +19,52 @@ import * as services from 'app/services/_index';
   templateUrl: './data.component.html',
   styleUrls: ['./data.component.scss']
 })
-
 export class DataComponent implements OnInit {
-
   limitForm: FormGroup;
 
   sortings: api.Sorting[] = [];
-  sortings$ = this.store.select(selectors.getSelectedMconfigSortings)
-    .pipe(
-      filter(v => !!v),
-      tap(x => this.sortings = x)
-    );
+  sortings$ = this.store.select(selectors.getSelectedMconfigSortings).pipe(
+    filter(v => !!v),
+    tap(x => (this.sortings = x))
+  );
 
   mconfigLimit: number;
-  mconfigLimit$ = this.store.select(selectors.getSelectedMconfigLimit)
-    .pipe(
-      filter(v => !!v),
-      tap(x => {
-        this.mconfigLimit = x;
-        this.buildLimitForm();
-      })
-    );
+  mconfigLimit$ = this.store.select(selectors.getSelectedMconfigLimit).pipe(
+    filter(v => !!v),
+    tap(x => {
+      this.mconfigLimit = x;
+      this.buildLimitForm();
+    })
+  );
 
   fields: api.ModelField[];
-  fields$ = this.store.select(selectors.getSelectedProjectModeRepoModelFields)
+  fields$ = this.store
+    .select(selectors.getSelectedProjectModeRepoModelFields)
     .pipe(
       filter(v => !!v),
-      tap(x => this.fields = x)
+      tap(x => (this.fields = x))
     );
 
   data: any[] = [];
-  data$ = this.store.select(selectors.getSelectedQueryData)
-    .pipe(
-      map(data => {
-        if (data) {
-          return JSON.parse(data);
-
-        } else {
-          return [];
-        }
-      }),
-      tap(y => {
-        this.data = y;
-        this.filter();
-      })
-    );
+  data$ = this.store.select(selectors.getSelectedQueryData).pipe(
+    map(data => {
+      if (data) {
+        return JSON.parse(data);
+      } else {
+        return [];
+      }
+    }),
+    tap(y => {
+      this.data = y;
+      this.filter();
+    })
+  );
 
   mconfigSelectFields: api.ModelField[] = [];
-  mconfigSelectFields$ = this.store.select(selectors.getSelectedMconfigSelectFields)
-    .pipe( // no filter here
+  mconfigSelectFields$ = this.store
+    .select(selectors.getSelectedMconfigSelectFields)
+    .pipe(
+      // no filter here
       tap(x => {
         this.mconfigSelectFields = x;
       })
@@ -80,8 +82,8 @@ export class DataComponent implements OnInit {
     private store: Store<interfaces.AppState>,
     private fb: FormBuilder,
     private navigateService: services.NavigateService,
-    private structService: services.StructService) {
-  }
+    private structService: services.StructService
+  ) {}
 
   ngOnInit(): void {
     this.buildLimitForm();
@@ -90,7 +92,7 @@ export class DataComponent implements OnInit {
 
   buildLimitForm() {
     this.limitForm = this.fb.group({
-      'limit': [
+      limit: [
         this.mconfigLimit || 500, // fix because of bug https://github.com/angular/material2/issues/2441
         Validators.compose([
           Validators.required,
@@ -103,18 +105,32 @@ export class DataComponent implements OnInit {
   }
 
   limitBlur(limit: AbstractControl) {
-    if (limit.value
-      && limit.value !== this.mconfigLimit
-      && this.limitForm.valid) {
+    if (
+      limit.value &&
+      limit.value !== this.mconfigLimit &&
+      this.limitForm.valid
+    ) {
       let [newMconfig, newQuery] = this.structService.generateMconfigAndQuery();
 
       newMconfig.limit = limit.value > 500 ? 500 : limit.value;
 
       this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
       this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
-      this.store.dispatch(new actions.CreateMconfigAndQueryAction({ mconfig: newMconfig, query: newQuery }));
+      this.store.dispatch(
+        new actions.CreateMconfigAndQueryAction({
+          mconfig: newMconfig,
+          query: newQuery
+        })
+      );
 
-      setTimeout(() => this.navigateService.navigateMconfigQueryData(newMconfig.mconfig_id, newQuery.query_id), 1);
+      setTimeout(
+        () =>
+          this.navigateService.navigateMconfigQueryData(
+            newMconfig.mconfig_id,
+            newQuery.query_id
+          ),
+        1
+      );
     }
   }
 
@@ -130,7 +146,9 @@ export class DataComponent implements OnInit {
 
     let newSortings: api.Sorting[] = [];
 
-    let fIndex = newMconfig.sortings.findIndex(sorting => sorting.field_id === fieldId);
+    let fIndex = newMconfig.sortings.findIndex(
+      sorting => sorting.field_id === fieldId
+    );
 
     if (fIndex > -1 && newMconfig.sortings[fIndex].desc === true && desc) {
       // desc should be removed from sortings and asc should be added to end
@@ -142,31 +160,29 @@ export class DataComponent implements OnInit {
         ...newMconfig.sortings.slice(fIndex + 1),
         sorting
       ];
-
-    } else if (fIndex > -1 && newMconfig.sortings[fIndex].desc === true && !desc) {
+    } else if (
+      fIndex > -1 &&
+      newMconfig.sortings[fIndex].desc === true &&
+      !desc
+    ) {
       // not possible in UI
       // asc should be removed from sortings
 
       newSortings = [
         ...newMconfig.sortings.slice(0, fIndex),
-        ...newMconfig.sortings.slice(fIndex + 1),
+        ...newMconfig.sortings.slice(fIndex + 1)
       ];
-
     } else if (fIndex > -1 && newMconfig.sortings[fIndex].desc === false) {
       // asc should be removed from sortings
       newSortings = [
         ...newMconfig.sortings.slice(0, fIndex),
         ...newMconfig.sortings.slice(fIndex + 1)
       ];
-
     } else if (fIndex < 0) {
       // should be added to sortings
       let sorting: api.Sorting = { field_id: fieldId, desc: desc };
 
-      newSortings = [
-        ...newMconfig.sortings,
-        sorting
-      ];
+      newSortings = [...newMconfig.sortings, sorting];
     }
 
     newMconfig.sortings = newSortings;
@@ -175,17 +191,30 @@ export class DataComponent implements OnInit {
     let newSorts: string[] = [];
 
     newMconfig.sortings.forEach(sorting =>
-      sorting.desc ? newSorts.push(`${sorting.field_id} desc`) : newSorts.push(sorting.field_id));
+      sorting.desc
+        ? newSorts.push(`${sorting.field_id} desc`)
+        : newSorts.push(sorting.field_id)
+    );
 
-    newMconfig.sorts = newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
+    newMconfig.sorts =
+      newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
 
     this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
-    this.store.dispatch(new actions.CreateMconfigAndQueryAction({
-      mconfig: newMconfig,
-      query: newQuery
-    }));
+    this.store.dispatch(
+      new actions.CreateMconfigAndQueryAction({
+        mconfig: newMconfig,
+        query: newQuery
+      })
+    );
 
-    setTimeout(() => this.navigateService.navigateMconfigQueryData(newMconfig.mconfig_id, newQuery.query_id), 1);
+    setTimeout(
+      () =>
+        this.navigateService.navigateMconfigQueryData(
+          newMconfig.mconfig_id,
+          newQuery.query_id
+        ),
+      1
+    );
   }
 }

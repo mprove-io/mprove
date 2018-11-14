@@ -9,12 +9,14 @@ import * as actions from 'app/store/actions/_index';
 
 @Injectable()
 export class ResetStateEffect {
-
-  @Effect() resetState$: Observable<Action> =
-    this.actions$.ofType(actionTypes.RESET_STATE)
-      .pipe(
-        tap((action: actions.ResetStateAction) => Raven.setUserContext({ email: '' })),
-        mergeMap(() => from([
+  @Effect() resetState$: Observable<Action> = this.actions$
+    .ofType(actionTypes.RESET_STATE)
+    .pipe(
+      tap((action: actions.ResetStateAction) =>
+        Raven.setUserContext({ email: '' })
+      ),
+      mergeMap(() =>
+        from([
           new actions.ResetLayoutStateAction(),
           new actions.ResetWebSocketStateAction(),
           new actions.ResetUserStateAction(),
@@ -33,12 +35,10 @@ export class ResetStateEffect {
           new actions.ResetMembersStateAction(),
           new actions.ResetReposStateAction(),
 
-          new actions.ResetProjectsStateAction(),
+          new actions.ResetProjectsStateAction()
         ])
-        )
-      );
+      )
+    );
 
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

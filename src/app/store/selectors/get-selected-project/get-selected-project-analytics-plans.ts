@@ -6,25 +6,19 @@ import * as interfaces from 'app/interfaces/_index';
 export const getSelectedProjectAnalyticsPlans = createSelector(
   getSelectedProjectAnalyticsPlanId,
   (analyticsPlanId: number) => {
-
     let plans: interfaces.AnalyticsPlan[] = [
       {
         analytics_plan_id: 519436,
         name: 'FREE',
         price: '$ 0',
-        description: [
-          'All core features'
-        ]
+        description: ['All core features']
       },
       {
         analytics_plan_id: 533802,
         name: 'Basic',
         price: '$ 50',
-        description: [
-          'All core features',
-          'Dark Theme'
-        ]
-      },
+        description: ['All core features', 'Dark Theme']
+      }
       // {
       //   analytics_plan_id: 532846,
       //   name: 'Standard',
@@ -42,8 +36,9 @@ export const getSelectedProjectAnalyticsPlans = createSelector(
       //     'Extra features: ...'
       //   ]
       // },
-    ]
-      .map(x => Object.assign({}, x, { switch: x.analytics_plan_id !== analyticsPlanId }));
+    ].map(x =>
+      Object.assign({}, x, { switch: x.analytics_plan_id !== analyticsPlanId })
+    );
 
     return plans;
   }

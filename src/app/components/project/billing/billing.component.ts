@@ -15,18 +15,15 @@ import * as services from 'app/services/_index';
   templateUrl: 'billing.component.html',
   styleUrls: ['billing.component.scss']
 })
-
 export class BillingComponent implements OnDestroy {
-
-  selectedProjectId$ = this.store.select(selectors.getSelectedProjectId)
+  selectedProjectId$ = this.store
+    .select(selectors.getSelectedProjectId)
     .pipe(filter(v => !!v));
 
   projectAnalyticsSubscription: api.Subscription;
-  selectedProjectAnalyticsSubscription$ = this.store.select(selectors.getSelectedProjectAnalyticsSubscription)
-    .pipe(
-      tap(x => this.projectAnalyticsSubscription = x)
-    );
-
+  selectedProjectAnalyticsSubscription$ = this.store
+    .select(selectors.getSelectedProjectAnalyticsSubscription)
+    .pipe(tap(x => (this.projectAnalyticsSubscription = x)));
 
   analyticsStateEnum = api.SubscriptionStateEnum;
 
@@ -35,15 +32,16 @@ export class BillingComponent implements OnDestroy {
   displayedColumns = ['name', 'price', 'description', 'switch'];
   dataSource = new ExampleDataSource(this.store);
 
-  selectedProjectUserIsAdmin$ = this.store.select(selectors.getSelectedProjectUserIsAdmin);
+  selectedProjectUserIsAdmin$ = this.store.select(
+    selectors.getSelectedProjectUserIsAdmin
+  );
 
   constructor(
     private store: Store<interfaces.AppState>,
     private myDialogService: services.MyDialogService,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
-    private pageTitle: services.PageTitleService,
+    private pageTitle: services.PageTitleService
   ) {
-
     this.pageTitleSub = this.pageTitle.setProjectSubtitle('Billing');
   }
 
@@ -53,21 +51,23 @@ export class BillingComponent implements OnDestroy {
 
   updateBillingAccount() {
     let projectId: string;
-    this.store.select(selectors.getSelectedProjectId)
+    this.store
+      .select(selectors.getSelectedProjectId)
       .pipe(take(1))
-      .subscribe(x => projectId = x);
+      .subscribe(x => (projectId = x));
 
     let userId;
-    this.store.select(selectors.getUserId)
+    this.store
+      .select(selectors.getUserId)
       .pipe(take(1))
-      .subscribe(x => userId = x);
+      .subscribe(x => (userId = x));
 
     Paddle.Checkout.open({
       product: 519436, // FREE plan
       email: userId,
       passthrough: {
         project_id: projectId,
-        global_product: api.SubscriptionGlobalProductEnum.Analytics,
+        global_product: api.SubscriptionGlobalProductEnum.Analytics
       }
     });
   }
@@ -77,7 +77,9 @@ export class BillingComponent implements OnDestroy {
   }
 
   openSwitchAnalyticsPlanDialog(targetPlanId: string) {
-    this.myDialogService.showSwitchAnalyticsPlanDialog({ target_plan_id: targetPlanId });
+    this.myDialogService.showSwitchAnalyticsPlanDialog({
+      target_plan_id: targetPlanId
+    });
   }
 }
 
@@ -98,5 +100,5 @@ export class ExampleDataSource extends DataSource<any> {
     return this.store.select(selectors.getSelectedProjectAnalyticsPlans);
   }
 
-  disconnect() { }
+  disconnect() {}
 }

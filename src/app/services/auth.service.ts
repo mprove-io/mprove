@@ -16,13 +16,11 @@ import { PrinterService } from 'app/services/printer.service';
 // import Auth0Lock from 'auth0-lock';
 const auth0Lock: any = require('auth0-lock').default;
 
-
 const host = window.location.host;
 const protocol = window.location.protocol;
 
 @Injectable()
 export class AuthService {
-
   // Configure Auth0
   lock: any;
 
@@ -32,8 +30,8 @@ export class AuthService {
     private printer: PrinterService,
     private jwtHelperService: JwtHelperService,
     public router: Router,
-    private store: Store<interfaces.AppState>) {
-
+    private store: Store<interfaces.AppState>
+  ) {
     this.restartLock();
   }
 
@@ -41,7 +39,7 @@ export class AuthService {
     this.lock = new auth0Lock(
       configs.authConfig.clientID,
       configs.authConfig.domain,
-      configs.authConfig.options,
+      configs.authConfig.options
     );
 
     // Add callback for lock `authenticated` event
@@ -57,11 +55,13 @@ export class AuthService {
       /* manually hide Auth0Lock window */
       // this.lock.hide();
 
-      this.store.select(selectors.getUserLoaded).pipe(
-        filter(loaded => !!loaded),
-        take(1))
+      this.store
+        .select(selectors.getUserLoaded)
+        .pipe(
+          filter(loaded => !!loaded),
+          take(1)
+        )
         .subscribe(x => this.reNavigate());
-
     });
 
     this.lock.on('authorization_error', (error: any) => {
@@ -90,16 +90,21 @@ export class AuthService {
   private reNavigate() {
     /* redirect user to the redirect_url */
     let redirectUrl: string = localStorage.getItem('redirect_url');
-    this.printer.log(enums.busEnum.AUTH_SERVICE, 'got redirect_url from LocalStorage:', redirectUrl);
+    this.printer.log(
+      enums.busEnum.AUTH_SERVICE,
+      'got redirect_url from LocalStorage:',
+      redirectUrl
+    );
 
     if (redirectUrl) {
-      this.printer.log(enums.busEnum.AUTH_SERVICE, 'navigating redirect_url...');
+      this.printer.log(
+        enums.busEnum.AUTH_SERVICE,
+        'navigating redirect_url...'
+      );
       this.router.navigate([redirectUrl]);
-
     } else {
       this.printer.log(enums.busEnum.AUTH_SERVICE, 'navigating profile...');
       this.router.navigate(['profile']);
     }
   }
-
 }

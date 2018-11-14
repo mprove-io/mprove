@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectDevRepoRemotePullAccessIsOk = createSelector(
   getSelectedProjectDevRepo,
-  (repo: api.Repo) => repo ? repo.remote_pull_access_is_ok : undefined
+  (repo: api.Repo) => (repo ? repo.remote_pull_access_is_ok : undefined)
 );

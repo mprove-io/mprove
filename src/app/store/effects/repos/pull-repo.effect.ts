@@ -9,11 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class PullRepoEffect {
-
   @Effect() pullRepo$: Observable<Action> = this.actions$
-    .ofType(actionTypes.PULL_REPO).pipe(
-      mergeMap((action: actions.PullRepoAction) => this.backendService.pullRepo(action.payload)
-        .pipe(
+    .ofType(actionTypes.PULL_REPO)
+    .pipe(
+      mergeMap((action: actions.PullRepoAction) =>
+        this.backendService.pullRepo(action.payload).pipe(
           map(body => new actions.PullRepoSuccessAction(body.payload)),
           catchError(e => of(new actions.PullRepoFailAction({ error: e })))
         )
@@ -22,6 +22,6 @@ export class PullRepoEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

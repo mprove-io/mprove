@@ -8,22 +8,21 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class SetProjectWeekStartSuccessEffect {
-
-  @Effect() setProjectWeekStartSuccess$: Observable<Action> = this.actions$
+  @Effect() setProjectWeekStartSuccess$: Observable<
+    Action
+  > = this.actions$
     .ofType(actionTypes.SET_PROJECT_WEEK_START_SUCCESS)
     .pipe(
-      mergeMap((action: actions.SetProjectWeekStartSuccessAction) => from([
-        new actions.UpdateProjectsStateAction([action.payload.project]),
-        new actions.ProcessStructsAction([
-          action.payload.dev_struct,
-          action.payload.prod_struct,
-        ]),
-      ])
+      mergeMap((action: actions.SetProjectWeekStartSuccessAction) =>
+        from([
+          new actions.UpdateProjectsStateAction([action.payload.project]),
+          new actions.ProcessStructsAction([
+            action.payload.dev_struct,
+            action.payload.prod_struct
+          ])
+        ])
       )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

@@ -9,12 +9,11 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class EditMemberEffect {
-
   @Effect() editMember$: Observable<Action> = this.actions$
     .ofType(actionTypes.EDIT_MEMBER)
     .pipe(
-      mergeMap((action: actions.EditMemberAction) => this.backendService.editMember(action.payload)
-        .pipe(
+      mergeMap((action: actions.EditMemberAction) =>
+        this.backendService.editMember(action.payload).pipe(
           map(body => new actions.EditMemberSuccessAction(body.payload)),
           catchError(e => of(new actions.EditMemberFailAction({ error: e })))
         )
@@ -23,7 +22,6 @@ export class EditMemberEffect {
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
-
+    private backendService: services.BackendService
+  ) {}
 }

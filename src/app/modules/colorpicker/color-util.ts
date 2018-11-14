@@ -6,18 +6,30 @@ export const COLOR_RGB = /(rgb)a?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*%?,\s*(\d{1,3}
 export const COLOR_HSL = /(hsl)a?\(\s*(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)/;
 
 export class Hsva {
-  constructor(public h: number, public s: number, public v: number, public a: number) {
-  }
+  constructor(
+    public h: number,
+    public s: number,
+    public v: number,
+    public a: number
+  ) {}
 }
 
 export class Hsla {
-  constructor(public h: number, public s: number, public l: number, public a: number) {
-  }
+  constructor(
+    public h: number,
+    public s: number,
+    public l: number,
+    public a: number
+  ) {}
 }
 
 export class Rgba {
-  constructor(public r: number, public g: number, public b: number, public a: number) {
-  }
+  constructor(
+    public r: number,
+    public g: number,
+    public b: number,
+    public a: number
+  ) {}
 }
 
 @Injectable()
@@ -27,13 +39,15 @@ export class ColorUtil {
    * @param hsla
    */
   hsla2hsva(hsla: Hsla) {
-    let h: number = Math.min(hsla.h, 1), s = Math.min(hsla.s, 1), l = Math.min(hsla.l, 1);
+    let h: number = Math.min(hsla.h, 1),
+      s = Math.min(hsla.s, 1),
+      l = Math.min(hsla.l, 1);
     let a = Math.min(hsla.a, 1);
     if (l === 0) {
       return { h: h, s: 0, v: 0, a: a };
     } else {
-      let v: number = l + s * (1 - Math.abs(2 * l - 1)) / 2;
-      return { h: h, s: 2 * (v - l) / v, v: v, a: a };
+      let v: number = l + (s * (1 - Math.abs(2 * l - 1))) / 2;
+      return { h: h, s: (2 * (v - l)) / v, v: v, a: a };
     }
   }
 
@@ -42,14 +56,17 @@ export class ColorUtil {
    * @param hsva
    */
   hsva2hsla(hsva: Hsva) {
-    let h = hsva.h, s = hsva.s, v = hsva.v, a = hsva.a;
+    let h = hsva.h,
+      s = hsva.s,
+      v = hsva.v,
+      a = hsva.a;
     if (v === 0) {
       return new Hsla(h, 0, 0, a);
     } else if (s === 0 && v === 1) {
       return new Hsla(h, 1, 1, a);
     } else {
-      let l: number = v * (2 - s) / 2;
-      return new Hsla(h, v * s / (1 - Math.abs(2 * l - 1)), l, a);
+      let l: number = (v * (2 - s)) / 2;
+      return new Hsla(h, (v * s) / (1 - Math.abs(2 * l - 1)), l, a);
     }
   }
 
@@ -58,10 +75,15 @@ export class ColorUtil {
    * @param rgba
    */
   rgbaToHsva(rgba: Rgba) {
-    let r: number = Math.min(rgba.r, 1), g = Math.min(rgba.g, 1), b = Math.min(rgba.b, 1);
+    let r: number = Math.min(rgba.r, 1),
+      g = Math.min(rgba.g, 1),
+      b = Math.min(rgba.b, 1);
     let a = Math.min(rgba.a, 1);
-    let max: number = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h: number, s: number, v: number = max;
+    let max: number = Math.max(r, g, b),
+      min = Math.min(r, g, b);
+    let h: number,
+      s: number,
+      v: number = max;
     let d: number = max - min;
     s = max === 0 ? 0 : d / max;
 
@@ -90,7 +112,10 @@ export class ColorUtil {
    * @param hsva
    */
   hsvaToRgba(hsva: Hsva) {
-    let h: number = hsva.h, s: number = hsva.s, v: number = hsva.v, a: number = hsva.a;
+    let h: number = hsva.h,
+      s: number = hsva.s,
+      v: number = hsva.v,
+      a: number = hsva.a;
     let r: number, g: number, b: number;
 
     let i: number = Math.floor(h * 6);
@@ -143,38 +168,46 @@ export class ColorUtil {
     let stringParsers = [
       {
         re: COLOR_RGB,
-        parse: function (execResult: Array<string>) {
-          return new Rgba(parseInt(execResult[2], 10) / 255,
+        parse: function(execResult: Array<string>) {
+          return new Rgba(
+            parseInt(execResult[2], 10) / 255,
             parseInt(execResult[3], 10) / 255,
             parseInt(execResult[4], 10) / 255,
-            isNaN(parseFloat(execResult[5])) ? 1 : parseFloat(execResult[5]));
+            isNaN(parseFloat(execResult[5])) ? 1 : parseFloat(execResult[5])
+          );
         }
       },
       {
         re: COLOR_HSL,
-        parse: function (execResult: Array<string>) {
-          return new Hsla(parseInt(execResult[2], 10) / 360,
+        parse: function(execResult: Array<string>) {
+          return new Hsla(
+            parseInt(execResult[2], 10) / 360,
             parseInt(execResult[3], 10) / 100,
             parseInt(execResult[4], 10) / 100,
-            isNaN(parseFloat(execResult[5])) ? 1 : parseFloat(execResult[5]));
+            isNaN(parseFloat(execResult[5])) ? 1 : parseFloat(execResult[5])
+          );
         }
       },
       {
         re: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/,
-        parse: function (execResult: Array<string>) {
-          return new Rgba(parseInt(execResult[1], 16) / 255,
+        parse: function(execResult: Array<string>) {
+          return new Rgba(
+            parseInt(execResult[1], 16) / 255,
             parseInt(execResult[2], 16) / 255,
             parseInt(execResult[3], 16) / 255,
-            1);
+            1
+          );
         }
       },
       {
         re: /#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])$/,
-        parse: function (execResult: Array<string>) {
-          return new Rgba(parseInt(execResult[1] + execResult[1], 16) / 255,
+        parse: function(execResult: Array<string>) {
+          return new Rgba(
+            parseInt(execResult[1] + execResult[1], 16) / 255,
             parseInt(execResult[2] + execResult[2], 16) / 255,
             parseInt(execResult[3] + execResult[3], 16) / 255,
-            1);
+            1
+          );
         }
       }
     ];
@@ -208,23 +241,50 @@ export class ColorUtil {
       switch (outputFormat) {
         case 'hsl':
           let hsla = this.hsva2hsla(hsva);
-          let hslaText = new Hsla(Math.round((hsla.h) * 360), Math.round(hsla.s * 100),
-            Math.round(hsla.l * 100), Math.round(hsla.a * 100) / 100
+          let hslaText = new Hsla(
+            Math.round(hsla.h * 360),
+            Math.round(hsla.s * 100),
+            Math.round(hsla.l * 100),
+            Math.round(hsla.a * 100) / 100
           );
-          return 'hsla(' + hslaText.h + ',' + hslaText.s + '%,' +
-            hslaText.l + '%,' + hslaText.a + ')';
+          return (
+            'hsla(' +
+            hslaText.h +
+            ',' +
+            hslaText.s +
+            '%,' +
+            hslaText.l +
+            '%,' +
+            hslaText.a +
+            ')'
+          );
         default:
           let rgba = this.denormalizeRGBA(this.hsvaToRgba(hsva));
-          return 'rgba(' + rgba.r + ',' + rgba.g + ',' + rgba.b +
-            ',' + Math.round(rgba.a * 100) / 100 + ')';
+          return (
+            'rgba(' +
+            rgba.r +
+            ',' +
+            rgba.g +
+            ',' +
+            rgba.b +
+            ',' +
+            Math.round(rgba.a * 100) / 100 +
+            ')'
+          );
       }
     } else {
       switch (outputFormat) {
         case 'hsl':
           let hsla = this.hsva2hsla(hsva);
-          let hslaText = new Hsla(Math.round((hsla.h) * 360), Math.round(hsla.s * 100),
-            Math.round(hsla.l * 100), Math.round(hsla.a * 100) / 100);
-          return 'hsl(' + hslaText.h + ',' + hslaText.s + '%,' + hslaText.l + '%)';
+          let hslaText = new Hsla(
+            Math.round(hsla.h * 360),
+            Math.round(hsla.s * 100),
+            Math.round(hsla.l * 100),
+            Math.round(hsla.a * 100) / 100
+          );
+          return (
+            'hsl(' + hslaText.h + ',' + hslaText.s + '%,' + hslaText.l + '%)'
+          );
         case 'rgb':
           let rgba = this.denormalizeRGBA(this.hsvaToRgba(hsva));
           return 'rgb(' + rgba.r + ',' + rgba.g + ',' + rgba.b + ')';
@@ -235,13 +295,22 @@ export class ColorUtil {
   }
 
   hexText(rgba: Rgba) {
-    let mainText = ((1 << 24) | (rgba.r << 16) | (rgba.g << 8) | rgba.b).toString(16);
+    let mainText = (
+      (1 << 24) |
+      (rgba.r << 16) |
+      (rgba.g << 8) |
+      rgba.b
+    ).toString(16);
     let hexText = '#' + mainText.substr(1);
     return hexText.toLowerCase();
   }
 
   denormalizeRGBA(rgba: Rgba) {
-    return new Rgba(Math.round(rgba.r * 255), Math.round(rgba.g * 255),
-      Math.round(rgba.b * 255), rgba.a);
+    return new Rgba(
+      Math.round(rgba.r * 255),
+      Math.round(rgba.g * 255),
+      Math.round(rgba.b * 255),
+      rgba.a
+    );
   }
 }

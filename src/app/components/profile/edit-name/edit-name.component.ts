@@ -8,7 +8,7 @@ import * as interfaces from 'app/interfaces/_index';
 @Component({
   moduleId: module.id,
   selector: 'm-edit-name',
-  templateUrl: 'edit-name.component.html',
+  templateUrl: 'edit-name.component.html'
 })
 export class EditNameComponent implements OnChanges {
   @Input()
@@ -17,44 +17,39 @@ export class EditNameComponent implements OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnChanges() {
     if (!this.nameForm) {
       this.buildForm();
-
-    } else if (this.nameForm.get('firstName').value === this.user.first_name &&
-      this.nameForm.get('lastName').value === this.user.last_name) {
-
+    } else if (
+      this.nameForm.get('firstName').value === this.user.first_name &&
+      this.nameForm.get('lastName').value === this.user.last_name
+    ) {
       this.nameForm.markAsPristine();
     }
   }
 
   buildForm(): void {
     this.nameForm = this.fb.group({
-      'firstName': [
+      firstName: [
         this.user.first_name,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(20)
-        ])
+        Validators.compose([Validators.required, Validators.maxLength(20)])
       ],
-      'lastName': [
+      lastName: [
         this.user.last_name,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(20)
-        ])]
+        Validators.compose([Validators.required, Validators.maxLength(20)])
+      ]
     });
   }
 
   onSubmit(form: FormGroup, fv: any) {
-    this.store.dispatch(new actions.SetUserNameAction(
-      {
+    this.store.dispatch(
+      new actions.SetUserNameAction({
         first_name: fv['firstName'],
         last_name: fv['lastName'],
-        server_ts: this.user.server_ts,
+        server_ts: this.user.server_ts
       })
     );
   }

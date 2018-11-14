@@ -14,61 +14,62 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class UpdateDashboardsStateEffect {
+  @Effect({ dispatch: false }) updateDashboardsState$: Observable<
+    Action
+  > = this.actions$.ofType(actionTypes.UPDATE_DASHBOARDS_STATE).pipe(
+    tap((action: actions.UpdateDashboardsStateAction) => {
+      let selectedRepo: api.Repo;
+      this.store
+        .select(selectors.getSelectedProjectModeRepo)
+        .pipe(take(1))
+        .subscribe(x => (selectedRepo = x));
 
-  @Effect({ dispatch: false }) updateDashboardsState$: Observable<Action> = this.actions$
-    .ofType(actionTypes.UPDATE_DASHBOARDS_STATE)
-    .pipe(
-      tap((action: actions.UpdateDashboardsStateAction) => {
+      let selectedDashboard: api.Dashboard;
+      this.store
+        .select(selectors.getSelectedProjectModeRepoDashboard)
+        .pipe(take(1))
+        .subscribe(dashboard => (selectedDashboard = dashboard));
 
-        let selectedRepo: api.Repo;
-        this.store.select(selectors.getSelectedProjectModeRepo)
-          .pipe(take(1))
-          .subscribe(x => selectedRepo = x);
+      if (selectedDashboard) {
+        // dashboard updated before repo
+        if (selectedDashboard.struct_id !== selectedRepo.struct_id) {
+          this.printer.log(
+            enums.busEnum.UPDATE_DASHBOARDS_EFFECT,
+            'selected dashboard struct_id mismatch'
+          );
+          this.printer.log(
+            enums.busEnum.UPDATE_DASHBOARDS_EFFECT,
+            'navigating profile...'
+          );
 
-        let selectedDashboard: api.Dashboard;
-        this.store.select(selectors.getSelectedProjectModeRepoDashboard)
-          .pipe(take(1))
-          .subscribe(dashboard => selectedDashboard = dashboard);
+          this.router.navigate(['profile']);
 
-        if (selectedDashboard) {
+          // this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard struct_id mismatch');
 
-          // dashboard updated before repo
-          if (selectedDashboard.struct_id !== selectedRepo.struct_id) {
+          // if (selectedDashboard.temp) {
+          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard is temp');
+          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'navigating profile...');
 
+          //   this.router.navigate(['profile']);
 
-            this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard struct_id mismatch');
-            this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'navigating profile...');
+          // } else {
+          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard is not temp');
+          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'renavigating using load...');
 
-            this.router.navigate(['profile']);
-
-
-            // this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard struct_id mismatch');
-
-            // if (selectedDashboard.temp) {
-            //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard is temp');
-            //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'navigating profile...');
-
-            //   this.router.navigate(['profile']);
-
-            // } else {
-            //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard is not temp');
-            //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'renavigating using load...');
-
-            //   let url = this.router.routerState.snapshot.url;
-            //   console.log('url:', url);
-            //   localStorage.setItem('redirect_url', url);
-            //   this.router.navigate(['load']);
-            // }
-          }
+          //   let url = this.router.routerState.snapshot.url;
+          //   console.log('url:', url);
+          //   localStorage.setItem('redirect_url', url);
+          //   this.router.navigate(['load']);
+          // }
         }
-      })
-    );
+      }
+    })
+  );
 
   constructor(
     private actions$: Actions,
     private router: Router,
     private printer: services.PrinterService,
-    private store: Store<interfaces.AppState>) {
-  }
-
+    private store: Store<interfaces.AppState>
+  ) {}
 }

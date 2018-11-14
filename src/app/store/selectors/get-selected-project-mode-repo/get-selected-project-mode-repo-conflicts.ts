@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedProjectModeRepoConflicts = createSelector(
   getSelectedProjectModeRepo,
-  (repo: api.Repo) => repo ? repo.conflicts : undefined
+  (repo: api.Repo) => (repo ? repo.conflicts : undefined)
 );

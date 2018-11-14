@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterStateSnapshot
+} from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
@@ -12,14 +17,16 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class ProjectResolver implements Resolve<boolean> {
-
   constructor(
     private printer: services.PrinterService,
     private store: Store<interfaces.AppState>,
-    private router: Router) {
-  }
+    private router: Router
+  ) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  resolve(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> {
     this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, 'starts...');
 
     // this.store.select(selectors.getLayoutChartId).take(1).subscribe(
@@ -34,10 +41,8 @@ export class ProjectResolver implements Resolve<boolean> {
     // this.store.select(selectors.getLayoutModelId).take(1).subscribe(
     //   x => x ? this.store.dispatch(new UpdateLayoutModelIdAction(undefined)) : 0);
 
-
     // this.store.select(selectors.getLayoutDashboardId).take(1).subscribe(
     //   x => x ? this.store.dispatch(new UpdateLayoutDashboardIdAction(undefined)) : 0);
-
 
     // this.store.select(selectors.getLayoutNeedSave).take(1).subscribe(
     //   x => x ? this.store.dispatch(new SetLayoutNeedSaveFalseAction()) : 0);
@@ -48,18 +53,20 @@ export class ProjectResolver implements Resolve<boolean> {
     // this.store.select(selectors.getLayoutFileId).take(1).subscribe(
     //   x => x ? this.store.dispatch(new UpdateLayoutFileIdAction(undefined)) : 0);
 
-
     // this.store.select(selectors.getLayoutModeIsDev).take(1).subscribe(
     //   x => x ? this.store.dispatch(new SetLayoutModeProdAction()) : 0);
 
-    this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, 'projectId:', route.params['projectId']);
+    this.printer.log(
+      enums.busEnum.PROJECT_SELECTED_RESOLVER,
+      'projectId:',
+      route.params['projectId']
+    );
 
-    return this.store.select(selectors.getUserLoaded)
-      .pipe(
-        filter(loaded => loaded),
-        take(1),
-        switchMap(() => this.hasProjectInStore(route.params['projectId']))
-      );
+    return this.store.select(selectors.getUserLoaded).pipe(
+      filter(loaded => loaded),
+      take(1),
+      switchMap(() => this.hasProjectInStore(route.params['projectId']))
+    );
   }
 
   /**
@@ -67,51 +74,76 @@ export class ProjectResolver implements Resolve<boolean> {
    * in the Store and is not Deleted
    */
   hasProjectInStore(id: string): Observable<boolean> {
-    return this.store.select(selectors.getProjectsState)
-      .pipe(
-        mergeMap(projects => {
+    return this.store.select(selectors.getProjectsState).pipe(
+      mergeMap(projects => {
+        let exists =
+          projects.findIndex(
+            project => project.project_id === id && project.deleted === false
+          ) > -1;
 
-          let exists = projects.findIndex(project => project.project_id === id && project.deleted === false) > -1;
+        if (!exists) {
+          this.printer.log(
+            enums.busEnum.PROJECT_SELECTED_RESOLVER,
+            `project not exists, navigating 404...`
+          );
+          this.store.dispatch(
+            new actions.UpdateLayoutProjectIdAction(constants.DEMO)
+          );
+          this.router.navigate(['/404']);
+          this.printer.log(
+            enums.busEnum.PROJECT_SELECTED_RESOLVER,
+            `resolved (false)`
+          );
+          return of(false);
+        } else {
+          this.printer.log(
+            enums.busEnum.PROJECT_SELECTED_RESOLVER,
+            `project exists`
+          );
 
-          if (!exists) {
-            this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `project not exists, navigating 404...`);
-            this.store.dispatch(new actions.UpdateLayoutProjectIdAction(constants.DEMO));
-            this.router.navigate(['/404']);
-            this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `resolved (false)`);
-            return of(false);
+          let layoutProjectId: string;
+          this.store
+            .select(selectors.getLayoutProjectId)
+            .pipe(take(1))
+            .subscribe(projectId => (layoutProjectId = projectId));
 
+          if (id !== layoutProjectId) {
+            this.printer.log(
+              enums.busEnum.PROJECT_SELECTED_RESOLVER,
+              `selecting project...`
+            );
+
+            this.store.dispatch(new actions.UpdateLayoutProjectIdAction(id));
+
+            return this.store.select(selectors.getSelectedProjectId).pipe(
+              filter(selectedProjectId => selectedProjectId === id),
+              map(() => true),
+              tap(x => {
+                this.printer.log(
+                  enums.busEnum.PROJECT_SELECTED_RESOLVER,
+                  `project selected`
+                );
+                this.printer.log(
+                  enums.busEnum.PROJECT_SELECTED_RESOLVER,
+                  `resolved (true)`
+                );
+              }),
+              take(1)
+            );
           } else {
-            this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `project exists`);
-
-            let layoutProjectId: string;
-            this.store.select(selectors.getLayoutProjectId)
-              .pipe(take(1))
-              .subscribe(projectId => layoutProjectId = projectId);
-
-            if (id !== layoutProjectId) {
-              this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `selecting project...`);
-
-              this.store.dispatch(new actions.UpdateLayoutProjectIdAction(id));
-
-              return this.store.select(selectors.getSelectedProjectId).pipe(
-                filter(selectedProjectId => selectedProjectId === id),
-                map(() => true),
-                tap(x => {
-                  this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `project selected`);
-                  this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `resolved (true)`);
-                }),
-                take(1)
-              );
-
-            } else {
-
-              this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `project already selected`);
-              this.printer.log(enums.busEnum.PROJECT_SELECTED_RESOLVER, `resolved (true)`);
-              return of(true);
-            }
+            this.printer.log(
+              enums.busEnum.PROJECT_SELECTED_RESOLVER,
+              `project already selected`
+            );
+            this.printer.log(
+              enums.busEnum.PROJECT_SELECTED_RESOLVER,
+              `resolved (true)`
+            );
+            return of(true);
           }
-        }),
-        take(1)
-      );
+        }
+      }),
+      take(1)
+    );
   }
 }

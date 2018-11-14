@@ -8,5 +8,5 @@ export let pathConfig = {
   staticAssetsBaseUrl: `${protocol}//${host}`,
   dynamicAssetsBaseUrl: environment.dynamicAssetsBaseUrl,
   httpUrl: environment.httpUrl,
-  websocketUrl: environment.websocketUrl,
+  websocketUrl: environment.websocketUrl
 };

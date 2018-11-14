@@ -8,15 +8,14 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class UpdateWebSocketInitIdEffect {
-
   @Effect() updateWebSocketInitId$: Observable<Action> = this.actions$
     .ofType(actionTypes.UPDATE_WEBSOCKET_INIT_ID)
     .pipe(
-      map((action: actions.UpdateWebSocketInitIdAction) => new actions.RestartWebSocketAction())
+      map(
+        (action: actions.UpdateWebSocketInitIdAction) =>
+          new actions.RestartWebSocketAction()
+      )
     );
 
-  constructor(
-    private actions$: Actions) {
-  }
-
+  constructor(private actions$: Actions) {}
 }

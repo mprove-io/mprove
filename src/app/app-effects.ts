@@ -124,5 +124,5 @@ export const APP_EFFECTS = [
   effects.PingReceivedEffect,
   effects.PongEffect,
   effects.RestartWebSocketEffect,
-  effects.UpdateWebSocketInitIdEffect,
+  effects.UpdateWebSocketInitIdEffect
 ];

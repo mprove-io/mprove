@@ -5,5 +5,5 @@ import * as api from 'app/api/_index';
 
 export const getSelectedQueryLastRunTs = createSelector(
   getSelectedQuery,
-  (query: api.Query) => query ? query.last_run_ts : undefined
+  (query: api.Query) => (query ? query.last_run_ts : undefined)
 );

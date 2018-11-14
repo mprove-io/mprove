@@ -46,5 +46,5 @@ export const APP_PROVIDERS = [
     provide: services.PrinterService,
     useClass: services.ConsoleLogService
   },
-  configs.APP_CONFIG_PROVIDER,
+  configs.APP_CONFIG_PROVIDER
 ];

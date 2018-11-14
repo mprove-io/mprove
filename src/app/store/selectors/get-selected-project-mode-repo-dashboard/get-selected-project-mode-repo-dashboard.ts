@@ -12,15 +12,14 @@ export const getSelectedProjectModeRepoDashboard = createSelector(
   getSelectedProjectModeRepoId,
   getLayoutDashboardId,
   (dashboards, projectId, repoId, dashboardId) => {
-
     if (dashboards && projectId && repoId && dashboardId) {
-      let dashboardIndex = dashboards.findIndex((dashboard: api.Dashboard) =>
-        dashboard.dashboard_id === dashboardId &&
-        dashboard.project_id === projectId &&
-        dashboard.repo_id === repoId
+      let dashboardIndex = dashboards.findIndex(
+        (dashboard: api.Dashboard) =>
+          dashboard.dashboard_id === dashboardId &&
+          dashboard.project_id === projectId &&
+          dashboard.repo_id === repoId
       );
       return dashboardIndex >= 0 ? dashboards[dashboardIndex] : undefined;
-
     } else {
       return undefined;
     }

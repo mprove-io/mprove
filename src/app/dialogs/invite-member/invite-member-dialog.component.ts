@@ -15,7 +15,6 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'invite-member-dialog.component.html'
 })
 export class InviteMemberDialogComponent implements OnInit, OnDestroy {
-
   selectedProject: api.Project;
   selectedProjectSub: Subscription;
 
@@ -24,13 +23,14 @@ export class InviteMemberDialogComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<InviteMemberDialogComponent>,
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   ngOnInit() {
-    this.selectedProjectSub = this.store.select(selectors.getSelectedProject)
+    this.selectedProjectSub = this.store
+      .select(selectors.getSelectedProject)
       .pipe(filter(v => !!v))
-      .subscribe(x => this.selectedProject = x);
+      .subscribe(x => (this.selectedProject = x));
 
     this.buildForm();
   }
@@ -41,21 +41,23 @@ export class InviteMemberDialogComponent implements OnInit, OnDestroy {
 
   buildForm() {
     this.inviteMemberForm = this.fb.group({
-      'email': [
+      email: [
         null,
         Validators.compose([
           Validators.required,
           Validators.email,
           Validators.maxLength(255)
         ])
-      ],
+      ]
     });
   }
 
   onSubmit(fv: any) {
-    this.store.dispatch(new actions.CreateMemberAction({
-      project_id: this.selectedProject.project_id,
-      member_id: fv['email'],
-    }));
+    this.store.dispatch(
+      new actions.CreateMemberAction({
+        project_id: this.selectedProject.project_id,
+        member_id: fv['email']
+      })
+    );
   }
 }

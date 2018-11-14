@@ -9,21 +9,28 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SwitchAnalyticsSubscriptionPlanEffect {
-
-  @Effect() switchAnalyticsSubscriptionPlan$: Observable<Action> = this.actions$
-    .ofType(actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN)
-    .pipe(
-      mergeMap((action: actions.SwitchAnalyticsSubscriptionPlanAction) =>
-        this.backendService.switchAnalyticsSubscriptionPlan(action.payload)
-          .pipe(
-            map(body => new actions.SwitchAnalyticsSubscriptionPlanSuccessAction(body.payload)),
-            catchError(e => of(new actions.SwitchAnalyticsSubscriptionPlanFailAction({ error: e })))
+  @Effect() switchAnalyticsSubscriptionPlan$: Observable<
+    Action
+  > = this.actions$.ofType(actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN).pipe(
+    mergeMap((action: actions.SwitchAnalyticsSubscriptionPlanAction) =>
+      this.backendService.switchAnalyticsSubscriptionPlan(action.payload).pipe(
+        map(
+          body =>
+            new actions.SwitchAnalyticsSubscriptionPlanSuccessAction(
+              body.payload
+            )
+        ),
+        catchError(e =>
+          of(
+            new actions.SwitchAnalyticsSubscriptionPlanFailAction({ error: e })
           )
+        )
       )
-    );
+    )
+  );
 
   constructor(
     private actions$: Actions,
-    private backendService: services.BackendService) {
-  }
+    private backendService: services.BackendService
+  ) {}
 }

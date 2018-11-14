@@ -8,18 +8,15 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class CancelQueriesSuccessEffect {
-
   @Effect() cancelQueriesSuccess$: Observable<Action> = this.actions$
     .ofType(actionTypes.CANCEL_QUERIES_SUCCESS)
     .pipe(
-      mergeMap((action: actions.CancelQueriesSuccessAction) => from([
-        new actions.UpdateQueriesStateAction(action.payload.canceled_queries),
-      ])
+      mergeMap((action: actions.CancelQueriesSuccessAction) =>
+        from([
+          new actions.UpdateQueriesStateAction(action.payload.canceled_queries)
+        ])
       )
     );
 
-
-  constructor(
-    private actions$: Actions) {
-  }
+  constructor(private actions$: Actions) {}
 }

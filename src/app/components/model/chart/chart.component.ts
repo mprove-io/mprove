@@ -13,36 +13,38 @@ import * as services from 'app/services/_index';
   moduleId: module.id,
   selector: 'm-chart',
   templateUrl: 'chart.component.html',
-  styleUrls: ['chart.component.scss'],
+  styleUrls: ['chart.component.scss']
 })
-
 export class ChartComponent {
-
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   visual: interfaces.Visual;
-  visual$ = this.store.select(selectors.getSelectedVisual)
-    .pipe(
-      filter(v => !!v),
-      tap(x => this.visual = x)
-    );
+  visual$ = this.store.select(selectors.getSelectedVisual).pipe(
+    filter(v => !!v),
+    tap(x => (this.visual = x))
+  );
 
   dashTheme: api.MemberDashThemeEnum; // no filter
-  dashTheme$ = this.store.select(selectors.getSelectedProjectUserDashTheme)
-    .pipe(
-      tap(x => this.dashTheme = x)); // no filter
+  dashTheme$ = this.store
+    .select(selectors.getSelectedProjectUserDashTheme)
+    .pipe(tap(x => (this.dashTheme = x))); // no filter
 
   constructor(
     private printer: services.PrinterService,
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   close() {
     this.sidenav.close();
   }
 
-  canDeactivate(): boolean { // used in component-deactivate-guard
-    this.printer.log(enums.busEnum.CAN_DEACTIVATE_CHECK, 'from ChartComponent:', event);
+  canDeactivate(): boolean {
+    // used in component-deactivate-guard
+    this.printer.log(
+      enums.busEnum.CAN_DEACTIVATE_CHECK,
+      'from ChartComponent:',
+      event
+    );
     this.store.dispatch(new actions.UpdateLayoutChartIdAction(undefined));
     return true;
   }

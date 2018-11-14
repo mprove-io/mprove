@@ -13,26 +13,25 @@ import * as selectors from 'app/store/selectors/_index';
   templateUrl: 'delete-folder-dialog.component.html'
 })
 export class DeleteFolderDialogComponent {
-
   constructor(
     public dialogRef: MatDialogRef<DeleteFolderDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { node_id: string },
-    private store: Store<interfaces.AppState>) {
-  }
+    private store: Store<interfaces.AppState>
+  ) {}
 
   onSubmit() {
-
     let repo: api.Repo;
-    this.store.select(selectors.getSelectedProjectModeRepo)
+    this.store
+      .select(selectors.getSelectedProjectModeRepo)
       .pipe(take(1))
-      .subscribe(x => repo = x);
+      .subscribe(x => (repo = x));
 
-    this.store.dispatch(new actions.DeleteFolderAction(
-      {
+    this.store.dispatch(
+      new actions.DeleteFolderAction({
         project_id: repo.project_id,
         repo_id: repo.repo_id,
         repo_server_ts: repo.server_ts,
-        node_id: this.data.node_id,
+        node_id: this.data.node_id
       })
     );
   }
