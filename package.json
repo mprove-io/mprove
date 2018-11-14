@@ -21,8 +21,8 @@
     "prod": "npm run clean && npm run build:prod && npm run server",
     "ci": "npm run clean && npm run format:test && ng lint && ng test --configuration=test --browsers ChromeTravisCi --code-coverage && ng e2e && npm run cy:ci && npm run accessibility && npm run build:prod -- --deploy-url /web-app/ --base-href /web-app",
     "release": "standard-version && git push --follow-tags origin master",
-    "format:write": "prettier \"{src,e2e}/**/*.{ts,json,md,scss}\" --write",
-    "format:test": "prettier \"{src,e2e}/**/*.{ts,json,md,scss}\" --list-different --config .prettierrc.yaml",
+    "format:write": "prettier \"{src,e2e}/**/*.ts\" --write",
+    "format:test": "prettier \"{src,e2e}/**/*.ts\" --list-different --config .prettierrc.yaml",
     "analyze": "npm run clean && npm run build:prod -- --stats-json && webpack-bundle-analyzer ./dist/stats.json",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
@@ -141,7 +141,7 @@
     "karma-spec-reporter": "~0.0.32",
     "lint-staged": "^7.3.0",
     "pa11y-ci": "^2.1.1",
-    "prettier": "^1.14.3",
+    "prettier": "^1.15.2",
     "standard-version": "^4.4.0"
   }
 }

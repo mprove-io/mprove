@@ -11,7 +11,7 @@ htmlWhitespaceSensitivity: css
 # jsxBracketSameLine: false
 # jsxSingleQuote: false
 # parser: babylon
-printWidth: 120 # default: 80
+printWidth: 80 # default: 80
 proseWrap: preserve
 # requireConfig: false
 semi: true
