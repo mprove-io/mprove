@@ -120,6 +120,7 @@
     "cucumber": "4.2.1",
     "protractor-cucumber-framework": "5.0.0",
     "typescript-formatter": "7.2.2",
+    "tslint-config-prettier": "^1.16.0",
     
     "@angular-devkit/build-angular": "^0.10.4",
     "@angular/cli": "6.2.5",
