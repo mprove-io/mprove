@@ -6,14 +6,14 @@
     flex: 0 0 300px;
     margin-right: 40px;
     text-align: right;
-    @media(max-width: 699px){
+    @media (max-width: 699px) {
       text-align: left;
       margin-bottom: 15px;
     }
   }
   &__value {
     margin-right: 40px;
-    @media(max-width: 699px){
+    @media (max-width: 699px) {
       margin-bottom: 10px;
     }
   }
@@ -21,7 +21,7 @@
     display: flex;
     margin-bottom: 50px;
     align-items: center;
-    @media(max-width: 699px){
+    @media (max-width: 699px) {
       display: block;
       margin-bottom: 30px;
     }

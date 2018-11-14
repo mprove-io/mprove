@@ -11,19 +11,18 @@
     }
 
     &__divider:after {
-        @if($is-dark) {
-          background-color: rgba(255, 255, 255, 0.5);
-        } @else {
-          background-color: rgba(0, 0, 0, 0.2);
-        }
+      @if ($is-dark) {
+        background-color: rgba(255, 255, 255, 0.5);
+      } @else {
+        background-color: rgba(0, 0, 0, 0.2);
       }
+    }
 
     &__chosen-icon {
       border: 3px solid mat-color($accent);
     }
     &__item {
       border: 3px solid rgba(0, 0, 0, 0.2) !important;
-      
     }
   }
 }

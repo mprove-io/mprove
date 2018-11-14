@@ -1,11 +1,8 @@
 @mixin project-setup-theme($theme) {
-
   $foreground: map-get($theme, foreground);
   $background: map-get($theme, background);
-
 
   .menu__options-title {
     color: mat-color($foreground, text);
   }
-  
 }

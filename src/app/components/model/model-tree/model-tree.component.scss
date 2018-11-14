@@ -6,7 +6,6 @@ $node-width: 60vw;
   overflow: auto;
 
   /deep/ {
-
     tree-node-expander {
       height: 0;
     }
@@ -69,11 +68,11 @@ $node-width: 60vw;
     height: 100%;
     &__file {
       &-default {
-        cursor: default!important;
+        cursor: default !important;
 
         &:active,
         &:hover {
-          background-color: transparent!important;
+          background-color: transparent !important;
         }
       }
 
@@ -92,11 +91,11 @@ $node-width: 60vw;
         }
 
         &:hover .model-tree__filter-button_hidden {
-          visibility: visible!important;
+          visibility: visible !important;
         }
-        @media(max-width: 959px){
+        @media (max-width: 959px) {
           .model-tree__filter-button_hidden {
-            visibility: visible!important;
+            visibility: visible !important;
           }
           .mat-button {
             visibility: visible;
@@ -104,7 +103,7 @@ $node-width: 60vw;
         }
 
         &_default {
-          cursor: default!important;
+          cursor: default !important;
         }
       }
 
@@ -135,12 +134,12 @@ $node-width: 60vw;
     }
 
     &__filter-button_hidden {
-      visibility: hidden!important;
+      visibility: hidden !important;
     }
 
     &__filter-count {
-        padding: 2px 9px 0;
-        border-radius: 8px;
+      padding: 2px 9px 0;
+      border-radius: 8px;
     }
 
     &__filter-label {

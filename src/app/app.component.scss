@@ -13,7 +13,7 @@
   .mat-sort-header {
     padding: 10px;
     &:hover {
-      background-color: #EEEEEE;
+      background-color: #eeeeee;
       cursor: pointer;
     }
   }
@@ -22,7 +22,6 @@
   display: flex;
   align-items: center;
 }
-
 
 .table--pdts {
   table.td-data-table {
@@ -42,7 +41,6 @@ button.mat-menu-item {
   height: auto;
   line-height: 1;
   padding: 10px !important;
-
 }
 
 .mat-slide-toggle-label {

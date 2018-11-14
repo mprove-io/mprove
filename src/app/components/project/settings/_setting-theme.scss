@@ -4,11 +4,11 @@
 
   .settings {
     &__button-success {
-      color: mat-color($primary)
+      color: mat-color($primary);
     }
 
     &__button-warn {
-      color: mat-color($warn)
+      color: mat-color($warn);
     }
   }
 }

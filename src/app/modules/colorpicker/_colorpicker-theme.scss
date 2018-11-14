@@ -7,18 +7,18 @@ $warn: #f44336 !default;
   .color-picker-selector {
     @if $is-dark == true {
       .m-colorpicker-value {
-        color: rgba(255,255,255,.9);
+        color: rgba(255, 255, 255, 0.9);
       }
     }
   }
 
   .m-colorpicker-input {
     @if $is-dark == true {
-      color: rgba(255,255,255,.9);
-      border-bottom: 1px solid rgba(255,255,255,.7);
+      color: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.7);
       &.input-focused {
         .m-colorpicker-placeholder {
-          color: rgba(255,255,255,.9);
+          color: rgba(255, 255, 255, 0.9);
         }
       }
     } @else {

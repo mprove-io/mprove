@@ -2,7 +2,6 @@
   $foreground: map-get($theme, foreground);
   $background: map-get($theme, background);
 
-
   .forum-link {
     &__button_hover_primary {
       &:hover {
@@ -10,7 +9,7 @@
       }
 
       &:hover .mat-button-focus-overlay {
-        background-color: transparent!important;
+        background-color: transparent !important;
       }
     }
   }
@@ -18,7 +17,7 @@
 .dark-theme .forum-link {
   &__button_hover_primary {
     &:hover {
-      color: #ff9800 !important; 
+      color: #ff9800 !important;
     }
   }
 }

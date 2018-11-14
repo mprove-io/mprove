@@ -5,27 +5,25 @@
   $warn: map-get($theme, warn);
 
   .menu {
-
     &__button_hover_primary {
       &:hover {
         color: mat-color($primary);
       }
 
       &:hover .mat-button-focus-overlay {
-        background-color: transparent!important;
+        background-color: transparent !important;
       }
     }
 
     &__active-link {
-      color: mat-color($primary)!important;
+      color: mat-color($primary) !important;
     }
-
   }
 
   .dark-theme .menu {
     &__button_hover_primary {
       &:hover {
-        color: #ff9800 !important; 
+        color: #ff9800 !important;
       }
     }
   }
@@ -67,7 +65,7 @@
 
     &__mode-slider {
       .mat-slide-toggle-thumb {
-        background-color: mat-color($warn)!important;
+        background-color: mat-color($warn) !important;
       }
     }
 
@@ -77,12 +75,12 @@
       }
 
       &:hover .mat-button-focus-overlay {
-        background-color: transparent!important;
+        background-color: transparent !important;
       }
     }
 
     &__active-link {
-      color: mat-color($primary)!important;
+      color: mat-color($primary) !important;
     }
 
     &_border_bottom {

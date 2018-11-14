@@ -58,10 +58,9 @@
       }
 
       &__filter-button_disabled {
-        background-color: mat-color($accent)!important;
-        color: mat-contrast($accent, 500)!important;
+        background-color: mat-color($accent) !important;
+        color: mat-contrast($accent, 500) !important;
       }
-
 
       &__filter-count {
         margin-left: 10px;
@@ -73,13 +72,12 @@
       }
 
       &__node-measures,
-      &__child-measure{
+      &__child-measure {
         color: #ff9800;
       }
 
       &__node-calculations,
       &__child-calculation {
-
         @if $is-dark == true {
           color: #cb64ed;
         } @else {
@@ -89,18 +87,18 @@
 
       .toggle-children {
         @if $is-dark == true {
-          background-image: url("/assets/app/collapsed-dark.svg");
+          background-image: url('/assets/app/collapsed-dark.svg');
         } @else {
-          background-image: url("/assets/app/collapsed-light.svg");
+          background-image: url('/assets/app/collapsed-light.svg');
         }
       }
 
       .toggle-children-wrapper-expanded {
         .toggle-children {
           @if $is-dark == true {
-            background-image: url("/assets/app/expanded-dark.svg");
+            background-image: url('/assets/app/expanded-dark.svg');
           } @else {
-            background-image: url("/assets/app/expanded-light.svg");
+            background-image: url('/assets/app/expanded-light.svg');
           }
         }
       }
@@ -108,6 +106,6 @@
   }
 }
 .model-tree__filter-count {
-  background: #C7CDD1;
-  color: #737373 !important; 
+  background: #c7cdd1;
+  color: #737373 !important;
 }

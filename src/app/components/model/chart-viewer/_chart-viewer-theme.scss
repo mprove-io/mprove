@@ -17,16 +17,16 @@
   }
 }
 .chart-viewer-dark {
-    @include chartViewerStyle(#484A51, #fff);
-    .mat-grid-list {
-      background: #1B1E27;
-    }
+  @include chartViewerStyle(#484a51, #fff);
+  .mat-grid-list {
+    background: #1b1e27;
   }
+}
 
 .chart-viewer-light {
-    @include chartViewerStyle(#f1f1f1, #000);
-  }
+  @include chartViewerStyle(#f1f1f1, #000);
+}
 
 .mat-grid-list {
-  background: rgba(255,255,255,1);
+  background: rgba(255, 255, 255, 1);
 }

@@ -33,9 +33,9 @@ $mat-font-url: '../node_modules/@covalent/core/common/styles/font/';
 @include mat-core();
 
 $primary: mat-palette($light-primary);
-$accent:  mat-palette($light-accent, A200, A100, A400);
-$warn:    mat-palette($light-warn);
-$theme:   custom-mat-light-theme($primary, $accent, $warn);
+$accent: mat-palette($light-accent, A200, A100, A400);
+$warn: mat-palette($light-warn);
+$theme: custom-mat-light-theme($primary, $accent, $warn);
 
 @include angular-material-theme($theme);
 @include covalent-theme($theme);
@@ -43,13 +43,13 @@ $theme:   custom-mat-light-theme($primary, $accent, $warn);
 
 .dark-theme {
   $primary: mat-palette($dark-primary);
-  $accent:  mat-palette($dark-accent, A200, A100, A400);
-  $warn:    mat-palette($dark-warn);
-  $theme:   custom-mat-dark-theme($primary, $accent, $warn);
+  $accent: mat-palette($dark-accent, A200, A100, A400);
+  $warn: mat-palette($dark-warn);
+  $theme: custom-mat-dark-theme($primary, $accent, $warn);
 
   @include angular-material-theme($theme);
   @include covalent-theme($theme);
-  @include material-app-theme($theme)
+  @include material-app-theme($theme);
 }
 
 .will-load {
@@ -67,7 +67,8 @@ a[md-icon-button] {
 @media only screen and (min-width: 800px) {
   md-sidenav.mat-sidenav-opened,
   md-sidenav.mat-sidenav-opening {
-    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.08), 0px 1px 1px 0px rgba(0, 0, 0, 0.07), 0px 1px 3px 0px rgba(0, 0, 0, 0.14) !important;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.08),
+      0px 1px 1px 0px rgba(0, 0, 0, 0.07), 0px 1px 3px 0px rgba(0, 0, 0, 0.14) !important;
   }
 }
 
@@ -77,7 +78,8 @@ a[md-icon-button] {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   min-height: 100%;
   margin: 0;
@@ -107,12 +109,23 @@ pre {
 /**
   * Basic styles from Material Design Lite for HTML elements
   */
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0;
   padding: 0;
 }
 
-h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
+h1 small,
+h2 small,
+h3 small,
+h4 small,
+h5 small,
+h6 small {
   font-family: $primary-font;
   font-size: 56px;
   font-weight: 400;
@@ -229,7 +242,8 @@ address {
   font-style: normal;
 }
 
-ul, ol {
+ul,
+ol {
   font-size: 14px;
   font-weight: 400;
   line-height: 24px;
@@ -347,7 +361,6 @@ ul, ol {
   width: 240px;
 }
 
-
 .app_loader {
   height: 100%;
   position: fixed;
@@ -366,4 +379,4 @@ ul, ol {
 }
 .mr-10 {
   margin-right: 10px;
-} 
+}

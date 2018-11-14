@@ -20,12 +20,10 @@
   $color-text-lighter: #fff;
 
   .visual {
-
     &-light {
-
       th[td-data-table-column],
       td[td-data-table-cell] {
-          border-right: 1px solid rgba(0,0,0,0.12);
+        border-right: 1px solid rgba(0, 0, 0, 0.12);
       }
 
       .visual-datatable__th-measure_background {
@@ -74,10 +72,9 @@
     }
 
     &-dark {
-
       th[td-data-table-column],
       td[td-data-table-cell] {
-        border-right: 1px solid rgba(255,255,255,0.12);
+        border-right: 1px solid rgba(255, 255, 255, 0.12);
       }
 
       .visual-datatable__th-measure_background {
@@ -117,7 +114,6 @@
       }
 
       .ngx-charts {
-
         text {
           fill: $color-text-med;
         }
@@ -191,7 +187,6 @@
             }
           }
         }
-
       }
 
       .chart-legend {
@@ -241,11 +236,10 @@
         color: #393945;
       }
     }
-
   }
 }
-  .visual {
-    &__not-valid {
-      color: #f44336;
-    }
+.visual {
+  &__not-valid {
+    color: #f44336;
   }
+}

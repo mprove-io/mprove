@@ -17,9 +17,9 @@
     .catalog-tree {
       &__file_hover:not(.catalog-tree__file-active):hover {
         @if $is-dark == true {
-          background-color: mat-color($background, hover)!important;
+          background-color: mat-color($background, hover) !important;
         } @else {
-          background-color: mat-color($sub-primary, 100)!important;
+          background-color: mat-color($sub-primary, 100) !important;
         }
       }
 
@@ -41,27 +41,27 @@
       .tree-node-leaf .node-content-wrapper-focused {
         &:after {
           @if $is-dark == true {
-            background-color: mat-color($sub-primary, 700)!important;
+            background-color: mat-color($sub-primary, 700) !important;
           } @else {
-            background-color: #fff!important;
+            background-color: #fff !important;
           }
         }
       }
 
       .toggle-children {
         @if $is-dark == true {
-          background-image: url("/assets/app/collapsed-dark.svg");
+          background-image: url('/assets/app/collapsed-dark.svg');
         } @else {
-          background-image: url("/assets/app/collapsed-light.svg");
+          background-image: url('/assets/app/collapsed-light.svg');
         }
       }
 
       .toggle-children-wrapper-expanded {
         .toggle-children {
           @if $is-dark == true {
-            background-image: url("/assets/app/expanded-dark.svg");
+            background-image: url('/assets/app/expanded-dark.svg');
           } @else {
-            background-image: url("/assets/app/expanded-light.svg");
+            background-image: url('/assets/app/expanded-light.svg');
           }
         }
       }
@@ -69,8 +69,8 @@
   }
 }
 m-catalog-tree .catalog-tree__menu-button.disableFileOptions:hover {
-  color: rgb(128,128,128);
+  color: rgb(128, 128, 128);
 }
 m-catalog-tree .catalog-tree__menu-button.disableFolderOptions:hover {
-  color: rgb(128,128,128);
+  color: rgb(128, 128, 128);
 }

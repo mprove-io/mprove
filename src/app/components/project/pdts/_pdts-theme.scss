@@ -4,16 +4,16 @@
 
   .pdts {
     &__error {
-        color: mat-color($warn);
+      color: mat-color($warn);
     }
   }
- .td-data-table-row:nth-child(odd) {
+  .td-data-table-row:nth-child(odd) {
     background: #f5f5f5;
   }
   .table--pdts {
     @if $is-dark == true {
       .td-data-table-row:nth-child(odd) {
-        background: rgba(255,255,255,.12);
+        background: rgba(255, 255, 255, 0.12);
       }
     }
   }
@@ -23,4 +23,3 @@
     }
   }
 }
-

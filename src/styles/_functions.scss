@@ -3,7 +3,13 @@
 @import './custom-palettes/success';
 
 // Creates a container object for a light theme to be given to individual component theme mixins.
-@function custom-mat-light-theme($primary, $accent, $warn: mat-palette($mat-red), $sub-primary: mat-palette($sub-primary), $success: mat-palette($success)) {
+@function custom-mat-light-theme(
+  $primary,
+  $accent,
+  $warn: mat-palette($mat-red),
+  $sub-primary: mat-palette($sub-primary),
+  $success: mat-palette($success)
+) {
   @return (
     primary: $primary,
     accent: $accent,
@@ -12,13 +18,18 @@
     success: $success,
     is-dark: false,
     foreground: $mat-light-theme-foreground,
-    background: $mat-light-theme-background,
+    background: $mat-light-theme-background
   );
 }
 
-
 // Creates a container object for a dark theme to be given to individual component theme mixins.
-@function custom-mat-dark-theme($primary, $accent, $warn: mat-palette($mat-red), $sub-primary: mat-palette($sub-primary), $success: mat-palette($success)) {
+@function custom-mat-dark-theme(
+  $primary,
+  $accent,
+  $warn: mat-palette($mat-red),
+  $sub-primary: mat-palette($sub-primary),
+  $success: mat-palette($success)
+) {
   @return (
     primary: $primary,
     accent: $accent,
@@ -27,6 +38,6 @@
     success: $success,
     is-dark: true,
     foreground: $mat-dark-theme-foreground,
-    background: $mat-dark-theme-background,
+    background: $mat-dark-theme-background
   );
 }

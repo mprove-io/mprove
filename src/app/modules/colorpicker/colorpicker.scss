@@ -11,10 +11,12 @@ $warn: #f44336 !default;
 
 .m-colorpicker-panel {
   outline: 0;
-  box-shadow: 0 5px 5px -3px rgba(black, 0.2), 0 8px 10px 1px rgba(black, 0.14), 0 3px 14px 2px rgba(black, 0.12);
+  box-shadow: 0 5px 5px -3px rgba(black, 0.2), 0 8px 10px 1px rgba(black, 0.14),
+    0 3px 14px 2px rgba(black, 0.12);
 
   &[container='dialog'] {
-    box-shadow: 0 11px 15px -7px rgba(black, 0.2), 0 24px 38px 3px rgba(black, 0.14), 0 9px 46px 8px rgba(black, 0.12);
+    box-shadow: 0 11px 15px -7px rgba(black, 0.2),
+      0 24px 38px 3px rgba(black, 0.14), 0 9px 46px 8px rgba(black, 0.12);
   }
 }
 
@@ -25,7 +27,12 @@ $warn: #f44336 !default;
   .color-picker-selector .m-colorpicker-value {
     color: rgba(0, 0, 0, 0.38);
     border-color: transparent;
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.38) 33%, transparent 0%);
+    background-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.38) 0%,
+      rgba(0, 0, 0, 0.38) 33%,
+      transparent 0%
+    );
     background-position: bottom -1px left 0;
     background-size: 4px 1px;
     background-repeat: repeat-x;
@@ -43,7 +50,12 @@ $warn: #f44336 !default;
   box-sizing: border-box;
 
   [aria-disabled='true'] & {
-    background-image: linear-gradient(to right, rgba(black, 0.26) 0, rgba(black, 0.26) 33%, transparent 0);
+    background-image: linear-gradient(
+      to right,
+      rgba(black, 0.26) 0,
+      rgba(black, 0.26) 33%,
+      transparent 0
+    );
     background-size: 4px 1px;
     background-repeat: repeat-x;
     border-color: transparent;
@@ -86,7 +98,7 @@ $warn: #f44336 !default;
   text-overflow: ellipsis;
   transition: all 150ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
-  [aria-required=true] &::after {
+  [aria-required='true'] &::after {
     content: '*';
   }
 }
@@ -101,7 +113,8 @@ m-colorpicker .m-colorpicker-placeholder.has-value {
 }
 
 .color-error {
-  .m-colorpicker-input, .m-colorpicker-placeholder {
+  .m-colorpicker-input,
+  .m-colorpicker-placeholder {
     color: $warn !important;
     border-color: $warn;
   }
@@ -125,7 +138,22 @@ m-colorpicker .m-colorpicker-placeholder.has-value {
     height: 24px;
     overflow: hidden;
     background-color: #fff;
-    background: linear-gradient(45deg, #ddd 25%, transparent 0, transparent 75%, #ddd 0, #ddd), linear-gradient(45deg, #ddd 25%, transparent 0, transparent 75%, #ddd 0, #ddd);
+    background: linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 0,
+        transparent 75%,
+        #ddd 0,
+        #ddd
+      ),
+      linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 0,
+        transparent 75%,
+        #ddd 0,
+        #ddd
+      );
     background-size: 8px 8px;
     background-position: 0 0, 4px 4px;
     border: 2px solid #fafafa;
@@ -134,7 +162,8 @@ m-colorpicker .m-colorpicker-placeholder.has-value {
     cursor: pointer;
     border-radius: 50%;
     vertical-align: middle;
-    box-shadow: 0 1px 1px 0 rgba($black, 0.2), 0 1px 1px 1px rgba($black, 0.14), 0 1px 1px 1px rgba($black, 0.12);
+    box-shadow: 0 1px 1px 0 rgba($black, 0.2), 0 1px 1px 1px rgba($black, 0.14),
+      0 1px 1px 1px rgba($black, 0.12);
 
     .color-fill {
       width: 100%;
@@ -227,7 +256,8 @@ m-colorpicker {
     height: 130px;
     border-radius: 2px;
     overflow: hidden;
-    background-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0)), linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+    background-image: linear-gradient(to top, #000, rgba(0, 0, 0, 0)),
+      linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
   }
 
   .saturation-lightness:hover {
@@ -240,7 +270,16 @@ m-colorpicker {
     height: 30px;
     margin: 8px 0;
     border-radius: 2px;
-    background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+    background: linear-gradient(
+      to right,
+      #f00,
+      #ff0,
+      #0f0,
+      #0ff,
+      #00f,
+      #f0f,
+      #f00
+    );
   }
 
   .alpha {
@@ -248,7 +287,22 @@ m-colorpicker {
     width: 100%;
     height: 30px;
     border-radius: 2px;
-    background: linear-gradient(45deg, #ddd 25%, transparent 0, transparent 75%, #ddd 0, #ddd), linear-gradient(45deg, #ddd 25%, transparent 0, transparent 75%, #ddd 0, #ddd);
+    background: linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 0,
+        transparent 75%,
+        #ddd 0,
+        #ddd
+      ),
+      linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 0,
+        transparent 75%,
+        #ddd 0,
+        #ddd
+      );
     background-size: 8px 8px;
     background-position: 0 0, 4px 4px;
 
@@ -256,7 +310,8 @@ m-colorpicker {
       position: absolute;
       height: 100%;
       opacity: 1;
-      background-image: linear-gradient(to left, transparent, transparent), linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+      background-image: linear-gradient(to left, transparent, transparent),
+        linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
       width: 100%;
     }
   }
@@ -266,7 +321,22 @@ m-colorpicker {
     width: 100%;
     height: 75px;
     background-color: #fff;
-    background: linear-gradient(45deg, #ddd 25%, transparent 0, transparent 75%, #ddd 0, #ddd), linear-gradient(45deg, #ddd 25%, transparent 0, transparent 75%, #ddd 0, #ddd);
+    background: linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 0,
+        transparent 75%,
+        #ddd 0,
+        #ddd
+      ),
+      linear-gradient(
+        45deg,
+        #ddd 25%,
+        transparent 0,
+        transparent 75%,
+        #ddd 0,
+        #ddd
+      );
     background-size: 8px 8px;
     background-position: 0 0, 4px 4px;
 
@@ -398,8 +468,8 @@ m-colorpicker {
   cursor: pointer;
 }
 
-
-.cdk-overlay-container, .cdk-global-overlay-wrapper {
+.cdk-overlay-container,
+.cdk-global-overlay-wrapper {
   pointer-events: none;
   top: 0;
   left: 0;

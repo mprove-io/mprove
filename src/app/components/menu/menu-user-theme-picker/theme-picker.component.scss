@@ -50,8 +50,8 @@ $color-picker-size: 20px;
     border-radius: $color-picker-size;
 
     /deep/ .mat-menu-ripple {
-      border-radius: $color-picker-size!important;
-      overflow: hidden!important;
+      border-radius: $color-picker-size !important;
+      overflow: hidden !important;
     }
   }
 

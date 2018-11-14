@@ -3,13 +3,12 @@
   $is-dark: map-get($theme, is-dark);
 
   /deep/.dashboard-filters {
-
     @if $is-dark != true {
-      background: #F1F1F1;
+      background: #f1f1f1;
     }
 
     &__error {
-        color: mat-color($warn);
+      color: mat-color($warn);
     }
   }
 }

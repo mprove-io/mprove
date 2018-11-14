@@ -4,11 +4,11 @@
   }
 
   &-form_max-width_900 {
-    max-width: 900px!important;
+    max-width: 900px !important;
   }
 
   &-form_max-width_150 {
-    max-width: 150px!important;
+    max-width: 150px !important;
   }
 
   &-avatar {
@@ -22,7 +22,7 @@
     }
 
     &_edit {
-      color: #fff!important;
+      color: #fff !important;
       position: absolute;
       background-color: transparent;
       cursor: pointer;
@@ -63,7 +63,6 @@
 
   &_padding {
     padding: 15px;
-
   }
 
   /deep/ .mat-flat-fab {
@@ -75,4 +74,3 @@
     max-width: 300px;
   }
 }
-

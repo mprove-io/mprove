@@ -2,8 +2,8 @@
   min-width: 1023px;
   /deep/ {
     .td-data-table-scrollable {
-      overflow-y: auto!important;
-      overflow-x: hidden!important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
       word-break: break-all;
     }
     /deep/.td-data-table-cell-content-wrapper {
@@ -16,36 +16,35 @@
     }
   }
 
-  &__member-avatar{
+  &__member-avatar {
     $member-avatar_size: 30px;
     cursor: pointer;
     height: $member-avatar_size;
     width: $member-avatar_size;
     border-radius: 2px;
     margin: 3px;
-    &_size{
+    &_size {
       font-size: $member-avatar_size;
     }
   }
 }
 
-.middle{
+.middle {
   vertical-align: middle;
 }
 
-.center{
+.center {
   text-align: center;
 }
 /deep/.dark-theme .team-table .td-data-table-row:nth-child(odd) {
-  background: rgba(255,255,255,.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 .team {
   &__content {
-
   }
   &__table {
     margin-bottom: 30px;
-    overflow-x: scroll
+    overflow-x: scroll;
   }
   &__bottom {
     padding-left: 15px;

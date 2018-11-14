@@ -4,7 +4,7 @@
   height: 100%;
 
   &__data-table {
-    overflow-y: auto!important;
+    overflow-y: auto !important;
   }
 
   &__sort {
@@ -48,11 +48,11 @@
     position: fixed;
     z-index: 1000;
     display: block;
-    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+      0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
   }
 
   /deep/ {
-
     thead > .td-data-table-row {
       position: relative;
     }
@@ -75,12 +75,12 @@
     }
 
     th[td-data-table-column] {
-      border-right: none!important;
+      border-right: none !important;
     }
 
     th[td-data-table-column]:last-child,
-    td[td-data-table-cell]:last-child{
-      border-right: none!important;
+    td[td-data-table-cell]:last-child {
+      border-right: none !important;
     }
   }
 }

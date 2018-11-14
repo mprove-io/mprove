@@ -86,7 +86,7 @@
     [mat-list-item].active {
       mat-icon[mat-list-avatar] {
         background-color: mat-color($accent);
-        color: mat-color($accent, default-contrast)
+        color: mat-color($accent, default-contrast);
       }
       mat-icon[mat-list-icon] {
         color: mat-color($accent);
@@ -111,24 +111,23 @@
   ::-webkit-scrollbar-thumb {
     // -webkit-border-radius: 10px;
     // border-radius: 10px;
-    background: #FF7B00;
+    background: #ff7b00;
     // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
   }
   ::-webkit-scrollbar-thumb:window-inactive {
     background: rgb(173, 173, 173);
   }
- 
 
   /* custom mat button */
 
   .mat-flat-fab {
     padding: 0 !important;
     min-width: 30px !important;
-    max-height: 30px!important;
+    max-height: 30px !important;
     border-radius: 30px !important;
-    line-height: 30px!important;
+    line-height: 30px !important;
     .mat-button-ripple {
-      border-radius: 30px!important;
+      border-radius: 30px !important;
     }
   }
 }

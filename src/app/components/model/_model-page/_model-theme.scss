@@ -5,9 +5,9 @@
   .model {
     &__pdts_color_grey {
       @if $is-dark == true {
-        color: rgba(255,255,255,0.45);
+        color: rgba(255, 255, 255, 0.45);
       } @else {
-        color: rgba(0,0,0,0.45);
+        color: rgba(0, 0, 0, 0.45);
       }
     }
 
@@ -27,17 +27,17 @@
   }
 }
 .model__panel_text-overflow_ellipsis {
-  color: rgba(0,0,0,.45);
+  color: rgba(0, 0, 0, 0.45);
   font-size: 16px;
 }
 .dark-theme {
   .model__panel_text-overflow_ellipsis {
-    color: rgba(255,255,255,.8);   
+    color: rgba(255, 255, 255, 0.8);
   }
 }
 .model__timer {
-  color: rgba(0,0,0,.45);
+  color: rgba(0, 0, 0, 0.45);
 }
 .dark-theme .model__timer {
-  color: rgba(255,255,255,.8);
+  color: rgba(255, 255, 255, 0.8);
 }

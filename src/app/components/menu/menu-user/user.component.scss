@@ -29,7 +29,7 @@ user-block
     height: 40px;
   }
 }
-@media(max-width: 599px) {
+@media (max-width: 599px) {
   /deep/.user-block__avatar {
     right: 10px !important;
   }
@@ -39,11 +39,10 @@ user-block
   width: $iconSize;
   height: $iconSize;
   border-radius: 4px;
-  &_size{
+  &_size {
     font-size: $iconSize;
   }
 }
-
 
 /*
 menu

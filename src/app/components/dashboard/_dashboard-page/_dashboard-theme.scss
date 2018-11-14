@@ -8,38 +8,34 @@
         background-color: #212121;
       }
     }
-    
+
     &__report {
       @if $is-dark == true {
-        color: rgba(255,255,255,.8);
+        color: rgba(255, 255, 255, 0.8);
       } @else {
-        color: rgba(0,0,0,.45);
+        color: rgba(0, 0, 0, 0.45);
       }
     }
   }
 
   .running__text {
     @if $is-dark == true {
-      color: rgba(255,255,255,.8);
+      color: rgba(255, 255, 255, 0.8);
     }
   }
 }
 
 .dashboard-dark {
   .mat-grid-list {
-    background: #1B1E27;
+    background: #1b1e27;
   }
 }
 
-@mixin dashboardStyle(
-  $gridBackground,
-  $columnBackground,
-  $columnColor) {
-
+@mixin dashboardStyle($gridBackground, $columnBackground, $columnColor) {
   .dashboard__grid-background {
     background-color: $gridBackground;
   }
-  
+
   .dashboard__column-background {
     background-color: $columnBackground;
     color: $columnColor;
@@ -47,7 +43,7 @@
 }
 
 .dashboard-dark {
-  @include dashboardStyle(#393945, #1B1E27, #fff);
+  @include dashboardStyle(#393945, #1b1e27, #fff);
 }
 
 .dashboard-light {
@@ -55,5 +51,5 @@
 }
 
 .running__text {
-  color: rgba(0,0,0,.45);
+  color: rgba(0, 0, 0, 0.45);
 }

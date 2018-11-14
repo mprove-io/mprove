@@ -1,5 +1,4 @@
 .model {
-
   &__go-to-file {
     margin-left: 10px;
     margin-right: 10px;
@@ -45,19 +44,18 @@
   padding-top: 53px;
 }
 /deep/.model__timezone {
-
   font-size: 14px;
 
   .mat-form-field-label-wrapper {
-  display: none
-}
+    display: none;
+  }
 }
 .mobile-menu__button {
   min-width: 55px;
   position: relative;
   left: -10px;
   &-right {
-    left:0;
+    left: 0;
   }
 }
 .model-timezone-wrapper {
@@ -65,7 +63,7 @@
   padding-right: 10px;
 }
 .mat-sidenav-model {
-    padding: 0 15px;
+  padding: 0 15px;
 }
 .model-loader {
   width: 60px;

@@ -36,11 +36,11 @@ $node-width: 60vw;
     .node-content-wrapper-active,
     .node-content-wrapper-focused {
       cursor: pointer;
-      background: transparent!important;
+      background: transparent !important;
       box-shadow: none;
       &:hover {
         cursor: pointer;
-        background: transparent!important;
+        background: transparent !important;
         box-shadow: none;
       }
 
@@ -62,7 +62,7 @@ $node-width: 60vw;
 
     .toggle-children {
       z-index: 100;
-      transform: scale(3)!important;
+      transform: scale(3) !important;
     }
 
     .toggle-children-placeholder {
