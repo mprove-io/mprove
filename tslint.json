@@ -61,10 +61,6 @@
       "allow-null-check"
     ],
     "unified-signatures": true,
-    "quotemark": [
-      true,
-      "single"
-    ],
     "no-consecutive-blank-lines": [
       true,
       2
@@ -86,20 +82,8 @@
       "check-separator",
       "check-type"
     ],
-    "align": [
-      true,
-      "arguments",
-      "elements",
-      "members",
-      "parameters",
-      "statements"
-    ],
     "no-namespace": true,
     "no-var-keyword": true,
-    "max-line-length": [
-      true,
-      120
-    ],
     "variable-name": [
       true,
       "ban-keywords",
@@ -109,7 +93,6 @@
       true,
       "no-public"
     ],
-    "curly": true,
     "no-unnecessary-initializer": true,
     "ordered-imports": false,
     "prefer-const": false,
@@ -127,42 +110,7 @@
     "no-switch-case-fall-through": true,
     "no-shadowed-variable": true,
     "class-name": true,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
-    "one-line": [
-      true,
-      "check-open-brace",
-      "check-catch",
-      "check-else",
-      "check-finally",
-      "check-whitespace"
-    ],
-    "semicolon": [
-      true,
-      "always",
-      "ignore-bound-class-methods"
-    ],
-    "typedef-whitespace": [
-      true,
-      {
-        "call-signature": "nospace",
-        "index-signature": "nospace",
-        "parameter": "nospace",
-        "property-declaration": "nospace",
-        "variable-declaration": "nospace"
-      },
-      {
-        "call-signature": "onespace",
-        "index-signature": "onespace",
-        "parameter": "onespace",
-        "property-declaration": "onespace",
-        "variable-declaration": "onespace"
-      }
-    ],
     "no-internal-module": true,
-    "no-trailing-whitespace": true,
     // "no-null-keyword": true,           
     "jsdoc-format": false,
     // "directive-selector": [true, "attribute", ["dir-prefix1", "dir-prefix2"], "camelCase"],
@@ -174,10 +122,6 @@
       ],
       "kebab-case"
     ],
-    "angular-whitespace": [
-      true,
-      "check-semicolon"
-    ], // "check-interpolation", "check-pipe"
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,
     "use-host-property-decorator": true,
@@ -194,6 +138,10 @@
     "directive-class-suffix": [
       true,
       "Directive"
-    ]
+    ],
+    "quotemark": [
+      true,
+      "single"
+    ]    
   }
 }
