@@ -1,19 +1,26 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+  "prettier.disableLanguages": ["vue", "html"],
+  "html.format.wrapAttributes": "force-aligned",
+  "tslint.ignoreDefinitionFiles": false,
   "search.exclude": {
     "**/node_modules": true,
-    "**/dist": true
-  },
-  "typescript.referencesCodeLens.enabled": true,
-  "tslint.ignoreDefinitionFiles": false,
-  "TodoParser": {
-    "folderExclude": [
-      "node_modules",
-      "dist",
-      "todos"
-    ]
-  },
+    "**/dist": true,
+  },  
+  "files.associations": {
+    "*.dashboard": "yaml",
+    "*.model": "yaml",
+    "*.view": "yaml",
+    "*.udf": "yaml"
+  },  
   "cSpell.words": [
+    "id",
+    "mconfig",
+    "mconfigs",
+    "ngrx",
+    "repo",
+    "struct",
+    "structs",
     "backend",
     "blockml",
     "colorpicker",

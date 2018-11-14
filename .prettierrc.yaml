@@ -3,25 +3,22 @@
 
 arrowParens: avoid
 bracketSpacing: true
-# disableLanguages: ["vue"]
 endOfLine: lf # default: auto
-# eslintIntegration: false
 htmlWhitespaceSensitivity: css
-# prettier.ignorePath: .prettierignore
-# jsxBracketSameLine: false
+jsxBracketSameLine: true # default: false
 # jsxSingleQuote: false
 # parser: babylon
 printWidth: 80 # default: 80
 proseWrap: preserve
-# requireConfig: false
 semi: true
 singleQuote: true # default: false
-# stylelintIntegration: false
 tabWidth: 2
 trailingComma: none
-# tslintIntegration: false
 useTabs: false
 
-    
-  
-
+# prettier.eslintIntegration
+# prettier.tslintIntegration
+# prettier.stylelintIntegration
+# prettier.requireConfig
+# prettier.ignorePath
+# prettier.disableLanguages - used in vscode settings
