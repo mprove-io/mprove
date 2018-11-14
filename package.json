@@ -13,14 +13,16 @@
     "build": "npm run clean:dist && npm run build-ts && npm run lint",
     "build-ts": "tsc",
     "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts'",
-    "format": "tsfmt -r --no-tslint --no-editorconfig --no-vscode --useTsconfig=./tsconfig.formatter.json"
-  },
-  "dependencies": {
-    "rimraf": "^2.6.2"
+    "format:base": "prettier \"src/**/*.{ts}\" --config .prettierrc.yaml",
+    "format:check": "npm run format:base -- --list-different",
+    "format:fix": "npm run format:base -- --write"
   },
   "devDependencies": {
-    "tslint": "^5.9.1",
-    "typescript": "^2.7.2",
-    "typescript-formatter": "^7.0.0"
+    "codelyzer": "~4.3.0",
+    "typescript": "~2.7.2",
+    "tslint": "~5.10.0",
+    "tslint-config-prettier": "^1.16.0",
+    "prettier": "^1.15.2",
+    "rimraf": "~2.6.2"
   }
 }
