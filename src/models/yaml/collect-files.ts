@@ -3,11 +3,9 @@ import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
 
 export function collectFiles(item: {
-  dir: string
+  dir: string;
 }): Promise<interfaces.File[]> {
-
   return new Promise((resolve, reject) => {
-
     // if (Math.random() < 0.5) { throw new Error('boom1'); }
 
     let files: interfaces.File[] = [];
@@ -41,6 +39,5 @@ export function collectFiles(item: {
     walker.on('end', () => {
       resolve(files);
     });
-
   });
 }

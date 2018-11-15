@@ -3,14 +3,9 @@ import { ApRegex } from '../../barrels/am-regex';
 import { ErrorsCollector } from '../../barrels/errors-collector';
 import { interfaces } from '../../barrels/interfaces';
 
-export function checkLimit(item: {
-  dashboards: interfaces.Dashboard[]
-}) {
-
+export function checkLimit(item: { dashboards: interfaces.Dashboard[] }) {
   item.dashboards.forEach(x => {
-
     x.reports.forEach(report => {
-
       if (!report.limit) {
         report.limit = '500';
         return;
@@ -23,18 +18,21 @@ export function checkLimit(item: {
         let limitNumber = Number(r[1]);
 
         report.limit = limitNumber > 500 ? '500' : limitNumber.toString();
-
       } else {
         // error e168
-        ErrorsCollector.addError(new AmError({
-          title: `wrong 'limit' value`,
-          message: `'limit' must contain positive integer value`,
-          lines: [{
-            line: report.limit_line_num,
-            name: x.file,
-            path: x.path,
-          }],
-        }));
+        ErrorsCollector.addError(
+          new AmError({
+            title: `wrong 'limit' value`,
+            message: `'limit' must contain positive integer value`,
+            lines: [
+              {
+                line: report.limit_line_num,
+                name: x.file,
+                path: x.path
+              }
+            ]
+          })
+        );
 
         report.limit = '500';
         return;

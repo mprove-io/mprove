@@ -6,5 +6,5 @@ export enum JoinTypeEnum {
   Left = 'left',
   LeftOuter = 'left_outer',
   Right = 'right',
-  RightOuter = 'right_outer',
+  RightOuter = 'right_outer'
 }

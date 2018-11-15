@@ -9,21 +9,19 @@ import { ServerOutcomes } from '../../server-outcomes';
 import { ServerProErrors } from '../../server-pro-errors';
 
 export async function genBqViews(item: {
-  model: interfaces.Model,
-  select: string[],
-  sorts: string,
-  limit: string,
-  filters: { [filter: string]: string[] },
-  udfs_user: interfaces.Udf[],
-  timezone: string,
-  weekStart: api.ProjectWeekStartEnum,
-  bqProject: string,
-  projectId: string,
-  structId: string,
+  model: interfaces.Model;
+  select: string[];
+  sorts: string;
+  limit: string;
+  filters: { [filter: string]: string[] };
+  udfs_user: interfaces.Udf[];
+  timezone: string;
+  weekStart: api.ProjectWeekStartEnum;
+  bqProject: string;
+  projectId: string;
+  structId: string;
 }): Promise<interfaces.ItemGenBqViews> {
-
   if (Object.keys(cluster.workers).length === 0) {
-
     let itemId = helper.makeId();
     await redisClient.set(itemId, JSON.stringify(item));
     let itemFromRedis = await redisClient.get(itemId);
@@ -42,9 +40,7 @@ export async function genBqViews(item: {
 
     // let outcome = this.genBqViewsPro(item);
     // return outcome;
-
   } else {
-
     let taskId = helper.makeId();
     let outcomeId = helper.makeId();
 
@@ -55,26 +51,21 @@ export async function genBqViews(item: {
     await redisClient.set(taskId, JSON.stringify(item));
 
     // send message to worker
-    await aWorker.send(
-      {
-        type: enums.ProEnum.GEN_BQ_VIEWS_PRO,
-        task_id: taskId,
-        outcome_id: outcomeId,
-      }
-    );
+    await aWorker.send({
+      type: enums.ProEnum.GEN_BQ_VIEWS_PRO,
+      task_id: taskId,
+      outcome_id: outcomeId
+    });
 
     let outcome = await ServerOutcomes.get(outcomeId);
 
     if (outcome === enums.ProEnum.PRO_ERROR) {
-
       let proErr = ServerProErrors.get(outcomeId);
 
       ServerProErrors.delete(outcomeId);
 
       throw proErr;
-
     } else {
-
       ServerOutcomes.delete(outcomeId);
 
       return outcome;

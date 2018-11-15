@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/03_mea_refs_dim/v6_model_mea_refs_view_dim.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     `CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS
@@ -17,7 +16,7 @@ jest.setTimeout(30000); test('testName', () => {
     'WITH',
     '  model_main AS (',
     '    SELECT',
-    '      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(a.dim4 + 200 AS STRING), \'||\'), CAST(a.dim2 + 100 AS STRING)))), 0) as mf_mea1',
+    `      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(a.dim4 + 200 AS STRING), '||'), CAST(a.dim2 + 100 AS STRING)))), 0) as mf_mea1`,
     '    FROM (',
     '      SELECT',
     '        (111) + 222 as dim2,',
@@ -42,10 +41,8 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

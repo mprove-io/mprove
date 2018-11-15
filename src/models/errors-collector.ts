@@ -1,7 +1,6 @@
 import { AmError } from '../barrels/am-error';
 
 export class ErrorsCollector {
-
   private static errors: AmError[];
 
   static clearErrors() {

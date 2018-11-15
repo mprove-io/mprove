@@ -3,11 +3,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/unit/12_chart/e203_wrong_report_tile_height_value.test.ts
-jest.setTimeout(30000); test('testName', () => {
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(3);
 
   return ApStruct.rebuildStruct({
@@ -17,14 +17,16 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     const desiredError0Lines: interfaces.ErrorLine[] = [
-      { line: 12, name: 'e203d.dashboard', path: 'e203d.dashboard' },
+      { line: 12, name: 'e203d.dashboard', path: 'e203d.dashboard' }
     ];
 
-    expect(struct.errors[0].lines).toEqual(expect.arrayContaining(desiredError0Lines));
+    expect(struct.errors[0].lines).toEqual(
+      expect.arrayContaining(desiredError0Lines)
+    );
     expect(struct.errors[0].title).toEqual(`wrong report tile_height value`);
     expect(struct.errors[0].message).toEqual(
-      `"unk" is not valid tile_height value`);
+      `"unk" is not valid tile_height value`
+    );
   });
 });

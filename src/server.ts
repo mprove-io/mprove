@@ -26,15 +26,11 @@ dotenv.config({ path: '.env' });
 // CLUSTER IS MASTER
 
 if (cluster.isMaster) {
-
   let numWorkers: number;
 
   if (process.env.JEST || process.env.STRUCT) {
-
     numWorkers = 0;
-
   } else {
-
     createExpress();
 
     // const numCPUs = require('os').cpus().length;
@@ -43,89 +39,71 @@ if (cluster.isMaster) {
 
   // fork workers
   for (let i = 0; i < numWorkers; i++) {
-
     let worker: ChildProcess = cluster.fork().process;
 
     listenToWorker(worker);
   }
 
   // if worker gets disconnected, start new one.
-  cluster.on(
-    'disconnect',
-    worker => {
-      console.error('Worker disconnect: ' + worker.id);
+  cluster.on('disconnect', worker => {
+    console.error('Worker disconnect: ' + worker.id);
 
-      let newWorker = cluster.fork().process;
+    let newWorker = cluster.fork().process;
 
-      listenToWorker(newWorker);
-    });
+    listenToWorker(newWorker);
+  });
 
-  cluster.on(
-    'online',
-    worker => {
-      console.log('New worker is online. worker: ' + worker.id);
-    });
+  cluster.on('online', worker => {
+    console.log('New worker is online. worker: ' + worker.id);
+  });
 }
 
 // CLUSTER IS WORKER
 
 if (cluster.isWorker) {
-  process.on(
-    'message',
-    async (message: interfaces.ProcessMessage) => {
+  process.on('message', async (message: interfaces.ProcessMessage) => {
+    // console.log('worker received message with type', message.type);
 
-      // console.log('worker received message with type', message.type);
+    try {
+      switch (message.type) {
+        case enums.ProEnum.GEN_BQ_VIEWS_PRO: {
+          let taskItem = await redisClient.get(message.task_id);
+          await redisClient.del(message.task_id);
 
-      try {
+          let taskItemParsed = JSON.parse(taskItem);
 
-        switch (message.type) {
+          let outcome = genSql.genBqViewsPro(taskItemParsed);
 
-          case enums.ProEnum.GEN_BQ_VIEWS_PRO: {
+          await redisClient.set(message.outcome_id, JSON.stringify(outcome));
 
-            let taskItem = await redisClient.get(message.task_id);
-            await redisClient.del(message.task_id);
+          process.send({
+            type: enums.ProEnum.OUTCOME,
+            outcome_id: message.outcome_id,
+            task_id: message.task_id
+          });
 
-            let taskItemParsed = JSON.parse(taskItem);
-
-            let outcome = genSql.genBqViewsPro(taskItemParsed);
-
-            await redisClient.set(message.outcome_id, JSON.stringify(outcome));
-
-            process.send({
-              type: enums.ProEnum.OUTCOME,
-              outcome_id: message.outcome_id,
-              task_id: message.task_id
-            });
-
-            break;
-          }
+          break;
         }
-
-      } catch (error) {
-
-        process.send({
-          type: enums.ProEnum.ERROR,
-          outcome_id: message.outcome_id,
-          task_id: message.task_id,
-          error: JSON.stringify(error, Object.getOwnPropertyNames(error))
-        });
       }
-
-    });
+    } catch (error) {
+      process.send({
+        type: enums.ProEnum.ERROR,
+        outcome_id: message.outcome_id,
+        task_id: message.task_id,
+        error: JSON.stringify(error, Object.getOwnPropertyNames(error))
+      });
+    }
+  });
 }
-
 
 function listenToWorker(worker: ChildProcess) {
   console.log('worker started. process id %s', worker.pid);
 
   worker.on('message', async (message: interfaces.ProcessMessage) => {
-
     // console.log('master received message with type', message.type);
 
     switch (message.type) {
-
       case enums.ProEnum.OUTCOME: {
-
         let outcomeItem = await redisClient.get(message.outcome_id);
 
         await redisClient.del(message.outcome_id);
@@ -140,7 +118,6 @@ function listenToWorker(worker: ChildProcess) {
       }
 
       case enums.ProEnum.ERROR: {
-
         ServerProErrors.set(message.outcome_id, JSON.parse(message.error));
 
         ServerOutcomes.set(message.outcome_id, enums.ProEnum.PRO_ERROR);

@@ -3,11 +3,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/unit/06_join_sql_where/e159_join_sql_where_refs_missing_field.test.ts
-jest.setTimeout(30000); test('testName', () => {
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(3);
 
   return ApStruct.rebuildStruct({
@@ -17,14 +17,16 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     const desiredError0Lines: interfaces.ErrorLine[] = [
-      { line: 10, name: 'e159m.model', path: 'e159m.model' },
+      { line: 10, name: 'e159m.model', path: 'e159m.model' }
     ];
 
-    expect(struct.errors[0].lines).toEqual(expect.arrayContaining(desiredError0Lines));
+    expect(struct.errors[0].lines).toEqual(
+      expect.arrayContaining(desiredError0Lines)
+    );
     expect(struct.errors[0].title).toEqual(`Join sql_where refs missing field`);
     expect(struct.errors[0].message).toEqual(
-      `found referencing to field "unk" of view "e159_one" as "a"`);
+      `found referencing to field "unk" of view "e159_one" as "a"`
+    );
   });
 });

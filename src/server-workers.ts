@@ -2,7 +2,6 @@ import * as cluster from 'cluster';
 import { helper } from './barrels/helper';
 
 export class ServerWorkers {
-
   private static busyWorkers: { [key: string]: number } = {};
 
   static delete(workerPid: number) {
@@ -10,17 +9,14 @@ export class ServerWorkers {
   }
 
   static async get() {
-
     let freeWorkers: { [pid: number]: number } = {};
 
     let restart = true;
 
     while (restart) {
-
       restart = false;
 
       Object.keys(cluster.workers).forEach(id => {
-
         let pid: number = cluster.workers[id].process.pid;
 
         if (!this.busyWorkers[pid]) {
@@ -36,7 +32,8 @@ export class ServerWorkers {
 
     let freeKeys = Object.keys(freeWorkers);
 
-    let workerPid = freeKeys[freeKeys.length * Math.random() << 0];
+    // tslint:disable-next-line:no-bitwise
+    let workerPid = freeKeys[(freeKeys.length * Math.random()) << 0];
 
     this.busyWorkers[workerPid] = 1;
 

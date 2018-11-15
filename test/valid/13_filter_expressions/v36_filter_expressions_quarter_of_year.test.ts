@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/13_filter_expressions/v36_filter_expressions_quarter_of_year.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     'WITH',
@@ -19,20 +18,20 @@ jest.setTimeout(30000); test('testName', () => {
     '    FROM (',
     '      SELECT',
     '        600 as dim6,',
-    '        CONCAT(CAST(\'Q\' AS STRING), CAST(EXTRACT(QUARTER FROM 111) AS STRING)) as created___quarter_of_year',
+    `        CONCAT(CAST('Q' AS STRING), CAST(EXTRACT(QUARTER FROM 111) AS STRING)) as created___quarter_of_year`,
     '      FROM `1`',
     '      ) as a',
     '    ',
     '    WHERE',
-    '      ((UPPER(a.created___quarter_of_year) = UPPER(\'q1\')',
-    '      OR UPPER(a.created___quarter_of_year) = UPPER(\'q2\')',
-    '      OR UPPER(a.created___quarter_of_year) = UPPER(\'q3\')',
-    '      OR UPPER(a.created___quarter_of_year) = UPPER(\'q4\')',
-    '      OR \'any\' = \'any\')',
-    '      AND NOT UPPER(a.created___quarter_of_year) = UPPER(\'q1\')',
-    '      AND NOT UPPER(a.created___quarter_of_year) = UPPER(\'q2\')',
-    '      AND NOT UPPER(a.created___quarter_of_year) = UPPER(\'q3\')',
-    '      AND NOT UPPER(a.created___quarter_of_year) = UPPER(\'q4\'))',
+    `      ((UPPER(a.created___quarter_of_year) = UPPER('q1')`,
+    `      OR UPPER(a.created___quarter_of_year) = UPPER('q2')`,
+    `      OR UPPER(a.created___quarter_of_year) = UPPER('q3')`,
+    `      OR UPPER(a.created___quarter_of_year) = UPPER('q4')`,
+    `      OR 'any' = 'any')`,
+    `      AND NOT UPPER(a.created___quarter_of_year) = UPPER('q1')`,
+    `      AND NOT UPPER(a.created___quarter_of_year) = UPPER('q2')`,
+    `      AND NOT UPPER(a.created___quarter_of_year) = UPPER('q3')`,
+    `      AND NOT UPPER(a.created___quarter_of_year) = UPPER('q4'))`,
     '',
     '    GROUP BY 1',
     '  )',
@@ -53,10 +52,8 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

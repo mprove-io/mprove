@@ -2,16 +2,16 @@ import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
 
 export function updateJoinsDoubleDepsAfterSingles(item: {
-  models: interfaces.Model[]
+  models: interfaces.Model[];
 }) {
-
   item.models.forEach(x => {
-
     x.joins
       .filter(j => j.as !== x.from_as)
       .forEach(join => {
-
-        if (typeof join.sql_where_real === 'undefined' && join.sql_where_real === null) {
+        if (
+          typeof join.sql_where_real === 'undefined' &&
+          join.sql_where_real === null
+        ) {
           return;
         }
 
@@ -19,7 +19,7 @@ export function updateJoinsDoubleDepsAfterSingles(item: {
         let reg = ApRegex.CAPTURE_DOUBLE_REF_G();
         let r;
 
-        while (r = reg.exec(join.sql_where_real)) {
+        while ((r = reg.exec(join.sql_where_real))) {
           let asName: string = r[1];
           let dep: string = r[2];
 

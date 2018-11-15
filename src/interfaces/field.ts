@@ -9,7 +9,7 @@ export interface Field {
   hidden_line_num: number;
   description: string; // TODO: use in time field as folder desc
   description_line_num: number;
-  sql: string;    // MyFilter uses it for fields deps check
-  sql_line_num: number;   // MyFilter uses it for fields deps check
+  sql: string; // MyFilter uses it for fields deps check
+  sql_line_num: number; // MyFilter uses it for fields deps check
   sql_real: string;
 }

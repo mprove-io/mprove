@@ -20,15 +20,15 @@ export interface Report {
 
   select_hash: {
     [element: string]: {
-      [forceDim: string]: number
-    }
+      [forceDim: string]: number;
+    };
   };
 
   sorts: string;
   sorts_line_num: number;
   sortings_ary: {
-    field_id: string,
-    desc: string // boolean
+    field_id: string;
+    desc: string; // boolean
   }[];
 
   timezone: string;
@@ -38,7 +38,7 @@ export interface Report {
   limit_line_num: number;
 
   listen_filters: {
-    [dashboardFilterName: string]: string
+    [dashboardFilterName: string]: string;
   };
   listen_filters_line_num: number;
 

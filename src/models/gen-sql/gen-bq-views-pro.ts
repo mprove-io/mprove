@@ -3,24 +3,25 @@ import { barUdf } from '../../barrels/bar-udf';
 import { interfaces } from '../../barrels/interfaces';
 
 export function genBqViewsPro(item: {
-  model: interfaces.Model,
-  select: string[],
-  sorts: string,
-  limit: string,
-  filters: { [filter: string]: string[] },
-  udfs_user: interfaces.Udf[],
-  timezone: string,
-  weekStart: api.ProjectWeekStartEnum,
-  bqProject: string,
-  projectId: string,
-  structId: string,
+  model: interfaces.Model;
+  select: string[];
+  sorts: string;
+  limit: string;
+  filters: { [filter: string]: string[] };
+  udfs_user: interfaces.Udf[];
+  timezone: string;
+  weekStart: api.ProjectWeekStartEnum;
+  bqProject: string;
+  projectId: string;
+  structId: string;
 }) {
-
   // if (Math.random() < 0.5) { throw new Error('boom2'); }
 
   let structId = item.structId ? item.structId : 'struct_id_not_provided';
 
-  let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({ udfs_user: item.udfs_user });
+  let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({
+    udfs_user: item.udfs_user
+  });
 
   let vars: interfaces.Vars = {
     model: item.model,
@@ -57,7 +58,7 @@ export function genBqViewsPro(item: {
     with_parts: {},
     with: undefined,
     joins_where: undefined,
-    query: undefined,
+    query: undefined
   };
 
   //    у calculation фильтр или select выбираются только вместе с селектом dimensions из force dims
@@ -67,7 +68,6 @@ export function genBqViewsPro(item: {
   // filters
   //    dep_measures_ref
   vars = this.makeDepMeasures(vars);
-
 
   //    создаем main select
   // model
@@ -82,7 +82,6 @@ export function genBqViewsPro(item: {
   //    main_udfs_ref
   vars = this.makeMainFields(vars);
 
-
   //    подтягиваем для полей зависимые double deps
   // selected
   // filters
@@ -90,13 +89,11 @@ export function genBqViewsPro(item: {
   //    needs_doubles
   vars = this.makeNeedsDoubles(vars);
 
-
   //    расширяем список джоинов через зависимости джоинов
   // model
   // need_doubles
   //    joins
   vars = this.findJoinsUsingJoinsDeps(vars);
-
 
   //    создаем список всех необходимых полей
   // model
@@ -104,7 +101,6 @@ export function genBqViewsPro(item: {
   // joins
   //    needs_all
   vars = this.makeNeedsAll(vars);
-
 
   // joins
   // model
@@ -116,7 +112,6 @@ export function genBqViewsPro(item: {
   //    filters_conditions
   //    untouched_filters_conditions
   vars = this.makeFilters(vars);
-
 
   //    derived tables
   // model
@@ -133,12 +128,10 @@ export function genBqViewsPro(item: {
   //    main_udfs
   vars = this.makeContents(vars);
 
-
   // model
   // joins
   //    joins_where
   vars = this.makeJoinsWhere(vars);
-
 
   // model
   // main_text
@@ -153,12 +146,10 @@ export function genBqViewsPro(item: {
   //    query
   vars = this.composeMain(vars);
 
-
   // query
   // timezone
   //    query
   vars = this.processTimezone(vars);
-
 
   // model
   // select

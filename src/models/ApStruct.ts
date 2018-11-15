@@ -16,25 +16,29 @@ import { ErrorsCollector } from '../barrels/errors-collector';
 import { interfaces } from '../barrels/interfaces';
 
 export class ApStruct {
-
   static async rebuildStruct(item: {
-    dir: string,
-    weekStart: api.ProjectWeekStartEnum,
-    bqProject: string,
-    projectId: string,
-    structId: string,
+    dir: string;
+    weekStart: api.ProjectWeekStartEnum;
+    bqProject: string;
+    projectId: string;
+    structId: string;
   }): Promise<interfaces.Struct> {
-
     ErrorsCollector.clearErrors();
 
     // ApYAML
 
     let pdts: interfaces.Pdt[] = [];
 
-    let files: interfaces.File[] = await barYaml.collectFiles({ dir: item.dir });
+    let files: interfaces.File[] = await barYaml.collectFiles({
+      dir: item.dir
+    });
 
-    let file2s: interfaces.File2[] = await barYaml.removeWrongExt({ files: files });
-    let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({ file2s: file2s });
+    let file2s: interfaces.File2[] = await barYaml.removeWrongExt({
+      files: files
+    });
+    let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({
+      file2s: file2s
+    });
     let filesAny: any[] = await barYaml.yamlToObjects({
       file3s: file3s,
       dir: item.dir
@@ -112,14 +116,18 @@ export class ApStruct {
     views = barView.checkViewFiltersFromField({ views: views });
 
     // ApFilter
-    views = barFilter.checkVMDFilterDefaults({ entities: views, weekStart: item.weekStart });
+    views = barFilter.checkVMDFilterDefaults({
+      entities: views,
+      weekStart: item.weekStart
+    });
 
     // ApView
     views = barView.checkDerivedTableApplyFilter({ views: views });
 
-
     // process view references
-    let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({ udfs_user: udfs });
+    let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({
+      udfs_user: udfs
+    });
 
     views = barView.makeViewDeps({ views: views });
     views = barView.checkViewCycles({ views: views });
@@ -132,7 +140,7 @@ export class ApStruct {
       weekStart: item.weekStart,
       bqProject: item.bqProject,
       projectId: item.projectId,
-      structId: item.structId,
+      structId: item.structId
     });
     views = barView.swapDerivedTables({ views: views });
 
@@ -173,7 +181,10 @@ export class ApStruct {
     models = barModel.checkModelFiltersFromField({ models: models });
 
     // ApFilter
-    models = barFilter.checkVMDFilterDefaults({ entities: models, weekStart: item.weekStart });
+    models = barFilter.checkVMDFilterDefaults({
+      entities: models,
+      weekStart: item.weekStart
+    });
 
     // ApJoin
     models = barJoin.checkJoinUnknownParameters({ models: models });
@@ -198,7 +209,9 @@ export class ApStruct {
 
     models = barJoinSqlWhere.checkSingleRefs({ models: models });
     models = barJoinSqlWhere.substituteSingleRefs({ models: models });
-    models = barJoinSqlWhere.updateJoinsDoubleDepsAfterSingles({ models: models });
+    models = barJoinSqlWhere.updateJoinsDoubleDepsAfterSingles({
+      models: models
+    });
     models = barJoinSqlWhere.checkApplyFilter({ models: models });
 
     // Back to ApModel
@@ -212,7 +225,9 @@ export class ApStruct {
 
     models = barModelSqlAlwaysWhere.checkSingleRefs({ models: models });
     models = barModelSqlAlwaysWhere.substituteSingleRefs({ models: models });
-    models = barModelSqlAlwaysWhere.makeDoubleDepsAfterSingles({ models: models });
+    models = barModelSqlAlwaysWhere.makeDoubleDepsAfterSingles({
+      models: models
+    });
     models = barModelSqlAlwaysWhere.checkApplyFilter({ models: models });
 
     // ApModelSqlAlwaysWhereCalc
@@ -225,11 +240,13 @@ export class ApStruct {
     models = barModelSqlAlwaysWhereCalc.checkApplyFilter({ models: models });
 
     // ApDashboard
-    dashboards = barDashboard.checkDashboardAccessUsers({ dashboards: dashboards });
+    dashboards = barDashboard.checkDashboardAccessUsers({
+      dashboards: dashboards
+    });
 
     // ApField
-    dashboards = barField.checkFieldsIsArray({ entities: dashboards });  //   *dash_prepare_fields_ary
-    dashboards = barField.checkFieldIsObject({ entities: dashboards });  //   *dash_prepare_fields_ary
+    dashboards = barField.checkFieldsIsArray({ entities: dashboards }); //   *dash_prepare_fields_ary
+    dashboards = barField.checkFieldIsObject({ entities: dashboards }); //   *dash_prepare_fields_ary
     // *dash_prepare_fields_ary && *dash_check_field_declaration
     dashboards = barField.checkFieldDeclaration({ entities: dashboards });
 
@@ -248,7 +265,9 @@ export class ApStruct {
     dashboards = barField.setImplicitLabel({ entities: dashboards });
     // *dash_check_and_set_implicit_results
     dashboards = barField.checkAndSetImplicitResults({ entities: dashboards });
-    dashboards = barField.checkAndSetImplicitFormatNumber({ entities: dashboards });
+    dashboards = barField.checkAndSetImplicitFormatNumber({
+      entities: dashboards
+    });
 
     // ApDashboard
     // *dash_check_and_set_implicit_results
@@ -260,29 +279,54 @@ export class ApStruct {
     dashboards = barDashboard.checkReportsIsArray({ dashboards: dashboards });
 
     // ApFilter
-    dashboards = barFilter.checkVMDFilterDefaults({ entities: dashboards, weekStart: item.weekStart });
+    dashboards = barFilter.checkVMDFilterDefaults({
+      entities: dashboards,
+      weekStart: item.weekStart
+    });
 
     // ApReport
     dashboards = barReport.checkReportIsObject({ dashboards: dashboards });
-    dashboards = barReport.checkReportUnknownParameters({ dashboards: dashboards });
+    dashboards = barReport.checkReportUnknownParameters({
+      dashboards: dashboards
+    });
     // *check_reports *check_select_exists
-    dashboards = barReport.checkReportsTitleModelSelect({ dashboards: dashboards, models: models });
-    dashboards = barReport.checkSelectElements({ dashboards: dashboards, models: models });
+    dashboards = barReport.checkReportsTitleModelSelect({
+      dashboards: dashboards,
+      models: models
+    });
+    dashboards = barReport.checkSelectElements({
+      dashboards: dashboards,
+      models: models
+    });
     dashboards = barReport.checkSelectForceDims({ dashboards: dashboards });
     dashboards = barReport.checkSorts({ dashboards: dashboards });
 
     dashboards = barReport.checkTimezone({ dashboards: dashboards });
     dashboards = barReport.checkLimit({ dashboards: dashboards });
 
-    dashboards = barReport.processListenFilters({ dashboards: dashboards, models: models });
-    dashboards = barReport.processDefaultFilters({ dashboards: dashboards, models: models });
+    dashboards = barReport.processListenFilters({
+      dashboards: dashboards,
+      models: models
+    });
+    dashboards = barReport.processDefaultFilters({
+      dashboards: dashboards,
+      models: models
+    });
     dashboards = barReport.checkReportDefaultFilters({
-      dashboards: dashboards, models: models, weekStart: item.weekStart
+      dashboards: dashboards,
+      models: models,
+      weekStart: item.weekStart
     });
 
     dashboards = barReport.combineReportFilters({ dashboards: dashboards });
-    dashboards = barReport.checkFiltersForceDims({ dashboards: dashboards, models: models });
-    dashboards = barReport.checkWhereCalcForceDims({ dashboards: dashboards, models: models });
+    dashboards = barReport.checkFiltersForceDims({
+      dashboards: dashboards,
+      models: models
+    });
+    dashboards = barReport.checkWhereCalcForceDims({
+      dashboards: dashboards,
+      models: models
+    });
 
     dashboards = await barReport.fetchBqViews({
       dashboards: dashboards,
@@ -291,7 +335,7 @@ export class ApStruct {
       weekStart: item.weekStart,
       bqProject: item.bqProject,
       projectId: item.projectId,
-      structId: item.structId,
+      structId: item.structId
     });
 
     // ApChart
@@ -299,7 +343,9 @@ export class ApStruct {
     dashboards = barChart.checkChartData({ dashboards: dashboards });
     dashboards = barChart.checkChartDataParameters({ dashboards: dashboards });
     dashboards = barChart.checkChartAxisParameters({ dashboards: dashboards });
-    dashboards = barChart.checkChartOptionsParameters({ dashboards: dashboards });
+    dashboards = barChart.checkChartOptionsParameters({
+      dashboards: dashboards
+    });
     dashboards = barChart.checkChartTileParameters({ dashboards: dashboards });
 
     let errors = ErrorsCollector.getErrors();
@@ -311,7 +357,7 @@ export class ApStruct {
       models: models,
       dashboards: dashboards,
       pdts: pdts,
-      pdts_sorted: pdtsSorted,
+      pdts_sorted: pdtsSorted
     };
   }
 }

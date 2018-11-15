@@ -15,11 +15,11 @@ export interface Vars {
   limit: string;
 
   filters: {
-    [filter: string]: string[]
+    [filter: string]: string[];
   };
 
   filters_fractions: {
-    [s: string]: api.Fraction[]
+    [s: string]: api.Fraction[];
   };
 
   weekStart: api.ProjectWeekStartEnum;
@@ -34,8 +34,8 @@ export interface Vars {
 
   dep_measures: {
     [as: string]: {
-      [dep: string]: number
-    }
+      [dep: string]: number;
+    };
   };
 
   main_text: string[];
@@ -43,57 +43,57 @@ export interface Vars {
   group_main_by: string[];
 
   main_fields: {
-    as_name: string,
-    field_name: string,
-    element_name: string
+    as_name: string;
+    field_name: string;
+    element_name: string;
   }[];
 
   selected: {
-    [s: string]: number
+    [s: string]: number;
   };
 
   processed_fields: {
-    [s: string]: string
+    [s: string]: string;
   };
 
   main_udfs: {
-    [s: string]: number
+    [s: string]: number;
   };
 
   needs_doubles: {
     [a: string]: {
-      [f: string]: number
-    }
+      [f: string]: number;
+    };
   };
 
   joins: {
-    [s: string]: number
+    [s: string]: number;
   };
 
   needs_all: {
     [a: string]: {
-      [f: string]: number
-    }
+      [f: string]: number;
+    };
   };
 
   where_main: {
-    [s: string]: string[]
+    [s: string]: string[];
   };
 
   having_main: {
-    [s: string]: string[]
+    [s: string]: string[];
   };
 
   where_calc: {
-    [s: string]: string[]
+    [s: string]: string[];
   };
 
   filters_conditions: {
-    [s: string]: string[]
+    [s: string]: string[];
   };
 
   untouched_filters_conditions: {
-    [s: string]: string[]
+    [s: string]: string[];
   };
 
   contents: string[];
@@ -106,11 +106,11 @@ export interface Vars {
   with: string[];
   with_parts: {
     [viewPartName: string]: {
-      content: string,
-      content_prepared: string,
-      parent_view_name: string,
-      deps: { [depName: string]: number }
-    }
+      content: string;
+      content_prepared: string;
+      parent_view_name: string;
+      deps: { [depName: string]: number };
+    };
   };
 
   joins_where: string[];

@@ -3,14 +3,13 @@ import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function wrapStruct(item: {
-  dir: string,
-  weekStart: api.ProjectWeekStartEnum,
-  bqProject: string,
-  projectId: string,
-  repoId: string,
-  structId: string,
+  dir: string;
+  weekStart: api.ProjectWeekStartEnum;
+  bqProject: string;
+  projectId: string;
+  repoId: string;
+  structId: string;
 }) {
-
   let struct: interfaces.Struct = await ApStruct.rebuildStruct({
     dir: item.dir,
     weekStart: item.weekStart,
@@ -46,23 +45,19 @@ export async function wrapStruct(item: {
     structId: item.structId
   });
 
-  let wrappedQueries = [
-    ...wd.wrappedDashboardsQueries,
-    ...wrappedPdtsQueries
-  ];
+  let wrappedQueries = [...wd.wrappedDashboardsQueries, ...wrappedPdtsQueries];
 
   let wrappedStruct: api.StructFull = {
     errors: wrappedErrors,
     models: wrappedModels,
     dashboards: wd.wrappedDashboards,
     mconfigs: wd.wrappedMconfigs,
-    queries: wrappedQueries,
+    queries: wrappedQueries
   };
 
   return {
     wrappedStruct: wrappedStruct,
     pdts_sorted: struct.pdts_sorted,
-    udfsContent: JSON.stringify(struct.udfs),
+    udfsContent: JSON.stringify(struct.udfs)
   };
-
 }

@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/13_filter_expressions/v34_filter_expressions_day_of_week_index.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     'WITH',
@@ -35,15 +34,15 @@ jest.setTimeout(30000); test('testName', () => {
     '      ) as a',
     '    ',
     '    WHERE',
-    '      ((\'any\' = \'any\'',
+    `      (('any' = 'any'`,
     '      OR a.created___day_of_week_index IN (1,2,3))',
     '      AND NOT (a.created___day_of_week_index IN (4,5,6,7)))',
     '     AND',
-    '      ((\'any\' = \'any\'',
+    `      (('any' = 'any'`,
     '      OR a.delivered___day_of_week_index = 1)',
     '      AND NOT (a.delivered___day_of_week_index = 4))',
     '     AND',
-    '      ((\'any\' = \'any\'',
+    `      (('any' = 'any'`,
     '      OR a.ordered___day_of_week_index IN (2,3))',
     '      AND NOT (a.ordered___day_of_week_index IN (5,6,7)))',
     '',
@@ -66,10 +65,8 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

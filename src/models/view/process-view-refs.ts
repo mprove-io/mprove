@@ -5,19 +5,16 @@ import { interfaces } from '../../barrels/interfaces';
 const { forEach } = require('p-iteration');
 let Graph = require('graph.js/dist/graph.full.js'); // tslint:disable-line
 
-
 export async function processViewRefs(item: {
-  views: interfaces.View[],
-  udfs_dict: interfaces.UdfsDict,
-  timezone: string,
-  weekStart: api.ProjectWeekStartEnum,
-  bqProject: string,
-  projectId: string,
-  structId: string,
+  views: interfaces.View[];
+  udfs_dict: interfaces.UdfsDict;
+  timezone: string;
+  weekStart: api.ProjectWeekStartEnum;
+  bqProject: string;
+  projectId: string;
+  structId: string;
 }) {
-
   await forEach(item.views, async (x: interfaces.View) => {
-
     x.parts = {};
 
     x.derived_table_start = x.derived_table;
@@ -42,7 +39,6 @@ export async function processViewRefs(item: {
       structId: item.structId
     });
 
-
     // prepare text
     let text = x.derived_table;
 
@@ -57,13 +53,11 @@ export async function processViewRefs(item: {
     let g = new Graph();
 
     Object.keys(x.parts).forEach(viewPartName => {
-
       g.addVertex(viewPartName);
 
       Object.keys(x.parts[viewPartName].deps).forEach(dep => {
         g.createEdge(viewPartName, dep);
       });
-
     });
 
     for (let [key, value] of g.vertices_topologically()) {
@@ -71,16 +65,17 @@ export async function processViewRefs(item: {
       partNamesSorted.unshift(key);
     }
 
-
     // unshift parts to text
     let count = 0;
 
     partNamesSorted.reverse().forEach(viewPartName => {
-
       count++;
 
       let content = x.parts[viewPartName].content;
-      content = ApRegex.replaceViewRefs(content, x.parts[viewPartName].parent_view_name);
+      content = ApRegex.replaceViewRefs(
+        content,
+        x.parts[viewPartName].parent_view_name
+      );
       content = ApRegex.removeBracketsOnViewFieldRefs(content);
 
       x.parts[viewPartName].content_prepared = content;
@@ -93,14 +88,11 @@ export async function processViewRefs(item: {
       text = [content, text].join(`\n`);
     });
 
-
     // wrap with
     text = [`WITH`, text].join(`\n`);
 
-
     x.derived_table_new = text;
   });
-
 
   return item.views;
 }

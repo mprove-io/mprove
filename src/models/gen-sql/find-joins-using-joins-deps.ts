@@ -1,7 +1,6 @@
 import { interfaces } from '../../barrels/interfaces';
 
 export function findJoinsUsingJoinsDeps(item: interfaces.Vars) {
-
   let joins: { [s: string]: number } = {};
 
   [

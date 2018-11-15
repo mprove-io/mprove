@@ -25,13 +25,12 @@ export interface View extends TopBasic {
 
   parts: {
     [viewPartName: string]: {
-      content: string,
-      content_prepared: string,
-      parent_view_name: string,
-      deps: { [depName: string]: number }
-    }
+      content: string;
+      content_prepared: string;
+      parent_view_name: string;
+      deps: { [depName: string]: number };
+    };
   };
-
 
   permanent: string; // boolean
   permanent_line_num: number;
@@ -39,36 +38,33 @@ export interface View extends TopBasic {
   udfs: string[];
   udfs_line_num: number;
 
-
   fields: FieldExt[];
   fields_line_num: number;
 
-
   fields_deps: {
     [field: string]: {
-      [dep: string]: number
+      [dep: string]: number;
     };
   };
 
   fields_deps_after_singles: {
     [field: string]: {
-      [dep: string]: number
+      [dep: string]: number;
     };
   };
 
   as_deps: {
     [as: string]: {
-      view_name: string,
-      fields: { [field: string]: number }
+      view_name: string;
+      fields: { [field: string]: number };
     };
   };
 
   pdt_view_deps: {
-    [view: string]: number
+    [view: string]: number;
   };
 
   pdt_view_deps_all: {
-    [view: string]: number
+    [view: string]: number;
   };
 }
-

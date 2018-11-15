@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/14_apply_filter/v43_apply_filter_untouched_override_by_user_false.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     'WITH',
@@ -44,7 +43,7 @@ jest.setTimeout(30000); test('testName', () => {
     '    ON a.dim1 = b.dim1',
     '    ',
     '    WHERE',
-    '      (\'empty filter mf.f4 applied\' = \'empty filter mf.f4 applied\')',
+    `      ('empty filter mf.f4 applied' = 'empty filter mf.f4 applied')`,
     '     AND',
     `      ((target1 > 100)
 AND (target2 > 200))`,
@@ -71,10 +70,8 @@ AND (target2 > 200))`,
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

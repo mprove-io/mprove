@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/13_filter_expressions/v33_filter_expressions_day_of_week.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     'WITH',
@@ -19,26 +18,26 @@ jest.setTimeout(30000); test('testName', () => {
     '    FROM (',
     '      SELECT',
     '        600 as dim6,',
-    '        FORMAT_TIMESTAMP(\'%A\', 222) as created___day_of_week',
+    `        FORMAT_TIMESTAMP('%A', 222) as created___day_of_week`,
     '      FROM `1`',
     '      ) as a',
     '    ',
     '    WHERE',
-    '      ((UPPER(a.created___day_of_week) = UPPER(\'Monday\')',
-    '      OR UPPER(a.created___day_of_week) = UPPER(\'Tuesday\')',
-    '      OR UPPER(a.created___day_of_week) = UPPER(\'Wednesday\')',
-    '      OR UPPER(a.created___day_of_week) = UPPER(\'Thursday\')',
-    '      OR UPPER(a.created___day_of_week) = UPPER(\'Friday\')',
-    '      OR UPPER(a.created___day_of_week) = UPPER(\'Saturday\')',
-    '      OR UPPER(a.created___day_of_week) = UPPER(\'Sunday\')',
-    '      OR \'any\' = \'any\')',
-    '      AND NOT UPPER(a.created___day_of_week) = UPPER(\'Monday\')',
-    '      AND NOT UPPER(a.created___day_of_week) = UPPER(\'Tuesday\')',
-    '      AND NOT UPPER(a.created___day_of_week) = UPPER(\'Wednesday\')',
-    '      AND NOT UPPER(a.created___day_of_week) = UPPER(\'Thursday\')',
-    '      AND NOT UPPER(a.created___day_of_week) = UPPER(\'Friday\')',
-    '      AND NOT UPPER(a.created___day_of_week) = UPPER(\'Saturday\')',
-    '      AND NOT UPPER(a.created___day_of_week) = UPPER(\'Sunday\'))',
+    `      ((UPPER(a.created___day_of_week) = UPPER('Monday')`,
+    `      OR UPPER(a.created___day_of_week) = UPPER('Tuesday')`,
+    `      OR UPPER(a.created___day_of_week) = UPPER('Wednesday')`,
+    `      OR UPPER(a.created___day_of_week) = UPPER('Thursday')`,
+    `      OR UPPER(a.created___day_of_week) = UPPER('Friday')`,
+    `      OR UPPER(a.created___day_of_week) = UPPER('Saturday')`,
+    `      OR UPPER(a.created___day_of_week) = UPPER('Sunday')`,
+    `      OR 'any' = 'any')`,
+    `      AND NOT UPPER(a.created___day_of_week) = UPPER('Monday')`,
+    `      AND NOT UPPER(a.created___day_of_week) = UPPER('Tuesday')`,
+    `      AND NOT UPPER(a.created___day_of_week) = UPPER('Wednesday')`,
+    `      AND NOT UPPER(a.created___day_of_week) = UPPER('Thursday')`,
+    `      AND NOT UPPER(a.created___day_of_week) = UPPER('Friday')`,
+    `      AND NOT UPPER(a.created___day_of_week) = UPPER('Saturday')`,
+    `      AND NOT UPPER(a.created___day_of_week) = UPPER('Sunday'))`,
     '',
     '    GROUP BY 1',
     '  )',
@@ -59,10 +58,8 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

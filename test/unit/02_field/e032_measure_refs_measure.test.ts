@@ -3,11 +3,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/unit/02_field/e032_measure_refs_measure.test.ts
-jest.setTimeout(30000); test('testName', () => {
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(3);
 
   return ApStruct.rebuildStruct({
@@ -17,14 +17,16 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     const desiredError0Lines: interfaces.ErrorLine[] = [
-      { line: 6, name: 'e32.view', path: 'e32.view' },
+      { line: 6, name: 'e32.view', path: 'e32.view' }
     ];
 
-    expect(struct.errors[0].lines).toEqual(expect.arrayContaining(desiredError0Lines));
+    expect(struct.errors[0].lines).toEqual(
+      expect.arrayContaining(desiredError0Lines)
+    );
     expect(struct.errors[0].title).toEqual(`measure refs measure`);
     expect(struct.errors[0].message).toEqual(
-      `Measures can not reference measures. Found measure "mea3" is referencing measure "mea4".`);
+      `Measures can not reference measures. Found measure "mea3" is referencing measure "mea4".`
+    );
   });
 });

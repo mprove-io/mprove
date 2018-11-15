@@ -3,7 +3,6 @@ import { api } from '../barrels/api';
 import { wrapper } from '../barrels/wrapper';
 
 export let rebuildStruct = async (req: Request, res: Response) => {
-
   let requestId: string;
   let projectId: string;
   let repoId: string;
@@ -18,9 +17,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
     bqProject = req.body['payload']['bq_project'];
     weekStart = req.body['payload']['week_start'];
     structId = req.body['payload']['struct_id'];
-
   } catch (e) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -40,24 +37,21 @@ export let rebuildStruct = async (req: Request, res: Response) => {
   let dir = `${basePath}/${projectId}/${repoId}`;
 
   let ws: {
-    wrappedStruct: api.StructFull,
-    udfsContent: string,
-    pdts_sorted: string[],
+    wrappedStruct: api.StructFull;
+    udfsContent: string;
+    pdts_sorted: string[];
   };
 
   try {
-
     ws = await wrapper.wrapStruct({
       dir: dir,
       weekStart: weekStart,
       bqProject: bqProject,
       projectId: projectId,
       repoId: repoId,
-      structId: structId,
+      structId: structId
     });
-
   } catch (err) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -73,7 +67,6 @@ export let rebuildStruct = async (req: Request, res: Response) => {
   }
 
   if (ws) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -84,9 +77,8 @@ export let rebuildStruct = async (req: Request, res: Response) => {
       payload: {
         struct: ws.wrappedStruct,
         udfs_content: ws.udfsContent,
-        pdts_sorted: ws.pdts_sorted,
+        pdts_sorted: ws.pdts_sorted
       }
     });
   }
-
 };

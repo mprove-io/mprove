@@ -4,8 +4,8 @@ import { interfaces } from '../../src/barrels/interfaces';
 
 // yarn jest test/manual/ma2_struct.test.ts
 
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(1);
 
   return ApStruct.rebuildStruct({
@@ -15,8 +15,6 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     expect(1).toEqual(1);
-
   });
 });

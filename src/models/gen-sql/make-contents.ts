@@ -3,7 +3,6 @@ import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 
 export function makeContents(item: interfaces.Vars) {
-
   let contents: string[] = [];
 
   // let bqViews: MyBqView[] = [];
@@ -13,8 +12,8 @@ export function makeContents(item: interfaces.Vars) {
   // prepare filters for ___timestamp
   let filt: {
     [s: string]: {
-      [f: string]: number
-    }
+      [f: string]: number;
+    };
   } = {};
 
   Object.keys(item.filters).forEach(element => {
@@ -32,39 +31,35 @@ export function makeContents(item: interfaces.Vars) {
   // let usedViews: { [s: string]: number } = {};
 
   item.model.joins_sorted.forEach(asName => {
-
     let flats: {
-      [s: string]: number
+      [s: string]: number;
     } = {};
 
     let join = item.model.joins.find(j => j.as === asName);
 
     if (asName === item.model.from_as) {
       contents.push(`FROM (`);
-
     } else if (item.joins[asName]) {
-
       let joinTypeString =
         join.type === enums.JoinTypeEnum.Inner
           ? `INNER JOIN (`
           : join.type === enums.JoinTypeEnum.Cross
-            ? `CROSS JOIN (`
-            : join.type === enums.JoinTypeEnum.Full
-              ? `FULL JOIN (`
-              : join.type === enums.JoinTypeEnum.FullOuter
-                ? `FULL OUTER JOIN (`
-                : join.type === enums.JoinTypeEnum.Left
-                  ? `LEFT JOIN (`
-                  : join.type === enums.JoinTypeEnum.LeftOuter
-                    ? `LEFT OUTER JOIN (`
-                    : join.type === enums.JoinTypeEnum.Right
-                      ? `RIGHT JOIN (`
-                      : join.type === enums.JoinTypeEnum.RightOuter
-                        ? `RIGHT OUTER JOIN (`
-                        : undefined;
+          ? `CROSS JOIN (`
+          : join.type === enums.JoinTypeEnum.Full
+          ? `FULL JOIN (`
+          : join.type === enums.JoinTypeEnum.FullOuter
+          ? `FULL OUTER JOIN (`
+          : join.type === enums.JoinTypeEnum.Left
+          ? `LEFT JOIN (`
+          : join.type === enums.JoinTypeEnum.LeftOuter
+          ? `LEFT OUTER JOIN (`
+          : join.type === enums.JoinTypeEnum.Right
+          ? `RIGHT JOIN (`
+          : join.type === enums.JoinTypeEnum.RightOuter
+          ? `RIGHT OUTER JOIN (`
+          : undefined;
 
       contents.push(joinTypeString);
-
     } else {
       return;
     }
@@ -76,15 +71,14 @@ export function makeContents(item: interfaces.Vars) {
     // check for need of ___timestamp
     // $as ne 'mf' (by design)
     if (filt[asName]) {
-
       let once: { [s: string]: number } = {};
 
       Object.keys(filt[asName]).forEach(fieldName => {
-
-        let field = join.view.fields.find(viewField => viewField.name === fieldName);
+        let field = join.view.fields.find(
+          viewField => viewField.name === fieldName
+        );
 
         if (field.result === enums.FieldExtResultEnum.Ts) {
-
           // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
           let sqlTimestampSelect = field.sql_timestamp_real;
 
@@ -104,16 +98,15 @@ export function makeContents(item: interfaces.Vars) {
     }
     // end of check
 
-
     if (item.needs_all[asName]) {
       // $as ne 'mf' (by design)
 
       Object.keys(item.needs_all[asName]).forEach(fieldName => {
-
-        let field = join.view.fields.find(viewField => viewField.name === fieldName);
+        let field = join.view.fields.find(
+          viewField => viewField.name === fieldName
+        );
 
         if (field.field_class === enums.FieldClassEnum.Dimension) {
-
           if (typeof field.unnest !== 'undefined' && field.unnest !== null) {
             flats[field.unnest] = 1;
           }
@@ -138,7 +131,6 @@ export function makeContents(item: interfaces.Vars) {
     let table;
 
     if (typeof join.view.table !== 'undefined' && join.view.table !== null) {
-
       // if (typeof join.view.udfs !== 'undefined' && join.view.udfs !== null) {
       //   join.view.udfs.forEach(udf => {
       //     item.main_udfs[udf] = 1;
@@ -146,9 +138,7 @@ export function makeContents(item: interfaces.Vars) {
       // }
 
       table = '`' + join.view.table + '`';
-
     } else {
-
       Object.keys(join.view.pdt_view_deps_all).forEach(viewName => {
         let pdtName = `${item.structId}_${viewName}`;
         item.query_pdt_deps_all[pdtName] = 1;
@@ -162,9 +152,7 @@ export function makeContents(item: interfaces.Vars) {
         permanentTable.push(`#standardSQL`);
 
         if (typeof join.view.udfs !== 'undefined' && join.view.udfs !== null) {
-
           join.view.udfs.forEach(udf => {
-
             permanentTable.push(item.udfs_dict[udf]);
           });
         }
@@ -184,10 +172,11 @@ export function makeContents(item: interfaces.Vars) {
         //   });
         // }
 
-        table = '`' + `${item.bqProject}.mprove_${item.projectId}.${permanentTableName}` + '`';
-
+        table =
+          '`' +
+          `${item.bqProject}.mprove_${item.projectId}.${permanentTableName}` +
+          '`';
       } else {
-
         Object.keys(join.view.pdt_view_deps).forEach(viewName => {
           let pdtName = `${item.structId}_${viewName}`;
           item.query_pdt_deps[pdtName] = 1;
@@ -214,7 +203,6 @@ export function makeContents(item: interfaces.Vars) {
         }
 
         table = `${join.view.name}__${asName}`;
-
       }
       // usedViews[join.view.name] = 1;
     }
@@ -234,7 +222,6 @@ export function makeContents(item: interfaces.Vars) {
     }
 
     contents.push(``);
-
   });
 
   item.contents = contents;

@@ -4,13 +4,11 @@ import { ErrorsCollector } from '../../barrels/errors-collector';
 import { interfaces } from '../../barrels/interfaces';
 
 export function processLineNumbersRecursive(item: {
-  hash: any,
-  fileName: string,
-  filePath: string
+  hash: any;
+  fileName: string;
+  filePath: string;
 }): any[] {
-
   Object.keys(item.hash).forEach(oldPar => {
-
     let reg = ApRegex.CAPTURE_BETWEEN_LINE_NUM();
     let r = reg.exec(oldPar);
 
@@ -19,17 +17,25 @@ export function processLineNumbersRecursive(item: {
     let npReg = ApRegex.BETWEEN_LINE_NUM_G();
     let newPar = oldPar.replace(npReg, '');
 
-    if (typeof item.hash[oldPar] === 'undefined' || item.hash[oldPar] === null) {
+    if (
+      typeof item.hash[oldPar] === 'undefined' ||
+      item.hash[oldPar] === null
+    ) {
       // error e6
-      ErrorsCollector.addError(new AmError({
-        title: 'undefined value',
-        message: 'if parameters are specified, they can not have undefined values',
-        lines: [{
-          line: lineNumber,
-          name: item.fileName,
-          path: item.filePath,
-        }]
-      }));
+      ErrorsCollector.addError(
+        new AmError({
+          title: 'undefined value',
+          message:
+            'if parameters are specified, they can not have undefined values',
+          lines: [
+            {
+              line: lineNumber,
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
 
       delete item.hash[oldPar];
       return;
@@ -50,18 +56,21 @@ export function processLineNumbersRecursive(item: {
     // array
     if (Array.isArray(item.hash[newPar])) {
       item.hash[newPar].forEach((element: any, i: number, a: any[]) => {
-
         if (element === null) {
           // error e279
-          ErrorsCollector.addError(new AmError({
-            title: 'array element is null',
-            message: 'array element can not be empty',
-            lines: [{
-              line: lineNumber,
-              name: item.fileName,
-              path: item.filePath,
-            }]
-          }));
+          ErrorsCollector.addError(
+            new AmError({
+              title: 'array element is null',
+              message: 'array element can not be empty',
+              lines: [
+                {
+                  line: lineNumber,
+                  name: item.fileName,
+                  path: item.filePath
+                }
+              ]
+            })
+          );
 
           delete item.hash[oldPar];
           return;
@@ -76,8 +85,6 @@ export function processLineNumbersRecursive(item: {
           });
           // TODO: make error - we don't support Array of Arrays
         } else if (Array.isArray(element)) {
-
-
           // !hash && !array - convert to string
         } else {
           // cut "_line_num___12345___line_num_" from parameter's value globally
@@ -94,7 +101,10 @@ export function processLineNumbersRecursive(item: {
       });
 
       // hash
-    } else if (!!item.hash[newPar] && item.hash[newPar].constructor === Object) {
+    } else if (
+      !!item.hash[newPar] &&
+      item.hash[newPar].constructor === Object
+    ) {
       item.hash[newPar] = processLineNumbersRecursive({
         hash: item.hash[newPar],
         fileName: item.fileName,
@@ -111,12 +121,10 @@ export function processLineNumbersRecursive(item: {
       let r3 = reg3.exec(item.hash[newPar]);
       item.hash[newPar] = r3 ? r3[1] : item.hash[newPar];
     }
-
   });
 
   // TODO: already checked by js-yaml (no error e7 test)
   Object.keys(item.hash).forEach(par => {
-
     let reg = ApRegex.CAPTURE_WITHOUT_END_LINE_NUMBERS();
     let r = reg.exec(par);
 
@@ -124,7 +132,6 @@ export function processLineNumbersRecursive(item: {
       let p = r[1];
 
       if (item.hash[par].length > 1) {
-
         let lines: interfaces.ErrorLine[] = item.hash[par].map((l: number) => ({
           line: l,
           name: item.fileName,
@@ -132,15 +139,16 @@ export function processLineNumbersRecursive(item: {
         }));
 
         // error e7
-        ErrorsCollector.addError(new AmError({
-          title: 'duplicate parameters',
-          message: `found duplicate "${p}:" parameters`,
-          lines: lines,
-        }));
+        ErrorsCollector.addError(
+          new AmError({
+            title: 'duplicate parameters',
+            message: `found duplicate "${p}:" parameters`,
+            lines: lines
+          })
+        );
 
         delete item.hash[par];
         delete item.hash[p];
-
       } else {
         // let parLineNum: string = p + 'LineNum';
         item.hash[p + '_line_num'] = item.hash[par][0];

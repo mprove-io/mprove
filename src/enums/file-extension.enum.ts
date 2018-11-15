@@ -1,4 +1,3 @@
-
 export enum FileExtensionEnum {
   Udf = '.udf',
   View = '.view',

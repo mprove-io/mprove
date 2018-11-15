@@ -1,23 +1,21 @@
 // tslint:disable:max-line-length
 import { interfaces } from '../../barrels/interfaces';
 
-export function makeUdfsDict(item: {
-  udfs_user: interfaces.Udf[],
-}) {
-
+export function makeUdfsDict(item: { udfs_user: interfaces.Udf[] }) {
   let udfsDict: interfaces.UdfsDict = {};
 
   item.udfs_user.forEach(u => {
     udfsDict[u.name] = u.sql;
   });
 
-  udfsDict['mprove_array_sum'] =
-    `CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS
+  udfsDict[
+    'mprove_array_sum'
+  ] = `CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS
   ((SELECT SUM(CAST(REGEXP_EXTRACT(val, '\\\\|\\\\|(\\\\-?\\\\d+(?:.\\\\d+)?)\$') AS FLOAT64)) FROM UNNEST(ar) as val));`;
 
-  udfsDict['mprove_approx_percentile_distinct_disc'] =
-
-    `CREATE TEMPORARY FUNCTION mprove_approx_percentile_distinct_disc(a_num ARRAY<STRING>, fraction FLOAT64) RETURNS FLOAT64 AS
+  udfsDict[
+    'mprove_approx_percentile_distinct_disc'
+  ] = `CREATE TEMPORARY FUNCTION mprove_approx_percentile_distinct_disc(a_num ARRAY<STRING>, fraction FLOAT64) RETURNS FLOAT64 AS
   ((
   SELECT
     MAX(num1)

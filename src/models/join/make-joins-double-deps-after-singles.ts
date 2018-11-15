@@ -2,18 +2,15 @@ import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
 
 export function makeJoinsDoubleDepsAfterSingles(item: {
-  models: interfaces.Model[]
+  models: interfaces.Model[];
 }) {
-
   item.models.forEach(x => {
-
     x.joins_prepared_deps = {};
     x.joins_double_deps_after_singles = {};
 
     x.joins
       .filter(j => j.as !== x.from_as)
       .forEach(join => {
-
         x.joins_prepared_deps[join.as] = {};
         x.joins_double_deps_after_singles[join.as] = {};
 
@@ -23,7 +20,7 @@ export function makeJoinsDoubleDepsAfterSingles(item: {
         let r;
         let reg = ApRegex.CAPTURE_DOUBLE_REF_G();
 
-        while (r = reg.exec(sqlOnReal)) {
+        while ((r = reg.exec(sqlOnReal))) {
           let asName: string = r[1];
           let dep: string = r[2];
 
@@ -37,7 +34,6 @@ export function makeJoinsDoubleDepsAfterSingles(item: {
             x.joins_prepared_deps[join.as][asName] = 1;
           }
         }
-
       });
   });
 

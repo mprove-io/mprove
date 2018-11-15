@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/13_filter_expressions/v32_filter_expressions_yesno.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     'WITH',
@@ -31,13 +30,13 @@ jest.setTimeout(30000); test('testName', () => {
     '      ) as a',
     '    ',
     '    WHERE',
-    '      (a.dim1 = \'Yes\'',
-    '      OR a.dim1 = \'No\'',
-    '      OR \'any\' = \'any\')',
+    `      (a.dim1 = 'Yes'`,
+    `      OR a.dim1 = 'No'`,
+    `      OR 'any' = 'any')`,
     '     AND',
-    '      (a.created___yesno_has_value = \'Yes\'',
-    '      OR a.created___yesno_has_value = \'No\'',
-    '      OR \'any\' = \'any\')',
+    `      (a.created___yesno_has_value = 'Yes'`,
+    `      OR a.created___yesno_has_value = 'No'`,
+    `      OR 'any' = 'any')`,
     '',
     '    GROUP BY 1',
     '  )',
@@ -58,10 +57,8 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

@@ -3,16 +3,14 @@ import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 
 export function wrapModels(item: {
-  projectId: string,
-  repoId: string,
-  structId: string,
-  models: interfaces.Model[]
+  projectId: string;
+  repoId: string;
+  structId: string;
+  models: interfaces.Model[];
 }): api.Model[] {
-
   let wrappedModels: api.Model[] = [];
 
   item.models.forEach(x => {
-
     let wrappedFields: api.ModelField[] = [];
     let nodes: api.ModelNode[] = [];
 
@@ -28,18 +26,17 @@ export function wrapModels(item: {
         hidden: false,
         is_field: false,
         children: children,
-        node_class: api.ModelNodeNodeClassEnum.Join,
+        node_class: api.ModelNodeNodeClassEnum.Join
       };
 
       x.fields.forEach(field => {
-
         this.wrapField({
           wrappedFields: wrappedFields,
           field: field,
           alias: 'mf',
           fileName: x.file,
           children: children,
-          node: node,
+          node: node
         });
       });
 
@@ -49,12 +46,12 @@ export function wrapModels(item: {
     }
 
     x.joins.forEach(join => {
-
       // join fields scope
 
       let children: api.ModelNode[] = [];
 
-      let joinHidden = join.hidden && join.hidden.match(ApRegex.TRUE()) ? true : false;
+      let joinHidden =
+        join.hidden && join.hidden.match(ApRegex.TRUE()) ? true : false;
 
       let node: api.ModelNode = {
         id: join.as,
@@ -64,25 +61,23 @@ export function wrapModels(item: {
         is_field: false,
         children: children,
         node_class: api.ModelNodeNodeClassEnum.Join,
-        view_name: join.view.name,
+        view_name: join.view.name
       };
 
       join.view.fields.forEach(field => {
-
         this.wrapField({
           wrappedFields: wrappedFields,
           field: field,
           alias: join.as,
           fileName: join.view.file,
           children: children,
-          node: node,
+          node: node
         });
       });
 
       if (join.view.fields.length > 0) {
         nodes.push(node);
       }
-
     });
 
     nodes.forEach(node => {
@@ -94,7 +89,6 @@ export function wrapModels(item: {
 
         node.children.forEach(n => {
           switch (true) {
-
             case n.node_class === api.ModelNodeNodeClassEnum.Filter: {
               filters.push(n);
               break;
@@ -103,19 +97,16 @@ export function wrapModels(item: {
             case n.node_class === api.ModelNodeNodeClassEnum.Dimension: {
               dimensions.push(n);
               break;
-
             }
 
             case n.node_class === api.ModelNodeNodeClassEnum.Measure: {
               measures.push(n);
               break;
-
             }
 
             case n.node_class === api.ModelNodeNodeClassEnum.Calculation: {
               calculations.push(n);
               break;
-
             }
           }
         });
@@ -154,7 +145,7 @@ export function wrapModels(item: {
             hidden: false,
             is_field: false,
             children: [],
-            node_class: api.ModelNodeNodeClassEnum.Info,
+            node_class: api.ModelNodeNodeClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedDimensions);
@@ -168,7 +159,7 @@ export function wrapModels(item: {
             hidden: false,
             is_field: false,
             children: [],
-            node_class: api.ModelNodeNodeClassEnum.Info,
+            node_class: api.ModelNodeNodeClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedMeasures);
@@ -182,7 +173,7 @@ export function wrapModels(item: {
             hidden: false,
             is_field: false,
             children: [],
-            node_class: api.ModelNodeNodeClassEnum.Info,
+            node_class: api.ModelNodeNodeClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedCalculations);
@@ -196,7 +187,7 @@ export function wrapModels(item: {
             hidden: false,
             is_field: false,
             children: [],
-            node_class: api.ModelNodeNodeClassEnum.Info,
+            node_class: api.ModelNodeNodeClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedFilters);
@@ -205,9 +196,7 @@ export function wrapModels(item: {
         node.children = sortedChildren;
 
         node.children.forEach(nc => {
-
           if (typeof nc.children !== 'undefined' && nc.children !== null) {
-
             nc.children = nc.children.sort((a, b) => {
               let labelA = a.label.toUpperCase();
               let labelB = b.label.toUpperCase();
@@ -215,7 +204,6 @@ export function wrapModels(item: {
             });
           }
         });
-
       }
     });
 
@@ -239,7 +227,7 @@ export function wrapModels(item: {
       nodes: sortedNodes,
       server_ts: 1,
       // not required
-      description: x.description,
+      description: x.description
     });
   });
 

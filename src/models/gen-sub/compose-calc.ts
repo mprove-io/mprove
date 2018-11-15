@@ -2,7 +2,6 @@ import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 
 export function composeCalc(item: interfaces.VarsSub) {
-
   let calc: string[] = [];
 
   calc = calc.concat(item.query);
@@ -15,17 +14,16 @@ export function composeCalc(item: interfaces.VarsSub) {
   }
 
   item.select.forEach(fieldName => {
-
     let field = item.view.fields.find(vField => vField.name === fieldName);
 
     let selectString =
       field.field_class === enums.FieldClassEnum.Dimension
         ? `  ${fieldName},`
         : field.field_class === enums.FieldClassEnum.Measure
-          ? `  ${fieldName},`
-          : field.field_class === enums.FieldClassEnum.Calculation
-            ? `  ${item.processed_fields[fieldName]} as ${fieldName},`
-            : ``;
+        ? `  ${fieldName},`
+        : field.field_class === enums.FieldClassEnum.Calculation
+        ? `  ${item.processed_fields[fieldName]} as ${fieldName},`
+        : ``;
 
     calc.push(selectString);
   });

@@ -1,7 +1,6 @@
 import { interfaces } from '../../barrels/interfaces';
 
 export function makeNeedsAll(item: interfaces.VarsSub) {
-
   let needsAll: { [a: string]: number } = {};
 
   Object.keys(item.selected).forEach(fieldName => {

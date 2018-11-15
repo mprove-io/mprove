@@ -2,16 +2,15 @@ import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 
 export function genSub(item: {
-  view: interfaces.View,
-  select: string[],
-  udfs_dict: interfaces.UdfsDict,
-  timezone: string,
-  weekStart: api.ProjectWeekStartEnum,
-  bqProject: string,
-  projectId: string,
-  structId: string,
+  view: interfaces.View;
+  select: string[];
+  udfs_dict: interfaces.UdfsDict;
+  timezone: string;
+  weekStart: api.ProjectWeekStartEnum;
+  bqProject: string;
+  projectId: string;
+  structId: string;
 }) {
-
   let structId = item.structId ? item.structId : 'struct_id_not_provided';
 
   let vars: interfaces.VarsSub = {
@@ -36,7 +35,7 @@ export function genSub(item: {
     bqViews: undefined,
     with: undefined,
     query: undefined,
-    calc_query: undefined,
+    calc_query: undefined
   };
 
   // view
@@ -44,13 +43,11 @@ export function genSub(item: {
   //    dep_measures
   vars = this.makeDepMeasuresAndDimensions(vars);
 
-
   //
   //
   // makeDepDimensions
   //
   //
-
 
   //    создаем main select
   // view
@@ -63,7 +60,6 @@ export function genSub(item: {
   //    processed_fields
   //    extra_udfs
   vars = this.makeMainFields(vars);
-
 
   //    создаем список всех необходимых полей
   // view
@@ -81,7 +77,6 @@ export function genSub(item: {
   //    with
   vars = this.makeContents(vars);
 
-
   // view
   // main_text
   // contents
@@ -94,7 +89,6 @@ export function genSub(item: {
   // timezone
   //    query
   vars = this.processTimezone(vars);
-
 
   // view
   // select

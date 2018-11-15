@@ -8,7 +8,6 @@ export class ServerOutcomes {
   }
 
   static async get(outcomeId: string) {
-
     while (!this.outcomes[outcomeId]) {
       await helper.delay(10);
     }

@@ -3,11 +3,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/unit/11_report/e168_wrong_limit_value.test.ts
-jest.setTimeout(30000); test('testName', () => {
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(3);
 
   return ApStruct.rebuildStruct({
@@ -17,14 +17,16 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     const desiredError0Lines: interfaces.ErrorLine[] = [
-      { line: 8, name: 'e168d.dashboard', path: 'e168d.dashboard' },
+      { line: 8, name: 'e168d.dashboard', path: 'e168d.dashboard' }
     ];
 
-    expect(struct.errors[0].lines).toEqual(expect.arrayContaining(desiredError0Lines));
+    expect(struct.errors[0].lines).toEqual(
+      expect.arrayContaining(desiredError0Lines)
+    );
     expect(struct.errors[0].title).toEqual(`wrong 'limit' value`);
     expect(struct.errors[0].message).toEqual(
-      `'limit' must contain positive integer value`);
+      `'limit' must contain positive integer value`
+    );
   });
 });

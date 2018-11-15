@@ -21,11 +21,11 @@ export interface VarsSub {
   udfs_dict: UdfsDict;
 
   dep_measures: {
-    [dep: string]: number
+    [dep: string]: number;
   };
 
   dep_dimensions: {
-    [dep: string]: number
+    [dep: string]: number;
   };
 
   main_text: string[];
@@ -35,19 +35,19 @@ export interface VarsSub {
   main_fields: string[];
 
   selected: {
-    [s: string]: number
+    [s: string]: number;
   };
 
   processed_fields: {
-    [s: string]: string
+    [s: string]: string;
   };
 
   extra_udfs: {
-    [s: string]: number
+    [s: string]: number;
   };
 
   needs_all: {
-    [a: string]: number
+    [a: string]: number;
   };
 
   contents: string[];

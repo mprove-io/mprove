@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/13_filter_expressions/v35_filter_expressions_month_name.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     'WITH',
@@ -37,31 +36,31 @@ jest.setTimeout(30000); test('testName', () => {
     '      ) as a',
     '    ',
     '    WHERE',
-    '      ((UPPER(a.created___month_name) = UPPER(\'January\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'February\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'March\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'April\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'May\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'June\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'July\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'August\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'September\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'October\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'November\')',
-    '      OR UPPER(a.created___month_name) = UPPER(\'December\')',
-    '      OR \'any\' = \'any\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'January\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'February\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'March\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'April\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'May\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'June\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'July\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'August\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'September\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'October\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'November\')',
-    '      AND NOT UPPER(a.created___month_name) = UPPER(\'December\'))',
+    `      ((UPPER(a.created___month_name) = UPPER('January')`,
+    `      OR UPPER(a.created___month_name) = UPPER('February')`,
+    `      OR UPPER(a.created___month_name) = UPPER('March')`,
+    `      OR UPPER(a.created___month_name) = UPPER('April')`,
+    `      OR UPPER(a.created___month_name) = UPPER('May')`,
+    `      OR UPPER(a.created___month_name) = UPPER('June')`,
+    `      OR UPPER(a.created___month_name) = UPPER('July')`,
+    `      OR UPPER(a.created___month_name) = UPPER('August')`,
+    `      OR UPPER(a.created___month_name) = UPPER('September')`,
+    `      OR UPPER(a.created___month_name) = UPPER('October')`,
+    `      OR UPPER(a.created___month_name) = UPPER('November')`,
+    `      OR UPPER(a.created___month_name) = UPPER('December')`,
+    `      OR 'any' = 'any')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('January')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('February')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('March')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('April')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('May')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('June')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('July')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('August')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('September')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('October')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('November')`,
+    `      AND NOT UPPER(a.created___month_name) = UPPER('December'))`,
     '',
     '    GROUP BY 1',
     '  )',
@@ -82,10 +81,8 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

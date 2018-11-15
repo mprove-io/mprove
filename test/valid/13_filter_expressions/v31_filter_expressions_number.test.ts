@@ -4,12 +4,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/valid/13_filter_expressions/v31_filter_expressions_number.test.ts
-jest.setTimeout(30000); test('testName', () => {
-
+jest.setTimeout(30000);
+test('testName', () => {
   let query = [
     '#standardSQL',
     'WITH',
@@ -35,7 +34,7 @@ jest.setTimeout(30000); test('testName', () => {
     '      OR ((a.dim1 > 100) AND (a.dim1 <= 200))',
     '      OR ((a.dim1 > 100) AND (a.dim1 < 200))',
     '      OR (a.dim1 IS NULL)',
-    '      OR \'any\' = \'any\'',
+    `      OR 'any' = 'any'`,
     '      OR a.dim1 IN (105,110,115))',
     '      AND NOT ((a.dim1 >= 100) AND (a.dim1 <= 200))',
     '      AND NOT ((a.dim1 >= 100) AND (a.dim1 < 200))',
@@ -44,11 +43,11 @@ jest.setTimeout(30000); test('testName', () => {
     '      AND NOT (a.dim1 IS NULL)',
     '      AND NOT (a.dim1 IN (105,110,115)))',
     '     AND',
-    '      ((\'any\' = \'any\'',
+    `      (('any' = 'any'`,
     '      OR a.dim2 = 100)',
     '      AND NOT (a.dim2 = 100))',
     '     AND',
-    '      ((\'any\' = \'any\'',
+    `      (('any' = 'any'`,
     '      OR a.dim3 IN (100,105,110,115))',
     '      AND NOT (a.dim3 IN (100,105,110,115)))',
     '',
@@ -71,10 +70,8 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     struct.dashboards[0].reports[0].bq_views[0].sql.forEach((element, i, a) => {
       expect(element).toEqual(query[i]);
     });
-
   });
 });

@@ -3,15 +3,13 @@ import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 
 export function wrapPdts(item: {
-  projectId: string,
-  structId: string,
-  pdts: interfaces.Pdt[]
+  projectId: string;
+  structId: string;
+  pdts: interfaces.Pdt[];
 }) {
-
   let wrappedPdtsQueries: api.Query[] = [];
 
   item.pdts.forEach(pdt => {
-
     let queryId = helper.makeId();
 
     wrappedPdtsQueries.push({
@@ -33,7 +31,7 @@ export function wrapPdts(item: {
       last_error_ts: 1,
       data: undefined,
       temp: false,
-      server_ts: 1,
+      server_ts: 1
     });
   });
 

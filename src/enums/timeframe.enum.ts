@@ -29,5 +29,5 @@ export enum TimeframeEnum {
   Week = 'week',
   WeekOfYear = 'week_of_year',
   Year = 'year',
-  YesNoHasValue = 'yesno_has_value',
+  YesNoHasValue = 'yesno_has_value'
 }

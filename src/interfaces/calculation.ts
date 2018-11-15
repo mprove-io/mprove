@@ -18,7 +18,7 @@ export interface Calculation extends Field {
   };
   force_dims: {
     [as: string]: {
-      [dim: string]: number
+      [dim: string]: number;
     };
   };
 }

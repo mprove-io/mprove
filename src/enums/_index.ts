@@ -7,4 +7,3 @@ export * from './join-type.enum';
 export * from './pro.enum';
 export * from './time-source.enum';
 export * from './timeframe.enum';
-

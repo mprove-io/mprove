@@ -3,11 +3,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/unit/04_model/e41_join_calls_missing_view.test.ts
-jest.setTimeout(30000); test('testName', () => {
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(3);
 
   return ApStruct.rebuildStruct({
@@ -17,13 +17,16 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     const desiredError0Lines: interfaces.ErrorLine[] = [
-      { line: 6, name: 'e41m.model', path: 'e41m.model' },
+      { line: 6, name: 'e41m.model', path: 'e41m.model' }
     ];
 
-    expect(struct.errors[0].lines).toEqual(expect.arrayContaining(desiredError0Lines));
+    expect(struct.errors[0].lines).toEqual(
+      expect.arrayContaining(desiredError0Lines)
+    );
     expect(struct.errors[0].title).toEqual(`join calls missing view`);
-    expect(struct.errors[0].message).toEqual(`view 'unk' is missing or not valid`);
+    expect(struct.errors[0].message).toEqual(
+      `view 'unk' is missing or not valid`
+    );
   });
 });

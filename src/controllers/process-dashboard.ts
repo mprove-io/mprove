@@ -5,7 +5,6 @@ import { special } from '../barrels/special';
 import { wrapper } from '../barrels/wrapper';
 
 export let processDashboard = async (req: Request, res: Response) => {
-
   let requestId: string;
   let structId;
   let bqProject;
@@ -21,13 +20,11 @@ export let processDashboard = async (req: Request, res: Response) => {
   let newDashboardFields: api.DashboardField[];
 
   let cuts: {
-    model_id: string,
-    model_content: string
+    model_id: string;
+    model_content: string;
   }[];
 
-
   try {
-
     requestId = req.body['info']['request_id'];
 
     structId = req.body['payload']['struct_id'];
@@ -44,9 +41,7 @@ export let processDashboard = async (req: Request, res: Response) => {
     newDashboardFields = req.body['payload']['new_dashboard_fields'];
 
     cuts = req.body['payload']['cuts'];
-
   } catch (e) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -100,7 +95,7 @@ export let processDashboard = async (req: Request, res: Response) => {
       bqProject: bqProject,
       projectId: projectId,
       udfs: udfs,
-      structId: structId,
+      structId: structId
     });
 
     let wd = wrapper.wrapDashboards({
@@ -129,9 +124,7 @@ export let processDashboard = async (req: Request, res: Response) => {
       query.temp = true;
       return query;
     });
-
   } catch (err) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -147,7 +140,6 @@ export let processDashboard = async (req: Request, res: Response) => {
   }
 
   if (newDashboard && mconfigs && queries) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -158,9 +150,8 @@ export let processDashboard = async (req: Request, res: Response) => {
       payload: {
         dashboard: newDashboard, // dashboard->content->fields stays old (ok)
         mconfigs: mconfigs,
-        queries: queries,
+        queries: queries
       }
     });
   }
-
 };

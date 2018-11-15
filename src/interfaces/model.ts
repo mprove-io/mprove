@@ -3,7 +3,6 @@ import { Join } from './join';
 import { FieldExt } from './field-ext';
 
 export interface Model extends TopBasic {
-
   model: string;
   model_line_num: number;
 
@@ -25,7 +24,7 @@ export interface Model extends TopBasic {
   always_join: string;
   always_join_line_num: number;
   always_join_list: {
-    [as: string]: number
+    [as: string]: number;
   };
 
   sql_always_where: string;
@@ -49,86 +48,86 @@ export interface Model extends TopBasic {
 
   fields_deps: {
     [field: string]: {
-      [dep: string]: number
+      [dep: string]: number;
     };
   };
   fields_deps_after_singles: {
     [field: string]: {
-      [dep: string]: number
+      [dep: string]: number;
     };
   };
 
   fields_double_deps: {
     [field: string]: {
       [as: string]: {
-        [dep: string]: number
-      }
-    }
+        [dep: string]: number;
+      };
+    };
   };
 
   fields_double_deps_after_singles: {
     [field: string]: {
       [as: string]: {
-        [dep: string]: number
-      }
-    }
+        [dep: string]: number;
+      };
+    };
   };
 
   joins_double_deps: {
     [alias: string]: {
       [as: string]: {
-        [dep: string]: number
-      }
-    }
+        [dep: string]: number;
+      };
+    };
   };
 
   joins_prepared_deps: {
     [alias: string]: {
-      [as: string]: number
-    }
+      [as: string]: number;
+    };
   };
 
   joins_double_deps_after_singles: {
     [alias: string]: {
       [as: string]: {
-        [dep: string]: number
-      }
-    }
+        [dep: string]: number;
+      };
+    };
   };
 
   joins_sorted: string[];
 
   sql_always_where_double_deps: {
     [as: string]: {
-      [dep: string]: number
-    }
+      [dep: string]: number;
+    };
   };
 
   sql_always_where_double_deps_after_singles: {
     [as: string]: {
-      [dep: string]: number
-    }
+      [dep: string]: number;
+    };
   };
 
   sql_always_where_calc_double_deps: {
     [as: string]: {
-      [dep: string]: number
-    }
+      [dep: string]: number;
+    };
   };
 
   sql_always_where_calc_force_dims: {
     [as: string]: {
-      [dep: string]: number
-    }
+      [dep: string]: number;
+    };
   };
 
   sql_always_where_calc_deps_after_singles: {
-    [dep: string]: number
+    [dep: string]: number;
   };
 
   sql_always_where_calc_double_deps_after_substitutions: {
     [as: string]: {
-      [dep: string]: number
-    }
+      [dep: string]: number;
+    };
   };
 }

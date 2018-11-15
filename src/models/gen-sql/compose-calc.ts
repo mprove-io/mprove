@@ -3,7 +3,6 @@ import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 
 export function composeCalc(item: interfaces.Vars) {
-
   let calc: string[] = [];
 
   calc = calc.concat(item.query);
@@ -16,26 +15,26 @@ export function composeCalc(item: interfaces.Vars) {
   }
 
   item.select.forEach(element => {
-
     let r = ApRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
 
     let asName = r[1];
     let fieldName = r[2];
 
-    let field = asName === 'mf'
-      ? item.model.fields.find(mField => mField.name === fieldName)
-      : item.model.joins
-        .find(j => j.as === asName).view.fields
-        .find(vField => vField.name === fieldName);
+    let field =
+      asName === 'mf'
+        ? item.model.fields.find(mField => mField.name === fieldName)
+        : item.model.joins
+            .find(j => j.as === asName)
+            .view.fields.find(vField => vField.name === fieldName);
 
     let selectString =
       field.field_class === enums.FieldClassEnum.Dimension
         ? `  ${asName}_${fieldName},`
         : field.field_class === enums.FieldClassEnum.Measure
-          ? `  ${asName}_${fieldName},`
-          : field.field_class === enums.FieldClassEnum.Calculation
-            ? `  ${item.processed_fields[element]} as ${asName}_${fieldName},`
-            : ``;
+        ? `  ${asName}_${fieldName},`
+        : field.field_class === enums.FieldClassEnum.Calculation
+        ? `  ${item.processed_fields[element]} as ${asName}_${fieldName},`
+        : ``;
 
     calc.push(selectString);
   });
@@ -46,30 +45,37 @@ export function composeCalc(item: interfaces.Vars) {
   calc.push(`FROM model_main`);
   calc.push(``);
 
-  if (Object.keys(item.where_calc).length > 0 ||
+  if (
+    Object.keys(item.where_calc).length > 0 ||
     (typeof item.model.sql_always_where_calc_real !== 'undefined' &&
-      item.model.sql_always_where_calc_real !== null)) {
-
+      item.model.sql_always_where_calc_real !== null)
+  ) {
     calc.push(`WHERE`);
 
-    if (typeof item.model.sql_always_where_calc_real !== 'undefined' &&
-      item.model.sql_always_where_calc_real !== null) {
+    if (
+      typeof item.model.sql_always_where_calc_real !== 'undefined' &&
+      item.model.sql_always_where_calc_real !== null
+    ) {
+      let sqlAlwaysWhereCalcFinal = ApRegex.removeBracketsOnCalculationSinglesMf(
+        item.model.sql_always_where_calc_real
+      );
 
-      let sqlAlwaysWhereCalcFinal =
-        ApRegex.removeBracketsOnCalculationSinglesMf(item.model.sql_always_where_calc_real);
+      sqlAlwaysWhereCalcFinal = ApRegex.removeBracketsOnCalculationDoubles(
+        sqlAlwaysWhereCalcFinal
+      );
 
-      sqlAlwaysWhereCalcFinal = ApRegex.removeBracketsOnCalculationDoubles(sqlAlwaysWhereCalcFinal);
-
-      sqlAlwaysWhereCalcFinal = this.applyFilter(item, 'mf', sqlAlwaysWhereCalcFinal);
+      sqlAlwaysWhereCalcFinal = this.applyFilter(
+        item,
+        'mf',
+        sqlAlwaysWhereCalcFinal
+      );
 
       calc.push(`  (${sqlAlwaysWhereCalcFinal})`);
       calc.push(` AND`);
     }
 
     Object.keys(item.where_calc).forEach(element => {
-
       if (item.where_calc[element].length > 0) {
-
         calc = calc.concat(item.where_calc[element]);
         calc.push(` AND`);
       }
@@ -87,16 +93,14 @@ export function composeCalc(item: interfaces.Vars) {
     mySorts.forEach(part => {
       let r;
 
-      if (r = ApRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G().exec(part)) {
+      if ((r = ApRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G().exec(part))) {
         let sorter = r[1];
         let desc = r[2];
 
         let index = item.select.findIndex(e => e === sorter);
         let n = index + 1;
 
-        let eString = desc
-          ? `${n} DESC`
-          : `${n}`;
+        let eString = desc ? `${n} DESC` : `${n}`;
 
         orderBy.push(eString);
       }
@@ -111,12 +115,14 @@ export function composeCalc(item: interfaces.Vars) {
 
   calc.push(`LIMIT ${item.limit}`);
 
-  item.bqViews = [{
-    bq_view_id: 'query',
-    sql: calc,
-    pdt_deps: Object.keys(item.query_pdt_deps),
-    pdt_deps_all: Object.keys(item.query_pdt_deps_all),
-  }];
+  item.bqViews = [
+    {
+      bq_view_id: 'query',
+      sql: calc,
+      pdt_deps: Object.keys(item.query_pdt_deps),
+      pdt_deps_all: Object.keys(item.query_pdt_deps_all)
+    }
+  ];
 
   return item;
 }

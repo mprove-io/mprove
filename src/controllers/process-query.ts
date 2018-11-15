@@ -4,7 +4,6 @@ import { interfaces } from '../barrels/interfaces';
 import { genSql } from '../barrels/gen-sql';
 
 export let processQuery = async (req: Request, res: Response) => {
-
   let requestId: string;
 
   let structId;
@@ -23,8 +22,8 @@ export let processQuery = async (req: Request, res: Response) => {
   let mconfig: api.Mconfig;
 
   let mconfigFilters: {
-    field_id: string,
-    fractions: api.Fraction[]
+    field_id: string;
+    fractions: api.Fraction[];
   }[];
 
   try {
@@ -46,9 +45,7 @@ export let processQuery = async (req: Request, res: Response) => {
     mconfig = req.body['payload']['mconfig'];
 
     mconfigFilters = req.body['payload']['mconfig']['filters'];
-
   } catch (e) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -66,11 +63,9 @@ export let processQuery = async (req: Request, res: Response) => {
   let query: api.Query;
 
   try {
-
     let filters: { [s: string]: string[] } = {};
 
     mconfigFilters.forEach(f => {
-
       let fieldId = f.field_id;
 
       let bricks: string[] = [];
@@ -93,21 +88,21 @@ export let processQuery = async (req: Request, res: Response) => {
       bqProject: bqProject,
       projectId: projectId,
       udfs_user: udfs,
-      structId: structId,
+      structId: structId
     });
 
     let filtersFractions = <any>resItem.filters_fractions;
     let bqViews = resItem.bq_views;
 
     let newMconfigFilters: {
-      field_id: string,
-      fractions: api.Fraction[]
+      field_id: string;
+      fractions: api.Fraction[];
     }[] = [];
 
     Object.keys(filtersFractions).forEach(fieldId => {
       newMconfigFilters.push({
         field_id: fieldId,
-        fractions: filtersFractions[fieldId],
+        fractions: filtersFractions[fieldId]
       });
     });
 
@@ -132,11 +127,9 @@ export let processQuery = async (req: Request, res: Response) => {
       last_error_ts: 1,
       data: undefined,
       temp: true,
-      server_ts: 1,
+      server_ts: 1
     };
-
   } catch (err) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -161,7 +154,7 @@ export let processQuery = async (req: Request, res: Response) => {
       },
       payload: {
         mconfig: mconfig,
-        query: query,
+        query: query
       }
     });
   }

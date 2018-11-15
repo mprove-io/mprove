@@ -5,46 +5,37 @@ import { interfaces } from '../../barrels/interfaces';
 const { forEach } = require('p-iteration');
 
 export async function bqViewsOnTheFly(item: {
-  dashboard: interfaces.Dashboard,
-  models: interfaces.Model[],
-  dashboardFilters: { [s: string]: string[] },
-  weekStart: api.ProjectWeekStartEnum,
-  bqProject: string,
-  projectId: string,
-  udfs: interfaces.Udf[],
-  structId: string,
+  dashboard: interfaces.Dashboard;
+  models: interfaces.Model[];
+  dashboardFilters: { [s: string]: string[] };
+  weekStart: api.ProjectWeekStartEnum;
+  bqProject: string;
+  projectId: string;
+  udfs: interfaces.Udf[];
+  structId: string;
 }) {
-
   // if (Math.random() < 0.5) { throw new Error('boom3'); }
 
-
   await forEach(item.dashboard.reports, async (report: interfaces.Report) => {
-
-
     // item.dashboard.reports.forEach(report => {
 
     // build new report filters
     let filters: { [s: string]: string[] } = {};
 
     Object.keys(report.default).forEach(defaultFilter => {
-
       // remove empty filters
       if (report.default[defaultFilter].length > 0) {
-
         filters[defaultFilter] = report.default[defaultFilter];
       }
     });
 
     Object.keys(report.listen).forEach(filter => {
-
       let listen = report.listen[filter];
 
       // remove empty filters
       if (item.dashboardFilters[listen].length > 0) {
-
         filters[filter] = item.dashboardFilters[listen];
       }
-
     });
 
     // replace report filters
@@ -63,7 +54,7 @@ export async function bqViewsOnTheFly(item: {
       sorts: report.sorts,
       timezone: report.timezone,
       limit: report.limit,
-      filters: filters,
+      filters: filters
     });
 
     report.filters_fractions = resItem.filters_fractions;

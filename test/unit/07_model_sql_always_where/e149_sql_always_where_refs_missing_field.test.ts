@@ -3,11 +3,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/unit/07_model_sql_always_where/e149_sql_always_where_refs_missing_field.test.ts
-jest.setTimeout(30000); test('testName', () => {
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(3);
 
   return ApStruct.rebuildStruct({
@@ -17,14 +17,18 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     const desiredError0Lines: interfaces.ErrorLine[] = [
-      { line: 2, name: 'e149m.model', path: 'e149m.model' },
+      { line: 2, name: 'e149m.model', path: 'e149m.model' }
     ];
 
-    expect(struct.errors[0].lines).toEqual(expect.arrayContaining(desiredError0Lines));
-    expect(struct.errors[0].title).toEqual(`sql_always_where refs missing field`);
+    expect(struct.errors[0].lines).toEqual(
+      expect.arrayContaining(desiredError0Lines)
+    );
+    expect(struct.errors[0].title).toEqual(
+      `sql_always_where refs missing field`
+    );
     expect(struct.errors[0].message).toEqual(
-      `field "unk" is missing or not valid`);
+      `field "unk" is missing or not valid`
+    );
   });
 });

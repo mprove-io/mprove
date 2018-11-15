@@ -2,12 +2,11 @@ import { AmError } from '../../barrels/am-error';
 import { api } from '../../barrels/api';
 
 export function wrapErrors(item: {
-  projectId: string,
-  repoId: string,
-  structId: string,
-  errors: AmError[]
+  projectId: string;
+  repoId: string;
+  structId: string;
+  errors: AmError[];
 }): api.SwError[] {
-
   let wrappedErrors: api.SwError[] = item.errors.map(e => {
     return {
       project_id: item.projectId,
@@ -22,7 +21,7 @@ export function wrapErrors(item: {
         file_id: eLine.path
       })),
       deleted: false,
-      server_ts: 1,
+      server_ts: 1
     };
   });
 

@@ -3,11 +3,11 @@ import { ApStruct } from '../../../src/barrels/ap-struct';
 import { api } from '../../../src/barrels/api';
 import { interfaces } from '../../../src/barrels/interfaces';
 
-
 //
 
 // yarn jest test/unit/02_field/e269_misuse_currency_prefix_by_field_result.test.ts
-jest.setTimeout(30000); test('testName', () => {
+jest.setTimeout(30000);
+test('testName', () => {
   expect.assertions(3);
 
   return ApStruct.rebuildStruct({
@@ -17,14 +17,19 @@ jest.setTimeout(30000); test('testName', () => {
     projectId: 'unkProjectId',
     structId: 'unkStructId'
   }).then((struct: interfaces.Struct) => {
-
     const desiredError0Lines: interfaces.ErrorLine[] = [
-      { line: 6, name: 'e269.view', path: 'e269.view' },
+      { line: 6, name: 'e269.view', path: 'e269.view' }
     ];
 
-    expect(struct.errors[0].lines).toEqual(expect.arrayContaining(desiredError0Lines));
-    expect(struct.errors[0].title).toEqual(`misuse of currency_prefix by field's result`);
-    expect(struct.errors[0].message).toEqual(`currency_prefix can only be used with fields where result is "number". ` +
-      `Found field result "string".`);
+    expect(struct.errors[0].lines).toEqual(
+      expect.arrayContaining(desiredError0Lines)
+    );
+    expect(struct.errors[0].title).toEqual(
+      `misuse of currency_prefix by field's result`
+    );
+    expect(struct.errors[0].message).toEqual(
+      `currency_prefix can only be used with fields where result is "number". ` +
+        `Found field result "string".`
+    );
   });
 });

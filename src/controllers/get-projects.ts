@@ -3,14 +3,11 @@ import { api } from '../barrels/api';
 import { barProject } from '../barrels/bar-project';
 
 export let getProjects = async (req: Request, res: Response) => {
-
   let requestId: string;
 
   try {
     requestId = req.body['info']['request_id'];
-
   } catch (e) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -32,13 +29,10 @@ export let getProjects = async (req: Request, res: Response) => {
   let projects: string[] = [];
 
   try {
-
     projects = await barProject.collectProjects({
-      dir: dir,
+      dir: dir
     });
-
   } catch (err) {
-
     res.json({
       info: {
         origin: api.CommunicationOriginEnum.BLOCKML,
@@ -53,7 +47,6 @@ export let getProjects = async (req: Request, res: Response) => {
     });
   }
 
-
   res.json({
     info: {
       origin: api.CommunicationOriginEnum.BLOCKML,
@@ -63,8 +56,7 @@ export let getProjects = async (req: Request, res: Response) => {
     },
     payload: {
       projects: projects,
-      projects_total: projects.length,
+      projects_total: projects.length
     }
   });
-
 };

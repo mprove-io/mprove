@@ -3,20 +3,19 @@ import { genSub } from '../../barrels/gen-sub';
 import { interfaces } from '../../barrels/interfaces';
 
 export function makeViewPart(item: {
-  top_view: interfaces.View,
-  parent_view_name: string,
-  need_view_name: string,
-  need_view_as: string,
-  need_view_fields: { [field: string]: number },
-  view: interfaces.View,
-  udfs_dict: interfaces.UdfsDict,
-  timezone: string,
-  weekStart: api.ProjectWeekStartEnum,
-  bqProject: string,
-  projectId: string,
-  structId: string,
+  top_view: interfaces.View;
+  parent_view_name: string;
+  need_view_name: string;
+  need_view_as: string;
+  need_view_fields: { [field: string]: number };
+  view: interfaces.View;
+  udfs_dict: interfaces.UdfsDict;
+  timezone: string;
+  weekStart: api.ProjectWeekStartEnum;
+  bqProject: string;
+  projectId: string;
+  structId: string;
 }) {
-
   let sub = genSub.genSub({
     select: Object.keys(item.need_view_fields),
     view: item.view,
@@ -25,7 +24,7 @@ export function makeViewPart(item: {
     weekStart: item.weekStart,
     bqProject: item.bqProject,
     projectId: item.projectId,
-    structId: item.structId,
+    structId: item.structId
   });
 
   Object.keys(sub.extra_udfs).forEach(udfName => {
@@ -34,7 +33,9 @@ export function makeViewPart(item: {
     }
   });
 
-  let name = `${item.parent_view_name}__${item.need_view_name}__${item.need_view_as}`;
+  let name = `${item.parent_view_name}__${item.need_view_name}__${
+    item.need_view_as
+  }`;
 
   let lines: string[] = [];
 

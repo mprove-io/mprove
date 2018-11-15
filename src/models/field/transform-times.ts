@@ -5,17 +5,13 @@ import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 
-export function transformTimes<T extends (interfaces.View | interfaces.Model)>(item: {
-  entities: Array<T>,
-  weekStart: api.ProjectWeekStartEnum
-}): Array<T> {
-
+export function transformTimes<
+  T extends interfaces.View | interfaces.Model
+>(item: { entities: Array<T>; weekStart: api.ProjectWeekStartEnum }): Array<T> {
   item.entities.forEach((x: T) => {
-
     let newFields: interfaces.FieldExt[] = [];
 
     x.fields.forEach(field => {
-
       // process only times
       if (field.field_class !== enums.FieldClassEnum.Time) {
         newFields.push(field);
@@ -23,7 +19,10 @@ export function transformTimes<T extends (interfaces.View | interfaces.Model)>(i
       }
 
       // start of check
-      if (typeof field.timeframes === 'undefined' || field.timeframes === null) {
+      if (
+        typeof field.timeframes === 'undefined' ||
+        field.timeframes === null
+      ) {
         field.timeframes = [
           enums.TimeframeEnum.Time,
           enums.TimeframeEnum.Date,
@@ -43,27 +42,30 @@ export function transformTimes<T extends (interfaces.View | interfaces.Model)>(i
           enums.TimeframeEnum.Quarter,
           enums.TimeframeEnum.QuarterOfYear,
           enums.TimeframeEnum.Minute,
-          enums.TimeframeEnum.YesNoHasValue,
+          enums.TimeframeEnum.YesNoHasValue
         ];
 
         field.timeframes_line_num = 0;
-
       } else if (!Array.isArray(field.timeframes)) {
         // error e58
-        ErrorsCollector.addError(new AmError({
-          title: `timeframes is not a List`,
-          message: `"timeframes:" must be a List of values. Try to use construction like this:
+        ErrorsCollector.addError(
+          new AmError({
+            title: `timeframes is not a List`,
+            message: `"timeframes:" must be a List of values. Try to use construction like this:
 timeframes:
 - year
 - month
 - day
 - ...`,
-          lines: [{
-            line: field.timeframes_line_num,
-            name: x.file,
-            path: x.path,
-          }],
-        }));
+            lines: [
+              {
+                line: field.timeframes_line_num,
+                name: x.file,
+                path: x.path
+              }
+            ]
+          })
+        );
         return;
       }
       // end of check
@@ -73,41 +75,49 @@ timeframes:
 
       let sqlTimestamp: string;
 
-      if ((typeof field.source === 'undefined' || field.source === null)
-        || field.source === enums.TimeSourceEnum.Timestamp) {
-        sqlTimestamp = `mprovetimestampstart` + field.sql + `mprovetimestampend`;
-
+      if (
+        typeof field.source === 'undefined' ||
+        field.source === null ||
+        field.source === enums.TimeSourceEnum.Timestamp
+      ) {
+        sqlTimestamp =
+          `mprovetimestampstart` + field.sql + `mprovetimestampend`;
       } else if (field.source === enums.TimeSourceEnum.Epoch) {
-        sqlTimestamp = `mprovetimestampstart` + `TIMESTAMP_SECONDS(${field.sql})` + `mprovetimestampend`;
-
+        sqlTimestamp =
+          `mprovetimestampstart` +
+          `TIMESTAMP_SECONDS(${field.sql})` +
+          `mprovetimestampend`;
       } else if (field.source === enums.TimeSourceEnum.YYYYMMDD) {
-        sqlTimestamp = `mprovetimestampstart` + `PARSE_TIMESTAMP('%Y%m%d', CAST(${field.sql} AS STRING))` +
+        sqlTimestamp =
+          `mprovetimestampstart` +
+          `PARSE_TIMESTAMP('%Y%m%d', CAST(${field.sql} AS STRING))` +
           `mprovetimestampend`;
       } else {
         // error e59
-        ErrorsCollector.addError(new AmError({
-          title: `wrong time source`,
-          message: `possible values for "source:" of time field are: "timestamp", "epoch", "yyyymmdd"`,
-          lines: [{
-            line: field.source_line_num,
-            name: x.file,
-            path: x.path,
-          }],
-        }));
+        ErrorsCollector.addError(
+          new AmError({
+            title: `wrong time source`,
+            message: `possible values for "source:" of time field are: "timestamp", "epoch", "yyyymmdd"`,
+            lines: [
+              {
+                line: field.source_line_num,
+                name: x.file,
+                path: x.path
+              }
+            ]
+          })
+        );
         return;
       }
 
       field.timeframes.forEach(timeframe => {
-
         let sqlTransformed: string;
         let name: string;
         let label: string;
         let result: enums.FieldExtResultEnum;
 
         switch (true) {
-
           case timeframe === enums.TimeframeEnum.DayOfWeek: {
-
             name = field.name + `___day_of_week`;
             label = `Day of Week`;
 
@@ -118,13 +128,13 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.DayOfWeekIndex: {
-
             name = field.name + `___day_of_week_index`;
             label = `Day of Week Index`;
 
-            sqlTransformed = item.weekStart === api.ProjectWeekStartEnum.Sunday
-              ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
-              : `CASE
+            sqlTransformed =
+              item.weekStart === api.ProjectWeekStartEnum.Sunday
+                ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
+                : `CASE
       WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7
       ELSE EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) - 1
     END`;
@@ -134,7 +144,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.DayOfYear: {
-
             name = field.name + `___day_of_year`;
             label = `Day of Year`;
             // no need for $week_start
@@ -145,20 +154,21 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.Week: {
-
             name = field.name + `___week`;
             label = `Week`;
 
             let dayOfYear = `EXTRACT(DAYOFYEAR FROM ${sqlTimestamp})`;
 
-            let dayOfWeekIndex = item.weekStart === api.ProjectWeekStartEnum.Sunday
-              ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
-              : `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7 ELSE ` +
-              `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) - 1 END)`;
+            let dayOfWeekIndex =
+              item.weekStart === api.ProjectWeekStartEnum.Sunday
+                ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
+                : `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7 ELSE ` +
+                  `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) - 1 END)`;
 
-            let fullWeekStartDate = item.weekStart === api.ProjectWeekStartEnum.Sunday
-              ? `CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE)`
-              : `DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE), INTERVAL 1 DAY)`;
+            let fullWeekStartDate =
+              item.weekStart === api.ProjectWeekStartEnum.Sunday
+                ? `CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE)`
+                : `DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE), INTERVAL 1 DAY)`;
 
             sqlTransformed = `CASE
       WHEN ${dayOfYear} >= ${dayOfWeekIndex} THEN ${fullWeekStartDate}
@@ -170,20 +180,20 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.WeekOfYear: {
-
             name = field.name + `___week_of_year`;
             label = `Week of Year`;
 
-            sqlTransformed = item.weekStart === api.ProjectWeekStartEnum.Sunday
-              ? `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64)`
-              : `CASE
+            sqlTransformed =
+              item.weekStart === api.ProjectWeekStartEnum.Sunday
+                ? `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64)`
+                : `CASE
       WHEN EXTRACT(DAYOFWEEK FROM TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), YEAR)) = 1 THEN ` +
-              `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN ` +
-              `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) ELSE ` +
-              `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) + 1 END)
+                  `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN ` +
+                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) ELSE ` +
+                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) + 1 END)
       ELSE (CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN ` +
-              `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) - 1 ELSE ` +
-              `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) END)
+                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) - 1 ELSE ` +
+                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) END)
     END`;
 
             result = enums.FieldExtResultEnum.Number;
@@ -191,7 +201,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.Date: {
-
             name = field.name + `___date`;
             label = `Date`;
 
@@ -202,7 +211,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.DayOfMonth: {
-
             name = field.name + `___day_of_month`;
             label = `Day of Month`;
 
@@ -213,7 +221,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.Hour: {
-
             name = field.name + `___hour`;
             label = `Hour`;
 
@@ -224,7 +231,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.HourOfDay: {
-
             name = field.name + `___hour_of_day`;
             label = `Hour of Day`;
 
@@ -234,31 +240,30 @@ timeframes:
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Hour2
-            || timeframe === enums.TimeframeEnum.Hour3
-            || timeframe === enums.TimeframeEnum.Hour4
-            || timeframe === enums.TimeframeEnum.Hour6
-            || timeframe === enums.TimeframeEnum.Hour8
-            || timeframe === enums.TimeframeEnum.Hour12: {
+          case timeframe === enums.TimeframeEnum.Hour2 ||
+            timeframe === enums.TimeframeEnum.Hour3 ||
+            timeframe === enums.TimeframeEnum.Hour4 ||
+            timeframe === enums.TimeframeEnum.Hour6 ||
+            timeframe === enums.TimeframeEnum.Hour8 ||
+            timeframe === enums.TimeframeEnum.Hour12: {
+            let reg = ApRegex.CAPTURE_DIGITS_G();
+            let r = reg.exec(timeframe);
 
-              let reg = ApRegex.CAPTURE_DIGITS_G();
-              let r = reg.exec(timeframe);
+            let num = r[1];
 
-              let num = r[1];
+            name = field.name + `___${timeframe}`;
+            label = timeframe;
 
-              name = field.name + `___${timeframe}`;
-              label = timeframe;
+            sqlTransformed =
+              `FORMAT_TIMESTAMP('%F %H', ` +
+              `TIMESTAMP_TRUNC(TIMESTAMP_ADD(${sqlTimestamp}, INTERVAL ` +
+              `MOD(-1 * EXTRACT(HOUR FROM ${sqlTimestamp}), ${num}) HOUR), HOUR))`;
 
-              sqlTransformed = `FORMAT_TIMESTAMP('%F %H', ` +
-                `TIMESTAMP_TRUNC(TIMESTAMP_ADD(${sqlTimestamp}, INTERVAL ` +
-                `MOD(-1 * EXTRACT(HOUR FROM ${sqlTimestamp}), ${num}) HOUR), HOUR))`;
-
-              result = enums.FieldExtResultEnum.Ts;
-              break;
-            }
+            result = enums.FieldExtResultEnum.Ts;
+            break;
+          }
 
           case timeframe === enums.TimeframeEnum.Minute: {
-
             name = field.name + `___minute`;
             label = `Minute`;
 
@@ -268,30 +273,29 @@ timeframes:
             break;
           }
 
-          case timeframe === enums.TimeframeEnum.Minute2
-            || timeframe === enums.TimeframeEnum.Minute3
-            || timeframe === enums.TimeframeEnum.Minute5
-            || timeframe === enums.TimeframeEnum.Minute10
-            || timeframe === enums.TimeframeEnum.Minute15
-            || timeframe === enums.TimeframeEnum.Minute30: {
+          case timeframe === enums.TimeframeEnum.Minute2 ||
+            timeframe === enums.TimeframeEnum.Minute3 ||
+            timeframe === enums.TimeframeEnum.Minute5 ||
+            timeframe === enums.TimeframeEnum.Minute10 ||
+            timeframe === enums.TimeframeEnum.Minute15 ||
+            timeframe === enums.TimeframeEnum.Minute30: {
+            let reg = ApRegex.CAPTURE_DIGITS_G();
+            let r = reg.exec(timeframe);
+            let num = r[1];
 
-              let reg = ApRegex.CAPTURE_DIGITS_G();
-              let r = reg.exec(timeframe);
-              let num = r[1];
+            name = field.name + `___${timeframe}`;
+            label = timeframe;
 
-              name = field.name + `___${timeframe}`;
-              label = timeframe;
+            sqlTransformed =
+              `FORMAT_TIMESTAMP('%F %H:%M', ` +
+              `TIMESTAMP_TRUNC(TIMESTAMP_SECONDS((UNIX_SECONDS(${sqlTimestamp}) - ` +
+              `MOD(UNIX_SECONDS(${sqlTimestamp}), (60*${num})))), MINUTE))`;
 
-              sqlTransformed = `FORMAT_TIMESTAMP('%F %H:%M', ` +
-                `TIMESTAMP_TRUNC(TIMESTAMP_SECONDS((UNIX_SECONDS(${sqlTimestamp}) - ` +
-                `MOD(UNIX_SECONDS(${sqlTimestamp}), (60*${num})))), MINUTE))`;
-
-              result = enums.FieldExtResultEnum.Ts;
-              break;
-            }
+            result = enums.FieldExtResultEnum.Ts;
+            break;
+          }
 
           case timeframe === enums.TimeframeEnum.Month: {
-
             name = field.name + `___month`;
             label = `Month`;
 
@@ -302,7 +306,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.MonthName: {
-
             name = field.name + `___month_name`;
             label = `Month Name`;
 
@@ -326,7 +329,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.MonthNum: {
-
             name = field.name + `___month_num`;
             label = `Month Num`;
 
@@ -337,19 +339,16 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.Quarter: {
-
             name = field.name + `___quarter`;
             label = `Quarter`;
 
-            sqlTransformed =
-              `FORMAT_TIMESTAMP('%Y-%m', TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), QUARTER))`;
+            sqlTransformed = `FORMAT_TIMESTAMP('%Y-%m', TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), QUARTER))`;
 
             result = enums.FieldExtResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.QuarterOfYear: {
-
             name = field.name + `___quarter_of_year`;
             label = `Quarter of Year`;
 
@@ -360,7 +359,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.Time: {
-
             name = field.name + `___time`;
             label = `Time`;
 
@@ -371,7 +369,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.TimeOfDay: {
-
             name = field.name + `___time_of_day`;
             label = `Time of Day`;
 
@@ -382,7 +379,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.Year: {
-
             name = field.name + `___year`;
             label = `Year`;
 
@@ -393,7 +389,6 @@ timeframes:
           }
 
           case timeframe === enums.TimeframeEnum.YesNoHasValue: {
-
             name = field.name + `___yesno_has_value`;
             label = `Has value (Yes / No)`;
 
@@ -408,18 +403,21 @@ timeframes:
 
           default: {
             // error e141
-            ErrorsCollector.addError(new AmError({
-              title: `wrong timeframes value`,
-              message: `found unknown "timeframes:" parameter's value '${timeframe}'`,
-              lines: [{
-                line: field.timeframes_line_num,
-                name: x.file,
-                path: x.path,
-              }],
-            }));
+            ErrorsCollector.addError(
+              new AmError({
+                title: `wrong timeframes value`,
+                message: `found unknown "timeframes:" parameter's value '${timeframe}'`,
+                lines: [
+                  {
+                    line: field.timeframes_line_num,
+                    name: x.file,
+                    path: x.path
+                  }
+                ]
+              })
+            );
             return; // next timeframe
           }
-
         }
 
         newFields.push({
@@ -446,8 +444,12 @@ timeframes:
           group_description: groupDescription,
           group_description_line_num: 0,
 
-          sql_timestamp: result === enums.FieldExtResultEnum.Ts ? sqlTimestamp : undefined,
-          sql_timestamp_name: result === enums.FieldExtResultEnum.Ts ? field.name + '___timestamp' : undefined,
+          sql_timestamp:
+            result === enums.FieldExtResultEnum.Ts ? sqlTimestamp : undefined,
+          sql_timestamp_name:
+            result === enums.FieldExtResultEnum.Ts
+              ? field.name + '___timestamp'
+              : undefined,
           sql_timestamp_real: undefined,
 
           sql: sqlTransformed,
@@ -494,7 +496,7 @@ timeframes:
           currency_prefix: undefined,
           currency_prefix_line_num: undefined,
           currency_suffix: undefined,
-          currency_suffix_line_num: undefined,
+          currency_suffix_line_num: undefined
         });
       });
 

@@ -3,21 +3,21 @@ import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 
 export function wrapField(item: {
-  wrappedFields: api.ModelField[],
-  field: interfaces.FieldExt,
-  alias: string,
-  fileName: string,
-  children: api.ModelNode[],
-  node: api.ModelNode
+  wrappedFields: api.ModelField[];
+  field: interfaces.FieldExt;
+  alias: string;
+  fileName: string;
+  children: api.ModelNode[];
+  node: api.ModelNode;
 }) {
-
   let wrappedFields = item.wrappedFields;
   let field = item.field;
   let alias = item.alias;
   let children = item.children;
   let node = item.node;
 
-  let fieldHidden = field.hidden && field.hidden.match(ApRegex.TRUE()) ? true : false;
+  let fieldHidden =
+    field.hidden && field.hidden.match(ApRegex.TRUE()) ? true : false;
 
   let forceDims: string[] = [];
 
@@ -47,13 +47,15 @@ export function wrapField(item: {
     type: <any>field.type,
     group_id: field.group_id,
     group_label: field.group_label,
-    group_description: field.group_description,
+    group_description: field.group_description
   });
 
   if (typeof field.group_id !== 'undefined' && field.group_id !== null) {
     // field should be grouped
     // find index of group node
-    let groupIndex = children.findIndex(c => c.id === `${alias}.${field.group_id}`);
+    let groupIndex = children.findIndex(
+      c => c.id === `${alias}.${field.group_id}`
+    );
 
     if (groupIndex < 0) {
       // group node not exists, add group node
@@ -65,7 +67,7 @@ export function wrapField(item: {
         hidden: fieldHidden,
         is_field: false,
         children: [],
-        node_class: api.ModelNodeNodeClassEnum.Dimension,
+        node_class: api.ModelNodeNodeClassEnum.Dimension
       });
 
       // find index of added group node
@@ -81,9 +83,8 @@ export function wrapField(item: {
         children: [],
         field_file_name: item.fileName,
         field_line_num: field.name_line_num,
-        node_class: <any>field.field_class,
+        node_class: <any>field.field_class
       });
-
     } else {
       // group node exists, add nested field node
       children[groupIndex].children.push({
@@ -95,10 +96,9 @@ export function wrapField(item: {
         children: [],
         field_file_name: item.fileName,
         field_line_num: field.name_line_num,
-        node_class: <any>field.field_class,
+        node_class: <any>field.field_class
       });
     }
-
   } else {
     // add field without grouping
     children.push({
@@ -110,7 +110,7 @@ export function wrapField(item: {
       children: [],
       field_file_name: item.fileName,
       field_line_num: field.name_line_num,
-      node_class: <any>field.field_class,
+      node_class: <any>field.field_class
     });
   }
 

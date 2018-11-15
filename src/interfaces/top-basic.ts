@@ -7,6 +7,6 @@ export interface TopBasic {
   path: string;
 
   filters: {
-    [s: string]: string[]
+    [s: string]: string[];
   };
 }

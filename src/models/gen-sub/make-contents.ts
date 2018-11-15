@@ -3,13 +3,12 @@ import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 
 export function makeContents(item: interfaces.VarsSub) {
-
   let contents: string[] = [];
 
   let myWith: string[] = [];
 
   let flats: {
-    [s: string]: number
+    [s: string]: number;
   } = {};
 
   contents.push(`FROM (`);
@@ -18,13 +17,12 @@ export function makeContents(item: interfaces.VarsSub) {
 
   let i: number = 0;
 
-
   Object.keys(item.needs_all).forEach(fieldName => {
-
-    let field = item.view.fields.find(viewField => viewField.name === fieldName);
+    let field = item.view.fields.find(
+      viewField => viewField.name === fieldName
+    );
 
     if (field.field_class === enums.FieldClassEnum.Dimension) {
-
       if (typeof field.unnest !== 'undefined' && field.unnest !== null) {
         flats[field.unnest] = 1;
       }
@@ -38,7 +36,6 @@ export function makeContents(item: interfaces.VarsSub) {
     }
   });
 
-
   if (i === 0) {
     contents.push(`    1 as no_fields_selected,`);
   }
@@ -49,15 +46,15 @@ export function makeContents(item: interfaces.VarsSub) {
   let table;
 
   if (typeof item.view.table !== 'undefined' && item.view.table !== null) {
-
     table = '`' + item.view.table + '`';
-
   } else if (item.view.permanent.match(ApRegex.TRUE())) {
-
-    table = '`' + `${item.bqProject}.mprove_${item.projectId}.${item.structId}_${item.view.name}` + '`';
-
+    table =
+      '`' +
+      `${item.bqProject}.mprove_${item.projectId}.${item.structId}_${
+        item.view.name
+      }` +
+      '`';
   } else {
-
     let derivedSqlArray = item.view.derived_table.split('\n');
 
     myWith.push(`  ${item.view.name}__derived_table AS (`);

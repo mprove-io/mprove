@@ -1,143 +1,110 @@
 let cloneRegexp = require('clone-regexp');
 
 export class ApRegex {
-
   static CONTAINS_BLOCKML_REF(): RegExp {
-    return cloneRegexp(
-      /\$\{.+\}/);
+    return cloneRegexp(/\$\{.+\}/);
   }
 
   static STARTS_WITH_DOT(): RegExp {
-    return cloneRegexp(
-      /^[.]/);
+    return cloneRegexp(/^[.]/);
   }
   static ENDS_WITH_IML(): RegExp {
-    return cloneRegexp(
-      /[.]iml$/);
+    return cloneRegexp(/[.]iml$/);
   }
   static ENDS_WITH_MD(): RegExp {
-    return cloneRegexp(
-      /[.]md$/);
+    return cloneRegexp(/[.]md$/);
   }
   static GIT_FOLDER(): RegExp {
-    return cloneRegexp(
-      /[.]git/);
+    return cloneRegexp(/[.]git/);
   }
   static IDEA_FOLDER(): RegExp {
-    return cloneRegexp(
-      /[.]idea/);
+    return cloneRegexp(/[.]idea/);
   }
   static SLASH_G(): RegExp {
-    return cloneRegexp(
-      /[/]/g);
+    return cloneRegexp(/[/]/g);
   }
   static CAPTURE_EXT(): RegExp {
-    return cloneRegexp(
-      /([.][\s\S]+)$/);
+    return cloneRegexp(/([.][\s\S]+)$/);
   }
   static TRIPLE_UNDERSCORE_G(): RegExp {
-    return cloneRegexp(
-      /___/g);
+    return cloneRegexp(/___/g);
   }
   static COMMENTS_G(): RegExp {
-    return cloneRegexp(
-      /[#][\s\S]*/g);
+    return cloneRegexp(/[#][\s\S]*/g);
   }
   static CAPTURE_PARAMETER_AND_VALUE(): RegExp {
-    return cloneRegexp(
-      /([^:]*):([^\n]*)/);
+    return cloneRegexp(/([^:]*):([^\n]*)/);
   }
   static CAPTURE_BETWEEN_LINE_NUM(): RegExp {
-    return cloneRegexp(
-      /_line_num___(.+?)___line_num_/);
+    return cloneRegexp(/_line_num___(.+?)___line_num_/);
   }
   static BETWEEN_LINE_NUM_G(): RegExp {
-    return cloneRegexp(
-      /_line_num___.+?___line_num_/g);
+    return cloneRegexp(/_line_num___.+?___line_num_/g);
   }
   static CAPTURE_WITHOUT_EDGE_WHITESPACES(): RegExp {
-    return cloneRegexp(
-      /^\s*([\s\S]+?)\s*$/);
+    return cloneRegexp(/^\s*([\s\S]+?)\s*$/);
   }
   static CAPTURE_WITHOUT_END_LINE_NUMBERS(): RegExp {
-    return cloneRegexp(
-      /([\s\S]+?)LineNumbers$/);
+    return cloneRegexp(/([\s\S]+?)LineNumbers$/);
   }
   static ENDS_WITH_LINE_NUM(): RegExp {
-    return cloneRegexp(
-      /_line_num$/);
+    return cloneRegexp(/_line_num$/);
   }
   static TRUE_FALSE(): RegExp {
-    return cloneRegexp(
-      /^(?:true|false)$/);
+    return cloneRegexp(/^(?:true|false)$/);
   }
   static TRUE(): RegExp {
-    return cloneRegexp(
-      /^true$/);
+    return cloneRegexp(/^true$/);
   }
   static FALSE(): RegExp {
-    return cloneRegexp(
-      /^false$/);
+    return cloneRegexp(/^false$/);
   }
   static FIELD_DECLARATION_G(): RegExp {
-    return cloneRegexp(
-      /^(?:dimension|time|measure|calculation|filter)$/g);
+    return cloneRegexp(/^(?:dimension|time|measure|calculation|filter)$/g);
   }
   static DIGITS_1_TO_99_G(): RegExp {
-    return cloneRegexp(
-      /^([123456789]\d?)$/g);
+    return cloneRegexp(/^([123456789]\d?)$/g);
   }
   static CAPTURE_DIGITS_G(): RegExp {
-    return cloneRegexp(
-      /(\d+)/g);
+    return cloneRegexp(/(\d+)/g);
   }
   static CAPTURE_DIGITS_START_TO_END_G(): RegExp {
-    return cloneRegexp(
-      /^(\d+)$/g);
+    return cloneRegexp(/^(\d+)$/g);
   }
   static CAPTURE_MINUS_DIGITS_START_TO_END_G(): RegExp {
-    return cloneRegexp(
-      /^([-]?\d+)$/g);
+    return cloneRegexp(/^([-]?\d+)$/g);
   }
   static CAPTURE_RGB_G(): RegExp {
-    return cloneRegexp(
-      /^((?:rgb)\(\d+\,\s?\d+\,\s?\d+\))$/g);
+    return cloneRegexp(/^((?:rgb)\(\d+\,\s?\d+\,\s?\d+\))$/g);
   }
   static CAPTURE_RGBA_G(): RegExp {
     return cloneRegexp(
-      /^((?:rgba)\(\d+\,\s?\d+\,\s?\d+\,\s?\d+(?:[.]\d+)?\))$/g);
+      /^((?:rgba)\(\d+\,\s?\d+\,\s?\d+\,\s?\d+(?:[.]\d+)?\))$/g
+    );
   }
   static CAPTURE_FLOAT_START_TO_END_G(): RegExp {
-    return cloneRegexp(
-      /^(\d+[.]\d+)$/g);
+    return cloneRegexp(/^(\d+[.]\d+)$/g);
   }
   static CAPTURE_REFS_G(): RegExp {
-    return cloneRegexp(
-      /\$\{([^}]+)\}/g);
+    return cloneRegexp(/\$\{([^}]+)\}/g);
   }
   static CAPTURE_SPECIAL_CHARS_G(): RegExp {
-    return cloneRegexp(
-      /([^a-zA-Z0-9_])/g);
+    return cloneRegexp(/([^a-zA-Z0-9_])/g);
   }
   static CAPTURE_NOT_ALLOWED_VIEW_REF_CHARS_G(): RegExp {
-    return cloneRegexp(
-      /([^a-zA-Z0-9_])/g);
+    return cloneRegexp(/([^a-zA-Z0-9_])/g);
   }
   static CAPTURE_NOT_ALLOWED_MODEL_REF_CHARS_G(): RegExp {
-    return cloneRegexp(
-      /([^a-zA-Z0-9_.])/g);
+    return cloneRegexp(/([^a-zA-Z0-9_.])/g);
   }
   static CAPTURE_SINGLE_REF(): RegExp {
-    return cloneRegexp(
-      /\$\{(\w+?)\}/);
+    return cloneRegexp(/\$\{(\w+?)\}/);
   }
   static CAPTURE_SINGLE_REF_G(): RegExp {
-    return cloneRegexp(
-      /\$\{(\w+?)\}/g);
+    return cloneRegexp(/\$\{(\w+?)\}/g);
   }
   static WORD_CHARACTERS(): RegExp {
-    return cloneRegexp(
-      /^(?:\w+)$/);
+    return cloneRegexp(/^(?:\w+)$/);
   }
   static CAPTURE_START_FIELD_TARGET_END(): RegExp {
     return cloneRegexp(
@@ -145,131 +112,116 @@ export class ApRegex {
     );
   }
   static CAPTURE_DOUBLE_REF_G(): RegExp {
-    return cloneRegexp(
-      /\$\{(\w+)[.](\w+)\}/g);
+    return cloneRegexp(/\$\{(\w+)[.](\w+)\}/g);
   }
 
   static CAPTURE_VIEW_REF_G(): RegExp {
-    return cloneRegexp(
-      /\$\{(\w+)\s+[Aa][Ss]\s+(\w+)\}/g);
+    return cloneRegexp(/\$\{(\w+)\s+[Aa][Ss]\s+(\w+)\}/g);
   }
 
   static CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G(): RegExp {
-    return cloneRegexp(
-      /^\s*(\w+)[.](\w+)\s*$/g);
+    return cloneRegexp(/^\s*(\w+)[.](\w+)\s*$/g);
   }
 
   static CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G(): RegExp {
-    return cloneRegexp(
-      /^\s*(\w+)[.](\w+)\s*$/g);
+    return cloneRegexp(/^\s*(\w+)[.](\w+)\s*$/g);
   }
   static CAPTURE_WORD_BETWEEN_WHITESPACES(): RegExp {
-    return cloneRegexp(
-      /^\s*(\w+)\s*$/);
+    return cloneRegexp(/^\s*(\w+)\s*$/);
   }
   static CAPTURE_TRIPLE_REF_WITHOUT_BRACKETS_G(): RegExp {
-    return cloneRegexp(
-      /^(\w+)[.](\w+)[.](\w+)$/g);
+    return cloneRegexp(/^(\w+)[.](\w+)[.](\w+)$/g);
   }
   static CAPTURE_SORT_WITH_OPTIONAL_DESC_G(): RegExp {
-    return cloneRegexp(
-      /^\s*(\w+[.]\w+)\s*(desc)?\s*$/g);
+    return cloneRegexp(/^\s*(\w+[.]\w+)\s*(desc)?\s*$/g);
   }
 
   static TIMESTAMP_START_END(): RegExp {
     return cloneRegexp(
-      /([\s\S]*)mprovetimestampstart([\s\S]*?)mprovetimestampend([\s\S]*)/);
+      /([\s\S]*)mprovetimestampstart([\s\S]*?)mprovetimestampend([\s\S]*)/
+    );
   }
 
   static APPLY_FILTER(): RegExp {
     return cloneRegexp(
-      /^([\s\S]*)\{\%\s*apply_filter\s*(\w+)\s*\%\}\s?(.+?)\s?\{\%\s*end_apply_filter\s*\%\}([\s\S]*)$/);
+      /^([\s\S]*)\{\%\s*apply_filter\s*(\w+)\s*\%\}\s?(.+?)\s?\{\%\s*end_apply_filter\s*\%\}([\s\S]*)$/
+    );
   }
-
 
   // BRICK
   static BRICK_IS_NULL(): RegExp {
-    return cloneRegexp(
-      /^(not\s+)?(null)$/g);
+    return cloneRegexp(/^(not\s+)?(null)$/g);
   }
   static BRICK_IS_ANY_VALUE(): RegExp {
-    return cloneRegexp(
-      /^any$/g);
+    return cloneRegexp(/^any$/g);
   }
 
   // BRICK_NUMBER
   static BRICK_NUMBER_NOT_AND_DIGITS(): RegExp {
     return cloneRegexp(
-      /^(not\s+)?(?:[-]?\d+(?:[.]\d+)?)(?:\s*,\s*[-]?\d+(?:[.]\d+)?)*$/g);
+      /^(not\s+)?(?:[-]?\d+(?:[.]\d+)?)(?:\s*,\s*[-]?\d+(?:[.]\d+)?)*$/g
+    );
   }
   static BRICK_NUMBER_EQUAL_TO(): RegExp {
-    return cloneRegexp(
-      /\s*([-]?\d+(?:[.]\d+)?)\s*$/g); // without ^, can contain 'not'
+    return cloneRegexp(/\s*([-]?\d+(?:[.]\d+)?)\s*$/g); // without ^, can contain 'not'
   }
 
   static BRICK_NUMBER_IS_GREATER_THAN_OR_EQUAL_TO(): RegExp {
-    return cloneRegexp(
-      /^>=\s*([-]?\d+(?:\.\d+)?)$/g);
+    return cloneRegexp(/^>=\s*([-]?\d+(?:\.\d+)?)$/g);
   }
   static BRICK_NUMBER_IS_GREATER_THAN(): RegExp {
-    return cloneRegexp(
-      /^>\s*([-]?\d+(?:\.\d+)?)$/g);
+    return cloneRegexp(/^>\s*([-]?\d+(?:\.\d+)?)$/g);
   }
   static BRICK_NUMBER_IS_LESS_THAN_OR_EQUAL_TO(): RegExp {
-    return cloneRegexp(
-      /^<=\s*([-]?\d+(?:\.\d+)?)$/g);
+    return cloneRegexp(/^<=\s*([-]?\d+(?:\.\d+)?)$/g);
   }
   static BRICK_NUMBER_IS_LESS_THAN(): RegExp {
-    return cloneRegexp(
-      /^<\s*([-]?\d+(?:\.\d+)?)$/g);
+    return cloneRegexp(/^<\s*([-]?\d+(?:\.\d+)?)$/g);
   }
   static BRICK_NUMBER_IS_BETWEEN_INCLUSIVE(): RegExp {
     return cloneRegexp(
-      /^(not\s+)?\[\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\]/g);
+      /^(not\s+)?\[\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\]/g
+    );
   }
   static BRICK_NUMBER_IS_BETWEEN_LEFT_INCLUSIVE(): RegExp {
     return cloneRegexp(
-      /^(not\s+)?\[\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\)/g);
+      /^(not\s+)?\[\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\)/g
+    );
   }
   static BRICK_NUMBER_IS_BETWEEN_RIGHT_INCLUSIVE(): RegExp {
     return cloneRegexp(
-      /^(not\s+)?\(\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\]/g);
+      /^(not\s+)?\(\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\]/g
+    );
   }
   static BRICK_NUMBER_IS_BETWEEN_EXCLUSIVE(): RegExp {
     return cloneRegexp(
-      /^(not\s+)?\(\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\)/g);
+      /^(not\s+)?\(\s*([-]?\d+(?:\.\d+)?)\s*,\s*([-]?\d+(?:\.\d+)?)\s*\)/g
+    );
   }
 
   // BRICK_STRING
   static BRICK_STRING_IS_EQUAL_TO(): RegExp {
-    return cloneRegexp(
-      /^(not\s+)?-(.+)-$/g);
+    return cloneRegexp(/^(not\s+)?-(.+)-$/g);
   }
   static BRICK_STRING_CONTAINS(): RegExp {
-    return cloneRegexp(
-      /^(not\s+)?%(.+)%$/g);
+    return cloneRegexp(/^(not\s+)?%(.+)%$/g);
   }
   static BRICK_STRING_STARTS_WITH(): RegExp {
-    return cloneRegexp(
-      /^(.+)%(\s+not)?$/g);
+    return cloneRegexp(/^(.+)%(\s+not)?$/g);
   }
   static BRICK_STRING_ENDS_WITH(): RegExp {
-    return cloneRegexp(
-      /^(not\s+)?%(.+)$/g);
+    return cloneRegexp(/^(not\s+)?%(.+)$/g);
   }
   static BRICK_STRING_IS_BLANK(): RegExp {
-    return cloneRegexp(
-      /^(not\s+)?(blank)$/g);
+    return cloneRegexp(/^(not\s+)?(blank)$/g);
   }
 
   // BRICK_YESNO
   static BRICK_YESNO_IS_YES(): RegExp {
-    return cloneRegexp(
-      /^yes$/g);
+    return cloneRegexp(/^yes$/g);
   }
   static BRICK_YESNO_IS_NO(): RegExp {
-    return cloneRegexp(
-      /^no$/g);
+    return cloneRegexp(/^no$/g);
   }
 
   // BRICK_TS
@@ -277,44 +229,46 @@ export class ApRegex {
     return cloneRegexp(
       new RegExp(
         [
-          '^(last|before|after)',                                        // way
-          '(?:\\s+(?:(\\d+)',                                             // integer
-          '\\s+(minutes|hours|days|weeks|months|quarters|years))',        // unit
-          '|(?:\\s+(\\d\\d\\d\\d)',                                       // year
-          '(?:\\/(\\d\\d)',                                               // month
-          '(?:\\/(\\d\\d)',                                               // day
-          '(?:\\s+(\\d\\d)',                                              // hour
-          '(?::(\\d\\d)',                                                 // minute
-          '?)?)?)?)?))',                                                  //
-          '(?:\\s+(complete))?',                                          // complete
-          '(?:\\s+(ago|in\\s*future))?',                                  // when
-          '(?:\\s+(plus\\s*current))?',                                   // plus_current
-          '(?:\\s+for\\s+(\\d+)\\s+',                                     // for_integer
-          '(minutes|hours|days|weeks|months|quarters|years))?',           // for_unit
-          '$',                                                            //
+          '^(last|before|after)', // way
+          '(?:\\s+(?:(\\d+)', // integer
+          '\\s+(minutes|hours|days|weeks|months|quarters|years))', // unit
+          '|(?:\\s+(\\d\\d\\d\\d)', // year
+          '(?:\\/(\\d\\d)', // month
+          '(?:\\/(\\d\\d)', // day
+          '(?:\\s+(\\d\\d)', // hour
+          '(?::(\\d\\d)', // minute
+          '?)?)?)?)?))', //
+          '(?:\\s+(complete))?', // complete
+          '(?:\\s+(ago|in\\s*future))?', // when
+          '(?:\\s+(plus\\s*current))?', // plus_current
+          '(?:\\s+for\\s+(\\d+)\\s+', // for_integer
+          '(minutes|hours|days|weeks|months|quarters|years))?', // for_unit
+          '$' //
         ].join('')
-      ));
+      )
+    );
   }
   static BRICK_TS_IS_BETWEEN_ON(): RegExp {
     return cloneRegexp(
       new RegExp(
         [
-          '^on\\s+',                                        //
-          '(\\d\\d\\d\\d)',                                  // year
-          '(?:\\/(\\d\\d)',                                  // month
-          '(?:\\/(\\d\\d)',                                  // day
-          '(?:\\s+(\\d\\d)',                                 // hour
-          '(?::(\\d\\d)',                                    // minute
-          '?)?)?)?)?',                                       //
-          '(?:\\s+to\\s+',                                   //
-          '(\\d\\d\\d\\d)',                                  // to_year
-          '(?:\\/(\\d\\d)',                                  // to_month
-          '(?:\\/(\\d\\d)',                                  // to_day
-          '(?:\\s+(\\d\\d)',                                 // to_hour
-          '(?::(\\d\\d)',                                    // to_minute
-          '?)?)?)?)?)?$',                                   //
+          '^on\\s+', //
+          '(\\d\\d\\d\\d)', // year
+          '(?:\\/(\\d\\d)', // month
+          '(?:\\/(\\d\\d)', // day
+          '(?:\\s+(\\d\\d)', // hour
+          '(?::(\\d\\d)', // minute
+          '?)?)?)?)?', //
+          '(?:\\s+to\\s+', //
+          '(\\d\\d\\d\\d)', // to_year
+          '(?:\\/(\\d\\d)', // to_month
+          '(?:\\/(\\d\\d)', // to_day
+          '(?:\\s+(\\d\\d)', // to_hour
+          '(?::(\\d\\d)', // to_minute
+          '?)?)?)?)?)?$' //
         ].join('')
-      ));
+      )
+    );
   }
 
   // BRICK_DAY_OF_WEEK
@@ -329,7 +283,7 @@ export class ApRegex {
           '|thursday',
           '|friday',
           '|saturday',
-          '|sunday)$',
+          '|sunday)$'
         ].join(''),
         'i'
       )
@@ -338,12 +292,10 @@ export class ApRegex {
 
   // BRICK_DAY_OF_WEEK_INDEX
   static BRICK_DAY_OF_WEEK_INDEX_IS_EQUAL(): RegExp {
-    return cloneRegexp(
-      /^(not\s+)?(?:[1-7](\s*,\s*[1-7])*)$/);
+    return cloneRegexp(/^(not\s+)?(?:[1-7](\s*,\s*[1-7])*)$/);
   }
   static BRICK_DAY_OF_WEEK_INDEX_EQUAL_TO(): RegExp {
-    return cloneRegexp(
-      /\s*([1-7])\s*$/);  // without ^, can contain 'not'
+    return cloneRegexp(/\s*([1-7])\s*$/); // without ^, can contain 'not'
   }
 
   // BRICK_MONTH_NAME
@@ -363,20 +315,19 @@ export class ApRegex {
           '|september',
           '|october',
           '|november',
-          '|december)$',
+          '|december)$'
         ].join(''),
         'i'
-      ));
+      )
+    );
   }
 
   // BRICK_QUARTER_OF_YEAR
   static BRICK_QUARTER_OF_YEAR_IS(): RegExp {
-    return cloneRegexp(
-      /^(not\s+)?(q1|q2|q3|q4)$/);
+    return cloneRegexp(/^(not\s+)?(q1|q2|q3|q4)$/);
   }
 
   static replaceSingleRefs(input: string, ref: string, val: string): string {
-
     // does not handle special characters
     // let reg = new RegExp(`\\$\\{${ref}\\}`, 'g');
     // return input.replace(reg, `(${val})`);
@@ -384,8 +335,12 @@ export class ApRegex {
     return input.split(`\$\{${ref}\}`).join(`(${val})`);
   }
 
-  static replaceAndConvert(input: string, depValue: string, asName: string, depName: string): string {
-
+  static replaceAndConvert(
+    input: string,
+    depValue: string,
+    asName: string,
+    depName: string
+  ): string {
     let reg = new RegExp(`\\$\\{(\\w+?)\\}`, 'g');
 
     let ins = depValue.replace(reg, `\$\{${asName}.$1\}`);
@@ -396,7 +351,6 @@ export class ApRegex {
   }
 
   static replaceMproveFilter(input: string, target: string): string {
-
     let reg1 = new RegExp(`^\\s*([\\s\\S]*)`);
 
     input = input.replace(reg1, `$1`);
@@ -407,61 +361,58 @@ export class ApRegex {
   }
 
   static removeLastN(input: string): string {
-
     let reg = new RegExp(`^([\\s\\S]*)\\n$`, 'g');
 
     return input.replace(reg, `$1`);
   }
 
   static removeBracketsOnDoubles(input: string): string {
-
     let reg = new RegExp(`\\$\\{([^}]+)\\}`, 'g');
 
     return input.replace(reg, `$1`);
   }
 
-  static removeBracketsOnSinglesWithAlias(input: string, alias: string): string {
-
+  static removeBracketsOnSinglesWithAlias(
+    input: string,
+    alias: string
+  ): string {
     let reg = new RegExp(`\\$\\{([^}.]+)\\}`, 'g');
 
     return input.replace(reg, `${alias}.$1`);
   }
 
   static removeBracketsOnSingles(input: string): string {
-
     let reg = new RegExp(`\\$\\{([^}.]+)\\}`, 'g');
 
     return input.replace(reg, `$1`);
   }
 
   static removeBracketsOnCalculationSinglesMf(input: string): string {
-
     let reg = new RegExp(`\\$\\{([^}.]+)\\}`, 'g');
 
     return input.replace(reg, `mf_$1`);
   }
 
-  static removeBracketsOnCalculationSinglesWithAlias(input: string, alias: string): string {
-
+  static removeBracketsOnCalculationSinglesWithAlias(
+    input: string,
+    alias: string
+  ): string {
     let reg = new RegExp(`\\$\\{([^}.]+)\\}`, 'g');
 
     return input.replace(reg, `${alias}\_$1`);
   }
 
   static removeBracketsOnCalculationSingles(input: string): string {
-
     let reg = new RegExp(`\\$\\{([^}.]+)\\}`, 'g');
 
     return input.replace(reg, `$1`);
   }
 
   static removeBracketsOnCalculationDoubles(input: string): string {
-
     let reg = new RegExp(`\\$\\{([^}.]+)[.]([^}.]+)\\}`, 'g');
 
     return input.replace(reg, `$1\_$2`);
   }
-
 
   // static CAPTURE_VIEW_REF_G(): RegExp {
   //   return cloneRegexp(
@@ -469,7 +420,6 @@ export class ApRegex {
   // }
 
   static replaceViewRefs(input: string, parentViewName: string): string {
-
     let reg = new RegExp(`\\$\\{(\\w+)\\s+[Aa][Ss]\\s+(\\w+)\\}`, 'g');
     // let reg = new RegExp(`\\$\\{([^}.]+)[.]([^}.]+)\\}`, 'g');
 
@@ -478,7 +428,6 @@ export class ApRegex {
   }
 
   static removeBracketsOnViewFieldRefs(input: string): string {
-
     let reg = new RegExp(`\\$\\{([^}.]+)[.]([^}.]+)\\}`, 'g');
 
     return input.replace(reg, `$1.$2`);
@@ -493,4 +442,3 @@ export class ApRegex {
 //   console.log('works');
 //   return cloneRegexp(arg);
 // }
-

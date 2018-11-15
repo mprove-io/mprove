@@ -1,7 +1,6 @@
 import { interfaces } from '../../barrels/interfaces';
 
 export function composeMain(item: interfaces.VarsSub) {
-
   let main: string[] = [];
 
   main.push(`WITH`);
@@ -21,7 +20,6 @@ export function composeMain(item: interfaces.VarsSub) {
   main = main.concat(item.contents.map(s => `    ${s}`));
 
   if (item.group_main_by.length > 0) {
-
     let groupMainByString = item.group_main_by.join(`, `);
 
     main.push(`    GROUP BY ${groupMainByString}`);

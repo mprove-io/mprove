@@ -2,28 +2,24 @@ import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
 
 export function makePdts(item: {
-  views: interfaces.View[],
-  udfs_dict: interfaces.UdfsDict,
-  structId: string
+  views: interfaces.View[];
+  udfs_dict: interfaces.UdfsDict;
+  structId: string;
 }) {
-
   let pdts: interfaces.Pdt[] = [];
 
   item.views.forEach(x => {
-
-    if (typeof x.derived_table !== 'undefined'
-      && x.derived_table !== null
-      && x.permanent.match(ApRegex.TRUE())) {
-
+    if (
+      typeof x.derived_table !== 'undefined' &&
+      x.derived_table !== null &&
+      x.permanent.match(ApRegex.TRUE())
+    ) {
       let permanentTable: string[] = [];
 
       permanentTable.push('#standardSQL');
 
-      if (typeof x.udfs !== 'undefined'
-        && x.udfs !== null) {
-
+      if (typeof x.udfs !== 'undefined' && x.udfs !== null) {
         x.udfs.forEach(udf => {
-
           permanentTable.push(item.udfs_dict[udf]);
         });
       }
@@ -50,7 +46,7 @@ export function makePdts(item: {
         name: item.structId + '_' + x.name,
         sql: permanentTable,
         pdt_deps: ptdDeps,
-        pdt_deps_all: ptdDepsAll,
+        pdt_deps_all: ptdDepsAll
       });
     }
   });
