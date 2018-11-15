@@ -1,18 +1,18 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "prettier.disableLanguages": ["vue", "html"],
+  "prettier.disableLanguages": ["html"],
   "html.format.wrapAttributes": "force-aligned",
   "tslint.ignoreDefinitionFiles": false,
   "search.exclude": {
     "**/node_modules": true,
-    "**/dist": true,
-  },  
+    "**/dist": true
+  },
   "files.associations": {
     "*.dashboard": "yaml",
     "*.model": "yaml",
     "*.view": "yaml",
     "*.udf": "yaml"
-  }, 
+  },
   "editor.links": false,
   "cSpell.words": [
     "Octokit",
@@ -42,5 +42,5 @@
     "udfs",
     "varchar",
     "webhook"
-  ],
+  ]
 }
