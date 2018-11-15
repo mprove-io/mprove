@@ -1,0 +1,8 @@
+{
+  "deprecation": {
+    "severity": "warn"
+  },
+  "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
+  "no-use-before-declare": true,
+  "no-null-keyword": true
+}
