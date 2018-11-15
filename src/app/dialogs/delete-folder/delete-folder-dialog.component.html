@@ -1,20 +1,22 @@
 <div class="mp-min-width-2 mp-max-width-3">
+  <mat-toolbar color="primary">Delete {{ data.node_id }} folder</mat-toolbar>
 
-  <mat-toolbar color="primary">Delete {{data.node_id}} folder</mat-toolbar>
+  <br />
+  <p>Are you sure you wish to delete {{ data.node_id }} folder?</p> <br />
 
-  <br>
-  <p>Are you sure you wish to delete {{data.node_id}} folder?</p>
-  <br>
-
-  <button type="submit"
-          color="warn"
-          mat-raised-button
-          (click)="onSubmit(); dialogRef.close()">Yes, Delete
+  <button
+    type="submit"
+    color="warn"
+    mat-raised-button
+    (click)="onSubmit(); dialogRef.close()"
+    >Yes, Delete
   </button>
 
-  <button type="reset"
-          class="mp-cancel"
-          mat-raised-button
-          (click)="dialogRef.close()">Cancel
+  <button
+    type="reset"
+    class="mp-cancel"
+    mat-raised-button
+    (click)="dialogRef.close()"
+    >Cancel
   </button>
 </div>

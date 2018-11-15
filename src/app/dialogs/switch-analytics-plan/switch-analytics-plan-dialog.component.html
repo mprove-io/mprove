@@ -1,43 +1,59 @@
 <div class="mp-min-width-1 mp-max-width-2">
-
   <mat-toolbar color="primary">
-    {{data.target_plan_id >= selectedProject.analytics_plan_id ? 'Upgrade' : 'Downgrade'}} {{selectedProject.project_id}} project
-    Subscription plan</mat-toolbar>
+    {{
+      data.target_plan_id >= selectedProject.analytics_plan_id
+        ? 'Upgrade'
+        : 'Downgrade'
+    }}
+    {{ selectedProject.project_id }} project Subscription plan</mat-toolbar
+  >
 
-  <br>
+  <br />
 
   <p>The plan will be updated instantly.</p>
 
-  <br>
+  <br />
 
   <p *ngIf="data.target_plan_id >= selectedProject.analytics_plan_id">
-    The payment will be taken equal to the difference between the price of the target plan and the price of the maximum plan
-    in the current period, taking into account the number of remaining days in the current period.
+    The payment will be taken equal to the difference between the price of the
+    target plan and the price of the maximum plan in the current period, taking
+    into account the number of remaining days in the current period.
   </p>
 
   <p *ngIf="data.target_plan_id < selectedProject.analytics_plan_id">
-    Features of a higher plan will become unavailable immediately after switching.
+    Features of a higher plan will become unavailable immediately after
+    switching.
   </p>
 
-  <br>
+  <br />
 
-  <p>The subsequent monthly payments will be equal to the price of the target plan.</p>
+  <p
+    >The subsequent monthly payments will be equal to the price of the target
+    plan.</p
+  >
 
-  <br>
-  <br>
+  <br />
+  <br />
 
-
-  <button type="submit"
-          color="primary"
-          mat-raised-button
-          (click)="switchPlan(); dialogRef.close()">
-    {{data.target_plan_id >= selectedProject.analytics_plan_id ? 'Upgrade' : 'Downgrade'}} to {{toPlan.name}}
+  <button
+    type="submit"
+    color="primary"
+    mat-raised-button
+    (click)="switchPlan(); dialogRef.close()"
+  >
+    {{
+      data.target_plan_id >= selectedProject.analytics_plan_id
+        ? 'Upgrade'
+        : 'Downgrade'
+    }}
+    to {{ toPlan.name }}
   </button>
 
-  <button type="reset"
-          class="mp-cancel"
-          mat-raised-button
-          (click)="dialogRef.close()">No
+  <button
+    type="reset"
+    class="mp-cancel"
+    mat-raised-button
+    (click)="dialogRef.close()"
+    >No
   </button>
-
 </div>

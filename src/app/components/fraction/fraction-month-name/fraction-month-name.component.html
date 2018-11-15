@@ -1,83 +1,137 @@
-<div fxLayout="row"
-     fxLayoutGap="20px"
-     fxLayoutAlign="start center">
-
-  <div fxFlex="40px"
-       class="ml-10">
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.Or)">OR</div>
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.And)">AND</div>
+<div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start center">
+  <div fxFlex="40px" class="ml-10">
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.Or"
+      >OR</div
+    >
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.And"
+      >AND</div
+    >
   </div>
 
   <mat-form-field>
-    <mat-select class="mp-fraction-type-select-width-230"
-                [(ngModel)]="fraction.type"
-                name="fractionMonthNameType"
-                (selectionChange)="typeChange($event)">
+    <mat-select
+      class="mp-fraction-type-select-width-230"
+      [(ngModel)]="fraction.type"
+      name="fractionMonthNameType"
+      (selectionChange)="typeChange($event)"
+    >
+      <mat-option
+        [value]="fractionTypeEnum.MonthNameIsAnyValue"
+        name="fractionMonthNameTypeIsAnyValue"
+        >is any value</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.MonthNameIsAnyValue"
-                  name="fractionMonthNameTypeIsAnyValue">is any value</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.MonthNameIs"
+        name="fractionMonthNameTypeIs"
+        >is</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.MonthNameIs"
-                  name="fractionMonthNameTypeIs">is</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.MonthNameIsNull"
+        name="fractionMonthNameTypeIsNull"
+        >is null</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.MonthNameIsNull"
-                  name="fractionMonthNameTypeIsNull">is null</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.MonthNameIsNot"
+        name="fractionMonthNameTypeIsNot"
+        >is not</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.MonthNameIsNot"
-                  name="fractionMonthNameTypeIsNot">is not</mat-option>
-
-      <mat-option [value]="fractionTypeEnum.MonthNameIsNotNull"
-                  name="fractionMonthNameTypeIsNotNull">is not null</mat-option>
-
+      <mat-option
+        [value]="fractionTypeEnum.MonthNameIsNotNull"
+        name="fractionMonthNameTypeIsNotNull"
+        >is not null</mat-option
+      >
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field *ngIf="fraction.type === fractionTypeEnum.MonthNameIs
-    || fraction.type === fractionTypeEnum.MonthNameIsNot">
+  <mat-form-field
+    *ngIf="
+      fraction.type === fractionTypeEnum.MonthNameIs ||
+      fraction.type === fractionTypeEnum.MonthNameIsNot
+    "
+  >
+    <mat-select
+      [(ngModel)]="fraction.month_name_value"
+      name="fractionMonthNameValue"
+      (selectionChange)="monthNameValueChange($event)"
+    >
+      <mat-option
+        [value]="fractionMonthNameValueEnum.January"
+        name="fractionMonthNameValueJanuary"
+        >January</mat-option
+      >
 
-    <mat-select [(ngModel)]="fraction.month_name_value"
-                name="fractionMonthNameValue"
-                (selectionChange)="monthNameValueChange($event)">
+      <mat-option
+        [value]="fractionMonthNameValueEnum.February"
+        name="fractionMonthNameValueFebruary"
+        >February</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.January"
-                  name="fractionMonthNameValueJanuary">January</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.March"
+        name="fractionMonthNameValueMarch"
+        >March</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.February"
-                  name="fractionMonthNameValueFebruary">February</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.April"
+        name="fractionMonthNameValueApril"
+        >April</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.March"
-                  name="fractionMonthNameValueMarch">March</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.May"
+        name="fractionMonthNameValueMay"
+        >May</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.April"
-                  name="fractionMonthNameValueApril">April</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.June"
+        name="fractionMonthNameValueJune"
+        >June</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.May"
-                  name="fractionMonthNameValueMay">May</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.July"
+        name="fractionMonthNameValueJuly"
+        >July</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.June"
-                  name="fractionMonthNameValueJune">June</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.August"
+        name="fractionMonthNameValueAugust"
+        >August</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.July"
-                  name="fractionMonthNameValueJuly">July</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.September"
+        name="fractionMonthNameValueSeptember"
+        >September</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.August"
-                  name="fractionMonthNameValueAugust">August</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.October"
+        name="fractionMonthNameValueOctober"
+        >October</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.September"
-                  name="fractionMonthNameValueSeptember">September</mat-option>
+      <mat-option
+        [value]="fractionMonthNameValueEnum.November"
+        name="fractionMonthNameValueNovember"
+        >November</mat-option
+      >
 
-      <mat-option [value]="fractionMonthNameValueEnum.October"
-                  name="fractionMonthNameValueOctober">October</mat-option>
-
-      <mat-option [value]="fractionMonthNameValueEnum.November"
-                  name="fractionMonthNameValueNovember">November</mat-option>
-
-      <mat-option [value]="fractionMonthNameValueEnum.December"
-                  name="fractionMonthNameValueDecember">December</mat-option>
-
+      <mat-option
+        [value]="fractionMonthNameValueEnum.December"
+        name="fractionMonthNameValueDecember"
+        >December</mat-option
+      >
     </mat-select>
   </mat-form-field>
 
-  <!--MonthNameIsNull-->
-  <!--MonthNameIsNotNull-->
+  <!-- MonthNameIsNull -->
+  <!-- MonthNameIsNotNull -->
 </div>

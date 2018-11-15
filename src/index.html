@@ -1,58 +1,106 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <base href="/" />
+    <title>Mprove App</title>
 
-<head>
-  <base href="/">
-  <title>Mprove App</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link
+      rel="shortcut icon"
+      href="/assets/app/favicon.ico"
+      type="image/x-icon"
+    />
+    <link rel="icon" href="/assets/app/favicon.ico" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css"
+    />
 
-  <meta charset='utf-8'>
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta http-equiv="x-ua-compatible"
-        content="ie=edge">
-  <link rel="shortcut icon"
-        href="/assets/app/favicon.ico"
-        type="image/x-icon">
-  <link rel="icon"
-        href="/assets/app/favicon.ico"
-        type="image/x-icon">
-  <link href='https://fonts.googleapis.com/css?family=Roboto'
-        rel='stylesheet'
-        type='text/css'>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" />
+    <script>
+      !(function() {
+        var analytics = (window.analytics = window.analytics || []);
+        if (!analytics.initialize)
+          if (analytics.invoked)
+            window.console &&
+              console.error &&
+              console.error('Segment snippet included twice.');
+          else {
+            analytics.invoked = !0;
+            analytics.methods = [
+              'trackSubmit',
+              'trackClick',
+              'trackLink',
+              'trackForm',
+              'pageview',
+              'identify',
+              'reset',
+              'group',
+              'track',
+              'ready',
+              'alias',
+              'debug',
+              'page',
+              'once',
+              'off',
+              'on'
+            ];
+            analytics.factory = function(t) {
+              return function() {
+                var e = Array.prototype.slice.call(arguments);
+                e.unshift(t);
+                analytics.push(e);
+                return analytics;
+              };
+            };
+            for (var t = 0; t < analytics.methods.length; t++) {
+              var e = analytics.methods[t];
+              analytics[e] = analytics.factory(e);
+            }
+            analytics.load = function(t, e) {
+              var n = document.createElement('script');
+              n.type = 'text/javascript';
+              n.async = !0;
+              n.src =
+                'https://cdn.segment.com/analytics.js/v1/' +
+                t +
+                '/analytics.min.js';
+              var a = document.getElementsByTagName('script')[0];
+              a.parentNode.insertBefore(n, a);
+              analytics._loadOptions = e;
+            };
+            analytics.SNIPPET_VERSION = '4.1.0';
+            analytics.load('pOM0bb7XoX9D98yxHhdZ77esvFzCgJ22');
+          }
+      })();
+    </script>
+  </head>
 
-  <script>
-    !function () {
-      var analytics = window.analytics = window.analytics || []; if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error("Segment snippet included twice."); else {
-        analytics.invoked = !0; analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on"]; analytics.factory = function (t) { return function () { var e = Array.prototype.slice.call(arguments); e.unshift(t); analytics.push(e); return analytics } }; for (var t = 0; t < analytics.methods.length; t++) { var e = analytics.methods[t]; analytics[e] = analytics.factory(e) } analytics.load = function (t, e) { var n = document.createElement("script"); n.type = "text/javascript"; n.async = !0; n.src = "https://cdn.segment.com/analytics.js/v1/" + t + "/analytics.min.js"; var a = document.getElementsByTagName("script")[0]; a.parentNode.insertBefore(n, a); analytics._loadOptions = e }; analytics.SNIPPET_VERSION = "4.1.0";
-        analytics.load("pOM0bb7XoX9D98yxHhdZ77esvFzCgJ22");
-      }
-    }();
-  </script>
+  <body>
+    <m-app>
+      <div class="app_loader">
+        <img src="assets/app/mprove_logo_square_white.png" width="80" />
+      </div>
+    </m-app>
 
-</head>
-
-<body>
-  <m-app>
-    <div class="app_loader">
-
-      <img src="assets/app/mprove_logo_square_white.png"
-           width="80">
-
-    </div>
-
-  </m-app>
-
-  <script src="https://cdn.paddle.com/paddle/paddle.js"></script>
-  <script type="text/javascript">
-    Paddle.Setup({
-      vendor: 19817
-    });
-  </script>
-
-</body>
-
+    <script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+    <script type="text/javascript">
+      Paddle.Setup({
+        vendor: 19817
+      });
+    </script>
+  </body>
 </html>

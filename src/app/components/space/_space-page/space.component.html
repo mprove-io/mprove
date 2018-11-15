@@ -1,106 +1,114 @@
 <div class="space">
-
-  <mat-sidenav-container class="example-container"
-                         (backdropClick)="close()">
-    <mat-sidenav #sidenav
-                 (keydown.escape)="close()"
-                 class="mat-sidenav"
-                 disableClose>
-
+  <mat-sidenav-container class="example-container" (backdropClick)="close()">
+    <mat-sidenav
+      #sidenav
+      (keydown.escape)="close()"
+      class="mat-sidenav"
+      disableClose
+    >
       <m-project-select *ngIf="isAuthenticated()"></m-project-select>
 
       <m-project-setup *ngIf="isAuthenticated()"></m-project-setup>
 
-      <div *ngIf="isAuthenticated()"
-           class="space__mode-wrapper"
-           mat-menu-item>
+      <div *ngIf="isAuthenticated()" class="space__mode-wrapper" mat-menu-item>
         <m-nav-dev-prod></m-nav-dev-prod>
       </div>
 
       <m-nav-blockml *ngIf="isAuthenticated()"></m-nav-blockml>
 
-      <m-nav-models *ngIf="isAuthenticated()"
-                    class="m-nav-models"></m-nav-models>
+      <m-nav-models
+        *ngIf="isAuthenticated()"
+        class="m-nav-models"
+      ></m-nav-models>
 
-      <m-nav-dashboards *ngIf="isAuthenticated()"
-                        class="m-nav-dashboards"></m-nav-dashboards>
+      <m-nav-dashboards
+        *ngIf="isAuthenticated()"
+        class="m-nav-dashboards"
+      ></m-nav-dashboards>
 
       <m-docs-link></m-docs-link>
       <m-forum-link></m-forum-link>
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <div fxLayout="column"
-           fxFlexFill>
-
-
+      <div fxLayout="column" fxFlexFill>
         <mat-toolbar class="space__primary-toolbar space_border_bottom">
-          <button mat-button
-                  (click)="sidenav.open()"
-                  class="mainmenu-btn"
-                  fxHide.gt-sm>
+          <button
+            mat-button
+            (click)="sidenav.open()"
+            class="mainmenu-btn"
+            fxHide.gt-sm
+          >
             <mat-icon>menu</mat-icon>
           </button>
 
           <m-logo></m-logo>
 
           <div class="topmenu-left">
-            <m-nav-blockml *ngIf="isAuthenticated()"
-                           fxHide.lt-md></m-nav-blockml>
+            <m-nav-blockml
+              *ngIf="isAuthenticated()"
+              fxHide.lt-md
+            ></m-nav-blockml>
 
-            <m-nav-models *ngIf="isAuthenticated()"
-                          class="m-nav-models"></m-nav-models>
+            <m-nav-models
+              *ngIf="isAuthenticated()"
+              class="m-nav-models"
+            ></m-nav-models>
 
-            <m-nav-dashboards *ngIf="isAuthenticated()"
-                              class="m-nav-dashboards"></m-nav-dashboards>
+            <m-nav-dashboards
+              *ngIf="isAuthenticated()"
+              class="m-nav-dashboards"
+            ></m-nav-dashboards>
           </div>
 
-          <div class="topmenu-center"
-               fxHide.lt-md>
+          <div class="topmenu-center" fxHide.lt-md>
             <m-docs-link></m-docs-link>
             <m-forum-link></m-forum-link>
           </div>
 
-          <div *ngIf="isAuthenticated()"
-               class="space__mode-wrapper"
-               fxHide.lt-md>
+          <div
+            *ngIf="isAuthenticated()"
+            class="space__mode-wrapper"
+            fxHide.lt-md
+          >
             <m-nav-dev-prod></m-nav-dev-prod>
           </div>
 
           <m-nav-remote-errors class="space__errors"></m-nav-remote-errors>
 
           <div class="space-toolbar__right">
+            <button mat-button (click)="signin()" *ngIf="!isAuthenticated()"
+              >Sign In</button
+            >
 
-            <button mat-button
-                    (click)="signin()"
-                    *ngIf="!isAuthenticated()">Sign In</button>
+            <div
+              *ngIf="isAuthenticated()"
+              class="header-menu"
+              fxLayout="row"
+              fxLayoutAlign="center center"
+              class="menu"
+            >
+              <m-project-select
+                class="menu__button_hover_primary m-project-select"
+              ></m-project-select>
 
-            <div *ngIf="isAuthenticated()"
-                 class="header-menu"
-                 fxLayout="row"
-                 fxLayoutAlign="center center"
-                 class="menu">
-
-              <m-project-select class="menu__button_hover_primary m-project-select"></m-project-select>
-
-              <m-project-setup class="project-selector"
-                               fxHide.lt-md></m-project-setup>
+              <m-project-setup
+                class="project-selector"
+                fxHide.lt-md
+              ></m-project-setup>
 
               <m-user class="m-user"></m-user>
             </div>
           </div>
-
         </mat-toolbar>
 
-        <div fxFlex
-             class="space__scroll-wrap">
-
-          <router-outlet (activate)="activateEvent($event)"
-                         (deactivate)="deactivateEvent($event)"></router-outlet>
+        <div fxFlex class="space__scroll-wrap">
+          <router-outlet
+            (activate)="activateEvent($event)"
+            (deactivate)="deactivateEvent($event)"
+          ></router-outlet>
         </div>
-
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
-
 </div>

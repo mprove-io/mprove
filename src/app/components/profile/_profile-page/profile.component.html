@@ -2,55 +2,66 @@
   <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
     <div name="profileTitle">Profile</div>
   </mat-toolbar>
-  
-  <!-- <div fxLayout="row" class="profile-content-top">
-    <div fxFlex="10"
-         fxFlexAlign="center"
-         class="profile__label profile_padding profile-form_max-width_150">Picture</div>
-    <div fxFlex="90"
-         class="profile_padding profile-form_max-width_900">
-      <div class="profile-avatar">
-        <img class="profile-avatar__image"
-             *ngIf="user?.picture_url_big; else defaultPhoto"
-             [src]="url" />
-        <ng-template #defaultPhoto>
-          <i class="material-icons profile-avatar__image">account_box</i>
-        </ng-template>
-        <div class="profile-avatar_edit"
-             (click)="changeProfilePhoto()">
-          <div class="profile-avatar_edit-text">
-            EDIT
+
+  <!--
+    <div fxLayout="row" class="profile-content-top">
+      <div fxFlex="10"
+           fxFlexAlign="center"
+           class="profile__label profile_padding profile-form_max-width_150">Picture</div>
+      <div fxFlex="90"
+           class="profile_padding profile-form_max-width_900">
+        <div class="profile-avatar">
+          <img class="profile-avatar__image"
+               *ngIf="user?.picture_url_big; else defaultPhoto"
+               [src]="url" />
+          <ng-template #defaultPhoto>
+            <i class="material-icons profile-avatar__image">account_box</i>
+          </ng-template>
+          <div class="profile-avatar_edit"
+               (click)="changeProfilePhoto()">
+            <div class="profile-avatar_edit-text">
+              EDIT
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div> -->
+  -->
 
   <div fxLayout="row">
-    <div fxFlex="10"
-         fxFlexAlign="center"
-         class="profile__label profile_padding profile-form_max-width_150">Name</div>
-    <div fxFlex="90"
-         class="profile_padding profile-form_max-width_900">
+    <div
+      fxFlex="10"
+      fxFlexAlign="center"
+      class="profile__label profile_padding profile-form_max-width_150"
+      >Name</div
+    >
+    <div fxFlex="90" class="profile_padding profile-form_max-width_900">
       <m-edit-name [user]="user"></m-edit-name>
     </div>
   </div>
   <div fxLayout="row">
-    <div fxFlex="10"
-         fxFlexAlign="center"
-         class="profile__label profile_padding profile-form_max-width_150">Timezone</div>
-    <div fxFlex="90"
-         class="profile_padding profile-form_max-width_900">
+    <div
+      fxFlex="10"
+      fxFlexAlign="center"
+      class="profile__label profile_padding profile-form_max-width_150"
+      >Timezone</div
+    >
+    <div fxFlex="90" class="profile_padding profile-form_max-width_900">
       <m-update-user-timezone [user]="user"></m-update-user-timezone>
     </div>
   </div>
   <div fxLayout="row">
-    <div fxFlex="10"
-         fxFlexAlign="center"
-         class="profile__label profile_padding profile-form_max-width_150">Email</div>
-    <div fxFlex="90"
-         class="profile_padding profile-form_max-width_900"
-         name="profileEmail">{{user.user_id}}</div>
+    <div
+      fxFlex="10"
+      fxFlexAlign="center"
+      class="profile__label profile_padding profile-form_max-width_150"
+      >Email</div
+    >
+    <div
+      fxFlex="90"
+      class="profile_padding profile-form_max-width_900"
+      name="profileEmail"
+      >{{ user.user_id }}</div
+    >
   </div>
-  
 </div>

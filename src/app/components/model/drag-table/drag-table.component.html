@@ -1,73 +1,100 @@
-<section #scrollSection
-         class="query-drag-table">
+<section #scrollSection class="query-drag-table">
+  <table td-data-table class="query-drag-table__data-table">
+    <th
+      #dropElement
+      td-data-table-column
+      *ngFor="let column of sortedColumns; let columnIndex = index"
+      (mouseenter)="
+        switchItem(dropElement, column.field_class, column[mConfigSelectIndex])
+      "
+      [ngStyle]="{ left: 0, order: columnIndex }"
+      class="query-drag-table__th query-drag-table__th-{{column.field_class}}_background"
+    >
+      <div
+        #dragElement
+        class="query-drag-table__wrap"
+        (dragstart)="preventDragStart()"
+        (touchstart)="
+          touchStart(
+            $event,
+            dragElement,
+            dropElement,
+            column.field_class,
+            column[mConfigSelectIndex]
+          )
+        "
+        (mousedown)="
+          mouseDown(
+            $event,
+            dragElement,
+            dropElement,
+            column.field_class,
+            column[mConfigSelectIndex]
+          )
+        "
+      >
+        <div fxLayout="row" fxLayoutAlign="start center">
+          <div>{{ column.top_label | capitalize }}</div>
+          <div *ngIf="column.group_label" class="ml-10">{{
+            column.group_label | capitalize
+          }}</div>
+          <div class="ml-10">{{ column.label | capitalize }}</div>
 
-  <table td-data-table
-         class="query-drag-table__data-table">
-    <th #dropElement
-        td-data-table-column
-        *ngFor="let column of sortedColumns; let columnIndex = index"
-        (mouseenter)="switchItem(dropElement, column.field_class, column[mConfigSelectIndex])"
-        [ngStyle]="{'left': 0, 'order': columnIndex}"
-        class="query-drag-table__th query-drag-table__th-{{column.field_class}}_background">
-      <div #dragElement
-           class="query-drag-table__wrap"
-           (dragstart)="preventDragStart()"
-           (touchstart)="touchStart($event, dragElement, dropElement, column.field_class, column[mConfigSelectIndex])"
-           (mousedown)="mouseDown($event, dragElement, dropElement, column.field_class, column[mConfigSelectIndex])">
-        <div fxLayout="row"
-             fxLayoutAlign="start center">
-
-          <div>{{column.top_label | capitalize}}</div>
-          <div *ngIf="column.group_label"
-               class="ml-10">{{column.group_label | capitalize}}</div>
-          <div class="ml-10">{{column.label | capitalize}}</div>
-
-          <div class="query-drag-table__sort"
-               fxLayout="row">
-            <div fxLayout="row"
-                 fxLayoutAlign="center center">
-              <mat-icon *ngIf="isAsc(column.id)"
-                        class="query-drag-table__sort-asc"
-                        name="dragTableSortAsc"
-                        [color]="isAsc(column.id) ? 'warn' : 'default'"
-                        (click)="onSort($event, column.id, false)">keyboard_arrow_up
+          <div class="query-drag-table__sort" fxLayout="row">
+            <div fxLayout="row" fxLayoutAlign="center center">
+              <mat-icon
+                *ngIf="isAsc(column.id)"
+                class="query-drag-table__sort-asc"
+                name="dragTableSortAsc"
+                [color]="isAsc(column.id) ? 'warn' : 'default'"
+                (click)="onSort($event, column.id, false)"
+                >keyboard_arrow_up
               </mat-icon>
 
-              <mat-icon *ngIf="isDesc(column.id)"
-                        class="query-drag-table__sort-desc"
-                        name="dragTableSortDesc"
-                        [color]="isDesc(column.id) ? 'warn' : 'default'"
-                        (click)="onSort($event, column.id, true)">keyboard_arrow_down
+              <mat-icon
+                *ngIf="isDesc(column.id)"
+                class="query-drag-table__sort-desc"
+                name="dragTableSortDesc"
+                [color]="isDesc(column.id) ? 'warn' : 'default'"
+                (click)="onSort($event, column.id, true)"
+                >keyboard_arrow_down
               </mat-icon>
 
-              <mat-icon *ngIf="!isDesc(column.id) && !isAsc(column.id)"
-                        class="query-drag-table__sort-desc"
-                        name="dragTableSortDesc"
-                        [color]="isDesc(column.id) ? 'warn' : 'default'"
-                        (click)="onSort($event, column.id, true)">keyboard_arrow_down
+              <mat-icon
+                *ngIf="!isDesc(column.id) && !isAsc(column.id)"
+                class="query-drag-table__sort-desc"
+                name="dragTableSortDesc"
+                [color]="isDesc(column.id) ? 'warn' : 'default'"
+                (click)="onSort($event, column.id, true)"
+                >keyboard_arrow_down
               </mat-icon>
             </div>
 
-            <div fxFlex="10px"
-                 class="query-drag-table__sort-number"
-                 name="dragTableSortNumber">
-              <span *ngIf="getSortingNumber(column.id)">{{getSortingNumber(column.id)}}</span>
+            <div
+              fxFlex="10px"
+              class="query-drag-table__sort-number"
+              name="dragTableSortNumber"
+            >
+              <span *ngIf="getSortingNumber(column.id)">{{
+                getSortingNumber(column.id)
+              }}</span>
             </div>
           </div>
         </div>
       </div>
     </th>
 
-    <tr td-data-table-row
-        *ngFor="let row of filteredData; let i = index">
-      <td td-data-table-cell
-          *ngFor="let column of sortedColumns"
-          name="dataTableCell"
-          class="query-drag-table__td-{{i % 2 !== 0 ? column.field_class : 'default'}}_background">
-        {{row[column.sql_name]}}
+    <tr td-data-table-row *ngFor="let row of filteredData; let i = index">
+      <td
+        td-data-table-cell
+        *ngFor="let column of sortedColumns"
+        name="dataTableCell"
+        class="query-drag-table__td-{{i % 2 !== 0 ? column.field_class : 'default'}}_background"
+      >
+        {{ row[column.sql_name] }}
       </td>
     </tr>
   </table>
 </section>
 
-<div *ngIf="sortings$ | async"></div>
+<div *ngIf="(sortings$ | async)"></div>

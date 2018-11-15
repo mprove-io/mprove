@@ -1,69 +1,77 @@
-<div fxLayout="column"
-     fxFlexFill>
-
+<div fxLayout="column" fxFlexFill>
   <mat-toolbar class="space__sub-toolbar">
+    <button
+      *ngIf="(fileIsView$ | async)"
+      mat-raised-button
+      [matMenuTriggerFor]="fileViewJoinsMenu"
+      class="file-editor__action"
+      [disabled]="fileViewJoins.length === 0"
+      >Joins</button
+    >
 
-    <button *ngIf="fileIsView$ | async"
-            mat-raised-button
-            [matMenuTriggerFor]="fileViewJoinsMenu"
-            class="file-editor__action"
-            [disabled]="fileViewJoins.length === 0">Joins</button>
+    <button
+      *ngIf="(fileIsModel$ | async)"
+      mat-raised-button
+      [disabled]="!(fileModelExist$ | async)"
+      class="file-editor__action"
+      (click)="goToFileModel()"
+      >Model</button
+    >
 
-    <button *ngIf="fileIsModel$ | async"
-            mat-raised-button
-            [disabled]="!(fileModelExist$ | async)"
-            class="file-editor__action"
-            (click)="goToFileModel()">Model</button>
+    <button
+      *ngIf="(fileIsDashboard$ | async)"
+      mat-raised-button
+      [disabled]="!(fileDashboardExist$ | async)"
+      class="file-editor__action"
+      (click)="goToFileDashboard()"
+      >Dashboard</button
+    >
 
-    <button *ngIf="fileIsDashboard$ | async"
-            mat-raised-button
-            [disabled]="!(fileDashboardExist$ | async)"
-            class="file-editor__action"
-            (click)="goToFileDashboard()">Dashboard</button>
-
-    <div fxHide.lt-md>
-      {{fileLastPath$ | async}}
-    </div>
+    <div fxHide.lt-md> {{ fileLastPath$ | async }} </div>
 
     <span class="example-fill-remaining-space"></span>
 
-    <div fxLayout="row"
-         *ngIf="(isDev$ | async) && (needSave$ | async)">
-      <button mat-raised-button
-              class="file-editor__cancel"
-              (click)="onCancel()">Cancel</button>
+    <div fxLayout="row" *ngIf="(isDev$ | async) && (needSave$ | async)">
+      <button mat-raised-button class="file-editor__cancel" (click)="onCancel()"
+        >Cancel</button
+      >
     </div>
 
-    <button mat-raised-button
-            name="blockmlFileEditorSave"
-            color="accent"
-            class="file-editor-save"
-            *ngIf="isDev$ | async"
-            [disabled]="!(needSave$ | async)"
-            (click)="onSave()">Save
+    <button
+      mat-raised-button
+      name="blockmlFileEditorSave"
+      color="accent"
+      class="file-editor-save"
+      *ngIf="(isDev$ | async)"
+      [disabled]="!(needSave$ | async)"
+      (click)="onSave()"
+      >Save
     </button>
-
   </mat-toolbar>
 
-  <ace-editor fxFlex
-              [text]="fileContent$ | async"
-              (textChanged)="onTextChanged($event)"
-              name="blockmlEditor"
-              #editor
-              class="file-editor__ace-editor">
+  <ace-editor
+    fxFlex
+    [text]="fileContent$ | async"
+    (textChanged)="onTextChanged($event)"
+    name="blockmlEditor"
+    #editor
+    class="file-editor__ace-editor"
+  >
   </ace-editor>
 </div>
 
 <mat-menu #fileViewJoinsMenu="matMenu">
-  <button *ngFor="let item of fileViewJoins"
-          mat-menu-item
-          (click)="goToModelFromView(item.model.model_id, item.join_as)">{{item.model.model_id}} {{item.join_as}}</button>
+  <button
+    *ngFor="let item of fileViewJoins"
+    mat-menu-item
+    (click)="goToModelFromView(item.model.model_id, item.join_as)"
+    >{{ item.model.model_id }} {{ item.join_as }}</button
+  >
 </mat-menu>
 
 <!-- <div *ngIf="lineNumber$ | async"></div> -->
-<div *ngIf="routeLine$ | async"></div>
-<div *ngIf="fileId$ | async"></div>
-<div *ngIf="fileErrorsLines$ | async"></div>
-<div *ngIf="fileConflictsLines$ | async"></div>
-<div *ngIf="fileEditorTheme$ | async"></div>
-<div *ngIf="fileViewJoins$ | async"></div>
+<div *ngIf="(routeLine$ | async)"></div> <div *ngIf="(fileId$ | async)"></div>
+<div *ngIf="(fileErrorsLines$ | async)"></div>
+<div *ngIf="(fileConflictsLines$ | async)"></div>
+<div *ngIf="(fileEditorTheme$ | async)"></div>
+<div *ngIf="(fileViewJoins$ | async)"></div>

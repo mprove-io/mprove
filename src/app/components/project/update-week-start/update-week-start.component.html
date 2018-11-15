@@ -2,34 +2,45 @@
   <div fxFlex="100">
     <form [formGroup]="updateWeekStartForm">
       <mat-form-field>
-        <mat-select placeholder="Day of the week"
-                    formControlName="weekStart"
-                    class="settings__user-input"
-                    name="projectSettingsWeekStart">
-
-          <mat-option name="projectSettingsWeekStartOption"
-                      *ngFor="let ws of weekStartEnumKeys()"
-                      [value]="ws">{{ws | capitalize}}</mat-option>
-
+        <mat-select
+          placeholder="Day of the week"
+          formControlName="weekStart"
+          class="settings__user-input"
+          name="projectSettingsWeekStart"
+        >
+          <mat-option
+            name="projectSettingsWeekStartOption"
+            *ngFor="let ws of weekStartEnumKeys()"
+            [value]="ws"
+            >{{ ws | capitalize }}</mat-option
+          >
         </mat-select>
       </mat-form-field>
     </form>
   </div>
-  <div fxFlex="60"
-       fxFlexAlign="center"
-       class="settings-button-wrapper"
-       *ngIf="updateWeekStartForm.dirty">
-    <button mat-button
-            type="submit"
-            [disabled]="!(selectedProjectUserIsAdmin$ | async) || !updateWeekStartForm.valid"
-            class="mat-flat-fab"
-            name="projectSettingsApplyChangeWeekStart"
-            (click)="onSubmit(updateWeekStartForm, updateWeekStartForm.value)">
+  <div
+    fxFlex="60"
+    fxFlexAlign="center"
+    class="settings-button-wrapper"
+    *ngIf="updateWeekStartForm.dirty"
+  >
+    <button
+      mat-button
+      type="submit"
+      [disabled]="
+        !(selectedProjectUserIsAdmin$ | async) || !updateWeekStartForm.valid
+      "
+      class="mat-flat-fab"
+      name="projectSettingsApplyChangeWeekStart"
+      (click)="onSubmit(updateWeekStartForm, updateWeekStartForm.value)"
+    >
       <mat-icon class="settings__button-success">done</mat-icon>
     </button>
-    <button mat-button
-            class="mat-flat-fab"
-            (click)="onReset(updateWeekStartForm)">
+    <button
+      mat-button
+      class="mat-flat-fab"
+      (click)="onReset(updateWeekStartForm)"
+    >
       <mat-icon class="settings__button-warn">clear</mat-icon>
     </button>
   </div>

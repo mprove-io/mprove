@@ -1,35 +1,53 @@
-<div fxLayout="row"
-     fxLayoutGap="20px"
-     fxLayoutAlign="start center"
-     [ngSwitch]="fraction.type">
-
-  <div fxFlex="40px"
-       class="ml-10">
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.Or)">OR</div>
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.And)">AND</div>
+<div
+  fxLayout="row"
+  fxLayoutGap="20px"
+  fxLayoutAlign="start center"
+  [ngSwitch]="fraction.type"
+>
+  <div fxFlex="40px" class="ml-10">
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.Or"
+      >OR</div
+    >
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.And"
+      >AND</div
+    >
   </div>
 
   <mat-form-field>
-    <mat-select class="mp-fraction-type-select-width-230"
-                name="fractionYesnoType"
-                [(ngModel)]="fraction.type"
-                (selectionChange)="typeChange($event)">
-      <mat-option [value]="fractionTypeEnum.YesnoIsAnyValue"
-                  name="fractionYesnoTypeIsAnyValue">is any value</mat-option>
-      <mat-option [value]="fractionTypeEnum.YesnoIs"
-                  name="fractionYesnoTypeIs">is</mat-option>
+    <mat-select
+      class="mp-fraction-type-select-width-230"
+      name="fractionYesnoType"
+      [(ngModel)]="fraction.type"
+      (selectionChange)="typeChange($event)"
+    >
+      <mat-option
+        [value]="fractionTypeEnum.YesnoIsAnyValue"
+        name="fractionYesnoTypeIsAnyValue"
+        >is any value</mat-option
+      >
+      <mat-option [value]="fractionTypeEnum.YesnoIs" name="fractionYesnoTypeIs"
+        >is</mat-option
+      >
     </mat-select>
   </mat-form-field>
 
-  <!--YesnoIs-->
+  <!-- YesnoIs -->
   <mat-form-field *ngIf="fraction.type === fractionTypeEnum.YesnoIs">
-    <mat-select [(ngModel)]="fraction.yesno_value"
-                name="fractionYesnoValue"
-                (selectionChange)="yesnoChange($event)">
-      <mat-option [value]="fractionYesnoValueEnum.Yes"
-                  name="fractionYesnoValueYes">Yes</mat-option>
-      <mat-option [value]="fractionYesnoValueEnum.No"
-                  name="fractionYesnoValueNo">No</mat-option>
+    <mat-select
+      [(ngModel)]="fraction.yesno_value"
+      name="fractionYesnoValue"
+      (selectionChange)="yesnoChange($event)"
+    >
+      <mat-option
+        [value]="fractionYesnoValueEnum.Yes"
+        name="fractionYesnoValueYes"
+        >Yes</mat-option
+      >
+      <mat-option
+        [value]="fractionYesnoValueEnum.No"
+        name="fractionYesnoValueNo"
+        >No</mat-option
+      >
     </mat-select>
   </mat-form-field>
 </div>

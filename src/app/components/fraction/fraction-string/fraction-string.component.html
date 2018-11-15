@@ -1,83 +1,131 @@
-<div fxLayout="row"
-     fxLayoutGap="20px"
-     fxLayoutAlign="start center">
-
-  <div fxFlex="40px"
-       class="ml-10">
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.Or)">OR</div>
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.And)">AND</div>
+<div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start center">
+  <div fxFlex="40px" class="ml-10">
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.Or"
+      >OR</div
+    >
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.And"
+      >AND</div
+    >
   </div>
 
   <mat-form-field>
-    <mat-select class="mp-fraction-type-select-width-230"
-                name="fractionStringType"
-                [(ngModel)]="fraction.type"
-                (selectionChange)="typeChange($event)">
-      <mat-option [value]="fractionTypeEnum.StringIsAnyValue"
-                  name="fractionStringTypeIsAnyValue">is any value</mat-option>
+    <mat-select
+      class="mp-fraction-type-select-width-230"
+      name="fractionStringType"
+      [(ngModel)]="fraction.type"
+      (selectionChange)="typeChange($event)"
+    >
+      <mat-option
+        [value]="fractionTypeEnum.StringIsAnyValue"
+        name="fractionStringTypeIsAnyValue"
+        >is any value</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringIsEqualTo"
-                  name="fractionStringTypeIsEqualTo">is equal to</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringIsEqualTo"
+        name="fractionStringTypeIsEqualTo"
+        >is equal to</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringContains"
-                  name="fractionStringTypeContains">contains</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringContains"
+        name="fractionStringTypeContains"
+        >contains</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringStartsWith"
-                  name="fractionStringTypeStartsWith">starts with</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringStartsWith"
+        name="fractionStringTypeStartsWith"
+        >starts with</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringEndsWith"
-                  name="fractionStringTypeEndsWith">ends with</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringEndsWith"
+        name="fractionStringTypeEndsWith"
+        >ends with</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringIsNull"
-                  name="fractionStringTypeIsNull">is null</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringIsNull"
+        name="fractionStringTypeIsNull"
+        >is null</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringIsBlank"
-                  name="fractionStringTypeIsBlank">is blank</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringIsBlank"
+        name="fractionStringTypeIsBlank"
+        >is blank</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringIsNotEqualTo"
-                  name="fractionStringTypeIsNotEqualTo">is not equal to</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringIsNotEqualTo"
+        name="fractionStringTypeIsNotEqualTo"
+        >is not equal to</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringDoesNotContain"
-                  name="fractionStringTypeDoesNotContain">does not contain</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringDoesNotContain"
+        name="fractionStringTypeDoesNotContain"
+        >does not contain</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringDoesNotStartWith"
-                  name="fractionStringTypeDoesNotStartWith">does not start with</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringDoesNotStartWith"
+        name="fractionStringTypeDoesNotStartWith"
+        >does not start with</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringDoesNotEndWith"
-                  name="fractionStringTypeDoesNotEndWith">does not end with</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringDoesNotEndWith"
+        name="fractionStringTypeDoesNotEndWith"
+        >does not end with</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringIsNotNull"
-                  name="fractionStringTypeIsNotNull">is not null</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringIsNotNull"
+        name="fractionStringTypeIsNotNull"
+        >is not null</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.StringIsNotBlank"
-                  name="fractionStringTypeIsNotBlank">is not blank</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.StringIsNotBlank"
+        name="fractionStringTypeIsNotBlank"
+        >is not blank</mat-option
+      >
     </mat-select>
   </mat-form-field>
 
-  <form [formGroup]="stringValueForm"
-        *ngIf="fraction.type === fractionTypeEnum.StringIsEqualTo
-          || fraction.type === fractionTypeEnum.StringContains
-          || fraction.type === fractionTypeEnum.StringStartsWith
-          || fraction.type === fractionTypeEnum.StringEndsWith
-          || fraction.type === fractionTypeEnum.StringIsNotEqualTo
-          || fraction.type === fractionTypeEnum.StringDoesNotContain
-          || fraction.type === fractionTypeEnum.StringDoesNotStartWith
-          || fraction.type === fractionTypeEnum.StringDoesNotEndWith">
-
+  <form
+    [formGroup]="stringValueForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.StringIsEqualTo ||
+      fraction.type === fractionTypeEnum.StringContains ||
+      fraction.type === fractionTypeEnum.StringStartsWith ||
+      fraction.type === fractionTypeEnum.StringEndsWith ||
+      fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
+      fraction.type === fractionTypeEnum.StringDoesNotContain ||
+      fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
+      fraction.type === fractionTypeEnum.StringDoesNotEndWith
+    "
+  >
     <mat-form-field>
-      <input matInput
-             type="text"
-             formControlName="stringValue"
-             name="fractionStringValue"
-             (blur)="stringValueBlur(stringValueForm.controls['stringValue'].value)">
+      <input
+        matInput
+        type="text"
+        formControlName="stringValue"
+        name="fractionStringValue"
+        (blur)="stringValueBlur(stringValueForm.controls['stringValue'].value)"
+      />
       <mat-error>
-        <m-validation-msg [errors]="stringValueForm.controls['stringValue'].errors"></m-validation-msg>
+        <m-validation-msg
+          [errors]="stringValueForm.controls['stringValue'].errors"
+        ></m-validation-msg>
       </mat-error>
     </mat-form-field>
   </form>
 
-  <!--StringIsNull-->
-  <!--StringIsBlank-->
-  <!--StringIsNotNull-->
-  <!--StringIsNotBlank-->
+  <!-- StringIsNull -->
+  <!-- StringIsBlank -->
+  <!-- StringIsNotNull -->
+  <!-- StringIsNotBlank -->
 </div>

@@ -2,44 +2,50 @@
   <div fxFlex="40">
     <form [formGroup]="nameForm">
       <mat-form-field>
-        <input matInput
-               type="text"
-               formControlName="firstName"
-               placeholder="First name"
-               required
-               name="profileFirstName">
+        <input
+          matInput
+          type="text"
+          formControlName="firstName"
+          placeholder="First name"
+          required
+          name="profileFirstName"
+        />
         <mat-error>
-          <m-validation-msg [errors]="nameForm.controls['firstName'].errors"></m-validation-msg>
+          <m-validation-msg
+            [errors]="nameForm.controls['firstName'].errors"
+          ></m-validation-msg>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field>
-        <input matInput
-               type="text"
-               formControlName="lastName"
-               placeholder="Last name"
-               required
-               name="profileLastName">
+        <input
+          matInput
+          type="text"
+          formControlName="lastName"
+          placeholder="Last name"
+          required
+          name="profileLastName"
+        />
         <mat-error>
-          <m-validation-msg [errors]="nameForm.controls['lastName'].errors"></m-validation-msg>
+          <m-validation-msg
+            [errors]="nameForm.controls['lastName'].errors"
+          ></m-validation-msg>
         </mat-error>
       </mat-form-field>
     </form>
   </div>
-  <div fxFlex="60"
-       fxFlexAlign="center"
-       *ngIf="nameForm.dirty">
-    <button mat-button
-            type="submit"
-            class="mat-flat-fab"
-            name="profileApplyChangeName"
-            [disabled]="!nameForm.valid"
-            (click)="onSubmit(nameForm, nameForm.value)">
+  <div fxFlex="60" fxFlexAlign="center" *ngIf="nameForm.dirty">
+    <button
+      mat-button
+      type="submit"
+      class="mat-flat-fab"
+      name="profileApplyChangeName"
+      [disabled]="!nameForm.valid"
+      (click)="onSubmit(nameForm, nameForm.value)"
+    >
       <mat-icon class="profile__button-success">done</mat-icon>
     </button>
-    <button mat-button
-            class="mat-flat-fab"
-            (click)="onReset(nameForm)">
+    <button mat-button class="mat-flat-fab" (click)="onReset(nameForm)">
       <mat-icon class="profile__button-warn">clear</mat-icon>
     </button>
   </div>

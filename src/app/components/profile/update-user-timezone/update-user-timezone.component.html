@@ -2,48 +2,47 @@
   <div fxFlex="40">
     <form [formGroup]="updateUserTimezoneForm">
       <mat-form-field>
-        <mat-select placeholder="Timezone"
-                    class="profile__user-input"
-                    name="profileTimezone"
-                    formControlName="userTimezone">
+        <mat-select
+          placeholder="Timezone"
+          class="profile__user-input"
+          name="profileTimezone"
+          formControlName="userTimezone"
+        >
+          <mat-option [value]="'project'" name="profileTimezoneOption"
+            >Use Project Default</mat-option
+          >
 
-          <mat-option [value]="'project'"
-                      name="profileTimezoneOption">Use Project Default</mat-option>
+          <mat-option [value]="'UTC'" name="profileTimezoneOption"
+            >UTC</mat-option
+          >
 
-          <mat-option [value]="'UTC'"
-                      name="profileTimezoneOption">UTC</mat-option>
-
-          <ng-template ngFor
-                       let-tzGroup
-                       [ngForOf]="timeZones">
-            <ng-template ngFor
-                         let-tz
-                         [ngForOf]="tzGroup.zones">
-
-              <mat-option [value]="tz.value"
-                          name="profileTimezoneOption">{{tzGroup.group}} - {{tz.name}}</mat-option>
-
+          <ng-template ngFor let-tzGroup [ngForOf]="timeZones">
+            <ng-template ngFor let-tz [ngForOf]="tzGroup.zones">
+              <mat-option [value]="tz.value" name="profileTimezoneOption"
+                >{{ tzGroup.group }} - {{ tz.name }}</mat-option
+              >
             </ng-template>
           </ng-template>
-
         </mat-select>
       </mat-form-field>
     </form>
   </div>
-  <div fxFlex="60"
-       fxFlexAlign="center"
-       *ngIf="updateUserTimezoneForm.dirty">
-    <button mat-button
-            type="submit"
-            class="mat-flat-fab"
-            name="profileApplyChangeTimezone"
-            [disabled]="!updateUserTimezoneForm.valid"
-            (click)="onSubmit(updateUserTimezoneForm, updateUserTimezoneForm.value)">
+  <div fxFlex="60" fxFlexAlign="center" *ngIf="updateUserTimezoneForm.dirty">
+    <button
+      mat-button
+      type="submit"
+      class="mat-flat-fab"
+      name="profileApplyChangeTimezone"
+      [disabled]="!updateUserTimezoneForm.valid"
+      (click)="onSubmit(updateUserTimezoneForm, updateUserTimezoneForm.value)"
+    >
       <mat-icon class="profile__button-success">done</mat-icon>
     </button>
-    <button mat-button
-            class="mat-flat-fab"
-            (click)="onReset(updateUserTimezoneForm)">
+    <button
+      mat-button
+      class="mat-flat-fab"
+      (click)="onReset(updateUserTimezoneForm)"
+    >
       <mat-icon class="profile__button-warn">clear</mat-icon>
     </button>
   </div>

@@ -1,16 +1,17 @@
 <div fxHide.lt-md>
-  <div class="can-toggle"
-       name="spaceModeToggle">
-    <input id="spaceModeToggleInput"
-           type="checkbox"
-           [disabled]="!(selectedProjectUserIsEditor$ | async) || (needSave$ | async)"
-           (change)="toggleMode()"
-           [checked]="layoutModeIsDev">
+  <div class="can-toggle" name="spaceModeToggle">
+    <input
+      id="spaceModeToggleInput"
+      type="checkbox"
+      [disabled]="
+        !(selectedProjectUserIsEditor$ | async) || (needSave$ | async)
+      "
+      (change)="toggleMode()"
+      [checked]="layoutModeIsDev"
+    />
 
     <label for="spaceModeToggleInput">
-      <div class="can-toggle__switch"
-           data-checked="Dev"
-           data-unchecked="Prod">
+      <div class="can-toggle__switch" data-checked="Dev" data-unchecked="Prod">
       </div>
     </label>
   </div>
@@ -19,21 +20,26 @@
 <!-- mobile -->
 <div fxHide.gt-sm>
   <mat-accordion>
-    <mat-expansion-panel hideToggle="true"
-                         disabled="true">
+    <mat-expansion-panel hideToggle="true" disabled="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div class="can-toggle">
-            <input id="spaceModeToggleInputMobile"
-                   type="checkbox"
-                   [disabled]="!(selectedProjectUserIsEditor$ | async) || (needSave$ | async)"
-                   (change)="toggleMode()"
-                   [checked]="layoutModeIsDev">
+            <input
+              id="spaceModeToggleInputMobile"
+              type="checkbox"
+              [disabled]="
+                !(selectedProjectUserIsEditor$ | async) || (needSave$ | async)
+              "
+              (change)="toggleMode()"
+              [checked]="layoutModeIsDev"
+            />
 
             <label for="spaceModeToggleInputMobile">
-              <div class="can-toggle__switch"
-                   data-checked="Dev"
-                   data-unchecked="Prod">
+              <div
+                class="can-toggle__switch"
+                data-checked="Dev"
+                data-unchecked="Prod"
+              >
               </div>
             </label>
           </div>
@@ -44,6 +50,5 @@
 </div>
 
 <!-- async -->
-<div *ngIf="projectId$ | async"></div>
-<div *ngIf="mode$ | async"></div>
-<div *ngIf="layoutModeIsDev$ | async"></div>
+<div *ngIf="(projectId$ | async)"></div> <div *ngIf="(mode$ | async)"></div>
+<div *ngIf="(layoutModeIsDev$ | async)"></div>

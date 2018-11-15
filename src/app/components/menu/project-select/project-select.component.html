@@ -1,43 +1,45 @@
 <div fxHide.lt-md>
-  <!-- <button mat-icon-button
-          name="projectSelectMenu"
-          [matMenuTriggerFor]="menu">
-    <mat-icon>settings</mat-icon>
-  </button> -->
+  <!--
+    <button mat-icon-button
+            name="projectSelectMenu"
+            [matMenuTriggerFor]="menu">
+      <mat-icon>settings</mat-icon>
+    </button>
+  -->
 
-
-  <button mat-button
-          name="projectSelectMenu"
-          class="space__button_hover_primary"
-          [matMenuTriggerFor]="menu">
-
-    <div fxLayout="row"
-         fxLayoutAlign="start center">
+  <button
+    mat-button
+    name="projectSelectMenu"
+    class="space__button_hover_primary"
+    [matMenuTriggerFor]="menu"
+  >
+    <div fxLayout="row" fxLayoutAlign="start center">
       <div class="mat-button__text">Projects</div>
       <mat-icon class="space__toolbar-icon">expand_more</mat-icon>
     </div>
   </button>
 
-  <mat-menu xPosition="before"
-            yPosition="below"
-            #menu="matMenu">
+  <mat-menu xPosition="before" yPosition="below" #menu="matMenu">
     <div class="menu">
       <div class="menu__options">
-
         <div class="menu__options-group">
           <div class="menu__options-title">Projects</div>
-          <button mat-menu-item
-                  *ngFor="let projectId of projectsIds$ | async"
-                  name="projectSelectMenuProject"
-                  [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']">
-            &nbsp;&nbsp;{{projectId | capitalize}}
+          <button
+            mat-menu-item
+            *ngFor="let projectId of (projectsIds$ | async)"
+            name="projectSelectMenuProject"
+            [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']"
+          >
+            &nbsp;&nbsp;{{ projectId | capitalize }}
           </button>
-          <button mat-menu-item
-                  (click)="openNewProjectDialog()"
-                  name="projectSelectMenuNewProject">
-            <mat-icon>add</mat-icon>New project</button>
+          <button
+            mat-menu-item
+            (click)="openNewProjectDialog()"
+            name="projectSelectMenuNewProject"
+          >
+            <mat-icon>add</mat-icon>New project</button
+          >
         </div>
-
       </div>
     </div>
   </mat-menu>
@@ -48,22 +50,25 @@
   <mat-accordion>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title>
-          Projects
-        </mat-panel-title>
+        <mat-panel-title> Projects </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <button mat-menu-item
-              *ngFor="let projectId of projectsIds$ | async"
-              name="projectSelectMenuProjectMobile"
-              [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']">
-        &nbsp;&nbsp;{{projectId | capitalize}}
+      <button
+        mat-menu-item
+        *ngFor="let projectId of (projectsIds$ | async)"
+        name="projectSelectMenuProjectMobile"
+        [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']"
+      >
+        &nbsp;&nbsp;{{ projectId | capitalize }}
       </button>
 
-      <button mat-menu-item
-              (click)="openNewProjectDialog()"
-              name="projectSelectMenuNewProjectMobile">
-        <mat-icon>add</mat-icon>New project</button>
+      <button
+        mat-menu-item
+        (click)="openNewProjectDialog()"
+        name="projectSelectMenuNewProjectMobile"
+      >
+        <mat-icon>add</mat-icon>New project</button
+      >
     </mat-expansion-panel>
   </mat-accordion>
 </div>

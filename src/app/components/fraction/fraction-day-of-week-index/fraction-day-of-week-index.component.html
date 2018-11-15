@@ -1,55 +1,83 @@
-<div fxLayout="row"
-     fxLayoutGap="20px"
-     fxLayoutAlign="start center">
-
-  <div fxFlex="40px"
-       class="ml-10">
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.Or)">OR</div>
-    <div *ngIf="(!isFirst) && (fraction.operator === fractionOperatorEnum.And)">AND</div>
+<div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start center">
+  <div fxFlex="40px" class="ml-10">
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.Or"
+      >OR</div
+    >
+    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.And"
+      >AND</div
+    >
   </div>
 
   <mat-form-field>
-    <mat-select class="mp-fraction-type-select-width-230"
-                name="fractionDayOfWeekIndexType"
-                [(ngModel)]="fraction.type"
-                (selectionChange)="typeChange($event)">
+    <mat-select
+      class="mp-fraction-type-select-width-230"
+      name="fractionDayOfWeekIndexType"
+      [(ngModel)]="fraction.type"
+      (selectionChange)="typeChange($event)"
+    >
+      <mat-option
+        [value]="fractionTypeEnum.DayOfWeekIndexIsAnyValue"
+        name="fractionDayOfWeekIndexTypeIsAnyValue"
+        >is any value</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.DayOfWeekIndexIsAnyValue"
-                  name="fractionDayOfWeekIndexTypeIsAnyValue">is any value</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.DayOfWeekIndexIsEqualTo"
+        name="fractionDayOfWeekIndexTypeIsEqualTo"
+        >is equal to</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.DayOfWeekIndexIsEqualTo"
-                  name="fractionDayOfWeekIndexTypeIsEqualTo">is equal to</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.DayOfWeekIndexIsNull"
+        name="fractionDayOfWeekIndexTypeIsNull"
+        >is null</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.DayOfWeekIndexIsNull"
-                  name="fractionDayOfWeekIndexTypeIsNull">is null</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.DayOfWeekIndexIsNotEqualTo"
+        name="fractionDayOfWeekIndexTypeIsNotEqualTo"
+        >is not equal to</mat-option
+      >
 
-      <mat-option [value]="fractionTypeEnum.DayOfWeekIndexIsNotEqualTo"
-                  name="fractionDayOfWeekIndexTypeIsNotEqualTo">is not equal to</mat-option>
-
-      <mat-option [value]="fractionTypeEnum.DayOfWeekIndexIsNotNull"
-                  name="fractionDayOfWeekIndexTypeIsNotNull">is not null</mat-option>
+      <mat-option
+        [value]="fractionTypeEnum.DayOfWeekIndexIsNotNull"
+        name="fractionDayOfWeekIndexTypeIsNotNull"
+        >is not null</mat-option
+      >
     </mat-select>
   </mat-form-field>
 
-  <form [formGroup]="dayOfWeekIndexValuesForm"
-        *ngIf="fraction.type === fractionTypeEnum.DayOfWeekIndexIsEqualTo
-          || fraction.type === fractionTypeEnum.DayOfWeekIndexIsNotEqualTo">
-
+  <form
+    [formGroup]="dayOfWeekIndexValuesForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.DayOfWeekIndexIsEqualTo ||
+      fraction.type === fractionTypeEnum.DayOfWeekIndexIsNotEqualTo
+    "
+  >
     <mat-form-field>
-      <textarea matInput
-                name="fractionDayOfWeekIndexValues"
-                matTextareaAutosize
-                matAutosizeMinRows="1"
-                matAutosizeMaxRows="5"
-                formControlName="dayOfWeekIndexValues"
-                (blur)="dayOfWeekIndexValuesBlur(dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'])"></textarea>
+      <textarea
+        matInput
+        name="fractionDayOfWeekIndexValues"
+        matTextareaAutosize
+        matAutosizeMinRows="1"
+        matAutosizeMaxRows="5"
+        formControlName="dayOfWeekIndexValues"
+        (blur)="
+          dayOfWeekIndexValuesBlur(
+            dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues']
+          )
+        "
+      ></textarea>
       <mat-error>
-        <m-validation-msg [errors]="dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].errors"></m-validation-msg>
+        <m-validation-msg
+          [errors]="
+            dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].errors
+          "
+        ></m-validation-msg>
       </mat-error>
     </mat-form-field>
   </form>
 
-
-  <!--DayOfWeekIndexIsNull-->
-  <!--DayOfWeekIndexIsNotNull-->
+  <!-- DayOfWeekIndexIsNull -->
+  <!-- DayOfWeekIndexIsNotNull -->
 </div>

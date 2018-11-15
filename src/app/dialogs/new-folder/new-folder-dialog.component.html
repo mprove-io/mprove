@@ -1,41 +1,48 @@
 <div class="mp-min-width-1 mp-max-width-1">
-
   <mat-toolbar color="primary">New Folder</mat-toolbar>
 
-  <form [formGroup]="newFolderForm"
-        (ngSubmit)="onSubmit(newFolderForm.value); dialogRef.close()">
-
-    <br>
+  <form
+    [formGroup]="newFolderForm"
+    (ngSubmit)="onSubmit(newFolderForm.value); dialogRef.close()"
+  >
+    <br />
 
     <mat-form-field>
-      <input matInput
-             type="text"
-             class="mp-full-width"
-             name="newFolderDialogName"
-             id="nameInput"
-             formControlName="name"
-             placeholder="Name"
-             required>
+      <input
+        matInput
+        type="text"
+        class="mp-full-width"
+        name="newFolderDialogName"
+        id="nameInput"
+        formControlName="name"
+        placeholder="Name"
+        required
+      />
       <mat-error>
-        <m-validation-msg [errors]="newFolderForm.controls['name'].errors"></m-validation-msg>
+        <m-validation-msg
+          [errors]="newFolderForm.controls['name'].errors"
+        ></m-validation-msg>
       </mat-error>
     </mat-form-field>
 
-    <br>
-    <br>
+    <br />
+    <br />
 
-    <button type="submit"
-            color="primary"
-            name="newFolderDialogCreate"
-            mat-raised-button
-            [disabled]="!newFolderForm.valid">Create
+    <button
+      type="submit"
+      color="primary"
+      name="newFolderDialogCreate"
+      mat-raised-button
+      [disabled]="!newFolderForm.valid"
+      >Create
     </button>
 
-    <button type="reset"
-            class="mp-cancel"
-            mat-raised-button
-            (click)="dialogRef.close()">Cancel
+    <button
+      type="reset"
+      class="mp-cancel"
+      mat-raised-button
+      (click)="dialogRef.close()"
+      >Cancel
     </button>
-
   </form>
 </div>

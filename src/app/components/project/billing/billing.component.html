@@ -1,98 +1,108 @@
 <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
-  {{selectedProjectId$ | async}} Billing
+  {{ selectedProjectId$ | async }} Billing
 </mat-toolbar>
 
 <div class="billing__content">
   <h4>Account</h4>
 
-  <button mat-raised-button
-          [disabled]="!(selectedProjectUserIsAdmin$ | async)"
-          color="primary"
-          (click)="updateBillingAccount()">Update Billing Account</button>
+  <button
+    mat-raised-button
+    [disabled]="!(selectedProjectUserIsAdmin$ | async)"
+    color="primary"
+    (click)="updateBillingAccount()"
+    >Update Billing Account</button
+  >
 
   <h4>Plan</h4>
 
   <div class="mat-table__wrapper">
-    <mat-table #table
-               class="billing__table"
-               [dataSource]="dataSource">
-
+    <mat-table #table class="billing__table" [dataSource]="dataSource">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="price">
         <mat-header-cell *matHeaderCellDef>
-          <div matTooltip="VAT - (Value Added Tax, or Sales Tax), is a tax on purchases. 
+          <div
+            matTooltip="VAT - (Value Added Tax, or Sales Tax), is a tax on purchases. 
       VAT registered businesses will not pay VAT if the transaction is cross-border. Make sure 
       to enter your VAT ID at the time of purchase (when you provide your payment card details).
       In other cases VAT will be added to the price of the plan. The amount of VAT depends on 
       your country. For European countries, it is usually in between 20 - 25% of the price."
-               [matTooltipShowDelay]="appConfig.tooltipDelay"
-               [matTooltipPosition]="'left'">
-            <div>Price per month</div>
-            <div>(TAX excluded)</div>
+            [matTooltipShowDelay]="appConfig.tooltipDelay"
+            [matTooltipPosition]="'left'"
+          >
+            <div>Price per month</div> <div>(TAX excluded)</div>
           </div>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.price}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.price }} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <mat-header-cell *matHeaderCellDef
-                         fxFlex="2 2 40%"> Description </mat-header-cell>
-        <mat-cell *matCellDef="let element"
-                  fxFlex="2 2 40%">
-
-          <div fxLayout="column"
-               fxLayoutGap="5px"
-               class="billing-descr__value">
-            <div fxLayout="row"
-                 *ngFor="let item of element.description">
+        <mat-header-cell *matHeaderCellDef fxFlex="2 2 40%">
+          Description
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" fxFlex="2 2 40%">
+          <div fxLayout="column" fxLayoutGap="5px" class="billing-descr__value">
+            <div fxLayout="row" *ngFor="let item of element.description">
               <mat-icon>check</mat-icon>
-              <p>{{item}}</p>
+              <p>{{ item }}</p>
             </div>
           </div>
-
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="switch">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button *ngIf="element.switch"
-                  [disabled]="!(selectedProjectUserIsAdmin$ | async) ||
-                    !(projectAnalyticsSubscription) || 
-                    projectAnalyticsSubscription.state === analyticsStateEnum.PastDue || 
-                    projectAnalyticsSubscription.state === analyticsStateEnum.Deleted"
-                  mat-raised-button
-                  color="primary"
-                  (click)="openSwitchAnalyticsPlanDialog(element.analytics_plan_id)">Switch</button>
+          <button
+            *ngIf="element.switch"
+            [disabled]="
+              !(selectedProjectUserIsAdmin$ | async) ||
+              !projectAnalyticsSubscription ||
+              projectAnalyticsSubscription.state ===
+                analyticsStateEnum.PastDue ||
+              projectAnalyticsSubscription.state === analyticsStateEnum.Deleted
+            "
+            mat-raised-button
+            color="primary"
+            (click)="openSwitchAnalyticsPlanDialog(element.analytics_plan_id)"
+            >Switch</button
+          >
 
-          <button *ngIf="!element.switch"
-                  mat-raised-button
-                  [disabled]=true>Current plan</button>
+          <button *ngIf="!element.switch" mat-raised-button [disabled]="true"
+            >Current plan</button
+          >
         </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
     </mat-table>
   </div>
 
-  <button mat-raised-button
-          [disabled]="!(selectedProjectUserIsAdmin$ | async) ||
-            !(projectAnalyticsSubscription) ||
-            projectAnalyticsSubscription.state === analyticsStateEnum.Deleted"
-          color="warn"
-          (click)="openCancelSubscriptionDialog()">Cancel Subscription</button>
+  <button
+    mat-raised-button
+    [disabled]="
+      !(selectedProjectUserIsAdmin$ | async) ||
+      !projectAnalyticsSubscription ||
+      projectAnalyticsSubscription.state === analyticsStateEnum.Deleted
+    "
+    color="warn"
+    (click)="openCancelSubscriptionDialog()"
+    >Cancel Subscription</button
+  >
 
-  <m-next-payment *ngIf="projectAnalyticsSubscription && 
-projectAnalyticsSubscription.state === analyticsStateEnum.Active"></m-next-payment>
+  <m-next-payment
+    *ngIf="
+      projectAnalyticsSubscription &&
+      projectAnalyticsSubscription.state === analyticsStateEnum.Active
+    "
+  ></m-next-payment>
 
   <m-payments></m-payments>
-
 </div>
 
 <!-- async -->
-<div *ngIf="selectedProjectAnalyticsSubscription$ | async"></div>
+<div *ngIf="(selectedProjectAnalyticsSubscription$ | async)"></div>

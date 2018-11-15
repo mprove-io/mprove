@@ -2,34 +2,51 @@
   <div fxFlex="40">
     <form [formGroup]="updateQuerySizeLimitForm">
       <mat-form-field class="settings__user-input">
-        <input matInput
-               type="number"
-               id="querySizeLimitInput"
-               name="projectSettingsQuerySizeLimit"
-               formControlName="querySizeLimit"
-               placeholder="Number"
-               required>
+        <input
+          matInput
+          type="number"
+          id="querySizeLimitInput"
+          name="projectSettingsQuerySizeLimit"
+          formControlName="querySizeLimit"
+          placeholder="Number"
+          required
+        />
         <mat-error>
-          <m-validation-msg [errors]="updateQuerySizeLimitForm.controls['querySizeLimit'].errors"></m-validation-msg>
+          <m-validation-msg
+            [errors]="
+              updateQuerySizeLimitForm.controls['querySizeLimit'].errors
+            "
+          ></m-validation-msg>
         </mat-error>
       </mat-form-field>
     </form>
   </div>
-  <div fxFlex="60"
-       fxFlexAlign="center"
-       class="settings-button-wrapper"
-       *ngIf="updateQuerySizeLimitForm.dirty">
-    <button mat-button
-            [disabled]="!(selectedProjectUserIsAdmin$ | async) || !updateQuerySizeLimitForm.valid"
-            type="submit"
-            class="mat-flat-fab"
-            name="projectSettingsApplyChangeQuerySizeLimit"
-            (click)="onSubmit(updateQuerySizeLimitForm, updateQuerySizeLimitForm.value)">
+  <div
+    fxFlex="60"
+    fxFlexAlign="center"
+    class="settings-button-wrapper"
+    *ngIf="updateQuerySizeLimitForm.dirty"
+  >
+    <button
+      mat-button
+      [disabled]="
+        !(selectedProjectUserIsAdmin$ | async) ||
+        !updateQuerySizeLimitForm.valid
+      "
+      type="submit"
+      class="mat-flat-fab"
+      name="projectSettingsApplyChangeQuerySizeLimit"
+      (click)="
+        onSubmit(updateQuerySizeLimitForm, updateQuerySizeLimitForm.value)
+      "
+    >
       <mat-icon class="settings__button-success">done</mat-icon>
     </button>
-    <button mat-button
-            class="mat-flat-fab"
-            (click)="onReset(updateQuerySizeLimitForm)">
+    <button
+      mat-button
+      class="mat-flat-fab"
+      (click)="onReset(updateQuerySizeLimitForm)"
+    >
       <mat-icon class="settings__button-warn">clear</mat-icon>
     </button>
   </div>

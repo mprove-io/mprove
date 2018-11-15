@@ -2,46 +2,56 @@
   <div fxFlex="100">
     <form [formGroup]="updateProjectTimezoneForm">
       <mat-form-field>
-        <mat-select placeholder="Timezone"
-                    #select="matSelect"
-                    name="projectSettingsTimezone"
-                    formControlName="projectTimezone"
-                    class="settings__user-input">
+        <mat-select
+          placeholder="Timezone"
+          #select="matSelect"
+          name="projectSettingsTimezone"
+          formControlName="projectTimezone"
+          class="settings__user-input"
+        >
+          <mat-option [value]="'UTC'" name="projectSettingsTimezoneOption"
+            >UTC</mat-option
+          >
 
-          <mat-option [value]="'UTC'"
-                      name="projectSettingsTimezoneOption">UTC</mat-option>
-
-          <ng-template ngFor
-                       let-tzGroup
-                       [ngForOf]="timeZones">
-            <ng-template ngFor
-                         let-tz
-                         [ngForOf]="tzGroup.zones">
-
-              <mat-option [value]="tz.value"
-                          name="projectSettingsTimezoneOption">{{tzGroup.group}} - {{tz.name}}</mat-option>
-
+          <ng-template ngFor let-tzGroup [ngForOf]="timeZones">
+            <ng-template ngFor let-tz [ngForOf]="tzGroup.zones">
+              <mat-option
+                [value]="tz.value"
+                name="projectSettingsTimezoneOption"
+                >{{ tzGroup.group }} - {{ tz.name }}</mat-option
+              >
             </ng-template>
           </ng-template>
         </mat-select>
       </mat-form-field>
     </form>
   </div>
-  <div fxFlex="60"
-       fxFlexAlign="center"
-       class="settings-button-wrapper"
-       *ngIf="updateProjectTimezoneForm.dirty">
-    <button mat-button
-            [disabled]="!(selectedProjectUserIsAdmin$ | async) || !updateProjectTimezoneForm.valid"
-            class="mat-flat-fab"
-            name="projectSettingsApplyChangeTimezone"
-            type="submit"
-            (click)="onSubmit(updateProjectTimezoneForm, updateProjectTimezoneForm.value)">
+  <div
+    fxFlex="60"
+    fxFlexAlign="center"
+    class="settings-button-wrapper"
+    *ngIf="updateProjectTimezoneForm.dirty"
+  >
+    <button
+      mat-button
+      [disabled]="
+        !(selectedProjectUserIsAdmin$ | async) ||
+        !updateProjectTimezoneForm.valid
+      "
+      class="mat-flat-fab"
+      name="projectSettingsApplyChangeTimezone"
+      type="submit"
+      (click)="
+        onSubmit(updateProjectTimezoneForm, updateProjectTimezoneForm.value)
+      "
+    >
       <mat-icon class="settings__button-success">done</mat-icon>
     </button>
-    <button mat-button
-            class="mat-flat-fab"
-            (click)="onReset(updateProjectTimezoneForm)">
+    <button
+      mat-button
+      class="mat-flat-fab"
+      (click)="onReset(updateProjectTimezoneForm)"
+    >
       <mat-icon class="settings__button-warn">clear</mat-icon>
     </button>
   </div>
