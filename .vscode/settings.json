@@ -1,14 +1,9 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "prettier.disableLanguages": ["html"],
-  "html.format.wrapAttributes": "force-aligned",
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true
   },
-  "typescript.referencesCodeLens.enabled": true,
-  "tslint.ignoreDefinitionFiles": false,
-  "tslint.exclude": "**/node_modules/**/*",
   "files.associations": {
     "*.view": "yaml",
     "*.model": "yaml",
