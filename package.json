@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf ./dist/",
-    "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts' 'e2e/**/*.ts'",
+    "lint": "tslint --config tslint.json -e 'node_modules/**' \"{src,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts ./",
     "format:base": "prettier \"{src,e2e}/**/*.{ts,js,json,scss}\" --config .prettierrc.yaml",
     "format:list": "npm run format:base -- --list-different --config .prettierrc.yaml",
