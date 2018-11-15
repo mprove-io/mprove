@@ -1,6 +1,0 @@
-{
-  "exclude": [
-    "node_modules",
-    "src/interfaces/Fraction.ts"
-  ]
-}

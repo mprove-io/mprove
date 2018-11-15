@@ -8,18 +8,21 @@
     "url": "https://github.com/mprove-io/mprove-blockml-node.git"
   },
   "scripts": {
-    "start": "npm run build && npm run watch",
     "rimraf": "rimraf",
-    "clean:dist": "npm run rimraf -- dist .awcache",
-    "build": "npm run clean:dist && npm run build-ts && npm run lint",
+    "clean": "npm run rimraf -- dist .awcache",
+    "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts' 'test/**/*.ts'",
+    "circular": "madge --circular --extensions ts ./",
+    "format:base": "prettier \"{src,test}/**/*.{ts,js,json}\" --config .prettierrc.yaml",
+    "format:list": "npm run format:base -- --list-different --config .prettierrc.yaml",
+    "format:write": "npm run format:base -- --write",
+    "files:check": "npm run format:write && npm-run-all --parallel lint circular",    
+    "build": "npm run files:check && npm run clean && tsc",
+    "start": "npm run build && npm run watch",
     "serve": "nodemon dist/server.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve\"",
     "test": "JEST=yes jest --forceExit",
     "jest": "JEST=yes jest",
-    "build-ts": "tsc",
-    "watch-ts": "tsc -w",
-    "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts' 'test/**/*.ts'",
-    "format": "tsfmt -r --no-tslint --no-editorconfig --no-vscode --useTsconfig=./tsconfig.formatter.json"
+    "watch-ts": "tsc -w"
   },
   "jest": {
     "globals": {
@@ -84,6 +87,7 @@
     "ts-jest": "^23.0.1",
     "tslint": "^5.0.0",
     "typescript": "^2.4.0",
-    "typescript-formatter": "^7.0.0"
+    "prettier": "^1.15.2",
+    "tslint-config-prettier": "^1.16.0"
   }
 }
