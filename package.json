@@ -120,7 +120,8 @@
     "@types/uuid": "^2.0.29",
     "cucumber": "4.2.1",
     "protractor-cucumber-framework": "5.0.0",
-    "tslint-config-prettier": "^1.16.0",
+    "prettier": "1.15.2",
+    "tslint-config-prettier": "1.16.0",
     
     "@angular-devkit/build-angular": "^0.10.4",
     "@angular/cli": "6.2.5",
@@ -142,7 +143,6 @@
     "karma-spec-reporter": "~0.0.32",
     "lint-staged": "^7.3.0",
     "pa11y-ci": "^2.1.1",
-    "prettier": "^1.15.2",
     "standard-version": "^4.4.0"
   }
 }
