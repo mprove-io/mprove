@@ -33,8 +33,12 @@ export enum ServerResponseStatusEnum {
   MemberEntityAlreadyExist = <any>'member_entity_already_exist',
   MemberEntityNotFound = <any>'member_entity_not_found',
   MessageEntityNotFound = <any>'message_entity_not_found',
-  MissingRequiredFieldInRequestBody = <any>'missing_required_field_in_request_body',
-  MissingRequiredFieldInRequestBodyPayload = <any>'missing_required_field_in_request_body_payload',
+  MissingRequiredFieldInRequestBody = <any>(
+    'missing_required_field_in_request_body'
+  ),
+  MissingRequiredFieldInRequestBodyPayload = <any>(
+    'missing_required_field_in_request_body_payload'
+  ),
   ModelEntityAlreadyExist = <any>'model_entity_already_exist',
   ModelEntityNotFound = <any>'model_entity_not_found',
   ModelEntityDeleted = <any>'model_entity_deleted',
@@ -57,8 +61,12 @@ export enum ServerResponseStatusEnum {
   ServiceUnavailable = <any>'service_unavailable',
   SubscriptionEntityAlreadyExist = <any>'subscription_entity_already_exist',
   SubscriptionEntityNotFound = <any>'subscription_entity_not_found',
-  SubscriptionEntityDoNotCancelled = <any>'subscription_entity_do_not_cancelled',
-  SubscriptionsSwitchAnalyticsSubscriptionPlanFailed = <any>'subscriptions_switch_analytics_subscription_plan_failed',
+  SubscriptionEntityDoNotCancelled = <any>(
+    'subscription_entity_do_not_cancelled'
+  ),
+  SubscriptionsSwitchAnalyticsSubscriptionPlanFailed = <any>(
+    'subscriptions_switch_analytics_subscription_plan_failed'
+  ),
   TestAlreadyStarted = <any>'test_already_started',
   TestAlreadyFinished = <any>'test_already_finished',
   TestNotStarted = <any>'test_not_started',
