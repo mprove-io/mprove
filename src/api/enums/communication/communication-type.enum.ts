@@ -1,4 +1,4 @@
 export enum CommunicationTypeEnum {
   REQUEST = 'REQUEST',
-  RESPONSE = 'RESPONSE',
+  RESPONSE = 'RESPONSE'
 }
