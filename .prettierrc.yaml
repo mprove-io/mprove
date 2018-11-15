@@ -1,13 +1,10 @@
 # edit in mprove-api only
 
-# see vscode settings prettier.*
-# https://github.com/prettier/prettier-vscode
-
 arrowParens: avoid
 bracketSpacing: true
 endOfLine: lf # default: auto
-htmlWhitespaceSensitivity: css
-jsxBracketSameLine: true # default: false
+htmlWhitespaceSensitivity: strict
+# jsxBracketSameLine: false
 # jsxSingleQuote: false
 # parser: babylon
 printWidth: 80 # default: 80
@@ -17,6 +14,8 @@ singleQuote: true # default: false
 tabWidth: 2
 trailingComma: none
 useTabs: false
+
+# see vscode settings https://github.com/prettier/prettier-vscode
 
 # prettier.eslintIntegration
 # prettier.tslintIntegration
