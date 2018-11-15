@@ -10,7 +10,7 @@
   "scripts": {
     "rimraf": "rimraf",
     "clean": "npm run rimraf -- dist .awcache",
-    "lint": "tslint --config tslint.json 'src/**/*.ts' 'test/**/*.ts' -e 'node_modules/**'",
+    "lint": "tslint --config tslint.json \"{src,test}/**/*.ts\" -e 'node_modules/**'",
     "circular": "madge --circular --extensions ts ./",
     "format:base": "prettier \"{src,test}/**/*.{ts,js,json}\" --config .prettierrc.yaml",
     "format:list": "npm run format:base -- --list-different --config .prettierrc.yaml",
