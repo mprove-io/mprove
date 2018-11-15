@@ -55,7 +55,7 @@ export class GenerateBlockmlDialogComponent implements OnInit, AfterViewInit {
           .replace(/^\s\s/g, '')
           .replace(/^\s\s\s\s[-]/g, '  -')
           .replace(/^\s\s\s\s\s\s[-]/g, '    -')
-          .replace(/'''/g, "'")
+          .replace(/'''/g, `'`)
       )
       .slice(1)
       .join('\n');
