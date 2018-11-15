@@ -6,7 +6,7 @@
     "clean": "rimraf ./dist/",
     "lint": "tslint --config tslint.json -e 'node_modules/**' \"{src,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts ./",
-    "format:base": "prettier \"{src,e2e}/**/*.{ts,js,json,scss}\" --config .prettierrc.yaml",
+    "format:base": "prettier \"{src,e2e}/**/*.{ts,js,json,scss,html}\" --config .prettierrc.yaml",
     "format:list": "npm run format:base -- --list-different --config .prettierrc.yaml",
     "format:write": "npm run format:base -- --write",
     "files:check": "npm run format:write && npm-run-all --parallel lint circular",

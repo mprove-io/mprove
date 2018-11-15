@@ -1,2 +1,3 @@
 package.json
 src/app/api
+src/app/components/visual/_visual-page/visual.component.html
