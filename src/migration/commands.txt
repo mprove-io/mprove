@@ -4,8 +4,3 @@ yarn ts-node node_modules/.bin/typeorm migration:generate -n base
 yarn ts-node node_modules/.bin/typeorm migration:generate -n 
 yarn ts-node node_modules/.bin/typeorm migration:create -n first
 yarn ts-node node_modules/.bin/typeorm migration:run
-
-// tslint:disable:max-line-length
-// tslint:disable:quotemark
-// tslint:disable:class-name
-// tslint:disable:member-access

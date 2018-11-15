@@ -1,4 +1,3 @@
-// tslint:disable:max-line-length
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression'; // compresses requests
 import * as express from 'express';

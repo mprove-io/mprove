@@ -1,5 +1,3 @@
-// tslint:disable:quotemark
-// tslint:disable:max-line-length
 export const bigqueryMproveDemo = {
   type: 'service_account',
   project_id: 'mprove-demo',
