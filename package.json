@@ -16,14 +16,13 @@
     "format:list": "npm run format:base -- --list-different --config .prettierrc.yaml",
     "format:write": "npm run format:base -- --write",
     "files:check": "npm run format:write && npm-run-all --parallel lint circular",    
-    "build": "npm run files:check && npm run clean && npm run build-ts",
+    "build": "npm run files:check && npm run clean && tsc",
     "start": "npm run build && npm run watch",
     "serve": "nodemon dist/server.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve\"",
-    "test": "JEST=yes jest --forceExit",
+    "watch-ts": "tsc -w",
     "jest": "JEST=yes jest",
-    "build-ts": "tsc",
-    "watch-ts": "tsc -w"
+    "test": "JEST=yes jest --forceExit"
   },
   "jest": {
     "globals": {
