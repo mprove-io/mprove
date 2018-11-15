@@ -8,10 +8,10 @@
     "url": "https://github.com/mprove-io/mprove-api.git"
   },
   "scripts": {
-    "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts'",
+    "lint": "tslint --config tslint.json -e 'node_modules/**' 'src/**/*.ts'",
     "circular": "madge --circular --extensions ts ./",
     "format:base": "prettier \"src/**/*.ts\" --config .prettierrc.yaml",
-    "format:list": "npm run format:base -- --list-different",
+    "format:list": "npm run format:base -- --list-different --config .prettierrc.yaml",
     "format:write": "npm run format:base -- --write",
     "files:check": "npm run format:write && npm-run-all --parallel lint circular"
   },
