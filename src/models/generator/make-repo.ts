@@ -3,12 +3,11 @@ import { entities } from '../../barrels/entities';
 import { enums } from '../../barrels/enums';
 
 export function makeRepo(item: {
-  project_id: string,
-  repo_id: string,
-  nodes: api.CatalogNode[],
-  struct_id: string,
+  project_id: string;
+  repo_id: string;
+  nodes: api.CatalogNode[];
+  struct_id: string;
 }): entities.RepoEntity {
-
   return {
     repo_id: item.repo_id,
     project_id: item.project_id,
@@ -28,6 +27,6 @@ export function makeRepo(item: {
     remote_last_pull_ts: (1).toString(),
     remote_pull_access_is_ok: enums.bEnum.FALSE,
     remote_pull_error_message: undefined,
-    server_ts: undefined,
+    server_ts: undefined
   };
 }

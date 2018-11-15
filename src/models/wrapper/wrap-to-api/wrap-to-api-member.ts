@@ -3,7 +3,6 @@ import { entities } from '../../../barrels/entities';
 import { helper } from '../../../barrels/helper';
 
 export function wrapToApiMember(member: entities.MemberEntity): api.Member {
-
   return {
     member_id: member.member_id,
     project_id: member.project_id,
@@ -20,6 +19,6 @@ export function wrapToApiMember(member: entities.MemberEntity): api.Member {
     file_theme: member.file_theme,
     sql_theme: member.sql_theme,
     deleted: helper.benumToBoolean(member.deleted),
-    server_ts: Number(member.server_ts),
+    server_ts: Number(member.server_ts)
   };
 }

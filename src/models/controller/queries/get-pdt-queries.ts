@@ -9,7 +9,6 @@ import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 
 export async function getPdtQueries(req: Request, res: Response) {
-
   let payload: api.GetPdtQueriesRequestBodyPayload = validator.getPayload(req);
 
   let projectId = payload.project_id;
@@ -19,17 +18,18 @@ export async function getPdtQueries(req: Request, res: Response) {
 
   let storeQueries = store.getQueriesRepo();
 
-  queries = <entities.QueryEntity[]>await storeQueries.find({
-    project_id: projectId,
-    struct_id: structId,
-    is_pdt: enums.bEnum.TRUE
-  })
+  queries = <entities.QueryEntity[]>await storeQueries
+    .find({
+      project_id: projectId,
+      struct_id: structId,
+      is_pdt: enums.bEnum.TRUE
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
 
   // response
 
   let responsePayload: api.GetPdtQueriesResponse200BodyPayload = {
-    queries: queries.map(query => wrapper.wrapToApiQuery(query)),
+    queries: queries.map(query => wrapper.wrapToApiQuery(query))
   };
 
   sender.sendClientResponse(req, res, responsePayload);

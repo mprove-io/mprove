@@ -5,7 +5,12 @@ import * as express from 'express';
 import * as expressWs from 'express-ws';
 import * as lusca from 'lusca';
 import * as logger from 'morgan';
-import { Connection, ConnectionOptions, createConnection, getConnectionOptions } from 'typeorm';
+import {
+  Connection,
+  ConnectionOptions,
+  createConnection,
+  getConnectionOptions
+} from 'typeorm';
 import { api } from './barrels/api';
 import { constants } from './barrels/constants';
 import { controller } from './barrels/controller';
@@ -30,17 +35,17 @@ import expressValidator = require('express-validator');
 //   config.DB_DATABASE
 // } from './configs/config';
 
-
-run()
-  .catch((e) => {
-    console.log(e); // TODO: console log e
-  });
-
+run().catch(e => {
+  console.log(e); // TODO: console log e
+});
 
 async function run() {
   // read connection options from ormconfig file (or ENV variables)
-  const connectionOptions = <ConnectionOptions>await getConnectionOptions()
-    .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_GET_CONNECTION_OPTIONS));
+  const connectionOptions = <ConnectionOptions>(
+    await getConnectionOptions().catch(e =>
+      helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_GET_CONNECTION_OPTIONS)
+    )
+  );
 
   Object.assign(connectionOptions, {
     // synchronize: true, // TODO: synchronize: false in prod
@@ -64,7 +69,7 @@ async function run() {
     //   SessionEntity,
     //   UserEntity,
     // ],
-    migrations: [__dirname + '/migration/*.js'],
+    migrations: [__dirname + '/migration/*.js']
     // migrations: ['src/migration/*.js'],
     //   cli: {
     //     migrationsDir: 'src/migration'
@@ -74,33 +79,44 @@ async function run() {
   // create connection with database
   // note that it's not active database connection
   // TypeORM creates connection pools and uses them for your requests
-  const connection = <Connection>await createConnection(connectionOptions)
-    .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_CREATE_CONNECTION));
+  const connection = <Connection>(
+    await createConnection(connectionOptions).catch(e =>
+      helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_CREATE_CONNECTION)
+    )
+  );
 
+  await connection
+    .dropDatabase() // TODO: remove synchronize in prod
+    .catch(e =>
+      helper.reThrow(
+        e,
+        enums.typeormErrorsEnum.TYPEORM_CONNECTION_DROP_DATABASE
+      )
+    );
 
-  await connection.dropDatabase() // TODO: remove synchronize in prod
-    .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_CONNECTION_DROP_DATABASE));
-
-  await connection.synchronize() // TODO: remove synchronize in prod
+  await connection
+    .synchronize() // TODO: remove synchronize in prod
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_SYNCHRONIZE));
-
 
   // await connection.runMigrations() // TODO: runMigrations in prod
   //   .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_RUN_MIGRATIONS));
 
-  await start.addUsers()
+  await start
+    .addUsers()
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_USERS));
 
-  await start.addProject({
-    project_id: constants.DEMO_PROJECT,
-    bigquery_credentials: credentials.bigqueryMproveData
-  })
+  await start
+    .addProject({
+      project_id: constants.DEMO_PROJECT,
+      bigquery_credentials: credentials.bigqueryMproveData
+    })
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
 
-  await start.addProject({
-    project_id: constants.PROJECT_WOOD,
-    bigquery_credentials: credentials.bigqueryMproveData
-  })
+  await start
+    .addProject({
+      project_id: constants.PROJECT_WOOD,
+      bigquery_credentials: credentials.bigqueryMproveData
+    })
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
 
   let itemCreateExpress = createExpress();
@@ -108,9 +124,7 @@ async function run() {
   scheduler.runScheduler(itemCreateExpress);
 }
 
-
 function createExpress() {
-
   const appExpress = express();
 
   // let options = {
@@ -137,7 +151,8 @@ function createExpress() {
     res.header('Access-Control-Allow-Origin', '*');
     res.header(
       'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
     next();
   });
 
@@ -165,33 +180,36 @@ function createExpress() {
   let wsClients: interfaces.WebsocketClient[] = [];
 
   app.ws('/api/v1/webchat/:init_id', async (ws, req) => {
-
     let initId = req.params.init_id;
     console.log('init_id', initId);
 
     let storeSessions = store.getSessionsRepo();
 
-    let session = await storeSessions.findOne({
-      session_id: initId
-    })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_FIND_ONE));
+    let session = await storeSessions
+      .findOne({
+        session_id: initId
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_FIND_ONE)
+      );
 
     if (!session) {
       ws.close(4505); // init_id not found
-
     } else if (session.is_activated === enums.bEnum.TRUE) {
       ws.close(4503); // init_id already in use
-
     } else {
       session.is_activated = enums.bEnum.TRUE;
 
-      await storeSessions.save(session)
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_SAVE));
+      await storeSessions
+        .save(session)
+        .catch(e =>
+          helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_SAVE)
+        );
 
       let wsClient: interfaces.WebsocketClient = {
         session_id: session.session_id,
         user_id: session.user_id,
-        ws: ws,
+        ws: ws
       };
 
       wsClients.push(wsClient);
@@ -202,14 +220,13 @@ function createExpress() {
     // });
   });
 
-
   app.use(handler.errorToResponse);
 
   // app.use(errorHandler()); // Provides full stack - remove for production
 
   app.listen(app.get('port'), () => {
     console.log(
-      ('  App is running at http://localhost:%d in %s mode'),
+      '  App is running at http://localhost:%d in %s mode',
       app.get('port'),
       app.get('env')
     );
@@ -224,9 +241,7 @@ function createExpress() {
   };
 }
 
-
 function registerRoutes(app: expressWs.Application, middlewares: any) {
-
   // CONFIRM
 
   app.post(
@@ -235,7 +250,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.confirm,
       enums.controllerErrorsEnum.CONTROLLER_CONFIRM
-    ));
+    )
+  );
 
   // FILES
 
@@ -245,7 +261,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.createFile,
       enums.controllerErrorsEnum.CONTROLLER_CREATE_FILE
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_DELETE_FILE,
@@ -253,7 +270,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.deleteFile,
       enums.controllerErrorsEnum.CONTROLLER_DELETE_FILE
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SAVE_FILE,
@@ -261,7 +279,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.saveFile,
       enums.controllerErrorsEnum.CONTROLLER_SAVE_FILE
-    ));
+    )
+  );
 
   // FOLDERS
 
@@ -271,7 +290,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.createFolder,
       enums.controllerErrorsEnum.CONTROLLER_CREATE_FOLDER
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_DELETE_FOLDER,
@@ -279,7 +299,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.deleteFolder,
       enums.controllerErrorsEnum.CONTROLLER_DELETE_FOLDER
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_RENAME_FOLDER,
@@ -287,7 +308,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.renameFolder,
       enums.controllerErrorsEnum.CONTROLLER_RENAME_FOLDER
-    ));
+    )
+  );
 
   // MEMBERS
 
@@ -297,7 +319,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.createMember,
       enums.controllerErrorsEnum.CONTROLLER_CREATE_MEMBER
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_DELETE_MEMBER,
@@ -305,7 +328,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.deleteMember,
       enums.controllerErrorsEnum.CONTROLLER_DELETE_MEMBER
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_EDIT_MEMBER,
@@ -313,7 +337,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.editMember,
       enums.controllerErrorsEnum.CONTROLLER_EDIT_MEMBER
-    ));
+    )
+  );
 
   // MCONFIGS
 
@@ -323,14 +348,17 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.createMconfig,
       enums.controllerErrorsEnum.CONTROLLER_CREATE_MCONFIG
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_GET_MCONFIG,
-    middlewares, handler.catchAsyncErrors(
+    middlewares,
+    handler.catchAsyncErrors(
       controller.getMconfig,
       enums.controllerErrorsEnum.CONTROLLER_GET_MCONFIG
-    ));
+    )
+  );
 
   // MULTI
 
@@ -340,14 +368,17 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.createDashboard,
       enums.controllerErrorsEnum.CONTROLLER_CREATE_DASHBOARD
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_CREATE_MCONFIG_AND_QUERY,
-    middlewares, handler.catchAsyncErrors(
+    middlewares,
+    handler.catchAsyncErrors(
       controller.createMconfigAndQuery,
       enums.controllerErrorsEnum.CONTROLLER_CREATE_MCONFIG_AND_QUERY
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_GET_DASHBOARD_MCONFIG_AND_QUERIES,
@@ -355,7 +386,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.getDashboardMconfigsQueries,
       enums.controllerErrorsEnum.CONTROLLER_GET_DASHBOARD_MCONFIGS_QUERIES
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SET_LIVE_QUERIES,
@@ -363,16 +395,19 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.setLiveQueries,
       enums.controllerErrorsEnum.CONTROLLER_SET_LIVE_QUERIES
-    ));
+    )
+  );
 
   // PROJECTS
 
   app.post(
     '/api/v1' + api.PATH_CHECK_PROJECT_ID_UNIQUE,
-    middlewares, handler.catchAsyncErrors(
+    middlewares,
+    handler.catchAsyncErrors(
       controller.checkProjectIdUnique,
       enums.controllerErrorsEnum.CONTROLLER_CHECK_PROJECT_ID_UNIQUE
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_CREATE_PROJECT,
@@ -380,7 +415,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.createProject,
       enums.controllerErrorsEnum.CONTROLLER_CREATE_PROJECT
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_DELETE_PROJECT,
@@ -388,7 +424,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.deleteProject,
       enums.controllerErrorsEnum.CONTROLLER_DELETE_PROJECT
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SET_PROJECT_CREDENTIALS,
@@ -396,7 +433,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.setProjectCredentials,
       enums.controllerErrorsEnum.CONTROLLER_SET_PROJECT_CREDENTIALS
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SET_PROJECT_QUERY_SIZE_LIMIT,
@@ -404,15 +442,17 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.setProjectQuerySizeLimit,
       enums.controllerErrorsEnum.CONTROLLER_SET_PROJECT_QUERY_SIZE_LIMIT
-
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SET_PROJECT_TIMEZONE,
-    middlewares, handler.catchAsyncErrors(
+    middlewares,
+    handler.catchAsyncErrors(
       controller.setProjectTimezone,
       enums.controllerErrorsEnum.CONTROLLER_SET_PROJECT_TIMEZONE
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SET_PROJECT_WEEK_START,
@@ -420,7 +460,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.setProjectWeekStart,
       enums.controllerErrorsEnum.CONTROLLER_SET_PROJECT_WEEK_START
-    ));
+    )
+  );
 
   // QUERIES
 
@@ -430,7 +471,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.getPdtQueries,
       enums.controllerErrorsEnum.CONTROLLER_GET_PDT_QUERIES
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_GET_QUERY_WITH_DEP_QUERIES,
@@ -438,7 +480,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.getQueryWithDepQueries,
       enums.controllerErrorsEnum.CONTROLLER_GET_QUERY_WITH_DEP_QUERIES
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_RUN_QUERIES,
@@ -446,7 +489,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.runQueries,
       enums.controllerErrorsEnum.CONTROLLER_RUN_QUERIES
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_RUN_QUERIES_DRY,
@@ -454,7 +498,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.runQueriesDry,
       enums.controllerErrorsEnum.CONTROLLER_RUN_QUERIES_DRY
-    ));
+    )
+  );
 
   // REPOS
 
@@ -464,7 +509,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.commitRepo,
       enums.controllerErrorsEnum.CONTROLLER_COMMIT_REPO
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_PULL_REPO,
@@ -472,7 +518,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.pullRepo,
       enums.controllerErrorsEnum.CONTROLLER_PULL_REPO
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_PUSH_REPO,
@@ -480,7 +527,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.pushRepo,
       enums.controllerErrorsEnum.CONTROLLER_PUSH_REPO
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_REVERT_REPO_TO_LAST_COMMIT,
@@ -488,14 +536,17 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.revertRepoToLastCommit,
       enums.controllerErrorsEnum.CONTROLLER_REVERT_REPO_TO_LAST_COMMIT
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_REVERT_REPO_TO_PRODUCTION,
-    middlewares, handler.catchAsyncErrors(
+    middlewares,
+    handler.catchAsyncErrors(
       controller.revertRepoToProduction,
       enums.controllerErrorsEnum.CONTROLLER_REVERT_REPO_TO_PRODUCTION
-    ));
+    )
+  );
 
   // STATE
 
@@ -505,7 +556,8 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.getState,
       enums.controllerErrorsEnum.CONTROLLER_GET_STATE
-    ));
+    )
+  );
 
   // USERS
 
@@ -515,14 +567,17 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.logoutUser,
       enums.controllerErrorsEnum.CONTROLLER_LOGOUT_USER
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SET_USER_NAME,
-    middlewares, handler.catchAsyncErrors(
+    middlewares,
+    handler.catchAsyncErrors(
       controller.usersSetUserName,
       enums.controllerErrorsEnum.CONTROLLER_SET_USER_NAME
-    ));
+    )
+  );
 
   app.post(
     '/api/v1' + api.PATH_SET_USER_TIMEZONE,
@@ -530,5 +585,6 @@ function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.setUserTimezone,
       enums.controllerErrorsEnum.CONTROLLER_SET_USER_TIMEZONE
-    ));
+    )
+  );
 }

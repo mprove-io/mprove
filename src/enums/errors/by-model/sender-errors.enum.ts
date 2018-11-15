@@ -1,2 +1,1 @@
-export enum senderErrorsEnum {
-}
+export enum senderErrorsEnum {}

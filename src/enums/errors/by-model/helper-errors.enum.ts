@@ -1,2 +1,1 @@
-export enum helperErrorsEnum {
-}
+export enum helperErrorsEnum {}

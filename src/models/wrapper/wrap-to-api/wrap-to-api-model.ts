@@ -3,7 +3,6 @@ import { entities } from '../../../barrels/entities';
 import { helper } from '../../../barrels/helper';
 
 export function wrapToApiModel(model: entities.ModelEntity): api.Model {
-
   return {
     model_id: model.model_id,
     project_id: model.project_id,
@@ -17,6 +16,6 @@ export function wrapToApiModel(model: entities.ModelEntity): api.Model {
     fields: JSON.parse(model.fields),
     nodes: JSON.parse(model.nodes),
     description: model.description,
-    server_ts: Number(model.server_ts),
+    server_ts: Number(model.server_ts)
   };
 }

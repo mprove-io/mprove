@@ -15,7 +15,6 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function createFolder(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let payload: api.CreateFolderRequestBodyPayload = validator.getPayload(req);
@@ -27,13 +26,16 @@ export async function createFolder(req: Request, res: Response) {
 
   let storeRepos = store.getReposRepo();
 
-  let repo = <entities.RepoEntity>await storeRepos.findOne({
-    project_id: projectId,
-    repo_id: repoId
-  })
+  let repo = <entities.RepoEntity>await storeRepos
+    .findOne({
+      project_id: projectId,
+      repo_id: repoId
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE));
 
-  if (!repo) { throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND }); }
+  if (!repo) {
+    throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
+  }
 
   let repoDir = `${config.DISK_BASE_PATH}/${projectId}/${repoId}`;
 
@@ -45,26 +47,37 @@ export async function createFolder(req: Request, res: Response) {
 
   let gitKeepFileAbsoluteId = folderAbsolutePath + '/' + '.gitkeep';
 
-  await disk.ensureFile(gitKeepFileAbsoluteId)
+  await disk
+    .ensureFile(gitKeepFileAbsoluteId)
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_ENSURE_FILE));
 
-  await git.addChangesToStage({
-    project_id: projectId,
-    repo_id: repoId,
-  })
-    .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE));
+  await git
+    .addChangesToStage({
+      project_id: projectId,
+      repo_id: repoId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE)
+    );
 
-  let itemStatus = <interfaces.ItemStatus>await git.getRepoStatus({
-    project_id: projectId,
-    repo_id: repoId
-  })
+  let itemStatus = <interfaces.ItemStatus>await git
+    .getRepoStatus({
+      project_id: projectId,
+      repo_id: repoId
+    })
     .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_GET_REPO_STATUS));
 
-  let itemCatalog = <interfaces.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
-    project_id: projectId,
-    repo_id: repoId,
-  })
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES));
+  let itemCatalog = <interfaces.ItemCatalog>await disk
+    .getRepoCatalogNodesAndFiles({
+      project_id: projectId,
+      repo_id: repoId
+    })
+    .catch(e =>
+      helper.reThrow(
+        e,
+        enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
+      )
+    );
 
   repo.status = itemStatus.status;
   repo.conflicts = JSON.stringify(itemStatus.conflicts);
@@ -81,24 +94,25 @@ export async function createFolder(req: Request, res: Response) {
   // save to database
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
-
-    await store.save({
-      manager: manager,
-      records: {
-        repos: [repo],
-      },
-      server_ts: newServerTs,
-      source_init_id: initId,
+  await connection
+    .transaction(async manager => {
+      await store
+        .save({
+          manager: manager,
+          records: {
+            repos: [repo]
+          },
+          server_ts: newServerTs,
+          source_init_id: initId
+        })
+        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
     })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-  })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   // response
 
   let responsePayload: api.CreateFolderResponse200BodyPayload = {
-    dev_repo: wrapper.wrapToApiRepo(repo),
+    dev_repo: wrapper.wrapToApiRepo(repo)
   };
 
   sender.sendClientResponse(req, res, responsePayload);

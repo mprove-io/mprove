@@ -9,31 +9,37 @@ import { validator } from '../../../barrels/validator';
 import { MyRegex } from '../../my-regex';
 
 export async function checkProjectIdUnique(req: Request, res: Response) {
-
-  let projectId: api.CheckProjectIdUniqueRequestBodyPayload['project_id'] =
-    validator.getPayloadProjectId(req);
+  let projectId: api.CheckProjectIdUniqueRequestBodyPayload['project_id'] = validator.getPayloadProjectId(
+    req
+  );
 
   projectId = projectId.toLowerCase();
 
   let storeProjects = store.getProjectsRepo();
 
-  let dbProject = await storeProjects.findOne(projectId) // also deleted
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE));
+  let dbProject = await storeProjects
+    .findOne(projectId) // also deleted
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+    );
 
-  let diskProject = await disk.isProjectExistOnDisk(projectId)
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_IS_PROJECT_EXIST_ON_DISK));
+  let diskProject = await disk
+    .isProjectExistOnDisk(projectId)
+    .catch(e =>
+      helper.reThrow(e, enums.diskErrorsEnum.DISK_IS_PROJECT_EXIST_ON_DISK)
+    );
 
   let isUnique = !dbProject && !diskProject;
 
   let isValid = true;
 
-  if (projectId.length < 4
-    || projectId.match(MyRegex.PROJECT_NAME_CONTAINS_WRONG_CHARS())
-    || projectId.match(MyRegex.PROJECT_NAME_DOES_NOT_START_WITH_LETTER())
+  if (
+    projectId.length < 4 ||
+    projectId.match(MyRegex.PROJECT_NAME_CONTAINS_WRONG_CHARS()) ||
+    projectId.match(MyRegex.PROJECT_NAME_DOES_NOT_START_WITH_LETTER())
   ) {
     isValid = false;
   }
-
 
   let payload: api.CheckProjectIdUniqueResponse200BodyPayload = {
     project_id: projectId,

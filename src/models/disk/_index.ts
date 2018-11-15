@@ -7,4 +7,3 @@ export * from './is-repo-exist-on-disk';
 export * from './move-path';
 export * from './remove-path';
 export * from './write-to-file';
-

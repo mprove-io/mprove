@@ -1,4 +1,3 @@
-
 // COMMON
 
 export const TS_TO_BIGINT_DATATYPE = 'bigint';

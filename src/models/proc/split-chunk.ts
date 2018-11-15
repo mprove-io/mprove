@@ -11,11 +11,10 @@ import { store } from '../../barrels/store';
 import { wrapper } from '../../barrels/wrapper';
 
 export async function splitChunk(item: {
-  express_ws_instance: expressWs.Instance,
-  ws_clients: interfaces.WebsocketClient[],
-  chunk: entities.ChunkEntity,
+  express_ws_instance: expressWs.Instance;
+  ws_clients: interfaces.WebsocketClient[];
+  chunk: entities.ChunkEntity;
 }) {
-
   let chunk = item.chunk;
 
   let content: interfaces.ChunkContentParsed = JSON.parse(chunk.content);
@@ -23,7 +22,6 @@ export async function splitChunk(item: {
   // let wsClients = item.express_ws_instance.getWss().clients;
 
   await forEach(item.ws_clients, async wsClient => {
-
     let payload: api.UpdateStateRequestBodyPayload = {
       user: null,
       projects: [],
@@ -34,15 +32,16 @@ export async function splitChunk(item: {
       mconfigs: [],
       dashboards: [],
       errors: [],
-      members: [],
+      members: []
     };
 
     let storeMessages = store.getMessagesRepo();
 
-    let messages = await storeMessages.find({
-      chunk_id: item.chunk.chunk_id,
-      session_id: wsClient.session_id
-    })
+    let messages = await storeMessages
+      .find({
+        chunk_id: item.chunk.chunk_id,
+        session_id: wsClient.session_id
+      })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MESSAGES_FIND));
 
     if (messages && messages.length > 0) {
@@ -50,37 +49,33 @@ export async function splitChunk(item: {
     }
 
     // let isSameUser = chunk.source_user_id && chunk.source_user_id === wsClient.user_id;
-    let isSameSession = chunk.source_session_id && chunk.source_session_id === wsClient.session_id;
+    let isSameSession =
+      chunk.source_session_id &&
+      chunk.source_session_id === wsClient.session_id;
     let isDifferentSession = !isSameSession;
-
 
     // users
 
     content.users.forEach(user => {
-
       if (isDifferentSession && user.user_id === wsClient.user_id) {
-
         let newUser = wrapper.wrapToApiUser(user, enums.bEnum.FALSE);
 
-        if (payload.user) { // in case if chunk has several changes about same user_id, should not be
+        if (payload.user) {
+          // in case if chunk has several changes about same user_id, should not be
 
           if (payload.user.server_ts < newUser.server_ts) {
             payload.user = newUser;
           }
-
         } else {
           payload.user = newUser;
         }
-
       }
     });
 
     // projects
 
     await forEach(content.projects, async project => {
-
       if (isDifferentSession) {
-
         let storeMembers = store.getMembersRepo();
 
         let members = await storeMembers.find({
@@ -90,20 +85,16 @@ export async function splitChunk(item: {
         let projectMemberIds = members.map(member => member.member_id);
 
         if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
-
           let wrappedProject = wrapper.wrapToApiProject(project);
           payload.projects.push(wrappedProject);
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // repos
 
     await forEach(content.repos, async repo => {
-
       if (isDifferentSession) {
-
         if (repo.repo_id === constants.PROD_REPO_ID) {
           let storeMembers = store.getMembersRepo();
 
@@ -118,25 +109,20 @@ export async function splitChunk(item: {
             let wrappedRepo = wrapper.wrapToApiRepo(repo);
             payload.repos.push(wrappedRepo);
           }
-
         } else if (repo.repo_id === wsClient.user_id) {
           // user dev repo
           let wrappedRepo = wrapper.wrapToApiRepo(repo);
           payload.repos.push(wrappedRepo);
-
         } else {
           // other user dev repo - ok
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // files
 
     await forEach(content.files, async file => {
-
       if (isDifferentSession) {
-
         if (file.repo_id === constants.PROD_REPO_ID) {
           // file of prod repo
           let storeMembers = store.getMembersRepo();
@@ -148,22 +134,18 @@ export async function splitChunk(item: {
           let fileProjectMemberIds = members.map(member => member.member_id);
 
           if (fileProjectMemberIds.indexOf(wsClient.user_id) > -1) {
-
             let wrappedFile = wrapper.wrapToApiFile(file);
             payload.files.push(wrappedFile);
           }
-
         } else if (file.repo_id === wsClient.user_id) {
           // file of user dev repo
           let wrappedFile = wrapper.wrapToApiFile(file);
           payload.files.push(wrappedFile);
-
         } else {
           // file of other user dev repo - ok
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // queries
 
@@ -172,15 +154,12 @@ export async function splitChunk(item: {
 
       let wrappedQuery = wrapper.wrapToApiQuery(query);
       payload.queries.push(wrappedQuery);
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // models
 
     await forEach(content.models, async model => {
-
       if (isDifferentSession) {
-
         if (model.repo_id === constants.PROD_REPO_ID) {
           let storeMembers = store.getMembersRepo();
 
@@ -195,25 +174,20 @@ export async function splitChunk(item: {
             let wrappedModel = wrapper.wrapToApiModel(model);
             payload.models.push(wrappedModel);
           }
-
         } else if (model.repo_id === wsClient.user_id) {
           // model of user dev repo
           let wrappedModel = wrapper.wrapToApiModel(model);
           payload.models.push(wrappedModel);
-
         } else {
           // model of other user dev repo - ok
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // dashboards
 
     await forEach(content.dashboards, async dashboard => {
-
       if (isDifferentSession) {
-
         if (dashboard.repo_id === constants.PROD_REPO_ID) {
           let storeMembers = store.getMembersRepo();
 
@@ -221,32 +195,29 @@ export async function splitChunk(item: {
             project_id: dashboard.project_id
           });
 
-          let dashboardProjectMemberIds = members.map(member => member.member_id);
+          let dashboardProjectMemberIds = members.map(
+            member => member.member_id
+          );
 
           if (dashboardProjectMemberIds.indexOf(wsClient.user_id) > -1) {
             // dashboard of prod repo && user is member
             let wrappedDashboard = wrapper.wrapToApiDashboard(dashboard);
             payload.dashboards.push(wrappedDashboard);
           }
-
         } else if (dashboard.repo_id === wsClient.user_id) {
           // dashboard of user dev repo
           let wrappedDashboard = wrapper.wrapToApiDashboard(dashboard);
           payload.dashboards.push(wrappedDashboard);
-
         } else {
           // dashboard of other user dev repo - ok
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // mconfigs
 
     await forEach(content.mconfigs, async mconfig => {
-
       if (isDifferentSession) {
-
         if (mconfig.repo_id === constants.PROD_REPO_ID) {
           let storeMembers = store.getMembersRepo();
 
@@ -261,25 +232,20 @@ export async function splitChunk(item: {
             let wrappedMconfig = wrapper.wrapToApiMconfig(mconfig);
             payload.mconfigs.push(wrappedMconfig);
           }
-
         } else if (mconfig.repo_id === wsClient.user_id) {
           // mconfig of user dev repo
           let wrappedMconfig = wrapper.wrapToApiMconfig(mconfig);
           payload.mconfigs.push(wrappedMconfig);
-
         } else {
           // mconfig of other user dev repo - ok
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // errors
 
     await forEach(content.errors, async error => {
-
       if (isDifferentSession) {
-
         if (error.repo_id === constants.PROD_REPO_ID) {
           let storeMembers = store.getMembersRepo();
 
@@ -294,40 +260,36 @@ export async function splitChunk(item: {
             let wrappedError = wrapper.wrapToApiError(error);
             payload.errors.push(wrappedError);
           }
-
         } else if (error.repo_id === wsClient.user_id) {
           // error of user dev repo
           let wrappedError = wrapper.wrapToApiError(error);
           payload.errors.push(wrappedError);
-
         } else {
           // error of other user dev repo - ok
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // members
 
     await forEach(content.members, async member => {
-
       if (isDifferentSession) {
-
         let storeMembers = store.getMembersRepo();
 
         let members = await storeMembers.find({
           project_id: member.project_id
         });
 
-        let projectMemberIds = members.map(projectMember => projectMember.member_id);
+        let projectMemberIds = members.map(
+          projectMember => projectMember.member_id
+        );
 
         if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
           let wrappedMember = wrapper.wrapToApiMember(member);
           payload.members.push(wrappedMember);
         }
       }
-    })
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     if (
       payload.user ||
@@ -339,37 +301,36 @@ export async function splitChunk(item: {
       payload.mconfigs.length > 0 ||
       payload.dashboards.length > 0 ||
       payload.errors.length > 0 ||
-      payload.members.length > 0) {
-
-      await createMessage({ // TODO: await ?
+      payload.members.length > 0
+    ) {
+      await createMessage({
+        // TODO: await ?
         payload: payload,
         ws_client: wsClient,
         chunk_id: chunk.chunk_id,
         server_ts: chunk.server_ts,
-        action: api.ServerRequestToClientActionEnum.StateUpdate,
-      })
-        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_SPLIT_CHUNK_CREATE_MESSAGE));
+        action: api.ServerRequestToClientActionEnum.StateUpdate
+      }).catch(e =>
+        helper.reThrow(e, enums.procErrorsEnum.PROC_SPLIT_CHUNK_CREATE_MESSAGE)
+      );
     }
-
-  })
-    .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+  }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 }
 
 async function createMessage(item: {
-  payload: any,
-  ws_client: interfaces.WebsocketClient,
-  chunk_id: string,
-  server_ts: string,
-  action: api.ServerRequestToClientActionEnum,
+  payload: any;
+  ws_client: interfaces.WebsocketClient;
+  chunk_id: string;
+  server_ts: string;
+  action: api.ServerRequestToClientActionEnum;
 }) {
-
   let messageId = helper.makeId();
 
   let content = wrapper.wrapWebsocketMessage({
     message_id: messageId,
     payload: item.payload,
     session_id: item.ws_client.session_id,
-    action: item.action,
+    action: item.action
   });
 
   let message = generator.makeMessage({
@@ -382,9 +343,9 @@ async function createMessage(item: {
 
   let storeMessages = store.getMessagesRepo();
 
-  await storeMessages.insert(message)
+  await storeMessages
+    .insert(message)
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MESSAGES_INSERT));
 
   item.ws_client.ws.send(content);
 }
-

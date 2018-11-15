@@ -4,13 +4,11 @@ import { helper } from '../../barrels/helper';
 import { ServerError } from '../server-error';
 
 export function getPayloadProjectId(req: Request) {
-
   let projectId;
   let err;
 
   try {
     projectId = req.body.payload.project_id;
-
   } catch (e) {
     err = true;
   }

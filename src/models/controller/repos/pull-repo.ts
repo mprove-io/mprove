@@ -13,7 +13,6 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function pullRepo(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let userId: string = req.user.email;
@@ -28,53 +27,72 @@ export async function pullRepo(req: Request, res: Response) {
 
   let storeRepos = store.getReposRepo();
 
-  let devRepo = <entities.RepoEntity>await storeRepos.findOne({
-    project_id: projectId,
-    repo_id: repoId
-  })
+  let devRepo = <entities.RepoEntity>await storeRepos
+    .findOne({
+      project_id: projectId,
+      repo_id: repoId
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE));
 
-  if (!devRepo) { throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND }); }
+  if (!devRepo) {
+    throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
+  }
 
   helper.checkServerTs(devRepo, serverTs);
 
   // pull production (central) to dev
 
-  await git.fetchOrigin({
-    project_id: projectId,
-    repo_id: repoId,
-  })
+  await git
+    .fetchOrigin({
+      project_id: projectId,
+      repo_id: repoId
+    })
     .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_FETCH_ORIGIN));
 
-  await git.mergeCommitsOriginToLocal({
-    project_id: projectId,
-    repo_id: repoId,
-    user_id: userId,
-  })
-    .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_MERGE_COMMITS_ORIGIN_TO_LOCAL));
+  await git
+    .mergeCommitsOriginToLocal({
+      project_id: projectId,
+      repo_id: repoId,
+      user_id: userId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.gitErrorsEnum.GIT_MERGE_COMMITS_ORIGIN_TO_LOCAL)
+    );
 
   // process changes
 
-  let itemChanges = <interfaces.ItemProcessDevRepoChanges>await proc.processDevRepoChanges({
-    project_id: projectId,
-    repo_id: repoId,
-    dev_repo: devRepo,
-    init_id: initId,
-  })
-    .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_DEV_REPO_CHANGES));
+  let itemChanges = <interfaces.ItemProcessDevRepoChanges>await proc
+    .processDevRepoChanges({
+      project_id: projectId,
+      repo_id: repoId,
+      dev_repo: devRepo,
+      init_id: initId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_DEV_REPO_CHANGES)
+    );
 
   // response
 
   let responsePayload: api.PullRepoResponse200BodyPayload = {
-    deleted_dev_files: itemChanges.deleted_dev_files.map(file => wrapper.wrapToApiFile(file)),
-    changed_dev_files: itemChanges.changed_dev_files.map(file => wrapper.wrapToApiFile(file)),
-    new_dev_files: itemChanges.new_dev_files.map(file => wrapper.wrapToApiFile(file)),
-    dev_struct_or_empty: [ // TODO: remove empty in api
+    deleted_dev_files: itemChanges.deleted_dev_files.map(file =>
+      wrapper.wrapToApiFile(file)
+    ),
+    changed_dev_files: itemChanges.changed_dev_files.map(file =>
+      wrapper.wrapToApiFile(file)
+    ),
+    new_dev_files: itemChanges.new_dev_files.map(file =>
+      wrapper.wrapToApiFile(file)
+    ),
+    dev_struct_or_empty: [
+      // TODO: remove empty in api
       {
         errors: itemChanges.errors.map(error => wrapper.wrapToApiError(error)),
         models: itemChanges.models.map(model => wrapper.wrapToApiModel(model)),
-        dashboards: itemChanges.dashboards.map(dashboard => wrapper.wrapToApiDashboard(dashboard)),
-        repo: wrapper.wrapToApiRepo(itemChanges.dev_repo),
+        dashboards: itemChanges.dashboards.map(dashboard =>
+          wrapper.wrapToApiDashboard(dashboard)
+        ),
+        repo: wrapper.wrapToApiRepo(itemChanges.dev_repo)
       }
     ]
   };

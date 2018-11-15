@@ -2,23 +2,22 @@ import { entities } from '../../barrels/entities';
 import { interfaces } from '../../barrels/interfaces';
 
 export function makeChunk(item: {
-  chunk_id: string,
+  chunk_id: string;
   records: {
-    users?: entities.UserEntity[],
-    projects?: entities.ProjectEntity[],
-    repos?: entities.RepoEntity[],
-    files?: entities.FileEntity[],
-    queries?: entities.QueryEntity[],
-    models?: entities.ModelEntity[],
-    mconfigs?: entities.MconfigEntity[],
-    dashboards?: entities.DashboardEntity[],
-    errors?: entities.ErrorEntity[],
-    members?: entities.MemberEntity[]
-  },
-  source_session_id: string,
-  server_ts: string,
+    users?: entities.UserEntity[];
+    projects?: entities.ProjectEntity[];
+    repos?: entities.RepoEntity[];
+    files?: entities.FileEntity[];
+    queries?: entities.QueryEntity[];
+    models?: entities.ModelEntity[];
+    mconfigs?: entities.MconfigEntity[];
+    dashboards?: entities.DashboardEntity[];
+    errors?: entities.ErrorEntity[];
+    members?: entities.MemberEntity[];
+  };
+  source_session_id: string;
+  server_ts: string;
 }): entities.ChunkEntity {
-
   let records = item.records;
 
   let contentParsed: interfaces.ChunkContentParsed = {
@@ -31,13 +30,13 @@ export function makeChunk(item: {
     mconfigs: records.mconfigs ? records.mconfigs : [],
     dashboards: records.dashboards ? records.dashboards : [],
     errors: records.errors ? records.errors : [],
-    members: records.members ? records.members : [],
+    members: records.members ? records.members : []
   };
 
   return {
     chunk_id: item.chunk_id,
     content: JSON.stringify(contentParsed),
     source_session_id: item.source_session_id,
-    server_ts: item.server_ts,
+    server_ts: item.server_ts
   };
 }

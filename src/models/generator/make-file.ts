@@ -2,15 +2,14 @@ import { entities } from '../../barrels/entities';
 import { enums } from '../../barrels/enums';
 
 export function makeFile(item: {
-  file_absolute_id: string,
-  file_id: string,
-  project_id: string,
-  repo_id: string,
-  path: string,
-  name: string,
-  content: string,
+  file_absolute_id: string;
+  file_id: string;
+  project_id: string;
+  repo_id: string;
+  path: string;
+  name: string;
+  content: string;
 }): entities.FileEntity {
-
   return {
     file_absolute_id: item.file_absolute_id,
     file_id: item.file_id,

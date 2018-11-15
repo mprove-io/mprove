@@ -10,11 +10,10 @@ import { store } from '../../barrels/store';
 const BigQuery = require('@google-cloud/bigquery');
 
 export async function runQueryDry(item: {
-  query: entities.QueryEntity,
-  new_last_run_dry_ts: number,
-  credentials_file_path: string,
+  query: entities.QueryEntity;
+  new_last_run_dry_ts: number;
+  credentials_file_path: string;
 }): Promise<interfaces.ItemRunQueryDry> {
-
   let query = item.query;
   let validEstimate: api.QueryEstimate;
   let errorQuery: entities.QueryEntity;
@@ -25,29 +24,30 @@ export async function runQueryDry(item: {
   let pdtDepsAll: string[] = JSON.parse(query.pdt_deps_all);
 
   if (pdtDepsAll.length > 0) {
-
     let storeQueries = store.getQueriesRepo();
 
-    pdtDepsAllQueries = <entities.QueryEntity[]>await storeQueries.find({
-      pdt_id: In(pdtDepsAll),
-    })
-      .catch((e: any) => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
+    pdtDepsAllQueries = <entities.QueryEntity[]>await storeQueries
+      .find({
+        pdt_id: In(pdtDepsAll)
+      })
+      .catch((e: any) =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND)
+      );
 
-    index = pdtDepsAllQueries.findIndex(pdtQuery => Number(pdtQuery.last_complete_ts) <= 1);
+    index = pdtDepsAllQueries.findIndex(
+      pdtQuery => Number(pdtQuery.last_complete_ts) <= 1
+    );
   }
 
   if (pdtDepsAllQueries.length > 0 && index > -1) {
-
     let estimate = -1;
 
     validEstimate = {
       query_id: query.query_id,
       estimate: estimate,
-      last_run_dry_ts: item.new_last_run_dry_ts,
+      last_run_dry_ts: item.new_last_run_dry_ts
     };
-
   } else {
-
     let bigquery = new BigQuery({
       keyFilename: item.credentials_file_path
     });
@@ -55,13 +55,13 @@ export async function runQueryDry(item: {
     let sqlArray: string[] = JSON.parse(query.sql);
     let sqlText = sqlArray.join('\n');
 
-    let resultItem = <any>await bigquery.createQueryJob({
-      dryRun: true,
-      useLegacySql: false,
-      query: sqlText
-    })
+    let resultItem = <any>await bigquery
+      .createQueryJob({
+        dryRun: true,
+        useLegacySql: false,
+        query: sqlText
+      })
       .catch((e: any) => {
-
         let lastErrorTs = helper.makeTs();
 
         query.status = api.QueryStatusEnum.Error; // do not set last_run_ts
@@ -73,7 +73,6 @@ export async function runQueryDry(item: {
       });
 
     if (resultItem) {
-
       let apiResponse = resultItem[1];
 
       let estimate = Number(apiResponse.statistics.totalBytesProcessed);
@@ -81,10 +80,9 @@ export async function runQueryDry(item: {
       validEstimate = {
         query_id: query.query_id,
         estimate: estimate,
-        last_run_dry_ts: item.new_last_run_dry_ts,
+        last_run_dry_ts: item.new_last_run_dry_ts
       };
     }
-
   }
 
   return {

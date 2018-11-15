@@ -11,7 +11,6 @@ import { ServerError } from '../../server-error';
 import { ProjectEntity } from '../../store/entities/_index';
 
 export async function deleteProject(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let payload: api.DeleteProjectRequestBodyPayload = validator.getPayload(req);
@@ -21,10 +20,15 @@ export async function deleteProject(req: Request, res: Response) {
 
   let storeProjects = store.getProjectsRepo();
 
-  let project = <ProjectEntity>await storeProjects.findOne(projectId) // TODO: deleted
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE));
+  let project = <ProjectEntity>await storeProjects
+    .findOne(projectId) // TODO: deleted
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+    );
 
-  if (!project) { throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND }); }
+  if (!project) {
+    throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
+  }
 
   helper.checkServerTs(project, serverTs);
 
@@ -40,18 +44,19 @@ export async function deleteProject(req: Request, res: Response) {
 
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
-
-    await store.save({
-      manager: manager,
-      records: {
-        projects: [project],
-      },
-      server_ts: newServerTs,
-      source_init_id: initId,
+  await connection
+    .transaction(async manager => {
+      await store
+        .save({
+          manager: manager,
+          records: {
+            projects: [project]
+          },
+          server_ts: newServerTs,
+          source_init_id: initId
+        })
+        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
     })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-  })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   let responsePayload: api.DeleteProjectResponse200BodyPayload = {

@@ -1,2 +1,1 @@
-export enum validatorErrorsEnum {
-}
+export enum validatorErrorsEnum {}

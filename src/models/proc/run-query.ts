@@ -10,14 +10,13 @@ import { runQueryWithoutDeps } from './run-query-without-deps';
 const BigQuery = require('@google-cloud/bigquery');
 
 export async function runQuery(item: {
-  is_top: boolean,
-  query: entities.QueryEntity,
-  new_last_run_ts: string,
-  credentials_file_path: string,
-  user_id: string,
-  refresh: boolean,
+  is_top: boolean;
+  query: entities.QueryEntity;
+  new_last_run_ts: string;
+  credentials_file_path: string;
+  user_id: string;
+  refresh: boolean;
 }): Promise<entities.QueryEntity[]> {
-
   let query = item.query;
 
   if (
@@ -38,40 +37,40 @@ export async function runQuery(item: {
   let pdtDeps = JSON.parse(query.pdt_deps);
 
   if (pdtDeps.length === 0) {
-
     query = <entities.QueryEntity>await runQueryWithoutDeps({
       credentials_file_path: item.credentials_file_path,
       user_id: item.user_id,
       query: query,
       refresh: item.refresh,
-      new_last_run_ts: item.new_last_run_ts,
-    })
-      .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY_WITHOUT_DEPS));
+      new_last_run_ts: item.new_last_run_ts
+    }).catch(e =>
+      helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY_WITHOUT_DEPS)
+    );
 
     return [query];
-
   } else {
-
     let storeQueries = store.getQueriesRepo();
 
-    let queries = <entities.QueryEntity[]>await storeQueries.find({
-      pdt_id: In(pdtDeps)
-    })
+    let queries = <entities.QueryEntity[]>await storeQueries
+      .find({
+        pdt_id: In(pdtDeps)
+      })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
 
-    let queryPacks: entities.QueryEntity[][] = <entities.QueryEntity[][]>await Promise.all(
-      queries.map(async q => runQuery({
-        is_top: false,
-        query: q,
-        credentials_file_path: item.credentials_file_path,
-        user_id: item.user_id,
-        refresh: item.refresh,
-        new_last_run_ts: item.new_last_run_ts,
-      })
-        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY))
-      )
-    )
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL));
+    let queryPacks: entities.QueryEntity[][] = <entities.QueryEntity[][]>(
+      await Promise.all(
+        queries.map(async q =>
+          runQuery({
+            is_top: false,
+            query: q,
+            credentials_file_path: item.credentials_file_path,
+            user_id: item.user_id,
+            refresh: item.refresh,
+            new_last_run_ts: item.new_last_run_ts
+          }).catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY))
+        )
+      ).catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL))
+    );
 
     let processedQueries: entities.QueryEntity[] = [];
 
@@ -79,10 +78,11 @@ export async function runQuery(item: {
       processedQueries = helper.makeNewArray(processedQueries, pack);
     });
 
-    let errorQueries = processedQueries.filter(q => q.status === api.QueryStatusEnum.Error);
+    let errorQueries = processedQueries.filter(
+      q => q.status === api.QueryStatusEnum.Error
+    );
 
     if (errorQueries.length > 0) {
-
       let newLastErrorTs = helper.makeTs();
 
       query.status = api.QueryStatusEnum.Error;
@@ -91,9 +91,7 @@ export async function runQuery(item: {
       query.last_error_ts = newLastErrorTs;
       query.last_run_by = item.user_id;
       query.last_run_ts = item.new_last_run_ts;
-
     } else {
-
       query.status = api.QueryStatusEnum.Waiting;
       query.refresh = helper.booleanToBenum(item.refresh);
       query.last_run_by = item.user_id;

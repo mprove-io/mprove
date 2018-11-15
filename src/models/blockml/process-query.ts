@@ -15,7 +15,6 @@ export async function processQuery(item: {
   udfs_content: string;
   struct_id: string;
 }): Promise<interfaces.ItemProcessQuery> {
-
   let requestPayload: api.ProcessQueryRequestBodyPayload = {
     project_id: item.project_id,
     bq_project: item.bq_project,
@@ -23,15 +22,23 @@ export async function processQuery(item: {
     mconfig: item.mconfig,
     model_content: item.model_content,
     udfs_content: item.udfs_content,
-    struct_id: item.struct_id,
+    struct_id: item.struct_id
   };
 
   let request = wrapper.wrapBlockmlRequest(requestPayload);
 
   let response: AxiosResponse<api.ProcessQueryResponse200Body>;
 
-  response = <any>await constantAxiosInstance.post('processQuery', request)
-    .catch(e => helper.reThrow(e, enums.axiosErrorsEnum.AXIOS_BLOCKML_POST_PROCESS_QUERY));
+  response = <any>(
+    await constantAxiosInstance
+      .post('processQuery', request)
+      .catch(e =>
+        helper.reThrow(
+          e,
+          enums.axiosErrorsEnum.AXIOS_BLOCKML_POST_PROCESS_QUERY
+        )
+      )
+  );
 
   let payload: api.ProcessQueryResponse200BodyPayload = response.data.payload;
 

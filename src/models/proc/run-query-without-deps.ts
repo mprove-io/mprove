@@ -7,13 +7,12 @@ import { helper } from '../../barrels/helper';
 const BigQuery = require('@google-cloud/bigquery');
 
 export async function runQueryWithoutDeps(item: {
-  credentials_file_path: string,
-  user_id: string,
-  query: entities.QueryEntity,
-  refresh: boolean,
-  new_last_run_ts: string,
+  credentials_file_path: string;
+  user_id: string;
+  query: entities.QueryEntity;
+  refresh: boolean;
+  new_last_run_ts: string;
 }) {
-
   let query = item.query;
 
   let bigquery = new BigQuery({
@@ -32,22 +31,20 @@ export async function runQueryWithoutDeps(item: {
   let destinationTable;
 
   if (query.is_pdt === enums.bEnum.TRUE) {
-
     destinationTable = bigquery
       .dataset(`mprove_${query.project_id}`)
       .table(`${query.pdt_id}_${query.query_id}`);
   }
 
-  let createQueryJobItem = <any>await bigquery.createQueryJob({
-    destination: query.is_pdt === enums.bEnum.TRUE
-      ? destinationTable
-      : undefined,
-    dryRun: false,
-    useLegacySql: false,
-    query: sqlText
-  })
+  let createQueryJobItem = <any>await bigquery
+    .createQueryJob({
+      destination:
+        query.is_pdt === enums.bEnum.TRUE ? destinationTable : undefined,
+      dryRun: false,
+      useLegacySql: false,
+      query: sqlText
+    })
     .catch((e: any) => {
-
       let newLastErrorTs = helper.makeTs();
 
       query.status = api.QueryStatusEnum.Error;
@@ -59,7 +56,6 @@ export async function runQueryWithoutDeps(item: {
     });
 
   if (createQueryJobItem) {
-
     let queryJob = createQueryJobItem[0];
     let createQueryJobApiResponse = createQueryJobItem[1];
 

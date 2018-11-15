@@ -3,9 +3,10 @@ import { config } from '../../barrels/config';
 
 let octokit = new Octokit();
 
-octokit.authenticate({ // sync
+octokit.authenticate({
+  // sync
   type: 'token',
-  token: config.GITHUB_TOKEN,
+  token: config.GITHUB_TOKEN
 });
 
 export const constantOctokitAuth = octokit;

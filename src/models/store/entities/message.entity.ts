@@ -5,7 +5,6 @@ import { enums } from '../../../barrels/enums';
 
 @Entity('m_message')
 export class MessageEntity {
-
   @PrimaryColumn({ type: constants.MESSAGE_ID_DATATYPE })
   message_id: string;
 

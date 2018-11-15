@@ -4,9 +4,8 @@ import { entities } from '../../barrels/entities';
 import { enums } from '../../barrels/enums';
 
 export function makeProject(item: {
-  project_id: string,
+  project_id: string;
 }): entities.ProjectEntity {
-
   return {
     project_id: item.project_id,
     has_credentials: enums.bEnum.FALSE,
@@ -21,6 +20,6 @@ export function makeProject(item: {
     analytics_max_plan_id: undefined,
     analytics_subscription_id: undefined,
     deleted: enums.bEnum.FALSE,
-    server_ts: undefined,
+    server_ts: undefined
   };
 }

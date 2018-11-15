@@ -18,7 +18,6 @@ import { MyRegex } from '../../my-regex';
 import { ServerError } from '../../server-error';
 
 export async function createFile(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let payload: api.CreateFileRequestBodyPayload = validator.getPayload(req);
@@ -30,13 +29,18 @@ export async function createFile(req: Request, res: Response) {
 
   let storeRepos = store.getReposRepo();
 
-  let repo = <entities.RepoEntity>await storeRepos.findOne({
-    project_id: projectId,
-    repo_id: repoId
-  })
-    .catch((e: any) => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE));
+  let repo = <entities.RepoEntity>await storeRepos
+    .findOne({
+      project_id: projectId,
+      repo_id: repoId
+    })
+    .catch((e: any) =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE)
+    );
 
-  if (!repo) { throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND }); }
+  if (!repo) {
+    throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
+  }
 
   let content;
 
@@ -45,19 +49,29 @@ export async function createFile(req: Request, res: Response) {
 
   let part: any = rPart ? rPart[1] : undefined;
 
-
   let regExt = MyRegex.CAPTURE_EXT();
   let rExt = regExt.exec(fileName.toLowerCase());
 
   let ext: any = rExt ? rExt[1] : '';
 
   switch (ext) {
-    case constants.EXT_MD: content = ''; break;
-    case constants.EXT_DASHBOARD: content = `dashboard: ${part}`; break;
-    case constants.EXT_MODEL: content = `model: ${part}`; break;
-    case constants.EXT_VIEW: content = `view: ${part}`; break;
-    case constants.EXT_UDF: content = `udf: ${part}`; break;
-    default: content = '';
+    case constants.EXT_MD:
+      content = '';
+      break;
+    case constants.EXT_DASHBOARD:
+      content = `dashboard: ${part}`;
+      break;
+    case constants.EXT_MODEL:
+      content = `model: ${part}`;
+      break;
+    case constants.EXT_VIEW:
+      content = `view: ${part}`;
+      break;
+    case constants.EXT_UDF:
+      content = `udf: ${part}`;
+      break;
+    default:
+      content = '';
   }
 
   let repoDir = `${config.DISK_BASE_PATH}/${projectId}/${repoId}`;
@@ -68,23 +82,29 @@ export async function createFile(req: Request, res: Response) {
 
   let fileAbsoluteId = repoDir + '/' + parent + fileName;
 
-  await disk.writeToFile({
-    file_absolute_id: fileAbsoluteId,
-    content: content
-  })
+  await disk
+    .writeToFile({
+      file_absolute_id: fileAbsoluteId,
+      content: content
+    })
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
 
-  await git.addChangesToStage({
-    project_id: projectId,
-    repo_id: repoId,
-  })
-    .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE));
+  await git
+    .addChangesToStage({
+      project_id: projectId,
+      repo_id: repoId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE)
+    );
 
   let fileNodeId = parentNodeId + '/' + fileName;
 
   let path = JSON.stringify(fileNodeId.split('/'));
 
-  let fileId = MyRegex.replaceSlashesWithUnderscores(fileNodeId.substring(projectId.length + 1));
+  let fileId = MyRegex.replaceSlashesWithUnderscores(
+    fileNodeId.substring(projectId.length + 1)
+  );
 
   let file = generator.makeFile({
     file_absolute_id: fileAbsoluteId,
@@ -93,20 +113,27 @@ export async function createFile(req: Request, res: Response) {
     repo_id: repoId,
     path: path,
     name: fileName,
-    content: content,
+    content: content
   });
 
-  let itemStatus = <interfaces.ItemStatus>await git.getRepoStatus({
-    project_id: projectId,
-    repo_id: repoId
-  })
+  let itemStatus = <interfaces.ItemStatus>await git
+    .getRepoStatus({
+      project_id: projectId,
+      repo_id: repoId
+    })
     .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_GET_REPO_STATUS));
 
-  let itemCatalog = <interfaces.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
-    project_id: projectId,
-    repo_id: repoId,
-  })
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES));
+  let itemCatalog = <interfaces.ItemCatalog>await disk
+    .getRepoCatalogNodesAndFiles({
+      project_id: projectId,
+      repo_id: repoId
+    })
+    .catch(e =>
+      helper.reThrow(
+        e,
+        enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
+      )
+    );
 
   repo.status = itemStatus.status;
   repo.conflicts = JSON.stringify(itemStatus.conflicts);
@@ -124,26 +151,27 @@ export async function createFile(req: Request, res: Response) {
   // save to database
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
-
-    await store.save({
-      manager: manager,
-      records: {
-        repos: [repo],
-        files: [file],
-      },
-      server_ts: newServerTs,
-      source_init_id: initId,
+  await connection
+    .transaction(async manager => {
+      await store
+        .save({
+          manager: manager,
+          records: {
+            repos: [repo],
+            files: [file]
+          },
+          server_ts: newServerTs,
+          source_init_id: initId
+        })
+        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
     })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-  })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   // response
 
   let responsePayload: api.CreateFileResponse200BodyPayload = {
     created_dev_file: wrapper.wrapToApiFile(file),
-    dev_repo: wrapper.wrapToApiRepo(repo),
+    dev_repo: wrapper.wrapToApiRepo(repo)
   };
 
   sender.sendClientResponse(req, res, responsePayload);

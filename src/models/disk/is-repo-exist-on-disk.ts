@@ -4,13 +4,13 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 
 export async function isRepoExistOnDisk(item: {
-  project_id: string,
-  repo_id: string
+  project_id: string;
+  repo_id: string;
 }) {
-
   let repoDir = `${config.DISK_BASE_PATH}/${item.project_id}/${item.repo_id}`;
 
-  let isExist = await fse.pathExists(repoDir)
+  let isExist = await fse
+    .pathExists(repoDir)
     .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_PATH_EXISTS_CHECK));
 
   return isExist;

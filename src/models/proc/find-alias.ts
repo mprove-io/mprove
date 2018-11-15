@@ -5,7 +5,6 @@ import { MyRegex } from '../../models/my-regex';
 import { ServerError } from '../../models/server-error';
 
 export async function findAlias(userId: string) {
-
   let reg = MyRegex.CAPTURE_ALIAS();
   let r = reg.exec(userId);
 
@@ -20,19 +19,20 @@ export async function findAlias(userId: string) {
   let restart = true;
 
   while (restart) {
-
     let storeUsers = store.getUsersRepo();
 
-    let aliasUser = await storeUsers.findOne({
-      alias: alias
-    })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
+    let aliasUser = await storeUsers
+      .findOne({
+        alias: alias
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE)
+      );
 
     if (aliasUser) {
       // retry
       alias = `${alias}${count}`;
       count++;
-
     } else {
       // ok
       restart = false;

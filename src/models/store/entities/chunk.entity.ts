@@ -4,7 +4,6 @@ import { constants } from '../../../barrels/constants';
 
 @Entity('m_chunk')
 export class ChunkEntity {
-
   @PrimaryColumn({ type: constants.CHUNK_ID_DATATYPE })
   chunk_id: string;
 

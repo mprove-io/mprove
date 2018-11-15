@@ -5,7 +5,6 @@ import { enums } from '../../../barrels/enums';
 
 @Entity('m_session')
 export class SessionEntity {
-
   @PrimaryColumn({ type: constants.SESSION_ID_DATATYPE })
   session_id: string;
 

@@ -5,18 +5,18 @@ import { interfaces } from '../../barrels/interfaces';
 import { store } from '../../barrels/store';
 
 export async function findDifferencesInFiles(item: {
-  project_id: string,
-  repo_id: string,
-  repo_disk_files: entities.FileEntity[],
+  project_id: string;
+  repo_id: string;
+  repo_disk_files: entities.FileEntity[];
 }): Promise<interfaces.ItemFiles> {
-
   let storeFiles = store.getFilesRepo();
 
-  let databaseFiles = <entities.FileEntity[]>await storeFiles.find({
-    project_id: item.project_id,
-    repo_id: item.repo_id,
-    deleted: enums.bEnum.FALSE
-  })
+  let databaseFiles = <entities.FileEntity[]>await storeFiles
+    .find({
+      project_id: item.project_id,
+      repo_id: item.repo_id,
+      deleted: enums.bEnum.FALSE
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_FIND));
 
   let deletedFiles: entities.FileEntity[] = [];
@@ -24,14 +24,15 @@ export async function findDifferencesInFiles(item: {
   let newFiles: entities.FileEntity[] = [];
 
   databaseFiles.forEach(databaseFile => {
-    let diskFile = item.repo_disk_files.find(file => file.file_absolute_id === databaseFile.file_absolute_id);
+    let diskFile = item.repo_disk_files.find(
+      file => file.file_absolute_id === databaseFile.file_absolute_id
+    );
 
     if (diskFile) {
       if (diskFile.content !== databaseFile.content) {
         // changed
         changedFiles.push(diskFile);
       }
-
     } else {
       // deleted
       databaseFile.deleted = enums.bEnum.TRUE;
@@ -40,7 +41,9 @@ export async function findDifferencesInFiles(item: {
   });
 
   item.repo_disk_files.forEach(diskFile => {
-    let databaseFile = databaseFiles.find(file => file.file_absolute_id === diskFile.file_absolute_id);
+    let databaseFile = databaseFiles.find(
+      file => file.file_absolute_id === diskFile.file_absolute_id
+    );
 
     if (!databaseFile) {
       // new
@@ -51,6 +54,6 @@ export async function findDifferencesInFiles(item: {
   return {
     deleted_files: deletedFiles,
     changed_files: changedFiles,
-    new_files: newFiles,
+    new_files: newFiles
   };
 }

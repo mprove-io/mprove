@@ -10,28 +10,25 @@ import { store } from '../../barrels/store';
 let cron = require('cron');
 
 export function loopCheckChunks(item: {
-  express_ws_instance: expressWs.Instance,
-  ws_clients: interfaces.WebsocketClient[],
+  express_ws_instance: expressWs.Instance;
+  ws_clients: interfaces.WebsocketClient[];
 }) {
-
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-
     if (isCronJobRunning) {
       console.log(`${loopCheckChunks.name} skip`);
     }
 
     if (!isCronJobRunning) {
-
       isCronJobRunning = true;
 
       // console.log(`${loopCheckChunks.name} start`);
 
       try {
-        await checkChunks(item)
-          .catch(e => helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_CHUNKS));
-
+        await checkChunks(item).catch(e =>
+          helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_CHUNKS)
+        );
       } catch (e) {
         // TODO: scheduler error handling policy
         console.log(e);
@@ -48,28 +45,30 @@ export function loopCheckChunks(item: {
 }
 
 async function checkChunks(item: {
-  express_ws_instance: expressWs.Instance,
-  ws_clients: interfaces.WebsocketClient[],
+  express_ws_instance: expressWs.Instance;
+  ws_clients: interfaces.WebsocketClient[];
 }) {
-
   let currentTs = helper.makeTs();
 
   let storeChunks = store.getChunksRepo();
 
-  let chunks = <entities.ChunkEntity[]>await storeChunks.find({
-    server_ts: <any>MoreThan(Number(currentTs) - 10 * 1000), // 10 seconds in past
-  })
+  let chunks = <entities.ChunkEntity[]>await storeChunks
+    .find({
+      server_ts: <any>MoreThan(Number(currentTs) - 10 * 1000) // 10 seconds in past
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_CHUNKS_FIND));
 
   Promise.all(
-    chunks.map(async chunk => proc.splitChunk({
-      express_ws_instance: item.express_ws_instance,
-      ws_clients: item.ws_clients,
-      chunk: chunk,
-    })
-      .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_SPLIT_CHUNK))
-    ))
-    .catch(e => {
-      console.log(e);
-    });
+    chunks.map(async chunk =>
+      proc
+        .splitChunk({
+          express_ws_instance: item.express_ws_instance,
+          ws_clients: item.ws_clients,
+          chunk: chunk
+        })
+        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_SPLIT_CHUNK))
+    )
+  ).catch(e => {
+    console.log(e);
+  });
 }

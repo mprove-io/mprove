@@ -13,7 +13,6 @@ export async function rebuildStruct(item: {
   week_start: api.ProjectWeekStartEnum;
   struct_id: string;
 }): Promise<interfaces.ItemStruct> {
-
   let requestPayload: api.RebuildStructRequestBodyPayload = {
     project_id: item.project_id,
     repo_id: item.repo_id,
@@ -26,8 +25,13 @@ export async function rebuildStruct(item: {
 
   let response: AxiosResponse<api.RebuildStructResponse200Body>;
 
-  response = <any>await constantAxiosInstance.post('rebuildStruct', request)
-    .catch(e => helper.reThrow(e, enums.axiosErrorsEnum.AXIOS_BLOCKML_REBUILD_STRUCT));
+  response = <any>(
+    await constantAxiosInstance
+      .post('rebuildStruct', request)
+      .catch(e =>
+        helper.reThrow(e, enums.axiosErrorsEnum.AXIOS_BLOCKML_REBUILD_STRUCT)
+      )
+  );
 
   let payload: api.RebuildStructResponse200BodyPayload = response.data.payload;
 
@@ -71,6 +75,6 @@ export async function rebuildStruct(item: {
     errors: errors,
     queries: queries,
     udfs_content: udfsContent,
-    pdts_sorted: pdtsSorted,
+    pdts_sorted: pdtsSorted
   };
 }

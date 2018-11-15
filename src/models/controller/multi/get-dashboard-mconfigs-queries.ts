@@ -11,8 +11,9 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function getDashboardMconfigsQueries(req: Request, res: Response) {
-
-  let payload: api.GetDashboardMconfigsQueriesRequestBodyPayload = validator.getPayload(req);
+  let payload: api.GetDashboardMconfigsQueriesRequestBodyPayload = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -20,14 +21,19 @@ export async function getDashboardMconfigsQueries(req: Request, res: Response) {
 
   let storeDashboards = store.getDashboardsRepo();
 
-  let dashboard = <entities.DashboardEntity>await storeDashboards.findOne({
-    project_id: projectId,
-    repo_id: repoId,
-    dashboard_id: dashboardId
-  })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_FIND_ONE));
+  let dashboard = <entities.DashboardEntity>await storeDashboards
+    .findOne({
+      project_id: projectId,
+      repo_id: repoId,
+      dashboard_id: dashboardId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_FIND_ONE)
+    );
 
-  if (!dashboard) { throw new ServerError({ name: enums.otherErrorsEnum.DASHBOARD_NOT_FOUND }); }
+  if (!dashboard) {
+    throw new ServerError({ name: enums.otherErrorsEnum.DASHBOARD_NOT_FOUND });
+  }
 
   let reports: api.Report[] = JSON.parse(dashboard.reports);
   let mconfigIds = reports.map(report => report.mconfig_id);
@@ -38,9 +44,10 @@ export async function getDashboardMconfigsQueries(req: Request, res: Response) {
   let storeMconfigs = store.getMconfigsRepo();
 
   if (mconfigIds.length > 0) {
-    mconfigs = <entities.MconfigEntity[]>await storeMconfigs.find({
-      mconfig_id: In(mconfigIds)
-    })
+    mconfigs = <entities.MconfigEntity[]>await storeMconfigs
+      .find({
+        mconfig_id: In(mconfigIds)
+      })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_FIND));
   }
 
@@ -49,9 +56,10 @@ export async function getDashboardMconfigsQueries(req: Request, res: Response) {
   let storeQueries = store.getQueriesRepo();
 
   if (queryIds.length > 0) {
-    queries = <entities.QueryEntity[]>await storeQueries.find({
-      query_id: In(queryIds)
-    })
+    queries = <entities.QueryEntity[]>await storeQueries
+      .find({
+        query_id: In(queryIds)
+      })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
   }
 
@@ -59,8 +67,10 @@ export async function getDashboardMconfigsQueries(req: Request, res: Response) {
 
   let responsePayload: api.GetDashboardMconfigsQueriesResponse200BodyPayload = {
     dashboard_or_empty: [wrapper.wrapToApiDashboard(dashboard)],
-    dashboard_mconfigs: mconfigs.map(mconfig => wrapper.wrapToApiMconfig(mconfig)),
-    dashboard_queries: queries.map(query => wrapper.wrapToApiQuery(query)),
+    dashboard_mconfigs: mconfigs.map(mconfig =>
+      wrapper.wrapToApiMconfig(mconfig)
+    ),
+    dashboard_queries: queries.map(query => wrapper.wrapToApiQuery(query))
   };
 
   sender.sendClientResponse(req, res, responsePayload);

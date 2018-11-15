@@ -4,7 +4,6 @@ import { sender } from '../../../barrels/sender';
 import { validator } from '../../../barrels/validator';
 
 export async function logoutUser(req: Request, res: Response) {
-
   let userId: string = req.user.email;
 
   let payload: api.LogoutUserRequestBodyPayload = validator.getPayload(req);

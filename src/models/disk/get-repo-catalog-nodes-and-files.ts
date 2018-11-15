@@ -11,10 +11,9 @@ import { interfaces } from '../../barrels/interfaces';
 import { MyRegex } from '../my-regex';
 
 export async function getRepoCatalogNodesAndFiles(item: {
-  project_id: string,
-  repo_id: string,
+  project_id: string;
+  repo_id: string;
 }) {
-
   let topNode: api.CatalogNode = {
     id: item.project_id,
     name: item.project_id,
@@ -26,13 +25,19 @@ export async function getRepoCatalogNodesAndFiles(item: {
 
   let repoDirPathLength = repoDir.length;
 
-  let itemDir = <interfaces.ItemCatalog>await getDirCatalogNodesAndFilesRecursive({
-    dir: repoDir,
-    project_id: item.project_id,
-    repo_id: item.repo_id,
-    repo_dir_path_length: repoDirPathLength,
-  })
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_GET_DIR_CATALOG_NODES_AND_FILES_RECURSIVE));
+  let itemDir = <interfaces.ItemCatalog>(
+    await getDirCatalogNodesAndFilesRecursive({
+      dir: repoDir,
+      project_id: item.project_id,
+      repo_id: item.repo_id,
+      repo_dir_path_length: repoDirPathLength
+    }).catch(e =>
+      helper.reThrow(
+        e,
+        enums.diskErrorsEnum.DISK_GET_DIR_CATALOG_NODES_AND_FILES_RECURSIVE
+      )
+    )
+  );
 
   topNode.children = itemDir.nodes;
 
@@ -43,14 +48,13 @@ export async function getRepoCatalogNodesAndFiles(item: {
   return { nodes: nodes, files: files };
 }
 
-
-async function getDirCatalogNodesAndFilesRecursive(item: { // private
-  dir: string,
-  project_id: string,
-  repo_id: string,
-  repo_dir_path_length: number,
+async function getDirCatalogNodesAndFilesRecursive(item: {
+  // private
+  dir: string;
+  project_id: string;
+  repo_id: string;
+  repo_dir_path_length: number;
 }) {
-
   let files: entities.FileEntity[] = [];
 
   let nodes: api.CatalogNode[] = [];
@@ -63,29 +67,40 @@ async function getDirCatalogNodesAndFilesRecursive(item: { // private
   let udfNodes: api.CatalogNode[] = [];
   let otherNodes: api.CatalogNode[] = [];
 
-  let fileNames: string[] = <string[]>await fse.readdir(item.dir)
-    .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_READ_DIR));
+  let fileNames: string[] = <string[]>(
+    await fse
+      .readdir(item.dir)
+      .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_READ_DIR))
+  );
 
-  await forEach(fileNames, async (name) => {
-
+  await forEach(fileNames, async name => {
     if (!name.match(MyRegex.STARTS_WITH_DOT())) {
-
       let filePath = item.dir + '/' + name;
 
-      let nodeId = item.project_id + filePath.substring(item.repo_dir_path_length);
+      let nodeId =
+        item.project_id + filePath.substring(item.repo_dir_path_length);
 
-      let stat = <fse.Stats>await fse.stat(filePath)
-        .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_STAT));
+      let stat = <fse.Stats>(
+        await fse
+          .stat(filePath)
+          .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_STAT))
+      );
 
       if (stat.isDirectory()) {
-
-        let itemDir = <interfaces.ItemCatalog>await getDirCatalogNodesAndFilesRecursive({
-          dir: filePath,
-          project_id: item.project_id,
-          repo_id: item.repo_id,
-          repo_dir_path_length: item.repo_dir_path_length,
-        })
-          .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_GET_DIR_CATALOG_NODES_AND_FILES_RECURSIVE));
+        let itemDir = <interfaces.ItemCatalog>(
+          await getDirCatalogNodesAndFilesRecursive({
+            dir: filePath,
+            project_id: item.project_id,
+            repo_id: item.repo_id,
+            repo_dir_path_length: item.repo_dir_path_length
+          }).catch(e =>
+            helper.reThrow(
+              e,
+              enums.diskErrorsEnum
+                .DISK_GET_DIR_CATALOG_NODES_AND_FILES_RECURSIVE
+            )
+          )
+        );
 
         // add dirNodes to children
 
@@ -99,10 +114,10 @@ async function getDirCatalogNodesAndFilesRecursive(item: { // private
         };
 
         folderNodes.push(node);
-
       } else {
-
-        let fileId = MyRegex.replaceSlashesWithUnderscores(filePath.substring(item.repo_dir_path_length + 1));
+        let fileId = MyRegex.replaceSlashesWithUnderscores(
+          filePath.substring(item.repo_dir_path_length + 1)
+        );
 
         let node = {
           id: nodeId,
@@ -117,18 +132,32 @@ async function getDirCatalogNodesAndFilesRecursive(item: { // private
         let ext: any = r ? r[1] : '';
 
         switch (ext) {
-          case constants.EXT_MD: mdNodes.push(node); break;
-          case constants.EXT_DASHBOARD: dashboardNodes.push(node); break;
-          case constants.EXT_MODEL: modelNodes.push(node); break;
-          case constants.EXT_VIEW: viewNodes.push(node); break;
-          case constants.EXT_UDF: udfNodes.push(node); break;
-          default: otherNodes.push(node);
+          case constants.EXT_MD:
+            mdNodes.push(node);
+            break;
+          case constants.EXT_DASHBOARD:
+            dashboardNodes.push(node);
+            break;
+          case constants.EXT_MODEL:
+            modelNodes.push(node);
+            break;
+          case constants.EXT_VIEW:
+            viewNodes.push(node);
+            break;
+          case constants.EXT_UDF:
+            udfNodes.push(node);
+            break;
+          default:
+            otherNodes.push(node);
         }
 
         let path = JSON.stringify(nodeId.split('/'));
 
-        let content = <string>await fse.readFile(filePath, 'utf8')
-          .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_READ_FILE));
+        let content = <string>(
+          await fse
+            .readFile(filePath, 'utf8')
+            .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_READ_FILE))
+        );
 
         let file = generator.makeFile({
           file_absolute_id: filePath,
@@ -137,22 +166,17 @@ async function getDirCatalogNodesAndFilesRecursive(item: { // private
           repo_id: item.repo_id,
           path: path,
           name: name,
-          content: content,
+          content: content
         });
 
         files.push(file);
       }
     }
-  })
-    .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+  }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
-  const sortNodes = (elements: api.CatalogNode[]) => elements.sort(
-    (a, b) => {
-      return a.name > b.name
-        ? 1
-        : b.name > a.name
-          ? -1
-          : 0;
+  const sortNodes = (elements: api.CatalogNode[]) =>
+    elements.sort((a, b) => {
+      return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
     });
 
   nodes = [
@@ -162,7 +186,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: { // private
     ...sortNodes(modelNodes),
     ...sortNodes(viewNodes),
     ...sortNodes(udfNodes),
-    ...sortNodes(otherNodes),
+    ...sortNodes(otherNodes)
   ];
 
   return { nodes: nodes, files: files };

@@ -10,8 +10,9 @@ import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 
 export async function getQueryWithDepQueries(req: Request, res: Response) {
-
-  let payload: api.GetQueryWithDepQueriesRequestBodyPayload = validator.getPayload(req);
+  let payload: api.GetQueryWithDepQueriesRequestBodyPayload = validator.getPayload(
+    req
+  );
 
   let queryId = payload.query_id;
 
@@ -19,10 +20,13 @@ export async function getQueryWithDepQueries(req: Request, res: Response) {
 
   let storeQueries = store.getQueriesRepo();
 
-  let query = <entities.QueryEntity>await storeQueries.findOne({
-    query_id: queryId
-  })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND_ONE));
+  let query = <entities.QueryEntity>await storeQueries
+    .findOne({
+      query_id: queryId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND_ONE)
+    );
 
   if (query) {
     queries.push(query);
@@ -30,11 +34,13 @@ export async function getQueryWithDepQueries(req: Request, res: Response) {
     let pdtDepsAll = JSON.parse(query.pdt_deps_all);
 
     if (pdtDepsAll.length > 0) {
-
-      let depQueries = <entities.QueryEntity[]>await storeQueries.find({
-        pdt_id: In(pdtDepsAll)
-      })
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
+      let depQueries = <entities.QueryEntity[]>await storeQueries
+        .find({
+          pdt_id: In(pdtDepsAll)
+        })
+        .catch(e =>
+          helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND)
+        );
 
       if (depQueries && depQueries.length > 0) {
         queries = helper.makeNewArray(queries, depQueries);
@@ -45,7 +51,7 @@ export async function getQueryWithDepQueries(req: Request, res: Response) {
   // response
 
   let responsePayload: api.GetQueryWithDepQueriesResponse200BodyPayload = {
-    queries: queries.map(q => wrapper.wrapToApiQuery(q)),
+    queries: queries.map(q => wrapper.wrapToApiQuery(q))
   };
 
   sender.sendClientResponse(req, res, responsePayload);

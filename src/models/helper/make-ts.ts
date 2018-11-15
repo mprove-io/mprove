@@ -1,5 +1,3 @@
 export function makeTs() {
-
-  return Date.now()
-    .toString();
+  return Date.now().toString();
 }

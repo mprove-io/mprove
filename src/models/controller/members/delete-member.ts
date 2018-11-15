@@ -11,7 +11,6 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function deleteMember(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let userId: string = req.user.email;
@@ -24,11 +23,15 @@ export async function deleteMember(req: Request, res: Response) {
 
   let storeMembers = store.getMembersRepo();
 
-  let memberTo = <entities.MemberEntity>await storeMembers.findOne({ // including deleted
-    project_id: projectId,
-    member_id: memberId,
-  })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE));
+  let memberTo = <entities.MemberEntity>await storeMembers
+    .findOne({
+      // including deleted
+      project_id: projectId,
+      member_id: memberId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE)
+    );
 
   if (!memberTo) {
     throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_NOT_FOUND });
@@ -42,25 +45,35 @@ export async function deleteMember(req: Request, res: Response) {
 
   // let storeMembers = store.getMembersRepo();
 
-  let memberFrom = <entities.MemberEntity>await storeMembers.findOne({ // including deleted
-    project_id: projectId,
-    member_id: userId,
-  })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE));
+  let memberFrom = <entities.MemberEntity>await storeMembers
+    .findOne({
+      // including deleted
+      project_id: projectId,
+      member_id: userId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE)
+    );
 
-  if (!memberFrom) { throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_NOT_FOUND }); }
+  if (!memberFrom) {
+    throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_NOT_FOUND });
+  }
 
-  if (memberFrom.is_admin === enums.bEnum.FALSE) { // user is not admin
+  if (memberFrom.is_admin === enums.bEnum.FALSE) {
+    // user is not admin
 
     throw new ServerError({ name: enums.otherErrorsEnum.USER_IS_NOT_ADMIN });
+  } else {
+    // user is admin
 
-  } else { // user is admin
+    if (userId === memberId) {
+      // deleting himself
 
-    if (userId === memberId) { // deleting himself
-
-      throw new ServerError({ name: enums.otherErrorsEnum.USER_CAN_NOT_DELETE_HIMSELF });
-
-    } else { // deleting another
+      throw new ServerError({
+        name: enums.otherErrorsEnum.USER_CAN_NOT_DELETE_HIMSELF
+      });
+    } else {
+      // deleting another
       // ok
     }
   }
@@ -75,19 +88,19 @@ export async function deleteMember(req: Request, res: Response) {
   // save to database
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
-
-    await store.save({
-      manager: manager,
-      records: {
-        members: [memberTo],
-      },
-      server_ts: newServerTs,
-      source_init_id: initId,
+  await connection
+    .transaction(async manager => {
+      await store
+        .save({
+          manager: manager,
+          records: {
+            members: [memberTo]
+          },
+          server_ts: newServerTs,
+          source_init_id: initId
+        })
+        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
     })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-  })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   let responsePayload: api.DeleteMemberResponse200BodyPayload = {
@@ -96,4 +109,3 @@ export async function deleteMember(req: Request, res: Response) {
 
   sender.sendClientResponse(req, res, responsePayload);
 }
-

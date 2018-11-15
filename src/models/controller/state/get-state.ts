@@ -13,7 +13,6 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function getState(req: Request, res: Response) {
-
   let userId = req.user.email;
 
   let sessionId = helper.makeId();
@@ -31,86 +30,100 @@ export async function getState(req: Request, res: Response) {
   let storeRepos = store.getReposRepo();
   let storeFiles = store.getFilesRepo();
 
-  await storeSessions.insert(newSession)
+  await storeSessions
+    .insert(newSession)
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_INSERT));
 
-  let user = <entities.UserEntity>await storeUsers.findOne(userId) // TODO: deleted
+  let user = <entities.UserEntity>await storeUsers
+    .findOne(userId) // TODO: deleted
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
 
-  if (!user) { throw new ServerError({ name: enums.otherErrorsEnum.USER_NOT_FOUND }); }
+  if (!user) {
+    throw new ServerError({ name: enums.otherErrorsEnum.USER_NOT_FOUND });
+  }
 
-  let userMembers = <entities.MemberEntity[]>await storeMembers.find({
-    member_id: userId,
-    deleted: Equal(enums.bEnum.FALSE)
-  })
+  let userMembers = <entities.MemberEntity[]>await storeMembers
+    .find({
+      member_id: userId,
+      deleted: Equal(enums.bEnum.FALSE)
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND));
 
   let projectsIds = userMembers.map(userMember => userMember.project_id);
 
   // TODO: use promise all
 
-  let projects = <entities.ProjectEntity[]>await storeProjects.find({
-    project_id: In(projectsIds),
-    deleted: Equal(enums.bEnum.FALSE)
-  })
+  let projects = <entities.ProjectEntity[]>await storeProjects
+    .find({
+      project_id: In(projectsIds),
+      deleted: Equal(enums.bEnum.FALSE)
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND));
 
-  let members = <entities.MemberEntity[]>await storeMembers.find({
-    project_id: In(projectsIds),
-    deleted: Equal(enums.bEnum.FALSE)
-  })
+  let members = <entities.MemberEntity[]>await storeMembers
+    .find({
+      project_id: In(projectsIds),
+      deleted: Equal(enums.bEnum.FALSE)
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND));
 
-  let repos = <entities.RepoEntity[]>await storeRepos.find({
-    project_id: In(projectsIds),
-    repo_id: In([userId, constants.PROD_REPO_ID])
-  })
+  let repos = <entities.RepoEntity[]>await storeRepos
+    .find({
+      project_id: In(projectsIds),
+      repo_id: In([userId, constants.PROD_REPO_ID])
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND));
 
-  let files = <entities.FileEntity[]>await storeFiles.find({
-    project_id: In(projectsIds),
-    repo_id: In([userId, constants.PROD_REPO_ID]),
-  })
+  let files = <entities.FileEntity[]>await storeFiles
+    .find({
+      project_id: In(projectsIds),
+      repo_id: In([userId, constants.PROD_REPO_ID])
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_FIND));
 
   let structs: api.Struct[] = [];
 
-  await forEach(repos, async (repo) => {
-
+  await forEach(repos, async repo => {
     let storeErrors = store.getErrorsRepo();
     let storeModels = store.getModelsRepo();
     let storeDashboards = store.getDashboardsRepo();
 
     // TODO: use promise all
 
-    let errors = <entities.ErrorEntity[]>await storeErrors.find({
-      struct_id: repo.struct_id,
-      repo_id: repo.repo_id
-    })
+    let errors = <entities.ErrorEntity[]>await storeErrors
+      .find({
+        struct_id: repo.struct_id,
+        repo_id: repo.repo_id
+      })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_FIND));
 
-    let models = <entities.ModelEntity[]>await storeModels.find({
-      struct_id: repo.struct_id,
-      repo_id: repo.repo_id
-    })
+    let models = <entities.ModelEntity[]>await storeModels
+      .find({
+        struct_id: repo.struct_id,
+        repo_id: repo.repo_id
+      })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_FIND));
 
-    let dashboards = <entities.DashboardEntity[]>await storeDashboards.find({
-      struct_id: repo.struct_id,
-      repo_id: repo.repo_id
-    })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_FIND));
+    let dashboards = <entities.DashboardEntity[]>await storeDashboards
+      .find({
+        struct_id: repo.struct_id,
+        repo_id: repo.repo_id
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_FIND)
+      );
 
     let struct: api.Struct = {
       repo: wrapper.wrapToApiRepo(repo),
       errors: errors.map(error => wrapper.wrapToApiError(error)),
       models: models.map(model => wrapper.wrapToApiModel(model)),
-      dashboards: dashboards.map(dashboard => wrapper.wrapToApiDashboard(dashboard)),
+      dashboards: dashboards.map(dashboard =>
+        wrapper.wrapToApiDashboard(dashboard)
+      )
     };
 
     structs.push(struct);
   });
-
 
   let payload: api.GetStateResponse200BodyPayload = {
     init_id: sessionId,

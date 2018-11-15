@@ -18,7 +18,6 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function createMember(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let payload: api.CreateMemberRequestBodyPayload = validator.getPayload(req);
@@ -28,11 +27,15 @@ export async function createMember(req: Request, res: Response) {
 
   let storeMembers = store.getMembersRepo();
 
-  let projectMember = await storeMembers.findOne({ // including deleted
-    project_id: projectId,
-    member_id: memberId,
-  })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE));
+  let projectMember = await storeMembers
+    .findOne({
+      // including deleted
+      project_id: projectId,
+      member_id: memberId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE)
+    );
 
   if (projectMember && projectMember.deleted === enums.bEnum.FALSE) {
     throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_ALREADY_EXIST });
@@ -40,7 +43,8 @@ export async function createMember(req: Request, res: Response) {
 
   let storeUsers = store.getUsersRepo();
 
-  let invitedUser = await storeUsers.findOne(memberId)
+  let invitedUser = await storeUsers
+    .findOne(memberId)
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
 
   let newUser: entities.UserEntity;
@@ -56,14 +60,16 @@ export async function createMember(req: Request, res: Response) {
   let models: entities.ModelEntity[] = [];
 
   if (!invitedUser) {
-
-    let alias = <string>await proc.findAlias(memberId)
-      .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_FIND_ALIAS));
+    let alias = <string>(
+      await proc
+        .findAlias(memberId)
+        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_FIND_ALIAS))
+    );
 
     newUser = generator.makeUser({
       user_id: memberId,
       alias: alias,
-      status: api.UserStatusEnum.Pending,
+      status: api.UserStatusEnum.Pending
     });
 
     // demo
@@ -72,53 +78,74 @@ export async function createMember(req: Request, res: Response) {
       user: newUser,
       project_id: constants.DEMO_PROJECT,
       is_editor: enums.bEnum.TRUE,
-      is_admin: enums.bEnum.FALSE,
+      is_admin: enums.bEnum.FALSE
     });
 
     let storeRepos = store.getReposRepo();
 
-    let demoProdRepo = await storeRepos.findOne({
-      project_id: constants.DEMO_PROJECT,
-      repo_id: constants.PROD_REPO_ID
-    })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE));
+    let demoProdRepo = await storeRepos
+      .findOne({
+        project_id: constants.DEMO_PROJECT,
+        repo_id: constants.PROD_REPO_ID
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE)
+      );
 
-    if (!demoProdRepo) { throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND }); }
+    if (!demoProdRepo) {
+      throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
+    }
 
-    await git.cloneCentralToDev({
-      project_id: constants.DEMO_PROJECT,
-      dev_repo_id: memberId
-    })
-      .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_CLONE_CENTRAL_TO_DEV));
+    await git
+      .cloneCentralToDev({
+        project_id: constants.DEMO_PROJECT,
+        dev_repo_id: memberId
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.gitErrorsEnum.GIT_CLONE_CENTRAL_TO_DEV)
+      );
 
-    let itemDemoDevCatalog = <interfaces.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
-      project_id: constants.DEMO_PROJECT,
-      repo_id: memberId,
-    })
-      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES));
+    let itemDemoDevCatalog = <interfaces.ItemCatalog>await disk
+      .getRepoCatalogNodesAndFiles({
+        project_id: constants.DEMO_PROJECT,
+        repo_id: memberId
+      })
+      .catch(e =>
+        helper.reThrow(
+          e,
+          enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
+        )
+      );
 
     let demoDevRepo: entities.RepoEntity = generator.makeRepo({
       project_id: constants.DEMO_PROJECT,
       repo_id: memberId,
       nodes: itemDemoDevCatalog.nodes,
-      struct_id: demoProdRepo.struct_id, // from prod
+      struct_id: demoProdRepo.struct_id // from prod
     });
 
     demoDevRepo.pdts_sorted = demoProdRepo.pdts_sorted;
     demoDevRepo.udfs_content = demoProdRepo.udfs_content;
 
-    let itemDemoStructCopy = <interfaces.ItemStructCopy>await copier.copyStructFromDatabase({
-      project_id: constants.DEMO_PROJECT,
-      from_repo_id: constants.PROD_REPO_ID,
-      to_repo_id: memberId,
-    })
-      .catch(e => helper.reThrow(e, enums.copierErrorsEnum.COPIER_COPY_STRUCT_FROM_DATABASE));
+    let itemDemoStructCopy = <interfaces.ItemStructCopy>await copier
+      .copyStructFromDatabase({
+        project_id: constants.DEMO_PROJECT,
+        from_repo_id: constants.PROD_REPO_ID,
+        to_repo_id: memberId
+      })
+      .catch(e =>
+        helper.reThrow(
+          e,
+          enums.copierErrorsEnum.COPIER_COPY_STRUCT_FROM_DATABASE
+        )
+      );
 
     let {
       dashboards: demoDevDashboards,
       models: demoDevModels,
       errors: demoDevErrors,
-      mconfigs: demoDevMconfigs } = itemDemoStructCopy;
+      mconfigs: demoDevMconfigs
+    } = itemDemoStructCopy;
 
     members.push(demoMember);
     repos.push(demoDevRepo);
@@ -135,62 +162,80 @@ export async function createMember(req: Request, res: Response) {
   let newProjectMember;
 
   if (projectMember && projectMember.deleted === enums.bEnum.TRUE) {
-
     projectMember.deleted = enums.bEnum.FALSE;
-
   } else if (!projectMember) {
-
     newProjectMember = generator.makeMember({
       user: invitedUser ? invitedUser : newUser,
       project_id: projectId,
       is_editor: enums.bEnum.FALSE,
-      is_admin: enums.bEnum.FALSE,
+      is_admin: enums.bEnum.FALSE
     });
 
     let storeRepos = store.getReposRepo();
 
-    let projectProdRepo = await storeRepos.findOne({
-      project_id: projectId,
-      repo_id: constants.PROD_REPO_ID
-    })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE));
+    let projectProdRepo = await storeRepos
+      .findOne({
+        project_id: projectId,
+        repo_id: constants.PROD_REPO_ID
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE)
+      );
 
-    if (!projectProdRepo) { throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND }); }
+    if (!projectProdRepo) {
+      throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
+    }
 
-    await git.cloneCentralToDev({
-      project_id: projectId,
-      dev_repo_id: memberId
-    })
-      .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_CLONE_CENTRAL_TO_DEV));
+    await git
+      .cloneCentralToDev({
+        project_id: projectId,
+        dev_repo_id: memberId
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.gitErrorsEnum.GIT_CLONE_CENTRAL_TO_DEV)
+      );
 
-    let itemProjectDevCatalog = <interfaces.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
-      project_id: projectId,
-      repo_id: memberId,
-    })
-      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES));
+    let itemProjectDevCatalog = <interfaces.ItemCatalog>await disk
+      .getRepoCatalogNodesAndFiles({
+        project_id: projectId,
+        repo_id: memberId
+      })
+      .catch(e =>
+        helper.reThrow(
+          e,
+          enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
+        )
+      );
 
     let projectDevRepo: entities.RepoEntity = generator.makeRepo({
       project_id: projectId,
       repo_id: memberId,
       nodes: itemProjectDevCatalog.nodes,
-      struct_id: projectProdRepo.struct_id, // from prod,
+      struct_id: projectProdRepo.struct_id // from prod,
     });
 
     projectDevRepo.pdts_sorted = projectProdRepo.pdts_sorted;
     projectDevRepo.udfs_content = projectProdRepo.udfs_content;
 
-    let itemProjectStructCopy = <interfaces.ItemStructCopy>await copier.copyStructFromDatabase({
-      project_id: projectId,
-      from_repo_id: constants.PROD_REPO_ID,
-      to_repo_id: memberId,
-    })
-      .catch(e => helper.reThrow(e, enums.copierErrorsEnum.COPIER_COPY_STRUCT_FROM_DATABASE));
+    let itemProjectStructCopy = <interfaces.ItemStructCopy>await copier
+      .copyStructFromDatabase({
+        project_id: projectId,
+        from_repo_id: constants.PROD_REPO_ID,
+        to_repo_id: memberId
+      })
+      .catch(e =>
+        helper.reThrow(
+          e,
+          enums.copierErrorsEnum.COPIER_COPY_STRUCT_FROM_DATABASE
+        )
+      );
 
     let {
       dashboards: projectDevDashboards,
       models: projectDevModels,
       errors: projectDevErrors,
-      mconfigs: projectDevMconfigs } = itemProjectStructCopy;
+      mconfigs: projectDevMconfigs
+    } = itemProjectStructCopy;
 
     members.push(newProjectMember);
     repos.push(projectDevRepo);
@@ -229,45 +274,46 @@ export async function createMember(req: Request, res: Response) {
   // save to database
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
-
-    if (projectMember) {
-
-      await store.save({
-        manager: manager,
-        records: {
-          members: [projectMember]
-        },
-        server_ts: newServerTs,
-        source_init_id: initId,
-      })
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-    } else {
-
-      await store.insert({
-        manager: manager,
-        records: {
-          users: newUser ? [newUser] : [],
-          members: members,
-          repos: repos,
-          files: files,
-          models: models,
-          mconfigs: mconfigs,
-          dashboards: dashboards,
-          errors: errors,
-        },
-        server_ts: newServerTs,
-        source_init_id: initId,
-      })
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_INSERT));
-    }
-  })
+  await connection
+    .transaction(async manager => {
+      if (projectMember) {
+        await store
+          .save({
+            manager: manager,
+            records: {
+              members: [projectMember]
+            },
+            server_ts: newServerTs,
+            source_init_id: initId
+          })
+          .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
+      } else {
+        await store
+          .insert({
+            manager: manager,
+            records: {
+              users: newUser ? [newUser] : [],
+              members: members,
+              repos: repos,
+              files: files,
+              models: models,
+              mconfigs: mconfigs,
+              dashboards: dashboards,
+              errors: errors
+            },
+            server_ts: newServerTs,
+            source_init_id: initId
+          })
+          .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_INSERT));
+      }
+    })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   // TODO: send email
 
-  let member = <entities.MemberEntity>(newProjectMember ? newProjectMember : projectMember);
+  let member = <entities.MemberEntity>(
+    (newProjectMember ? newProjectMember : projectMember)
+  );
 
   let responsePayload: api.CreateMemberResponse200BodyPayload = {
     member: wrapper.wrapToApiMember(member)

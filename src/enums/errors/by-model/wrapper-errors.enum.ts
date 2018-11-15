@@ -1,2 +1,1 @@
-export enum wrapperErrorsEnum {
-}
+export enum wrapperErrorsEnum {}

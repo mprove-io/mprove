@@ -3,7 +3,6 @@ import { entities } from '../../../barrels/entities';
 import { helper } from '../../../barrels/helper';
 
 export function wrapToEntityQuery(query: api.Query): entities.QueryEntity {
-
   return {
     query_id: helper.undefinedToNull(query.query_id),
     project_id: helper.undefinedToNull(query.project_id),
@@ -14,17 +13,21 @@ export function wrapToEntityQuery(query: api.Query): entities.QueryEntity {
     pdt_deps_all: query.pdt_deps_all
       ? JSON.stringify(query.pdt_deps_all)
       : JSON.stringify([]),
-    sql: query.sql
-      ? JSON.stringify(query.sql)
-      : null,
+    sql: query.sql ? JSON.stringify(query.sql) : null,
     is_pdt: helper.booleanToBenum(query.is_pdt),
     pdt_id: helper.undefinedToNull(query.pdt_id),
     status: helper.undefinedToNull(query.status),
     last_run_by: helper.undefinedToNull(query.last_run_by),
     last_run_ts: query.last_run_ts ? query.last_run_ts.toString() : null,
-    last_cancel_ts: query.last_cancel_ts ? query.last_cancel_ts.toString() : null,
-    last_complete_ts: query.last_complete_ts ? query.last_complete_ts.toString() : null,
-    last_complete_duration: query.last_complete_duration ? query.last_complete_duration.toString() : null,
+    last_cancel_ts: query.last_cancel_ts
+      ? query.last_cancel_ts.toString()
+      : null,
+    last_complete_ts: query.last_complete_ts
+      ? query.last_complete_ts.toString()
+      : null,
+    last_complete_duration: query.last_complete_duration
+      ? query.last_complete_duration.toString()
+      : null,
     last_error_message: helper.undefinedToNull(query.last_error_message),
     last_error_ts: query.last_error_ts ? query.last_error_ts.toString() : null,
     data: helper.undefinedToNull(query.data),
@@ -34,7 +37,6 @@ export function wrapToEntityQuery(query: api.Query): entities.QueryEntity {
     bigquery_copy_job_id: null,
     bigquery_is_copying: helper.booleanToBenum(false),
     is_checking: helper.booleanToBenum(false),
-    refresh: null,
+    refresh: null
   };
 }
-

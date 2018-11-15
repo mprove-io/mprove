@@ -15,7 +15,6 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function saveFile(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let payload: api.SaveFileRequestBodyPayload = validator.getPayload(req);
@@ -30,63 +29,86 @@ export async function saveFile(req: Request, res: Response) {
   let storeRepos = store.getReposRepo();
   let storeProjects = store.getProjectsRepo();
 
-  let [file, repo, project] = <[entities.FileEntity, entities.RepoEntity, entities.ProjectEntity]>
-    await Promise.all([
-      storeFiles.findOne({
+  let [file, repo, project] = <
+    [entities.FileEntity, entities.RepoEntity, entities.ProjectEntity]
+  >await Promise.all([
+    storeFiles
+      .findOne({
         project_id: projectId,
         repo_id: repoId,
         file_id: fileId
       })
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_FIND_ONE)),
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_FIND_ONE)
+      ),
 
-      storeRepos.findOne({
+    storeRepos
+      .findOne({
         project_id: projectId,
         repo_id: repoId
       })
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE)),
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE)
+      ),
 
-      storeProjects.findOne(projectId)
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)),
-    ])
-      .catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL));
+    storeProjects
+      .findOne(projectId)
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+      )
+  ]).catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL));
 
-  if (!file) { throw new ServerError({ name: enums.otherErrorsEnum.FILE_NOT_FOUND }); }
-  if (!repo) { throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND }); }
-  if (!project) { throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND }); }
+  if (!file) {
+    throw new ServerError({ name: enums.otherErrorsEnum.FILE_NOT_FOUND });
+  }
+  if (!repo) {
+    throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
+  }
+  if (!project) {
+    throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
+  }
 
   helper.checkServerTs(file, serverTs);
 
   let oldStructId = repo.struct_id;
   let newStructId = helper.makeId();
 
-  await disk.writeToFile({
-    file_absolute_id: file.file_absolute_id,
-    content: content
-  })
+  await disk
+    .writeToFile({
+      file_absolute_id: file.file_absolute_id,
+      content: content
+    })
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
 
   file.content = content;
 
-  await git.addChangesToStage({
-    project_id: projectId,
-    repo_id: repoId,
-  })
-    .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE));
+  await git
+    .addChangesToStage({
+      project_id: projectId,
+      repo_id: repoId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE)
+    );
 
-  let itemStatus = <interfaces.ItemStatus>await git.getRepoStatus({
-    project_id: projectId,
-    repo_id: repoId
-  })
+  let itemStatus = <interfaces.ItemStatus>await git
+    .getRepoStatus({
+      project_id: projectId,
+      repo_id: repoId
+    })
     .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_GET_REPO_STATUS));
 
-  let itemStruct = <interfaces.ItemStruct>await blockml.rebuildStruct({
-    project_id: projectId,
-    repo_id: repo.repo_id,
-    bq_project: project.bigquery_project,
-    week_start: <any>project.week_start,
-    struct_id: newStructId,
-  })
-    .catch(e => helper.reThrow(e, enums.blockmlErrorsEnum.BLOCKML_REBUILD_STRUCT));
+  let itemStruct = <interfaces.ItemStruct>await blockml
+    .rebuildStruct({
+      project_id: projectId,
+      repo_id: repo.repo_id,
+      bq_project: project.bigquery_project,
+      week_start: <any>project.week_start,
+      struct_id: newStructId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.blockmlErrorsEnum.BLOCKML_REBUILD_STRUCT)
+    );
 
   repo.status = itemStatus.status;
   repo.conflicts = JSON.stringify(itemStatus.conflicts);
@@ -103,38 +125,48 @@ export async function saveFile(req: Request, res: Response) {
   file.server_ts = newServerTs;
 
   itemStruct.models = helper.refreshServerTs(itemStruct.models, newServerTs);
-  itemStruct.dashboards = helper.refreshServerTs(itemStruct.dashboards, newServerTs);
-  itemStruct.mconfigs = helper.refreshServerTs(itemStruct.mconfigs, newServerTs);
+  itemStruct.dashboards = helper.refreshServerTs(
+    itemStruct.dashboards,
+    newServerTs
+  );
+  itemStruct.mconfigs = helper.refreshServerTs(
+    itemStruct.mconfigs,
+    newServerTs
+  );
   itemStruct.errors = helper.refreshServerTs(itemStruct.errors, newServerTs);
   itemStruct.queries = helper.refreshServerTs(itemStruct.queries, newServerTs);
 
   // save to database
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
+  await connection
+    .transaction(async manager => {
+      await store
+        .save({
+          manager: manager,
+          records: {
+            repos: [repo],
+            files: [file],
+            queries: itemStruct.queries,
+            models: itemStruct.models,
+            mconfigs: itemStruct.mconfigs,
+            dashboards: itemStruct.dashboards,
+            errors: itemStruct.errors
+          },
+          server_ts: newServerTs,
+          source_init_id: initId
+        })
+        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
 
-    await store.save({
-      manager: manager,
-      records: {
-        repos: [repo],
-        files: [file],
-        queries: itemStruct.queries,
-        models: itemStruct.models,
-        mconfigs: itemStruct.mconfigs,
-        dashboards: itemStruct.dashboards,
-        errors: itemStruct.errors,
-      },
-      server_ts: newServerTs,
-      source_init_id: initId,
+      await store
+        .deleteOldStruct(manager, {
+          repo_id: repoId,
+          old_struct_id: oldStructId
+        })
+        .catch(e =>
+          helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT)
+        );
     })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-    await store.deleteOldStruct(manager, {
-      repo_id: repoId,
-      old_struct_id: oldStructId,
-    })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT));
-  })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   // response
@@ -144,7 +176,9 @@ export async function saveFile(req: Request, res: Response) {
     dev_struct: {
       errors: itemStruct.errors.map(error => wrapper.wrapToApiError(error)),
       models: itemStruct.models.map(model => wrapper.wrapToApiModel(model)),
-      dashboards: itemStruct.dashboards.map(dashboard => wrapper.wrapToApiDashboard(dashboard)),
+      dashboards: itemStruct.dashboards.map(dashboard =>
+        wrapper.wrapToApiDashboard(dashboard)
+      ),
       repo: wrapper.wrapToApiRepo(repo)
     }
   };

@@ -3,7 +3,6 @@ import { entities } from '../../../barrels/entities';
 import { helper } from '../../../barrels/helper';
 
 export function wrapToApiQuery(query: entities.QueryEntity): api.Query {
-
   return {
     query_id: query.query_id,
     project_id: query.project_id,
@@ -23,6 +22,6 @@ export function wrapToApiQuery(query: entities.QueryEntity): api.Query {
     last_error_ts: Number(query.last_error_ts),
     data: query.data,
     temp: helper.benumToBoolean(query.temp),
-    server_ts: Number(query.server_ts),
+    server_ts: Number(query.server_ts)
   };
 }

@@ -4,11 +4,10 @@ import { entities } from '../../barrels/entities';
 import { helper } from '../../barrels/helper';
 
 export function makeUser(item: {
-  user_id: string,
-  alias: string,
-  status: api.UserStatusEnum,
+  user_id: string;
+  alias: string;
+  status: api.UserStatusEnum;
 }): entities.UserEntity {
-
   return {
     user_id: item.user_id,
     user_track_id: helper.makeId(),
@@ -19,6 +18,6 @@ export function makeUser(item: {
     picture_url_big: undefined,
     timezone: constants.USE_PROJECT_DEFAULT_TIMEZONE,
     status: item.status,
-    server_ts: undefined,
+    server_ts: undefined
   };
 }

@@ -14,7 +14,6 @@ import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 
 export async function renameFolder(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let payload: api.RenameFolderRequestBodyPayload = validator.getPayload(req);
@@ -27,10 +26,11 @@ export async function renameFolder(req: Request, res: Response) {
 
   let storeRepos = store.getReposRepo();
 
-  let repo = <entities.RepoEntity>await storeRepos.findOne({
-    project_id: projectId,
-    repo_id: repoId
-  })
+  let repo = <entities.RepoEntity>await storeRepos
+    .findOne({
+      project_id: projectId,
+      repo_id: repoId
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE));
 
   helper.checkServerTs(repo, serverTs);
@@ -45,36 +45,49 @@ export async function renameFolder(req: Request, res: Response) {
 
   let destination = sourceArray.join('/') + '/' + newName;
 
-  await disk.movePath({
-    source_path: source,
-    destination_path: destination
-  })
+  await disk
+    .movePath({
+      source_path: source,
+      destination_path: destination
+    })
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_MOVE_PATH));
 
-  await git.addChangesToStage({
-    project_id: projectId,
-    repo_id: repoId,
-  })
-    .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE));
+  await git
+    .addChangesToStage({
+      project_id: projectId,
+      repo_id: repoId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.gitErrorsEnum.GIT_ADD_CHANGES_TO_STAGE)
+    );
 
-  let itemChanges = <interfaces.ItemProcessDevRepoChanges>await proc.processDevRepoChanges({
-    project_id: projectId,
-    repo_id: repoId,
-    dev_repo: repo,
-    init_id: initId,
-  })
-    .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_DEV_REPO_CHANGES));
+  let itemChanges = <interfaces.ItemProcessDevRepoChanges>await proc
+    .processDevRepoChanges({
+      project_id: projectId,
+      repo_id: repoId,
+      dev_repo: repo,
+      init_id: initId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_DEV_REPO_CHANGES)
+    );
 
   // response
 
   let responsePayload: api.RenameFolderResponse200BodyPayload = {
-    deleted_folder_dev_files: itemChanges.deleted_dev_files.map(file => wrapper.wrapToApiFile(file)),
-    new_folder_dev_files: itemChanges.new_dev_files.map(file => wrapper.wrapToApiFile(file)),
+    deleted_folder_dev_files: itemChanges.deleted_dev_files.map(file =>
+      wrapper.wrapToApiFile(file)
+    ),
+    new_folder_dev_files: itemChanges.new_dev_files.map(file =>
+      wrapper.wrapToApiFile(file)
+    ),
     dev_struct: {
       errors: itemChanges.errors.map(error => wrapper.wrapToApiError(error)),
       models: itemChanges.models.map(model => wrapper.wrapToApiModel(model)),
-      dashboards: itemChanges.dashboards.map(dashboard => wrapper.wrapToApiDashboard(dashboard)),
-      repo: wrapper.wrapToApiRepo(itemChanges.dev_repo),
+      dashboards: itemChanges.dashboards.map(dashboard =>
+        wrapper.wrapToApiDashboard(dashboard)
+      ),
+      repo: wrapper.wrapToApiRepo(itemChanges.dev_repo)
     }
   };
 

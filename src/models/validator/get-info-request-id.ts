@@ -4,13 +4,11 @@ import { helper } from '../../barrels/helper';
 import { ServerError } from '../server-error';
 
 export function getInfoRequestId(req: Request) {
-
   let requestId;
   let error;
 
   try {
     requestId = req.body.info.request_id;
-
   } catch (e) {
     error = true;
   }

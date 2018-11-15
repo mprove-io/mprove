@@ -3,7 +3,6 @@ import { entities } from '../../../barrels/entities';
 import { helper } from '../../../barrels/helper';
 
 export function wrapToApiProject(project: entities.ProjectEntity): api.Project {
-
   return {
     project_id: project.project_id,
     has_credentials: helper.benumToBoolean(project.has_credentials),
@@ -16,6 +15,6 @@ export function wrapToApiProject(project: entities.ProjectEntity): api.Project {
     analytics_max_plan_id: Number(project.analytics_max_plan_id),
     analytics_subscription_id: Number(project.analytics_subscription_id),
     deleted: helper.benumToBoolean(project.deleted),
-    server_ts: Number(project.server_ts),
+    server_ts: Number(project.server_ts)
   };
 }

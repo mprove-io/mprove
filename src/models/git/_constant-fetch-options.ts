@@ -1,5 +1,5 @@
 export const constantFetchOptions = {
   callbacks: {
-    certificateCheck: () => 1,
+    certificateCheck: () => 1
   }
 };

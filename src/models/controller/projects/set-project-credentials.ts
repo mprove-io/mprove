@@ -18,12 +18,13 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function setProjectCredentials(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let userId: string = req.user.email;
 
-  let payload: api.SetProjectCredentialsRequestBodyPayload = validator.getPayload(req);
+  let payload: api.SetProjectCredentialsRequestBodyPayload = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let credentials = payload.credentials;
@@ -36,25 +37,34 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   let storeProjects = store.getProjectsRepo();
 
-  let project = <entities.ProjectEntity>await storeProjects.findOne(projectId) // TODO: deleted
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE));
+  let project = <entities.ProjectEntity>await storeProjects
+    .findOne(projectId) // TODO: deleted
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+    );
 
-  if (!project) { throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND }); }
+  if (!project) {
+    throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
+  }
 
   helper.checkServerTs(project, serverTs);
 
-  let fileAbsoluteId = `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`;
+  let fileAbsoluteId = `${
+    config.DISK_BIGQUERY_CREDENTIALS_PATH
+  }/${projectId}.json`;
 
-  await disk.writeToFile({
-    file_absolute_id: fileAbsoluteId,
-    content: credentials
-  })
+  await disk
+    .writeToFile({
+      file_absolute_id: fileAbsoluteId,
+      content: credentials
+    })
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
 
-  await proc.createDataset({
-    project_id: projectId,
-    credentials_file_path: fileAbsoluteId
-  })
+  await proc
+    .createDataset({
+      project_id: projectId,
+      credentials_file_path: fileAbsoluteId
+    })
     .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_CREATE_DATASET));
 
   project.bigquery_project = bigqueryProject;
@@ -65,9 +75,10 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   let storeRepos = store.getReposRepo();
 
-  let projectRepos = <entities.RepoEntity[]>await storeRepos.find({
-    project_id: projectId
-  })
+  let projectRepos = <entities.RepoEntity[]>await storeRepos
+    .find({
+      project_id: projectId
+    })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND));
 
   let repos: entities.RepoEntity[] = [];
@@ -82,17 +93,19 @@ export async function setProjectCredentials(req: Request, res: Response) {
   let devStruct: interfaces.ItemStructAndRepo;
 
   await forEach(projectRepos, async repo => {
-
     let structId = helper.makeId();
 
-    let itemRebuildStruct = <interfaces.ItemStruct>await blockml.rebuildStruct({
-      project_id: projectId,
-      repo_id: repo.repo_id,
-      bq_project: project.bigquery_project,
-      week_start: <any>project.week_start,
-      struct_id: structId,
-    })
-      .catch(e => helper.reThrow(e, enums.blockmlErrorsEnum.BLOCKML_REBUILD_STRUCT));
+    let itemRebuildStruct = <interfaces.ItemStruct>await blockml
+      .rebuildStruct({
+        project_id: projectId,
+        repo_id: repo.repo_id,
+        bq_project: project.bigquery_project,
+        week_start: <any>project.week_start,
+        struct_id: structId
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.blockmlErrorsEnum.BLOCKML_REBUILD_STRUCT)
+      );
 
     let {
       pdts_sorted: pdtsSorted,
@@ -101,7 +114,8 @@ export async function setProjectCredentials(req: Request, res: Response) {
       errors: repoErrors,
       mconfigs: repoMconfigs,
       models: repoModels,
-      queries: repoQueries } = itemRebuildStruct;
+      queries: repoQueries
+    } = itemRebuildStruct;
 
     repo.pdts_sorted = pdtsSorted;
     repo.udfs_content = udfsContent;
@@ -116,16 +130,13 @@ export async function setProjectCredentials(req: Request, res: Response) {
     errors = helper.makeNewArray(errors, repoErrors);
 
     if (repo.repo_id === constants.PROD_REPO_ID) {
-
       prodStruct = {
         errors: repoErrors,
         models: repoModels,
         dashboards: repoDashboards,
         repo: repo
       };
-
     } else if (repo.repo_id === userId) {
-
       devStruct = {
         errors: repoErrors,
         models: repoModels,
@@ -133,9 +144,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
         repo: repo
       };
     }
-
-  })
-    .catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+  }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
   // update server_ts
 
@@ -157,35 +166,36 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
-
-    await store.save({
-      manager: manager,
-      records: {
-        projects: [project],
-        repos: repos,
-        queries: queries,
-        models: models,
-        mconfigs: mconfigs,
-        dashboards: dashboards,
-        errors: errors,
-      },
-      server_ts: newServerTs,
-      source_init_id: initId,
+  await connection
+    .transaction(async manager => {
+      await store
+        .save({
+          manager: manager,
+          records: {
+            projects: [project],
+            repos: repos,
+            queries: queries,
+            models: models,
+            mconfigs: mconfigs,
+            dashboards: dashboards,
+            errors: errors
+          },
+          server_ts: newServerTs,
+          source_init_id: initId
+        })
+        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
     })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-  })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   // response
 
   let responsePayload: api.SetProjectCredentialsResponse200BodyPayload = {
     project: wrapper.wrapToApiProject(project),
-    dev_and_prod_structs_or_empty: [ // TODO: empty if bq_project not changed
+    dev_and_prod_structs_or_empty: [
+      // TODO: empty if bq_project not changed
       wrapper.wrapStructResponse(devStruct),
       wrapper.wrapStructResponse(prodStruct)
-    ],
+    ]
   };
 
   sender.sendClientResponse(req, res, responsePayload);

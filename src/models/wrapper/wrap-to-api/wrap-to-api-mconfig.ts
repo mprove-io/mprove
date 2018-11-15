@@ -3,7 +3,6 @@ import { entities } from '../../../barrels/entities';
 import { helper } from '../../../barrels/helper';
 
 export function wrapToApiMconfig(mconfig: entities.MconfigEntity): api.Mconfig {
-
   return {
     mconfig_id: mconfig.mconfig_id,
     query_id: mconfig.query_id,
@@ -15,10 +14,10 @@ export function wrapToApiMconfig(mconfig: entities.MconfigEntity): api.Mconfig {
     sortings: JSON.parse(mconfig.sortings),
     sorts: mconfig.sorts,
     timezone: mconfig.timezone,
-    limit:  mconfig.limit,
+    limit: mconfig.limit,
     filters: JSON.parse(mconfig.filters),
     charts: JSON.parse(mconfig.charts),
     temp: helper.benumToBoolean(mconfig.temp),
-    server_ts: Number(mconfig.server_ts),
+    server_ts: Number(mconfig.server_ts)
   };
 }

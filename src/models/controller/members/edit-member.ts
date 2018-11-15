@@ -11,7 +11,6 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function editMember(req: Request, res: Response) {
-
   let initId = validator.getRequestInfoInitId(req);
 
   let userId: string = req.user.email;
@@ -30,11 +29,15 @@ export async function editMember(req: Request, res: Response) {
 
   let storeMembers = store.getMembersRepo();
 
-  let memberTo = <entities.MemberEntity>await storeMembers.findOne({ // including deleted
-    project_id: projectId,
-    member_id: memberId,
-  })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE));
+  let memberTo = <entities.MemberEntity>await storeMembers
+    .findOne({
+      // including deleted
+      project_id: projectId,
+      member_id: memberId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE)
+    );
 
   if (!memberTo) {
     throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_NOT_FOUND });
@@ -46,51 +49,63 @@ export async function editMember(req: Request, res: Response) {
 
   helper.checkServerTs(memberTo, serverTs);
 
-  let memberFrom = <entities.MemberEntity>await storeMembers.findOne({ // including deleted
-    project_id: projectId,
-    member_id: userId,
-  })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE));
+  let memberFrom = <entities.MemberEntity>await storeMembers
+    .findOne({
+      // including deleted
+      project_id: projectId,
+      member_id: userId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND_ONE)
+    );
 
-  if (!memberFrom) { throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_NOT_FOUND }); }
+  if (!memberFrom) {
+    throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_NOT_FOUND });
+  }
 
-  if (memberFrom.is_admin === enums.bEnum.FALSE) { // user is not admin
+  if (memberFrom.is_admin === enums.bEnum.FALSE) {
+    // user is not admin
 
-    if (userId === memberId) { // changing himself
+    if (userId === memberId) {
+      // changing himself
 
-      if (isEditor !== memberTo.is_editor ||
-        isAdmin !== memberTo.is_admin) {
-        throw new ServerError({ name: enums.otherErrorsEnum.USER_IS_NOT_ADMIN });
+      if (isEditor !== memberTo.is_editor || isAdmin !== memberTo.is_admin) {
+        throw new ServerError({
+          name: enums.otherErrorsEnum.USER_IS_NOT_ADMIN
+        });
       } else {
         // ok - editing themes
       }
-
-    } else { // changing another
+    } else {
+      // changing another
       throw new ServerError({ name: enums.otherErrorsEnum.USER_IS_NOT_ADMIN });
     }
+  } else {
+    // user is admin
 
-  } else { // user is admin
-
-    if (userId === memberId) { // changing himself
+    if (userId === memberId) {
+      // changing himself
 
       if (isAdmin !== memberTo.is_admin) {
-
-        throw new ServerError({ name: enums.otherErrorsEnum.USER_CAN_NOT_CHANGE_HIS_ADMIN_STATUS });
-
+        throw new ServerError({
+          name: enums.otherErrorsEnum.USER_CAN_NOT_CHANGE_HIS_ADMIN_STATUS
+        });
       } else {
         // ok - editing themes
         // ok - editing is_editor
       }
+    } else {
+      // changing another
 
-    } else { // changing another
-
-      if (mainTheme !== memberTo.main_theme ||
+      if (
+        mainTheme !== memberTo.main_theme ||
         dashTheme !== memberTo.dash_theme ||
         fileTheme !== memberTo.file_theme ||
-        sqlTheme !== memberTo.sql_theme) {
-
-        throw new ServerError({ name: enums.otherErrorsEnum.USER_CAN_NOT_CHANGE_MEMBER_THEMES });
-
+        sqlTheme !== memberTo.sql_theme
+      ) {
+        throw new ServerError({
+          name: enums.otherErrorsEnum.USER_CAN_NOT_CHANGE_MEMBER_THEMES
+        });
       } else {
         // ok - editing is_editor
         // ok - editing is_admin
@@ -113,19 +128,19 @@ export async function editMember(req: Request, res: Response) {
   // save to database
   let connection = getConnection();
 
-  await connection.transaction(async manager => {
-
-    await store.save({
-      manager: manager,
-      records: {
-        members: [memberTo],
-      },
-      server_ts: newServerTs,
-      source_init_id: initId,
+  await connection
+    .transaction(async manager => {
+      await store
+        .save({
+          manager: manager,
+          records: {
+            members: [memberTo]
+          },
+          server_ts: newServerTs,
+          source_init_id: initId
+        })
+        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
     })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-  })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   let responsePayload: api.EditMemberResponse200BodyPayload = {
