@@ -1,0 +1,6 @@
+// tslint:disable:max-line-length
+export const initialToken =
+  'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ5ZWZiMUw5RnRJRFFBdkJnczV4cmxDMEN5aWo0dm5nUSIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTEyNzQ2NjEyNDM5Mzk3NTEyOTI3IiwiZW1haWxfdmVyaWZpZWQiOiJ0cnVlIiwidXNlcl9pZCI6Imdvb2dsZS1vYXV0aDJ8MTEyNzQ2NjEyNDM5Mzk3NTEyOTI3IiwiaXNzIjoiaHR0cHM6Ly9tcHJvdmUuYXV0aDAuY29tLyIsIm5hbWUiOiJiZW5kZXJAZXhhbXBsZS5jb20iLCJuaWNrbmFtZSI6ImJlbmRlciIsImV4cCI6MTgyMjk0OTU5MCwiaWF0IjoxNTA3NTg5NTkwLCJlbWFpbCI6ImJlbmRlckBleGFtcGxlLmNvbSJ9.3epudv_e8J1vByRSre1qxjrEHZ5KIVUQtaJdZNtffZ0';
+export const baseDomain = 'https://e2e.mprove.io';
+export const waitTime = 25 * 1000;
+export const appearTime = 20 * 1000;
