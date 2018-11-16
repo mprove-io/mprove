@@ -29,3 +29,8 @@ cp -rf /Users/akalitenya/mprove-api/tslint-codelyzer.json /Users/akalitenya/mpro
 cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-docs-app/.prettierrc.yaml
 cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-docs-app/tslint-base.json
 cp -rf /Users/akalitenya/mprove-api/tslint-codelyzer.json /Users/akalitenya/mprove-docs-app/tslint-codelyzer.json
+
+# mprove-landing-app
+cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-landing-app/.prettierrc.yaml
+cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-landing-app/tslint-base.json
+cp -rf /Users/akalitenya/mprove-api/tslint-codelyzer.json /Users/akalitenya/mprove-landing-app/tslint-codelyzer.json

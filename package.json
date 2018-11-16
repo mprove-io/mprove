@@ -15,11 +15,24 @@
     "format:write": "npm run format:base -- --write",
     "files:check": "npm run format:write && npm-run-all --parallel lint circular"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "prettier --write --config .prettierrc.yaml",
+      "git add"
+    ]
+  },  
   "devDependencies": {
     "npm-run-all": "^4.1.3",
     "prettier": "1.15.2",
     "tslint": "~5.10.0",
     "tslint-config-prettier": "1.16.0",
-    "typescript": "~2.7.2"
+    "typescript": "~2.7.2",
+    "lint-staged": "^7.3.0",
+    "husky": "^1.1.3"
   }
 }
