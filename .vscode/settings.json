@@ -3,34 +3,5 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true
-  },
-  "cSpell.words": [
-    "Octokit",
-    "awcache",
-    "benum",
-    "bigint",
-    "bigquery",
-    "blockml",
-    "mconfig",
-    "mconfigs",
-    "mediumtext",
-    "middlewares",
-    "mprove",
-    "nodegit",
-    "octokit",
-    "ormlogs",
-    "pdt",
-    "pdts",
-    "prettierrc",
-    "promisify",
-    "repo",
-    "repos",
-    "sortings",
-    "struct",
-    "structs",
-    "typeorm",
-    "udfs",
-    "varchar",
-    "webhook"
-  ],
+  }
 }
