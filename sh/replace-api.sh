@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# mprove-node
-rm -rf /Users/akalitenya/mprove-node/src/api
-mkdir /Users/akalitenya/mprove-node/src/api
-cp -rf /Users/akalitenya/mprove-api/src/ /Users/akalitenya/mprove-node/src/api
+# mprove-server-node
+rm -rf /Users/akalitenya/mprove-server-node/src/api
+mkdir /Users/akalitenya/mprove-server-node/src/api
+cp -rf /Users/akalitenya/mprove-api/src/ /Users/akalitenya/mprove-server-node/src/api
 
-cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-node/.prettierrc.yaml
-cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-node/tslint-base.json
+cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-server-node/.prettierrc.yaml
+cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-server-node/tslint-base.json
 
 # mprove-blockml-node
 rm -rf /Users/akalitenya/mprove-blockml-node/src/api
@@ -34,3 +34,8 @@ cp -rf /Users/akalitenya/mprove-api/tslint-codelyzer.json /Users/akalitenya/mpro
 cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-landing-app/.prettierrc.yaml
 cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-landing-app/tslint-base.json
 cp -rf /Users/akalitenya/mprove-api/tslint-codelyzer.json /Users/akalitenya/mprove-landing-app/tslint-codelyzer.json
+
+# mprove-data-generator
+cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-data-generator/.prettierrc.yaml
+cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-data-generator/tslint-base.json
+cp -rf /Users/akalitenya/mprove-api/tslint-codelyzer.json /Users/akalitenya/mprove-data-generator/tslint-codelyzer.json
