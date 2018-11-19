@@ -45,7 +45,7 @@ export function checkJoinUnknownParameters(item: {
                   'label',
                   'description',
                   'as',
-                  'sql_where' // TODO: check from_view with sql_where
+                  'sql_where' // TODO: #10 check from_view with sql_where
                 ].indexOf(parameter) < 0
               ) {
                 // error e123

@@ -83,7 +83,7 @@ export function processLineNumbersRecursive(item: {
             fileName: item.fileName,
             filePath: item.filePath
           });
-          // TODO: make error - we don't support Array of Arrays
+          // TODO: #7 make error - we don't support Array of Arrays
         } else if (Array.isArray(element)) {
           // !hash && !array - convert to string
         } else {
@@ -123,7 +123,7 @@ export function processLineNumbersRecursive(item: {
     }
   });
 
-  // TODO: already checked by js-yaml (no error e7 test)
+  // TODO: #8 already checked by js-yaml (no error e7 test)
   Object.keys(item.hash).forEach(par => {
     let reg = ApRegex.CAPTURE_WITHOUT_END_LINE_NUMBERS();
     let r = reg.exec(par);

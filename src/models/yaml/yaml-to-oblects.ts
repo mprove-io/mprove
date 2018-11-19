@@ -30,7 +30,7 @@ export async function yamlToObjects(item: {
       tiedFileString = fs.readFileSync(absolutePath, 'UTF-8');
       // throw new Error('abc');
     } catch (e) {
-      // TODO: error e3 test
+      // TODO: #9 error e3 test
       ErrorsCollector.addError(
         new AmError({
           title: `can't open file`,
