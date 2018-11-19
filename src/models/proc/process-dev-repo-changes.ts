@@ -21,11 +21,13 @@ export async function processDevRepoChanges(item: {
 
   let storeProjects = store.getProjectsRepo();
 
-  let project = <entities.ProjectEntity>await storeProjects
-    .findOne(projectId) // TODO: deleted
-    .catch(e =>
-      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
-    );
+  let project = <entities.ProjectEntity>(
+    await storeProjects
+      .findOne(projectId)
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+      )
+  );
 
   if (!project) {
     throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
@@ -137,7 +139,7 @@ export async function processDevRepoChanges(item: {
         .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
 
       if (filesItem.deleted_files.length > 0) {
-        // TODO: use custom transaction to not check length
+        // use custom transaction to not check length
 
         let deletedFilesIds = filesItem.deleted_files.map(
           file => file.file_absolute_id

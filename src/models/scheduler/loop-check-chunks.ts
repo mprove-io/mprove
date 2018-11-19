@@ -30,7 +30,6 @@ export function loopCheckChunks(item: {
           helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_CHUNKS)
         );
       } catch (e) {
-        // TODO: scheduler error handling policy
         console.log(e);
         console.log('stackIndex2: ', e.stackArrayElementIndex2, '\n');
       }

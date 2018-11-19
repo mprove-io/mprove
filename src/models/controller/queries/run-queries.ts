@@ -29,7 +29,7 @@ export async function runQueries(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
 
-  let projectId = queries[0].project_id; // TODO: pass project_id through api
+  let projectId = queries[0].project_id;
 
   let storeProjects = store.getProjectsRepo();
 
@@ -45,11 +45,7 @@ export async function runQueries(req: Request, res: Response) {
     throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
   }
 
-  // TODO: check has credentials
-
   let newLastRunTs = helper.makeTs();
-
-  // TODO: rewrite credentials from db to file
 
   let queryPacks: entities.QueryEntity[][] = <entities.QueryEntity[][]>(
     await Promise.all(
@@ -103,7 +99,6 @@ export async function runQueries(req: Request, res: Response) {
 
   // response
 
-  // TODO: not filter live_queries for pdts page
   let responseQueries = processedQueries; // .filter(q => queryIds.indexOf(q.query_id) > -1);
 
   let responsePayload: api.RunQueriesResponse200BodyPayload = {

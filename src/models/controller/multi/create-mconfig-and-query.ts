@@ -20,7 +20,7 @@ export async function createMconfigAndQuery(req: Request, res: Response) {
   );
 
   let mconfig = payload.mconfig;
-  let query = payload.query; // TODO: check why no need
+  let query = payload.query;
 
   let projectId = mconfig.project_id;
   let repoId = mconfig.repo_id;

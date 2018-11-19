@@ -26,7 +26,6 @@ export function loopCheckQueries() {
           helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_QUERIES)
         );
       } catch (e) {
-        // TODO: scheduler error handling policy
         console.log(e);
         console.log('stackIndex2: ', e.stackArrayElementIndex2, '\n');
       }

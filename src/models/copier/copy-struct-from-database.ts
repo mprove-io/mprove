@@ -10,8 +10,6 @@ export async function copyStructFromDatabase(item: {
   from_repo_id: string;
   to_repo_id: string;
 }): Promise<interfaces.ItemStructCopy> {
-  // TODO: use promise all
-
   let storeModels = store.getModelsRepo();
   let storeErrors = store.getErrorsRepo();
   let storeMconfigs = store.getMconfigsRepo();

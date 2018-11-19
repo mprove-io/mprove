@@ -150,8 +150,6 @@ export async function splitChunk(item: {
     // queries
 
     await forEach(content.queries, async query => {
-      // TODO: check live queries
-
       let wrappedQuery = wrapper.wrapToApiQuery(query);
       payload.queries.push(wrappedQuery);
     }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
@@ -304,7 +302,6 @@ export async function splitChunk(item: {
       payload.members.length > 0
     ) {
       await createMessage({
-        // TODO: await ?
         payload: payload,
         ws_client: wsClient,
         chunk_id: chunk.chunk_id,

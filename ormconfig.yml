@@ -6,7 +6,7 @@ default: # default connection
   password: root
   database: my_dev
   logging: true
-  logger: file # TODO: remove in production
+  logger: file
   entities: 
   - src/models/store/entities/*.ts # CLI loads from ts files when use ts-node
   migrations: 

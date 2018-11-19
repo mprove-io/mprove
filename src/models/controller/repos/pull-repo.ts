@@ -19,8 +19,6 @@ export async function pullRepo(req: Request, res: Response) {
 
   let payload: api.PullRepoRequestBodyPayload = validator.getPayload(req);
 
-  // TODO: remove need_manual_pull: from api
-
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
   let serverTs = payload.server_ts;
@@ -85,7 +83,6 @@ export async function pullRepo(req: Request, res: Response) {
       wrapper.wrapToApiFile(file)
     ),
     dev_struct_or_empty: [
-      // TODO: remove empty in api
       {
         errors: itemChanges.errors.map(error => wrapper.wrapToApiError(error)),
         models: itemChanges.models.map(model => wrapper.wrapToApiModel(model)),

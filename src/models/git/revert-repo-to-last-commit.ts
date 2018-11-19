@@ -32,6 +32,4 @@ export async function revertRepoToLastCommit(item: {
     nodegit.Reset.TYPE.HARD,
     null
   ).catch(e => helper.reThrow(e, enums.nodegitErrorsEnum.NODEGIT_RESET_RESET));
-
-  // TODO: check for untracked
 }

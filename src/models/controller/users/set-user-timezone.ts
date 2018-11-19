@@ -24,9 +24,11 @@ export async function setUserTimezone(req: Request, res: Response) {
 
   let storeUsers = store.getUsersRepo();
 
-  let user = <entities.UserEntity>await storeUsers
-    .findOne(userId) // TODO: deleted
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
+  let user = <entities.UserEntity>(
+    await storeUsers
+      .findOne(userId)
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE))
+  );
 
   if (!user) {
     throw new ServerError({ name: enums.otherErrorsEnum.USER_NOT_FOUND });

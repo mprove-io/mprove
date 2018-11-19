@@ -309,8 +309,6 @@ export async function createMember(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  // TODO: send email
-
   let member = <entities.MemberEntity>(
     (newProjectMember ? newProjectMember : projectMember)
   );

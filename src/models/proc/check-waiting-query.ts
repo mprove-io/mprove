@@ -129,6 +129,4 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
         .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
-
-  // TODO: notify by websocket if (server_ts === newServerTs)
 }

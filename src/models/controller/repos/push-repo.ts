@@ -27,8 +27,6 @@ export async function pushRepo(req: Request, res: Response) {
   let repoId = payload.repo_id;
   let serverTs = payload.server_ts;
 
-  // TODO: use promise all
-
   let storeRepos = store.getReposRepo();
 
   let devRepo = <entities.RepoEntity>await storeRepos

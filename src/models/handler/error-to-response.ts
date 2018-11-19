@@ -4,7 +4,7 @@ import { ServerError } from '../server-error';
 
 export async function errorToResponse(err: any, req: any, res: any, next: any) {
   if (err) {
-    console.log(err); // TODO: sentry
+    console.log(err); // sentry
 
     res.json({
       info: {

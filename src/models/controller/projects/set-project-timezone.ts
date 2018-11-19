@@ -23,11 +23,13 @@ export async function setProjectTimezone(req: Request, res: Response) {
 
   let storeProjects = store.getProjectsRepo();
 
-  let project = <entities.ProjectEntity>await storeProjects
-    .findOne(projectId) // TODO: deleted
-    .catch(e =>
-      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
-    );
+  let project = <entities.ProjectEntity>(
+    await storeProjects
+      .findOne(projectId)
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+      )
+  );
 
   if (!project) {
     throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });

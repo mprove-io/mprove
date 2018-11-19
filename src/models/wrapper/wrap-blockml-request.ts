@@ -6,7 +6,7 @@ export function wrapBlockmlRequest(payload: any) {
     info: {
       origin: api.CommunicationOriginEnum.SERVER,
       type: api.CommunicationTypeEnum.REQUEST,
-      request_id: helper.makeId() // TODO: blockml request_id
+      request_id: helper.makeId()
     },
     payload: payload
   };

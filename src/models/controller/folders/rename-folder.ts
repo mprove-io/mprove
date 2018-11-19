@@ -20,7 +20,7 @@ export async function renameFolder(req: Request, res: Response) {
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
-  let nodeId = payload.node_id; // TODO: make required in api
+  let nodeId = payload.node_id;
   let newName = payload.new_name;
   let serverTs = payload.repo_server_ts;
 

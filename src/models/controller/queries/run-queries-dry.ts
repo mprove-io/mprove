@@ -28,7 +28,7 @@ export async function runQueriesDry(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
 
-  let projectId = queries[0].project_id; // TODO: pass project_id through api
+  let projectId = queries[0].project_id;
 
   let storeProjects = store.getProjectsRepo();
 
@@ -44,11 +44,7 @@ export async function runQueriesDry(req: Request, res: Response) {
     throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
   }
 
-  // TODO: check has credentials
-
   let newLastRunDryTs = Date.now(); // number (not to save in db)
-
-  // TODO: rewrite credentials from db to file
 
   let results = <interfaces.ItemRunQueryDry[]>await Promise.all(
     queries.map(

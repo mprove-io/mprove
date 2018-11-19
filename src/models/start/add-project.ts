@@ -153,7 +153,7 @@ export async function addProject(item: {
     .rebuildStruct({
       project_id: projectId,
       repo_id: constants.PROD_REPO_ID,
-      bq_project: 'flow-1202', // TODO: bq_project credentials
+      bq_project: 'flow-1202', // bq_project credentials
       week_start: <any>project.week_start,
       struct_id: prodStructId
     })

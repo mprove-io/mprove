@@ -12,8 +12,8 @@ export function makeUser(item: {
     user_id: item.user_id,
     user_track_id: helper.makeId(),
     alias: item.alias,
-    first_name: null, // TODO: first_name undefined?
-    last_name: null, // TODO: last_name undefined?
+    first_name: null,
+    last_name: null,
     picture_url_small: undefined,
     picture_url_big: undefined,
     timezone: constants.USE_PROJECT_DEFAULT_TIMEZONE,

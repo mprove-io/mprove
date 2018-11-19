@@ -37,11 +37,13 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   let storeProjects = store.getProjectsRepo();
 
-  let project = <entities.ProjectEntity>await storeProjects
-    .findOne(projectId) // TODO: deleted
-    .catch(e =>
-      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
-    );
+  let project = <entities.ProjectEntity>(
+    await storeProjects
+      .findOne(projectId)
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+      )
+  );
 
   if (!project) {
     throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
@@ -71,7 +73,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
   project.bigquery_client_email = bigqueryClientEmail;
   project.bigquery_credentials = credentials;
   project.bigquery_credentials_file_path = fileAbsoluteId;
-  project.has_credentials = enums.bEnum.TRUE; // TODO: validate credentials
+  project.has_credentials = enums.bEnum.TRUE;
 
   let storeRepos = store.getReposRepo();
 
@@ -192,7 +194,6 @@ export async function setProjectCredentials(req: Request, res: Response) {
   let responsePayload: api.SetProjectCredentialsResponse200BodyPayload = {
     project: wrapper.wrapToApiProject(project),
     dev_and_prod_structs_or_empty: [
-      // TODO: empty if bq_project not changed
       wrapper.wrapStructResponse(devStruct),
       wrapper.wrapStructResponse(prodStruct)
     ]

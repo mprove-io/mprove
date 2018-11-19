@@ -27,8 +27,6 @@ export async function createProject(req: Request, res: Response) {
 
   projectId = projectId.toLowerCase();
 
-  // TODO: check that project not exist in db
-
   let projectDir = `${config.DISK_BASE_PATH}/${projectId}`;
 
   await disk

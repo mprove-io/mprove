@@ -9,8 +9,6 @@ import { getModelsRepo } from './get-models-repo';
 import { getQueriesRepo } from './get-queries-repo';
 import { getReposRepo } from './get-repos-repo';
 
-// TODO: check other places to delete old struct
-
 export async function deleteOldStruct(
   manager: EntityManager,
   item: {

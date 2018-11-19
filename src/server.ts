@@ -35,7 +35,7 @@ import expressValidator = require('express-validator');
 // } from './configs/config';
 
 run().catch(e => {
-  console.log(e); // TODO: console log e
+  console.log(e); // sentry
 });
 
 async function run() {
@@ -154,8 +154,6 @@ function createExpress() {
     );
     next();
   });
-
-  // TODO: use erMiddleware enum
 
   let middlewares = [
     handler.catchAsyncErrors(

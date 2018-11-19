@@ -34,9 +34,11 @@ export async function getState(req: Request, res: Response) {
     .insert(newSession)
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_INSERT));
 
-  let user = <entities.UserEntity>await storeUsers
-    .findOne(userId) // TODO: deleted
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
+  let user = <entities.UserEntity>(
+    await storeUsers
+      .findOne(userId)
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE))
+  );
 
   if (!user) {
     throw new ServerError({ name: enums.otherErrorsEnum.USER_NOT_FOUND });
@@ -50,8 +52,6 @@ export async function getState(req: Request, res: Response) {
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND));
 
   let projectsIds = userMembers.map(userMember => userMember.project_id);
-
-  // TODO: use promise all
 
   let projects = <entities.ProjectEntity[]>await storeProjects
     .find({
@@ -87,8 +87,6 @@ export async function getState(req: Request, res: Response) {
     let storeErrors = store.getErrorsRepo();
     let storeModels = store.getModelsRepo();
     let storeDashboards = store.getDashboardsRepo();
-
-    // TODO: use promise all
 
     let errors = <entities.ErrorEntity[]>await storeErrors
       .find({
