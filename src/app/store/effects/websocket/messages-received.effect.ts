@@ -12,7 +12,7 @@ export class MessagesReceivedEffect {
     .ofType(actionTypes.STATE_RECEIVED)
     .pipe(
       mergeMap((action: any) => [
-        // TODO: check need of from()
+        // TODO: #23-1 check need of from()
         new actions.ConfirmAction({ reply_to: action.payload.info.request_id }),
         new actions.UpdateLayoutLastWebsocketMessageTimestampAction(Date.now())
       ])

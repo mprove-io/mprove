@@ -188,7 +188,7 @@ export class DoCheckService {
             );
 
             if (diff > 600) {
-              // TODO: change 10 min to 30 sec and message to 'connection lost'
+              // TODO: #22 change 10 min to 30 sec and message to 'connection lost'
 
               if (this.appConfig.forceWindowReload) {
                 window.location.reload();

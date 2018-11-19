@@ -138,7 +138,8 @@ export class FileEditorComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    this.editor.getEditor().$blockScrolling = Infinity; // TODO: update ace later (1 instead of 2 by using this line)
+    // TODO: #18-1 update ace later (1 instead of 2 by using this line)
+    this.editor.getEditor().$blockScrolling = Infinity;
     this.editor.getEditor().setFontSize(16);
 
     let modeIsDev: boolean;

@@ -12,7 +12,7 @@ export class PingReceivedEffect {
     .ofType(actionTypes.PING_RECEIVED)
     .pipe(
       mergeMap((action: actions.PingReceivedAction) => [
-        // TODO: check need of from()
+        // TODO: #23-2 check need of from()
         new actions.PongAction({ reply_to: action.payload.info.request_id }),
         new actions.UpdateLayoutLastWebsocketMessageTimestampAction(Date.now())
       ])

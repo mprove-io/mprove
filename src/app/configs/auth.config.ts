@@ -26,7 +26,8 @@ export const authConfig: interfaces.AuthConfiguration = {
     theme: {
       // primaryColor: '#31324F', // default #ea5323
       logo:
-        'https://raw.githubusercontent.com/akalitenya/Other/master/mrove_logo_square_auth.png', // TODO: logo path
+        // TODO: #19 logo path
+        'https://raw.githubusercontent.com/akalitenya/Other/master/mrove_logo_square_auth.png',
       // authButtons: {
       //   'testConnection': {
       //     displayName: 'Test Conn',

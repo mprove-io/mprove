@@ -65,7 +65,7 @@ export class AuthService {
     });
 
     this.lock.on('authorization_error', (error: any) => {
-      // console.log(error); // TODO: handle authorization_error
+      // console.log(error); // TODO: #20 handle authorization_error
     });
   }
 

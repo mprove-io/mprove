@@ -22,7 +22,8 @@ export class PdtSqlDialogComponent implements AfterViewInit {
     this.editor.getEditor().gotoLine(1);
     this.editor.getEditor().navigateLineEnd();
 
-    this.editor.getEditor().$blockScrolling = Infinity; // TODO: update ace later (1 instead of 2 by using this line)
+    // TODO: #18-4 update ace later (1 instead of 2 by using this line)
+    this.editor.getEditor().$blockScrolling = Infinity;
     this.editor.getEditor().setFontSize(16);
 
     this.editor.getEditor().renderer.$cursorLayer.element.style.display =
