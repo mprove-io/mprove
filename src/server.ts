@@ -47,7 +47,7 @@ async function run() {
   );
 
   Object.assign(connectionOptions, {
-    // synchronize: true, // TODO: synchronize: false in prod
+    // synchronize: true, // TODO: #28-1 synchronize: false in prod
     //   type: config.DB_TYPE,
     //   host: config.DB_HOST,
     //   port: config.DB_PORT,
@@ -85,7 +85,7 @@ async function run() {
   );
 
   await connection
-    .dropDatabase() // TODO: remove synchronize in prod
+    .dropDatabase() // TODO: #28-2 remove synchronize in prod
     .catch(e =>
       helper.reThrow(
         e,
@@ -94,10 +94,10 @@ async function run() {
     );
 
   await connection
-    .synchronize() // TODO: remove synchronize in prod
+    .synchronize() // TODO: #28-3 remove synchronize in prod
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_SYNCHRONIZE));
 
-  // await connection.runMigrations() // TODO: runMigrations in prod
+  // await connection.runMigrations() // TODO: #28-4 runMigrations in prod
   //   .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_RUN_MIGRATIONS));
 
   await start
