@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '.env' });
 
-export const BLOCKML_BASE_PATH = 'http://localhost:8081/api/v2/';
+export const BLOCKML_BASE_PATH = 'http://blockml:8081/api/v2/';
 export const BLOCKML_TIMEOUT = 10000;
 export const DISK_BASE_PATH = '/mprove/basedir';
 export const DISK_BIGQUERY_CREDENTIALS_PATH = '/mprove/bigquery';
