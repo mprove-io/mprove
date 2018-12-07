@@ -70,6 +70,7 @@ if (environment.canUseRaven === true) {
         authScheme: 'Bearer ',
         tokenGetter: helper.getToken, // for jwtInterceptor
         whitelistedDomains: [
+          'localhost',
           'localhost:3000',
           'localhost:4000',
           'localhost:4200',
