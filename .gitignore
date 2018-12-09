@@ -22,3 +22,8 @@ node_modules
 
 # debug
 yarn-error.log
+
+# e2e
+/reports/*.json
+
+/cypress/screenshots
