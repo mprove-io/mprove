@@ -9,6 +9,10 @@ export class MyRegex {
     return cloneRegexp(/^[.]/);
   }
 
+  static ENDS_WITH_MD(): RegExp {
+    return cloneRegexp(/[.]md$/);
+  }
+
   static CAPTURE_EXT(): RegExp {
     return cloneRegexp(/([.][\s\S]+)$/);
   }

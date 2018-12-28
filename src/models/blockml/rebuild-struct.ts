@@ -16,20 +16,22 @@ export async function rebuildStruct(item: {
   week_start: api.ProjectWeekStartEnum;
   struct_id: string;
 }): Promise<interfaces.ItemStruct> {
-  let apiFiles: api.File[] = item.files.map(x => {
-    let path = x.file_id;
+  let apiFiles: api.File[] = item.files
+    .filter(x => !x.name.match(MyRegex.ENDS_WITH_MD()))
+    .map(x => {
+      let path = x.file_id;
 
-    let pReg = MyRegex.SLASH_G();
-    path = path.replace(pReg, '___');
+      let pReg = MyRegex.SLASH_G();
+      path = path.replace(pReg, '___');
 
-    let file = {
-      name: x.name,
-      path: path,
-      content: x.content
-    };
+      let file = {
+        name: x.name,
+        path: path,
+        content: x.content
+      };
 
-    return file;
-  });
+      return file;
+    });
 
   let requestPayload: api.RebuildStructRequestBodyPayload = {
     files: apiFiles,
