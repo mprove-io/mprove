@@ -13,47 +13,13 @@ export async function yamlToObjects(item: {
 }): Promise<any[]> {
   let filesAny: any[] = [];
 
-  // item.file3s.forEach(x => {
   await forEach(item.file3s, async (x: interfaces.File3) => {
-    // recreating absolute path
-    let rpReg = ApRegex.TRIPLE_UNDERSCORE_G();
-
-    let relativePath: string = x.path.replace(rpReg, '/');
-    let absolutePath: string = item.dir + '/' + relativePath;
-
-    let tiedFileString: string = '';
     let tiedFileArray: string[] = [];
-
-    // file open
-    let breakOnFileOpen: boolean;
-    try {
-      tiedFileString = fs.readFileSync(absolutePath, 'UTF-8');
-      // throw new Error('abc');
-    } catch (e) {
-      // TODO: #9 error e3 test
-      ErrorsCollector.addError(
-        new AmError({
-          title: `can't open file`,
-          message: `unable to open file ${x.name}`,
-          lines: [
-            {
-              line: 0,
-              name: x.name,
-              path: x.path
-            }
-          ]
-        })
-      );
-      breakOnFileOpen = true;
-    }
-    if (breakOnFileOpen) {
-      return;
-    }
 
     // try YAML parsing
     let breakOnYamlParsing: boolean;
     try {
-      y.safeLoad(tiedFileString);
+      y.safeLoad(x.content);
     } catch (e) {
       // error e4
       ErrorsCollector.addError(
@@ -76,7 +42,7 @@ export async function yamlToObjects(item: {
     }
 
     // prepare line numbers
-    tiedFileArray = tiedFileString.split('\n');
+    tiedFileArray = x.content.split('\n');
 
     let processedString: string = '';
 

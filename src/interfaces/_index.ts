@@ -9,7 +9,6 @@ export * from './dimension';
 export * from './error-line';
 export * from './field';
 export * from './field-ext';
-export * from './file';
 export * from './file-2';
 export * from './file-3';
 export * from './filter';

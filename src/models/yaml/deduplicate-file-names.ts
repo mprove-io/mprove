@@ -12,10 +12,10 @@ export async function deduplicateFileNames(item: {
   // item.file2s.forEach(x => {
   await forEach(item.file2s, async (x: interfaces.File2) => {
     if (x.filePaths.length > 1) {
-      let lines: interfaces.ErrorLine[] = x.filePaths.map(p => ({
+      let lines: interfaces.ErrorLine[] = x.filePaths.map(fp => ({
         line: 0,
         name: x.name,
-        path: p
+        path: fp.path
       }));
 
       // error e2
@@ -32,7 +32,8 @@ export async function deduplicateFileNames(item: {
       file3s.push({
         name: x.name,
         ext: x.ext,
-        path: x.filePaths[0]
+        path: x.filePaths[0].path,
+        content: x.filePaths[0].content
       });
     }
   });

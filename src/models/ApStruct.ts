@@ -23,18 +23,36 @@ export class ApStruct {
     projectId: string;
     structId: string;
   }): Promise<interfaces.Struct> {
-    ErrorsCollector.clearErrors();
-
-    // ApYAML
-
-    let pdts: interfaces.Pdt[] = [];
-
-    let files: interfaces.File[] = await barYaml.collectFiles({
+    let files: api.File[] = await barYaml.collectFiles({
       dir: item.dir
     });
 
+    return await this.rebuildStructStateless({
+      files: files,
+      dir: item.dir,
+      weekStart: item.weekStart,
+      bqProject: item.bqProject,
+      projectId: item.projectId,
+      structId: item.structId
+    });
+  }
+
+  static async rebuildStructStateless(item: {
+    files: api.File[];
+    dir: string;
+    weekStart: api.ProjectWeekStartEnum;
+    bqProject: string;
+    projectId: string;
+    structId: string;
+  }): Promise<interfaces.Struct> {
+    ErrorsCollector.clearErrors();
+
+    let pdts: interfaces.Pdt[] = [];
+
+    // ApYAML
+
     let file2s: interfaces.File2[] = await barYaml.removeWrongExt({
-      files: files
+      files: item.files
     });
     let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({
       file2s: file2s

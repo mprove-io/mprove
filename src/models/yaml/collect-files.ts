@@ -1,14 +1,13 @@
 import * as walk from 'walk';
+import * as fs from 'fs';
 import { ApRegex } from '../../barrels/am-regex';
-import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
-export function collectFiles(item: {
-  dir: string;
-}): Promise<interfaces.File[]> {
+export function collectFiles(item: { dir: string }): Promise<api.File[]> {
   return new Promise((resolve, reject) => {
     // if (Math.random() < 0.5) { throw new Error('boom1'); }
 
-    let files: interfaces.File[] = [];
+    let files: api.File[] = [];
 
     let walker = walk.walk(item.dir, { followLinks: false });
 
@@ -27,10 +26,17 @@ export function collectFiles(item: {
         let pReg = ApRegex.SLASH_G();
         path = path.replace(pReg, '___');
 
+        // recreating absolute path
+        let rpReg = ApRegex.TRIPLE_UNDERSCORE_G();
+
+        let relativePath: string = path.replace(rpReg, '/');
+        let absolutePath: string = item.dir + '/' + relativePath;
+
         // Add this file to the list of files
         files.push({
           name: stat.name.toLowerCase(),
-          path: path
+          path: path,
+          content: fs.readFileSync(absolutePath, 'UTF-8')
         });
       }
       next();

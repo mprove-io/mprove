@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import { api } from '../barrels/api';
 import { wrapper } from '../barrels/wrapper';
+import { interfaces } from '../barrels/interfaces';
 
 export let rebuildStruct = async (req: Request, res: Response) => {
   let requestId: string;
   let projectId: string;
+  let files: api.File[];
   let repoId: string;
   let bqProject: string;
   let weekStart: api.ProjectWeekStartEnum;
@@ -14,6 +16,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
     requestId = req.body['info']['request_id'];
     projectId = req.body['payload']['project_id'];
     repoId = req.body['payload']['repo_id'];
+    files = req.body['payload']['files'];
     bqProject = req.body['payload']['bq_project'];
     weekStart = req.body['payload']['week_start'];
     structId = req.body['payload']['struct_id'];
@@ -44,6 +47,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
 
   try {
     ws = await wrapper.wrapStruct({
+      files: files,
       dir: dir,
       weekStart: weekStart,
       bqProject: bqProject,

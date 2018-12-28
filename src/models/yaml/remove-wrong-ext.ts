@@ -2,16 +2,22 @@ import { AmError } from '../../barrels/am-error';
 import { ApRegex } from '../../barrels/am-regex';
 import { ErrorsCollector } from '../../barrels/errors-collector';
 import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
 const { forEach } = require('p-iteration');
 
 export async function removeWrongExt(item: {
-  files: interfaces.File[];
+  files: api.File[];
 }): Promise<interfaces.File2[]> {
   let file2s: interfaces.File2[] = [];
 
   // item.files.forEach(x => {
-  await forEach(item.files, async (x: interfaces.File) => {
+  await forEach(item.files, async (x: api.File) => {
+    let fp = {
+      path: x.path,
+      content: x.content
+    };
+
     let reg = ApRegex.CAPTURE_EXT();
     let r = reg.exec(x.name.toLowerCase());
 
@@ -21,11 +27,11 @@ export async function removeWrongExt(item: {
       let f: interfaces.File2 = file2s.find(z => z.name === x.name);
 
       if (f) {
-        f.filePaths.push(x.path);
+        f.filePaths.push(fp);
       } else {
         file2s.push({
           name: x.name,
-          filePaths: [x.path],
+          filePaths: [fp],
           ext: ext
         });
       }

@@ -6,4 +6,4 @@ export * from './make-line-numbers';
 export * from './process-line-numbers-recursive';
 export * from './remove-wrong-ext';
 export * from './split-files';
-export * from './yaml-to-oblects';
+export * from './yaml-to-objects';
