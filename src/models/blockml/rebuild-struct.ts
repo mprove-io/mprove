@@ -5,15 +5,34 @@ import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { wrapper } from '../../barrels/wrapper';
 import { constantAxiosInstance } from './_constant-axios-instance';
+import { entities } from '../../barrels/entities';
+import { MyRegex } from '../my-regex';
 
 export async function rebuildStruct(item: {
+  files: entities.FileEntity[];
   project_id: string;
   repo_id: string;
   bq_project: string;
   week_start: api.ProjectWeekStartEnum;
   struct_id: string;
 }): Promise<interfaces.ItemStruct> {
+  let apiFiles: api.File[] = item.files.map(x => {
+    let path = x.file_id;
+
+    let pReg = MyRegex.SLASH_G();
+    path = path.replace(pReg, '___');
+
+    let file = {
+      name: x.name,
+      path: path,
+      content: x.content
+    };
+
+    return file;
+  });
+
   let requestPayload: api.RebuildStructRequestBodyPayload = {
+    files: apiFiles,
     project_id: item.project_id,
     repo_id: item.repo_id,
     bq_project: item.bq_project,

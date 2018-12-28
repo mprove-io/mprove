@@ -65,6 +65,7 @@ export async function processDevRepoChanges(item: {
 
   let itemStruct = <interfaces.ItemStruct>await blockml
     .rebuildStruct({
+      files: itemCatalog.files,
       project_id: projectId,
       repo_id: item.repo_id,
       bq_project: project.bigquery_project,

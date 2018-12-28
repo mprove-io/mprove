@@ -10,6 +10,7 @@ import { helper } from '../../../barrels/helper';
 import { interfaces } from '../../../barrels/interfaces';
 import { sender } from '../../../barrels/sender';
 import { store } from '../../../barrels/store';
+import { disk } from '../../../barrels/disk';
 import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
@@ -67,15 +68,28 @@ export async function setProjectWeekStart(req: Request, res: Response) {
   await forEach(projectRepos, async repo => {
     let structId = helper.makeId();
 
+    let itemCatalog = <interfaces.ItemCatalog>await disk
+      .getRepoCatalogNodesAndFiles({
+        project_id: projectId,
+        repo_id: repo.repo_id
+      })
+      .catch((e: any) =>
+        helper.reThrow(
+          e,
+          enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
+        )
+      );
+
     let rebuildStructItem = <interfaces.ItemStruct>await blockml
       .rebuildStruct({
+        files: itemCatalog.files,
         project_id: projectId,
         repo_id: repo.repo_id,
         bq_project: project.bigquery_project,
         week_start: <any>project.week_start,
         struct_id: structId
       })
-      .catch(e =>
+      .catch((e: any) =>
         helper.reThrow(e, enums.blockmlErrorsEnum.BLOCKML_REBUILD_STRUCT)
       );
 

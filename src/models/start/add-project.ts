@@ -151,6 +151,7 @@ export async function addProject(item: {
 
   let itemStruct = <interfaces.ItemStruct>await blockml
     .rebuildStruct({
+      files: itemCatalogProd.files,
       project_id: projectId,
       repo_id: constants.PROD_REPO_ID,
       bq_project: 'flow-1202', // bq_project credentials

@@ -98,8 +98,21 @@ export async function saveFile(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.gitErrorsEnum.GIT_GET_REPO_STATUS));
 
+  let itemCatalog = <interfaces.ItemCatalog>await disk
+    .getRepoCatalogNodesAndFiles({
+      project_id: projectId,
+      repo_id: repo.repo_id
+    })
+    .catch(e =>
+      helper.reThrow(
+        e,
+        enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
+      )
+    );
+
   let itemStruct = <interfaces.ItemStruct>await blockml
     .rebuildStruct({
+      files: itemCatalog.files,
       project_id: projectId,
       repo_id: repo.repo_id,
       bq_project: project.bigquery_project,

@@ -1,6 +1,10 @@
 const cloneRegexp = require('clone-regexp');
 
 export class MyRegex {
+  static SLASH_G(): RegExp {
+    return cloneRegexp(/[/]/g);
+  }
+
   static STARTS_WITH_DOT(): RegExp {
     return cloneRegexp(/^[.]/);
   }

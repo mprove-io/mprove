@@ -108,6 +108,7 @@ export async function deleteFile(req: Request, res: Response) {
 
   let itemStruct = <interfaces.ItemStruct>await blockml
     .rebuildStruct({
+      files: itemCatalog.files,
       project_id: projectId,
       repo_id: repoId,
       bq_project: project.bigquery_project,
