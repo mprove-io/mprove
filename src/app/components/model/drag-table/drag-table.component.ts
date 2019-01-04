@@ -120,8 +120,11 @@ export class DragTableComponent implements OnChanges {
     const dropElementStyle = getComputedStyle(dropElement);
     const parentElementStyle = getComputedStyle(element);
 
-    const toIndexOrder: number = Number.parseInt(dropElementStyle.order);
-    const fromIndexOrder: number = Number.parseInt(parentElementStyle.order);
+    const toIndexOrder: number = Number.parseInt(dropElementStyle.order, 10);
+    const fromIndexOrder: number = Number.parseInt(
+      parentElementStyle.order,
+      10
+    );
 
     const leftOffsetDropElement = Number.parseFloat(dropElementStyle.left);
     const leftOffsetParentElement = Number.parseFloat(parentElementStyle.left);

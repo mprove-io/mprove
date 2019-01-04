@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
@@ -9,16 +9,15 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class SaveFileEffect {
-  @Effect() saveFile$: Observable<Action> = this.actions$
-    .ofType(actionTypes.SAVE_FILE)
-    .pipe(
-      mergeMap((action: actions.SaveFileAction) =>
-        this.backendService.saveFile(action.payload).pipe(
-          map(body => new actions.SaveFileSuccessAction(body.payload)),
-          catchError(e => of(new actions.SaveFileFailAction({ error: e })))
-        )
+  @Effect() saveFile$: Observable<Action> = this.actions$.pipe(
+    ofType(actionTypes.SAVE_FILE),
+    mergeMap((action: actions.SaveFileAction) =>
+      this.backendService.saveFile(action.payload).pipe(
+        map(body => new actions.SaveFileSuccessAction(body.payload)),
+        catchError(e => of(new actions.SaveFileFailAction({ error: e })))
       )
-    );
+    )
+  );
 
   constructor(
     private actions$: Actions,

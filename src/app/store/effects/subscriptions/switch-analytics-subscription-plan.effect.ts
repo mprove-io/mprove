@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
@@ -11,7 +11,8 @@ import * as services from 'app/services/_index';
 export class SwitchAnalyticsSubscriptionPlanEffect {
   @Effect() switchAnalyticsSubscriptionPlan$: Observable<
     Action
-  > = this.actions$.ofType(actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN).pipe(
+  > = this.actions$.pipe(
+    ofType(actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN),
     mergeMap((action: actions.SwitchAnalyticsSubscriptionPlanAction) =>
       this.backendService.switchAnalyticsSubscriptionPlan(action.payload).pipe(
         map(

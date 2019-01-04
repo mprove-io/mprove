@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
@@ -9,16 +9,15 @@ import * as services from 'app/services/_index';
 
 @Injectable()
 export class RunQueriesEffect {
-  @Effect() runQueries$: Observable<Action> = this.actions$
-    .ofType(actionTypes.RUN_QUERIES)
-    .pipe(
-      mergeMap((action: actions.RunQueriesAction) =>
-        this.backendService.runQueries(action.payload).pipe(
-          map(body => new actions.RunQueriesSuccessAction(body.payload)),
-          catchError(e => of(new actions.RunQueriesFailAction({ error: e })))
-        )
+  @Effect() runQueries$: Observable<Action> = this.actions$.pipe(
+    ofType(actionTypes.RUN_QUERIES),
+    mergeMap((action: actions.RunQueriesAction) =>
+      this.backendService.runQueries(action.payload).pipe(
+        map(body => new actions.RunQueriesSuccessAction(body.payload)),
+        catchError(e => of(new actions.RunQueriesFailAction({ error: e })))
       )
-    );
+    )
+  );
 
   constructor(
     private actions$: Actions,

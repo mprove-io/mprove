@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
@@ -12,7 +12,8 @@ import * as selectors from 'app/store/selectors/_index';
 export class SetLiveQueriesSuccessEffect {
   @Effect({ dispatch: false }) setLiveQueriesSuccess$: Observable<
     Action
-  > = this.actions$.ofType(actionTypes.SET_LIVE_QUERIES_SUCCESS).pipe(
+  > = this.actions$.pipe(
+    ofType(actionTypes.SET_LIVE_QUERIES_SUCCESS),
     tap((action: actions.SetLiveQueriesSuccessAction) => {
       if (action.payload.live_queries.length > 0) {
         let selectedProjectId: string;

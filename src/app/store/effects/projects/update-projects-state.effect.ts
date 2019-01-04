@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
@@ -17,7 +17,8 @@ import * as constants from 'app/constants/_index';
 export class UpdateProjectsStateEffect {
   @Effect({ dispatch: false }) updateProjectsState$: Observable<
     Action
-  > = this.actions$.ofType(actionTypes.UPDATE_PROJECTS_STATE).pipe(
+  > = this.actions$.pipe(
+    ofType(actionTypes.UPDATE_PROJECTS_STATE),
     tap((action: actions.UpdateProjectsStateAction) => {
       let selectedProject: api.Project;
       this.store

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { from, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
@@ -10,18 +10,17 @@ import * as actionTypes from 'app/store/action-types';
 export class CancelSubscriptionsSuccessEffect {
   @Effect() cancelSubscriptionsSuccess$: Observable<
     Action
-  > = this.actions$
-    .ofType(actionTypes.CANCEL_SUBSCRIPTIONS_SUCCESS)
-    .pipe(
-      mergeMap((action: actions.CancelSubscriptionsSuccessAction) =>
-        from([
-          new actions.UpdateSubscriptionsStateAction(
-            action.payload.subscriptions
-          ),
-          new actions.UpdateProjectsStateAction([action.payload.project])
-        ])
-      )
-    );
+  > = this.actions$.pipe(
+    ofType(actionTypes.CANCEL_SUBSCRIPTIONS_SUCCESS),
+    mergeMap((action: actions.CancelSubscriptionsSuccessAction) =>
+      from([
+        new actions.UpdateSubscriptionsStateAction(
+          action.payload.subscriptions
+        ),
+        new actions.UpdateProjectsStateAction([action.payload.project])
+      ])
+    )
+  );
 
   constructor(private actions$: Actions) {}
 }

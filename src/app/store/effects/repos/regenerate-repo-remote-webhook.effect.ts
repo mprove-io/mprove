@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
@@ -11,7 +11,8 @@ import * as services from 'app/services/_index';
 export class RegenerateRepoRemoteWebhookEffect {
   @Effect() regenerateRepoRemoteWebhook$: Observable<
     Action
-  > = this.actions$.ofType(actionTypes.REGENERATE_REPO_REMOTE_WEBHOOK).pipe(
+  > = this.actions$.pipe(
+    ofType(actionTypes.REGENERATE_REPO_REMOTE_WEBHOOK),
     mergeMap((action: actions.RegenerateRepoRemoteWebhookAction) =>
       this.backendService.regenerateRepoRemoteWebhook(action.payload).pipe(
         map(

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
@@ -8,15 +8,14 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class PingReceivedEffect {
-  @Effect() pingReceived$: Observable<Action> = this.actions$
-    .ofType(actionTypes.PING_RECEIVED)
-    .pipe(
-      mergeMap((action: actions.PingReceivedAction) => [
-        // TODO: #23-2 check need of from()
-        new actions.PongAction({ reply_to: action.payload.info.request_id }),
-        new actions.UpdateLayoutLastWebsocketMessageTimestampAction(Date.now())
-      ])
-    );
+  @Effect() pingReceived$: Observable<Action> = this.actions$.pipe(
+    ofType(actionTypes.PING_RECEIVED),
+    mergeMap((action: actions.PingReceivedAction) => [
+      // TODO: #23-2 check need of from()
+      new actions.PongAction({ reply_to: action.payload.info.request_id }),
+      new actions.UpdateLayoutLastWebsocketMessageTimestampAction(Date.now())
+    ])
+  );
 
   constructor(private actions$: Actions) {}
 }

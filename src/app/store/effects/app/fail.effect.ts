@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
@@ -9,8 +9,8 @@ import * as actionTypes from 'app/store/action-types';
 
 @Injectable()
 export class FailEffect {
-  @Effect() fail$: Observable<Action> = this.actions$
-    .ofType(
+  @Effect() fail$: Observable<Action> = this.actions$.pipe(
+    ofType(
       actionTypes.GET_STATE_FAIL,
 
       actionTypes.CREATE_FILE_FAIL,
@@ -61,52 +61,51 @@ export class FailEffect {
       actionTypes.PONG_FAIL,
 
       actionTypes.LOCK_SHOW_FAIL
-    )
-    .pipe(
-      filter(
-        (action: any) =>
-          !action.payload.error
-            .toString()
-            .includes('Request not sent because not authenticated')
-      ),
-      tap((action: any) => {
-        if (
-          action.payload.error &&
-          action.payload.error.data &&
-          action.payload.error.data.response &&
-          action.payload.error.data.response.body &&
-          action.payload.error.data.response.body.info &&
-          action.payload.error.data.response.body.info.status ===
-            api.ServerResponseStatusEnum.MaintenanceMode
-        ) {
-          let url = this.router.routerState.snapshot.url;
+    ),
+    filter(
+      (action: any) =>
+        !action.payload.error
+          .toString()
+          .includes('Request not sent because not authenticated')
+    ),
+    tap((action: any) => {
+      if (
+        action.payload.error &&
+        action.payload.error.data &&
+        action.payload.error.data.response &&
+        action.payload.error.data.response.body &&
+        action.payload.error.data.response.body.info &&
+        action.payload.error.data.response.body.info.status ===
+          api.ServerResponseStatusEnum.MaintenanceMode
+      ) {
+        let url = this.router.routerState.snapshot.url;
 
-          window.location.href = url;
-        } else {
-          let err = action.payload.error;
+        window.location.href = url;
+      } else {
+        let err = action.payload.error;
 
-          if (!err.data) {
-            err.name = `[AppEffects] ${err.message}`;
-            err.message = `[AppEffects] ${err.message}: -`;
-
-            err.data = {
-              name: err.name,
-              message: '-'
-            };
-          }
-
-          err.name = `${action.type} ${err.name}`;
-          err.message = `${action.type} ${err.message}`;
+        if (!err.data) {
+          err.name = `[AppEffects] ${err.message}`;
+          err.message = `[AppEffects] ${err.message}: -`;
 
           err.data = {
             name: err.name,
-            message: err.data.message
+            message: '-'
           };
-
-          throw err;
         }
-      })
-    );
+
+        err.name = `${action.type} ${err.name}`;
+        err.message = `${action.type} ${err.message}`;
+
+        err.data = {
+          name: err.name,
+          message: err.data.message
+        };
+
+        throw err;
+      }
+    })
+  );
 
   constructor(private actions$: Actions, private router: Router) {}
 }

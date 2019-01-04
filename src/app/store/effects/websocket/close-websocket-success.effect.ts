@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
@@ -15,7 +15,8 @@ import * as services from 'app/services/_index';
 export class CloseWebSocketSuccessEffect {
   @Effect({ dispatch: false }) closeWebSocketSuccess$: Observable<
     Action
-  > = this.actions$.ofType(actionTypes.CLOSE_WEBSOCKET_SUCCESS).pipe(
+  > = this.actions$.pipe(
+    ofType(actionTypes.CLOSE_WEBSOCKET_SUCCESS),
     tap((action: actions.CloseWebSocketSuccessAction) => {
       this.printer.log(
         enums.busEnum.WEBSOCKET_EFFECTS,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
@@ -16,7 +16,8 @@ import * as services from 'app/services/_index';
 export class UpdateReposStateEffect {
   @Effect({ dispatch: false }) updateReposState$: Observable<
     Action
-  > = this.actions$.ofType(actionTypes.UPDATE_REPOS_STATE).pipe(
+  > = this.actions$.pipe(
+    ofType(actionTypes.UPDATE_REPOS_STATE),
     tap((action: actions.UpdateReposStateAction) => {
       let selectedRepo: api.Repo;
       this.store
