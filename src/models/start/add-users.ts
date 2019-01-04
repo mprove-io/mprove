@@ -24,6 +24,10 @@ export async function addUsers() {
     {
       user_id: config.ADMIN_1_USER_ID,
       alias: config.ADMIN_1_ALIAS
+    },
+    {
+      user_id: config.ADMIN_2_USER_ID,
+      alias: config.ADMIN_2_ALIAS
     }
   ];
 

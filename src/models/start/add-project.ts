@@ -84,7 +84,7 @@ export async function addProject(item: {
 
   let users = <entities.UserEntity[]>await storeUsers
     .find({
-      user_id: In([config.ADMIN_1_USER_ID])
+      user_id: In([config.ADMIN_1_USER_ID, config.ADMIN_2_USER_ID])
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND));
 

@@ -4,8 +4,9 @@ dotenv.config({ path: '.env' });
 
 export const BLOCKML_BASE_PATH = 'http://blockml:8081/api/v2/';
 export const BLOCKML_TIMEOUT = 10000;
-export const DISK_BASE_PATH = '/mprove/basedir';
-export const DISK_BIGQUERY_CREDENTIALS_PATH = '/mprove/bigquery';
+export const DISK_BASE_PATH = '/mprove_data/backend/projects';
+export const DISK_BIGQUERY_CREDENTIALS_PATH =
+  '/mprove_data/backend/bigquery_credentials';
 
 // export const DB_TYPE = 'mysql';
 // export const DB_HOST = 'localhost';
@@ -19,3 +20,6 @@ export const GITHUB_ORG = 'mprove-projects';
 
 export const ADMIN_1_USER_ID = 'akalitenya@mprove.io';
 export const ADMIN_1_ALIAS = 'akalitenya';
+
+export const ADMIN_2_USER_ID = 'bhundr@gmail.com';
+export const ADMIN_2_ALIAS = 'bhundr';
