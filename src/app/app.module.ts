@@ -77,9 +77,8 @@ if (environment.canUseRaven === true) {
           'localhost:4201',
           'localhost:8088',
           'localhost:8080',
-          'mprove.iconiux.com',
-          't.mprove.io',
-          'e2e.mprove.io',
+          'test.mprove.io',
+          'stage.mprove.io',
           'mprove.io'
         ]
       }

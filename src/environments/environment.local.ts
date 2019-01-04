@@ -14,9 +14,9 @@ export const environment: interfaces.Environment = {
   canPrintToConsole: true,
   canUseStoreLogger: false,
   canUseStoreFreeze: false,
-  canUseSegmentMetaReducer: false,
+  canUseSegmentMetaReducer: false
 
-  dynamicAssetsBaseUrl: 'http://localhost:8080',
-  httpUrl: 'http://localhost:8080/api/v1',
-  websocketUrl: 'ws://localhost:8080/api/v1/webchat/'
+  // dynamicAssetsBaseUrl: 'http://localhost:8080',
+  // httpUrl: 'http://localhost:8080/api/v1',
+  // websocketUrl: 'ws://localhost:8080/api/v1/webchat/'
 };

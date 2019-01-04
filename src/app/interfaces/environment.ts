@@ -15,9 +15,9 @@ export interface Environment {
   canUseStoreFreeze: boolean;
   canUseSegmentMetaReducer: boolean;
 
-  dynamicAssetsBaseUrl: string;
-  httpUrl: string;
-  websocketUrl: string;
+  // dynamicAssetsBaseUrl: string;
+  // httpUrl: string;
+  // websocketUrl: string;
 
   i18nPrefix?: string;
   versions?: any;

@@ -16,6 +16,7 @@
     "format:write": "npm run format:base -- --write",
     "files:check": "npm run format:write && npm-run-all --parallel lint circular",
     "build:local": "npm run files:check && npm run clean && ng build --configuration=local",
+    "build:test": "npm run files:check && npm run clean && ng build --configuration=test",
     "build:prod": "npm run files:check && npm run clean && ng build --prod --vendor-chunk",
     "server": "node ./server.js",
     "ng": "ng",

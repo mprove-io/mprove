@@ -6,6 +6,7 @@ export * from './cut';
 export * from './dashboard';
 export * from './dashboard-field';
 export * from './file-line';
+export * from './file';
 export * from './filter';
 export * from './fraction';
 export * from './mconfig';
