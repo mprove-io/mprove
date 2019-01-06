@@ -44,7 +44,6 @@
       "js"
     ],
     "transform": {
-      "^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js"
     },
     "testMatch": [
       "**/test/**/*.test.js"
@@ -96,7 +95,6 @@
     "jest": "23.2.0",
     "nodemon": "^1.11.0",
     "supertest": "^2.0.1",
-    "ts-jest": "23.10.5",
     "tslint": "^5.0.0",
     "typescript": "^3.2.0",
     "prettier": "1.15.2",
