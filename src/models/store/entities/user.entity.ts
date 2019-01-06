@@ -8,6 +8,12 @@ export class UserEntity implements UserInterface {
   @PrimaryColumn({ type: constants.USER_ID_DATATYPE })
   user_id: string;
 
+  @Column({ type: constants.USER_HASH_DATATYPE })
+  hash: string;
+
+  @Column({ type: constants.USER_SALT_DATATYPE })
+  salt: string;
+
   @Column({ unique: true, type: constants.USER_TRACK_ID_DATATYPE })
   user_track_id: string;
 

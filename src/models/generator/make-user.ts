@@ -5,13 +5,17 @@ import { helper } from '../../barrels/helper';
 
 export function makeUser(item: {
   user_id: string;
+  hash?: string;
+  salt?: string;
   alias: string;
   status: api.UserStatusEnum;
 }): entities.UserEntity {
   return {
     user_id: item.user_id,
-    user_track_id: helper.makeId(),
+    hash: item.hash,
+    salt: item.salt,
     alias: item.alias,
+    user_track_id: helper.makeId(),
     first_name: null,
     last_name: null,
     picture_url_small: undefined,

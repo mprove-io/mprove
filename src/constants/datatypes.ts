@@ -121,6 +121,8 @@ export const REPO_PULL_ERROR_MESSAGE_DATATYPE = 'text';
 
 // USER
 
+export const USER_HASH_DATATYPE = 'varchar';
+export const USER_SALT_DATATYPE = 'varchar';
 export const USER_ALIAS_DATATYPE = 'varchar';
 export const USER_FIRST_NAME_DATATYPE = 'varchar';
 export const USER_LAST_NAME_DATATYPE = 'varchar';
