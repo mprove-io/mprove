@@ -174,7 +174,7 @@ export function createExpress() {
   // app.use(errorHandler()); // Provides full stack - remove for production
 
   app.listen(app.get('port'), () => {
-    console.log('  App is running.');
+    console.log('Backend is running.');
   });
 
   // module.exports = app;
