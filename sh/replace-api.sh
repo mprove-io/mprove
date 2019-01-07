@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# mprove-server-node
-rm -rf /Users/akalitenya/mprove-server-node/src/api
-mkdir /Users/akalitenya/mprove-server-node/src/api
-cp -rf /Users/akalitenya/mprove-api/src/ /Users/akalitenya/mprove-server-node/src/api
+# mprove-backend-node
+rm -rf /Users/akalitenya/mprove-backend-node/src/api
+mkdir /Users/akalitenya/mprove-backend-node/src/api
+cp -rf /Users/akalitenya/mprove-api/src/ /Users/akalitenya/mprove-backend-node/src/api
 
-cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-server-node/.prettierrc.yaml
-cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-server-node/tslint-base.json
+cp -rf /Users/akalitenya/mprove-api/.prettierrc.yaml /Users/akalitenya/mprove-backend-node/.prettierrc.yaml
+cp -rf /Users/akalitenya/mprove-api/tslint-base.json /Users/akalitenya/mprove-backend-node/tslint-base.json
 
 # mprove-blockml-node
 rm -rf /Users/akalitenya/mprove-blockml-node/src/api
