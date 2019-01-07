@@ -41,6 +41,8 @@ export * from './repos/revert-repo-to-production';
 
 export * from './state/get-state';
 
+export * from './users/login-user';
 export * from './users/logout-user';
+export * from './users/register-user';
 export * from './users/set-user-name';
 export * from './users/set-user-timezone';

@@ -46,7 +46,9 @@ export const PATH_GET_STATE = '/state.getState';
 export const PATH_CANCEL_SUBSCRIPTIONS = '/subscriptions.cancelSubscriptions';
 export const PATH_SWITCH_ANALYTICS_SUBSCRIPTION_PLAN =
   '/subscriptions.switchAnalyticsSubscriptionPlan';
+export const PATH_LOGIN_USER = '/users.loginUser';
 export const PATH_LOGOUT_USER = '/users.logoutUser';
+export const PATH_REGISTER_USER = '/users.registerUser';
 export const PATH_SET_USER_NAME = '/users.setUserName';
 export const PATH_SET_USER_PICTURE = '/users.setUserPicture';
 export const PATH_SET_USER_TIMEZONE = '/users.setUserTimezone';

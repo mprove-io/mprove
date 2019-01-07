@@ -5,6 +5,51 @@ import { enums } from './barrels/enums';
 import { handler } from './barrels/handler';
 
 export function registerRoutes(app: expressWs.Application, middlewares: any) {
+  // USERS
+
+  app.post(
+    '/api/v1' + api.PATH_REGISTER_USER,
+    handler.catchAsyncErrors(
+      controller.registerUser,
+      enums.controllerErrorsEnum.CONTROLLER_REGISTER_USER
+    )
+  );
+
+  app.post(
+    '/api/v1' + api.PATH_LOGIN_USER,
+    handler.catchAsyncErrors(
+      controller.loginUser,
+      enums.controllerErrorsEnum.CONTROLLER_LOGIN_USER
+    )
+  );
+
+  app.post(
+    '/api/v1' + api.PATH_LOGOUT_USER,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.logoutUser,
+      enums.controllerErrorsEnum.CONTROLLER_LOGOUT_USER
+    )
+  );
+
+  app.post(
+    '/api/v1' + api.PATH_SET_USER_NAME,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.usersSetUserName,
+      enums.controllerErrorsEnum.CONTROLLER_SET_USER_NAME
+    )
+  );
+
+  app.post(
+    '/api/v1' + api.PATH_SET_USER_TIMEZONE,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.setUserTimezone,
+      enums.controllerErrorsEnum.CONTROLLER_SET_USER_TIMEZONE
+    )
+  );
+
   // CONFIRM
 
   app.post(
@@ -319,35 +364,6 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
     handler.catchAsyncErrors(
       controller.getState,
       enums.controllerErrorsEnum.CONTROLLER_GET_STATE
-    )
-  );
-
-  // USERS
-
-  app.post(
-    '/api/v1' + api.PATH_LOGOUT_USER,
-    middlewares,
-    handler.catchAsyncErrors(
-      controller.logoutUser,
-      enums.controllerErrorsEnum.CONTROLLER_LOGOUT_USER
-    )
-  );
-
-  app.post(
-    '/api/v1' + api.PATH_SET_USER_NAME,
-    middlewares,
-    handler.catchAsyncErrors(
-      controller.usersSetUserName,
-      enums.controllerErrorsEnum.CONTROLLER_SET_USER_NAME
-    )
-  );
-
-  app.post(
-    '/api/v1' + api.PATH_SET_USER_TIMEZONE,
-    middlewares,
-    handler.catchAsyncErrors(
-      controller.setUserTimezone,
-      enums.controllerErrorsEnum.CONTROLLER_SET_USER_TIMEZONE
     )
   );
 }
