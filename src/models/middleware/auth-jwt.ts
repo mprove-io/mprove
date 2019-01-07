@@ -1,6 +1,6 @@
 import * as jwt from 'express-jwt';
 
-let authJwt = jwt({
+export const authJwt = jwt({
   secret: 'MY_SECRET',
-  userProperty: 'payload'
+  requestProperty: 'user'
 });

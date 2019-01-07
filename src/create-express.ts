@@ -4,6 +4,10 @@ import * as bodyParser from 'body-parser';
 import * as compression from 'compression'; // compresses requests
 import * as logger from 'morgan';
 import * as lusca from 'lusca';
+import * as passport from 'passport';
+import * as passportLocal from 'passport-local';
+import * as crypto from 'crypto';
+
 import expressValidator = require('express-validator');
 
 import { interfaces } from './barrels/interfaces';
@@ -14,8 +18,57 @@ import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 
 import { registerRoutes } from './register-routes';
+import { entities } from './barrels/entities';
 
 export function createExpress() {
+  // const localStrategy = passportLocal.Strategy;
+
+  passport.use(
+    new passportLocal.Strategy(
+      {
+        usernameField: 'user_id'
+      },
+      async (userId, password, done) => {
+        let storeUsers = store.getUsersRepo();
+
+        let user = <entities.UserEntity>(
+          await storeUsers
+            .findOne(userId)
+            .catch(e =>
+              helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE)
+            )
+        );
+
+        // if (err) {
+        //   return done(err);
+        // }
+
+        // Return if user not found in database
+        // if (!user) {
+        //   return done(null, false, {
+        //     message: 'User not found'
+        //   });
+        // }
+
+        // Return if password is wrong
+        let hash = crypto
+          .pbkdf2Sync(password, user.salt, 1000, 64, 'sha512')
+          .toString('hex');
+
+        if (hash !== user.hash) {
+          return done(null, false, {
+            message: 'Password is wrong'
+          });
+        }
+
+        // If credentials are correct, return the user object
+        return done(null, {
+          email: userId
+        });
+      }
+    )
+  );
+
   const appExpress = express();
 
   // let options = {

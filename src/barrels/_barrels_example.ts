@@ -1,4 +1,5 @@
 import { api } from './api';
+import { auth } from './auth';
 import { blockml } from './blockml';
 import { config } from './config';
 import { constants } from './constants';
