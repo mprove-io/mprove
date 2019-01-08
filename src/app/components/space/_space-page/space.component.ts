@@ -44,14 +44,14 @@ export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   signin() {
-    let pathArray = this.location.path().split('/');
+    // let pathArray = this.location.path().split('/');
 
-    if (pathArray.length === 2 && pathArray[1] === 'login') {
-      localStorage.removeItem('redirect_url');
-      this.auth.login();
-    } else {
-      this.router.navigate([this.LOGIN_URL]);
-    }
+    // if (pathArray.length === 2 && pathArray[1] === 'login') {
+    //   localStorage.removeItem('redirect_url');
+    //   this.auth.login();
+    // } else {
+    this.router.navigate([this.LOGIN_URL]);
+    // }
   }
 
   isAuthenticated() {

@@ -9,6 +9,10 @@ export const APP_ROUTES: Routes = [
     component: components.SoftComponent
   },
   {
+    path: 'register',
+    component: components.RegisterComponent
+  },
+  {
     path: '',
     component: components.SpaceComponent,
     resolve: {

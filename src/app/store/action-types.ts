@@ -292,9 +292,17 @@ export const RUN_QUERIES_DRY_FAIL = ngrxType('[Queries] Run Queries Dry Fail');
 export const UPDATE_USER_STATE = ngrxType('[User] Update User State');
 export const RESET_USER_STATE = ngrxType('[User] Reset User State');
 
+export const LOGIN_USER = ngrxType('[User] Login User');
+export const LOGIN_USER_SUCCESS = ngrxType('[User] Login User Success');
+export const LOGIN_USER_FAIL = ngrxType('[User] Login User Fail');
+
 export const LOGOUT_USER = ngrxType('[User] Logout User');
 export const LOGOUT_USER_SUCCESS = ngrxType('[User] Logout User Success');
 export const LOGOUT_USER_FAIL = ngrxType('[User] Logout User Fail');
+
+export const REGISTER_USER = ngrxType('[User] Register User');
+export const REGISTER_USER_SUCCESS = ngrxType('[User] Register User Success');
+export const REGISTER_USER_FAIL = ngrxType('[User] Register User Fail');
 
 export const SET_USER_NAME = ngrxType('[User] Set User Name');
 export const SET_USER_NAME_SUCCESS = ngrxType('[User] Set User Name Success');

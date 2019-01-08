@@ -8,6 +8,8 @@ import { MyMaterialModule } from 'app/modules/my-material.module';
 import { ProfileModule } from 'app/modules/profile.module';
 import { ProjectModule } from 'app/modules/project.module';
 import { SharedModule } from 'app/modules/shared.module';
+import { ValidationMsgModule } from 'app/modules/validation-msg.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
@@ -18,7 +20,9 @@ import { SharedModule } from 'app/modules/shared.module';
     MenuModule,
     ProfileModule,
     ProjectModule,
-    RouterModule
+    RouterModule,
+    ValidationMsgModule,
+    ReactiveFormsModule
   ],
   declarations: [
     components.NavDevProdComponent,
@@ -28,6 +32,7 @@ import { SharedModule } from 'app/modules/shared.module';
     components.NavRemoteErrorsComponent,
     components.SpaceComponent,
     components.ProjectDeletedComponent,
+    components.RegisterComponent,
     components.LoginComponent,
     components.LogoutComponent,
     components.NotFound404Component

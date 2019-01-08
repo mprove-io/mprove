@@ -43,7 +43,9 @@ export class MyHttpService {
   ) {}
 
   req(path: string, payload: object): Observable<any> {
-    if (!this.auth.authenticated()) {
+    let bypassAuthPaths = [api.PATH_REGISTER_USER];
+
+    if (!this.auth.authenticated() && bypassAuthPaths.indexOf(path) < 0) {
       this.printer.log(
         enums.busEnum.MY_HTTP_SERVICE,
         'not authenticated, dispatching Logout...'

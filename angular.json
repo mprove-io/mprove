@@ -191,6 +191,12 @@
           "configurations": {
             "production": {
               "browserTarget": "web-app:build:production"
+            },
+            "local": {
+              "browserTarget": "web-app:build:local"
+            },
+            "test": {
+              "browserTarget": "web-app:build:test"
             }
           }
         },

@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    localStorage.removeItem('redirect_url');
-    this.auth.login();
+    // localStorage.removeItem('redirect_url');
+    // this.auth.login();
   }
 }

@@ -1,0 +1,74 @@
+<!--
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-6">
+        <h1>Register</h1>
+        <p class="lead">Already a member? Please <a routerLink="/login">log in</a> instead.</p>
+        <form (submit)="register()">
+          <div class="form-group">
+            <label for="name">Full name</label>
+            <input type="text" class="form-control" name="name" placeholder="Enter your name" [(ngModel)]="credentials.name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" name="email" placeholder="Enter email" [(ngModel)]="credentials.email">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Password" [(ngModel)]="credentials.password">
+          </div>
+          <button type="submit" class="btn btn-default">Register!</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+-->
+
+<h2>register</h2>
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
+  <br />
+
+  <mat-form-field>
+    <input
+      matInput
+      id="emailInput"
+      formControlName="email"
+      placeholder="email"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="registerForm.controls['email'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+
+  <br />
+
+  <mat-form-field>
+    <input
+      matInput
+      id="passwordInput"
+      formControlName="password"
+      placeholder="password"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="registerForm.controls['password'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+
+  <br />
+  <br />
+
+  <button
+    type="submit"
+    color="primary"
+    mat-raised-button
+    [disabled]="!registerForm.valid"
+    >Register
+  </button>
+</form>

@@ -14,7 +14,8 @@ import { PrinterService } from 'app/services/printer.service';
 // Avoid name not found warnings
 // declare var Auth0Lock: any;
 // import Auth0Lock from 'auth0-lock';
-const auth0Lock: any = require('auth0-lock').default;
+
+// const auth0Lock: any = require('auth0-lock').default;
 
 const host = window.location.host;
 const protocol = window.location.protocol;
@@ -22,9 +23,9 @@ const protocol = window.location.protocol;
 @Injectable()
 export class AuthService {
   // Configure Auth0
-  lock: any;
+  // lock: any;
 
-  private lockAuthenticated: Subject<void> = new Subject<void>();
+  // private lockAuthenticated: Subject<void> = new Subject<void>();
 
   constructor(
     private printer: PrinterService,
@@ -32,79 +33,83 @@ export class AuthService {
     public router: Router,
     private store: Store<interfaces.AppState>
   ) {
-    this.restartLock();
+    // this.restartLock();
   }
 
-  restartLock() {
-    this.lock = new auth0Lock(
-      configs.authConfig.clientID,
-      configs.authConfig.domain,
-      configs.authConfig.options
-    );
+  // restartLock() {
+  //   this.lock = new auth0Lock(
+  //     configs.authConfig.clientID,
+  //     configs.authConfig.domain,
+  //     configs.authConfig.options
+  //   );
 
-    // Add callback for lock `authenticated` event
-    this.lock.on('authenticated', (authResult: any) => {
-      this.lockAuthenticated.next(null);
+  //   // Add callback for lock `authenticated` event
+  //   this.lock.on('authenticated', (authResult: any) => {
+  //     this.lockAuthenticated.next(null);
 
-      localStorage.setItem('token', authResult.idToken);
+  //     localStorage.setItem('token', authResult.idToken);
 
-      this.printer.log(enums.busEnum.AUTH_SERVICE, 'getting State...');
-      this.store.dispatch(new actions.ResetStateAction());
-      this.store.dispatch(new actions.GetStateAction({ empty: true }));
+  //     this.printer.log(enums.busEnum.AUTH_SERVICE, 'getting State...');
+  //     this.store.dispatch(new actions.ResetStateAction());
+  //     this.store.dispatch(new actions.GetStateAction({ empty: true }));
 
-      /* manually hide Auth0Lock window */
-      // this.lock.hide();
+  //     /* manually hide Auth0Lock window */
+  //     // this.lock.hide();
 
-      this.store
-        .select(selectors.getUserLoaded)
-        .pipe(
-          filter(loaded => !!loaded),
-          take(1)
-        )
-        .subscribe(x => this.reNavigate());
-    });
+  //     this.store
+  //       .select(selectors.getUserLoaded)
+  //       .pipe(
+  //         filter(loaded => !!loaded),
+  //         take(1)
+  //       )
+  //       .subscribe(x => this.reNavigate());
+  //   });
 
-    this.lock.on('authorization_error', (error: any) => {
-      // console.log(error); // TODO: #20 handle authorization_error
-    });
-  }
+  //   this.lock.on('authorization_error', (error: any) => {
+  //     // console.log(error); // TODO: #20 handle authorization_error
+  //   });
+  // }
 
-  getLockAuthenticated(): Observable<void> {
-    return this.lockAuthenticated.asObservable();
-  }
+  // getLockAuthenticated(): Observable<void> {
+  //   return this.lockAuthenticated.asObservable();
+  // }
 
-  login() {
-    this.restartLock();
+  // login() {
+  //   this.restartLock();
 
-    // Call the show method to display the widget.
-    this.lock.show();
-  }
+  //   // Call the show method to display the widget.
+  //   this.lock.show();
+  // }
 
   authenticated() {
     // Check if there's an unexpired JWT
     const token: string = localStorage.getItem('token');
 
-    return token ? !this.jwtHelperService.isTokenExpired(token) : false;
+    let isAuthenticated: boolean = token
+      ? !this.jwtHelperService.isTokenExpired(token)
+      : false;
+
+    return isAuthenticated;
   }
 
-  private reNavigate() {
-    /* redirect user to the redirect_url */
-    let redirectUrl: string = localStorage.getItem('redirect_url');
-    this.printer.log(
-      enums.busEnum.AUTH_SERVICE,
-      'got redirect_url from LocalStorage:',
-      redirectUrl
-    );
+  // private reNavigate() {
+  //   /* redirect user to the redirect_url */
+  //   let redirectUrl: string = localStorage.getItem('redirect_url');
+  //   this.printer.log(
+  //     enums.busEnum.AUTH_SERVICE,
+  //     'got redirect_url from LocalStorage:',
+  //     redirectUrl
+  //   );
 
-    if (redirectUrl) {
-      this.printer.log(
-        enums.busEnum.AUTH_SERVICE,
-        'navigating redirect_url...'
-      );
-      this.router.navigate([redirectUrl]);
-    } else {
-      this.printer.log(enums.busEnum.AUTH_SERVICE, 'navigating profile...');
-      this.router.navigate(['profile']);
-    }
-  }
+  //   if (redirectUrl) {
+  //     this.printer.log(
+  //       enums.busEnum.AUTH_SERVICE,
+  //       'navigating redirect_url...'
+  //     );
+  //     this.router.navigate([redirectUrl]);
+  //   } else {
+  //     this.printer.log(enums.busEnum.AUTH_SERVICE, 'navigating profile...');
+  //     this.router.navigate(['profile']);
+  //   }
+  // }
 }

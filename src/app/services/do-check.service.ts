@@ -41,9 +41,9 @@ export class DoCheckService {
       this.printer.log(enums.busEnum.DO_CHECK_SERVICE, 'UserId:', this.userId);
     });
 
-    this.auth
-      .getLockAuthenticated()
-      .subscribe(() => this.stopWatchAuthentication());
+    // this.auth
+    //   .getLockAuthenticated()
+    //   .subscribe(() => this.stopWatchAuthentication());
 
     this.store
       .select(selectors.getUserLoaded)

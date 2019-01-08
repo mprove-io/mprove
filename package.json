@@ -20,7 +20,7 @@
     "build:prod": "npm run files:check && npm run clean && ng build --prod --vendor-chunk",
     "server": "node ./server.js",
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --configuration=local",
     "start:open": "ng serve --open",
     "build": "npm run clean && ng build",
     "docker-start": "ng serve  --host 0.0.0.0",

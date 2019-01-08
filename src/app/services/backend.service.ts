@@ -324,6 +324,12 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_SET_USER_NAME, payload);
   }
 
+  registerUser(
+    payload: api.RegisterUserRequestBodyPayload
+  ): Observable<api.RegisterUserResponse200Body> {
+    return this.myHttpService.req(api.PATH_REGISTER_USER, payload);
+  }
+
   /**
    * POST
    * Обновление фото пользователя.  Сервер оповещает текущего клиента через: - users.updateUser
