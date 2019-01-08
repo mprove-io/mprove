@@ -26,14 +26,15 @@ export function createExpress() {
   passport.use(
     new passportLocal.Strategy(
       {
-        usernameField: 'user_id'
+        usernameField: 'payload[]user_id',
+        passwordField: 'payload[]password'
       },
       async (userId, password, done) => {
         let storeUsers = store.getUsersRepo();
 
         let user = <entities.UserEntity>(
           await storeUsers
-            .findOne(userId)
+            .findOne({ user_id: userId })
             .catch(e =>
               helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE)
             )
