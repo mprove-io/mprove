@@ -107,6 +107,8 @@ export const APP_EFFECTS = [
   effects.SwitchAnalyticsSubscriptionPlanEffect,
 
   // User
+  effects.LoginUserEffect,
+  effects.LoginUserSuccessEffect,
   effects.RegisterUserEffect,
   effects.RegisterUserSuccessEffect,
   effects.SetUserNameSuccessEffect,

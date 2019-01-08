@@ -9,12 +9,12 @@ import * as services from 'app/services/_index';
 import { Router } from '@angular/router';
 
 @Injectable()
-export class RegisterUserSuccessEffect {
-  @Effect({ dispatch: false }) registerUserSuccess$: Observable<
+export class LoginUserSuccessEffect {
+  @Effect({ dispatch: false }) loginUserSuccess$: Observable<
     Action
   > = this.actions$.pipe(
-    ofType(actionTypes.REGISTER_USER_SUCCESS),
-    tap((action: actions.RegisterUserSuccessAction) => {
+    ofType(actionTypes.LOGIN_USER_SUCCESS),
+    tap((action: actions.LoginUserSuccessAction) => {
       localStorage.setItem('token', action.payload.token);
       this.router.navigate(['profile']);
     })

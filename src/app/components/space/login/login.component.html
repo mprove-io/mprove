@@ -1,0 +1,44 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+  <br />
+
+  <mat-form-field>
+    <input
+      matInput
+      id="emailInput"
+      formControlName="email"
+      placeholder="email"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="loginForm.controls['email'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+
+  <br />
+
+  <mat-form-field>
+    <input
+      matInput
+      id="passwordInput"
+      formControlName="password"
+      placeholder="password"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="loginForm.controls['password'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+
+  <br />
+  <br />
+
+  <button
+    type="submit"
+    color="primary"
+    mat-raised-button
+    [disabled]="!loginForm.valid"
+    >Sign In
+  </button>
+</form>

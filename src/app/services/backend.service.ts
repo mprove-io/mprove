@@ -307,6 +307,12 @@ export class BackendService {
     );
   }
 
+  loginUser(
+    payload: api.LoginUserRequestBodyPayload
+  ): Observable<api.LoginUserResponse200Body> {
+    return this.myHttpService.req(api.PATH_LOGIN_USER, payload);
+  }
+
   /**
    * POST
    * Logout пользователя. Для того чтобы сервер более не принимал данный JWT token и init_id.
@@ -318,16 +324,16 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_LOGOUT_USER, payload);
   }
 
-  setUserName(
-    payload: api.SetUserNameRequestBodyPayload
-  ): Observable<api.SetUserNameResponse200Body> {
-    return this.myHttpService.req(api.PATH_SET_USER_NAME, payload);
-  }
-
   registerUser(
     payload: api.RegisterUserRequestBodyPayload
   ): Observable<api.RegisterUserResponse200Body> {
     return this.myHttpService.req(api.PATH_REGISTER_USER, payload);
+  }
+
+  setUserName(
+    payload: api.SetUserNameRequestBodyPayload
+  ): Observable<api.SetUserNameResponse200Body> {
+    return this.myHttpService.req(api.PATH_SET_USER_NAME, payload);
   }
 
   /**
