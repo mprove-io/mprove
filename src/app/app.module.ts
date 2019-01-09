@@ -116,10 +116,6 @@ if (environment.canUseRaven === true) {
       useClass: ShowOnDirtyErrorStateMatcher
     },
     ...APP_PROVIDERS // ...?
-    // {
-    //   provide: ErrorHandler,
-    //   useClass: services.MyErrorHandler
-    // }
   ],
   exports: [AppComponent]
 })

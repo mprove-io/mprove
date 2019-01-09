@@ -9,8 +9,36 @@ export const APP_ROUTES: Routes = [
     component: components.SoftComponent
   },
   {
-    path: 'register',
-    component: components.RegisterComponent
+    path: '',
+    component: components.SpaceComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: '/profile',
+        pathMatch: 'full'
+      },
+      {
+        path: 'register',
+        component: components.RegisterComponent,
+        resolve: {
+          toProfileResolver: resolvers.ToProfileResolver
+        }
+      },
+      {
+        path: 'login',
+        component: components.LoginComponent,
+        resolve: {
+          toProfileResolver: resolvers.ToProfileResolver
+        }
+      },
+      {
+        path: 'logout',
+        component: components.LogoutComponent,
+        resolve: {
+          toProfileResolver: resolvers.ToProfileResolver
+        }
+      }
+    ]
   },
   {
     path: '',
@@ -19,22 +47,6 @@ export const APP_ROUTES: Routes = [
       stateResolver: resolvers.StateResolver
     },
     children: [
-      {
-        path: 'login',
-        component: components.LoginComponent
-      },
-      {
-        path: 'logout',
-        component: components.LogoutComponent,
-        resolve: {
-          logoutResolver: resolvers.LogoutResolver
-        }
-      },
-      {
-        path: '',
-        redirectTo: '/profile',
-        pathMatch: 'full'
-      },
       {
         path: 'profile',
         component: components.ProfileComponent,

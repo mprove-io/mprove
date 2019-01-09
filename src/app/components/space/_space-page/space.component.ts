@@ -21,18 +21,21 @@ export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   private readonly LOGIN_URL: string = '/login';
+  private readonly REGISTER_URL: string = '/register';
 
   constructor(
     private printer: services.PrinterService,
     private router: Router,
     private location: Location,
     private auth: services.AuthService,
-    private doCheckService: services.DoCheckService,
+    private watchAuthenticationService: services.WatchAuthenticationService,
+    private watchWebsocketService: services.WatchWebsocketService,
     private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.doCheckService.startCheck();
+    // this.watchAuthenticationService.start();
+    // this.watchWebsocketService.start();
   }
 
   ngAfterViewChecked() {
@@ -40,18 +43,15 @@ export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy() {
-    this.doCheckService.stopCheck();
+    // this.watchAuthenticationService.stop();
+    // this.watchWebsocketService.stop();
   }
 
+  register() {
+    this.router.navigate([this.REGISTER_URL]);
+  }
   signin() {
-    // let pathArray = this.location.path().split('/');
-
-    // if (pathArray.length === 2 && pathArray[1] === 'login') {
-    //   localStorage.removeItem('redirect_url');
-    //   this.auth.login();
-    // } else {
     this.router.navigate([this.LOGIN_URL]);
-    // }
   }
 
   isAuthenticated() {

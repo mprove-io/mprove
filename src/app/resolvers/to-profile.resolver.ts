@@ -9,7 +9,7 @@ import * as enums from 'app/enums/_index';
 import * as services from 'app/services/_index';
 
 @Injectable()
-export class LogoutResolver implements Resolve<boolean> {
+export class ToProfileResolver implements Resolve<boolean> {
   constructor(
     private printer: services.PrinterService,
     private auth: services.AuthService,
@@ -20,22 +20,22 @@ export class LogoutResolver implements Resolve<boolean> {
     next: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ) {
-    this.printer.log(enums.busEnum.LOGOUT_RESOLVER, 'starts...');
+    this.printer.log(enums.busEnum.TO_PROFILE_RESOLVER, 'starts...');
 
     if (!this.auth.authenticated()) {
       this.printer.log(
-        enums.busEnum.LOGOUT_RESOLVER,
+        enums.busEnum.TO_PROFILE_RESOLVER,
         'not authenticated, resolved (true)'
       );
       return true;
     } else {
       this.printer.log(
-        enums.busEnum.LOGOUT_RESOLVER,
+        enums.busEnum.TO_PROFILE_RESOLVER,
         'authenticated, navigating profile...'
       );
 
       this.router.navigate(['profile']);
-      this.printer.log(enums.busEnum.LOGOUT_RESOLVER, 'resolved (false)');
+      this.printer.log(enums.busEnum.TO_PROFILE_RESOLVER, 'resolved (false)');
       return false;
     }
   }

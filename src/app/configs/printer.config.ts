@@ -8,7 +8,7 @@ export const printerConfig = {
   [enums.busEnum[enums.busEnum.PDT_RESOLVER]]: true,
   [enums.busEnum[enums.busEnum.VALIDATION_SERVICE]]: true,
   [enums.busEnum[enums.busEnum.FILE_SELECTED_RESOLVER]]: true,
-  [enums.busEnum[enums.busEnum.LOGOUT_RESOLVER]]: true,
+  [enums.busEnum[enums.busEnum.TO_PROFILE_RESOLVER]]: true,
   [enums.busEnum[enums.busEnum.MODE_RESOLVER]]: true,
   [enums.busEnum[enums.busEnum.MCONFIG_SELECTED_RESOLVER]]: true,
   [enums.busEnum[enums.busEnum.MODEL_SELECTED_RESOLVER]]: true,
@@ -19,7 +19,8 @@ export const printerConfig = {
 
   [enums.busEnum[enums.busEnum.AUTH_SERVICE]]: true,
   [enums.busEnum[enums.busEnum.MY_HTTP_SERVICE]]: true,
-  [enums.busEnum[enums.busEnum.DO_CHECK_SERVICE]]: false,
+  [enums.busEnum[enums.busEnum.WATCH_AUTHENTICATION_SERVICE]]: true,
+  [enums.busEnum[enums.busEnum.WATCH_WEBSOCKET_SERVICE]]: true,
 
   [enums.busEnum[enums.busEnum.APP_EFFECTS]]: true,
   [enums.busEnum[enums.busEnum.WEBSOCKET_EFFECTS]]: true,

@@ -3,6 +3,7 @@ import * as configs from 'app/configs/_index';
 import * as guards from 'app/guards/_index';
 import * as resolvers from 'app/resolvers/_index';
 import * as services from 'app/services/_index';
+import { ErrorHandler } from '@angular/core';
 
 export const APP_PROVIDERS = [
   TreeDraggedElement,
@@ -13,7 +14,8 @@ export const APP_PROVIDERS = [
   services.CookieService,
   services.DataSizeService,
   services.PageTitleService,
-  services.DoCheckService,
+  services.WatchAuthenticationService,
+  services.WatchWebsocketService,
 
   guards.AuthCanActivateGuard,
   guards.ComponentDeactivateGuard,
@@ -31,7 +33,7 @@ export const APP_PROVIDERS = [
   resolvers.TeamResolver,
   resolvers.SettingsResolver,
   resolvers.BillingResolver,
-  resolvers.LogoutResolver,
+  resolvers.ToProfileResolver,
 
   services.DataService,
   services.LiveQueriesService,
@@ -46,5 +48,9 @@ export const APP_PROVIDERS = [
     provide: services.PrinterService,
     useClass: services.ConsoleLogService
   },
-  configs.APP_CONFIG_PROVIDER
+  configs.APP_CONFIG_PROVIDER,
+  {
+    provide: ErrorHandler,
+    useClass: services.MyErrorHandler
+  }
 ];

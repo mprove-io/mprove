@@ -10,7 +10,7 @@ export enum busEnum {
   SETTINGS_RESOLVER = <any>'SettingsResolver:',
   BILLING_RESOLVER = <any>'BillingResolver:',
   FILE_SELECTED_RESOLVER = <any>'FileSelectedResolver:',
-  LOGOUT_RESOLVER = <any>'LogoutResolver:',
+  TO_PROFILE_RESOLVER = <any>'ToProfileResolver:',
   MODE_RESOLVER = <any>'ModeResolver:',
   MCONFIG_SELECTED_RESOLVER = <any>'MconfigSelectedResolver:',
   MODEL_SELECTED_RESOLVER = <any>'ModelSelectedResolver:',
@@ -21,7 +21,8 @@ export enum busEnum {
 
   AUTH_SERVICE = <any>'AuthService:',
   MY_HTTP_SERVICE = <any>'MyHttpService:',
-  DO_CHECK_SERVICE = <any>'DoCheckService:',
+  WATCH_AUTHENTICATION_SERVICE = <any>'WatchAuthenticationService:',
+  WATCH_WEBSOCKET_SERVICE = <any>'WatchWebsocketService:',
 
   APP_EFFECTS = <any>'AppEffects:',
   WEBSOCKET_EFFECTS = <any>'WebsocketEffects:',

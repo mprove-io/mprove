@@ -29,6 +29,8 @@ export class UserLogoutEffect {
       }
     }),
     tap(x => {
+      this.watchAuthenticationService.stop();
+      this.watchWebsocketService.stop();
       localStorage.removeItem('token');
       this.cookieService.deleteCookie('token');
       this.store.dispatch(new actions.CloseWebSocketAction());
@@ -43,6 +45,8 @@ export class UserLogoutEffect {
     private router: Router,
     private store: Store<interfaces.AppState>,
     private auth: services.AuthService,
+    private watchAuthenticationService: services.WatchAuthenticationService,
+    private watchWebsocketService: services.WatchWebsocketService,
     private cookieService: services.CookieService
   ) {}
 }
