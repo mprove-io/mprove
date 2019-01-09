@@ -3,19 +3,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  ErrorStateMatcher,
-  ShowOnDirtyErrorStateMatcher
-} from '@angular/material';
-import { BrowserModule, Title } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PreloadAllModules, RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 import { EffectsModule } from '@ngrx/effects';
-import {
-  RouterStateSerializer,
-  StoreRouterConnectingModule
-} from '@ngrx/router-store';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { ClipboardModule } from 'ngx-clipboard';
@@ -27,7 +20,6 @@ import { APP_PROVIDERS } from 'app/app-providers';
 import { APP_REDUCERS_OBJECT } from 'app/app-reducers-object';
 import { APP_ROUTES } from 'app/app-routes';
 import { AppComponent } from 'app/app.component';
-import * as components from 'app/components/_index';
 import * as directives from 'app/directives/_index';
 import * as helper from 'app/helper/_index';
 import { MyCovalentModule } from 'app/modules/my-covalent.module';
@@ -48,12 +40,7 @@ if (environment.canUseRaven === true) {
 }
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    components.SoftComponent,
-    directives.SingleClickDirective,
-    ...APP_DIALOGS
-  ],
+  declarations: [AppComponent, directives.SingleClickDirective, ...APP_DIALOGS],
   entryComponents: [...APP_DIALOGS],
   imports: [
     EffectsModule.forRoot(APP_EFFECTS),
@@ -71,11 +58,7 @@ if (environment.canUseRaven === true) {
         tokenGetter: helper.getToken, // for jwtInterceptor
         whitelistedDomains: [
           'localhost',
-          'localhost:3000',
-          'localhost:4000',
           'localhost:4200',
-          'localhost:4201',
-          'localhost:8088',
           'localhost:8080',
           'test.mprove.io',
           'stage.mprove.io',
@@ -97,26 +80,11 @@ if (environment.canUseRaven === true) {
       preloadingStrategy: PreloadAllModules
     }),
     StoreRouterConnectingModule.forRoot({
-      /*
-        They stateKey defines the name of the state used by the router-store reducer.
-        This matches the key defined in the map of reducers
-      */
       stateKey: 'router'
     })
   ],
   bootstrap: [AppComponent],
-  providers: [
-    {
-      provide: RouterStateSerializer,
-      useClass: helper.NgrxCustomRouterStateSerializer
-    },
-    Title,
-    {
-      provide: ErrorStateMatcher,
-      useClass: ShowOnDirtyErrorStateMatcher
-    },
-    ...APP_PROVIDERS // ...?
-  ],
+  providers: [...APP_PROVIDERS],
   exports: [AppComponent]
 })
 export class AppModule {}

@@ -17,17 +17,15 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private store: Store<interfaces.AppState>,
     private auth: services.AuthService,
-    public pageTitle: services.PageTitleService
+    public pageTitle: services.PageTitleService,
+    private watchAuthenticationService: services.WatchAuthenticationService
   ) {
     this.pageTitle.setTitle('Login | Mprove');
   }
 
-  // ngOnInit() {
-  // localStorage.removeItem('redirect_url');
-  // this.auth.login();
-  // }
-
   ngOnInit(): void {
+    this.watchAuthenticationService.start();
+
     this.buildForm();
   }
 

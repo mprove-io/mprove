@@ -5,10 +5,6 @@ import * as components from 'app/components/_index';
 
 export const APP_ROUTES: Routes = [
   {
-    path: 'soft',
-    component: components.SoftComponent
-  },
-  {
     path: '',
     component: components.SpaceComponent,
     children: [
@@ -27,13 +23,6 @@ export const APP_ROUTES: Routes = [
       {
         path: 'login',
         component: components.LoginComponent,
-        resolve: {
-          toProfileResolver: resolvers.ToProfileResolver
-        }
-      },
-      {
-        path: 'logout',
-        component: components.LogoutComponent,
         resolve: {
           toProfileResolver: resolvers.ToProfileResolver
         }

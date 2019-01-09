@@ -15,6 +15,8 @@ export class LoginUserSuccessEffect {
   > = this.actions$.pipe(
     ofType(actionTypes.LOGIN_USER_SUCCESS),
     tap((action: actions.LoginUserSuccessAction) => {
+      this.watchAuthenticationService.stop();
+
       localStorage.setItem('token', action.payload.token);
       this.router.navigate(['profile']);
     })
@@ -23,6 +25,6 @@ export class LoginUserSuccessEffect {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private backendService: services.BackendService
+    private watchAuthenticationService: services.WatchAuthenticationService
   ) {}
 }

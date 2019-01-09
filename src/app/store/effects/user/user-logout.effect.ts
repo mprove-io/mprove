@@ -16,8 +16,15 @@ export class UserLogoutEffect {
     mergeMap((action: actions.LogoutUserAction) => {
       this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
 
-      localStorage.setItem('redirect_url', '/profile');
-      this.router.navigate(['soft']);
+      this.watchAuthenticationService.stop();
+      this.watchWebsocketService.stop();
+
+      localStorage.removeItem('token');
+      this.cookieService.deleteCookie('token'); // TODO: cookie token
+
+      this.router.navigate(['login']);
+      this.store.dispatch(new actions.CloseWebSocketAction());
+      this.store.dispatch(new actions.ResetStateAction());
 
       if (this.auth.authenticated()) {
         return this.backendService.logoutUser({ empty: true }).pipe(
@@ -27,15 +34,6 @@ export class UserLogoutEffect {
       } else {
         return of({ type: 'EMPTY ACTION' });
       }
-    }),
-    tap(x => {
-      this.watchAuthenticationService.stop();
-      this.watchWebsocketService.stop();
-      localStorage.removeItem('token');
-      this.cookieService.deleteCookie('token');
-      this.store.dispatch(new actions.CloseWebSocketAction());
-      this.store.dispatch(new actions.ResetStateAction());
-      this.router.navigate(['logout']);
     })
   );
 

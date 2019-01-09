@@ -27,22 +27,11 @@ export class AuthCanActivateGuard implements CanActivate {
       );
       return true;
     } else {
-      this.printer.log(enums.busEnum.AUTH_CAN_ACTIVATE, 'not authenticated');
-
-      let url: string = routerStateSnapshot.url;
-
       this.printer.log(
         enums.busEnum.AUTH_CAN_ACTIVATE,
-        'setting redirect_url:',
-        url
+        'not authenticated, navigating login...'
       );
-      localStorage.setItem('redirect_url', url);
 
-      this.printer.log(
-        enums.busEnum.AUTH_CAN_ACTIVATE,
-        'navigating login...',
-        url
-      );
       this.router.navigate(['/login']);
 
       this.printer.log(enums.busEnum.AUTH_CAN_ACTIVATE, 'resolved (false)');

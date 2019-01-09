@@ -80,7 +80,6 @@
     "@auth0/angular-jwt": "2.1.0",
     "@covalent/core": "2.0.0",
     "angular-tree-component": "8.0.0",
-    "auth0-lock": "11.12.1",
     "brace": "^0.10.0",
     "clone-regexp": "^1.0.0",
     "d3-format": "^1.2.2",
@@ -121,7 +120,6 @@
     "typescript": "~3.1.1",
     "webpack-bundle-analyzer": "^3.0.3",
 
-    "@types/auth0-lock": "^10.16.3",
     "@types/cucumber": "^4.0.1",
     "@types/d3-shape": "^1.2.1",
     "@types/js-yaml": "^3.5.30",

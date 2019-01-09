@@ -15,6 +15,8 @@ export class RegisterUserSuccessEffect {
   > = this.actions$.pipe(
     ofType(actionTypes.REGISTER_USER_SUCCESS),
     tap((action: actions.RegisterUserSuccessAction) => {
+      this.watchAuthenticationService.stop();
+
       localStorage.setItem('token', action.payload.token);
       this.router.navigate(['profile']);
     })
@@ -23,6 +25,6 @@ export class RegisterUserSuccessEffect {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private backendService: services.BackendService
+    private watchAuthenticationService: services.WatchAuthenticationService
   ) {}
 }

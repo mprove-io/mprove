@@ -4,8 +4,24 @@ import * as guards from 'app/guards/_index';
 import * as resolvers from 'app/resolvers/_index';
 import * as services from 'app/services/_index';
 import { ErrorHandler } from '@angular/core';
+import { RouterStateSerializer } from '@ngrx/router-store';
+import * as helper from 'app/helper/_index';
+import { Title } from '@angular/platform-browser';
+import {
+  ErrorStateMatcher,
+  ShowOnDirtyErrorStateMatcher
+} from '@angular/material';
 
 export const APP_PROVIDERS = [
+  {
+    provide: RouterStateSerializer,
+    useClass: helper.NgrxCustomRouterStateSerializer
+  },
+  Title,
+  {
+    provide: ErrorStateMatcher,
+    useClass: ShowOnDirtyErrorStateMatcher
+  },
   TreeDraggedElement,
   services.MyHttpService,
   services.MyWebSocketService,

@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import * as actions from 'app/store/actions/_index';
 import * as interfaces from 'app/interfaces/_index';
+import * as services from 'app/services/_index';
 
 @Component({
   moduleId: module.id,
@@ -16,10 +17,16 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private store: Store<interfaces.AppState>
-  ) {}
+    public pageTitle: services.PageTitleService,
+    private store: Store<interfaces.AppState>,
+    private watchAuthenticationService: services.WatchAuthenticationService
+  ) {
+    this.pageTitle.setTitle('Register | Mprove');
+  }
 
   ngOnInit(): void {
+    this.watchAuthenticationService.start();
+
     this.buildForm();
   }
 

@@ -1,10 +1,7 @@
-import { Location } from '@angular/common';
 import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
-  OnDestroy,
-  OnInit,
   ViewChild
 } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
@@ -17,7 +14,7 @@ import * as services from 'app/services/_index';
   templateUrl: './space.component.html',
   styleUrls: ['./space.component.scss']
 })
-export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class SpaceComponent implements AfterViewChecked {
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   private readonly LOGIN_URL: string = '/login';
@@ -26,25 +23,12 @@ export class SpaceComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(
     private printer: services.PrinterService,
     private router: Router,
-    private location: Location,
     private auth: services.AuthService,
-    private watchAuthenticationService: services.WatchAuthenticationService,
-    private watchWebsocketService: services.WatchWebsocketService,
     private cdRef: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    // this.watchAuthenticationService.start();
-    // this.watchWebsocketService.start();
-  }
-
   ngAfterViewChecked() {
     this.cdRef.detectChanges();
-  }
-
-  ngOnDestroy() {
-    // this.watchAuthenticationService.stop();
-    // this.watchWebsocketService.stop();
   }
 
   register() {
