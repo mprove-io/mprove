@@ -4142,15 +4142,15 @@ dependency-graph@^0.7.2:
   resolved "https://registry.yarnpkg.com/dependency-graph/-/dependency-graph-0.7.2.tgz#91db9de6eb72699209d88aea4c1fd5221cac1c49"
   integrity sha512-KqtH4/EZdtdfWX0p6MGP9jljvxSY6msy/pRUD4jgNwVpv3v1QmNLlsB3LDSSUg79BRVSn7jI1QPRtArGABovAQ==
 
-dependency-tree@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/dependency-tree/-/dependency-tree-7.0.0.tgz#9d95959736f96ce603ea587e34164bd295410e10"
-  integrity sha512-ttEPDL5JzWu96sV3lZT14/Y26brdNYkZFSk3mKpZVzkgoeOmm4aHzkTPgqXZPQaqED3e4BzlHjcM9xDhl8BrXg==
+dependency-tree@^6.1.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/dependency-tree/-/dependency-tree-6.5.0.tgz#666d6838c2d8eab0eeeb2e2d19eafcbdda336cde"
+  integrity sha512-r0KO5BkQy8sMbyTD8NxSDOexsySbGpSH5fIsxCLZjarFTXMryiZoR7+Ao6OWkwLz6OeQPYCOIjUDh+knWitMEw==
   dependencies:
     commander "^2.19.0"
     debug "^4.1.1"
     filing-cabinet "^2.3.0"
-    precinct "^6.1.0"
+    precinct "^5.3.1"
 
 des.js@^1.0.0:
   version "1.0.0"
@@ -4249,14 +4249,14 @@ detective-stylus@^1.0.0:
   resolved "https://registry.yarnpkg.com/detective-stylus/-/detective-stylus-1.0.0.tgz#50aee7db8babb990381f010c63fabba5b58e54cd"
   integrity sha1-UK7n24uruZA4HwEMY/q7pbWOVM0=
 
-detective-typescript@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/detective-typescript/-/detective-typescript-5.0.0.tgz#d66782498433a9ec05b20f1c9b54837916dc9023"
-  integrity sha512-w+UpXVC5jE1mI/rVbA9OndSmYexbCmtmKDExfib/j3qW+fYYoYzs1I9W+E5pmjXKBNBgkEMtdnlcQMbN9U5fpg==
+detective-typescript@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/detective-typescript/-/detective-typescript-4.1.2.tgz#796ef6215a948ce3a11ec7e787a6c2c03db62d35"
+  integrity sha512-jeQMIN/0hjMdMpFGoo9y+ibo+dTb1Vbg6z/peHoRMR69jqH691kgz1gT5XM5UfkDD/Ru0save1bSJBmUr2yjvQ==
   dependencies:
-    node-source-walk "4.2.0"
-    typescript "3.1.1"
-    typescript-eslint-parser "21.0.2"
+    node-source-walk "^4.0.0"
+    typescript "^3.0.3"
+    typescript-eslint-parser "^18.0.0"
 
 di@^0.0.1:
   version "0.0.1"
@@ -4714,11 +4714,6 @@ eslint-scope@^4.0.0:
   dependencies:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
-
-eslint-visitor-keys@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
-  integrity sha512-qzm/XxIbxm/FHyH341ZrbnMUpe+5Bocte9xkmFMzPMjRaZMcXww+MpBptFvtU+79L362nqiLhekCxCxDPaUMBQ==
 
 esprima@2.7.x, esprima@^2.7.1:
   version "2.7.3"
@@ -7671,16 +7666,16 @@ macos-release@^2.0.0:
   resolved "https://registry.yarnpkg.com/macos-release/-/macos-release-2.0.0.tgz#7dddf4caf79001a851eb4fba7fb6034f251276ab"
   integrity sha512-iCM3ZGeqIzlrH7KxYK+fphlJpCCczyHXc+HhRVbEu9uNTCrzYJjvvtefzeKTCVHd5AP/aD/fzC80JZ4ZP+dQ/A==
 
-madge@^3.3.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/madge/-/madge-3.4.0.tgz#308d73c09fd4222f227833b97db3547ce9b70a2c"
-  integrity sha512-5vijwVXWYwssBEpKfuZnZA1WYbu6pK/B1JgajoyGWrxJeouqkVARpsNfGEAl1KMpmvv5b6daWJw3gUlhI3j0RQ==
+madge@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/madge/-/madge-3.3.0.tgz#608ae0fdefef0c278b843b76e4cb6c309637feb3"
+  integrity sha512-AWRUIyir+ufyBgueZL+AfvsHPcATNQcwgndwC2bcdIEb57xK54YXmx3ECKCg9PK1zxp9Uc0LMSE1roO+foX7NQ==
   dependencies:
     chalk "^2.4.1"
     commander "^2.15.1"
     commondir "^1.0.1"
     debug "^4.0.1"
-    dependency-tree "^7.0.0"
+    dependency-tree "^6.1.0"
     graphviz "^0.0.8"
     ora "^3.0.0"
     pify "^4.0.0"
@@ -8387,7 +8382,7 @@ node-sass@4.9.3:
     stdout-stream "^1.4.0"
     "true-case-path" "^1.0.2"
 
-node-source-walk@4.2.0, node-source-walk@^4.0.0, node-source-walk@^4.2.0:
+node-source-walk@^4.0.0, node-source-walk@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/node-source-walk/-/node-source-walk-4.2.0.tgz#c2efe731ea8ba9c03c562aa0a9d984e54f27bc2c"
   integrity sha512-hPs/QMe6zS94f5+jG3kk9E7TNm4P2SulrKiLWMzKszBfNZvL/V6wseHlTd7IvfW0NZWqPtK3+9yYNr+3USGteA==
@@ -9259,10 +9254,10 @@ postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.2:
     source-map "^0.6.1"
     supports-color "^6.0.0"
 
-precinct@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/precinct/-/precinct-6.1.0.tgz#7d8d1469ca02b747c483b99a5e2a1251ea71a489"
-  integrity sha512-X+gMi6GhF/9KEYH7NmQx1eDs7HELcUSEdCb/0qd+3FnOFPSEoKbM2/n71q6mw2AQaKGx9cbryyYB7VnmVhjlcQ==
+precinct@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/precinct/-/precinct-5.3.1.tgz#4ab0ec1d1a8f1b2f4982b810d56419e7b3025870"
+  integrity sha512-HOIXDarP6S5JXYC5GhnpoAj9RqJ6yAwZ8VI71vQFlq1rmkBRPs+Mt60TOr7DUc/fx309iIQaniB4x3zueOOSdw==
   dependencies:
     commander "^2.19.0"
     debug "^4.1.1"
@@ -9274,7 +9269,7 @@ precinct@^6.1.0:
     detective-sass "^3.0.0"
     detective-scss "^2.0.0"
     detective-stylus "^1.0.0"
-    detective-typescript "^5.0.0"
+    detective-typescript "^4.1.2"
     module-definition "^3.1.0"
     node-source-walk "^4.2.0"
 
@@ -11412,19 +11407,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript-eslint-parser@21.0.2:
-  version "21.0.2"
-  resolved "https://registry.yarnpkg.com/typescript-eslint-parser/-/typescript-eslint-parser-21.0.2.tgz#270af10e4724528677fbcf34ea495284bec3a894"
-  integrity sha512-u+pj4RVJBr4eTzj0n5npoXD/oRthvfUCjSKndhNI714MG0mQq2DJw5WP7qmonRNIFgmZuvdDOH3BHm9iOjIAfg==
-  dependencies:
-    eslint-scope "^4.0.0"
-    eslint-visitor-keys "^1.0.0"
-    typescript-estree "5.3.0"
-
-typescript-estree@5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/typescript-estree/-/typescript-estree-5.3.0.tgz#fb6c977b5e21073eb16cbdc0338a7f752da99ff5"
-  integrity sha512-Vu0KmYdSCkpae+J48wsFC1ti19Hq3Wi/lODUaE+uesc3gzqhWbZ5itWbsjylLVbjNW4K41RqDzSfnaYNbmEiMQ==
+typescript-eslint-parser@^18.0.0:
+  version "18.0.0"
+  resolved "https://registry.yarnpkg.com/typescript-eslint-parser/-/typescript-eslint-parser-18.0.0.tgz#3e5055a44980d69e4154350fc5d8b1ab4e2332a8"
+  integrity sha512-Pn/A/Cw9ysiXSX5U1xjBmPQlxtWGV2o7jDNiH/u7KgBO2yC/y37wNFl2ogSrGZBQFuglLzGq0Xl0Bt31Jv44oA==
   dependencies:
     lodash.unescape "4.0.1"
     semver "5.5.0"
@@ -11433,11 +11419,6 @@ typescript@2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.1.tgz#fdb19d2c67a15d11995fd15640e373e09ab09961"
   integrity sha512-h6pM2f/GDchCFlldnriOhs1QHuwbnmj6/v7499eMHqPeW4V2G0elua2eIc2nu8v2NdHV0Gm+tzX83Hr6nUFjQA==
-
-typescript@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.1.tgz#3362ba9dd1e482ebb2355b02dfe8bcd19a2c7c96"
-  integrity sha512-Veu0w4dTc/9wlWNf2jeRInNodKlcdLgemvPsrNpfu5Pq39sgfFjvIIgTsvUHCoLBnMhPoUA+tFxsXjU6VexVRQ==
 
 typescript@3.1.3:
   version "3.1.3"
