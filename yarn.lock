@@ -3502,7 +3502,7 @@ lusca@^1.4.1:
   dependencies:
     tsscmp "^1.0.5"
 
-madge@^3.3.0:
+madge@3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/madge/-/madge-3.3.0.tgz#608ae0fdefef0c278b843b76e4cb6c309637feb3"
   integrity sha512-AWRUIyir+ufyBgueZL+AfvsHPcATNQcwgndwC2bcdIEb57xK54YXmx3ECKCg9PK1zxp9Uc0LMSE1roO+foX7NQ==
