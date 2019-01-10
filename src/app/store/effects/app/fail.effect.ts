@@ -11,6 +11,7 @@ import * as actionTypes from 'app/store/action-types';
 export class FailEffect {
   @Effect() fail$: Observable<Action> = this.actions$.pipe(
     ofType(
+      actionTypes.BACKEND_FAIL,
       actionTypes.GET_STATE_FAIL,
 
       actionTypes.CREATE_FILE_FAIL,
@@ -42,6 +43,7 @@ export class FailEffect {
       actionTypes.RUN_QUERIES_DRY_FAIL,
       actionTypes.SET_LIVE_QUERIES_FAIL,
 
+      actionTypes.LOGIN_USER_FAIL,
       actionTypes.SET_USER_NAME_FAIL,
       actionTypes.SET_USER_TIMEZONE_FAIL,
 

@@ -5,6 +5,7 @@ export * from './delete-file/delete-file-dialog.component';
 export * from './delete-folder/delete-folder-dialog.component';
 export * from './delete-project/delete-project-dialog.component';
 export * from './dep-calc-removed/dep-calc-removed-dialog.component';
+export * from './info/info-dialog.component';
 export * from './er/er-dialog.component';
 export * from './generate-blockml/generate-blockml-dialog.component';
 export * from './invite-member/invite-member-dialog.component';

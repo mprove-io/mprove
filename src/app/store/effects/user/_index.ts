@@ -2,6 +2,7 @@ export * from './login-user.effect';
 export * from './login-user-success.effect';
 export * from './register-user.effect';
 export * from './register-user-success.effect';
+export * from './register-user-fail.effect';
 export * from './set-user-name-success.effect';
 export * from './set-user-name.effect';
 export * from './set-user-picture-success.effect';

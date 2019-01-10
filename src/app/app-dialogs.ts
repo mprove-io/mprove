@@ -1,6 +1,7 @@
 import * as dialogs from 'app/dialogs/_index';
 
 export const APP_DIALOGS = [
+  dialogs.InfoDialogComponent,
   dialogs.ErDialogComponent,
   dialogs.BqDialogComponent,
   dialogs.ReqDimAddedDialogComponent,

@@ -116,8 +116,6 @@ export class WatchAuthenticationService {
 
           let pathArray = this.location.path().split('/');
 
-          console.log(pathArray);
-
           if (
             ['profile', 'project', 'project-deleted'].indexOf(pathArray[1]) > -1
           ) {

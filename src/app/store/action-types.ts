@@ -28,6 +28,7 @@ function ngrxType<T>(label: T | ''): T {
 }
 
 // APP
+export const BACKEND_FAIL = ngrxType('[App] Backend Fail');
 
 export const RESET_STATE = ngrxType('[App] Reset State');
 

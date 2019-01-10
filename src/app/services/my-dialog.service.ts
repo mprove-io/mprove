@@ -5,6 +5,7 @@ import * as dialogs from 'app/dialogs/_index';
 
 @Injectable()
 export class MyDialogService {
+  infoDialogRef: MatDialogRef<dialogs.InfoDialogComponent>;
   erDialogRef: MatDialogRef<dialogs.ErDialogComponent>;
   bqDialogRef: MatDialogRef<dialogs.BqDialogComponent>;
   reqDimAddedDialogRef: MatDialogRef<dialogs.ReqDimAddedDialogComponent>;
@@ -106,6 +107,20 @@ export class MyDialogService {
 
     this.erDialogRef.afterClosed().subscribe(() => {
       this.erDialogRef = null;
+    });
+  }
+
+  showInfoDialog(info: string) {
+    this.infoDialogRef = this.dialog.open(dialogs.InfoDialogComponent, {
+      disableClose: true,
+      autoFocus: false,
+      data: {
+        info: info
+      }
+    });
+
+    this.infoDialogRef.afterClosed().subscribe(() => {
+      this.infoDialogRef = null;
     });
   }
 
