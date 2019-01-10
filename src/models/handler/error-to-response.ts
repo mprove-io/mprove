@@ -33,6 +33,8 @@ function mapErrors(name: string) {
   switch (name) {
     case enums.otherErrorsEnum.INTERNAL:
       return api.ServerResponseStatusEnum.InternalServerError;
+    case enums.otherErrorsEnum.USER_ALREADY_EXIST:
+      return api.ServerResponseStatusEnum.USER_ALREADY_EXISTS;
     case enums.otherErrorsEnum.API:
       return api.ServerResponseStatusEnum.ApiError;
     case enums.otherErrorsEnum.AUTHORIZATION_EMAIL:
