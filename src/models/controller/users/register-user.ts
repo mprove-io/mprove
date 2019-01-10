@@ -26,6 +26,18 @@ export async function registerUser(req: Request, res: Response) {
   let userId = payload.user_id;
   let password = payload.password;
 
+  let storeUsers = store.getUsersRepo();
+
+  let user = <entities.UserEntity>(
+    await storeUsers
+      .findOne(userId)
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE))
+  );
+
+  if (user) {
+    throw new ServerError({ name: enums.otherErrorsEnum.USER_ALREADY_EXIST });
+  }
+
   let alias = await proc.findAlias(userId);
 
   let salt = crypto.randomBytes(16).toString('hex');

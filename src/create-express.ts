@@ -107,17 +107,9 @@ export function createExpress() {
       enums.middlewareErrorsEnum.MIDDLEWARE_CHECK_REQUEST_ID
     ),
     handler.promisifyCatchAsyncErrors(
-      middleware.authJwt,
+      middleware.checkJwt,
       enums.middlewareErrorsEnum.MIDDLEWARE_CHECK_JWT
     )
-    // handler.promisifyCatchAsyncErrors(
-    //   middleware.checkJwt,
-    //   enums.middlewareErrorsEnum.MIDDLEWARE_CHECK_JWT
-    // ),
-    // handler.catchAsyncErrors(
-    //   middleware.addUser,
-    //   enums.middlewareErrorsEnum.MIDDLEWARE_ADD_USER
-    // )
   ];
 
   // Initialize Passport before using the route middleware
