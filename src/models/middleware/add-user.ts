@@ -14,6 +14,8 @@ import { store } from '../../barrels/store';
 import { validator } from '../../barrels/validator';
 import { ServerError } from '../server-error';
 
+// TODO: rewrite addUser to activateUser middleware
+
 export async function addUser(req: any, res: any, next: any) {
   let initId = validator.getRequestInfoInitId(req);
 

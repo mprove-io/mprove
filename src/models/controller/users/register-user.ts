@@ -35,7 +35,9 @@ export async function registerUser(req: Request, res: Response) {
   );
 
   if (user) {
-    throw new ServerError({ name: enums.otherErrorsEnum.USER_ALREADY_EXIST });
+    throw new ServerError({
+      name: enums.otherErrorsEnum.REGISTER_ERROR_USER_ALREADY_EXISTS
+    });
   }
 
   let alias = await proc.findAlias(userId);

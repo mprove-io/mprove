@@ -33,8 +33,12 @@ function mapErrors(name: string) {
   switch (name) {
     case enums.otherErrorsEnum.INTERNAL:
       return api.ServerResponseStatusEnum.InternalServerError;
-    case enums.otherErrorsEnum.USER_ALREADY_EXIST:
-      return api.ServerResponseStatusEnum.USER_ALREADY_EXISTS;
+    case enums.otherErrorsEnum.REGISTER_ERROR_USER_ALREADY_EXISTS:
+      return api.ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS;
+    case enums.otherErrorsEnum.LOGIN_ERROR_WRONG_PASSWORD:
+      return api.ServerResponseStatusEnum.LOGIN_ERROR_WRONG_PASSWORD;
+    case enums.otherErrorsEnum.LOGIN_ERROR_USER_DOES_NOT_EXIST:
+      return api.ServerResponseStatusEnum.LOGIN_ERROR_USER_DOES_NOT_EXIST;
     case enums.otherErrorsEnum.API:
       return api.ServerResponseStatusEnum.ApiError;
     case enums.otherErrorsEnum.AUTHORIZATION_EMAIL:
