@@ -43,7 +43,6 @@ export class FailEffect {
       actionTypes.RUN_QUERIES_DRY_FAIL,
       actionTypes.SET_LIVE_QUERIES_FAIL,
 
-      actionTypes.LOGIN_USER_FAIL,
       actionTypes.SET_USER_NAME_FAIL,
       actionTypes.SET_USER_TIMEZONE_FAIL,
 
@@ -60,9 +59,7 @@ export class FailEffect {
       actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN_FAIL,
 
       actionTypes.CONFIRM_FAIL,
-      actionTypes.PONG_FAIL,
-
-      actionTypes.LOCK_SHOW_FAIL
+      actionTypes.PONG_FAIL
     ),
     filter(
       (action: any) =>

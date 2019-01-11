@@ -1,5 +1,6 @@
 export * from './login-user.effect';
 export * from './login-user-success.effect';
+export * from './login-user-fail.effect';
 export * from './register-user.effect';
 export * from './register-user-success.effect';
 export * from './register-user-fail.effect';

@@ -449,6 +449,3 @@ export const CONFIRM_FAIL = ngrxType('[Websocket] Confirm Fail');
 export const PONG = ngrxType('[Websocket] Pong');
 export const PONG_SUCCESS = ngrxType('[Websocket] Pong Success');
 export const PONG_FAIL = ngrxType('[Websocket] Pong Fail');
-
-// OTHER
-export const LOCK_SHOW_FAIL = ngrxType('[Other] Lock Show Fail');

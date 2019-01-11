@@ -109,6 +109,7 @@ export const APP_EFFECTS = [
   // User
   effects.LoginUserEffect,
   effects.LoginUserSuccessEffect,
+  effects.LoginUserFailEffect,
   effects.RegisterUserEffect,
   effects.RegisterUserSuccessEffect,
   effects.RegisterUserFailEffect,
