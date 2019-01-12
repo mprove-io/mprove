@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env' });
+
 import {
   Connection,
   ConnectionOptions,
@@ -13,10 +16,6 @@ import { scheduler } from './barrels/scheduler';
 import { start } from './barrels/start';
 
 import { createExpress } from './create-express';
-
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: '.env' });
 
 // import {
 //   config.DB_TYPE,

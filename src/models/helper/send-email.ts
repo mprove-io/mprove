@@ -1,14 +1,14 @@
 import * as nodemailer from 'nodemailer';
-import * as mailgunTransport from 'nodemailer-mailgun-transport';
+import * as mg from 'nodemailer-mailgun-transport';
 
-const transport = mailgunTransport({
+const auth = {
   auth: {
     api_key: process.env.MAILGUN_ACTIVE_API_KEY,
     domain: process.env.MAILGUN_DOMAIN
   }
-});
+};
 
-const emailSender = nodemailer.createTransport(transport);
+const emailSender = nodemailer.createTransport(mg(auth));
 
 export async function sendEmail(item: {
   to: string;
