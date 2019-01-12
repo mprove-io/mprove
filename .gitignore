@@ -1,3 +1,4 @@
+.env
 # System Files
 .DS_Store
 Thumbs.db
@@ -20,5 +21,3 @@ node_modules
 
 # debug
 yarn-error.log
-
-.env
