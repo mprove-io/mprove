@@ -17,8 +17,7 @@ export class RegisterUserSuccessEffect {
     tap((action: actions.RegisterUserSuccessAction) => {
       this.watchAuthenticationService.stop();
 
-      localStorage.setItem('token', action.payload.token);
-      this.router.navigate(['profile']);
+      this.router.navigate(['verify-email']);
     })
   );
 

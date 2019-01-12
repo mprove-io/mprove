@@ -14,6 +14,13 @@ export const APP_ROUTES: Routes = [
         pathMatch: 'full'
       },
       {
+        path: 'login',
+        component: components.LoginComponent,
+        resolve: {
+          toProfileResolver: resolvers.ToProfileResolver
+        }
+      },
+      {
         path: 'register',
         component: components.RegisterComponent,
         resolve: {
@@ -21,8 +28,8 @@ export const APP_ROUTES: Routes = [
         }
       },
       {
-        path: 'login',
-        component: components.LoginComponent,
+        path: 'verify-email',
+        component: components.VerifyEmailComponent,
         resolve: {
           toProfileResolver: resolvers.ToProfileResolver
         }

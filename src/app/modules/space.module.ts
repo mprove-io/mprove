@@ -25,17 +25,18 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule
   ],
   declarations: [
-    components.NavDevProdComponent,
-    components.NavBlockmlComponent,
-    components.NavModelsComponent,
-    components.NavDashboardsComponent,
-    components.NavRemoteErrorsComponent,
     components.SpaceComponent,
-    components.ProjectDeletedComponent,
-    components.RegisterComponent,
     components.LoginComponent,
     components.LogoutComponent,
-    components.NotFound404Component
+    components.NavBlockmlComponent,
+    components.NavDashboardsComponent,
+    components.NavDevProdComponent,
+    components.NavModelsComponent,
+    components.NavRemoteErrorsComponent,
+    components.NotFound404Component,
+    components.ProjectDeletedComponent,
+    components.RegisterComponent,
+    components.VerifyEmailComponent
   ],
   exports: [components.SpaceComponent]
 })

@@ -17,8 +17,12 @@ export class LoginUserSuccessEffect {
     tap((action: actions.LoginUserSuccessAction) => {
       this.watchAuthenticationService.stop();
 
-      localStorage.setItem('token', action.payload.token);
-      this.router.navigate(['profile']);
+      if (action.payload.email_verified === true) {
+        localStorage.setItem('token', action.payload.token);
+        this.router.navigate(['profile']);
+      } else if (action.payload.email_verified === false) {
+        this.router.navigate(['verify-email']);
+      }
     })
   );
 

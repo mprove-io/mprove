@@ -9,3 +9,4 @@ export * from './nav-remote-errors/nav-remote-errors.component';
 export * from './not-found404/not-found404.component';
 export * from './project-deleted/project-deleted.component';
 export * from './register/register.component';
+export * from './verify-email/verify-email.component';
