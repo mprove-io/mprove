@@ -49,10 +49,11 @@ export async function registerUser(req: Request, res: Response) {
 
   let newUser = generator.makeUser({
     user_id: userId,
+    email_verified: enums.bEnum.FALSE,
     hash: hash,
     salt: salt,
     alias: alias,
-    status: api.UserStatusEnum.Active
+    status: api.UserStatusEnum.Pending
   });
 
   let newMember = generator.makeMember({
@@ -164,16 +165,8 @@ export async function registerUser(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  // let payload: api.LogoutUserRequestBodyPayload = validator.getPayload(req);
-
-  // let responsePayload: api.LogoutUserResponse200BodyPayload = {
-  //   empty: true
-  // };
-
-  let token = auth.generateJwt(userId);
-
   let responsePayload: api.RegisterUserResponse200BodyPayload = {
-    token: token
+    empty: true
   };
 
   sender.sendClientResponse(req, res, responsePayload);

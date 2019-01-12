@@ -39,7 +39,7 @@ export const passportLocalStrategy = new passportLocal.Strategy(
         });
       }
 
-      return done(null, { email: userId });
+      return done(null, user);
     } catch (e) {
       return done(e);
     }

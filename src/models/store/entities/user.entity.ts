@@ -2,11 +2,15 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { api } from '../../../barrels/api';
 import { constants } from '../../../barrels/constants';
+import { enums } from '../../../barrels/enums';
 
 @Entity('m_user')
 export class UserEntity implements UserInterface {
   @PrimaryColumn({ type: constants.USER_ID_DATATYPE })
   user_id: string;
+
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
+  email_verified: enums.bEnum;
 
   @Column({ type: constants.USER_HASH_DATATYPE, nullable: true })
   hash: string;

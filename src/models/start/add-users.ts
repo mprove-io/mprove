@@ -34,6 +34,7 @@ export async function addUsers() {
   let users = admins.map(demoAdmin =>
     generator.makeUser({
       user_id: demoAdmin.user_id,
+      email_verified: enums.bEnum.TRUE,
       alias: demoAdmin.alias,
       status: api.UserStatusEnum.Pending
     })
