@@ -166,7 +166,7 @@ export async function registerUser(req: Request, res: Response) {
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
   let responsePayload: api.RegisterUserResponse200BodyPayload = {
-    empty: true
+    user_id: userId
   };
 
   sender.sendClientResponse(req, res, responsePayload);

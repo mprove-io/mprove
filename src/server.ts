@@ -14,6 +14,10 @@ import { start } from './barrels/start';
 
 import { createExpress } from './create-express';
 
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
+
 // import {
 //   config.DB_TYPE,
 //   config.DB_HOST,

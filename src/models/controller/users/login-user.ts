@@ -24,7 +24,8 @@ export async function loginUser(req: Request, res: Response, next: any) {
 
       if (user.email_verified === enums.bEnum.FALSE) {
         responsePayload = {
-          email_verified: false
+          email_verified: false,
+          user_id: user.user_id
         };
       } else if (user.email_verified === enums.bEnum.TRUE) {
         if (user.status === api.UserStatusEnum.Pending) {

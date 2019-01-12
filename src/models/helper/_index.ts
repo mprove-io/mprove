@@ -12,4 +12,5 @@ export * from './make-ts';
 export * from './re-throw';
 export * from './refresh-server-ts';
 export * from './refresh-struct-server-ts';
+export * from './send-email';
 export * from './undefined-to-null';
