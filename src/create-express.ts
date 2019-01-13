@@ -16,7 +16,7 @@ export function createExpress() {
   /**
    * Express configuration.
    */
-  app.set('port', process.env.PORT || 8080);
+  app.set('port', process.env.BLOCKML_PORT || 8080);
   app.use(compression());
   app.use(logger('dev'));
   app.use(bodyParser.json({ limit: '10mb' }));

@@ -35,7 +35,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
     });
   }
 
-  let basePath = process.env.BASE_PATH;
+  let basePath = process.env.BLOCKML_BASE_PATH;
 
   let dir = `${basePath}/${projectId}/${repoId}`;
 

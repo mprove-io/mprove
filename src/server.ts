@@ -1,6 +1,5 @@
 import { ChildProcess } from 'child_process';
 import * as cluster from 'cluster';
-import * as dotenv from 'dotenv';
 import { enums } from './barrels/enums';
 import { genSql } from './barrels/gen-sql';
 import { interfaces } from './barrels/interfaces';
@@ -17,11 +16,6 @@ redisClient.on('ready', () => {
 redisClient.on('error', () => {
   console.log('Error in Redis');
 });
-
-/**
- * Load environment variables from .env file, where API keys and passwords are configured.
- */
-dotenv.config({ path: '.env' });
 
 // CLUSTER IS MASTER
 
