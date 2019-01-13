@@ -26,7 +26,7 @@ export function createExpress() {
   const expressWsInstance = expressWs(appExpress);
   const app = expressWsInstance.app;
 
-  app.set('port', process.env.PORT || 8080);
+  app.set('port', process.env.BACKEND_PORT || 8080);
   app.use(compression());
   app.use(logger('dev'));
   app.use(bodyParser.json({ limit: '10mb' }));

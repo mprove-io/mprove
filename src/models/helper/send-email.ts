@@ -3,8 +3,8 @@ import * as mg from 'nodemailer-mailgun-transport';
 
 const auth = {
   auth: {
-    api_key: process.env.MAILGUN_ACTIVE_API_KEY,
-    domain: process.env.MAILGUN_DOMAIN
+    api_key: process.env.BACKEND_MAILGUN_ACTIVE_API_KEY,
+    domain: process.env.BACKEND_MAILGUN_DOMAIN
   }
 };
 
@@ -18,7 +18,7 @@ export async function sendEmail(item: {
   return new Promise((resolve, reject) => {
     this.emailClient.sendMail(
       {
-        from: process.env.SEND_EMAIL_FROM,
+        from: process.env.BACKEND_SEND_EMAIL_FROM,
         to: item.to,
         subject: item.subject,
         text: item.text

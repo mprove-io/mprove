@@ -8,7 +8,7 @@ export const DISK_BIGQUERY_CREDENTIALS_PATH =
 // export const DB_HOST = 'localhost';
 // export const DB_PORT = 3306;
 // export const DB_USERNAME = 'root';
-// export const DB_PASSWORD = process.env.DB_PASSWORD_DEV;
+// export const DB_PASSWORD = process.env.BACKEND_DB_PASSWORD_DEV;
 // export const DB_DATABASE = 'my_dev';
 
 export const GITHUB_TOKEN = 'a97933f0beee74169e58bd598a754e56875d225d';
