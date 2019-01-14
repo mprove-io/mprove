@@ -51,3 +51,4 @@ export * from './users/set-user-name/_index';
 export * from './users/set-user-picture/_index';
 export * from './users/set-user-timezone/_index';
 export * from './users/verify-user-email/_index';
+export * from './users/confirm-user-email/_index';
