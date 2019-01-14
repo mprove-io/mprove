@@ -1,4 +1,4 @@
-FROM node:8.14.0
+FROM node:10.15.0-jessie
 
 WORKDIR /usr/src/app
 
