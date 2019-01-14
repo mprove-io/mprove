@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import * as actions from 'app/store/actions/_index';
 import * as actionTypes from 'app/store/action-types';
-import { ServerResponseStatusEnum } from '@app/api/_index';
+import { ServerResponseStatusEnum } from 'app/api/_index';
 import { MyDialogService } from 'app/services/_index';
 
 @Injectable()

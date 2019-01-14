@@ -355,4 +355,10 @@ export class BackendService {
   ): Observable<api.SetUserTimezoneResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_USER_TIMEZONE, payload);
   }
+
+  verifyUserEmail(
+    payload: api.VerifyUserEmailRequestBodyPayload
+  ): Observable<api.VerifyUserEmailResponse200Body> {
+    return this.myHttpService.req(api.PATH_VERIFY_USER_EMAIL, payload);
+  }
 }

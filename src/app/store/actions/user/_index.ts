@@ -18,3 +18,6 @@ export * from './set-user-timezone-fail.action';
 export * from './set-user-timezone-success.action';
 export * from './set-user-timezone.action';
 export * from './update-user-state.action';
+export * from './verify-user-email-fail.action';
+export * from './verify-user-email-success.action';
+export * from './verify-user-email.action';

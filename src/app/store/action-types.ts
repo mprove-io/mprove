@@ -128,6 +128,9 @@ export const UPDATE_LAYOUT_CHART_ID = ngrxType(
   '[Layout] Update Layout Chart Id'
 );
 export const UPDATE_LAYOUT_DRY = ngrxType('[Layout] Update Layout Dry');
+export const UPDATE_LAYOUT_EMAIL_TO_VERIFY = ngrxType(
+  '[Layout] Update Layout Email To Verify'
+);
 export const RESET_LAYOUT_STATE = ngrxType('[Layout] Reset Layout State');
 export const UPDATE_LAYOUT_LAST_WS_MSG_TS = ngrxType(
   '[Layout] Update Layout WebSocket Message TimeStamp'
@@ -314,6 +317,12 @@ export const SET_USER_TIMEZONE_SUCCESS = ngrxType(
   '[User] Set User Timezone Success'
 );
 export const SET_USER_TIMEZONE_FAIL = ngrxType('[User] Set User Timezone Fail');
+
+export const VERIFY_USER_EMAIL = ngrxType('[User] Verify User Email');
+export const VERIFY_USER_EMAIL_SUCCESS = ngrxType(
+  '[User] Verify User Email Success'
+);
+export const VERIFY_USER_EMAIL_FAIL = ngrxType('[User] Verify User Email Fail');
 
 export const SET_USER_PICTURE = ngrxType('[User] Set User Picture');
 export const SET_USER_PICTURE_SUCCESS = ngrxType(

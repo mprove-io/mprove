@@ -11,3 +11,6 @@ export * from './set-user-picture.effect';
 export * from './set-user-timezone-success.effect';
 export * from './set-user-timezone.effect';
 export * from './user-logout.effect';
+export * from './verify-user-email-fail.effect';
+export * from './verify-user-email-success.effect';
+export * from './verify-user-email.effect';

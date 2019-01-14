@@ -15,7 +15,8 @@ const initialState: interfaces.LayoutState = {
   query_id: undefined,
   chart_id: undefined,
   dry: undefined,
-  last_ws_msg_ts: undefined
+  last_ws_msg_ts: undefined,
+  email_to_verify: undefined
 };
 
 export function layoutReducer(
@@ -23,6 +24,9 @@ export function layoutReducer(
   action: types.LayoutActions
 ): interfaces.LayoutState {
   switch (action.type) {
+    case actionTypes.UPDATE_LAYOUT_EMAIL_TO_VERIFY: {
+      return Object.assign({}, state, { email_to_verify: action.payload });
+    }
     case actionTypes.UPDATE_LAYOUT_PROJECT_ID: {
       return Object.assign({}, state, { project_id: action.payload });
     }

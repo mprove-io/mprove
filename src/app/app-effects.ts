@@ -120,6 +120,9 @@ export const APP_EFFECTS = [
   effects.SetUserTimezoneSuccessEffect,
   effects.SetUserTimezoneEffect,
   effects.UserLogoutEffect,
+  effects.VerifyUserEmailEffect,
+  effects.VerifyUserEmailSuccessEffect,
+  effects.VerifyUserEmailFailEffect,
 
   // WebSocket
   effects.CloseWebSocketSuccessEffect,

@@ -1,6 +1,7 @@
 export * from './get-layout-chart-id';
 export * from './get-layout-dashboard-id';
 export * from './get-layout-dry';
+export * from './get-layout-email-to-verify';
 export * from './get-layout-file-id';
 export * from './get-layout-last-ws-msg-ts';
 export * from './get-layout-mconfig-id';

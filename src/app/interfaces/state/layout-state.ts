@@ -13,4 +13,5 @@ export interface LayoutState {
   need_save: boolean;
   dry: Dry;
   last_ws_msg_ts: number;
+  email_to_verify: string;
 }
