@@ -16,7 +16,7 @@ export async function sendEmail(item: {
   text: string;
 }) {
   return new Promise((resolve, reject) => {
-    this.emailClient.sendMail(
+    emailSender.sendMail(
       {
         from: process.env.BACKEND_SEND_EMAIL_FROM,
         to: item.to,

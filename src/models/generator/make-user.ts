@@ -15,6 +15,7 @@ export function makeUser(item: {
   return {
     user_id: item.user_id,
     email_verified: item.email_verified,
+    email_verification_token: helper.makeId(),
     hash: item.hash,
     salt: item.salt,
     alias: item.alias,

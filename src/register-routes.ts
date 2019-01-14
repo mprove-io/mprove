@@ -16,6 +16,22 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
   );
 
   app.post(
+    '/api/v1' + api.PATH_VERIFY_USER_EMAIL,
+    handler.catchAsyncErrors(
+      controller.verifyUserEmail,
+      enums.controllerErrorsEnum.CONTROLLER_VERIFY_USER_EMAIL
+    )
+  );
+
+  app.post(
+    '/api/v1' + api.PATH_CONFIRM_USER_EMAIL,
+    handler.catchAsyncErrors(
+      controller.confirmUserEmail,
+      enums.controllerErrorsEnum.CONTROLLER_CONFIRM_USER_EMAIL
+    )
+  );
+
+  app.post(
     '/api/v1' + api.PATH_LOGIN_USER,
     handler.catchAsyncErrors(
       controller.loginUser,

@@ -12,6 +12,9 @@ export class UserEntity implements UserInterface {
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   email_verified: enums.bEnum;
 
+  @Column({ unique: true, type: constants.USER_EMAIL_VERIFICATION_TOKEN })
+  email_verification_token: string;
+
   @Column({ type: constants.USER_HASH_DATATYPE, nullable: true })
   hash: string;
 
