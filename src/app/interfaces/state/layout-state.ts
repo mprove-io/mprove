@@ -14,4 +14,5 @@ export interface LayoutState {
   dry: Dry;
   last_ws_msg_ts: number;
   email_to_verify: string;
+  email_to_reset_password: string;
 }

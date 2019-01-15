@@ -7,6 +7,7 @@ export * from './update-layout-chart-id.action';
 export * from './update-layout-dashboard-id.action';
 export * from './update-layout-dry.action';
 export * from './update-layout-email-to-verify.action';
+export * from './update-layout-email-to-reset-password.action';
 export * from './update-layout-file-id.action';
 export * from './update-layout-last-websocket-message-timestamp.action';
 export * from './update-layout-mconfig-id.action';

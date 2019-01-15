@@ -6,6 +6,7 @@ import * as actions from 'app/store/actions/_index';
 
 export type LayoutActions =
   | actions.UpdateLayoutEmailToVerifyAction
+  | actions.UpdateLayoutEmailToResetPasswordAction
   | actions.UpdateLayoutProjectIdAction
   | actions.SetLayoutModeDevAction
   | actions.SetLayoutModeProdAction

@@ -17,3 +17,6 @@ export * from './user-logout.effect';
 export * from './verify-user-email-fail.effect';
 export * from './verify-user-email-success.effect';
 export * from './verify-user-email.effect';
+export * from './reset-user-password-fail.effect';
+export * from './reset-user-password-success.effect';
+export * from './reset-user-password.effect';

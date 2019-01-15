@@ -24,3 +24,6 @@ export * from './update-user-state.action';
 export * from './verify-user-email-fail.action';
 export * from './verify-user-email-success.action';
 export * from './verify-user-email.action';
+export * from './reset-user-password-fail.action';
+export * from './reset-user-password-success.action';
+export * from './reset-user-password.action';

@@ -37,7 +37,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     components.ProjectDeletedComponent,
     components.RegisterComponent,
     components.VerifyEmailComponent,
-    components.ConfirmEmailComponent
+    components.ConfirmEmailComponent,
+    components.ResetPasswordSentComponent
   ],
   exports: [components.SpaceComponent]
 })

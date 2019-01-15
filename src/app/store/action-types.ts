@@ -131,6 +131,9 @@ export const UPDATE_LAYOUT_DRY = ngrxType('[Layout] Update Layout Dry');
 export const UPDATE_LAYOUT_EMAIL_TO_VERIFY = ngrxType(
   '[Layout] Update Layout Email To Verify'
 );
+export const UPDATE_LAYOUT_EMAIL_TO_RESET_PASSWORD = ngrxType(
+  '[Layout] Update Layout Email To Reset Password'
+);
 export const RESET_LAYOUT_STATE = ngrxType('[Layout] Reset Layout State');
 export const UPDATE_LAYOUT_LAST_WS_MSG_TS = ngrxType(
   '[Layout] Update Layout WebSocket Message TimeStamp'
@@ -323,12 +326,21 @@ export const VERIFY_USER_EMAIL_SUCCESS = ngrxType(
   '[User] Verify User Email Success'
 );
 export const VERIFY_USER_EMAIL_FAIL = ngrxType('[User] Verify User Email Fail');
+
 export const CONFIRM_USER_EMAIL = ngrxType('[User] Confirm User Email');
 export const CONFIRM_USER_EMAIL_SUCCESS = ngrxType(
   '[User] Confirm User Email Success'
 );
 export const CONFIRM_USER_EMAIL_FAIL = ngrxType(
   '[User] Confirm User Email Fail'
+);
+
+export const RESET_USER_PASSWORD = ngrxType('[User] Reset User Password');
+export const RESET_USER_PASSWORD_SUCCESS = ngrxType(
+  '[User] Reset User Password Success'
+);
+export const RESET_USER_PASSWORD_FAIL = ngrxType(
+  '[User] Reset User Password Fail'
 );
 
 export const SET_USER_PICTURE = ngrxType('[User] Set User Picture');

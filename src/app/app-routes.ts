@@ -37,6 +37,10 @@ export const APP_ROUTES: Routes = [
       {
         path: 'confirm-email',
         component: components.ConfirmEmailComponent
+      },
+      {
+        path: 'reset-password-sent',
+        component: components.ResetPasswordSentComponent
       }
     ]
   },

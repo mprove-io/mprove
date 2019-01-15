@@ -16,7 +16,8 @@ const initialState: interfaces.LayoutState = {
   chart_id: undefined,
   dry: undefined,
   last_ws_msg_ts: undefined,
-  email_to_verify: undefined
+  email_to_verify: undefined,
+  email_to_reset_password: undefined
 };
 
 export function layoutReducer(
@@ -27,6 +28,13 @@ export function layoutReducer(
     case actionTypes.UPDATE_LAYOUT_EMAIL_TO_VERIFY: {
       return Object.assign({}, state, { email_to_verify: action.payload });
     }
+
+    case actionTypes.UPDATE_LAYOUT_EMAIL_TO_RESET_PASSWORD: {
+      return Object.assign({}, state, {
+        email_to_reset_password: action.payload
+      });
+    }
+
     case actionTypes.UPDATE_LAYOUT_PROJECT_ID: {
       return Object.assign({}, state, { project_id: action.payload });
     }

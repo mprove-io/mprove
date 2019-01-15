@@ -11,3 +11,4 @@ export * from './project-deleted/project-deleted.component';
 export * from './register/register.component';
 export * from './verify-email/verify-email.component';
 export * from './confirm-email/confirm-email.component';
+export * from './reset-password-sent/reset-password-sent.component';

@@ -367,4 +367,10 @@ export class BackendService {
   ): Observable<api.VerifyUserEmailResponse200Body> {
     return this.myHttpService.req(api.PATH_VERIFY_USER_EMAIL, payload);
   }
+
+  resetUserPassword(
+    payload: api.ResetUserPasswordRequestBodyPayload
+  ): Observable<api.ResetUserPasswordResponse200Body> {
+    return this.myHttpService.req(api.PATH_RESET_USER_PASSWORD, payload);
+  }
 }
