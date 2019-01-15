@@ -1,3 +1,6 @@
+export * from './confirm-user-email-fail.effect';
+export * from './confirm-user-email-success.effect';
+export * from './confirm-user-email.effect';
 export * from './login-user.effect';
 export * from './login-user-success.effect';
 export * from './login-user-fail.effect';

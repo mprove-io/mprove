@@ -33,6 +33,10 @@ export const APP_ROUTES: Routes = [
         resolve: {
           toProfileResolver: resolvers.ToProfileResolver
         }
+      },
+      {
+        path: 'confirm-email',
+        component: components.ConfirmEmailComponent
       }
     ]
   },

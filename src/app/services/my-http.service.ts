@@ -45,8 +45,9 @@ export class MyHttpService {
   req(path: string, payload: object): Observable<any> {
     let bypassAuthPaths = [
       api.PATH_REGISTER_USER,
-      api.PATH_LOGIN_USER,
-      api.PATH_VERIFY_USER_EMAIL
+      api.PATH_VERIFY_USER_EMAIL,
+      api.PATH_CONFIRM_USER_EMAIL,
+      api.PATH_LOGIN_USER
     ];
 
     if (!this.auth.authenticated() && bypassAuthPaths.indexOf(path) < 0) {

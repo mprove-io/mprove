@@ -323,6 +323,13 @@ export const VERIFY_USER_EMAIL_SUCCESS = ngrxType(
   '[User] Verify User Email Success'
 );
 export const VERIFY_USER_EMAIL_FAIL = ngrxType('[User] Verify User Email Fail');
+export const CONFIRM_USER_EMAIL = ngrxType('[User] Confirm User Email');
+export const CONFIRM_USER_EMAIL_SUCCESS = ngrxType(
+  '[User] Confirm User Email Success'
+);
+export const CONFIRM_USER_EMAIL_FAIL = ngrxType(
+  '[User] Confirm User Email Fail'
+);
 
 export const SET_USER_PICTURE = ngrxType('[User] Set User Picture');
 export const SET_USER_PICTURE_SUCCESS = ngrxType(
