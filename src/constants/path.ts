@@ -54,3 +54,5 @@ export const PATH_SET_USER_PICTURE = '/users.setUserPicture';
 export const PATH_SET_USER_TIMEZONE = '/users.setUserTimezone';
 export const PATH_VERIFY_USER_EMAIL = '/users.verifyUserEmail';
 export const PATH_CONFIRM_USER_EMAIL = '/users.confirmUserEmail';
+export const PATH_RESET_USER_PASSWORD = '/users.resetUserPassword';
+export const PATH_UPDATE_USER_PASSWORD = '/users.updateUserPassword';
