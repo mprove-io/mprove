@@ -31,8 +31,8 @@ export async function verifyUserEmail(req: Request, res: Response) {
 
   let token = user.email_verification_token;
 
-  let url = process.env.BACKEND_EMAIL_CONFIRM_URL
-    ? process.env.BACKEND_EMAIL_CONFIRM_URL
+  let url = process.env.BACKEND_EMAIL_APP_HOST_URL // TODO: document
+    ? process.env.BACKEND_EMAIL_APP_HOST_URL
     : payload.url;
 
   let link = `${url}/confirm-email?token=${token}`;

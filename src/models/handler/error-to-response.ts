@@ -47,6 +47,14 @@ function mapErrors(name: string) {
       return api.ServerResponseStatusEnum
         .VERIFY_EMAIL_ERROR_USER_DOES_NOT_EXIST;
 
+    case enums.otherErrorsEnum.RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST:
+      return api.ServerResponseStatusEnum
+        .RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST;
+
+    case enums.otherErrorsEnum.UPDATE_PASSWORD_ERROR_USER_DOES_NOT_EXIST:
+      return api.ServerResponseStatusEnum
+        .UPDATE_PASSWORD_ERROR_USER_DOES_NOT_EXIST;
+
     case enums.otherErrorsEnum.CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST:
       return api.ServerResponseStatusEnum
         .CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST;

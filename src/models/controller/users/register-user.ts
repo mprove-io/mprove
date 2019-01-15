@@ -4,7 +4,6 @@ import { sender } from '../../../barrels/sender';
 import { validator } from '../../../barrels/validator';
 import { proc } from '../../../barrels/proc';
 import { generator } from '../../../barrels/generator';
-import * as jsonwebtoken from 'jsonwebtoken';
 
 import * as crypto from 'crypto';
 import { constants } from '../../../barrels/constants';

@@ -40,6 +40,22 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
   );
 
   app.post(
+    '/api/v1' + api.PATH_RESET_USER_PASSWORD,
+    handler.catchAsyncErrors(
+      controller.resetUserPassword,
+      enums.controllerErrorsEnum.CONTROLLER_RESET_USER_PASSWORD
+    )
+  );
+
+  app.post(
+    '/api/v1' + api.PATH_UPDATE_USER_PASSWORD,
+    handler.catchAsyncErrors(
+      controller.updateUserPassword,
+      enums.controllerErrorsEnum.CONTROLLER_UPDATE_USER_PASSWORD
+    )
+  );
+
+  app.post(
     '/api/v1' + api.PATH_LOGOUT_USER,
     middlewares,
     handler.catchAsyncErrors(

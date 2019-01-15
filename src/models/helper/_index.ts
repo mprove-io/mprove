@@ -9,6 +9,7 @@ export * from './is-null-or-undefined';
 export * from './make-id';
 export * from './make-new-array';
 export * from './make-ts';
+export * from './make-ts-offset';
 export * from './re-throw';
 export * from './refresh-server-ts';
 export * from './refresh-struct-server-ts';

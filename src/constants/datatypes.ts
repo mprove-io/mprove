@@ -130,3 +130,4 @@ export const USER_PICTURE_URL_SMALL_DATATYPE = 'varchar';
 export const USER_PICTURE_URL_BIG_DATATYPE = 'varchar';
 export const USER_TIMEZONE_DATATYPE = 'varchar';
 export const USER_EMAIL_VERIFICATION_TOKEN = 'varchar';
+export const PASSWORD_RESET_TOKEN = 'varchar';

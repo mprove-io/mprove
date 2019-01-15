@@ -14,6 +14,8 @@ export function makeUser(item: {
 }): entities.UserEntity {
   return {
     user_id: item.user_id,
+    password_reset_expires_ts: undefined,
+    password_reset_token: undefined,
     email_verified: item.email_verified,
     email_verification_token: helper.makeId(),
     hash: item.hash,
