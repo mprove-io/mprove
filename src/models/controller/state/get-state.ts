@@ -41,7 +41,9 @@ export async function getState(req: Request, res: Response) {
   );
 
   if (!user) {
-    throw new ServerError({ name: enums.otherErrorsEnum.USER_NOT_FOUND });
+    throw new ServerError({
+      name: enums.otherErrorsEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST
+    });
   }
 
   let userMembers = <entities.MemberEntity[]>await storeMembers

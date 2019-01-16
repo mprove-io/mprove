@@ -1,4 +1,4 @@
 export interface UpdateUserPasswordRequestBodyPayload {
-  user_id: string;
+  token: string;
   password: string;
 }

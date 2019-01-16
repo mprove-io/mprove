@@ -15,26 +15,26 @@ export async function updateUserPassword(req: Request, res: Response) {
     req
   );
 
-  let userId = payload.user_id;
+  let token = payload.token;
   let password = payload.password;
 
   let storeUsers = store.getUsersRepo();
 
   let user = <entities.UserEntity>(
     await storeUsers
-      .findOne(userId)
+      .findOne({ password_reset_token: token })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE))
   );
 
   if (!user) {
     throw new ServerError({
-      name: enums.otherErrorsEnum.UPDATE_PASSWORD_ERROR_USER_DOES_NOT_EXIST
+      name: enums.otherErrorsEnum.UPDATE_PASSWORD_ERROR_TOKEN_EXPIRED
     });
   }
 
   if (Number(user.password_reset_expires_ts) < Date.now()) {
     throw new ServerError({
-      name: enums.otherErrorsEnum.RESET_PASSWORD_ERROR_TOKEN_EXPIRED
+      name: enums.otherErrorsEnum.UPDATE_PASSWORD_ERROR_TOKEN_EXPIRED
     });
   }
 

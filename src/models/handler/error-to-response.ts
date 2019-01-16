@@ -51,13 +51,15 @@ function mapErrors(name: string) {
       return api.ServerResponseStatusEnum
         .RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST;
 
-    case enums.otherErrorsEnum.UPDATE_PASSWORD_ERROR_USER_DOES_NOT_EXIST:
-      return api.ServerResponseStatusEnum
-        .UPDATE_PASSWORD_ERROR_USER_DOES_NOT_EXIST;
+    case enums.otherErrorsEnum.UPDATE_PASSWORD_ERROR_TOKEN_EXPIRED:
+      return api.ServerResponseStatusEnum.UPDATE_PASSWORD_ERROR_TOKEN_EXPIRED;
 
     case enums.otherErrorsEnum.CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST:
       return api.ServerResponseStatusEnum
         .CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST;
+
+    case enums.otherErrorsEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST:
+      return api.ServerResponseStatusEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST;
 
     case enums.otherErrorsEnum.API:
       return api.ServerResponseStatusEnum.ApiError;
