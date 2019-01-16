@@ -3,6 +3,7 @@ import * as effects from 'app/store/effects/_index';
 export const APP_EFFECTS = [
   // App
   effects.FailEffect,
+  effects.GetStateFailEffect,
   effects.GetStateSuccessEffect,
   effects.GetStateEffect,
   effects.ProcessStructsEffect,
@@ -126,6 +127,12 @@ export const APP_EFFECTS = [
   effects.VerifyUserEmailEffect,
   effects.VerifyUserEmailSuccessEffect,
   effects.VerifyUserEmailFailEffect,
+  effects.ResetUserPasswordEffect,
+  effects.ResetUserPasswordSuccessEffect,
+  effects.ResetUserPasswordFailEffect,
+  effects.UpdateUserPasswordEffect,
+  effects.UpdateUserPasswordSuccessEffect,
+  effects.UpdateUserPasswordFailEffect,
 
   // WebSocket
   effects.CloseWebSocketSuccessEffect,

@@ -8,6 +8,7 @@ export const APP_DIALOGS = [
   dialogs.DepCalcRemovedDialogComponent,
   dialogs.PdtSqlDialogComponent,
   dialogs.NewProjectDialogComponent,
+  dialogs.ResetPasswordDialogComponent,
   dialogs.CancelSubscriptionDialogComponent,
   dialogs.SwitchAnalyticsPlanDialogComponent,
   dialogs.UpdateRemoteUrlDialogComponent,

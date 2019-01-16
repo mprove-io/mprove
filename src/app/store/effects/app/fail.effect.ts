@@ -12,7 +12,6 @@ export class FailEffect {
   @Effect() fail$: Observable<Action> = this.actions$.pipe(
     ofType(
       actionTypes.BACKEND_FAIL,
-      actionTypes.GET_STATE_FAIL,
 
       actionTypes.CREATE_FILE_FAIL,
       actionTypes.SAVE_FILE_FAIL,

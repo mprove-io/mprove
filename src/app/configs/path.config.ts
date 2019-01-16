@@ -5,6 +5,7 @@ const protocol = window.location.protocol;
 // const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
 
 export let pathConfig = {
+  devEmailLinkBaseUrl: `${protocol}//${host}`,
   staticAssetsBaseUrl: `${protocol}//${host}`,
   dynamicAssetsBaseUrl: environment.local
     ? 'http://localhost:8080'

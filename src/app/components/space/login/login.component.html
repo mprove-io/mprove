@@ -43,4 +43,12 @@
     [disabled]="!loginForm.valid"
     >Sign In
   </button>
+
+  <button
+    type="button"
+    class="forgot-password-button"
+    mat-raised-button
+    (click)="openResetPasswordDialog()"
+    >Forgot Password?
+  </button>
 </form>

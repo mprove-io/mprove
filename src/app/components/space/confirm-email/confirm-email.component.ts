@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as services from 'app/services/_index';
 import * as interfaces from 'app/interfaces/_index';
 import { Store } from '@ngrx/store';
-import {
-  ConfirmUserEmailAction,
-  LogoutUserAction
-} from '@app/store/actions/_index';
+import * as actions from 'app/store/actions/_index';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -26,7 +23,9 @@ export class ConfirmEmailComponent implements OnInit {
 
   ngOnInit() {
     this.token = this.route.snapshot.queryParamMap.get('token');
-    this.store.dispatch(new ConfirmUserEmailAction({ token: this.token }));
-    this.store.dispatch(new LogoutUserAction({ empty: true }));
+    this.store.dispatch(
+      new actions.ConfirmUserEmailAction({ token: this.token })
+    );
+    this.store.dispatch(new actions.LogoutUserAction({ empty: true }));
   }
 }

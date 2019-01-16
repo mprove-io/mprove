@@ -335,6 +335,14 @@ export const CONFIRM_USER_EMAIL_FAIL = ngrxType(
   '[User] Confirm User Email Fail'
 );
 
+export const UPDATE_USER_PASSWORD = ngrxType('[User] Update User Password');
+export const UPDATE_USER_PASSWORD_SUCCESS = ngrxType(
+  '[User] Update User Password Success'
+);
+export const UPDATE_USER_PASSWORD_FAIL = ngrxType(
+  '[User] Update User Password Fail'
+);
+
 export const RESET_USER_PASSWORD = ngrxType('[User] Reset User Password');
 export const RESET_USER_PASSWORD_SUCCESS = ngrxType(
   '[User] Reset User Password Success'

@@ -47,7 +47,9 @@ export class MyHttpService {
       api.PATH_REGISTER_USER,
       api.PATH_VERIFY_USER_EMAIL,
       api.PATH_CONFIRM_USER_EMAIL,
-      api.PATH_LOGIN_USER
+      api.PATH_LOGIN_USER,
+      api.PATH_RESET_USER_PASSWORD,
+      api.PATH_UPDATE_USER_PASSWORD
     ];
 
     if (!this.auth.authenticated() && bypassAuthPaths.indexOf(path) < 0) {

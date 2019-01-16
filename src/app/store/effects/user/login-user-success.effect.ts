@@ -27,7 +27,7 @@ export class LoginUserSuccessEffect {
           new UpdateLayoutEmailToVerifyAction(action.payload.user_id)
         );
 
-        this.router.navigate(['verify-email']);
+        this.router.navigate(['verify-email-sent']);
       }
     })
   );

@@ -20,7 +20,7 @@ export class RegisterUserSuccessEffect {
       this.store.dispatch(
         new actions.UpdateLayoutEmailToVerifyAction(action.payload.user_id)
       );
-      this.router.navigate(['verify-email']);
+      this.router.navigate(['verify-email-sent']);
     })
   );
 

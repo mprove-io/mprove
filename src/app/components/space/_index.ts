@@ -9,6 +9,7 @@ export * from './nav-remote-errors/nav-remote-errors.component';
 export * from './not-found404/not-found404.component';
 export * from './project-deleted/project-deleted.component';
 export * from './register/register.component';
-export * from './verify-email/verify-email.component';
+export * from './verify-email-sent/verify-email-sent.component';
 export * from './confirm-email/confirm-email.component';
 export * from './reset-password-sent/reset-password-sent.component';
+export * from './update-password/update-password.component';

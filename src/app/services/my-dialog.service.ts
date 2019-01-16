@@ -12,6 +12,7 @@ export class MyDialogService {
   depCalcRemovedDialogRef: MatDialogRef<dialogs.DepCalcRemovedDialogComponent>;
   pdtSqlDialogRef: MatDialogRef<dialogs.PdtSqlDialogComponent>;
   newProjectDialogRef: MatDialogRef<dialogs.NewProjectDialogComponent>;
+  resetPasswordDialogRef: MatDialogRef<dialogs.ResetPasswordDialogComponent>;
   cancelSubscriptionDialogRef: MatDialogRef<
     dialogs.CancelSubscriptionDialogComponent
   >;
@@ -218,6 +219,20 @@ export class MyDialogService {
 
     this.deleteProjectDialogRef.afterClosed().subscribe(() => {
       this.deleteProjectDialogRef = null;
+    });
+  }
+
+  showResetPasswordDialog() {
+    this.resetPasswordDialogRef = this.dialog.open(
+      dialogs.ResetPasswordDialogComponent,
+      {
+        disableClose: false,
+        autoFocus: false
+      }
+    );
+
+    this.resetPasswordDialogRef.afterClosed().subscribe(() => {
+      this.resetPasswordDialogRef = null;
     });
   }
 

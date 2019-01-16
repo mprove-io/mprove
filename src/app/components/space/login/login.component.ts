@@ -8,7 +8,8 @@ import * as actions from 'app/store/actions/_index';
 @Component({
   moduleId: module.id,
   selector: 'm-login',
-  templateUrl: 'login.component.html'
+  templateUrl: 'login.component.html',
+  styleUrls: ['login.component.scss']
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -16,9 +17,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private store: Store<interfaces.AppState>,
-    private auth: services.AuthService,
     public pageTitle: services.PageTitleService,
-    private watchAuthenticationService: services.WatchAuthenticationService
+    private watchAuthenticationService: services.WatchAuthenticationService,
+    private myDialogService: services.MyDialogService
   ) {
     this.pageTitle.setTitle('Login | Mprove');
   }
@@ -31,7 +32,14 @@ export class LoginComponent implements OnInit {
 
   buildForm(): void {
     this.loginForm = this.fb.group({
-      email: [null, Validators.compose([Validators.maxLength(255)])],
+      email: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.email,
+          Validators.maxLength(255)
+        ])
+      ],
       password: [null, Validators.compose([Validators.maxLength(255)])]
     });
   }
@@ -43,5 +51,9 @@ export class LoginComponent implements OnInit {
         password: fv['password']
       })
     );
+  }
+
+  openResetPasswordDialog() {
+    this.myDialogService.showResetPasswordDialog();
   }
 }

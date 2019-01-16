@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as services from 'app/services/_index';
+import * as configs from 'app/configs/_index';
 import * as interfaces from 'app/interfaces/_index';
 import * as selectors from 'app/store/selectors/_index';
 import { Store } from '@ngrx/store';
@@ -9,10 +10,10 @@ import { Router } from '@angular/router';
 
 @Component({
   moduleId: module.id,
-  selector: 'm-verify-email',
-  templateUrl: 'verify-email.component.html'
+  selector: 'm-verify-email-sent',
+  templateUrl: 'verify-email-sent.component.html'
 })
-export class VerifyEmailComponent implements OnInit {
+export class VerifyEmailSentComponent implements OnInit {
   private readonly LOGIN_URL: string = '/login';
   email: string;
 
@@ -37,7 +38,7 @@ export class VerifyEmailComponent implements OnInit {
       this.store.dispatch(
         new VerifyUserEmailAction({
           user_id: this.email,
-          url: `${window.location.protocol}//${window.location.host}`
+          url: configs.pathConfig.devEmailLinkBaseUrl
         })
       );
     } else {

@@ -9,10 +9,10 @@ import * as api from 'app/api/_index';
 import * as services from 'app/services/_index';
 
 @Injectable()
-export class ResetUserPasswordFailEffect {
-  @Effect() resetUserPasswordFail$: Observable<Action> = this.actions$.pipe(
-    ofType(actionTypes.RESET_USER_PASSWORD_FAIL),
-    mergeMap((action: actions.ResetUserPasswordFailAction) => {
+export class GetStateFailEffect {
+  @Effect() getStateFail$: Observable<Action> = this.actions$.pipe(
+    ofType(actionTypes.GET_STATE_FAIL),
+    mergeMap((action: actions.GetStateFailAction) => {
       let e = action.payload.error;
 
       if (
@@ -22,7 +22,7 @@ export class ResetUserPasswordFailEffect {
         e.data.response.body &&
         e.data.response.body.info &&
         [
-          api.ServerResponseStatusEnum.RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST
+          api.ServerResponseStatusEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST
         ].indexOf(e.data.response.body.info.status) > -1
       ) {
         this.myDialogService.showInfoDialog(e.data.response.body.info.status);

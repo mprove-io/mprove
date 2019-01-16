@@ -13,12 +13,6 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_CONFIRM, payload);
   }
 
-  confirmUserEmail(
-    payload: api.ConfirmUserEmailRequestBodyPayload
-  ): Observable<api.ConfirmUserEmailResponse200Body> {
-    return this.myHttpService.req(api.PATH_CONFIRM_USER_EMAIL, payload);
-  }
-
   createFile(
     payload: api.CreateFileRequestBodyPayload
   ): Observable<api.CreateFileResponse200Body> {
@@ -372,5 +366,17 @@ export class BackendService {
     payload: api.ResetUserPasswordRequestBodyPayload
   ): Observable<api.ResetUserPasswordResponse200Body> {
     return this.myHttpService.req(api.PATH_RESET_USER_PASSWORD, payload);
+  }
+
+  confirmUserEmail(
+    payload: api.ConfirmUserEmailRequestBodyPayload
+  ): Observable<api.ConfirmUserEmailResponse200Body> {
+    return this.myHttpService.req(api.PATH_CONFIRM_USER_EMAIL, payload);
+  }
+
+  updateUserPassword(
+    payload: api.UpdateUserPasswordRequestBodyPayload
+  ): Observable<api.UpdateUserPasswordResponse200Body> {
+    return this.myHttpService.req(api.PATH_UPDATE_USER_PASSWORD, payload);
   }
 }

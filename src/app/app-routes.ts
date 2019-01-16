@@ -28,8 +28,8 @@ export const APP_ROUTES: Routes = [
         }
       },
       {
-        path: 'verify-email',
-        component: components.VerifyEmailComponent,
+        path: 'verify-email-sent',
+        component: components.VerifyEmailSentComponent,
         resolve: {
           toProfileResolver: resolvers.ToProfileResolver
         }
@@ -41,6 +41,10 @@ export const APP_ROUTES: Routes = [
       {
         path: 'reset-password-sent',
         component: components.ResetPasswordSentComponent
+      },
+      {
+        path: 'update-password',
+        component: components.UpdatePasswordComponent
       }
     ]
   },

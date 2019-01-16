@@ -20,3 +20,6 @@ export * from './verify-user-email.effect';
 export * from './reset-user-password-fail.effect';
 export * from './reset-user-password-success.effect';
 export * from './reset-user-password.effect';
+export * from './update-user-password-fail.effect';
+export * from './update-user-password-success.effect';
+export * from './update-user-password.effect';

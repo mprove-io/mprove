@@ -27,3 +27,6 @@ export * from './verify-user-email.action';
 export * from './reset-user-password-fail.action';
 export * from './reset-user-password-success.action';
 export * from './reset-user-password.action';
+export * from './update-user-password-fail.action';
+export * from './update-user-password-success.action';
+export * from './update-user-password.action';
