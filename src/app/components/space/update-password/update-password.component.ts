@@ -19,12 +19,17 @@ export class UpdatePasswordComponent implements OnInit {
     private fb: FormBuilder,
     public pageTitle: services.PageTitleService,
     private store: Store<interfaces.AppState>,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private watchAuthenticationService: services.WatchAuthenticationService
   ) {
     this.pageTitle.setTitle('Set New Password | Mprove');
   }
 
   ngOnInit() {
+    // auth token
+    localStorage.removeItem('token');
+
+    // change password token
     this.token = this.route.snapshot.queryParamMap.get('token');
 
     this.buildForm();

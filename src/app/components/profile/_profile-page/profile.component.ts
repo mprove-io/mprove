@@ -26,7 +26,8 @@ export class ProfileComponent implements OnDestroy {
   constructor(
     private store: Store<interfaces.AppState>,
     public dialog: MatDialog,
-    public pageTitle: services.PageTitleService
+    public pageTitle: services.PageTitleService,
+    private myDialogService: services.MyDialogService
   ) {
     this.pageTitle.setTitle('Profile');
 
@@ -42,6 +43,10 @@ export class ProfileComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.userSub.unsubscribe();
+  }
+
+  openResetPasswordDialog() {
+    this.myDialogService.showResetPasswordDialog();
   }
 
   // changeProfilePhoto() {

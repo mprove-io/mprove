@@ -15,12 +15,15 @@ export class ResetPasswordSentComponent implements OnInit {
 
   constructor(
     public pageTitle: services.PageTitleService,
-    private store: Store<interfaces.AppState>
+    private store: Store<interfaces.AppState>,
+    private watchAuthenticationService: services.WatchAuthenticationService
   ) {
     this.pageTitle.setTitle('Reset Password Sent | Mprove');
   }
 
   ngOnInit() {
+    this.watchAuthenticationService.start();
+
     this.store
       .select(selectors.getLayoutEmailToResetPassword)
       .pipe(take(1))

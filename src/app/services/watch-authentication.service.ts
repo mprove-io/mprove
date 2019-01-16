@@ -52,6 +52,16 @@ export class WatchAuthenticationService {
           '----------CHECK------------'
         );
 
+        this.store.select(selectors.getUserId).subscribe(x => {
+          this.userId = x;
+        });
+
+        this.printer.log(
+          enums.busEnum.WATCH_AUTHENTICATION_SERVICE,
+          'UserId:',
+          this.userId
+        );
+
         // authenticated
         if (this.auth.authenticated()) {
           this.printer.log(
@@ -59,24 +69,10 @@ export class WatchAuthenticationService {
             'authenticated'
           );
 
-          this.store.select(selectors.getUserId).subscribe(x => {
-            this.userId = x;
-          });
-
           if (this.userId === undefined) {
             this.router.navigateByUrl(this.PROFILE_URL);
             this.stop();
-            // throw new MyError({
-            //   name: `[DoCheckAuthService] User ID is undefined`,
-            //   message: `-`
-            // });
           } else {
-            this.printer.log(
-              enums.busEnum.WATCH_AUTHENTICATION_SERVICE,
-              'UserId:',
-              this.userId
-            );
-
             let tokenEmail = this.stateResolver.getTokenEmail();
 
             this.printer.log(
@@ -90,22 +86,23 @@ export class WatchAuthenticationService {
                 name: `[DoCheckAuthService] User ID is mismatch`,
                 message: `-`
               });
-            } else {
-              this.printer.log(
-                enums.busEnum.WATCH_AUTHENTICATION_SERVICE,
-                'authenticated, user_id match, complete'
-              );
-
-              if (
-                [this.REGISTER_URL, this.LOGIN_URL].indexOf(
-                  this.location.path()
-                ) > -1
-              ) {
-                this.router.navigateByUrl(this.PROFILE_URL);
-              }
-
-              return;
             }
+
+            this.printer.log(
+              enums.busEnum.WATCH_AUTHENTICATION_SERVICE,
+              'authenticated, user_id match, complete'
+            );
+
+            if (
+              // in case of internal navigation to login
+              [this.REGISTER_URL, this.LOGIN_URL].indexOf(
+                this.location.path()
+              ) > -1
+            ) {
+              this.router.navigateByUrl(this.PROFILE_URL);
+            }
+
+            return;
           }
           // not authenticated
         } else {
@@ -122,6 +119,15 @@ export class WatchAuthenticationService {
             this.printer.log(
               enums.busEnum.WATCH_AUTHENTICATION_SERVICE,
               'protected url, dispatching Logout...'
+            );
+            this.store.dispatch(new actions.LogoutUserAction({ empty: true }));
+          } else if (
+            ['reset-password-sent'].indexOf(pathArray[1]) > -1 &&
+            this.userId !== undefined
+          ) {
+            this.printer.log(
+              enums.busEnum.WATCH_AUTHENTICATION_SERVICE,
+              'user_id is defined, dispatching Logout...'
             );
             this.store.dispatch(new actions.LogoutUserAction({ empty: true }));
           } else {

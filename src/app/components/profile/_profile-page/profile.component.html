@@ -64,4 +64,24 @@
       >{{ user.user_id }}</div
     >
   </div>
+
+  <div fxLayout="row">
+    <div
+      fxFlex="10"
+      fxFlexAlign="center"
+      class="profile__label profile_padding profile-form_max-width_150"
+    ></div>
+    <div
+      fxFlex="90"
+      class="profile_padding profile-form_max-width_900"
+      name="profileChangePassword"
+    >
+      <button
+        type="button"
+        mat-raised-button
+        (click)="openResetPasswordDialog()"
+        >Change Password
+      </button>
+    </div>
+  </div>
 </div>
