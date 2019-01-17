@@ -1,46 +1,48 @@
-<h2>register</h2>
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h3>Register</h3>
 
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
-  <br />
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
+    <br />
 
-  <mat-form-field>
-    <input
-      matInput
-      id="emailInput"
-      formControlName="email"
-      placeholder="email"
-    />
-    <mat-error>
-      <m-validation-msg
-        [errors]="registerForm.controls['email'].errors"
-      ></m-validation-msg>
-    </mat-error>
-  </mat-form-field>
+    <mat-form-field>
+      <input
+        matInput
+        id="emailInput"
+        formControlName="email"
+        placeholder="email"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="registerForm.controls['email'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
 
-  <br />
+    <br />
 
-  <mat-form-field>
-    <input
-      matInput
-      id="passwordInput"
-      formControlName="password"
-      placeholder="password"
-    />
-    <mat-error>
-      <m-validation-msg
-        [errors]="registerForm.controls['password'].errors"
-      ></m-validation-msg>
-    </mat-error>
-  </mat-form-field>
+    <mat-form-field>
+      <input
+        matInput
+        id="passwordInput"
+        formControlName="password"
+        placeholder="password"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="registerForm.controls['password'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
 
-  <br />
-  <br />
+    <br />
+    <br />
 
-  <button
-    type="submit"
-    color="primary"
-    mat-raised-button
-    [disabled]="!registerForm.valid"
-    >Register
-  </button>
-</form>
+    <button
+      type="submit"
+      color="primary"
+      mat-raised-button
+      [disabled]="!registerForm.valid"
+      >Register
+    </button>
+  </form>
+</div>

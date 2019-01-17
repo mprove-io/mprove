@@ -1,54 +1,55 @@
-<h2>sign in</h2>
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h3>Sign In</h3>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+    <br />
 
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
-  <br />
+    <mat-form-field>
+      <input
+        matInput
+        id="emailInput"
+        formControlName="email"
+        placeholder="email"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="loginForm.controls['email'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field>
-    <input
-      matInput
-      id="emailInput"
-      formControlName="email"
-      placeholder="email"
-    />
-    <mat-error>
-      <m-validation-msg
-        [errors]="loginForm.controls['email'].errors"
-      ></m-validation-msg>
-    </mat-error>
-  </mat-form-field>
+    <br />
 
-  <br />
+    <mat-form-field>
+      <input
+        matInput
+        id="passwordInput"
+        formControlName="password"
+        placeholder="password"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="loginForm.controls['password'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field>
-    <input
-      matInput
-      id="passwordInput"
-      formControlName="password"
-      placeholder="password"
-    />
-    <mat-error>
-      <m-validation-msg
-        [errors]="loginForm.controls['password'].errors"
-      ></m-validation-msg>
-    </mat-error>
-  </mat-form-field>
+    <br />
+    <br />
 
-  <br />
-  <br />
+    <button
+      type="submit"
+      color="primary"
+      mat-raised-button
+      [disabled]="!loginForm.valid"
+      >Sign In
+    </button>
 
-  <button
-    type="submit"
-    color="primary"
-    mat-raised-button
-    [disabled]="!loginForm.valid"
-    >Sign In
-  </button>
-
-  <button
-    type="button"
-    class="forgot-password-button"
-    mat-raised-button
-    (click)="openResetPasswordDialog()"
-    >Forgot Password?
-  </button>
-</form>
+    <button
+      type="button"
+      class="forgot-password-button"
+      mat-raised-button
+      (click)="openResetPasswordDialog()"
+      >Forgot Password?
+    </button>
+  </form>
+</div>

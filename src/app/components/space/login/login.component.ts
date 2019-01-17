@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     private watchAuthenticationService: services.WatchAuthenticationService,
     private myDialogService: services.MyDialogService
   ) {
-    this.pageTitle.setTitle('Login | Mprove');
+    this.pageTitle.setTitle('Sign In | Mprove');
   }
 
   ngOnInit(): void {

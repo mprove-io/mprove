@@ -8,6 +8,7 @@ import * as actions from 'app/store/actions/_index';
 import * as api from 'app/api/_index';
 import * as interfaces from 'app/interfaces/_index';
 import * as selectors from 'app/store/selectors/_index';
+import * as configs from 'app/configs/_index';
 
 @Component({
   moduleId: module.id,
@@ -56,7 +57,8 @@ export class InviteMemberDialogComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       new actions.CreateMemberAction({
         project_id: this.selectedProject.project_id,
-        member_id: fv['email']
+        member_id: fv['email'],
+        url: configs.pathConfig.devEmailLinkBaseUrl
       })
     );
   }
