@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import * as api from 'app/api/_index';
 import * as actionTypes from 'app/store/action-types';
+import * as actions from 'app/store/actions/_index';
+import * as services from 'app/services/_index';
+import * as interfaces from 'app/interfaces/_index';
 
 @Injectable()
 export class FailEffect {
-  @Effect() fail$: Observable<Action> = this.actions$.pipe(
+  @Effect({ dispatch: false }) fail$: Observable<Action> = this.actions$.pipe(
     ofType(
       actionTypes.BACKEND_FAIL,
 
@@ -67,20 +70,38 @@ export class FailEffect {
           .includes('Request not sent because not authenticated')
     ),
     tap((action: any) => {
+      let e = action.payload.error;
+
       if (
-        action.payload.error &&
-        action.payload.error.data &&
-        action.payload.error.data.response &&
-        action.payload.error.data.response.body &&
-        action.payload.error.data.response.body.info &&
-        action.payload.error.data.response.body.info.status ===
+        e &&
+        e.data &&
+        e.data.response &&
+        e.data.response.body &&
+        e.data.response.body.info &&
+        [api.ServerResponseStatusEnum.AUTHORIZATION_ERROR].indexOf(
+          e.data.response.body.info.status
+        ) > -1
+      ) {
+        this.myDialogService.showInfoDialog(e.data.response.body.info.status);
+        this.store.dispatch(new actions.LogoutUserAction({ empty: true }));
+
+        return;
+      }
+
+      if (
+        e &&
+        e.data &&
+        e.data.response &&
+        e.data.response.body &&
+        e.data.response.body.info &&
+        e.data.response.body.info.status ===
           api.ServerResponseStatusEnum.MaintenanceMode
       ) {
         let url = this.router.routerState.snapshot.url;
 
         window.location.href = url;
       } else {
-        let err = action.payload.error;
+        let err = e;
 
         if (!err.data) {
           err.name = `[AppEffects] ${err.message}`;
@@ -105,5 +126,10 @@ export class FailEffect {
     })
   );
 
-  constructor(private actions$: Actions, private router: Router) {}
+  constructor(
+    private actions$: Actions,
+    private router: Router,
+    private myDialogService: services.MyDialogService,
+    private store: Store<interfaces.AppState>
+  ) {}
 }
