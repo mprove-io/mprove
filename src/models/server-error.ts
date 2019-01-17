@@ -17,7 +17,9 @@ export class ServerError extends Error {
   ) {
     super();
 
-    this.data = data ? data : { name: enums.otherErrorsEnum.INTERNAL };
+    this.data = data
+      ? data
+      : { name: enums.otherErrorsEnum.INTERNAL_SERVER_ERROR };
 
     this.name = this.data.name.toString();
 

@@ -12,12 +12,12 @@ export async function errorToResponse(err: any, req: any, res: any, next: any) {
         type: api.CommunicationTypeEnum.RESPONSE,
         reply_to: req.body.info.request_id,
         status:
-          err.name === enums.middlewareErrorsEnum.MIDDLEWARE_CHECK_JWT &&
-          err.originalError.name === 'UnauthorizedError'
-            ? api.ServerResponseStatusEnum.AuthorizationError
+          err.name === 'UnauthorizedError' ||
+          err.name === enums.middlewareErrorsEnum.MIDDLEWARE_CHECK_JWT
+            ? api.ServerResponseStatusEnum.AUTHORIZATION_ERROR
             : err instanceof ServerError
             ? mapErrors(err.name)
-            : api.ServerResponseStatusEnum.InternalServerError,
+            : api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR,
         error: {
           message: undefined
         }
@@ -31,8 +31,8 @@ export async function errorToResponse(err: any, req: any, res: any, next: any) {
 
 function mapErrors(name: string) {
   switch (name) {
-    case enums.otherErrorsEnum.INTERNAL:
-      return api.ServerResponseStatusEnum.InternalServerError;
+    case enums.otherErrorsEnum.INTERNAL_SERVER_ERROR:
+      return api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR;
 
     case enums.otherErrorsEnum.REGISTER_ERROR_USER_ALREADY_EXISTS:
       return api.ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS;
@@ -63,10 +63,11 @@ function mapErrors(name: string) {
 
     case enums.otherErrorsEnum.API:
       return api.ServerResponseStatusEnum.ApiError;
+
     case enums.otherErrorsEnum.AUTHORIZATION_EMAIL:
       return api.ServerResponseStatusEnum.AuthorizationEmailError;
 
     default:
-      return api.ServerResponseStatusEnum.InternalServerError;
+      return api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR;
   }
 }

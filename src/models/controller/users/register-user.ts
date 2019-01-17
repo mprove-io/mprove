@@ -158,6 +158,7 @@ export async function registerUser(req: Request, res: Response) {
             errors: repoErrors
           },
           server_ts: newServerTs,
+          skip_chunk: true,
           source_init_id: undefined
         })
         .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_INSERT));

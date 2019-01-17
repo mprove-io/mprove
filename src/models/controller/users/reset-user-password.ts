@@ -48,6 +48,7 @@ export async function resetUserPassword(req: Request, res: Response) {
             users: [user]
           },
           server_ts: newServerTs,
+          skip_chunk: true,
           source_init_id: undefined
         })
         .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));

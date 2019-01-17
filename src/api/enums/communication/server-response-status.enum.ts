@@ -1,4 +1,6 @@
 export enum ServerResponseStatusEnum {
+  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+  AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
   REGISTER_ERROR_USER_ALREADY_EXISTS = 'REGISTER_ERROR_USER_ALREADY_EXISTS',
   GET_STATE_ERROR_USER_DOES_NOT_EXIST = 'GET_STATE_ERROR_USER_DOES_NOT_EXIST',
   LOGIN_ERROR_WRONG_PASSWORD = 'LOGIN_ERROR_WRONG_PASSWORD',
@@ -12,9 +14,7 @@ export enum ServerResponseStatusEnum {
   GitError = 'git_error',
   GithubError = 'github_error',
   ApiError = 'api_error',
-  AuthorizationError = 'authorization_error',
   AuthorizationEmailError = 'authorization_email_error',
-  InternalServerError = 'internal_server_error',
   Ok = 'ok',
   MaintenanceMode = 'maintenance_mode',
   BlockmlWrongRequestParams = 'blockml_wrong_request_params',
