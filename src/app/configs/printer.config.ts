@@ -19,7 +19,7 @@ export const printerConfig = {
 
   [enums.busEnum[enums.busEnum.AUTH_SERVICE]]: true,
   [enums.busEnum[enums.busEnum.MY_HTTP_SERVICE]]: true,
-  [enums.busEnum[enums.busEnum.WATCH_AUTHENTICATION_SERVICE]]: true,
+  [enums.busEnum[enums.busEnum.WATCH_AUTHENTICATION_SERVICE]]: false,
   [enums.busEnum[enums.busEnum.WATCH_WEBSOCKET_SERVICE]]: true,
 
   [enums.busEnum[enums.busEnum.APP_EFFECTS]]: true,

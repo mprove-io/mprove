@@ -2,21 +2,15 @@ import * as interfaces from 'app/interfaces/_index';
 import * as enums from 'app/enums/_index';
 
 export const environment: interfaces.Environment = {
-  appName: 'Mprove',
-  envName: enums.EnvNameEnum.TEST,
-
+  dev: false,
   local: false,
-  production: false,
   test: true,
+  production: false,
 
-  canUseRaven: false,
   canClickOkOnErrorDialog: false,
   canPrintToConsole: false,
   canUseStoreLogger: false,
   canUseStoreFreeze: false,
+  canUseRaven: false,
   canUseSegmentMetaReducer: false
-
-  // dynamicAssetsBaseUrl: 'https://test.mprove.io',
-  // httpUrl: 'https://test.mprove.io/api/v1',
-  // websocketUrl: 'wss://test.mprove.io/api/v1/webchat/',
 };

@@ -1,12 +1,10 @@
 import * as enums from 'app/enums/_index';
 
 export interface Environment {
-  appName: string;
-  envName: enums.EnvNameEnum;
-
+  dev: boolean;
   local: boolean;
-  production: boolean;
   test: boolean;
+  production: boolean;
 
   canUseRaven: boolean;
   canClickOkOnErrorDialog: boolean;
