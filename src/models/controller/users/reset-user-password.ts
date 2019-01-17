@@ -64,7 +64,7 @@ export async function resetUserPassword(req: Request, res: Response) {
 
   await helper.sendEmail({
     to: userId,
-    subject: 'Reset your Mprove password',
+    subject: '[Mprove] Reset your password',
     text: `You requested password change. Click the link to set new password: ${link}`
   });
 

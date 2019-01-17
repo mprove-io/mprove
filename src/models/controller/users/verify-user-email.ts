@@ -39,7 +39,7 @@ export async function verifyUserEmail(req: Request, res: Response) {
 
   await helper.sendEmail({
     to: userId,
-    subject: 'Verify your Mprove account',
+    subject: '[Mprove] Verify your email',
     text: `Click the link to complete email verification: ${link}`
   });
 

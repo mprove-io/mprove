@@ -22,6 +22,18 @@ export async function createMember(req: Request, res: Response) {
 
   let payload: api.CreateMemberRequestBodyPayload = validator.getPayload(req);
 
+  let userId = req.user.email;
+
+  let storeUsers = store.getUsersRepo();
+
+  let user = await storeUsers
+    .findOne(userId)
+    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
+
+  if (!user) {
+    throw new ServerError({ name: enums.otherErrorsEnum.USER_NOT_FOUND });
+  }
+
   let projectId = payload.project_id;
   let memberId = payload.member_id;
 
@@ -40,8 +52,6 @@ export async function createMember(req: Request, res: Response) {
   if (projectMember && projectMember.deleted === enums.bEnum.FALSE) {
     throw new ServerError({ name: enums.otherErrorsEnum.MEMBER_ALREADY_EXIST });
   }
-
-  let storeUsers = store.getUsersRepo();
 
   let invitedUser = await storeUsers
     .findOne(memberId)
@@ -313,6 +323,18 @@ export async function createMember(req: Request, res: Response) {
   let member = <entities.MemberEntity>(
     (newProjectMember ? newProjectMember : projectMember)
   );
+
+  let url = process.env.BACKEND_EMAIL_APP_HOST_URL // TODO: document
+    ? process.env.BACKEND_EMAIL_APP_HOST_URL
+    : payload.url;
+
+  let link = `${url}/project/${projectId}/team`;
+
+  await helper.sendEmail({
+    to: memberId,
+    subject: `[Mprove] ${user.alias} added you to ${projectId} project team`,
+    text: `Project url: ${link}`
+  });
 
   let responsePayload: api.CreateMemberResponse200BodyPayload = {
     member: wrapper.wrapToApiMember(member)
