@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
@@ -18,6 +18,7 @@ export class ValidationService {
 
   static getValidatorErrorMessage(validatorName: string, validatorValue?: any) {
     let config = new Map([
+      ['noPasswordMatch', 'Passwords do not match'],
       ['required', 'Required'],
       ['minlength', `Minimum length ${validatorValue.requiredLength}`],
       ['maxlength', `Maximum length ${validatorValue.requiredLength}`],
@@ -39,6 +40,16 @@ export class ValidationService {
     ]);
 
     return config.get(validatorName);
+  }
+
+  static passwordMatchValidator(control: AbstractControl) {
+    const password: string = control.get('password').value; // get password from our password form control
+    const confirmPassword: string = control.get('confirmPassword').value; // get password from our confirmPassword form control
+    // compare is the password math
+    if (password !== confirmPassword) {
+      // if they don't match, set an error in our confirmPassword form control
+      control.get('confirmPassword').setErrors({ noPasswordMatch: true });
+    }
   }
 
   static dayOfWeekIndexValuesValidator(control: FormControl) {

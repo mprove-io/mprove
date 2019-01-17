@@ -40,7 +40,11 @@ export class RegisterComponent implements OnInit {
       ],
       password: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(255)])
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(255)
+        ])
       ]
     });
   }

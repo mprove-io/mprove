@@ -40,7 +40,14 @@ export class LoginComponent implements OnInit {
           Validators.maxLength(255)
         ])
       ],
-      password: [null, Validators.compose([Validators.maxLength(255)])]
+      password: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(255)
+        ])
+      ]
     });
   }
 

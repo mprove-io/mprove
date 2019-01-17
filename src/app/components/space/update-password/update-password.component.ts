@@ -36,12 +36,22 @@ export class UpdatePasswordComponent implements OnInit {
   }
 
   buildForm(): void {
-    this.updatePasswordForm = this.fb.group({
-      password: [
-        null,
-        Validators.compose([Validators.required, Validators.maxLength(255)])
-      ]
-    });
+    this.updatePasswordForm = this.fb.group(
+      {
+        password: [
+          null,
+          Validators.compose([
+            Validators.required,
+            Validators.minLength(6),
+            Validators.maxLength(255)
+          ])
+        ],
+        confirmPassword: [null, Validators.compose([Validators.required])]
+      },
+      {
+        validator: services.ValidationService.passwordMatchValidator
+      }
+    );
   }
 
   onSubmit(fv: any) {
