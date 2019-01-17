@@ -9,7 +9,7 @@ export function generateJwt(userId: string) {
       email: userId,
       exp: parseInt((expiry.getTime() / 1000).toString(), 10)
     },
-    'MY_SECRET' // TODO: secret
+    process.env.BACKEND_JWT_SECRET
   );
 
   return token;

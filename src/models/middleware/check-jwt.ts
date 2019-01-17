@@ -1,6 +1,6 @@
 import * as jwt from 'express-jwt';
 
 export const checkJwt = jwt({
-  secret: 'MY_SECRET',
+  secret: process.env.BACKEND_JWT_SECRET,
   requestProperty: 'user'
 });
