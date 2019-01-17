@@ -6,6 +6,10 @@ import { enums } from '../../barrels/enums';
 import { generator } from '../../barrels/generator';
 import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
+import { proc } from '../../barrels/proc';
+import * as crypto from 'crypto';
+import { forEach } from 'p-iteration';
+import { UserEntity } from '../store/entities/_index';
 
 export async function addUsers() {
   let storeUsers = store.getUsersRepo();
@@ -20,25 +24,27 @@ export async function addUsers() {
     return;
   }
 
-  let admins = [
-    {
-      user_id: config.ADMIN_1_USER_ID,
-      alias: config.ADMIN_1_ALIAS
-    },
-    {
-      user_id: config.ADMIN_2_USER_ID,
-      alias: config.ADMIN_2_ALIAS
-    }
-  ];
+  let users: UserEntity[] = [];
 
-  let users = admins.map(demoAdmin =>
-    generator.makeUser({
-      user_id: demoAdmin.user_id,
+  await forEach(config.admins, async admin => {
+    let salt = crypto.randomBytes(16).toString('hex');
+    let hash = crypto
+      .pbkdf2Sync(admin.first_password, salt, 1000, 64, 'sha512')
+      .toString('hex');
+
+    let alias = await proc.findAlias(admin.user_id);
+
+    let user = generator.makeUser({
+      user_id: admin.user_id,
       email_verified: enums.bEnum.TRUE,
-      alias: demoAdmin.alias,
+      salt: salt,
+      hash: hash,
+      alias: alias,
       status: api.UserStatusEnum.Pending
-    })
-  );
+    });
+
+    users.push(user);
+  });
 
   // update server_ts
 

@@ -14,8 +14,9 @@ export const DISK_BIGQUERY_CREDENTIALS_PATH =
 export const GITHUB_TOKEN = 'a97933f0beee74169e58bd598a754e56875d225d';
 export const GITHUB_ORG = 'mprove-projects';
 
-export const ADMIN_1_USER_ID = 'akalitenya@mprove.io';
-export const ADMIN_1_ALIAS = 'akalitenya';
-
-export const ADMIN_2_USER_ID = 'bhundr@gmail.com';
-export const ADMIN_2_ALIAS = 'bhundr';
+export const admins = [
+  {
+    user_id: 'akalitenya@mprove.io',
+    first_password: '123123'
+  }
+];
