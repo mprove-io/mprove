@@ -47,3 +47,6 @@
     </button>
   </div>
 </div>
+
+<div *ngIf="(userTimezone$ | async)"></div>
+<div *ngIf="(userServerTs$ | async)"></div>

@@ -50,3 +50,7 @@
     </button>
   </div>
 </div>
+
+<div *ngIf="(userFirstName$ | async)"></div>
+<div *ngIf="(userLastName$ | async)"></div>
+<div *ngIf="(userServerTs$ | async)"></div>
