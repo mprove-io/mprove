@@ -56,3 +56,7 @@
     </button>
   </div>
 </div>
+
+<div *ngIf="(projectTimezone$ | async)"></div>
+<div *ngIf="(selectedProjectServerTs$ | async)"></div>
+<div *ngIf="(selectedProjectId$ | async)"></div>

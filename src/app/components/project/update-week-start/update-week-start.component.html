@@ -1,10 +1,10 @@
 <div fxLayout="row">
   <div fxFlex="100">
-    <form [formGroup]="updateWeekStartForm">
+    <form [formGroup]="updateProjectWeekStartForm">
       <mat-form-field>
         <mat-select
           placeholder="Day of the week"
-          formControlName="weekStart"
+          formControlName="projectWeekStart"
           class="settings__user-input"
           name="projectSettingsWeekStart"
         >
@@ -22,26 +22,33 @@
     fxFlex="60"
     fxFlexAlign="center"
     class="settings-button-wrapper"
-    *ngIf="updateWeekStartForm.dirty"
+    *ngIf="updateProjectWeekStartForm.dirty"
   >
     <button
       mat-button
       type="submit"
       [disabled]="
-        !(selectedProjectUserIsAdmin$ | async) || !updateWeekStartForm.valid
+        !(selectedProjectUserIsAdmin$ | async) ||
+        !updateProjectWeekStartForm.valid
       "
       class="mat-flat-fab"
       name="projectSettingsApplyChangeWeekStart"
-      (click)="onSubmit(updateWeekStartForm, updateWeekStartForm.value)"
+      (click)="
+        onSubmit(updateProjectWeekStartForm, updateProjectWeekStartForm.value)
+      "
     >
       <mat-icon class="settings__button-success">done</mat-icon>
     </button>
     <button
       mat-button
       class="mat-flat-fab"
-      (click)="onReset(updateWeekStartForm)"
+      (click)="onReset(updateProjectWeekStartForm)"
     >
       <mat-icon class="settings__button-warn">clear</mat-icon>
     </button>
   </div>
 </div>
+
+<div *ngIf="(projectWeekStart$ | async)"></div>
+<div *ngIf="(selectedProjectServerTs$ | async)"></div>
+<div *ngIf="(selectedProjectId$ | async)"></div>

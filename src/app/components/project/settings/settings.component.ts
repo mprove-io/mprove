@@ -17,15 +17,14 @@ export class SettingsComponent implements OnDestroy {
     selectors.getSelectedProjectUserIsAdmin
   );
 
-  selectedProject$ = this.store
-    .select(selectors.getSelectedProject)
-    .pipe(filter(v => !!v));
   selectedProjectId$ = this.store
     .select(selectors.getSelectedProjectId)
     .pipe(filter(v => !!v));
+
   selectedProjectBqProject$ = this.store
     .select(selectors.getSelectedProjectBqProject)
     .pipe(filter(v => !!v));
+
   selectedProjectClientEmail$ = this.store
     .select(selectors.getSelectedProjectClientEmail)
     .pipe(filter(v => !!v));
