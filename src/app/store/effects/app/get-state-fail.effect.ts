@@ -12,26 +12,28 @@ import * as services from 'app/services/_index';
 export class GetStateFailEffect {
   @Effect() getStateFail$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.GET_STATE_FAIL),
-    mergeMap((action: actions.GetStateFailAction) => {
-      let e = action.payload.error;
+    mergeMap(
+      (action: actions.GetStateFailAction): Observable<Action> => {
+        let e = action.payload.error;
 
-      if (
-        e &&
-        e.data &&
-        e.data.response &&
-        e.data.response.body &&
-        e.data.response.body.info &&
-        [
-          api.ServerResponseStatusEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST
-        ].indexOf(e.data.response.body.info.status) > -1
-      ) {
-        this.myDialogService.showInfoDialog(e.data.response.body.info.status);
+        if (
+          e &&
+          e.data &&
+          e.data.response &&
+          e.data.response.body &&
+          e.data.response.body.info &&
+          [
+            api.ServerResponseStatusEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST
+          ].indexOf(e.data.response.body.info.status) > -1
+        ) {
+          this.myDialogService.showInfoDialog(e.data.response.body.info.status);
 
-        return of({ type: 'EMPTY ACTION' });
-      } else {
-        return of(new actions.BackendFailAction({ error: e }));
+          return of(new actions.LogoutUserAction({ empty: true }));
+        } else {
+          return of(new actions.BackendFailAction({ error: e }));
+        }
       }
-    })
+    )
   );
 
   constructor(
