@@ -69,7 +69,7 @@ export function createExpress() {
     let initId = req.params.init_id;
     console.log('init_id', initId);
 
-    if (!!initId) {
+    if (!initId) {
       // Init_id is missing in url
       ws.close(4500);
     }
