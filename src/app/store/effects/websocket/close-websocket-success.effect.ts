@@ -24,61 +24,47 @@ export class CloseWebSocketSuccessEffect {
         action.payload
       );
 
-      let id: string;
+      let initId: string;
       this.store
         .select(selectors.getWebSocketInitId)
         .pipe(take(1))
-        .subscribe(initId2 => (id = initId2));
+        .subscribe(x => (initId = x));
 
       switch (action.payload.code) {
         case 4500: {
-          // Init_id is dead, get new by getState
-
-          throw new MyError({
-            name: `[WebSocketEffects] Websocket closed: ${
-              action.payload.code
-            } - init_id is dead`,
-            message: `-`
-          });
-
-          // break;
-        }
-
-        case 4501: {
-          // Init_id is missing in url
-
+          // * init_id is missing in url
           throw new MyError({
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
             } - init_id is missing in url`,
             message: `-`
           });
+          // break;
+        }
 
+        case 4501: {
+          // * Init_id not found, get new by getState
+          throw new MyError({
+            name: `[WebSocketEffects] Websocket closed: ${
+              action.payload.code
+            } - init_id not found`,
+            message: `-`
+          });
           // break;
         }
 
         case 4502: {
-          // New session was opened with same init_id on same ip
-
-          // OK, just closed
-
-          break;
-        }
-
-        case 4503: {
-          // Init_id already used on other ip
-
+          // * Init_id is dead, get new by getState
           throw new MyError({
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
-            } - init_id already used`,
+            } - init_id is dead`,
             message: `-`
           });
-
           // break;
         }
 
-        case 4504: {
+        case 4503: {
           // Unanswered ping limit exceeded
 
           throw new MyError({
@@ -87,44 +73,26 @@ export class CloseWebSocketSuccessEffect {
             } - Unanswered ping limit exceeded`,
             message: ``
           });
-
           // break;
         }
 
-        case 4505: {
-          // Init_id not found
-
-          throw new MyError({
-            name: `[WebSocketEffects] Websocket closed: ${
-              action.payload.code
-            } - init_id not found`,
-            message: `-`
-          });
-
-          // break;
-        }
-
-        case 4510: {
+        case 4504: {
           // After Logout
-
           // OK, just closed
-
           break;
         }
 
-        case 1006: {
-          // maintenance 1005 => 1006, 1006, 1006
-
-          throw new MyError({
-            name: `[WebSocketEffects] Websocket closed: ${action.payload.code}`,
-            message: `-`
-          });
-
-          // break;
-        }
+        // case 1006: {
+        //   // maintenance 1005 => 1006, 1006, 1006
+        //   throw new MyError({
+        //     name: `[WebSocketEffects] Websocket closed: ${action.payload.code}`,
+        //     message: `-`
+        //   });
+        //   // break;
+        // }
 
         default: {
-          if (id !== 'empty') {
+          if (initId !== 'empty') {
             setTimeout(
               () => this.store.dispatch(new actions.OpenWebSocketAction()),
               1000
