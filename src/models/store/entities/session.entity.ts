@@ -13,4 +13,7 @@ export class SessionEntity {
 
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   is_activated: enums.bEnum;
+
+  @Column({ type: constants.TS_TO_BIGINT_DATATYPE, nullable: true })
+  last_pong_ts: string;
 }

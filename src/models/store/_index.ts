@@ -1,4 +1,5 @@
 export * from './delete-old-struct';
+export * from './get-chunk-sessions-repo';
 export * from './get-chunks-repo';
 export * from './get-dashboards-repo';
 export * from './get-errors-repo';

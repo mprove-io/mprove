@@ -1,4 +1,5 @@
 export * from './chunk-content-parsed';
+export * from './chunk-sessions-map';
 export * from './item-catalog';
 export * from './item-files';
 export * from './item-process-dashboard';
@@ -9,4 +10,5 @@ export * from './item-status';
 export * from './item-struct-and-repo';
 export * from './item-struct';
 export * from './item-struct-copy';
+export * from './project-members-map';
 export * from './websocket-client';

@@ -33,9 +33,7 @@
       ],
       "preLaunchTask": "Run Build",
       "protocol": "inspector",
-      "env": {
-        "WORKERS": "0",
-      },
+      "envFile": "/Users/akalitenya/mprove-deploy/.env",
       "stopOnEntry": false
     },
   ]

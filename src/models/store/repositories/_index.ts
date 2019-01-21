@@ -1,3 +1,4 @@
+export * from './chunk-session.repository';
 export * from './chunk.repository';
 export * from './dashboard.repository';
 export * from './error.repository';

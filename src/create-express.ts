@@ -17,6 +17,7 @@ import { helper } from './barrels/helper';
 
 import { registerRoutes } from './register-routes';
 import { passportLocalStrategy } from './passport-local-strategy';
+import { config } from './barrels/config';
 
 export function createExpress() {
   passport.use(passportLocalStrategy);
@@ -68,6 +69,11 @@ export function createExpress() {
     let initId = req.params.init_id;
     console.log('init_id', initId);
 
+    if (!!initId) {
+      // Init_id is missing in url
+      ws.close(4500);
+    }
+
     let storeSessions = store.getSessionsRepo();
 
     let session = await storeSessions
@@ -79,11 +85,16 @@ export function createExpress() {
       );
 
     if (!session) {
-      ws.close(4505); // init_id not found
+      // init_id not found
+      ws.close(4501);
     } else if (session.is_activated === enums.bEnum.TRUE) {
-      ws.close(4503); // init_id already in use
+      if (Number(session.last_pong_ts) < Date.now() - config.LAST_PONG_CUTOFF) {
+        // init_id is dead
+        ws.close(4502);
+      }
     } else {
       session.is_activated = enums.bEnum.TRUE;
+      session.last_pong_ts = helper.makeTs();
 
       await storeSessions
         .save(session)

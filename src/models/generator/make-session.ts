@@ -9,6 +9,7 @@ export function makeSession(item: {
   return {
     session_id: item.session_id,
     user_id: item.user_id,
-    is_activated: item.is_activated
+    is_activated: item.is_activated,
+    last_pong_ts: undefined
   };
 }

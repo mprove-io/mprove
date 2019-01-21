@@ -1,3 +1,4 @@
+export * from './make-chunk-session';
 export * from './make-chunk';
 export * from './make-file';
 export * from './make-member';

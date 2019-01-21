@@ -1,3 +1,4 @@
+export * from './chunk-session.entity';
 export * from './chunk.entity';
 export * from './dashboard.entity';
 export * from './error.entity';

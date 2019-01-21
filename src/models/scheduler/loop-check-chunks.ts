@@ -1,11 +1,14 @@
 import * as expressWs from 'express-ws';
-import { MoreThan } from 'typeorm';
 import { entities } from '../../barrels/entities';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { proc } from '../../barrels/proc';
 import { store } from '../../barrels/store';
+import { handler } from '../../barrels/handler';
+import { config } from '../../barrels/config';
+import * as WebSocket from 'ws';
+import { In } from 'typeorm';
 
 let cron = require('cron');
 
@@ -23,18 +26,13 @@ export function loopCheckChunks(item: {
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 
-      // console.log(`${loopCheckChunks.name} start`);
-
-      try {
-        await checkChunks(item).catch(e =>
-          helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_CHUNKS)
-        );
-      } catch (e) {
-        console.log(e);
-        console.log('stackIndex2: ', e.stackArrayElementIndex2, '\n');
-      }
-
-      // console.log(`${loopCheckChunks.name} complete`);
+      await checkChunks(item).catch(e => {
+        try {
+          helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_CHUNKS);
+        } catch (err) {
+          handler.errorToLog(err);
+        }
+      });
 
       isCronJobRunning = false;
     }
@@ -47,27 +45,111 @@ async function checkChunks(item: {
   express_ws_instance: expressWs.Instance;
   ws_clients: interfaces.WebsocketClient[];
 }) {
+  let wsOpenClients = item.ws_clients.filter(
+    wsClient => wsClient.ws.readyState === WebSocket.OPEN
+  );
+
+  // get fresh chunks with age < some seconds in past
+
   let currentTs = helper.makeTs();
+  let tsInPast = Number(currentTs) - config.CHUNK_CUTOFF;
 
   let storeChunks = store.getChunksRepo();
 
-  let chunks = <entities.ChunkEntity[]>await storeChunks
-    .find({
-      server_ts: <any>MoreThan(Number(currentTs) - 10 * 1000) // 10 seconds in past
-    })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_CHUNKS_FIND));
+  let freshChunkParts = <entities.ChunkEntity[]>await storeChunks
+    .createQueryBuilder('chunk')
+    .select('chunk.chunk_id')
+    .where(`chunk.server_ts > (:ts)`, { ts: tsInPast })
+    .getMany()
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_CHUNKS_QUERY_BUILDER)
+    );
 
-  Promise.all(
+  let freshChunkIds = freshChunkParts.map(part => part.chunk_id);
+
+  if (freshChunkIds.length === 0) {
+    return;
+  }
+
+  // what fresh chunks were already processed for which sessions
+
+  let storeChunkSessions = store.getChunkSessionsRepo();
+
+  let processedChunkSessions = <entities.ChunkSessionEntity[]>(
+    await storeChunkSessions
+      .createQueryBuilder('chunk_session')
+      .where('chunk_session.chunk_id IN (:...chunkIds)', {
+        chunkIds: freshChunkIds
+      })
+      .getMany()
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.CHUNK_SESSION_QUERY_BUILDER)
+      )
+  );
+
+  let processedChunkSessionMap: interfaces.ChunkSessionsMap = {};
+
+  processedChunkSessions.forEach(x => {
+    if (processedChunkSessionMap[x.chunk_id]) {
+      processedChunkSessionMap[x.chunk_id].push(x.session_id);
+    } else {
+      processedChunkSessionMap[x.chunk_id] = [x.session_id];
+    }
+  });
+
+  // what fresh chunk must be processed for which session
+
+  let newChunkSessionsMap: interfaces.ChunkSessionsMap = {};
+
+  freshChunkIds.forEach(chunkId => {
+    wsOpenClients.forEach(wsClientOpen => {
+      if (
+        !processedChunkSessionMap[chunkId] ||
+        processedChunkSessionMap[chunkId].indexOf(wsClientOpen.session_id) < 0
+      ) {
+        if (newChunkSessionsMap[chunkId]) {
+          newChunkSessionsMap[chunkId].push(wsClientOpen.session_id);
+        } else {
+          newChunkSessionsMap[chunkId] = [wsClientOpen.session_id];
+        }
+      }
+    });
+  });
+
+  let newChunkIds = Object.keys(newChunkSessionsMap);
+
+  if (newChunkIds.length === 0) {
+    return;
+  }
+
+  let chunks = <entities.ChunkEntity[]>(
+    await storeChunks
+      .find({ chunk_id: In(newChunkIds) })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_CHUNKS_FIND))
+  );
+
+  await Promise.all(
     chunks.map(async chunk =>
       proc
         .splitChunk({
           express_ws_instance: item.express_ws_instance,
-          ws_clients: item.ws_clients,
+          ws_clients_open: wsOpenClients.filter(
+            wsClientOpen =>
+              newChunkSessionsMap[chunk.chunk_id].indexOf(
+                wsClientOpen.session_id
+              ) > -1
+          ),
           chunk: chunk
         })
-        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_SPLIT_CHUNK))
+        .catch(e => {
+          try {
+            helper.reThrow(e, enums.procErrorsEnum.PROC_SPLIT_CHUNK);
+          } catch (err) {
+            handler.errorToLog(err);
+          }
+        })
     )
-  ).catch(e => {
-    console.log(e);
+  ).catch(error => {
+    handler.errorToLog(error);
   });
 }
