@@ -20,6 +20,8 @@ export * from './multi/create-mconfig-and-query';
 export * from './multi/get-dashboard-mconfigs-queries';
 export * from './multi/set-live-queries';
 
+export * from './pong/pong';
+
 export * from './projects/check-project-id-unique';
 export * from './projects/create-project';
 export * from './projects/delete-project';

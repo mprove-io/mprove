@@ -93,6 +93,17 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
     )
   );
 
+  // PONG
+
+  app.post(
+    '/api/v1' + api.PATH_PONG,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.pong,
+      enums.controllerErrorsEnum.CONTROLLER_CONFIRM
+    )
+  );
+
   // FILES
 
   app.post(
