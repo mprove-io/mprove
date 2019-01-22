@@ -1,3 +1,3 @@
 export interface PongRequestBodyPayload {
-  reply_to: string;
+  init_id: string;
 }
