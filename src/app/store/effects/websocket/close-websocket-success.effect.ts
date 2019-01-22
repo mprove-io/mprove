@@ -24,6 +24,8 @@ export class CloseWebSocketSuccessEffect {
         action.payload
       );
 
+      this.watchWebsocketService.stop();
+
       let initId: string;
       this.store
         .select(selectors.getWebSocketInitId)
@@ -32,51 +34,36 @@ export class CloseWebSocketSuccessEffect {
 
       switch (action.payload.code) {
         case 4500: {
-          // * init_id is missing in url
           throw new MyError({
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
-            } - init_id is missing in url`,
+            } - Server: init_id is missing in url`,
             message: `-`
           });
           // break;
         }
 
         case 4501: {
-          // * Init_id not found, get new by getState
           throw new MyError({
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
-            } - init_id not found`,
+            } - Server: init_id not found`,
             message: `-`
           });
           // break;
         }
 
         case 4502: {
-          // * Init_id is dead, get new by getState
           throw new MyError({
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
-            } - init_id is dead`,
-            message: `-`
-          });
-          // break;
-        }
-
-        case 4503: {
-          // Unanswered ping limit exceeded
-
-          throw new MyError({
-            name: `[WebSocketEffects] Websocket closed: ${
-              action.payload.code
-            } - Unanswered ping limit exceeded`,
+            } - Server: Unanswered ping limit exceeded`,
             message: ``
           });
           // break;
         }
 
-        case 4504: {
+        case 4503: {
           // After Logout
           // OK, just closed
           break;
@@ -106,6 +93,7 @@ export class CloseWebSocketSuccessEffect {
   constructor(
     private printer: services.PrinterService,
     private actions$: Actions,
+    private watchWebsocketService: services.WatchWebsocketService,
     private store: Store<interfaces.AppState>
   ) {}
 }

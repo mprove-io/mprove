@@ -17,7 +17,6 @@ export class UserLogoutEffect {
       this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
 
       this.watchAuthenticationService.stop();
-      this.watchWebsocketService.stop();
 
       localStorage.removeItem('token');
       this.cookieService.deleteCookie('token'); // TODO: cookie token
@@ -44,7 +43,6 @@ export class UserLogoutEffect {
     private store: Store<interfaces.AppState>,
     private auth: services.AuthService,
     private watchAuthenticationService: services.WatchAuthenticationService,
-    private watchWebsocketService: services.WatchWebsocketService,
     private cookieService: services.CookieService
   ) {}
 }

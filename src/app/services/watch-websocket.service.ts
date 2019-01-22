@@ -59,11 +59,9 @@ export class WatchWebsocketService {
             `${diff}s`
           );
 
-          if (diff > 600) {
-            // TODO: #22 change 10 min to 30 sec and message to 'connection lost'
-
+          if (diff > configs.PING_DIFF_SECONDS) {
             throw new MyError({
-              name: `[DoCheckWebsocketService] Ping expired`,
+              name: `Connection Lost`,
               message: `-`
             });
           }
