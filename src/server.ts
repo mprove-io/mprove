@@ -109,5 +109,5 @@ async function run() {
 
   let itemCreateExpress = createExpress();
 
-  scheduler.runScheduler(itemCreateExpress);
+  scheduler.runScheduler({ ws_clients: itemCreateExpress.ws_clients });
 }

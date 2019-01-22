@@ -32,7 +32,7 @@ export async function updateUserPassword(req: Request, res: Response) {
     });
   }
 
-  if (Number(user.password_reset_expires_ts) < Date.now()) {
+  if (Number(user.password_reset_expires_ts) < Number(helper.makeTs())) {
     throw new ServerError({
       name: enums.otherErrorsEnum.UPDATE_PASSWORD_ERROR_TOKEN_EXPIRED
     });

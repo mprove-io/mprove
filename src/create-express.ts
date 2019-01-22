@@ -72,6 +72,7 @@ export function createExpress() {
     if (!initId) {
       // Init_id is missing in url
       ws.close(4500);
+      return;
     }
 
     let storeSessions = store.getSessionsRepo();
@@ -87,12 +88,10 @@ export function createExpress() {
     if (!session) {
       // init_id not found
       ws.close(4501);
-    } else if (session.is_activated === enums.bEnum.TRUE) {
-      if (Number(session.last_pong_ts) < Date.now() - config.LAST_PONG_CUTOFF) {
-        // init_id is dead
-        ws.close(4502);
-      }
-    } else {
+      return;
+    }
+
+    if (session.is_activated === enums.bEnum.FALSE) {
       session.is_activated = enums.bEnum.TRUE;
       session.last_pong_ts = helper.makeTs();
 
@@ -101,15 +100,15 @@ export function createExpress() {
         .catch(e =>
           helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_SAVE)
         );
-
-      let wsClient: interfaces.WebsocketClient = {
-        session_id: session.session_id,
-        user_id: session.user_id,
-        ws: ws
-      };
-
-      wsClients.push(wsClient);
     }
+
+    let wsClient: interfaces.WebsocketClient = {
+      session_id: session.session_id,
+      user_id: session.user_id,
+      ws: ws
+    };
+
+    wsClients.push(wsClient);
 
     // ws.on('message', (msg) => {
     //   console.log(msg);

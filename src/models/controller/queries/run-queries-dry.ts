@@ -44,7 +44,7 @@ export async function runQueriesDry(req: Request, res: Response) {
     throw new ServerError({ name: enums.otherErrorsEnum.PROJECT_NOT_FOUND });
   }
 
-  let newLastRunDryTs = Date.now(); // number (not to save in db)
+  let newLastRunDryTs = Number(helper.makeTs()); // number (not to save in db)
 
   let results = <interfaces.ItemRunQueryDry[]>await Promise.all(
     queries.map(

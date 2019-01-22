@@ -14,4 +14,5 @@ export * from './re-throw';
 export * from './refresh-server-ts';
 export * from './refresh-struct-server-ts';
 export * from './send-email';
+export * from './send-ws-async';
 export * from './undefined-to-null';

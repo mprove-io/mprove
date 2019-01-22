@@ -14,7 +14,6 @@ import { MemberEntity } from '../store/entities/_index';
 import { In } from 'typeorm';
 
 export async function splitChunk(item: {
-  express_ws_instance: expressWs.Instance;
   ws_clients_open: interfaces.WebsocketClient[];
   chunk: entities.ChunkEntity;
 }) {
@@ -50,24 +49,26 @@ export async function splitChunk(item: {
   //   )
   //   .getMany();
 
-  let storeMembers = store.getMembersRepo();
-
-  let memberIdProjectIdPairs = await storeMembers.find({
-    select: ['member_id', 'project_id'],
-    where: {
-      project_id: In(projectIds)
-    }
-  });
-
   let projectMembersMap: interfaces.ProjectMembersMap = {};
 
-  memberIdProjectIdPairs.forEach(x => {
-    if (projectMembersMap[x.project_id]) {
-      projectMembersMap[x.project_id].push(x.member_id);
-    } else {
-      projectMembersMap[x.project_id] = [x.member_id];
-    }
-  });
+  if (projectIds.length > 0) {
+    let storeMembers = store.getMembersRepo();
+
+    let memberIdProjectIdPairs = await storeMembers.find({
+      select: ['member_id', 'project_id'],
+      where: {
+        project_id: In(projectIds)
+      }
+    });
+
+    memberIdProjectIdPairs.forEach(x => {
+      if (projectMembersMap[x.project_id]) {
+        projectMembersMap[x.project_id].push(x.member_id);
+      } else {
+        projectMembersMap[x.project_id] = [x.member_id];
+      }
+    });
+  }
 
   await forEach(item.ws_clients_open, async wsClient => {
     let payload: api.UpdateStateRequestBodyPayload = {
@@ -342,20 +343,16 @@ async function createMessage(item: {
     .insert(message)
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MESSAGES_INSERT));
 
-  item.ws_client.ws.send(content, function ack(e: any) {
-    // If error is not defined, the send has been completed, otherwise the error
-    // object will indicate what failed.
-    if (e) {
+  helper
+    .sendWsAsync({
+      ws_client: item.ws_client,
+      content: content
+    })
+    .catch(e => {
       try {
-        helper.reThrow(
-          e,
-          enums.procErrorsEnum.PROC_SPLIT_CHUNK_CREATE_MESSAGE_SEND
-        );
+        helper.reThrow(e, enums.helperErrorsEnum.HELPER_SEND_WS_ASYNC);
       } catch (err) {
         handler.errorToLog(err);
       }
-    } else {
-      // mark as sent
-    }
-  });
+    });
 }

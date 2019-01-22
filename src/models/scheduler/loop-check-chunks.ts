@@ -13,7 +13,6 @@ import { In } from 'typeorm';
 let cron = require('cron');
 
 export function loopCheckChunks(item: {
-  express_ws_instance: expressWs.Instance;
   ws_clients: interfaces.WebsocketClient[];
 }) {
   let isCronJobRunning = false;
@@ -41,11 +40,8 @@ export function loopCheckChunks(item: {
   cronJob.start();
 }
 
-async function checkChunks(item: {
-  express_ws_instance: expressWs.Instance;
-  ws_clients: interfaces.WebsocketClient[];
-}) {
-  let wsOpenClients = item.ws_clients.filter(
+async function checkChunks(item: { ws_clients: interfaces.WebsocketClient[] }) {
+  let wsClientsOpen = item.ws_clients.filter(
     wsClient => wsClient.ws.readyState === WebSocket.OPEN
   );
 
@@ -102,15 +98,15 @@ async function checkChunks(item: {
   let newChunkSessionsMap: interfaces.ChunkSessionsMap = {};
 
   freshChunkIds.forEach(chunkId => {
-    wsOpenClients.forEach(wsClientOpen => {
+    wsClientsOpen.forEach(wsClient => {
       if (
         !processedChunkSessionMap[chunkId] ||
-        processedChunkSessionMap[chunkId].indexOf(wsClientOpen.session_id) < 0
+        processedChunkSessionMap[chunkId].indexOf(wsClient.session_id) < 0
       ) {
         if (newChunkSessionsMap[chunkId]) {
-          newChunkSessionsMap[chunkId].push(wsClientOpen.session_id);
+          newChunkSessionsMap[chunkId].push(wsClient.session_id);
         } else {
-          newChunkSessionsMap[chunkId] = [wsClientOpen.session_id];
+          newChunkSessionsMap[chunkId] = [wsClient.session_id];
         }
       }
     });
@@ -132,8 +128,7 @@ async function checkChunks(item: {
     chunks.map(async chunk =>
       proc
         .splitChunk({
-          express_ws_instance: item.express_ws_instance,
-          ws_clients_open: wsOpenClients.filter(
+          ws_clients_open: wsClientsOpen.filter(
             wsClientOpen =>
               newChunkSessionsMap[chunk.chunk_id].indexOf(
                 wsClientOpen.session_id

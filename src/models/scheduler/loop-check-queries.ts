@@ -5,6 +5,7 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { proc } from '../../barrels/proc';
 import { store } from '../../barrels/store';
+import { handler } from '../../barrels/handler';
 
 let cron = require('cron');
 
@@ -19,18 +20,13 @@ export function loopCheckQueries() {
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 
-      // console.log(`${loopCheckQueries.name} start`);
-
       try {
         await checkQueries().catch(e =>
           helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_QUERIES)
         );
-      } catch (e) {
-        console.log(e);
-        console.log('stackIndex2: ', e.stackArrayElementIndex2, '\n');
+      } catch (err) {
+        handler.errorToLog(err);
       }
-
-      // console.log(`${loopCheckQueries.name} complete`);
 
       isCronJobRunning = false;
     }
@@ -61,9 +57,13 @@ async function checkQueries() {
         .checkRunningQuery({
           query: query
         })
-        .catch(e =>
-          helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_RUNNING_QUERY)
-        )
+        .catch(e => {
+          try {
+            helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_RUNNING_QUERY);
+          } catch (err) {
+            handler.errorToLog(err);
+          }
+        })
     )
   ).catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL));
 
@@ -73,9 +73,13 @@ async function checkQueries() {
         .checkWaitingQuery({
           query: query
         })
-        .catch(e =>
-          helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_WAITING_QUERY)
-        )
+        .catch(e => {
+          try {
+            helper.reThrow(e, enums.procErrorsEnum.PROC_PROCESS_WAITING_QUERY);
+          } catch (err) {
+            handler.errorToLog(err);
+          }
+        })
     )
   ).catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL));
 }
