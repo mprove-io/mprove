@@ -67,7 +67,6 @@ export function createExpress() {
 
   app.ws('/api/v1/webchat/:init_id', async (ws, req) => {
     let initId = req.params.init_id;
-    console.log('init_id', initId);
 
     if (!initId) {
       // Init_id is missing in url
@@ -110,9 +109,7 @@ export function createExpress() {
 
     wsClients.push(wsClient);
 
-    // ws.on('message', (msg) => {
-    //   console.log(msg);
-    // });
+    // ws.on('message', (msg) => {});
   });
 
   app.use(handler.errorToResponse);

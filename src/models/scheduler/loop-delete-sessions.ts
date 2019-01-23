@@ -66,11 +66,14 @@ async function deleteSessions(item: {
     return;
   }
 
-  item.ws_clients.forEach(x => {
+  for (let i = item.ws_clients.length - 1; i >= 0; i--) {
+    let x = item.ws_clients[i];
+
     if (sessionIds.indexOf(x.session_id) > -1) {
       x.ws.close(4502);
+      item.ws_clients.splice(i, 1);
     }
-  });
+  }
 
   let storeMessages = store.getMessagesRepo();
 

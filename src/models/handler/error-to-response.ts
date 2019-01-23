@@ -1,10 +1,11 @@
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
+import { handler } from '../../barrels/handler';
 import { ServerError } from '../server-error';
 
 export async function errorToResponse(err: any, req: any, res: any, next: any) {
   if (err) {
-    console.log(err); // sentry
+    handler.errorToLog(err);
 
     res.json({
       info: {

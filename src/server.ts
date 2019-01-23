@@ -9,6 +9,7 @@ import { constants } from './barrels/constants';
 import { credentials } from './barrels/credentials';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
+import { handler } from './barrels/handler';
 import { scheduler } from './barrels/scheduler';
 import { start } from './barrels/start';
 
@@ -24,7 +25,7 @@ import { createExpress } from './create-express';
 // } from './configs/config';
 
 run().catch(e => {
-  console.log(e); // sentry
+  handler.errorToLog(e);
 });
 
 async function run() {

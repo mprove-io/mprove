@@ -20,6 +20,12 @@ export class MessageEntity {
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   is_confirmed: enums.bEnum;
 
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
+  is_sent: enums.bEnum;
+
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
-  server_ts: string;
+  last_send_attempt_ts: string;
+
+  @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
+  chunk_server_ts: string;
 }

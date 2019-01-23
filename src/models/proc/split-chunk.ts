@@ -291,7 +291,7 @@ export async function splitChunk(item: {
         payload: payload,
         ws_client: wsClient,
         chunk_id: chunk.chunk_id,
-        server_ts: chunk.server_ts,
+        chunk_server_ts: chunk.server_ts,
         action: api.ServerRequestToClientActionEnum.StateUpdate
       }).catch(e =>
         helper.reThrow(e, enums.procErrorsEnum.PROC_SPLIT_CHUNK_CREATE_MESSAGE)
@@ -317,7 +317,7 @@ async function createMessage(item: {
   payload: any;
   ws_client: interfaces.WebsocketClient;
   chunk_id: string;
-  server_ts: string;
+  chunk_server_ts: string;
   action: api.ServerRequestToClientActionEnum;
 }) {
   let messageId = helper.makeId();
@@ -329,24 +329,15 @@ async function createMessage(item: {
     action: item.action
   });
 
-  let message = generator.makeMessage({
-    message_id: messageId,
-    content: content,
-    session_id: item.ws_client.session_id,
-    chunk_id: item.chunk_id,
-    server_ts: item.server_ts
-  });
-
-  let storeMessages = store.getMessagesRepo();
-
-  await storeMessages
-    .insert(message)
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MESSAGES_INSERT));
+  let isSent = enums.bEnum.FALSE;
 
   helper
     .sendWsAsync({
       ws_client: item.ws_client,
       content: content
+    })
+    .then(() => {
+      isSent = enums.bEnum.TRUE;
     })
     .catch(e => {
       try {
@@ -354,5 +345,24 @@ async function createMessage(item: {
       } catch (err) {
         handler.errorToLog(err);
       }
+    })
+    .then(() => {
+      let message = generator.makeMessage({
+        message_id: messageId,
+        content: content,
+        session_id: item.ws_client.session_id,
+        chunk_id: item.chunk_id,
+        chunk_server_ts: item.chunk_server_ts,
+        last_send_attempt_ts: helper.makeTs(),
+        is_sent: isSent
+      });
+
+      let storeMessages = store.getMessagesRepo();
+
+      storeMessages
+        .insert(message)
+        .catch(err =>
+          helper.reThrow(err, enums.storeErrorsEnum.STORE_MESSAGES_INSERT)
+        );
     });
 }

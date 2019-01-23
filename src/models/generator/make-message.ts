@@ -6,14 +6,18 @@ export function makeMessage(item: {
   content: string;
   session_id: string;
   chunk_id: string;
-  server_ts: string;
+  chunk_server_ts: string;
+  last_send_attempt_ts: string;
+  is_sent: enums.bEnum;
 }): entities.MessageEntity {
   return {
     message_id: item.message_id,
     content: item.content,
     session_id: item.session_id,
     chunk_id: item.chunk_id,
-    is_confirmed: enums.bEnum.FALSE,
-    server_ts: item.server_ts
+    chunk_server_ts: item.chunk_server_ts,
+    last_send_attempt_ts: item.last_send_attempt_ts,
+    is_sent: item.is_sent,
+    is_confirmed: enums.bEnum.FALSE
   };
 }
