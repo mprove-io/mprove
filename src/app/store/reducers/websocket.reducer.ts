@@ -3,7 +3,7 @@ import * as interfaces from 'app/interfaces/_index';
 import * as types from 'app/types/_index';
 
 const initialState: interfaces.WebSocketState = {
-  init_id: 'empty',
+  init_id: null,
   is_open: false
 };
 

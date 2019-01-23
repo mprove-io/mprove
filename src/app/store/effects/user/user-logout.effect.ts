@@ -22,8 +22,8 @@ export class UserLogoutEffect {
       this.cookieService.deleteCookie('token'); // TODO: cookie token
 
       this.router.navigate(['login']);
-      this.store.dispatch(new actions.CloseWebSocketAction());
       this.store.dispatch(new actions.ResetStateAction());
+      this.store.dispatch(new actions.CloseWebSocketAction());
 
       if (this.auth.authenticated()) {
         return this.backendService.logoutUser({ empty: true }).pipe(

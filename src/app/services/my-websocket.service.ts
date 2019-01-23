@@ -8,6 +8,8 @@ import * as api from 'app/api/_index';
 import * as configs from 'app/configs/_index';
 import * as interfaces from 'app/interfaces/_index';
 import * as selectors from 'app/store/selectors/_index';
+import { MyError } from 'app/models/my-error';
+import { WatchWebsocketService } from './watch-websocket.service';
 
 @Injectable()
 export class MyWebSocketService {
@@ -15,7 +17,10 @@ export class MyWebSocketService {
 
   protected websocketSubscription: Subscription;
 
-  constructor(private store: Store<interfaces.AppState>) {}
+  constructor(
+    private store: Store<interfaces.AppState>,
+    private watchWebsocketService: WatchWebsocketService
+  ) {}
 
   close() {
     if (this.websocketSubscription) {
@@ -29,7 +34,13 @@ export class MyWebSocketService {
     this.store
       .select(selectors.getWebSocketInitId)
       .pipe(take(1))
-      .subscribe(x => (initId = x));
+      .subscribe(x => {
+        initId = x;
+      });
+
+    if (!initId) {
+      return;
+    }
 
     let fullPath = this.basePath + initId;
 
@@ -38,7 +49,36 @@ export class MyWebSocketService {
     };
 
     let closeObserver: NextObserver<CloseEvent> = {
-      next: p => this.store.dispatch(new actions.CloseWebSocketSuccessAction(p))
+      next: p => {
+        this.watchWebsocketService.stop();
+
+        let closeInitId: string;
+
+        this.store
+          .select(selectors.getWebSocketInitId)
+          .pipe(take(1))
+          .subscribe(x => {
+            closeInitId = x;
+          });
+
+        let wsIsOpen: boolean = false;
+
+        this.store
+          .select(selectors.getWebSocketIsOpen)
+          .pipe(take(1))
+          .subscribe(isOpen => {
+            wsIsOpen = isOpen;
+          });
+
+        if (wsIsOpen || !closeInitId) {
+          this.store.dispatch(new actions.CloseWebSocketSuccessAction(p));
+        } else {
+          throw new MyError({
+            name: `[MyWebSocketService] connect failed`,
+            message: '-'
+          });
+        }
+      }
     };
 
     let config: WebSocketSubjectConfig<any> = {
@@ -70,17 +110,17 @@ export class MyWebSocketService {
       },
 
       err => {
-        if (!err.data) {
-          err.name = `[WebsocketService] ${err.message}`;
-          err.message = `[WebsocketService] ${err.message}: -`;
+        // if (!err.data) {
+        //   err.name = `[WebsocketService] ${err.message}`;
+        //   err.message = `[WebsocketService] ${err.message}: -`;
 
-          err.data = {
-            name: err.name,
-            message: '-'
-          };
-        }
+        //   err.data = {
+        //     name: err.name,
+        //     message: '-'
+        //   };
+        // }
 
-        throw err;
+        console.log(err);
       }
     );
   }

@@ -135,14 +135,13 @@ export const APP_EFFECTS = [
   effects.UpdateUserPasswordFailEffect,
 
   // WebSocket
-  effects.CloseWebSocketSuccessEffect,
+  effects.UpdateWebSocketInitIdEffect,
+  effects.OpenWebSocketEffect,
+  effects.OpenWebSocketSuccessEffect,
   effects.CloseWebSocketEffect,
+  effects.CloseWebSocketSuccessEffect,
   effects.ConfirmEffect,
   effects.MessagesReceivedEffect,
-  effects.OpenWebSocketSuccessEffect,
-  effects.OpenWebSocketEffect,
   effects.PingReceivedEffect,
-  effects.PongEffect,
-  effects.RestartWebSocketEffect,
-  effects.UpdateWebSocketInitIdEffect
+  effects.PongEffect
 ];

@@ -456,8 +456,6 @@ export const SWITCH_ANALYTICS_SUBSCRIPTION_PLAN_FAIL = ngrxType(
 
 // WEBSOCKET
 
-export const RESTART_WEBSOCKET = ngrxType('[Websocket] Restart Websocket');
-
 export const OPEN_WEBSOCKET = ngrxType('[Websocket] Open Websocket');
 export const OPEN_WEBSOCKET_SUCCESS = ngrxType(
   '[Websocket] Open Websocket Success'

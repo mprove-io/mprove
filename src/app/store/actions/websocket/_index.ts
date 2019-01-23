@@ -10,6 +10,5 @@ export * from './pong-fail.action';
 export * from './pong-success.action';
 export * from './pong.action';
 export * from './reset-websocket-state.action';
-export * from './restart-websocket.action';
 export * from './state-received.action';
 export * from './update-websocket-init-id.action';

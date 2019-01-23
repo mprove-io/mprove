@@ -6,5 +6,4 @@ export * from './open-websocket-success.effect';
 export * from './open-websocket.effect';
 export * from './ping-received.effect';
 export * from './pong.effect';
-export * from './restart-websocket.effect';
 export * from './update-websocket-init-id.effect';

@@ -2,8 +2,7 @@ import { InjectionToken } from '@angular/core';
 import * as interfaces from 'app/interfaces/_index';
 
 const CONFIG: interfaces.AppConfig = {
-  tooltipDelay: 400,
-  forceWindowReload: false
+  tooltipDelay: 400
 };
 
 export const APP_CONFIG = new InjectionToken<interfaces.AppConfig>(

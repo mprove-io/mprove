@@ -24,14 +24,6 @@ export class CloseWebSocketSuccessEffect {
         action.payload
       );
 
-      this.watchWebsocketService.stop();
-
-      let initId: string;
-      this.store
-        .select(selectors.getWebSocketInitId)
-        .pipe(take(1))
-        .subscribe(x => (initId = x));
-
       switch (action.payload.code) {
         case 4500: {
           throw new MyError({
@@ -79,7 +71,16 @@ export class CloseWebSocketSuccessEffect {
         // }
 
         default: {
-          if (initId !== 'empty') {
+          let initId: string;
+
+          this.store
+            .select(selectors.getWebSocketInitId)
+            .pipe(take(1))
+            .subscribe(x => {
+              initId = x;
+            });
+
+          if (!!initId) {
             setTimeout(
               () => this.store.dispatch(new actions.OpenWebSocketAction()),
               1000
@@ -93,7 +94,6 @@ export class CloseWebSocketSuccessEffect {
   constructor(
     private printer: services.PrinterService,
     private actions$: Actions,
-    private watchWebsocketService: services.WatchWebsocketService,
     private store: Store<interfaces.AppState>
   ) {}
 }

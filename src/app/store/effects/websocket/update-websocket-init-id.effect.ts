@@ -12,7 +12,7 @@ export class UpdateWebSocketInitIdEffect {
     ofType(actionTypes.UPDATE_WEBSOCKET_INIT_ID),
     map(
       (action: actions.UpdateWebSocketInitIdAction) =>
-        new actions.RestartWebSocketAction()
+        new actions.OpenWebSocketAction()
     )
   );
 

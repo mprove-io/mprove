@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material';
 import * as Raven from 'raven-js';
 import { MyDialogService } from 'app/services/my-dialog.service';
 import { environment } from '@env/environment';
+import { NgZone } from '@angular/core';
 
 @Injectable()
 export class MyErrorHandler extends ErrorHandler {
@@ -10,7 +11,8 @@ export class MyErrorHandler extends ErrorHandler {
 
   constructor(
     private injector: Injector,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    readonly ngZone: NgZone
   ) {
     super();
   }
@@ -34,7 +36,9 @@ export class MyErrorHandler extends ErrorHandler {
     let openDialogs = this.dialog.openDialogs;
 
     if (openDialogs.length < 5) {
-      this.myDialogService.showErDialog({ error: err });
+      this.ngZone.run(() => {
+        this.myDialogService.showErDialog({ error: err });
+      });
     }
 
     super.handleError(err);
