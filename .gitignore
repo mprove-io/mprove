@@ -26,3 +26,4 @@ yarn-error.log
 /reports/*.json
 
 /cypress/screenshots
+/cypress/videos

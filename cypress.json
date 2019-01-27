@@ -1,4 +1,8 @@
 {
   "baseUrl": "http://localhost:4200",
-  "video": false
+  "video": false,
+  "watchForFileChanges": false,
+  "viewportWidth": 1280,
+  "viewportHeight": 720,  
+  "projectId": "y4yp8f"
 }
