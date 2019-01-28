@@ -1,21 +1,13 @@
 {
-  "compileOnSave": false,
+  "include": [
+    "../node_modules/cypress",
+    "../cypress/**/*.ts"
+  ],
   "compilerOptions": {
-    "outDir": "./cypress-dist",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "types": ["cypress", "node"],
     "lib": [
       "es2017",
       "dom"
     ]
   }
-  ,
-  "include": ["integration/*.ts", "support/*.ts", "../node_modules/cypress"]
 }

@@ -24,14 +24,16 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-// tslint:disable-next-line:no-namespace
-declare namespace Cypress {
-  interface Chainable<Subject> {
-    basicVisit(url: string): Cypress.Chainable<Window>;
+declare global {
+  // tslint:disable-next-line:no-namespace
+  namespace Cypress {
+    interface Chainable {
+      basicVisit: typeof basicVisit;
+    }
   }
 }
 
-function basicVisit(url: string) {
+export function basicVisit(url: string) {
   cy.visit(url, {
     auth: {
       username: Cypress.env('basic_login'),
