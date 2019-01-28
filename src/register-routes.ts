@@ -5,6 +5,15 @@ import { enums } from './barrels/enums';
 import { handler } from './barrels/handler';
 
 export function registerRoutes(app: expressWs.Application, middlewares: any) {
+  // CYPRESS
+
+  app.post(
+    '/api/v1' + api.PATH_CYPRESS_DELETE,
+    handler.catchAsyncErrors(
+      controller.cypressDelete,
+      enums.controllerErrorsEnum.CONTROLLER_CYPRESS_DELETE
+    )
+  );
   // USERS
 
   app.post(

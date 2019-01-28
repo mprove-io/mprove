@@ -1,4 +1,5 @@
 export const PATH_CONFIRM = '/confirm';
+export const PATH_CYPRESS_DELETE = '/cypress.cypress-delete';
 export const PATH_CREATE_FILE = '/files.createFile';
 export const PATH_DELETE_FILE = '/files.deleteFile';
 export const PATH_MOVE_FILE = '/files.moveFile';
