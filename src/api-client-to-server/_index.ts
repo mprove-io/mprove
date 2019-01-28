@@ -1,4 +1,7 @@
 export * from './confirm/_index';
+
+export * from './cypress/cypress-delete/_index';
+
 export * from './files/create-file/_index';
 export * from './files/delete-file/_index';
 export * from './files/move-file/_index';
