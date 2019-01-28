@@ -138,33 +138,31 @@ export async function processDevRepoChanges(item: {
           source_init_id: item.init_id
         })
         .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-      if (filesItem.deleted_files.length > 0) {
-        // use custom transaction to not check length
-
-        let deletedFilesIds = filesItem.deleted_files.map(
-          file => file.file_absolute_id
-        );
-
-        let storeFilesTrans = store.getFilesRepo(manager);
-
-        await storeFilesTrans
-          .delete(deletedFilesIds)
-          .catch(e =>
-            helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE)
-          );
-      }
-
-      await store
-        .deleteOldStruct(manager, {
-          repo_id: item.repo_id,
-          old_struct_id: oldStructId
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT)
-        );
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
+
+  if (filesItem.deleted_files.length > 0) {
+    // use custom transaction to not check length
+
+    let deletedFilesIds = filesItem.deleted_files.map(
+      file => file.file_absolute_id
+    );
+
+    let storeFiles = store.getFilesRepo();
+
+    await storeFiles
+      .delete(deletedFilesIds)
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE));
+  }
+
+  await store
+    .deleteOldStruct({
+      repo_id: item.repo_id,
+      old_struct_id: oldStructId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT)
+    );
 
   return {
     deleted_dev_files: filesItem.deleted_files,

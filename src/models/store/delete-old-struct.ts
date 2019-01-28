@@ -9,19 +9,16 @@ import { getModelsRepo } from './get-models-repo';
 import { getQueriesRepo } from './get-queries-repo';
 import { getReposRepo } from './get-repos-repo';
 
-export async function deleteOldStruct(
-  manager: EntityManager,
-  item: {
-    repo_id: string;
-    old_struct_id: string;
-  }
-) {
-  let storeErrorsTrans = getErrorsRepo(manager);
-  let storeDashboardsTrans = getDashboardsRepo(manager);
-  let storeMconfigsTrans = getMconfigsRepo(manager);
-  let storeModelsTrans = getModelsRepo(manager);
-  let storeReposTrans = getReposRepo(manager);
-  let storeQueriesTrans = getQueriesRepo(manager);
+export async function deleteOldStruct(item: {
+  repo_id: string;
+  old_struct_id: string;
+}) {
+  let storeErrorsTrans = getErrorsRepo();
+  let storeDashboardsTrans = getDashboardsRepo();
+  let storeMconfigsTrans = getMconfigsRepo();
+  let storeModelsTrans = getModelsRepo();
+  let storeReposTrans = getReposRepo();
+  let storeQueriesTrans = getQueriesRepo();
 
   await Promise.all([
     storeErrorsTrans

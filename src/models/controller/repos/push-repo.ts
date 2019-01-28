@@ -208,31 +208,29 @@ export async function pushRepo(req: Request, res: Response) {
           source_init_id: initId
         })
         .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-      if (itemFilesProd.deleted_files.length > 0) {
-        let deleteFileAbsoluteIds = itemFilesProd.deleted_files.map(
-          file => file.file_absolute_id
-        );
-
-        let storeFilesTrans = store.getFilesRepo(manager);
-
-        await storeFilesTrans
-          .delete(deleteFileAbsoluteIds)
-          .catch(e =>
-            helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE)
-          );
-      }
-
-      await store
-        .deleteOldStruct(manager, {
-          repo_id: repoId,
-          old_struct_id: oldStructId
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT)
-        );
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
+
+  if (itemFilesProd.deleted_files.length > 0) {
+    let deleteFileAbsoluteIds = itemFilesProd.deleted_files.map(
+      file => file.file_absolute_id
+    );
+
+    let storeFiles = store.getFilesRepo();
+
+    await storeFiles
+      .delete(deleteFileAbsoluteIds)
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE));
+  }
+
+  await store
+    .deleteOldStruct({
+      repo_id: repoId,
+      old_struct_id: oldStructId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT)
+    );
 
   // response
 

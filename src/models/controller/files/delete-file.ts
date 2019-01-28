@@ -164,25 +164,21 @@ export async function deleteFile(req: Request, res: Response) {
           source_init_id: initId
         })
         .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-
-      let storeFilesTrans = store.getFilesRepo(manager);
-
-      await storeFilesTrans
-        .delete(file.file_absolute_id)
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE)
-        );
-
-      await store
-        .deleteOldStruct(manager, {
-          repo_id: repoId,
-          old_struct_id: oldStructId
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT)
-        );
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
+
+  await storeFiles
+    .delete(file.file_absolute_id)
+    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE));
+
+  await store
+    .deleteOldStruct({
+      repo_id: repoId,
+      old_struct_id: oldStructId
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_DELETE_OLD_STRUCT)
+    );
 
   // response
 
