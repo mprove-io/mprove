@@ -13,22 +13,22 @@ export async function deleteOldStruct(item: {
   repo_id: string;
   old_struct_id: string;
 }) {
-  let storeErrorsTrans = getErrorsRepo();
-  let storeDashboardsTrans = getDashboardsRepo();
-  let storeMconfigsTrans = getMconfigsRepo();
-  let storeModelsTrans = getModelsRepo();
-  let storeReposTrans = getReposRepo();
-  let storeQueriesTrans = getQueriesRepo();
+  let storeErrors = getErrorsRepo();
+  let storeDashboards = getDashboardsRepo();
+  let storeMconfigs = getMconfigsRepo();
+  let storeModels = getModelsRepo();
+  let storeRepos = getReposRepo();
+  let storeQueries = getQueriesRepo();
 
   await Promise.all([
-    storeErrorsTrans
+    storeErrors
       .delete({
         struct_id: item.old_struct_id,
         repo_id: item.repo_id
       })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_DELETE)),
 
-    storeDashboardsTrans
+    storeDashboards
       .delete({
         struct_id: item.old_struct_id,
         repo_id: item.repo_id
@@ -37,7 +37,7 @@ export async function deleteOldStruct(item: {
         helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_DELETE)
       ),
 
-    storeMconfigsTrans
+    storeMconfigs
       .delete({
         struct_id: item.old_struct_id,
         repo_id: item.repo_id
@@ -46,7 +46,7 @@ export async function deleteOldStruct(item: {
         helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_DELETE)
       ),
 
-    storeModelsTrans
+    storeModels
       .delete({
         struct_id: item.old_struct_id,
         repo_id: item.repo_id
@@ -54,7 +54,7 @@ export async function deleteOldStruct(item: {
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_DELETE))
   ]).catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL));
 
-  let reposWithOldStructId = <entities.RepoEntity[]>await storeReposTrans
+  let reposWithOldStructId = <entities.RepoEntity[]>await storeRepos
     .find({
       struct_id: item.old_struct_id
     })
@@ -62,7 +62,7 @@ export async function deleteOldStruct(item: {
 
   if (reposWithOldStructId.length === 0) {
     await Promise.all([
-      storeQueriesTrans
+      storeQueries
         .delete({
           struct_id: item.old_struct_id
         })
