@@ -1,4 +1,4 @@
-import * as api from 'app/api/_index';
+import * as api from '../../api/_index';
 
 export const autoScaleChartTypes = [
   api.ChartTypeEnum.Line,
