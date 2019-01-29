@@ -13,8 +13,8 @@ import {
   Validators
 } from '@angular/forms';
 import { MatSelectChange } from '@angular/material';
-import * as api from 'app/api/_index';
-import { ValidationService } from 'app/services/validation.service';
+import * as api from '@app/api/_index';
+import { ValidationService } from '@app/services/validation.service';
 
 @Component({
   moduleId: module.id,

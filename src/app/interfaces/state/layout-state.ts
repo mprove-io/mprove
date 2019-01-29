@@ -1,5 +1,5 @@
-import * as enums from 'app/enums/_index';
-import { Dry } from 'app/interfaces/dry';
+import * as enums from '@app/enums/_index';
+import { Dry } from '@app/interfaces/dry';
 
 export interface LayoutState {
   project_id: string;

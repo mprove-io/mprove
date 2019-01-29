@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import * as api from 'app/api/_index';
-import { MyHttpService } from 'app/services/my-http.service';
+import * as api from '@app/api/_index';
+import { MyHttpService } from '@app/services/my-http.service';
 
 @Injectable()
 export class BackendService {

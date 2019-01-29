@@ -9,16 +9,16 @@ import { TdLoadingService } from '@covalent/core';
 import { Store } from '@ngrx/store';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
-import * as actions from 'app/store/actions/_index';
-import * as api from 'app/api/_index';
-import * as configs from 'app/configs/_index';
-import * as enums from 'app/enums/_index';
-import * as interfaces from 'app/interfaces/_index';
-import { MyError } from 'app/models/my-error';
-import * as selectors from 'app/store/selectors/_index';
+import * as actions from '@app/store/actions/_index';
+import * as api from '@app/api/_index';
+import * as configs from '@app/configs/_index';
+import * as enums from '@app/enums/_index';
+import * as interfaces from '@app/interfaces/_index';
+import { MyError } from '@app/models/my-error';
+import * as selectors from '@app/store/selectors/_index';
 import * as uuid from 'uuid';
-import { PrinterService } from 'app/services/printer.service';
-import { AuthService } from 'app/services/auth.service';
+import { PrinterService } from '@app/services/printer.service';
+import { AuthService } from '@app/services/auth.service';
 
 @Injectable()
 export class MyHttpService {

@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import * as Raven from 'raven-js';
-import { MyDialogService } from 'app/services/my-dialog.service';
+import { MyDialogService } from '@app/services/my-dialog.service';
 import { environment } from '@env/environment';
 import { NgZone } from '@angular/core';
 

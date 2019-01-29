@@ -1,9 +1,9 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectModeRepoFile } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
-import { getSelectedProjectModeRepoFileIsView } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-is-view';
-import { getSelectedProjectModeRepoStructModels } from 'app/store/selectors/get-selected-project-mode-repo-struct-models/get-selected-project-mode-repo-struct-models';
-import * as api from 'app/api/_index';
-import { MyRegex } from 'app/models/my-regex';
+import { getSelectedProjectModeRepoFile } from '@app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
+import { getSelectedProjectModeRepoFileIsView } from '@app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-is-view';
+import { getSelectedProjectModeRepoStructModels } from '@app/store/selectors/get-selected-project-mode-repo-struct-models/get-selected-project-mode-repo-struct-models';
+import * as api from '@app/api/_index';
+import { MyRegex } from '@app/models/my-regex';
 
 export const getSelectedProjectModeRepoFileViewJoins = createSelector(
   getSelectedProjectModeRepoFile,

@@ -6,7 +6,7 @@ import {
   Output
 } from '@angular/core';
 import { MatSelectChange } from '@angular/material';
-import * as api from 'app/api/_index';
+import * as api from '@app/api/_index';
 
 @Component({
   moduleId: module.id,

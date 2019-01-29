@@ -4,11 +4,11 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { from, Observable } from 'rxjs';
 import { mergeMap, take } from 'rxjs/operators';
-import * as actions from 'app/store/actions/_index';
-import * as actionTypes from 'app/store/action-types';
-import * as enums from 'app/enums/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as selectors from 'app/store/selectors/_index';
+import * as actions from '@app/store/actions/_index';
+import * as actionTypes from '@app/store/action-types';
+import * as enums from '@app/enums/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as selectors from '@app/store/selectors/_index';
 
 @Injectable()
 export class DeleteFolderSuccessEffect {

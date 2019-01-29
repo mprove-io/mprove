@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import { getLayoutProjectId } from 'app/store/selectors/get-layout/get-layout-project-id';
-import { getProjectsState } from 'app/store/selectors/get-state/get-projects-state';
-import * as api from 'app/api/_index';
+import { getLayoutProjectId } from '@app/store/selectors/get-layout/get-layout-project-id';
+import { getProjectsState } from '@app/store/selectors/get-state/get-projects-state';
+import * as api from '@app/api/_index';
 
 export const getSelectedProject = createSelector(
   getProjectsState,

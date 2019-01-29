@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import * as configs from 'app/configs/_index';
-import * as enums from 'app/enums/_index';
-import { IPrinter } from 'app/services/printer.service';
+import * as configs from '@app/configs/_index';
+import * as enums from '@app/enums/_index';
+import { IPrinter } from '@app/services/printer.service';
 import { environment } from '@env/environment';
 
 // Declare the console as an ambient value so that TypeScript doesn't complain.

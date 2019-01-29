@@ -3,10 +3,10 @@ import { FormControl, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
-import * as enums from 'app/enums/_index';
-import { MyRegex } from 'app/models/my-regex';
-import { BackendService } from 'app/services/backend.service';
-import { PrinterService } from 'app/services/printer.service';
+import * as enums from '@app/enums/_index';
+import { MyRegex } from '@app/models/my-regex';
+import { BackendService } from '@app/services/backend.service';
+import { PrinterService } from '@app/services/printer.service';
 
 @Injectable()
 export class ValidationService {

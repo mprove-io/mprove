@@ -7,9 +7,9 @@ import 'brace/theme/solarized_dark';
 import 'brace/theme/sqlserver';
 import { AceEditorComponent } from 'ng2-ace-editor';
 import { filter, tap } from 'rxjs/operators';
-import * as api from 'app/api/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as selectors from 'app/store/selectors/_index';
+import * as api from '@app/api/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as selectors from '@app/store/selectors/_index';
 
 @Component({
   moduleId: module.id,

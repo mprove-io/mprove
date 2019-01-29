@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectMembers } from 'app/store/selectors/get-selected-project-members/get-selected-project-members';
-import { getUserId } from 'app/store/selectors/get-user/get-user-id';
-import * as api from 'app/api/_index';
+import { getSelectedProjectMembers } from '@app/store/selectors/get-selected-project-members/get-selected-project-members';
+import { getUserId } from '@app/store/selectors/get-user/get-user-id';
+import * as api from '@app/api/_index';
 
 export const getSelectedProjectUserSqlTheme = createSelector(
   getSelectedProjectMembers,

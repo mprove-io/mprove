@@ -1,9 +1,9 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedMconfigFilters } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig-filters';
-import { getSelectedMconfigSelect } from 'app/store/selectors/get-selected-mconfig/get-selected-mconfig-select';
-import { getSelectedProjectModeRepoModel } from 'app/store/selectors/get-selected-project-mode-repo-model/get-selected-project-mode-repo-model';
-import * as api from 'app/api/_index';
-import * as interfaces from 'app/interfaces/_index';
+import { getSelectedMconfigFilters } from '@app/store/selectors/get-selected-mconfig/get-selected-mconfig-filters';
+import { getSelectedMconfigSelect } from '@app/store/selectors/get-selected-mconfig/get-selected-mconfig-select';
+import { getSelectedProjectModeRepoModel } from '@app/store/selectors/get-selected-project-mode-repo-model/get-selected-project-mode-repo-model';
+import * as api from '@app/api/_index';
+import * as interfaces from '@app/interfaces/_index';
 
 export const getSelectedMconfigModelFieldsExtra = createSelector(
   getSelectedProjectModeRepoModel,

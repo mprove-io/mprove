@@ -1,4 +1,4 @@
-import * as api from 'app/api/_index';
+import * as api from '@app/api/_index';
 
 export interface DashboardGroup {
   gr: string;

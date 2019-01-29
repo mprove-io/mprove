@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import * as components from 'app/components/_index';
-import { MyCovalentModule } from 'app/modules/my-covalent.module';
-import { MyMaterialModule } from 'app/modules/my-material.module';
-import { SharedModule } from 'app/modules/shared.module';
+import * as components from '@app/components/_index';
+import { MyCovalentModule } from '@app/modules/my-covalent.module';
+import { MyMaterialModule } from '@app/modules/my-material.module';
+import { SharedModule } from '@app/modules/shared.module';
 
 @NgModule({
   imports: [

@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import * as actionTypes from 'app/store/action-types';
+import * as actionTypes from '@app/store/action-types';
 
 export class CleanErrorsStateAction implements Action {
   readonly type = actionTypes.CLEAN_ERRORS_STATE;

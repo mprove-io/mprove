@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectAnalyticsSubscriptionPlanId } from 'app/store/selectors/get-selected-project-analytics-subscription/get-selected-project-analytics-subscription-plan-id';
-import { getSelectedProjectPayments } from 'app/store/selectors/get-selected-project-payments/get-selected-project-payments';
-import * as api from 'app/api/_index';
+import { getSelectedProjectAnalyticsSubscriptionPlanId } from '@app/store/selectors/get-selected-project-analytics-subscription/get-selected-project-analytics-subscription-plan-id';
+import { getSelectedProjectPayments } from '@app/store/selectors/get-selected-project-payments/get-selected-project-payments';
+import * as api from '@app/api/_index';
 
 export const getSelectedProjectNextPayment = createSelector(
   getSelectedProjectPayments,

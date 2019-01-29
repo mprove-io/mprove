@@ -1,9 +1,9 @@
 import { createSelector } from '@ngrx/store';
 
-import { getSelectedProjectModeRepoErrors } from 'app/store/selectors/get-selected-project-mode-repo-errors/get-selected-project-mode-repo-errors';
+import { getSelectedProjectModeRepoErrors } from '@app/store/selectors/get-selected-project-mode-repo-errors/get-selected-project-mode-repo-errors';
 
-import { getSelectedProjectModeRepoFileId } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
-import * as api from 'app/api/_index';
+import { getSelectedProjectModeRepoFileId } from '@app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
+import * as api from '@app/api/_index';
 
 export const getSelectedProjectModeRepoFileErrorsLines = createSelector(
   getSelectedProjectModeRepoErrors,

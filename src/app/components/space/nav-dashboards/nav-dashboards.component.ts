@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, map, tap } from 'rxjs/operators';
-import * as api from 'app/api/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as enums from 'app/enums/_index';
-import * as selectors from 'app/store/selectors/_index';
+import * as api from '@app/api/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as enums from '@app/enums/_index';
+import * as selectors from '@app/store/selectors/_index';
 
 @Component({
   selector: 'm-nav-dashboards',

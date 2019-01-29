@@ -5,8 +5,8 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import * as enums from 'app/enums/_index';
-import * as services from 'app/services/_index';
+import * as enums from '@app/enums/_index';
+import * as services from '@app/services/_index';
 
 @Injectable()
 export class ToProfileResolver implements Resolve<boolean> {

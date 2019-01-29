@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import * as guards from 'app/guards/_index';
-import * as resolvers from 'app/resolvers/_index';
-import * as components from 'app/components/_index';
-import * as constants from 'app/constants/_index';
+import * as guards from '@app/guards/_index';
+import * as resolvers from '@app/resolvers/_index';
+import * as components from '@app/components/_index';
+import * as constants from '@app/constants/_index';
 
 export const APP_ROUTES: Routes = [
   {

@@ -3,11 +3,11 @@ import { Component, Inject, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
-import * as api from 'app/api/_index';
-import * as configs from 'app/configs/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as selectors from 'app/store/selectors/_index';
-import * as services from 'app/services/_index';
+import * as api from '@app/api/_index';
+import * as configs from '@app/configs/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as selectors from '@app/store/selectors/_index';
+import * as services from '@app/services/_index';
 
 @Component({
   moduleId: module.id,

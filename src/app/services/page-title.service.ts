@@ -3,8 +3,8 @@ import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
-import * as interfaces from 'app/interfaces/_index';
-import * as selectors from 'app/store/selectors/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as selectors from '@app/store/selectors/_index';
 
 @Injectable()
 export class PageTitleService {

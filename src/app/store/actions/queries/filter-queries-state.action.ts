@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import * as actionTypes from 'app/store/action-types';
+import * as actionTypes from '@app/store/action-types';
 
 export class FilterQueriesStateAction implements Action {
   readonly type = actionTypes.FILTER_QUERIES_STATE;

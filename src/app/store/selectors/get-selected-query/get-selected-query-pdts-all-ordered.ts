@@ -1,8 +1,8 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectModeRepoPdtsSorted } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-pdts-sorted';
-import { getSelectedQuery } from 'app/store/selectors/get-selected-query/get-selected-query';
-import { getQueriesState } from 'app/store/selectors/get-state/get-queries-state';
-import * as api from 'app/api/_index';
+import { getSelectedProjectModeRepoPdtsSorted } from '@app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-pdts-sorted';
+import { getSelectedQuery } from '@app/store/selectors/get-selected-query/get-selected-query';
+import { getQueriesState } from '@app/store/selectors/get-state/get-queries-state';
+import * as api from '@app/api/_index';
 
 export const getSelectedQueryPdtsAllOrdered = createSelector(
   getSelectedQuery,

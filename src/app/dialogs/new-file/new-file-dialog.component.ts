@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
-import * as actions from 'app/store/actions/_index';
-import * as api from 'app/api/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as selectors from 'app/store/selectors/_index';
-import { ValidationService } from 'app/services/validation.service';
+import * as actions from '@app/store/actions/_index';
+import * as api from '@app/api/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as selectors from '@app/store/selectors/_index';
+import { ValidationService } from '@app/services/validation.service';
 
 @Component({
   moduleId: module.id,

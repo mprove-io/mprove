@@ -1,4 +1,4 @@
-import * as enums from 'app/enums/_index';
+import * as enums from '@app/enums/_index';
 
 export interface Environment {
   dev: boolean;

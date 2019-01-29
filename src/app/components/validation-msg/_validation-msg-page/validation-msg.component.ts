@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import * as services from 'app/services/_index';
+import * as services from '@app/services/_index';
 
 @Component({
   moduleId: module.id,

@@ -6,8 +6,8 @@ import { MetaReducer } from '@ngrx/store';
  */
 import { storeFreeze } from 'ngrx-store-freeze';
 import { storeLogger } from 'ngrx-store-logger';
-import * as interfaces from 'app/interfaces/_index';
-import * as metaReducers from 'app/store/meta-reducers/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as metaReducers from '@app/store/meta-reducers/_index';
 import { environment } from '@env/environment';
 
 /**

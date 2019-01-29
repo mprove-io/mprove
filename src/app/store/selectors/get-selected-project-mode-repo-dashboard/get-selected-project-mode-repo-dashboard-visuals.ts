@@ -1,17 +1,17 @@
 import { createSelector } from '@ngrx/store';
 
-import { getSelectedProjectModeRepoDashboardReports } from 'app/store/selectors/get-selected-project-mode-repo-dashboard/get-selected-project-mode-repo-dashboard-reports';
+import { getSelectedProjectModeRepoDashboardReports } from '@app/store/selectors/get-selected-project-mode-repo-dashboard/get-selected-project-mode-repo-dashboard-reports';
 
-import { getSelectedProjectModeRepoId } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-id';
+import { getSelectedProjectModeRepoId } from '@app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-id';
 
-import { getSelectedProjectModeRepoStructId } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-struct-id';
-import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
-import { getMconfigsState } from 'app/store/selectors/get-state/get-mconfigs-state';
-import { getModelsState } from 'app/store/selectors/get-state/get-models-state';
-import { getQueriesState } from 'app/store/selectors/get-state/get-queries-state';
-import { getUserAlias } from 'app/store/selectors/get-user/get-user-alias';
-import * as api from 'app/api/_index';
-import * as interfaces from 'app/interfaces/_index';
+import { getSelectedProjectModeRepoStructId } from '@app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-struct-id';
+import { getSelectedProjectId } from '@app/store/selectors/get-selected-project/get-selected-project-id';
+import { getMconfigsState } from '@app/store/selectors/get-state/get-mconfigs-state';
+import { getModelsState } from '@app/store/selectors/get-state/get-models-state';
+import { getQueriesState } from '@app/store/selectors/get-state/get-queries-state';
+import { getUserAlias } from '@app/store/selectors/get-user/get-user-alias';
+import * as api from '@app/api/_index';
+import * as interfaces from '@app/interfaces/_index';
 
 export const getSelectedProjectModeRepoDashboardVisuals = createSelector(
   getSelectedProjectModeRepoDashboardReports,

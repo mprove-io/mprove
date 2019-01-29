@@ -9,7 +9,7 @@ import {
   ColorUtil,
   MColorpicker,
   TextDirective
-} from 'app/modules/colorpicker';
+} from '@app/modules/colorpicker';
 
 @NgModule({
   imports: [CommonModule, FormsModule, OverlayModule, PortalModule, A11yModule],

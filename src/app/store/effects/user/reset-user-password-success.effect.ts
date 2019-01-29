@@ -3,9 +3,9 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
-import * as actions from 'app/store/actions/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as actionTypes from 'app/store/action-types';
+import * as actions from '@app/store/actions/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as actionTypes from '@app/store/action-types';
 import { Router } from '@angular/router';
 
 @Injectable()

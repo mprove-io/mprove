@@ -1,5 +1,5 @@
-import * as interfaces from 'app/interfaces/_index';
-import * as enums from 'app/enums/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as enums from '@app/enums/_index';
 
 const packageJson = require('../../package.json');
 

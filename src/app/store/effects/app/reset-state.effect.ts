@@ -4,8 +4,8 @@ import { Action } from '@ngrx/store';
 import * as Raven from 'raven-js';
 import { from, Observable } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
-import * as actionTypes from 'app/store/action-types';
-import * as actions from 'app/store/actions/_index';
+import * as actionTypes from '@app/store/action-types';
+import * as actions from '@app/store/actions/_index';
 
 @Injectable()
 export class ResetStateEffect {

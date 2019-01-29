@@ -1,8 +1,8 @@
-import * as actionTypes from 'app/store/action-types';
-import * as enums from 'app/enums/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as types from 'app/types/_index';
-import * as constants from 'app/constants/_index';
+import * as actionTypes from '@app/store/action-types';
+import * as enums from '@app/enums/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as types from '@app/types/_index';
+import * as constants from '@app/constants/_index';
 
 const initialState: interfaces.LayoutState = {
   project_id: constants.DEMO,

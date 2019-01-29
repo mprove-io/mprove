@@ -1,9 +1,9 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectModeRepoDashboardsNotTemp } from 'app/store/selectors/get-selected-project-mode-repo-dashboards/get-selected-project-mode-repo-dashboards-not-temp';
-import { getSelectedProjectModeRepoFile } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
-import { getSelectedProjectModeRepoFileIsDashboard } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-is-dashboard';
-import * as api from 'app/api/_index';
-import { MyRegex } from 'app/models/my-regex';
+import { getSelectedProjectModeRepoDashboardsNotTemp } from '@app/store/selectors/get-selected-project-mode-repo-dashboards/get-selected-project-mode-repo-dashboards-not-temp';
+import { getSelectedProjectModeRepoFile } from '@app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file';
+import { getSelectedProjectModeRepoFileIsDashboard } from '@app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-is-dashboard';
+import * as api from '@app/api/_index';
+import { MyRegex } from '@app/models/my-regex';
 
 export const getSelectedProjectModeRepoFileDashboardExist = createSelector(
   getSelectedProjectModeRepoFile,

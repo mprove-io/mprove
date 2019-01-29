@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import * as services from 'app/services/_index';
-import * as interfaces from 'app/interfaces/_index';
+import * as services from '@app/services/_index';
+import * as interfaces from '@app/interfaces/_index';
 import { Store } from '@ngrx/store';
-import * as actions from 'app/store/actions/_index';
+import * as actions from '@app/store/actions/_index';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({

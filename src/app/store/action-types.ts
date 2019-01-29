@@ -1,4 +1,4 @@
-import { MyError } from 'app/models/my-error';
+import { MyError } from '@app/models/my-error';
 
 /**
  * This function coerces a string into a string literal type.

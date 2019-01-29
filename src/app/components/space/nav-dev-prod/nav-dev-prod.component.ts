@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, tap } from 'rxjs/operators';
-import * as enums from 'app/enums/_index';
-import * as services from 'app/services/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as selectors from 'app/store/selectors/_index';
+import * as enums from '@app/enums/_index';
+import * as services from '@app/services/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as selectors from '@app/store/selectors/_index';
 
 @Component({
   selector: 'm-nav-dev-prod',

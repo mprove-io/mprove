@@ -1,6 +1,6 @@
-import * as api from 'app/api/_index';
-import * as actionTypes from 'app/store/action-types';
-import * as types from 'app/types/_index';
+import * as api from '@app/api/_index';
+import * as actionTypes from '@app/store/action-types';
+import * as types from '@app/types/_index';
 
 const initialState: api.Mconfig[] = [];
 

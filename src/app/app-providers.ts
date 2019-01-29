@@ -1,11 +1,11 @@
 import { TreeDraggedElement } from 'angular-tree-component';
-import * as configs from 'app/configs/_index';
-import * as guards from 'app/guards/_index';
-import * as resolvers from 'app/resolvers/_index';
-import * as services from 'app/services/_index';
+import * as configs from '@app/configs/_index';
+import * as guards from '@app/guards/_index';
+import * as resolvers from '@app/resolvers/_index';
+import * as services from '@app/services/_index';
 import { ErrorHandler } from '@angular/core';
 import { RouterStateSerializer } from '@ngrx/router-store';
-import * as helper from 'app/helper/_index';
+import * as helper from '@app/helper/_index';
 import { Title } from '@angular/platform-browser';
 import {
   ErrorStateMatcher,

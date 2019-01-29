@@ -1,6 +1,6 @@
-import * as actionTypes from 'app/store/action-types';
-import * as interfaces from 'app/interfaces/_index';
-import * as types from 'app/types/_index';
+import * as actionTypes from '@app/store/action-types';
+import * as interfaces from '@app/interfaces/_index';
+import * as types from '@app/types/_index';
 
 const initialState: interfaces.UserState = {
   user_id: undefined,

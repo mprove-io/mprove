@@ -1,4 +1,4 @@
-import * as enums from 'app/enums/_index';
+import * as enums from '@app/enums/_index';
 
 export const printerConfig = {
   [enums.busEnum[enums.busEnum.AUTH_CAN_ACTIVATE]]: true,

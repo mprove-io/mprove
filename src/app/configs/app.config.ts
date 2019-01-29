@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import * as interfaces from 'app/interfaces/_index';
+import * as interfaces from '@app/interfaces/_index';
 
 const CONFIG: interfaces.AppConfig = {
   tooltipDelay: 400

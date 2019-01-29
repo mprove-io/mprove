@@ -1,8 +1,8 @@
 import { createSelector } from '@ngrx/store';
 
-import { getSelectedProjectModeRepoFileId } from 'app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
+import { getSelectedProjectModeRepoFileId } from '@app/store/selectors/get-selected-project-mode-repo-file/get-selected-project-mode-repo-file-id';
 
-import { getSelectedProjectModeRepoConflicts } from 'app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-conflicts';
+import { getSelectedProjectModeRepoConflicts } from '@app/store/selectors/get-selected-project-mode-repo/get-selected-project-mode-repo-conflicts';
 
 export const getSelectedProjectModeRepoFileConflictsLines = createSelector(
   getSelectedProjectModeRepoConflicts,

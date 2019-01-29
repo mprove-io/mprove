@@ -1,4 +1,4 @@
-import * as dialogs from 'app/dialogs/_index';
+import * as dialogs from '@app/dialogs/_index';
 
 export const APP_DIALOGS = [
   dialogs.InfoDialogComponent,

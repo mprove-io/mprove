@@ -1,8 +1,8 @@
 import { createSelector } from '@ngrx/store';
 
-import { getSelectedProjectAnalyticsPlanId } from 'app/store/selectors/get-selected-project/get-selected-project-analytics-plan-id';
-import { getSelectedProjectId } from 'app/store/selectors/get-selected-project/get-selected-project-id';
-import * as constants from 'app/constants/_index';
+import { getSelectedProjectAnalyticsPlanId } from '@app/store/selectors/get-selected-project/get-selected-project-analytics-plan-id';
+import { getSelectedProjectId } from '@app/store/selectors/get-selected-project/get-selected-project-id';
+import * as constants from '@app/constants/_index';
 
 export const getSelectedProjectThemesRestricted = createSelector(
   getSelectedProjectId,

@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
-import { getSelectedProjectRepos } from 'app/store/selectors/get-selected-project-repos/get-selected-project-repos';
-import { getUserId } from 'app/store/selectors/get-user/get-user-id';
-import * as api from 'app/api/_index';
+import { getSelectedProjectRepos } from '@app/store/selectors/get-selected-project-repos/get-selected-project-repos';
+import { getUserId } from '@app/store/selectors/get-user/get-user-id';
+import * as api from '@app/api/_index';
 
 export const getSelectedProjectDevRepo = createSelector(
   getSelectedProjectRepos,

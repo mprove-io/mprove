@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 
-import { getSelectedProjectAnalyticsPlanId } from 'app/store/selectors/get-selected-project/get-selected-project-analytics-plan-id';
-import * as interfaces from 'app/interfaces/_index';
+import { getSelectedProjectAnalyticsPlanId } from '@app/store/selectors/get-selected-project/get-selected-project-analytics-plan-id';
+import * as interfaces from '@app/interfaces/_index';
 
 export const getSelectedProjectAnalyticsPlans = createSelector(
   getSelectedProjectAnalyticsPlanId,

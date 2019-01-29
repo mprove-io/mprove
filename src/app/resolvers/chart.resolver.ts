@@ -8,11 +8,11 @@ import {
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
-import * as actions from 'app/store/actions/_index';
-import * as enums from 'app/enums/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as selectors from 'app/store/selectors/_index';
-import * as services from 'app/services/_index';
+import * as actions from '@app/store/actions/_index';
+import * as enums from '@app/enums/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as selectors from '@app/store/selectors/_index';
+import * as services from '@app/services/_index';
 
 @Injectable()
 export class ChartResolver implements Resolve<boolean> {

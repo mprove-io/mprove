@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import * as services from 'app/services/_index';
-import * as interfaces from 'app/interfaces/_index';
-import * as actions from 'app/store/actions/_index';
+import * as services from '@app/services/_index';
+import * as interfaces from '@app/interfaces/_index';
+import * as actions from '@app/store/actions/_index';
 import { Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
