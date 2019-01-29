@@ -14,6 +14,15 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
       enums.controllerErrorsEnum.CONTROLLER_CYPRESS_DELETE
     )
   );
+
+  app.post(
+    '/api/v1' + api.PATH_CYPRESS_SEED,
+    handler.catchAsyncErrors(
+      controller.cypressSeed,
+      enums.controllerErrorsEnum.CONTROLLER_CYPRESS_SEED
+    )
+  );
+
   // USERS
 
   app.post(

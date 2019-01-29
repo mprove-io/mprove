@@ -10,6 +10,7 @@ export function makeUser(item: {
   salt?: string;
   alias: string;
   email_verified: enums.bEnum;
+  email_verification_token?: string;
   status: api.UserStatusEnum;
 }): entities.UserEntity {
   return {
@@ -17,7 +18,7 @@ export function makeUser(item: {
     password_reset_expires_ts: undefined,
     password_reset_token: undefined,
     email_verified: item.email_verified,
-    email_verification_token: helper.makeId(),
+    email_verification_token: item.email_verification_token || helper.makeId(),
     hash: item.hash,
     salt: item.salt,
     alias: item.alias,

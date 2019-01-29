@@ -1,6 +1,7 @@
 export * from './confirm/confirm';
 
 export * from './cypress/cypress-delete';
+export * from './cypress/cypress-seed';
 
 export * from './files/create-file';
 export * from './files/delete-file';
