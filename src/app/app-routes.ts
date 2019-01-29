@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import * as guards from 'app/guards/_index';
 import * as resolvers from 'app/resolvers/_index';
 import * as components from 'app/components/_index';
+import * as constants from 'app/constants/_index';
 
 export const APP_ROUTES: Routes = [
   {
@@ -10,40 +11,40 @@ export const APP_ROUTES: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/profile',
+        redirectTo: '/' + constants.PATH_PROFILE,
         pathMatch: 'full'
       },
       {
-        path: 'login',
+        path: constants.PATH_LOGIN,
         component: components.LoginComponent,
         resolve: {
           toProfileResolver: resolvers.ToProfileResolver
         }
       },
       {
-        path: 'register',
+        path: constants.PATH_REGISTER,
         component: components.RegisterComponent,
         resolve: {
           toProfileResolver: resolvers.ToProfileResolver
         }
       },
       {
-        path: 'verify-email-sent',
+        path: constants.PATH_VERIFY_EMAIL_SENT,
         component: components.VerifyEmailSentComponent,
         resolve: {
           toProfileResolver: resolvers.ToProfileResolver
         }
       },
       {
-        path: 'confirm-email',
+        path: constants.PATH_CONFIRM_EMAIL,
         component: components.ConfirmEmailComponent
       },
       {
-        path: 'reset-password-sent',
+        path: constants.PATH_RESET_PASSWORD_SENT,
         component: components.ResetPasswordSentComponent
       },
       {
-        path: 'update-password',
+        path: constants.PATH_UPDATE_PASSWORD,
         component: components.UpdatePasswordComponent
       }
     ]
@@ -56,12 +57,12 @@ export const APP_ROUTES: Routes = [
     },
     children: [
       {
-        path: 'profile',
+        path: constants.PATH_PROFILE,
         component: components.ProfileComponent,
         canActivate: [guards.AuthCanActivateGuard]
       },
       {
-        path: 'project/:projectId',
+        path: constants.PATH_PROJECT + '/:projectId',
         component: components.ProjectComponent,
         canActivate: [guards.AuthCanActivateGuard],
         resolve: {
@@ -69,39 +70,39 @@ export const APP_ROUTES: Routes = [
         },
         children: [
           {
-            path: 'team',
+            path: constants.PATH_TEAM,
             component: components.TeamComponent,
             resolve: {
               teamResolver: resolvers.TeamResolver
             }
           },
           {
-            path: 'settings',
+            path: constants.PATH_SETTINGS,
             component: components.SettingsComponent,
             resolve: {
               settingsResolver: resolvers.SettingsResolver
             }
           },
           {
-            path: 'remote',
+            path: constants.PATH_REMOTE,
             component: components.RemoteComponent
           },
           {
-            path: 'billing',
+            path: constants.PATH_BILLING,
             component: components.BillingComponent,
             resolve: {
               teamResolver: resolvers.BillingResolver
             }
           },
           {
-            path: 'mode/:mode',
+            path: constants.PATH_MODE + '/:mode',
             component: components.RepoComponent,
             resolve: {
               modeResolver: resolvers.ModeResolver
             },
             children: [
               {
-                path: 'pdts',
+                path: constants.PATH_PDTS,
                 component: components.PdtsComponent,
                 canDeactivate: [guards.ComponentDeactivateGuard],
                 resolve: {
@@ -109,11 +110,11 @@ export const APP_ROUTES: Routes = [
                 }
               },
               {
-                path: 'blockml',
+                path: constants.PATH_BLOCKML,
                 component: components.BlockMLComponent,
                 children: [
                   {
-                    path: 'file/:fileId',
+                    path: constants.PATH_FILE + '/:fileId',
                     component: components.FileEditorComponent,
                     canDeactivate: [guards.ComponentDeactivateGuard],
                     resolve: {
@@ -123,7 +124,7 @@ export const APP_ROUTES: Routes = [
                 ]
               },
               {
-                path: 'model/:modelId',
+                path: constants.PATH_MODEL + '/:modelId',
                 component: components.ModelComponent,
                 canDeactivate: [guards.ComponentDeactivateGuard],
                 resolve: {
@@ -131,7 +132,7 @@ export const APP_ROUTES: Routes = [
                 },
                 children: [
                   {
-                    path: 'mconfig/:mconfigId',
+                    path: constants.PATH_MCONFIG + '/:mconfigId',
                     component: components.MconfigComponent,
                     canDeactivate: [guards.ComponentDeactivateGuard],
                     resolve: {
@@ -139,7 +140,7 @@ export const APP_ROUTES: Routes = [
                     },
                     children: [
                       {
-                        path: 'query/:queryId',
+                        path: constants.PATH_QUERY + '/:queryId',
                         component: components.QueryComponent,
                         canDeactivate: [guards.ComponentDeactivateGuard],
                         resolve: {
@@ -147,19 +148,19 @@ export const APP_ROUTES: Routes = [
                         },
                         children: [
                           {
-                            path: 'filters',
+                            path: constants.PATH_FILTERS,
                             component: components.ModelFiltersComponent
                           },
                           {
-                            path: 'sql',
+                            path: constants.PATH_SQL,
                             component: components.SqlComponent
                           },
                           {
-                            path: 'data',
+                            path: constants.PATH_DATA,
                             component: components.DataComponent
                           },
                           {
-                            path: 'chart/:chartId',
+                            path: constants.PATH_CHART + '/:chartId',
                             component: components.ChartComponent,
                             canDeactivate: [guards.ComponentDeactivateGuard],
                             resolve: {
@@ -173,7 +174,7 @@ export const APP_ROUTES: Routes = [
                 ]
               },
               {
-                path: 'dashboard/:dashboardId',
+                path: constants.PATH_DASHBOARD + '/:dashboardId',
                 component: components.DashboardComponent,
                 canDeactivate: [guards.ComponentDeactivateGuard],
                 resolve: {
@@ -185,7 +186,7 @@ export const APP_ROUTES: Routes = [
         ]
       },
       {
-        path: 'project-deleted',
+        path: constants.PATH_PROJECT_DELETED,
         component: components.ProjectDeletedComponent,
         canActivate: [guards.AuthCanActivateGuard]
       },

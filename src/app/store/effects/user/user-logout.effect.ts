@@ -8,6 +8,7 @@ import * as actions from 'app/store/actions/_index';
 import * as actionTypes from 'app/store/action-types';
 import * as interfaces from 'app/interfaces/_index';
 import * as services from 'app/services/_index';
+import * as constants from 'app/constants/_index';
 
 @Injectable()
 export class UserLogoutEffect {
@@ -21,7 +22,7 @@ export class UserLogoutEffect {
       localStorage.removeItem('token');
       this.cookieService.deleteCookie('token'); // TODO: cookie token
 
-      this.router.navigate(['login']);
+      this.router.navigate([constants.PATH_LOGIN]);
       this.store.dispatch(new actions.ResetStateAction());
       this.store.dispatch(new actions.CloseWebSocketAction());
 
