@@ -6,6 +6,7 @@ declare global {
     interface Chainable {
       basicVisit: typeof basicVisit;
       deletePack: typeof deletePack;
+      seedPack: typeof seedPack;
     }
   }
 }
@@ -29,5 +30,16 @@ export function deletePack(pack: api.CypressDeleteRequestBody['payload']) {
   });
 }
 
+export function seedPack(pack: api.CypressSeedRequestBody['payload']) {
+  cy.request({
+    url: 'http://localhost:8080/api/v1' + api.PATH_CYPRESS_SEED,
+    method: 'POST',
+    body: {
+      payload: pack
+    }
+  });
+}
+
 Cypress.Commands.add('basicVisit', basicVisit);
 Cypress.Commands.add('deletePack', deletePack);
+Cypress.Commands.add('seedPack', seedPack);
