@@ -5,9 +5,6 @@ const userId = 't2-user@example.com';
 const userPassword = '123123';
 const userEmailVerificationToken = 'abcdef';
 
-const errorText =
-  api.ServerResponseStatusEnum.CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST;
-
 function resetData() {
   cy.deletePack({ user_ids: [userId] });
   cy.seedPack({
@@ -16,51 +13,37 @@ function resetData() {
         user_id: userId,
         password: userPassword,
         email_verified: false,
-        email_verification_token: userEmailVerificationToken,
+        email_verification_token: userEmailVerificationToken
       }
     ]
   });
 }
 
-describe('confirm email', () => {
-
-  context('good token', () => {
-    it(`should be redirected to ${constants.PATH_LOGIN}`, () => {
-      resetData();
-      cy.basicVisit(
-        constants.PATH_CONFIRM_EMAIL + '?token=' + userEmailVerificationToken
-      );
-      cy.url().should('include', constants.PATH_LOGIN);
-    });
-
-    it('should see email confirmed dialog', () => {
-      resetData();
-      cy.basicVisit(
-        constants.PATH_CONFIRM_EMAIL + '?token=' + userEmailVerificationToken
-      );
-      cy.get('[data-cy=message]').should('contain', 'Email is confirmed');
-    });
+describe('t2-confirm-email', () => {
+  afterEach(() => {
+    cy.noLoading();
   });
 
-  context('bad token', () => {
-    it(`should be redirected to ${constants.PATH_LOGIN}`, () => {
-      cy.basicVisit(constants.PATH_CONFIRM_EMAIL + '?token=notExistingToken');
-      cy.url().should('include', constants.PATH_LOGIN);
-    });
+  const infoText = 'Email is confirmed';
 
-    it(`should see ${errorText} for wrong token`, () => {
-      cy.basicVisit(constants.PATH_CONFIRM_EMAIL + '?token=notExistingToken');
-      cy.get('[data-cy=message]').should('contain', errorText);
-    });
+  it(`good token - should see "${infoText}", redirect to ${
+    constants.PATH_LOGIN
+  }`, () => {
+    resetData();
+    cy.basicVisit(
+      constants.PATH_CONFIRM_EMAIL + '?token=' + userEmailVerificationToken
+    );
+    cy.get('[data-cy=message]').should('contain', infoText);
+  });
 
-    it(`should see ${errorText} for empty token`, () => {
-      cy.basicVisit(constants.PATH_CONFIRM_EMAIL + '?token=');
-      cy.get('[data-cy=message]').should('contain', errorText);
-    });
-
-    it(`should see ${errorText} for no token`, () => {
-      cy.basicVisit(constants.PATH_CONFIRM_EMAIL + '');
-      cy.get('[data-cy=message]').should('contain', errorText);
-    });
+  it(`bad token - should see ${
+    api.ServerResponseStatusEnum.CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST
+  }, redirect to ${constants.PATH_LOGIN}`, () => {
+    cy.basicVisit(constants.PATH_CONFIRM_EMAIL + '?token=notExistingToken');
+    cy.url().should('include', constants.PATH_LOGIN);
+    cy.get('[data-cy=message]').should(
+      'contain',
+      api.ServerResponseStatusEnum.CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST
+    );
   });
 });

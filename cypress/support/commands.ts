@@ -5,6 +5,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       basicVisit: typeof basicVisit;
+      noLoading: typeof noLoading;
       deletePack: typeof deletePack;
       seedPack: typeof seedPack;
     }
@@ -18,6 +19,10 @@ export function basicVisit(url: string) {
       password: Cypress.env('basic_pass')
     }
   });
+}
+
+export function noLoading() {
+  cy.get('cdk-overlay-container').should('not.exist');
 }
 
 export function deletePack(pack: api.CypressDeleteRequestBody['payload']) {
@@ -43,3 +48,4 @@ export function seedPack(pack: api.CypressSeedRequestBody['payload']) {
 Cypress.Commands.add('basicVisit', basicVisit);
 Cypress.Commands.add('deletePack', deletePack);
 Cypress.Commands.add('seedPack', seedPack);
+Cypress.Commands.add('noLoading', noLoading);
