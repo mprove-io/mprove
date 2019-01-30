@@ -6,8 +6,8 @@ export interface CypressSeedRequestBody {
     users?: Array<{
       user_id: string;
       password: string;
-      email_verification_token: string;
-      status: apiEnums.UserStatusEnum;
+      email_verified: boolean;
+      email_verification_token?: string;
     }>;
   };
 }
