@@ -46,10 +46,15 @@ export async function cypressSeed(req: Request, res: Response) {
 
   if (payload.users) {
     await forEach(payload.users, async x => {
-      let salt = crypto.randomBytes(16).toString('hex');
-      let hash = crypto
-        .pbkdf2Sync(x.password, salt, 1000, 64, 'sha512')
-        .toString('hex');
+      let salt = x.password
+        ? crypto.randomBytes(16).toString('hex')
+        : undefined;
+
+      let hash = x.password
+        ? crypto
+            .pbkdf2Sync(x.password, salt, 1000, 64, 'sha512')
+            .toString('hex')
+        : undefined;
 
       let alias = <string>(
         await proc
@@ -61,6 +66,10 @@ export async function cypressSeed(req: Request, res: Response) {
         user_id: x.user_id,
         email_verified: helper.booleanToBenum(x.email_verified),
         email_verification_token: x.email_verification_token,
+        password_reset_token: x.password_reset_token,
+        password_reset_expires_ts: x.password_reset_token
+          ? helper.makeTsOffset(86400000)
+          : undefined,
         salt: salt,
         hash: hash,
         alias: alias

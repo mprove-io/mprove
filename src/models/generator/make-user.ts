@@ -11,11 +11,13 @@ export function makeUser(item: {
   alias: string;
   email_verified: enums.bEnum;
   email_verification_token?: string;
+  password_reset_token?: string;
+  password_reset_expires_ts?: string;
 }): entities.UserEntity {
   return {
     user_id: item.user_id,
-    password_reset_expires_ts: undefined,
-    password_reset_token: undefined,
+    password_reset_token: item.password_reset_token,
+    password_reset_expires_ts: item.password_reset_expires_ts,
     email_verified: item.email_verified,
     email_verification_token: item.email_verification_token || helper.makeId(),
     hash: item.hash,
