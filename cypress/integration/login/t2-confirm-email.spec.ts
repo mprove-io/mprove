@@ -8,15 +8,15 @@ const userEmailVerificationToken = 'abcdef';
 const errorText =
   api.ServerResponseStatusEnum.CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST;
 
-function reset() {
+function resetData() {
   cy.deletePack({ user_ids: [userId] });
   cy.seedPack({
     users: [
       {
         user_id: userId,
         password: userPassword,
+        email_verified: false,
         email_verification_token: userEmailVerificationToken,
-        status: api.UserStatusEnum.Pending
       }
     ]
   });
@@ -26,7 +26,7 @@ describe('confirm email', () => {
 
   context('good token', () => {
     it(`should be redirected to ${constants.PATH_LOGIN}`, () => {
-      reset();
+      resetData();
       cy.basicVisit(
         constants.PATH_CONFIRM_EMAIL + '?token=' + userEmailVerificationToken
       );
@@ -34,7 +34,7 @@ describe('confirm email', () => {
     });
 
     it('should see email confirmed dialog', () => {
-      reset();
+      resetData();
       cy.basicVisit(
         constants.PATH_CONFIRM_EMAIL + '?token=' + userEmailVerificationToken
       );

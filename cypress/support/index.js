@@ -14,7 +14,13 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+Cypress.Server.defaults({
+  whitelist: xhr => {
+    return xhr.method === 'POST' && /pong$/.test(xhr.url);
+  }
+});

@@ -6,7 +6,7 @@
     <mat-form-field>
       <input
         matInput
-        id="emailInput"
+        data-cy="emailInput"
         formControlName="email"
         placeholder="email"
       />
@@ -23,7 +23,7 @@
       <input
         matInput
         type="password"
-        id="passwordInput"
+        data-cy="passwordInput"
         formControlName="password"
         placeholder="password"
       />
@@ -38,6 +38,7 @@
     <br />
 
     <button
+      data-cy="signInButton"
       type="submit"
       color="primary"
       mat-raised-button
@@ -46,6 +47,7 @@
     </button>
 
     <button
+      data-cy="forgotPasswordButton"
       type="button"
       class="forgot-password-button"
       mat-raised-button
