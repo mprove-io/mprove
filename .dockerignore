@@ -3,9 +3,7 @@
 .vscode
 .idea
 
+cypress
+cypress-examples
 dist
 node_modules
-
-/cypress/screenshots
-/cypress/videos
-/cypress-examples
