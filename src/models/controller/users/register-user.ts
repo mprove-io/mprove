@@ -74,15 +74,18 @@ export async function registerUser(req: Request, res: Response) {
       );
   } else {
     // B
-    let alias = await proc.findAlias(userId);
+    let alias = <string>(
+      await proc
+        .findAlias(userId)
+        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_FIND_ALIAS))
+    );
 
     let newUser = generator.makeUser({
       user_id: userId,
       email_verified: enums.bEnum.FALSE,
       hash: hash,
       salt: salt,
-      alias: alias,
-      status: api.UserStatusEnum.Pending
+      alias: alias
     });
 
     let newMember = generator.makeMember({

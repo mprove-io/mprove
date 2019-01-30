@@ -32,15 +32,18 @@ export async function addUsers() {
       .pbkdf2Sync(admin.first_password, salt, 1000, 64, 'sha512')
       .toString('hex');
 
-    let alias = await proc.findAlias(admin.user_id);
+    let alias = <string>(
+      await proc
+        .findAlias(admin.user_id)
+        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_FIND_ALIAS))
+    );
 
     let user = generator.makeUser({
       user_id: admin.user_id,
       email_verified: enums.bEnum.TRUE,
       salt: salt,
       hash: hash,
-      alias: alias,
-      status: api.UserStatusEnum.Pending
+      alias: alias
     });
 
     users.push(user);

@@ -11,7 +11,6 @@ export function makeUser(item: {
   alias: string;
   email_verified: enums.bEnum;
   email_verification_token?: string;
-  status: api.UserStatusEnum;
 }): entities.UserEntity {
   return {
     user_id: item.user_id,
@@ -28,7 +27,7 @@ export function makeUser(item: {
     picture_url_small: undefined,
     picture_url_big: undefined,
     timezone: constants.USE_PROJECT_DEFAULT_TIMEZONE,
-    status: item.status,
+    status: api.UserStatusEnum.Pending,
     server_ts: undefined
   };
 }

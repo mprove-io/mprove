@@ -3,11 +3,11 @@ import * as apiEnums from '../../../enums/_index';
 
 export interface CypressSeedRequestBody {
   payload: {
-    users: Array<{
+    users?: Array<{
       user_id: string;
       password: string;
-      email_verification_token: string;
-      status: apiEnums.UserStatusEnum;
+      email_verified: boolean;
+      email_verification_token?: string;
     }>;
   };
 }

@@ -79,8 +79,7 @@ export async function createMember(req: Request, res: Response) {
     newUser = generator.makeUser({
       user_id: memberId,
       email_verified: enums.bEnum.FALSE,
-      alias: alias,
-      status: api.UserStatusEnum.Pending
+      alias: alias
     });
 
     // demo

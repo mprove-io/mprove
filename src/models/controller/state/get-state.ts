@@ -55,33 +55,47 @@ export async function getState(req: Request, res: Response) {
 
   let projectsIds = userMembers.map(userMember => userMember.project_id);
 
-  let projects = <entities.ProjectEntity[]>await storeProjects
-    .find({
-      project_id: In(projectsIds),
-      deleted: Equal(enums.bEnum.FALSE)
-    })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND));
+  let projects =
+    projectsIds.length === 0
+      ? []
+      : <entities.ProjectEntity[]>await storeProjects
+          .find({
+            project_id: In(projectsIds),
+            deleted: Equal(enums.bEnum.FALSE)
+          })
+          .catch(e =>
+            helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND)
+          );
 
-  let members = <entities.MemberEntity[]>await storeMembers
-    .find({
-      project_id: In(projectsIds),
-      deleted: Equal(enums.bEnum.FALSE)
-    })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND));
+  let members =
+    projectsIds.length === 0 ? [] : <entities.MemberEntity[]>await storeMembers
+          .find({
+            project_id: In(projectsIds),
+            deleted: Equal(enums.bEnum.FALSE)
+          })
+          .catch(e =>
+            helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND)
+          );
 
-  let repos = <entities.RepoEntity[]>await storeRepos
-    .find({
-      project_id: In(projectsIds),
-      repo_id: In([userId, constants.PROD_REPO_ID])
-    })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND));
+  let repos =
+    projectsIds.length === 0 ? [] : <entities.RepoEntity[]>await storeRepos
+          .find({
+            project_id: In(projectsIds),
+            repo_id: In([userId, constants.PROD_REPO_ID])
+          })
+          .catch(e =>
+            helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND)
+          );
 
-  let files = <entities.FileEntity[]>await storeFiles
-    .find({
-      project_id: In(projectsIds),
-      repo_id: In([userId, constants.PROD_REPO_ID])
-    })
-    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_FIND));
+  let files =
+    projectsIds.length === 0 ? [] : <entities.FileEntity[]>await storeFiles
+          .find({
+            project_id: In(projectsIds),
+            repo_id: In([userId, constants.PROD_REPO_ID])
+          })
+          .catch(e =>
+            helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_FIND)
+          );
 
   let structs: api.Struct[] = [];
 
