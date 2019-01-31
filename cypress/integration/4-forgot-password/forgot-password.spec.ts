@@ -27,7 +27,7 @@ describe('1-4-forgot-password', () => {
     cy.noLoading();
   });
 
-  it(`existing user - should redirect to ${
+  it(`logged out, existing user - should redirect to ${
     constants.PATH_RESET_PASSWORD_SENT
   }`, () => {
     resetData();
@@ -40,7 +40,7 @@ describe('1-4-forgot-password', () => {
   const error1 =
     api.ServerResponseStatusEnum.RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST;
 
-  it(`not existing user - should see ${error1}`, () => {
+  it(`logged out, not existing user - should see ${error1}`, () => {
     resetData();
     cy.get('[data-cy=forgotPasswordButton]').click();
     cy.get('[data-cy=resetPasswordEmailInput]').type(notExistingUserId);

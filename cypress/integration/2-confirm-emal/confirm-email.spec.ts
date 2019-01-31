@@ -26,7 +26,7 @@ describe('1-2-confirm-email', () => {
 
   const infoText = 'Email is confirmed';
 
-  it(`good token - should see "${infoText}", redirect to ${
+  it(`logged out, good emailVerificationToken - should see "${infoText}", redirect to ${
     constants.PATH_LOGIN
   }`, () => {
     resetData();
@@ -39,7 +39,7 @@ describe('1-2-confirm-email', () => {
   const error1 =
     api.ServerResponseStatusEnum.CONFIRM_EMAIL_ERROR_USER_DOES_NOT_EXIST;
 
-  it(`bad token - should see ${error1}, redirect to ${
+  it(`logged out, bad emailVerificationToken - should see ${error1}, redirect to ${
     constants.PATH_LOGIN
   }`, () => {
     cy.basicVisit(constants.PATH_CONFIRM_EMAIL + '?token=notExistingToken');

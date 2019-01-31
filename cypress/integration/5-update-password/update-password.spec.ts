@@ -25,12 +25,12 @@ describe('1-5-update-password', () => {
     cy.noLoading();
   });
 
-  it(`should display title`, () => {
+  it(`logged out - should display title`, () => {
     cy.basicVisit(constants.PATH_UPDATE_PASSWORD);
     cy.get(`[data-cy=updatePasswordTitle]`);
   });
 
-  it(`good token - should be able to set new password, redirect to ${
+  it(`logged out, good passwordResetToken - should be able to set new password, redirect to ${
     constants.PATH_LOGIN
   }`, () => {
     resetData();
@@ -47,7 +47,7 @@ describe('1-5-update-password', () => {
   const error1 =
     api.ServerResponseStatusEnum.UPDATE_PASSWORD_ERROR_TOKEN_EXPIRED;
 
-  it(`bad token - should see ${error1}, redirect to ${
+  it(`logged out, bad passwordResetToken - should see ${error1}, redirect to ${
     constants.PATH_LOGIN
   }`, () => {
     cy.basicVisit(constants.PATH_UPDATE_PASSWORD + '?token=notExistingToken');
