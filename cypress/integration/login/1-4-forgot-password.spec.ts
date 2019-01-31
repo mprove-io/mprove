@@ -1,8 +1,8 @@
 import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 
-const existingUserId = 't4-existing-user@example.com';
-const notExistingUserId = 't4-not-existing-user@example.com';
+const existingUserId = '1-4-existing-user@example.com';
+const notExistingUserId = '1-4-not-existing-user@example.com';
 const newPassword = '123123';
 
 function resetData() {
@@ -18,7 +18,7 @@ function resetData() {
   });
 }
 
-describe('t4-forgot-password', () => {
+describe('1-4-forgot-password', () => {
   beforeEach(() => {
     cy.basicVisit(constants.PATH_LOGIN);
   });
@@ -37,16 +37,14 @@ describe('t4-forgot-password', () => {
     cy.url().should('include', constants.PATH_RESET_PASSWORD_SENT);
   });
 
-  it(`not existing user - should see ${
-    api.ServerResponseStatusEnum.RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST
-  }`, () => {
+  const error1 =
+    api.ServerResponseStatusEnum.RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST;
+
+  it(`not existing user - should see ${error1}`, () => {
     resetData();
     cy.get('[data-cy=forgotPasswordButton]').click();
     cy.get('[data-cy=resetPasswordEmailInput]').type(notExistingUserId);
     cy.get('[data-cy=resetPasswordSendButton]').click();
-    cy.get('[data-cy=message]').should(
-      'contain',
-      api.ServerResponseStatusEnum.RESET_PASSWORD_ERROR_USER_DOES_NOT_EXIST
-    );
+    cy.get('[data-cy=message]').should('contain', error1);
   });
 });

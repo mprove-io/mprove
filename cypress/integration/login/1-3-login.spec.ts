@@ -1,7 +1,7 @@
 import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 
-const existingUserId = 't3-existing-user@example.com';
+const existingUserId = '1-3-existing-user@example.com';
 
 function resetData(item: { password: string; email_verified: boolean }) {
   cy.deletePack({ user_ids: [existingUserId] });
@@ -16,7 +16,7 @@ function resetData(item: { password: string; email_verified: boolean }) {
   });
 }
 
-describe('t3-login', () => {
+describe('1-3-login', () => {
   beforeEach(() => {
     cy.basicVisit(constants.PATH_LOGIN);
   });
@@ -25,9 +25,8 @@ describe('t3-login', () => {
     cy.noLoading();
   });
 
-  const mainHeading = 'Sign In';
-  it(`should display heading "${mainHeading}"`, () => {
-    cy.get('h3').should('contain', mainHeading);
+  it(`should display title`, () => {
+    cy.get(`[data-cy=loginTitle]`);
   });
 
   it(`existing user, valid password, email verified - should be able to login, redirect to ${
@@ -50,41 +49,33 @@ describe('t3-login', () => {
     cy.url().should('include', constants.PATH_VERIFY_EMAIL_SENT);
   });
 
-  it(`existing user, wrong password - should see ${
-    api.ServerResponseStatusEnum.LOGIN_ERROR_WRONG_PASSWORD
-  }`, () => {
+  const error1 = api.ServerResponseStatusEnum.LOGIN_ERROR_WRONG_PASSWORD;
+
+  it(`existing user, wrong password - should see ${error1}`, () => {
     resetData({ password: '123123', email_verified: false });
     cy.get('[data-cy=emailInput]').type(existingUserId);
     cy.get('[data-cy=passwordInput]').type('456456');
     cy.get('[data-cy=signInButton]').click();
-    cy.get('[data-cy=message]').should(
-      'contain',
-      api.ServerResponseStatusEnum.LOGIN_ERROR_WRONG_PASSWORD
-    );
+    cy.get('[data-cy=message]').should('contain', error1);
   });
 
-  it(`existing user, password not set - should see ${
-    api.ServerResponseStatusEnum.LOGIN_ERROR_REGISTER_TO_SET_PASSWORD
-  }`, () => {
+  const error2 =
+    api.ServerResponseStatusEnum.LOGIN_ERROR_REGISTER_TO_SET_PASSWORD;
+
+  it(`existing user, password not set - should see ${error2}`, () => {
     resetData({ password: undefined, email_verified: false });
     cy.get('[data-cy=emailInput]').type(existingUserId);
     cy.get('[data-cy=passwordInput]').type('789789');
     cy.get('[data-cy=signInButton]').click();
-    cy.get('[data-cy=message]').should(
-      'contain',
-      api.ServerResponseStatusEnum.LOGIN_ERROR_REGISTER_TO_SET_PASSWORD
-    );
+    cy.get('[data-cy=message]').should('contain', error2);
   });
 
-  it(`not registered user - should see ${
-    api.ServerResponseStatusEnum.LOGIN_ERROR_USER_DOES_NOT_EXIST
-  }`, () => {
-    cy.get('[data-cy=emailInput]').type('t3-new-user@example.com');
+  const error3 = api.ServerResponseStatusEnum.LOGIN_ERROR_USER_DOES_NOT_EXIST;
+
+  it(`not registered user - should see ${error3}`, () => {
+    cy.get('[data-cy=emailInput]').type('1-3-new-user@example.com');
     cy.get('[data-cy=passwordInput]').type('456456');
     cy.get('[data-cy=signInButton]').click();
-    cy.get('[data-cy=message]').should(
-      'contain',
-      api.ServerResponseStatusEnum.LOGIN_ERROR_USER_DOES_NOT_EXIST
-    );
+    cy.get('[data-cy=message]').should('contain', error3);
   });
 });
