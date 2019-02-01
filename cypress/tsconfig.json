@@ -1,12 +1,13 @@
 {
   "include": [
-    "../node_modules/cypress",
-    "../cypress/**/*.ts",
+    "node_modules/cypress",
+    "**/*.ts",
     // "../src/app/constants/**/*.ts",
     // "../src/app/api/**/*.ts",
   ],
   "exclude": [
-    "../node_modules"
+    "node_modules",
+    "../node_modules",
   ],
   "compilerOptions": {
     "types": ["cypress", "node"],
