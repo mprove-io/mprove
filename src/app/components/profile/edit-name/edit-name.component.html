@@ -8,7 +8,7 @@
           formControlName="firstName"
           placeholder="First name"
           required
-          name="profileFirstName"
+          data-cy="editNameFirstNameInput"
         />
         <mat-error>
           <m-validation-msg
@@ -24,7 +24,7 @@
           formControlName="lastName"
           placeholder="Last name"
           required
-          name="profileLastName"
+          data-cy="editNameLastNameInput"
         />
         <mat-error>
           <m-validation-msg
@@ -39,7 +39,7 @@
       mat-button
       type="submit"
       class="mat-flat-fab"
-      name="profileApplyChangeName"
+      data-cy="editNameApply"
       [disabled]="!nameForm.valid"
       (click)="onSubmit(nameForm, nameForm.value)"
     >

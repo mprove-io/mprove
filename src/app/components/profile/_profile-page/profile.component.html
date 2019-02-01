@@ -60,7 +60,7 @@
     <div
       fxFlex="90"
       class="profile_padding profile-form_max-width_900"
-      name="profileEmail"
+      data-cy="profileEmailData"
       >{{ user.user_id }}</div
     >
   </div>
@@ -71,12 +71,9 @@
       fxFlexAlign="center"
       class="profile__label profile_padding profile-form_max-width_150"
     ></div>
-    <div
-      fxFlex="90"
-      class="profile_padding profile-form_max-width_900"
-      name="profileChangePassword"
-    >
+    <div fxFlex="90" class="profile_padding profile-form_max-width_900">
       <button
+        data-cy="profileChangePasswordButton"
         type="button"
         mat-raised-button
         (click)="openResetPasswordDialog()"
