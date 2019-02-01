@@ -1,11 +1,11 @@
 import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 
-const userId = '1-4-user@example.com';
+const userId = '7-1-user@example.com';
 const password = '123123';
 
-describe('1-4 (register) logged in', () => {
-  it(`should redirect to ${constants.PATH_PROFILE}`, () => {
+describe('7-1 profile-title (logged in)', () => {
+  it(`should see Profile`, () => {
     cy.deletePack({ user_ids: [userId] });
     cy.seedPack({
       users: [
@@ -16,9 +16,8 @@ describe('1-4 (register) logged in', () => {
         }
       ]
     });
-    cy.basicVisit(constants.PATH_REGISTER);
     cy.loginUser({ user_id: userId, password: password });
-    cy.basicVisit(constants.PATH_LOGIN);
+    cy.basicVisit(constants.PATH_PROFILE);
     cy.get('[data-cy=profileTitle]');
     cy.noLoading();
   });

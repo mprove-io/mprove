@@ -1,10 +1,10 @@
 import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 
-describe('6-1 (not-found) logged out', () => {
+describe('3-1 login-title (logged out)', () => {
   it(`should display title`, () => {
-    cy.basicVisit('someUnknownPage');
-    cy.get(`[data-cy=notFoundTitle]`);
+    cy.basicVisit(constants.PATH_LOGIN);
+    cy.get(`[data-cy=loginTitle]`);
     cy.noLoading();
   });
 });

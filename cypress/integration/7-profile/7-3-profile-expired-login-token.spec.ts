@@ -1,7 +1,7 @@
 import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 
-describe('7-3 (profile) expired login token', () => {
+describe('7-3 profile-expired-login-token', () => {
   it(`should redirect to "${constants.PATH_LOGIN}"`, () => {
     // jwt.io
     // "email": "email@example.com", "exp": 1548929971, "iat": 1548929970

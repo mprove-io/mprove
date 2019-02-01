@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '3-3-user@example.com';
 const password = '123123';
 
-describe('3-3 (login) logged out, existing user, valid password, email is not verified', () => {
+describe('3-3 login-verify-email (logged out, existing user, valid password)', () => {
   it(`should be able to login, redirect to ${
     constants.PATH_VERIFY_EMAIL_SENT
   }`, () => {
@@ -21,9 +21,9 @@ describe('3-3 (login) logged out, existing user, valid password, email is not ve
       ]
     });
     cy.basicVisit(constants.PATH_LOGIN);
-    cy.get('[data-cy=emailInput]').type(userId);
-    cy.get('[data-cy=passwordInput]').type(password);
-    cy.get('[data-cy=signInButton]').click();
+    cy.get('[data-cy=loginEmailInput]').type(userId);
+    cy.get('[data-cy=loginPasswordInput]').type(password);
+    cy.get('[data-cy=loginSignInButton]').click();
     cy.url().should('include', constants.PATH_VERIFY_EMAIL_SENT);
     cy.noLoading();
   });

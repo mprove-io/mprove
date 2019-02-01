@@ -5,7 +5,7 @@ const userId = '3-4-user@example.com';
 const password = '123123';
 const error = api.ServerResponseStatusEnum.LOGIN_ERROR_WRONG_PASSWORD;
 
-describe('3-4 (login) logged out, existing user, wrong password', () => {
+describe('3-4 login-wrong-password (logged out, existing user)', () => {
   it(`should see ${error}`, () => {
     cy.deletePack({
       user_ids: [userId]
@@ -20,10 +20,10 @@ describe('3-4 (login) logged out, existing user, wrong password', () => {
       ]
     });
     cy.basicVisit(constants.PATH_LOGIN);
-    cy.get('[data-cy=emailInput]').type(userId);
-    cy.get('[data-cy=passwordInput]').type('456456');
-    cy.get('[data-cy=signInButton]').click();
-    cy.get('[data-cy=message]').should('contain', error);
+    cy.get('[data-cy=loginEmailInput]').type(userId);
+    cy.get('[data-cy=loginPasswordInput]').type('456456');
+    cy.get('[data-cy=loginSignInButton]').click();
+    cy.get('[data-cy=infoMessage]').should('contain', error);
     cy.noLoading();
   });
 });

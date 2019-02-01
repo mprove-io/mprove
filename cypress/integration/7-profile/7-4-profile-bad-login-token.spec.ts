@@ -5,7 +5,7 @@ const userId = '7-4-user@example.com';
 const password = '123123';
 const error1 = api.ServerResponseStatusEnum.AUTHORIZATION_ERROR;
 
-describe('7-4 (profile) bad login token', () => {
+describe('7-4 profile-bad-login-token', () => {
   it(`should see ${error1}, redirect to "${constants.PATH_LOGIN}"`, () => {
     //   "email": "email@example.com", "exp": 999999999999, "iat": 1548929970
     let token =
@@ -24,7 +24,7 @@ describe('7-4 (profile) bad login token', () => {
     });
     cy.basicVisit(constants.PATH_PROFILE);
     cy.get('[data-cy=loginTitle]');
-    cy.get('[data-cy=message]').should('contain', error1);
+    cy.get('[data-cy=infoMessage]').should('contain', error1);
     cy.noLoading();
   });
 });

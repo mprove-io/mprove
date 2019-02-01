@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '3-7-user@example.com';
 const password = '123123';
 
-describe('3-7 (login) logged in', () => {
+describe('3-7 login-logged-in', () => {
   it(`should redirect to ${constants.PATH_PROFILE}`, () => {
     cy.deletePack({
       user_ids: [userId]

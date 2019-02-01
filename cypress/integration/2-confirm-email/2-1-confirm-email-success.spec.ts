@@ -6,7 +6,7 @@ const userPassword = '123123';
 const userEmailVerificationToken = 'abcdef';
 const infoText = 'Email is confirmed';
 
-describe('2-1 (confirm-email) logged out, good emailVerificationToken', () => {
+describe('2-1 confirm-email-success (logged out)', () => {
   it(`should see "${infoText}", redirect to ${constants.PATH_LOGIN}`, () => {
     cy.deletePack({ user_ids: [userId] });
     cy.seedPack({
@@ -22,7 +22,7 @@ describe('2-1 (confirm-email) logged out, good emailVerificationToken', () => {
     cy.basicVisit(
       constants.PATH_CONFIRM_EMAIL + '?token=' + userEmailVerificationToken
     );
-    cy.get('[data-cy=message]').should('contain', infoText);
+    cy.get('[data-cy=infoMessage]').should('contain', infoText);
     cy.noLoading();
   });
 });

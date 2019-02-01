@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '4-1-user@example.com';
 const password = '123123';
 
-describe('4-1 (forgot-password) logged out, existing user', () => {
+describe('4-1 forgot-password-success (logged out)', () => {
   it(`should redirect to ${constants.PATH_RESET_PASSWORD_SENT}`, () => {
     cy.deletePack({ user_ids: [userId] });
     cy.seedPack({
@@ -17,7 +17,7 @@ describe('4-1 (forgot-password) logged out, existing user', () => {
       ]
     });
     cy.basicVisit(constants.PATH_LOGIN);
-    cy.get('[data-cy=forgotPasswordButton]').click();
+    cy.get('[data-cy=loginForgotPasswordButton]').click();
     cy.get('[data-cy=resetPasswordEmailInput]').type(userId);
     cy.get('[data-cy=resetPasswordSendButton]').click();
     cy.url().should('include', constants.PATH_RESET_PASSWORD_SENT);
