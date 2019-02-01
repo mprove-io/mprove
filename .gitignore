@@ -8,6 +8,7 @@ dist
 
 # dependencies
 node_modules
+cypress/node_modules
 
 # IDEs and editors
 /.idea
