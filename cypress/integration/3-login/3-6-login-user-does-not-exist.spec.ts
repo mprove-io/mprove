@@ -9,7 +9,7 @@ describe('3-6 login-user-does-not-exist (logged out)', () => {
     cy.get('[data-cy=loginEmailInput]').type('3-6-user@example.com');
     cy.get('[data-cy=loginPasswordInput]').type('123123');
     cy.get('[data-cy=loginSignInButton]').click();
+    cy.loading();
     cy.get('[data-cy=infoMessage]').should('contain', error);
-    cy.noLoading();
   });
 });

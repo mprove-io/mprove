@@ -22,7 +22,7 @@ describe('2-1 confirm-email-success (logged out)', () => {
     cy.basicVisit(
       constants.PATH_CONFIRM_EMAIL + '?token=' + userEmailVerificationToken
     );
+    cy.loading();
     cy.get('[data-cy=infoMessage]').should('contain', infoText);
-    cy.noLoading();
   });
 });

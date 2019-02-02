@@ -22,7 +22,7 @@ describe('3-2 login-success (logged out, existing user, valid password, email ve
     cy.get('[data-cy=loginEmailInput]').type(userId);
     cy.get('[data-cy=loginPasswordInput]').type(password);
     cy.get('[data-cy=loginSignInButton]').click();
+    cy.loading();
     cy.url().should('include', constants.PATH_PROFILE);
-    cy.noLoading();
   });
 });

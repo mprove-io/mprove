@@ -9,7 +9,9 @@ declare global {
       seedPack: typeof seedPack;
       loginUser: typeof loginUser;
       basicVisit: typeof basicVisit;
-      noLoading: typeof noLoading;
+      loading: typeof loading;
+      // loadingExist: typeof loadingExist;
+      // loadingNotExist: typeof loadingNotExist;
     }
   }
 }
@@ -66,12 +68,24 @@ export function basicVisit(url: string) {
   });
 }
 
-export function noLoading() {
-  cy.get('cdk-overlay-container').should('not.exist');
+export function loading() {
+  cy.get('circle.ng-star-inserted').should('exist');  
+  cy.get('circle.ng-star-inserted').should('not.exist');
 }
+
+// export function loadingExist() {
+//   cy.get('circle.ng-star-inserted').should('exist');
+// }
+
+// export function loadingNotExist() {
+//   cy.get('circle.ng-star-inserted').should('not.exist');
+// }
+
 
 Cypress.Commands.add('deletePack', deletePack);
 Cypress.Commands.add('seedPack', seedPack);
 Cypress.Commands.add('loginUser', loginUser);
 Cypress.Commands.add('basicVisit', basicVisit);
-Cypress.Commands.add('noLoading', noLoading);
+Cypress.Commands.add('loading', loading);
+// Cypress.Commands.add('loadingExist', loadingExist);
+// Cypress.Commands.add('loadingNotExist', loadingNotExist);

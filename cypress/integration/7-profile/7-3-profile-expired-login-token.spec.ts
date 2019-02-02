@@ -8,10 +8,9 @@ describe('7-3 profile-expired-login-token', () => {
     // HMACSHA256(base64UrlEncode(header) + "." +base64UrlEncode(payload), secretString)
     let expiredToken =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsQGV4YW1wbGUuY29tIiwiZXhwIjoxNTQ4OTI5OTcxLCJpYXQiOjE1NDg5Mjk5NzB9.OWqIvPe_ejFjYwRnZ-ML88v7Xo8VNV6vLJ8c1VYwx1s';
-
     window.localStorage.setItem('token', expiredToken);
+
     cy.basicVisit(constants.PATH_PROFILE);
     cy.get('[data-cy=loginTitle]');
-    cy.noLoading();
   });
 });

@@ -3,10 +3,10 @@ import * as api from '../../../src/app/api/_index';
 
 const userId = '1-3-user@example.com';
 const password = '123123';
-const error1 = api.ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS;
+const error = api.ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS;
 
 describe('1-3 register-user-already-exist (logged out)', () => {
-  it(`should see ${error1}`, () => {
+  it(`should see ${error}`, () => {
     cy.deletePack({ user_ids: [userId] });
     cy.seedPack({
       users: [
@@ -21,7 +21,7 @@ describe('1-3 register-user-already-exist (logged out)', () => {
     cy.get('[data-cy=registerEmailInput]').type(userId);
     cy.get('[data-cy=registerPasswordInput]').type(password);
     cy.get('[data-cy=registerRegisterButton]').click();
-    cy.get('[data-cy=infoMessage]').should('contain', error1);
-    cy.noLoading();
+    cy.loading();
+    cy.get('[data-cy=infoMessage]').should('contain', error);
   });
 });

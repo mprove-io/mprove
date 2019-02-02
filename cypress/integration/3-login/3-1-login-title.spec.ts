@@ -5,6 +5,5 @@ describe('3-1 login-title (logged out)', () => {
   it(`should display title`, () => {
     cy.basicVisit(constants.PATH_LOGIN);
     cy.get(`[data-cy=loginTitle]`);
-    cy.noLoading();
   });
 });

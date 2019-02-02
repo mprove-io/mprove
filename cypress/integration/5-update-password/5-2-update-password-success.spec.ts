@@ -27,8 +27,8 @@ describe('5-2 update-password-success (logged out)', () => {
     cy.get('[data-cy=updatePasswordNewPasswordInput]').type(newPassword);
     cy.get('[data-cy=updatePasswordConfirmPasswordInput]').type(newPassword);
     cy.get('[data-cy=updatePasswordSetPasswordButton]').click();
+    cy.loading();
     cy.url().should('include', constants.PATH_LOGIN);
     cy.get('[data-cy=infoMessage]').should('contain', 'New Password was set');
-    cy.noLoading();
   });
 });

@@ -12,7 +12,7 @@ describe('4-2 forgot-password-user-does-not-exist (logged out)', () => {
     cy.get('[data-cy=loginForgotPasswordButton]').click();
     cy.get('[data-cy=resetPasswordEmailInput]').type(userId);
     cy.get('[data-cy=resetPasswordSendButton]').click();
+    cy.loading();
     cy.get('[data-cy=infoMessage]').should('contain', error);
-    cy.noLoading();
   });
 });

@@ -13,7 +13,7 @@ describe('1-2 register-success (logged out, new user)', () => {
     cy.get('[data-cy=registerEmailInput]').type(userId);
     cy.get('[data-cy=registerPasswordInput]').type(password);
     cy.get('[data-cy=registerRegisterButton]').click();
+    cy.loading();
     cy.url().should('include', constants.PATH_VERIFY_EMAIL_SENT);
-    cy.noLoading();
   });
 });

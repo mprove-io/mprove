@@ -18,7 +18,7 @@ describe('7-1 profile-title (logged in)', () => {
     });
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(constants.PATH_PROFILE);
+    cy.loading();
     cy.get('[data-cy=profileTitle]');
-    cy.noLoading();
   });
 });

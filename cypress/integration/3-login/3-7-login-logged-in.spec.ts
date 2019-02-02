@@ -20,7 +20,7 @@ describe('3-7 login-logged-in', () => {
     });
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(constants.PATH_LOGIN);
+    cy.loading();
     cy.get('[data-cy=profileTitle]');
-    cy.noLoading();
   });
 });
