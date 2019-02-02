@@ -11,8 +11,8 @@ import * as services from '@app/services/_index';
 import * as constants from '@app/constants/_index';
 
 @Injectable()
-export class UserLogoutEffect {
-  @Effect() userLogout$: Observable<Action> = this.actions$.pipe(
+export class LogoutUserEffect {
+  @Effect() logoutUser$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.LOGOUT_USER),
     mergeMap((action: actions.LogoutUserAction) => {
       this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
@@ -20,7 +20,6 @@ export class UserLogoutEffect {
       this.watchAuthenticationService.stop();
 
       localStorage.removeItem('token');
-      this.cookieService.deleteCookie('token'); // TODO: cookie token
 
       this.router.navigate([constants.PATH_LOGIN]);
       this.store.dispatch(new actions.ResetStateAction());
@@ -43,7 +42,6 @@ export class UserLogoutEffect {
     private router: Router,
     private store: Store<interfaces.AppState>,
     private auth: services.AuthService,
-    private watchAuthenticationService: services.WatchAuthenticationService,
-    private cookieService: services.CookieService
+    private watchAuthenticationService: services.WatchAuthenticationService
   ) {}
 }

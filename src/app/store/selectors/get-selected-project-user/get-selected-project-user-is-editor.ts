@@ -7,7 +7,7 @@ export const getSelectedProjectUserIsEditor = createSelector(
   getSelectedProjectMembers,
   getUserId,
   (members: api.Member[], userId: string) => {
-    if (members && userId) {
+    if (members && members.length > 0 && userId) {
       let userIndex = members.findIndex(
         (member: api.Member) => member.member_id === userId
       );

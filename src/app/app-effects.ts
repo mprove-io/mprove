@@ -123,7 +123,7 @@ export const APP_EFFECTS = [
   effects.SetUserPictureEffect,
   effects.SetUserTimezoneSuccessEffect,
   effects.SetUserTimezoneEffect,
-  effects.UserLogoutEffect,
+  effects.LogoutUserEffect,
   effects.VerifyUserEmailEffect,
   effects.VerifyUserEmailSuccessEffect,
   effects.VerifyUserEmailFailEffect,

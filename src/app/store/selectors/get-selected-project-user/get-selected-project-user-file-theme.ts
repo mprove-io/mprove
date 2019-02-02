@@ -7,7 +7,7 @@ export const getSelectedProjectUserFileTheme = createSelector(
   getSelectedProjectMembers,
   getUserId,
   (members, userId) => {
-    if (members && userId) {
+    if (members && members.length > 0 && userId) {
       return members.find((member: api.Member) => member.member_id === userId)
         .file_theme;
     } else {

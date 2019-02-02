@@ -1,7 +1,6 @@
 export * from './auth.service';
 export * from './backend.service';
 export * from './console-log.service';
-export * from './cookie.service';
 export * from './data-size.service';
 export * from './data.service';
 export * from './dialog.service';

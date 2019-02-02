@@ -7,7 +7,7 @@ export const getSelectedProjectUserIsAdmin = createSelector(
   getSelectedProjectMembers,
   getUserId,
   (members, userId) => {
-    if (members && userId) {
+    if (members && members.length > 0 && userId) {
       let userIndex = members.findIndex(
         (member: api.Member) => member.member_id === userId
       );

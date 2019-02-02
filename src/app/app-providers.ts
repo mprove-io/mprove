@@ -27,7 +27,6 @@ export const APP_PROVIDERS = [
   services.MyWebSocketService,
   services.AuthService,
   services.TimeService,
-  services.CookieService,
   services.DataSizeService,
   services.PageTitleService,
   services.WatchAuthenticationService,

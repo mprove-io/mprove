@@ -4,8 +4,8 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "cs:open": "cypress open",
-    "cs:run": "cypress run"
+    "cypress": "cypress open",
+    "cypress:run": "cypress run"
   },
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "devDependencies": {

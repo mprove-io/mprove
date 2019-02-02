@@ -9,7 +9,7 @@ export const getSelectedProjectUserMember = createSelector(
   getSelectedProjectId,
   getUserId,
   (members: api.Member[], projectId: string, userId: string) => {
-    if (members && projectId && userId) {
+    if (members && members.length > 0 && projectId && userId) {
       return members.find(
         (member: api.Member) =>
           member.project_id === projectId &&
