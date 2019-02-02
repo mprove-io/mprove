@@ -2,14 +2,8 @@
   mat-button
   class="user-block"
   [mat-menu-trigger-for]="menu"
-  name="userMenu"
+  data-cy="userMenuButton"
 >
-  <!--
-    <div class="user-block__info">
-      <div class="user-block__project">{{userFirstName$ | async | capitalize}}</div>
-      <div class="user-block__name"> {{userLastName$ | async | capitalize}}</div>
-    </div>
-  -->
   <div class="user-block__avatar">
     <img
       *ngIf="(userPictureUrlBig$ | async); else: defaultPhoto"
@@ -54,7 +48,7 @@
           mat-menu-item
           class="mat-menu-item--logout"
           (click)="logout()"
-          name="logoutButton"
+          data-cy="logoutButton"
         >
           <mat-icon svgIcon="logout" class="icon-logout"></mat-icon>Log
           Out</button
