@@ -12,6 +12,6 @@ describe('5-3 update-password-token-expired (logged out)', () => {
     cy.get('[data-cy=updatePasswordSetPasswordButton]').click();
     cy.loading();
     cy.url().should('include', constants.PATH_LOGIN);
-    cy.get('[data-cy=infoMessage]').should('contain', error);
+    cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

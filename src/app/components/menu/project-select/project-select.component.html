@@ -1,15 +1,8 @@
+<!-- desktop -->
 <div fxHide.lt-md>
-  <!--
-    <button mat-icon-button
-            name="projectSelectMenu"
-            [matMenuTriggerFor]="menu">
-      <mat-icon>settings</mat-icon>
-    </button>
-  -->
-
   <button
     mat-button
-    name="projectSelectMenu"
+    data-cy="projectSelectMenuButton"
     class="space__button_hover_primary"
     [matMenuTriggerFor]="menu"
   >
@@ -27,7 +20,7 @@
           <button
             mat-menu-item
             *ngFor="let projectId of (projectsIds$ | async)"
-            name="projectSelectMenuProject"
+            data-cy="projectSelectMenuProjectItemButton"
             [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']"
           >
             &nbsp;&nbsp;{{ projectId | capitalize }}
@@ -35,7 +28,7 @@
           <button
             mat-menu-item
             (click)="openNewProjectDialog()"
-            name="projectSelectMenuNewProject"
+            data-cy="projectSelectMenuNewProjectButton"
           >
             <mat-icon>add</mat-icon>New project</button
           >
@@ -56,7 +49,7 @@
       <button
         mat-menu-item
         *ngFor="let projectId of (projectsIds$ | async)"
-        name="projectSelectMenuProjectMobile"
+        data-cy="projectSelectMenuProjectItemButtonMobile"
         [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']"
       >
         &nbsp;&nbsp;{{ projectId | capitalize }}
@@ -65,7 +58,7 @@
       <button
         mat-menu-item
         (click)="openNewProjectDialog()"
-        name="projectSelectMenuNewProjectMobile"
+        data-cy="projectSelectMenuNewProjectButtonMobile"
       >
         <mat-icon>add</mat-icon>New project</button
       >

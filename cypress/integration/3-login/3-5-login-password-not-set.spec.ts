@@ -23,6 +23,6 @@ describe('3-5 login-password-not-set (logged out, existing user)', () => {
     cy.get('[data-cy=loginPasswordInput]').type('789789');
     cy.get('[data-cy=loginSignInButton]').click();
     cy.loading();
-    cy.get('[data-cy=infoMessage]').should('contain', error);
+    cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

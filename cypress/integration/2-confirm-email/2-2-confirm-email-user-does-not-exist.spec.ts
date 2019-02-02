@@ -9,6 +9,6 @@ describe('2-2 confirm-email-user-does-not-exist (logged out, notExistingToken)',
     cy.basicVisit(constants.PATH_CONFIRM_EMAIL + '?token=notExistingToken');
     cy.loading();
     cy.url().should('include', constants.PATH_LOGIN);
-    cy.get('[data-cy=infoMessage]').should('contain', error1);
+    cy.get('[data-cy=dialogInfoMessage]').should('contain', error1);
   });
 });

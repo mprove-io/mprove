@@ -24,6 +24,6 @@ describe('3-4 login-wrong-password (logged out, existing user)', () => {
     cy.get('[data-cy=loginPasswordInput]').type('456456');
     cy.get('[data-cy=loginSignInButton]').click();
     cy.loading();
-    cy.get('[data-cy=infoMessage]').should('contain', error);
+    cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

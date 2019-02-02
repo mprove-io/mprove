@@ -10,6 +10,6 @@ describe('3-6 login-user-does-not-exist (logged out)', () => {
     cy.get('[data-cy=loginPasswordInput]').type('123123');
     cy.get('[data-cy=loginSignInButton]').click();
     cy.loading();
-    cy.get('[data-cy=infoMessage]').should('contain', error);
+    cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

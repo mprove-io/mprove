@@ -18,8 +18,8 @@ describe('4-1 forgot-password-success (logged out)', () => {
     });
     cy.basicVisit(constants.PATH_LOGIN);
     cy.get('[data-cy=loginForgotPasswordButton]').click();
-    cy.get('[data-cy=resetPasswordEmailInput]').type(userId);
-    cy.get('[data-cy=resetPasswordSendButton]').click();
+    cy.get('[data-cy=dialogResetPasswordEmailInput]').type(userId);
+    cy.get('[data-cy=dialogResetPasswordSendButton]').click();
     cy.loading();
     cy.url().should('include', constants.PATH_RESET_PASSWORD_SENT);
   });

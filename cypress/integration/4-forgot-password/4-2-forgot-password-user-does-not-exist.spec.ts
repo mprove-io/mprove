@@ -10,9 +10,9 @@ describe('4-2 forgot-password-user-does-not-exist (logged out)', () => {
     cy.deletePack({ user_ids: [userId] });
     cy.basicVisit(constants.PATH_LOGIN);
     cy.get('[data-cy=loginForgotPasswordButton]').click();
-    cy.get('[data-cy=resetPasswordEmailInput]').type(userId);
-    cy.get('[data-cy=resetPasswordSendButton]').click();
+    cy.get('[data-cy=dialogResetPasswordEmailInput]').type(userId);
+    cy.get('[data-cy=dialogResetPasswordSendButton]').click();
     cy.loading();
-    cy.get('[data-cy=infoMessage]').should('contain', error);
+    cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

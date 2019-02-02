@@ -22,6 +22,6 @@ describe('1-3 register-user-already-exist (logged out)', () => {
     cy.get('[data-cy=registerPasswordInput]').type(password);
     cy.get('[data-cy=registerRegisterButton]').click();
     cy.loading();
-    cy.get('[data-cy=infoMessage]').should('contain', error);
+    cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

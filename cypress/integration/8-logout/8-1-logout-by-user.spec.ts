@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '8-1-user@example.com';
 const password = '123123';
 
-describe('8-1 logout (logged in)', () => {
+describe('8-1 logout-by-user (logged in)', () => {
   it(`should be able to logout, redirect to ${constants.PATH_LOGIN}`, () => {
     cy.deletePack({ user_ids: [userId] });
     cy.seedPack({
