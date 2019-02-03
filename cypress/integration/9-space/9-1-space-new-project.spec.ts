@@ -8,7 +8,10 @@ const projectId = 'project-9-1';
 
 describe('9-1 space-new-project (logged in)', () => {
   it(`should be able create new project`, () => {
-    cy.deletePack({ user_ids: [userId] });
+    cy.deletePack({
+      user_ids: [userId],
+      project_ids: [projectId]
+    });
     cy.seedPack({
       users: [
         {
@@ -21,7 +24,9 @@ describe('9-1 space-new-project (logged in)', () => {
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(constants.PATH_PROFILE);
     cy.loading();
-    cy.get('[data-cy=projectSelectMenuButton]').eq(1).click();
+    cy.get('[data-cy=projectSelectMenuButton]')
+      .eq(1)
+      .click();
     cy.get('[data-cy=projectSelectMenuNewProjectButton]').click();
     cy.get('[data-cy=dialogNewProjectNameInput]').type(projectId);
     cy.get('[data-cy=dialogNewProjectAddButton]').click();

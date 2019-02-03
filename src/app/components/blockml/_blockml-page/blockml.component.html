@@ -9,14 +9,14 @@
       <mat-icon>menu</mat-icon>
     </button>
 
-    <span class="space__sub-toolbar_text" name="blockmlTitle">BlockML</span>
+    <span class="space__sub-toolbar_text" data-cy="blockmlTitle">BlockML</span>
 
-    <span *ngIf="!(isDev$ | async); else: devRepo" name="blockmlTitleMode"
+    <span *ngIf="!(isDev$ | async); else: devRepo" data-cy="blockmlTitleMode"
       >Prod</span
     >
 
     <ng-template #devRepo>
-      <span name="blockmlTitleMode">Dev</span>
+      <span data-cy="blockmlTitleMode">Dev</span>
     </ng-template>
 
     <span class="example-fill-remaining-space"></span>
@@ -29,7 +29,7 @@
       <button
         mat-raised-button
         color="accent"
-        name="blockmlConflicts"
+        data-cy="blockmlConflicts"
         [matMenuTriggerFor]="conflictsMenu"
       >
         <div fxLayout="row" fxLayoutAlign="start center">
@@ -44,7 +44,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        name="blockmlCommit"
+        data-cy="blockmlCommit"
         [disabled]="(needSave$ | async) || !(repoIsNeedCommit$ | async)"
         (click)="commit()"
         >Commit
@@ -60,7 +60,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        name="blockmlPullFromRemote"
+        data-cy="blockmlPullFromRemote"
         [disabled]="needSave$ | async"
         (click)="pullFromRemote()"
         >Pull From Remote
@@ -76,7 +76,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        name="blockmlPull"
+        data-cy="blockmlPull"
         [disabled]="needSave$ | async"
         (click)="pull()"
         >Pull
@@ -88,7 +88,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        name="blockmlPushToProduction"
+        data-cy="blockmlPushToProduction"
         [disabled]="
           (needSave$ | async) ||
           !(repoIsNeedPush$ | async) ||
@@ -104,7 +104,7 @@
       *ngIf="(isDev$ | async)"
       fxHide.lt-md
       mat-icon-button
-      name="blockmlOptions"
+      data-cy="blockmlOptions"
       [matMenuTriggerFor]="repoMenu"
       [disabled]="needSave$ | async"
     >
@@ -175,7 +175,7 @@
         <button
           mat-raised-button
           color="accent"
-          name="blockmlConflictsMobile"
+          data-cy="blockmlConflictsMobile"
           [matMenuTriggerFor]="conflictsMenu"
         >
           <div fxLayout="row" fxLayoutAlign="start center">
@@ -189,7 +189,7 @@
         <button
           mat-raised-button
           color="accent"
-          name="blockmlCommitMobile"
+          data-cy="blockmlCommitMobile"
           [disabled]="(needSave$ | async) || !(repoIsNeedCommit$ | async)"
           (click)="commit()"
           >Commit
@@ -200,7 +200,7 @@
         <button
           mat-raised-button
           color="accent"
-          name="blockmlPullFromRemoteMobile"
+          data-cy="blockmlPullFromRemoteMobile"
           [disabled]="needSave$ | async"
           (click)="pullFromRemote()"
           >Pull From Remote
@@ -211,7 +211,7 @@
         <button
           mat-raised-button
           color="accent"
-          name="blockmlPullMobile"
+          data-cy="blockmlPullMobile"
           [disabled]="needSave$ | async"
           (click)="pull()"
           >Pull
@@ -222,7 +222,7 @@
         <button
           mat-raised-button
           color="accent"
-          name="blockmlPushToProductionMobile"
+          data-cy="blockmlPushToProductionMobile"
           [disabled]="
             (needSave$ | async) ||
             !(repoIsNeedPush$ | async) ||
@@ -236,7 +236,7 @@
 
       <button
         mat-menu-item
-        name="blockmlRevertRepoToLastCommitMobile"
+        data-cy="blockmlRevertRepoToLastCommitMobile"
         (click)="revertRepoToLastCommit()"
       >
         Revert Repo to Last Commit</button
@@ -244,7 +244,7 @@
 
       <button
         mat-menu-item
-        name="blockmlRevertRepoToProductionMobile"
+        data-cy="blockmlRevertRepoToProductionMobile"
         (click)="revertRepoToProduction()"
       >
         Revert Repo to Production</button
@@ -257,7 +257,7 @@
   <button
     mat-menu-item
     *ngFor="let line of (conflicts$ | async)"
-    name="blockmlConflictLine"
+    data-cy="blockmlConflictLine"
     (click)="conflictLineClick(line)"
     fxLayout="row"
     fxLayoutAlign="start center"
@@ -275,7 +275,7 @@
 <mat-menu #repoMenu="matMenu">
   <button
     mat-menu-item
-    name="blockmlRevertRepoToLastCommit"
+    data-cy="blockmlRevertRepoToLastCommit"
     (click)="revertRepoToLastCommit()"
   >
     Revert Repo to Last Commit</button
@@ -283,7 +283,7 @@
 
   <button
     mat-menu-item
-    name="blockmlRevertRepoToProduction"
+    data-cy="blockmlRevertRepoToProduction"
     (click)="revertRepoToProduction()"
   >
     Revert Repo to Production</button
