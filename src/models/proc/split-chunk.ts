@@ -114,7 +114,10 @@ export async function splitChunk(item: {
       if (isDifferentSession) {
         let projectMemberIds = projectMembersMap[project.project_id];
 
-        if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+        if (
+          projectMemberIds &&
+          projectMemberIds.indexOf(wsClient.user_id) > -1
+        ) {
           let wrappedProject = wrapper.wrapToApiProject(project);
           payload.projects.push(wrappedProject);
         }
@@ -128,7 +131,10 @@ export async function splitChunk(item: {
         if (repo.repo_id === constants.PROD_REPO_ID) {
           let projectMemberIds = projectMembersMap[repo.project_id];
 
-          if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+          if (
+            projectMemberIds &&
+            projectMemberIds.indexOf(wsClient.user_id) > -1
+          ) {
             // prod repo
             let wrappedRepo = wrapper.wrapToApiRepo(repo);
             payload.repos.push(wrappedRepo);
@@ -151,7 +157,10 @@ export async function splitChunk(item: {
           // file of prod repo
           let projectMemberIds = projectMembersMap[file.project_id];
 
-          if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+          if (
+            projectMemberIds &&
+            projectMemberIds.indexOf(wsClient.user_id) > -1
+          ) {
             let wrappedFile = wrapper.wrapToApiFile(file);
             payload.files.push(wrappedFile);
           }
@@ -179,7 +188,10 @@ export async function splitChunk(item: {
         if (model.repo_id === constants.PROD_REPO_ID) {
           let projectMemberIds = projectMembersMap[model.project_id];
 
-          if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+          if (
+            projectMemberIds &&
+            projectMemberIds.indexOf(wsClient.user_id) > -1
+          ) {
             // model of prod repo && user is member
             let wrappedModel = wrapper.wrapToApiModel(model);
             payload.models.push(wrappedModel);
@@ -201,7 +213,10 @@ export async function splitChunk(item: {
         if (dashboard.repo_id === constants.PROD_REPO_ID) {
           let projectMemberIds = projectMembersMap[dashboard.project_id];
 
-          if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+          if (
+            projectMemberIds &&
+            projectMemberIds.indexOf(wsClient.user_id) > -1
+          ) {
             // dashboard of prod repo && user is member
             let wrappedDashboard = wrapper.wrapToApiDashboard(dashboard);
             payload.dashboards.push(wrappedDashboard);
@@ -223,7 +238,10 @@ export async function splitChunk(item: {
         if (mconfig.repo_id === constants.PROD_REPO_ID) {
           let projectMemberIds = projectMembersMap[mconfig.project_id];
 
-          if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+          if (
+            projectMemberIds &&
+            projectMemberIds.indexOf(wsClient.user_id) > -1
+          ) {
             // mconfig of prod repo && user is member
             let wrappedMconfig = wrapper.wrapToApiMconfig(mconfig);
             payload.mconfigs.push(wrappedMconfig);
@@ -245,7 +263,10 @@ export async function splitChunk(item: {
         if (error.repo_id === constants.PROD_REPO_ID) {
           let projectMemberIds = projectMembersMap[error.project_id];
 
-          if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+          if (
+            projectMemberIds &&
+            projectMemberIds.indexOf(wsClient.user_id) > -1
+          ) {
             // error of prod repo && user is member
             let wrappedError = wrapper.wrapToApiError(error);
             payload.errors.push(wrappedError);
@@ -266,7 +287,10 @@ export async function splitChunk(item: {
       if (isDifferentSession) {
         let projectMemberIds = projectMembersMap[member.project_id];
 
-        if (projectMemberIds.indexOf(wsClient.user_id) > -1) {
+        if (
+          projectMemberIds &&
+          projectMemberIds.indexOf(wsClient.user_id) > -1
+        ) {
           let wrappedMember = wrapper.wrapToApiMember(member);
           payload.members.push(wrappedMember);
         }
