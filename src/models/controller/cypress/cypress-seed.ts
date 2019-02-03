@@ -77,18 +77,6 @@ export async function cypressSeed(req: Request, res: Response) {
 
       users.push(newUser);
 
-      // let alias = <string>(
-      //   await proc
-      //     .findAlias(memberId)
-      //     .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_FIND_ALIAS))
-      // );
-
-      // newUser = generator.makeUser({
-      //   user_id: memberId,
-      //   email_verified: enums.bEnum.FALSE,
-      //   alias: alias,
-      // });
-
       // demo
 
       let memberId = newUser.user_id;
