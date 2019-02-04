@@ -37,18 +37,6 @@ export class MemberEntity implements MemberInterface {
   is_admin: enums.bEnum;
 
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
-  main_theme: api.MemberMainThemeEnum;
-
-  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
-  dash_theme: api.MemberDashThemeEnum;
-
-  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
-  file_theme: api.MemberFileThemeEnum;
-
-  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
-  sql_theme: api.MemberSqlThemeEnum;
-
-  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   deleted: enums.bEnum;
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })

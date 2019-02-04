@@ -53,6 +53,7 @@ export const PATH_LOGOUT_USER = '/users.logoutUser';
 export const PATH_REGISTER_USER = '/users.registerUser';
 export const PATH_SET_USER_NAME = '/users.setUserName';
 export const PATH_SET_USER_PICTURE = '/users.setUserPicture';
+export const PATH_SET_USER_THEMES = '/users.setUserThemes';
 export const PATH_SET_USER_TIMEZONE = '/users.setUserTimezone';
 export const PATH_VERIFY_USER_EMAIL = '/users.verifyUserEmail';
 export const PATH_CONFIRM_USER_EMAIL = '/users.confirmUserEmail';

@@ -10,6 +10,10 @@ export interface User {
   picture_url_big: string;
   timezone: string;
   status: apiEnums.UserStatusEnum;
+  main_theme: apiEnums.UserMainThemeEnum;
+  dash_theme: apiEnums.UserDashThemeEnum;
+  file_theme: apiEnums.UserFileThemeEnum;
+  sql_theme: apiEnums.UserSqlThemeEnum;  
   deleted: boolean;
   server_ts: number;
 }

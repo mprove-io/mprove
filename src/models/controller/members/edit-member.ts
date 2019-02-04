@@ -15,16 +15,12 @@ export async function editMember(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.EditMemberRequestBodyPayload = validator.getPayload(req);
+  let payload: api.EditMemberRequestBody['payload'] = validator.getPayload(req);
 
   let projectId = payload.project_id;
   let memberId = payload.member_id;
   let isEditor = helper.booleanToBenum(payload.is_editor);
   let isAdmin = helper.booleanToBenum(payload.is_admin);
-  let mainTheme: api.MemberMainThemeEnum = <any>payload.main_theme;
-  let dashTheme: api.MemberDashThemeEnum = <any>payload.dash_theme;
-  let fileTheme: api.MemberFileThemeEnum = <any>payload.file_theme;
-  let sqlTheme: api.MemberSqlThemeEnum = <any>payload.sql_theme;
   let serverTs = payload.server_ts;
 
   let storeMembers = store.getMembersRepo();
@@ -96,29 +92,13 @@ export async function editMember(req: Request, res: Response) {
       }
     } else {
       // changing another
-
-      if (
-        mainTheme !== memberTo.main_theme ||
-        dashTheme !== memberTo.dash_theme ||
-        fileTheme !== memberTo.file_theme ||
-        sqlTheme !== memberTo.sql_theme
-      ) {
-        throw new ServerError({
-          name: enums.otherErrorsEnum.USER_CAN_NOT_CHANGE_MEMBER_THEMES
-        });
-      } else {
-        // ok - editing is_editor
-        // ok - editing is_admin
-      }
+      // ok - editing is_editor
+      // ok - editing is_admin
     }
   }
 
   memberTo.is_admin = isAdmin;
   memberTo.is_editor = isEditor;
-  memberTo.main_theme = mainTheme;
-  memberTo.dash_theme = dashTheme;
-  memberTo.sql_theme = sqlTheme;
-  memberTo.file_theme = fileTheme;
 
   // update server_ts
   let newServerTs = helper.makeTs();
@@ -143,7 +123,7 @@ export async function editMember(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  let responsePayload: api.EditMemberResponse200BodyPayload = {
+  let responsePayload: api.EditMemberResponse200Body['payload'] = {
     member: wrapper.wrapToApiMember(memberTo)
   };
 

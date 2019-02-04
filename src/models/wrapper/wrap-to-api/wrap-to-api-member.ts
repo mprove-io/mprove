@@ -14,10 +14,6 @@ export function wrapToApiMember(member: entities.MemberEntity): api.Member {
     status: <any>member.status, // any
     is_editor: helper.benumToBoolean(member.is_editor),
     is_admin: helper.benumToBoolean(member.is_admin),
-    main_theme: member.main_theme,
-    dash_theme: member.dash_theme,
-    file_theme: member.file_theme,
-    sql_theme: member.sql_theme,
     deleted: helper.benumToBoolean(member.deleted),
     server_ts: Number(member.server_ts)
   };

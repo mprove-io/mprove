@@ -55,6 +55,18 @@ export class UserEntity implements UserInterface {
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   status: api.UserStatusEnum;
 
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
+  main_theme: api.UserMainThemeEnum;
+
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
+  dash_theme: api.UserDashThemeEnum;
+
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
+  file_theme: api.UserFileThemeEnum;
+
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
+  sql_theme: api.UserSqlThemeEnum;
+
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
 }

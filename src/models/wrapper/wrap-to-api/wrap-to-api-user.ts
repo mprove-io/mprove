@@ -17,6 +17,10 @@ export function wrapToApiUser(
     picture_url_big: user.picture_url_big,
     timezone: user.timezone,
     status: user.status,
+    main_theme: user.main_theme,
+    dash_theme: user.dash_theme,
+    file_theme: user.file_theme,
+    sql_theme: user.sql_theme,
     deleted: helper.benumToBoolean(deleted),
     server_ts: Number(user.server_ts)
   };

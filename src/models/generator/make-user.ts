@@ -30,6 +30,10 @@ export function makeUser(item: {
     picture_url_big: undefined,
     timezone: constants.USE_PROJECT_DEFAULT_TIMEZONE,
     status: api.UserStatusEnum.Pending,
+    main_theme: api.UserMainThemeEnum.Light,
+    dash_theme: api.UserDashThemeEnum.Light,
+    file_theme: api.UserFileThemeEnum.Dark,
+    sql_theme: api.UserSqlThemeEnum.Light,
     server_ts: undefined
   };
 }

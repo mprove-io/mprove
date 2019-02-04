@@ -92,6 +92,14 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
   );
 
   app.post(
+    '/api/v1' + api.PATH_SET_USER_THEMES,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.setUserThemes,
+      enums.controllerErrorsEnum.CONTROLLER_SET_USER_THEMES
+    )
+  );
+  app.post(
     '/api/v1' + api.PATH_SET_USER_TIMEZONE,
     middlewares,
     handler.catchAsyncErrors(

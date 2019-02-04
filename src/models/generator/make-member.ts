@@ -24,10 +24,6 @@ export function makeMember(item: {
     is_admin: helper.isNotNullAndNotEmpty(item.is_admin)
       ? item.is_admin
       : enums.bEnum.FALSE,
-    main_theme: api.MemberMainThemeEnum.Light,
-    dash_theme: api.MemberDashThemeEnum.Light,
-    file_theme: api.MemberFileThemeEnum.Dark,
-    sql_theme: api.MemberSqlThemeEnum.Light,
     deleted: enums.bEnum.FALSE,
     server_ts: '1'
   };
