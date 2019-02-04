@@ -315,6 +315,12 @@ export const SET_USER_NAME = ngrxType('[User] Set User Name');
 export const SET_USER_NAME_SUCCESS = ngrxType('[User] Set User Name Success');
 export const SET_USER_NAME_FAIL = ngrxType('[User] Set User Name Fail');
 
+export const SET_USER_THEMES = ngrxType('[User] Set User Themes');
+export const SET_USER_THEMES_SUCCESS = ngrxType(
+  '[User] Set User Themes Success'
+);
+export const SET_USER_THEMES_FAIL = ngrxType('[User] Set User Themes Fail');
+
 export const SET_USER_TIMEZONE = ngrxType('[User] Set User Timezone');
 export const SET_USER_TIMEZONE_SUCCESS = ngrxType(
   '[User] Set User Timezone Success'

@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class EditMemberSuccessAction implements Action {
   readonly type = actionTypes.EDIT_MEMBER_SUCCESS;
 
-  constructor(public payload: api.EditMemberResponse200BodyPayload) {}
+  constructor(public payload: api.EditMemberResponse200Body['payload']) {}
 }

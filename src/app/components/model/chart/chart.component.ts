@@ -24,9 +24,9 @@ export class ChartComponent {
     tap(x => (this.visual = x))
   );
 
-  dashTheme: api.MemberDashThemeEnum; // no filter
+  dashTheme: api.UserDashThemeEnum; // no filter
   dashTheme$ = this.store
-    .select(selectors.getSelectedProjectUserDashTheme)
+    .select(selectors.getUserDashTheme)
     .pipe(tap(x => (this.dashTheme = x))); // no filter
 
   constructor(

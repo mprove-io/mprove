@@ -7,7 +7,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__light"
             (click)="installMainTheme(userMainThemeEnum.Light)"
           >
@@ -25,7 +24,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__dark"
             (click)="installMainTheme(userMainThemeEnum.Dark)"
           >
@@ -51,7 +49,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__light"
             (click)="installDashTheme(userDashThemeEnum.Light)"
           >
@@ -69,7 +66,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__dark"
             (click)="installDashTheme(userDashThemeEnum.Dark)"
           >
@@ -95,7 +91,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__light"
             (click)="installFileTheme(userFileThemeEnum.Light)"
           >
@@ -113,7 +108,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__dark"
             (click)="installFileTheme(userFileThemeEnum.Dark)"
           >
@@ -139,7 +133,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__light"
             (click)="installSqlTheme(userSqlThemeEnum.Light)"
           >
@@ -157,7 +150,6 @@
         <div class="theme-picker__colors-item">
           <button
             mat-menu-item
-            [disabled]="themesAreRestricted$ | async"
             class="theme-picker__item theme-picker__dark"
             (click)="installSqlTheme(userSqlThemeEnum.Dark)"
           >
@@ -179,5 +171,4 @@
   <div *ngIf="(dashTheme$ | async)"></div>
   <div *ngIf="(fileTheme$ | async)"></div>
   <div *ngIf="(sqlTheme$ | async)"></div>
-  <div *ngIf="(userMember$ | async)"></div>
 </div>

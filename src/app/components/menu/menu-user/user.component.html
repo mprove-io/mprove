@@ -20,17 +20,7 @@
   <div class="menu menu--user">
     <div class="menu__options">
       <div class="menu__options-group">
-        <div class="menu__options-title">
-          <span>Theme</span>
-          <span
-            *ngIf="(themesAreRestricted$ | async)"
-            matTooltip="Theme change disabled on FREE plan"
-            [matTooltipShowDelay]="appConfig.tooltipDelay"
-            [matTooltipPosition]="'below'"
-          >
-            - Disabled</span
-          >
-        </div>
+        <div class="menu__options-title"> <span>Theme</span> </div>
 
         <m-theme-picker></m-theme-picker>
 

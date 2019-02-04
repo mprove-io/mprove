@@ -46,6 +46,7 @@ export class FailEffect {
       actionTypes.SET_LIVE_QUERIES_FAIL,
 
       actionTypes.SET_USER_NAME_FAIL,
+      actionTypes.SET_USER_THEMES_FAIL,
       actionTypes.SET_USER_TIMEZONE_FAIL,
 
       actionTypes.COMMIT_REPO_FAIL,

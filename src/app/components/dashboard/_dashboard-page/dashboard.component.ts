@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   tileWidthEnum = api.ChartTileWidthEnum;
   queryStatusEnum = api.QueryStatusEnum;
 
-  dashThemeEnum = api.MemberDashThemeEnum;
+  dashThemeEnum = api.UserDashThemeEnum;
 
   dryId: string;
   drySize: string;
@@ -195,14 +195,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     map(x => this.timeService.timeAgoFromNow(this.dryTs))
   );
 
-  dashTheme: api.MemberDashThemeEnum = null;
-  dashTheme$ = this.store
-    .select(selectors.getSelectedProjectUserDashTheme)
-    .pipe(
-      filter(v => !!v),
-      debounceTime(1),
-      tap(x => (this.dashTheme = x))
-    );
+  dashTheme: api.UserDashThemeEnum = null;
+  dashTheme$ = this.store.select(selectors.getUserDashTheme).pipe(
+    filter(v => !!v),
+    debounceTime(1),
+    tap(x => (this.dashTheme = x))
+  );
 
   fileId: string = undefined;
   fileId$ = this.store

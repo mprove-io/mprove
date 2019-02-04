@@ -70,6 +70,7 @@ export function segmentMetaReducer(
         actionTypes.RUN_QUERIES,
 
         actionTypes.SET_USER_NAME,
+        actionTypes.SET_USER_THEMES,
         actionTypes.SET_USER_TIMEZONE,
         actionTypes.SET_USER_PICTURE,
 

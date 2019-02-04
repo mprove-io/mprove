@@ -26,18 +26,16 @@ export class GenerateBlockmlDialogComponent implements OnInit, AfterViewInit {
 
   @ViewChild('editor') editor: AceEditorComponent;
 
-  fileEditorTheme$ = this.store
-    .select(selectors.getSelectedProjectUserFileTheme)
-    .pipe(
-      filter(v => !!v),
-      tap(x => {
-        this.fileEditorTheme =
-          x === api.MemberFileThemeEnum.Light ? 'chrome' : 'solarized_dark';
-        if (this.editor !== null) {
-          this.editor.setTheme(this.fileEditorTheme);
-        }
-      })
-    );
+  fileEditorTheme$ = this.store.select(selectors.getUserFileTheme).pipe(
+    filter(v => !!v),
+    tap(x => {
+      this.fileEditorTheme =
+        x === api.UserFileThemeEnum.Light ? 'chrome' : 'solarized_dark';
+      if (this.editor !== null) {
+        this.editor.setTheme(this.fileEditorTheme);
+      }
+    })
+  );
 
   constructor(
     public dialogRef: MatDialogRef<GenerateBlockmlDialogComponent>,

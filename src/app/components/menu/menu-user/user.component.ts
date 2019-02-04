@@ -30,10 +30,6 @@ export class UserComponent {
     .select(selectors.getUserPictureUrlBig)
     .pipe(filter(v => !!v));
 
-  themesAreRestricted$ = this.store.select(
-    selectors.getSelectedProjectThemesRestricted
-  ); // no filter here
-
   constructor(
     private store: Store<interfaces.AppState>,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,

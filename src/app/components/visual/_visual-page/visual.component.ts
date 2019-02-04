@@ -16,7 +16,7 @@ import { ChartIconPipe } from '@app/pipes/chart-icon.pipe';
   styleUrls: ['visual.component.scss']
 })
 export class VisualComponent implements OnChanges {
-  dashThemeEnum = api.MemberDashThemeEnum;
+  dashThemeEnum = api.UserDashThemeEnum;
 
   chartTypeEnum = api.ChartTypeEnum;
 
@@ -129,14 +129,12 @@ export class VisualComponent implements OnChanges {
   // tile
   view: number[];
 
-  dashTheme: api.MemberDashThemeEnum = null;
-  dashTheme$ = this.store
-    .select(selectors.getSelectedProjectUserDashTheme)
-    .pipe(
-      filter(v => !!v),
-      debounceTime(1),
-      tap(x => (this.dashTheme = x))
-    );
+  dashTheme: api.UserDashThemeEnum = null;
+  dashTheme$ = this.store.select(selectors.getUserDashTheme).pipe(
+    filter(v => !!v),
+    debounceTime(1),
+    tap(x => (this.dashTheme = x))
+  );
 
   curve: any;
   curves = {

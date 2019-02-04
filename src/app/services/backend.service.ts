@@ -86,7 +86,7 @@ export class BackendService {
   }
 
   editMember(
-    payload: api.EditMemberRequestBodyPayload
+    payload: api.EditMemberRequestBody['payload']
   ): Observable<api.EditMemberResponse200Body> {
     return this.myHttpService.req(api.PATH_EDIT_MEMBER, payload);
   }
@@ -348,6 +348,12 @@ export class BackendService {
     payload: api.SetUserPictureRequestBodyPayload
   ): Observable<api.SetUserPictureResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_USER_PICTURE, payload);
+  }
+
+  setUserThemes(
+    payload: api.SetUserThemesRequestBody['payload']
+  ): Observable<api.SetUserThemesResponse200Body> {
+    return this.myHttpService.req(api.PATH_SET_USER_THEMES, payload);
   }
 
   setUserTimezone(

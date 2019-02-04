@@ -13,6 +13,10 @@ const initialState: interfaces.UserState = {
   timezone: undefined,
   status: undefined,
   deleted: undefined,
+  dash_theme: undefined,
+  file_theme: undefined,
+  main_theme: undefined,
+  sql_theme: undefined,
   server_ts: null,
 
   loading: false,

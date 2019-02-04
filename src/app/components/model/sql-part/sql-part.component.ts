@@ -24,18 +24,16 @@ export class SqlPartComponent implements AfterViewInit {
 
   @ViewChild('editor') editor: AceEditorComponent;
 
-  sqlEditorTheme$ = this.store
-    .select(selectors.getSelectedProjectUserSqlTheme)
-    .pipe(
-      filter(v => !!v),
-      tap(x => {
-        this.sqlEditorTheme =
-          x === api.MemberSqlThemeEnum.Light ? 'sqlserver' : 'solarized_dark';
-        if (this.editor !== null) {
-          this.editor.setTheme(this.sqlEditorTheme);
-        }
-      })
-    );
+  sqlEditorTheme$ = this.store.select(selectors.getUserSqlTheme).pipe(
+    filter(v => !!v),
+    tap(x => {
+      this.sqlEditorTheme =
+        x === api.UserSqlThemeEnum.Light ? 'sqlserver' : 'solarized_dark';
+      if (this.editor !== null) {
+        this.editor.setTheme(this.sqlEditorTheme);
+      }
+    })
+  );
 
   constructor(private store: Store<interfaces.AppState>) {}
 

@@ -1,4 +1,4 @@
-export enum MemberMainThemeEnum {
+export enum UserFileThemeEnum {
   Light = <any>'light',
   Dark = <any>'dark'
 }

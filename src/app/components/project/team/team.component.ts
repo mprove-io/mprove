@@ -89,10 +89,6 @@ export class TeamComponent implements OnDestroy {
           member_id: row.member_id,
           is_editor: row.is_editor,
           is_admin: !row.is_admin,
-          main_theme: row.main_theme,
-          dash_theme: row.dash_theme,
-          file_theme: row.file_theme,
-          sql_theme: row.sql_theme,
           server_ts: row.server_ts
         })
       );
@@ -111,10 +107,6 @@ export class TeamComponent implements OnDestroy {
           member_id: row.member_id,
           is_editor: !row.is_editor,
           is_admin: row.is_admin,
-          main_theme: row.main_theme,
-          dash_theme: row.dash_theme,
-          file_theme: row.file_theme,
-          sql_theme: row.sql_theme,
           server_ts: row.server_ts
         })
       );

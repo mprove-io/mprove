@@ -121,6 +121,8 @@ export const APP_EFFECTS = [
   effects.SetUserNameEffect,
   effects.SetUserPictureSuccessEffect,
   effects.SetUserPictureEffect,
+  effects.SetUserThemesSuccessEffect,
+  effects.SetUserThemesEffect,
   effects.SetUserTimezoneSuccessEffect,
   effects.SetUserTimezoneEffect,
   effects.LogoutUserEffect,
