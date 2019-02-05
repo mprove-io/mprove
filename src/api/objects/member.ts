@@ -11,10 +11,6 @@ export interface Member {
   status: apiEnums.MemberStatusEnum;
   is_editor: boolean;
   is_admin: boolean;
-  main_theme: apiEnums.MemberMainThemeEnum;
-  dash_theme: apiEnums.MemberDashThemeEnum;
-  file_theme: apiEnums.MemberFileThemeEnum;
-  sql_theme: apiEnums.MemberSqlThemeEnum;
   deleted: boolean;
   server_ts: number;
 }

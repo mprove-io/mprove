@@ -12,7 +12,6 @@ import { barModelSqlAlwaysWhereCalc } from './bar-model-sql-always-where-calc';
 import { barModelSqlAlwaysWhere } from './bar-model-sql-always-where';
 import { barModel } from './bar-model';
 import { barProcessFilter } from './bar-process-filter';
-import { barProject } from './bar-project';
 import { barReport } from './bar-report';
 import { barUdf } from './bar-udf';
 import { barView } from './bar-view';

@@ -32,7 +32,6 @@ export function createExpress() {
   app.post('/api/v2/processDashboard', controllers.processDashboard);
   app.post('/api/v2/processQuery', controllers.processQuery);
   app.post('/api/v2/rebuildStruct', controllers.rebuildStruct);
-  app.post('/api/v2/getProjects', controllers.getProjects);
 
   /**
    * Error Handler. Provides full stack - remove for production
