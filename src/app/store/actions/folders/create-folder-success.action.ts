@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class CreateFolderSuccessAction implements Action {
   readonly type = actionTypes.CREATE_FOLDER_SUCCESS;
 
-  constructor(public payload: api.CreateFolderResponse200BodyPayload) {}
+  constructor(public payload: api.CreateFolderResponse200Body['payload']) {}
 }

@@ -6,6 +6,6 @@ export class SetProjectQuerySizeLimitSuccessAction implements Action {
   readonly type = actionTypes.SET_PROJECT_QUERY_SIZE_LIMIT_SUCCESS;
 
   constructor(
-    public payload: api.SetProjectQuerySizeLimitResponse200BodyPayload
+    public payload: api.SetProjectQuerySizeLimitResponse200Body['payload']
   ) {}
 }

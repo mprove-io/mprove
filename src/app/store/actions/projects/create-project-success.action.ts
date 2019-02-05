@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class CreateProjectSuccessAction implements Action {
   readonly type = actionTypes.CREATE_PROJECT_SUCCESS;
 
-  constructor(public payload: api.CreateProjectResponse200BodyPayload) {}
+  constructor(public payload: api.CreateProjectResponse200Body['payload']) {}
 }

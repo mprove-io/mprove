@@ -53,7 +53,7 @@ export function loginUser(item: { user_id: string; password: string }) {
       }
     }
   }).then(resp => {
-    let payload: api.LoginUserResponse200BodyPayload = resp.body.payload;
+    let payload: api.LoginUserResponse200Body['payload'] = resp.body.payload;
     window.localStorage.setItem('token', payload.token);
   });
 }

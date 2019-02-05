@@ -5,7 +5,7 @@ import * as actionTypes from '@app/store/action-types';
 export class LogoutUserSuccessAction implements Action {
   readonly type = actionTypes.LOGOUT_USER_SUCCESS;
 
-  constructor(public payload: api.LogoutUserResponse200BodyPayload) {
+  constructor(public payload: api.LogoutUserResponse200Body['payload']) {
     // for effects
   }
 }

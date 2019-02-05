@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class SetProjectWeekStartAction implements Action {
   readonly type = actionTypes.SET_PROJECT_WEEK_START;
 
-  constructor(public payload: api.SetProjectWeekStartRequestBodyPayload) {}
+  constructor(public payload: api.SetProjectWeekStartRequestBody['payload']) {}
 }

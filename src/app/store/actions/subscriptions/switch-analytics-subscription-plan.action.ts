@@ -6,6 +6,6 @@ export class SwitchAnalyticsSubscriptionPlanAction implements Action {
   readonly type = actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN;
 
   constructor(
-    public payload: api.SwitchAnalyticsSubscriptionPlanRequestBodyPayload
+    public payload: api.SwitchAnalyticsSubscriptionPlanRequestBody['payload']
   ) {}
 }

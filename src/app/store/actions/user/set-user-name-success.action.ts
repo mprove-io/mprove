@@ -5,7 +5,7 @@ import * as actionTypes from '@app/store/action-types';
 export class SetUserNameSuccessAction implements Action {
   readonly type = actionTypes.SET_USER_NAME_SUCCESS;
 
-  constructor(public payload: api.SetUserNameResponse200BodyPayload) {
+  constructor(public payload: api.SetUserNameResponse200Body['payload']) {
     // for effects
   }
 }

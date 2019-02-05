@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class RunQueriesDryAction implements Action {
   readonly type = actionTypes.RUN_QUERIES_DRY;
 
-  constructor(public payload: api.RunQueriesDryRequestBodyPayload) {}
+  constructor(public payload: api.RunQueriesDryRequestBody['payload']) {}
 }

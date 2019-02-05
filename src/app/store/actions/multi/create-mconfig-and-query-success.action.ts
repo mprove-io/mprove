@@ -6,6 +6,6 @@ export class CreateMconfigAndQuerySuccessAction implements Action {
   readonly type = actionTypes.CREATE_MCONFIG_AND_QUERY_SUCCESS;
 
   constructor(
-    public payload: api.CreateMconfigAndQueryResponse200BodyPayload
+    public payload: api.CreateMconfigAndQueryResponse200Body['payload']
   ) {}
 }

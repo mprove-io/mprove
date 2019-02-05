@@ -7,11 +7,10 @@ export interface SetUserThemesRequestBody {
     main_theme: apiEnums.UserMainThemeEnum;
     dash_theme: apiEnums.UserDashThemeEnum;
     file_theme: apiEnums.UserFileThemeEnum;
-    sql_theme: apiEnums.UserSqlThemeEnum;  
+    sql_theme: apiEnums.UserSqlThemeEnum;
     server_ts: number;
   };
 }
-
 
 export interface SetUserThemesResponse200Body {
   info: apiObjects.ServerResponse;

@@ -6,6 +6,6 @@ export class SetProjectCredentialsSuccessAction implements Action {
   readonly type = actionTypes.SET_PROJECT_CREDENTIALS_SUCCESS;
 
   constructor(
-    public payload: api.SetProjectCredentialsResponse200BodyPayload
+    public payload: api.SetProjectCredentialsResponse200Body['payload']
   ) {}
 }

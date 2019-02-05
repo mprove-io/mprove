@@ -6,6 +6,6 @@ export class RegenerateRepoRemotePublicKeySuccessAction implements Action {
   readonly type = actionTypes.REGENERATE_REPO_REMOTE_PUBLIC_KEY_SUCCESS;
 
   constructor(
-    public payload: api.RegenerateRepoRemotePublicKeyResponse200BodyPayload
+    public payload: api.RegenerateRepoRemotePublicKeyResponse200Body['payload']
   ) {}
 }

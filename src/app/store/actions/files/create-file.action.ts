@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class CreateFileAction implements Action {
   readonly type = actionTypes.CREATE_FILE;
 
-  constructor(public payload: api.CreateFileRequestBodyPayload) {}
+  constructor(public payload: api.CreateFileRequestBody['payload']) {}
 }

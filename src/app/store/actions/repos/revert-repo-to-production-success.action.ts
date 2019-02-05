@@ -6,6 +6,6 @@ export class RevertRepoToProductionSuccessAction implements Action {
   readonly type = actionTypes.REVERT_REPO_TO_PRODUCTION_SUCCESS;
 
   constructor(
-    public payload: api.RevertRepoToProductionResponse200BodyPayload
+    public payload: api.RevertRepoToProductionResponse200Body['payload']
   ) {}
 }

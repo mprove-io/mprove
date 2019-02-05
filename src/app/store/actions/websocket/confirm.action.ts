@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class ConfirmAction implements Action {
   readonly type = actionTypes.CONFIRM;
 
-  constructor(public payload: api.ConfirmRequestBodyPayload) {}
+  constructor(public payload: api.ConfirmRequestBody['payload']) {}
 }

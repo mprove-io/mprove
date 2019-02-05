@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class VerifyUserEmailAction implements Action {
   readonly type = actionTypes.VERIFY_USER_EMAIL;
 
-  constructor(public payload: api.VerifyUserEmailRequestBodyPayload) {}
+  constructor(public payload: api.VerifyUserEmailRequestBody['payload']) {}
 }

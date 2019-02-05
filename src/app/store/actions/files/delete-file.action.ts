@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class DeleteFileAction implements Action {
   readonly type = actionTypes.DELETE_FILE;
 
-  constructor(public payload: api.DeleteFileRequestBodyPayload) {}
+  constructor(public payload: api.DeleteFileRequestBody['payload']) {}
 }

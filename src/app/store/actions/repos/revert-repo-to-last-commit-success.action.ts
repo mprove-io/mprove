@@ -6,6 +6,6 @@ export class RevertRepoToLastCommitSuccessAction implements Action {
   readonly type = actionTypes.REVERT_REPO_TO_LAST_COMMIT_SUCCESS;
 
   constructor(
-    public payload: api.RevertRepoToLastCommitResponse200BodyPayload
+    public payload: api.RevertRepoToLastCommitResponse200Body['payload']
   ) {}
 }

@@ -5,5 +5,7 @@ import * as actionTypes from '@app/store/action-types';
 export class SetProjectWeekStartSuccessAction implements Action {
   readonly type = actionTypes.SET_PROJECT_WEEK_START_SUCCESS;
 
-  constructor(public payload: api.SetProjectWeekStartResponse200BodyPayload) {}
+  constructor(
+    public payload: api.SetProjectWeekStartResponse200Body['payload']
+  ) {}
 }

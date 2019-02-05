@@ -8,79 +8,79 @@ export class BackendService {
   constructor(protected myHttpService: MyHttpService) {}
 
   confirm(
-    payload: api.ConfirmRequestBodyPayload
+    payload: api.ConfirmRequestBody['payload']
   ): Observable<api.ConfirmResponse200Body> {
     return this.myHttpService.req(api.PATH_CONFIRM, payload);
   }
 
   createFile(
-    payload: api.CreateFileRequestBodyPayload
+    payload: api.CreateFileRequestBody['payload']
   ): Observable<api.CreateFileResponse200Body> {
     return this.myHttpService.req(api.PATH_CREATE_FILE, payload);
   }
 
   deleteFile(
-    payload: api.DeleteFileRequestBodyPayload
+    payload: api.DeleteFileRequestBody['payload']
   ): Observable<api.DeleteFileResponse200Body> {
     return this.myHttpService.req(api.PATH_DELETE_FILE, payload);
   }
 
   moveFile(
-    payload: api.MoveFileRequestBodyPayload
+    payload: api.MoveFileRequestBody['payload']
   ): Observable<api.MoveFileResponse200Body> {
     return this.myHttpService.req(api.PATH_MOVE_FILE, payload);
   }
 
   saveFile(
-    payload: api.SaveFileRequestBodyPayload
+    payload: api.SaveFileRequestBody['payload']
   ): Observable<api.SaveFileResponse200Body> {
     return this.myHttpService.req(api.PATH_SAVE_FILE, payload);
   }
 
   createFolder(
-    payload: api.CreateFolderRequestBodyPayload
+    payload: api.CreateFolderRequestBody['payload']
   ): Observable<api.CreateFolderResponse200Body> {
     return this.myHttpService.req(api.PATH_CREATE_FOLDER, payload);
   }
 
   deleteFolder(
-    payload: api.DeleteFolderRequestBodyPayload
+    payload: api.DeleteFolderRequestBody['payload']
   ): Observable<api.DeleteFolderResponse200Body> {
     return this.myHttpService.req(api.PATH_DELETE_FOLDER, payload);
   }
 
   moveFolder(
-    payload: api.MoveFolderRequestBodyPayload
+    payload: api.MoveFolderRequestBody['payload']
   ): Observable<api.MoveFolderResponse200Body> {
     return this.myHttpService.req(api.PATH_MOVE_FOLDER, payload);
   }
 
   renameFolder(
-    payload: api.RenameFolderRequestBodyPayload
+    payload: api.RenameFolderRequestBody['payload']
   ): Observable<api.RenameFolderResponse200Body> {
     return this.myHttpService.req(api.PATH_RENAME_FOLDER, payload);
   }
 
   createMconfig(
-    payload: api.CreateMconfigRequestBodyPayload
+    payload: api.CreateMconfigRequestBody['payload']
   ): Observable<api.CreateMconfigResponse200Body> {
     return this.myHttpService.req(api.PATH_CREATE_MCONFIG, payload);
   }
 
   getMconfig(
-    payload: api.GetMconfigRequestBodyPayload
+    payload: api.GetMconfigRequestBody['payload']
   ): Observable<api.GetMconfigResponse200Body> {
     return this.myHttpService.req(api.PATH_GET_MCONFIG, payload);
   }
 
   createMember(
-    payload: api.CreateMemberRequestBodyPayload
+    payload: api.CreateMemberRequestBody['payload']
   ): Observable<api.CreateMemberResponse200Body> {
     return this.myHttpService.req(api.PATH_CREATE_MEMBER, payload);
   }
 
   deleteMember(
-    payload: api.DeleteMemberRequestBodyPayload
+    payload: api.DeleteMemberRequestBody['payload']
   ): Observable<api.DeleteMemberResponse200Body> {
     return this.myHttpService.req(api.PATH_DELETE_MEMBER, payload);
   }
@@ -92,19 +92,19 @@ export class BackendService {
   }
 
   createDashboard(
-    payload: api.CreateDashboardRequestBodyPayload
+    payload: api.CreateDashboardRequestBody['payload']
   ): Observable<api.CreateDashboardResponse200Body> {
     return this.myHttpService.req(api.PATH_CREATE_DASHBOARD, payload);
   }
 
   createMconfigAndQuery(
-    payload: api.CreateMconfigAndQueryRequestBodyPayload
+    payload: api.CreateMconfigAndQueryRequestBody['payload']
   ): Observable<api.CreateMconfigAndQueryResponse200Body> {
     return this.myHttpService.req(api.PATH_CREATE_MCONFIG_AND_QUERY, payload);
   }
 
   getDashboardMconfigsQueries(
-    payload: api.GetDashboardMconfigsQueriesRequestBodyPayload
+    payload: api.GetDashboardMconfigsQueriesRequestBody['payload']
   ): Observable<api.GetDashboardMconfigsQueriesResponse200Body> {
     return this.myHttpService.req(
       api.PATH_GET_DASHBOARD_MCONFIG_AND_QUERIES,
@@ -113,43 +113,43 @@ export class BackendService {
   }
 
   setLiveQueries(
-    payload: api.SetLiveQueriesRequestBodyPayload
+    payload: api.SetLiveQueriesRequestBody['payload']
   ): Observable<api.SetLiveQueriesResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_LIVE_QUERIES, payload);
   }
 
   pong(
-    payload: api.PongRequestBodyPayload
+    payload: api.PongRequestBody['payload']
   ): Observable<api.PongResponse200Body> {
     return this.myHttpService.req(api.PATH_PONG, payload);
   }
 
   checkProjectIdUnique(
-    payload: api.CheckProjectIdUniqueRequestBodyPayload
+    payload: api.CheckProjectIdUniqueRequestBody['payload']
   ): Observable<api.CheckProjectIdUniqueResponse200Body> {
     return this.myHttpService.req(api.PATH_CHECK_PROJECT_ID_UNIQUE, payload);
   }
 
   createProject(
-    payload: api.CreateProjectRequestBodyPayload
+    payload: api.CreateProjectRequestBody['payload']
   ): Observable<api.CreateProjectResponse200Body> {
     return this.myHttpService.req(api.PATH_CREATE_PROJECT, payload);
   }
 
   deleteProject(
-    payload: api.DeleteProjectRequestBodyPayload
+    payload: api.DeleteProjectRequestBody['payload']
   ): Observable<api.DeleteProjectResponse200Body> {
     return this.myHttpService.req(api.PATH_DELETE_PROJECT, payload);
   }
 
   setProjectCredentials(
-    payload: api.SetProjectCredentialsRequestBodyPayload
+    payload: api.SetProjectCredentialsRequestBody['payload']
   ): Observable<api.SetProjectCredentialsResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_PROJECT_CREDENTIALS, payload);
   }
 
   setProjectQuerySizeLimit(
-    payload: api.SetProjectQuerySizeLimitRequestBodyPayload
+    payload: api.SetProjectQuerySizeLimitRequestBody['payload']
   ): Observable<api.SetProjectQuerySizeLimitResponse200Body> {
     return this.myHttpService.req(
       api.PATH_SET_PROJECT_QUERY_SIZE_LIMIT,
@@ -158,13 +158,13 @@ export class BackendService {
   }
 
   setProjectTimezone(
-    payload: api.SetProjectTimezoneRequestBodyPayload
+    payload: api.SetProjectTimezoneRequestBody['payload']
   ): Observable<api.SetProjectTimezoneResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_PROJECT_TIMEZONE, payload);
   }
 
   setProjectWeekStart(
-    payload: api.SetProjectWeekStartRequestBodyPayload
+    payload: api.SetProjectWeekStartRequestBody['payload']
   ): Observable<api.SetProjectWeekStartResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_PROJECT_WEEK_START, payload);
   }
@@ -181,37 +181,37 @@ export class BackendService {
    * @param payload
    */
   cancelQueries(
-    payload: api.CancelQueriesRequestBodyPayload
+    payload: api.CancelQueriesRequestBody['payload']
   ): Observable<api.CancelQueriesResponse200Body> {
     return this.myHttpService.req(api.PATH_CANCEL_QUERIES, payload);
   }
 
   getPdtQueries(
-    payload: api.GetPdtQueriesRequestBodyPayload
+    payload: api.GetPdtQueriesRequestBody['payload']
   ): Observable<api.GetPdtQueriesResponse200Body> {
     return this.myHttpService.req(api.PATH_GET_PDT_QUERIES, payload);
   }
 
   getQueryWithDepQueries(
-    payload: api.GetQueryWithDepQueriesRequestBodyPayload
+    payload: api.GetQueryWithDepQueriesRequestBody['payload']
   ): Observable<api.GetQueryWithDepQueriesResponse200Body> {
     return this.myHttpService.req(api.PATH_GET_QUERY_WITH_DEP_QUERIES, payload);
   }
 
   runQueries(
-    payload: api.RunQueriesRequestBodyPayload
+    payload: api.RunQueriesRequestBody['payload']
   ): Observable<api.RunQueriesResponse200Body> {
     return this.myHttpService.req(api.PATH_RUN_QUERIES, payload);
   }
 
   runQueriesDry(
-    payload: api.RunQueriesDryRequestBodyPayload
+    payload: api.RunQueriesDryRequestBody['payload']
   ): Observable<api.RunQueriesDryResponse200Body> {
     return this.myHttpService.req(api.PATH_RUN_QUERIES_DRY, payload);
   }
 
   commitRepo(
-    payload: api.CommitRepoRequestBodyPayload
+    payload: api.CommitRepoRequestBody['payload']
   ): Observable<api.CommitRepoResponse200Body> {
     return this.myHttpService.req(api.PATH_COMMIT_REPO, payload);
   }
@@ -227,19 +227,19 @@ export class BackendService {
    * @param payload
    */
   pullRepo(
-    payload: api.PullRepoRequestBodyPayload
+    payload: api.PullRepoRequestBody['payload']
   ): Observable<api.PullRepoResponse200Body> {
     return this.myHttpService.req(api.PATH_PULL_REPO, payload);
   }
 
   pushRepo(
-    payload: api.PushRepoRequestBodyPayload
+    payload: api.PushRepoRequestBody['payload']
   ): Observable<api.PushRepoResponse200Body> {
     return this.myHttpService.req(api.PATH_PUSH_REPO, payload);
   }
 
   regenerateRepoRemotePublicKey(
-    payload: api.RegenerateRepoRemotePublicKeyRequestBodyPayload
+    payload: api.RegenerateRepoRemotePublicKeyRequestBody['payload']
   ): Observable<api.RegenerateRepoRemotePublicKeyResponse200Body> {
     return this.myHttpService.req(
       api.PATH_REGENERATE_REPO_REMOTE_PUBLIC_KEY,
@@ -248,7 +248,7 @@ export class BackendService {
   }
 
   regenerateRepoRemoteWebhook(
-    payload: api.RegenerateRepoRemoteWebhookRequestBodyPayload
+    payload: api.RegenerateRepoRemoteWebhookRequestBody['payload']
   ): Observable<api.RegenerateRepoRemoteWebhookResponse200Body> {
     return this.myHttpService.req(
       api.PATH_REGENERATE_REPO_REMOTE_WEBHOOK,
@@ -257,25 +257,25 @@ export class BackendService {
   }
 
   revertRepoToLastCommit(
-    payload: api.RevertRepoToLastCommitRequestBodyPayload
+    payload: api.RevertRepoToLastCommitRequestBody['payload']
   ): Observable<api.RevertRepoToLastCommitResponse200Body> {
     return this.myHttpService.req(api.PATH_REVERT_REPO_TO_LAST_COMMIT, payload);
   }
 
   revertRepoToProduction(
-    payload: api.RevertRepoToProductionRequestBodyPayload
+    payload: api.RevertRepoToProductionRequestBody['payload']
   ): Observable<api.RevertRepoToProductionResponse200Body> {
     return this.myHttpService.req(api.PATH_REVERT_REPO_TO_PRODUCTION, payload);
   }
 
   setRepoRemoteUrl(
-    payload: api.SetRepoRemoteUrlRequestBodyPayload
+    payload: api.SetRepoRemoteUrlRequestBody['payload']
   ): Observable<api.SetRepoRemoteUrlResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_REPO_REMOTE_URL, payload);
   }
 
   getState(
-    payload: api.GetStateRequestBodyPayload
+    payload: api.GetStateRequestBody['payload']
   ): Observable<api.GetStateResponse200Body> {
     return this.myHttpService.req(api.PATH_GET_STATE, payload);
   }
@@ -288,7 +288,7 @@ export class BackendService {
    * @param payload
    */
   cancelSubscriptions(
-    payload: api.CancelSubscriptionsRequestBodyPayload
+    payload: api.CancelSubscriptionsRequestBody['payload']
   ): Observable<api.CancelSubscriptionsResponse200Body> {
     return this.myHttpService.req(api.PATH_CANCEL_SUBSCRIPTIONS, payload);
   }
@@ -299,7 +299,7 @@ export class BackendService {
    * @param payload
    */
   switchAnalyticsSubscriptionPlan(
-    payload: api.SwitchAnalyticsSubscriptionPlanRequestBodyPayload
+    payload: api.SwitchAnalyticsSubscriptionPlanRequestBody['payload']
   ): Observable<api.SwitchAnalyticsSubscriptionPlanResponse200Body> {
     return this.myHttpService.req(
       api.PATH_SWITCH_ANALYTICS_SUBSCRIPTION_PLAN,
@@ -308,7 +308,7 @@ export class BackendService {
   }
 
   loginUser(
-    payload: api.LoginUserRequestBodyPayload
+    payload: api.LoginUserRequestBody['payload']
   ): Observable<api.LoginUserResponse200Body> {
     return this.myHttpService.req(api.PATH_LOGIN_USER, payload);
   }
@@ -319,19 +319,19 @@ export class BackendService {
    * @param payload
    */
   logoutUser(
-    payload: api.LogoutUserRequestBodyPayload
+    payload: api.LogoutUserRequestBody['payload']
   ): Observable<api.LogoutUserResponse200Body> {
     return this.myHttpService.req(api.PATH_LOGOUT_USER, payload);
   }
 
   registerUser(
-    payload: api.RegisterUserRequestBodyPayload
+    payload: api.RegisterUserRequestBody['payload']
   ): Observable<api.RegisterUserResponse200Body> {
     return this.myHttpService.req(api.PATH_REGISTER_USER, payload);
   }
 
   setUserName(
-    payload: api.SetUserNameRequestBodyPayload
+    payload: api.SetUserNameRequestBody['payload']
   ): Observable<api.SetUserNameResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_USER_NAME, payload);
   }
@@ -345,7 +345,7 @@ export class BackendService {
    * @param payload
    */
   setUserPicture(
-    payload: api.SetUserPictureRequestBodyPayload
+    payload: api.SetUserPictureRequestBody['payload']
   ): Observable<api.SetUserPictureResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_USER_PICTURE, payload);
   }
@@ -357,31 +357,31 @@ export class BackendService {
   }
 
   setUserTimezone(
-    payload: api.SetUserTimezoneRequestBodyPayload
+    payload: api.SetUserTimezoneRequestBody['payload']
   ): Observable<api.SetUserTimezoneResponse200Body> {
     return this.myHttpService.req(api.PATH_SET_USER_TIMEZONE, payload);
   }
 
   verifyUserEmail(
-    payload: api.VerifyUserEmailRequestBodyPayload
+    payload: api.VerifyUserEmailRequestBody['payload']
   ): Observable<api.VerifyUserEmailResponse200Body> {
     return this.myHttpService.req(api.PATH_VERIFY_USER_EMAIL, payload);
   }
 
   resetUserPassword(
-    payload: api.ResetUserPasswordRequestBodyPayload
+    payload: api.ResetUserPasswordRequestBody['payload']
   ): Observable<api.ResetUserPasswordResponse200Body> {
     return this.myHttpService.req(api.PATH_RESET_USER_PASSWORD, payload);
   }
 
   confirmUserEmail(
-    payload: api.ConfirmUserEmailRequestBodyPayload
+    payload: api.ConfirmUserEmailRequestBody['payload']
   ): Observable<api.ConfirmUserEmailResponse200Body> {
     return this.myHttpService.req(api.PATH_CONFIRM_USER_EMAIL, payload);
   }
 
   updateUserPassword(
-    payload: api.UpdateUserPasswordRequestBodyPayload
+    payload: api.UpdateUserPasswordRequestBody['payload']
   ): Observable<api.UpdateUserPasswordResponse200Body> {
     return this.myHttpService.req(api.PATH_UPDATE_USER_PASSWORD, payload);
   }

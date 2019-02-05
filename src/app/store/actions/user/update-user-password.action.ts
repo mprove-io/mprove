@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class UpdateUserPasswordAction implements Action {
   readonly type = actionTypes.UPDATE_USER_PASSWORD;
 
-  constructor(public payload: api.UpdateUserPasswordRequestBodyPayload) {}
+  constructor(public payload: api.UpdateUserPasswordRequestBody['payload']) {}
 }

@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class GetStateSuccessAction implements Action {
   type = actionTypes.GET_STATE_SUCCESS;
 
-  constructor(public payload: api.GetStateResponse200BodyPayload) {}
+  constructor(public payload: api.GetStateResponse200Body['payload']) {}
 }

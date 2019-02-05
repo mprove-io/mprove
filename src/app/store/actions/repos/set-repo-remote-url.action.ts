@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class SetRepoRemoteUrlAction implements Action {
   readonly type = actionTypes.SET_REPO_REMOTE_URL;
 
-  constructor(public payload: api.SetRepoRemoteUrlRequestBodyPayload) {}
+  constructor(public payload: api.SetRepoRemoteUrlRequestBody['payload']) {}
 }

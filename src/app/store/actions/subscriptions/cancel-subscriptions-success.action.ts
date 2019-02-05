@@ -5,5 +5,7 @@ import * as actionTypes from '@app/store/action-types';
 export class CancelSubscriptionsSuccessAction implements Action {
   readonly type = actionTypes.CANCEL_SUBSCRIPTIONS_SUCCESS;
 
-  constructor(public payload: api.CancelSubscriptionsResponse200BodyPayload) {}
+  constructor(
+    public payload: api.CancelSubscriptionsResponse200Body['payload']
+  ) {}
 }

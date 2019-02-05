@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class ResetUserPasswordAction implements Action {
   readonly type = actionTypes.RESET_USER_PASSWORD;
 
-  constructor(public payload: api.ResetUserPasswordRequestBodyPayload) {}
+  constructor(public payload: api.ResetUserPasswordRequestBody['payload']) {}
 }

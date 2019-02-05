@@ -6,6 +6,6 @@ export class RegenerateRepoRemoteWebhookSuccessAction implements Action {
   readonly type = actionTypes.REGENERATE_REPO_REMOTE_WEBHOOK_SUCCESS;
 
   constructor(
-    public payload: api.RegenerateRepoRemoteWebhookResponse200BodyPayload
+    public payload: api.RegenerateRepoRemoteWebhookResponse200Body['payload']
   ) {}
 }

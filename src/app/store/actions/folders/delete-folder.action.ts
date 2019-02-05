@@ -5,5 +5,5 @@ import * as actionTypes from '@app/store/action-types';
 export class DeleteFolderAction implements Action {
   readonly type = actionTypes.DELETE_FOLDER;
 
-  constructor(public payload: api.DeleteFolderRequestBodyPayload) {}
+  constructor(public payload: api.DeleteFolderRequestBody['payload']) {}
 }
