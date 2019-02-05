@@ -13,7 +13,7 @@ import { ServerError } from '../../server-error';
 export async function setProjectTimezone(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.SetProjectTimezoneRequestBodyPayload = validator.getPayload(
+  let payload: api.SetProjectTimezoneRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -64,7 +64,7 @@ export async function setProjectTimezone(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  let responsePayload: api.SetProjectTimezoneResponse200BodyPayload = {
+  let responsePayload: api.SetProjectTimezoneResponse200Body['payload'] = {
     project: wrapper.wrapToApiProject(project)
   };
 

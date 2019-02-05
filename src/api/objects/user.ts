@@ -13,7 +13,7 @@ export interface User {
   main_theme: apiEnums.UserMainThemeEnum;
   dash_theme: apiEnums.UserDashThemeEnum;
   file_theme: apiEnums.UserFileThemeEnum;
-  sql_theme: apiEnums.UserSqlThemeEnum;  
+  sql_theme: apiEnums.UserSqlThemeEnum;
   deleted: boolean;
   server_ts: number;
 }

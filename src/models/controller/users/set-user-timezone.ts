@@ -15,7 +15,7 @@ export async function setUserTimezone(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.SetUserTimezoneRequestBodyPayload = validator.getPayload(
+  let payload: api.SetUserTimezoneRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -65,7 +65,7 @@ export async function setUserTimezone(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.SetUserTimezoneResponse200BodyPayload = {
+  let responsePayload: api.SetUserTimezoneResponse200Body['payload'] = {
     user: wrapper.wrapToApiUser(user, enums.bEnum.FALSE)
   };
 

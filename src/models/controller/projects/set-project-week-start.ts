@@ -20,7 +20,7 @@ export async function setProjectWeekStart(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.SetProjectWeekStartRequestBodyPayload = validator.getPayload(
+  let payload: api.SetProjectWeekStartRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -175,7 +175,7 @@ export async function setProjectWeekStart(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.SetProjectWeekStartResponse200BodyPayload = {
+  let responsePayload: api.SetProjectWeekStartResponse200Body['payload'] = {
     project: wrapper.wrapToApiProject(project),
     dev_struct: wrapper.wrapStructResponse(devStruct),
     prod_struct: wrapper.wrapStructResponse(prodStruct)

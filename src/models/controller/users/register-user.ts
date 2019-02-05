@@ -20,7 +20,9 @@ import { copier } from '../../../barrels/copier';
 import { getConnection } from 'typeorm';
 
 export async function registerUser(req: Request, res: Response) {
-  let payload: api.RegisterUserRequestBodyPayload = validator.getPayload(req);
+  let payload: api.RegisterUserRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let userId = payload.user_id;
   let password = payload.password;
@@ -205,7 +207,7 @@ export async function registerUser(req: Request, res: Response) {
       );
   }
 
-  let responsePayload: api.RegisterUserResponse200BodyPayload = {
+  let responsePayload: api.RegisterUserResponse200Body['payload'] = {
     user_id: userId
   };
 

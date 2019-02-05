@@ -15,7 +15,7 @@ export async function processQuery(item: {
   udfs_content: string;
   struct_id: string;
 }): Promise<interfaces.ItemProcessQuery> {
-  let requestPayload: api.ProcessQueryRequestBodyPayload = {
+  let requestPayload: api.ProcessQueryRequestBody['payload'] = {
     project_id: item.project_id,
     bq_project: item.bq_project,
     week_start: item.week_start,
@@ -40,7 +40,8 @@ export async function processQuery(item: {
       )
   );
 
-  let payload: api.ProcessQueryResponse200BodyPayload = response.data.payload;
+  let payload: api.ProcessQueryResponse200Body['payload'] =
+    response.data.payload;
 
   let mconfig = wrapper.wrapToEntityMconfig(payload.mconfig);
 

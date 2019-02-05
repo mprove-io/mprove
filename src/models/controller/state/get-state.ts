@@ -139,7 +139,7 @@ export async function getState(req: Request, res: Response) {
     structs.push(struct);
   });
 
-  let payload: api.GetStateResponse200BodyPayload = {
+  let payload: api.GetStateResponse200Body['payload'] = {
     init_id: sessionId,
     state: {
       user: wrapper.wrapToApiUser(user, enums.bEnum.FALSE),

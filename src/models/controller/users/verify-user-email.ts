@@ -9,7 +9,7 @@ import { enums } from '../../../barrels/enums';
 import { ServerError } from '../../../models/server-error';
 
 export async function verifyUserEmail(req: Request, res: Response) {
-  let payload: api.VerifyUserEmailRequestBodyPayload = validator.getPayload(
+  let payload: api.VerifyUserEmailRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -43,7 +43,7 @@ export async function verifyUserEmail(req: Request, res: Response) {
     text: `Click the link to complete email verification: ${link}`
   });
 
-  let responsePayload: api.VerifyUserEmailResponse200BodyPayload = {
+  let responsePayload: api.VerifyUserEmailResponse200Body['payload'] = {
     empty: true
   };
 

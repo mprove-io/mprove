@@ -10,7 +10,7 @@ import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 
 export async function getQueryWithDepQueries(req: Request, res: Response) {
-  let payload: api.GetQueryWithDepQueriesRequestBodyPayload = validator.getPayload(
+  let payload: api.GetQueryWithDepQueriesRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -50,7 +50,7 @@ export async function getQueryWithDepQueries(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.GetQueryWithDepQueriesResponse200BodyPayload = {
+  let responsePayload: api.GetQueryWithDepQueriesResponse200Body['payload'] = {
     queries: queries.map(q => wrapper.wrapToApiQuery(q))
   };
 

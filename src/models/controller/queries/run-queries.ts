@@ -16,7 +16,7 @@ export async function runQueries(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.RunQueriesRequestBodyPayload = validator.getPayload(req);
+  let payload: api.RunQueriesRequestBody['payload'] = validator.getPayload(req);
 
   let queryIds = payload.query_ids;
   let refresh = payload.refresh;
@@ -101,7 +101,7 @@ export async function runQueries(req: Request, res: Response) {
 
   let responseQueries = processedQueries; // .filter(q => queryIds.indexOf(q.query_id) > -1);
 
-  let responsePayload: api.RunQueriesResponse200BodyPayload = {
+  let responsePayload: api.RunQueriesResponse200Body['payload'] = {
     running_queries: responseQueries.map(query => wrapper.wrapToApiQuery(query))
   };
 

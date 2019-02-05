@@ -20,7 +20,9 @@ import { ServerError } from '../../server-error';
 export async function createMember(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.CreateMemberRequestBodyPayload = validator.getPayload(req);
+  let payload: api.CreateMemberRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let userId = req.user.email;
 
@@ -335,7 +337,7 @@ export async function createMember(req: Request, res: Response) {
     text: `Project url: ${link}`
   });
 
-  let responsePayload: api.CreateMemberResponse200BodyPayload = {
+  let responsePayload: api.CreateMemberResponse200Body['payload'] = {
     member: wrapper.wrapToApiMember(member)
   };
 

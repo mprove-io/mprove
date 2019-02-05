@@ -22,7 +22,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.SetProjectCredentialsRequestBodyPayload = validator.getPayload(
+  let payload: api.SetProjectCredentialsRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -204,7 +204,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.SetProjectCredentialsResponse200BodyPayload = {
+  let responsePayload: api.SetProjectCredentialsResponse200Body['payload'] = {
     project: wrapper.wrapToApiProject(project),
     dev_and_prod_structs_or_empty: [
       wrapper.wrapStructResponse(devStruct),

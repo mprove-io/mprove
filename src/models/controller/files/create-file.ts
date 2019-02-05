@@ -20,7 +20,7 @@ import { ServerError } from '../../server-error';
 export async function createFile(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.CreateFileRequestBodyPayload = validator.getPayload(req);
+  let payload: api.CreateFileRequestBody['payload'] = validator.getPayload(req);
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -169,7 +169,7 @@ export async function createFile(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.CreateFileResponse200BodyPayload = {
+  let responsePayload: api.CreateFileResponse200Body['payload'] = {
     created_dev_file: wrapper.wrapToApiFile(file),
     dev_repo: wrapper.wrapToApiRepo(repo)
   };

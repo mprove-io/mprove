@@ -15,7 +15,7 @@ import { ServerError } from '../../server-error';
 export async function createDashboard(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.CreateDashboardRequestBodyPayload = validator.getPayload(
+  let payload: api.CreateDashboardRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -140,7 +140,7 @@ export async function createDashboard(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.CreateDashboardResponse200BodyPayload = {
+  let responsePayload: api.CreateDashboardResponse200Body['payload'] = {
     dashboard: wrapper.wrapToApiDashboard(itemProcessDashboard.dashboard),
     dashboard_mconfigs: itemProcessDashboard.mconfigs.map(mconfig =>
       wrapper.wrapToApiMconfig(mconfig)

@@ -17,7 +17,7 @@ import { ServerError } from '../../server-error';
 export async function saveFile(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.SaveFileRequestBodyPayload = validator.getPayload(req);
+  let payload: api.SaveFileRequestBody['payload'] = validator.getPayload(req);
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -184,7 +184,7 @@ export async function saveFile(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.SaveFileResponse200BodyPayload = {
+  let responsePayload: api.SaveFileResponse200Body['payload'] = {
     saved_dev_file: wrapper.wrapToApiFile(file),
     dev_struct: {
       errors: itemStruct.errors.map(error => wrapper.wrapToApiError(error)),

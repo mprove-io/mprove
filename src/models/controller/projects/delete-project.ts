@@ -13,7 +13,9 @@ import { ProjectEntity } from '../../store/entities/_index';
 export async function deleteProject(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.DeleteProjectRequestBodyPayload = validator.getPayload(req);
+  let payload: api.DeleteProjectRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let serverTs = payload.server_ts;
@@ -61,7 +63,7 @@ export async function deleteProject(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  let responsePayload: api.DeleteProjectResponse200BodyPayload = {
+  let responsePayload: api.DeleteProjectResponse200Body['payload'] = {
     deleted_project: wrapper.wrapToApiProject(project)
   };
 

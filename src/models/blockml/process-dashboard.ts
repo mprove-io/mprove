@@ -18,7 +18,7 @@ export async function processDashboard(item: {
   cuts: api.Cut[];
   struct_id: string;
 }): Promise<interfaces.ItemProcessDashboard> {
-  let requestPayload: api.ProcessDashboardRequestBodyPayload = {
+  let requestPayload: api.ProcessDashboardRequestBody['payload'] = {
     project_id: item.project_id,
     repo_id: item.repo_id,
     bq_project: item.bq_project,
@@ -46,7 +46,7 @@ export async function processDashboard(item: {
       )
   );
 
-  let payload: api.ProcessDashboardResponse200BodyPayload =
+  let payload: api.ProcessDashboardResponse200Body['payload'] =
     response.data.payload;
 
   let dashboard = wrapper.wrapToEntityDashboard(payload.dashboard);

@@ -10,7 +10,7 @@ import { ServerError } from '../../../models/server-error';
 import { getConnection } from 'typeorm';
 
 export async function confirmUserEmail(req: Request, res: Response) {
-  let payload: api.ConfirmUserEmailRequestBodyPayload = validator.getPayload(
+  let payload: api.ConfirmUserEmailRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -56,7 +56,7 @@ export async function confirmUserEmail(req: Request, res: Response) {
       );
   }
 
-  let responsePayload: api.ConfirmUserEmailResponse200BodyPayload = {
+  let responsePayload: api.ConfirmUserEmailResponse200Body['payload'] = {
     empty: true
   };
 

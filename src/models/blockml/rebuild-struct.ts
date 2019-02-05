@@ -33,7 +33,7 @@ export async function rebuildStruct(item: {
       return file;
     });
 
-  let requestPayload: api.RebuildStructRequestBodyPayload = {
+  let requestPayload: api.RebuildStructRequestBody['payload'] = {
     files: apiFiles,
     project_id: item.project_id,
     repo_id: item.repo_id,
@@ -54,7 +54,8 @@ export async function rebuildStruct(item: {
       )
   );
 
-  let payload: api.RebuildStructResponse200BodyPayload = response.data.payload;
+  let payload: api.RebuildStructResponse200Body['payload'] =
+    response.data.payload;
 
   let models = payload.struct.models.map(modelApi => {
     let model = wrapper.wrapToEntityModel(modelApi);

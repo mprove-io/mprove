@@ -9,7 +9,9 @@ import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 
 export async function getPdtQueries(req: Request, res: Response) {
-  let payload: api.GetPdtQueriesRequestBodyPayload = validator.getPayload(req);
+  let payload: api.GetPdtQueriesRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let structId = payload.struct_id;
@@ -28,7 +30,7 @@ export async function getPdtQueries(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.GetPdtQueriesResponse200BodyPayload = {
+  let responsePayload: api.GetPdtQueriesResponse200Body['payload'] = {
     queries: queries.map(query => wrapper.wrapToApiQuery(query))
   };
 

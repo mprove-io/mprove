@@ -15,7 +15,7 @@ import { ServerError } from '../../server-error';
 export async function revertRepoToLastCommit(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.RevertRepoToLastCommitRequestBodyPayload = validator.getPayload(
+  let payload: api.RevertRepoToLastCommitRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -72,7 +72,7 @@ export async function revertRepoToLastCommit(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.RevertRepoToLastCommitResponse200BodyPayload = {
+  let responsePayload: api.RevertRepoToLastCommitResponse200Body['payload'] = {
     deleted_dev_files: itemChanges.deleted_dev_files.map(file =>
       wrapper.wrapToApiFile(file)
     ),

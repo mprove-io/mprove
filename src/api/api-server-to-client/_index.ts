@@ -1,2 +1,2 @@
-export * from './ping/_index';
-export * from './update-state/_index';
+export * from './ping';
+export * from './update-state';

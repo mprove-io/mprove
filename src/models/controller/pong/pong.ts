@@ -7,7 +7,7 @@ import { store } from '../../../barrels/store';
 import { validator } from '../../../barrels/validator';
 
 export async function pong(req: Request, res: Response) {
-  let payload: api.PongRequestBodyPayload = validator.getPayload(req);
+  let payload: api.PongRequestBody['payload'] = validator.getPayload(req);
 
   let storeSessions = store.getSessionsRepo();
 
@@ -29,7 +29,7 @@ export async function pong(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.PongResponse200BodyPayload = {
+  let responsePayload: api.PongResponse200Body['payload'] = {
     empty: true
   };
 

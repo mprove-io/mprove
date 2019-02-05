@@ -6,9 +6,9 @@ import { validator } from '../../../barrels/validator';
 export async function logoutUser(req: Request, res: Response) {
   let userId: string = req.user.email;
 
-  let payload: api.LogoutUserRequestBodyPayload = validator.getPayload(req);
+  let payload: api.LogoutUserRequestBody['payload'] = validator.getPayload(req);
 
-  let responsePayload: api.LogoutUserResponse200BodyPayload = {
+  let responsePayload: api.LogoutUserResponse200Body['payload'] = {
     empty: true
   };
 

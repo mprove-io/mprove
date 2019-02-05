@@ -15,7 +15,7 @@ import { ServerError } from '../../server-error';
 export async function createMconfigAndQuery(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.CreateMconfigAndQueryRequestBodyPayload = validator.getPayload(
+  let payload: api.CreateMconfigAndQueryRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -129,7 +129,7 @@ export async function createMconfigAndQuery(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.CreateMconfigAndQueryResponse200BodyPayload = {
+  let responsePayload: api.CreateMconfigAndQueryResponse200Body['payload'] = {
     mconfig: wrapper.wrapToApiMconfig(itemProcessQuery.mconfig),
     queries: queries.map(x => wrapper.wrapToApiQuery(x))
   };

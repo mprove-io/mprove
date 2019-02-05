@@ -9,7 +9,7 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function getMconfig(req: Request, res: Response) {
-  let payload: api.GetMconfigRequestBodyPayload = validator.getPayload(req);
+  let payload: api.GetMconfigRequestBody['payload'] = validator.getPayload(req);
 
   let mconfigId = payload.mconfig_id;
 
@@ -27,7 +27,7 @@ export async function getMconfig(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.GetMconfigResponse200BodyPayload = {
+  let responsePayload: api.GetMconfigResponse200Body['payload'] = {
     mconfig_or_empty: mconfig ? [wrapper.wrapToApiMconfig(mconfig)] : []
   };
 

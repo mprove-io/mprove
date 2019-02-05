@@ -5,7 +5,9 @@ import { sender } from '../../../barrels/sender';
 import { validator } from '../../../barrels/validator';
 
 export async function setLiveQueries(req: Request, res: Response) {
-  let payload: api.SetLiveQueriesRequestBodyPayload = validator.getPayload(req);
+  let payload: api.SetLiveQueriesRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let liveQueries = payload.live_queries;
   let server_ts = payload.server_ts;
@@ -14,7 +16,7 @@ export async function setLiveQueries(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.SetLiveQueriesResponse200BodyPayload = {
+  let responsePayload: api.SetLiveQueriesResponse200Body['payload'] = {
     live_queries: liveQueries,
     server_ts: Number(newServerTs)
   };

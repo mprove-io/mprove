@@ -7,7 +7,7 @@ import { store } from '../../../barrels/store';
 import { validator } from '../../../barrels/validator';
 
 export async function confirm(req: Request, res: Response) {
-  let payload: api.ConfirmRequestBodyPayload = validator.getPayload(req);
+  let payload: api.ConfirmRequestBody['payload'] = validator.getPayload(req);
 
   let storeMessages = store.getMessagesRepo();
 
@@ -30,7 +30,7 @@ export async function confirm(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.ConfirmResponse200BodyPayload = {
+  let responsePayload: api.ConfirmResponse200Body['payload'] = {
     empty: true
   };
 

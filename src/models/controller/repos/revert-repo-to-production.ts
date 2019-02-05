@@ -15,7 +15,7 @@ import { ServerError } from '../../server-error';
 export async function revertRepoToProduction(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.RevertRepoToProductionRequestBodyPayload = validator.getPayload(
+  let payload: api.RevertRepoToProductionRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -71,7 +71,7 @@ export async function revertRepoToProduction(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.RevertRepoToProductionResponse200BodyPayload = {
+  let responsePayload: api.RevertRepoToProductionResponse200Body['payload'] = {
     deleted_dev_files: itemChanges.deleted_dev_files.map(file =>
       wrapper.wrapToApiFile(file)
     ),

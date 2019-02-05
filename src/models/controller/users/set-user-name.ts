@@ -15,7 +15,9 @@ export async function usersSetUserName(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.SetUserNameRequestBodyPayload = validator.getPayload(req);
+  let payload: api.SetUserNameRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let firstName = payload.first_name;
   let lastName = payload.last_name;
@@ -80,7 +82,7 @@ export async function usersSetUserName(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.SetUserNameResponse200BodyPayload = {
+  let responsePayload: api.SetUserNameResponse200Body['payload'] = {
     user: wrapper.wrapToApiUser(user, enums.bEnum.FALSE),
     members: userMembers.map(member => wrapper.wrapToApiMember(member))
   };

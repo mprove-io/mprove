@@ -17,7 +17,9 @@ import { ServerError } from '../../server-error';
 export async function deleteFolder(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.DeleteFolderRequestBodyPayload = validator.getPayload(req);
+  let payload: api.DeleteFolderRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -70,7 +72,7 @@ export async function deleteFolder(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.DeleteFolderResponse200BodyPayload = {
+  let responsePayload: api.DeleteFolderResponse200Body['payload'] = {
     deleted_folder_dev_files: itemChanges.deleted_dev_files.map(file =>
       wrapper.wrapToApiFile(file)
     ),

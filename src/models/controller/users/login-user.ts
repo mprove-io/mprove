@@ -11,7 +11,9 @@ import { getConnection } from 'typeorm';
 import { store } from '../../../barrels/store';
 
 export async function loginUser(req: Request, res: Response, next: any) {
-  let payload: api.RegisterUserRequestBodyPayload = validator.getPayload(req);
+  let payload: api.RegisterUserRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   passport.authenticate(
     'local',
@@ -22,7 +24,7 @@ export async function loginUser(req: Request, res: Response, next: any) {
 
       let userId = user.user_id;
 
-      let responsePayload: api.LoginUserResponse200BodyPayload;
+      let responsePayload: api.LoginUserResponse200Body['payload'];
 
       if (user.email_verified === enums.bEnum.FALSE) {
         responsePayload = {

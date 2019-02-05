@@ -9,7 +9,7 @@ import { validator } from '../../../barrels/validator';
 import { MyRegex } from '../../my-regex';
 
 export async function checkProjectIdUnique(req: Request, res: Response) {
-  let projectId: api.CheckProjectIdUniqueRequestBodyPayload['project_id'] = validator.getPayloadProjectId(
+  let projectId: api.CheckProjectIdUniqueRequestBody['payload']['project_id'] = validator.getPayloadProjectId(
     req
   );
 
@@ -41,7 +41,7 @@ export async function checkProjectIdUnique(req: Request, res: Response) {
     isValid = false;
   }
 
-  let payload: api.CheckProjectIdUniqueResponse200BodyPayload = {
+  let payload: api.CheckProjectIdUniqueResponse200Body['payload'] = {
     project_id: projectId,
     is_unique: isUnique,
     is_valid: isValid

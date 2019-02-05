@@ -15,7 +15,9 @@ export async function deleteMember(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.DeleteMemberRequestBodyPayload = validator.getPayload(req);
+  let payload: api.DeleteMemberRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let memberId = payload.member_id;
@@ -103,7 +105,7 @@ export async function deleteMember(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  let responsePayload: api.DeleteMemberResponse200BodyPayload = {
+  let responsePayload: api.DeleteMemberResponse200Body['payload'] = {
     member: wrapper.wrapToApiMember(memberTo)
   };
 

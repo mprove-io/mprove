@@ -11,7 +11,7 @@ import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
 export async function getDashboardMconfigsQueries(req: Request, res: Response) {
-  let payload: api.GetDashboardMconfigsQueriesRequestBodyPayload = validator.getPayload(
+  let payload: api.GetDashboardMconfigsQueriesRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -65,7 +65,7 @@ export async function getDashboardMconfigsQueries(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.GetDashboardMconfigsQueriesResponse200BodyPayload = {
+  let responsePayload: api.GetDashboardMconfigsQueriesResponse200Body['payload'] = {
     dashboard_or_empty: [wrapper.wrapToApiDashboard(dashboard)],
     dashboard_mconfigs: mconfigs.map(mconfig =>
       wrapper.wrapToApiMconfig(mconfig)

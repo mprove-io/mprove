@@ -16,7 +16,9 @@ import { wrapper } from '../../../barrels/wrapper';
 export async function renameFolder(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.RenameFolderRequestBodyPayload = validator.getPayload(req);
+  let payload: api.RenameFolderRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -74,7 +76,7 @@ export async function renameFolder(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.RenameFolderResponse200BodyPayload = {
+  let responsePayload: api.RenameFolderResponse200Body['payload'] = {
     deleted_folder_dev_files: itemChanges.deleted_dev_files.map(file =>
       wrapper.wrapToApiFile(file)
     ),

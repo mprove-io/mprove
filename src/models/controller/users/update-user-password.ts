@@ -11,7 +11,7 @@ import { getConnection } from 'typeorm';
 import * as crypto from 'crypto';
 
 export async function updateUserPassword(req: Request, res: Response) {
-  let payload: api.UpdateUserPasswordRequestBodyPayload = validator.getPayload(
+  let payload: api.UpdateUserPasswordRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -69,7 +69,7 @@ export async function updateUserPassword(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  let responsePayload: api.UpdateUserPasswordResponse200BodyPayload = {
+  let responsePayload: api.UpdateUserPasswordResponse200Body['payload'] = {
     empty: true
   };
 

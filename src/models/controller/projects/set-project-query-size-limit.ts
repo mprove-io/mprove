@@ -13,7 +13,7 @@ import { ServerError } from '../../server-error';
 export async function setProjectQuerySizeLimit(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.SetProjectQuerySizeLimitRequestBodyPayload = validator.getPayload(
+  let payload: api.SetProjectQuerySizeLimitRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -64,7 +64,7 @@ export async function setProjectQuerySizeLimit(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
-  let responsePayload: api.SetProjectQuerySizeLimitResponse200BodyPayload = {
+  let responsePayload: api.SetProjectQuerySizeLimitResponse200Body['payload'] = {
     project: wrapper.wrapToApiProject(project)
   };
 

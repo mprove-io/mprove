@@ -21,7 +21,7 @@ export async function createProject(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let projectId: api.CreateProjectRequestBodyPayload['project_id'] = validator.getPayloadProjectId(
+  let projectId: api.CreateProjectRequestBody['payload']['project_id'] = validator.getPayloadProjectId(
     req
   );
 
@@ -161,7 +161,7 @@ export async function createProject(req: Request, res: Response) {
 
   // response
 
-  let payload: api.CreateProjectResponse200BodyPayload = {
+  let payload: api.CreateProjectResponse200Body['payload'] = {
     project: wrapper.wrapToApiProject(newProject),
     member: wrapper.wrapToApiMember(newMember),
     dev_files: itemDevCatalog.files.map(file => wrapper.wrapToApiFile(file)),

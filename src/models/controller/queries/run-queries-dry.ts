@@ -15,7 +15,9 @@ import { ServerError } from '../../server-error';
 export async function runQueriesDry(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.RunQueriesDryRequestBodyPayload = validator.getPayload(req);
+  let payload: api.RunQueriesDryRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let queryIds = payload.query_ids;
   let dryId = payload.dry_id;
@@ -99,7 +101,7 @@ export async function runQueriesDry(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.RunQueriesDryResponse200BodyPayload = {
+  let responsePayload: api.RunQueriesDryResponse200Body['payload'] = {
     dry_id: dryId,
     valid_estimates: validEstimates,
     error_queries: errorQueries.map(query => wrapper.wrapToApiQuery(query))

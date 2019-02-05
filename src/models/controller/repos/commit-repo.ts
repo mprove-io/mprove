@@ -17,7 +17,7 @@ export async function commitRepo(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.CommitRepoRequestBodyPayload = validator.getPayload(req);
+  let payload: api.CommitRepoRequestBody['payload'] = validator.getPayload(req);
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -87,7 +87,7 @@ export async function commitRepo(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.CommitRepoResponse200BodyPayload = {
+  let responsePayload: api.CommitRepoResponse200Body['payload'] = {
     dev_repo: wrapper.wrapToApiRepo(repo)
   };
 

@@ -10,7 +10,7 @@ import { ServerError } from '../../../models/server-error';
 import { getConnection } from 'typeorm';
 
 export async function resetUserPassword(req: Request, res: Response) {
-  let payload: api.ResetUserPasswordRequestBodyPayload = validator.getPayload(
+  let payload: api.ResetUserPasswordRequestBody['payload'] = validator.getPayload(
     req
   );
 
@@ -69,7 +69,7 @@ export async function resetUserPassword(req: Request, res: Response) {
     text: `You requested password change. Click the link to set new password: ${link}`
   });
 
-  let responsePayload: api.ResetUserPasswordResponse200BodyPayload = {
+  let responsePayload: api.ResetUserPasswordResponse200Body['payload'] = {
     user_id: userId
   };
 

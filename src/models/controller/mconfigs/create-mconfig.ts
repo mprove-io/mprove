@@ -11,7 +11,9 @@ import { wrapper } from '../../../barrels/wrapper';
 export async function createMconfig(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.CreateMconfigRequestBodyPayload = validator.getPayload(req);
+  let payload: api.CreateMconfigRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let mconfigApi = payload.mconfig;
 
@@ -45,7 +47,7 @@ export async function createMconfig(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.CreateMconfigResponse200BodyPayload = {
+  let responsePayload: api.CreateMconfigResponse200Body['payload'] = {
     mconfig: wrapper.wrapToApiMconfig(mconfig)
   };
 

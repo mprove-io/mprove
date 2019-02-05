@@ -17,7 +17,9 @@ import { ServerError } from '../../server-error';
 export async function createFolder(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.CreateFolderRequestBodyPayload = validator.getPayload(req);
+  let payload: api.CreateFolderRequestBody['payload'] = validator.getPayload(
+    req
+  );
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -111,7 +113,7 @@ export async function createFolder(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.CreateFolderResponse200BodyPayload = {
+  let responsePayload: api.CreateFolderResponse200Body['payload'] = {
     dev_repo: wrapper.wrapToApiRepo(repo)
   };
 

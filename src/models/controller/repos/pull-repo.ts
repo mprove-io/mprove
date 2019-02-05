@@ -17,7 +17,7 @@ export async function pullRepo(req: Request, res: Response) {
 
   let userId: string = req.user.email;
 
-  let payload: api.PullRepoRequestBodyPayload = validator.getPayload(req);
+  let payload: api.PullRepoRequestBody['payload'] = validator.getPayload(req);
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -72,7 +72,7 @@ export async function pullRepo(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.PullRepoResponse200BodyPayload = {
+  let responsePayload: api.PullRepoResponse200Body['payload'] = {
     deleted_dev_files: itemChanges.deleted_dev_files.map(file =>
       wrapper.wrapToApiFile(file)
     ),

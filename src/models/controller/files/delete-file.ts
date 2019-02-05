@@ -17,7 +17,7 @@ import { ServerError } from '../../server-error';
 export async function deleteFile(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
-  let payload: api.DeleteFileRequestBodyPayload = validator.getPayload(req);
+  let payload: api.DeleteFileRequestBody['payload'] = validator.getPayload(req);
 
   let projectId = payload.project_id;
   let repoId = payload.repo_id;
@@ -182,7 +182,7 @@ export async function deleteFile(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.DeleteFileResponse200BodyPayload = {
+  let responsePayload: api.DeleteFileResponse200Body['payload'] = {
     deleted_dev_file: wrapper.wrapToApiFile(file),
     dev_struct: {
       errors: itemStruct.errors.map(error => wrapper.wrapToApiError(error)),

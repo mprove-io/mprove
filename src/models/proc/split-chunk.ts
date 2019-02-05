@@ -71,7 +71,7 @@ export async function splitChunk(item: {
   }
 
   await forEach(item.ws_clients_open, async wsClient => {
-    let payload: api.UpdateStateRequestBodyPayload = {
+    let payload: api.UpdateStateRequestBody['payload'] = {
       user: null,
       projects: [],
       repos: [],
