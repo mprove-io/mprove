@@ -16,9 +16,8 @@ import * as selectors from '@app/store/selectors/_index';
 export class ProjectSetupComponent {
   staticAssetsBaseUrl: string = configs.pathConfig.staticAssetsBaseUrl;
 
-  layoutProjectId$ = this.store
-    .select(selectors.getLayoutProjectId)
-    .pipe(filter(v => !!v));
+  layoutProjectId$ = this.store.select(selectors.getLayoutProjectId); // no filter here
+
   isDemo$ = this.store.select(selectors.getLayoutProjectIdIsDemo); // no filter here
   isAdmin$ = this.store.select(selectors.getSelectedProjectUserIsAdmin); // no filter here
   isEditor$ = this.store.select(selectors.getSelectedProjectUserIsEditor); // no filter here

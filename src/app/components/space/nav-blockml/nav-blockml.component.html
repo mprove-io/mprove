@@ -1,4 +1,5 @@
-<div fxHide.lt-md>
+<!-- desktop -->
+<div fxHide.lt-md *ngIf="projectId">
   <button
     mat-button
     class="space__button_hover_primary"
@@ -10,7 +11,7 @@
 </div>
 
 <!-- mobile -->
-<div fxHide.gt-sm>
+<div fxHide.gt-sm *ngIf="projectId">
   <mat-accordion>
     <mat-expansion-panel hideToggle="true" disabled="true">
       <mat-expansion-panel-header>

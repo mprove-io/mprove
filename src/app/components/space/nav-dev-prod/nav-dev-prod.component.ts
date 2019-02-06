@@ -14,10 +14,9 @@ import * as selectors from '@app/store/selectors/_index';
 })
 export class NavDevProdComponent {
   projectId: string;
-  projectId$ = this.store.select(selectors.getLayoutProjectId).pipe(
-    filter(v => !!v),
-    tap(x => (this.projectId = x))
-  );
+  projectId$ = this.store
+    .select(selectors.getLayoutProjectId)
+    .pipe(tap(x => (this.projectId = x))); // no filter here
 
   selectedProjectUserIsEditor$ = this.store.select(
     selectors.getSelectedProjectUserIsEditor

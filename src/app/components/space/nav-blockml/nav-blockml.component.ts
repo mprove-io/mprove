@@ -12,10 +12,9 @@ import * as selectors from '@app/store/selectors/_index';
 })
 export class NavBlockmlComponent {
   projectId: string;
-  projectId$ = this.store.select(selectors.getLayoutProjectId).pipe(
-    filter(v => !!v),
-    tap(x => (this.projectId = x))
-  );
+  projectId$ = this.store
+    .select(selectors.getLayoutProjectId)
+    .pipe(tap(x => (this.projectId = x))); // no filter here
 
   mode: enums.LayoutModeEnum;
   mode$ = this.store.select(selectors.getLayoutMode).pipe(

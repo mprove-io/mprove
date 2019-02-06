@@ -1,5 +1,5 @@
 <!-- desktop -->
-<div fxHide.lt-md>
+<div fxHide.lt-md *ngIf="projectId">
   <div class="can-toggle" data-cy="spaceModeToggle">
     <input
       id="spaceModeToggleInput"
@@ -19,7 +19,7 @@
 </div>
 
 <!-- mobile -->
-<div fxHide.gt-sm>
+<div fxHide.gt-sm *ngIf="projectId">
   <mat-accordion>
     <mat-expansion-panel hideToggle="true" disabled="true">
       <mat-expansion-panel-header>
