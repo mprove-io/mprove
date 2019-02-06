@@ -8,12 +8,6 @@ import * as interfaces from '@app/interfaces/_index';
   selector: 'm-project-deleted',
   templateUrl: './project-deleted.component.html'
 })
-export class ProjectDeletedComponent implements OnInit {
+export class ProjectDeletedComponent {
   constructor(private store: Store<interfaces.AppState>) {}
-
-  ngOnInit() {
-    this.store.dispatch(
-      new actions.UpdateLayoutProjectIdAction(constants.DEMO)
-    );
-  }
 }

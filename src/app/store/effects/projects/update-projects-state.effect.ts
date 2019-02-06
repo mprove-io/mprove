@@ -54,31 +54,6 @@ export class UpdateProjectsStateEffect {
         );
 
         this.router.navigate(['profile']);
-
-        // set prod mode
-        this.printer.log(
-          enums.busEnum.UPDATE_PROJECTS_EFFECT,
-          'setting prod mode...'
-        );
-
-        let mode: enums.LayoutModeEnum;
-        this.store
-          .select(selectors.getLayoutMode)
-          .pipe(take(1))
-          .subscribe(x => (mode = x));
-
-        if (mode === enums.LayoutModeEnum.Dev) {
-          this.store.dispatch(new actions.SetLayoutModeProdAction());
-        }
-
-        // select Demo project
-        this.printer.log(
-          enums.busEnum.UPDATE_PROJECTS_EFFECT,
-          'selecting Demo project...'
-        );
-        this.store.dispatch(
-          new actions.UpdateLayoutProjectIdAction(constants.DEMO)
-        );
       }
     })
   );

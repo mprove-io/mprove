@@ -76,13 +76,6 @@ export class UpdateMembersStateEffect {
                 this.store.dispatch(new actions.SetLayoutModeProdAction());
               }
             }
-
-            if (payloadMember.deleted === true) {
-              // select Demo project
-              this.store.dispatch(
-                new actions.UpdateLayoutProjectIdAction(constants.DEMO)
-              );
-            }
           }
 
           if (payloadMember.deleted === true) {

@@ -86,9 +86,6 @@ export class ProjectResolver implements Resolve<boolean> {
             enums.busEnum.PROJECT_SELECTED_RESOLVER,
             `project not exists, navigating 404...`
           );
-          this.store.dispatch(
-            new actions.UpdateLayoutProjectIdAction(constants.DEMO)
-          );
           this.router.navigate(['/404']);
           this.printer.log(
             enums.busEnum.PROJECT_SELECTED_RESOLVER,

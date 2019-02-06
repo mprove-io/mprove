@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import 'brace';
@@ -21,7 +21,7 @@ import * as services from '@app/services/_index';
   templateUrl: 'file-editor.component.html',
   styleUrls: ['file-editor.component.scss']
 })
-export class FileEditorComponent implements AfterViewInit {
+export class FileEditorComponent implements AfterViewInit, OnDestroy {
   text: string = '';
   newText: string = '';
   errorsLines: number[] = [];
@@ -175,6 +175,38 @@ export class FileEditorComponent implements AfterViewInit {
     // });
   }
 
+  canDeactivate(): Promise<boolean> | boolean {
+    // used in component-deactivate-guard
+    this.printer.log(
+      enums.busEnum.CAN_DEACTIVATE_CHECK,
+      'from FileEditorComponent'
+    );
+
+    let needSave: boolean;
+    this.store
+      .select(selectors.getLayoutNeedSave)
+      .pipe(take(1))
+      .subscribe(x => (needSave = x));
+
+    if (needSave) {
+      return this.dialogService.confirm('Discard changes?').then(answer => {
+        if (answer === true) {
+          this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
+          return true;
+        } else {
+          return false;
+        }
+      });
+    } else {
+      return true;
+    }
+  }
+
+  ngOnDestroy() {
+    console.log(123);
+    this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
+  }
+
   goToFileModel(): void {
     this.store
       .select(selectors.getSelectedProjectModeRepoFile)
@@ -296,34 +328,5 @@ export class FileEditorComponent implements AfterViewInit {
         content: this.newText
       })
     );
-  }
-
-  canDeactivate(): Promise<boolean> | boolean {
-    // used in component-deactivate-guard
-    this.printer.log(
-      enums.busEnum.CAN_DEACTIVATE_CHECK,
-      'from FileEditorComponent'
-    );
-
-    let needSave: boolean;
-    this.store
-      .select(selectors.getLayoutNeedSave)
-      .pipe(take(1))
-      .subscribe(x => (needSave = x));
-
-    if (needSave) {
-      return this.dialogService.confirm('Discard changes?').then(answer => {
-        if (answer === true) {
-          this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
-          this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
-          return true;
-        } else {
-          return false;
-        }
-      });
-    } else {
-      this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
-      return true;
-    }
   }
 }
