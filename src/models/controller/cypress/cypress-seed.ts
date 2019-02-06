@@ -76,92 +76,95 @@ export async function cypressSeed(req: Request, res: Response) {
       });
 
       users.push(newUser);
-
-      // demo
-
-      // let memberId = newUser.user_id;
-
-      // let demoMember = generator.makeMember({
-      //   user: newUser,
-      //   project_id: constants.DEMO_PROJECT,
-      //   is_editor: enums.bEnum.TRUE,
-      //   is_admin: enums.bEnum.FALSE
-      // });
-
-      // let demoProdRepo = await storeRepos
-      //   .findOne({
-      //     project_id: constants.DEMO_PROJECT,
-      //     repo_id: constants.PROD_REPO_ID
-      //   })
-      //   .catch(e =>
-      //     helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE)
-      //   );
-
-      // if (!demoProdRepo) {
-      //   throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
-      // }
-
-      // await git
-      //   .cloneCentralToDev({
-      //     project_id: constants.DEMO_PROJECT,
-      //     dev_repo_id: memberId
-      //   })
-      //   .catch(e =>
-      //     helper.reThrow(e, enums.gitErrorsEnum.GIT_CLONE_CENTRAL_TO_DEV)
-      //   );
-
-      // let itemDemoDevCatalog = <interfaces.ItemCatalog>await disk
-      //   .getRepoCatalogNodesAndFiles({
-      //     project_id: constants.DEMO_PROJECT,
-      //     repo_id: memberId
-      //   })
-      //   .catch(e =>
-      //     helper.reThrow(
-      //       e,
-      //       enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
-      //     )
-      //   );
-
-      // let demoDevRepo: entities.RepoEntity = generator.makeRepo({
-      //   project_id: constants.DEMO_PROJECT,
-      //   repo_id: memberId,
-      //   nodes: itemDemoDevCatalog.nodes,
-      //   struct_id: demoProdRepo.struct_id // from prod
-      // });
-
-      // demoDevRepo.pdts_sorted = demoProdRepo.pdts_sorted;
-      // demoDevRepo.udfs_content = demoProdRepo.udfs_content;
-
-      // let itemDemoStructCopy = <interfaces.ItemStructCopy>await copier
-      //   .copyStructFromDatabase({
-      //     project_id: constants.DEMO_PROJECT,
-      //     from_repo_id: constants.PROD_REPO_ID,
-      //     to_repo_id: memberId
-      //   })
-      //   .catch(e =>
-      //     helper.reThrow(
-      //       e,
-      //       enums.copierErrorsEnum.COPIER_COPY_STRUCT_FROM_DATABASE
-      //     )
-      //   );
-
-      // let {
-      //   dashboards: demoDevDashboards,
-      //   models: demoDevModels,
-      //   errors: demoDevErrors,
-      //   mconfigs: demoDevMconfigs
-      // } = itemDemoStructCopy;
-
-      // members.push(demoMember);
-      // repos.push(demoDevRepo);
-
-      // files = helper.makeNewArray(files, itemDemoDevCatalog.files);
-      // models = helper.makeNewArray(models, demoDevModels);
-      // mconfigs = helper.makeNewArray(mconfigs, demoDevMconfigs);
-      // dashboards = helper.makeNewArray(dashboards, demoDevDashboards);
-      // errors = helper.makeNewArray(errors, demoDevErrors);
     });
   }
+
+  if (payload.projects) {
+  }
+
+  // demo
+
+  // let memberId = newUser.user_id;
+
+  // let demoMember = generator.makeMember({
+  //   user: newUser,
+  //   project_id: constants.DEMO_PROJECT,
+  //   is_editor: enums.bEnum.TRUE,
+  //   is_admin: enums.bEnum.FALSE
+  // });
+
+  // let demoProdRepo = await storeRepos
+  //   .findOne({
+  //     project_id: constants.DEMO_PROJECT,
+  //     repo_id: constants.PROD_REPO_ID
+  //   })
+  //   .catch(e =>
+  //     helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_FIND_ONE)
+  //   );
+
+  // if (!demoProdRepo) {
+  //   throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
+  // }
+
+  // await git
+  //   .cloneCentralToDev({
+  //     project_id: constants.DEMO_PROJECT,
+  //     dev_repo_id: memberId
+  //   })
+  //   .catch(e =>
+  //     helper.reThrow(e, enums.gitErrorsEnum.GIT_CLONE_CENTRAL_TO_DEV)
+  //   );
+
+  // let itemDemoDevCatalog = <interfaces.ItemCatalog>await disk
+  //   .getRepoCatalogNodesAndFiles({
+  //     project_id: constants.DEMO_PROJECT,
+  //     repo_id: memberId
+  //   })
+  //   .catch(e =>
+  //     helper.reThrow(
+  //       e,
+  //       enums.diskErrorsEnum.DISK_GET_REPO_CATALOG_NODES_AND_FILES
+  //     )
+  //   );
+
+  // let demoDevRepo: entities.RepoEntity = generator.makeRepo({
+  //   project_id: constants.DEMO_PROJECT,
+  //   repo_id: memberId,
+  //   nodes: itemDemoDevCatalog.nodes,
+  //   struct_id: demoProdRepo.struct_id // from prod
+  // });
+
+  // demoDevRepo.pdts_sorted = demoProdRepo.pdts_sorted;
+  // demoDevRepo.udfs_content = demoProdRepo.udfs_content;
+
+  // let itemDemoStructCopy = <interfaces.ItemStructCopy>await copier
+  //   .copyStructFromDatabase({
+  //     project_id: constants.DEMO_PROJECT,
+  //     from_repo_id: constants.PROD_REPO_ID,
+  //     to_repo_id: memberId
+  //   })
+  //   .catch(e =>
+  //     helper.reThrow(
+  //       e,
+  //       enums.copierErrorsEnum.COPIER_COPY_STRUCT_FROM_DATABASE
+  //     )
+  //   );
+
+  // let {
+  //   dashboards: demoDevDashboards,
+  //   models: demoDevModels,
+  //   errors: demoDevErrors,
+  //   mconfigs: demoDevMconfigs
+  // } = itemDemoStructCopy;
+
+  // members.push(demoMember);
+  // repos.push(demoDevRepo);
+
+  // files = helper.makeNewArray(files, itemDemoDevCatalog.files);
+  // models = helper.makeNewArray(models, demoDevModels);
+  // mconfigs = helper.makeNewArray(mconfigs, demoDevMconfigs);
+  // dashboards = helper.makeNewArray(dashboards, demoDevDashboards);
+  // errors = helper.makeNewArray(errors, demoDevErrors);
 
   // update server_ts
 

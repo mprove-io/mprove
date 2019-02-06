@@ -13,6 +13,5 @@ export interface CreateMemberResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     member: apiObjects.Member;
-
   };
 }

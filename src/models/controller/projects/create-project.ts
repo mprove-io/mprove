@@ -34,7 +34,7 @@ export async function createProject(req: Request, res: Response) {
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
 
   await git
-    .prepareCentralAndProd(projectId)
+    .prepareCentralAndProd({ project_id: projectId, use_data: false })
     .catch(e =>
       helper.reThrow(e, enums.gitErrorsEnum.GIT_PREPARE_CENTRAL_AND_PROD)
     );

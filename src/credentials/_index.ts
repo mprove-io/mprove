@@ -1,2 +1,2 @@
-export * from './bigquery-mprove-data';
-export * from './bigquery-mprove-demo';
+export * from '../../test-credentials/bigquery-mprove-data';
+export * from '../../test-credentials/bigquery-mprove-demo';

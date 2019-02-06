@@ -12,6 +12,5 @@ export interface RegisterUserResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     user_id: string;
-
   };
 }

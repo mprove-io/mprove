@@ -4,7 +4,6 @@ export interface GetStateRequestBody {
   info: apiObjects.ClientRequest;
   payload: {
     empty: boolean;
-
   };
 }
 

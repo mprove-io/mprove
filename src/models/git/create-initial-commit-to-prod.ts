@@ -5,8 +5,11 @@ import { disk } from '../../barrels/disk';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 
-export async function createInitialCommitToProd(projectId: string) {
-  let dirProd = `${config.DISK_BASE_PATH}/${projectId}/${
+export async function createInitialCommitToProd(item: {
+  project_id: string;
+  use_data: boolean;
+}) {
+  let dirProd = `${config.DISK_BASE_PATH}/${item.project_id}/${
     constants.PROD_REPO_ID
   }`;
 
@@ -16,16 +19,25 @@ export async function createInitialCommitToProd(projectId: string) {
     )
   );
 
-  let fileName = 'readme.md';
-  let fileAbsoluteId = `${dirProd}/${fileName}`;
-  let content = `# ${projectId}`;
+  if (item.use_data) {
+    await disk
+      .copyPath({
+        source_path: `test-projects/${item.project_id}`,
+        destination_path: dirProd
+      })
+      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
+  } else {
+    let fileName = 'readme.md';
+    let fileAbsoluteId = `${dirProd}/${fileName}`;
+    let content = `# ${item.project_id}`;
 
-  await disk
-    .writeToFile({
-      file_absolute_id: fileAbsoluteId,
-      content: content
-    })
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
+    await disk
+      .writeToFile({
+        file_absolute_id: fileAbsoluteId,
+        content: content
+      })
+      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
+  }
 
   let index = <nodegit.Index>(
     await gitRepo
@@ -36,7 +48,8 @@ export async function createInitialCommitToProd(projectId: string) {
   );
 
   await index
-    .addByPath(fileName)
+    // .addByPath(fileName)
+    .addAll(undefined, undefined)
     .catch(e =>
       helper.reThrow(e, enums.nodegitErrorsEnum.NODEGIT_INDEX_ADD_BY_PATH)
     );

@@ -5,6 +5,7 @@ import {
   getConnectionOptions
 } from 'typeorm';
 
+import { config } from './barrels/config';
 import { constants } from './barrels/constants';
 import { credentials } from './barrels/credentials';
 import { enums } from './barrels/enums';
@@ -94,17 +95,29 @@ async function run() {
     .addUsers()
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_USERS));
 
+  let adminMemberIds = config.admins.map(admin => admin.user_id);
+
   await start
     .addProject({
       project_id: constants.DEMO_PROJECT,
-      bigquery_credentials: credentials.bigqueryMproveData
+      bigquery_credentials: credentials.bigqueryMproveData,
+      member_ids: adminMemberIds
     })
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
 
   await start
     .addProject({
       project_id: constants.PROJECT_WOOD,
-      bigquery_credentials: credentials.bigqueryMproveData
+      bigquery_credentials: credentials.bigqueryMproveData,
+      member_ids: adminMemberIds
+    })
+    .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
+
+  await start
+    .addProject({
+      project_id: 'apple',
+      bigquery_credentials: credentials.bigqueryMproveData,
+      member_ids: adminMemberIds
     })
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
 

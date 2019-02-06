@@ -4,7 +4,6 @@ export interface CreateProjectRequestBody {
   info: apiObjects.ClientRequest;
   payload: {
     project_id: string;
-
   };
 }
 

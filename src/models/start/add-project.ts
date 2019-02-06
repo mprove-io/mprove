@@ -25,6 +25,7 @@ const { forEach } = require('p-iteration');
 export async function addProject(item: {
   project_id: string;
   bigquery_credentials: any;
+  member_ids: string[];
 }) {
   // let abc = await er();
 
@@ -84,7 +85,7 @@ export async function addProject(item: {
 
   let users = <entities.UserEntity[]>await storeUsers
     .find({
-      user_id: In([config.admins.map(admin => admin.user_id)])
+      user_id: In([item.member_ids])
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND));
 
@@ -125,7 +126,7 @@ export async function addProject(item: {
 
   if (!isCentralExistOnDisk || !isProdExistOnDisk) {
     await git
-      .prepareCentralAndProd(projectId)
+      .prepareCentralAndProd({ project_id: projectId, use_data: true })
       .catch(e =>
         helper.reThrow(e, enums.gitErrorsEnum.GIT_PREPARE_CENTRAL_AND_PROD)
       );

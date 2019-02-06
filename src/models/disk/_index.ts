@@ -1,3 +1,4 @@
+export * from './copy-path';
 export * from './empty-dir';
 export * from './ensure-dir';
 export * from './ensure-file';

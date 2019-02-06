@@ -13,6 +13,5 @@ export interface CommitRepoResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     dev_repo: apiObjects.Repo;
-
   };
 }
