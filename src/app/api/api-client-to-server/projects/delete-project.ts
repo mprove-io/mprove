@@ -12,6 +12,5 @@ export interface DeleteProjectResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     deleted_project: apiObjects.Project;
-
   };
 }

@@ -4,7 +4,6 @@ export interface GetQueryWithDepQueriesRequestBody {
   info: apiObjects.ClientRequest;
   payload: {
     query_id: string;
-
   };
 }
 
