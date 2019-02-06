@@ -13,7 +13,7 @@ export interface CypressSeedRequestBody {
     members?: {
       project_id: string;
       member_id: string;
-    }
+    };
   };
 }
 
