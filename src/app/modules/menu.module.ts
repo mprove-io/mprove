@@ -22,8 +22,6 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
     components.ProjectSetupComponent,
     components.ProjectSelectComponent,
     components.UserComponent,
-    components.DocsLinkComponent,
-    components.ForumLinkComponent,
     components.LogoComponent,
     components.ThemePickerComponent
   ],
@@ -32,8 +30,6 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
     components.ProjectSetupComponent,
     components.ProjectSelectComponent,
     components.UserComponent,
-    components.DocsLinkComponent,
-    components.ForumLinkComponent,
     components.LogoComponent
   ]
 })

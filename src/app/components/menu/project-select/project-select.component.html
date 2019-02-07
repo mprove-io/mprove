@@ -44,6 +44,9 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title> Projects </mat-panel-title>
+        <mat-panel-description>
+          {{ layoutProjectId$ | async | capitalize }}
+        </mat-panel-description>
       </mat-expansion-panel-header>
 
       <button
