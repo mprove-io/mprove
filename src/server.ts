@@ -10,6 +10,7 @@ import { constants } from './barrels/constants';
 import { credentials } from './barrels/credentials';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
+import { disk } from './barrels/disk';
 import { handler } from './barrels/handler';
 import { scheduler } from './barrels/scheduler';
 import { start } from './barrels/start';
@@ -91,6 +92,10 @@ async function run() {
   // await connection.runMigrations() // TODO: #28-4 runMigrations in prod
   //   .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_RUN_MIGRATIONS));
 
+  await disk
+    .emptyDir(config.DISK_BASE_PATH)
+    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
+
   await start
     .addUsers()
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_USERS));
@@ -108,14 +113,6 @@ async function run() {
   await start
     .addProject({
       project_id: constants.PROJECT_WOOD,
-      bigquery_credentials: credentials.bigqueryMproveData,
-      member_ids: adminMemberIds
-    })
-    .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
-
-  await start
-    .addProject({
-      project_id: 'apple',
       bigquery_credentials: credentials.bigqueryMproveData,
       member_ids: adminMemberIds
     })

@@ -4,6 +4,7 @@ import { constants } from '../../barrels/constants';
 import { disk } from '../../barrels/disk';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
+import * as fse from 'fs-extra';
 
 export async function createInitialCommitToProd(item: {
   project_id: string;
@@ -19,7 +20,13 @@ export async function createInitialCommitToProd(item: {
     )
   );
 
-  if (item.use_data) {
+  let sourcePath = `test-projects/${item.project_id}`;
+
+  let isSourcePathExist = await fse
+    .pathExists(sourcePath)
+    .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_PATH_EXISTS_CHECK));
+
+  if (item.use_data && isSourcePathExist) {
     await disk
       .copyPath({
         source_path: `test-projects/${item.project_id}`,
