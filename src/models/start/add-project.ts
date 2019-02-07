@@ -155,7 +155,7 @@ export async function addProject(item: {
       files: itemCatalogProd.files,
       project_id: projectId,
       repo_id: constants.PROD_REPO_ID,
-      bq_project: 'flow-1202', // bq_project credentials
+      bq_project: project.bigquery_project,
       week_start: <any>project.week_start,
       struct_id: prodStructId
     })
