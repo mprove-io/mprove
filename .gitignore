@@ -1,6 +1,9 @@
 .envrc
 
 nogit
+old-code
+old-data
+test-credentials
 
 # debug
 yarn-error.log
