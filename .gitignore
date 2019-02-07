@@ -4,6 +4,8 @@ nogit
 old-code
 old-data
 test-credentials
+test-projects/demo
+test-projects/wood
 
 # debug
 yarn-error.log
