@@ -1,5 +1,7 @@
 .envrc
 
+nogit
+
 # debug
 yarn-error.log
 ormlogs.log
