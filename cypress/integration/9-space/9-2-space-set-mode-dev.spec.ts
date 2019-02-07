@@ -19,13 +19,27 @@ describe('9-2 space-set-mode-dev (logged in)', () => {
           password: password,
           email_verified: true
         }
+      ],
+      members: [
+        {
+          project_id: projectId,
+          member_id: userId,
+          is_admin: true,
+          is_editor: true
+        }
+      ],
+      projects: [
+        {
+          project_id: projectId,
+          has_credentials: false
+        }
       ]
     });
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/mode/prod/blockml`);
     cy.loading();
     cy.get('[data-cy=blockmlTitleMode]').should('have.text', 'Prod');
-    cy.get('[data-cy=spaceModeToggle]').click();
+    cy.get('[data-cy=spaceModeToggle]').eq(1).click();
     cy.get('[data-cy=blockmlTitleMode]').should('have.text', 'Dev');
   });
 });
