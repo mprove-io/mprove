@@ -24,7 +24,7 @@ export class SettingsResolver implements Resolve<any> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    this.printer.log(enums.busEnum.TEAM_RESOLVER, 'starts...');
+    this.printer.log(enums.busEnum.SETTINGS_RESOLVER, 'starts...');
 
     let userId: string;
     this.store

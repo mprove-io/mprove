@@ -34,10 +34,6 @@ export class ChartComponent {
     private store: Store<interfaces.AppState>
   ) {}
 
-  close() {
-    this.sidenav.close();
-  }
-
   canDeactivate(): boolean {
     // used in component-deactivate-guard
     this.printer.log(
@@ -47,5 +43,9 @@ export class ChartComponent {
     );
     this.store.dispatch(new actions.UpdateLayoutChartIdAction(undefined));
     return true;
+  }
+
+  close() {
+    this.sidenav.close();
   }
 }

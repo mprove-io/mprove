@@ -16,22 +16,6 @@ export class MconfigComponent {
     private store: Store<interfaces.AppState>
   ) {}
 
-  activateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.ACTIVATE_EVENT,
-      'from MconfigComponent:',
-      event
-    );
-  }
-
-  deactivateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.DEACTIVATE_EVENT,
-      'from MconfigComponent:',
-      event
-    );
-  }
-
   canDeactivate(): boolean {
     // used in component-deactivate-guard
     this.printer.log(

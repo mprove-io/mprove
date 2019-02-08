@@ -21,16 +21,4 @@ export class AppComponent {
       // color: 'accent',
     });
   }
-
-  activateEvent(event: any) {
-    this.printer.log(enums.busEnum.ACTIVATE_EVENT, 'from AppComponent:', event);
-  }
-
-  deactivateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.DEACTIVATE_EVENT,
-      'from AppComponent:',
-      event
-    );
-  }
 }

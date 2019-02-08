@@ -6,7 +6,7 @@ import * as constants from '@app/constants/_index';
 
 const initialState: interfaces.LayoutState = {
   project_id: undefined,
-  mode: undefined,
+  mode: enums.LayoutModeEnum.Prod,
   file_id: undefined,
   need_save: false,
   mconfig_id: undefined,

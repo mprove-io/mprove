@@ -99,6 +99,13 @@ export class QueryComponent {
     this.selectTab(router.url);
   }
 
+  canDeactivate(): boolean {
+    // used in component-deactivate-guard
+    this.printer.log(enums.busEnum.CAN_DEACTIVATE_CHECK, 'from QueryComponent');
+    this.store.dispatch(new actions.UpdateLayoutQueryIdAction(undefined));
+    return true;
+  }
+
   selectTab(path: string) {
     let pathArray: string[];
 
@@ -181,28 +188,5 @@ export class QueryComponent {
         ),
       1
     );
-  }
-
-  activateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.ACTIVATE_EVENT,
-      'from QueryComponent:',
-      event
-    );
-  }
-
-  deactivateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.DEACTIVATE_EVENT,
-      'from QueryComponent:',
-      event
-    );
-  }
-
-  canDeactivate(): boolean {
-    // used in component-deactivate-guard
-    this.printer.log(enums.busEnum.CAN_DEACTIVATE_CHECK, 'from QueryComponent');
-    this.store.dispatch(new actions.UpdateLayoutQueryIdAction(undefined));
-    return true;
   }
 }

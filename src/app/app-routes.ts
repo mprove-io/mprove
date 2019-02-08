@@ -91,7 +91,7 @@ export const APP_ROUTES: Routes = [
             path: constants.PATH_BILLING,
             component: components.BillingComponent,
             resolve: {
-              teamResolver: resolvers.BillingResolver
+              billingResolver: resolvers.BillingResolver
             }
           },
           {

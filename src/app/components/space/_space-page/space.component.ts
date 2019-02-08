@@ -45,20 +45,4 @@ export class SpaceComponent implements AfterViewChecked {
   close() {
     this.sidenav.close();
   }
-
-  activateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.ACTIVATE_EVENT,
-      'from SpaceComponent:',
-      event
-    );
-  }
-
-  deactivateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.DEACTIVATE_EVENT,
-      'from SpaceComponent:',
-      event
-    );
-  }
 }

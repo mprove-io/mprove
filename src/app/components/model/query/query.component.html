@@ -69,12 +69,7 @@
     </div>
   </div>
 
-  <div fxFlex="1 1 calc(100%-80px)">
-    <router-outlet
-      (activate)="activateEvent($event)"
-      (deactivate)="deactivateEvent($event)"
-    ></router-outlet>
-  </div>
+  <div fxFlex="1 1 calc(100%-80px)"> <router-outlet></router-outlet> </div>
 </div>
 
 <div *ngIf="(queryId$ | async)"></div>

@@ -177,20 +177,4 @@ export class BlockMLComponent implements OnDestroy {
   closeRight() {
     this.sidenavRight.close();
   }
-
-  activateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.ACTIVATE_EVENT,
-      'from BlockMLComponent:',
-      event
-    );
-  }
-
-  deactivateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.DEACTIVATE_EVENT,
-      'from BlockMLComponent:',
-      event
-    );
-  }
 }

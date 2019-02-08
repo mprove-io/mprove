@@ -226,6 +226,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.pageTitleSub = this.pageTitle.setDashboardTitle();
   }
 
+  canDeactivate(): boolean {
+    // used in component-deactivate-guard
+    this.printer.log(
+      enums.busEnum.CAN_DEACTIVATE_CHECK,
+      'from DashboardComponent:',
+      event
+    );
+    this.store.dispatch(new actions.UpdateLayoutDashboardIdAction(undefined));
+    return true;
+  }
+
   ngOnDestroy() {
     this.pageTitleSub.unsubscribe();
   }
@@ -291,17 +302,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   closeRight() {
     this.sidenavRight.close();
-  }
-
-  canDeactivate(): boolean {
-    // used in component-deactivate-guard
-    this.printer.log(
-      enums.busEnum.CAN_DEACTIVATE_CHECK,
-      'from DashboardComponent:',
-      event
-    );
-    this.store.dispatch(new actions.UpdateLayoutDashboardIdAction(undefined));
-    return true;
   }
 
   trackByFn(index: number, item: interfaces.Visual) {

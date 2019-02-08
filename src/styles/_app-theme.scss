@@ -9,8 +9,6 @@
 @import '../app/components/dashboard/dashboard-filters/_dashboard-filters-theme';
 @import '../app/components/dashboard/dashboard-report-title/_report-title-theme';
 
-@import '../app/components/menu/docs-link/_docs-link-theme';
-@import '../app/components/menu/forum-link/_forum-link-theme';
 @import '../app/components/menu/logo/_logo-theme';
 @import '../app/components/menu/menu-user/_user-theme';
 @import '../app/components/menu/menu-user-theme-picker/_theme-picker-theme';
@@ -52,8 +50,6 @@
   /* include components mixin*/
   @include user-theme($theme);
   @include logo-theme($theme);
-  @include docs-link-theme($theme);
-  @include forum-link-theme($theme);
   @include project-select-theme($theme);
   @include project-setup-theme($theme);
   @include space-theme($theme);

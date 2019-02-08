@@ -209,6 +209,16 @@ export class ModelComponent implements OnDestroy {
     this.pageTitleSub = this.pageTitle.setModelTitle();
   }
 
+  canDeactivate(): boolean {
+    // used in component-deactivate-guard
+    this.printer.log(
+      enums.busEnum.CAN_DEACTIVATE_CHECK,
+      'from ModelComponent:'
+    );
+    this.store.dispatch(new actions.UpdateLayoutModelIdAction(undefined));
+    return true;
+  }
+
   ngOnDestroy() {
     this.pageTitleSub.unsubscribe();
   }
@@ -305,31 +315,5 @@ export class ModelComponent implements OnDestroy {
 
   closeRight() {
     this.sidenavRight.close();
-  }
-
-  activateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.ACTIVATE_EVENT,
-      'from ModelComponent:',
-      event
-    );
-  }
-
-  deactivateEvent(event: any) {
-    this.printer.log(
-      enums.busEnum.DEACTIVATE_EVENT,
-      'from ModelComponent:',
-      event
-    );
-  }
-
-  canDeactivate(): boolean {
-    // used in component-deactivate-guard
-    this.printer.log(
-      enums.busEnum.CAN_DEACTIVATE_CHECK,
-      'from ModelComponent:'
-    );
-    this.store.dispatch(new actions.UpdateLayoutModelIdAction(undefined));
-    return true;
   }
 }
