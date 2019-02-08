@@ -17,7 +17,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
     projectId = req.body['payload']['project_id'];
     repoId = req.body['payload']['repo_id'];
     files = req.body['payload']['files'];
-    bqProject = req.body['payload']['bq_project'];
+    bqProject = req.body['payload']['bigquery_project'];
     weekStart = req.body['payload']['week_start'];
     structId = req.body['payload']['struct_id'];
   } catch (e) {

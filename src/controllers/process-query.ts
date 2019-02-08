@@ -30,7 +30,7 @@ export let processQuery = async (req: Request, res: Response) => {
     requestId = req.body['info']['request_id'];
 
     structId = req.body['payload']['struct_id'];
-    bqProject = req.body['payload']['bq_project'];
+    bqProject = req.body['payload']['bigquery_project'];
     projectId = req.body['payload']['project_id'];
     weekStart = req.body['payload']['week_start'];
     model = JSON.parse(req.body['payload']['model_content']);

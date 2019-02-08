@@ -13,6 +13,5 @@ export interface SetProjectQuerySizeLimitResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     project: apiObjects.Project;
-
   };
 }

@@ -7,6 +7,16 @@ export interface CypressSeedRequestBody {
       email_verification_token?: string;
       password_reset_token?: string;
     }>;
+    projects?: Array<{
+      project_id: string;
+      has_credentials: boolean;
+    }>;
+    members?: Array<{
+      project_id: string;
+      member_id: string;
+      is_admin: boolean;
+      is_editor: boolean;
+    }>;
   };
 }
 

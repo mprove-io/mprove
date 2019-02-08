@@ -12,6 +12,5 @@ export interface RunQueriesResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     running_queries: apiObjects.Query[];
-
   };
 }

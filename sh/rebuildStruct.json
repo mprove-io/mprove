@@ -7,7 +7,7 @@
   "payload":{
     "project_id":"mprove-akalitenya-wood-t",
     "repo_id":"dev",
-    "bq_project":"flow-1202",
+    "bigquery_project":"flow-1202",
     "week_start":"monday",
     "struct_id":"123"
   }

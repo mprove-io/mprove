@@ -13,6 +13,5 @@ export interface RegenerateRepoRemoteWebhookResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     dev_repo: apiObjects.Repo;
-
   };
 }

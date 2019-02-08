@@ -12,6 +12,5 @@ export interface ResetUserPasswordResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     user_id: string;
-
   };
 }

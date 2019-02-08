@@ -13,6 +13,5 @@ export interface SetProjectTimezoneResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     project: apiObjects.Project;
-
   };
 }
