@@ -24,9 +24,9 @@ describe('7-6 profile-change-user-timezone (logged in)', () => {
     cy.loading();
     cy.get('[data-cy=updateUserTimezoneSelect').click();
     cy.get('[data-cy=updateUserTimezoneOption]').eq(1).click();
-    cy.get('[data-cy=updateUserTimezoneApply]').click();
+    cy.get('[data-cy=updateUserTimezoneApplyChange]').click();
     cy.loading();
-    cy.get('[data-cy=updateUserTimezoneApply]').should('not.exist');
+    cy.get('[data-cy=updateUserTimezoneApplyChange]').should('not.exist');
     cy.get('[data-cy=updateUserTimezoneSelect]').should('have.text', 'UTC');
   });
 });

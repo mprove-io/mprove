@@ -5,7 +5,7 @@ export interface ProcessQueryRequestBody {
   info: apiObjects.ServerRequestToBlockml;
   payload: {
     project_id: string;
-    bq_project: string;
+    bigquery_project: string;
     week_start: apiEnums.ProjectWeekStartEnum;
     mconfig: apiObjects.Mconfig;
     model_content: string;

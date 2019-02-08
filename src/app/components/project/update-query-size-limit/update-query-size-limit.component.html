@@ -6,7 +6,7 @@
           matInput
           type="number"
           id="querySizeLimitInput"
-          name="projectSettingsQuerySizeLimit"
+          data-cy="projectSettingsQuerySizeLimitInput"
           formControlName="querySizeLimit"
           placeholder="Number"
           required
@@ -35,7 +35,7 @@
       "
       type="submit"
       class="mat-flat-fab"
-      name="projectSettingsApplyChangeQuerySizeLimit"
+      data-cy="projectSettingsQuerySizeLimitApplyChange"
       (click)="
         onSubmit(updateQuerySizeLimitForm, updateQuerySizeLimitForm.value)
       "

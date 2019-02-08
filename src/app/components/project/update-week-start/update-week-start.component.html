@@ -6,10 +6,10 @@
           placeholder="Day of the week"
           formControlName="projectWeekStart"
           class="settings__user-input"
-          name="projectSettingsWeekStart"
+          data-cy="projectSettingsWeekStartSelect"
         >
           <mat-option
-            name="projectSettingsWeekStartOption"
+            data-cy="projectSettingsWeekStartOption"
             *ngFor="let ws of weekStartEnumKeys()"
             [value]="ws"
             >{{ ws | capitalize }}</mat-option
@@ -32,7 +32,7 @@
         !updateProjectWeekStartForm.valid
       "
       class="mat-flat-fab"
-      name="projectSettingsApplyChangeWeekStart"
+      data-cy="projectSettingsWeekStartApplyChange"
       (click)="
         onSubmit(updateProjectWeekStartForm, updateProjectWeekStartForm.value)
       "

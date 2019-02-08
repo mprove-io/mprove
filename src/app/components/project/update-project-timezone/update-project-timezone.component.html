@@ -5,11 +5,11 @@
         <mat-select
           placeholder="Timezone"
           #select="matSelect"
-          name="projectSettingsTimezone"
+          data-cy="projectSettingsTimezoneSelect"
           formControlName="projectTimezone"
           class="settings__user-input"
         >
-          <mat-option [value]="'UTC'" name="projectSettingsTimezoneOption"
+          <mat-option [value]="'UTC'" data-cy="projectSettingsTimezoneOption"
             >UTC</mat-option
           >
 
@@ -17,7 +17,7 @@
             <ng-template ngFor let-tz [ngForOf]="tzGroup.zones">
               <mat-option
                 [value]="tz.value"
-                name="projectSettingsTimezoneOption"
+                data-cy="projectSettingsTimezoneOption"
                 >{{ tzGroup.group }} - {{ tz.name }}</mat-option
               >
             </ng-template>
@@ -39,7 +39,7 @@
         !updateProjectTimezoneForm.valid
       "
       class="mat-flat-fab"
-      name="projectSettingsApplyChangeTimezone"
+      data-cy="projectSettingsTimezoneApplyChange"
       type="submit"
       (click)="
         onSubmit(updateProjectTimezoneForm, updateProjectTimezoneForm.value)

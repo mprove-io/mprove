@@ -1,5 +1,5 @@
 <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
-  <div name="projectSettingsTitle">
+  <div data-cy="projectSettingsTitle">
     {{ selectedProjectId$ | async }} Settings
   </div>
 </mat-toolbar>
@@ -15,7 +15,7 @@
   <div class="settings__row">
     <div class="settings__label"> BigQuery project </div>
     <div class="settings__value">
-      <div name="projectSettingsBqProject">{{
+      <div data-cy="projectSettingsBqProjectData">{{
         selectedProjectBqProject$ | async
       }}</div>
     </div>
@@ -25,7 +25,7 @@
   <div class="settings__row">
     <div class="settings__label"> Client email </div>
     <div class="settings__value">
-      <div name="projectSettingsClientEmail">{{
+      <div data-cy="projectSettingsClientEmailData">{{
         selectedProjectClientEmail$ | async
       }}</div>
     </div>
@@ -34,7 +34,7 @@
       [disabled]="!(selectedProjectUserIsAdmin$ | async)"
       color="primary"
       (click)="openUpdateCredentialsDialog()"
-      name="projectSettingsUpdateCredentials"
+      data-cy="projectSettingsUpdateCredentialsButton"
       >Edit</button
     >
   </div>
@@ -67,7 +67,7 @@
   <div class="settings__row">
     <div class="settings__label"> Mprove Project </div>
     <div class="settings__value">
-      <div name="projectSettingsProjectId">{{
+      <div data-cy="projectSettingsProjectIdData">{{
         selectedProjectId$ | async
       }}</div>
     </div>
@@ -80,7 +80,7 @@
       [disabled]="!(selectedProjectUserIsAdmin$ | async)"
       color="warn"
       (click)="openDeleteProjectDialog()"
-      name="projectSettingsDelete"
+      data-cy="projectSettingsDeleteButton"
       >DELETE PROJECT</button
     >
   </div>

@@ -4,5 +4,5 @@ import * as api from '@app/api/_index';
 
 export const getSelectedProjectBqProject = createSelector(
   getSelectedProject,
-  (project: api.Project) => (project ? project.bq_project : undefined)
+  (project: api.Project) => (project ? project.bigquery_project : undefined)
 );

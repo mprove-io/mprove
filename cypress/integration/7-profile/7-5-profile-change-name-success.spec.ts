@@ -24,9 +24,9 @@ describe('7-5 profile-change-name (logged in)', () => {
     cy.loading();
     cy.get('[data-cy=editNameFirstNameInput]').type(firstName);
     cy.get('[data-cy=editNameLastNameInput]').type(lastName);
-    cy.get('[data-cy=editNameApply]').click();
+    cy.get('[data-cy=editNameApplyChange]').click();
     cy.loading();
-    cy.get('[data-cy=editNameApply]').should('not.exist');
+    cy.get('[data-cy=editNameApplyChange]').should('not.exist');
     cy.get('[data-cy=editNameFirstNameInput]').should('have.value', firstName);
     cy.get('[data-cy=editNameLastNameInput]').should('have.value', lastName);
   });
