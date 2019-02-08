@@ -7,7 +7,7 @@ export interface RebuildStructRequestBody {
     files: apiObjects.File[];
     project_id: string;
     repo_id: string;
-    bq_project: string;
+    bigquery_project: string;
     week_start: apiEnums.ProjectWeekStartEnum;
     struct_id: string;
   };

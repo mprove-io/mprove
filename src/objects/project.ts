@@ -3,7 +3,7 @@ import * as apiEnums from '../enums/_index';
 export interface Project {
   project_id: string;
   has_credentials: boolean;
-  bq_project: string;
+  bigquery_project: string;
   client_email: string;
   query_size_limit: number;
   week_start: apiEnums.ProjectWeekStartEnum;

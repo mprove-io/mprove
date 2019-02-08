@@ -6,7 +6,7 @@ export interface ProcessDashboardRequestBody {
   payload: {
     project_id: string;
     repo_id: string;
-    bq_project: string;
+    bigquery_project: string;
     week_start: apiEnums.ProjectWeekStartEnum;
     old_dashboard_content: string;
     udfs_content: string;
