@@ -54,7 +54,8 @@ export async function runQueriesDry(req: Request, res: Response) {
           .runQueryDry({
             query: query,
             new_last_run_dry_ts: newLastRunDryTs,
-            credentials_file_path: project.bigquery_credentials_file_path
+            credentials_file_path: project.bigquery_credentials_file_path,
+            bigquery_project: project.bigquery_project
           })
           .catch(e =>
             helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY_DRY)

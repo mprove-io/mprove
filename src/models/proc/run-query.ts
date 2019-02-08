@@ -6,10 +6,8 @@ import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
 import { runQueryWithoutDeps } from './run-query-without-deps';
 
-// tslint:disable-next-line:variable-name
-const BigQuery = require('@google-cloud/bigquery');
-
 export async function runQuery(item: {
+  bigquery_project: string;
   is_top: boolean;
   query: entities.QueryEntity;
   new_last_run_ts: string;
@@ -39,6 +37,7 @@ export async function runQuery(item: {
   if (pdtDeps.length === 0) {
     query = <entities.QueryEntity>await runQueryWithoutDeps({
       credentials_file_path: item.credentials_file_path,
+      bigquery_project: item.bigquery_project,
       user_id: item.user_id,
       query: query,
       refresh: item.refresh,
@@ -64,6 +63,7 @@ export async function runQuery(item: {
             is_top: false,
             query: q,
             credentials_file_path: item.credentials_file_path,
+            bigquery_project: item.bigquery_project,
             user_id: item.user_id,
             refresh: item.refresh,
             new_last_run_ts: item.new_last_run_ts

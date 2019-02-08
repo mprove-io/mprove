@@ -63,6 +63,7 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
 
     query = <entities.QueryEntity>await runQueryWithoutDeps({
       credentials_file_path: project.bigquery_credentials_file_path,
+      bigquery_project: project.bigquery_project,
       user_id: query.last_run_by,
       query: query,
       refresh: helper.benumToBoolean(query.refresh),
@@ -80,6 +81,7 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
 
     query = <entities.QueryEntity>await runQueryWithoutDeps({
       credentials_file_path: project.bigquery_credentials_file_path,
+      bigquery_project: project.bigquery_project,
       user_id: query.last_run_by,
       query: query,
       refresh: helper.benumToBoolean(query.refresh),

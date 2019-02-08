@@ -107,16 +107,17 @@ export async function cypressSeed(req: Request, res: Response) {
             helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE)
           );
 
+        let credentialsParsed = JSON.parse(credentialsString);
+
         await proc
           .createDataset({
+            bigquery_project: credentialsParsed.project_id,
             project_id: projectId,
             credentials_file_path: fileAbsoluteId
           })
           .catch(e =>
             helper.reThrow(e, enums.procErrorsEnum.PROC_CREATE_DATASET)
           );
-
-        let credentialsParsed = JSON.parse(credentialsString);
 
         project.has_credentials = enums.bEnum.TRUE;
         project.bigquery_credentials = credentialsString;
@@ -169,7 +170,7 @@ export async function cypressSeed(req: Request, res: Response) {
           files: itemCatalogProd.files,
           project_id: projectId,
           repo_id: constants.PROD_REPO_ID,
-          bq_project: project.bigquery_project,
+          bigquery_project: project.bigquery_project,
           week_start: <any>project.week_start,
           struct_id: prodStructId
         })

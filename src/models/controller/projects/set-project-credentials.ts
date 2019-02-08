@@ -30,11 +30,6 @@ export async function setProjectCredentials(req: Request, res: Response) {
   let credentials = payload.credentials;
   let serverTs = payload.server_ts;
 
-  let credentialsParsed = JSON.parse(credentials);
-
-  let bigqueryProject = credentialsParsed.project_id;
-  let bigqueryClientEmail = credentialsParsed.client_email;
-
   let storeProjects = store.getProjectsRepo();
 
   let project = <entities.ProjectEntity>(
@@ -62,15 +57,18 @@ export async function setProjectCredentials(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
 
+  let credentialsParsed = JSON.parse(credentials);
+
   await proc
     .createDataset({
+      bigquery_project: credentialsParsed.project_id,
       project_id: projectId,
       credentials_file_path: fileAbsoluteId
     })
     .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_CREATE_DATASET));
 
-  project.bigquery_project = bigqueryProject;
-  project.bigquery_client_email = bigqueryClientEmail;
+  project.bigquery_project = credentialsParsed.project_id;
+  project.bigquery_client_email = credentialsParsed.client_email;
   project.bigquery_credentials = credentials;
   project.bigquery_credentials_file_path = fileAbsoluteId;
   project.has_credentials = enums.bEnum.TRUE;
@@ -114,7 +112,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
         files: itemCatalog.files,
         project_id: projectId,
         repo_id: repo.repo_id,
-        bq_project: project.bigquery_project,
+        bigquery_project: project.bigquery_project,
         week_start: <any>project.week_start,
         struct_id: structId
       })

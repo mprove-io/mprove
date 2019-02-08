@@ -111,7 +111,7 @@ export async function deleteFile(req: Request, res: Response) {
       files: itemCatalog.files,
       project_id: projectId,
       repo_id: repoId,
-      bq_project: project.bigquery_project,
+      bigquery_project: project.bigquery_project,
       week_start: <any>project.week_start,
       struct_id: newStructId
     })

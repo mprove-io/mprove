@@ -179,6 +179,12 @@ export async function cypressDelete(req: Request, res: Response) {
       await disk
         .removePath(`${config.DISK_BASE_PATH}/${projectId}`)
         .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
+
+      await disk
+        .removePath(
+          `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`
+        )
+        .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
     });
   }
 

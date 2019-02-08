@@ -6,10 +6,10 @@ import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { store } from '../../barrels/store';
 
-// tslint:disable-next-line:variable-name
-const BigQuery = require('@google-cloud/bigquery');
+const { BigQuery } = require('@google-cloud/bigquery');
 
 export async function runQueryDry(item: {
+  bigquery_project: string;
   query: entities.QueryEntity;
   new_last_run_dry_ts: number;
   credentials_file_path: string;
@@ -49,6 +49,7 @@ export async function runQueryDry(item: {
     };
   } else {
     let bigquery = new BigQuery({
+      projectId: item.bigquery_project,
       keyFilename: item.credentials_file_path
     });
 

@@ -70,7 +70,7 @@ export class ProjectEntity implements ProjectInterface {
 interface ProjectInterface {
   project_id: api.Project['project_id'];
   has_credentials: enums.bEnum; // boolean
-  bigquery_project: string; // bq_project
+  bigquery_project: string; // bigquery_project
   bigquery_client_email: string; // client_email
   bigquery_credentials: string; // not api
   query_size_limit: api.Project['query_size_limit'];

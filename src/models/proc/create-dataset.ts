@@ -1,14 +1,17 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 
-// tslint:disable-next-line:variable-name
-const BigQuery = require('@google-cloud/bigquery');
+const { BigQuery } = require('@google-cloud/bigquery');
 
 export async function createDataset(item: {
+  bigquery_project: string;
   project_id: string;
   credentials_file_path: string;
 }) {
-  let bigquery = new BigQuery({
+  let bigquery;
+
+  bigquery = new BigQuery({
+    projectId: item.bigquery_project,
     keyFilename: item.credentials_file_path
   });
 

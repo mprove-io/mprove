@@ -12,7 +12,7 @@ export async function rebuildStruct(item: {
   files: entities.FileEntity[];
   project_id: string;
   repo_id: string;
-  bq_project: string;
+  bigquery_project: string;
   week_start: api.ProjectWeekStartEnum;
   struct_id: string;
 }): Promise<interfaces.ItemStruct> {
@@ -37,7 +37,7 @@ export async function rebuildStruct(item: {
     files: apiFiles,
     project_id: item.project_id,
     repo_id: item.repo_id,
-    bq_project: item.bq_project,
+    bigquery_project: item.bigquery_project,
     week_start: item.week_start,
     struct_id: item.struct_id
   };

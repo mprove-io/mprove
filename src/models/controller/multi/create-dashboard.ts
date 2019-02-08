@@ -92,7 +92,7 @@ export async function createDashboard(req: Request, res: Response) {
     .processDashboard({
       project_id: projectId,
       repo_id: repoId,
-      bq_project: project.bigquery_project,
+      bigquery_project: project.bigquery_project,
       week_start: <any>project.week_start,
       old_dashboard_content: oldDashboard.content,
       udfs_content: repo.udfs_content,

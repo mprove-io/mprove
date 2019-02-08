@@ -72,7 +72,7 @@ export async function createMconfigAndQuery(req: Request, res: Response) {
   let itemProcessQuery = <interfaces.ItemProcessQuery>await blockml
     .processQuery({
       project_id: mconfig.project_id,
-      bq_project: project.bigquery_project,
+      bigquery_project: project.bigquery_project,
       week_start: <any>project.week_start,
       mconfig: mconfig,
       model_content: model.content,

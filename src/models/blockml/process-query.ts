@@ -8,7 +8,7 @@ import { constantAxiosInstance } from './_constant-axios-instance';
 
 export async function processQuery(item: {
   project_id: string;
-  bq_project: string;
+  bigquery_project: string;
   week_start: api.ProjectWeekStartEnum;
   mconfig: api.Mconfig;
   model_content: string;
@@ -17,7 +17,7 @@ export async function processQuery(item: {
 }): Promise<interfaces.ItemProcessQuery> {
   let requestPayload: api.ProcessQueryRequestBody['payload'] = {
     project_id: item.project_id,
-    bq_project: item.bq_project,
+    bigquery_project: item.bigquery_project,
     week_start: item.week_start,
     mconfig: item.mconfig,
     model_content: item.model_content,

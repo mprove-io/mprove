@@ -3,11 +3,11 @@ import { entities } from '../../barrels/entities';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 
-// tslint:disable-next-line:variable-name
-const BigQuery = require('@google-cloud/bigquery');
+const { BigQuery } = require('@google-cloud/bigquery');
 
 export async function runQueryWithoutDeps(item: {
   credentials_file_path: string;
+  bigquery_project: string;
   user_id: string;
   query: entities.QueryEntity;
   refresh: boolean;
@@ -16,6 +16,7 @@ export async function runQueryWithoutDeps(item: {
   let query = item.query;
 
   let bigquery = new BigQuery({
+    projectId: item.bigquery_project,
     keyFilename: item.credentials_file_path
   });
 
@@ -23,10 +24,6 @@ export async function runQueryWithoutDeps(item: {
   let sqlText = sqlArray.join('\n');
 
   // get dataset
-
-  let datasetName = `mprove_${query.project_id}`;
-
-  let projectDataset = bigquery.dataset(datasetName);
 
   let destinationTable;
 

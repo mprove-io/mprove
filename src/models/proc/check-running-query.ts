@@ -6,8 +6,7 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
 
-// tslint:disable-next-line:variable-name
-const BigQuery = require('@google-cloud/bigquery');
+const { BigQuery } = require('@google-cloud/bigquery');
 
 export async function checkRunningQuery(item: { query: entities.QueryEntity }) {
   let skipChunk = true;
@@ -30,7 +29,18 @@ export async function checkRunningQuery(item: { query: entities.QueryEntity }) {
     query.project_id
   }.json`;
 
+  let storeProjects = store.getProjectsRepo();
+
+  let project = <entities.ProjectEntity>await storeProjects
+    .findOne({
+      project_id: query.project_id
+    })
+    .catch(e =>
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+    );
+
   let bigquery = new BigQuery({
+    projectId: project.bigquery_project,
     keyFilename: credentialsFilePath
   });
 

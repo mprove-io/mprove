@@ -6,7 +6,7 @@ export function wrapToApiProject(project: entities.ProjectEntity): api.Project {
   return {
     project_id: project.project_id,
     has_credentials: helper.benumToBoolean(project.has_credentials),
-    bq_project: project.bigquery_project,
+    bigquery_project: project.bigquery_project,
     client_email: project.bigquery_client_email,
     query_size_limit: project.query_size_limit,
     week_start: project.week_start,

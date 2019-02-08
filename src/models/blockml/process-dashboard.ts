@@ -9,7 +9,7 @@ import { constantAxiosInstance } from './_constant-axios-instance';
 export async function processDashboard(item: {
   project_id: string;
   repo_id: string;
-  bq_project: string;
+  bigquery_project: string;
   week_start: string;
   old_dashboard_content: string;
   udfs_content: string;
@@ -21,7 +21,7 @@ export async function processDashboard(item: {
   let requestPayload: api.ProcessDashboardRequestBody['payload'] = {
     project_id: item.project_id,
     repo_id: item.repo_id,
-    bq_project: item.bq_project,
+    bigquery_project: item.bigquery_project,
     week_start: <any>item.week_start,
     old_dashboard_content: item.old_dashboard_content,
     udfs_content: item.udfs_content,

@@ -96,6 +96,10 @@ async function run() {
     .emptyDir(config.DISK_BASE_PATH)
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
 
+  await disk
+    .emptyDir(config.DISK_BIGQUERY_CREDENTIALS_PATH)
+    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
+
   await start
     .addUsers()
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_USERS));

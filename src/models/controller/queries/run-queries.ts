@@ -55,6 +55,7 @@ export async function runQueries(req: Request, res: Response) {
               is_top: true,
               query: query,
               new_last_run_ts: newLastRunTs,
+              bigquery_project: project.bigquery_project,
               credentials_file_path: project.bigquery_credentials_file_path,
               user_id: userId,
               refresh: refresh
