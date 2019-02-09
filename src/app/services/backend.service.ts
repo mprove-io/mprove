@@ -142,6 +142,12 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_DELETE_PROJECT, payload);
   }
 
+  deleteProjectCredentials(
+    payload: api.DeleteProjectCredentialsRequestBody['payload']
+  ): Observable<api.DeleteProjectCredentialsResponse200Body> {
+    return this.myHttpService.req(api.PATH_DELETE_PROJECT_CREDENTIALS, payload);
+  }
+
   setProjectCredentials(
     payload: api.SetProjectCredentialsRequestBody['payload']
   ): Observable<api.SetProjectCredentialsResponse200Body> {

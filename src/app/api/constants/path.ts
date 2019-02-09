@@ -23,6 +23,7 @@ export const PATH_PONG = '/pong';
 export const PATH_CHECK_PROJECT_ID_UNIQUE = '/projects.checkProjectIdUnique';
 export const PATH_CREATE_PROJECT = '/projects.createProject';
 export const PATH_DELETE_PROJECT = '/projects.deleteProject';
+export const PATH_DELETE_PROJECT_CREDENTIALS = '/projects.deleteProjectCredentials';
 export const PATH_SET_PROJECT_CREDENTIALS = '/projects.setProjectCredentials';
 export const PATH_SET_PROJECT_QUERY_SIZE_LIMIT =
   '/projects.setProjectQuerySizeLimit';

@@ -29,15 +29,19 @@
         selectedProjectClientEmail$ | async
       }}</div>
     </div>
+  </div>
+
+  <div class="settings__row settings__row-edit">
     <button
       mat-raised-button
       [disabled]="!(selectedProjectUserIsAdmin$ | async)"
       color="primary"
       (click)="openUpdateCredentialsDialog()"
-      data-cy="projectSettingsUpdateCredentialsButton"
-      >Edit</button
+      data-cy="projectSettingsEditCredentialsButton"
+      >Edit Credentials</button
     >
   </div>
+
   <!-- settings__row -->
 
   <div class="settings__row">

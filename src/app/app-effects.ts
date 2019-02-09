@@ -61,9 +61,15 @@ export const APP_EFFECTS = [
   effects.CreateProjectEffect,
   effects.DeleteProjectSuccessEffect,
   effects.DeleteProjectEffect,
+
+  effects.DeleteProjectCredentialsFailEffect,
+  effects.DeleteProjectCredentialsSuccessEffect,
+  effects.DeleteProjectCredentialsEffect,
+
   effects.SetProjectCredentialsFailEffect,
   effects.SetProjectCredentialsSuccessEffect,
   effects.SetProjectCredentialsEffect,
+
   effects.SetProjectQuerySizeLimitSuccessEffect,
   effects.SetProjectQuerySizeLimitEffect,
   effects.SetProjectTimezoneSuccessEffect,
@@ -104,6 +110,7 @@ export const APP_EFFECTS = [
 
   // Subscriptions
   effects.CancelSubscriptionsSuccessEffect,
+  effects.CancelSubscriptionsEffect,
   effects.CancelSubscriptionsEffect,
   effects.SwitchAnalyticsSubscriptionPlanSuccessEffect,
   effects.SwitchAnalyticsSubscriptionPlanEffect,

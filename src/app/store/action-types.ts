@@ -1,31 +1,7 @@
-import { MyError } from '@app/models/my-error';
+import { ngrxType } from '@app/ngrx/ngrx-type';
 
-/**
- * This function coerces a string into a string literal type.
- * Using tagged union types in TypeScript 2.0, this enables
- * powerful typechecking of our reducers.
- *
- * Since every action label passes through this function it
- * is a good place to ensure all of our action labels
- * are unique.
- */
-
-let typeCache: { [label: string]: boolean } = {};
-
-function ngrxType<T>(label: T | ''): T {
-  if (typeCache[<string>label]) {
-    throw new MyError({
-      name: `Action type is not unique`,
-      message: `type is ${label}`
-    });
-
-    // throw new Error(`Action type "${label}" is not unique"`);
-  }
-
-  typeCache[<string>label] = true;
-
-  return <T>label;
-}
+export * from './actions-effects/projects/delete-project-credentials/action-types';
+export * from './actions-effects/projects/set-project-credentials/action-types';
 
 // APP
 export const BACKEND_FAIL = ngrxType('[App] Backend Fail');
@@ -226,16 +202,6 @@ export const CREATE_PROJECT_SUCCESS = ngrxType(
   '[Projects] Create Project Success'
 );
 export const CREATE_PROJECT_FAIL = ngrxType('[Projects] Create Project Fail');
-
-export const SET_PROJECT_CREDENTIALS = ngrxType(
-  '[Projects] Set Project Credentials'
-);
-export const SET_PROJECT_CREDENTIALS_SUCCESS = ngrxType(
-  '[Projects] Set Project Credentials Success'
-);
-export const SET_PROJECT_CREDENTIALS_FAIL = ngrxType(
-  '[Projects] Set Project Credentials Fail'
-);
 
 export const SET_PROJECT_QUERY_SIZE_LIMIT = ngrxType(
   '[Projects] Set Project Query Size Limit'

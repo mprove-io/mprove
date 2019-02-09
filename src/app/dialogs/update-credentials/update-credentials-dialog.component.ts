@@ -13,7 +13,8 @@ import { ValidationService } from '@app/services/validation.service';
 @Component({
   moduleId: module.id,
   selector: 'm-update-credentials-dialog',
-  templateUrl: 'update-credentials-dialog.component.html'
+  templateUrl: 'update-credentials-dialog.component.html',
+  styleUrls: ['update-credentials-dialog.component.scss']
 })
 export class UpdateCredentialsDialogComponent implements OnInit, OnDestroy {
   selectedProject: api.Project;
@@ -50,6 +51,15 @@ export class UpdateCredentialsDialogComponent implements OnInit, OnDestroy {
         ])
       ]
     });
+  }
+
+  delete() {
+    this.store.dispatch(
+      new actions.DeleteProjectCredentialsAction({
+        project_id: this.selectedProject.project_id,
+        server_ts: this.selectedProject.server_ts
+      })
+    );
   }
 
   onSubmit(fv: any) {

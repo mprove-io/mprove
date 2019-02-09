@@ -13,3 +13,6 @@ export * from './router/_index';
 export * from './subscriptions/_index';
 export * from './user/_index';
 export * from './websocket/_index';
+
+export * from '../actions-effects/projects/delete-project-credentials/effects';
+export * from '../actions-effects/projects/set-project-credentials/effects';

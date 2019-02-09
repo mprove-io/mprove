@@ -25,6 +25,11 @@
       display: block;
       margin-bottom: 30px;
     }
+    &-edit {
+      max-width: 470px;
+      justify-content: flex-end;
+    }
+
     &-delete {
       max-width: 485px;
       justify-content: flex-end;
