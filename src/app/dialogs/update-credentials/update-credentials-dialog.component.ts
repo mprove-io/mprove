@@ -57,7 +57,6 @@ export class UpdateCredentialsDialogComponent implements OnInit, OnDestroy {
       new actions.SetProjectCredentialsAction({
         project_id: this.selectedProject.project_id,
         server_ts: this.selectedProject.server_ts,
-        // credentials: 'abcd',
         credentials: fv['credentials']
       })
     );

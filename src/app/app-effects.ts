@@ -61,6 +61,7 @@ export const APP_EFFECTS = [
   effects.CreateProjectEffect,
   effects.DeleteProjectSuccessEffect,
   effects.DeleteProjectEffect,
+  effects.SetProjectCredentialsFailEffect,
   effects.SetProjectCredentialsSuccessEffect,
   effects.SetProjectCredentialsEffect,
   effects.SetProjectQuerySizeLimitSuccessEffect,

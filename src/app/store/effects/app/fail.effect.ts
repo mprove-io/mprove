@@ -34,7 +34,6 @@ export class FailEffect {
       actionTypes.CREATE_MCONFIG_AND_QUERY_FAIL,
 
       actionTypes.CREATE_PROJECT_FAIL,
-      actionTypes.SET_PROJECT_CREDENTIALS_FAIL,
       actionTypes.SET_PROJECT_QUERY_SIZE_LIMIT_FAIL,
       actionTypes.SET_PROJECT_WEEK_START_FAIL,
       actionTypes.SET_PROJECT_TIMEZONE_FAIL,
