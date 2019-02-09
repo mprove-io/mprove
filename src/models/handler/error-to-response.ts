@@ -35,6 +35,14 @@ function mapErrors(name: string) {
     case enums.otherErrorsEnum.INTERNAL_SERVER_ERROR:
       return api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR;
 
+    case enums.otherErrorsEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID:
+      return api.ServerResponseStatusEnum
+        .SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID;
+
+    case enums.procErrorsEnum.PROC_CREATE_DATASET:
+      return api.ServerResponseStatusEnum
+        .SET_PROJECT_CREDENTIALS_ERROR_CAN_NOT_CREATE_DATASET;
+
     case enums.otherErrorsEnum.REGISTER_ERROR_USER_ALREADY_EXISTS:
       return api.ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS;
 

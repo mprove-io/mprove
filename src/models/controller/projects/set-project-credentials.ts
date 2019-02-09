@@ -16,6 +16,7 @@ import { store } from '../../../barrels/store';
 import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
+import { handler } from '../../../barrels/handler';
 
 export async function setProjectCredentials(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
@@ -46,31 +47,66 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   helper.checkServerTs(project, serverTs);
 
-  let fileAbsoluteId = `${
-    config.DISK_BIGQUERY_CREDENTIALS_PATH
-  }/${projectId}.json`;
+  let credentialsParsed;
+
+  try {
+    credentialsParsed = JSON.parse(credentials);
+  } catch (e) {
+    helper.reThrow(
+      e,
+      enums.otherErrorsEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID
+    );
+  }
+
+  let id = helper.makeId();
+  let tempId = `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${id}.json`;
 
   await disk
     .writeToFile({
-      file_absolute_id: fileAbsoluteId,
+      file_absolute_id: tempId,
       content: credentials
     })
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
-
-  let credentialsParsed = JSON.parse(credentials);
 
   await proc
     .createDataset({
       bigquery_project: credentialsParsed.project_id,
       project_id: projectId,
-      credentials_file_path: fileAbsoluteId
+      credentials_file_path: tempId
     })
-    .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_CREATE_DATASET));
+    .catch(async e => {
+      try {
+        await disk
+          .removePath(tempId)
+          .catch(err =>
+            helper.reThrow(err, enums.diskErrorsEnum.DISK_REMOVE_PATH)
+          );
+      } catch (err) {
+        handler.errorToLog(err);
+      }
+
+      handler.errorToLog(e);
+
+      throw new ServerError({ name: enums.procErrorsEnum.PROC_CREATE_DATASET });
+    });
+
+  await disk
+    .removePath(tempId)
+    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
+
+  let fileId = `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`;
+
+  await disk
+    .writeToFile({
+      file_absolute_id: fileId,
+      content: credentials
+    })
+    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
 
   project.bigquery_project = credentialsParsed.project_id;
   project.bigquery_client_email = credentialsParsed.client_email;
   project.bigquery_credentials = credentials;
-  project.bigquery_credentials_file_path = fileAbsoluteId;
+  project.bigquery_credentials_file_path = fileId;
   project.has_credentials = enums.bEnum.TRUE;
 
   let storeRepos = store.getReposRepo();
