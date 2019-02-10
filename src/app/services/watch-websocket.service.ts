@@ -6,7 +6,7 @@ import * as configs from '@app/configs/_index';
 import * as enums from '@app/enums/_index';
 import * as interfaces from '@app/interfaces/_index';
 import { MyError } from '@app/models/my-error';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 import { PrinterService } from '@app/services/printer.service';
 
 @Injectable()

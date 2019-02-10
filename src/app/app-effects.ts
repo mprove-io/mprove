@@ -1,4 +1,4 @@
-import * as effects from '@app/store/effects/_index';
+import * as effects from '@app/store-actions/effects';
 
 export const APP_EFFECTS = [
   // App

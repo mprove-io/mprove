@@ -3,11 +3,11 @@ import { Store } from '@ngrx/store';
 import { NextObserver, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { webSocket, WebSocketSubjectConfig } from 'rxjs/webSocket';
-import * as actions from '@app/store-actions/_index';
+import * as actions from '@app/store-actions/actions';
 import * as api from '@app/api/_index';
 import * as configs from '@app/configs/_index';
 import * as interfaces from '@app/interfaces/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 import { MyError } from '@app/models/my-error';
 import { WatchWebsocketService } from './watch-websocket.service';
 

@@ -16,10 +16,10 @@ import { TdDataTableColumnComponent } from '@covalent/core';
 import { Store } from '@ngrx/store';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { filter, takeUntil, tap } from 'rxjs/operators';
-import * as actions from '@app/store-actions/_index';
+import * as actions from '@app/store-actions/actions';
 import * as api from '@app/api/_index';
 import * as interfaces from '@app/interfaces/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 import * as services from '@app/services/_index';
 
 @Component({

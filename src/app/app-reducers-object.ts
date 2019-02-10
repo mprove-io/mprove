@@ -7,7 +7,7 @@ import * as fromRouter from '@ngrx/router-store';
  */
 import { ActionReducerMap } from '@ngrx/store';
 import * as interfaces from '@app/interfaces/_index';
-import * as reducers from '@app/store/reducers/_index';
+import * as reducers from '@app/store-reducers/_index';
 
 /**
  * Our state is composed of a map of action reducer functions.

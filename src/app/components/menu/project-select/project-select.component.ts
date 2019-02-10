@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs/operators';
 import * as interfaces from '@app/interfaces/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 import * as services from '@app/services/_index';
 
 @Component({

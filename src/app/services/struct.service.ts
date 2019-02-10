@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
-import * as actions from '@app/store-actions/_index';
+import * as actions from '@app/store-actions/actions';
 import * as api from '@app/api/_index';
 import * as interfaces from '@app/interfaces/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 import * as uuid from 'uuid';
 
 @Injectable()

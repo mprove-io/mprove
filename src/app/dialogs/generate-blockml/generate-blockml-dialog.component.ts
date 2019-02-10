@@ -12,7 +12,7 @@ import { filter, take, tap } from 'rxjs/operators';
 import * as api from '@app/api/_index';
 import * as constants from '@app/constants/_index';
 import * as interfaces from '@app/interfaces/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 
 @Component({
   moduleId: module.id,

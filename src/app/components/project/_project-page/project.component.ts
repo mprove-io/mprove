@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import * as enums from '@app/enums/_index';
 import * as services from '@app/services/_index';
 import * as interfaces from '@app/interfaces/_index';
-import * as actions from '@app/store-actions/_index';
+import * as actions from '@app/store-actions/actions';
 import { Store } from '@ngrx/store';
 
 @Component({

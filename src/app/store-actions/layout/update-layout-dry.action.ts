@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import * as actionTypes from '@app/store-action-types/index';
+import * as actionTypes from '@app/store-actions/action-types';
 import * as interfaces from '@app/interfaces/_index';
 
 export class UpdateLayoutDryAction implements Action {

@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { filter } from 'rxjs/operators';
 import * as configs from '@app/configs/_index';
 import * as interfaces from '@app/interfaces/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 
 @Component({
   moduleId: module.id,

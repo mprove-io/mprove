@@ -10,10 +10,10 @@ import { Observable, of } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
 import { AuthService } from '@app/services/auth.service';
 import { PrinterService } from '@app/services/printer.service';
-import * as actions from '@app/store-actions/_index';
+import * as actions from '@app/store-actions/actions';
 import * as enums from '@app/enums/_index';
 import * as interfaces from '@app/interfaces/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as selectors from '@app/store-selectors/_index';
 
 @Injectable()
 export class StateResolver implements Resolve<Observable<boolean>> {

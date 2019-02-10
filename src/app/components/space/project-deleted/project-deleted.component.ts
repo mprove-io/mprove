@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import * as actions from '@app/store-actions/_index';
+import * as actions from '@app/store-actions/actions';
 import * as constants from '@app/constants/_index';
 import * as interfaces from '@app/interfaces/_index';
 

@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, OnInit, DoCheck } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import * as actions from '@app/store-actions/_index';
-import * as selectors from '@app/store/selectors/_index';
+import * as actions from '@app/store-actions/actions';
+import * as selectors from '@app/store-selectors/_index';
 import * as api from '@app/api/_index';
 import * as interfaces from '@app/interfaces/_index';
 import { tap } from 'rxjs/operators';
