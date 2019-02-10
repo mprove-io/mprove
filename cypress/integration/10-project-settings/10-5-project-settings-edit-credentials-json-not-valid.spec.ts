@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '10-5-user@example.com';
 const password = '123123';
 
-const projectId = 'project-10-5';
+const projectId = 'project_10_5';
 
 const error = api.ServerResponseStatusEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID;
 

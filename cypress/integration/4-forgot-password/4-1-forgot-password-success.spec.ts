@@ -21,6 +21,9 @@ describe('4-1 forgot-password-success (logged out)', () => {
     cy.get('[data-cy=dialogResetPasswordEmailInput]').type(userId);
     cy.get('[data-cy=dialogResetPasswordSendButton]').click();
     cy.loading();
-    cy.url().should('include', constants.PATH_RESET_PASSWORD_SENT);
+    cy.url({ timeout: 15000 }).should(
+      'include',
+      constants.PATH_RESET_PASSWORD_SENT
+    );
   });
 });

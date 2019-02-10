@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '10-4-user@example.com';
 const password = '123123';
 
-const projectId = 'project-10-4';
+const projectId = 'project_10_4';
 
 describe('10-4 project-settings-data (logged in)', () => {
   it(`should see data`, () => {

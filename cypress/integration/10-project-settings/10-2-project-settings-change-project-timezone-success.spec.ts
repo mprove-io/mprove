@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '10-2-user@example.com';
 const password = '123123';
 
-const projectId = 'project-10-2';
+const projectId = 'project_10_2';
 
 describe('10-2 project-settings-change-project-timezone-success (logged in)', () => {
   it(`should be able to change project timezone`, () => {

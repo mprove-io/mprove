@@ -25,6 +25,9 @@ describe('3-3 login-verify-email (logged out, existing user, valid password)', (
     cy.get('[data-cy=loginPasswordInput]').type(password);
     cy.get('[data-cy=loginSignInButton]').click();
     cy.loading();
-    cy.url().should('include', constants.PATH_VERIFY_EMAIL_SENT);
+    cy.url({ timeout: 15000 }).should(
+      'include',
+      constants.PATH_VERIFY_EMAIL_SENT
+    );
   });
 });

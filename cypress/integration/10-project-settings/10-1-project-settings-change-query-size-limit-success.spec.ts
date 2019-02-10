@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '10-1-user@example.com';
 const password = '123123';
 
-const projectId = 'project-10-1';
+const projectId = 'project_10_1';
 
 describe('10-1 project-settings-change-query-size-limit-success (logged in)', () => {
   it(`should be able change query size limit`, () => {

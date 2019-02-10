@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '10-3-user@example.com';
 const password = '123123';
 
-const projectId = 'project-10-3';
+const projectId = 'project_10_3';
 
 describe('10-3 project-settings-change-week-start-day-success (logged in)', () => {
   it(`should be able to change project week start day`, () => {

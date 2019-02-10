@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '9-3-user@example.com';
 const password = '123123';
 
-const projectId = 'project-9-3';
+const projectId = 'project_9_3';
 
 describe('9-3 space-set-mode-prod (logged in)', () => {
   it(`should be able to set mode Prod`, () => {

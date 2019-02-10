@@ -4,7 +4,7 @@ import * as api from '../../../src/app/api/_index';
 const userId = '10-6-user@example.com';
 const password = '123123';
 
-const projectId = 'project-10-6';
+const projectId = 'project_10_6';
 
 const error = api.ServerResponseStatusEnum.SET_PROJECT_CREDENTIALS_ERROR_CAN_NOT_CREATE_DATASET;
 
