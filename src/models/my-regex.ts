@@ -22,11 +22,11 @@ export class MyRegex {
   }
 
   static PROJECT_NAME_CONTAINS_WRONG_CHARS(): RegExp {
-    return cloneRegexp(/([^a-z0-9_-])/g);
+    return cloneRegexp(/([^a-z0-9_])/g);
   }
 
   static PROJECT_NAME_DOES_NOT_START_WITH_LETTER(): RegExp {
-    return cloneRegexp(/(^[0-9_-])/g);
+    return cloneRegexp(/(^[0-9_])/g);
   }
 
   static CAPTURE_ALIAS(): RegExp {
