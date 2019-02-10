@@ -1,6 +1,6 @@
 import { ActionReducer } from '@ngrx/store';
-import * as actions from '@app/store/actions/_index';
-import * as actionTypes from '@app/store/action-types';
+import * as actions from '@app/store-actions/_index';
+import * as actionTypes from '@app/store-action-types/index';
 
 export function segmentMetaReducer(
   reducer: ActionReducer<any>

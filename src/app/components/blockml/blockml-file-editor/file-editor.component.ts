@@ -8,7 +8,7 @@ import 'brace/theme/chrome';
 import 'brace/theme/solarized_dark';
 import { AceEditorComponent } from 'ng2-ace-editor';
 import { filter, take, tap } from 'rxjs/operators';
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as api from '@app/api/_index';
 import * as enums from '@app/enums/_index';
 import * as interfaces from '@app/interfaces/_index';

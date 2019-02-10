@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { interval as observableInterval, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as configs from '@app/configs/_index';
 import * as enums from '@app/enums/_index';
 import * as interfaces from '@app/interfaces/_index';

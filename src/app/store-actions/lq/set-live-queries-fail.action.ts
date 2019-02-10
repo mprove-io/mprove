@@ -1,0 +1,8 @@
+import { Action } from '@ngrx/store';
+import * as actionTypes from '@app/store-action-types/index';
+
+export class SetLiveQueriesFailAction implements Action {
+  readonly type = actionTypes.SET_LIVE_QUERIES_FAIL;
+
+  constructor(public payload: { error: any }) {}
+}

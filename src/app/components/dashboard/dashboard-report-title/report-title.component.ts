@@ -2,7 +2,7 @@ import { Component, Inject, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { interval } from 'rxjs';
 import { debounceTime, filter, map, startWith, tap } from 'rxjs/operators';
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as api from '@app/api/_index';
 import * as configs from '@app/configs/_index';
 import * as interfaces from '@app/interfaces/_index';

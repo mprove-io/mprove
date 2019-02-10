@@ -8,7 +8,7 @@ import {
   TreeNode
 } from 'angular-tree-component';
 import { debounceTime, filter, map, take, tap } from 'rxjs/operators';
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as api from '@app/api/_index';
 import * as configs from '@app/configs/_index';
 import * as interfaces from '@app/interfaces/_index';

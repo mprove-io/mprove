@@ -5,7 +5,7 @@ import * as interfaces from '@app/interfaces/_index';
 import * as selectors from '@app/store/selectors/_index';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
-import { VerifyUserEmailAction } from '@app/store/actions/_index';
+import { VerifyUserEmailAction } from '@app/store-actions/_index';
 import { Router } from '@angular/router';
 
 @Component({

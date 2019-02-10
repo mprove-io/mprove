@@ -1,0 +1,8 @@
+import { Action } from '@ngrx/store';
+import * as actionTypes from '@app/store-action-types/index';
+
+export class SetUserPictureFailAction implements Action {
+  readonly type = actionTypes.SET_USER_PICTURE_FAIL;
+
+  constructor(public payload: { error: any }) {}
+}

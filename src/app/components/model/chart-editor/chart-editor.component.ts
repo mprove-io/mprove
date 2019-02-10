@@ -15,7 +15,7 @@ import {
 import { ErrorStateMatcher, MatSelectChange } from '@angular/material';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as api from '@app/api/_index';
 import * as constants from '@app/constants/_index';
 import * as enums from '@app/enums/_index';

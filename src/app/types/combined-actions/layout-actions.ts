@@ -2,7 +2,7 @@
  * Export a type alias of all actions in this action group
  * so that reducers can easily compose action types
  */
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 
 export type LayoutActions =
   | actions.UpdateLayoutEmailToVerifyAction

@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, Renderer2 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, tap, take } from 'rxjs/operators';
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as api from '@app/api/_index';
 import * as configs from '@app/configs/_index';
 import * as interfaces from '@app/interfaces/_index';

@@ -11,7 +11,7 @@ import {
   take,
   tap
 } from 'rxjs/operators';
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as api from '@app/api/_index';
 import * as configs from '@app/configs/_index';
 import * as enums from '@app/enums/_index';

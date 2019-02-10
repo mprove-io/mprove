@@ -1,4 +1,4 @@
-import * as actions from '@app/store/actions/_index';
+import * as actions from '@app/store-actions/_index';
 import * as api from '@app/api/_index';
 
 export function processStructsHelper(structs: api.Struct[]) {
