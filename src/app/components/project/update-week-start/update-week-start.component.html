@@ -3,6 +3,7 @@
     <form [formGroup]="updateProjectWeekStartForm">
       <mat-form-field>
         <mat-select
+          [disableControl]="!(selectedProjectUserIsAdmin$ | async)"
           placeholder="Day of the week"
           formControlName="projectWeekStart"
           class="settings__user-input"

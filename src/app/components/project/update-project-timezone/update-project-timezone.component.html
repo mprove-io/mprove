@@ -3,6 +3,7 @@
     <form [formGroup]="updateProjectTimezoneForm">
       <mat-form-field>
         <mat-select
+          [disableControl]="!(selectedProjectUserIsAdmin$ | async)"
           placeholder="Timezone"
           #select="matSelect"
           data-cy="projectSettingsTimezoneSelect"

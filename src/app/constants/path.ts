@@ -22,4 +22,3 @@ export const PATH_SQL = 'sql';
 export const PATH_DATA = 'data';
 export const PATH_CHART = 'chart';
 export const PATH_DASHBOARD = 'dashboard';
-export const PATH_PROJECT_DELETED = 'project-deleted';

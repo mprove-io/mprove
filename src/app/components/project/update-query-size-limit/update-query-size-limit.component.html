@@ -3,6 +3,7 @@
     <form [formGroup]="updateQuerySizeLimitForm">
       <mat-form-field class="settings__user-input">
         <input
+          [disableControl]="!(selectedProjectUserIsAdmin$ | async)"
           matInput
           type="number"
           id="querySizeLimitInput"

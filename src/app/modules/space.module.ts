@@ -34,7 +34,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     components.NavModelsComponent,
     components.NavRemoteErrorsComponent,
     components.NotFound404Component,
-    components.ProjectDeletedComponent,
     components.RegisterComponent,
     components.VerifyEmailSentComponent,
     components.ConfirmEmailComponent,

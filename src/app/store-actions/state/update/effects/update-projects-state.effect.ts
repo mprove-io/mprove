@@ -60,6 +60,7 @@ export class UpdateProjectsStateEffect {
 
   constructor(
     private actions$: Actions,
+    private myDialogService: services.MyDialogService,
     private printer: services.PrinterService,
     private router: Router,
     private store: Store<interfaces.AppState>

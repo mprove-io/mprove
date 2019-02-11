@@ -186,11 +186,6 @@ export const APP_ROUTES: Routes = [
         ]
       },
       {
-        path: constants.PATH_PROJECT_DELETED,
-        component: components.ProjectDeletedComponent,
-        canActivate: [guards.AuthCanActivateGuard]
-      },
-      {
         path: '**',
         component: components.NotFound404Component
       }

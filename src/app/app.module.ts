@@ -20,7 +20,6 @@ import { APP_PROVIDERS } from '@app/app-providers';
 import { APP_REDUCERS_OBJECT } from '@app/app-reducers-object';
 import { APP_ROUTES } from '@app/app-routes';
 import { AppComponent } from '@app/app.component';
-import * as directives from '@app/directives/_index';
 import * as helper from '@app/helper/_index';
 import { MyCovalentModule } from '@app/modules/my-covalent.module';
 import { MyMaterialModule } from '@app/modules/my-material.module';
@@ -40,7 +39,7 @@ if (environment.canUseRaven === true) {
 }
 
 @NgModule({
-  declarations: [AppComponent, directives.SingleClickDirective, ...APP_DIALOGS],
+  declarations: [AppComponent, ...APP_DIALOGS],
   entryComponents: [...APP_DIALOGS],
   imports: [
     EffectsModule.forRoot(APP_EFFECTS),

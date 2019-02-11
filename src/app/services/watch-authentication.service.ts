@@ -113,9 +113,7 @@ export class WatchAuthenticationService {
 
           let pathArray = this.location.path().split('/');
 
-          if (
-            ['profile', 'project', 'project-deleted'].indexOf(pathArray[1]) > -1
-          ) {
+          if (['profile', 'project'].indexOf(pathArray[1]) > -1) {
             this.printer.log(
               enums.busEnum.WATCH_AUTHENTICATION_SERVICE,
               'protected url, dispatching Logout...'

@@ -15,8 +15,7 @@ export class DeleteProjectSuccessEffect {
       from([
         new actions.UpdateProjectsStateAction([action.payload.deleted_project])
       ])
-    ),
-    tap(() => this.router.navigate(['project-deleted']))
+    )
   );
 
   constructor(private actions$: Actions, private router: Router) {}
