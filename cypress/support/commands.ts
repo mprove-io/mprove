@@ -68,7 +68,7 @@ export function basicVisit(url: string) {
 
 export function loading() {
   // cy.get('circle.ng-star-inserted').should('exist');
-  cy.get('circle.ng-star-inserted').should('not.exist');
+  cy.get('circle.ng-star-inserted', { timeout: 10000 }).should('not.exist');
 }
 
 Cypress.Commands.add('deletePack', deletePack);

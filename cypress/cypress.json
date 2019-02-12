@@ -1,6 +1,6 @@
 {
   "numTestsKeptInMemory": 1,
-  "defaultCommandTimeout": 10000,
+  "defaultCommandTimeout": 4000,
   "baseUrl": "http://localhost:4200",
   "video": false,
   "watchForFileChanges": false,
