@@ -1,5 +1,4 @@
 import * as constants from '../../../src/app/constants/_index';
-import * as api from '../../../src/app/api/_index';
 
 const userId = '1-2-user@example.com';
 const password = '123123';
@@ -14,7 +13,7 @@ describe('1-2 register-success (logged out, new user)', () => {
     cy.get('[data-cy=registerPasswordInput]').type(password);
     cy.get('[data-cy=registerRegisterButton]').click();
     cy.loading();
-    cy.url({ timeout: 15000 }).should(
+    cy.url().should(
       'include',
       constants.PATH_VERIFY_EMAIL_SENT
     );

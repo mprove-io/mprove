@@ -15,7 +15,7 @@
         formControlName="email"
         placeholder="Email"
         required
-        name="teamInviteMemberDialogEmail"
+        data-cy="dialogTeamInviteMemberEmailInput"
       />
       <mat-error>
         <m-validation-msg
@@ -32,7 +32,7 @@
       color="primary"
       mat-raised-button
       [disabled]="!inviteMemberForm.valid"
-      name="teamInviteMemberDialogInvite"
+      data-cy="dialogTeamInviteMemberInviteButton"
       >Invite
     </button>
 

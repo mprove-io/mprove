@@ -1,5 +1,4 @@
 import * as constants from '../../../src/app/constants/_index';
-import * as api from '../../../src/app/api/_index';
 
 const userId = '10-7-user@example.com';
 const password = '123123';

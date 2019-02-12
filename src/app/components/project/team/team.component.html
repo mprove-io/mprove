@@ -1,5 +1,5 @@
 <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
-  <div name="teamTitle"> {{ selectedProjectId$ | async }} Team </div>
+  <div data-cy="teamTitle"> {{ selectedProjectId$ | async }} Team </div>
 </mat-toolbar>
 <div class="team__content">
   <div class="team__table">
@@ -39,7 +39,7 @@
       >
         <div layout="row">
           <span flex>
-            <div name="teamMemberName"> {{ row['name'] }} </div>
+            <div data-cy="teamMemberNameData"> {{ row['name'] }} </div>
           </span>
         </div>
       </ng-template>
@@ -52,7 +52,7 @@
       >
         <div layout="row">
           <span flex>
-            <div name="teamMemberEmail"> {{ row['member_id'] }} </div>
+            <div data-cy="teamMemberEmailData"> {{ row['member_id'] }} </div>
           </span>
         </div>
       </ng-template>
@@ -65,7 +65,7 @@
       >
         <div layout="row">
           <span flex>
-            <div name="teamMemberAlias"> {{ row['alias'] }} </div>
+            <div data-cy="teamMemberAliasData"> {{ row['alias'] }} </div>
           </span>
         </div>
       </ng-template>
@@ -85,7 +85,7 @@
                 row['member_id'] === (userId$ | async)
               "
               (click)="isAdminToggle(row)"
-              name="teamMemberIsAdmin"
+              data-cy="teamMemberIsAdminCheckbox"
             >
             </mat-checkbox>
           </span>
@@ -104,7 +104,7 @@
               [checked]="value"
               [disabled]="!(selectedProjectUserIsAdmin$ | async)"
               (click)="isEditorToggle(row)"
-              name="teamMemberIsEditor"
+              data-cy="teamMemberIsEditorCheckbox"
             >
             </mat-checkbox>
           </span>
@@ -119,7 +119,7 @@
       >
         <div layout="row">
           <span flex>
-            <div name="teamMemberStatus"> {{ row['status'] }} </div>
+            <div data-cy="teamMemberStatusData"> {{ row['status'] }} </div>
           </span>
         </div>
       </ng-template>
@@ -140,7 +140,7 @@
                 !(selectedProjectUserIsAdmin$ | async)
               "
               (click)="deleteMember(row)"
-              name="teamMemberDelete"
+              data-cy="teamMemberDeleteButton"
             >
               <mat-icon>close</mat-icon>
             </button>
@@ -155,7 +155,7 @@
       color="primary"
       [disabled]="!(selectedProjectUserIsAdmin$ | async)"
       (click)="openInviteMemberDialog()"
-      name="teamInviteMember"
+      data-cy="teamInviteMemberButton"
       >Invite member</button
     >
   </div>
