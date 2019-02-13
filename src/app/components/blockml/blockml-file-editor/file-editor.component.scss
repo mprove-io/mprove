@@ -10,10 +10,10 @@
   }
 
   .file-editor {
-    &__ace-editor {
+    &__code-editor {
       height: 100%;
       width: 100%;
-      overflow: auto;
+      overflow: hidden;
     }
     &__cancel {
       margin-right: 10px;

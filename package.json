@@ -75,6 +75,7 @@
     "@swimlane/ngx-charts": "10.0.0",
     "@angular/flex-layout": "7.0.0-beta.22",
     "@auth0/angular-jwt": "2.1.0",
+    "@covalent/code-editor": "2.0.3",
     "@covalent/core": "2.0.0",
     "angular-tree-component": "8.0.0",
     "brace": "^0.10.0",

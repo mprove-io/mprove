@@ -391,6 +391,14 @@
     fs-extra "^4.0.1"
     viz.js "^1.8.0"
 
+"@covalent/code-editor@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@covalent/code-editor/-/code-editor-2.0.3.tgz#c0b1c29850e0ec657c4263e761d95c4ba78286bd"
+  integrity sha512-5RpbuaZsIBCSAEqAVd9m+i7Nva37iaDyWZEWhoDP1HKAYuMHEWSE9iXE2sJbuM94KmFTbmPKEZQSTmZFIdILAA==
+  dependencies:
+    monaco-editor "^0.10.1"
+    tslib "^1.9.0"
+
 "@covalent/core@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@covalent/core/-/core-2.0.0.tgz#58912dc0ccc3bde09f8797e19e9e87cf157c796d"
@@ -6786,6 +6794,11 @@ moment@^2.18.1, moment@^2.22.2:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
+
+monaco-editor@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.10.1.tgz#8c96c4f15b6b5258bf92cbde93cad8a7e3007e14"
+  integrity sha1-jJbE8VtrUli/ksvek8rYp+MAfhQ=
 
 morgan@^1.9.1:
   version "1.9.1"

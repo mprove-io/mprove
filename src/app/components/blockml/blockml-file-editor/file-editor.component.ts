@@ -1,13 +1,10 @@
+// tslint:disable-next-line:no-reference
+/// <reference path="../../../../../node_modules/monaco-editor/monaco.d.ts" />
+
 import { AfterViewInit, Component, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import 'brace';
-import 'brace/ext/searchbox';
-import 'brace/mode/yaml';
-import 'brace/theme/chrome';
-import 'brace/theme/solarized_dark';
-import { AceEditorComponent } from 'ng2-ace-editor';
-import { filter, take, tap } from 'rxjs/operators';
+import { filter, take, tap, map } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
 import * as api from '@app/api/_index';
 import * as enums from '@app/enums/_index';
@@ -22,22 +19,43 @@ import * as services from '@app/services/_index';
   styleUrls: ['file-editor.component.scss']
 })
 export class FileEditorComponent implements AfterViewInit, OnDestroy {
+  // automaticLayout: boolean = true;
+
+  fileEditorTheme: string = null;
+
+  editorOptions = {
+    theme: this.fileEditorTheme,
+    fontSize: 16,
+    language: 'yaml'
+  };
+
+  codeEditor: monaco.editor.IEditor = null;
+
   text: string = '';
   newText: string = '';
+  specialText: string = '';
+
   errorsLines: number[] = [];
   conflictsLines: number[] = [];
-  fileEditorTheme: string = 'chrome';
-
-  @ViewChild('editor') editor: AceEditorComponent;
 
   isDev$ = this.store.select(selectors.getLayoutModeIsDev); // no filter here
 
-  needSave$ = this.store.select(selectors.getLayoutNeedSave); // no filter here
+  needSave: boolean = false;
+  needSave$ = this.store
+    .select(selectors.getLayoutNeedSave)
+    .pipe(tap(x => (this.needSave = x))); // no filter here
 
   fileContent$ = this.store
     .select(selectors.getSelectedProjectModeRepoFileContent)
     .pipe(
-      tap(x => (this.text = x)) // no filter here
+      tap(x => {
+        this.specialText = x;
+
+        if (this.needSave === false) {
+          this.newText = x;
+          this.text = x;
+        }
+      }) // no filter here
     );
 
   fileLastPath$ = this.store
@@ -50,8 +68,8 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
       filter(v => !!v),
       tap(x => {
         this.errorsLines = x;
-        this.removeMarkers();
-        this.addMarkers();
+        // this.removeMarkers();
+        // this.addMarkers();
       })
     );
 
@@ -61,8 +79,8 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
       filter(v => !!v),
       tap(x => {
         this.conflictsLines = x;
-        this.removeMarkers();
-        this.addMarkers();
+        // this.removeMarkers();
+        // this.addMarkers();
       })
     );
 
@@ -70,9 +88,10 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
     filter(v => !!v),
     tap(x => {
       this.fileEditorTheme =
-        x === api.UserFileThemeEnum.Light ? 'chrome' : 'solarized_dark';
-      if (this.editor !== null) {
-        this.editor.setTheme(this.fileEditorTheme);
+        x === api.UserFileThemeEnum.Light ? 'vs' : 'vs-dark';
+
+      if (this.codeEditor) {
+        monaco.editor.setTheme(this.fileEditorTheme);
       }
     })
   );
@@ -84,8 +103,8 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
       this.line = Number(params['line'] ? params['line'] : 1);
 
       setTimeout(() => {
-        this.editor.getEditor().gotoLine(this.line);
-        this.editor.getEditor().navigateLineEnd();
+        // this.editor.getEditor().gotoLine(this.line);
+        // this.editor.getEditor().navigateLineEnd();
       }, 1);
     })
   );
@@ -94,8 +113,8 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
     filter(v => !!v),
     tap((fileId: string) => {
       setTimeout(() => {
-        this.editor.getEditor().gotoLine(this.line);
-        this.editor.getEditor().navigateLineEnd();
+        // this.editor.getEditor().gotoLine(this.line);
+        // this.editor.getEditor().navigateLineEnd();
       }, 1);
     })
   );
@@ -135,10 +154,8 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
     private route: ActivatedRoute
   ) {}
 
-  ngAfterViewInit() {
-    // TODO: #18-1 update ace later (1 instead of 2 by using this line)
-    this.editor.getEditor().$blockScrolling = Infinity;
-    this.editor.getEditor().setFontSize(16);
+  async onEditorInit(editor: monaco.editor.IEditor) {
+    this.codeEditor = editor;
 
     let modeIsDev: boolean;
     this.store
@@ -146,33 +163,16 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
       .pipe(take(1))
       .subscribe(x => (modeIsDev = x));
 
-    if (!modeIsDev) {
-      this.editor.getEditor().renderer.$cursorLayer.element.style.display =
-        'none';
-    }
+    monaco.editor.setTheme(this.fileEditorTheme);
 
-    this.editor.setOptions({
-      readOnly: !modeIsDev,
-      tabSize: 2,
-      useSoftTabs: true,
-      highlightActiveLine: modeIsDev,
-      highlightGutterLine: modeIsDev
+    editor.updateOptions({
+      readOnly: !modeIsDev
     });
+  }
 
-    this.editor.setTheme(this.fileEditorTheme);
-    this.editor.setMode('yaml');
-
-    // this.editor.getEditor().setOptions({
-    //   enableBasicAutocompletion: true
-    // });
-
-    // this.editor.getEditor().commands.addCommand({
-    //   name: 'showOtherCompletions',
-    //   bindKey: 'Ctrl-.',
-    //   exec: function (editor: any) {
-    //
-    //   }
-    // });
+  ngAfterViewInit() {
+    //   highlightActiveLine: modeIsDev,
+    //   highlightGutterLine: modeIsDev
   }
 
   canDeactivate(): Promise<boolean> | boolean {
@@ -234,81 +234,68 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   }
 
   removeMarkers() {
-    let frontMarkers = this.editor.getEditor().session.getMarkers(true); // returns Object, not Array (wrong docs!)
-    for (let id in frontMarkers) {
-      if (
-        frontMarkers.hasOwnProperty(id) &&
-        frontMarkers[id].clazz === 'myMarker'
-      ) {
-        this.editor.getEditor().session.removeMarker(frontMarkers[id].id);
-      }
-    }
+    // let frontMarkers = this.editor.getEditor().session.getMarkers(true); // returns Object, not Array (wrong docs!)
+    // for (let id in frontMarkers) {
+    //   if (
+    //     frontMarkers.hasOwnProperty(id) &&
+    //     frontMarkers[id].clazz === 'myMarker'
+    //   ) {
+    //     this.editor.getEditor().session.removeMarker(frontMarkers[id].id);
+    //   }
+    // }
   }
 
   addMarkers() {
-    let repoIsNeedResolve: boolean;
-    this.store
-      .select(selectors.getSelectedProjectModeRepoIsNeedResolve)
-      .pipe(take(1))
-      .subscribe(x => (repoIsNeedResolve = x));
-
-    let Range = require('brace').acequire('ace/range').Range;
-
-    if (repoIsNeedResolve) {
-      // conflicts markers
-      this.conflictsLines.forEach(cLine => {
-        if (cLine !== 0) {
-          this.editor
-            .getEditor()
-            .session.addMarker(
-              new Range(cLine - 1, 0, cLine - 1, 1),
-              'myMarker',
-              'fullLine',
-              true
-            );
-        }
-      });
-    } else {
-      // errors markers
-      this.errorsLines.forEach(eLine => {
-        if (eLine !== 0) {
-          this.editor
-            .getEditor()
-            .session.addMarker(
-              new Range(eLine - 1, 0, eLine - 1, 1),
-              'myMarker',
-              'fullLine',
-              true
-            );
-        }
-      });
-    }
+    // let repoIsNeedResolve: boolean;
+    // this.store
+    //   .select(selectors.getSelectedProjectModeRepoIsNeedResolve)
+    //   .pipe(take(1))
+    //   .subscribe(x => (repoIsNeedResolve = x));
+    // let Range = require('brace').acequire('ace/range').Range;
+    // if (repoIsNeedResolve) {
+    //   // conflicts markers
+    //   this.conflictsLines.forEach(cLine => {
+    //     if (cLine !== 0) {
+    //       this.editor
+    //         .getEditor()
+    //         .session.addMarker(
+    //           new Range(cLine - 1, 0, cLine - 1, 1),
+    //           'myMarker',
+    //           'fullLine',
+    //           true
+    //         );
+    //     }
+    //   });
+    // } else {
+    //   // errors markers
+    //   this.errorsLines.forEach(eLine => {
+    //     if (eLine !== 0) {
+    //       this.editor
+    //         .getEditor()
+    //         .session.addMarker(
+    //           new Range(eLine - 1, 0, eLine - 1, 1),
+    //           'myMarker',
+    //           'fullLine',
+    //           true
+    //         );
+    //     }
+    //   });
+    // }
   }
 
-  onTextChanged(e: any) {
-    if (!!e) {
-      if (e !== this.text) {
-        this.newText = e;
-
-        this.removeMarkers();
-
-        this.store
-          .select(selectors.getLayoutNeedSave)
-          .pipe(take(1))
-          .subscribe(needSave => {
-            if (!needSave) {
-              this.store.dispatch(new actions.SetLayoutNeedSaveTrueAction());
-            }
-          });
-      } else {
-        this.removeMarkers();
-        this.addMarkers();
-      }
+  onTextChanged() {
+    if (!this.needSave && this.newText !== this.text) {
+      // this.removeMarkers();
+      this.store.dispatch(new actions.SetLayoutNeedSaveTrueAction());
+    } else {
+      // this.removeMarkers();
+      // this.addMarkers();
     }
   }
 
   onCancel() {
-    this.editor.setText(this.text);
+    this.text = this.specialText;
+    this.newText = this.text;
     this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
   }
 

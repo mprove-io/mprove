@@ -1,7 +1,10 @@
 .blockml {
-  &-sidenav {
+  &-sidenav-content {
     height: 100%;
-    width: 20%;
+    width: 100%;
+    &-center {
+      width: 100%;
+    }
     &-button {
       min-width: 1px;
       position: relative;
@@ -9,13 +12,8 @@
     }
   }
   &-errors {
-    width: 20%;
     height: 100%;
     overflow: auto;
-  }
-  &-content {
-    flex: 1;
-    display: flex;
   }
 }
 .mobile-menu__button {

@@ -132,14 +132,14 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <div fxFlex fxLayout="row" class="blockml-sidenav ">
+      <div fxLayout="row" class="blockml-sidenav-content">
         <m-catalog-tree
           fxFlex="20%"
           fxHide.lt-md
           class="space_border_right"
         ></m-catalog-tree>
 
-        <div fxFlex>
+        <div fxFlex class="blockml-sidenav-content-center">
           <div
             *ngIf="
               (fileIsNotSelected$ | async) && !(remotePageIsActive$ | async)

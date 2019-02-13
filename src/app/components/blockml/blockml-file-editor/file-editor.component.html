@@ -31,7 +31,7 @@
 
     <span class="example-fill-remaining-space"></span>
 
-    <div fxLayout="row" *ngIf="(isDev$ | async) && (needSave$ | async)">
+    <div fxLayout="row" *ngIf="(isDev$ | async) && needSave">
       <button mat-raised-button class="file-editor__cancel" (click)="onCancel()"
         >Cancel</button
       >
@@ -43,21 +43,21 @@
       color="accent"
       class="file-editor-save"
       *ngIf="(isDev$ | async)"
-      [disabled]="!(needSave$ | async)"
+      [disabled]="!needSave"
       (click)="onSave()"
       >Save
     </button>
   </mat-toolbar>
 
-  <ace-editor
-    fxFlex
-    [text]="fileContent$ | async"
-    (textChanged)="onTextChanged($event)"
-    data-cy="blockmlEditor"
-    #editor
-    class="file-editor__ace-editor"
-  >
-  </ace-editor>
+  <td-code-editor
+    *ngIf="fileEditorTheme"
+    class="file-editor__code-editor"
+    data-cy="blockmlFileEditorCodeEditor"
+    [editorOptions]="editorOptions"
+    [(ngModel)]="newText"
+    (change)="onTextChanged()"
+    (editorInitialized)="onEditorInit($event)"
+  ></td-code-editor>
 </div>
 
 <mat-menu #fileViewJoinsMenu="matMenu">
@@ -69,9 +69,11 @@
   >
 </mat-menu>
 
-<!-- <div *ngIf="lineNumber$ | async"></div> -->
-<div *ngIf="(routeLine$ | async)"></div> <div *ngIf="(fileId$ | async)"></div>
+<div *ngIf="(routeLine$ | async)"></div>
 <div *ngIf="(fileErrorsLines$ | async)"></div>
 <div *ngIf="(fileConflictsLines$ | async)"></div>
+<div *ngIf="(fileId$ | async)"></div>
 <div *ngIf="(fileEditorTheme$ | async)"></div>
 <div *ngIf="(fileViewJoins$ | async)"></div>
+<div *ngIf="(fileContent$ | async)"></div>
+<div *ngIf="(needSave$ | async)"></div>

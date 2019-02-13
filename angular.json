@@ -30,13 +30,16 @@
               },
               {
                 "glob": "**/*",
+                "input": "node_modules/@covalent/code-editor/assets/monaco",
+                "output": "/assets/monaco"
+              },
+              {
+                "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets"
               }
             ],
-            "styles": [
-              { "input": "src/styles.scss" }
-            ],
+            "styles": [{ "input": "src/styles.scss" }],
             "scripts": []
           },
           "configurations": {
@@ -86,7 +89,7 @@
                   "maximumError": "10000kb"
                 }
               ]
-            },            
+            },
             "test": {
               "fileReplacements": [
                 {
@@ -133,7 +136,7 @@
                   "maximumError": "10000kb"
                 }
               ]
-            },            
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -247,12 +250,8 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["src/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -272,9 +271,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

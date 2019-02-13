@@ -7,8 +7,10 @@ import {
   CovalentStepsModule,
   CovalentFileModule
 } from '@covalent/core';
+import { CovalentCodeEditorModule } from '@covalent/code-editor';
 
 const COVALENT_MODULES: any[] = [
+  CovalentCodeEditorModule,
   CovalentCommonModule,
   CovalentDataTableModule,
   CovalentPagingModule,
