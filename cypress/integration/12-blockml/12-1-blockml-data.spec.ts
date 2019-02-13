@@ -1,11 +1,13 @@
 import * as constants from '../../../src/app/constants/_index';
+import * as api from '../../../src/app/api/_index';
+import * as enums from '../../../src/app/enums/_index';
 
-const userId = '10-4-user@example.com';
+const userId = '12-1-user@example.com';
 const password = '123123';
 
-const projectId = 'project_10_4';
+const projectId = 'project_12_1';
 
-describe('10-4 project-settings-data (logged in)', () => {
+describe('12-1 blockml-data (logged in)', () => {
   it(`should see data`, () => {
     cy.deletePack({
       user_ids: [userId],
@@ -35,11 +37,12 @@ describe('10-4 project-settings-data (logged in)', () => {
       ]
     });
     cy.loginUser({ user_id: userId, password: password });
-    cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/settings`);
+    cy.basicVisit(
+      `${constants.PATH_PROJECT}/${projectId}/${constants.PATH_MODE}/${
+        enums.LayoutModeEnum.Prod
+      }/${constants.PATH_BLOCKML}`
+    );
     cy.loading();
-    cy.get('[data-cy=projectSettingsTitle]').should('exist');
-    cy.get('[data-cy=projectSettingsProjectIdData]').should('have.text', projectId);
+    cy.get('[data-cy=blockmlTitle]').should('exist');
   });
 });
-
-// {"project_id":"123","client_email":"456"}

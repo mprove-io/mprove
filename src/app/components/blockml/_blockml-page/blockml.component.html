@@ -29,7 +29,7 @@
       <button
         mat-raised-button
         color="accent"
-        data-cy="blockmlConflicts"
+        data-cy="blockmlConflictsButton"
         [matMenuTriggerFor]="conflictsMenu"
       >
         <div fxLayout="row" fxLayoutAlign="start center">
@@ -44,7 +44,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        data-cy="blockmlCommit"
+        data-cy="blockmlCommitButton"
         [disabled]="(needSave$ | async) || !(repoIsNeedCommit$ | async)"
         (click)="commit()"
         >Commit
@@ -60,7 +60,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        data-cy="blockmlPullFromRemote"
+        data-cy="blockmlPullFromRemoteButton"
         [disabled]="needSave$ | async"
         (click)="pullFromRemote()"
         >Pull From Remote
@@ -76,7 +76,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        data-cy="blockmlPull"
+        data-cy="blockmlPullButton"
         [disabled]="needSave$ | async"
         (click)="pull()"
         >Pull
@@ -88,7 +88,7 @@
         mat-raised-button
         color="accent"
         class="blockml-top-btn"
-        data-cy="blockmlPushToProduction"
+        data-cy="blockmlPushToProductionButton"
         [disabled]="
           (needSave$ | async) ||
           !(repoIsNeedPush$ | async) ||
@@ -104,7 +104,7 @@
       *ngIf="(isDev$ | async)"
       fxHide.lt-md
       mat-icon-button
-      data-cy="blockmlOptions"
+      data-cy="blockmlOptionsButton"
       [matMenuTriggerFor]="repoMenu"
       [disabled]="needSave$ | async"
     >
@@ -172,7 +172,7 @@
         <button
           mat-raised-button
           color="accent"
-          data-cy="blockmlConflictsMobile"
+          data-cy="blockmlConflictsButtonMobile"
           [matMenuTriggerFor]="conflictsMenu"
         >
           <div fxLayout="row" fxLayoutAlign="start center">
@@ -186,7 +186,7 @@
         <button
           mat-raised-button
           color="accent"
-          data-cy="blockmlCommitMobile"
+          data-cy="blockmlCommitButtonMobile"
           [disabled]="(needSave$ | async) || !(repoIsNeedCommit$ | async)"
           (click)="commit()"
           >Commit
@@ -197,7 +197,7 @@
         <button
           mat-raised-button
           color="accent"
-          data-cy="blockmlPullFromRemoteMobile"
+          data-cy="blockmlPullFromRemoteButtonMobile"
           [disabled]="needSave$ | async"
           (click)="pullFromRemote()"
           >Pull From Remote
@@ -208,7 +208,7 @@
         <button
           mat-raised-button
           color="accent"
-          data-cy="blockmlPullMobile"
+          data-cy="blockmlPullButtonMobile"
           [disabled]="needSave$ | async"
           (click)="pull()"
           >Pull
@@ -219,7 +219,7 @@
         <button
           mat-raised-button
           color="accent"
-          data-cy="blockmlPushToProductionMobile"
+          data-cy="blockmlPushToProductionButtonMobile"
           [disabled]="
             (needSave$ | async) ||
             !(repoIsNeedPush$ | async) ||
@@ -233,7 +233,7 @@
 
       <button
         mat-menu-item
-        data-cy="blockmlRevertRepoToLastCommitMobile"
+        data-cy="blockmlRevertRepoToLastCommitButtonMobile"
         (click)="revertRepoToLastCommit()"
       >
         Revert Repo to Last Commit</button
@@ -241,7 +241,7 @@
 
       <button
         mat-menu-item
-        data-cy="blockmlRevertRepoToProductionMobile"
+        data-cy="blockmlRevertRepoToProductionButtonMobile"
         (click)="revertRepoToProduction()"
       >
         Revert Repo to Production</button
@@ -272,7 +272,7 @@
 <mat-menu #repoMenu="matMenu">
   <button
     mat-menu-item
-    data-cy="blockmlRevertRepoToLastCommit"
+    data-cy="blockmlRevertRepoToLastCommitButton"
     (click)="revertRepoToLastCommit()"
   >
     Revert Repo to Last Commit</button
@@ -280,7 +280,7 @@
 
   <button
     mat-menu-item
-    data-cy="blockmlRevertRepoToProduction"
+    data-cy="blockmlRevertRepoToProductionButton"
     (click)="revertRepoToProduction()"
   >
     Revert Repo to Production</button

@@ -19,7 +19,7 @@ describe('7-1 profile-data (logged in)', () => {
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(constants.PATH_PROFILE);
     cy.loading();
-    cy.get('[data-cy=profileTitle]');
+    cy.get('[data-cy=profileTitle]').should('exist');
     cy.get('[data-cy=editNameFirstNameInput]').should('have.value', '');
     cy.get('[data-cy=editNameLastNameInput]').should('have.value', '');    
     cy.get('[data-cy=updateUserTimezoneSelect]').should('have.text', 'Use Project Default');

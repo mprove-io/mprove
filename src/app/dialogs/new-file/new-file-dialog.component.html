@@ -9,7 +9,7 @@
         matInput
         type="text"
         class="mp-full-width"
-        name="newFileDialogName"
+        data-cy="dialogNewFileNameInput"
         id="nameInput"
         formControlName="name"
         placeholder="Name"
@@ -28,7 +28,7 @@
     <button
       type="submit"
       color="primary"
-      name="newFileDialogCreate"
+      data-cy="dialogNewFileDialogCreateButton"
       mat-raised-button
       [disabled]="!newFileForm.valid"
       >Create

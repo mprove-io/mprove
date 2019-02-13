@@ -11,6 +11,6 @@ describe('7-3 profile-expired-login-token', () => {
     window.localStorage.setItem('token', expiredToken);
 
     cy.basicVisit(constants.PATH_PROFILE);
-    cy.get('[data-cy=loginTitle]');
+    cy.get('[data-cy=loginTitle]').should('exist');
   });
 });

@@ -24,7 +24,7 @@ describe('7-4 profile-bad-login-token', () => {
     });
     cy.basicVisit(constants.PATH_PROFILE);
     cy.loading();
-    cy.get('[data-cy=loginTitle]');
+    cy.get('[data-cy=loginTitle]').should('exist');
     cy.get('[data-cy=dialogInfoMessage]').should('contain', error1);
   });
 });

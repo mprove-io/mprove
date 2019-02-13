@@ -18,7 +18,7 @@ describe('8-2 logout-auto (logged in)', () => {
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(constants.PATH_PROFILE);
     cy.loading();
-    cy.get('[data-cy=profileTitle]');
+    cy.get('[data-cy=profileTitle]').should('exist');
     cy.clearLocalStorage();
     cy.url().should('include', constants.PATH_LOGIN);
   });

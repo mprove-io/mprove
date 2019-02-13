@@ -12,7 +12,7 @@
           fxFlex
           fxLayout="row"
           fxLayoutAlign="start center"
-          name="blockmlTreeItem"
+          data-cy="blockmlTreeItem"
           class="catalog-tree__file_clickable"
           [ngClass]="{
             'catalog-tree__file_hover': !node.hasChildren,
@@ -44,7 +44,7 @@
           *ngIf="(isDev$ | async) && node.data.is_folder"
           class="catalog-tree__menu-button"
           [matMenuTriggerFor]="folderMenu"
-          name="blockmlTreeFolderOptions"
+          data-cy="blockmlTreeFolderOptionsButton"
           [ngClass]="{ disableFolderOptions: needSave$ | async }"
           [disabled]="needSave$ | async"
         >
@@ -54,21 +54,21 @@
         <mat-menu #folderMenu="matMenu">
           <button
             mat-menu-item
-            name="blockmlTreeFolderOptionsNewFile"
+            data-cy="blockmlTreeFolderOptionsNewFileButton"
             (click)="openNewFileDialog(node)"
           >
             New file</button
           >
           <button
             mat-menu-item
-            name="blockmlTreeFolderOptionsNewFolder"
+            data-cy="blockmlTreeFolderOptionsNewFolderButton"
             (click)="openNewFolderDialog(node)"
           >
             New folder</button
           >
           <button
             mat-menu-item
-            name="blockmlTreeFolderOptionsRenameFolder"
+            data-cy="blockmlTreeFolderOptionsRenameFolderButton"
             [disabled]="node.data.id === (projectId$ | async)"
             (click)="openRenameFolderDialog(node)"
           >
@@ -76,7 +76,7 @@
           </button>
           <button
             mat-menu-item
-            name="blockmlTreeFolderOptionsDeleteFolder"
+            data-cy="blockmlTreeFolderOptionsDeleteFolderButton"
             [disabled]="node.data.id === (projectId$ | async)"
             (click)="openDeleteFolderDialog(node)"
           >
@@ -88,7 +88,7 @@
           *ngIf="(isDev$ | async) && !node.data.is_folder"
           class="catalog-tree__menu-button"
           [matMenuTriggerFor]="fileMenu"
-          name="blockmlTreeFileOptions"
+          data-cy="blockmlTreeFileOptionsButton"
           [ngClass]="{ disableFileOptions: needSave$ | async }"
           [disabled]="needSave$ | async"
         >
@@ -98,7 +98,7 @@
         <mat-menu #fileMenu="matMenu">
           <button
             mat-menu-item
-            name="blockmlTreeFileOptionsDeleteFile"
+            data-cy="blockmlTreeFileOptionsDeleteFileButton"
             (click)="openDeleteFileDialog(node)"
           >
             Delete file</button

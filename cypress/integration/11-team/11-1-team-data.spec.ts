@@ -38,7 +38,7 @@ describe('11-1 team-data (logged in)', () => {
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/team`);
     cy.loading();
-    cy.get('[data-cy=teamTitle]');
+    cy.get('[data-cy=teamTitle]').should('exist');
     cy.get('[data-cy=teamMemberNameData]').should('contain', 'null null');
     cy.get('[data-cy=teamMemberEmailData]').should('contain', userId);
     cy.get('[data-cy=teamMemberAliasData]').should('contain', '11-1-user');

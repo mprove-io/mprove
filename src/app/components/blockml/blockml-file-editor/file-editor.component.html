@@ -39,7 +39,7 @@
 
     <button
       mat-raised-button
-      name="blockmlFileEditorSave"
+      data-cy="blockmlFileEditorSaveButton"
       color="accent"
       class="file-editor-save"
       *ngIf="(isDev$ | async)"
@@ -53,7 +53,7 @@
     fxFlex
     [text]="fileContent$ | async"
     (textChanged)="onTextChanged($event)"
-    name="blockmlEditor"
+    data-cy="blockmlEditor"
     #editor
     class="file-editor__ace-editor"
   >

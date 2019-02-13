@@ -19,6 +19,6 @@ describe('1-4 register-logged-in (logged in)', () => {
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(constants.PATH_REGISTER);
     cy.loading();
-    cy.get('[data-cy=profileTitle]');
+    cy.get('[data-cy=profileTitle]').should('exist');
   });
 });
