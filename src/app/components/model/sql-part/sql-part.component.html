@@ -1,11 +1,12 @@
 <div class="sql-part">
-  <ace-editor
-    class="sql-part__ace-editor"
-    name="sqlEditor"
-    [text]="text"
-    #editor
-  >
-  </ace-editor>
+  <td-code-editor
+    *ngIf="sqlEditorTheme"
+    class="sql-part__code-editor"
+    data-cy="sqlCodeEditor"
+    [editorOptions]="editorOptions"
+    [(ngModel)]="text"
+    (editorInitialized)="onEditorInit($event)"
+  ></td-code-editor>
 </div>
 
 <div *ngIf="(sqlEditorTheme$ | async)"></div>

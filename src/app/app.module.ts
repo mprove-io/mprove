@@ -10,7 +10,6 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
-import { AceEditorModule } from 'ng2-ace-editor';
 import { ClipboardModule } from 'ngx-clipboard';
 import * as Raven from 'raven-js';
 import { APP_DIALOGS } from '@app/app-dialogs';
@@ -44,7 +43,6 @@ if (environment.canUseRaven === true) {
   imports: [
     EffectsModule.forRoot(APP_EFFECTS),
     MyMaterialModule,
-    AceEditorModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     SharedModule,

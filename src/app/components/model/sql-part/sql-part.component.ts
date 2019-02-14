@@ -1,12 +1,6 @@
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import 'brace';
-import 'brace/ext/searchbox';
-import 'brace/mode/sql';
-import 'brace/theme/solarized_dark';
-import 'brace/theme/sqlserver';
-import { AceEditorComponent } from 'ng2-ace-editor';
-import { filter, tap } from 'rxjs/operators';
+import { filter, tap, delay } from 'rxjs/operators';
 import * as api from '@app/api/_index';
 import * as interfaces from '@app/interfaces/_index';
 import * as selectors from '@app/store-selectors/_index';
@@ -17,46 +11,36 @@ import * as selectors from '@app/store-selectors/_index';
   templateUrl: 'sql-part.component.html',
   styleUrls: ['sql-part.component.scss']
 })
-export class SqlPartComponent implements AfterViewInit {
-  sqlEditorTheme: string = 'sqlserver';
-
+export class SqlPartComponent {
   @Input() text: string;
 
-  @ViewChild('editor') editor: AceEditorComponent;
+  sqlEditorTheme: string = null;
+
+  editorOptions = {
+    theme: this.sqlEditorTheme,
+    readOnly: true,
+    fontSize: 16,
+    language: 'sql'
+  };
+
+  codeEditor: monaco.editor.IEditor = null;
 
   sqlEditorTheme$ = this.store.select(selectors.getUserSqlTheme).pipe(
     filter(v => !!v),
+    delay(0),
     tap(x => {
-      this.sqlEditorTheme =
-        x === api.UserSqlThemeEnum.Light ? 'sqlserver' : 'solarized_dark';
-      if (this.editor !== null) {
-        this.editor.setTheme(this.sqlEditorTheme);
+      this.sqlEditorTheme = x === api.UserSqlThemeEnum.Light ? 'vs' : 'vs-dark';
+
+      if (this.codeEditor) {
+        monaco.editor.setTheme(this.sqlEditorTheme);
       }
     })
   );
 
   constructor(private store: Store<interfaces.AppState>) {}
 
-  ngAfterViewInit() {
-    this.editor.getEditor().gotoLine(1);
-    this.editor.getEditor().navigateLineEnd();
-
-    // TODO: #18-2 update ace later (1 instead of 2 by using this line)
-    this.editor.getEditor().$blockScrolling = Infinity;
-    this.editor.getEditor().setFontSize(16);
-
-    this.editor.getEditor().renderer.$cursorLayer.element.style.display =
-      'none';
-
-    this.editor.setOptions({
-      maxLines: Infinity,
-      readOnly: true,
-      highlightActiveLine: false,
-      highlightGutterLine: false
-    });
-
-    this.editor.setTheme(this.sqlEditorTheme);
-
-    this.editor.setMode('sql');
+  async onEditorInit(editor: monaco.editor.IEditor) {
+    this.codeEditor = editor;
+    monaco.editor.setTheme(this.sqlEditorTheme);
   }
 }

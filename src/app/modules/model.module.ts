@@ -4,7 +4,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from 'angular-tree-component';
-import { AceEditorModule } from 'ng2-ace-editor';
 import { ClipboardModule } from 'ngx-clipboard';
 import * as components from '@app/components/_index';
 import { ColorPickerModule } from '@app/modules/colorpicker/colorpicker.module';
@@ -19,7 +18,6 @@ import { VisualModule } from '@app/modules/visual.module';
   imports: [
     SharedModule,
     ClipboardModule,
-    AceEditorModule,
     FractionModule,
     CommonModule,
     MyMaterialModule,

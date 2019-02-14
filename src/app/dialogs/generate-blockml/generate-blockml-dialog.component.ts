@@ -1,14 +1,8 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { Store } from '@ngrx/store';
-import 'brace';
-import 'brace/ext/searchbox';
-import 'brace/mode/yaml';
-import 'brace/theme/chrome';
-import 'brace/theme/solarized_dark';
 import * as y from 'js-yaml';
-import { AceEditorComponent } from 'ng2-ace-editor';
-import { filter, take, tap } from 'rxjs/operators';
+import { filter, take, tap, delay } from 'rxjs/operators';
 import * as api from '@app/api/_index';
 import * as constants from '@app/constants/_index';
 import * as interfaces from '@app/interfaces/_index';
@@ -20,19 +14,29 @@ import * as selectors from '@app/store-selectors/_index';
   templateUrl: 'generate-blockml-dialog.component.html',
   styleUrls: ['generate-blockml-dialog.component.scss']
 })
-export class GenerateBlockmlDialogComponent implements OnInit, AfterViewInit {
-  fileEditorTheme: string = 'chrome';
-  reportYaml: string;
+export class GenerateBlockmlDialogComponent implements OnInit {
+  fileEditorTheme: string = null;
 
-  @ViewChild('editor') editor: AceEditorComponent;
+  editorOptions = {
+    theme: this.fileEditorTheme,
+    readOnly: true,
+    fontSize: 16,
+    language: 'yaml'
+  };
+
+  codeEditor: monaco.editor.IEditor = null;
+
+  reportYaml: string;
 
   fileEditorTheme$ = this.store.select(selectors.getUserFileTheme).pipe(
     filter(v => !!v),
+    delay(0),
     tap(x => {
       this.fileEditorTheme =
-        x === api.UserFileThemeEnum.Light ? 'chrome' : 'solarized_dark';
-      if (this.editor !== null) {
-        this.editor.setTheme(this.fileEditorTheme);
+        x === api.UserFileThemeEnum.Light ? 'vs' : 'vs-dark';
+
+      if (this.codeEditor) {
+        monaco.editor.setTheme(this.fileEditorTheme);
       }
     })
   );
@@ -59,26 +63,9 @@ export class GenerateBlockmlDialogComponent implements OnInit, AfterViewInit {
       .join('\n');
   }
 
-  ngAfterViewInit() {
-    this.editor.getEditor().gotoLine(1);
-    this.editor.getEditor().navigateLineEnd();
-
-    // TODO: #18-3 update ace later (1 instead of 2 by using this line)
-    this.editor.getEditor().$blockScrolling = Infinity;
-    this.editor.getEditor().setFontSize(16);
-
-    this.editor.getEditor().renderer.$cursorLayer.element.style.display =
-      'none';
-
-    this.editor.setOptions({
-      readOnly: true,
-      highlightActiveLine: false,
-      highlightGutterLine: false
-    });
-
-    this.editor.setTheme(this.fileEditorTheme);
-
-    this.editor.setMode('yaml');
+  async onEditorInit(editor: monaco.editor.IEditor) {
+    this.codeEditor = editor;
+    monaco.editor.setTheme(this.fileEditorTheme);
   }
 
   prepareReport() {

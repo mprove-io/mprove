@@ -284,6 +284,8 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   }
 
   onTextChanged() {
+    // console.log('getValue', monaco.editor.getModels()[0].getValue());
+
     if (!this.needSave && this.newText !== this.text) {
       // this.removeMarkers();
       this.store.dispatch(new actions.SetLayoutNeedSaveTrueAction());

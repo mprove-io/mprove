@@ -13,15 +13,14 @@
     </button>
   </mat-toolbar>
 
-  <div fxLayout="column">
-    <ace-editor
-      fxFlex="700px"
-      [text]="reportYaml"
-      #editor
-      class="generate-blockml__ace-editor"
-    >
-    </ace-editor>
-  </div>
+  <td-code-editor
+    *ngIf="fileEditorTheme"
+    class="generate-blockml__code-editor"
+    data-cy="generateBlockmlCodeEditor"
+    [editorOptions]="editorOptions"
+    [value]="reportYaml"
+    (editorInitialized)="onEditorInit($event)"
+  ></td-code-editor>
 </div>
 
 <div *ngIf="(fileEditorTheme$ | async)"></div>

@@ -3,13 +3,15 @@
     <a>{{ data.pdt_id }}</a>
   </mat-toolbar>
 
-  <div fxLayout="column">
-    <ace-editor
-      fxFlex="700px"
-      [text]="data.sql"
-      #editor
-      class="pdt-sql__ace-editor"
-    >
-    </ace-editor>
-  </div>
+  <td-code-editor
+    *ngIf="sqlEditorTheme"
+    automaticLayout="automaticLayout"
+    class="pdt-sql__code-editor"
+    data-cy="pdtSqlCodeEditor"
+    [editorOptions]="editorOptions"
+    [value]="data.sql"
+    (editorInitialized)="onEditorInit($event)"
+  ></td-code-editor>
 </div>
+
+<div *ngIf="(sqlEditorTheme$ | async)"></div>

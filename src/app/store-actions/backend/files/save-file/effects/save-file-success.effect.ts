@@ -12,8 +12,8 @@ export class SaveFileSuccessEffect {
     ofType(actionTypes.SAVE_FILE_SUCCESS),
     mergeMap((action: actions.SaveFileSuccessAction) =>
       from([
+        new actions.SetLayoutNeedSaveFalseAction(), // before UpdateFilesStateAction
         new actions.UpdateFilesStateAction([action.payload.saved_dev_file]),
-        new actions.SetLayoutNeedSaveFalseAction(), // special for this scenario
         new actions.ProcessStructsAction([action.payload.dev_struct])
       ])
     )

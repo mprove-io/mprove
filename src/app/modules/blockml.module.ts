@@ -4,7 +4,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from 'angular-tree-component';
-import { AceEditorModule } from 'ng2-ace-editor';
 import * as components from '@app/components/_index';
 import { MyCovalentModule } from '@app/modules/my-covalent.module';
 import { MyMaterialModule } from '@app/modules/my-material.module';
@@ -14,7 +13,6 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
 @NgModule({
   imports: [
     SharedModule,
-    AceEditorModule,
     CommonModule,
     MyMaterialModule,
     FlexLayoutModule,
