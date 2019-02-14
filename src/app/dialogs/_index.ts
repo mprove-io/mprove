@@ -14,7 +14,7 @@ export * from './new-file/new-file-dialog.component';
 export * from './new-folder/new-folder-dialog.component';
 export * from './new-project/new-project-dialog.component';
 export * from './reset-password/reset-password-dialog.component';
-export * from './pdt-sql/pdt-sql-dialog.component';
+export * from './sql/sql-dialog.component';
 export * from './rename-folder/rename-folder-dialog.component';
 export * from './req-dim-added/req-dim-added-dialog.component';
 export * from './switch-analytics-plan/switch-analytics-plan-dialog.component';

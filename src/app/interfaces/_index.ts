@@ -14,7 +14,6 @@ export * from './model-field-extra';
 export * from './model-group';
 export * from './model-node-field';
 export * from './ngrx-router-state-url';
-export * from './pdt-part';
 export * from './query-extra';
 export * from './query-extra-time';
 export * from './sql-part';

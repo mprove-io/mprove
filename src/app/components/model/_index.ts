@@ -9,4 +9,3 @@ export * from './model-filters/model-filters.component';
 export * from './model-tree/model-tree.component';
 export * from './query/query.component';
 export * from './sql/sql.component';
-export * from './sql-part/sql-part.component';

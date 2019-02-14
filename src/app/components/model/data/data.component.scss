@@ -1,17 +1,13 @@
 :host {
   display: block;
   height: 100%;
+  overflow: auto;
 }
 .query-data {
   &__table {
-    height: calc(100% - 70px);
     overflow: auto;
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__empty-title {
-    text-align: center;
+    // display: flex;
+    // flex-direction: column;
   }
 }
 .limit-form {

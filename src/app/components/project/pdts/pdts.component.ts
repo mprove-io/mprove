@@ -103,8 +103,8 @@ export class PdtsComponent {
 
     row.sql.forEach(sqlLine => (sqlText = sqlText.concat(...[sqlLine, '\n'])));
 
-    this.myDialogService.showPdtSqlDialog({
-      pdt_id: row.pdt_id,
+    this.myDialogService.showSqlDialog({
+      name: row.pdt_id,
       sql: sqlText
     });
   }

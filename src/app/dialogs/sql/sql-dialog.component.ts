@@ -8,11 +8,11 @@ import { filter, delay, tap } from 'rxjs/operators';
 
 @Component({
   moduleId: module.id,
-  selector: 'm-pdt-sql-dialog',
-  templateUrl: 'pdt-sql-dialog.component.html',
-  styleUrls: ['pdt-sql-dialog.component.scss']
+  selector: 'm-sql-dialog',
+  templateUrl: 'sql-dialog.component.html',
+  styleUrls: ['sql-dialog.component.scss']
 })
-export class PdtSqlDialogComponent {
+export class SqlDialogComponent {
   automaticLayout: boolean = true;
 
   sqlEditorTheme: string = null;
@@ -41,7 +41,7 @@ export class PdtSqlDialogComponent {
   constructor(
     private store: Store<interfaces.AppState>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<PdtSqlDialogComponent>
+    public dialogRef: MatDialogRef<SqlDialogComponent>
   ) {}
 
   async onEditorInit(editor: monaco.editor.IEditor) {

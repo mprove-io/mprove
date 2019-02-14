@@ -37,7 +37,6 @@ import { VisualModule } from '@app/modules/visual.module';
     components.MconfigComponent,
     components.QueryComponent,
     components.SqlComponent,
-    components.SqlPartComponent,
     components.DataComponent,
     components.DragTableComponent,
     components.ChartComponent,

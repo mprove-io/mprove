@@ -10,7 +10,7 @@ export class MyDialogService {
   bqDialogRef: MatDialogRef<dialogs.BqDialogComponent>;
   reqDimAddedDialogRef: MatDialogRef<dialogs.ReqDimAddedDialogComponent>;
   depCalcRemovedDialogRef: MatDialogRef<dialogs.DepCalcRemovedDialogComponent>;
-  pdtSqlDialogRef: MatDialogRef<dialogs.PdtSqlDialogComponent>;
+  pdtSqlDialogRef: MatDialogRef<dialogs.SqlDialogComponent>;
   newProjectDialogRef: MatDialogRef<dialogs.NewProjectDialogComponent>;
   resetPasswordDialogRef: MatDialogRef<dialogs.ResetPasswordDialogComponent>;
   cancelSubscriptionDialogRef: MatDialogRef<
@@ -73,12 +73,12 @@ export class MyDialogService {
     });
   }
 
-  showPdtSqlDialog(item: { pdt_id: string; sql: string }) {
-    this.pdtSqlDialogRef = this.dialog.open(dialogs.PdtSqlDialogComponent, {
+  showSqlDialog(item: { name: string; sql: string }) {
+    this.pdtSqlDialogRef = this.dialog.open(dialogs.SqlDialogComponent, {
       disableClose: false,
       autoFocus: false,
       data: {
-        pdt_id: item.pdt_id,
+        name: item.name,
         sql: item.sql
       }
     });

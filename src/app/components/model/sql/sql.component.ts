@@ -3,7 +3,9 @@ import { Store } from '@ngrx/store';
 import { filter, tap } from 'rxjs/operators';
 import * as api from '@app/api/_index';
 import * as interfaces from '@app/interfaces/_index';
+import * as services from '@app/services/_index';
 import * as selectors from '@app/store-selectors/_index';
+import { ITdDataTableColumn } from '@covalent/core';
 
 @Component({
   moduleId: module.id,
@@ -15,6 +17,8 @@ export class SqlComponent {
   sqlEditorTheme: string = 'sqlserver';
 
   query: interfaces.SqlPart;
+
+  partsWithQuery;
 
   query$ = this.store.select(selectors.getSelectedQuery).pipe(
     filter(v => !!v),
@@ -28,17 +32,19 @@ export class SqlComponent {
       }
 
       this.query = {
-        name: 'Query',
+        part: 'Query',
         sql: sqlText
       };
+
+      this.partsWithQuery = [...this.parts, this.query];
     })
   );
 
-  parts: interfaces.PdtPart[] = [];
+  parts: interfaces.SqlPart[] = [];
   parts$ = this.store.select(selectors.getSelectedQueryPdtsAllOrdered).pipe(
     filter(v => !!v),
     tap(queriesPdt => {
-      let parts: interfaces.PdtPart[] = [];
+      let parts: interfaces.SqlPart[] = [];
 
       queriesPdt.forEach(x => {
         let sqlText: string = '';
@@ -48,12 +54,14 @@ export class SqlComponent {
         );
 
         parts.push({
-          name: `PDT ${x.pdt_id}`,
+          part: `PDT ${x.pdt_id}`,
           sql: sqlText
         });
       });
 
       this.parts = parts;
+
+      this.partsWithQuery = [...this.parts, this.query];
     })
   );
 
@@ -67,5 +75,24 @@ export class SqlComponent {
       })
     );
 
-  constructor(private store: Store<interfaces.AppState>) {}
+  columns: ITdDataTableColumn[] = [
+    { name: 'part', label: 'part', width: 150 },
+    { name: 'show_sql', label: 'SQL', width: 150 }
+  ];
+
+  constructor(
+    private store: Store<interfaces.AppState>,
+    private myDialogService: services.MyDialogService
+  ) {}
+
+  showSql(row: { part: string; sql: string }) {
+    // let sqlText = '';
+
+    // row.sql.forEach(sqlLine => (sqlText = sqlText.concat(...[sqlLine, '\n'])));
+
+    this.myDialogService.showSqlDialog({
+      name: row.part,
+      sql: row.sql
+    });
+  }
 }

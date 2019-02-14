@@ -1,7 +1,21 @@
 .sql {
   overflow: auto;
+}
 
-  &__empty-title {
-    text-align: center;
+/deep/ .sql-table {
+  overflow-x: scroll;
+  // min-width: 1023px;
+  .td-data-table-scrollable {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    word-break: break-all;
+  }
+  .td-data-table-cell-content-wrapper {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  .td-data-table-heading {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
   }
 }

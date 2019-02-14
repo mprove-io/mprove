@@ -1,29 +1,31 @@
 <div class="sql" fxLayout="column" fxFlexFill>
-  <h3 *ngIf="mconfigSelectFields.length === 0" class="sql__empty-title"
-    >Select some fields...</h3
+  <div
+    fxFlex
+    *ngIf="mconfigSelectFields.length === 0"
+    class="sql__empty-title"
+    fxLayoutAlign="center center"
   >
+    <h3>Select some fields...</h3>
+  </div>
 
-  <mat-accordion *ngIf="mconfigSelectFields.length !== 0" displayMode="flat">
-    <mat-expansion-panel *ngFor="let part of parts">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <span>{{ part.name }}</span>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <m-sql-part [text]="part.sql"></m-sql-part>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel *ngIf="query" expanded="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <span>{{ query.name }}</span>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <m-sql-part [text]="query.sql"></m-sql-part>
-    </mat-expansion-panel>
-  </mat-accordion>
+  <div *ngIf="mconfigSelectFields.length !== 0" class="sql-table">
+    <td-data-table
+      [data]="partsWithQuery"
+      [columns]="columns"
+      class="table--sql"
+    >
+      <ng-template
+        tdDataTableTemplate="show_sql"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <button mat-raised-button (click)="showSql(row)" data-cy="showSql"
+          >SQL</button
+        >
+      </ng-template>
+    </td-data-table>
+  </div>
 </div>
 
 <div *ngIf="(mconfigSelectFields$ | async)"></div>

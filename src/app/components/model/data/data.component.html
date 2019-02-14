@@ -1,20 +1,32 @@
 <div fxLayout="column" fxFlexFill class="query-data">
-  <div class="query-data__table">
+  <div
+    fxFlex
+    *ngIf="mconfigSelectFields.length === 0"
+    class="query-data__empty-title"
+    fxLayoutAlign="center center"
+  >
+    <h3>Select some fields...</h3>
+  </div>
+
+  <div class="query-data__table" *ngIf="mconfigSelectFields.length !== 0">
     <m-drag-table
       [columns]="mconfigSelectFields"
       [filteredData]="filteredData"
       (sort)="sort($event)"
       class="m-drag-table"
     ></m-drag-table>
-    <h3 *ngIf="mconfigSelectFields.length === 0" class="query-data__empty-title"
-      >Select some fields...</h3
-    >
+  </div>
 
-    <h3
-      *ngIf="emptyData && mconfigSelectFields.length > 0"
-      class="query-data__empty-title"
-      >Run query to get data...</h3
-    >
+  <div
+    fxFlex
+    fxLayoutAlign="center center"
+    *ngIf="
+      mconfigSelectFields.length !== 0 &&
+      emptyData &&
+      mconfigSelectFields.length > 0
+    "
+  >
+    <h3 class="query-data__empty-title">Run query to get data...</h3>
   </div>
 
   <div fxLayout="row" class="table-row-col">
@@ -36,7 +48,6 @@
       </mat-form-field>
     </form>
   </div>
-  <div fxFlex></div>
 </div>
 
 <div *ngIf="(mconfigSelectFields$ | async)"></div>

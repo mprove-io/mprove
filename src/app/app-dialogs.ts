@@ -6,7 +6,7 @@ export const APP_DIALOGS = [
   dialogs.BqDialogComponent,
   dialogs.ReqDimAddedDialogComponent,
   dialogs.DepCalcRemovedDialogComponent,
-  dialogs.PdtSqlDialogComponent,
+  dialogs.SqlDialogComponent,
   dialogs.NewProjectDialogComponent,
   dialogs.ResetPasswordDialogComponent,
   dialogs.CancelSubscriptionDialogComponent,

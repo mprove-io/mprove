@@ -1,4 +1,4 @@
 export interface SqlPart {
-  name: string;
+  part: string;
   sql: string;
 }
