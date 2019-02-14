@@ -133,18 +133,20 @@
 
     <mat-sidenav-content>
       <div fxLayout="row" class="blockml-sidenav-content">
-        <m-catalog-tree
+        <div
           fxFlex="20%"
+          fxLayout="column"
           fxHide.lt-md
           class="space_border_right"
-        ></m-catalog-tree>
+        >
+          <m-catalog-tree fxFlex></m-catalog-tree>
+        </div>
 
         <div fxFlex class="blockml-sidenav-content-center">
           <div
             *ngIf="
               (fileIsNotSelected$ | async) && !(remotePageIsActive$ | async)
             "
-            fxFlex
             fxLayoutAlign="center center"
             class="m-body"
           >
@@ -153,11 +155,17 @@
           <router-outlet></router-outlet>
         </div>
 
-        <m-errors
-          fxFlex="20%"
-          *ngIf="(errorsExist$ | async) && !(repoIsNeedResolve$ | async)"
-          class="space_border_left"
-        ></m-errors>
+        <div fxFlex="20%" fxLayout="column" class="space_border_left">
+          <m-errors
+            fxFlex
+            *ngIf="(errorsExist$ | async) && !(repoIsNeedResolve$ | async)"
+          ></m-errors>
+
+          <m-hint
+            fxFlex
+            *ngIf="!(errorsExist$ | async) || (repoIsNeedResolve$ | async)"
+          ></m-hint>
+        </div>
       </div>
     </mat-sidenav-content>
 

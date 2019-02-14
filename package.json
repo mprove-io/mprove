@@ -73,7 +73,7 @@
     "zone.js": "^0.8.26",
 
     "@swimlane/ngx-charts": "10.0.0",
-    "@angular/flex-layout": "7.0.0-beta.22",
+    "@angular/flex-layout": "7.0.0-beta.23",
     "@auth0/angular-jwt": "2.1.0",
     "@covalent/code-editor": "2.0.3",
     "@covalent/core": "2.0.0",
