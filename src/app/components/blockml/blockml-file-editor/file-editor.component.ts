@@ -146,7 +146,6 @@ export class FileEditorComponent implements OnDestroy {
 
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;
-    this.editor.layout();
 
     let modeIsDev: boolean;
     this.store

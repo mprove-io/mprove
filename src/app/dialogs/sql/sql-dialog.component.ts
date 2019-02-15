@@ -24,7 +24,7 @@ export class SqlDialogComponent {
     language: 'sql'
   };
 
-  codeEditor: monaco.editor.IEditor = null;
+  editor: monaco.editor.IStandaloneCodeEditor = null;
 
   sqlEditorTheme$ = this.store.select(selectors.getUserSqlTheme).pipe(
     filter(v => !!v),
@@ -32,7 +32,7 @@ export class SqlDialogComponent {
     tap(x => {
       this.sqlEditorTheme = x === api.UserSqlThemeEnum.Light ? 'vs' : 'vs-dark';
 
-      if (this.codeEditor) {
+      if (this.editor) {
         monaco.editor.setTheme(this.sqlEditorTheme);
       }
     })
@@ -44,8 +44,8 @@ export class SqlDialogComponent {
     public dialogRef: MatDialogRef<SqlDialogComponent>
   ) {}
 
-  async onEditorInit(editor: monaco.editor.IEditor) {
-    this.codeEditor = editor;
+  async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+    this.editor = editor;
     monaco.editor.setTheme(this.sqlEditorTheme);
   }
 }

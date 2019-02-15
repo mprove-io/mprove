@@ -24,7 +24,7 @@ export class GenerateBlockmlDialogComponent implements OnInit {
     language: 'yaml'
   };
 
-  codeEditor: monaco.editor.IEditor = null;
+  editor: monaco.editor.IStandaloneCodeEditor = null;
 
   reportYaml: string;
 
@@ -35,7 +35,7 @@ export class GenerateBlockmlDialogComponent implements OnInit {
       this.fileEditorTheme =
         x === api.UserFileThemeEnum.Light ? 'vs' : 'vs-dark';
 
-      if (this.codeEditor) {
+      if (this.editor) {
         monaco.editor.setTheme(this.fileEditorTheme);
       }
     })
@@ -63,8 +63,8 @@ export class GenerateBlockmlDialogComponent implements OnInit {
       .join('\n');
   }
 
-  async onEditorInit(editor: monaco.editor.IEditor) {
-    this.codeEditor = editor;
+  async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+    this.editor = editor;
     monaco.editor.setTheme(this.fileEditorTheme);
   }
 

@@ -3,17 +3,14 @@
     <a>{{ data.name }}</a>
   </mat-toolbar>
 
-  <!--
-    <td-code-editor
-      *ngIf="sqlEditorTheme"
-      automaticLayout="automaticLayout"
-      class="sql__code-editor"
-      data-cy="sqlCodeEditor"
-      [editorOptions]="editorOptions"
-      [value]="data.sql"
-      (editorInitialized)="onEditorInit($event)"
-    ></td-code-editor>
-  -->
+  <ngx-monaco-editor
+    *ngIf="sqlEditorTheme"
+    class="sql__code-editor"
+    data-cy="sqlCodeEditor"
+    [options]="editorOptions"
+    [(ngModel)]="data.sql"
+    (onInit)="onEditorInit($event)"
+  ></ngx-monaco-editor>
 </div>
 
 <div *ngIf="(sqlEditorTheme$ | async)"></div>

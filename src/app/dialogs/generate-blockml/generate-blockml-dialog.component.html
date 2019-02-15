@@ -13,16 +13,14 @@
     </button>
   </mat-toolbar>
 
-  <!--
-    <td-code-editor
-      *ngIf="fileEditorTheme"
-      class="generate-blockml__code-editor"
-      data-cy="generateBlockmlCodeEditor"
-      [editorOptions]="editorOptions"
-      [value]="reportYaml"
-      (editorInitialized)="onEditorInit($event)"
-    ></td-code-editor>
-  -->
+  <ngx-monaco-editor
+    *ngIf="fileEditorTheme"
+    class="generate-blockml__code-editor"
+    data-cy="generateBlockmlCodeEditor"
+    [options]="editorOptions"
+    [(ngModel)]="reportYaml"
+    (onInit)="onEditorInit($event)"
+  ></ngx-monaco-editor>
 </div>
 
 <div *ngIf="(fileEditorTheme$ | async)"></div>
