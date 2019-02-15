@@ -27,7 +27,7 @@
           fxLayoutGap="20px"
           fxLayoutAlign="start center"
           *ngFor="
-            let fraction of getOrAndFractions(filter);
+            let fraction of filter.fractions;
             let isFirst = first;
             let fractionIndex = index
           "
@@ -49,9 +49,7 @@
             <mat-icon>close</mat-icon>
           </button>
 
-          <span
-            *ngIf="fractionHasDuplicates(filter, fraction)"
-            class="model-filters__error"
+          <span *ngIf="fraction.has_duplicates" class="model-filters__error"
             >duplicate filter</span
           >
         </div>

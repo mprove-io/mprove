@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, tap } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
@@ -26,26 +26,19 @@ export class ModelFiltersComponent {
   filters: api.Filter[] = [];
   filters$ = this.store.select(selectors.getSelectedMconfigFilters).pipe(
     filter(v => !!v),
-    tap(x => (this.filters = JSON.parse(JSON.stringify(x))))
+    tap(x => {
+      this.filters = JSON.parse(JSON.stringify(x));
+      this.cdRef.detectChanges();
+    })
   );
 
   constructor(
     private store: Store<interfaces.AppState>,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
     private structService: services.StructService,
+    private cdRef: ChangeDetectorRef,
     private navigateService: services.NavigateService
   ) {}
-
-  getOrAndFractions(filt: api.Filter): api.Fraction[] {
-    return [
-      ...filt.fractions.filter(
-        fraction => fraction.operator === api.FractionOperatorEnum.Or
-      ),
-      ...filt.fractions.filter(
-        fraction => fraction.operator === api.FractionOperatorEnum.And
-      )
-    ];
-  }
 
   getFieldTopLabel(fieldId: string) {
     let fieldIndex = this.fields.findIndex(field => field.id === fieldId);
@@ -78,7 +71,7 @@ export class ModelFiltersComponent {
       ];
     } else {
       // should remove fraction
-      let fractions = this.getOrAndFractions(filt);
+      let fractions = filt.fractions;
 
       let newFractions = [
         ...fractions.slice(0, fractionIndex),
@@ -118,7 +111,7 @@ export class ModelFiltersComponent {
   addFraction(filt: api.Filter, filterIndex: number) {
     let [newMconfig, newQuery] = this.structService.generateMconfigAndQuery();
 
-    let fractions = this.getOrAndFractions(filt);
+    let fractions = filt.fractions;
 
     let fraction = this.structService.generateEmptyFraction();
 
@@ -160,7 +153,7 @@ export class ModelFiltersComponent {
   ) {
     let [newMconfig, newQuery] = this.structService.generateMconfigAndQuery();
 
-    let fractions = this.getOrAndFractions(filt);
+    let fractions = filt.fractions;
 
     let newFractions = [
       ...fractions.slice(0, event.fractionIndex),
@@ -195,15 +188,5 @@ export class ModelFiltersComponent {
         ),
       1
     );
-  }
-
-  fractionHasDuplicates(filt: api.Filter, fraction: api.Fraction) {
-    let hasDuplicates = false;
-
-    if (filt.fractions.filter(x => x.brick === fraction.brick).length > 1) {
-      hasDuplicates = true;
-    }
-
-    return hasDuplicates;
   }
 }

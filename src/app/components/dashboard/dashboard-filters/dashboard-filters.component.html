@@ -23,7 +23,7 @@
     fxLayoutGap="20px"
     fxLayoutAlign="start center"
     *ngFor="
-      let fraction of getOrAndFractions(dashboardField);
+      let fraction of dashboardField.fractions;
       let isFirst = first;
       let fractionIndex = index
     "
@@ -40,7 +40,7 @@
     </m-fraction>
 
     <button
-      *ngIf="getOrAndFractions(dashboardField).length > 1"
+      *ngIf="dashboardField.fractions.length > 1"
       mat-icon-button
       color="warn"
       (click)="
@@ -50,9 +50,7 @@
       <mat-icon>close</mat-icon>
     </button>
 
-    <span
-      *ngIf="fractionHasDuplicates(dashboardField, fraction)"
-      class="dashboard-filters__error"
+    <span *ngIf="fraction.has_duplicates" class="dashboard-filters__error"
       >duplicate filter</span
     >
   </div>

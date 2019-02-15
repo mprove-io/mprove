@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, map, take, tap } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
@@ -24,25 +24,18 @@ export class DashboardFiltersComponent {
     .select(selectors.getSelectedProjectModeRepoDashboardFields)
     .pipe(
       filter(v => !!v),
-      tap(x => (this.dashboardFields = JSON.parse(JSON.stringify(x))))
+      tap(x => {
+        this.dashboardFields = JSON.parse(JSON.stringify(x));
+        this.cdRef.detectChanges();
+      })
     );
 
   constructor(
     private store: Store<interfaces.AppState>,
+    private cdRef: ChangeDetectorRef,
     private structService: services.StructService,
     private navigateService: services.NavigateService
   ) {}
-
-  getOrAndFractions(dashboardField: api.DashboardField): api.Fraction[] {
-    return [
-      ...dashboardField.fractions.filter(
-        fraction => fraction.operator === api.FractionOperatorEnum.Or
-      ),
-      ...dashboardField.fractions.filter(
-        fraction => fraction.operator === api.FractionOperatorEnum.And
-      )
-    ];
-  }
 
   deleteFraction(
     dashboardField: api.DashboardField,
@@ -53,7 +46,7 @@ export class DashboardFiltersComponent {
       // do nothing
     } else {
       // should remove fraction
-      let fractions = this.getOrAndFractions(dashboardField);
+      let fractions = dashboardField.fractions;
 
       let newFractions = [
         ...fractions.slice(0, fractionIndex),
@@ -78,7 +71,7 @@ export class DashboardFiltersComponent {
   }
 
   addFraction(dashboardField: api.DashboardField, dashboardFieldIndex: number) {
-    let fractions = this.getOrAndFractions(dashboardField);
+    let fractions = dashboardField.fractions;
 
     let fraction = this.structService.generateEmptyFraction();
 
@@ -105,7 +98,7 @@ export class DashboardFiltersComponent {
     dashboardFieldIndex: number,
     event: interfaces.FractionUpdate
   ) {
-    let fractions = this.getOrAndFractions(dashboardField);
+    let fractions = dashboardField.fractions;
 
     let newFractions = [
       ...fractions.slice(0, event.fractionIndex),
@@ -127,22 +120,6 @@ export class DashboardFiltersComponent {
 
     this.createDashboard(newDashboardId, newDashboardFields);
     this.navigateNewDashboardId(newDashboardId);
-  }
-
-  fractionHasDuplicates(
-    dashboardField: api.DashboardField,
-    fraction: api.Fraction
-  ) {
-    let hasDuplicates = false;
-
-    if (
-      dashboardField.fractions.filter(x => x.brick === fraction.brick).length >
-      1
-    ) {
-      hasDuplicates = true;
-    }
-
-    return hasDuplicates;
   }
 
   createDashboard(
