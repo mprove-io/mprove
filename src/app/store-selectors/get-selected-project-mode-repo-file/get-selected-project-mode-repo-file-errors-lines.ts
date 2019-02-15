@@ -10,15 +10,20 @@ export const getSelectedProjectModeRepoFileErrorsLines = createSelector(
   getSelectedProjectModeRepoFileId,
   (repoErrors: api.SwError[], fileId: string) => {
     if (repoErrors && fileId) {
-      let fileLines: number[] = [];
+      let fileLines: Array<{ line_num: number; info: string }> = [];
       repoErrors.forEach((error: api.SwError) =>
         error.lines
           .filter(l => l.file_id === fileId)
           .forEach(line => {
             if (
-              fileLines.findIndex(element => element === line.line_number) < 0
+              fileLines.findIndex(
+                element => element.line_num === line.line_number
+              ) < 0
             ) {
-              fileLines.push(line.line_number);
+              fileLines.push({
+                line_num: line.line_number,
+                info: `${error.type}: \n${error.message}`
+              });
             }
           })
       );

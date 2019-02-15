@@ -1,24 +1,12 @@
-:host {
-  /deep/ {
-    .myMarker {
-      position: absolute;
-      background: rgba(200, 44, 44, 0.5);
-      z-index: 20;
-    }
+.file-editor {
+  &__code-editor {
+    overflow: hidden;
+  }
+  &__cancel {
+    margin-right: 10px;
   }
 
-  .file-editor {
-    &__code-editor {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-    }
-    &__cancel {
-      margin-right: 10px;
-    }
-
-    &__action {
-      margin-right: 10px;
-    }
+  &__action {
+    margin-right: 10px;
   }
 }

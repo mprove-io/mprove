@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import * as pipes from '@app/pipes/_index';
 import * as directives from '@app/directives/_index';
+import { MonacoEditorModule } from 'ngx-monaco-editor';
 
 const pipesArray = [
   pipes.CapitalizePipe,
@@ -16,9 +17,9 @@ const directivesArray = [
 ];
 
 @NgModule({
-  imports: [],
+  imports: [MonacoEditorModule.forRoot()],
   declarations: [...pipesArray, ...directivesArray],
-  exports: [...pipesArray, ...directivesArray],
+  exports: [...pipesArray, ...directivesArray, MonacoEditorModule],
   providers: pipesArray
 })
 export class SharedModule {}

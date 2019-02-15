@@ -49,15 +49,16 @@
     </button>
   </mat-toolbar>
 
-  <td-code-editor
+  <ngx-monaco-editor
+    fxFlex
     *ngIf="fileEditorTheme"
     class="file-editor__code-editor"
     data-cy="blockmlFileEditorCodeEditor"
-    [editorOptions]="editorOptions"
-    [(ngModel)]="newText"
-    (change)="onTextChanged()"
-    (editorInitialized)="onEditorInit($event)"
-  ></td-code-editor>
+    [options]="editorOptions"
+    [(ngModel)]="code"
+    (ngModelChange)="onTextChanged()"
+    (onInit)="onEditorInit($event)"
+  ></ngx-monaco-editor>
 </div>
 
 <mat-menu #fileViewJoinsMenu="matMenu">

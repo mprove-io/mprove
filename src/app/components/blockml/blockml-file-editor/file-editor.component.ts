@@ -1,7 +1,7 @@
 // tslint:disable-next-line:no-reference
-/// <reference path="../../../../../node_modules/monaco-editor/monaco.d.ts" />
+/// <reference path="../../../../../node_modules/ngx-monaco-editor/monaco.d.ts" />
 
-import { AfterViewInit, Component, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { filter, take, tap, map } from 'rxjs/operators';
@@ -18,24 +18,23 @@ import * as services from '@app/services/_index';
   templateUrl: 'file-editor.component.html',
   styleUrls: ['file-editor.component.scss']
 })
-export class FileEditorComponent implements AfterViewInit, OnDestroy {
-  // automaticLayout: boolean = true;
-
+export class FileEditorComponent implements OnDestroy {
   fileEditorTheme: string = null;
 
   editorOptions = {
+    // automaticLayout: true,
     theme: this.fileEditorTheme,
     fontSize: 16,
     language: 'yaml'
   };
 
-  codeEditor: monaco.editor.IEditor = null;
+  editor: monaco.editor.IStandaloneCodeEditor = null;
 
   text: string = '';
-  newText: string = '';
+  code: string = '';
   specialText: string = '';
 
-  errorsLines: number[] = [];
+  errorsLines: Array<{ line_num: number; info: string }> = [];
   conflictsLines: number[] = [];
 
   isDev$ = this.store.select(selectors.getLayoutModeIsDev); // no filter here
@@ -52,7 +51,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
         this.specialText = x;
 
         if (this.needSave === false) {
-          this.newText = x;
+          this.code = x;
           this.text = x;
         }
       }) // no filter here
@@ -68,8 +67,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
       filter(v => !!v),
       tap(x => {
         this.errorsLines = x;
-        // this.removeMarkers();
-        // this.addMarkers();
+        this.refreshMarkers();
       })
     );
 
@@ -79,8 +77,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
       filter(v => !!v),
       tap(x => {
         this.conflictsLines = x;
-        // this.removeMarkers();
-        // this.addMarkers();
+        this.refreshMarkers();
       })
     );
 
@@ -90,7 +87,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
       this.fileEditorTheme =
         x === api.UserFileThemeEnum.Light ? 'vs' : 'vs-dark';
 
-      if (this.codeEditor) {
+      if (this.editor) {
         monaco.editor.setTheme(this.fileEditorTheme);
       }
     })
@@ -101,21 +98,14 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   routeLine$ = this.route.queryParams.pipe(
     tap(params => {
       this.line = Number(params['line'] ? params['line'] : 1);
-
-      setTimeout(() => {
-        // this.editor.getEditor().gotoLine(this.line);
-        // this.editor.getEditor().navigateLineEnd();
-      }, 1);
+      this.moveToLine();
     })
   );
 
   fileId$ = this.store.select(selectors.getSelectedProjectModeRepoFileId).pipe(
     filter(v => !!v),
     tap((fileId: string) => {
-      setTimeout(() => {
-        // this.editor.getEditor().gotoLine(this.line);
-        // this.editor.getEditor().navigateLineEnd();
-      }, 1);
+      this.moveToLine();
     })
   );
   fileIsView$ = this.store.select(
@@ -154,8 +144,9 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
     private route: ActivatedRoute
   ) {}
 
-  async onEditorInit(editor: monaco.editor.IEditor) {
-    this.codeEditor = editor;
+  async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+    this.editor = editor;
+    this.editor.layout();
 
     let modeIsDev: boolean;
     this.store
@@ -165,14 +156,10 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
 
     monaco.editor.setTheme(this.fileEditorTheme);
 
-    editor.updateOptions({
+    this.editor.updateOptions({
       readOnly: !modeIsDev
     });
-  }
-
-  ngAfterViewInit() {
-    //   highlightActiveLine: modeIsDev,
-    //   highlightGutterLine: modeIsDev
+    this.refreshMarkers();
   }
 
   canDeactivate(): Promise<boolean> | boolean {
@@ -207,6 +194,15 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
     this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
   }
 
+  async moveToLine() {
+    setTimeout(() => {
+      if (this.editor) {
+        this.editor.revealLineInCenter(this.line);
+        this.editor.setPosition({ column: 1, lineNumber: this.line });
+      }
+    }, 50);
+  }
+
   goToFileModel(): void {
     this.store
       .select(selectors.getSelectedProjectModeRepoFile)
@@ -234,70 +230,80 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
   }
 
   removeMarkers() {
-    // let frontMarkers = this.editor.getEditor().session.getMarkers(true); // returns Object, not Array (wrong docs!)
-    // for (let id in frontMarkers) {
-    //   if (
-    //     frontMarkers.hasOwnProperty(id) &&
-    //     frontMarkers[id].clazz === 'myMarker'
-    //   ) {
-    //     this.editor.getEditor().session.removeMarker(frontMarkers[id].id);
-    //   }
-    // }
+    if (!this.editor || !this.editor.getModel()) {
+      return;
+    }
+    monaco.editor.setModelMarkers(this.editor.getModel(), 'Conflicts', []);
+    monaco.editor.setModelMarkers(this.editor.getModel(), 'BlockML', []);
   }
 
-  addMarkers() {
-    // let repoIsNeedResolve: boolean;
-    // this.store
-    //   .select(selectors.getSelectedProjectModeRepoIsNeedResolve)
-    //   .pipe(take(1))
-    //   .subscribe(x => (repoIsNeedResolve = x));
-    // let Range = require('brace').acequire('ace/range').Range;
-    // if (repoIsNeedResolve) {
-    //   // conflicts markers
-    //   this.conflictsLines.forEach(cLine => {
-    //     if (cLine !== 0) {
-    //       this.editor
-    //         .getEditor()
-    //         .session.addMarker(
-    //           new Range(cLine - 1, 0, cLine - 1, 1),
-    //           'myMarker',
-    //           'fullLine',
-    //           true
-    //         );
-    //     }
-    //   });
-    // } else {
-    //   // errors markers
-    //   this.errorsLines.forEach(eLine => {
-    //     if (eLine !== 0) {
-    //       this.editor
-    //         .getEditor()
-    //         .session.addMarker(
-    //           new Range(eLine - 1, 0, eLine - 1, 1),
-    //           'myMarker',
-    //           'fullLine',
-    //           true
-    //         );
-    //     }
-    //   });
-    // }
+  refreshMarkers() {
+    if (!this.editor || !this.editor.getModel()) {
+      return;
+    }
+
+    let repoIsNeedResolve: boolean;
+    this.store
+      .select(selectors.getSelectedProjectModeRepoIsNeedResolve)
+      .pipe(take(1))
+      .subscribe(x => (repoIsNeedResolve = x));
+
+    if (repoIsNeedResolve) {
+      let conflictMarkers: monaco.editor.IMarkerData[] = [];
+
+      this.conflictsLines.forEach(cLine => {
+        if (cLine !== 0) {
+          conflictMarkers.push({
+            startLineNumber: cLine,
+            endLineNumber: cLine,
+            startColumn: 1,
+            endColumn: 99,
+            message: `conflict`,
+            severity: monaco.MarkerSeverity.Error
+          });
+        }
+      });
+
+      monaco.editor.setModelMarkers(
+        this.editor.getModel(),
+        'Conflicts',
+        conflictMarkers
+      );
+    } else {
+      let errorMarkers: monaco.editor.IMarkerData[] = [];
+      this.errorsLines.forEach(eLine => {
+        if (eLine.line_num !== 0) {
+          errorMarkers.push({
+            startLineNumber: eLine.line_num,
+            endLineNumber: eLine.line_num,
+            startColumn: 1,
+            endColumn: 99,
+            message: eLine.info,
+            severity: monaco.MarkerSeverity.Error
+          });
+        }
+      });
+
+      monaco.editor.setModelMarkers(
+        this.editor.getModel(),
+        'BlockML',
+        errorMarkers
+      );
+    }
   }
 
   onTextChanged() {
-    // console.log('getValue', monaco.editor.getModels()[0].getValue());
-
-    if (!this.needSave && this.newText !== this.text) {
-      // this.removeMarkers();
+    this.removeMarkers();
+    if (!this.needSave && this.code !== this.text) {
       this.store.dispatch(new actions.SetLayoutNeedSaveTrueAction());
     } else {
-      // this.removeMarkers();
-      // this.addMarkers();
+      this.refreshMarkers();
     }
   }
 
   onCancel() {
     this.text = this.specialText;
-    this.newText = this.text;
+    this.code = this.text;
     this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
   }
 
@@ -314,7 +320,7 @@ export class FileEditorComponent implements AfterViewInit, OnDestroy {
         repo_id: selectedFile.repo_id,
         file_id: selectedFile.file_id,
         server_ts: selectedFile.server_ts,
-        content: this.newText
+        content: this.code
       })
     );
   }
