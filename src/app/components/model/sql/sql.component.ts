@@ -86,10 +86,6 @@ export class SqlComponent {
   ) {}
 
   showSql(row: { part: string; sql: string }) {
-    // let sqlText = '';
-
-    // row.sql.forEach(sqlLine => (sqlText = sqlText.concat(...[sqlLine, '\n'])));
-
     this.myDialogService.showSqlDialog({
       name: row.part,
       sql: row.sql
