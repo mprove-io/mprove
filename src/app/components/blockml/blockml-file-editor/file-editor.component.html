@@ -32,7 +32,11 @@
     <span class="example-fill-remaining-space"></span>
 
     <div fxLayout="row" *ngIf="(isDev$ | async) && needSave">
-      <button mat-raised-button class="file-editor__cancel" (click)="onCancel()"
+      <button
+        mat-raised-button
+        data-cy="blockmlFileEditorCancelButton"
+        class="file-editor__cancel"
+        (click)="onCancel()"
         >Cancel</button
       >
     </div>

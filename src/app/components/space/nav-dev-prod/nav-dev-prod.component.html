@@ -3,6 +3,7 @@
   <div class="can-toggle" data-cy="spaceModeToggle">
     <input
       id="spaceModeToggleInput"
+      data-cy="spaceModeToggleInput"
       type="checkbox"
       [disabled]="
         !(selectedProjectUserIsEditor$ | async) || (needSave$ | async)
@@ -27,6 +28,7 @@
           <div class="can-toggle" data-cy="spaceModeToggleMobile">
             <input
               id="spaceModeToggleInputMobile"
+              data-cy="spaceModeToggleInputMobile"
               type="checkbox"
               [disabled]="
                 !(selectedProjectUserIsEditor$ | async) || (needSave$ | async)
