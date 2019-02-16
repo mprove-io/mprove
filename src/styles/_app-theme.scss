@@ -2,6 +2,7 @@
 
 /* add components themes*/
 @import '../app/components/blockml/blockml-catalog-tree/_catalog-tree-theme';
+@import '../app/components/blockml/blockml-conflicts/_conflicts-theme';
 @import '../app/components/blockml/blockml-errors/_errors-theme';
 @import '../app/components/blockml/blockml-hint/_hint-theme';
 @import '../app/components/blockml/blockml-file-editor/_file-editor-theme';
@@ -60,6 +61,7 @@
   @include catalog-tree-theme($theme);
   @include repo-theme($theme);
   @include model-theme($theme);
+  @include conflicts-theme($theme);
   @include errors-theme($theme);
   @include hint-theme($theme);
   @include model-tree-theme($theme);

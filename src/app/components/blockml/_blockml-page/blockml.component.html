@@ -21,24 +21,6 @@
 
     <span class="example-fill-remaining-space"></span>
 
-    <div
-      fxHide.lt-md
-      fxLayout="row"
-      *ngIf="(isDev$ | async) && (repoIsNeedResolve$ | async)"
-    >
-      <button
-        mat-raised-button
-        color="accent"
-        data-cy="blockmlConflictsButton"
-        [matMenuTriggerFor]="conflictsMenu"
-      >
-        <div fxLayout="row" fxLayoutAlign="start center">
-          <div>Conflicts {{ ' (' + (conflictsLength$ | async) + ')' }}</div>
-          <mat-icon>expand_more</mat-icon>
-        </div>
-      </button>
-    </div>
-
     <div fxHide.lt-md fxLayout="row" *ngIf="(isDev$ | async)">
       <button
         mat-raised-button
@@ -156,6 +138,11 @@
         </div>
 
         <div fxFlex="20%" fxLayout="column" class="space_border_left">
+          <m-conflicts
+            fxFlex
+            *ngIf="(repoIsNeedResolve$ | async)"
+          ></m-conflicts>
+
           <m-errors
             fxFlex
             *ngIf="(errorsExist$ | async) && !(repoIsNeedResolve$ | async)"
@@ -163,7 +150,7 @@
 
           <m-hint
             fxFlex
-            *ngIf="!(errorsExist$ | async) || (repoIsNeedResolve$ | async)"
+            *ngIf="!(errorsExist$ | async) && !(repoIsNeedResolve$ | async)"
           ></m-hint>
         </div>
       </div>
@@ -176,20 +163,6 @@
       class="mat-sidenav blockml-sidenav-right"
       disableClose
     >
-      <div *ngIf="(isDev$ | async) && (repoIsNeedResolve$ | async)">
-        <button
-          mat-raised-button
-          color="accent"
-          data-cy="blockmlConflictsButtonMobile"
-          [matMenuTriggerFor]="conflictsMenu"
-        >
-          <div fxLayout="row" fxLayoutAlign="start center">
-            <div>Conflicts {{ ' (' + (conflictsLength$ | async) + ')' }}</div>
-            <mat-icon>expand_more</mat-icon>
-          </div>
-        </button>
-      </div>
-
       <div *ngIf="(isDev$ | async)">
         <button
           mat-raised-button
@@ -257,25 +230,6 @@
     </mat-sidenav>
   </mat-sidenav-container>
 </div>
-
-<mat-menu #conflictsMenu="matMenu">
-  <button
-    mat-menu-item
-    *ngFor="let line of (conflicts$ | async)"
-    data-cy="blockmlConflictLine"
-    (click)="conflictLineClick(line)"
-    fxLayout="row"
-    fxLayoutAlign="start center"
-  >
-    <div>
-      <a> {{ line.line_number }} </a>
-    </div>
-
-    <div>
-      <a> {{ ' ' + line.file_name }} </a>
-    </div>
-  </button>
-</mat-menu>
 
 <mat-menu #repoMenu="matMenu">
   <button

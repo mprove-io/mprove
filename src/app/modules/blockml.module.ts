@@ -26,6 +26,7 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
     components.BlockMLComponent,
     components.CatalogTreeComponent,
     components.FileEditorComponent,
+    components.ConflictsComponent,
     components.ErrorsComponent,
     components.HintComponent
   ],
