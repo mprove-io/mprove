@@ -91,7 +91,7 @@ export async function cypressSeed(req: Request, res: Response) {
 
       if (x.has_credentials === true) {
         let credentialsString: string = JSON.stringify(
-          credentials.bigqueryMproveData
+          credentials.bigqueryMproveDemo
         );
 
         let fileAbsoluteId = `${

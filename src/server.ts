@@ -109,7 +109,7 @@ async function run() {
   await start
     .addProject({
       project_id: constants.DEMO_PROJECT,
-      bigquery_credentials: credentials.bigqueryMproveData,
+      bigquery_credentials: credentials.bigqueryMproveDemo,
       member_ids: adminMemberIds
     })
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
@@ -117,7 +117,7 @@ async function run() {
   await start
     .addProject({
       project_id: constants.PROJECT_WOOD,
-      bigquery_credentials: credentials.bigqueryMproveData,
+      bigquery_credentials: credentials.bigqueryMproveDemo,
       member_ids: adminMemberIds
     })
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
