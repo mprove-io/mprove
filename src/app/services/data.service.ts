@@ -283,7 +283,7 @@ export class DataService {
   private getDateFromHour(raw: any, fieldName: string) {
     let data = raw[fieldName];
 
-    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)$/g;
+    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)$/g;
 
     let [full, year, month, day, hour] = regEx.exec(data);
 
@@ -300,7 +300,7 @@ export class DataService {
   private getDateFromMinute(raw: any, fieldName: string) {
     let data = raw[fieldName];
 
-    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d).+$/g;
+    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)$/g;
 
     let [full, year, month, day, hour, minute] = regEx.exec(data);
 
@@ -361,11 +361,15 @@ export class DataService {
   private getDateFromWeek(raw: any, fieldName: string) {
     let data = raw[fieldName];
 
-    let regEx = /(\d\d\d\d)[-](\d\d)$/g;
+    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)$/g;
 
-    let [full, year, month] = regEx.exec(data);
+    let [full, year, month, day] = regEx.exec(data);
 
-    let date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
+    let date = new Date(
+      parseInt(year, 10),
+      parseInt(month, 10) - 1,
+      parseInt(day, 10)
+    );
 
     return date;
   }
