@@ -11,6 +11,7 @@
       <input
         matInput
         type="text"
+        data-cy="dialogRenameFolderNameInput"
         class="mp-full-width"
         id="nameInput"
         formControlName="name"
@@ -29,6 +30,7 @@
 
     <button
       type="submit"
+      data-cy="dialogRenameFolderSaveButton"
       color="primary"
       mat-raised-button
       [disabled]="!renameFolderForm.valid"
