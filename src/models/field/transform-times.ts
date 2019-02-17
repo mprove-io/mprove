@@ -167,12 +167,12 @@ timeframes:
 
             let fullWeekStartDate =
               item.weekStart === api.ProjectWeekStartEnum.Sunday
-                ? `CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE)`
-                : `DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE), INTERVAL 1 DAY)`;
+                ? `CAST(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE) AS STRING)`
+                : `CAST(DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE), INTERVAL 1 DAY) AS STRING)`;
 
             sqlTransformed = `CASE
       WHEN ${dayOfYear} >= ${dayOfWeekIndex} THEN ${fullWeekStartDate}
-      ELSE DATE_ADD(CAST(${sqlTimestamp} AS DATE), INTERVAL -${dayOfYear} + 1 DAY)
+      ELSE CAST(DATE_ADD(CAST(${sqlTimestamp} AS DATE), INTERVAL -${dayOfYear} + 1 DAY) AS STRING)
     END`;
 
             result = enums.FieldExtResultEnum.Ts;
@@ -204,7 +204,7 @@ timeframes:
             name = field.name + `___date`;
             label = `Date`;
 
-            sqlTransformed = `CAST(${sqlTimestamp} AS DATE)`;
+            sqlTransformed = `CAST(CAST(${sqlTimestamp} AS DATE) AS STRING)`;
 
             result = enums.FieldExtResultEnum.Ts;
             break;
