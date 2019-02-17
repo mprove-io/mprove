@@ -12,7 +12,7 @@
         matInput
         type="text"
         class="mp-full-width"
-        name="newFolderDialogName"
+        data-cy="dialogNewFolderNameInput"
         id="nameInput"
         formControlName="name"
         placeholder="Name"
@@ -31,7 +31,7 @@
     <button
       type="submit"
       color="primary"
-      name="newFolderDialogCreate"
+      data-cy="dialogNewFolderCreateButton"
       mat-raised-button
       [disabled]="!newFolderForm.valid"
       >Create

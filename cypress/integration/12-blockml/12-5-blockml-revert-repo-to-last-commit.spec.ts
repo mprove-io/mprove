@@ -7,7 +7,7 @@ const password = '123123';
 
 const projectId = 'project_12_5';
 
-describe('12-5 blockml-revert-to-last-commit (logged in)', () => {
+describe('12-5 blockml-revert-repo-to-last-commit (logged in)', () => {
   it(`should be able to revert to last commit`, () => {
     cy.deletePack({
       user_ids: [userId],

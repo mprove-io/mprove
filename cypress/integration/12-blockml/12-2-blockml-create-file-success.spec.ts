@@ -7,7 +7,7 @@ const password = '123123';
 
 const projectId = 'project_12_2';
 
-describe('12-2 blockml-data (logged in)', () => {
+describe('12-2 blockml-create-file-success (logged in)', () => {
   it(`should be able to create file`, () => {
     cy.deletePack({
       user_ids: [userId],
@@ -49,7 +49,15 @@ describe('12-2 blockml-data (logged in)', () => {
       .click();
     cy.get('[data-cy=blockmlTreeFolderOptionsNewFileButton]').click();
     cy.get('[data-cy=dialogNewFileNameInput]').type('sales.view');
-    cy.get('[data-cy=dialogNewFileDialogCreateButton]').click();
+    cy.get('[data-cy=dialogNewFileCreateButton]').click();
     cy.loading();
+    cy.contains('sales.view').should('exist');
+    cy.url().should('include', 'sales.view');
+    cy.get('[data-cy=blockmlFileEditorSaveButton]').should('be.disabled');
+    cy.get('[data-cy=blockmlHintTitle]').should('exist');
+    cy.get('[data-cy=blockmlCommitButton]').should('be.enabled');
+    cy.get('[data-cy=blockmlPullButton]').should('not.be.visible');
+    cy.get('[data-cy=blockmlPushToProductionButton]').should('be.disabled');
+    cy.get('[data-cy=blockmlOptionsButton]').should('be.enabled');
   });
 });

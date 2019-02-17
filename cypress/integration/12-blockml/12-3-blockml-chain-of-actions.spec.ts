@@ -8,7 +8,7 @@ const password = '123123';
 
 const projectId = 'project_12_3';
 
-describe('12-3 blockml-chain (logged in)', () => {
+describe('12-3 blockml-chain-of-actions (logged in)', () => {
   it(`should handle chain of actions`, () => {
     cy.deletePack({
       user_ids: [userId, secondUserId],
@@ -76,6 +76,7 @@ describe('12-3 blockml-chain (logged in)', () => {
     cy.get('[data-cy=blockmlPushToProductionButton]').should('be.disabled');
     cy.get('[data-cy=blockmlOptionsButton]').should('be.disabled');
 
+    // save
     cy.get('[data-cy=blockmlFileEditorSaveButton]').click();
     cy.loading();
 
@@ -90,6 +91,7 @@ describe('12-3 blockml-chain (logged in)', () => {
       .contains('123')
       .should('exist');
 
+    // commit
     cy.get('[data-cy=blockmlCommitButton]').click();
     cy.loading();
 
@@ -100,6 +102,7 @@ describe('12-3 blockml-chain (logged in)', () => {
     cy.get('[data-cy=blockmlPushToProductionButton]').should('be.enabled');
     cy.get('[data-cy=blockmlOptionsButton]').should('be.enabled');
 
+    // push to production
     cy.get('[data-cy=blockmlPushToProductionButton]').click();
     cy.loading();
 
@@ -138,6 +141,7 @@ describe('12-3 blockml-chain (logged in)', () => {
     cy.get('[data-cy=blockmlPushToProductionButton]').should('be.disabled');
     cy.get('[data-cy=blockmlOptionsButton]').should('be.enabled');
 
+    // pull
     cy.get('[data-cy=blockmlPullButton]').click();
     cy.loading();
 
@@ -151,6 +155,7 @@ describe('12-3 blockml-chain (logged in)', () => {
     cy.get('[data-cy=blockmlConflictLine]').click();
     cy.url().should('include', '?line=1');
 
+    // revert to production
     cy.get('[data-cy=blockmlOptionsButton]').click();
     cy.get('[data-cy=blockmlRevertRepoToProductionButton]').click();
     cy.loading();
