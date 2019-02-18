@@ -16,6 +16,8 @@ export const PATH_DELETE_MEMBER = '/members.deleteMember';
 export const PATH_EDIT_MEMBER = '/members.editMember';
 export const PATH_CREATE_DASHBOARD = '/multi.createDashboard';
 export const PATH_CREATE_MCONFIG_AND_QUERY = '/multi.createMconfigAndQuery';
+export const PATH_DUPLICATE_MCONFIG_AND_QUERY =
+  '/multi.duplicateMconfigAndQuery';
 export const PATH_GET_DASHBOARD_MCONFIG_AND_QUERIES =
   '/multi.getDashboardMconfigsQueries';
 export const PATH_SET_LIVE_QUERIES = '/multi.setLiveQueries';
