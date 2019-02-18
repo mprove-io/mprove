@@ -258,6 +258,15 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
   );
 
   app.post(
+    '/api/v1' + api.PATH_DUPLICATE_MCONFIG_AND_QUERY,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.duplicateMconfigAndQuery,
+      enums.controllerErrorsEnum.CONTROLLER_DUPLICATE_MCONFIG_AND_QUERY
+    )
+  );
+
+  app.post(
     '/api/v1' + api.PATH_GET_DASHBOARD_MCONFIG_AND_QUERIES,
     middlewares,
     handler.catchAsyncErrors(

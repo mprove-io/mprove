@@ -20,6 +20,7 @@ export * from './members/edit-member';
 
 export * from './multi/create-dashboard';
 export * from './multi/create-mconfig-and-query';
+export * from './multi/duplicate-mconfig-and-query';
 export * from './multi/get-dashboard-mconfigs-queries';
 export * from './multi/set-live-queries';
 
