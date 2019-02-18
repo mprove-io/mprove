@@ -16,6 +16,7 @@ export const PATH_DELETE_MEMBER = '/members.deleteMember';
 export const PATH_EDIT_MEMBER = '/members.editMember';
 export const PATH_CREATE_DASHBOARD = '/multi.createDashboard';
 export const PATH_CREATE_MCONFIG_AND_QUERY = '/multi.createMconfigAndQuery';
+export const PATH_DUPLICATE_MCONFIG_AND_QUERY = '/multi.duplicateMconfigAndQuery';
 export const PATH_GET_DASHBOARD_MCONFIG_AND_QUERIES =
   '/multi.getDashboardMconfigsQueries';
 export const PATH_SET_LIVE_QUERIES = '/multi.setLiveQueries';
@@ -23,7 +24,8 @@ export const PATH_PONG = '/pong';
 export const PATH_CHECK_PROJECT_ID_UNIQUE = '/projects.checkProjectIdUnique';
 export const PATH_CREATE_PROJECT = '/projects.createProject';
 export const PATH_DELETE_PROJECT = '/projects.deleteProject';
-export const PATH_DELETE_PROJECT_CREDENTIALS = '/projects.deleteProjectCredentials';
+export const PATH_DELETE_PROJECT_CREDENTIALS =
+  '/projects.deleteProjectCredentials';
 export const PATH_SET_PROJECT_CREDENTIALS = '/projects.setProjectCredentials';
 export const PATH_SET_PROJECT_QUERY_SIZE_LIMIT =
   '/projects.setProjectQuerySizeLimit';
