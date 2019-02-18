@@ -137,7 +137,11 @@
           <router-outlet></router-outlet>
         </div>
 
-        <div fxFlex="20%" fxLayout="column" class="space_border_left">
+        <div
+          fxFlex="20%"
+          fxLayout="column"
+          class="space_border_left mp-overflow-auto"
+        >
           <m-conflicts
             fxFlex
             *ngIf="(repoIsNeedResolve$ | async)"
