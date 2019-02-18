@@ -31,138 +31,134 @@ export async function cypressDelete(req: Request, res: Response) {
   let userIds = payload.user_ids || [];
   let projectIds = payload.project_ids || [];
 
-  if (payload.user_ids && payload.user_ids.length > 0) {
-    if (userIds.length > 0) {
-      await storeUsers
-        .delete({
-          user_id: In(userIds)
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_DELETE)
-        );
-    }
+  if (userIds.length > 0) {
+    await storeUsers
+      .delete({
+        user_id: In(userIds)
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_DELETE));
 
-    if (userIds.length > 0) {
-      await storeMembers
-        .delete({
-          member_id: In(userIds),
-          project_id: In([constants.DEMO_PROJECT, ...projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_DELETE)
-        );
-    }
+    await storeMembers
+      .delete({
+        member_id: In(userIds),
+        project_id: In([constants.DEMO_PROJECT])
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_DELETE)
+      );
 
-    // repos dev - demo and project_ids
-    if (userIds.length > 0) {
-      await storeRepos
-        .delete({
-          repo_id: In(userIds),
-          project_id: In([constants.DEMO_PROJECT, ...projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_DELETE)
-        );
-    }
+    await storeRepos
+      .delete({
+        repo_id: In(userIds),
+        project_id: In([constants.DEMO_PROJECT])
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_DELETE));
 
-    // repos prod - project_ids
-    if (projectIds.length > 0) {
-      await storeRepos
-        .delete({
-          repo_id: constants.PROD_REPO_ID,
-          project_id: In([projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_DELETE)
-        );
-    }
+    await storeFiles
+      .delete({
+        repo_id: In(userIds),
+        project_id: In([constants.DEMO_PROJECT])
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE));
 
-    // files dev - demo and project_ids
-    if (userIds.length > 0) {
-      await storeFiles
-        .delete({
-          repo_id: In(userIds),
-          project_id: In([constants.DEMO_PROJECT, ...projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE)
-        );
-    }
+    await storeErrors
+      .delete({
+        repo_id: In(userIds),
+        project_id: In([constants.DEMO_PROJECT])
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_DELETE));
 
-    // files prod - project_ids
-    if (projectIds.length > 0) {
-      await storeFiles
-        .delete({
-          repo_id: constants.PROD_REPO_ID,
-          project_id: In(projectIds)
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE)
-        );
-    }
+    await storeDashboards
+      .delete({
+        repo_id: In(userIds),
+        project_id: In([constants.DEMO_PROJECT])
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_DELETE)
+      );
 
-    if (userIds.length > 0) {
-      await storeErrors
-        .delete({
-          repo_id: In(userIds),
-          project_id: In([constants.DEMO_PROJECT, ...projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_DELETE)
-        );
-    }
+    await storeMconfigs
+      .delete({
+        repo_id: In(userIds),
+        project_id: In([constants.DEMO_PROJECT])
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_DELETE)
+      );
 
-    if (userIds.length > 0) {
-      await storeDashboards
-        .delete({
-          repo_id: In(userIds),
-          project_id: In([constants.DEMO_PROJECT, ...projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_DELETE)
-        );
-    }
-
-    if (userIds.length > 0) {
-      await storeMconfigs
-        .delete({
-          repo_id: In(userIds),
-          project_id: In([constants.DEMO_PROJECT, ...projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_DELETE)
-        );
-    }
-
-    if (userIds.length > 0) {
-      await storeModels
-        .delete({
-          repo_id: In(userIds),
-          project_id: In([constants.DEMO_PROJECT, ...projectIds])
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_DELETE)
-        );
-    }
-
-    if (projectIds.length > 0) {
-      await storeProjects
-        .delete({
-          project_id: In(projectIds)
-        })
-        .catch(e =>
-          helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_DELETE)
-        );
-    }
-
-    // await storeQueries
-    //   .delete({
-    //     struct_id: item.old_struct_id
-    //   })
-    //   .catch(e =>
-    //     helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_DELETE)
-    //   );
+    await storeModels
+      .delete({
+        repo_id: In(userIds),
+        project_id: In([constants.DEMO_PROJECT])
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_DELETE));
   }
+
+  if (projectIds.length > 0) {
+    await storeMembers
+      .delete({
+        project_id: In(projectIds)
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_DELETE)
+      );
+
+    await storeRepos
+      .delete({
+        project_id: In(projectIds)
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_DELETE));
+
+    await storeFiles
+      .delete({
+        project_id: In(projectIds)
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_DELETE));
+
+    await storeErrors
+      .delete({
+        project_id: In(projectIds)
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_DELETE));
+
+    await storeDashboards
+      .delete({
+        project_id: In(projectIds)
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_DELETE)
+      );
+
+    await storeMconfigs
+      .delete({
+        project_id: In(projectIds)
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_DELETE)
+      );
+
+    await storeModels
+      .delete({
+        project_id: In([projectIds])
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_DELETE));
+
+    await storeProjects
+      .delete({
+        project_id: In(projectIds)
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_DELETE)
+      );
+  }
+
+  // await storeQueries
+  //   .delete({
+  //     struct_id: item.old_struct_id
+  //   })
+  //   .catch(e =>
+  //     helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_DELETE)
+  //   );
 
   if (userIds.length > 0) {
     await forEach(userIds, async repoId => {

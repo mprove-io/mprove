@@ -4,5 +4,11 @@
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true
-  }
+  },
+  "files.associations": {
+    "*.view": "yaml",
+    "*.model": "yaml",
+    "*.dashboard": "yaml",
+    "*.udf": "yaml"
+  }  
 }

@@ -1,0 +1,29 @@
+dashboard: w_d1
+reports:
+
+- title: 'String Filters'
+  model: m1
+  select: 
+  - a.city
+  default_filters:
+    a.city:
+    - 'any'
+    - '-FOO-'
+    - '%FOO%'
+    - 'FOO%'
+    - '%FOO'
+    - 'null'
+    - 'blank'
+    - 'not -FOO-'
+    - 'not %FOO%'
+    - 'FOO% not'
+    - 'not %FOO'
+    - 'not null'
+    - 'not blank'
+  type: 'bar_vertical'
+  data:
+    x_field: a.city
+    y_field: a.city    
+  axis:
+    x_axis_label: abc
+    y_axis_label: def
