@@ -53,6 +53,8 @@ export const APP_EFFECTS = [
   effects.CreateDashboardEffect,
   effects.CreateMconfigAndQuerySuccessEffect,
   effects.CreateMconfigAndQueryEffect,
+  effects.DuplicateMconfigAndQuerySuccessEffect,
+  effects.DuplicateMconfigAndQueryEffect,
   effects.SetLiveQueriesSuccessEffect,
   effects.SetLiveQueriesEffect,
 

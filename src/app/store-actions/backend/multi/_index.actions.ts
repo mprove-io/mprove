@@ -6,6 +6,10 @@ export * from './create-mconfig-and-query/actions/create-mconfig-and-query.actio
 export * from './create-mconfig-and-query/actions/create-mconfig-and-query-success.action';
 export * from './create-mconfig-and-query/actions/create-mconfig-and-query-fail.action';
 
+export * from './duplicate-mconfig-and-query/actions/duplicate-mconfig-and-query.action';
+export * from './duplicate-mconfig-and-query/actions/duplicate-mconfig-and-query-success.action';
+export * from './duplicate-mconfig-and-query/actions/duplicate-mconfig-and-query-fail.action';
+
 export * from './set-live-queries/actions/set-live-queries.action';
 export * from './set-live-queries/actions/set-live-queries-success.action';
 export * from './set-live-queries/actions/set-live-queries-fail.action';

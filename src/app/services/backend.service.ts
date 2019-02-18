@@ -103,6 +103,15 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_CREATE_MCONFIG_AND_QUERY, payload);
   }
 
+  duplicateMconfigAndQuery(
+    payload: api.DuplicateMconfigAndQueryRequestBody['payload']
+  ): Observable<api.DuplicateMconfigAndQueryResponse200Body> {
+    return this.myHttpService.req(
+      api.PATH_DUPLICATE_MCONFIG_AND_QUERY,
+      payload
+    );
+  }
+
   getDashboardMconfigsQueries(
     payload: api.GetDashboardMconfigsQueriesRequestBody['payload']
   ): Observable<api.GetDashboardMconfigsQueriesResponse200Body> {
