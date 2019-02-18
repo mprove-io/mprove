@@ -14,18 +14,24 @@ export class CreateMconfigAndQueryEffect {
     filter(
       (action: actions.CreateMconfigAndQueryAction) =>
         !this.structService.mconfigHasFiltersWithDuplicateFractions(
-          action.payload.mconfig
+          action.payload.api_payload.mconfig
         )
     ),
     mergeMap((action: actions.CreateMconfigAndQueryAction) =>
-      this.backendService.createMconfigAndQuery(action.payload).pipe(
-        map(
-          body => new actions.CreateMconfigAndQuerySuccessAction(body.payload)
-        ),
-        catchError(e =>
-          of(new actions.CreateMconfigAndQueryFailAction({ error: e }))
+      this.backendService
+        .createMconfigAndQuery(action.payload.api_payload)
+        .pipe(
+          map(
+            body =>
+              new actions.CreateMconfigAndQuerySuccessAction({
+                api_payload: body.payload,
+                navigate: action.payload.navigate
+              })
+          ),
+          catchError(e =>
+            of(new actions.CreateMconfigAndQueryFailAction({ error: e }))
+          )
         )
-      )
     )
   );
 

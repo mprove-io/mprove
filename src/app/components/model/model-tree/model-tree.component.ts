@@ -196,14 +196,19 @@ export class ModelTreeComponent implements AfterViewInit {
         });
       }
 
-      this.dispatchData(newMconfig, newQuery);
-      setTimeout(
-        () =>
-          this.navigateService.navigateMconfigQueryData(
-            newMconfig.mconfig_id,
-            newQuery.query_id
-          ),
-        1
+      this.store.dispatch(
+        new actions.CreateMconfigAndQueryAction({
+          api_payload: {
+            mconfig: newMconfig,
+            query: newQuery
+          },
+          navigate: () => {
+            this.navigateService.navigateMconfigQueryData(
+              newMconfig.mconfig_id,
+              newQuery.query_id
+            );
+          }
+        })
       );
     } else if (node.hasChildren) {
       // not field and has children
@@ -403,24 +408,18 @@ export class ModelTreeComponent implements AfterViewInit {
       });
     }
 
-    this.dispatchData(newMconfig, newQuery);
-    setTimeout(
-      () =>
-        this.navigateService.navigateMconfigQueryFilters(
-          newMconfig.mconfig_id,
-          newQuery.query_id
-        ),
-      1
-    );
-  }
-
-  dispatchData(newMconfig: api.Mconfig, newQuery: api.Query) {
-    this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
     this.store.dispatch(
       new actions.CreateMconfigAndQueryAction({
-        mconfig: newMconfig,
-        query: newQuery
+        api_payload: {
+          mconfig: newMconfig,
+          query: newQuery
+        },
+        navigate: () => {
+          this.navigateService.navigateMconfigQueryFilters(
+            newMconfig.mconfig_id,
+            newQuery.query_id
+          );
+        }
       })
     );
   }

@@ -14,12 +14,6 @@ export class DuplicateMconfigAndQuerySuccessEffect {
     Action
   > = this.actions$.pipe(
     ofType(actionTypes.DUPLICATE_MCONFIG_AND_QUERY_SUCCESS),
-    // mergeMap((action: actions.DuplicateMconfigAndQuerySuccessAction) =>
-    //   from([
-    //     new actions.UpdateQueriesStateAction([action.payload.query]),
-    //     new actions.UpdateMconfigsStateAction([action.payload.mconfig])
-    //   ])
-    // ),
     tap((action: actions.DuplicateMconfigAndQuerySuccessAction) => {
       this.store.dispatch(
         new actions.UpdateQueriesStateAction([action.payload.query])

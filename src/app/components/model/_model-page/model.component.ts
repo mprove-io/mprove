@@ -232,22 +232,19 @@ export class ModelComponent implements OnDestroy {
 
     newMconfig.timezone = ev.value;
 
-    this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
     this.store.dispatch(
       new actions.CreateMconfigAndQueryAction({
-        mconfig: newMconfig,
-        query: newQuery
+        api_payload: {
+          mconfig: newMconfig,
+          query: newQuery
+        },
+        navigate: () => {
+          this.navigateService.navigateSwitch(
+            newMconfig.mconfig_id,
+            newQuery.query_id
+          );
+        }
       })
-    );
-
-    setTimeout(
-      () =>
-        this.navigateService.navigateSwitch(
-          newMconfig.mconfig_id,
-          newQuery.query_id
-        ),
-      1
     );
   }
 

@@ -114,22 +114,19 @@ export class DataComponent implements OnInit {
 
       newMconfig.limit = limit.value > 500 ? 500 : limit.value;
 
-      this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-      this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
       this.store.dispatch(
         new actions.CreateMconfigAndQueryAction({
-          mconfig: newMconfig,
-          query: newQuery
+          api_payload: {
+            mconfig: newMconfig,
+            query: newQuery
+          },
+          navigate: () => {
+            this.navigateService.navigateMconfigQueryData(
+              newMconfig.mconfig_id,
+              newQuery.query_id
+            );
+          }
         })
-      );
-
-      setTimeout(
-        () =>
-          this.navigateService.navigateMconfigQueryData(
-            newMconfig.mconfig_id,
-            newQuery.query_id
-          ),
-        1
       );
     }
   }
@@ -199,22 +196,30 @@ export class DataComponent implements OnInit {
     newMconfig.sorts =
       newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
 
-    this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
+    // this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
+    // this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
     this.store.dispatch(
       new actions.CreateMconfigAndQueryAction({
-        mconfig: newMconfig,
-        query: newQuery
+        api_payload: {
+          mconfig: newMconfig,
+          query: newQuery
+        },
+        navigate: () => {
+          this.navigateService.navigateMconfigQueryData(
+            newMconfig.mconfig_id,
+            newQuery.query_id
+          );
+        }
       })
     );
 
-    setTimeout(
-      () =>
-        this.navigateService.navigateMconfigQueryData(
-          newMconfig.mconfig_id,
-          newQuery.query_id
-        ),
-      1
-    );
+    // setTimeout(
+    //   () =>
+    //     this.navigateService.navigateMconfigQueryData(
+    //       newMconfig.mconfig_id,
+    //       newQuery.query_id
+    //     ),
+    //   1
+    // );
   }
 }

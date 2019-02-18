@@ -1,7 +1,7 @@
 {
   "numTestsKeptInMemory": 1,
   "defaultCommandTimeout": 4000,
-  "baseUrl": "http://localhost:4200",
+  "baseUrl": "http://localhost:8080",
   "video": false,
   "watchForFileChanges": false,
   "viewportWidth": 1280,

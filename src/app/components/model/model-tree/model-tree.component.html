@@ -4,7 +4,7 @@
       <div
         fxLayout="row"
         fxLayoutAlign="start center"
-        name="modelTreeItem"
+        data-cy="modelTreeItem"
         class="model-tree__file_clickable"
         [class.model-tree__file-default]="node.isLeaf && !node.data.is_field"
         [ngClass]="{
@@ -24,7 +24,7 @@
           >
             <div
               class="model-tree__child-{{node.data.node_class}} model-tree__node-{{node.data.id | extension}}"
-              name="modelTreeItemName"
+              data-cy="modelTreeItemName"
             >
               {{ node.data.label | capitalize }}
             </div>
@@ -49,7 +49,7 @@
               mat-raised-button
               *ngIf="node.data.is_field"
               class="model-tree__filter-button"
-              name="modelTreeFilter"
+              data-cy="modelTreeItemFilterButton"
               [disabled]="node.data.field.field_class === fieldClassEnum.Filter"
               [ngClass]="{
                 'model-tree__filter-button_hidden': !node.data.field

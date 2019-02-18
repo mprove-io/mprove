@@ -9,7 +9,7 @@
       <mat-icon>menu</mat-icon>
     </button>
 
-    <span fxHide.lt-md name="modelTitle">Model</span>
+    <span fxHide.lt-md data-cy="modelTitle">Model</span>
 
     <button
       fxHide.lt-md
@@ -156,17 +156,19 @@
       >
         <mat-select
           placeholder="Time Zone"
-          name="modelMconfigTimezone"
+          data-cy="modelMconfigTimezoneSelect"
           class=""
           [(ngModel)]="mconfigTimezone"
           (selectionChange)="timezoneChange($event)"
         >
-          <mat-option [value]="'UTC'" name="modelMconfigTimezoneOption"
+          <mat-option [value]="'UTC'" data-cy="modelMconfigTimezoneOption"
             >UTC</mat-option
           >
           <ng-template ngFor let-tzGroup [ngForOf]="timeZones">
             <ng-template ngFor let-tz [ngForOf]="tzGroup.zones">
-              <mat-option [value]="tz.value" name="modelMconfigTimezoneOption"
+              <mat-option
+                [value]="tz.value"
+                data-cy="modelMconfigTimezoneOption"
                 >{{ tzGroup.group }} - {{ tz.name }}</mat-option
               >
             </ng-template>
@@ -181,7 +183,7 @@
         (queryStatus$ | async) === queryStatusEnum.Waiting
       "
       mat-raised-button
-      name="modelQueryCancel"
+      data-cy="modelQueryCancelButton"
       class="model-query-button"
       color="primary"
       [disabled]="(userId$ | async) !== (queryLastRunBy$ | async)"
@@ -194,7 +196,7 @@
         (queryStatus$ | async) !== queryStatusEnum.Running &&
         (queryStatus$ | async) !== queryStatusEnum.Waiting
       "
-      name="modelQueryRun"
+      data-cy="modelQueryRunButton"
       mat-raised-button
       class="model-query-button"
       [color]="(queryData$ | async) ? 'primary' : 'accent'"
@@ -210,7 +212,7 @@
     <button
       fxHide.lt-md
       mat-icon-button
-      name="modelQueryMenu"
+      data-cy="modelQueryMenu"
       [disabled]="queryNotSelected$ | async"
       [matMenuTriggerFor]="queryMenu"
     >
@@ -276,19 +278,19 @@
       >
         <mat-select
           placeholder="Time Zone"
-          name="modelMconfigTimezoneMobile"
+          data-cy="modelMconfigTimezoneSelectMobile"
           class=""
           [(ngModel)]="mconfigTimezone"
           (selectionChange)="timezoneChange($event)"
         >
-          <mat-option [value]="'UTC'" name="modelMconfigTimezoneOptionMobile"
+          <mat-option [value]="'UTC'" data-cy="modelMconfigTimezoneOptionMobile"
             >UTC</mat-option
           >
           <ng-template ngFor let-tzGroup [ngForOf]="timeZones">
             <ng-template ngFor let-tz [ngForOf]="tzGroup.zones">
               <mat-option
                 [value]="tz.value"
-                name="modelMconfigTimezoneOptionMobile"
+                data-cy="modelMconfigTimezoneOptionMobile"
                 >{{ tzGroup.group }} - {{ tz.name }}</mat-option
               >
             </ng-template>
@@ -298,21 +300,21 @@
 
       <button
         mat-menu-item
-        name="modelQueryMenuRunDryMobile"
+        data-cy="modelQueryMenuRunDryButtonMobile"
         [disabled]="!(queryServerTsMoreThanOne$ | async)"
         (click)="runDry()"
         >Run Dry (estimate data size)</button
       >
       <button
         mat-menu-item
-        name="modelQueryMenuRefreshMobile"
+        data-cy="modelQueryMenuRefreshButtonMobile"
         [disabled]="!(queryServerTsMoreThanOne$ | async)"
         (click)="runRefresh()"
         >Refresh PDTs and Run</button
       >
       <button
         mat-menu-item
-        name="modelQueryMenuClearSelectionMobile"
+        data-cy="modelQueryMenuClearSelectionButtonMobile"
         (click)="clearSelection()"
         >Clear Selection</button
       >
@@ -388,21 +390,21 @@
 <mat-menu #queryMenu="matMenu">
   <button
     mat-menu-item
-    name="modelQueryMenuRunDry"
+    data-cy="modelQueryMenuRunDryButton"
     [disabled]="!(queryServerTsMoreThanOne$ | async)"
     (click)="runDry()"
     >Run Dry (estimate data size)</button
   >
   <button
     mat-menu-item
-    name="modelQueryMenuRefresh"
+    data-cy="modelQueryMenuRefreshButton"
     [disabled]="!(queryServerTsMoreThanOne$ | async)"
     (click)="runRefresh()"
     >Refresh PDTs and Run</button
   >
   <button
     mat-menu-item
-    name="modelQueryMenuClearSelection"
+    data-cy="modelQueryMenuClearSelectionButton"
     (click)="clearSelection()"
     >Clear Selection</button
   >
