@@ -8,10 +8,7 @@
         class="model-tree__file_clickable"
         [class.model-tree__file-default]="node.isLeaf && !node.data.is_field"
         [ngClass]="{
-          'model-tree__file-root': node.isRoot,
-          'model-tree__file-active':
-            node.data.is_field && node.data.field.is_selected,
-          'model-tree__file_hover': !node.hasChildren
+          'model-tree__file-root': node.isRoot
         }"
         (click)="nodeOnClick(node)"
       >
@@ -30,7 +27,11 @@
             </div>
 
             <div
-              *ngIf="node.isRoot && node.data[countSelectedItemsKey] > 0"
+              *ngIf="
+                node.hasChildren &&
+                node.data[countSelectedItemsKey] > 0 &&
+                !node.isExpanded
+              "
               class="model-tree__filter-count"
             >
               {{ node.data[countSelectedItemsKey] }}
@@ -44,6 +45,20 @@
               [matTooltipPosition]="'below'"
               >info_outline
             </mat-icon>
+
+            <button
+              mat-raised-button
+              *ngIf="node.data.is_field"
+              class="model-tree__select-button"
+              data-cy="modelTreeItemSelectButton"
+              [ngClass]="{
+                'model-tree__select-button_hidden': !node.data.field.is_selected
+              }"
+              [color]="node.data.field.is_selected ? 'accent' : 'default'"
+              (click)="nodeOnClick(node)"
+            >
+              Select
+            </button>
 
             <button
               mat-raised-button

@@ -93,8 +93,15 @@ $node-width: 60vw;
         &:hover .model-tree__filter-button_hidden {
           visibility: visible !important;
         }
+        &:hover .model-tree__select-button_hidden {
+          visibility: visible !important;
+        }
+
         @media (max-width: 959px) {
           .model-tree__filter-button_hidden {
+            visibility: visible !important;
+          }
+          .model-tree__select-button_hidden {
             visibility: visible !important;
           }
           .mat-button {
@@ -133,7 +140,20 @@ $node-width: 60vw;
       font-size: 12px;
     }
 
+    &__select-button {
+      line-height: 20px;
+      padding: 0 5px;
+      min-width: 45px;
+      position: absolute;
+      right: 83px;
+      font-size: 12px;
+    }
+
     &__filter-button_hidden {
+      visibility: hidden !important;
+    }
+
+    &__select-button_hidden {
       visibility: hidden !important;
     }
 
@@ -157,7 +177,7 @@ $node-width: 60vw;
 }
 /deep/.folder-btn {
   position: absolute;
-  right: 83px;
+  right: 130px;
   &:hover {
     .mat-button-focus-overlay {
       opacity: 0 !important;

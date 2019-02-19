@@ -148,7 +148,9 @@ export class ModelTreeComponent implements AfterViewInit {
         }
       }
       if (item.children.length > 0) {
+        item[this.countSelectedItemsKey] = 0;
         this.parentNodeInfo(rootNode, item.children);
+        this.parentNodeInfo(item, item.children);
       }
     }
   }
