@@ -11,37 +11,37 @@
   <mat-form-field>
     <mat-select
       class="mp-fraction-type-select-width-230"
-      name="fractionQuarterOfYearType"
+      data-cy="fractionQuarterOfYearType"
       [(ngModel)]="fraction.type"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         [value]="fractionTypeEnum.QuarterOfYearIsAnyValue"
-        name="fractionQuarterOfYearTypeIsAnyValue"
+        data-cy="fractionQuarterOfYearTypeIsAnyValue"
         >is any value</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.QuarterOfYearIs"
-        name="fractionQuarterOfYearTypeIs"
+        data-cy="fractionQuarterOfYearTypeIs"
         >is</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.QuarterOfYearIsNull"
-        name="fractionQuarterOfYearTypeIsNull"
+        data-cy="fractionQuarterOfYearTypeIsNull"
         >is null</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.QuarterOfYearIsNot"
-        name="fractionQuarterOfYearTypeIsNot"
+        data-cy="fractionQuarterOfYearTypeIsNot"
         >is not</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.QuarterOfYearIsNotNull"
-        name="fractionQuarterOfYearTypeIsNotNull"
+        data-cy="fractionQuarterOfYearTypeIsNotNull"
         >is not null</mat-option
       >
     </mat-select>
@@ -55,30 +55,30 @@
   >
     <mat-select
       [(ngModel)]="fraction.quarter_of_year_value"
-      name="fractionQuarterOfYearValue"
+      data-cy="fractionQuarterOfYearValue"
       (selectionChange)="quarterOfYearValueChange($event)"
     >
       <mat-option
         [value]="fractionQuarterOfYearValueEnum.Q1"
-        name="fractionQuarterOfYearValueQ1"
+        data-cy="fractionQuarterOfYearValueQ1"
         >Q1</mat-option
       >
 
       <mat-option
         [value]="fractionQuarterOfYearValueEnum.Q2"
-        name="fractionQuarterOfYearValueQ2"
+        data-cy="fractionQuarterOfYearValueQ2"
         >Q2</mat-option
       >
 
       <mat-option
         [value]="fractionQuarterOfYearValueEnum.Q3"
-        name="fractionQuarterOfYearValueQ3"
+        data-cy="fractionQuarterOfYearValueQ3"
         >Q3</mat-option
       >
 
       <mat-option
         [value]="fractionQuarterOfYearValueEnum.Q4"
-        name="fractionQuarterOfYearValueQ4"
+        data-cy="fractionQuarterOfYearValueQ4"
         >Q4</mat-option
       >
     </mat-select>

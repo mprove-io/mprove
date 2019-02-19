@@ -11,73 +11,73 @@
   <mat-form-field>
     <mat-select
       class="mp-fraction-type-select-width-230"
-      name="fractionNumberType"
+      data-cy="fractionNumberType"
       [(ngModel)]="fraction.type"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         [value]="fractionTypeEnum.NumberIsAnyValue"
-        name="fractionNumberTypeIsAnyValue"
+        data-cy="fractionNumberTypeIsAnyValue"
         >is any value</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsEqualTo"
-        name="fractionNumberTypeIsEqualTo"
+        data-cy="fractionNumberTypeIsEqualTo"
         >is equal to</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsGreaterThan"
-        name="fractionNumberTypeIsGreaterThan"
+        data-cy="fractionNumberTypeIsGreaterThan"
         >is greater than</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsGreaterThanOrEqualTo"
-        name="fractionNumberTypeIsGreaterThanOrEqualTo"
+        data-cy="fractionNumberTypeIsGreaterThanOrEqualTo"
         >is greater than or equal to</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsLessThan"
-        name="fractionNumberTypeIsLessThan"
+        data-cy="fractionNumberTypeIsLessThan"
         >is less than</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsLessThanOrEqualTo"
-        name="fractionNumberTypeIsLessThanOrEqualTo"
+        data-cy="fractionNumberTypeIsLessThanOrEqualTo"
         >is less than or equal to</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsBetween"
-        name="fractionNumberTypeIsBetween"
+        data-cy="fractionNumberTypeIsBetween"
         >is between</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsNull"
-        name="fractionNumberTypeIsNull"
+        data-cy="fractionNumberTypeIsNull"
         >is null</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsNotEqualTo"
-        name="fractionNumberTypeIsNotEqualTo"
+        data-cy="fractionNumberTypeIsNotEqualTo"
         >is not equal to</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsNotBetween"
-        name="fractionNumberTypeIsNotBetween"
+        data-cy="fractionNumberTypeIsNotBetween"
         >is not between</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.NumberIsNotNull"
-        name="fractionNumberTypeIsNotNull"
+        data-cy="fractionNumberTypeIsNotNull"
         >is not null</mat-option
       >
     </mat-select>
@@ -93,7 +93,7 @@
     <mat-form-field>
       <textarea
         matInput
-        name="fractionNumberValues"
+        data-cy="fractionNumberValues"
         type="text"
         matTextareaAutosize
         matAutosizeMinRows="2"
@@ -121,7 +121,7 @@
     <mat-form-field>
       <input
         matInput
-        name="fractionNumberSingleValue"
+        data-cy="fractionNumberSingleValue"
         type="number"
         formControlName="numberSingleValue"
         (blur)="
@@ -146,31 +146,31 @@
   >
     <mat-select
       class="mp-fraction-between-select-width-180"
-      name="fractionNumberBetweenOption"
+      data-cy="fractionNumberBetweenOption"
       [(ngModel)]="fraction.number_between_option"
       (selectionChange)="betweenOptionChange($event)"
     >
       <mat-option
         [value]="fractionNumberBetweenOptionEnum.Inclusive"
-        name="fractionNumberBetweenOptionInclusive"
+        data-cy="fractionNumberBetweenOptionInclusive"
         >[inclusive]</mat-option
       >
 
       <mat-option
         [value]="fractionNumberBetweenOptionEnum.LeftInclusive"
-        name="fractionNumberBetweenOptionLeftInclusive"
+        data-cy="fractionNumberBetweenOptionLeftInclusive"
         >[left inclusive)</mat-option
       >
 
       <mat-option
         [value]="fractionNumberBetweenOptionEnum.RightInclusive"
-        name="fractionNumberBetweenOptionRightInclusive"
+        data-cy="fractionNumberBetweenOptionRightInclusive"
         >(right inclusive]</mat-option
       >
 
       <mat-option
         [value]="fractionNumberBetweenOptionEnum.Exclusive"
-        name="fractionNumberBetweenOptionExclusive"
+        data-cy="fractionNumberBetweenOptionExclusive"
         >(exclusive)</mat-option
       >
     </mat-select>
@@ -187,7 +187,7 @@
       <mat-form-field>
         <input
           matInput
-          name="fractionNumberBetweenFirstValue"
+          data-cy="fractionNumberBetweenFirstValue"
           type="number"
           formControlName="numberBetweenFirstValue"
           (blur)="
@@ -208,7 +208,7 @@
       <mat-form-field>
         <input
           matInput
-          name="fractionNumberBetweenSecondValue"
+          data-cy="fractionNumberBetweenSecondValue"
           type="number"
           formControlName="numberBetweenSecondValue"
           (blur)="

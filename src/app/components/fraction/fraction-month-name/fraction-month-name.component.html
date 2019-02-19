@@ -12,36 +12,36 @@
     <mat-select
       class="mp-fraction-type-select-width-230"
       [(ngModel)]="fraction.type"
-      name="fractionMonthNameType"
+      data-cy="fractionMonthNameType"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         [value]="fractionTypeEnum.MonthNameIsAnyValue"
-        name="fractionMonthNameTypeIsAnyValue"
+        data-cy="fractionMonthNameTypeIsAnyValue"
         >is any value</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.MonthNameIs"
-        name="fractionMonthNameTypeIs"
+        data-cy="fractionMonthNameTypeIs"
         >is</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.MonthNameIsNull"
-        name="fractionMonthNameTypeIsNull"
+        data-cy="fractionMonthNameTypeIsNull"
         >is null</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.MonthNameIsNot"
-        name="fractionMonthNameTypeIsNot"
+        data-cy="fractionMonthNameTypeIsNot"
         >is not</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.MonthNameIsNotNull"
-        name="fractionMonthNameTypeIsNotNull"
+        data-cy="fractionMonthNameTypeIsNotNull"
         >is not null</mat-option
       >
     </mat-select>
@@ -55,78 +55,78 @@
   >
     <mat-select
       [(ngModel)]="fraction.month_name_value"
-      name="fractionMonthNameValue"
+      data-cy="fractionMonthNameValue"
       (selectionChange)="monthNameValueChange($event)"
     >
       <mat-option
         [value]="fractionMonthNameValueEnum.January"
-        name="fractionMonthNameValueJanuary"
+        data-cy="fractionMonthNameValueJanuary"
         >January</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.February"
-        name="fractionMonthNameValueFebruary"
+        data-cy="fractionMonthNameValueFebruary"
         >February</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.March"
-        name="fractionMonthNameValueMarch"
+        data-cy="fractionMonthNameValueMarch"
         >March</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.April"
-        name="fractionMonthNameValueApril"
+        data-cy="fractionMonthNameValueApril"
         >April</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.May"
-        name="fractionMonthNameValueMay"
+        data-cy="fractionMonthNameValueMay"
         >May</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.June"
-        name="fractionMonthNameValueJune"
+        data-cy="fractionMonthNameValueJune"
         >June</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.July"
-        name="fractionMonthNameValueJuly"
+        data-cy="fractionMonthNameValueJuly"
         >July</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.August"
-        name="fractionMonthNameValueAugust"
+        data-cy="fractionMonthNameValueAugust"
         >August</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.September"
-        name="fractionMonthNameValueSeptember"
+        data-cy="fractionMonthNameValueSeptember"
         >September</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.October"
-        name="fractionMonthNameValueOctober"
+        data-cy="fractionMonthNameValueOctober"
         >October</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.November"
-        name="fractionMonthNameValueNovember"
+        data-cy="fractionMonthNameValueNovember"
         >November</mat-option
       >
 
       <mat-option
         [value]="fractionMonthNameValueEnum.December"
-        name="fractionMonthNameValueDecember"
+        data-cy="fractionMonthNameValueDecember"
         >December</mat-option
       >
     </mat-select>

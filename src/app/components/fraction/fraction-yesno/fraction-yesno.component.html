@@ -16,16 +16,18 @@
   <mat-form-field>
     <mat-select
       class="mp-fraction-type-select-width-230"
-      name="fractionYesnoType"
+      data-cy="fractionYesnoType"
       [(ngModel)]="fraction.type"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         [value]="fractionTypeEnum.YesnoIsAnyValue"
-        name="fractionYesnoTypeIsAnyValue"
+        data-cy="fractionYesnoTypeIsAnyValue"
         >is any value</mat-option
       >
-      <mat-option [value]="fractionTypeEnum.YesnoIs" name="fractionYesnoTypeIs"
+      <mat-option
+        [value]="fractionTypeEnum.YesnoIs"
+        data-cy="fractionYesnoTypeIs"
         >is</mat-option
       >
     </mat-select>
@@ -35,17 +37,17 @@
   <mat-form-field *ngIf="fraction.type === fractionTypeEnum.YesnoIs">
     <mat-select
       [(ngModel)]="fraction.yesno_value"
-      name="fractionYesnoValue"
+      data-cy="fractionYesnoValue"
       (selectionChange)="yesnoChange($event)"
     >
       <mat-option
         [value]="fractionYesnoValueEnum.Yes"
-        name="fractionYesnoValueYes"
+        data-cy="fractionYesnoValueYes"
         >Yes</mat-option
       >
       <mat-option
         [value]="fractionYesnoValueEnum.No"
-        name="fractionYesnoValueNo"
+        data-cy="fractionYesnoValueNo"
         >No</mat-option
       >
     </mat-select>

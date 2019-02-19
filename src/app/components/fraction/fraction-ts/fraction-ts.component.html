@@ -11,91 +11,91 @@
   <mat-form-field>
     <mat-select
       class="mp-fraction-type-select-width-230"
-      name="fractionTsType"
+      data-cy="fractionTsType"
       [(ngModel)]="fraction.type"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         [value]="fractionTypeEnum.TsIsAnyValue"
-        name="fractionTsTypeIsAnyValue"
+        data-cy="fractionTsTypeIsAnyValue"
         >is any value</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsOnYear"
-        name="fractionTsTypeIsOnYear"
+        data-cy="fractionTsTypeIsOnYear"
         >is on Year</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsOnMonth"
-        name="fractionTsTypeIsOnMonth"
+        data-cy="fractionTsTypeIsOnMonth"
         >is on Month</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsOnDay"
-        name="fractionTsTypeIsOnDay"
+        data-cy="fractionTsTypeIsOnDay"
         >is on Day</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsOnHour"
-        name="fractionTsTypeIsOnHour"
+        data-cy="fractionTsTypeIsOnHour"
         >is on Hour</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsOnMinute"
-        name="fractionTsTypeIsOnMinute"
+        data-cy="fractionTsTypeIsOnMinute"
         >is on Minute</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsInRange"
-        name="fractionTsTypeIsInRange"
+        data-cy="fractionTsTypeIsInRange"
         >is in range</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsBeforeDate"
-        name="fractionTsTypeIsBeforeDate"
+        data-cy="fractionTsTypeIsBeforeDate"
         >is before</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsAfterDate"
-        name="fractionTsTypeIsAfterDate"
+        data-cy="fractionTsTypeIsAfterDate"
         >is after</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsBeforeRelative"
-        name="fractionTsTypeIsBeforeRelative"
+        data-cy="fractionTsTypeIsBeforeRelative"
         >is before (relative)</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsAfterRelative"
-        name="fractionTsTypeIsAfterRelative"
+        data-cy="fractionTsTypeIsAfterRelative"
         >is after (relative)</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsInLast"
-        name="fractionTsTypeIsInLast"
+        data-cy="fractionTsTypeIsInLast"
         >is in last</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsNull"
-        name="fractionTsTypeIsNull"
+        data-cy="fractionTsTypeIsNull"
         >is null</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.TsIsNotNull"
-        name="fractionTsTypeIsNotNull"
+        data-cy="fractionTsTypeIsNotNull"
         >is not null</mat-option
       >
     </mat-select>
@@ -104,7 +104,7 @@
   <!-- on -->
   <dp-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
-    name="fractionTsDate"
+    data-cy="fractionTsDate"
     [mode]="'daytime'"
     [theme]="'dp-material'"
     [config]="yearConfig"
@@ -116,7 +116,7 @@
 
   <dp-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
-    name="fractionTsDate"
+    data-cy="fractionTsDate"
     [mode]="'daytime'"
     [theme]="'dp-material'"
     [config]="monthConfig"
@@ -128,7 +128,7 @@
 
   <dp-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
-    name="fractionTsDate"
+    data-cy="fractionTsDate"
     [mode]="'daytime'"
     [theme]="'dp-material'"
     [config]="dayConfig"
@@ -140,7 +140,7 @@
 
   <dp-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
-    name="fractionTsDate"
+    data-cy="fractionTsDate"
     [mode]="'daytime'"
     [theme]="'dp-material'"
     [config]="hourConfig"
@@ -152,7 +152,7 @@
 
   <dp-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
-    name="fractionTsDate"
+    data-cy="fractionTsDate"
     [mode]="'daytime'"
     [theme]="'dp-material'"
     [config]="minuteConfig"
@@ -171,7 +171,7 @@
   >
     <dp-date-picker
       [mode]="'daytime'"
-      name="fractionTsDate"
+      data-cy="fractionTsDate"
       [theme]="'dp-material'"
       [config]="minuteConfig"
       [(ngModel)]="date"
@@ -184,7 +184,7 @@
 
     <dp-date-picker
       [mode]="'daytime'"
-      name="fractionTsDateTo"
+      data-cy="fractionTsDateTo"
       [theme]="'dp-material'"
       [config]="minuteConfig"
       [(ngModel)]="dateTo"
@@ -196,7 +196,7 @@
 
   <dp-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsBeforeDate"
-    name="fractionTsDate"
+    data-cy="fractionTsDate"
     [mode]="'daytime'"
     [theme]="'dp-material'"
     [config]="minuteConfig"
@@ -208,7 +208,7 @@
 
   <dp-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsAfterDate"
-    name="fractionTsDate"
+    data-cy="fractionTsDate"
     [mode]="'daytime'"
     [theme]="'dp-material'"
     [config]="minuteConfig"
@@ -233,7 +233,7 @@
         <input
           matInput
           type="number"
-          name="fractionTsRelativeValue"
+          data-cy="fractionTsRelativeValue"
           formControlName="relativeValue"
           (blur)="
             relativeValueBlur(relativeValueForm.controls['relativeValue'])
@@ -250,48 +250,48 @@
     <mat-form-field>
       <mat-select
         [(ngModel)]="fraction.ts_relative_unit"
-        name="fractionTsRelativeUnit"
+        data-cy="fractionTsRelativeUnit"
         (selectionChange)="relativeUnitChange($event)"
       >
         <mat-option
           [value]="fractionTsRelativeUnitEnum.Years"
-          name="fractionTsRelativeUnitYears"
+          data-cy="fractionTsRelativeUnitYears"
           >Years</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeUnitEnum.Quarters"
-          name="fractionTsRelativeUnitQuarters"
+          data-cy="fractionTsRelativeUnitQuarters"
           >Quarters</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeUnitEnum.Months"
-          name="fractionTsRelativeUnitMonths"
+          data-cy="fractionTsRelativeUnitMonths"
           >Months</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeUnitEnum.Weeks"
-          name="fractionTsRelativeUnitWeeks"
+          data-cy="fractionTsRelativeUnitWeeks"
           >Weeks</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeUnitEnum.Days"
-          name="fractionTsRelativeUnitDays"
+          data-cy="fractionTsRelativeUnitDays"
           >Days</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeUnitEnum.Hours"
-          name="fractionTsRelativeUnitHours"
+          data-cy="fractionTsRelativeUnitHours"
           >Hours</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeUnitEnum.Minutes"
-          name="fractionTsRelativeUnitMinutes"
+          data-cy="fractionTsRelativeUnitMinutes"
           >Minutes</mat-option
         >
       </mat-select>
@@ -300,18 +300,18 @@
     <mat-form-field>
       <mat-select
         [(ngModel)]="fraction.ts_relative_complete_option"
-        name="fractionTsRelativeCompleteOption"
+        data-cy="fractionTsRelativeCompleteOption"
         (selectionChange)="relativeCompleteChange($event)"
       >
         <mat-option
           [value]="fractionTsRelativeCompleteOptionEnum.Complete"
-          name="fractionTsRelativeCompleteOptionComplete"
+          data-cy="fractionTsRelativeCompleteOptionComplete"
           >complete</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeCompleteOptionEnum.Incomplete"
-          name="fractionTsRelativeCompleteOptionIncomplete"
+          data-cy="fractionTsRelativeCompleteOptionIncomplete"
           >incomplete</mat-option
         >
       </mat-select>
@@ -320,18 +320,18 @@
     <mat-form-field>
       <mat-select
         [(ngModel)]="fraction.ts_relative_when_option"
-        name="fractionTsRelativeWhenOption"
+        data-cy="fractionTsRelativeWhenOption"
         (selectionChange)="relativeWhenChange($event)"
       >
         <mat-option
           [value]="fractionTsRelativeWhenOptionEnum.Ago"
-          name="fractionTsRelativeWhenOptionAgo"
+          data-cy="fractionTsRelativeWhenOptionAgo"
           >ago</mat-option
         >
 
         <mat-option
           [value]="fractionTsRelativeWhenOptionEnum.InFuture"
-          name="fractionTsRelativeWhenOptionInFuture"
+          data-cy="fractionTsRelativeWhenOptionInFuture"
           >in future</mat-option
         >
       </mat-select>
@@ -353,18 +353,18 @@
     <mat-form-field>
       <mat-select
         [(ngModel)]="fraction.ts_for_option"
-        name="fractionTsForOption"
+        data-cy="fractionTsForOption"
         (selectionChange)="forOptionChange($event)"
       >
         <mat-option
           [value]="fractionTsForOptionEnum.For"
-          name="fractionTsForOptionFor"
+          data-cy="fractionTsForOptionFor"
           >for</mat-option
         >
 
         <mat-option
           [value]="fractionTsForOptionEnum.ForInfinity"
-          name="fractionTsForOptionForInfinity"
+          data-cy="fractionTsForOptionForInfinity"
           >for infinity</mat-option
         >
       </mat-select>
@@ -378,7 +378,7 @@
         <input
           matInput
           type="number"
-          name="fractionTsForValue"
+          data-cy="fractionTsForValue"
           formControlName="forValue"
           (blur)="forValueBlur(forValueForm.controls['forValue'])"
         />
@@ -395,48 +395,48 @@
     >
       <mat-select
         [(ngModel)]="fraction.ts_for_unit"
-        name="fractionTsForUnit"
+        data-cy="fractionTsForUnit"
         (selectionChange)="forUnitChange($event)"
       >
         <mat-option
           [value]="fractionTsForUnitEnum.Years"
-          name="fractionTsForUnitYears"
+          data-cy="fractionTsForUnitYears"
           >Years</mat-option
         >
 
         <mat-option
           [value]="fractionTsForUnitEnum.Quarters"
-          name="fractionTsForUnitQuarters"
+          data-cy="fractionTsForUnitQuarters"
           >Quarters</mat-option
         >
 
         <mat-option
           [value]="fractionTsForUnitEnum.Months"
-          name="fractionTsForUnitMonths"
+          data-cy="fractionTsForUnitMonths"
           >Months</mat-option
         >
 
         <mat-option
           [value]="fractionTsForUnitEnum.Weeks"
-          name="fractionTsForUnitWeeks"
+          data-cy="fractionTsForUnitWeeks"
           >Weeks</mat-option
         >
 
         <mat-option
           [value]="fractionTsForUnitEnum.Days"
-          name="fractionTsForUnitDays"
+          data-cy="fractionTsForUnitDays"
           >Days</mat-option
         >
 
         <mat-option
           [value]="fractionTsForUnitEnum.Hours"
-          name="fractionTsForUnitHours"
+          data-cy="fractionTsForUnitHours"
           >Hours</mat-option
         >
 
         <mat-option
           [value]="fractionTsForUnitEnum.Minutes"
-          name="fractionTsForUnitMinutes"
+          data-cy="fractionTsForUnitMinutes"
           >Minutes</mat-option
         >
       </mat-select>
@@ -454,7 +454,7 @@
       <mat-form-field class="mp-fraction-last-value-width-50">
         <input
           matInput
-          name="fractionTsLastValue"
+          data-cy="fractionTsLastValue"
           type="number"
           formControlName="lastValue"
           (blur)="lastValueBlur(lastValueForm.controls['lastValue'])"
@@ -470,48 +470,48 @@
     <mat-form-field>
       <mat-select
         [(ngModel)]="fraction.ts_last_unit"
-        name="fractionTsLastUnit"
+        data-cy="fractionTsLastUnit"
         (selectionChange)="lastUnitChange($event)"
       >
         <mat-option
           [value]="fractionTsLastUnitEnum.Years"
-          name="fractionTsLastUnitYears"
+          data-cy="fractionTsLastUnitYears"
           >Years</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastUnitEnum.Quarters"
-          name="fractionTsLastUnitQuarters"
+          data-cy="fractionTsLastUnitQuarters"
           >Quarters</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastUnitEnum.Months"
-          name="fractionTsLastUnitMonths"
+          data-cy="fractionTsLastUnitMonths"
           >Months</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastUnitEnum.Weeks"
-          name="fractionTsLastUnitWeeks"
+          data-cy="fractionTsLastUnitWeeks"
           >Weeks</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastUnitEnum.Days"
-          name="fractionTsLastUnitDays"
+          data-cy="fractionTsLastUnitDays"
           >Days</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastUnitEnum.Hours"
-          name="fractionTsLastUnitHours"
+          data-cy="fractionTsLastUnitHours"
           >Hours</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastUnitEnum.Minutes"
-          name="fractionTsLastUnitMinutes"
+          data-cy="fractionTsLastUnitMinutes"
           >Minutes</mat-option
         >
       </mat-select>
@@ -520,25 +520,25 @@
     <mat-form-field>
       <mat-select
         class="mp-fraction-last-complete-option-width-230"
-        name="fractionTsLastCompleteOption"
+        data-cy="fractionTsLastCompleteOption"
         [(ngModel)]="fraction.ts_last_complete_option"
         (selectionChange)="lastCompleteChange($event)"
       >
         <mat-option
           [value]="fractionTsLastCompleteOptionEnum.Complete"
-          name="fractionTsLastCompleteOptionComplete"
+          data-cy="fractionTsLastCompleteOptionComplete"
           >complete</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastCompleteOptionEnum.CompletePlusCurrent"
-          name="fractionTsLastCompleteOptionCompletePlusCurrent"
+          data-cy="fractionTsLastCompleteOptionCompletePlusCurrent"
           >complete plus current</mat-option
         >
 
         <mat-option
           [value]="fractionTsLastCompleteOptionEnum.Incomplete"
-          name="fractionTsLastCompleteOptionIncomplete"
+          data-cy="fractionTsLastCompleteOptionIncomplete"
           >incomplete</mat-option
         >
       </mat-select>

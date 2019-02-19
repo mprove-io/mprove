@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '13-01-user@example.com';
+const userId = '14-02-user@example.com';
 const password = '123123';
 
-const projectId = 'project_13_01';
+const projectId = 'project_14_02';
 
-describe('13-01 model-filters-string-type-is-equal-to (logged in)', () => {
-  it(`should be able to filter string-type-is-equal-to`, () => {
+describe('14-02 model-filters-number-type-is-equal-to-multiple (logged in)', () => {
+  it(`should be able to filter number-type-is-equal-to-multiple`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -49,16 +49,16 @@ describe('13-01 model-filters-string-type-is-equal-to (logged in)', () => {
       .click({ force: true });
     cy.loading();
 
-    cy.get('[data-cy=fractionStringType]').click();
-    cy.get('[data-cy=fractionStringTypeIsEqualTo]').click();
-    cy.get('[data-cy=fractionStringValue]').type('FOO');
+    cy.get('[data-cy=fractionNumberType]').click();
+    cy.get('[data-cy=fractionNumberTypeIsEqualTo]').click();
+    cy.get('[data-cy=fractionNumberValues]').type('105, 110, 115');
     cy.get('[data-cy=modelTitle]').click();
     cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });
     cy.loading();
 
-    cy.get('[data-cy=fractionStringType]').should($elements => {
+    cy.get('[data-cy=fractionNumberType]').should($elements => {
       expect($elements).to.have.length(2);
     });
   });

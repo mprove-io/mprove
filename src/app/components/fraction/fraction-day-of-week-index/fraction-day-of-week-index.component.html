@@ -11,37 +11,37 @@
   <mat-form-field>
     <mat-select
       class="mp-fraction-type-select-width-230"
-      name="fractionDayOfWeekIndexType"
+      data-cy="fractionDayOfWeekIndexType"
       [(ngModel)]="fraction.type"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIndexIsAnyValue"
-        name="fractionDayOfWeekIndexTypeIsAnyValue"
+        data-cy="fractionDayOfWeekIndexTypeIsAnyValue"
         >is any value</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIndexIsEqualTo"
-        name="fractionDayOfWeekIndexTypeIsEqualTo"
+        data-cy="fractionDayOfWeekIndexTypeIsEqualTo"
         >is equal to</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIndexIsNull"
-        name="fractionDayOfWeekIndexTypeIsNull"
+        data-cy="fractionDayOfWeekIndexTypeIsNull"
         >is null</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIndexIsNotEqualTo"
-        name="fractionDayOfWeekIndexTypeIsNotEqualTo"
+        data-cy="fractionDayOfWeekIndexTypeIsNotEqualTo"
         >is not equal to</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIndexIsNotNull"
-        name="fractionDayOfWeekIndexTypeIsNotNull"
+        data-cy="fractionDayOfWeekIndexTypeIsNotNull"
         >is not null</mat-option
       >
     </mat-select>
@@ -57,7 +57,7 @@
     <mat-form-field>
       <textarea
         matInput
-        name="fractionDayOfWeekIndexValues"
+        data-cy="fractionDayOfWeekIndexValues"
         matTextareaAutosize
         matAutosizeMinRows="1"
         matAutosizeMaxRows="5"

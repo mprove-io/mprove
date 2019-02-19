@@ -11,37 +11,37 @@
   <mat-form-field>
     <mat-select
       class="mp-fraction-type-select-width-230"
-      name="fractionDayOfWeekType"
+      data-cy="fractionDayOfWeekType"
       [(ngModel)]="fraction.type"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIsAnyValue"
-        name="fractionDayOfWeekTypeIsAnyValue"
+        data-cy="fractionDayOfWeekTypeIsAnyValue"
         >is any value</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIs"
-        name="fractionDayOfWeekTypeIs"
+        data-cy="fractionDayOfWeekTypeIs"
         >is</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIsNull"
-        name="fractionDayOfWeekTypeIsNull"
+        data-cy="fractionDayOfWeekTypeIsNull"
         >is null</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIsNot"
-        name="fractionDayOfWeekTypeIsNot"
+        data-cy="fractionDayOfWeekTypeIsNot"
         >is not</mat-option
       >
 
       <mat-option
         [value]="fractionTypeEnum.DayOfWeekIsNotNull"
-        name="fractionDayOfWeekTypeIsNotNull"
+        data-cy="fractionDayOfWeekTypeIsNotNull"
         >is not null</mat-option
       >
     </mat-select>
@@ -55,48 +55,48 @@
   >
     <mat-select
       [(ngModel)]="fraction.day_of_week_value"
-      name="fractionDayOfWeekValue"
+      data-cy="fractionDayOfWeekValue"
       (selectionChange)="dayOfWeekValueChange($event)"
     >
       <mat-option
         [value]="fractionDayOfWeekValueEnum.Monday"
-        name="fractionDayOfWeekValueMonday"
+        data-cy="fractionDayOfWeekValueMonday"
         >Monday</mat-option
       >
 
       <mat-option
         [value]="fractionDayOfWeekValueEnum.Tuesday"
-        name="fractionDayOfWeekValueTuesday"
+        data-cy="fractionDayOfWeekValueTuesday"
         >Tuesday</mat-option
       >
 
       <mat-option
         [value]="fractionDayOfWeekValueEnum.Wednesday"
-        name="fractionDayOfWeekValueWednesday"
+        data-cy="fractionDayOfWeekValueWednesday"
         >Wednesday</mat-option
       >
 
       <mat-option
         [value]="fractionDayOfWeekValueEnum.Thursday"
-        name="fractionDayOfWeekValueThursday"
+        data-cy="fractionDayOfWeekValueThursday"
         >Thursday</mat-option
       >
 
       <mat-option
         [value]="fractionDayOfWeekValueEnum.Friday"
-        name="fractionDayOfWeekValueFriday"
+        data-cy="fractionDayOfWeekValueFriday"
         >Friday</mat-option
       >
 
       <mat-option
         [value]="fractionDayOfWeekValueEnum.Saturday"
-        name="fractionDayOfWeekValueSaturday"
+        data-cy="fractionDayOfWeekValueSaturday"
         >Saturday</mat-option
       >
 
       <mat-option
         [value]="fractionDayOfWeekValueEnum.Sunday"
-        name="fractionDayOfWeekValueSunday"
+        data-cy="fractionDayOfWeekValueSunday"
         >Sunday</mat-option
       >
     </mat-select>
