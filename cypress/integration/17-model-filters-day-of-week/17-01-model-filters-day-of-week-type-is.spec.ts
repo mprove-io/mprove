@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '16-01-user@example.com';
+const userId = '17-01-user@example.com';
 const password = '123123';
 
-const projectId = 'project_16_01';
+const projectId = 'project_17_01';
 
-describe('16-01 model-filters-day-of-index-type-is-equal-to (logged in)', () => {
-  it(`should be able to filter day-of-index-type-is-equal-to`, () => {
+describe('17-01 model-filters-day-of-week-type-is (logged in)', () => {
+  it(`should be able to filter day-of-week-type-is`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -52,17 +52,19 @@ describe('16-01 model-filters-day-of-index-type-is-equal-to (logged in)', () => 
       .eq(0)
       .click({ force: true });
     cy.loading();
-
-    cy.get('[data-cy=fractionDayOfWeekIndexType]').click();
-    cy.get('[data-cy=fractionDayOfWeekIndexTypeIsEqualTo]').click();
-    cy.get('[data-cy=fractionDayOfWeekIndexValues]').type('1');
+    
+    cy.get('[data-cy=fractionDayOfWeekType]').click();
+    cy.get('[data-cy=fractionDayOfWeekTypeIs]').click();
+    cy.loading();
+    cy.get('[data-cy=fractionDayOfWeekValue]').click();
+    cy.get('[data-cy=fractionDayOfWeekValueTuesday]').click();
     cy.get('[data-cy=modelTitle]').click();
     cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });
     cy.loading();
 
-    cy.get('[data-cy=fractionDayOfWeekIndexType]').should($elements => {
+    cy.get('[data-cy=fractionDayOfWeekType]').should($elements => {
       expect($elements).to.have.length(2);
     });
   });
