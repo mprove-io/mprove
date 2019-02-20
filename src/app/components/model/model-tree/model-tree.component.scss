@@ -66,7 +66,13 @@ $node-width: 60vw;
 
   .model-tree {
     height: 100%;
-    &__file {
+    &__item {
+      visibility: visible;
+      padding: 2px 5px;
+      position: relative;
+      width: calc(100% + #{$node-offset-positive});
+      left: $node-offset-negative;
+
       &-default {
         cursor: default !important;
 
@@ -76,11 +82,9 @@ $node-width: 60vw;
         }
       }
 
-      &_clickable {
-        padding: 2px 5px;
-        position: relative;
-        width: calc(100% + #{$node-offset-positive});
-        left: $node-offset-negative;
+      &_not_clickable {
+        cursor: default !important;
+
         .mat-button {
           visibility: hidden;
         }
@@ -107,10 +111,6 @@ $node-width: 60vw;
           .mat-button {
             visibility: visible;
           }
-        }
-
-        &_default {
-          cursor: default !important;
         }
       }
 
@@ -157,22 +157,22 @@ $node-width: 60vw;
       visibility: hidden !important;
     }
 
-    &__filter-count {
+    &__field-count {
       padding: 2px 9px 0;
       border-radius: 8px;
     }
 
-    &__filter-label {
-      position: absolute;
-      right: 20px;
-      line-height: 19px;
-      border: 1px solid;
-      padding: 0 5px;
-      border-radius: 2px;
-    }
+    // &__filter-label {
+    //   position: absolute;
+    //   right: 20px;
+    //   line-height: 19px;
+    //   border: 1px solid;
+    //   padding: 0 5px;
+    //   border-radius: 2px;
+    // }
   }
 }
-.model-tree__file-inner {
+.model-tree__item-inner {
   position: relative;
 }
 /deep/.folder-btn {

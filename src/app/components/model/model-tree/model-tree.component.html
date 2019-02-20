@@ -5,19 +5,20 @@
         fxLayout="row"
         fxLayoutAlign="start center"
         data-cy="modelTreeItem"
-        class="model-tree__file_clickable"
-        [class.model-tree__file-default]="node.isLeaf && !node.data.is_field"
+        class="model-tree__item"
         [ngClass]="{
-          'model-tree__file-root': node.isRoot
+          'model-tree__item-default': node.isLeaf && !node.data.is_field,
+          'model-tree__item-root': node.isRoot,
+          'model-tree__item_not_clickable': !node.hasChildren
         }"
-        (click)="nodeOnClick(node)"
+        (click)="toggleExpandCollapse(node)"
       >
-        <div class="model-tree__file-inner">
+        <div class="model-tree__item-inner">
           <div
             fxFlex
             fxLayout="row"
             fxLayoutAlign="space-between center"
-            [class.model-tree__file-name_offset-left_10]="node.hasChildren"
+            [class.model-tree__item-name_offset-left_10]="node.hasChildren"
           >
             <div
               class="model-tree__child-{{node.data.node_class}} model-tree__node-{{node.data.id | extension}}"
@@ -32,7 +33,7 @@
                 node.data[countSelectedItemsKey] > 0 &&
                 !node.isExpanded
               "
-              class="model-tree__filter-count"
+              class="model-tree__field-count"
             >
               {{ node.data[countSelectedItemsKey] }}
             </div>

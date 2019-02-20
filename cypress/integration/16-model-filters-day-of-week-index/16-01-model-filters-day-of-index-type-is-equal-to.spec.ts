@@ -44,22 +44,26 @@ describe('16-01 model-filters-day-of-index-type-is-equal-to (logged in)', () => 
     );
     cy.loading();
 
-    // cy.get('[data-cy=modelTreeItemFilterButton]')
-    //   .eq(1)
-    //   .click({ force: true });
-    // cy.loading();
+    cy.get('[data-cy=modelTreeItem]')
+      .eq(5)
+      .click({ force: true });
 
-    // cy.get('[data-cy=fractionDayOfWeekIndexType]').click();
-    // cy.get('[data-cy=fractionDayOfWeekIndexTypeIsEqualTo]').click();
-    // cy.get('[data-cy=fractionDayOfWeekIndexValues]').type('1');
-    // cy.get('[data-cy=modelTitle]').click();
-    // cy.loading();
+    cy.get('[data-cy=modelTreeItemFilterButton]')
+      .eq(0)
+      .click({ force: true });
+    cy.loading();
 
-    // cy.get('[data-cy=addModelFilterFraction]').click({ force: true });
-    // cy.loading();
+    cy.get('[data-cy=fractionDayOfWeekIndexType]').click();
+    cy.get('[data-cy=fractionDayOfWeekIndexTypeIsEqualTo]').click();
+    cy.get('[data-cy=fractionDayOfWeekIndexValues]').type('1');
+    cy.get('[data-cy=modelTitle]').click();
+    cy.loading();
 
-    // cy.get('[data-cy=fractionDayOfWeekIndexType]').should($elements => {
-    //   expect($elements).to.have.length(2);
-    // });
+    cy.get('[data-cy=addModelFilterFraction]').click({ force: true });
+    cy.loading();
+
+    cy.get('[data-cy=fractionDayOfWeekIndexType]').should($elements => {
+      expect($elements).to.have.length(2);
+    });
   });
 });

@@ -172,6 +172,12 @@ export class ModelTreeComponent implements AfterViewInit {
     });
   }
 
+  toggleExpandCollapse(node: TreeNode) {
+    if (!node.data.is_field && node.hasChildren) {
+      node.toggleExpanded();
+    }
+  }
+
   nodeOnClick(node: TreeNode) {
     if (
       node.data.is_field &&
@@ -212,9 +218,6 @@ export class ModelTreeComponent implements AfterViewInit {
           }
         })
       );
-    } else if (node.hasChildren) {
-      // not field and has children
-      node.toggleExpanded();
     }
   }
 

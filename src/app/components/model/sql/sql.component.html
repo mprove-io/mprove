@@ -1,14 +1,14 @@
 <div class="sql" fxLayout="column" fxFlexFill>
   <div
     fxFlex
-    *ngIf="mconfigSelectFields.length === 0"
+    *ngIf="!query"
     class="sql__empty-title"
     fxLayoutAlign="center center"
   >
     <h3>Select some fields...</h3>
   </div>
 
-  <div *ngIf="mconfigSelectFields.length !== 0" class="sql-table">
+  <div *ngIf="query" class="sql-table">
     <td-data-table
       [data]="partsWithQuery"
       [columns]="columns"

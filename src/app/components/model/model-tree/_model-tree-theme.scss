@@ -16,15 +16,7 @@
     }
 
     .model-tree {
-      &__file_clickable:active {
-        @if $is-dark == true {
-          background-color: mat-color($sub-primary, 900);
-        } @else {
-          background-color: mat-color($sub-primary, 400);
-        }
-      }
-
-      &__file_hover:not(.model-tree__file-active):hover {
+      &__item_hover:not(.model-tree__item-active):hover {
         @if $is-dark == true {
           background-color: mat-color($background, hover);
         } @else {
@@ -32,7 +24,7 @@
         }
       }
 
-      &__file-active {
+      &__item-active {
         @if $is-dark == true {
           background-color: mat-color($sub-primary, 700);
         } @else {
@@ -40,7 +32,7 @@
         }
       }
 
-      &__file-root {
+      &__item-root {
         @if $is-dark == true {
           background-color: mat-color($sub-primary, 900);
         } @else {
@@ -62,14 +54,14 @@
         color: mat-contrast($accent, 500) !important;
       }
 
-      &__filter-count {
+      &__field-count {
         margin-left: 10px;
         color: mat-color($primary);
       }
 
-      &__filter-label {
-        color: mat-color($accent);
-      }
+      // &__filter-label {
+      //   color: mat-color($accent);
+      // }
 
       &__node-measures,
       &__child-measure {
@@ -105,7 +97,7 @@
     }
   }
 }
-.model-tree__filter-count {
+.model-tree__field-count {
   background: #c7cdd1;
   color: #737373 !important;
 }
