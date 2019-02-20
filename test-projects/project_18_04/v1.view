@@ -1,0 +1,9 @@
+view: v1
+derived_table: |
+  SELECT CURRENT_TIMESTAMP() as created
+
+fields:
+- time: created
+  timeframes:
+    - month_name
+  sql: created
