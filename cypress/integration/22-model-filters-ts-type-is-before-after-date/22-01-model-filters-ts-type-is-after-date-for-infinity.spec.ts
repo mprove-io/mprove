@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '20-09-user@example.com';
+const userId = '22-01-user@example.com';
 const password = '123123';
 
-const projectId = 'project_20_09';
+const projectId = 'project_22_01';
 
-describe('20-09 model-filters-ts-type-is-not-null (logged in)', () => {
-  it(`should be able to filter ts-type-is-not-null`, () => {
+describe('22-01 model-filters-ts-type-is-after-date (logged in)', () => {
+  it(`should be able to filter ts-type-is-after-date`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -54,8 +54,12 @@ describe('20-09 model-filters-ts-type-is-not-null (logged in)', () => {
     cy.loading();
 
     cy.get('[data-cy=fractionTsType]').click();
-    cy.get('[data-cy=fractionTsTypeIsNotNull]').click();
+    cy.get('[data-cy=fractionTsTypeIsAfterDate]').click();
     cy.loading();
+
+    cy.get('[data-cy=fractionTsForOption]').click();
+    cy.get('[data-cy=fractionTsForOptionForInfinity]').click();
+    cy.loading();      
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });
     cy.loading();

@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '20-23-user@example.com';
+const userId = '24-03-user@example.com';
 const password = '123123';
 
-const projectId = 'project_20_23';
+const projectId = 'project_24_03';
 
-describe('20-23 model-filters-ts-type-is-null (logged in)', () => {
-  it(`should be able to filter ts-type-is-null`, () => {
+describe('24-03 model-filters-ts-type-is-in-last-complete-plus-current (logged in)', () => {
+  it(`should be able to filter ts-type-is-in-last-complete-plus-current`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -54,7 +54,21 @@ describe('20-23 model-filters-ts-type-is-null (logged in)', () => {
     cy.loading();
 
     cy.get('[data-cy=fractionTsType]').click();
-    cy.get('[data-cy=fractionTsTypeIsNull]').click();
+    cy.get('[data-cy=fractionTsTypeIsInLast]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsLastValue]')
+      .clear({ force: true })
+      .type('5');
+    cy.get('[data-cy=modelTitle]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsLastUnit]').click();
+    cy.get('[data-cy=fractionTsLastUnitDays]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsLastCompleteOption]').click();
+    cy.get('[data-cy=fractionTsLastCompleteOptionCompletePlusCurrent]').click();
     cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });

@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '20-24-user@example.com';
+const userId = '21-02-user@example.com';
 const password = '123123';
 
-const projectId = 'project_20_24';
+const projectId = 'project_21_02';
 
-describe('20-24 model-filters-ts-type-is-not-null (logged in)', () => {
-  it(`should be able to filter ts-type-is-not-null`, () => {
+describe('21-02 model-filters-ts-type-is-on-month (logged in)', () => {
+  it(`should be able to filter ts-type-is-on-month`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -54,7 +54,7 @@ describe('20-24 model-filters-ts-type-is-not-null (logged in)', () => {
     cy.loading();
 
     cy.get('[data-cy=fractionTsType]').click();
-    cy.get('[data-cy=fractionTsTypeIsNotNull]').click();
+    cy.get('[data-cy=fractionTsTypeIsOnMonth]').click();
     cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });

@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '20-15-user@example.com';
+const userId = '23-06-user@example.com';
 const password = '123123';
 
-const projectId = 'project_20_15';
+const projectId = 'project_23_06';
 
-describe('20-15 model-filters-ts-type-is-before-date-for-unit-years (logged in)', () => {
-  it(`should be able to filter ts-type-is-before-date-for-unit-years`, () => {
+describe('23-06 model-filters-ts-type-is-before-relative-incomplete-ago-for-hours (logged in)', () => {
+  it(`should be able to filter ts-type-is-before-relative-incomplete-ago-for-hours`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -54,7 +54,25 @@ describe('20-15 model-filters-ts-type-is-before-date-for-unit-years (logged in)'
     cy.loading();
 
     cy.get('[data-cy=fractionTsType]').click();
-    cy.get('[data-cy=fractionTsTypeIsBeforeDate]').click();
+    cy.get('[data-cy=fractionTsTypeIsBeforeRelative]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeValue]')
+      .clear()
+      .type('5');
+    cy.get('[data-cy=modelTitle]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeUnit]').click();
+    cy.get('[data-cy=fractionTsRelativeUnitDays]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeCompleteOption]').click();
+    cy.get('[data-cy=fractionTsRelativeCompleteOptionIncomplete]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeWhenOption]').click();
+    cy.get('[data-cy=fractionTsRelativeWhenOptionAgo]').click();
     cy.loading();
 
     cy.get('[data-cy=fractionTsForOption]').click();
@@ -62,13 +80,13 @@ describe('20-15 model-filters-ts-type-is-before-date-for-unit-years (logged in)'
     cy.loading();
 
     cy.get('[data-cy=fractionTsForValue]')
-      .clear({ force: true })
+      .clear()
       .type('2');
     cy.get('[data-cy=modelTitle]').click();
     cy.loading();
 
     cy.get('[data-cy=fractionTsForUnit]').click();
-    cy.get('[data-cy=fractionTsForUnitYears]').click();
+    cy.get('[data-cy=fractionTsForUnitHours]').click();
     cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });

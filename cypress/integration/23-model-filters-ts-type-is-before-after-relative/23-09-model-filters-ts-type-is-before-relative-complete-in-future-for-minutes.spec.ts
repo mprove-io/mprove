@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '20-16-user@example.com';
+const userId = '23-09-user@example.com';
 const password = '123123';
 
-const projectId = 'project_20_16';
+const projectId = 'project_23_09';
 
-describe('20-16 model-filters-ts-type-is-before-date-for-unit-quarters (logged in)', () => {
-  it(`should be able to filter ts-type-is-before-date-for-unit-quarters`, () => {
+describe('23-09 model-filters-ts-type-is-before-relative-complete-in-future-for-minutes (logged in)', () => {
+  it(`should be able to filter ts-type-is-before-relative-complete-in-future-for-minutes`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -54,7 +54,25 @@ describe('20-16 model-filters-ts-type-is-before-date-for-unit-quarters (logged i
     cy.loading();
 
     cy.get('[data-cy=fractionTsType]').click();
-    cy.get('[data-cy=fractionTsTypeIsBeforeDate]').click();
+    cy.get('[data-cy=fractionTsTypeIsBeforeRelative]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeValue]')
+      .clear()
+      .type('5');
+    cy.get('[data-cy=modelTitle]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeUnit]').click();
+    cy.get('[data-cy=fractionTsRelativeUnitDays]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeCompleteOption]').click();
+    cy.get('[data-cy=fractionTsRelativeCompleteOptionComplete]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeWhenOption]').click();
+    cy.get('[data-cy=fractionTsRelativeWhenOptionInFuture]').click();
     cy.loading();
 
     cy.get('[data-cy=fractionTsForOption]').click();
@@ -68,7 +86,7 @@ describe('20-16 model-filters-ts-type-is-before-date-for-unit-quarters (logged i
     cy.loading();
 
     cy.get('[data-cy=fractionTsForUnit]').click();
-    cy.get('[data-cy=fractionTsForUnitQuarters]').click();
+    cy.get('[data-cy=fractionTsForUnitMinutes]').click();
     cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });

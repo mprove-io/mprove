@@ -24,7 +24,12 @@
     "cypress:17": "cypress run --spec 'integration/17-model-filters-day-of-week/*'",
     "cypress:18": "cypress run --spec 'integration/18-model-filters-month-name/*'",
     "cypress:19": "cypress run --spec 'integration/19-model-filters-quarter-of-year/*'",
-    "cypress:all": "npm-run-all cypress:01 cypress:02 cypress:03 cypress:04 cypress:05 cypress:06 cypress:07 cypress:08 cypress:09 cypress:10 cypress:11 cypress:12 cypress:13 cypress:14 cypress:15 cypress:16 cypress:17 cypress:18 cypress:19",
+    "cypress:20": "cypress run --spec 'integration/20-model-filters-ts/*'",
+    "cypress:21": "cypress run --spec 'integration/21-model-filters-ts-type-is-on/*'",
+    "cypress:22": "cypress run --spec 'integration/22-model-filters-ts-type-is-before-after-date/*'",
+    "cypress:23": "cypress run --spec 'integration/23-model-filters-ts-type-is-before-after-relative/*'",
+    "cypress:24": "cypress run --spec 'integration/24-model-filters-ts-type-is-in-last/*'",
+    "cypress:all": "npm-run-all cypress:01 cypress:02 cypress:03 cypress:04 cypress:05 cypress:06 cypress:07 cypress:08 cypress:09 cypress:10 cypress:11 cypress:12 cypress:13 cypress:14 cypress:15 cypress:16 cypress:17 cypress:18 cypress:19 cypress:20 cypress:21 cypress:22 cypress:23 cypress:24",
     "cypress:all-p": "npm-run-all --parallel --max-parallel 2 cypress:01 cypress:02"
   },
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",

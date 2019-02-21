@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '20-11-user@example.com';
+const userId = '23-01-user@example.com';
 const password = '123123';
 
-const projectId = 'project_20_11';
+const projectId = 'project_23_01';
 
-describe('20-11 model-filters-ts-type-is-on-day (logged in)', () => {
-  it(`should be able to filter ts-type-is-on-day`, () => {
+describe('23-01 model-filters-ts-type-is-after-relative-for-infinity (logged in)', () => {
+  it(`should be able to filter ts-type-is-after-relative-for-infinity`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -54,7 +54,21 @@ describe('20-11 model-filters-ts-type-is-on-day (logged in)', () => {
     cy.loading();
 
     cy.get('[data-cy=fractionTsType]').click();
-    cy.get('[data-cy=fractionTsTypeIsOnDay]').click();
+    cy.get('[data-cy=fractionTsTypeIsAfterRelative]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeValue]')
+      .clear()
+      .type('5');
+    cy.get('[data-cy=modelTitle]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsRelativeUnit]').click();
+    cy.get('[data-cy=fractionTsRelativeUnitDays]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fractionTsForOption]').click();
+    cy.get('[data-cy=fractionTsForOptionForInfinity]').click();
     cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });
