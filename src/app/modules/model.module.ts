@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TreeModule } from 'angular-tree-component';
 import { ClipboardModule } from 'ngx-clipboard';
 import * as components from '@app/components/_index';
 import { ColorPickerModule } from '@app/modules/colorpicker/colorpicker.module';
@@ -26,7 +25,6 @@ import { VisualModule } from '@app/modules/visual.module';
     FlexLayoutModule,
     RouterModule,
     ReactiveFormsModule,
-    TreeModule,
     VisualModule,
     ValidationMsgModule
   ],
@@ -38,7 +36,7 @@ import { VisualModule } from '@app/modules/visual.module';
     components.QueryComponent,
     components.SqlComponent,
     components.DataComponent,
-    components.DragTableComponent,
+    components.MainTableComponent,
     components.ChartComponent,
     components.ChartEditorComponent,
     components.ChartViewerComponent

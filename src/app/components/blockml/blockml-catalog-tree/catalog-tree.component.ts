@@ -44,8 +44,6 @@ export class CatalogTreeComponent {
 
   treeOptions = {
     actionMapping: this.actionMapping,
-    // allowDrag: (node: TreeNode) => node.isLeaf,
-    // allowDrop: (element: any, to: any) => to.parent.hasChildren,
     displayField: 'name'
   };
 

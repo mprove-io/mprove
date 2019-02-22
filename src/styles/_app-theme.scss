@@ -22,7 +22,7 @@
 @import '../app/components/model/chart-editor/_chart-editor-theme';
 @import '../app/components/model/chart-viewer/_chart-viewer-theme';
 @import '../app/components/model/data/_data-theme';
-@import '../app/components/model/drag-table/_drag-table-theme';
+@import '../app/components/model/main-table/_main-table-theme';
 @import '../app/components/model/model-filters/_model-filters-theme';
 @import '../app/components/model/model-tree/_model-tree-theme';
 @import '../app/components/model/query/_query-theme';
@@ -75,8 +75,8 @@
   @include sql-theme($theme);
   @include model-filters-theme($theme);
   @include dashboard-filters-theme($theme);
-  @include query-data-theme($theme);
-  @include query-drag-table-theme($theme);
+  @include data-theme($theme);
+  @include main-table-theme($theme);
   @include file-editor-theme($theme);
   @include visual-theme($theme);
   @include chart-viewer-theme($theme);

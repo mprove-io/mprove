@@ -1,21 +1,13 @@
-@mixin query-drag-table-theme($theme) {
+@mixin main-table-theme($theme) {
   $sub-primary: map-get($theme, sub-primary);
   $is-dark: map-get($theme, is-dark);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, accent);
 
-  .query-drag-table {
+  .main-table {
     &__sort {
       &-number {
         color: mat-color($warn);
-      }
-    }
-
-    &__th-drag {
-      @if $is-dark == true {
-        background-color: mat-color($sub-primary, 700);
-      } @else {
-        background-color: #fff;
       }
     }
 
@@ -24,14 +16,6 @@
         background-color: mat-color($sub-primary, 600);
       } @else {
         background-color: #ffffff;
-      }
-    }
-
-    .sindu_column li {
-      @if $is-dark == true {
-        box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.12);
-      } @else {
-        box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.12);
       }
     }
 
@@ -46,7 +30,7 @@
 
     &__th-measure_background {
       background-color: transparent;
-      .query-drag-table__wrap {
+      .main-table__wrap {
         @if $is-dark == true {
           background-color: rgb(197, 143, 61);
         } @else {
@@ -65,7 +49,7 @@
 
     &__th-calculation_background {
       background-color: transparent;
-      .query-drag-table__wrap {
+      .main-table__wrap {
         @if $is-dark == true {
           background-color: #a018cc;
         } @else {
@@ -84,7 +68,7 @@
 
     &__th-dimension_background {
       background-color: transparent;
-      .query-drag-table__wrap {
+      .main-table__wrap {
         @if $is-dark == true {
           background-color: rgb(24, 124, 204);
         } @else {
@@ -99,19 +83,6 @@
       } @else {
         background-color: #0057bc12;
       }
-    }
-  }
-
-  .clear-select {
-    .query-drag-table__th:after {
-      content: '';
-      display: block;
-      position: absolute;
-      z-index: 2000;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
     }
   }
 }

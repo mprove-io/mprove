@@ -1,0 +1,115 @@
+.main-table {
+  display: flex;
+  position: relative;
+  height: 100%;
+  overflow: auto;
+
+  &__data-table {
+    overflow-y: auto !important;
+  }
+
+  &__arrow-right {
+    display: none;
+    cursor: pointer;
+    position: absolute;
+    align-items: center;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    /*    background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+    background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
+    background: linear-gradient(to right, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=1 );*/
+  }
+
+  &__arrow-left {
+    display: none;
+    cursor: pointer;
+    position: absolute;
+    align-items: center;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    /*    background: -moz-linear-gradient(left, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
+    background: -webkit-linear-gradient(left, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+    background: linear-gradient(to right, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 );*/
+  }
+
+  &__sort {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &-asc {
+      order: 1;
+    }
+
+    &-number {
+      text-align: center;
+      order: 2;
+    }
+
+    &-desc {
+      order: 3;
+    }
+
+    &-asc,
+    &-desc {
+      cursor: pointer;
+      // height: 13px!important;
+      // line-height: 13px;
+    }
+
+    &-asc,
+    &-desc {
+      cursor: pointer;
+    }
+  }
+
+  &__wrap {
+    position: relative;
+    padding: 0 28px;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.12);
+
+    &:hover .main-table__arrow-left {
+      display: flex;
+    }
+
+    &:hover .main-table__arrow-right {
+      display: flex;
+    }
+  }
+
+  /deep/ {
+    thead > .td-data-table-row {
+      position: relative;
+    }
+
+    th[td-data-table-column] {
+      cursor: move;
+      box-shadow: none;
+
+      .td-data-table-heading {
+        height: 48px;
+        line-height: 48px;
+        width: 100%;
+        position: relative;
+        padding: 0;
+      }
+    }
+
+    td[td-data-table-cell] {
+      height: 19.8px;
+    }
+
+    th[td-data-table-column] {
+      border-right: none !important;
+    }
+
+    th[td-data-table-column]:last-child,
+    td[td-data-table-cell]:last-child {
+      border-right: none !important;
+    }
+  }
+}

@@ -3,11 +3,9 @@
   height: 100%;
   overflow: auto;
 }
-.query-data {
+.data {
   &__table {
     overflow: auto;
-    // display: flex;
-    // flex-direction: column;
   }
 }
 .limit-form {
@@ -24,7 +22,4 @@
   .mat-select {
     width: 100% !important;
   }
-}
-.m-drag-table {
-  overflow: visible !important;
 }

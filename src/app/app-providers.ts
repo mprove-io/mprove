@@ -1,4 +1,3 @@
-import { TreeDraggedElement } from 'angular-tree-component';
 import * as configs from '@app/configs/_index';
 import * as guards from '@app/guards/_index';
 import * as resolvers from '@app/resolvers/_index';
@@ -22,7 +21,6 @@ export const APP_PROVIDERS = [
     provide: ErrorStateMatcher,
     useClass: ShowOnDirtyErrorStateMatcher
   },
-  TreeDraggedElement,
   services.MyHttpService,
   services.MyWebSocketService,
   services.AuthService,
