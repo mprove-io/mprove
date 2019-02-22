@@ -24,7 +24,9 @@
           <div *ngIf="column.group_label" class="ml-10">{{
             column.group_label | capitalize
           }}</div>
-          <div class="ml-10">{{ column.label | capitalize }}</div>
+          <div class="ml-10" data-cy="mainTableColumnLabel">{{
+            column.label | capitalize
+          }}</div>
 
           <div class="main-table__sort" fxLayout="row">
             <div fxLayout="row" fxLayoutAlign="center center">
@@ -85,7 +87,7 @@
       <td
         td-data-table-cell
         *ngFor="let column of sortedColumns"
-        name="dataTableCell"
+        data-cy="dataTableCell"
         class="main-table__td-{{i % 2 !== 0 ? column.field_class : 'default'}}_background"
       >
         {{ row[column.sql_name] }}

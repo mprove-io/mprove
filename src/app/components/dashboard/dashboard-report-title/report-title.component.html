@@ -37,7 +37,9 @@
         >error_outline
       </mat-icon>
 
-      <h6 class="report-title__h6">{{ visual.chart.title | capitalize }}</h6>
+      <h6 class="report-title__h6" data-cy="reportTitleText">{{
+        visual.chart.title | capitalize
+      }}</h6>
 
       <div
         *ngIf="

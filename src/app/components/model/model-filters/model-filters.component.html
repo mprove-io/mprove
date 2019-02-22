@@ -18,7 +18,9 @@
 
           <div class="model-filters__label ml-10"
             >{{ getFieldTopLabel(filter.field_id) | capitalize }}
-            <strong>{{ getFieldLabel(filter.field_id) | capitalize }}</strong>
+            <strong data-cy="modelFiltersFieldLabel">{{
+              getFieldLabel(filter.field_id) | capitalize
+            }}</strong>
           </div>
         </div>
 
