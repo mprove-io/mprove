@@ -165,8 +165,6 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    // this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
-    // this.store.dispatch(new actions.UpdateQueriesStateAction([newQuery]));
     this.store.dispatch(
       new actions.CreateMconfigAndQueryAction({
         api_payload: {
@@ -181,14 +179,5 @@ export class ModelFiltersComponent {
         }
       })
     );
-
-    // setTimeout(
-    //   () =>
-    //     this.navigateService.navigateSwitch(
-    //       newMconfig.mconfig_id,
-    //       newQuery.query_id
-    //     ),
-    //   1
-    // );
   }
 }

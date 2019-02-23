@@ -12,8 +12,14 @@ export class CreateMconfigEffect {
   @Effect() createMconfig$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.CREATE_MCONFIG),
     mergeMap((action: actions.CreateMconfigAction) =>
-      this.backendService.createMconfig(action.payload).pipe(
-        map(body => new actions.CreateMconfigSuccessAction(body.payload)),
+      this.backendService.createMconfig(action.payload.api_payload).pipe(
+        map(
+          body =>
+            new actions.CreateMconfigSuccessAction({
+              api_payload: body.payload,
+              navigate: action.payload.navigate
+            })
+        ),
         catchError(e => of(new actions.CreateMconfigFailAction({ error: e })))
       )
     )

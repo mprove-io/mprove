@@ -44,19 +44,6 @@ export class ReportTitleComponent {
 
   reportClick(visual: interfaces.Visual) {
     if (visual.has_access_to_model && !visual.is_model_hidden) {
-      // let mconfig: api.Mconfig = visual.mconfig;
-
-      // let [newMconfig, newQuery] = this.structService.copyMconfigAndQuery(
-      //   mconfig.mconfig_id
-      // );
-
-      // this.store.dispatch(
-      //   new actions.CreateMconfigAndQueryAction({
-      //     mconfig: newMconfig,
-      //     query: newQuery
-      //   })
-      // );
-
       let mconfigId = visual.mconfig.mconfig_id;
       let queryId = visual.mconfig.query_id;
 
@@ -66,17 +53,6 @@ export class ReportTitleComponent {
           query_id: queryId
         })
       );
-
-      // setTimeout(
-      //   () =>
-      //     this.navigateService.navigateModelMconfigQueryChart(
-      //       newMconfig.model_id,
-      //       newMconfig.mconfig_id,
-      //       newMconfig.query_id,
-      //       newMconfig.charts[0].chart_id
-      //     ),
-      //   1
-      // );
     }
   }
 }

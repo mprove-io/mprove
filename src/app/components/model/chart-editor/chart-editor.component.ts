@@ -536,19 +536,19 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
     newMconfig.charts = [...newMconfig.charts, newChart];
 
-    this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(
-      new actions.CreateMconfigAction({ mconfig: newMconfig })
-    );
-
-    setTimeout(
-      () =>
-        this.navigateMconfigService.navigateMconfigQueryChart(
-          newMconfig.mconfig_id,
-          newMconfig.query_id,
-          newChart.chart_id
-        ),
-      1
+      new actions.CreateMconfigAction({
+        api_payload: {
+          mconfig: newMconfig
+        },
+        navigate: () => {
+          this.navigateMconfigService.navigateMconfigQueryChart(
+            newMconfig.mconfig_id,
+            newMconfig.query_id,
+            newChart.chart_id
+          );
+        }
+      })
     );
   }
 
@@ -568,18 +568,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       ...newMconfig.charts.slice(chartIndex + 1)
     ];
 
-    this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(
-      new actions.CreateMconfigAction({ mconfig: newMconfig })
-    );
-
-    setTimeout(
-      () =>
-        this.navigateMconfigService.navigateMconfigQueryData(
-          newMconfig.mconfig_id,
-          newMconfig.query_id
-        ),
-      1
+      new actions.CreateMconfigAction({
+        api_payload: {
+          mconfig: newMconfig
+        },
+        navigate: () => {
+          this.navigateMconfigService.navigateMconfigQueryData(
+            newMconfig.mconfig_id,
+            newMconfig.query_id
+          );
+        }
+      })
     );
   }
 
@@ -1215,19 +1215,19 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       this.chart
     ];
 
-    this.store.dispatch(new actions.UpdateMconfigsStateAction([newMconfig]));
     this.store.dispatch(
-      new actions.CreateMconfigAction({ mconfig: newMconfig })
-    );
-
-    setTimeout(
-      () =>
-        this.navigateMconfigService.navigateMconfigQueryChart(
-          newMconfig.mconfig_id,
-          newMconfig.query_id,
-          this.chart.chart_id
-        ),
-      1
+      new actions.CreateMconfigAction({
+        api_payload: {
+          mconfig: newMconfig
+        },
+        navigate: () => {
+          this.navigateMconfigService.navigateMconfigQueryChart(
+            newMconfig.mconfig_id,
+            newMconfig.query_id,
+            this.chart.chart_id
+          );
+        }
+      })
     );
   }
 
