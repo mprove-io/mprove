@@ -14,6 +14,7 @@
             column.field_class === sortedColumns[columnIndex - 1].field_class
           "
           (click)="moveLeft(columnIndex)"
+          data-cy="mainTableColumnMoveLeftButton"
           class="main-table__arrow-left"
         >
           <mat-icon color="warn">navigate_before</mat-icon>
@@ -33,7 +34,7 @@
               <mat-icon
                 *ngIf="isAsc(column.id)"
                 class="main-table__sort-asc"
-                data-cy="mainTableSortAsc"
+                data-cy="mainTableColumnIsAscSortAscButton"
                 [color]="isAsc(column.id) ? 'warn' : 'default'"
                 (click)="sort(column.id, false)"
                 >keyboard_arrow_up
@@ -42,7 +43,7 @@
               <mat-icon
                 *ngIf="isDesc(column.id)"
                 class="main-table__sort-desc"
-                data-cy="mainTableSortDesc"
+                data-cy="mainTableColumnIsDescSortDescButton"
                 [color]="isDesc(column.id) ? 'warn' : 'default'"
                 (click)="sort(column.id, true)"
                 >keyboard_arrow_down
@@ -51,7 +52,7 @@
               <mat-icon
                 *ngIf="!isDesc(column.id) && !isAsc(column.id)"
                 class="main-table__sort-desc"
-                data-cy="mainTableSortDesc"
+                data-cy="mainTableColumnNotSortedSortDescButton"
                 [color]="isDesc(column.id) ? 'warn' : 'default'"
                 (click)="sort(column.id, true)"
                 >keyboard_arrow_down
@@ -76,6 +77,7 @@
             column.field_class === sortedColumns[columnIndex + 1].field_class
           "
           (click)="moveRight(columnIndex)"
+          data-cy="mainTableColumnMoveRightButton"
           class="main-table__arrow-right"
         >
           <mat-icon color="warn">navigate_next</mat-icon>
@@ -83,7 +85,11 @@
       </div>
     </th>
 
-    <tr td-data-table-row *ngFor="let row of filteredData; let i = index">
+    <tr
+      td-data-table-row
+      *ngFor="let row of filteredData; let i = index"
+      data-cy="dataTableRow"
+    >
       <td
         td-data-table-cell
         *ngFor="let column of sortedColumns"

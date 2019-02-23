@@ -3,7 +3,7 @@
     <div fxLayout="row" fxLayoutAlign="start center">
       <a
         mat-tab-link
-        name="queryTabFilters"
+        data-cy="queryTabFilters"
         (click)="navigateToFilters()"
         [active]="activeLinkIndex === 0"
       >
@@ -20,7 +20,7 @@
 
       <a
         mat-tab-link
-        name="queryTabSql"
+        data-cy="queryTabSql"
         (click)="navigateToSql()"
         [active]="activeLinkIndex === 1"
       >
@@ -29,7 +29,7 @@
 
       <a
         mat-tab-link
-        name="queryTabData"
+        data-cy="queryTabData"
         (click)="navigateToData()"
         [active]="activeLinkIndex === 2"
       >
@@ -39,7 +39,7 @@
       <a
         mat-tab-link
         *ngFor="let chart of charts; let i = index"
-        name="queryTabChart"
+        data-cy="queryTabChart"
         (click)="navigateChart(chart.chart_id)"
         [active]="activeLinkIndex === i + 3"
       >
@@ -54,7 +54,7 @@
       <button
         mat-icon-button
         color="primary"
-        name="queryTabAddChart"
+        data-cy="queryTabAddChart"
         (click)="addChart()"
       >
         <mat-icon>add</mat-icon>
