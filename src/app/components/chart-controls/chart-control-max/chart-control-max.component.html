@@ -1,0 +1,18 @@
+<form [formGroup]="maxForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      placeholder="max"
+      name="chartMax"
+      [formControl]="max"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="maxBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="maxForm.controls['max'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

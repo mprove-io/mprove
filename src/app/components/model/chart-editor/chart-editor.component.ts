@@ -99,9 +99,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
 
-  titleForm: FormGroup;
-  title: AbstractControl;
-
   xAxisLabelForm: FormGroup;
   xAxisLabel: AbstractControl;
 
@@ -147,12 +144,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   smallSegmentsForm: FormGroup;
   smallSegments: AbstractControl;
 
-  maxForm: FormGroup;
-  max: AbstractControl;
-
-  unitsForm: FormGroup;
-  units: AbstractControl;
-
   legendTitleForm: FormGroup;
   legendTitle: AbstractControl;
 
@@ -173,6 +164,9 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   };
 
   minValid: boolean;
+  maxValid: boolean;
+  unitsValid: boolean;
+  titleValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -191,8 +185,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   }
 
   buildForms() {
-    this.buildTitleForm();
-
     this.buildXAxisLabelForm();
     this.buildYAxisLabelForm();
 
@@ -214,23 +206,10 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.buildBigSegmentsForm();
     this.buildSmallSegmentsForm();
 
-    this.buildMaxForm();
-    this.buildUnitsForm();
     this.buildLegendTitleForm();
 
     this.buildViewWidthForm();
     this.buildViewHeightForm();
-  }
-
-  buildTitleForm() {
-    this.titleForm = this.fb.group({
-      title: [
-        this.chart.title,
-        Validators.compose([Validators.required, Validators.maxLength(255)])
-      ]
-    });
-
-    this.title = this.titleForm.controls['title'];
   }
 
   buildXAxisLabelForm() {
@@ -440,31 +419,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.smallSegments = this.smallSegmentsForm.controls['smallSegments'];
   }
 
-  buildMaxForm() {
-    this.maxForm = this.fb.group({
-      max: [
-        this.chart.max,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator
-        ])
-      ]
-    });
-
-    this.max = this.maxForm.controls['max'];
-  }
-
-  buildUnitsForm() {
-    this.unitsForm = this.fb.group({
-      units: [
-        this.chart.units,
-        Validators.compose([Validators.required, Validators.maxLength(255)])
-      ]
-    });
-
-    this.units = this.unitsForm.controls['units'];
-  }
-
   buildLegendTitleForm() {
     this.legendTitleForm = this.fb.group({
       legendTitle: [
@@ -572,17 +526,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   }
 
   //
-
-  titleBlur() {
-    if (this.title.value !== this.chart.title) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        title: this.title.value
-      });
-
-      this.chartChange();
-    }
-  }
 
   typeChange(ev: MatSelectChange) {
     this.chart = Object.assign({}, this.chart, {
@@ -989,28 +932,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  maxBlur() {
-    if (this.max.value !== this.chart.max) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        max: this.max.value
-      });
-
-      this.chartChange();
-    }
-  }
-
-  unitsBlur() {
-    if (this.units.value !== this.chart.units) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        units: this.units.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   legendTitleBlur() {
     if (this.legendTitle.value !== this.chart.legend_title) {
       this.chart = Object.assign({}, this.chart, {
@@ -1174,6 +1095,27 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
+  maxChange(ev) {
+    this.maxValid = ev.maxValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  unitsChange(ev) {
+    this.unitsValid = ev.unitsValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  titleChange(ev) {
+    this.titleValid = ev.titleValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
   chartChange(chart?) {
     if (chart) {
       this.chart = chart;
@@ -1220,7 +1162,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.pageSizeForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1238,7 +1180,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.yScaleMaxForm.valid
         ) {
           return true;
@@ -1257,7 +1199,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.xScaleMaxForm.valid
         ) {
           return true;
@@ -1277,7 +1219,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.yScaleMaxForm.valid
         ) {
           return true;
@@ -1297,7 +1239,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.xScaleMaxForm.valid
         ) {
           return true;
@@ -1316,7 +1258,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.yScaleMaxForm.valid
         ) {
           return true;
@@ -1335,7 +1277,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.xScaleMaxForm.valid
         ) {
           return true;
@@ -1354,7 +1296,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1372,7 +1314,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1388,7 +1330,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.arcWidthForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1403,7 +1345,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.legendTitleForm.valid &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1417,7 +1359,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.legendTitleForm.valid &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1434,7 +1376,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.yScaleMinForm.valid &&
           this.yScaleMaxForm.valid
         ) {
@@ -1453,7 +1395,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.yScaleMinForm.valid &&
           this.yScaleMaxForm.valid
         ) {
@@ -1472,7 +1414,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid &&
+          this.titleValid &&
           this.yScaleMinForm.valid &&
           this.yScaleMaxForm.valid
         ) {
@@ -1491,7 +1433,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1509,7 +1451,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.yAxisLabelForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1524,7 +1466,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.legendTitleForm.valid &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1537,7 +1479,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.innerPaddingForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1554,11 +1496,11 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.bigSegmentsForm.valid &&
           this.smallSegmentsForm.valid &&
           this.minValid &&
-          this.maxForm.valid &&
-          this.unitsForm.valid &&
+          this.maxValid &&
+          this.unitsValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }
@@ -1570,11 +1512,11 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.value_field &&
           this.minValid &&
-          this.maxForm.valid &&
-          this.unitsForm.valid &&
+          this.maxValid &&
+          this.unitsValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.titleForm.valid
+          this.titleValid
         ) {
           return true;
         }

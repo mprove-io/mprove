@@ -42,24 +42,10 @@
     class="mp-overflow-auto chart-inner"
   >
     <div class="chart-title__wrapper">
-      <form [formGroup]="titleForm">
-        <mat-form-field>
-          <input
-            matInput
-            placeholder="Title"
-            name="chartTitle"
-            class="mp-chart-editor-field-full-width"
-            [formControl]="title"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="titleBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="titleForm.controls['title'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-title
+        [chart]="chart"
+        (titleChange)="titleChange($event)"
+      ></m-chart-control-title>
     </div>
 
     <div>
@@ -1379,46 +1365,17 @@
     </div>
 
     <div *ngIf="maxChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="maxForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="max"
-            name="chartMax"
-            [formControl]="max"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="maxBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="maxForm.controls['max'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-max
+        [chart]="chart"
+        (maxChange)="maxChange($event)"
+      ></m-chart-control-max>
     </div>
 
     <div *ngIf="unitsChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="unitsForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="text"
-            name="chartUnits"
-            placeholder="units"
-            class="mp-chart-editor-field-full-width"
-            [formControl]="units"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="unitsBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="unitsForm.controls['units'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-units
+        [chart]="chart"
+        (unitsChange)="unitsChange($event)"
+      ></m-chart-control-units>
     </div>
 
     <m-colorpicker

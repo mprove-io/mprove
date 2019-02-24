@@ -1,0 +1,19 @@
+<form [formGroup]="unitsForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="text"
+      name="chartUnits"
+      placeholder="units"
+      class="mp-chart-editor-field-full-width"
+      [formControl]="units"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="unitsBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="unitsForm.controls['units'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>
