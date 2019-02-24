@@ -44,7 +44,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlMaxComponent,
     components.ChartControlUnitsComponent,
     components.ChartControlTitleComponent,
-    components.ChartControlXAxisLabelComponent
+    components.ChartControlXAxisLabelComponent,
+    components.ChartControlYAxisLabelComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]
