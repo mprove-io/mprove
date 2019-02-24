@@ -99,9 +99,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
 
-  arcWidthForm: FormGroup;
-  arcWidth: AbstractControl;
-
   barPaddingForm: FormGroup;
   barPadding: AbstractControl;
 
@@ -159,6 +156,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   yAxisLabelValid: boolean;
   legendTitleValid: boolean;
   pageSizeValid: boolean;
+  arcWidthValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -177,8 +175,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   }
 
   buildForms() {
-    this.buildArcWidthForm();
-
     this.buildBarPaddingForm();
     this.buildGroupPaddingForm();
     this.buildInnerPaddingForm();
@@ -195,21 +191,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
     this.buildViewWidthForm();
     this.buildViewHeightForm();
-  }
-
-  buildArcWidthForm() {
-    this.arcWidthForm = this.fb.group({
-      arcWidth: [
-        this.chart.arc_width,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.numberValidator,
-          Validators.min(0)
-        ])
-      ]
-    });
-
-    this.arcWidth = this.arcWidthForm.controls['arcWidth'];
   }
 
   buildBarPaddingForm() {
@@ -700,17 +681,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.chartChange();
   }
 
-  arcWidthBlur() {
-    if (this.arcWidth.value !== this.chart.arc_width) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        arc_width: this.arcWidth.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   barPaddingBlur() {
     if (this.barPadding.value !== this.chart.bar_padding) {
       this.chart = Object.assign({}, this.chart, {
@@ -975,6 +945,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
 
     this.chartChange();
+  }
+
+  arcWidthChange(ev) {
+    this.arcWidthValid = ev.arcWidthValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
   }
 
   legendTitleChange(ev) {
@@ -1244,7 +1221,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_field &&
           this.legendTitleValid &&
-          this.arcWidthForm.valid &&
+          this.arcWidthValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid
