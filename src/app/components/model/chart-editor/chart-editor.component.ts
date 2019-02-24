@@ -99,9 +99,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
 
-  barPaddingForm: FormGroup;
-  barPadding: AbstractControl;
-
   groupPaddingForm: FormGroup;
   groupPadding: AbstractControl;
 
@@ -157,6 +154,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   legendTitleValid: boolean;
   pageSizeValid: boolean;
   arcWidthValid: boolean;
+  barPaddingValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -175,7 +173,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   }
 
   buildForms() {
-    this.buildBarPaddingForm();
     this.buildGroupPaddingForm();
     this.buildInnerPaddingForm();
 
@@ -191,21 +188,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
     this.buildViewWidthForm();
     this.buildViewHeightForm();
-  }
-
-  buildBarPaddingForm() {
-    this.barPaddingForm = this.fb.group({
-      barPadding: [
-        this.chart.bar_padding,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator,
-          Validators.min(0)
-        ])
-      ]
-    });
-
-    this.barPadding = this.barPaddingForm.controls['barPadding'];
   }
 
   buildGroupPaddingForm() {
@@ -681,17 +663,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.chartChange();
   }
 
-  barPaddingBlur() {
-    if (this.barPadding.value !== this.chart.bar_padding) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        bar_padding: this.barPadding.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   groupPaddingBlur() {
     if (this.groupPadding.value !== this.chart.group_padding) {
       this.chart = Object.assign({}, this.chart, {
@@ -954,6 +925,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
+  barPaddingChange(ev) {
+    this.barPaddingValid = ev.barPaddingValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
   legendTitleChange(ev) {
     this.legendTitleValid = ev.legendTitleValid;
     if (ev.chart) {
@@ -1069,7 +1047,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_field &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1088,7 +1066,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_field &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1107,7 +1085,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.groupPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1127,7 +1105,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.groupPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1147,7 +1125,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1166,7 +1144,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1185,7 +1163,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1203,7 +1181,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
-          this.barPaddingForm.valid &&
+          this.barPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||

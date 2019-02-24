@@ -1,4 +1,5 @@
 export * from './chart-control-arc-width/chart-control-arc-width.component';
+export * from './chart-control-bar-padding/chart-control-bar-padding.component';
 export * from './chart-control-legend-title/chart-control-legend-title.component';
 export * from './chart-control-max/chart-control-max.component';
 export * from './chart-control-min/chart-control-min.component';
