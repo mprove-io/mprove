@@ -647,25 +647,10 @@
     </mat-slide-toggle>
 
     <div *ngIf="xAxisLabelChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="xAxisLabelForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="text"
-            name="chartXAxisLabel"
-            placeholder="xAxisLabel"
-            class="mp-chart-editor-field-full-width"
-            [formControl]="xAxisLabel"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="xAxisLabelBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="xAxisLabelForm.controls['xAxisLabel'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-x-axis-label
+        [chart]="chart"
+        (xAxisLabelChange)="xAxisLabelChange($event)"
+      ></m-chart-control-x-axis-label>
     </div>
 
     <mat-slide-toggle
