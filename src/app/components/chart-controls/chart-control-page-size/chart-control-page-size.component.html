@@ -1,0 +1,18 @@
+<form [formGroup]="pageSizeForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      name="chartPageSize"
+      placeholder="pageSize"
+      [formControl]="pageSize"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="pageSizeBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="pageSizeForm.controls['pageSize'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

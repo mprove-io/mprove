@@ -99,9 +99,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
 
-  pageSizeForm: FormGroup;
-  pageSize: AbstractControl;
-
   arcWidthForm: FormGroup;
   arcWidth: AbstractControl;
 
@@ -161,6 +158,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   xAxisLabelValid: boolean;
   yAxisLabelValid: boolean;
   legendTitleValid: boolean;
+  pageSizeValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -179,8 +177,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   }
 
   buildForms() {
-    this.buildPageSizeForm();
-
     this.buildArcWidthForm();
 
     this.buildBarPaddingForm();
@@ -199,22 +195,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
     this.buildViewWidthForm();
     this.buildViewHeightForm();
-  }
-
-  buildPageSizeForm() {
-    this.pageSizeForm = this.fb.group({
-      pageSize: [
-        this.chart.page_size,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator,
-          Validators.min(0),
-          Validators.maxLength(255)
-        ])
-      ]
-    });
-
-    this.pageSize = this.pageSizeForm.controls['pageSize'];
   }
 
   buildArcWidthForm() {
@@ -720,17 +700,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.chartChange();
   }
 
-  pageSizeBlur() {
-    if (this.pageSize.value !== this.chart.page_size) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        page_size: this.pageSize.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   arcWidthBlur() {
     if (this.arcWidth.value !== this.chart.arc_width) {
       this.chart = Object.assign({}, this.chart, {
@@ -1008,8 +977,8 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.chartChange();
   }
 
-  minChange(ev) {
-    this.minValid = ev.minValid;
+  legendTitleChange(ev) {
+    this.legendTitleValid = ev.legendTitleValid;
     if (ev.chart) {
       this.chartChange(ev.chart);
     }
@@ -1022,8 +991,15 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  unitsChange(ev) {
-    this.unitsValid = ev.unitsValid;
+  minChange(ev) {
+    this.minValid = ev.minValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  pageSizeChange(ev) {
+    this.pageSizeValid = ev.pageSizeValid;
     if (ev.chart) {
       this.chartChange(ev.chart);
     }
@@ -1031,6 +1007,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   titleChange(ev) {
     this.titleValid = ev.titleValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  unitsChange(ev) {
+    this.unitsValid = ev.unitsValid;
     if (ev.chart) {
       this.chartChange(ev.chart);
     }
@@ -1093,7 +1076,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     switch (this.chart.type) {
       case api.ChartTypeEnum.Table: {
         if (
-          this.pageSizeForm.valid &&
+          this.pageSizeValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid

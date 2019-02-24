@@ -1042,24 +1042,10 @@
     </div>
 
     <div *ngIf="pageSizeChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="pageSizeForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            name="chartPageSize"
-            placeholder="pageSize"
-            [formControl]="pageSize"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="pageSizeBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="pageSizeForm.controls['pageSize'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-page-size
+        [chart]="chart"
+        (pageSizeChange)="pageSizeChange($event)"
+      ></m-chart-control-page-size>
     </div>
 
     <div *ngIf="arcWidthChartTypes.indexOf(chart.type) > -1">
