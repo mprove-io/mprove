@@ -39,7 +39,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.MainTableComponent,
     components.ChartComponent,
     components.ChartEditorComponent,
-    components.ChartViewerComponent
+    components.ChartViewerComponent,
+    components.ChartControlMinComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

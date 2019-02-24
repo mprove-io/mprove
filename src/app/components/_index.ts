@@ -1,4 +1,5 @@
 export * from './blockml/_index';
+export * from './chart-controls/_index';
 export * from './dashboard/_index';
 export * from './fraction/_index';
 export * from './menu/_index';

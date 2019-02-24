@@ -1372,24 +1372,10 @@
     </div>
 
     <div *ngIf="minChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="minForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="min"
-            name="chartMin"
-            [formControl]="min"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="minBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="minForm.controls['min'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-min
+        [chart]="chart"
+        (minChange)="minChange($event)"
+      ></m-chart-control-min>
     </div>
 
     <div *ngIf="maxChartTypes.indexOf(chart.type) > -1">

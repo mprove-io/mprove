@@ -147,9 +147,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   smallSegmentsForm: FormGroup;
   smallSegments: AbstractControl;
 
-  minForm: FormGroup;
-  min: AbstractControl;
-
   maxForm: FormGroup;
   max: AbstractControl;
 
@@ -174,6 +171,8 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       return false;
     }
   };
+
+  minValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -215,7 +214,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.buildBigSegmentsForm();
     this.buildSmallSegmentsForm();
 
-    this.buildMinForm();
     this.buildMaxForm();
     this.buildUnitsForm();
     this.buildLegendTitleForm();
@@ -440,20 +438,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     });
 
     this.smallSegments = this.smallSegmentsForm.controls['smallSegments'];
-  }
-
-  buildMinForm() {
-    this.minForm = this.fb.group({
-      min: [
-        this.chart.min,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator
-        ])
-      ]
-    });
-
-    this.min = this.minForm.controls['min'];
   }
 
   buildMaxForm() {
@@ -1005,17 +989,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  minBlur() {
-    if (this.min.value !== this.chart.min) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        min: this.min.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   maxBlur() {
     if (this.max.value !== this.chart.max) {
       this.chart = Object.assign({}, this.chart, {
@@ -1194,9 +1167,18 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.chartChange();
   }
 
-  //
+  minChange(ev) {
+    this.minValid = ev.minValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
 
-  chartChange() {
+  chartChange(chart?) {
+    if (chart) {
+      this.chart = chart;
+    }
+
     this.chart.is_valid = this.isChartValid();
 
     let newMconfig: api.Mconfig = this.structService.generateMconfig();
@@ -1571,7 +1553,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.startAngleForm.valid &&
           this.bigSegmentsForm.valid &&
           this.smallSegmentsForm.valid &&
-          this.minForm.valid &&
+          this.minValid &&
           this.maxForm.valid &&
           this.unitsForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1587,7 +1569,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       case api.ChartTypeEnum.GaugeLinear: {
         if (
           this.chart.value_field &&
-          this.minForm.valid &&
+          this.minValid &&
           this.maxForm.valid &&
           this.unitsForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
