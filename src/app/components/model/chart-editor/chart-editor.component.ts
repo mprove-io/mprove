@@ -138,9 +138,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   smallSegmentsForm: FormGroup;
   smallSegments: AbstractControl;
 
-  legendTitleForm: FormGroup;
-  legendTitle: AbstractControl;
-
   viewWidthForm: FormGroup;
   viewWidth: AbstractControl;
 
@@ -163,6 +160,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   titleValid: boolean;
   xAxisLabelValid: boolean;
   yAxisLabelValid: boolean;
+  legendTitleValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -198,8 +196,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.buildXScaleMaxForm();
     this.buildBigSegmentsForm();
     this.buildSmallSegmentsForm();
-
-    this.buildLegendTitleForm();
 
     this.buildViewWidthForm();
     this.buildViewHeightForm();
@@ -388,20 +384,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     });
 
     this.smallSegments = this.smallSegmentsForm.controls['smallSegments'];
-  }
-
-  buildLegendTitleForm() {
-    this.legendTitleForm = this.fb.group({
-      legendTitle: [
-        this.chart.legend_title,
-        Validators.compose([
-          // Validators.required,
-          Validators.maxLength(255)
-        ])
-      ]
-    });
-
-    this.legendTitle = this.legendTitleForm.controls['legendTitle'];
   }
 
   buildViewWidthForm() {
@@ -881,17 +863,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  legendTitleBlur() {
-    if (this.legendTitle.value !== this.chart.legend_title) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        legend_title: this.legendTitle.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   bandColorChange(ev: MColorChange) {
     this.chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
@@ -1137,7 +1108,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_field &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1156,7 +1127,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_field &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1175,7 +1146,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.groupPaddingForm.valid &&
           this.xAxisLabelValid &&
@@ -1195,7 +1166,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.groupPaddingForm.valid &&
           this.xAxisLabelValid &&
@@ -1215,7 +1186,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1234,7 +1205,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1253,7 +1224,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1271,7 +1242,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.barPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1289,7 +1260,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_field &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.arcWidthForm.valid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
@@ -1307,7 +1278,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.y_field &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.titleValid
         ) {
           return true;
@@ -1321,7 +1292,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.y_field &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.titleValid
         ) {
           return true;
@@ -1333,7 +1304,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.rangeFillOpacityForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1353,7 +1324,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1372,7 +1343,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1391,7 +1362,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1408,7 +1379,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.innerPaddingForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
@@ -1428,7 +1399,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.y_field &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
-          this.legendTitleForm.valid &&
+          this.legendTitleValid &&
           this.titleValid
         ) {
           return true;
