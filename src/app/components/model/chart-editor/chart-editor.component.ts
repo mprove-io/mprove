@@ -1,18 +1,5 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
-import { ErrorStateMatcher, MatSelectChange } from '@angular/material';
+import { Component, Input } from '@angular/core';
+import { MatSelectChange } from '@angular/material';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
@@ -31,7 +18,7 @@ import { MColorChange } from '@app/modules/colorpicker/colorpicker';
   templateUrl: 'chart-editor.component.html',
   styleUrls: ['chart-editor.component.scss']
 })
-export class ChartEditorComponent implements OnInit, OnChanges {
+export class ChartEditorComponent {
   // data
   xFieldChartTypes = constants.xFieldChartTypes;
   yFieldChartTypes = constants.yFieldChartTypes;
@@ -87,7 +74,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   textColorChartTypes = constants.textColorChartTypes;
   emptyColorChartTypes = constants.emptyColorChartTypes;
 
-  chartIconEnum = enums.ChartIconEnum;
   chartTypeEnum = api.ChartTypeEnum;
   chartInterpolationEnum = api.ChartInterpolationEnum;
   chartColorSchemeEnum = api.ChartColorSchemeEnum;
@@ -98,19 +84,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
-
-  rangeFillOpacityForm: FormGroup;
-  rangeFillOpacity: AbstractControl;
-
-  showOnInvalidErrorStateMatcher: ErrorStateMatcher = {
-    isErrorState: (control: FormControl | null) => {
-      if (control) {
-        return control.invalid;
-      }
-
-      return false;
-    }
-  };
 
   minValid: boolean;
   maxValid: boolean;
@@ -138,38 +111,8 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     private store: Store<interfaces.AppState>,
     private structService: services.StructService,
     private myDialogService: services.MyDialogService,
-    private fb: FormBuilder,
     private navigateMconfigService: services.NavigateService
   ) {}
-
-  ngOnInit() {
-    this.buildForms();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.buildForms();
-  }
-
-  buildForms() {
-    this.buildRangeFillOpacityForm();
-  }
-
-  buildRangeFillOpacityForm() {
-    this.rangeFillOpacityForm = this.fb.group({
-      rangeFillOpacity: [
-        this.chart.range_fill_opacity,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.numberValidator,
-          Validators.min(0)
-        ])
-      ]
-    });
-
-    this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
-      'rangeFillOpacity'
-    ];
-  }
 
   //
 
@@ -235,13 +178,51 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   //
 
-  typeChange(ev: MatSelectChange) {
-    this.chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      type: ev.value
-    });
+  chartChange(chart?) {
+    if (chart) {
+      this.chart = chart;
+    }
 
-    this.chartChange();
+    this.chart.is_valid = this.isChartValid();
+
+    let newMconfig: api.Mconfig = this.structService.generateMconfig();
+
+    let chartId: string;
+    this.store
+      .select(selectors.getSelectedMconfigChartId)
+      .pipe(take(1))
+      .subscribe(x => (chartId = x));
+
+    let chartIndex = newMconfig.charts.findIndex(x => x.chart_id === chartId);
+
+    newMconfig.charts = [
+      ...newMconfig.charts.slice(0, chartIndex),
+      ...newMconfig.charts.slice(chartIndex + 1),
+      this.chart
+    ];
+
+    this.store.dispatch(
+      new actions.CreateMconfigAction({
+        api_payload: {
+          mconfig: newMconfig
+        },
+        navigate: () => {
+          this.navigateMconfigService.navigateMconfigQueryChart(
+            newMconfig.mconfig_id,
+            newMconfig.query_id,
+            this.chart.chart_id
+          );
+        }
+      })
+    );
+  }
+
+  //
+
+  selectTypeChange(ev) {
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
   }
 
   // data
@@ -473,17 +454,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     });
 
     this.chartChange();
-  }
-
-  rangeFillOpacityBlur() {
-    if (this.rangeFillOpacity.value !== this.chart.range_fill_opacity) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        range_fill_opacity: this.rangeFillOpacity.value
-      });
-
-      this.chartChange();
-    }
   }
 
   bandColorChange(ev: MColorChange) {
@@ -758,45 +728,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  chartChange(chart?) {
-    if (chart) {
-      this.chart = chart;
-    }
-
-    this.chart.is_valid = this.isChartValid();
-
-    let newMconfig: api.Mconfig = this.structService.generateMconfig();
-
-    let chartId: string;
-    this.store
-      .select(selectors.getSelectedMconfigChartId)
-      .pipe(take(1))
-      .subscribe(x => (chartId = x));
-
-    let chartIndex = newMconfig.charts.findIndex(x => x.chart_id === chartId);
-
-    newMconfig.charts = [
-      ...newMconfig.charts.slice(0, chartIndex),
-      ...newMconfig.charts.slice(chartIndex + 1),
-      this.chart
-    ];
-
-    this.store.dispatch(
-      new actions.CreateMconfigAction({
-        api_payload: {
-          mconfig: newMconfig
-        },
-        navigate: () => {
-          this.navigateMconfigService.navigateMconfigQueryChart(
-            newMconfig.mconfig_id,
-            newMconfig.query_id,
-            this.chart.chart_id
-          );
-        }
-      })
-    );
-  }
-
   isChartValid() {
     switch (this.chart.type) {
       case api.ChartTypeEnum.Table: {
@@ -1013,7 +944,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
-          this.rangeFillOpacityForm.valid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||

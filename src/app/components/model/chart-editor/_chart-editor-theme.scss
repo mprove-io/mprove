@@ -18,19 +18,6 @@
         background: #414141;
       }
     }
-
-    &__chart-option {
-      display: flex;
-    }
-
-    &__chart-icon {
-      margin-right: 10px;
-      @if $is-dark == true {
-        // filter: invert(100%);
-      } @else {
-        // filter: invert(0%);
-      }
-    }
   }
   .chart-inner {
     @if $is-dark != true {
