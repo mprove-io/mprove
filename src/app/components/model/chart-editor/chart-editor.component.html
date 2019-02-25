@@ -1063,24 +1063,10 @@
     </div>
 
     <div *ngIf="groupPaddingChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="groupPaddingForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            name="chartGroupPadding"
-            placeholder="groupPadding"
-            [formControl]="groupPadding"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="groupPaddingBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="groupPaddingForm.controls['groupPadding'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-group-padding
+        [chart]="chart"
+        (groupPaddingChange)="groupPaddingChange($event)"
+      ></m-chart-control-group-padding>
     </div>
 
     <div *ngIf="innerPaddingChartTypes.indexOf(chart.type) > -1">

@@ -49,7 +49,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlLegendTitleComponent,
     components.ChartControlPageSizeComponent,
     components.ChartControlArcWidthComponent,
-    components.ChartControlBarPaddingComponent
+    components.ChartControlBarPaddingComponent,
+    components.ChartControlGroupPaddingComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

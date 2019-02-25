@@ -99,9 +99,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
 
-  groupPaddingForm: FormGroup;
-  groupPadding: AbstractControl;
-
   innerPaddingForm: FormGroup;
   innerPadding: AbstractControl;
 
@@ -155,6 +152,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   pageSizeValid: boolean;
   arcWidthValid: boolean;
   barPaddingValid: boolean;
+  groupPaddingValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -173,7 +171,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   }
 
   buildForms() {
-    this.buildGroupPaddingForm();
     this.buildInnerPaddingForm();
 
     this.buildRangeFillOpacityForm();
@@ -188,21 +185,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
     this.buildViewWidthForm();
     this.buildViewHeightForm();
-  }
-
-  buildGroupPaddingForm() {
-    this.groupPaddingForm = this.fb.group({
-      groupPadding: [
-        this.chart.group_padding,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator,
-          Validators.min(0)
-        ])
-      ]
-    });
-
-    this.groupPadding = this.groupPaddingForm.controls['groupPadding'];
   }
 
   buildInnerPaddingForm() {
@@ -663,17 +645,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.chartChange();
   }
 
-  groupPaddingBlur() {
-    if (this.groupPadding.value !== this.chart.group_padding) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        group_padding: this.groupPadding.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   innerPaddingBlur() {
     if (this.innerPadding.value !== this.chart.inner_padding) {
       this.chart = Object.assign({}, this.chart, {
@@ -932,6 +903,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
+  groupPaddingChange(ev) {
+    this.groupPaddingValid = ev.groupPaddingValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
   legendTitleChange(ev) {
     this.legendTitleValid = ev.legendTitleValid;
     if (ev.chart) {
@@ -1086,7 +1064,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
           this.barPaddingValid &&
-          this.groupPaddingForm.valid &&
+          this.groupPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1106,7 +1084,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
           this.barPaddingValid &&
-          this.groupPaddingForm.valid &&
+          this.groupPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
