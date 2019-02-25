@@ -102,9 +102,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   rangeFillOpacityForm: FormGroup;
   rangeFillOpacity: AbstractControl;
 
-  yScaleMaxForm: FormGroup;
-  yScaleMax: AbstractControl;
-
   xScaleMaxForm: FormGroup;
   xScaleMax: AbstractControl;
 
@@ -145,6 +142,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   angleSpanValid: boolean;
   startAngleValid: boolean;
   yScaleMinValid: boolean;
+  yScaleMaxValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -165,7 +163,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   buildForms() {
     this.buildRangeFillOpacityForm();
 
-    this.buildYScaleMaxForm();
     this.buildXScaleMaxForm();
     this.buildBigSegmentsForm();
     this.buildSmallSegmentsForm();
@@ -189,17 +186,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
       'rangeFillOpacity'
     ];
-  }
-
-  buildYScaleMaxForm() {
-    this.yScaleMaxForm = this.fb.group({
-      yScaleMax: [
-        this.chart.y_scale_max,
-        Validators.compose([services.ValidationService.numberValidator])
-      ]
-    });
-
-    this.yScaleMax = this.yScaleMaxForm.controls['yScaleMax'];
   }
 
   buildXScaleMaxForm() {
@@ -588,17 +574,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  yScaleMaxBlur() {
-    if (this.yScaleMax.value !== this.chart.y_scale_max) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        y_scale_max: this.yScaleMax.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   xScaleMaxBlur() {
     if (this.xScaleMax.value !== this.chart.x_scale_max) {
       this.chart = Object.assign({}, this.chart, {
@@ -877,6 +852,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
+  yScaleMaxChange(ev) {
+    this.yScaleMaxValid = ev.yScaleMaxValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
   yScaleMinChange(ev) {
     this.yScaleMinValid = ev.yScaleMinValid;
     if (ev.chart) {
@@ -949,7 +931,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.yScaleMaxForm.valid
+          this.yScaleMaxValid
         ) {
           return true;
         }
@@ -988,7 +970,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.yScaleMaxForm.valid
+          this.yScaleMaxValid
         ) {
           return true;
         }
@@ -1027,7 +1009,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.yScaleMaxForm.valid
+          this.yScaleMaxValid
         ) {
           return true;
         }
@@ -1146,7 +1128,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
           this.yScaleMinValid &&
-          this.yScaleMaxForm.valid
+          this.yScaleMaxValid
         ) {
           return true;
         }
@@ -1165,7 +1147,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
           this.yScaleMinValid &&
-          this.yScaleMaxForm.valid
+          this.yScaleMaxValid
         ) {
           return true;
         }
@@ -1184,7 +1166,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
           this.yScaleMinValid &&
-          this.yScaleMaxForm.valid
+          this.yScaleMaxValid
         ) {
           return true;
         }

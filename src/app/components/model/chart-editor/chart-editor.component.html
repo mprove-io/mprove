@@ -1117,24 +1117,10 @@
     </div>
 
     <div *ngIf="yScaleMaxChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="yScaleMaxForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="yScaleMax"
-            name="chartYScaleMax"
-            [formControl]="yScaleMax"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="yScaleMaxBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="yScaleMaxForm.controls['yScaleMax'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-y-scale-max
+        [chart]="chart"
+        (yScaleMaxChange)="yScaleMaxChange($event)"
+      ></m-chart-control-y-scale-max>
     </div>
 
     <div *ngIf="xScaleMaxChartTypes.indexOf(chart.type) > -1">
