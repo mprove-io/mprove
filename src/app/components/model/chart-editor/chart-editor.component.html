@@ -51,7 +51,7 @@
     <div>
       <m-chart-control-select-type
         [chart]="chart"
-        (selectTypeChange)="selectTypeChange($event)"
+        (selectTypeChange)="delayChartChange($event)"
       ></m-chart-control-select-type>
     </div>
 
@@ -65,38 +65,12 @@
       *ngIf="xFieldChartTypes.indexOf(chart.type) > -1"
     >
       <div fxFlex></div>
-      <mat-form-field>
-        <mat-select
-          placeholder="xField"
-          name="chartXField"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.x_field"
-          (selectionChange)="xFieldChange($event)"
-        >
-          <mat-option
-            *ngFor="let field of selectFields"
-            name="chartXFieldOption"
-            [value]="field.id"
-          >
-            <span>{{ field.top_label + ' ' | capitalize }}</span>
-            <span *ngIf="field.group_label">{{
-              field.group_label + ' ' | capitalize
-            }}</span>
-            <span>{{ field.label | capitalize }}</span>
-          </mat-option>
 
-          <mat-option
-            *ngIf="chart.type === chartTypeEnum.NumberCard"
-            [value]="null"
-            >Undefined</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
-      <mat-error
-        *ngIf="!chart.x_field && chart.type !== chartTypeEnum.NumberCard"
-      >
-        <m-validation-msg [errors]="{ required: true }"></m-validation-msg>
-      </mat-error>
+      <m-chart-control-select-x-field
+        [chart]="chart"
+        [selectFields]="selectFields"
+        (selectXFieldChange)="chartChange($event)"
+      ></m-chart-control-select-x-field>
     </div>
 
     <div

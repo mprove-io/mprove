@@ -13,26 +13,26 @@ import { MatSelectChange } from '@angular/material';
 
 @Component({
   moduleId: module.id,
-  selector: 'm-chart-control-select-type',
-  templateUrl: 'chart-control-select-type.component.html',
-  styleUrls: ['chart-control-select-type.component.scss'],
+  selector: 'm-chart-control-select-x-field',
+  templateUrl: 'chart-control-select-x-field.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChartControlSelectTypeComponent {
-  chartIconEnum = enums.ChartIconEnum;
+export class ChartControlSelectXFieldComponent {
   chartTypeEnum = api.ChartTypeEnum;
 
   @Input() chart: api.Chart;
-  @Output() selectTypeChange = new EventEmitter();
+  @Input() selectFields: api.ModelField[];
+
+  @Output() selectXFieldChange = new EventEmitter();
 
   constructor() {}
 
-  typeChange(ev: MatSelectChange) {
+  xFieldChange(ev: MatSelectChange) {
     this.chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
-      type: ev.value
+      x_field: ev.value
     });
 
-    this.selectTypeChange.emit(this.chart);
+    this.selectXFieldChange.emit(this.chart);
   }
 }

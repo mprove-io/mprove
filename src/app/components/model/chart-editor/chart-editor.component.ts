@@ -219,22 +219,15 @@ export class ChartEditorComponent {
 
   //
 
-  selectTypeChange(ev) {
-    if (ev.chart) {
-      this.chartChange(ev.chart);
-    }
+  delayChartChange(chart) {
+    this.chart = chart;
+    // wait until children components initialize and pass valid status to validate chart
+    setTimeout(() => {
+      this.chartChange();
+    }, 1);
   }
 
   // data
-
-  xFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      x_field: ev.value
-    });
-
-    this.chartChange();
-  }
 
   yFieldChange(ev: MatSelectChange) {
     this.chart = Object.assign({}, this.chart, {
