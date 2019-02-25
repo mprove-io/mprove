@@ -1,0 +1,18 @@
+<form [formGroup]="viewHeightForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      placeholder="ViewHeight"
+      name="chartViewHeight"
+      [formControl]="viewHeight"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="viewHeightBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="viewHeightForm.controls['viewHeight'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>
