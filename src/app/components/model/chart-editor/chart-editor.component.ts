@@ -99,9 +99,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
 
-  innerPaddingForm: FormGroup;
-  innerPadding: AbstractControl;
-
   rangeFillOpacityForm: FormGroup;
   rangeFillOpacity: AbstractControl;
 
@@ -153,6 +150,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   arcWidthValid: boolean;
   barPaddingValid: boolean;
   groupPaddingValid: boolean;
+  innerPaddingValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -171,8 +169,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   }
 
   buildForms() {
-    this.buildInnerPaddingForm();
-
     this.buildRangeFillOpacityForm();
 
     this.buildAngleSpanForm();
@@ -185,21 +181,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
     this.buildViewWidthForm();
     this.buildViewHeightForm();
-  }
-
-  buildInnerPaddingForm() {
-    this.innerPaddingForm = this.fb.group({
-      innerPadding: [
-        this.chart.inner_padding,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator,
-          Validators.min(0)
-        ])
-      ]
-    });
-
-    this.innerPadding = this.innerPaddingForm.controls['innerPadding'];
   }
 
   buildRangeFillOpacityForm() {
@@ -645,17 +626,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.chartChange();
   }
 
-  innerPaddingBlur() {
-    if (this.innerPadding.value !== this.chart.inner_padding) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        inner_padding: this.innerPadding.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   rangeFillOpacityBlur() {
     if (this.rangeFillOpacity.value !== this.chart.range_fill_opacity) {
       this.chart = Object.assign({}, this.chart, {
@@ -898,6 +868,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   barPaddingChange(ev) {
     this.barPaddingValid = ev.barPaddingValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  innerPaddingChange(ev) {
+    this.innerPaddingValid = ev.innerPaddingValid;
     if (ev.chart) {
       this.chartChange(ev.chart);
     }
@@ -1295,8 +1272,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
         if (
           this.chart.x_field &&
           this.chart.y_fields.length > 0 &&
-          this.legendTitleValid &&
-          this.innerPaddingForm.valid &&
+          this.innerPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
@@ -1326,7 +1302,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
       case api.ChartTypeEnum.NumberCard: {
         if (
           this.chart.y_field &&
-          this.innerPaddingForm.valid &&
+          this.innerPaddingValid &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid

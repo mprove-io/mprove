@@ -1070,24 +1070,10 @@
     </div>
 
     <div *ngIf="innerPaddingChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="innerPaddingForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="innerPadding"
-            name="chartInnerPadding"
-            [formControl]="innerPadding"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="innerPaddingBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="innerPaddingForm.controls['innerPadding'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-inner-padding
+        [chart]="chart"
+        (innerPaddingChange)="innerPaddingChange($event)"
+      ></m-chart-control-inner-padding>
     </div>
 
     <!--
