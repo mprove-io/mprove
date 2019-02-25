@@ -1407,24 +1407,10 @@
         class="flex-wrap"
         *ngIf="chart.view_size === chartViewSizeEnum.Manual"
       >
-        <form [formGroup]="viewWidthForm">
-          <mat-form-field>
-            <input
-              matInput
-              type="number"
-              placeholder="ViewWidth"
-              name="chartViewWidth"
-              [formControl]="viewWidth"
-              [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-              (blur)="viewWidthBlur()"
-            />
-            <mat-error>
-              <m-validation-msg
-                [errors]="viewWidthForm.controls['viewWidth'].errors"
-              ></m-validation-msg>
-            </mat-error>
-          </mat-form-field>
-        </form>
+        <m-chart-control-view-width
+          [chart]="chart"
+          (viewWidthChange)="viewWidthChange($event)"
+        ></m-chart-control-view-width>
 
         <form [formGroup]="viewHeightForm">
           <mat-form-field>

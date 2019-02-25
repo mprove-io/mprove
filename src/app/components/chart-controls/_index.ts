@@ -12,6 +12,7 @@ export * from './chart-control-small-segments/chart-control-small-segments.compo
 export * from './chart-control-start-angle/chart-control-start-angle.component';
 export * from './chart-control-title/chart-control-title.component';
 export * from './chart-control-units/chart-control-units.component';
+export * from './chart-control-view-width/chart-control-view-width.component';
 export * from './chart-control-x-axis-label/chart-control-x-axis-label.component';
 export * from './chart-control-x-scale-max/chart-control-x-scale-max.component';
 export * from './chart-control-y-axis-label/chart-control-y-axis-label.component';

@@ -58,7 +58,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlYScaleMaxComponent,
     components.ChartControlXScaleMaxComponent,
     components.ChartControlBigSegmentsComponent,
-    components.ChartControlSmallSegmentsComponent
+    components.ChartControlSmallSegmentsComponent,
+    components.ChartControlViewWidthComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]
