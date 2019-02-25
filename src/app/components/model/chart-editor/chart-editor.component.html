@@ -65,7 +65,6 @@
       *ngIf="xFieldChartTypes.indexOf(chart.type) > -1"
     >
       <div fxFlex></div>
-
       <m-chart-control-select-x-field
         [chart]="chart"
         [selectFields]="selectFields"
@@ -81,30 +80,11 @@
       *ngIf="yFieldChartTypes.indexOf(chart.type) > -1"
     >
       <div fxFlex></div>
-      <mat-form-field>
-        <mat-select
-          placeholder="yField"
-          name="chartYField"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.y_field"
-          (selectionChange)="yFieldChange($event)"
-        >
-          <mat-option
-            *ngFor="let field of selectFields"
-            name="chartYFieldOption"
-            [value]="field.id"
-          >
-            <span>{{ field.top_label + ' ' | capitalize }}</span>
-            <span *ngIf="field.group_label">{{
-              field.group_label + ' ' | capitalize
-            }}</span>
-            <span>{{ field.label | capitalize }}</span>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-error *ngIf="!chart.y_field">
-        <m-validation-msg [errors]="{ required: true }"></m-validation-msg>
-      </mat-error>
+      <m-chart-control-select-y-field
+        [chart]="chart"
+        [selectFields]="selectFields"
+        (selectYFieldChange)="chartChange($event)"
+      ></m-chart-control-select-y-field>
     </div>
 
     <div *ngIf="yFieldsChartTypes.indexOf(chart.type) > -1">
