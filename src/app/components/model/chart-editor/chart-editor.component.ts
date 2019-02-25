@@ -102,9 +102,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   rangeFillOpacityForm: FormGroup;
   rangeFillOpacity: AbstractControl;
 
-  startAngleForm: FormGroup;
-  startAngle: AbstractControl;
-
   yScaleMinForm: FormGroup;
   yScaleMin: AbstractControl;
 
@@ -149,6 +146,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   groupPaddingValid: boolean;
   innerPaddingValid: boolean;
   angleSpanValid: boolean;
+  startAngleValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -169,7 +167,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   buildForms() {
     this.buildRangeFillOpacityForm();
 
-    this.buildStartAngleForm();
     this.buildYScaleMinForm();
     this.buildYScaleMaxForm();
     this.buildXScaleMaxForm();
@@ -195,20 +192,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
       'rangeFillOpacity'
     ];
-  }
-
-  buildStartAngleForm() {
-    this.startAngleForm = this.fb.group({
-      startAngle: [
-        this.chart.start_angle,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator
-        ])
-      ]
-    });
-
-    this.startAngle = this.startAngleForm.controls['startAngle'];
   }
 
   buildYScaleMinForm() {
@@ -619,17 +602,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  startAngleBlur() {
-    if (this.startAngle.value !== this.chart.start_angle) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        start_angle: this.startAngle.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   yScaleMinBlur() {
     if (this.yScaleMin.value !== this.chart.y_scale_min) {
       this.chart = Object.assign({}, this.chart, {
@@ -890,6 +862,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   pageSizeChange(ev) {
     this.pageSizeValid = ev.pageSizeValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  startAngleChange(ev) {
+    this.startAngleValid = ev.startAngleValid;
     if (ev.chart) {
       this.chartChange(ev.chart);
     }
@@ -1298,7 +1277,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.x_field &&
           this.chart.y_field &&
           this.angleSpanValid &&
-          this.startAngleForm.valid &&
+          this.startAngleValid &&
           this.bigSegmentsForm.valid &&
           this.smallSegmentsForm.valid &&
           this.minValid &&

@@ -1103,24 +1103,10 @@
     </div>
 
     <div *ngIf="startAngleChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="startAngleForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="startAngle"
-            name="chartStartAngle"
-            [formControl]="startAngle"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="startAngleBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="startAngleForm.controls['startAngle'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-start-angle
+        [chart]="chart"
+        (startAngleChange)="startAngleChange($event)"
+      ></m-chart-control-start-angle>
     </div>
 
     <div *ngIf="yScaleMinChartTypes.indexOf(chart.type) > -1">
