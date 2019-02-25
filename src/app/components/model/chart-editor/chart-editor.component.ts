@@ -102,9 +102,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   rangeFillOpacityForm: FormGroup;
   rangeFillOpacity: AbstractControl;
 
-  yScaleMinForm: FormGroup;
-  yScaleMin: AbstractControl;
-
   yScaleMaxForm: FormGroup;
   yScaleMax: AbstractControl;
 
@@ -147,6 +144,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   innerPaddingValid: boolean;
   angleSpanValid: boolean;
   startAngleValid: boolean;
+  yScaleMinValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -167,7 +165,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   buildForms() {
     this.buildRangeFillOpacityForm();
 
-    this.buildYScaleMinForm();
     this.buildYScaleMaxForm();
     this.buildXScaleMaxForm();
     this.buildBigSegmentsForm();
@@ -192,17 +189,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
       'rangeFillOpacity'
     ];
-  }
-
-  buildYScaleMinForm() {
-    this.yScaleMinForm = this.fb.group({
-      yScaleMin: [
-        this.chart.y_scale_min,
-        Validators.compose([services.ValidationService.numberValidator])
-      ]
-    });
-
-    this.yScaleMin = this.yScaleMinForm.controls['yScaleMin'];
   }
 
   buildYScaleMaxForm() {
@@ -602,17 +588,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  yScaleMinBlur() {
-    if (this.yScaleMin.value !== this.chart.y_scale_min) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        y_scale_min: this.yScaleMin.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   yScaleMaxBlur() {
     if (this.yScaleMax.value !== this.chart.y_scale_max) {
       this.chart = Object.assign({}, this.chart, {
@@ -902,6 +877,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
+  yScaleMinChange(ev) {
+    this.yScaleMinValid = ev.yScaleMinValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
   chartChange(chart?) {
     if (chart) {
       this.chart = chart;
@@ -1163,7 +1145,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.yScaleMinForm.valid &&
+          this.yScaleMinValid &&
           this.yScaleMaxForm.valid
         ) {
           return true;
@@ -1182,7 +1164,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.yScaleMinForm.valid &&
+          this.yScaleMinValid &&
           this.yScaleMaxForm.valid
         ) {
           return true;
@@ -1201,7 +1183,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.yScaleMinForm.valid &&
+          this.yScaleMinValid &&
           this.yScaleMaxForm.valid
         ) {
           return true;

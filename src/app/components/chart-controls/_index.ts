@@ -12,3 +12,4 @@ export * from './chart-control-title/chart-control-title.component';
 export * from './chart-control-units/chart-control-units.component';
 export * from './chart-control-x-axis-label/chart-control-x-axis-label.component';
 export * from './chart-control-y-axis-label/chart-control-y-axis-label.component';
+export * from './chart-control-y-scale-min/chart-control-y-scale-min.component';

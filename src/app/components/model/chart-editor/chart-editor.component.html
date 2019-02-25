@@ -1110,24 +1110,10 @@
     </div>
 
     <div *ngIf="yScaleMinChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="yScaleMinForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="yScaleMin"
-            name="chartYScaleMin"
-            [formControl]="yScaleMin"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="yScaleMinBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="yScaleMinForm.controls['yScaleMin'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-y-scale-min
+        [chart]="chart"
+        (yScaleMinChange)="yScaleMinChange($event)"
+      ></m-chart-control-y-scale-min>
     </div>
 
     <div *ngIf="yScaleMaxChartTypes.indexOf(chart.type) > -1">
