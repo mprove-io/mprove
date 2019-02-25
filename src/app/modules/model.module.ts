@@ -51,7 +51,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlArcWidthComponent,
     components.ChartControlBarPaddingComponent,
     components.ChartControlGroupPaddingComponent,
-    components.ChartControlInnerPaddingComponent
+    components.ChartControlInnerPaddingComponent,
+    components.ChartControlAngleSpanComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

@@ -1096,24 +1096,10 @@
     -->
 
     <div *ngIf="angleSpanChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="angleSpanForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            name="chartAngleSpan"
-            placeholder="angleSpan"
-            [formControl]="angleSpan"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="angleSpanBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="angleSpanForm.controls['angleSpan'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-angle-span
+        [chart]="chart"
+        (angleSpanChange)="angleSpanChange($event)"
+      ></m-chart-control-angle-span>
     </div>
 
     <div *ngIf="startAngleChartTypes.indexOf(chart.type) > -1">
