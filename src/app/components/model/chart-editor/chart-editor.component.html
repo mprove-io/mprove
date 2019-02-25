@@ -1131,24 +1131,10 @@
     </div>
 
     <div *ngIf="bigSegmentsChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="bigSegmentsForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            name="chartBigSegments"
-            placeholder="bigSegments"
-            [formControl]="bigSegments"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="bigSegmentsBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="bigSegmentsForm.controls['bigSegments'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-big-segments
+        [chart]="chart"
+        (bigSegmentsChange)="bigSegmentsChange($event)"
+      ></m-chart-control-big-segments>
     </div>
 
     <div *ngIf="smallSegmentsChartTypes.indexOf(chart.type) > -1">

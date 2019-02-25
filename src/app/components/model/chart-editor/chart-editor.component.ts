@@ -102,9 +102,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   rangeFillOpacityForm: FormGroup;
   rangeFillOpacity: AbstractControl;
 
-  bigSegmentsForm: FormGroup;
-  bigSegments: AbstractControl;
-
   smallSegmentsForm: FormGroup;
   smallSegments: AbstractControl;
 
@@ -141,6 +138,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   yScaleMinValid: boolean;
   yScaleMaxValid: boolean;
   xScaleMaxValid: boolean;
+  bigSegmentsValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -161,7 +159,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   buildForms() {
     this.buildRangeFillOpacityForm();
 
-    this.buildBigSegmentsForm();
     this.buildSmallSegmentsForm();
 
     this.buildViewWidthForm();
@@ -183,21 +180,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
       'rangeFillOpacity'
     ];
-  }
-
-  buildBigSegmentsForm() {
-    this.bigSegmentsForm = this.fb.group({
-      bigSegments: [
-        this.chart.big_segments,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator,
-          Validators.min(0)
-        ])
-      ]
-    });
-
-    this.bigSegments = this.bigSegmentsForm.controls['bigSegments'];
   }
 
   buildSmallSegmentsForm() {
@@ -560,17 +542,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  bigSegmentsBlur() {
-    if (this.bigSegments.value !== this.chart.big_segments) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        big_segments: this.bigSegments.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   smallSegmentsBlur() {
     if (this.smallSegments.value !== this.chart.small_segments) {
       this.chart = Object.assign({}, this.chart, {
@@ -745,6 +716,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   barPaddingChange(ev) {
     this.barPaddingValid = ev.barPaddingValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  bigSegmentsChange(ev) {
+    this.bigSegmentsValid = ev.bigSegmentsValid;
     if (ev.chart) {
       this.chartChange(ev.chart);
     }
@@ -1224,7 +1202,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.chart.y_field &&
           this.angleSpanValid &&
           this.startAngleValid &&
-          this.bigSegmentsForm.valid &&
+          this.bigSegmentsValid &&
           this.smallSegmentsForm.valid &&
           this.minValid &&
           this.maxValid &&
