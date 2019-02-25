@@ -149,30 +149,10 @@
       *ngIf="multiFieldChartTypes.indexOf(chart.type) > -1"
     >
       <div fxFlex></div>
-
-      <mat-form-field>
-        <mat-select
-          placeholder="multiField"
-          name="chartMultiField"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.multi_field"
-          (selectionChange)="multiFieldChange($event)"
-        >
-          <mat-option
-            *ngFor="let field of selectFields"
-            name="chartMultiFieldOption"
-            [value]="field.id"
-          >
-            <span>{{ field.top_label + ' ' | capitalize }}</span>
-            <span *ngIf="field.group_label">{{
-              field.group_label + ' ' | capitalize
-            }}</span>
-            <span>{{ field.label | capitalize }}</span>
-          </mat-option>
-
-          <mat-option [value]="null">Undefined</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <m-chart-control-select-multi-field
+        [chart]="chart"
+        (selectMultiFieldChange)="chartChange($event)"
+      ></m-chart-control-select-multi-field>
     </div>
 
     <div *ngIf="valueFieldChartTypes.indexOf(chart.type) > -1">

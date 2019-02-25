@@ -229,15 +229,6 @@ export class ChartEditorComponent {
 
   // data
 
-  multiFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      multi_field: ev.value
-    });
-
-    this.chartChange();
-  }
-
   valueFieldChange(ev: MatSelectChange) {
     this.chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
