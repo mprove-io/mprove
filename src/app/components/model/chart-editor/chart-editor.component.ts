@@ -102,9 +102,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   rangeFillOpacityForm: FormGroup;
   rangeFillOpacity: AbstractControl;
 
-  xScaleMaxForm: FormGroup;
-  xScaleMax: AbstractControl;
-
   bigSegmentsForm: FormGroup;
   bigSegments: AbstractControl;
 
@@ -143,6 +140,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   startAngleValid: boolean;
   yScaleMinValid: boolean;
   yScaleMaxValid: boolean;
+  xScaleMaxValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -163,7 +161,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   buildForms() {
     this.buildRangeFillOpacityForm();
 
-    this.buildXScaleMaxForm();
     this.buildBigSegmentsForm();
     this.buildSmallSegmentsForm();
 
@@ -186,17 +183,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
       'rangeFillOpacity'
     ];
-  }
-
-  buildXScaleMaxForm() {
-    this.xScaleMaxForm = this.fb.group({
-      xScaleMax: [
-        this.chart.x_scale_max,
-        Validators.compose([services.ValidationService.numberValidator])
-      ]
-    });
-
-    this.xScaleMax = this.xScaleMaxForm.controls['xScaleMax'];
   }
 
   buildBigSegmentsForm() {
@@ -574,17 +560,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  xScaleMaxBlur() {
-    if (this.xScaleMax.value !== this.chart.x_scale_max) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        x_scale_max: this.xScaleMax.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   bigSegmentsBlur() {
     if (this.bigSegments.value !== this.chart.big_segments) {
       this.chart = Object.assign({}, this.chart, {
@@ -845,6 +820,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
+  xScaleMaxChange(ev) {
+    this.xScaleMaxValid = ev.xScaleMaxValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
   yAxisLabelChange(ev) {
     this.yAxisLabelValid = ev.yAxisLabelValid;
     if (ev.chart) {
@@ -950,7 +932,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.xScaleMaxForm.valid
+          this.xScaleMaxValid
         ) {
           return true;
         }
@@ -990,7 +972,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.xScaleMaxForm.valid
+          this.xScaleMaxValid
         ) {
           return true;
         }
@@ -1028,7 +1010,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightForm.valid && this.viewWidthForm.valid)) &&
           this.titleValid &&
-          this.xScaleMaxForm.valid
+          this.xScaleMaxValid
         ) {
           return true;
         }

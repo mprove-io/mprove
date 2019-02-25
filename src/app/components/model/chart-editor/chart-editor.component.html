@@ -1124,24 +1124,10 @@
     </div>
 
     <div *ngIf="xScaleMaxChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="xScaleMaxForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="xScaleMax"
-            name="chartXScaleMax"
-            [formControl]="xScaleMax"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="xScaleMaxBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="xScaleMaxForm.controls['xScaleMax'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-x-scale-max
+        [chart]="chart"
+        (xScaleMaxChange)="xScaleMaxChange($event)"
+      ></m-chart-control-x-scale-max>
     </div>
 
     <div *ngIf="bigSegmentsChartTypes.indexOf(chart.type) > -1">
