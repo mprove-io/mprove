@@ -102,9 +102,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   rangeFillOpacityForm: FormGroup;
   rangeFillOpacity: AbstractControl;
 
-  smallSegmentsForm: FormGroup;
-  smallSegments: AbstractControl;
-
   viewWidthForm: FormGroup;
   viewWidth: AbstractControl;
 
@@ -139,6 +136,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   yScaleMaxValid: boolean;
   xScaleMaxValid: boolean;
   bigSegmentsValid: boolean;
+  smallSegmentsValid: boolean;
 
   constructor(
     private store: Store<interfaces.AppState>,
@@ -159,8 +157,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
   buildForms() {
     this.buildRangeFillOpacityForm();
 
-    this.buildSmallSegmentsForm();
-
     this.buildViewWidthForm();
     this.buildViewHeightForm();
   }
@@ -180,21 +176,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     this.rangeFillOpacity = this.rangeFillOpacityForm.controls[
       'rangeFillOpacity'
     ];
-  }
-
-  buildSmallSegmentsForm() {
-    this.smallSegmentsForm = this.fb.group({
-      smallSegments: [
-        this.chart.small_segments,
-        Validators.compose([
-          Validators.required,
-          services.ValidationService.integerValidator,
-          Validators.min(0)
-        ])
-      ]
-    });
-
-    this.smallSegments = this.smallSegmentsForm.controls['smallSegments'];
   }
 
   buildViewWidthForm() {
@@ -542,17 +523,6 @@ export class ChartEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  smallSegmentsBlur() {
-    if (this.smallSegments.value !== this.chart.small_segments) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        small_segments: this.smallSegments.value
-      });
-
-      this.chartChange();
-    }
-  }
-
   bandColorChange(ev: MColorChange) {
     this.chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
@@ -765,6 +735,13 @@ export class ChartEditorComponent implements OnInit, OnChanges {
 
   pageSizeChange(ev) {
     this.pageSizeValid = ev.pageSizeValid;
+    if (ev.chart) {
+      this.chartChange(ev.chart);
+    }
+  }
+
+  smallSegmentsChange(ev) {
+    this.smallSegmentsValid = ev.smallSegmentsValid;
     if (ev.chart) {
       this.chartChange(ev.chart);
     }
@@ -1203,7 +1180,7 @@ export class ChartEditorComponent implements OnInit, OnChanges {
           this.angleSpanValid &&
           this.startAngleValid &&
           this.bigSegmentsValid &&
-          this.smallSegmentsForm.valid &&
+          this.smallSegmentsValid &&
           this.minValid &&
           this.maxValid &&
           this.unitsValid &&

@@ -1138,24 +1138,10 @@
     </div>
 
     <div *ngIf="smallSegmentsChartTypes.indexOf(chart.type) > -1">
-      <form [formGroup]="smallSegmentsForm">
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            placeholder="smallSegments"
-            name="chartSmallSegments"
-            [formControl]="smallSegments"
-            [errorStateMatcher]="showOnInvalidErrorStateMatcher"
-            (blur)="smallSegmentsBlur()"
-          />
-          <mat-error>
-            <m-validation-msg
-              [errors]="smallSegmentsForm.controls['smallSegments'].errors"
-            ></m-validation-msg>
-          </mat-error>
-        </mat-form-field>
-      </form>
+      <m-chart-control-small-segments
+        [chart]="chart"
+        (smallSegmentsChange)="smallSegmentsChange($event)"
+      ></m-chart-control-small-segments>
     </div>
 
     <div *ngIf="minChartTypes.indexOf(chart.type) > -1">

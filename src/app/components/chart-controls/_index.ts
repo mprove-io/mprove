@@ -8,6 +8,7 @@ export * from './chart-control-legend-title/chart-control-legend-title.component
 export * from './chart-control-max/chart-control-max.component';
 export * from './chart-control-min/chart-control-min.component';
 export * from './chart-control-page-size/chart-control-page-size.component';
+export * from './chart-control-small-segments/chart-control-small-segments.component';
 export * from './chart-control-start-angle/chart-control-start-angle.component';
 export * from './chart-control-title/chart-control-title.component';
 export * from './chart-control-units/chart-control-units.component';
