@@ -530,62 +530,10 @@
       <div class="vertical-space"></div>
 
       <div fxLayout="row" class="select-wrapper">
-        <mat-form-field>
-          <mat-select
-            placeholder="TileWidth"
-            name="chartTileWidth"
-            [(ngModel)]="chart.tile_width"
-            (selectionChange)="tileWidthChange($event)"
-          >
-            <mat-option [value]="chartTileWidthEnum._1" name="chartTileWidth1"
-              >1</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._2" name="chartTileWidth2"
-              >2</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._3" name="chartTileWidth3"
-              >3</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._4" name="chartTileWidth4"
-              >4</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._5" name="chartTileWidth5"
-              >5</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._6" name="chartTileWidth6"
-              >6</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._7" name="chartTileWidth7"
-              >7</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._8" name="chartTileWidth8"
-              >8</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._9" name="chartTileWidth9"
-              >9</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._10" name="chartTileWidth10"
-              >10</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._11" name="chartTileWidth11"
-              >11</mat-option
-            >
-
-            <mat-option [value]="chartTileWidthEnum._12" name="chartTileWidth12"
-              >12</mat-option
-            >
-          </mat-select>
-        </mat-form-field>
+        <m-chart-control-select-tile-width
+          [chart]="chart"
+          (selectTileWidthChange)="delayChartChange($event)"
+        ></m-chart-control-select-tile-width>
 
         <mat-form-field>
           <mat-select
