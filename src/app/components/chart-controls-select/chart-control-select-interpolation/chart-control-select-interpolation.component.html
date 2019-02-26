@@ -1,0 +1,99 @@
+<mat-form-field>
+  <mat-select
+    placeholder="Interpolation"
+    name="chartInterpolation"
+    class="mp-chart-editor-field-full-width"
+    [(ngModel)]="chart.interpolation"
+    (selectionChange)="interpolationChange($event)"
+  >
+    <mat-option
+      [value]="chartInterpolationEnum.Basis"
+      name="chartInterpolationBasis"
+      >Basis</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.BasisClosed"
+      name="chartInterpolationBasisClosed"
+      >Basis closed</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.Bundle"
+      name="chartInterpolationBundle"
+      >Bundle</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.Cardinal"
+      name="chartInterpolationCardinal"
+      >Cardinal</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.CardinalClosed"
+      name="chartInterpolationCardinalClosed"
+      >Cardinal closed</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.CatmullRom"
+      name="chartInterpolationCatmullRom"
+      >Catmull rom</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.CatmullRomClosed"
+      name="chartInterpolationCatmullRomClosed"
+      >Catmull rom closed</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.Linear"
+      name="chartInterpolationLinear"
+      >Linear</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.LinearClosed"
+      name="chartInterpolationLinearClosed"
+      >Linear closed</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.MonotoneX"
+      name="chartInterpolationMonotoneX"
+      >Monotone x</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.MonotoneY"
+      name="chartInterpolationMonotoneY"
+      >Monotone y</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.Natural"
+      name="chartInterpolationNatural"
+      >Natural</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.Step"
+      name="chartInterpolationStep"
+      >Step</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.StepAfter"
+      name="chartInterpolationStepAfter"
+      >Step after</mat-option
+    >
+
+    <mat-option
+      [value]="chartInterpolationEnum.StepBefore"
+      name="chartInterpolationStepBefore"
+      >Step before</mat-option
+    >
+  </mat-select>
+</mat-form-field>
