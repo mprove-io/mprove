@@ -88,29 +88,11 @@
     </div>
 
     <div *ngIf="yFieldsChartTypes.indexOf(chart.type) > -1">
-      <h6>yFields</h6>
-      <div fxLayout="column">
-        <mat-checkbox
-          *ngFor="let field of selectFields"
-          name="chartYFieldsCheckbox"
-          [checked]="yFieldsIsSelected(field.id)"
-          (change)="yFieldsOnClick(field.id)"
-        >
-          <div name="chartYFieldsCheckboxInner">
-            <span>{{ field.top_label + ' ' | capitalize }}</span>
-            <span *ngIf="field.group_label">{{
-              field.group_label + ' ' | capitalize
-            }}</span>
-            <span>{{ field.label | capitalize }}</span>
-          </div>
-        </mat-checkbox>
-
-        <div fxFlex="15px">
-          <mat-error *ngIf="!(chart.y_fields.length > 0)">
-            <m-validation-msg [errors]="{ required: true }"></m-validation-msg>
-          </mat-error>
-        </div>
-      </div>
+      <m-chart-control-checkbox-y-fields
+        [chart]="chart"
+        [selectFields]="selectFields"
+        (checkboxYFieldsChange)="delayChartChange($event)"
+      ></m-chart-control-checkbox-y-fields>
     </div>
 
     <div *ngIf="hideColumnsChartTypes.indexOf(chart.type) > -1">

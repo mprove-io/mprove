@@ -72,7 +72,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlSelectSchemeTypeComponent,
     components.ChartControlSelectTileWidthComponent,
     components.ChartControlSelectTileHeightComponent,
-    components.ChartControlSelectViewSizeComponent
+    components.ChartControlSelectViewSizeComponent,
+    components.ChartControlCheckboxYFieldsComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

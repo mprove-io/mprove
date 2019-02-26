@@ -173,11 +173,7 @@ export class ChartEditorComponent {
 
   //
 
-  chartChange(chart?) {
-    if (chart) {
-      this.chart = chart;
-    }
-
+  chartChange() {
     this.chart.is_valid = this.isChartValid();
 
     let newMconfig: api.Mconfig = this.structService.generateMconfig();
@@ -227,240 +223,209 @@ export class ChartEditorComponent {
   // axis
 
   toggleXAxis() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       x_axis: !this.chart.x_axis // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleShowXAxisLabel() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       show_x_axis_label: !this.chart.show_x_axis_label // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleYAxis() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       y_axis: !this.chart.y_axis // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleShowYAxisLabel() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       show_y_axis_label: !this.chart.show_y_axis_label // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleShowAxis() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       show_axis: !this.chart.show_axis // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   // options
 
   toggleAnimations() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       animations: !this.chart.animations // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleGradient() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       gradient: !this.chart.gradient // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleLegend() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       legend: !this.chart.legend // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleTooltipDisabled() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       tooltip_disabled: !this.chart.tooltip_disabled // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleRoundEdges() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       round_edges: !this.chart.round_edges // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleRoundDomains() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       round_domains: !this.chart.round_domains // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleShowGridLines() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       show_grid_lines: !this.chart.show_grid_lines // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleTimeline() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       timeline: !this.chart.timeline // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleAutoScale() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       auto_scale: !this.chart.auto_scale // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleDoughnut() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       doughnut: !this.chart.doughnut // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleExplodeSlices() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       explode_slices: !this.chart.explode_slices // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   toggleLabels() {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       labels: !this.chart.labels // !
     });
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   bandColorChange(ev: MColorChange) {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       band_color: ev.color
     });
 
-    setTimeout(() => {
-      this.chartChange();
-    }, 1);
+    this.delayChartChange(chart);
   }
 
   cardColorChange(ev: any) {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       card_color: ev.color
     });
 
-    setTimeout(() => {
-      this.chartChange();
-    }, 1);
+    this.delayChartChange(chart);
   }
 
   textColorChange(ev: MColorChange) {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       text_color: ev.color
     });
 
-    setTimeout(() => {
-      this.chartChange();
-    }, 1);
+    this.delayChartChange(chart);
   }
 
   emptyColorChange(ev: MColorChange) {
-    this.chart = Object.assign({}, this.chart, {
+    let chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       empty_color: ev.color
     });
 
-    setTimeout(() => {
-      this.chartChange();
-    }, 1);
+    this.delayChartChange(chart);
   }
 
   // tile
-
-  yFieldsIsSelected(id: string) {
-    return this.chart.y_fields.findIndex(x => x === id) > -1;
-  }
 
   hideColumnsIsSelected(id: string) {
     return this.chart.hide_columns.findIndex(x => x === id) > -1;
   }
 
-  yFieldsOnClick(id: string) {
-    let index = this.chart.y_fields.findIndex(x => x === id);
-
-    if (index > -1) {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        y_fields: [
-          ...this.chart.y_fields.slice(0, index),
-          ...this.chart.y_fields.slice(index + 1)
-        ]
-      });
-    } else {
-      this.chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        y_fields: [...this.chart.y_fields, id]
-      });
-    }
-
-    this.chartChange();
-  }
-
   hideColumnsOnClick(id: string) {
     let index = this.chart.hide_columns.findIndex(x => x === id);
 
+    let chart;
+
     if (index > -1) {
-      this.chart = Object.assign({}, this.chart, {
+      chart = Object.assign({}, this.chart, {
         chart_id: uuid.v4(),
         hide_columns: [
           ...this.chart.hide_columns.slice(0, index),
@@ -468,13 +433,13 @@ export class ChartEditorComponent {
         ]
       });
     } else {
-      this.chart = Object.assign({}, this.chart, {
+      chart = Object.assign({}, this.chart, {
         chart_id: uuid.v4(),
         hide_columns: [...this.chart.hide_columns, id]
       });
     }
 
-    this.chartChange();
+    this.delayChartChange(chart);
   }
 
   //
