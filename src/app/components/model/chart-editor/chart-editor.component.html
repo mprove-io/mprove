@@ -368,105 +368,10 @@
       class="chart-editor__block"
       *ngIf="colorSchemeChartTypes.indexOf(chart.type) > -1"
     >
-      <mat-form-field>
-        <mat-select
-          placeholder="ColorScheme"
-          name="chartColorScheme"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.color_scheme"
-          (selectionChange)="colorSchemeChange($event)"
-        >
-          <mat-option
-            [value]="chartColorSchemeEnum.Vivid"
-            name="chartColorSchemeVivid"
-            >Vivid (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Natural"
-            name="chartColorSchemeNatural"
-            >Natural (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Cool"
-            name="chartColorSchemeCool"
-            >Cool (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Fire"
-            name="chartColorSchemeFire"
-            >Fire (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Solar"
-            name="chartColorSchemeSolar"
-            >Solar (continuous)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Air"
-            name="chartColorSchemeAir"
-            >Air (continuous)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Aqua"
-            name="chartColorSchemeAqua"
-            >Aqua (continuous)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Flame"
-            name="chartColorSchemeFlame"
-            >Flame (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Ocean"
-            name="chartColorSchemeOcean"
-            >Ocean (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Forest"
-            name="chartColorSchemeForest"
-            >Forest (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Horizon"
-            name="chartColorSchemeHorizon"
-            >Horizon (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Neons"
-            name="chartColorSchemeNeons"
-            >Neons (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Picnic"
-            name="chartColorSchemePicnic"
-            >Picnic (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.Night"
-            name="chartColorSchemeNight"
-            >Night (ordinal)</mat-option
-          >
-
-          <mat-option
-            [value]="chartColorSchemeEnum.NightLights"
-            name="chartColorSchemeNightLights"
-            >NightLights (ordinal)</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
+      <m-chart-control-select-color-scheme
+        [chart]="chart"
+        (selectColorSchemeChange)="delayChartChange($event)"
+      ></m-chart-control-select-color-scheme>
     </div>
 
     <div *ngIf="schemeTypeChartTypes.indexOf(chart.type) > -1">

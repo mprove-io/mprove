@@ -66,7 +66,9 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlSelectYFieldComponent,
     components.ChartControlSelectMultiFieldComponent,
     components.ChartControlSelectValueFieldComponent,
-    components.ChartControlSelectPreviousValueFieldComponent
+    components.ChartControlSelectPreviousValueFieldComponent,
+    components.ChartControlSelectInterpolationComponent,
+    components.ChartControlSelectColorSchemeComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

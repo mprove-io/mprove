@@ -1,3 +1,5 @@
+export * from './chart-control-select-color-scheme/chart-control-select-color-scheme.component';
+export * from './chart-control-select-interpolation/chart-control-select-interpolation.component';
 export * from './chart-control-select-multi-field/chart-control-select-multi-field.component';
 export * from './chart-control-select-previous-value-field/chart-control-select-previous-value-field.component';
 export * from './chart-control-select-type/chart-control-select-type.component';

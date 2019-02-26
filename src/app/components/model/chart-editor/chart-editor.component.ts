@@ -75,7 +75,6 @@ export class ChartEditorComponent {
   emptyColorChartTypes = constants.emptyColorChartTypes;
 
   chartTypeEnum = api.ChartTypeEnum;
-  chartColorSchemeEnum = api.ChartColorSchemeEnum;
   chartSchemeTypeEnum = api.ChartSchemeTypeEnum;
   chartTileWidthEnum = api.ChartTileWidthEnum;
   chartTileHeightEnum = api.ChartTileHeightEnum;
@@ -380,15 +379,6 @@ export class ChartEditorComponent {
     this.chart = Object.assign({}, this.chart, {
       chart_id: uuid.v4(),
       labels: !this.chart.labels // !
-    });
-
-    this.chartChange();
-  }
-
-  colorSchemeChange(ev: MatSelectChange) {
-    this.chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      color_scheme: ev.value
     });
 
     this.chartChange();
