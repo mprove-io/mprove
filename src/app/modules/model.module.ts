@@ -70,7 +70,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlSelectInterpolationComponent,
     components.ChartControlSelectColorSchemeComponent,
     components.ChartControlSelectSchemeTypeComponent,
-    components.ChartControlSelectTileWidthComponent
+    components.ChartControlSelectTileWidthComponent,
+    components.ChartControlSelectTileHeightComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

@@ -3,6 +3,7 @@ export * from './chart-control-select-interpolation/chart-control-select-interpo
 export * from './chart-control-select-multi-field/chart-control-select-multi-field.component';
 export * from './chart-control-select-previous-value-field/chart-control-select-previous-value-field.component';
 export * from './chart-control-select-scheme-type/chart-control-select-scheme-type.component';
+export * from './chart-control-select-tile-height/chart-control-select-tile-height.component';
 export * from './chart-control-select-tile-width/chart-control-select-tile-width.component';
 export * from './chart-control-select-type/chart-control-select-type.component';
 export * from './chart-control-select-value-field/chart-control-select-value-field.component';
