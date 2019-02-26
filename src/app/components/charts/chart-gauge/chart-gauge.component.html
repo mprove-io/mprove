@@ -1,0 +1,102 @@
+<div fxLayout="column" fxLayoutGap="20px">
+  <h5>Data</h5>
+
+  <div fxFlex="50px" fxLayout="column" fxFlexAlign="end start" fxFlexFill>
+    <div fxFlex></div>
+    <m-chart-control-select-x-field
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (selectXFieldChange)="emitPartChange($event)"
+    ></m-chart-control-select-x-field>
+  </div>
+
+  <div fxFlex="50px" fxLayout="column" fxFlexAlign="end start" fxFlexFill>
+    <div fxFlex></div>
+    <m-chart-control-select-y-field
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (selectYFieldChange)="emitPartChange($event)"
+    ></m-chart-control-select-y-field>
+  </div>
+
+  <h5>Axis</h5>
+
+  <mat-slide-toggle
+    name="chartShowAxisToggle"
+    (change)="toggleShowAxis()"
+    [checked]="chart.show_axis"
+  >
+    <div name="chartShowAxisToggleInner">show axis</div>
+  </mat-slide-toggle>
+
+  <h5>Options</h5>
+
+  <mat-slide-toggle
+    (change)="toggleAnimations()"
+    name="chartAnimationsToggle"
+    [checked]="chart.animations"
+  >
+    <div name="chartAnimationsToggleInner">animations</div>
+  </mat-slide-toggle>
+
+  <mat-slide-toggle
+    (change)="toggleLegend()"
+    name="chartLegendToggle"
+    [checked]="chart.legend"
+  >
+    <div name="chartLegendToggleInner">legend</div>
+  </mat-slide-toggle>
+
+  <m-chart-control-legend-title
+    [chart]="chart"
+    (legendTitleChange)="legendTitleChange($event)"
+  ></m-chart-control-legend-title>
+
+  <mat-slide-toggle
+    (change)="toggleTooltipDisabled()"
+    name="chartTooltipDisabledToggle"
+    [checked]="!chart.tooltip_disabled"
+  >
+    <div name="chartTooltipDisabledToggleInner">tooltip</div>
+  </mat-slide-toggle>
+
+  <m-chart-control-select-color-scheme
+    [chart]="chart"
+    (selectColorSchemeChange)="emitPartChange($event)"
+  ></m-chart-control-select-color-scheme>
+
+  <m-chart-control-angle-span
+    [chart]="chart"
+    (angleSpanChange)="angleSpanChange($event)"
+  ></m-chart-control-angle-span>
+
+  <m-chart-control-start-angle
+    [chart]="chart"
+    (startAngleChange)="startAngleChange($event)"
+  ></m-chart-control-start-angle>
+
+  <m-chart-control-big-segments
+    [chart]="chart"
+    (bigSegmentsChange)="bigSegmentsChange($event)"
+  ></m-chart-control-big-segments>
+
+  <m-chart-control-small-segments
+    [chart]="chart"
+    (smallSegmentsChange)="smallSegmentsChange($event)"
+  ></m-chart-control-small-segments>
+
+  <m-chart-control-min
+    [chart]="chart"
+    (minChange)="minChange($event)"
+  ></m-chart-control-min>
+
+  <m-chart-control-max
+    [chart]="chart"
+    (maxChange)="maxChange($event)"
+  ></m-chart-control-max>
+
+  <m-chart-control-units
+    [chart]="chart"
+    (unitsChange)="unitsChange($event)"
+  ></m-chart-control-units>
+</div>

@@ -1,0 +1,18 @@
+<div fxLayout="column" fxLayoutGap="20px">
+  <h5>Data</h5>
+
+  <m-chart-control-checkbox-hide-columns
+    [chart]="chart"
+    [selectFields]="selectFields"
+    (checkboxHideColumnsChange)="emitPartChange($event)"
+  ></m-chart-control-checkbox-hide-columns>
+
+  <h5>Axis</h5>
+
+  <h5>Options</h5>
+
+  <m-chart-control-page-size
+    [chart]="chart"
+    (pageSizeChange)="pageSizeChange($event)"
+  ></m-chart-control-page-size>
+</div>

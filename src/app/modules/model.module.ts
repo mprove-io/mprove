@@ -74,7 +74,9 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlSelectTileHeightComponent,
     components.ChartControlSelectViewSizeComponent,
     components.ChartControlCheckboxYFieldsComponent,
-    components.ChartControlCheckboxHideColumnsComponent
+    components.ChartControlCheckboxHideColumnsComponent,
+    components.ChartTableComponent,
+    components.ChartGaugeComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

@@ -173,8 +173,10 @@ export class ChartEditorComponent {
 
   //
 
-  chartChange() {
-    this.chart.is_valid = this.isChartValid();
+  chartChange(item: { skipValidation: boolean }) {
+    if (!item.skipValidation) {
+      this.chart.is_valid = this.isChartValid();
+    }
 
     let newMconfig: api.Mconfig = this.structService.generateMconfig();
 
@@ -210,11 +212,23 @@ export class ChartEditorComponent {
 
   //
 
+  partChange(ev) {
+    this.chart = ev.chart;
+
+    this.chart.is_valid =
+      ev.is_part_valid &&
+      this.titleValid &&
+      (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
+        (this.viewHeightValid && this.viewWidthValid));
+
+    this.chartChange({ skipValidation: true });
+  }
+
   delayChartChange(chart) {
     this.chart = chart;
     // wait until children components initialize and pass valid status to validate chart
     setTimeout(() => {
-      this.chartChange();
+      this.chartChange({ skipValidation: false });
     }, 0);
   }
 

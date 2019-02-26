@@ -55,6 +55,20 @@
       ></m-chart-control-select-type>
     </div>
 
+    <m-chart-table
+      *ngIf="chart.type === chartTypeEnum.Table"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-table>
+
+    <m-chart-gauge
+      *ngIf="chart.type === chartTypeEnum.Gauge"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-gauge>
+
     <h5>Data</h5>
 
     <div
@@ -95,13 +109,15 @@
       ></m-chart-control-checkbox-y-fields>
     </div>
 
-    <div *ngIf="hideColumnsChartTypes.indexOf(chart.type) > -1">
-      <m-chart-control-checkbox-hide-columns
-        [chart]="chart"
-        [selectFields]="selectFields"
-        (checkboxHideColumnsChange)="delayChartChange($event)"
-      ></m-chart-control-checkbox-hide-columns>
-    </div>
+    <!--
+      <div *ngIf="hideColumnsChartTypes.indexOf(chart.type) > -1">
+        <m-chart-control-checkbox-hide-columns
+          [chart]="chart"
+          [selectFields]="selectFields"
+          (checkboxHideColumnsChange)="delayChartChange($event)"
+        ></m-chart-control-checkbox-hide-columns>
+      </div>
+    -->
 
     <div
       fxFlex="50px"
@@ -345,12 +361,14 @@
       ></m-chart-control-select-scheme-type>
     </div>
 
-    <div *ngIf="pageSizeChartTypes.indexOf(chart.type) > -1">
-      <m-chart-control-page-size
-        [chart]="chart"
-        (pageSizeChange)="pageSizeChange($event)"
-      ></m-chart-control-page-size>
-    </div>
+    <!--
+      <div *ngIf="pageSizeChartTypes.indexOf(chart.type) > -1">
+        <m-chart-control-page-size
+          [chart]="chart"
+          (pageSizeChange)="pageSizeChange($event)"
+        ></m-chart-control-page-size>
+      </div>
+    -->
 
     <div *ngIf="arcWidthChartTypes.indexOf(chart.type) > -1">
       <m-chart-control-arc-width

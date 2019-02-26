@@ -2,6 +2,7 @@ export * from './blockml/_index';
 export * from './chart-controls-checkbox/_index';
 export * from './chart-controls-input/_index';
 export * from './chart-controls-select/_index';
+export * from './charts/_index';
 export * from './dashboard/_index';
 export * from './fraction/_index';
 export * from './menu/_index';
