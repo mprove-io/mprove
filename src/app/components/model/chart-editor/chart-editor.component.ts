@@ -229,15 +229,6 @@ export class ChartEditorComponent {
 
   // data
 
-  previousValueFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      previous_value_field: ev.value
-    });
-
-    this.chartChange();
-  }
-
   // axis
 
   toggleXAxis() {

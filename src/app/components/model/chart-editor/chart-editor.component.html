@@ -168,29 +168,11 @@
       *ngIf="previousValueFieldChartTypes.indexOf(chart.type) > -1"
       class="mp-chart-editor__value-field"
     >
-      <mat-form-field>
-        <mat-select
-          placeholder="previousValueField"
-          name="chartPreviousValueField"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.previous_value_field"
-          (selectionChange)="previousValueFieldChange($event)"
-        >
-          <mat-option
-            *ngFor="let field of selectFields"
-            name="chartPreviousValueFieldOption"
-            [value]="field.id"
-          >
-            <span>{{ field.top_label + ' ' | capitalize }}</span>
-            <span *ngIf="field.group_label">{{
-              field.group_label + ' ' | capitalize
-            }}</span>
-            <span>{{ field.label | capitalize }}</span>
-          </mat-option>
-
-          <mat-option [value]="null">Undefined</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <m-chart-control-select-previous-value-field
+        [chart]="chart"
+        [selectFields]="selectFields"
+        (selectPreviousValueFieldChange)="delayChartChange($event)"
+      ></m-chart-control-select-previous-value-field>
     </div>
 
     <h5>Axis</h5>
