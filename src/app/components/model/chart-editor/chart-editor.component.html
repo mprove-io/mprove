@@ -68,7 +68,7 @@
       <m-chart-control-select-x-field
         [chart]="chart"
         [selectFields]="selectFields"
-        (selectXFieldChange)="chartChange($event)"
+        (selectXFieldChange)="delayChartChange($event)"
       ></m-chart-control-select-x-field>
     </div>
 
@@ -83,7 +83,7 @@
       <m-chart-control-select-y-field
         [chart]="chart"
         [selectFields]="selectFields"
-        (selectYFieldChange)="chartChange($event)"
+        (selectYFieldChange)="delayChartChange($event)"
       ></m-chart-control-select-y-field>
     </div>
 
@@ -151,36 +151,17 @@
       <div fxFlex></div>
       <m-chart-control-select-multi-field
         [chart]="chart"
-        (selectMultiFieldChange)="chartChange($event)"
+        [selectFields]="selectFields"
+        (selectMultiFieldChange)="delayChartChange($event)"
       ></m-chart-control-select-multi-field>
     </div>
 
     <div *ngIf="valueFieldChartTypes.indexOf(chart.type) > -1">
-      <mat-form-field>
-        <mat-select
-          placeholder="valueField"
-          name="chartValueField"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.value_field"
-          (selectionChange)="valueFieldChange($event)"
-        >
-          <mat-option
-            *ngFor="let field of selectFields"
-            name="chartValueFieldOption"
-            [value]="field.id"
-          >
-            <span>{{ field.top_label + ' ' | capitalize }}</span>
-            <span *ngIf="field.group_label">{{
-              field.group_label + ' ' | capitalize
-            }}</span>
-            <span>{{ field.label | capitalize }}</span>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-error *ngIf="!chart.value_field">
-        <m-validation-msg [errors]="{ required: true }"></m-validation-msg>
-      </mat-error>
+      <m-chart-control-select-value-field
+        [chart]="chart"
+        [selectFields]="selectFields"
+        (selectValueFieldChange)="delayChartChange($event)"
+      ></m-chart-control-select-value-field>
     </div>
 
     <div

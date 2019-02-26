@@ -1,0 +1,25 @@
+<mat-form-field>
+  <mat-select
+    placeholder="valueField"
+    name="chartValueField"
+    class="mp-chart-editor-field-full-width"
+    [(ngModel)]="chart.value_field"
+    (selectionChange)="valueFieldChange($event)"
+  >
+    <mat-option
+      *ngFor="let field of selectFields"
+      name="chartValueFieldOption"
+      [value]="field.id"
+    >
+      <span>{{ field.top_label + ' ' | capitalize }}</span>
+      <span *ngIf="field.group_label">{{
+        field.group_label + ' ' | capitalize
+      }}</span>
+      <span>{{ field.label | capitalize }}</span>
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-error *ngIf="!chart.value_field">
+  <m-validation-msg [errors]="{ required: true }"></m-validation-msg>
+</mat-error>

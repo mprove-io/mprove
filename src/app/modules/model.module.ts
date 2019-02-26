@@ -64,7 +64,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlSelectTypeComponent,
     components.ChartControlSelectXFieldComponent,
     components.ChartControlSelectYFieldComponent,
-    components.ChartControlSelectMultiFieldComponent
+    components.ChartControlSelectMultiFieldComponent,
+    components.ChartControlSelectValueFieldComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

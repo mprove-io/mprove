@@ -224,19 +224,10 @@ export class ChartEditorComponent {
     // wait until children components initialize and pass valid status to validate chart
     setTimeout(() => {
       this.chartChange();
-    }, 1);
+    }, 0);
   }
 
   // data
-
-  valueFieldChange(ev: MatSelectChange) {
-    this.chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      value_field: ev.value
-    });
-
-    this.chartChange();
-  }
 
   previousValueFieldChange(ev: MatSelectChange) {
     this.chart = Object.assign({}, this.chart, {
@@ -559,147 +550,147 @@ export class ChartEditorComponent {
   angleSpanChange(ev) {
     this.angleSpanValid = ev.angleSpanValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   arcWidthChange(ev) {
     this.arcWidthValid = ev.arcWidthValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   barPaddingChange(ev) {
     this.barPaddingValid = ev.barPaddingValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   bigSegmentsChange(ev) {
     this.bigSegmentsValid = ev.bigSegmentsValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   innerPaddingChange(ev) {
     this.innerPaddingValid = ev.innerPaddingValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   groupPaddingChange(ev) {
     this.groupPaddingValid = ev.groupPaddingValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   legendTitleChange(ev) {
     this.legendTitleValid = ev.legendTitleValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   maxChange(ev) {
     this.maxValid = ev.maxValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   minChange(ev) {
     this.minValid = ev.minValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   pageSizeChange(ev) {
     this.pageSizeValid = ev.pageSizeValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   smallSegmentsChange(ev) {
     this.smallSegmentsValid = ev.smallSegmentsValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   startAngleChange(ev) {
     this.startAngleValid = ev.startAngleValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   titleChange(ev) {
     this.titleValid = ev.titleValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   unitsChange(ev) {
     this.unitsValid = ev.unitsValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   viewHeightChange(ev) {
     this.viewHeightValid = ev.viewHeightValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   viewWidthChange(ev) {
     this.viewWidthValid = ev.viewWidthValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   xAxisLabelChange(ev) {
     this.xAxisLabelValid = ev.xAxisLabelValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   xScaleMaxChange(ev) {
     this.xScaleMaxValid = ev.xScaleMaxValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   yAxisLabelChange(ev) {
     this.yAxisLabelValid = ev.yAxisLabelValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   yScaleMaxChange(ev) {
     this.yScaleMaxValid = ev.yScaleMaxValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
   yScaleMinChange(ev) {
     this.yScaleMinValid = ev.yScaleMinValid;
     if (ev.chart) {
-      this.chartChange(ev.chart);
+      this.delayChartChange(ev.chart);
     }
   }
 
