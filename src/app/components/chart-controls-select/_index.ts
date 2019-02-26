@@ -2,6 +2,7 @@ export * from './chart-control-select-color-scheme/chart-control-select-color-sc
 export * from './chart-control-select-interpolation/chart-control-select-interpolation.component';
 export * from './chart-control-select-multi-field/chart-control-select-multi-field.component';
 export * from './chart-control-select-previous-value-field/chart-control-select-previous-value-field.component';
+export * from './chart-control-select-scheme-type/chart-control-select-scheme-type.component';
 export * from './chart-control-select-type/chart-control-select-type.component';
 export * from './chart-control-select-value-field/chart-control-select-value-field.component';
 export * from './chart-control-select-x-field/chart-control-select-x-field.component';

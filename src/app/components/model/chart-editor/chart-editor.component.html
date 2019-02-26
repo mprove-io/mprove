@@ -377,27 +377,10 @@
     <div *ngIf="schemeTypeChartTypes.indexOf(chart.type) > -1">
       <div class="vertical-space"></div>
 
-      <mat-form-field>
-        <mat-select
-          placeholder="SchemeType"
-          name="chartSchemeType"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.scheme_type"
-          (selectionChange)="schemeTypeChange($event)"
-        >
-          <mat-option
-            [value]="chartSchemeTypeEnum.Ordinal"
-            name="chartSchemeTypeOrdinal"
-            >Ordinal</mat-option
-          >
-
-          <mat-option
-            [value]="chartSchemeTypeEnum.Linear"
-            name="chartSchemeTypeLinear"
-            >Linear</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
+      <m-chart-control-select-scheme-type
+        [chart]="chart"
+        (selectSchemeTypeChange)="delayChartChange($event)"
+      ></m-chart-control-select-scheme-type>
     </div>
 
     <div *ngIf="pageSizeChartTypes.indexOf(chart.type) > -1">
