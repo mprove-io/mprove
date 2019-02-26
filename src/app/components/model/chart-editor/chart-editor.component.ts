@@ -427,15 +427,6 @@ export class ChartEditorComponent {
 
   // tile
 
-  viewSizeChange(ev: MatSelectChange) {
-    this.chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      view_size: ev.value
-    });
-
-    this.chartChange();
-  }
-
   yFieldsIsSelected(id: string) {
     return this.chart.y_fields.findIndex(x => x === id) > -1;
   }

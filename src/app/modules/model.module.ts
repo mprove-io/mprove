@@ -71,7 +71,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartControlSelectColorSchemeComponent,
     components.ChartControlSelectSchemeTypeComponent,
     components.ChartControlSelectTileWidthComponent,
-    components.ChartControlSelectTileHeightComponent
+    components.ChartControlSelectTileHeightComponent,
+    components.ChartControlSelectViewSizeComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

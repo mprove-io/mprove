@@ -545,25 +545,10 @@
     <div>
       <div class="vertical-space"></div>
 
-      <mat-form-field>
-        <mat-select
-          placeholder="ViewSize"
-          name="chartViewSize"
-          class="mp-chart-editor-field-full-width"
-          [(ngModel)]="chart.view_size"
-          (selectionChange)="viewSizeChange($event)"
-        >
-          <mat-option [value]="chartViewSizeEnum.Auto" name="chartViewSizeAuto"
-            >Auto</mat-option
-          >
-
-          <mat-option
-            [value]="chartViewSizeEnum.Manual"
-            name="chartViewSizeManual"
-            >Manual</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
+      <m-chart-control-select-view-size
+        [chart]="chart"
+        (selectViewSizeChange)="delayChartChange($event)"
+      ></m-chart-control-select-view-size>
     </div>
 
     <div>
