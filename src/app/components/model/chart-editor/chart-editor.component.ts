@@ -413,35 +413,6 @@ export class ChartEditorComponent {
     this.delayChartChange(chart);
   }
 
-  // tile
-
-  hideColumnsIsSelected(id: string) {
-    return this.chart.hide_columns.findIndex(x => x === id) > -1;
-  }
-
-  hideColumnsOnClick(id: string) {
-    let index = this.chart.hide_columns.findIndex(x => x === id);
-
-    let chart;
-
-    if (index > -1) {
-      chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        hide_columns: [
-          ...this.chart.hide_columns.slice(0, index),
-          ...this.chart.hide_columns.slice(index + 1)
-        ]
-      });
-    } else {
-      chart = Object.assign({}, this.chart, {
-        chart_id: uuid.v4(),
-        hide_columns: [...this.chart.hide_columns, id]
-      });
-    }
-
-    this.delayChartChange(chart);
-  }
-
   //
 
   angleSpanChange(ev) {

@@ -96,31 +96,11 @@
     </div>
 
     <div *ngIf="hideColumnsChartTypes.indexOf(chart.type) > -1">
-      <h6>HideColumns</h6>
-      <div fxLayout="column">
-        <mat-checkbox
-          *ngFor="let field of selectFields"
-          name="chartHideColumnsCheckbox"
-          [checked]="hideColumnsIsSelected(field.id)"
-          (change)="hideColumnsOnClick(field.id)"
-        >
-          <div name="chartHideColumnsCheckboxInner">
-            <span>{{ field.top_label + ' ' | capitalize }}</span>
-            <span *ngIf="field.group_label">{{
-              field.group_label + ' ' | capitalize
-            }}</span>
-            <span>{{ field.label | capitalize }}</span>
-          </div>
-        </mat-checkbox>
-
-        <!--
-          <div fxFlex="15px">
-            <mat-error *ngIf="!(chart.hide_columns.length === selectFields.length)">
-              <m-validation-msg [errors]="{'required': true}"></m-validation-msg>
-            </mat-error>
-          </div>
-        -->
-      </div>
+      <m-chart-control-checkbox-hide-columns
+        [chart]="chart"
+        [selectFields]="selectFields"
+        (checkboxHideColumnsChange)="delayChartChange($event)"
+      ></m-chart-control-checkbox-hide-columns>
     </div>
 
     <div
