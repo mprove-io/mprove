@@ -765,7 +765,6 @@ export class ChartEditorComponent {
           this.chart.y_field &&
           (this.chart.view_size === api.ChartViewSizeEnum.Auto ||
             (this.viewHeightValid && this.viewWidthValid)) &&
-          this.legendTitleValid &&
           this.titleValid
         ) {
           return true;
