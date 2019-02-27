@@ -76,6 +76,13 @@
       (partChange)="partChange($event)"
     ></m-chart-number-card>
 
+    <m-chart-gauge-linear
+      *ngIf="chart.type === chartTypeEnum.GaugeLinear"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-gauge-linear>
+
     <h5>Data</h5>
 
     <div
@@ -141,24 +148,26 @@
       ></m-chart-control-select-multi-field>
     </div>
 
-    <div *ngIf="valueFieldChartTypes.indexOf(chart.type) > -1">
-      <m-chart-control-select-value-field
-        [chart]="chart"
-        [selectFields]="selectFields"
-        (selectValueFieldChange)="delayChartChange($event)"
-      ></m-chart-control-select-value-field>
-    </div>
+    <!--
+      <div *ngIf="valueFieldChartTypes.indexOf(chart.type) > -1">
+        <m-chart-control-select-value-field
+          [chart]="chart"
+          [selectFields]="selectFields"
+          (selectValueFieldChange)="delayChartChange($event)"
+        ></m-chart-control-select-value-field>
+      </div>
 
-    <div
-      *ngIf="previousValueFieldChartTypes.indexOf(chart.type) > -1"
-      class="mp-chart-editor__value-field"
-    >
-      <m-chart-control-select-previous-value-field
-        [chart]="chart"
-        [selectFields]="selectFields"
-        (selectPreviousValueFieldChange)="delayChartChange($event)"
-      ></m-chart-control-select-previous-value-field>
-    </div>
+      <div
+        *ngIf="previousValueFieldChartTypes.indexOf(chart.type) > -1"
+        class="mp-chart-editor__value-field"
+      >
+        <m-chart-control-select-previous-value-field
+          [chart]="chart"
+          [selectFields]="selectFields"
+          (selectPreviousValueFieldChange)="delayChartChange($event)"
+        ></m-chart-control-select-previous-value-field>
+      </div>
+    -->
 
     <h5>Axis</h5>
 
