@@ -125,6 +125,13 @@
       (partChange)="partChange($event)"
     ></m-chart-area-normalized>
 
+    <m-chart-pie
+      *ngIf="chart.type === chartTypeEnum.Pie"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-pie>
+
     <h5>Data</h5>
 
     <div
