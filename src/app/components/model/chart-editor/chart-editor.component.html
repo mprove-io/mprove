@@ -91,10 +91,18 @@
     ></m-chart-tree-map>
 
     <m-chart-heat-map
+      *ngIf="chart.type === chartTypeEnum.HeatMap"
       [chart]="chart"
       [selectFields]="selectFields"
       (partChange)="partChange($event)"
     ></m-chart-heat-map>
+
+    <m-chart-line
+      *ngIf="chart.type === chartTypeEnum.Line"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-line>
 
     <h5>Data</h5>
 

@@ -80,7 +80,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartNumberCardComponent,
     components.ChartGaugeLinearComponent,
     components.ChartTreeMapComponent,
-    components.ChartHeatMapComponent
+    components.ChartHeatMapComponent,
+    components.ChartLineComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]
