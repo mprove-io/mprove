@@ -83,7 +83,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartHeatMapComponent,
     components.ChartLineComponent,
     components.ChartAreaComponent,
-    components.ChartAreaStackedComponent
+    components.ChartAreaStackedComponent,
+    components.ChartAreaNormalizedComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]
