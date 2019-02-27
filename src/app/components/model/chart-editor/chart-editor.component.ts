@@ -391,41 +391,41 @@ export class ChartEditorComponent {
     this.delayChartChange(chart);
   }
 
-  bandColorChange(ev: MColorChange) {
-    let chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      band_color: ev.color
-    });
+  // bandColorChange(ev: MColorChange) {
+  //   let chart = Object.assign({}, this.chart, {
+  //     chart_id: uuid.v4(),
+  //     band_color: ev.color
+  //   });
 
-    this.delayChartChange(chart);
-  }
+  //   this.delayChartChange(chart);
+  // }
 
-  cardColorChange(ev: any) {
-    let chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      card_color: ev.color
-    });
+  // cardColorChange(ev: any) {
+  //   let chart = Object.assign({}, this.chart, {
+  //     chart_id: uuid.v4(),
+  //     card_color: ev.color
+  //   });
 
-    this.delayChartChange(chart);
-  }
+  //   this.delayChartChange(chart);
+  // }
 
-  textColorChange(ev: MColorChange) {
-    let chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      text_color: ev.color
-    });
+  // textColorChange(ev: MColorChange) {
+  //   let chart = Object.assign({}, this.chart, {
+  //     chart_id: uuid.v4(),
+  //     text_color: ev.color
+  //   });
 
-    this.delayChartChange(chart);
-  }
+  //   this.delayChartChange(chart);
+  // }
 
-  emptyColorChange(ev: MColorChange) {
-    let chart = Object.assign({}, this.chart, {
-      chart_id: uuid.v4(),
-      empty_color: ev.color
-    });
+  // emptyColorChange(ev: MColorChange) {
+  //   let chart = Object.assign({}, this.chart, {
+  //     chart_id: uuid.v4(),
+  //     empty_color: ev.color
+  //   });
 
-    this.delayChartChange(chart);
-  }
+  //   this.delayChartChange(chart);
+  // }
 
   //
 

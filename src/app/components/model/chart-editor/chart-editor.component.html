@@ -69,6 +69,13 @@
       (partChange)="partChange($event)"
     ></m-chart-gauge>
 
+    <m-chart-number-card
+      *ngIf="chart.type === chartTypeEnum.NumberCard"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-number-card>
+
     <h5>Data</h5>
 
     <div
@@ -468,41 +475,43 @@
       ></m-chart-control-units>
     </div>
 
-    <m-colorpicker
-      *ngIf="bandColorChartTypes.indexOf(chart.type) > -1"
-      placeholder="Band Color"
-      name="chartBandColor"
-      [(ngModel)]="chart.band_color"
-      (change)="bandColorChange($event)"
-      format="rgb"
-    ></m-colorpicker>
+    <!--
+      <m-colorpicker
+        *ngIf="bandColorChartTypes.indexOf(chart.type) > -1"
+        placeholder="Band Color"
+        name="chartBandColor"
+        [(ngModel)]="chart.band_color"
+        (change)="bandColorChange($event)"
+        format="rgb"
+      ></m-colorpicker>
 
-    <m-colorpicker
-      *ngIf="cardColorChartTypes.indexOf(chart.type) > -1"
-      placeholder="Card Color"
-      name="chartCardColor"
-      [(ngModel)]="chart.card_color"
-      (change)="cardColorChange($event)"
-      format="rgb"
-    ></m-colorpicker>
+      <m-colorpicker
+        *ngIf="cardColorChartTypes.indexOf(chart.type) > -1"
+        placeholder="Card Color"
+        name="chartCardColor"
+        [(ngModel)]="chart.card_color"
+        (change)="cardColorChange($event)"
+        format="rgb"
+      ></m-colorpicker>
 
-    <m-colorpicker
-      *ngIf="textColorChartTypes.indexOf(chart.type) > -1"
-      placeholder="Text Color"
-      name="chartTextColor"
-      [(ngModel)]="chart.text_color"
-      (change)="textColorChange($event)"
-      format="rgb"
-    ></m-colorpicker>
+      <m-colorpicker
+        *ngIf="textColorChartTypes.indexOf(chart.type) > -1"
+        placeholder="Text Color"
+        name="chartTextColor"
+        [(ngModel)]="chart.text_color"
+        (change)="textColorChange($event)"
+        format="rgb"
+      ></m-colorpicker>
 
-    <m-colorpicker
-      *ngIf="emptyColorChartTypes.indexOf(chart.type) > -1"
-      placeholder="Empty Color"
-      name="chartEmptyColor"
-      [(ngModel)]="chart.empty_color"
-      (change)="emptyColorChange($event)"
-      format="rgb"
-    ></m-colorpicker>
+      <m-colorpicker
+        *ngIf="emptyColorChartTypes.indexOf(chart.type) > -1"
+        placeholder="Empty Color"
+        name="chartEmptyColor"
+        [(ngModel)]="chart.empty_color"
+        (change)="emptyColorChange($event)"
+        format="rgb"
+      ></m-colorpicker>
+    -->
 
     <h5>Tile</h5>
 
