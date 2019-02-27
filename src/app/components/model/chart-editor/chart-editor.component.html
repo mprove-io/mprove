@@ -104,6 +104,13 @@
       (partChange)="partChange($event)"
     ></m-chart-line>
 
+    <m-chart-area
+      *ngIf="chart.type === chartTypeEnum.Area"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-area>
+
     <h5>Data</h5>
 
     <div

@@ -81,7 +81,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartGaugeLinearComponent,
     components.ChartTreeMapComponent,
     components.ChartHeatMapComponent,
-    components.ChartLineComponent
+    components.ChartLineComponent,
+    components.ChartAreaComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]
