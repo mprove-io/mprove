@@ -111,6 +111,13 @@
       (partChange)="partChange($event)"
     ></m-chart-area>
 
+    <m-chart-area-stacked
+      *ngIf="chart.type === chartTypeEnum.AreaStacked"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-area-stacked>
+
     <h5>Data</h5>
 
     <div
