@@ -87,7 +87,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartAreaNormalizedComponent,
     components.ChartPieComponent,
     components.ChartPieAdvancedComponent,
-    components.ChartPieGridComponent
+    components.ChartPieGridComponent,
+    components.ChartBarVerticalComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

@@ -1,6 +1,7 @@
 export * from './chart-area/chart-area.component';
 export * from './chart-area-normalized/chart-area-normalized.component';
 export * from './chart-area-stacked/chart-area-stacked.component';
+export * from './chart-bar-vertical/chart-bar-vertical.component';
 export * from './chart-gauge/chart-gauge.component';
 export * from './chart-gauge-linear/chart-gauge-linear.component';
 export * from './chart-heat-map/chart-heat-map.component';
