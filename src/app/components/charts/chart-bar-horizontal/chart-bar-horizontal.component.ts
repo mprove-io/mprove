@@ -24,7 +24,7 @@ export class ChartBarHorizontalComponent {
   barPaddingValid: boolean;
   xAxisLabelValid: boolean;
   yAxisLabelValid: boolean;
-  yScaleMaxValid: boolean;
+  xScaleMaxValid: boolean;
 
   constructor() {}
 
@@ -40,7 +40,7 @@ export class ChartBarHorizontalComponent {
           this.barPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
-          this.yScaleMaxValid,
+          this.xScaleMaxValid,
         chart: chart
       });
     }, 0);
@@ -172,8 +172,8 @@ export class ChartBarHorizontalComponent {
     }
   }
 
-  yScaleMaxChange(ev) {
-    this.yScaleMaxValid = ev.yScaleMaxValid;
+  xScaleMaxChange(ev) {
+    this.xScaleMaxValid = ev.xScaleMaxValid;
     if (ev.chart) {
       this.emitPartChange(ev.chart);
     }
