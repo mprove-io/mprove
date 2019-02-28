@@ -181,6 +181,13 @@
       (partChange)="partChange($event)"
     ></m-chart-bar-horizontal>
 
+    <m-chart-bar-horizontal-normalized
+      *ngIf="chart.type === chartTypeEnum.BarHorizontalNormalized"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-bar-horizontal-normalized>
+
     <m-chart-bar-horizontal-grouped
       *ngIf="chart.type === chartTypeEnum.BarHorizontalGrouped"
       [chart]="chart"
