@@ -7,7 +7,7 @@ const password = '123123';
 
 const projectId = 'project_27_02';
 
-describe('27-02 model-data-change-columns-order (logged in)', () => {
+describe('27-02 model-query-data-change-columns-order (logged in)', () => {
   it(`should be able to change-columns-order`, () => {
     cy.deletePack({
       user_ids: [userId],

@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '27-03-user@example.com';
+const userId = '28-01-user@example.com';
 const password = '123123';
 
-const projectId = 'project_27_03';
+const projectId = 'project_28_01';
 
-describe('27-03 model-data-sort-column (logged in)', () => {
-  it(`should be able to sort-column`, () => {
+describe('28-01 model-query-chart-add-chart (logged in)', () => {
+  it(`should be able to add chart`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -50,26 +50,11 @@ describe('27-03 model-data-sort-column (logged in)', () => {
     cy.loading();
 
     cy.get('[data-cy=queryTabData]').click();
+    cy.url().should('include', constants.PATH_DATA);
 
-    cy.get('[data-cy=mainTableColumnNotSortedSortDescButton]')
-      .eq(0)
-      .click();
+    cy.get('[data-cy=queryTabAddChart]').click();
     cy.loading();
 
-    cy.get('[data-cy=mainTableColumnIsDescSortDescButton]')
-      .eq(0)
-      .click();
-    cy.loading();
-
-    cy.get('[data-cy=mainTableColumnIsAscSortAscButton]')
-      .eq(0)
-      .click();
-    cy.loading();
-
-    cy.get('[data-cy=mainTableColumnNotSortedSortDescButton]').should(
-      $elements => {
-        expect($elements).to.have.length(2);
-      }
-    );
+    cy.url().should('include', constants.PATH_CHART);
   });
 });

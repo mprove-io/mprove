@@ -7,7 +7,7 @@ const password = '123123';
 
 const projectId = 'project_27_01';
 
-describe('27-01 model-data-change-limit (logged in)', () => {
+describe('27-01 model-query-data-change-limit (logged in)', () => {
   it(`should be able to change-limit`, () => {
     cy.deletePack({
       user_ids: [userId],
