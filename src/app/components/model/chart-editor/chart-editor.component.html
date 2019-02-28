@@ -153,6 +153,34 @@
       (partChange)="partChange($event)"
     ></m-chart-bar-vertical>
 
+    <m-chart-bar-vertical-grouped
+      *ngIf="chart.type === chartTypeEnum.BarVerticalGrouped"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-bar-vertical-grouped>
+
+    <m-chart-bar-vertical-stacked
+      *ngIf="chart.type === chartTypeEnum.BarVerticalStacked"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-bar-vertical-stacked>
+
+    <m-chart-bar-horizontal
+      *ngIf="chart.type === chartTypeEnum.BarHorizontal"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-bar-horizontal>
+
+    <m-chart-bar-horizontal-grouped
+      *ngIf="chart.type === chartTypeEnum.BarHorizontalGrouped"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-bar-horizontal-grouped>
+
     <h5>Data</h5>
 
     <div
