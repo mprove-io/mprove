@@ -7,6 +7,7 @@ export * from './chart-bar-horizontal-stacked/chart-bar-horizontal-stacked.compo
 export * from './chart-bar-vertical/chart-bar-vertical.component';
 export * from './chart-bar-vertical-grouped/chart-bar-vertical-grouped.component';
 export * from './chart-bar-vertical-stacked/chart-bar-vertical-stacked.component';
+export * from './chart-bar-vertical-normalized/chart-bar-vertical-normalized.component';
 export * from './chart-gauge/chart-gauge.component';
 export * from './chart-gauge-linear/chart-gauge-linear.component';
 export * from './chart-heat-map/chart-heat-map.component';

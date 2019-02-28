@@ -167,6 +167,13 @@
       (partChange)="partChange($event)"
     ></m-chart-bar-vertical-stacked>
 
+    <m-chart-bar-vertical-normalized
+      *ngIf="chart.type === chartTypeEnum.BarVerticalNormalized"
+      [chart]="chart"
+      [selectFields]="selectFields"
+      (partChange)="partChange($event)"
+    ></m-chart-bar-vertical-normalized>
+
     <m-chart-bar-horizontal
       *ngIf="chart.type === chartTypeEnum.BarHorizontal"
       [chart]="chart"

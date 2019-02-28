@@ -91,6 +91,7 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartBarVerticalComponent,
     components.ChartBarVerticalGroupedComponent,
     components.ChartBarVerticalStackedComponent,
+    components.ChartBarVerticalNormalizedComponent,
     components.ChartBarHorizontalComponent,
     components.ChartBarHorizontalGroupedComponent,
     components.ChartBarHorizontalStackedComponent

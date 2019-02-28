@@ -10,11 +10,11 @@ import * as uuid from 'uuid';
 
 @Component({
   moduleId: module.id,
-  selector: 'm-chart-bar-horizontal-stacked',
-  templateUrl: 'chart-bar-horizontal-stacked.component.html',
+  selector: 'm-chart-bar-vertical-normalized',
+  templateUrl: 'chart-bar-vertical-normalized.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChartBarHorizontalStackedComponent {
+export class ChartBarVerticalNormalizedComponent {
   @Input() chart: api.Chart;
   @Input() selectFields: api.ModelField[];
 
@@ -40,8 +40,7 @@ export class ChartBarHorizontalStackedComponent {
           this.legendTitleValid &&
           this.barPaddingValid &&
           this.xAxisLabelValid &&
-          this.yAxisLabelValid &&
-          this.yScaleMaxValid,
+          this.yAxisLabelValid,
         chart: chart
       });
     }, 0);
@@ -159,13 +158,6 @@ export class ChartBarHorizontalStackedComponent {
 
   barPaddingChange(ev) {
     this.barPaddingValid = ev.barPaddingValid;
-    if (ev.chart) {
-      this.emitPartChange(ev.chart);
-    }
-  }
-
-  yScaleMaxChange(ev) {
-    this.yScaleMaxValid = ev.yScaleMaxValid;
     if (ev.chart) {
       this.emitPartChange(ev.chart);
     }

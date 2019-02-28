@@ -39,7 +39,6 @@ export class ChartBarVerticalStackedComponent {
           this.chart.y_fields.length > 0 &&
           this.legendTitleValid &&
           this.barPaddingValid &&
-          this.groupPaddingValid &&
           this.xAxisLabelValid &&
           this.yAxisLabelValid &&
           this.yScaleMaxValid,
