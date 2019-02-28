@@ -18,6 +18,16 @@
         background: #414141;
       }
     }
+
+    /deep/ .mat-slide-toggle-label {
+      &:hover {
+        @if $is-dark == true {
+          background-color: #525252;
+        } @else {
+          background-color: #f9f9f9;
+        }
+      }
+    }
   }
   .chart-inner {
     @if $is-dark != true {

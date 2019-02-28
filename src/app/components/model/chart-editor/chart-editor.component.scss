@@ -15,6 +15,10 @@
   .vertical-space {
     height: 20px;
   }
+
+  /deep/ .mat-slide-toggle-label {
+    max-width: 180px;
+  }
 }
 .chart-inner {
   padding-left: 15px;
@@ -29,6 +33,7 @@
 .mat-slide-toggle {
   margin-bottom: 35px !important;
 }
+
 /deep/ .mat-form-field-underline {
   max-width: 360px;
 }
