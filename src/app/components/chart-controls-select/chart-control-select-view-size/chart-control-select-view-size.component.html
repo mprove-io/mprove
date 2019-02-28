@@ -1,16 +1,16 @@
 <mat-form-field>
   <mat-select
     placeholder="ViewSize"
-    name="chartViewSize"
+    data-cy="chartViewSize"
     class="mp-chart-editor-field-full-width"
     [(ngModel)]="chart.view_size"
     (selectionChange)="viewSizeChange($event)"
   >
-    <mat-option [value]="chartViewSizeEnum.Auto" name="chartViewSizeAuto"
+    <mat-option [value]="chartViewSizeEnum.Auto" data-cy="chartViewSizeAuto"
       >Auto</mat-option
     >
 
-    <mat-option [value]="chartViewSizeEnum.Manual" name="chartViewSizeManual"
+    <mat-option [value]="chartViewSizeEnum.Manual" data-cy="chartViewSizeManual"
       >Manual</mat-option
     >
   </mat-select>

@@ -6,7 +6,7 @@
       <button
         mat-icon-button
         color="primary"
-        name="chartAddChart"
+        data-cy="chartAddChart"
         (click)="duplicateChart()"
       >
         <mat-icon>add</mat-icon>
@@ -14,7 +14,7 @@
 
       <button
         mat-icon-button
-        name="chartRemoveChart"
+        data-cy="chartRemoveChart"
         color="warn"
         (click)="removeChart()"
       >
@@ -25,7 +25,7 @@
 
       <button
         mat-raised-button
-        name="chartSaveChart"
+        data-cy="chartSaveChart"
         class="chart-editor__save-button"
         color="accent"
         (click)="openGenerateBlockmlDialog()"

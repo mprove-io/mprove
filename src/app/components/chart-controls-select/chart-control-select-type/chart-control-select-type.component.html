@@ -11,13 +11,13 @@
     <mat-select
       placeholder="Type"
       class="mp-chart-editor-field-full-width"
-      name="chartType"
+      data-cy="chartType"
       [(ngModel)]="chart.type"
       (selectionChange)="typeChange($event)"
     >
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeTable"
+        data-cy="chartTypeTable"
         [value]="chartTypeEnum.Table"
       >
         <img
@@ -31,7 +31,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarVertical"
+        data-cy="chartTypeBarVertical"
         [value]="chartTypeEnum.BarVertical"
       >
         <img
@@ -45,7 +45,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarVerticalGrouped"
+        data-cy="chartTypeBarVerticalGrouped"
         [value]="chartTypeEnum.BarVerticalGrouped"
       >
         <img
@@ -61,7 +61,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarVerticalStacked"
+        data-cy="chartTypeBarVerticalStacked"
         [value]="chartTypeEnum.BarVerticalStacked"
       >
         <img
@@ -77,7 +77,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarVerticalNormalized"
+        data-cy="chartTypeBarVerticalNormalized"
         [value]="chartTypeEnum.BarVerticalNormalized"
       >
         <img
@@ -93,7 +93,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarHorizontal"
+        data-cy="chartTypeBarHorizontal"
         [value]="chartTypeEnum.BarHorizontal"
       >
         <img
@@ -107,7 +107,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarHorizontalGrouped"
+        data-cy="chartTypeBarHorizontalGrouped"
         [value]="chartTypeEnum.BarHorizontalGrouped"
       >
         <img
@@ -123,7 +123,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarHorizontalStacked"
+        data-cy="chartTypeBarHorizontalStacked"
         [value]="chartTypeEnum.BarHorizontalStacked"
       >
         <img
@@ -139,7 +139,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeBarHorizontalNormalized"
+        data-cy="chartTypeBarHorizontalNormalized"
         [value]="chartTypeEnum.BarHorizontalNormalized"
       >
         <img
@@ -157,7 +157,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypePie"
+        data-cy="chartTypePie"
         [value]="chartTypeEnum.Pie"
       >
         <img
@@ -171,7 +171,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypePieAdvanced"
+        data-cy="chartTypePieAdvanced"
         [value]="chartTypeEnum.PieAdvanced"
       >
         <img
@@ -185,7 +185,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypePieGrid"
+        data-cy="chartTypePieGrid"
         [value]="chartTypeEnum.PieGrid"
       >
         <img
@@ -199,7 +199,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeLine"
+        data-cy="chartTypeLine"
         [value]="chartTypeEnum.Line"
       >
         <img
@@ -213,7 +213,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeArea"
+        data-cy="chartTypeArea"
         [value]="chartTypeEnum.Area"
       >
         <img
@@ -227,7 +227,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeAreaStacked"
+        data-cy="chartTypeAreaStacked"
         [value]="chartTypeEnum.AreaStacked"
       >
         <img
@@ -241,7 +241,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeAreaNormalized"
+        data-cy="chartTypeAreaNormalized"
         [value]="chartTypeEnum.AreaNormalized"
       >
         <img
@@ -255,7 +255,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeHeatMap"
+        data-cy="chartTypeHeatMap"
         [value]="chartTypeEnum.HeatMap"
       >
         <img
@@ -269,7 +269,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeTreeMap"
+        data-cy="chartTypeTreeMap"
         [value]="chartTypeEnum.TreeMap"
       >
         <img
@@ -283,7 +283,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeNumberCard"
+        data-cy="chartTypeNumberCard"
         [value]="chartTypeEnum.NumberCard"
       >
         <img
@@ -297,7 +297,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeGauge"
+        data-cy="chartTypeGauge"
         [value]="chartTypeEnum.Gauge"
       >
         <img
@@ -311,7 +311,7 @@
 
       <mat-option
         class="chart-control-select-type__option"
-        name="chartTypeGaugeLinear"
+        data-cy="chartTypeGaugeLinear"
         [value]="chartTypeEnum.GaugeLinear"
       >
         <img

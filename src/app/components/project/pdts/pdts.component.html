@@ -22,7 +22,7 @@
       let-row="row"
       let-column="column"
     >
-      <button mat-raised-button (click)="showSql(row)" name="showPdtSql"
+      <button mat-raised-button (click)="showSql(row)" data-cy="showPdtSql"
         >SQL</button
       >
     </ng-template>
@@ -91,7 +91,7 @@
         mat-icon-button
         [matMenuTriggerFor]="pdtMenu"
         [matMenuTriggerData]="{ r: row }"
-        name="pdtMenu"
+        data-cy="pdtMenu"
       >
         <mat-icon>more_vert</mat-icon>
       </button>

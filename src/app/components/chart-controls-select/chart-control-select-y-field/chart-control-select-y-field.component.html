@@ -1,14 +1,14 @@
 <mat-form-field>
   <mat-select
     placeholder="yField"
-    name="chartYField"
+    data-cy="chartYField"
     class="mp-chart-editor-field-full-width"
     [(ngModel)]="chart.y_field"
     (selectionChange)="yFieldChange($event)"
   >
     <mat-option
       *ngFor="let field of selectFields"
-      name="chartYFieldOption"
+      data-cy="chartYFieldOption"
       [value]="field.id"
     >
       <span>{{ field.top_label + ' ' | capitalize }}</span>

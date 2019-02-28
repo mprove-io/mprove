@@ -1,90 +1,96 @@
 <mat-form-field>
   <mat-select
     placeholder="ColorScheme"
-    name="chartColorScheme"
+    data-cy="chartColorScheme"
     class="mp-chart-editor-field-full-width"
     [(ngModel)]="chart.color_scheme"
     (selectionChange)="colorSchemeChange($event)"
   >
     <mat-option
       [value]="chartColorSchemeEnum.Vivid"
-      name="chartColorSchemeVivid"
+      data-cy="chartColorSchemeVivid"
       >Vivid (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Natural"
-      name="chartColorSchemeNatural"
+      data-cy="chartColorSchemeNatural"
       >Natural (ordinal)</mat-option
     >
 
-    <mat-option [value]="chartColorSchemeEnum.Cool" name="chartColorSchemeCool"
+    <mat-option
+      [value]="chartColorSchemeEnum.Cool"
+      data-cy="chartColorSchemeCool"
       >Cool (ordinal)</mat-option
     >
 
-    <mat-option [value]="chartColorSchemeEnum.Fire" name="chartColorSchemeFire"
+    <mat-option
+      [value]="chartColorSchemeEnum.Fire"
+      data-cy="chartColorSchemeFire"
       >Fire (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Solar"
-      name="chartColorSchemeSolar"
+      data-cy="chartColorSchemeSolar"
       >Solar (continuous)</mat-option
     >
 
-    <mat-option [value]="chartColorSchemeEnum.Air" name="chartColorSchemeAir"
+    <mat-option [value]="chartColorSchemeEnum.Air" data-cy="chartColorSchemeAir"
       >Air (continuous)</mat-option
     >
 
-    <mat-option [value]="chartColorSchemeEnum.Aqua" name="chartColorSchemeAqua"
+    <mat-option
+      [value]="chartColorSchemeEnum.Aqua"
+      data-cy="chartColorSchemeAqua"
       >Aqua (continuous)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Flame"
-      name="chartColorSchemeFlame"
+      data-cy="chartColorSchemeFlame"
       >Flame (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Ocean"
-      name="chartColorSchemeOcean"
+      data-cy="chartColorSchemeOcean"
       >Ocean (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Forest"
-      name="chartColorSchemeForest"
+      data-cy="chartColorSchemeForest"
       >Forest (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Horizon"
-      name="chartColorSchemeHorizon"
+      data-cy="chartColorSchemeHorizon"
       >Horizon (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Neons"
-      name="chartColorSchemeNeons"
+      data-cy="chartColorSchemeNeons"
       >Neons (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Picnic"
-      name="chartColorSchemePicnic"
+      data-cy="chartColorSchemePicnic"
       >Picnic (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.Night"
-      name="chartColorSchemeNight"
+      data-cy="chartColorSchemeNight"
       >Night (ordinal)</mat-option
     >
 
     <mat-option
       [value]="chartColorSchemeEnum.NightLights"
-      name="chartColorSchemeNightLights"
+      data-cy="chartColorSchemeNightLights"
       >NightLights (ordinal)</mat-option
     >
   </mat-select>

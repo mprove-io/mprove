@@ -2,11 +2,11 @@
 <div fxLayout="column">
   <mat-checkbox
     *ngFor="let field of selectFields"
-    name="chartHideColumnsCheckbox"
+    data-cy="chartHideColumnsCheckbox"
     [checked]="hideColumnsIsSelected(field.id)"
     (change)="hideColumnsOnClick(field.id)"
   >
-    <div name="chartHideColumnsCheckboxInner">
+    <div data-cy="chartHideColumnsCheckboxInner">
       <span>{{ field.top_label + ' ' | capitalize }}</span>
       <span *ngIf="field.group_label">{{
         field.group_label + ' ' | capitalize

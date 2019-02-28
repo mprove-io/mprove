@@ -1,14 +1,14 @@
 <mat-form-field>
   <mat-select
     placeholder="previousValueField"
-    name="chartPreviousValueField"
+    data-cy="chartPreviousValueField"
     class="mp-chart-editor-field-full-width"
     [(ngModel)]="chart.previous_value_field"
     (selectionChange)="previousValueFieldChange($event)"
   >
     <mat-option
       *ngFor="let field of selectFields"
-      name="chartPreviousValueFieldOption"
+      data-cy="chartPreviousValueFieldOption"
       [value]="field.id"
     >
       <span>{{ field.top_label + ' ' | capitalize }}</span>
