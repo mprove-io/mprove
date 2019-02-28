@@ -1,5 +1,5 @@
 <div fxLayout="column" fxLayoutGap="20px">
-  <h5>Data</h5>
+  <h5 class="parameters-group">Data</h5>
 
   <div fxFlex="50px" fxLayout="column" fxFlexAlign="end start" fxFlexFill>
     <div fxFlex></div>
@@ -19,7 +19,7 @@
     ></m-chart-control-select-y-field>
   </div>
 
-  <h5>Axis</h5>
+  <h5 class="parameters-group">Axis</h5>
 
   <mat-slide-toggle
     (change)="toggleXAxis()"
@@ -63,7 +63,7 @@
     (yAxisLabelChange)="yAxisLabelChange($event)"
   ></m-chart-control-y-axis-label>
 
-  <h5>Options</h5>
+  <h5 class="parameters-group">Options</h5>
 
   <mat-slide-toggle
     (change)="toggleAnimations()"

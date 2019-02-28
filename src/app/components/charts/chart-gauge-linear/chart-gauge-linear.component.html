@@ -1,5 +1,5 @@
 <div fxLayout="column" fxLayoutGap="20px">
-  <h5>Data</h5>
+  <h5 class="parameters-group">Data</h5>
 
   <m-chart-control-select-value-field
     [chart]="chart"
@@ -13,9 +13,9 @@
     (selectPreviousValueFieldChange)="emitPartChange($event)"
   ></m-chart-control-select-previous-value-field>
 
-  <h5>Axis</h5>
+  <h5 class="parameters-group">Axis</h5>
 
-  <h5>Options</h5>
+  <h5 class="parameters-group">Options</h5>
 
   <mat-slide-toggle
     (change)="toggleAnimations()"

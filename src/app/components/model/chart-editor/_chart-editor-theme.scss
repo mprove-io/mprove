@@ -28,6 +28,14 @@
         }
       }
     }
+
+    /deep/ .parameters-group {
+      @if $is-dark == true {
+        background-color: #303030;
+      } @else {
+        background-color: #cecece;
+      }
+    }
   }
   .chart-inner {
     @if $is-dark != true {
