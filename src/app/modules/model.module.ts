@@ -92,7 +92,8 @@ import { VisualModule } from '@app/modules/visual.module';
     components.ChartBarVerticalGroupedComponent,
     components.ChartBarVerticalStackedComponent,
     components.ChartBarHorizontalComponent,
-    components.ChartBarHorizontalGroupedComponent
+    components.ChartBarHorizontalGroupedComponent,
+    components.ChartBarHorizontalStackedComponent
   ],
   entryComponents: [],
   exports: [components.ModelComponent]

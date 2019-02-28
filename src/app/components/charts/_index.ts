@@ -3,6 +3,7 @@ export * from './chart-area-normalized/chart-area-normalized.component';
 export * from './chart-area-stacked/chart-area-stacked.component';
 export * from './chart-bar-horizontal/chart-bar-horizontal.component';
 export * from './chart-bar-horizontal-grouped/chart-bar-horizontal-grouped.component';
+export * from './chart-bar-horizontal-stacked/chart-bar-horizontal-stacked.component';
 export * from './chart-bar-vertical/chart-bar-vertical.component';
 export * from './chart-bar-vertical-grouped/chart-bar-vertical-grouped.component';
 export * from './chart-bar-vertical-stacked/chart-bar-vertical-stacked.component';
