@@ -52,6 +52,7 @@ export * from './users/confirm-user-email';
 export * from './users/login-user';
 export * from './users/logout-user';
 export * from './users/register-user';
+export * from './users/delete-user';
 export * from './users/set-user-name';
 export * from './users/set-user-themes';
 export * from './users/set-user-timezone';

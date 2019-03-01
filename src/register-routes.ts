@@ -34,6 +34,15 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
   );
 
   app.post(
+    '/api/v1' + api.PATH_DELETE_USER,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.deleteUser,
+      enums.controllerErrorsEnum.CONTROLLER_DELETE_USER
+    )
+  );
+
+  app.post(
     '/api/v1' + api.PATH_VERIFY_USER_EMAIL,
     handler.catchAsyncErrors(
       controller.verifyUserEmail,
@@ -86,7 +95,7 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
     '/api/v1' + api.PATH_SET_USER_NAME,
     middlewares,
     handler.catchAsyncErrors(
-      controller.usersSetUserName,
+      controller.setUserName,
       enums.controllerErrorsEnum.CONTROLLER_SET_USER_NAME
     )
   );

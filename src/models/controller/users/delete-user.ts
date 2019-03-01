@@ -10,23 +10,17 @@ import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
-export async function setUserThemes(req: Request, res: Response) {
+export async function deleteUser(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
   let userId: string = req.user.email;
 
-  let payload: api.SetUserThemesRequestBody['payload'] = validator.getPayload(
-    req
-  );
-
-  let mainTheme: api.UserMainThemeEnum = payload.main_theme;
-  let dashTheme: api.UserDashThemeEnum = payload.dash_theme;
-  let fileTheme: api.UserFileThemeEnum = payload.file_theme;
-  let sqlTheme: api.UserSqlThemeEnum = payload.sql_theme;
+  let payload: api.DeleteUserRequestBody['payload'] = validator.getPayload(req);
 
   let serverTs = payload.server_ts;
 
   let storeUsers = store.getUsersRepo();
+  let storeMembers = store.getMembersRepo();
 
   let user = <entities.UserEntity>(
     await storeUsers
@@ -40,16 +34,25 @@ export async function setUserThemes(req: Request, res: Response) {
 
   helper.checkServerTs(user, serverTs);
 
-  user.main_theme = mainTheme;
-  user.dash_theme = dashTheme;
-  user.file_theme = fileTheme;
-  user.sql_theme = sqlTheme;
+  user.deleted = enums.bEnum.TRUE;
+
+  let userMembers = <entities.MemberEntity[]>await storeMembers
+    .find({
+      // including deleted
+      member_id: userId
+    })
+    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND));
+
+  userMembers.map(member => {
+    member.deleted = enums.bEnum.TRUE;
+  });
 
   // update server_ts
 
   let newServerTs = helper.makeTs();
 
   user.server_ts = newServerTs;
+  userMembers = helper.refreshServerTs(userMembers, newServerTs);
 
   // save to database
 
@@ -61,7 +64,8 @@ export async function setUserThemes(req: Request, res: Response) {
         .save({
           manager: manager,
           records: {
-            users: [user]
+            users: [user],
+            members: userMembers
           },
           server_ts: newServerTs,
           source_init_id: initId
@@ -72,8 +76,9 @@ export async function setUserThemes(req: Request, res: Response) {
 
   // response
 
-  let responsePayload: api.SetUserThemesResponse200Body['payload'] = {
-    user: wrapper.wrapToApiUser(user)
+  let responsePayload: api.DeleteUserResponse200Body['payload'] = {
+    deleted_user: wrapper.wrapToApiUser(user),
+    members: userMembers.map(member => wrapper.wrapToApiMember(member))
   };
 
   sender.sendClientResponse(req, res, responsePayload);

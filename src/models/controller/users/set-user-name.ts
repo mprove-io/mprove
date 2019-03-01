@@ -10,7 +10,7 @@ import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
 
-export async function usersSetUserName(req: Request, res: Response) {
+export async function setUserName(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
 
   let userId: string = req.user.email;
@@ -83,7 +83,7 @@ export async function usersSetUserName(req: Request, res: Response) {
   // response
 
   let responsePayload: api.SetUserNameResponse200Body['payload'] = {
-    user: wrapper.wrapToApiUser(user, enums.bEnum.FALSE),
+    user: wrapper.wrapToApiUser(user),
     members: userMembers.map(member => wrapper.wrapToApiMember(member))
   };
 

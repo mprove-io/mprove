@@ -66,7 +66,7 @@ export async function setUserTimezone(req: Request, res: Response) {
   // response
 
   let responsePayload: api.SetUserTimezoneResponse200Body['payload'] = {
-    user: wrapper.wrapToApiUser(user, enums.bEnum.FALSE)
+    user: wrapper.wrapToApiUser(user)
   };
 
   sender.sendClientResponse(req, res, responsePayload);

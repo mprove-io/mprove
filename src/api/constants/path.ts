@@ -16,7 +16,8 @@ export const PATH_DELETE_MEMBER = '/members.deleteMember';
 export const PATH_EDIT_MEMBER = '/members.editMember';
 export const PATH_CREATE_DASHBOARD = '/multi.createDashboard';
 export const PATH_CREATE_MCONFIG_AND_QUERY = '/multi.createMconfigAndQuery';
-export const PATH_DUPLICATE_MCONFIG_AND_QUERY = '/multi.duplicateMconfigAndQuery';
+export const PATH_DUPLICATE_MCONFIG_AND_QUERY =
+  '/multi.duplicateMconfigAndQuery';
 export const PATH_GET_DASHBOARD_MCONFIG_AND_QUERIES =
   '/multi.getDashboardMconfigsQueries';
 export const PATH_SET_LIVE_QUERIES = '/multi.setLiveQueries';
@@ -54,6 +55,7 @@ export const PATH_SWITCH_ANALYTICS_SUBSCRIPTION_PLAN =
 export const PATH_LOGIN_USER = '/users.loginUser';
 export const PATH_LOGOUT_USER = '/users.logoutUser';
 export const PATH_REGISTER_USER = '/users.registerUser';
+export const PATH_DELETE_USER = '/users.deleteUser';
 export const PATH_SET_USER_NAME = '/users.setUserName';
 export const PATH_SET_USER_PICTURE = '/users.setUserPicture';
 export const PATH_SET_USER_THEMES = '/users.setUserThemes';

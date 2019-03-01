@@ -3,10 +3,7 @@ import { entities } from '../../../barrels/entities';
 import { enums } from '../../../barrels/enums';
 import { helper } from '../../../barrels/helper';
 
-export function wrapToApiUser(
-  user: entities.UserEntity,
-  deleted: enums.bEnum
-): api.User {
+export function wrapToApiUser(user: entities.UserEntity): api.User {
   return {
     user_id: user.user_id,
     user_track_id: user.user_track_id,
@@ -21,7 +18,7 @@ export function wrapToApiUser(
     dash_theme: user.dash_theme,
     file_theme: user.file_theme,
     sql_theme: user.sql_theme,
-    deleted: helper.benumToBoolean(deleted),
+    deleted: helper.benumToBoolean(user.deleted),
     server_ts: Number(user.server_ts)
   };
 }

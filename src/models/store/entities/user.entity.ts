@@ -67,6 +67,9 @@ export class UserEntity implements UserInterface {
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   sql_theme: api.UserSqlThemeEnum;
 
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
+  deleted: enums.bEnum;
+
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
 }

@@ -94,7 +94,7 @@ export async function splitChunk(item: {
 
     content.users.forEach(user => {
       if (isDifferentSession && user.user_id === wsClient.user_id) {
-        let newUser = wrapper.wrapToApiUser(user, enums.bEnum.FALSE);
+        let newUser = wrapper.wrapToApiUser(user);
 
         if (payload.user) {
           // in case if chunk has several changes about same user_id, should not be

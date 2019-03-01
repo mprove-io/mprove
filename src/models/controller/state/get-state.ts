@@ -142,7 +142,7 @@ export async function getState(req: Request, res: Response) {
   let payload: api.GetStateResponse200Body['payload'] = {
     init_id: sessionId,
     state: {
-      user: wrapper.wrapToApiUser(user, enums.bEnum.FALSE),
+      user: wrapper.wrapToApiUser(user),
       projects: projects.map(project => wrapper.wrapToApiProject(project)),
       subscriptions: [],
       payments: [],
