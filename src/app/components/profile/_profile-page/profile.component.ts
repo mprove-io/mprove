@@ -49,6 +49,10 @@ export class ProfileComponent implements OnDestroy {
     this.myDialogService.showResetPasswordDialog();
   }
 
+  openDeleteUserDialog() {
+    this.myDialogService.showDeleteUserDialog();
+  }
+
   // changeProfilePhoto() {
   //   this.editUserImageDialogRef = this.dialog.open(ImageUploadComponent, {
   //     disableClose: false,

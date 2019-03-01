@@ -351,6 +351,12 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_SET_USER_NAME, payload);
   }
 
+  deleteUser(
+    payload: api.DeleteUserRequestBody['payload']
+  ): Observable<api.DeleteUserResponse200Body> {
+    return this.myHttpService.req(api.PATH_DELETE_USER, payload);
+  }
+
   /**
    * POST
    * Обновление фото пользователя.  Сервер оповещает текущего клиента через: - users.updateUser

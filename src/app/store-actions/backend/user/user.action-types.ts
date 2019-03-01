@@ -16,6 +16,10 @@ export const SET_USER_NAME = ngrxType('SET_USER_NAME');
 export const SET_USER_NAME_SUCCESS = ngrxType('SET_USER_NAME_SUCCESS');
 export const SET_USER_NAME_FAIL = ngrxType('SET_USER_NAME_FAIL');
 
+export const DELETE_USER = ngrxType('DELETE_USER');
+export const DELETE_USER_SUCCESS = ngrxType('DELETE_USER_SUCCESS');
+export const DELETE_USER_FAIL = ngrxType('DELETE_USER_FAIL');
+
 export const SET_USER_THEMES = ngrxType('SET_USER_THEMES');
 export const SET_USER_THEMES_SUCCESS = ngrxType('SET_USER_THEMES_SUCCESS');
 export const SET_USER_THEMES_FAIL = ngrxType('SET_USER_THEMES_FAIL');

@@ -4,6 +4,7 @@ export * from './cancel-subscription/cancel-subscription-dialog.component';
 export * from './delete-file/delete-file-dialog.component';
 export * from './delete-folder/delete-folder-dialog.component';
 export * from './delete-project/delete-project-dialog.component';
+export * from './delete-user/delete-user-dialog.component';
 export * from './dep-calc-removed/dep-calc-removed-dialog.component';
 export * from './info/info-dialog.component';
 export * from './er/er-dialog.component';

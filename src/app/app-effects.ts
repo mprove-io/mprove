@@ -121,6 +121,8 @@ export const APP_EFFECTS = [
   effects.ConfirmUserEmailEffect,
   effects.ConfirmUserEmailSuccessEffect,
   effects.ConfirmUserEmailFailEffect,
+  effects.DeleteUserEffect,
+  effects.DeleteUserSuccessEffect,
   effects.LoginUserEffect,
   effects.LoginUserSuccessEffect,
   effects.LoginUserFailEffect,
@@ -145,6 +147,7 @@ export const APP_EFFECTS = [
   effects.UpdateUserPasswordEffect,
   effects.UpdateUserPasswordSuccessEffect,
   effects.UpdateUserPasswordFailEffect,
+  effects.UpdateUserStateEffect,
 
   // WebSocket
   effects.UpdateWebSocketInitIdEffect,

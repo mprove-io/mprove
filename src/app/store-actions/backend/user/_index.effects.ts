@@ -2,6 +2,9 @@ export * from './confirm-user-email/effects/confirm-user-email.effect';
 export * from './confirm-user-email/effects/confirm-user-email-success.effect';
 export * from './confirm-user-email/effects/confirm-user-email-fail.effect';
 
+export * from './delete-user/effects/delete-user.effect';
+export * from './delete-user/effects/delete-user-success.effect';
+
 export * from './login-user/effects/login-user.effect';
 export * from './login-user/effects/login-user-success.effect';
 export * from './login-user/effects/login-user-fail.effect';

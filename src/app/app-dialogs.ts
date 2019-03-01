@@ -14,6 +14,7 @@ export const APP_DIALOGS = [
   dialogs.UpdateRemoteUrlDialogComponent,
   dialogs.UpdateCredentialsDialogComponent,
   dialogs.DeleteProjectDialogComponent,
+  dialogs.DeleteUserDialogComponent,
   dialogs.InviteMemberDialogComponent,
   dialogs.RenameFolderDialogComponent,
   dialogs.DeleteFolderDialogComponent,

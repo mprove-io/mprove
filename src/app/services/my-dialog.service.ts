@@ -26,6 +26,7 @@ export class MyDialogService {
     dialogs.UpdateCredentialsDialogComponent
   >;
   deleteProjectDialogRef: MatDialogRef<dialogs.DeleteProjectDialogComponent>;
+  deleteUserDialogRef: MatDialogRef<dialogs.DeleteUserDialogComponent>;
   inviteMemberDialogRef: MatDialogRef<dialogs.InviteMemberDialogComponent>;
 
   newFolderDialogRef: MatDialogRef<dialogs.NewFolderDialogComponent>;
@@ -219,6 +220,20 @@ export class MyDialogService {
 
     this.deleteProjectDialogRef.afterClosed().subscribe(() => {
       this.deleteProjectDialogRef = null;
+    });
+  }
+
+  showDeleteUserDialog() {
+    this.deleteUserDialogRef = this.dialog.open(
+      dialogs.DeleteUserDialogComponent,
+      {
+        disableClose: false,
+        autoFocus: false
+      }
+    );
+
+    this.deleteUserDialogRef.afterClosed().subscribe(() => {
+      this.deleteUserDialogRef = null;
     });
   }
 

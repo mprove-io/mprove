@@ -2,6 +2,10 @@ export * from './confirm-user-email/actions/confirm-user-email.action';
 export * from './confirm-user-email/actions/confirm-user-email-success.action';
 export * from './confirm-user-email/actions/confirm-user-email-fail.action';
 
+export * from './delete-user/actions/delete-user.action';
+export * from './delete-user/actions/delete-user-success.action';
+export * from './delete-user/actions/delete-user-fail.action';
+
 export * from './login-user/actions/login-user.action';
 export * from './login-user/actions/login-user-success.action';
 export * from './login-user/actions/login-user-fail.action';
