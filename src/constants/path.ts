@@ -55,6 +55,7 @@ export const PATH_SWITCH_ANALYTICS_SUBSCRIPTION_PLAN =
 export const PATH_LOGIN_USER = '/users.loginUser';
 export const PATH_LOGOUT_USER = '/users.logoutUser';
 export const PATH_REGISTER_USER = '/users.registerUser';
+export const PATH_DELETE_USER = '/users.deleteUser';
 export const PATH_SET_USER_NAME = '/users.setUserName';
 export const PATH_SET_USER_PICTURE = '/users.setUserPicture';
 export const PATH_SET_USER_THEMES = '/users.setUserThemes';
