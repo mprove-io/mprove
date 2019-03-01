@@ -2,12 +2,12 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '28-01-user@example.com';
+const userId = '26-06-user@example.com';
 const password = '123123';
 
-const projectId = 'project_28_01';
+const projectId = 'project_26_06';
 
-describe('28-01 model-query-chart-add-chart (logged in)', () => {
+describe('26-06 model-query-add-chart (logged in)', () => {
   it(`should be able to add chart`, () => {
     cy.deletePack({
       user_ids: [userId],
@@ -49,9 +49,7 @@ describe('28-01 model-query-chart-add-chart (logged in)', () => {
       .click();
     cy.loading();
 
-    cy.get('[data-cy=chartAddChartButton]')
-      .eq(1)
-      .click();
+    cy.get('[data-cy=queryTabAddChartButton]').click();
     cy.loading();
 
     cy.get('[data-cy=queryTabChart]').should($elements => {

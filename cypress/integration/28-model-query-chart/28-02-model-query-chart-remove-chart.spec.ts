@@ -2,13 +2,13 @@ import * as constants from '../../../src/app/constants/_index';
 import * as api from '../../../src/app/api/_index';
 import * as enums from '../../../src/app/enums/_index';
 
-const userId = '28-01-user@example.com';
+const userId = '28-02-user@example.com';
 const password = '123123';
 
-const projectId = 'project_28_01';
+const projectId = 'project_28_02';
 
-describe('28-01 model-query-chart-add-chart (logged in)', () => {
-  it(`should be able to add chart`, () => {
+describe('28-02 model-query-chart-remove-chart (logged in)', () => {
+  it(`should be able to remove chart`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]
@@ -49,13 +49,13 @@ describe('28-01 model-query-chart-add-chart (logged in)', () => {
       .click();
     cy.loading();
 
-    cy.get('[data-cy=chartAddChartButton]')
+    cy.get('[data-cy=chartRemoveChartButton]')
       .eq(1)
       .click();
     cy.loading();
 
     cy.get('[data-cy=queryTabChart]').should($elements => {
-      expect($elements).to.have.length(2);
+      expect($elements).to.have.length(0);
     });
   });
 });
