@@ -6,6 +6,7 @@ import { loopPing } from './loop-ping';
 import { loopDeleteSessions } from './loop-delete-sessions';
 import { loopResendMessage } from './loop-resend-message';
 import { loopCheckDemo } from './loop-check-demo';
+import { loopDeleteProjects } from './loop-delete-projects';
 
 export function runScheduler(item: {
   ws_clients: interfaces.WebsocketClient[];
@@ -14,6 +15,7 @@ export function runScheduler(item: {
   loopCheckQueries();
   loopPing(item);
   loopDeleteSessions(item);
+  loopDeleteProjects(item);
   loopResendMessage(item);
   loopCheckDemo();
 }

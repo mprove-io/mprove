@@ -4,6 +4,8 @@ export * from './check-waiting-query';
 export * from './create-dataset';
 export * from './find-alias';
 export * from './find-differences-in-files';
+export * from './process-deleted-projects';
+export * from './process-deleted-users';
 export * from './process-dev-repo-changes';
 export * from './run-query';
 export * from './run-query-dry';
