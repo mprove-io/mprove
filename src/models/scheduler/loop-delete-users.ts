@@ -14,19 +14,19 @@ import { config } from '../../barrels/config';
 
 let cron = require('cron');
 
-export function loopDeleteProjects() {
+export function loopDeleteUsers() {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
     if (isCronJobRunning) {
-      console.log(`${loopDeleteProjects.name} skip`);
+      console.log(`${loopDeleteUsers.name} skip`);
     }
 
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 
       try {
-        await deleteProjects().catch(e =>
+        await deleteUsers().catch(e =>
           helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_DELETE_PROJECTS)
         );
       } catch (err) {
@@ -40,26 +40,30 @@ export function loopDeleteProjects() {
   cronJob.start();
 }
 
-async function deleteProjects() {
+async function deleteUsers() {
   let currentTs = helper.makeTs();
 
-  let tsInPast = Number(currentTs) - config.DELETE_PROJECTS_CUTOFF;
+  let tsInPast = Number(currentTs) - config.DELETE_USERS_CUTOFF;
 
-  let storeProjects = store.getProjectsRepo();
+  let storeUsers = store.getUsersRepo();
 
-  let projects = <entities.ProjectEntity[]>await storeProjects
+  let users = <entities.UserEntity[]>await storeUsers
     .createQueryBuilder()
     .select()
     .where(`server_ts < :ts`, { ts: tsInPast })
     .andWhere(`deleted = :benum_true`, { benum_true: enums.bEnum.TRUE })
     .getMany()
     .catch(e =>
-      helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_QUERY_BUILDER)
+      helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_QUERY_BUILDER)
     );
 
-  let projectIds = projects.map(x => x.project_id);
+  let userIds = users.map(x => x.user_id);
 
-  if (projectIds.length > 0) {
-    await proc.processDeletedProjects(projectIds);
+  if (userIds.length > 0) {
+    await storeUsers
+      .delete({
+        user_id: In(userIds)
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_DELETE));
   }
 }
