@@ -9,6 +9,7 @@ import { store } from '../../../barrels/store';
 import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
+import { forEach } from 'p-iteration';
 
 export async function deleteUser(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
@@ -38,10 +39,32 @@ export async function deleteUser(req: Request, res: Response) {
 
   let userMembers = <entities.MemberEntity[]>await storeMembers
     .find({
-      // including deleted
-      member_id: userId
+      member_id: userId,
+      deleted: enums.bEnum.FALSE
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND));
+
+  let userAdminProjectIds = userMembers
+    .filter(x => x.is_admin === enums.bEnum.TRUE)
+    .map(x => x.project_id);
+
+  await forEach(userAdminProjectIds, async projectId => {
+    let projectAdminMembers = <entities.MemberEntity[]>await storeMembers
+      .find({
+        project_id: projectId,
+        is_admin: enums.bEnum.TRUE,
+        deleted: enums.bEnum.FALSE
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_FIND));
+
+    if (projectAdminMembers && projectAdminMembers.length === 1) {
+      throw new ServerError({
+        name:
+          enums.otherErrorsEnum
+            .DELETE_USER_ERROR_USER_IS_THE_SINGLE_ADMIN_IN_PROJECT
+      });
+    }
+  });
 
   userMembers.map(member => {
     member.deleted = enums.bEnum.TRUE;
