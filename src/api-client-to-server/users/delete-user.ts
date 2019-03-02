@@ -12,5 +12,6 @@ export interface DeleteUserResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     deleted_user: apiObjects.User;
+    members: apiObjects.Member[];
   };
 }
