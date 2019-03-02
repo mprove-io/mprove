@@ -4,6 +4,7 @@ export * from './confirm-user-email/effects/confirm-user-email-fail.effect';
 
 export * from './delete-user/effects/delete-user.effect';
 export * from './delete-user/effects/delete-user-success.effect';
+export * from './delete-user/effects/delete-user-fail.effect';
 
 export * from './login-user/effects/login-user.effect';
 export * from './login-user/effects/login-user-success.effect';

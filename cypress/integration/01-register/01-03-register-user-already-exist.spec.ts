@@ -13,7 +13,8 @@ describe('01-03 register-user-already-exist (logged out)', () => {
         {
           user_id: userId,
           password: password,
-          email_verified: false
+          email_verified: false,
+          deleted: true // in case if user deleted
         }
       ]
     });

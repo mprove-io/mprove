@@ -12,27 +12,15 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class DeleteUserSuccessEffect {
-  @Effect({ dispatch: false }) deleteUserSuccess$: Observable<
-    Action
-  > = this.actions$.pipe(
+  @Effect() deleteUserSuccess$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.DELETE_USER_SUCCESS),
-    tap((action: actions.DeleteUserSuccessAction) => {
-      this.store.dispatch(new actions.SetLayoutNeedSaveFalseAction());
-
-      this.watchAuthenticationService.stop();
-
-      localStorage.removeItem('token');
-
-      this.router.navigate([constants.PATH_LOGIN]);
-      this.store.dispatch(new actions.ResetStateAction());
-      this.store.dispatch(new actions.CloseWebSocketAction());
-    })
+    mergeMap((action: actions.DeleteUserSuccessAction) =>
+      from([
+        new actions.UpdateUserStateAction(action.payload.deleted_user),
+        new actions.UpdateMembersStateAction(action.payload.members)
+      ])
+    )
   );
 
-  constructor(
-    private actions$: Actions,
-    private store: Store<interfaces.AppState>,
-    private router: Router,
-    private watchAuthenticationService: services.WatchAuthenticationService
-  ) {}
+  constructor(private actions$: Actions) {}
 }

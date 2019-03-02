@@ -123,6 +123,7 @@ export const APP_EFFECTS = [
   effects.ConfirmUserEmailFailEffect,
   effects.DeleteUserEffect,
   effects.DeleteUserSuccessEffect,
+  effects.DeleteUserFailEffect,
   effects.LoginUserEffect,
   effects.LoginUserSuccessEffect,
   effects.LoginUserFailEffect,
