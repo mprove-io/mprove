@@ -23,6 +23,7 @@ export class LoginUserFailEffect {
         e.data.response.body.info &&
         [
           api.ServerResponseStatusEnum.LOGIN_ERROR_USER_DOES_NOT_EXIST,
+          api.ServerResponseStatusEnum.LOGIN_ERROR_USER_DELETED,
           api.ServerResponseStatusEnum.LOGIN_ERROR_WRONG_PASSWORD,
           api.ServerResponseStatusEnum.LOGIN_ERROR_REGISTER_TO_SET_PASSWORD
         ].indexOf(e.data.response.body.info.status) > -1
