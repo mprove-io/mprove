@@ -9,6 +9,7 @@ import { loopCheckDemo } from './loop-check-demo';
 import { loopDeleteProjects } from './loop-delete-projects';
 import { loopDeleteUsers } from './loop-delete-users';
 import { loopDeleteMembers } from './loop-delete-members';
+import { loopDeleteQueries } from './loop-delete-queries';
 
 export function runScheduler(item: {
   ws_clients: interfaces.WebsocketClient[];
@@ -22,4 +23,5 @@ export function runScheduler(item: {
   loopDeleteProjects();
   loopDeleteUsers();
   loopDeleteMembers();
+  loopDeleteQueries();
 }
