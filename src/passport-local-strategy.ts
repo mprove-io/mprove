@@ -29,6 +29,12 @@ export const passportLocalStrategy = new passportLocal.Strategy(
         });
       }
 
+      if (user.deleted === enums.bEnum.TRUE) {
+        throw new ServerError({
+          name: enums.otherErrorsEnum.LOGIN_ERROR_USER_DELETED
+        });
+      }
+
       if (!user.hash) {
         throw new ServerError({
           name: enums.otherErrorsEnum.LOGIN_ERROR_REGISTER_TO_SET_PASSWORD

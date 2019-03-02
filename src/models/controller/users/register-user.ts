@@ -28,11 +28,9 @@ export async function registerUser(req: Request, res: Response) {
 
   let storeUsers = store.getUsersRepo();
 
-  let user = <entities.UserEntity>(
-    await storeUsers
-      .findOne(userId)
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE))
-  );
+  let user = <entities.UserEntity>await storeUsers
+    .findOne(userId) // including deleted
+    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
 
   if (user && !!user.hash) {
     throw new ServerError({

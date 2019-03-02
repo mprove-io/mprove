@@ -13,6 +13,7 @@ export function makeUser(item: {
   email_verification_token?: string;
   password_reset_token?: string;
   password_reset_expires_ts?: string;
+  deleted?: enums.bEnum;
 }): entities.UserEntity {
   return {
     user_id: item.user_id,
@@ -34,7 +35,7 @@ export function makeUser(item: {
     dash_theme: api.UserDashThemeEnum.Light,
     file_theme: api.UserFileThemeEnum.Dark,
     sql_theme: api.UserSqlThemeEnum.Light,
-    deleted: enums.bEnum.FALSE,
+    deleted: item.deleted || enums.bEnum.FALSE,
     server_ts: undefined
   };
 }

@@ -68,7 +68,8 @@ export async function cypressSeed(req: Request, res: Response) {
           : undefined,
         salt: salt,
         hash: hash,
-        alias: alias
+        alias: alias,
+        deleted: x.deleted === true ? enums.bEnum.TRUE : enums.bEnum.FALSE
       });
 
       users.push(newUser);
