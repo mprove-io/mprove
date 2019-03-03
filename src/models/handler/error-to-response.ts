@@ -46,6 +46,9 @@ function mapErrors(name: string) {
     case enums.otherErrorsEnum.REGISTER_ERROR_USER_ALREADY_EXISTS:
       return api.ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS;
 
+    case enums.otherErrorsEnum.INVITE_MEMBER_ERROR_USER_DELETED:
+      return api.ServerResponseStatusEnum.INVITE_MEMBER_ERROR_USER_DELETED;
+
     case enums.otherErrorsEnum
       .DELETE_USER_ERROR_USER_IS_THE_SINGLE_ADMIN_IN_PROJECT:
       return api.ServerResponseStatusEnum

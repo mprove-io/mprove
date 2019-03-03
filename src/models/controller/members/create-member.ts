@@ -56,8 +56,14 @@ export async function createMember(req: Request, res: Response) {
   }
 
   let invitedUser = await storeUsers
-    .findOne(memberId)
+    .findOne(memberId) // including deleted
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND_ONE));
+
+  if (invitedUser && invitedUser.deleted === enums.bEnum.TRUE) {
+    throw new ServerError({
+      name: enums.otherErrorsEnum.INVITE_MEMBER_ERROR_USER_DELETED
+    });
+  }
 
   let newUser: entities.UserEntity;
 
