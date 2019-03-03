@@ -7,10 +7,10 @@ import * as actions from '@app/store-actions/actions';
 import * as actionTypes from '@app/store-actions/action-types';
 
 @Injectable()
-export class ConfirmFailEffect {
+export class CreateFileFailEffect {
   @Effect() confirmFail$: Observable<Action> = this.actions$.pipe(
-    ofType(actionTypes.CONFIRM_FAIL),
-    mergeMap((action: actions.ConfirmFailAction) => {
+    ofType(actionTypes.CREATE_FILE_FAIL),
+    mergeMap((action: actions.CreateFileFailAction) => {
       return of(new actions.BackendFailAction({ error: action.payload.error }));
     })
   );

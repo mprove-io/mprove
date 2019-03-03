@@ -15,6 +15,7 @@ export const APP_EFFECTS = [
 
   // Files
   effects.CreateFileSuccessEffect,
+  effects.CreateFileFailEffect,
   effects.CreateFileEffect,
   effects.DeleteFileSuccessEffect,
   effects.DeleteFileEffect,

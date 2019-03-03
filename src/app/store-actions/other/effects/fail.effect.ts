@@ -17,7 +17,6 @@ export class FailEffect {
     ofType(
       actionTypes.BACKEND_FAIL,
 
-      actionTypes.CREATE_FILE_FAIL,
       actionTypes.SAVE_FILE_FAIL,
       actionTypes.DELETE_FILE_FAIL,
 
@@ -60,7 +59,6 @@ export class FailEffect {
       actionTypes.CANCEL_SUBSCRIPTIONS_FAIL,
       actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN_FAIL,
 
-      actionTypes.CONFIRM_FAIL,
       actionTypes.PONG_FAIL
     ),
     filter(

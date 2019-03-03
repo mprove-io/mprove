@@ -1,4 +1,5 @@
 export * from './create-file/effects/create-file-success.effect';
+export * from './create-file/effects/create-file-fail.effect';
 export * from './create-file/effects/create-file.effect';
 
 export * from './delete-file/effects/delete-file-success.effect';
