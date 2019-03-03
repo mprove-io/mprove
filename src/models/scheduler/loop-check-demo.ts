@@ -52,11 +52,14 @@ async function checkDemo() {
   if (demoMemberIds.length > 0) {
     users = <entities.UserEntity[]>await storeUsers
       .find({
-        user_id: Not(In([demoMemberIds]))
+        user_id: Not(In([demoMemberIds])),
+        deleted: enums.bEnum.FALSE
       })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_FIND));
   } else {
-    users = <entities.UserEntity[]>await storeUsers.find();
+    users = <entities.UserEntity[]>await storeUsers.find({
+      deleted: enums.bEnum.FALSE
+    });
   }
 
   await Promise.all(
