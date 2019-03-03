@@ -7,29 +7,27 @@ import * as actions from '@app/store-actions/actions';
 import * as actionTypes from '@app/store-actions/action-types';
 import { ServerResponseStatusEnum } from '@app/api/_index';
 import { MyDialogService } from '@app/services/_index';
+import * as helper from '@app/helper/_index';
 
 @Injectable()
 export class RegisterUserFailEffect {
   @Effect() registerUserFail$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.REGISTER_USER_FAIL),
     mergeMap((action: actions.RegisterUserFailAction) => {
-      let e = action.payload.error;
-
+      let status = helper.getResponseBodyInfoStatus(action.payload.error);
       if (
-        e &&
-        e.data &&
-        e.data.response &&
-        e.data.response.body &&
-        e.data.response.body.info &&
+        status &&
         [ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS].indexOf(
-          e.data.response.body.info.status
+          status
         ) > -1
       ) {
-        this.myDialogService.showInfoDialog(e.data.response.body.info.status);
+        this.myDialogService.showInfoDialog(status);
 
         return of({ type: 'EMPTY ACTION' });
       } else {
-        return of(new actions.BackendFailAction({ error: e }));
+        return of(
+          new actions.BackendFailAction({ error: action.payload.error })
+        );
       }
     })
   );

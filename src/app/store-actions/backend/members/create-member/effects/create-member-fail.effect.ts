@@ -7,29 +7,27 @@ import * as actions from '@app/store-actions/actions';
 import * as api from '@app/api/_index';
 import * as services from '@app/services/_index';
 import * as actionTypes from '@app/store-actions/action-types';
+import * as helper from '@app/helper/_index';
 
 @Injectable()
 export class CreateMemberFailEffect {
   @Effect() createMemberFail$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.CREATE_MEMBER_FAIL),
     mergeMap((action: actions.CreateMemberFailAction) => {
-      let e = action.payload.error;
-
+      let status = helper.getResponseBodyInfoStatus(action.payload.error);
       if (
-        e &&
-        e.data &&
-        e.data.response &&
-        e.data.response.body &&
-        e.data.response.body.info &&
+        status &&
         [api.ServerResponseStatusEnum.INVITE_MEMBER_ERROR_USER_DELETED].indexOf(
-          e.data.response.body.info.status
+          status
         ) > -1
       ) {
-        this.myDialogService.showInfoDialog(e.data.response.body.info.status);
+        this.myDialogService.showInfoDialog(status);
 
         return of({ type: 'EMPTY ACTION' });
       } else {
-        return of(new actions.BackendFailAction({ error: e }));
+        return of(
+          new actions.BackendFailAction({ error: action.payload.error })
+        );
       }
     })
   );

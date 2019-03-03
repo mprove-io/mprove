@@ -158,6 +158,7 @@ export const APP_EFFECTS = [
   effects.CloseWebSocketEffect,
   effects.CloseWebSocketSuccessEffect,
   effects.ConfirmEffect,
+  effects.ConfirmFailEffect,
   effects.MessagesReceivedEffect,
   effects.PingReceivedEffect,
   effects.PongEffect

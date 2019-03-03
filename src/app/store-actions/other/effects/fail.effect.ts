@@ -9,6 +9,7 @@ import * as actionTypes from '@app/store-actions/action-types';
 import * as actions from '@app/store-actions/actions';
 import * as services from '@app/services/_index';
 import * as interfaces from '@app/interfaces/_index';
+import * as helper from '@app/helper/_index';
 
 @Injectable()
 export class FailEffect {
@@ -69,38 +70,23 @@ export class FailEffect {
           .includes('Request not sent because not authenticated')
     ),
     tap((action: any) => {
-      let e = action.payload.error;
-
+      let status = helper.getResponseBodyInfoStatus(action.payload.error);
       if (
-        e &&
-        e.data &&
-        e.data.response &&
-        e.data.response.body &&
-        e.data.response.body.info &&
-        [api.ServerResponseStatusEnum.AUTHORIZATION_ERROR].indexOf(
-          e.data.response.body.info.status
-        ) > -1
+        status &&
+        [api.ServerResponseStatusEnum.AUTHORIZATION_ERROR].indexOf(status) > -1
       ) {
-        this.myDialogService.showInfoDialog(e.data.response.body.info.status);
+        this.myDialogService.showInfoDialog(status);
         this.store.dispatch(new actions.LogoutUserAction({ empty: true }));
 
         return;
       }
 
-      if (
-        e &&
-        e.data &&
-        e.data.response &&
-        e.data.response.body &&
-        e.data.response.body.info &&
-        e.data.response.body.info.status ===
-          api.ServerResponseStatusEnum.MaintenanceMode
-      ) {
+      if (status && status === api.ServerResponseStatusEnum.MaintenanceMode) {
         let url = this.router.routerState.snapshot.url;
 
         window.location.href = url;
       } else {
-        let err = e;
+        let err = action.payload.error;
 
         if (!err.data) {
           err.name = `[AppEffects] ${err.message}`;
