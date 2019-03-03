@@ -5,12 +5,13 @@ import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
 import * as actionTypes from '@app/store-actions/action-types';
+import { StateReceivedAction } from '../actions/state-received.action';
 
 @Injectable()
-export class MessagesReceivedEffect {
-  @Effect() messagesReceived$: Observable<Action> = this.actions$.pipe(
+export class StateReceivedEffect {
+  @Effect() stateReceived$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.STATE_RECEIVED),
-    mergeMap((action: any) => [
+    mergeMap((action: StateReceivedAction) => [
       // TODO: #23-1 check need of from()
       new actions.ConfirmAction({ reply_to: action.payload.info.request_id }),
       new actions.UpdateLayoutLastWebsocketMessageTimestampAction(Date.now())

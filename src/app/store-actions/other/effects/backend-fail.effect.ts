@@ -12,52 +12,11 @@ import * as interfaces from '@app/interfaces/_index';
 import * as helper from '@app/helper/_index';
 
 @Injectable()
-export class FailEffect {
-  @Effect({ dispatch: false }) fail$: Observable<Action> = this.actions$.pipe(
-    ofType(
-      actionTypes.BACKEND_FAIL,
-
-      actionTypes.CREATE_FOLDER_FAIL,
-      actionTypes.DELETE_FOLDER_FAIL,
-      actionTypes.RENAME_FOLDER_FAIL,
-
-      actionTypes.CREATE_MCONFIG_FAIL,
-
-      actionTypes.EDIT_MEMBER_FAIL,
-      actionTypes.DELETE_MEMBER_FAIL,
-
-      actionTypes.CREATE_DASHBOARD_FAIL,
-      actionTypes.CREATE_MCONFIG_AND_QUERY_FAIL,
-
-      actionTypes.CREATE_PROJECT_FAIL,
-      actionTypes.SET_PROJECT_QUERY_SIZE_LIMIT_FAIL,
-      actionTypes.SET_PROJECT_WEEK_START_FAIL,
-      actionTypes.SET_PROJECT_TIMEZONE_FAIL,
-      actionTypes.DELETE_PROJECT_FAIL,
-
-      actionTypes.CANCEL_QUERIES_FAIL,
-      actionTypes.RUN_QUERIES_FAIL,
-      actionTypes.RUN_QUERIES_DRY_FAIL,
-      actionTypes.SET_LIVE_QUERIES_FAIL,
-
-      actionTypes.SET_USER_NAME_FAIL,
-      actionTypes.SET_USER_THEMES_FAIL,
-      actionTypes.SET_USER_TIMEZONE_FAIL,
-
-      actionTypes.COMMIT_REPO_FAIL,
-      actionTypes.PULL_REPO_FAIL,
-      actionTypes.PUSH_REPO_FAIL,
-      actionTypes.REGENERATE_REPO_REMOTE_PUBLIC_KEY_FAIL,
-      actionTypes.REGENERATE_REPO_REMOTE_WEBHOOK_FAIL,
-      actionTypes.REVERT_REPO_TO_LAST_COMMIT_FAIL,
-      actionTypes.REVERT_REPO_TO_PRODUCTION_FAIL,
-      actionTypes.SET_REPO_REMOTE_URL_FAIL,
-
-      actionTypes.CANCEL_SUBSCRIPTIONS_FAIL,
-      actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN_FAIL,
-
-      actionTypes.PONG_FAIL
-    ),
+export class BackendFailEffect {
+  @Effect({ dispatch: false }) backendFail$: Observable<
+    Action
+  > = this.actions$.pipe(
+    ofType(actionTypes.BACKEND_FAIL),
     filter(
       (action: any) =>
         !action.payload.error
