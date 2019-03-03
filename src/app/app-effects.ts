@@ -38,6 +38,7 @@ export const APP_EFFECTS = [
 
   // Members
   effects.CreateMemberSuccessEffect,
+  effects.CreateMemberFailEffect,
   effects.CreateMemberEffect,
   effects.DeleteMemberSuccessEffect,
   effects.DeleteMemberEffect,

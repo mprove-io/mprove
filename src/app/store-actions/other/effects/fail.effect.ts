@@ -26,7 +26,6 @@ export class FailEffect {
 
       actionTypes.CREATE_MCONFIG_FAIL,
 
-      actionTypes.CREATE_MEMBER_FAIL,
       actionTypes.EDIT_MEMBER_FAIL,
       actionTypes.DELETE_MEMBER_FAIL,
 

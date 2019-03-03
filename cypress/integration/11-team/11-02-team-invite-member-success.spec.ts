@@ -7,7 +7,7 @@ const password = '123123';
 
 const projectId = 'project_11_02';
 
-describe('11-02 team-invite-member (logged in)', () => {
+describe('11-02 team-invite-member-success (logged in)', () => {
   it(`should be able to invite member`, () => {
     cy.deletePack({
       user_ids: [userId, invitedUserId],
