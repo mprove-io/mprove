@@ -17,9 +17,6 @@ export class FailEffect {
     ofType(
       actionTypes.BACKEND_FAIL,
 
-      actionTypes.SAVE_FILE_FAIL,
-      actionTypes.DELETE_FILE_FAIL,
-
       actionTypes.CREATE_FOLDER_FAIL,
       actionTypes.DELETE_FOLDER_FAIL,
       actionTypes.RENAME_FOLDER_FAIL,

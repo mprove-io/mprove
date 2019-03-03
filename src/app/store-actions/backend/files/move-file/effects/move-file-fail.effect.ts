@@ -7,10 +7,10 @@ import * as actions from '@app/store-actions/actions';
 import * as actionTypes from '@app/store-actions/action-types';
 
 @Injectable()
-export class CreateFileFailEffect {
-  @Effect() createFileFail$: Observable<Action> = this.actions$.pipe(
-    ofType(actionTypes.CREATE_FILE_FAIL),
-    mergeMap((action: actions.CreateFileFailAction) => {
+export class MoveFileFailEffect {
+  @Effect() moveFileFail$: Observable<Action> = this.actions$.pipe(
+    ofType(actionTypes.MOVE_FILE_FAIL),
+    mergeMap((action: actions.MoveFileFailAction) => {
       return of(new actions.BackendFailAction({ error: action.payload.error }));
     })
   );

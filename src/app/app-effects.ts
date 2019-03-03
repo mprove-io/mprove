@@ -2,13 +2,15 @@ import * as effects from '@app/store-actions/effects';
 
 export const APP_EFFECTS = [
   // App
-  effects.FailEffect,
+
   effects.GetStateFailEffect,
   effects.GetStateSuccessEffect,
   effects.GetStateEffect,
+
   effects.ProcessStructsEffect,
   effects.ResetStateEffect,
   effects.UpdateStateEffect,
+  effects.FailEffect,
 
   // Dashboards
   effects.UpdateDashboardsStateEffect,
@@ -17,12 +19,19 @@ export const APP_EFFECTS = [
   effects.CreateFileSuccessEffect,
   effects.CreateFileFailEffect,
   effects.CreateFileEffect,
+
   effects.DeleteFileSuccessEffect,
+  effects.DeleteFileFailEffect,
   effects.DeleteFileEffect,
+
   effects.MoveFileSuccessEffect,
+  effects.MoveFileFailEffect,
   effects.MoveFileEffect,
+
   effects.SaveFileSuccessEffect,
+  effects.SaveFileFailEffect,
   effects.SaveFileEffect,
+
   effects.UpdateFilesStateEffect,
 
   // Folders
