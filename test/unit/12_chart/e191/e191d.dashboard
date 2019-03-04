@@ -1,0 +1,14 @@
+dashboard: e191d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e191m
+  type: 'gauge_linear'
+  data:
+    value_field: a.dim1
+  options:
+    gradient: unk        
+
+

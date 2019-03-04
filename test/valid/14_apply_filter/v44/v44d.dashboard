@@ -1,0 +1,7 @@
+dashboard: v44d
+reports:
+- title: 'sales weekly'
+  model: v44m
+  select:
+  - b.dim1
+  type: 'table'

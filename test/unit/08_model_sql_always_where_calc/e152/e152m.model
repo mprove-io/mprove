@@ -1,0 +1,5 @@
+model: e152m
+sql_always_where_calc: ${! @ $ % ^ & * ( ) - + =}  
+joins:
+- from_view: e152_one
+  as: a

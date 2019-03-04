@@ -1,0 +1,10 @@
+view: e212
+table: 1
+udfs: 
+- unk
+fields:
+- dimension: dim1
+  sql: 111
+
+
+

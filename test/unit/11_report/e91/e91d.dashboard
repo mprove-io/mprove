@@ -1,0 +1,10 @@
+dashboard: e91d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e91m
+  listen_filters:
+    unk: a.dim1     
+  select:
+  - a.dim1
+

@@ -1,0 +1,12 @@
+view: e278
+table: 1
+fields:
+- measure: mea1
+  type: sum_by_key
+  sql: ${dim1}
+  sql_key: abc
+
+- dimension: dim1
+  sql: 111
+
+

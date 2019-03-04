@@ -1,0 +1,12 @@
+model: e126m
+joins:
+- from_view: e126_one
+  description:        
+    5: 5
+  as: a
+
+- join_view: e126_one
+  as: b
+  description:       
+    5: 5
+  sql_on: ${a.dim1} = ${b.dim1}

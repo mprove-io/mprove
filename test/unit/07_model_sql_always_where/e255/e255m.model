@@ -1,0 +1,9 @@
+model: e255m
+sql_always_where: '{% apply_filter dim1 %} target {% end_apply_filter %}'
+joins:
+- from_view: e255_one
+  as: a
+
+fields:
+- dimension: dim1
+  sql: dim1

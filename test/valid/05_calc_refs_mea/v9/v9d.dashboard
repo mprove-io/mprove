@@ -1,0 +1,8 @@
+dashboard: v9d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v9m
+  select:
+  - a.calc1
+  type: 'table'

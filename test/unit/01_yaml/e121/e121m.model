@@ -1,0 +1,6 @@
+model: e121m
+description:   
+  7: 55
+joins:
+- from_view: e121_one
+  as: a

@@ -1,0 +1,5 @@
+view: e43_one
+table: 1
+fields:
+- dimension: dim2
+  sql: dim2

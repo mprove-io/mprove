@@ -1,0 +1,7 @@
+view: e276
+table: 1
+fields:
+- dimension: a b
+  sql: abc
+
+

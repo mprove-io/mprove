@@ -1,0 +1,10 @@
+dashboard: v10d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v10m
+  select:
+  - mf.calc1
+  - a.dim3
+  - a.dim4
+  type: 'table'

@@ -1,0 +1,17 @@
+model: e21m
+joins:
+- from_view: e21_one
+  as: a
+
+- join_view: e21_two
+  as: c
+  type: left_outer
+  sql_on: ${mea1}   
+
+fields:
+- measure: mea1
+  type: min
+  sql: ${dim1}
+
+- dimension: dim1
+  sql: 111

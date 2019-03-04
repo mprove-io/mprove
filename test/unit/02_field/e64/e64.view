@@ -1,0 +1,10 @@
+view: e64
+table: 1
+fields:
+- measure: created
+  type: min
+  sql: ${dim1}
+  result: unk    
+
+- dimension: dim1
+  sql: 1

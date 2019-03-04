@@ -1,0 +1,6 @@
+model: v36m
+joins:
+- from_view: v36_one
+  as: a
+
+

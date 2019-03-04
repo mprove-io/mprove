@@ -1,0 +1,8 @@
+view: e277
+table: 1
+fields:
+- measure: mea1
+  type: min
+  sql: abc
+
+

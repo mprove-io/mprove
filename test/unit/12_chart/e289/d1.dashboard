@@ -1,0 +1,17 @@
+dashboard: d1
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: m1
+  type: 'line'
+  data:
+    x_field: a.dim1
+    hide_columns:       
+    - a.dim1
+    - unk
+    y_fields:
+    - a.dim1
+
+

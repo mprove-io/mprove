@@ -1,0 +1,178 @@
+
+# funnel_explorer.view
+# funnel_explorer
+
+view: segment_funnel_explorer
+derived_table: |
+  SELECT
+    ${tracks_sessions_map.session_id} AS session_id,
+    MIN(
+      CASE
+        WHEN {% apply_filter event1 %} ${tracks_sessions_map.event} {% end_apply_filter %} THEN ${tracks_sessions_map.timestamp}
+        ELSE NULL
+      END ) AS event1_ts,
+    MIN(
+      CASE
+        WHEN {% apply_filter event2 %} ${tracks_sessions_map.event} {% end_apply_filter %} THEN ${tracks_sessions_map.timestamp}
+        ELSE NULL
+      END ) AS event2_ts,
+    MIN(
+      CASE
+        WHEN {% apply_filter event3 %} ${tracks_sessions_map.event} {% end_apply_filter %} THEN ${tracks_sessions_map.timestamp}
+        ELSE NULL
+      END ) AS event3_ts
+  FROM
+    ${segment_4_track_facts AS tracks_sessions_map}
+  GROUP BY
+    1
+# permanent: true
+
+fields:
+- dimension: events_word
+  sql: "'events'"
+
+- filter: event1
+  result: string
+  
+- filter: event2
+  result: string  
+
+- filter: event3
+  result: string    
+  
+- dimension: session_id
+  sql: session_id
+  
+
+- time: event1_ts_frames
+  timeframes:
+  - time
+  sql: event1_ts
+
+- time: event2_ts_frames
+  timeframes:
+  - time
+  sql: event2_ts
+  
+- time: event3_ts_frames
+  timeframes:
+  - time
+  sql: event3_ts  
+
+  
+- dimension: event1_ts 
+  sql: event1_ts  
+  
+- dimension: event2_ts  
+  sql: event2_ts
+
+- dimension: event3_ts 
+  sql: event3_ts
+  
+  
+- dimension: event1_before_event2
+  type: yesno_is_true
+  sql: ${event1_ts_frames___time} < ${event2_ts_frames___time}
+
+- dimension: event2_before_event3
+  type: yesno_is_true
+  sql: ${event2_ts_frames___time} < ${event3_ts_frames___time}
+  
+- dimension: minutes_in_funnel
+  result: number
+  sql: timestamp_diff(${event1_ts},COALESCE(${event3_ts},${event2_ts}), minute)
+  
+- measure: count_sessions
+  type: count_distinct
+  sql: ${session_id}  
+  
+# - measure: count_sessions_event1 {
+#     type: count_distinct
+#     sql: ${session_id} ;;
+
+#     filters: {
+#       field: event1_time
+#       value: "NOT NULL"
+#     }
+#   }   
+  
+- measure: count_sessions_event1
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (${event1_ts_frames___time} IS NOT NULL) THEN ${session_id} ELSE NULL END)  
+  
+  
+# - measure: count_sessions_event12 {
+#     type: count_distinct
+#     sql: ${session_id} ;;
+
+#     filters: {
+#       field: event1_time
+#       value: "NOT NULL"
+#     }
+
+#     filters: {
+#       field: event2_time
+#       value: "NOT NULL"
+#     }
+
+#     filters: {
+#       field: event1_before_event2
+#       value: "yes"
+#     }
+#   }
+
+- measure: count_sessions_event12
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (
+    
+    (${event1_ts_frames___time} IS NOT NULL) AND
+    (${event2_ts_frames___time} IS NOT NULL) AND
+    (${event1_before_event2} = 'Yes')
+    
+    ) THEN ${session_id} ELSE NULL END)  
+
+# - measure: count_sessions_event123 {
+#     type: count_distinct
+#     sql: ${session_id} ;;
+
+#     filters: {
+#       field: event1_time
+#       value: "NOT NULL"
+#     }
+
+#     filters: {
+#       field: event2_time
+#       value: "NOT NULL"
+#     }
+
+#     filters: {
+#       field: event3_time
+#       value: "NOT NULL"
+#     }
+
+#     filters: {
+#       field: event1_before_event2
+#       value: "yes"
+#     }
+
+#     filters: {
+#       field: event2_before_event3
+#       value: "yes"
+#     }
+#   }
+
+- measure: count_sessions_event123
+  type: custom
+  sql: |
+    COUNT(DISTINCT CASE WHEN (
+      (${event1_ts_frames___time} IS NOT NULL) AND
+      (${event2_ts_frames___time} IS NOT NULL) AND
+      (${event3_ts_frames___time} IS NOT NULL) AND    
+      (${event1_before_event2} = 'Yes') AND
+      (${event2_before_event3} = 'Yes')
+    ) THEN ${session_id} ELSE NULL END)   
+  
+  
+        
+        
+        

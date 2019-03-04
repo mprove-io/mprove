@@ -1,0 +1,71 @@
+
+# 4_track_facts.view
+# track_facts
+
+view: segment_4_track_facts
+derived_table: |
+  SELECT
+    ${t.anonymous_id},
+    ${t.timestamp},
+    ${t.event_id},
+    ${t.event} AS event,
+    ${s.session_id},
+    ${t.mprove_visitor_id},
+    ROW_NUMBER() OVER(PARTITION BY ${s.session_id} ORDER BY ${t.timestamp}) AS track_sequence_number
+  FROM
+    ${segment_2_mapped_tracks AS t}
+  INNER JOIN
+    ${segment_3_session_tracks AS s}
+  ON
+    ${t.mprove_visitor_id} = ${s.mprove_visitor_id}
+    AND ${t.timestamp} >= ${s.session_start_at}
+    AND (${t.timestamp} < ${s.next_session_start_at}
+      OR ${s.next_session_start_at} IS NULL)
+# permanent: true
+
+fields:
+- dimension: event_id
+  hidden: true
+  sql: event_id
+  
+- dimension: event
+  sql: event
+
+- dimension: timestamp
+  sql: timestamp
+  
+- time: timestamp_frames
+  hidden: true
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: timestamp
+  
+- dimension: session_id
+  sql: session_id  
+  
+- dimension: mprove_visitor_id
+  sql: mprove_visitor_id
+  
+- dimension: sequence_number
+  sql: track_sequence_number
+  
+- measure: count_visitors
+  type: count_distinct
+  sql: ${mprove_visitor_id}
+  
+- dimension: anonymous_id
+  sql: anonymous_id  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

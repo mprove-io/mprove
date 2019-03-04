@@ -1,0 +1,39 @@
+dashboard: v31d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v31m
+  default_filters:
+    a.dim1:
+    - '105, 110, 115'
+    - '> 100'
+    - '> 100'
+    - '>= 100'
+    - '< 100'
+    - '<= 100'
+    - '[100 , 200]'
+    - '[100 , 200)'
+    - '(100 , 200]'
+    - '(100 , 200)'
+    - 'null'
+    - 'any'
+    - 'not 105, 110, 115'
+    - 'not [100 , 200]'
+    - 'not [100 , 200)'
+    - 'not (100 , 200]'
+    - 'not (100 , 200)'
+    - 'not null'
+    a.dim2:
+    - '100'
+    - 'any'
+    - 'not 100'
+    a.dim3:
+    - '100'
+    - '105, 110, 115'
+    - 'any'
+    - 'not 100'
+    - 'not 105, 110, 115'
+  select:
+  - a.dim6
+  type: 'table'
+

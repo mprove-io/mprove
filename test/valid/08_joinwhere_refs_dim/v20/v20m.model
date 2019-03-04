@@ -1,0 +1,19 @@
+model: v20m
+joins:
+
+- from_view: v20_one
+  as: a
+
+- join_view: v20_one
+  as: b
+  sql_on: 1 = 1
+  sql_where: ${dim4} + ${dim5} > 100
+
+fields:
+
+- dimension: dim4
+  sql: ${b.dim3} + 444
+
+- dimension: dim5
+  sql: 555
+

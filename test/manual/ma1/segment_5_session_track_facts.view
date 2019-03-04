@@ -1,0 +1,77 @@
+
+# 5_session_track_facts.view
+# session_trk_facts
+
+view: segment_5_session_track_facts     
+derived_table: |
+  SELECT
+    ${s.session_id},
+    MAX(${map.timestamp}) AS ended_time,
+    COUNT(DISTINCT ${map.event_id}) AS num_pvs,
+    COUNT(CASE
+        WHEN ${map.event} = 'app_get_state' THEN event_id
+        ELSE NULL END) AS cnt_app_get_state,
+    COUNT(CASE
+        WHEN ${map.event} = 'queries_run_queries' THEN event_id
+        ELSE NULL END) AS cnt_queries_run_queries
+  FROM
+    ${segment_3_session_tracks AS s}
+  LEFT JOIN
+    ${segment_4_track_facts AS map}
+  ON
+    ${map.session_id} = ${s.session_id}
+  GROUP BY
+    1
+# permanent: true
+
+fields:
+
+- dimension: session_id
+  sql: session_id   
+  
+- time: ended_time_frames
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: ended_time
+  
+- dimension: number_events
+  result: number
+  sql: num_pvs  
+  
+- dimension: is_bounced_session
+  type: yesno_is_true
+  sql: ${number_events} = 1
+  
+- dimension: event_is_app_get_state
+  type: yesno_is_true
+  sql: cnt_app_get_state > 0
+  
+- dimension: event_is_queries_run_queries
+  type: yesno_is_true
+  sql: cnt_queries_run_queries > 0
+  
+- measure: count_app_get_state
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (${event_is_app_get_state} = 'Yes') THEN ${session_id} ELSE NULL END)
+  
+- measure: count_queries_run_queries
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (${event_is_queries_run_queries} = 'Yes') THEN ${session_id} ELSE NULL END)  
+  
+- dimension: events
+  sql: '"events"'
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

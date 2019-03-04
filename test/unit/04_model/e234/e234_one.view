@@ -1,0 +1,5 @@
+view: e234_one
+table: 1
+fields:
+- filter: f2
+  result: number

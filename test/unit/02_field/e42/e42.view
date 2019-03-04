@@ -1,0 +1,5 @@
+view: e42
+table: 1
+fields:
+- dimension: ccc
+  sql: ${a.color !@^&%}   

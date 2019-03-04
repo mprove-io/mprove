@@ -1,0 +1,13 @@
+view: e30
+table: 1
+fields:
+
+- dimension: dim2
+  sql: ${mea2}        
+
+- measure: mea2
+  type: min
+  sql: ${dim1}
+
+- dimension: dim1
+  sql: 1

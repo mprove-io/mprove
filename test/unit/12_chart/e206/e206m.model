@@ -1,0 +1,4 @@
+model: e206m
+joins:
+- from_view: e206_one
+  as: a

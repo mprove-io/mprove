@@ -1,0 +1,4 @@
+model: segment_users_m
+joins: 
+- from_view: segment_users
+  as: a

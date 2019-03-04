@@ -1,0 +1,12 @@
+model: v28m
+joins:
+
+- from_view: v28_one
+  as: a
+
+- join_view: v28_two
+  as: b
+  sql_on: ${a.dim5} = ${b.dim4}
+
+
+

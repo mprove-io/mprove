@@ -1,0 +1,13 @@
+model: e252m
+joins:
+- from_view: e252_one
+  as: a
+
+- join_view: e252_one
+  as: b
+  sql_on: ${a.dim1} = ${b.dim1}
+  sql_where: '{% apply_filter unk %} target {% end_apply_filter %}' 
+
+fields:
+- filter: f1
+  result: number

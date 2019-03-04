@@ -1,0 +1,11 @@
+model: e230m
+joins:
+- from_view: e230_one
+  as: a
+fields:
+- filter: f1
+  result: from_field
+  from_field: mf.d1    
+
+- dimension: d1
+  sql: d1

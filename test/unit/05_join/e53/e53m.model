@@ -1,0 +1,9 @@
+model: e53m
+joins:
+
+- from_view: e53_one
+  as: a
+
+- join_view: e53_two
+  as: b
+  sql_on: ${a.dim1}         

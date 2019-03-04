@@ -1,0 +1,12 @@
+dashboard: e139d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e139m
+  select:
+  - a.dim1
+  sorts: a.dim1, a.dim2      
+  type: 'bar_vertical'
+  data:
+    x_field: a.dim1
+    y_field: a.dim1

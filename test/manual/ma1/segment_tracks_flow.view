@@ -1,0 +1,136 @@
+
+# tracks_flow.view
+# tracks_flow
+ 
+view: segment_tracks_flow 
+derived_table: |
+  SELECT
+    ${a.event_id},
+    ${a.session_id},
+    ${a.sequence_number},
+    ${a.event},
+    ${a.mprove_visitor_id},
+    ${a.timestamp},
+    ${b.event} AS event_2,
+    ${c.event} AS event_3,
+    ${d.event} AS event_4,
+    ${e.event} AS event_5
+
+  FROM
+    ${segment_4_track_facts AS a}
+  LEFT JOIN
+    ${segment_4_track_facts AS b}
+  ON
+    ${a.sequence_number} + 1 = ${b.sequence_number}
+    AND ${a.session_id} = ${b.session_id}
+  LEFT JOIN
+    ${segment_4_track_facts AS c}
+  ON
+    ${a.sequence_number} + 2 = ${c.sequence_number}
+    AND ${a.session_id} = ${c.session_id}
+  LEFT JOIN
+    ${segment_4_track_facts AS d}
+  ON
+    ${a.sequence_number} + 3 = ${d.sequence_number}
+    AND ${a.session_id} = ${d.session_id}
+  LEFT JOIN
+    ${segment_4_track_facts AS e}
+  ON
+    ${a.sequence_number} + 4 = ${e.sequence_number}
+    AND ${a.session_id} = ${e.session_id}
+  ORDER BY
+    ${a.session_id},
+    ${a.sequence_number}
+# permanent: true
+        
+fields:
+
+- dimension: events
+  sql: '"events"'
+
+- dimension: event_id
+  hidden: true
+  sql: event_id   
+
+- dimension: session_id
+  hidden: true
+  sql: session_id  
+
+- dimension: sequence_number
+  result: number
+  hidden: true
+  sql: sequence_number
+  
+- dimension: event
+  sql: event
+  
+# - dimension: user_id
+#   hidden: true
+#   sql: user_id
+  
+- time: timestamp_frames
+  timeframes:
+  - date
+  - week
+  - month
+  - year
+  sql: timestamp
+  
+- dimension: event_2
+  sql: event_2  
+  
+# - measure: event_1_count
+#   type: custom
+#   sql: COUNT(DISTINCT ${event_id})
+
+- measure: event_1_count_distinct
+  type: count_distinct
+  sql: ${event_id}
+
+
+- measure: event_2_drop_off
+  label: "2nd Event Remaining Count"
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (${event_2} IS NOT NULL) THEN ${event_id} ELSE NULL END)
+
+
+- dimension: event_3
+  sql: event_3
+
+- measure: event_3_drop_off
+  label: "3rd Event Remaining Count"
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (${event_3} IS NOT NULL) THEN ${event_id} ELSE NULL END)
+
+- calculation: event_2_3_dropoff_percent
+  format_number: '.0%'
+  sql: cast(${event_3_drop_off} as float64) / NULLIF(cast(${event_2_drop_off} as float64), 0)
+  
+  
+- dimension: event_4
+  sql: event_4
+  
+- measure: event_4_drop_off
+  label: "4th Event Remaining Count"
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (${event_4} IS NOT NULL) THEN ${event_id} ELSE NULL END)  
+  
+- calculation: event_3_4_dropoff_percent
+  format_number: '.0%'
+  sql: cast(${event_4_drop_off} as float64) / NULLIF(cast(${event_3_drop_off} as float64), 0)  
+  
+  
+- dimension: event_5
+  sql: event_5
+  
+- measure: event_5_drop_off
+  label: "5th Event Remaining Count"
+  type: custom
+  sql: COUNT(DISTINCT CASE WHEN (${event_5} IS NOT NULL) THEN ${event_id} ELSE NULL END)    
+  
+  
+  
+  
+  
+  
+  

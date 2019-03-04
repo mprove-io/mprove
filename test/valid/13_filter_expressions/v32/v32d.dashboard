@@ -1,0 +1,18 @@
+dashboard: v32d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v32m
+  default_filters:
+    a.dim1:
+    - 'yes'
+    - 'no'
+    - 'any'
+    a.created___yesno_has_value:
+    - 'yes'
+    - 'no'
+    - 'any'
+  select:
+  - a.dim6
+  type: 'table'
+

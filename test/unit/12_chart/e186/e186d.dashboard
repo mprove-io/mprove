@@ -1,0 +1,15 @@
+dashboard: e186d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e186m
+  type: 'gauge_linear'
+  data:
+    value_field: a.dim1
+  axis:
+    x_axis:          
+      abc: unk
+
+

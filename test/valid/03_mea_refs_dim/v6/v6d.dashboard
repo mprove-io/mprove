@@ -1,0 +1,9 @@
+dashboard: v6d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v6m
+  select:
+  - mf.mea1
+  type: 'table'
+

@@ -1,0 +1,4 @@
+model: v1m
+joins:
+- from_view: v1_one
+  as: a

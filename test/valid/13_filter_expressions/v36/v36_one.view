@@ -1,0 +1,13 @@
+view: v36_one
+table: 1
+fields:
+
+- time: created
+  timeframes:
+  - quarter_of_year
+  sql: 111
+
+- dimension: dim6
+  sql: 600
+
+

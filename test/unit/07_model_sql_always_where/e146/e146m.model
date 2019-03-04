@@ -1,0 +1,5 @@
+model: e146m
+sql_always_where: ${a.unk}   
+joins:
+- from_view: e146_one
+  as: a

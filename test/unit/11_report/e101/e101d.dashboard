@@ -1,0 +1,11 @@
+dashboard: e101d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e101m
+  default_filters:
+    unk.dim1:   
+    - '-BAR-'
+  select:
+  - a.dim1
+

@@ -1,0 +1,5 @@
+view: e197_one
+table: 1
+fields:
+- dimension: dim1
+  sql: 111

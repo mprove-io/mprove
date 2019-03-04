@@ -1,0 +1,8 @@
+dashboard: v24d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v24m
+  select:
+  - a.dim6
+  type: 'table'

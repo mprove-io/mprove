@@ -1,0 +1,16 @@
+view: e31
+table: 1
+fields:
+- dimension: dim1
+  sql: ${calc1}      
+
+- calculation: calc1
+  sql: ${dim2}
+
+- dimension: dim2
+  sql: 1
+
+
+
+
+

@@ -1,0 +1,8 @@
+dashboard: e156d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e156m
+  select:     
+  - a.dim1
+

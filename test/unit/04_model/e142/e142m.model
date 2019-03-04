@@ -1,0 +1,6 @@
+model: e142m
+always_join: a, b         
+joins:
+- from_view: e142_one
+  as: a
+

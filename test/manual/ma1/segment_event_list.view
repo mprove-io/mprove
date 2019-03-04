@@ -1,0 +1,9 @@
+
+# event_list.view
+# event_list
+
+view: segment_event_list
+table: mprove-data.segment_javascript.tracks
+fields:
+- dimension: event_types
+  sql: event

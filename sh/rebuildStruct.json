@@ -1,0 +1,14 @@
+{
+  "info":{
+    "type":"request",
+    "origin":"server",
+    "request_id":"13ec316c-1785-43a0-83e7-46d35b33b81m"
+  },
+  "payload":{
+    "project_id":"mprove-akalitenya-wood-t",
+    "repo_id":"dev",
+    "bigquery_project":"flow-1202",
+    "week_start":"monday",
+    "struct_id":"123"
+  }
+}

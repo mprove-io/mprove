@@ -1,0 +1,11 @@
+view: v30_one
+table: 1
+fields:
+
+- dimension: dim1
+  sql: 111
+
+- dimension: dim6
+  sql: 600
+
+

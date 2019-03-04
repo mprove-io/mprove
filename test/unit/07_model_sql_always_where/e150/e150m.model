@@ -1,0 +1,12 @@
+model: e150m
+sql_always_where: ${calc1}   
+joins:
+
+- from_view: e150_one
+  as: a
+fields:
+- calculation: calc1
+  sql: ${dim2}
+
+- dimension: dim2
+  sql: 111

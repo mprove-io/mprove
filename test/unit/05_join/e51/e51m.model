@@ -1,0 +1,9 @@
+model: e51m
+joins:
+
+- from_view: e51_one
+  as: a
+
+- join_view: e51_two
+  as: b
+  sql_on: ${! @ $ % ^ & * ( ) - + =}   

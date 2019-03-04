@@ -1,0 +1,4 @@
+model: e200m
+joins:
+- from_view: e200_one
+  as: a

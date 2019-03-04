@@ -1,0 +1,6 @@
+model: e213m
+udfs: abc    
+joins:
+- from_view: e213_one
+  as: a
+

@@ -1,0 +1,7 @@
+view: e279
+table: 1
+fields:
+- calculation: calc1
+  sql: abc
+
+

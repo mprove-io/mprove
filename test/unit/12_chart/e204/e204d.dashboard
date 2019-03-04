@@ -1,0 +1,14 @@
+dashboard: e204d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e204m
+  type: 'gauge_linear'
+  data:
+    value_field: a.dim1
+  tile:
+    view_size: unk       
+
+

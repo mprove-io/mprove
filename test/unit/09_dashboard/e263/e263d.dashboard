@@ -1,0 +1,5 @@
+dashboard: e263d
+title: 'sales'
+fields:
+- dimension: 'abc'
+  sql: 1  

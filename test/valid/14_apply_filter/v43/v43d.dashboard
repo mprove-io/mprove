@@ -1,0 +1,10 @@
+dashboard: v43d
+reports:
+- title: 'sales weekly'
+  model: v43m
+  default_filters:
+    a.f5:
+    - '>5000'
+  select:
+  - b.dim1
+  type: 'table'

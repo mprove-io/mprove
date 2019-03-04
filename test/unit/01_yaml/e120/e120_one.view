@@ -1,0 +1,7 @@
+view: e120_one
+table: 1
+description:     
+- 6
+fields:
+- dimension: dim1
+  sql: 111

@@ -1,0 +1,4 @@
+model: e135m
+joins:
+- from_view: e135_one
+  as: a

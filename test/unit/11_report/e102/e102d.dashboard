@@ -1,0 +1,11 @@
+dashboard: e102d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e102m
+  default_filters:
+    a.unk:    
+    - '-BAR-'
+  select:
+  - a.dim1
+

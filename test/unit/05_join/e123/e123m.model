@@ -1,0 +1,6 @@
+model: e123m
+joins:
+- from_view: e123_one
+  sql_on: 5      
+  as: a
+

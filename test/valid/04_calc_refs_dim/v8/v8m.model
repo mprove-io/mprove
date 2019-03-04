@@ -1,0 +1,5 @@
+model: v8m
+joins:
+- from_view: v8_one
+  as: a
+

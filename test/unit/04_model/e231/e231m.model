@@ -1,0 +1,8 @@
+model: e231m
+joins:
+- from_view: e231_one
+  as: a
+fields:
+- filter: f1
+  result: from_field
+  from_field: unk.d1   

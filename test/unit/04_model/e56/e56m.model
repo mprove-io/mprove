@@ -1,0 +1,17 @@
+model: e56m
+joins:
+- from_view: e56_one
+  as: a
+
+- join_view: e56_two
+  as: b
+  sql_on: ${b.dim2} = ${c.dim3}      
+
+- join_view: e56_three
+  as: c
+  sql_on: ${dim5} = ${a.dim1}       
+
+fields:
+
+- dimension: dim5
+  sql: ${b.dim2} + ${c.dim3}

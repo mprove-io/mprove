@@ -1,0 +1,5 @@
+model: e258m
+access_users: 'abc'    
+joins:
+- from_view: e258_one
+  as: a

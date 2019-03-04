@@ -1,0 +1,10 @@
+view: e46_one
+table: 1
+fields:
+- measure: mea2
+  type: min
+  sql: ${dim1}
+
+- dimension: dim1
+  sql: 1
+  

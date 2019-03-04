@@ -1,0 +1,107 @@
+
+# 0_pages.view
+# pages
+
+view: segment_pages
+table: mprove-data.segment_javascript.pages
+fields:
+- dimension: anonymous_id
+  sql: anonymous_id
+  
+- dimension: context_ip
+  sql: context_ip
+  
+- dimension: context_library_name
+  sql: context_library_name
+
+- dimension: context_library_version
+  sql: context_library_version
+  
+- dimension: context_page_path
+  sql: context_page_path
+  
+- dimension: context_page_referrer
+  sql: context_page_referrer
+
+- dimension: context_page_title
+  sql: context_page_title
+  
+- dimension: context_page_url
+  sql: context_page_url
+  
+- dimension: context_user_agent
+  sql: context_user_agent
+  
+- dimension: id
+  sql: id
+  
+- dimension: loaded_at
+  sql: loaded_at
+  
+- dimension: name
+  sql: name  
+  
+- time: original_timestamp
+  sql: original_timestamp
+  
+- dimension: path
+  sql: path
+  
+- time: received_at_frames
+  hidden: true
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: received_at
+  
+- dimension: received_at
+  sql: received_at
+  
+- dimension: referrer
+  sql: referrer
+  
+- dimension: sent_at
+  sql: sent_at
+  
+- time: timestamp_frames
+  hidden: true
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: timestamp
+  
+- dimension: timestamp
+  sql: timestamp
+  
+- dimension: title
+  sql: title
+  
+- dimension: url
+  sql: url
+  
+- dimension: uuid_ts
+  sql: uuid_ts
+  
+- dimension: context_page_search
+  sql: context_page_search
+  
+- dimension: search
+  sql: search
+  
+- dimension: user_id
+  sql: user_id  
+
+- measure: count
+  type: custom
+  sql: COUNT(DISTINCT ${id})
+  
+- measure: count_pageviews
+  type: custom
+  sql: COUNT(DISTINCT ${id}) 
+  
+
+  

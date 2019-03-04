@@ -1,0 +1,9 @@
+dashboard: e79d
+title: 'sales'
+fields:
+- filter: category
+  result: from_field
+  from_field: e79m.b.cat     
+
+
+

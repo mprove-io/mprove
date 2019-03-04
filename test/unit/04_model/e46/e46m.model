@@ -1,0 +1,8 @@
+model: e46m
+joins:
+- from_view: e46_one
+  as: a
+
+fields:
+- dimension: dim1
+  sql: ${a.mea2}   

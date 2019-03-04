@@ -1,0 +1,5 @@
+view: e56_three
+table: 3
+fields:
+- dimension: dim3
+  sql: 333

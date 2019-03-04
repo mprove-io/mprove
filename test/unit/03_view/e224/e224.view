@@ -1,0 +1,8 @@
+view: e224
+table: 1
+fields:
+- filter: f1
+  result: from_field
+  from_field: dim1   
+
+

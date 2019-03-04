@@ -1,0 +1,5 @@
+view: e247_one
+table: 1
+fields:
+- filter: f1
+  result: number

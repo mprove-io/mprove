@@ -1,0 +1,11 @@
+view: v2
+derived_table: |
+  SELECT ${a.unk}
+  FROM ${v1 AS a}
+fields:
+- dimension: dim2
+  sql: 222
+
+
+
+

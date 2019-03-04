@@ -1,0 +1,14 @@
+dashboard: e99d
+title: 'sales'
+fields:
+- filter: category
+  result: number
+
+reports:
+- title: 'overview'
+  model: e99m
+  listen_filters:
+    category: a.dim1    
+  select:
+  - a.dim1
+

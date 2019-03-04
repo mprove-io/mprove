@@ -1,0 +1,6 @@
+model: v32m
+joins:
+- from_view: v32_one
+  as: a
+
+

@@ -1,0 +1,9 @@
+dashboard: e135d
+title: 'sales'
+reports:
+- title: 'overview'
+  description:       
+    5: 7
+  model: e135m
+  select:
+  - a.dim1

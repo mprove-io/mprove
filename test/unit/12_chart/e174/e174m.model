@@ -1,0 +1,4 @@
+model: e174m
+joins:
+- from_view: e174_one
+  as: a

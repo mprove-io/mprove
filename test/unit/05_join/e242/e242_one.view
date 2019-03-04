@@ -1,0 +1,5 @@
+view: e242_one
+table: 2
+fields:
+- dimension: d1
+  sql: d1

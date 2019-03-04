@@ -1,0 +1,104 @@
+dashboard: segment_events 
+
+fields:
+- filter: date
+  result: from_field
+  from_field: segment_m2.b.received_at_frames___date
+  default:
+  - 'after 2016/01/01'
+
+reports:
+- title: 'Unique Users'
+  type: number_card
+  model: segment_m2
+  select:
+  - a.count_visitors
+  sorts: 'a.count_visitors desc'
+  listen_filters:
+    date: b.received_at_frames___date
+  data: 
+    x_field: a.count_visitors
+    y_field: a.count_visitors
+  tile:    
+    tile_width: '4'
+    tile_height: '300'    
+    
+    
+- title: 'Total Tracks'
+  type: number_card
+  model: segment_m2
+  select:
+  - b.count
+  sorts: 'b.count desc'
+  listen_filters:
+    date: b.received_at_frames___date
+  data: 
+    x_field: b.count
+    y_field: b.count
+  tile:    
+    tile_width: '4'
+    tile_height: '300'     
+    
+
+# - title: 'Pages count'
+    
+# - title: 'Device Type Breakdown'  
+
+# - title: 'Carrier Breakdown'
+
+# - title: 'Manufacturer Breakdown'
+
+# - title: 'Top Device Models'
+    
+- title: 'Daily Tracks Count'
+  type: line
+  model: segment_m2
+  select:
+  - b.received_at_frames___date
+  - b.count
+  listen_filters:
+    date: b.received_at_frames___date
+  sorts: b.received_at_frames___date
+  data:
+    x_field: b.received_at_frames___date
+    y_fields:
+    - b.count
+  axis:
+    x_axis_label: 'Received date'
+    y_axis_label: 'Count'
+  tile:
+    tile_width: '6'
+
+- title: 'Top 25 Event Types by Track Count'
+  type: bar_vertical
+  model: segment_m2
+  select:
+  - b.event
+  - b.count
+  listen_filters:
+    date: b.received_at_frames___date
+  sorts: 'b.count desc'
+  limit: 25
+  data:
+    x_field: b.event
+    y_field: b.count
+  axis:
+    x_axis_label: 'event'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '6'
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  

@@ -1,0 +1,9 @@
+view: e116
+table: 1
+unk: 5   
+fields:
+- dimension: dim1
+  sql: dim1
+
+
+

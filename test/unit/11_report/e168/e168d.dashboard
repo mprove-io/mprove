@@ -1,0 +1,12 @@
+dashboard: e168d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e168m
+  select:
+  - a.dim1
+  limit: 5.7   
+  type: 'bar_vertical'
+  data:
+    x_field: a.dim1
+    y_field: a.dim1

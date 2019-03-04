@@ -1,0 +1,8 @@
+view: r3
+derived_table: |
+  SELECT ${a.dim10}
+  FROM 
+    ${r2 AS a}
+fields:
+- dimension: dim12
+  sql: a.dim10

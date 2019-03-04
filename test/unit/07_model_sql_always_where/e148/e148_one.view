@@ -1,0 +1,8 @@
+view: e148_one
+table: 1
+fields:
+- calculation: calc1
+  sql: ${abc}
+
+- dimension: abc
+  sql: 555

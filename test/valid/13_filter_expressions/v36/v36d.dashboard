@@ -1,0 +1,20 @@
+dashboard: v36d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v36m
+  default_filters:
+    a.created___quarter_of_year:
+    - 'q1'
+    - 'q2'
+    - 'q3'
+    - 'q4'
+    - 'any'
+    - 'not q1'
+    - 'not q2'
+    - 'not q3'
+    - 'not q4'
+  select:
+  - a.dim6
+  type: 'table'
+

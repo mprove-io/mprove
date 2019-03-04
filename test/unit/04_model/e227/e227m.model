@@ -1,0 +1,7 @@
+model: e227m
+joins:
+- from_view: e227_one
+  as: a
+fields:
+- filter: f1     
+  result: from_field

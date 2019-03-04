@@ -1,0 +1,8 @@
+model: v3m
+joins:
+- from_view: v3_one
+  as: a
+
+fields:
+- dimension: dim1
+  sql: 111

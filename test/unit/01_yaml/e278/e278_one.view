@@ -1,0 +1,5 @@
+view: e278_one
+derived_table: |
+  #standardSQL
+    WITH
+  SELECT  

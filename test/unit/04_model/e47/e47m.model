@@ -1,0 +1,8 @@
+model: e47m
+joins:
+- from_view: e47_one
+  as: a
+
+fields:
+- dimension: dim1
+  sql: ${a.calc1}      

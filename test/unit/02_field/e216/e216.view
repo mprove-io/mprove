@@ -1,0 +1,11 @@
+view: e216
+table: 1
+fields:
+- dimension: id
+  sql: id
+- measure: price        
+  type: percentile_by_key
+  sql: asdf
+  sql_key: ${id}
+
+
