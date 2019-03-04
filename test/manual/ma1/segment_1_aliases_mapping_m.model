@@ -1,0 +1,4 @@
+model: segment_1_aliases_mapping_m 
+joins:
+- from_view: segment_1_aliases_mapping
+  as: a

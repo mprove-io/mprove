@@ -1,0 +1,5 @@
+view: e19_one
+table: 1
+fields:
+- dimension: d1
+  sql: d1

@@ -1,0 +1,9 @@
+view: e59
+table: 1
+fields:
+- time: created
+  sql: created
+  source: datetime     
+  timeframes:
+  - year
+  - month

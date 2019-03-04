@@ -1,0 +1,11 @@
+model: v15m
+joins:
+
+- from_view: v15_one
+  as: a
+
+fields:
+
+- calculation: calc2
+  sql: ${a.calc1} + 700
+

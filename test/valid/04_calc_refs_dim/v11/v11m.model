@@ -1,0 +1,22 @@
+model: v11m
+joins:
+
+- from_view: v11_one
+  as: a
+
+fields:
+
+- calculation: calc1
+  sql: ${dim3} + ${dim4}
+
+- dimension: dim1
+  sql: 111
+
+- dimension: dim2
+  sql: ${dim1} + 222
+
+- dimension: dim3
+  sql: ${dim2} + 333
+
+- dimension: dim4
+  sql: 444

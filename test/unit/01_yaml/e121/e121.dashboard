@@ -1,0 +1,13 @@
+dashboard: e121
+title: 'sales'
+description:  
+  7: 55
+reports:
+- title: 'overview'
+  model: e121m
+  select:
+  - a.dim1
+  type: 'bar_vertical'
+  data:
+    x_field: a.dim1
+    y_field: a.dim1

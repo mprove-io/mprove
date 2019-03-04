@@ -1,0 +1,8 @@
+view: e243_one
+table: 1
+fields:
+- dimension: dim5
+  sql: 555
+
+- filter: f1
+  result: number

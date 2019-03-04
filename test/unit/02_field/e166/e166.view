@@ -1,0 +1,7 @@
+view: e166
+table: 1
+fields:
+  - measure: eight
+    sql: asdf
+    type: unk  
+

@@ -1,0 +1,10 @@
+dashboard: v39d
+reports:
+- title: 'sales weekly'
+  model: v39m
+  default_filters:
+    mf.f1:
+    - '>100'
+  select:
+  - a.dim1
+  type: 'table'

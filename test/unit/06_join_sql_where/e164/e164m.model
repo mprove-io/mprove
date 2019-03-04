@@ -1,0 +1,16 @@
+model: e164m
+joins:
+- from_view: e164_one
+  as: a
+
+- join_view: e164_one
+  as: b
+  sql_on: ${a.dim5} = ${b.dim5}
+  sql_where: ${calc1} > 10     
+
+fields:
+- calculation: calc1
+  sql: ${dim1}
+
+- dimension: dim1
+  sql: 111

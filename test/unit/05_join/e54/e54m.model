@@ -1,0 +1,9 @@
+model: e54m
+joins:
+
+- from_view: e54_one
+  as: a
+
+- join_view: e54_two
+  as: b
+  sql_on: ${a.mea1}       

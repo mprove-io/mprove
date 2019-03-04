@@ -1,0 +1,17 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/dist": true
+    },
+    "typescript.referencesCodeLens.enabled": true,
+    "tslint.ignoreDefinitionFiles": false,
+    "tslint.exclude": "**/node_modules/**/*",
+    "files.associations": {
+      "*.view": "yaml",
+      "*.model": "yaml",
+      "*.dashboard": "yaml",
+      "*.udf": "yaml"
+    } 
+}

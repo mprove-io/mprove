@@ -1,0 +1,89 @@
+{
+  "name": "mprove-blockml-node",
+  "version": "0.0.0",
+  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mprove-io/mprove-blockml-node.git"
+  },
+  "scripts": {
+    "start": "npm run build && npm run watch",
+    "rimraf": "rimraf",
+    "clean:dist": "npm run rimraf -- dist .awcache",
+    "build": "npm run clean:dist && npm run build-ts && npm run lint",
+    "serve": "nodemon dist/server.js",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve\"",
+    "test": "JEST=yes jest --forceExit",
+    "jest": "JEST=yes jest",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "lint": "tslint --project tsconfig.json --config tslint.json -e 'node_modules/**' 'src/**/*.ts' 'test/**/*.ts'",
+    "format": "tsfmt -r --no-tslint --no-editorconfig --no-vscode --useTsconfig=./tsconfig.formatter.json"
+  },
+  "jest": {
+    "globals": {
+      "__TS_CONFIG__": "tsconfig.json"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js"
+    },
+    "testMatch": [
+      "**/test/**/*.test.(ts|js)"
+    ],
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "async": "^2.1.2",
+    "async-redis": "^1.1.4",
+    "body-parser": "^1.15.2",
+    "clone-regexp": "^1.0.0",
+    "compression": "^1.6.2",
+    "d3-format": "^1.2.2",
+    "dotenv": "^2.0.0",
+    "errorhandler": "^1.4.3",
+    "express": "^4.14.0",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.14.2",
+    "express-validator": "^3.1.3",
+    "fs-extra": "^7.0.0",
+    "graph.js": "^1.21.1",
+    "js-yaml": "^3.12.0",
+    "lusca": "^1.4.1",
+    "morgan": "^1.7.0",
+    "nanoid": "^1.3.0",
+    "p-iteration": "^1.1.7",
+    "request": "^2.78.0",
+    "rimraf": "^2.6.2",
+    "uuid": "^3.1.0",
+    "walk": "^2.3.9"
+  },
+  "devDependencies": {
+    "@types/async": "^2.0.40",
+    "@types/body-parser": "^1.16.2",
+    "@types/compression": "^0.0.33",
+    "@types/dotenv": "^2.0.20",
+    "@types/errorhandler": "^0.0.30",
+    "@types/express": "^4.0.35",
+    "@types/express-session": "^0.0.32",
+    "@types/jest": "^23.3.1",
+    "@types/js-yaml": "^3.9.0",
+    "@types/morgan": "^1.7.32",
+    "@types/node": "^7.0.12",
+    "@types/request": "^0.0.45",
+    "@types/supertest": "^2.0.0",
+    "@types/uuid": "^3.4.0",
+    "concurrently": "^3.4.0",
+    "jest": "23.2.0",
+    "nodemon": "^1.11.0",
+    "supertest": "^2.0.1",
+    "ts-jest": "^23.0.1",
+    "tslint": "^5.0.0",
+    "typescript": "^2.4.0",
+    "typescript-formatter": "^7.0.0"
+  }
+}

@@ -1,0 +1,12 @@
+view: r2
+derived_table: |
+  SELECT ${b.dim3}, ${a.dim1}
+  FROM 
+    ${k1 AS a}
+  LEFT JOIN
+    ${r1 AS b}
+  ON
+    ${a.dim1} = ${b.dim2}
+fields:
+- dimension: dim10
+  sql: b.dim3

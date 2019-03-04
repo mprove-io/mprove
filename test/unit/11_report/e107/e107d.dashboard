@@ -1,0 +1,12 @@
+dashboard: e107d
+title: 'sales'
+reports:
+
+- title: 'overview'
+  model: e107m
+  default_filters:
+    a.dim1:      
+    - '100'
+  select:
+  - a.dim1
+

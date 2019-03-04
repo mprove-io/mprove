@@ -1,0 +1,9 @@
+#e236 needs this file
+view: e236_one
+table: 1
+fields:
+- dimension: d1
+  sql: d1
+
+
+

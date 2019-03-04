@@ -1,0 +1,7 @@
+view: e165
+table: 1
+fields:
+  - measure: two        
+    sql: asdf
+    type: sum_by_key
+

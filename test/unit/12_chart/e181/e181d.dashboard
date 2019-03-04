@@ -1,0 +1,15 @@
+dashboard: e181d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e181m
+  type: 'bar_vertical_grouped'
+  data:
+    x_field: a.dim1
+    y_fields:
+    - a.dim1
+    multi_field: unk 
+
+

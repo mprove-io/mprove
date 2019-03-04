@@ -1,0 +1,285 @@
+dashboard: segment_event_flow
+
+fields:
+- filter: date 
+  result: from_field
+  from_field: segment_m2.b.received_at_frames___date
+  default:
+  - 'on 2018'
+  
+- filter: event
+  label: 'First Event'
+  result: string
+  default:
+  - '-login-'  
+  
+reports:
+- title: 'Tracks Drop Off'
+  type: bar_vertical_grouped
+  model: segment_m2
+  select:
+  - f.events   
+  - b.count
+  - f.event_2_drop_off
+  - f.event_3_drop_off
+  - f.event_4_drop_off
+  - f.event_5_drop_off
+  sorts: 'b.count desc'
+  data:
+    x_field: f.events
+    y_fields: 
+    - b.count
+    - f.event_2_drop_off
+    - f.event_3_drop_off
+    - f.event_4_drop_off
+    - f.event_5_drop_off    
+  axis:
+    x_axis_label: 'event'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '12'    
+    
+    
+- title: 'Event Flow'
+  type: table
+  model: segment_m2
+  select:
+  - b.event
+  - f.event_2
+  - f.event_3
+  - f.event_4
+  - f.event_5
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  tile:
+    tile_width: '12'
+    
+    
+- title: 'Top 5 Second Events'
+  type: bar_vertical
+  model: segment_m2
+  select:
+  - f.event_2
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  limit: 5
+  data:
+    x_field: f.event_2
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_2'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3'    
+    
+
+- title: 'Top 5 Third Events'
+  type: bar_vertical
+  model: segment_m2
+  select:
+  - f.event_3
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  limit: 5  
+  data:
+    x_field: f.event_3
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_3'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3'     
+    
+    
+- title: 'Top 5 Fourth Events'
+  type: bar_vertical
+  model: segment_m2
+  select:
+  - f.event_4
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  limit: 5  
+  data:
+    x_field: f.event_4
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_4'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3'    
+    
+    
+- title: 'Top 5 Fifth Events'
+  type: bar_vertical
+  model: segment_m2
+  select:
+  - f.event_5
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  limit: 5  
+  data:
+    x_field: f.event_5
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_5'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3'    
+    
+    
+- title: 'Second Event'
+  type: table
+  model: segment_m2
+  select:
+  - f.event_2
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  data:
+    x_field: f.event_2
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_2'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3'    
+    
+    
+- title: 'Third Event'
+  type: table
+  model: segment_m2
+  select:
+  - f.event_3
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  data:
+    x_field: f.event_3
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_3'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3' 
+    
+    
+- title: 'Fourth Event'
+  type: table
+  model: segment_m2
+  select:
+  - f.event_4
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  data:
+    x_field: f.event_4
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_4'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3' 
+    
+    
+- title: 'Fifth Event'
+  type: table
+  model: segment_m2
+  select:
+  - f.event_5
+  - b.count
+  default_filters:
+    f.event_2:
+    - not null
+    f.event_3:
+    - not null
+    f.event_4:
+    - not null
+    f.event_5:
+    - not null          
+  sorts: 'b.count desc' 
+  data:
+    x_field: f.event_5
+    y_field: b.count
+  axis:
+    x_axis_label: 'event_5'
+    y_axis_label: 'count'
+  tile:
+    tile_width: '3'     
+  
+  
+  
+  
+  
+  
+  
+
+    

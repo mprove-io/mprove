@@ -1,0 +1,9 @@
+view: e268
+table: 1
+fields:
+- dimension: dim1
+  result: string
+  format_number: '$'
+  sql: abc
+
+

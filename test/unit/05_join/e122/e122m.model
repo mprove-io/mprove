@@ -1,0 +1,6 @@
+model: e122m
+joins:
+- from_view: e122_one
+  hidden:   
+  - 5
+  as: a

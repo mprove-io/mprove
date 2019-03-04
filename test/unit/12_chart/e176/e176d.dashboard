@@ -1,0 +1,12 @@
+dashboard: e176d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e176m
+  type: 'bar_vertical'
+  data:         
+    y_field: a.dim1
+
+

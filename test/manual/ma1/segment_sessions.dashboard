@@ -1,0 +1,230 @@
+dashboard: segment_sessions 
+
+fields:
+- filter: date
+  result: from_field
+  from_field: segment_m1.a.next_session_start_at_frames___date
+  default:
+  - 'after 2016/01/01'
+
+reports:
+- title: 'Total Sessions'
+  type: number_card
+  model: segment_m1
+  select:
+  - a.count
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: a.count
+    y_field: a.count
+  tile:    
+    tile_width: '3'
+    tile_height: '300'    
+    
+    
+- title: 'Distinct Visitors'
+  type: number_card
+  model: segment_m1
+  select:
+  - a.count_visitors
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: a.count_visitors
+    y_field: a.count_visitors
+  tile:
+    tile_width: '3'
+    tile_height: '300'  
+
+    
+- title: 'Average Sessions Per User'
+  type: number_card
+  model: segment_m1
+  select:
+  - a.avg_sessions_per_user
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: a.avg_sessions_per_user
+    y_field: a.avg_sessions_per_user
+  tile:
+    tile_width: '3'
+    tile_height: '300'    
+    
+    
+# - title: 'Average Session Duration'
+#   type: number_card
+#   model: segment_session_tracks
+#   select:
+#   - a.avg_session_duration_minutes
+#   listen_filters:
+#     date: a.start___date
+#   data: 
+#     x_field: a.avg_session_duration_minutes
+#     y_field: a.avg_session_duration_minutes
+#   tile:
+#     tile_width: '1/4'
+#     tile_height: '300'     
+
+
+- title: 'Daily Session Count - Bounce Analysis'
+  type: area_stacked
+  model: segment_m1
+  select:
+  - b.is_bounced_session
+  - a.next_session_start_at_frames___date
+  - a.count
+  sorts: 'a.count desc'
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: a.next_session_start_at_frames___date  
+    y_fields:
+    - a.count
+    multi_field: b.is_bounced_session
+  axis:
+    x_axis: true
+    show_x_axis_label: true
+    x_axis_label: 'Session Start Date'
+    show_y_axis_label: true
+    y_axis_label: 'Count'
+  tile:
+    tile_width: '9'
+    tile_height: '400' 
+    
+    
+- title: 'Bounced Session Percentage'
+  type: pie
+  model: segment_m1
+  select:
+  - b.is_bounced_session
+  - a.count
+  sorts: 'a.count desc'
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: b.is_bounced_session
+    y_field: a.count
+  tile:
+    tile_width: '3'
+    tile_height: '400'     
+
+
+- title: 'Daily Sessions by New Users'
+  type: area_stacked
+  model: segment_m1
+  select:
+  - a.next_session_start_at_frames___date
+  - a.is_first_session
+  - a.count
+  sorts: 'a.next_session_start_at_frames___date desc'
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: a.next_session_start_at_frames___date  
+    y_fields:
+    - a.count
+    multi_field: a.is_first_session
+  axis:
+    x_axis: true
+    show_x_axis_label: true
+    x_axis_label: 'Session Start Date'
+    show_y_axis_label: true
+    y_axis_label: 'Count'
+  tile:
+    tile_width: '9'
+    tile_height: '400'     
+    
+    
+- title: 'New User Session Percentage'
+  type: pie
+  model: segment_m1
+  select:
+  - a.is_first_session
+  - a.count
+  sorts: 'a.count desc'
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: a.is_first_session
+    y_field: a.count
+  tile:
+    tile_width: '3'
+    tile_height: '400'    
+    
+
+- title: 'Cohort - Sessions Layered by First Session Month'
+  type: area_stacked
+  model: segment_m1
+  select:
+  - c.first_date_frames___month
+  - a.next_session_start_at_frames___date
+  - a.next_session_start_at_frames___month
+  - a.count
+  sorts: 'c.first_date_frames___month desc, a.next_session_start_at_frames___month'
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  data: 
+    x_field: a.next_session_start_at_frames___date  
+    y_fields:
+    - a.count
+    multi_field: c.first_date_frames___month
+  axis:
+    x_axis: true
+    show_x_axis_label: true
+    x_axis_label: 'Session Start Date'
+    show_y_axis_label: true
+    y_axis_label: 'Count'
+  tile:
+    tile_width: '9'
+    tile_height: '400'      
+    
+    
+# - title: 'Customer Cohorts'   
+#   type: table
+#   model: segment_m1
+#   select:
+#   - a.start___date
+#   - c.first___month  
+#   - a.start___month
+#   - a.count  
+#   sorts: 'c.first___month, a.start___month desc, '
+    
+- title: 'Conversion Funnel'
+  type: bar_vertical_grouped
+  model: segment_m1
+  select:
+  - b.events
+  - b.count_app_get_state
+  - b.count_queries_run_queries
+  listen_filters:
+    date: a.next_session_start_at_frames___date
+  sorts: 'b.count_app_get_state desc'
+  data:
+    x_field: b.events
+    y_fields:
+    - b.count_app_get_state
+    - b.count_queries_run_queries
+  axis:
+    x_axis: true
+    show_x_axis_label: false
+    x_axis_label: 'x axis label in UI'
+    y_axis: true
+    show_y_axis_label: false
+    y_axis_label: 'y axis label in UI'
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+  

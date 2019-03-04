@@ -1,0 +1,4 @@
+model: e189m
+joins:
+- from_view: e189_one
+  as: a

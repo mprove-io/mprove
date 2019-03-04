@@ -1,0 +1,9 @@
+model: e238m
+joins:
+- from_view: e238_one
+  as: a
+fields:
+- filter: f1
+  result: number
+  default:  
+  - 'abc'

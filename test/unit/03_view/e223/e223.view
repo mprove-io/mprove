@@ -1,0 +1,6 @@
+view: e223
+table: 1
+fields:
+- filter: f1
+  result: from_field 
+

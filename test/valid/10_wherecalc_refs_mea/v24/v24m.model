@@ -1,0 +1,20 @@
+model: v24m
+sql_always_where_calc: ${mea2} + ${mea3} > 100
+joins:
+
+- from_view: v24_one
+  as: a
+
+fields:
+
+- measure: mea2
+  type: sum_by_key
+  sql: ${a.dim3} + 100
+  sql_key: ${a.dim4} + 200
+
+- measure: mea3
+  type: min
+  sql: ${dim1}
+
+- dimension: dim1
+  sql: 555

@@ -1,0 +1,12 @@
+dashboard: e218d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e218m
+  select:
+  - a.dim1
+  timezone: 'abc'   
+  type: 'bar_vertical'
+  data:
+    x_field: a.dim1
+    y_field: a.dim1

@@ -1,0 +1,7 @@
+model: e12m
+joins:
+
+- from_view: nw_orders            
+  as: a
+  join_view: nw_order_items       
+  type: left_outer_each

@@ -1,0 +1,4 @@
+model: e92m
+joins:
+- from_view: e92_one
+  as: a

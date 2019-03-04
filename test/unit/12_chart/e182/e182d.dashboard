@@ -1,0 +1,12 @@
+dashboard: e182d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e182m
+  type: 'gauge_linear'
+  data:
+    value_field: unk 
+
+

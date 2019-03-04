@@ -1,0 +1,7 @@
+view: e222
+table: 1
+fields:
+- filter: filt
+  result: number
+  sql: 111   
+

@@ -1,0 +1,17 @@
+
+# sessions_trk
+
+model: segment_m1
+group: 'segment'
+
+joins:
+- from_view: segment_3_session_tracks
+  as: a
+
+- join_view: segment_5_session_track_facts
+  as: b
+  sql_on: ${a.session_id} = ${b.session_id}
+  
+- join_view: segment_6_user_session_facts
+  as: c
+  sql_on: ${a.mprove_visitor_id} = ${c.mprove_visitor_id}

@@ -1,0 +1,17 @@
+dashboard: e103d
+title: 'sales'
+fields:
+- filter: category
+  result: string
+
+reports:
+- title: 'overview'
+  model: e103m
+  listen_filters:
+    category: a.dim1
+  default_filters:
+    a.dim1:       
+    - '-BAR-'
+  select:
+  - a.dim1
+

@@ -1,0 +1,4 @@
+model: e78m
+joins:
+- from_view: e78_one
+  as: a

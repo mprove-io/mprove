@@ -1,0 +1,4 @@
+model: segment_2_mapped_tracks_m 
+joins:
+- from_view: segment_2_mapped_tracks
+  as: a

@@ -1,0 +1,17 @@
+view: e34
+table: 1
+fields:
+- dimension: AAA
+  sql: ${BBB}          
+
+- dimension: BBB
+  sql: ${CCC}           
+
+- dimension: CCC
+  sql: ${AAA}          
+
+#- calculation: NNN
+#  sql: ${MMM}
+#
+#- calculation: MMM
+#  sql: ${NNN}

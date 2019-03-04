@@ -1,0 +1,5 @@
+view: e102_one
+table: 1
+fields:
+- dimension: dim1
+  sql: 111

@@ -1,0 +1,6 @@
+view: e2.view
+table: [mpr-demo:northwind.orders]
+fields:
+
+- dimension: order_id
+  sql: orderID

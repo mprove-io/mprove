@@ -1,0 +1,7 @@
+dashboard: e85d
+title: 'sales'
+reports:
+- title: 'overview'       
+  model: e85m
+
+

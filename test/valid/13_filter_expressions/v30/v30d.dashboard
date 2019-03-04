@@ -1,0 +1,24 @@
+dashboard: v30d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v30m
+  default_filters:
+    a.dim1:
+    - '-foo-'
+    - '%foo%'
+    - 'foo%'
+    - '%foo'
+    - 'null'
+    - 'blank'
+    - 'any'
+    - 'not -foo-'
+    - 'not %foo%'
+    - 'foo% not'
+    - 'not %foo'
+    - 'not blank'
+    - 'not null'
+  select:
+  - a.dim6
+  type: 'table'
+

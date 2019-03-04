@@ -1,0 +1,39 @@
+dashboard: segment_funnel 
+fields:
+  
+- filter: event1
+  label: 'First Event'
+  result: string
+  default:
+  - '-app_get_state-'  
+  
+- filter: event2
+  label: 'Second Event'
+  result: string
+  default:
+  - '-queries_run_queries-'   
+  
+reports:
+- title: 'Funnel'
+  type: bar_vertical_grouped
+  model: segment_m3
+  select:
+  - a.events_word
+  - a.count_sessions
+  - a.count_sessions_event1
+  - a.count_sessions_event12
+  - a.count_sessions_event123
+  listen_filters:
+    event1: a.event1
+    event2: a.event2
+  sorts: 'a.count_sessions desc'
+  data:
+    x_field: a.events_word
+    y_fields:
+    - a.count_sessions_event1
+    - a.count_sessions_event12
+    - a.count_sessions_event123
+  axis:
+    x_axis_label: 'events'
+    y_axis_label: 'count'
+    

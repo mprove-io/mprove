@@ -1,0 +1,11 @@
+model: e162m
+sql_always_where: ${b.dim}
+joins:
+- from_view: e162_one
+  as: a
+
+- join_view: e162_one
+  as: b
+  sql_on: ${a.dim5} = ${b.dim5}
+  sql_where: ${unk} > 10       
+

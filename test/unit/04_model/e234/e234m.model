@@ -1,0 +1,8 @@
+model: e234m
+joins:
+- from_view: e234_one
+  as: a
+fields:
+- filter: f1
+  result: from_field
+  from_field: a.b.c.d   

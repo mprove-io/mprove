@@ -1,0 +1,7 @@
+dashboard: e82d
+title: 'sales'
+reports:
+- model: kc_1         
+
+
+

@@ -1,0 +1,8 @@
+dashboard: e88d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e88m
+  select:       
+  - unk.fff
+

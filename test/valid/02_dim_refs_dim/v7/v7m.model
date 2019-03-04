@@ -1,0 +1,10 @@
+model: v7m
+joins:
+- from_view: v7_one
+  as: a
+
+fields:
+
+- dimension: dim4
+  sql: ${a.dim3} + 444
+

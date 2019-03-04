@@ -1,0 +1,5 @@
+model: e145m
+sql_always_where: ${b.dim}    
+joins:
+- from_view: e145_one
+  as: a

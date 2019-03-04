@@ -1,0 +1,11 @@
+view: v1
+table: 1
+fields:
+- filter: f1
+  result: from_field
+  from_field: dim1
+  default:
+  - '-abc-' 
+
+- dimension: dim1
+  sql: 111

@@ -1,0 +1,12 @@
+dashboard: e178d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e178m
+  type: 'gauge_linear'
+  data:            
+    x_field: a.dim1
+
+

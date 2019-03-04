@@ -1,0 +1,10 @@
+dashboard: v21d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v21m
+  select:
+  - a.dim6
+  - a.dim5
+  - a.dim4
+  type: 'table'

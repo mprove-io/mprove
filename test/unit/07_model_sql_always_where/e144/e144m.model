@@ -1,0 +1,6 @@
+model: e144m
+sql_always_where: ${! @ $ % ^ & * ( ) - + =}  
+joins:
+
+- from_view: e144_one
+  as: a

@@ -1,0 +1,8 @@
+model: e228m
+joins:
+- from_view: e228_one
+  as: a
+fields:
+- filter: f1
+  result: from_field
+  from_field: unk    

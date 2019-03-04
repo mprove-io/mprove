@@ -1,0 +1,11 @@
+view: e161_one
+table: 1
+fields:
+- dimension: dim5
+  sql: 555
+
+- calculation: calc1
+  sql: ${dim1}
+
+- dimension: dim1
+  sql: 777

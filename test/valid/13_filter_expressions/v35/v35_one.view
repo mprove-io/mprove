@@ -1,0 +1,13 @@
+view: v35_one
+table: 1
+fields:
+
+- time: created
+  timeframes:
+  - month_name
+  sql: 111
+
+- dimension: dim6
+  sql: 600
+
+

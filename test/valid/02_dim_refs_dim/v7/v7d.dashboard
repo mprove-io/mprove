@@ -1,0 +1,9 @@
+dashboard: v7d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v7m
+  select:
+  - mf.dim4
+  type: 'table'
+

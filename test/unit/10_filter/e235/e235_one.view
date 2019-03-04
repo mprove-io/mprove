@@ -1,0 +1,9 @@
+view: e235_one
+table: 1
+fields:
+- filter: size
+  result: number
+  default: '100'    
+
+
+

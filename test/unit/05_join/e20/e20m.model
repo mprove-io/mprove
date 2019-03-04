@@ -1,0 +1,17 @@
+model: e20m
+joins:
+
+- from_view: e20_one
+  as: a
+
+- join_view: e20_two
+  as: c
+  type: left_outer
+  sql_on: ${calc1}   
+
+fields:
+- calculation: calc1
+  sql: ${dim1}
+
+- dimension: dim1
+  sql: 111

@@ -1,0 +1,9 @@
+model: e157m
+joins:
+- from_view: e157_one
+  as: a
+
+- join_view: e157_one
+  as: b
+  sql_on: ${a.dim5} = ${b.dim5}
+  sql_where: ${! @ $ % ^ & * ( ) - + =}  

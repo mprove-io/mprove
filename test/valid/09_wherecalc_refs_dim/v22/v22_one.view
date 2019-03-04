@@ -1,0 +1,15 @@
+view: v22_one
+table: 1
+fields:
+
+- dimension: dim6
+  sql: 600
+
+- dimension: dim1
+  sql: 111
+
+- dimension: dim2
+  sql: ${dim1} + 222
+
+- dimension: dim3
+  sql: ${dim2} + 333

@@ -1,0 +1,8 @@
+model: e39m
+joins:
+- from_view: e39_one
+  as: a
+
+- join_view: e39_two
+  as: b
+  sql_on: ${unk}        

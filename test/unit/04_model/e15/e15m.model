@@ -1,0 +1,5 @@
+model: e15m
+joins:
+- from_view: one     
+- from_view: two      
+- from_view: three    

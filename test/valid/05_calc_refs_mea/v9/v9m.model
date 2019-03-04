@@ -1,0 +1,5 @@
+model: v9m
+joins:
+- from_view: v9_one
+  as: a
+

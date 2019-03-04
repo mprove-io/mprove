@@ -1,0 +1,11 @@
+dashboard: e170d
+title: 'sales'
+reports:
+- title: 'overview'
+  select:
+  - a.dim1
+  model: e170m
+  data: 'e'   
+
+
+

@@ -1,0 +1,8 @@
+model: e236m
+joins:
+- from_view: e236_one
+  as: a
+fields:
+- filter: f1
+  result: number
+  default: '100'    

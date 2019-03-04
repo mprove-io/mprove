@@ -1,0 +1,13 @@
+view: v33_one
+table: 1
+fields:
+
+- time: created
+  timeframes:
+  - day_of_week
+  sql: 222
+
+- dimension: dim6
+  sql: 600
+
+

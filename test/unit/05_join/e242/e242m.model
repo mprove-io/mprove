@@ -1,0 +1,13 @@
+model: e242m
+joins:
+- from_view: e242_one
+  as: a
+
+- join_view: e242_two
+  as: c
+  type: left_outer
+  sql_on: ${f1}  
+
+fields:
+  - filter: f1
+    result: number

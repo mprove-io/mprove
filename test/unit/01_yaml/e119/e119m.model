@@ -1,0 +1,5 @@
+model: e119m
+hidden: 200
+joins:
+- from_view: e119_one
+  as: a

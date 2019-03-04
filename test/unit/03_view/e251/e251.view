@@ -1,0 +1,14 @@
+view: e251
+derived_table: |  
+  SELECT *
+  FROM abc
+  WHERE {% apply_filter dim1 %} target {% end_apply_filter %}
+fields:
+
+- dimension: dim1
+  sql: dim1
+
+- filter: f2
+  result: number
+
+

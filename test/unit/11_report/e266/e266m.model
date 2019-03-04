@@ -1,0 +1,4 @@
+model: e266m
+joins:
+- from_view: e266_one
+  as: a

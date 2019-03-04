@@ -1,0 +1,8 @@
+dashboard: e90d
+title: 'sales'
+reports:
+- title: 'overview'
+  model: e90m
+  select:         
+  - a.calc1
+

@@ -1,0 +1,9 @@
+model: e49m
+joins:
+- from_view: e49_one
+  as: a
+
+fields:
+- measure: mea1
+  type: min
+  sql: ${a.calc2}        

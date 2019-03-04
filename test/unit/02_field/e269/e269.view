@@ -1,0 +1,9 @@
+view: e269
+table: 1
+fields:
+- dimension: dim1
+  result: string
+  currency_prefix: 'usd'
+  sql: abc
+
+

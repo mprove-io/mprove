@@ -1,0 +1,8 @@
+view: e90_one
+table: 1
+fields:
+- dimension: dim1
+  sql: 111
+
+- calculation: calc1
+  sql: ${dim1}*2

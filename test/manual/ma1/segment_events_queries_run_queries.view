@@ -1,0 +1,109 @@
+view: segment_events_queries_run_queries
+table: mprove-data.segment_javascript.queries_run_queries
+
+fields:
+- dimension: anonymous_id
+  sql: anonymous_id
+  
+# - dimension: context_ip
+#   sql: context_ip
+  
+- dimension: context_library_name
+  sql: context_library_name
+
+- dimension: context_library_version
+  sql: context_library_version
+  
+# - dimension: context_page_path
+#   sql: context_page_path
+  
+# - dimension: context_page_referrer
+#   sql: context_page_referrer
+
+# - dimension: context_page_search
+#   sql: context_page_search
+
+# - dimension: context_page_title
+#   sql: context_page_title
+  
+# - dimension: context_page_url
+#   sql: context_page_url
+  
+# - dimension: context_user_agent
+#   sql: context_user_agent
+ 
+- dimension: event
+  sql: event
+  
+- dimension: event_text
+  sql: event_text  
+  
+- dimension: id
+  sql: id
+
+- time: loaded_at_frames
+  source: timestamp
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: loaded_at
+  
+- time: original_timestamp_frames
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: original_timestamp  
+  
+- time: received_at_frames
+  source: timestamp
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: received_at
+
+  
+- time: sent_at_frames
+  source: timestamp
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: sent_at
+
+  
+- time: timestamp_frames
+  hidden: true
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: timestamp
+
+
+- dimension: user_id
+  sql: user_id 
+  
+
+- time: uuid_ts_frames
+  hidden: true
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: uuid_ts
+  
+  
+- measure: count
+  type: custom
+  sql: COUNT(DISTINCT ${id})
+
+

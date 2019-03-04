@@ -1,0 +1,31 @@
+view: v27_one
+table: 1
+fields:
+
+- measure: mea2
+  type: sum_by_key
+  sql: ${dim2} + 100
+  sql_key: ${dim4} + 200
+
+- dimension: dim1
+  sql: 111
+
+- dimension: dim2
+  sql: ${dim1} + 222
+
+- dimension: dim3
+  sql: 333
+
+- dimension: dim4
+  sql: ${dim3} + 444
+
+- measure: mea3
+  type: min
+  sql: ${dim7}
+
+- dimension: dim6
+  sql: 600
+
+- dimension: dim7
+  sql: 555
+

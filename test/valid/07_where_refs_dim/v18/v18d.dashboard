@@ -1,0 +1,9 @@
+dashboard: v18d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v18m
+  select:
+  - a.dim6
+  type: 'table'
+

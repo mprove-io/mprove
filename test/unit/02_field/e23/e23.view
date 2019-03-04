@@ -1,0 +1,9 @@
+view: e23
+table: 1
+fields:
+- dimension: a            
+  measure: b              
+  calculation: c          
+  time: d                 
+  filter: e               
+

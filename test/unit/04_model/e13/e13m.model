@@ -1,0 +1,9 @@
+model: e13m
+joins:
+- from_view: one
+
+- join_view: two
+
+- as: a                  
+  type: left_outer_each
+  sql_on: ${a.order_id} = ${b.order_id}

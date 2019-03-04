@@ -1,0 +1,12 @@
+model: v39m
+sql_always_where_calc: |
+  {% apply_filter f1 %} target {% end_apply_filter %}
+joins:
+- from_view: v39_one
+  as: a
+
+fields:
+- filter: f1
+  result: number
+
+

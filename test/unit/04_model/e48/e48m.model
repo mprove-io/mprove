@@ -1,0 +1,10 @@
+model: e48m
+joins:
+- from_view: e48_one
+  as: a
+
+fields:
+- measure: mea1
+  type: min
+  sql: ${a.mea2}     
+   

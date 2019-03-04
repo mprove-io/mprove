@@ -1,0 +1,4 @@
+model: e104m
+joins:
+- from_view: e104_one
+  as: a

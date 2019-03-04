@@ -1,0 +1,8 @@
+dashboard: v12d
+title: 'sales'
+reports:
+- title: 'weekly'
+  model: v12m
+  select:
+  - mf.calc1
+  type: 'table'

@@ -1,0 +1,7 @@
+model: v42m
+joins:
+- from_view: v42_one
+  as: a
+
+
+

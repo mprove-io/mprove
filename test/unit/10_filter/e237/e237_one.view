@@ -1,0 +1,10 @@
+view: e237_one
+table: 1
+fields:
+- filter: size
+  result: number
+  default:  
+  - 'abc'
+
+
+

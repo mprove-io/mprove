@@ -1,0 +1,9 @@
+model: e246m
+sql_always_where: ${f1}   
+joins:
+- from_view: e246_one
+  as: a
+
+fields:
+- filter: f1
+  result: number

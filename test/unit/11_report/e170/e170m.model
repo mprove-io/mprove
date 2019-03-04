@@ -1,0 +1,4 @@
+model: e170m
+joins:
+- from_view: e170_one
+  as: a

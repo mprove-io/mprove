@@ -1,0 +1,17 @@
+model: v2m
+joins:
+- from_view: v2_one
+  as: a
+
+fields:
+- dimension: dim1
+  sql: 111
+
+- dimension: dim2
+  sql: ${dim1} + 222
+
+- dimension: dim3
+  sql: ${dim2} + 333
+
+- dimension: dim4
+  sql: ${dim3} + 444

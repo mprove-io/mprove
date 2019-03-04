@@ -1,0 +1,5 @@
+model: v14m
+joins:
+- from_view: v14_one
+  as: a
+
