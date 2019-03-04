@@ -1,0 +1,33 @@
+{
+  "update.channel": "none", 
+  "window.zoomLevel": 4,
+  "workbench.colorTheme": "Darcula Extra",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 300,
+  "editor.tabSize": 2,
+  "editor.links": false,
+  "workbench.iconTheme": "vs-seti",
+  "editor.detectIndentation": false,    
+  "extensions.ignoreRecommendations": true,
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.startupEditor": "newUntitledFile",
+  "editor.largeFileOptimizations": false,
+  "typescript.updateImportsOnFileMove.enabled": "never", 
+  "typescript.referencesCodeLens.enabled": true,
+  "tslint.ignoreDefinitionFiles": false,  
+  "gitlens.keymap": "none",
+  "gitlens.historyExplorer.enabled": true,
+  "gitlens.advanced.messages": {
+    "suppressCommitHasNoPreviousCommitWarning": false,
+    "suppressCommitNotFoundWarning": false,
+    "suppressFileNotUnderSourceControlWarning": false,
+    "suppressGitVersionWarning": false,
+    "suppressLineUncommittedWarning": false,
+    "suppressNoRepositoryWarning": false,
+    "suppressResultsExplorerNotice": false,
+    "suppressShowKeyBindingsNotice": true
+  },    
+  "TodoParser": {
+    "folderExclude": ["node_modules", "dist", "todos"]
+  }
+}
