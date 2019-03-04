@@ -1,0 +1,10 @@
+dashboard: d1
+reports:
+- title: 'Untitled'
+  model: m1
+  select:
+  - a.price
+  default_filters:
+    a.doublePrice:
+    - 'any'
+  type: 'table'

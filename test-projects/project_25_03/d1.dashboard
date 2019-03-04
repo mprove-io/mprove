@@ -1,0 +1,7 @@
+dashboard: d1
+reports:
+- title: 'Untitled'
+  model: m1
+  select:
+  - a.price
+  type: 'table'

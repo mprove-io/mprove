@@ -1,0 +1,6 @@
+yarn ts-node node_modules/.bin/typeorm schema:drop
+yarn ts-node node_modules/.bin/typeorm migration:generate -n base
+
+yarn ts-node node_modules/.bin/typeorm migration:generate -n 
+yarn ts-node node_modules/.bin/typeorm migration:create -n first
+yarn ts-node node_modules/.bin/typeorm migration:run

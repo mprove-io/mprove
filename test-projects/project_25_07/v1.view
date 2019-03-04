@@ -1,0 +1,11 @@
+view: v1
+derived_table: |
+  SELECT 50 as price
+
+fields:
+- dimension: price
+  result: number
+  sql: price
+
+- calculation: doublePrice
+  sql: ${price}*2   

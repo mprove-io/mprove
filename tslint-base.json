@@ -1,0 +1,77 @@
+{
+  "extends": [],
+  "rules": {
+    "arrow-return-shorthand": true,
+    "callable-types": true,
+    "forin": true,
+    "import-blacklist": [true, "rxjs/Rx", "rxjs/internal/operators"],
+    "interface-over-type-literal": true,
+    "label-position": true,
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "static-field",
+          "instance-field",
+          "constructor",
+          "static-method",
+          "instance-method"
+        ]
+      }
+    ],
+    "no-arg": true,
+    "no-bitwise": true,
+    "no-construct": true,
+    "no-debugger": true,
+    "no-duplicate-super": true,
+    "no-empty-interface": true,
+    "no-eval": true,
+    "no-misused-new": true,
+    "no-non-null-assertion": true,
+    "no-string-throw": true,
+    "no-unused-expression": true,
+    "radix": true,
+    "triple-equals": [true, "allow-null-check"],
+    "unified-signatures": true,
+    "no-namespace": true,
+    "no-var-keyword": true,
+    "variable-name": [true, "ban-keywords", "check-format"],
+    "member-access": [true, "no-public"],
+    "no-unnecessary-initializer": true,
+    "ordered-imports": false,
+    "prefer-const": false,
+    "interface-name": false,
+    "object-literal-sort-keys": false,
+    "object-literal-shorthand": false,
+    "no-console": false,
+    "max-classes-per-file": false,
+    "no-empty": false,
+    "no-angle-bracket-type-assertion": false,
+    "no-string-literal": false,
+    "no-var-requires": false,
+    "no-switch-case-fall-through": true,
+    "no-shadowed-variable": true,
+    "class-name": true,
+    "no-internal-module": true,
+    "jsdoc-format": false,
+    "no-consecutive-blank-lines": [true, 2],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": false,
+        "singleline": "never"
+      }
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-module",
+      "check-operator",
+      "check-preblock",
+      "check-separator",
+      "check-type"
+    ],
+    "quotemark": [true, "single"]
+  }
+}
