@@ -1,0 +1,48 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "prettier.disableLanguages": ["html"],
+  "html.format.wrapAttributes": "force-aligned",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "typescript.referencesCodeLens.enabled": true,
+  "tslint.ignoreDefinitionFiles": false,
+  "tslint.exclude": "**/node_modules/**/*",
+  "files.associations": {
+    "*.view": "yaml",
+    "*.model": "yaml",
+    "*.dashboard": "yaml",
+    "*.udf": "yaml"
+  },
+  "editor.links": false,
+  "cSpell.words": [
+    "Octokit",
+    "awcache",
+    "benum",
+    "bigint",
+    "bigquery",
+    "blockml",
+    "mconfig",
+    "mconfigs",
+    "mediumtext",
+    "middlewares",
+    "mprove",
+    "nodegit",
+    "octokit",
+    "ormlogs",
+    "pdt",
+    "pdts",
+    "prettierrc",
+    "promisify",
+    "repo",
+    "repos",
+    "sortings",
+    "struct",
+    "structs",
+    "typeorm",
+    "udfs",
+    "varchar",
+    "webhook"
+  ],
+}

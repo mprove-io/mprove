@@ -1,0 +1,16 @@
+default: # default connection
+  type: mysql
+  host: localhost
+  port: 3306
+  username: root
+  password: root
+  database: my_dev
+  logging: true
+  logger: file # TODO: remove in production
+  entities: 
+  - src/models/store/entities/*.ts # CLI loads from ts files when use ts-node
+  migrations: 
+  - src/migration/*.ts # CLI loads from ts files when use ts-node
+  cli: 
+    entitiesDir: src/models/store/entities # CLI created entities to folder
+    migrationsDir: src/migration # CLI created migrations to folder
