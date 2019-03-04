@@ -1,0 +1,89 @@
+version: '3.7'
+services:
+
+  redis:
+    image: redis:alpine
+  
+  db:
+    image: mysql:5.7
+    volumes:
+    - type: bind
+      source: /mprove_data/db/mysql
+      target: /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    ports:
+    - '3305:3306'
+  
+  blockml:
+    build: ../mprove-blockml-node/  
+    image: mprove/blockml
+    environment:
+      BLOCKML_PORT: $BLOCKML_PORT
+      BLOCKML_BASE_PATH: $BLOCKML_BASE_PATH    
+    depends_on:
+    - wait-for-redis
+  
+  wait-for-redis:
+    build: ../mprove-wait/
+    image: mprove/wait
+    command: ["redis:6379", "-t", "0", "--", "echo", wait-for-redis-done;'] 
+  
+  wait-for-db:
+    build: ../mprove-wait/
+    image: mprove/wait
+    command: ["db:3306", "-t", "0", "--", "echo", wait-for-db-done;'] 
+  
+  wait-for-blockml:
+    build: ../mprove-wait/
+    image: mprove/wait
+    command: ["blockml:8081", "-t", "0", "--", "echo", wait-for-blockml-done;'] 
+
+  backend:
+    build: ../mprove-backend-node/  
+    image: mprove/backend
+    environment:
+      BACKEND_PORT: $BACKEND_PORT
+      BACKEND_JWT_SECRET: $BACKEND_JWT_SECRET
+      BACKEND_DB_PASSWORD_DEV: $BACKEND_DB_PASSWORD_DEV
+      BACKEND_MAILGUN_ACTIVE_API_KEY: $BACKEND_MAILGUN_ACTIVE_API_KEY
+      BACKEND_MAILGUN_DOMAIN: $BACKEND_MAILGUN_DOMAIN
+      BACKEND_SEND_EMAIL_FROM: $BACKEND_SEND_EMAIL_FROM      
+    volumes:
+    - type: bind
+      source: /mprove_data/backend
+      target: /mprove_data/backend
+    depends_on:
+    - wait-for-db     
+    - wait-for-blockml     
+  
+  landing:
+    build: ../mprove-landing-app/  
+    image: mprove/landing  
+  
+  docs:
+    build: ../mprove-docs-app/
+    image: mprove/docs
+  
+  web:
+    build: 
+      context: ../mprove-web-app/
+      dockerfile: docker.local.Dockerfile
+    image: mprove/web    
+  
+  proxy:
+    build: 
+      context: ../mprove-proxy/
+      dockerfile: docker.local.Dockerfile  
+    image: mprove/proxy
+    depends_on:
+    - backend
+    - web
+    - docs
+    - landing
+    ports:
+    - '80:80'    
+    - '8080:80' # browser web app communicates with backend through 8080  
+
+   
