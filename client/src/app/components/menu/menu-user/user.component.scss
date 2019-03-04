@@ -1,0 +1,72 @@
+/*
+user-block
+*/
+.user-block {
+  line-height: 1.4;
+  cursor: pointer;
+  position: relative;
+  padding: 5px 50px 0 0px;
+  height: 50px;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-left: 10px !important;
+  min-width: 1px;
+
+  &__project,
+  &__name {
+    white-space: nowrap;
+    text-align: left;
+  }
+
+  &__avatar {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (max-width: 599px) {
+  /deep/.user-block__avatar {
+    right: 10px !important;
+  }
+}
+.user-avatar-img {
+  $iconSize: 40px;
+  width: $iconSize;
+  height: $iconSize;
+  border-radius: 4px;
+  &_size {
+    font-size: $iconSize;
+  }
+}
+
+/*
+menu
+*/
+
+.menu {
+  &__options {
+    cursor: default;
+    line-height: 1.1;
+    right: 0;
+    top: 50px;
+    padding: 20px 15px 0 15px;
+    width: 210px;
+  }
+
+  &__options-group {
+    margin: 0 0 20px;
+  }
+
+  &__options-title {
+    font-weight: bold;
+    margin: 0 0 5px;
+  }
+}
+.mat-button--project {
+  position: relative;
+}
