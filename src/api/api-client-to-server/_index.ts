@@ -48,6 +48,7 @@ export * from './subscriptions/switch-analytics-subscription-plan';
 export * from './users/login-user';
 export * from './users/logout-user';
 export * from './users/register-user';
+export * from './users/delete-user';
 export * from './users/reset-user-password';
 export * from './users/set-user-name';
 export * from './users/set-user-picture';

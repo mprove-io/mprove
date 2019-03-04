@@ -6,6 +6,7 @@ export interface CypressSeedRequestBody {
       email_verified: boolean;
       email_verification_token?: string;
       password_reset_token?: string;
+      deleted?: boolean;
     }>;
     projects?: Array<{
       project_id: string;
