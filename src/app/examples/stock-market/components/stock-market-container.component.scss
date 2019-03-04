@@ -1,0 +1,51 @@
+.main-heading {
+  text-transform: uppercase;
+  margin: 0 0 20px 0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-card {
+  span {
+    float: right;
+  }
+
+  mat-card-title {
+    margin-bottom: 5px;
+  }
+
+  mat-card-subtitle {
+    text-align: right;
+
+    fa-icon {
+      width: 8px;
+    }
+  }
+
+  mat-card-content {
+    text-align: center;
+  }
+}
+
+mat-spinner {
+  margin: auto;
+}
+
+.error-state {
+  text-align: center;
+  padding: 20px;
+
+  mat-icon {
+    width: 54px;
+    font-size: 48px;
+  }
+
+  > span {
+    opacity: 0.4;
+  }
+  .symbol {
+    font-weight: bold;
+  }
+}

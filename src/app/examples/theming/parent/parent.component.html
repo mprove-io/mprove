@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="main-heading">{{ 'anms.examples.theming.parent.title' | translate }}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" [ngClass]="routeAnimationsElements">
+      <p>
+        {{ 'anms.examples.theming.parent.text1' | translate }} <code>stylesUrls</code>
+        {{ 'anms.examples.theming.parent.text2' | translate }} <code>@Component</code>
+        {{ 'anms.examples.theming.parent.text3' | translate }} <code>styles.scss</code>
+        {{ 'anms.examples.theming.parent.text4' | translate }}
+        <strong>{{ 'anms.examples.theming.parent.text5' | translate }}</strong>
+        {{ 'anms.examples.theming.parent.text6' | translate }}
+      </p>
+      <p>
+        {{ 'anms.examples.theming.parent.text7' | translate }}
+        <strong>{{ 'anms.examples.theming.parent.text8' | translate }}</strong>
+        {{ 'anms.examples.theming.parent.text9' | translate }}
+        <code>> (child selectors)</code>
+        {{ 'anms.examples.theming.parent.text10' | translate }}
+      </p>
+      <pre>
+{{themeSrc}}
+      </pre>
+    </div>
+    <div class="col-md-6" [ngClass]="routeAnimationsElements">
+      <div class="example">
+        <h1>{{ 'anms.examples.theming.parent.description' | translate }}</h1>
+        <anms-child></anms-child>
+      </div>
+    </div>
+  </div>
+</div>
