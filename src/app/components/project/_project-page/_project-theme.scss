@@ -1,0 +1,7 @@
+@mixin project-theme($theme) {
+  $sub-primary: map-get($theme, sub-primary);
+  $is-dark: map-get($theme, is-dark);
+  .chart-viewer-dark .td-data-table-row:nth-child(odd) {
+    background: #757575;
+  }
+}

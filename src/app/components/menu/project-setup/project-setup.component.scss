@@ -1,0 +1,29 @@
+.menu {
+  &__options {
+    cursor: default;
+    line-height: 1.1;
+    right: 0;
+    top: 50px;
+    padding: 20px 5px 0 5px;
+  }
+
+  &__options-group {
+    margin: 0 0 20px;
+  }
+
+  &__options-title {
+    font-weight: bold;
+    margin: 0 0 5px;
+    padding-left: 12px;
+  }
+}
+.pdt-icon {
+  font-size: 26px !important;
+}
+
+/deep/.pdts-icon .st2 {
+  fill: #727273 !important;
+}
+/deep/ .dark-theme .pdts-icon .st2 {
+  fill: #fff !important;
+}

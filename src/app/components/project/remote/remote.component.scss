@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+.remote {
+  &__public-key_width {
+    width: 100%;
+    p {
+      word-break: break-all;
+    }
+  }
+  &__content {
+    padding-left: 15px;
+    padding-right: 15px;
+    button {
+      margin-bottom: 15px;
+      margin-right: 15px;
+    }
+  }
+}
+.section {
+  margin-top: 45px;
+  margin-bottom: 45px;
+}
+.word-break {
+  word-break: break-all;
+}

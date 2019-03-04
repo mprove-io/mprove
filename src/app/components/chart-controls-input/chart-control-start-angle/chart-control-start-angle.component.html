@@ -1,0 +1,18 @@
+<form [formGroup]="startAngleForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      placeholder="startAngle"
+      data-cy="chartStartAngle"
+      [formControl]="startAngle"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="startAngleBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="startAngleForm.controls['startAngle'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

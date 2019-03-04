@@ -1,0 +1,9 @@
+.envrc
+.git
+.vscode
+.idea
+
+cypress
+cypress-examples
+dist
+node_modules

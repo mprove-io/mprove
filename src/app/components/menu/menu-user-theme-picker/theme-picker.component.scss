@@ -1,0 +1,78 @@
+$color-picker-size: 20px;
+
+.theme-picker {
+  &__wrapper {
+    margin-bottom: 20px;
+  }
+  &__title {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: right;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__colors {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+
+    &-item {
+      margin: 0 5px;
+    }
+  }
+
+  &__divider {
+    position: relative;
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 90%;
+      height: 1px;
+      margin-left: 5%;
+      bottom: 0;
+    }
+  }
+
+  &__item {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 0;
+    overflow: visible;
+    min-width: 0;
+    width: $color-picker-size;
+    height: $color-picker-size;
+    border-radius: $color-picker-size;
+
+    /deep/ .mat-menu-ripple {
+      border-radius: $color-picker-size !important;
+      overflow: hidden !important;
+    }
+  }
+
+  &__figure {
+    display: block;
+    position: relative;
+    width: $color-picker-size;
+    height: $color-picker-size;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  &__chosen-icon {
+    color: transparent;
+    position: absolute;
+    left: 51%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    border-radius: 50%;
+    font-size: 20px;
+  }
+}

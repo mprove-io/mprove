@@ -1,0 +1,13 @@
+@mixin chart-theme($theme) {
+  $is-dark: map-get($theme, is-dark);
+
+  .chart {
+    &__toolbar {
+      @if $is-dark != true {
+        background-color: #eee;
+      } @else {
+        background: #414141;
+      }
+    }
+  }
+}

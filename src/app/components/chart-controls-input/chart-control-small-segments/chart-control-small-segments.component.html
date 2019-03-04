@@ -1,0 +1,18 @@
+<form [formGroup]="smallSegmentsForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      placeholder="smallSegments"
+      data-cy="chartSmallSegments"
+      [formControl]="smallSegments"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="smallSegmentsBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="smallSegmentsForm.controls['smallSegments'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

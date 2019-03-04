@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-prettier",
+    "./tslint-base.json",
+    "./tslint-codelyzer.json"
+  ],
+  "rulesDirectory": ["node_modules/codelyzer"],
+  "rules": {
+    // "directive-selector": [true, "attribute", ["dir-prefix1", "dir-prefix2"], "camelCase"],
+    "component-selector": [true, "element", ["m"], "kebab-case"]
+  }
+}

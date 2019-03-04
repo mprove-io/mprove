@@ -1,0 +1,54 @@
+<div fxLayout="column" fxFlexFill class="data">
+  <div
+    fxFlex
+    *ngIf="mconfigSelectFields.length === 0"
+    class="data__empty-title"
+    fxLayoutAlign="center center"
+  >
+    <h3>Select some fields...</h3>
+  </div>
+
+  <div class="data__table" *ngIf="mconfigSelectFields.length !== 0">
+    <m-main-table
+      [columns]="mconfigSelectFields"
+      [filteredData]="filteredData"
+    ></m-main-table>
+  </div>
+
+  <div
+    fxFlex
+    fxLayoutAlign="center center"
+    *ngIf="
+      mconfigSelectFields.length !== 0 &&
+      emptyData &&
+      mconfigSelectFields.length > 0
+    "
+  >
+    <h3 class="data__empty-title">Run query to get data...</h3>
+  </div>
+
+  <div fxLayout="row" class="table-row-col">
+    <form [formGroup]="limitForm" class="limit-form ml-10">
+      <mat-form-field>
+        <input
+          matInput
+          data-cy="modelMconfigDataLimit"
+          placeholder="LIMIT"
+          type="number"
+          formControlName="limit"
+          (blur)="limitBlur(limitForm.controls['limit'])"
+        />
+        <mat-error>
+          <m-validation-msg
+            [errors]="limitForm.controls['limit'].errors"
+          ></m-validation-msg>
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="(mconfigSelectFields$ | async)"></div>
+<div *ngIf="(sortings$ | async)"></div>
+<div *ngIf="(mconfigLimit$ | async)"></div>
+<div *ngIf="(fields$ | async)"></div> <div *ngIf="(data$ | async)"></div>

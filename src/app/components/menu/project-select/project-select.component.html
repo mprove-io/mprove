@@ -1,0 +1,70 @@
+<!-- desktop -->
+<div fxHide.lt-md>
+  <button
+    mat-button
+    data-cy="projectSelectMenuButton"
+    class="space__button_hover_primary"
+    [matMenuTriggerFor]="menu"
+  >
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <div class="mat-button__text">Projects</div>
+      <mat-icon class="space__toolbar-icon">expand_more</mat-icon>
+    </div>
+  </button>
+
+  <mat-menu xPosition="before" yPosition="below" #menu="matMenu">
+    <div class="menu">
+      <div class="menu__options">
+        <div class="menu__options-group">
+          <div class="menu__options-title">Projects</div>
+          <button
+            mat-menu-item
+            *ngFor="let projectId of (projectsIds$ | async)"
+            data-cy="projectSelectMenuProjectItemButton"
+            [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']"
+          >
+            &nbsp;&nbsp;{{ projectId | capitalize }}
+          </button>
+          <button
+            mat-menu-item
+            (click)="openNewProjectDialog()"
+            data-cy="projectSelectMenuNewProjectButton"
+          >
+            <mat-icon>add</mat-icon>New project</button
+          >
+        </div>
+      </div>
+    </div>
+  </mat-menu>
+</div>
+
+<!-- mobile -->
+<div fxHide.gt-sm>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Projects </mat-panel-title>
+        <mat-panel-description>
+          {{ layoutProjectId$ | async | capitalize }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <button
+        mat-menu-item
+        *ngFor="let projectId of (projectsIds$ | async)"
+        data-cy="projectSelectMenuProjectItemButtonMobile"
+        [routerLink]="['/project', projectId, 'mode', 'prod', 'blockml']"
+      >
+        &nbsp;&nbsp;{{ projectId | capitalize }}
+      </button>
+
+      <button
+        mat-menu-item
+        (click)="openNewProjectDialog()"
+        data-cy="projectSelectMenuNewProjectButtonMobile"
+      >
+        <mat-icon>add</mat-icon>New project</button
+      >
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

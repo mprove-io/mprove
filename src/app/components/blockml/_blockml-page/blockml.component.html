@@ -1,0 +1,258 @@
+<div fxLayout="column" fxFlexFill>
+  <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
+    <button
+      fxHide.gt-sm
+      mat-button
+      class="blockml-sidenav-button"
+      (click)="sidenav.toggle()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <span class="space__sub-toolbar_text" data-cy="blockmlTitle">BlockML</span>
+
+    <span *ngIf="!(isDev$ | async); else: devRepo" data-cy="blockmlTitleMode"
+      >Prod</span
+    >
+
+    <ng-template #devRepo>
+      <span data-cy="blockmlTitleMode">Dev</span>
+    </ng-template>
+
+    <span class="example-fill-remaining-space"></span>
+
+    <div fxHide.lt-md fxLayout="row" *ngIf="(isDev$ | async)">
+      <button
+        mat-raised-button
+        color="accent"
+        class="blockml-top-btn"
+        data-cy="blockmlCommitButton"
+        [disabled]="(needSave$ | async) || !(repoIsNeedCommit$ | async)"
+        (click)="commit()"
+        >Commit
+      </button>
+    </div>
+
+    <div
+      fxHide.lt-md
+      fxLayout="row"
+      *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)"
+    >
+      <button
+        mat-raised-button
+        color="accent"
+        class="blockml-top-btn"
+        data-cy="blockmlPullFromRemoteButton"
+        [disabled]="needSave$ | async"
+        (click)="pullFromRemote()"
+        >Pull From Remote
+      </button>
+    </div>
+
+    <div
+      fxHide.lt-md
+      fxLayout="row"
+      *ngIf="(isDev$ | async) && (repoIsNeedPull$ | async)"
+    >
+      <button
+        mat-raised-button
+        color="accent"
+        class="blockml-top-btn"
+        data-cy="blockmlPullButton"
+        [disabled]="needSave$ | async"
+        (click)="pull()"
+        >Pull
+      </button>
+    </div>
+
+    <div fxHide.lt-md *ngIf="(isDev$ | async)">
+      <button
+        mat-raised-button
+        color="accent"
+        class="blockml-top-btn"
+        data-cy="blockmlPushToProductionButton"
+        [disabled]="
+          (needSave$ | async) ||
+          !(repoIsNeedPush$ | async) ||
+          (errorsExist$ | async) ||
+          !(canPush$ | async)
+        "
+        (click)="push()"
+        >Push to Production
+      </button>
+    </div>
+
+    <button
+      *ngIf="(isDev$ | async)"
+      fxHide.lt-md
+      mat-icon-button
+      data-cy="blockmlOptionsButton"
+      [matMenuTriggerFor]="repoMenu"
+      [disabled]="needSave$ | async"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <button
+      mat-button
+      fxHide.gt-sm
+      class="mobile-menu__button"
+      (click)="sidenavRight.toggle()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-sidenav-container (backdropClick)="close(); closeRight()">
+    <mat-sidenav
+      #sidenav
+      (keydown.escape)="close()"
+      class="mat-sidenav"
+      disableClose
+    >
+      <m-catalog-tree></m-catalog-tree>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <div fxLayout="row" class="blockml-sidenav-content">
+        <div
+          fxFlex="20%"
+          fxLayout="column"
+          fxHide.lt-md
+          class="space_border_right"
+        >
+          <m-catalog-tree fxFlex></m-catalog-tree>
+        </div>
+
+        <div fxFlex class="blockml-sidenav-content-center">
+          <div
+            *ngIf="
+              (fileIsNotSelected$ | async) && !(remotePageIsActive$ | async)
+            "
+            fxLayoutAlign="center center"
+            class="m-body"
+          >
+            <h3>Select file...</h3>
+          </div>
+          <router-outlet></router-outlet>
+        </div>
+
+        <div
+          fxFlex="20%"
+          fxLayout="column"
+          class="space_border_left mp-overflow-auto"
+        >
+          <m-conflicts
+            fxFlex
+            *ngIf="(repoIsNeedResolve$ | async)"
+          ></m-conflicts>
+
+          <m-errors
+            fxFlex
+            *ngIf="(errorsExist$ | async) && !(repoIsNeedResolve$ | async)"
+          ></m-errors>
+
+          <m-hint
+            fxFlex
+            *ngIf="!(errorsExist$ | async) && !(repoIsNeedResolve$ | async)"
+          ></m-hint>
+        </div>
+      </div>
+    </mat-sidenav-content>
+
+    <mat-sidenav
+      #sidenavRight
+      position="end"
+      (keydown.escape)="closeRight()"
+      class="mat-sidenav blockml-sidenav-right"
+      disableClose
+    >
+      <div *ngIf="(isDev$ | async)">
+        <button
+          mat-raised-button
+          color="accent"
+          data-cy="blockmlCommitButtonMobile"
+          [disabled]="(needSave$ | async) || !(repoIsNeedCommit$ | async)"
+          (click)="commit()"
+          >Commit
+        </button>
+      </div>
+
+      <div *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)">
+        <button
+          mat-raised-button
+          color="accent"
+          data-cy="blockmlPullFromRemoteButtonMobile"
+          [disabled]="needSave$ | async"
+          (click)="pullFromRemote()"
+          >Pull From Remote
+        </button>
+      </div>
+
+      <div *ngIf="(isDev$ | async) && (repoIsNeedPull$ | async)">
+        <button
+          mat-raised-button
+          color="accent"
+          data-cy="blockmlPullButtonMobile"
+          [disabled]="needSave$ | async"
+          (click)="pull()"
+          >Pull
+        </button>
+      </div>
+
+      <div *ngIf="(isDev$ | async)">
+        <button
+          mat-raised-button
+          color="accent"
+          data-cy="blockmlPushToProductionButtonMobile"
+          [disabled]="
+            (needSave$ | async) ||
+            !(repoIsNeedPush$ | async) ||
+            (errorsExist$ | async) ||
+            !(canPush$ | async)
+          "
+          (click)="push()"
+          >Push to Production
+        </button>
+      </div>
+
+      <button
+        mat-menu-item
+        data-cy="blockmlRevertRepoToLastCommitButtonMobile"
+        (click)="revertRepoToLastCommit()"
+      >
+        Revert Repo to Last Commit</button
+      >
+
+      <button
+        mat-menu-item
+        data-cy="blockmlRevertRepoToProductionButtonMobile"
+        (click)="revertRepoToProduction()"
+      >
+        Revert Repo to Production</button
+      >
+    </mat-sidenav>
+  </mat-sidenav-container>
+</div>
+
+<mat-menu #repoMenu="matMenu">
+  <button
+    mat-menu-item
+    data-cy="blockmlRevertRepoToLastCommitButton"
+    (click)="revertRepoToLastCommit()"
+  >
+    Revert Repo to Last Commit</button
+  >
+
+  <button
+    mat-menu-item
+    data-cy="blockmlRevertRepoToProductionButton"
+    (click)="revertRepoToProduction()"
+  >
+    Revert Repo to Production</button
+  >
+</mat-menu>
+
+<div *ngIf="(projectId$ | async)"></div> <div *ngIf="(mode$ | async)"></div>
+<div *ngIf="(repoId$ | async)"></div>
+<div *ngIf="(repoServerTs$ | async)"></div>

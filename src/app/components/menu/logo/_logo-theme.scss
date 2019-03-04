@@ -1,0 +1,13 @@
+@mixin logo-theme($theme) {
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+  $is-dark: map-get($theme, is-dark);
+
+  .logo {
+    @if $is-dark == true {
+      background-image: url('/assets/app/mprove_logo_box_dark.png');
+    } @else {
+      background-image: url('/assets/app/mprove_logo_box_white.png');
+    }
+  }
+}

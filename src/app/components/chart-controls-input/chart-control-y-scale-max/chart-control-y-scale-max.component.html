@@ -1,0 +1,18 @@
+<form [formGroup]="yScaleMaxForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      placeholder="yScaleMax"
+      data-cy="chartYScaleMax"
+      [formControl]="yScaleMax"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="yScaleMaxBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="yScaleMaxForm.controls['yScaleMax'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

@@ -1,0 +1,11 @@
+import { Action } from '@ngrx/store';
+import * as api from '@app/api/_index';
+import * as actionTypes from '@app/store-actions/action-types';
+
+export class SwitchAnalyticsSubscriptionPlanAction implements Action {
+  readonly type = actionTypes.SWITCH_ANALYTICS_SUBSCRIPTION_PLAN;
+
+  constructor(
+    public payload: api.SwitchAnalyticsSubscriptionPlanRequestBody['payload']
+  ) {}
+}

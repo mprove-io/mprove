@@ -1,0 +1,38 @@
+@mixin theme-picker-theme($theme) {
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $is-dark: map-get($theme, is-dark);
+
+  .theme-picker {
+    &__title {
+      color: mat-color($foreground, text);
+    }
+
+    &__divider:after {
+      @if ($is-dark) {
+        background-color: rgba(255, 255, 255, 0.5);
+      } @else {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    &__chosen-icon {
+      border: 3px solid mat-color($accent);
+    }
+    &__item {
+      border: 3px solid rgba(0, 0, 0, 0.2) !important;
+    }
+  }
+}
+.theme-picker__light {
+  .mat-menu-ripple {
+    background-color: #eee;
+  }
+}
+.theme-picker__dark {
+  .mat-menu-ripple {
+    background-color: rgba(0, 0, 0, 0.87);
+  }
+}

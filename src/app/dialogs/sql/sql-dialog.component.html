@@ -1,0 +1,16 @@
+<div class="sql mp-min-width-3 mp-max-width-3">
+  <mat-toolbar>
+    <a>{{ data.name }}</a>
+  </mat-toolbar>
+
+  <ngx-monaco-editor
+    *ngIf="sqlEditorTheme"
+    class="sql__code-editor"
+    data-cy="sqlCodeEditor"
+    [options]="editorOptions"
+    [(ngModel)]="data.sql"
+    (onInit)="onEditorInit($event)"
+  ></ngx-monaco-editor>
+</div>
+
+<div *ngIf="(sqlEditorTheme$ | async)"></div>

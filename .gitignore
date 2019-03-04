@@ -1,0 +1,31 @@
+.envrc
+# System Files
+.DS_Store
+Thumbs.db
+
+# compiled output
+dist
+
+# dependencies
+node_modules
+cypress/node_modules
+
+# IDEs and editors
+/.idea
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# debug
+yarn-error.log
+
+# e2e
+/reports/*.json
+
+/cypress/screenshots
+/cypress/videos
+/cypress-examples

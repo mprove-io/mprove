@@ -1,0 +1,79 @@
+<div fxLayout="column" fxFlexFill>
+  <nav mat-tab-nav-bar class="filter-toolbar">
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <a
+        mat-tab-link
+        data-cy="queryTabFilters"
+        (click)="navigateToFilters()"
+        [active]="activeLinkIndex === 0"
+      >
+        <mat-icon
+          matTooltip="error: duplicate filters"
+          *ngIf="mconfigFilterErrors"
+          color="warn"
+          [matTooltipShowDelay]="appConfig.tooltipDelay"
+          >error</mat-icon
+        >
+
+        <span>Filters ({{ filters.length }})</span>
+      </a>
+
+      <a
+        mat-tab-link
+        data-cy="queryTabSql"
+        (click)="navigateToSql()"
+        [active]="activeLinkIndex === 1"
+      >
+        SQL
+      </a>
+
+      <a
+        mat-tab-link
+        data-cy="queryTabData"
+        (click)="navigateToData()"
+        [active]="activeLinkIndex === 2"
+      >
+        Data
+      </a>
+
+      <a
+        mat-tab-link
+        *ngFor="let chart of charts; let i = index"
+        data-cy="queryTabChart"
+        (click)="navigateChart(chart.chart_id)"
+        [active]="activeLinkIndex === i + 3"
+      >
+        <img
+          class="query__chart-icon"
+          width="22"
+          [src]="'/assets/app/charts/' + (chart.type | chartIcon) + '.svg'"
+          alt="chart"
+        />
+      </a>
+
+      <button
+        mat-icon-button
+        color="primary"
+        data-cy="queryTabAddChartButton"
+        (click)="addChart()"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </nav>
+
+  <div *ngIf="queryStatus === queryStatusEnum.Error" class="query__error">
+    <div class="query__error-text">
+      <mat-icon class="query__error-icon" color="warn">warning</mat-icon>
+      {{ queryLastErrorMessage }}
+    </div>
+  </div>
+
+  <div fxFlex="1 1 calc(100%-80px)"> <router-outlet></router-outlet> </div>
+</div>
+
+<div *ngIf="(queryId$ | async)"></div>
+<div *ngIf="(queryStatus$ | async)"></div>
+<div *ngIf="(queryLastErrorMessage$ | async)"></div>
+<div *ngIf="(filters$ | async)"></div> <div *ngIf="(mconfig$ | async)"></div>
+<div *ngIf="(charts$ | async)"></div> <div *ngIf="(routerPath$ | async)"></div>

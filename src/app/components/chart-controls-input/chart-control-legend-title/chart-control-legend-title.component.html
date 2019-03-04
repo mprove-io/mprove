@@ -1,0 +1,19 @@
+<form [formGroup]="legendTitleForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="text"
+      data-cy="chartLegendTitle"
+      placeholder="Legend Title"
+      class="mp-chart-editor-field-full-width"
+      [formControl]="legendTitle"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="legendTitleBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="legendTitleForm.controls['legendTitle'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

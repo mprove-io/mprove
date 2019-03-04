@@ -1,0 +1,27 @@
+.billing {
+  &__content {
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow: auto;
+  }
+  &-descr__value {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    p {
+      padding-left: 10px;
+    }
+  }
+  &__table {
+    min-width: 700px;
+  }
+}
+/deep/.mat-table {
+  &__wrapper {
+    margin-bottom: 30px;
+    min-width: 100%;
+    overflow-x: scroll;
+  }
+}
+/deep/.payment__table {
+  min-width: 700px;
+}

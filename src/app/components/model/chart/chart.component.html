@@ -1,0 +1,54 @@
+<mat-sidenav-container (backdropClick)="close()">
+  <mat-sidenav
+    #sidenav
+    (keydown.escape)="close()"
+    position="end"
+    class="mat-sidenav"
+    disableClose
+  >
+    <div *ngIf="visual">
+      <m-chart-editor
+        [chart]="visual.chart"
+        [selectFields]="visual.select_fields"
+      ></m-chart-editor>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div fxLayout="column" fxFlexFill>
+      <div fxFlex fxLayout="row" *ngIf="visual">
+        <div fxFlex fxLayout="column" fxFlexFill>
+          <mat-toolbar class="chart__toolbar space_border_bottom">
+            <span>Chart</span>
+
+            <div class="example-fill-remaining-space"></div>
+
+            <button mat-button fxHide.gt-sm (click)="sidenav.toggle()">
+              <mat-icon>menu</mat-icon>
+            </button>
+          </mat-toolbar>
+
+          <m-chart-viewer
+            fxFlex
+            [backgroundColor]="dashTheme"
+            [visual]="visual"
+          ></m-chart-viewer>
+        </div>
+
+        <m-chart-editor
+          fxFlex="25%"
+          fxHide.lt-md
+          [chart]="visual.chart"
+          [selectFields]="visual.select_fields"
+        ></m-chart-editor>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<div *ngIf="(visual$ | async)"></div>
+<!--
+  <div *ngIf="chart$ | async"></div>
+  <div *ngIf="selectFields$ | async"></div>
+-->
+<div *ngIf="(dashTheme$ | async)"></div>

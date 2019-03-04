@@ -1,0 +1,21 @@
+<mat-form-field>
+  <mat-select
+    placeholder="SchemeType"
+    data-cy="chartSchemeType"
+    class="mp-chart-editor-field-full-width"
+    [(ngModel)]="chart.scheme_type"
+    (selectionChange)="schemeTypeChange($event)"
+  >
+    <mat-option
+      [value]="chartSchemeTypeEnum.Ordinal"
+      data-cy="chartSchemeTypeOrdinal"
+      >Ordinal</mat-option
+    >
+
+    <mat-option
+      [value]="chartSchemeTypeEnum.Linear"
+      data-cy="chartSchemeTypeLinear"
+      >Linear</mat-option
+    >
+  </mat-select>
+</mat-form-field>

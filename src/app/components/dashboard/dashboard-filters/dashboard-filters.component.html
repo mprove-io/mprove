@@ -1,0 +1,60 @@
+<div
+  fxLayout="column"
+  class="dashboard-filters"
+  *ngFor="
+    let dashboardField of dashboardFields;
+    let dashboardFieldIndex = index
+  "
+>
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <button
+      mat-icon-button
+      color="primary"
+      (click)="addFraction(dashboardField, dashboardFieldIndex)"
+    >
+      <mat-icon data-cy="addDashboardFraction">add</mat-icon>
+    </button>
+
+    <strong>{{ dashboardField.label | capitalize }}</strong>
+  </div>
+
+  <div
+    fxLayout="row"
+    fxLayoutGap="20px"
+    fxLayoutAlign="start center"
+    *ngFor="
+      let fraction of dashboardField.fractions;
+      let isFirst = first;
+      let fractionIndex = index
+    "
+  >
+    <m-fraction
+      [fieldResult]="dashboardField.result"
+      [fraction]="fraction"
+      [fractionIndex]="fractionIndex"
+      [isFirst]="isFirst"
+      (fractionUpdate)="
+        updateFraction(dashboardField, dashboardFieldIndex, $event)
+      "
+    >
+    </m-fraction>
+
+    <button
+      *ngIf="dashboardField.fractions.length > 1"
+      mat-icon-button
+      color="warn"
+      (click)="
+        deleteFraction(dashboardField, dashboardFieldIndex, fractionIndex)
+      "
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <span *ngIf="fraction.has_duplicates" class="dashboard-filters__error"
+      >duplicate filter</span
+    >
+  </div>
+</div>
+
+<div *ngIf="(dashboard$ | async)"></div>
+<div *ngIf="(dashboardFields$ | async)"></div>

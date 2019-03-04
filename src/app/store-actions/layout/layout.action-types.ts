@@ -1,0 +1,27 @@
+import { ngrxType } from '@app/ngrx/ngrx-type';
+
+export const UPDATE_LAYOUT_PROJECT_ID = ngrxType('UPDATE_LAYOUT_PROJECT_ID');
+export const SET_LAYOUT_MODE_DEV = ngrxType('SET_LAYOUT_MODE_DEV');
+export const SET_LAYOUT_MODE_PROD = ngrxType('SET_LAYOUT_MODE_PROD');
+export const SET_LAYOUT_NEED_SAVE_TRUE = ngrxType('SET_LAYOUT_NEED_SAVE_TRUE');
+export const SET_LAYOUT_NEED_SAVE_FALSE = ngrxType(
+  'SET_LAYOUT_NEED_SAVE_FALSE'
+);
+export const UPDATE_LAYOUT_FILE_ID = ngrxType('UPDATE_LAYOUT_FILE_ID');
+export const UPDATE_LAYOUT_MCONFIG_ID = ngrxType('UPDATE_LAYOUT_MCONFIG_ID');
+export const UPDATE_LAYOUT_MODEL_ID = ngrxType('UPDATE_LAYOUT_MODEL_ID');
+export const UPDATE_LAYOUT_DASHBOARD_ID = ngrxType(
+  'UPDATE_LAYOUT_DASHBOARD_ID'
+);
+export const UPDATE_LAYOUT_QUERY_ID = ngrxType('UPDATE_LAYOUT_QUERY_ID');
+export const UPDATE_LAYOUT_CHART_ID = ngrxType('UPDATE_LAYOUT_CHART_ID');
+export const UPDATE_LAYOUT_DRY = ngrxType('UPDATE_LAYOUT_DRY');
+export const UPDATE_LAYOUT_EMAIL_TO_VERIFY = ngrxType(
+  'UPDATE_LAYOUT_EMAIL_TO_VERIFY'
+);
+export const UPDATE_LAYOUT_EMAIL_TO_RESET_PASSWORD = ngrxType(
+  'UPDATE_LAYOUT_EMAIL_TO_RESET_PASSWORD'
+);
+export const UPDATE_LAYOUT_LAST_WS_MSG_TS = ngrxType(
+  'UPDATE_LAYOUT_LAST_WS_MSG_TS'
+);

@@ -1,0 +1,58 @@
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h3 data-cy="loginTitle">Sign In</h3>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+    <br />
+
+    <mat-form-field>
+      <input
+        matInput
+        data-cy="loginEmailInput"
+        formControlName="email"
+        placeholder="email"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="loginForm.controls['email'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <mat-form-field>
+      <input
+        matInput
+        type="password"
+        data-cy="loginPasswordInput"
+        formControlName="password"
+        placeholder="password"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="loginForm.controls['password'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <br />
+    <br />
+
+    <button
+      data-cy="loginSignInButton"
+      type="submit"
+      color="primary"
+      mat-raised-button
+      [disabled]="!loginForm.valid"
+      >Sign In
+    </button>
+
+    <button
+      data-cy="loginForgotPasswordButton"
+      type="button"
+      class="forgot-password-button"
+      mat-raised-button
+      (click)="openResetPasswordDialog()"
+      >Forgot Password?
+    </button>
+  </form>
+</div>

@@ -1,0 +1,50 @@
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h3 data-cy="registerTitle">Register</h3>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
+    <br />
+
+    <mat-form-field>
+      <input
+        matInput
+        data-cy="registerEmailInput"
+        formControlName="email"
+        placeholder="email"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="registerForm.controls['email'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <br />
+
+    <mat-form-field>
+      <input
+        matInput
+        type="password"
+        data-cy="registerPasswordInput"
+        formControlName="password"
+        placeholder="password"
+      />
+      <mat-error>
+        <m-validation-msg
+          [errors]="registerForm.controls['password'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <br />
+    <br />
+
+    <button
+      type="submit"
+      data-cy="registerRegisterButton"
+      color="primary"
+      mat-raised-button
+      [disabled]="!registerForm.valid"
+      >Register
+    </button>
+  </form>
+</div>

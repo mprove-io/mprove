@@ -1,0 +1,33 @@
+<!-- desktop -->
+<div fxHide.lt-md *ngIf="projectId">
+  <button
+    mat-button
+    class="space__button_hover_primary"
+    [routerLink]="['/project', projectId, 'mode', mode, 'blockml']"
+  >
+    <mat-icon class="space__toolbar-icon">folder_open</mat-icon>
+    <span class="mat-button__text">BlockML</span>
+  </button>
+</div>
+
+<!-- mobile -->
+<div fxHide.gt-sm *ngIf="projectId">
+  <mat-accordion>
+    <mat-expansion-panel hideToggle="true" disabled="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <button
+            mat-menu-item
+            [routerLink]="['/project', projectId, 'mode', mode, 'blockml']"
+          >
+            <mat-icon>folder_open</mat-icon>
+            <span>BlockML</span>
+          </button>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+<!-- async -->
+<div *ngIf="(projectId$ | async)"></div> <div *ngIf="(mode$ | async)"></div>

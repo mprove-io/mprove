@@ -1,0 +1,29 @@
+<div fxLayout="column" fxFlexFill>
+  <mat-toolbar
+    data-cy="blockmlConflictsTitle"
+    class="conflict__toolbar space_border_bottom"
+  >
+    Conflicts
+  </mat-toolbar>
+
+  <div fxFlex class="mp-overflow-auto">
+    <button
+      mat-menu-item
+      *ngFor="let line of (conflicts$ | async)"
+      data-cy="blockmlConflictLine"
+      (click)="conflictLineClick(line)"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+    >
+      <div>
+        <a> {{ line.file_name }} </a>
+      </div>
+
+      <div fxFlex></div>
+
+      <div>
+        <a> {{ line.line_number }} </a>
+      </div>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,255 @@
+<div
+  [ngClass]="{
+    'dashboard-light': dashTheme === dashThemeEnum.Light,
+    'dashboard-dark': dashTheme === dashThemeEnum.Dark
+  }"
+  fxLayout="column"
+  fxFlexFill
+>
+  <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
+    <span fxHide.lt-md data-cy="dashboardTitle">Dashboard</span>
+
+    <button
+      fxHide.lt-md
+      mat-raised-button
+      [disabled]="!fileId"
+      class="dashboard__go-to-file"
+      (click)="gotToFile()"
+      >{{
+        dashboardIsTemp ? 'temp' : dashboardTitle ? dashboardTitle : dashboardId
+      }}</button
+    >
+
+    <mat-icon
+      fxHide.lt-md
+      *ngIf="(dashboardDescription$ | async)"
+      class="info-icon"
+      [matTooltip]="dashboardDescription$ | async"
+      [matTooltipShowDelay]="appConfig.tooltipDelay"
+      [matTooltipPosition]="'below'"
+      >info_outline
+    </mat-icon>
+
+    <span fxHide.lt-md class="mr-10">reports</span>
+
+    <div
+      fxHide.lt-md
+      *ngIf="dryTs && drySize"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+      class="dashboard__report"
+    >
+      <div
+        *ngIf="drySize !== 'need PDTs'"
+        matTooltip="Dashboard will process {{drySize}} when run (checked by Run Dry {{dryTimeAgo$ | async}})"
+        [matTooltipShowDelay]="appConfig.tooltipDelay"
+        [matTooltipPosition]="'below'"
+      >
+        {{ drySize }} - {{ dryTimeAgo$ | async }}
+      </div>
+
+      <div
+        *ngIf="drySize === 'need PDTs'"
+        matTooltip="Run Dry estimate needs PDTs to be created first (checked {{dryTimeAgo$ | async}})"
+        [matTooltipShowDelay]="appConfig.tooltipDelay"
+        [matTooltipPosition]="'below'"
+      >
+        need PDTs - {{ dryTimeAgo$ | async }}
+      </div>
+    </div>
+
+    <ng-template
+      tdLoading="dry"
+      tdLoadingType="circular"
+      tdLoadingMode="indeterminate"
+      tdLoadingStrategy="replace"
+      tdLoadingColor="primary"
+    >
+    </ng-template>
+    <div class="tdloading-size"></div>
+
+    <span class="example-fill-remaining-space"></span>
+
+    <div
+      *ngIf="(inProgressQueryExists$ | async)"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+    >
+      <ng-template
+        tdLoading
+        [tdLoadingUntil]="false"
+        tdLoadingStrategy="replace"
+      >
+      </ng-template>
+      <div class="tdloading-size"></div>
+
+      <div fxLayout="row" fxHide.lt-md>
+        <div class="running__text mr-10">In progress...</div>
+      </div>
+
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="(userId$ | async) !== (lastRunBy$ | async)"
+        (click)="cancel()"
+        >Cancel
+      </button>
+    </div>
+
+    <button
+      *ngIf="!(inProgressQueryExists$ | async)"
+      mat-raised-button
+      [color]="(allQueriesHaveData$ | async) ? 'primary' : 'accent'"
+      [disabled]="visuals.length === 0"
+      (click)="run()"
+      >Run
+    </button>
+
+    <button
+      fxHide.lt-md
+      mat-icon-button
+      [disabled]="visuals.length === 0"
+      [matMenuTriggerFor]="dashboardMenu"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <button
+      mat-button
+      fxHide.gt-sm
+      class="mobile-menu__button mobile-menu__button-right"
+      (click)="sidenavRight.toggle()"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-sidenav-container (backdropClick)="closeRight()">
+    <mat-sidenav-content>
+      <div fxFlex class="mp-overflow-auto" fxLayout="column">
+        <m-dashboard-filters
+          class="m-dashboard-filters"
+          *ngIf="dashboardFields.length > 0"
+        ></m-dashboard-filters>
+
+        <div fxFlex class="dashboard__grid-background">
+          <mat-grid-list fxHide.lt-md cols="12" rowHeight="100px">
+            <mat-grid-tile
+              *ngFor="let visual of visuals; trackBy: trackByFn"
+              [colspan]="
+                visual.chart.tile_width === tileWidthEnum._1
+                  ? 1
+                  : visual.chart.tile_width === tileWidthEnum._2
+                  ? 2
+                  : visual.chart.tile_width === tileWidthEnum._3
+                  ? 3
+                  : visual.chart.tile_width === tileWidthEnum._4
+                  ? 4
+                  : visual.chart.tile_width === tileWidthEnum._5
+                  ? 5
+                  : visual.chart.tile_width === tileWidthEnum._6
+                  ? 6
+                  : visual.chart.tile_width === tileWidthEnum._7
+                  ? 7
+                  : visual.chart.tile_width === tileWidthEnum._8
+                  ? 8
+                  : visual.chart.tile_width === tileWidthEnum._9
+                  ? 9
+                  : visual.chart.tile_width === tileWidthEnum._10
+                  ? 10
+                  : visual.chart.tile_width === tileWidthEnum._11
+                  ? 11
+                  : 12
+              "
+              [rowspan]="visual.chart.tile_height / 100"
+            >
+              <div
+                fxLayout="column"
+                fxFlexFill
+                class="dashboard__column-background"
+              >
+                <m-report-title [visual]="visual"></m-report-title>
+
+                <div fxFlex fxLayout="column" fxFlexFill>
+                  <m-visual fxFlex [visual]="visual"></m-visual>
+                </div>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+
+          <mat-grid-list fxHide.gt-sm cols="1" rowHeight="100px">
+            <mat-grid-tile
+              *ngFor="let visual of visuals; trackBy: trackByFn"
+              [colspan]="1"
+              [rowspan]="visual.chart.tile_height / 100"
+            >
+              <div
+                fxLayout="column"
+                fxFlexFill
+                class="dashboard__column-background"
+              >
+                <m-report-title [visual]="visual"></m-report-title>
+
+                <div fxFlex fxLayout="column" fxFlexFill>
+                  <m-visual fxFlex [visual]="visual"></m-visual>
+                </div>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+        </div>
+      </div>
+    </mat-sidenav-content>
+
+    <mat-sidenav
+      #sidenavRight
+      position="end"
+      (keydown.escape)="closeRight()"
+      class="mat-sidenav dashboard-mobile-side"
+      disableClose
+    >
+      <button mat-menu-item (click)="runDry()"
+        >Run Dry (estimate data size)</button
+      >
+
+      <button mat-menu-item (click)="runRefresh()">Refresh PDTs and Run</button>
+
+      <div
+        *ngIf="dryTs && drySize"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        class="dashboard__report"
+      >
+        <div
+          *ngIf="drySize !== 'need PDTs'"
+          matTooltip="Dashboard will process {{drySize}} when run (checked by Run Dry {{dryTimeAgo$ | async}})"
+          [matTooltipShowDelay]="appConfig.tooltipDelay"
+          [matTooltipPosition]="'below'"
+        >
+          {{ drySize }} - {{ dryTimeAgo$ | async }}
+        </div>
+
+        <div
+          *ngIf="drySize === 'need PDTs'"
+          matTooltip="Run Dry estimate needs PDTs to be created first (checked {{dryTimeAgo$ | async}})"
+          [matTooltipShowDelay]="appConfig.tooltipDelay"
+          [matTooltipPosition]="'below'"
+        >
+          need PDTs - {{ dryTimeAgo$ | async }}
+        </div>
+      </div>
+    </mat-sidenav>
+  </mat-sidenav-container>
+</div>
+
+<mat-menu #dashboardMenu="matMenu">
+  <button mat-menu-item (click)="runDry()">Run Dry (estimate data size)</button>
+  <button mat-menu-item (click)="runRefresh()">Refresh PDTs and Run</button>
+</mat-menu>
+
+<div *ngIf="(dashboardId$ | async)"></div>
+<div *ngIf="(dashboardIsTemp$ | async)"></div>
+<div *ngIf="(dashboardTitle$ | async)"></div>
+<div *ngIf="(layoutDry$ | async)"></div> <div *ngIf="(reports$ | async)"></div>
+<div *ngIf="(dashboardFields$ | async)"></div>
+<div *ngIf="(visuals$ | async)"></div> <div *ngIf="(dashTheme$ | async)"></div>
+<div *ngIf="(fileId$ | async)"></div>

@@ -1,0 +1,29 @@
+<div class="mp-min-width-1 mp-max-width-2">
+  <mat-toolbar color="primary"
+    >Delete {{ selectedProjectId$ | async }} project</mat-toolbar
+  >
+
+  <br />
+  <p
+    >Are you sure you wish to delete
+    {{ selectedProjectId$ | async }} project?</p
+  >
+  <br />
+
+  <button
+    type="submit"
+    color="warn"
+    mat-raised-button
+    data-cy="dialogDeleteProjectYesButton"
+    (click)="onSubmit(); dialogRef.close()"
+    >Yes, Delete
+  </button>
+
+  <button
+    type="reset"
+    class="mp-cancel"
+    mat-raised-button
+    (click)="dialogRef.close()"
+    >Cancel
+  </button>
+</div>

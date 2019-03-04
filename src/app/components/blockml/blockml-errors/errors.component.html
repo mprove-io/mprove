@@ -1,0 +1,58 @@
+<div fxLayout="column" fxFlexFill>
+  <mat-toolbar
+    data-cy="blockmlErrorsTitle"
+    class="error__toolbar space_border_bottom"
+  >
+    Errors
+  </mat-toolbar>
+
+  <div fxFlex class="mp-overflow-auto">
+    <td-steps>
+      <td-step
+        *ngFor="
+          let errorTypeCollection of (errors$ | async | groupBy: errorType)
+        "
+        [state]="stateStep"
+        disableRipple
+      >
+        <ng-template td-step-label>
+          <span
+            >{{ errorTypeCollection[0] }} Errors&nbsp;({{
+              errorTypeCollection[1].length
+            }})</span
+          >
+        </ng-template>
+        <div *ngFor="let error of errorTypeCollection[1]">
+          <div fxLayout="row" fxLayoutAlign="start center">
+            <div>
+              <h6 class="error__title">{{ error.type }}</h6>
+              <p>{{ error.message }}</p>
+            </div>
+          </div>
+
+          <mat-nav-list matLine>
+            <mat-list-item
+              *ngFor="let line of error.lines"
+              (click)="lineOnClick(line)"
+            >
+              <div matLine fxLayout="row" fxLayoutAlign="start center">
+                <div>
+                  <a> {{ line.line_number }} </a>
+                </div>
+
+                <div fxFlex></div>
+
+                <div>
+                  <a> {{ line.file_name }} </a>
+                </div>
+              </div>
+
+              <!-- <a matLine href="...">{{ line.line_number }}</a> -->
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          </mat-nav-list>
+        </div>
+      </td-step>
+    </td-steps>
+  </div>
+</div>

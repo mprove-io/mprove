@@ -1,0 +1,162 @@
+<mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
+  <div data-cy="teamTitle"> {{ selectedProjectId$ | async }} Team </div>
+</mat-toolbar>
+<div class="team__content">
+  <div class="team__table">
+    <td-data-table
+      class="team-table"
+      [data]="selectedProjectMembers$ | async"
+      [columns]="columns"
+    >
+      <ng-template
+        tdDataTableTemplate="picture"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <img
+          class="team-table__member-avatar middle md-36"
+          *ngIf="row.picture_url_big; else: defaultPhoto"
+          [src]="dynamicAssetsBaseUrl + row.picture_url_big"
+          (click)="openMemberBigPicture(row)"
+        />
+        <ng-template #defaultPhoto>
+          <mat-icon class="middle md-36">account_box</mat-icon>
+        </ng-template>
+        <!-- <mat-checkbox [checked]="value" -->
+        <!--
+          [disabled]="!(selectedProjectUserIsAdmin$ | async) || (row['member_id'] === (userId$ | async))"
+        -->
+        <!-- (click)="isAdminToggle(row)"> -->
+        <!-- </mat-checkbox> -->
+      </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="name"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <div layout="row">
+          <span flex>
+            <div data-cy="teamMemberNameData"> {{ row['name'] }} </div>
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="member_id"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <div layout="row">
+          <span flex>
+            <div data-cy="teamMemberEmailData"> {{ row['member_id'] }} </div>
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="alias"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <div layout="row">
+          <span flex>
+            <div data-cy="teamMemberAliasData"> {{ row['alias'] }} </div>
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="is_admin"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <div layout="row">
+          <span flex>
+            <mat-checkbox
+              [checked]="value"
+              [disabled]="
+                !(selectedProjectUserIsAdmin$ | async) ||
+                row['member_id'] === (userId$ | async)
+              "
+              (click)="isAdminToggle(row)"
+              data-cy="teamMemberIsAdminCheckbox"
+            >
+            </mat-checkbox>
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="is_editor"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <div layout="row">
+          <span flex>
+            <mat-checkbox
+              [checked]="value"
+              [disabled]="!(selectedProjectUserIsAdmin$ | async)"
+              (click)="isEditorToggle(row)"
+              data-cy="teamMemberIsEditorCheckbox"
+            >
+            </mat-checkbox>
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="status"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <div layout="row">
+          <span flex>
+            <div data-cy="teamMemberStatusData"> {{ row['status'] }} </div>
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="delete"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <div layout="row">
+          <span flex>
+            <button
+              mat-icon-button
+              color="warn"
+              [disabled]="
+                row['member_id'] === (userId$ | async) ||
+                !(selectedProjectUserIsAdmin$ | async)
+              "
+              (click)="deleteMember(row)"
+              data-cy="teamMemberDeleteButton"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        </div>
+      </ng-template>
+    </td-data-table>
+  </div>
+  <div class="team__bottom">
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!(selectedProjectUserIsAdmin$ | async)"
+      (click)="openInviteMemberDialog()"
+      data-cy="teamInviteMemberButton"
+      >Invite member</button
+    >
+  </div>
+</div>

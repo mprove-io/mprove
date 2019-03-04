@@ -1,0 +1,32 @@
+@mixin chart-viewer-theme($theme) {
+  $is-dark: map-get($theme, is-dark);
+  .chart-viewer {
+    &__toolbar {
+      @if $is-dark != true {
+        background-color: #eee;
+      }
+    }
+  }
+}
+@mixin chartViewerStyle($columnBackground, $columnColor) {
+  .chart-viewer {
+    &__layout-background {
+      background-color: $columnBackground;
+      color: $columnColor;
+    }
+  }
+}
+.chart-viewer-dark {
+  @include chartViewerStyle(#484a51, #fff);
+  .mat-grid-list {
+    background: #1b1e27;
+  }
+}
+
+.chart-viewer-light {
+  @include chartViewerStyle(#f1f1f1, #000);
+}
+
+.mat-grid-list {
+  background: rgba(255, 255, 255, 1);
+}

@@ -1,0 +1,18 @@
+<form [formGroup]="barPaddingForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      data-cy="chartBarPadding"
+      placeholder="barPadding"
+      [formControl]="barPadding"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="barPaddingBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="barPaddingForm.controls['barPadding'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

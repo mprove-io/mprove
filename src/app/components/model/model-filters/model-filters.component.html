@@ -1,0 +1,62 @@
+<div class="model-filters">
+  <h3
+    *ngIf="filters.length === 0; else: filtersList"
+    class="model-filters__title"
+    >Filter some fields...</h3
+  >
+  <ng-template #filtersList>
+    <div fxLayout="column" class="model-filters__layout">
+      <div *ngFor="let filter of filters; let filterIndex = index">
+        <div fxLayout="row" fxLayoutAlign="start center">
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addFraction(filter, filterIndex)"
+          >
+            <mat-icon data-cy="addModelFilterFraction">add</mat-icon>
+          </button>
+
+          <div class="model-filters__label ml-10"
+            >{{ getFieldTopLabel(filter.field_id) | capitalize }}
+            <strong data-cy="modelFiltersFieldLabel">{{
+              getFieldLabel(filter.field_id) | capitalize
+            }}</strong>
+          </div>
+        </div>
+
+        <div
+          fxLayout="row"
+          fxLayoutGap="20px"
+          fxLayoutAlign="start center"
+          *ngFor="
+            let fraction of filter.fractions;
+            let isFirst = first;
+            let fractionIndex = index
+          "
+        >
+          <m-fraction
+            [fieldResult]="getFieldResult(filter.field_id)"
+            [fraction]="fraction"
+            [fractionIndex]="fractionIndex"
+            [isFirst]="isFirst"
+            (fractionUpdate)="updateFraction(filter, filterIndex, $event)"
+          >
+          </m-fraction>
+
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+
+          <span *ngIf="fraction.has_duplicates" class="model-filters__error"
+            >duplicate filter</span
+          >
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
+<div *ngIf="(fields$ | async)"></div> <div *ngIf="(filters$ | async)"></div>

@@ -1,0 +1,18 @@
+<form [formGroup]="groupPaddingForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      data-cy="chartGroupPadding"
+      placeholder="groupPadding"
+      [formControl]="groupPadding"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="groupPaddingBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="groupPaddingForm.controls['groupPadding'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

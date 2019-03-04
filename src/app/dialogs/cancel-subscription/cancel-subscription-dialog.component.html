@@ -1,0 +1,48 @@
+<div class="mp-min-width-1 mp-max-width-2">
+  <mat-toolbar color="primary"
+    >Cancel {{ selectedProject.project_id }} project subscription</mat-toolbar
+  >
+
+  <form
+    [formGroup]="cancelSubscriptionForm"
+    (ngSubmit)="onSubmit(cancelSubscriptionForm.value); dialogRef.close()"
+  >
+    <br />
+    <p>Please, tell us why</p> <br />
+
+    <mat-form-field class="mp-full-width">
+      <textarea
+        matInput
+        matTextareaAutosize
+        matAutosizeMinRows="8"
+        matAutosizeMaxRows="8"
+        id="cancelMessageInput"
+        formControlName="cancelMessage"
+        placeholder="Message"
+        required
+      >
+      </textarea>
+      <mat-error>
+        <m-validation-msg
+          [errors]="cancelSubscriptionForm.controls['cancelMessage'].errors"
+        ></m-validation-msg>
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      type="submit"
+      color="warn"
+      mat-raised-button
+      [disabled]="!cancelSubscriptionForm.valid"
+      >Cancel Subscription
+    </button>
+
+    <button
+      type="reset"
+      class="mp-cancel"
+      mat-raised-button
+      (click)="dialogRef.close()"
+      >No
+    </button>
+  </form>
+</div>

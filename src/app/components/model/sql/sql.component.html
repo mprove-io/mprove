@@ -1,0 +1,32 @@
+<div class="sql" fxLayout="column" fxFlexFill>
+  <div
+    fxFlex
+    *ngIf="!query"
+    class="sql__empty-title"
+    fxLayoutAlign="center center"
+  >
+    <h3>Select some fields...</h3>
+  </div>
+
+  <div *ngIf="query" class="sql-table">
+    <td-data-table
+      [data]="partsWithQuery"
+      [columns]="columns"
+      class="table--sql"
+    >
+      <ng-template
+        tdDataTableTemplate="show_sql"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <button mat-raised-button (click)="showSql(row)" data-cy="showSql"
+          >SQL</button
+        >
+      </ng-template>
+    </td-data-table>
+  </div>
+</div>
+
+<div *ngIf="(mconfigSelectFields$ | async)"></div>
+<div *ngIf="(query$ | async)"></div> <div *ngIf="(parts$ | async)"></div>

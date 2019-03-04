@@ -1,0 +1,18 @@
+<form [formGroup]="angleSpanForm">
+  <mat-form-field>
+    <input
+      matInput
+      type="number"
+      data-cy="chartAngleSpan"
+      placeholder="angleSpan"
+      [formControl]="angleSpan"
+      [errorStateMatcher]="showOnInvalidErrorStateMatcher"
+      (blur)="angleSpanBlur()"
+    />
+    <mat-error>
+      <m-validation-msg
+        [errors]="angleSpanForm.controls['angleSpan'].errors"
+      ></m-validation-msg>
+    </mat-error>
+  </mat-form-field>
+</form>

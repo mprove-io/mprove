@@ -1,0 +1,101 @@
+<div class="model-tree">
+  <tree-root #itemsTree [nodes]="nodes" [options]="treeOptions">
+    <ng-template #treeNodeTemplate let-node="node" let-index="index">
+      <div
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        data-cy="modelTreeItem"
+        class="model-tree__item"
+        [ngClass]="{
+          'model-tree__item-default': node.isLeaf && !node.data.is_field,
+          'model-tree__item-root': node.isRoot,
+          'model-tree__item_not_clickable': !node.hasChildren
+        }"
+        (click)="toggleExpandCollapse(node)"
+      >
+        <div class="model-tree__item-inner">
+          <div
+            fxFlex
+            fxLayout="row"
+            fxLayoutAlign="space-between center"
+            [class.model-tree__item-name_offset-left_10]="node.hasChildren"
+          >
+            <div
+              class="model-tree__child-{{node.data.node_class}} model-tree__node-{{node.data.id | extension}}"
+              data-cy="modelTreeItemName"
+            >
+              {{ node.data.label | capitalize }}
+            </div>
+
+            <div
+              *ngIf="
+                node.hasChildren &&
+                node.data[countSelectedItemsKey] > 0 &&
+                !node.isExpanded
+              "
+              class="model-tree__field-count"
+            >
+              {{ node.data[countSelectedItemsKey] }}
+            </div>
+
+            <mat-icon
+              *ngIf="node.data.description"
+              class="info-icon"
+              [matTooltip]="node.data.description"
+              [matTooltipShowDelay]="appConfig.tooltipDelay"
+              [matTooltipPosition]="'below'"
+              >info_outline
+            </mat-icon>
+
+            <button
+              mat-raised-button
+              *ngIf="node.data.is_field"
+              class="model-tree__select-button"
+              data-cy="modelTreeItemSelectButton"
+              [ngClass]="{
+                'model-tree__select-button_hidden': !node.data.field.is_selected
+              }"
+              [color]="node.data.field.is_selected ? 'accent' : 'default'"
+              (click)="nodeOnClick(node)"
+            >
+              Select
+            </button>
+
+            <button
+              mat-raised-button
+              *ngIf="node.data.is_field"
+              class="model-tree__filter-button"
+              data-cy="modelTreeItemFilterButton"
+              [disabled]="node.data.field.field_class === fieldClassEnum.Filter"
+              [ngClass]="{
+                'model-tree__filter-button_hidden': !node.data.field
+                  .is_filtered,
+                'model-tree__filter-button_disabled':
+                  node.data.field.field_class === fieldClassEnum.Filter
+              }"
+              [color]="node.data.field.is_filtered ? 'accent' : 'default'"
+              (click)="toggleFilter(node, $event)"
+            >
+              Filter
+            </button>
+
+            <button
+              mat-button
+              *ngIf="node.data.is_field"
+              class="mat-flat-fab folder-btn"
+              (click)="
+                goToFile(node.data.field_file_name, node.data.field_line_num)
+              "
+            >
+              <mat-icon class="folder-open">folder_open</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </tree-root>
+</div>
+
+<div *ngIf="(joinAs$ | async)"></div> <div *ngIf="(modelId$ | async)"></div>
+<div *ngIf="(nodes$ | async)"></div> <div *ngIf="(modelFields$ | async)"></div>
+<div *ngIf="(fields$ | async)"></div>
