@@ -1,0 +1,28 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# env
+.env
+.envrc
+
+# cypress
+client/cypress/screenshots
+client/cypress/videos
+client/cypress-examples
+
+# compiled output
+dist
+
+# dependencies
+node_modules
+
+# debug
+yarn-error.log
