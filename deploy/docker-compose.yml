@@ -17,7 +17,7 @@ services:
     - '3305:3306'
   
   blockml:
-    build: ../mprove-blockml-node/  
+    build: ../blockml/  
     image: mprove/blockml
     environment:
       BLOCKML_PORT: $BLOCKML_PORT
@@ -26,22 +26,22 @@ services:
     - wait-for-redis
   
   wait-for-redis:
-    build: ../mprove-wait/
+    build: ../wait/
     image: mprove/wait
     command: ["redis:6379", "-t", "0", "--", "echo", wait-for-redis-done;'] 
   
   wait-for-db:
-    build: ../mprove-wait/
+    build: ../wait/
     image: mprove/wait
     command: ["db:3306", "-t", "0", "--", "echo", wait-for-db-done;'] 
   
   wait-for-blockml:
-    build: ../mprove-wait/
+    build: ../wait/
     image: mprove/wait
     command: ["blockml:8081", "-t", "0", "--", "echo", wait-for-blockml-done;'] 
 
   backend:
-    build: ../mprove-backend-node/  
+    build: ../backend/  
     image: mprove/backend
     environment:
       BACKEND_PORT: $BACKEND_PORT
@@ -58,17 +58,9 @@ services:
     - wait-for-db     
     - wait-for-blockml     
   
-  landing:
-    build: ../mprove-landing-app/  
-    image: mprove/landing  
-  
-  docs:
-    build: ../mprove-docs-app/
-    image: mprove/docs
-  
   web:
     build: 
-      context: ../mprove-web-app/
+      context: ../client/
       dockerfile: docker.local.Dockerfile
     image: mprove/web    
   
