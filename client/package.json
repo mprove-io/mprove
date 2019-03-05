@@ -32,9 +32,6 @@
     "release": "standard-version && git push --follow-tags origin master",
     "analyze": "npm run clean && npm run build:prod -- --stats-json && webpack-bundle-analyzer ./dist/stats.json",
     "precy:ci": "npm run build:prod -- --deploy-url \"/web-app/\" --base-href \"/web-app\"",
-    "preaccessibility": "npm run build:prod -- --deploy-url \"/web-app/\" --base-href \"/web-app\"",
-    "accessibility": "npm-run-all --parallel --race server accessibility:run",
-    "accessibility:run": "pa11y-ci --threshold 250",
     "compodoc": "compodoc -p src/tsconfig.app.json"
   },
   "husky": {
