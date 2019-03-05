@@ -2,27 +2,34 @@
 .DS_Store
 Thumbs.db
 
-# IDE - VSCode
+# IDE
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.idea/
 
 # env
 .env
 .envrc
 
 # cypress
-client/cypress/screenshots
-client/cypress/videos
-client/cypress-examples
+/client/cypress/screenshots/
+/client/cypress/videos/
+/client/cypress-examples/
 
 # compiled output
-dist
+dist/
 
 # dependencies
-node_modules
+node_modules/
 
-# debug
+# logs
 yarn-error.log
+/backend/ormlogs.log
+
+# 
+/backend/test-credentials/
+/backend/test-projects/demo/
+/backend/test-projects/wood/
