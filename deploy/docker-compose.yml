@@ -24,21 +24,6 @@ services:
       BLOCKML_BASE_PATH: $BLOCKML_BASE_PATH    
     depends_on:
     - wait-for-redis
-  
-  wait-for-redis:
-    build: ../wait/
-    image: mprove/wait
-    command: ["redis:6379", "-t", "0", "--", "echo", wait-for-redis-done;'] 
-  
-  wait-for-db:
-    build: ../wait/
-    image: mprove/wait
-    command: ["db:3306", "-t", "0", "--", "echo", wait-for-db-done;'] 
-  
-  wait-for-blockml:
-    build: ../wait/
-    image: mprove/wait
-    command: ["blockml:8081", "-t", "0", "--", "echo", wait-for-blockml-done;'] 
 
   backend:
     build: ../backend/  
@@ -66,16 +51,28 @@ services:
   
   proxy:
     build: 
-      context: ../mprove-proxy/
+      context: ../proxy/
       dockerfile: docker.local.Dockerfile  
     image: mprove/proxy
     depends_on:
     - backend
     - web
-    - docs
-    - landing
     ports:
     - '80:80'    
     - '8080:80' # browser web app communicates with backend through 8080  
 
+  wait-for-redis:
+    build: ../wait/
+    image: mprove/wait
+    command: ["redis:6379", "-t", "0", "--", "echo", wait-for-redis-done;'] 
+  
+  wait-for-db:
+    build: ../wait/
+    image: mprove/wait
+    command: ["db:3306", "-t", "0", "--", "echo", wait-for-db-done;'] 
+  
+  wait-for-blockml:
+    build: ../wait/
+    image: mprove/wait
+    command: ["blockml:8081", "-t", "0", "--", "echo", wait-for-blockml-done;'] 
    

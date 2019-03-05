@@ -11,10 +11,7 @@
     "clean": "rimraf ./dist/",
     "lint": "tslint --config tslint.json -e 'node_modules/**' \"{src,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts ./",
-    "format:base": "prettier \"{src,e2e}/**/*.{ts,js,json,scss,html}\" --config .prettierrc.yaml",
-    "format:list": "npm run format:base -- --list-different --config .prettierrc.yaml",
-    "format:write": "npm run format:base -- --write",
-    "files:check": "npm run format:write && npm-run-all --parallel lint circular",
+    "files:check": "npm-run-all --parallel lint circular",
     "build:local": "npm run files:check && npm run clean && ng build --configuration=local",
     "build:test": "npm run files:check && npm run clean && ng build --configuration=test",
     "build:prod": "npm run files:check && npm run clean && ng build --prod --vendor-chunk",
@@ -34,17 +31,6 @@
     "precy:ci": "npm run build:prod -- --deploy-url \"/web-app/\" --base-href \"/web-app\"",
     "compodoc": "compodoc -p src/tsconfig.app.json"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "{src,e2e}/**/*.{ts,js,json,scss,html}": [
-      "prettier --write --config .prettierrc.yaml",
-      "git add"
-    ]
-  }, 
   "dependencies": {
     "@angular/animations": "7.0.1",
     "@angular/cdk": "7.0.1",
@@ -117,7 +103,6 @@
     "@types/segment-analytics": "^0.0.28",
     "@types/uuid": "^2.0.29",
 
-    "prettier": "1.15.2",
     "lint-staged": "^7.3.0",
     "madge": "3.3.0",
     "husky": "^1.1.3",    

@@ -1,0 +1,43 @@
+{
+  "name": "mprove",
+  "version": "0.0.0",
+  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mprove-io/mprove.git"
+  },
+  "scripts": {
+    "p:base": "prettier \"backend/src/**/*.ts\" \"blockml/{src,test}/**/*.ts\" \"client/src/**/*.{ts,js,json,scss,html}\" \"common-tslint/**/*.json\" --config .prettierrc.yaml",
+    "p:list": "npm run p:base -- --list-different",
+    "p:write": "npm run p:base -- --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "backend/src/**/*.ts": [
+      "prettier --write --config .prettierrc.yaml",
+      "git add"
+    ],
+    "blockml/{src,test}/**/*.ts": [
+      "prettier --write --config .prettierrc.yaml",
+      "git add"
+    ],
+    "client/src/**/*.{ts,js,json,scss,html}": [
+      "prettier --write --config .prettierrc.yaml",
+      "git add"
+    ],
+    "common-tslint/**/*.json": [
+      "prettier --write --config .prettierrc.yaml",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "prettier": "1.15.2",
+    "lint-staged": "^7.3.0",
+    "husky": "^1.1.3"
+  }
+}
