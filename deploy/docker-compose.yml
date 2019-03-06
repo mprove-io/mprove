@@ -43,11 +43,11 @@ services:
     - wait-for-db     
     - wait-for-blockml     
   
-  web:
+  client:
     build: 
       context: ../client/
       dockerfile: docker.local.Dockerfile
-    image: mprove/web    
+    image: mprove/client    
   
   proxy:
     build: 
@@ -56,10 +56,10 @@ services:
     image: mprove/proxy
     depends_on:
     - backend
-    - web
+    - client
     ports:
     - '80:80'    
-    - '8080:80' # browser web app communicates with backend through 8080  
+    - '8080:80' # browser client app communicates with backend through 8080  
 
   wait-for-redis:
     build: ../wait/
