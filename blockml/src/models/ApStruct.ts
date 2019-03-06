@@ -29,7 +29,6 @@ export class ApStruct {
 
     return await this.rebuildStructStateless({
       files: files,
-      dir: item.dir,
       weekStart: item.weekStart,
       bqProject: item.bqProject,
       projectId: item.projectId,
@@ -39,7 +38,6 @@ export class ApStruct {
 
   static async rebuildStructStateless(item: {
     files: api.File[];
-    dir: string;
     weekStart: api.ProjectWeekStartEnum;
     bqProject: string;
     projectId: string;
@@ -58,8 +56,7 @@ export class ApStruct {
       file2s: file2s
     });
     let filesAny: any[] = await barYaml.yamlToObjects({
-      file3s: file3s,
-      dir: item.dir
+      file3s: file3s
     });
     // ->processLineNumbersRecursive
     filesAny = barYaml.makeLineNumbers({ filesAny: filesAny });

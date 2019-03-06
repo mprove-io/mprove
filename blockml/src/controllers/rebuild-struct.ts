@@ -35,10 +35,6 @@ export let rebuildStruct = async (req: Request, res: Response) => {
     });
   }
 
-  let basePath = process.env.BLOCKML_BASE_PATH;
-
-  let dir = `${basePath}/${projectId}/${repoId}`;
-
   let ws: {
     wrappedStruct: api.StructFull;
     udfsContent: string;
@@ -48,7 +44,6 @@ export let rebuildStruct = async (req: Request, res: Response) => {
   try {
     ws = await wrapper.wrapStruct({
       files: files,
-      dir: dir,
       weekStart: weekStart,
       bqProject: bqProject,
       projectId: projectId,

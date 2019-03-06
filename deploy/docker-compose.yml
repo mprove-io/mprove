@@ -21,7 +21,6 @@ services:
     image: mprove/blockml
     environment:
       BLOCKML_PORT: $BLOCKML_PORT
-      BLOCKML_BASE_PATH: $BLOCKML_BASE_PATH    
     depends_on:
     - wait-for-redis
 

@@ -9,7 +9,6 @@ const { forEach } = require('p-iteration');
 
 export async function yamlToObjects(item: {
   file3s: interfaces.File3[];
-  dir: string;
 }): Promise<any[]> {
   let filesAny: any[] = [];
 

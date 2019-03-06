@@ -4,7 +4,6 @@ import { interfaces } from '../../barrels/interfaces';
 
 export async function wrapStruct(item: {
   files: api.File[];
-  dir: string;
   weekStart: api.ProjectWeekStartEnum;
   bqProject: string;
   projectId: string;
@@ -13,7 +12,6 @@ export async function wrapStruct(item: {
 }) {
   let struct: interfaces.Struct = await ApStruct.rebuildStructStateless({
     files: item.files,
-    dir: item.dir,
     weekStart: item.weekStart,
     bqProject: item.bqProject,
     projectId: item.projectId,
