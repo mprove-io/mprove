@@ -8,7 +8,7 @@
     "url": "https://github.com/mprove-io/mprove.git"
   },
   "scripts": {
-    "p:base": "prettier \"backend/src/**/*.ts\" \"blockml/{src,test}/**/*.ts\" \"client/src/**/*.{ts,js,json,scss,html}\" \"common-tslint/**/*.json\" --config .prettierrc.yaml",
+    "p:base": "prettier \"backend/src/**/*.ts\" \"blockml/{src,test}/**/*.ts\" \"client/src/**/*.{ts,js,json,scss,html}\" \"common/api/src/**/*.ts\" \"common/tslint/**/*.json\" --config .prettierrc.yaml",
     "p:list": "npm run p:base -- --list-different",
     "p:write": "npm run p:base -- --write"
   },
@@ -30,7 +30,11 @@
       "prettier --write --config .prettierrc.yaml",
       "git add"
     ],
-    "common-tslint/**/*.json": [
+    "common/api/src/**/*.ts": [
+      "prettier --write --config .prettierrc.yaml",
+      "git add"
+    ],
+    "common/tslint/**/*.json": [
       "prettier --write --config .prettierrc.yaml",
       "git add"
     ]
