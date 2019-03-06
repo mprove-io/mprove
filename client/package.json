@@ -5,7 +5,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/mprove-io/mprove-web-app.git"
+    "url": "https://github.com/mprove-io/mprove.git"
   },
   "scripts": {
     "clean": "rimraf ./dist/",
