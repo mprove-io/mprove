@@ -1,0 +1,50 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - type: bind
+        source: /mprove_data/db/mysql
+        target: /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    ports:
+      - '3305:3306'
+
+  redis:
+    image: redis:alpine
+
+  blockml:
+    image: mprove/blockml
+    environment:
+      BLOCKML_PORT: $BLOCKML_PORT
+
+  backend:
+    image: mprove/backend
+    environment:
+      BACKEND_PORT: $BACKEND_PORT
+      BACKEND_JWT_SECRET: $BACKEND_JWT_SECRET
+      BACKEND_DB_PASSWORD_DEV: $BACKEND_DB_PASSWORD_DEV
+      BACKEND_MAILGUN_ACTIVE_API_KEY: $BACKEND_MAILGUN_ACTIVE_API_KEY
+      BACKEND_MAILGUN_DOMAIN: $BACKEND_MAILGUN_DOMAIN
+      BACKEND_SEND_EMAIL_FROM: $BACKEND_SEND_EMAIL_FROM
+    volumes:
+      - type: bind
+        source: /mprove_data/backend
+        target: /mprove_data/backend
+
+  client:
+    image: mprove/client-prod
+
+  proxy:
+    image: mprove/proxy-https
+    volumes:
+      - type: bind
+        source: /mprove_certs
+        target: /mprove_certs
+    ports:
+      - '443:443'
+      - '80:80'
+      - '8080:80' # browser client app communicates with backend through 8080
+

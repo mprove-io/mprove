@@ -14,7 +14,7 @@
     "files:check": "npm-run-all --parallel lint circular",
     "build:local": "npm run files:check && npm run clean && ng build --configuration=local",
     "build:test": "npm run files:check && npm run clean && ng build --configuration=test",
-    "build:prod": "npm run files:check && npm run clean && ng build --prod --vendor-chunk",
+    "build:prod": "npm run files:check && npm run clean && ng build --configuration=production",
     "server": "node ./server.js",
     "ng": "ng",
     "start": "ng serve",

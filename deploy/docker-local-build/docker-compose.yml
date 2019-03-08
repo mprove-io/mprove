@@ -16,11 +16,13 @@ services:
     image: redis:alpine
 
   blockml:
+    build: ../../blockml/
     image: mprove/blockml
     environment:
       BLOCKML_PORT: $BLOCKML_PORT
 
   backend:
+    build: ../../backend/
     image: mprove/backend
     environment:
       BACKEND_PORT: $BACKEND_PORT
@@ -35,9 +37,15 @@ services:
         target: /mprove_data/backend
 
   client:
+    build:
+      context: ../../client/
+      dockerfile: docker.local.Dockerfile
     image: mprove/client
 
   proxy:
+    build:
+      context: ../../proxy/
+      dockerfile: docker.local.Dockerfile
     image: mprove/proxy
     ports:
       - '80:80'
