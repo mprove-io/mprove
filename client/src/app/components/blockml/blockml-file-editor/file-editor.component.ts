@@ -189,7 +189,6 @@ export class FileEditorComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log(123);
     this.store.dispatch(new actions.UpdateLayoutFileIdAction(undefined));
   }
 
