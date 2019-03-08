@@ -50,7 +50,7 @@ if (environment.canUseRaven === true) {
     HttpClientModule,
     JwtModule.forRoot({
       config: {
-        headerName: 'Authorization',
+        headerName: 'Auth',
         authScheme: 'Bearer ',
         tokenGetter: helper.getToken, // for jwtInterceptor
         whitelistedDomains: [
