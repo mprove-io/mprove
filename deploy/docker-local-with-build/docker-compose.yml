@@ -17,13 +17,13 @@ services:
 
   blockml:
     build: ../../blockml/
-    image: mprove/blockml
+    image: mprove/blockml:$TAG
     environment:
       BLOCKML_PORT: $BLOCKML_PORT
 
   backend:
     build: ../../backend/
-    image: mprove/backend
+    image: mprove/backend:$TAG
     environment:
       BACKEND_PORT: $BACKEND_PORT
       BACKEND_JWT_SECRET: $BACKEND_JWT_SECRET
@@ -40,13 +40,13 @@ services:
     build:
       context: ../../client/
       dockerfile: docker.local.Dockerfile
-    image: mprove/client
+    image: mprove/client:$TAG
 
   proxy:
     build:
       context: ../../proxy/
       dockerfile: docker.local.Dockerfile
-    image: mprove/proxy
+    image: mprove/proxy:$TAG
     ports:
       - '80:80'
       - '8080:80' # browser client app communicates with backend through 8080

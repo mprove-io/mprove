@@ -16,12 +16,12 @@ services:
     image: redis:alpine
 
   blockml:
-    image: mprove/blockml
+    image: mprove/blockml:$TAG
     environment:
       BLOCKML_PORT: $BLOCKML_PORT
 
   backend:
-    image: mprove/backend
+    image: mprove/backend:$TAG
     environment:
       BACKEND_PORT: $BACKEND_PORT
       BACKEND_JWT_SECRET: $BACKEND_JWT_SECRET
@@ -35,10 +35,10 @@ services:
         target: /mprove_data/backend
 
   client:
-    image: mprove/client-prod
+    image: mprove/client-prod:$TAG
 
   proxy:
-    image: mprove/proxy-https
+    image: mprove/proxy-https:$TAG
     volumes:
       - type: bind
         source: /mprove_certs
