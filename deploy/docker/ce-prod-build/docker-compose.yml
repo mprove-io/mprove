@@ -16,14 +16,14 @@ services:
     image: redis:alpine
 
   blockml:
-    build: ../../blockml/
-    image: mprove/blockml:$TAG
+    build: ../../../blockml/
+    image: mprove/mprove-ce-blockml:$TAG
     environment:
       BLOCKML_PORT: $BLOCKML_PORT
 
   backend:
-    build: ../../backend/
-    image: mprove/backend:$TAG
+    build: ../../../backend/
+    image: mprove/mprove-ce-backend:$TAG
     environment:
       BACKEND_PORT: $BACKEND_PORT
       BACKEND_JWT_SECRET: $BACKEND_JWT_SECRET
@@ -38,15 +38,15 @@ services:
 
   client:
     build:
-      context: ../../client/
+      context: ../../../client/
       dockerfile: docker.production.Dockerfile
-    image: mprove/client-prod:$TAG
+    image: mprove/mprove-ce-client-prod:$TAG
 
   proxy:
     build:
-      context: ../../proxy/
+      context: ../../../proxy/
       dockerfile: docker.https.Dockerfile
-    image: mprove/proxy-https:$TAG
+    image: mprove/mprove-ce-proxy-https:$TAG
     volumes:
       - type: bind
         source: /mprove_certs

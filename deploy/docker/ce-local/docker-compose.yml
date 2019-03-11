@@ -16,12 +16,12 @@ services:
     image: redis:alpine
 
   blockml:
-    image: mprove/blockml:$TAG
+    image: mprove/mprove-ce-blockml:$TAG
     environment:
       BLOCKML_PORT: $BLOCKML_PORT
 
   backend:
-    image: mprove/backend:$TAG
+    image: mprove/mprove-ce-backend:$TAG
     environment:
       BACKEND_PORT: $BACKEND_PORT
       BACKEND_JWT_SECRET: $BACKEND_JWT_SECRET
@@ -35,10 +35,10 @@ services:
         target: /mprove_data/backend
 
   client:
-    image: mprove/client:$TAG
+    image: mprove/mprove-ce-client-local:$TAG
 
   proxy:
-    image: mprove/proxy:$TAG
+    image: mprove/mprove-ce-proxy-local:$TAG
     ports:
       - '80:80'
       - '8080:80' # browser client app communicates with backend through 8080
