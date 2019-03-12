@@ -34,10 +34,9 @@ export class ErDialogComponent implements OnInit {
     window.location.reload();
   }
 
-  forumClick(): void {
-    window.open('https://forum.mprove.io', '_blank');
-    // this.dialogRef.close();
-  }
+  // forumClick(): void {
+  //   window.open('https://forum.mprove.io', '_blank');
+  // }
 
   okClick(): void {
     this.dialogRef.close();
