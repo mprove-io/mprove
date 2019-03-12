@@ -45,7 +45,6 @@ export const APP_PROVIDERS = [
   resolvers.PDTResolver,
   resolvers.TeamResolver,
   resolvers.SettingsResolver,
-  resolvers.BillingResolver,
   resolvers.ToProfileResolver,
 
   services.DataService,

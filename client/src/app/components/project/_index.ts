@@ -1,7 +1,4 @@
 export * from './_project-page/project.component';
-export * from './billing/billing.component';
-export * from './next-payment/next-payment.component';
-export * from './payments/payments.component';
 export * from './pdts/pdts.component';
 export * from './remote/remote.component';
 export * from './repo/repo.component';

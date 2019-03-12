@@ -9,7 +9,6 @@ export const PATH_PROJECT = 'project';
 export const PATH_TEAM = 'team';
 export const PATH_SETTINGS = 'settings';
 export const PATH_REMOTE = 'remote';
-export const PATH_BILLING = 'billing';
 export const PATH_MODE = 'mode';
 export const PATH_PDTS = 'pdts';
 export const PATH_BLOCKML = 'blockml';

@@ -144,8 +144,6 @@ export async function getState(req: Request, res: Response) {
     state: {
       user: wrapper.wrapToApiUser(user),
       projects: projects.map(project => wrapper.wrapToApiProject(project)),
-      subscriptions: [],
-      payments: [],
       members: members.map(member => wrapper.wrapToApiMember(member)),
       files: files.map(file => wrapper.wrapToApiFile(file)),
       structs: structs

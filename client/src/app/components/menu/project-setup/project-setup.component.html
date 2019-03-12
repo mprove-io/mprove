@@ -23,14 +23,6 @@
 
           <button
             mat-menu-item
-            [disabled]="(isDemo$ | async) || !(isAdmin$ | async)"
-            [routerLink]="['/project', layoutProjectId$ | async, 'billing']"
-          >
-            <mat-icon>payment</mat-icon>Billing
-          </button>
-
-          <button
-            mat-menu-item
             [disabled]="isDemo$ | async"
             [routerLink]="['/project', layoutProjectId$ | async, 'settings']"
           >
@@ -78,14 +70,6 @@
       <mat-expansion-panel-header>
         <mat-panel-title> Project Settings</mat-panel-title>
       </mat-expansion-panel-header>
-
-      <button
-        mat-menu-item
-        [disabled]="(isDemo$ | async) || !(isAdmin$ | async)"
-        [routerLink]="['/project', layoutProjectId$ | async, 'billing']"
-      >
-        <mat-icon>payment</mat-icon>Billing
-      </button>
 
       <button
         mat-menu-item

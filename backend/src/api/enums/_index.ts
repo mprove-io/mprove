@@ -2,7 +2,6 @@ export * from './chart/_index';
 export * from './communication/_index';
 export * from './fraction/_index';
 export * from './model-field/_index';
-export * from './subscription/_index';
 export * from './user/_index';
 
 export * from './dashboard-field-result.enum';

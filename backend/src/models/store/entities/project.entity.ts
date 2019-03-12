@@ -42,24 +42,6 @@ export class ProjectEntity implements ProjectInterface {
   @Column({ type: constants.PROJECT_TIMEZONE_DATATYPE })
   timezone: string;
 
-  @Column({
-    type: constants.PROJECT_ANALYTICS_PLAN_ID_DATATYPE,
-    nullable: true
-  })
-  analytics_plan_id: string;
-
-  @Column({
-    type: constants.PROJECT_ANALYTICS_MAX_PLAN_ID_DATATYPE,
-    nullable: true
-  })
-  analytics_max_plan_id: string;
-
-  @Column({
-    type: constants.PROJECT_ANALYTICS_SUBSCRIPTION_ID_DATATYPE,
-    nullable: true
-  })
-  analytics_subscription_id: string;
-
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   deleted: enums.bEnum;
 
@@ -76,9 +58,6 @@ interface ProjectInterface {
   query_size_limit: api.Project['query_size_limit'];
   week_start: api.Project['week_start'];
   timezone: api.Project['timezone'];
-  analytics_plan_id: string; // number
-  analytics_max_plan_id: string; // number
-  analytics_subscription_id: string; // number
   deleted: enums.bEnum; // boolean
   server_ts: string; // number
 }

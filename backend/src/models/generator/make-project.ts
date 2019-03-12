@@ -16,9 +16,6 @@ export function makeProject(item: {
     query_size_limit: constants.PROJECT_DEFAULT_QUERY_SIZE_LIMIT,
     week_start: api.ProjectWeekStartEnum.Sunday,
     timezone: constants.PROJECT_DEFAULT_TIMEZONE,
-    analytics_plan_id: undefined,
-    analytics_max_plan_id: undefined,
-    analytics_subscription_id: undefined,
     deleted: enums.bEnum.FALSE,
     server_ts: undefined
   };

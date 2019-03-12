@@ -105,26 +105,6 @@ export class NavDashboardsComponent {
     .select(selectors.getSelectedProjectIsSpecial) // no filter here
     .pipe(tap(x => (this.projectIsSpecial = x)));
 
-  planIsFree: boolean;
-  planIsFree$ = this.store
-    .select(selectors.getSelectedProjectAnalyticsPlanIsFree) // no filter here
-    .pipe(tap(x => (this.planIsFree = x)));
-
-  planIsBasic: boolean;
-  planIsBasic$ = this.store
-    .select(selectors.getSelectedProjectAnalyticsPlanIsBasic) // no filter here
-    .pipe(tap(x => (this.planIsBasic = x)));
-
-  planIsStandard: boolean;
-  planIsStandard$ = this.store
-    .select(selectors.getSelectedProjectPlanAnalyticsIsStandard) // no filter here
-    .pipe(tap(x => (this.planIsStandard = x)));
-
-  planIsBusiness: boolean;
-  planIsBusiness$ = this.store
-    .select(selectors.getSelectedProjectPlanAnalyticsIsBusiness) // no filter here
-    .pipe(tap(x => (this.planIsBusiness = x)));
-
   constructor(private store: Store<interfaces.AppState>) {}
 
   getDashboardTitleOrName(dashboard: api.Dashboard) {
@@ -134,21 +114,4 @@ export class NavDashboardsComponent {
       return '';
     }
   }
-
-  isAllowedDashboard(dashboard: api.Dashboard) {
-    // return this.projectIsSpecial ||
-    //   this.planIsBusiness ||
-    //   this.planIsStandard ||
-    //   (this.planIsBasic && this.isAmongFirstFiveDashboards(dashboard)) ||
-    //   (this.planIsFree && this.isAmongFirstTwoDashboards(dashboard));
-    return true;
-  }
-
-  // isAmongFirstTwoDashboards(dashboard: Dashboard) {
-  //   return this.dashboards.findIndex(x => x.dashboard_id === dashboard.dashboard_id) < 2;
-  // }
-
-  // isAmongFirstFiveDashboards(dashboard: Dashboard) {
-  //   return this.dashboards.findIndex(x => x.dashboard_id === dashboard.dashboard_id) < 5;
-  // }
 }

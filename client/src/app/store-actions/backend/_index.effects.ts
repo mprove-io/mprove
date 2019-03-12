@@ -9,5 +9,4 @@ export * from './pong/_index.effects';
 export * from './projects/_index.effects';
 export * from './queries/_index.effects';
 export * from './repos/_index.effects';
-export * from './subscriptions/_index.effects';
 export * from './user/_index.effects';

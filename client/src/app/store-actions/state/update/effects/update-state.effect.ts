@@ -19,19 +19,11 @@ export class UpdateStateEffect {
         );
       }
 
-      // if (action.payload.subscriptions.length > 0) {
-      //   nextActions.push(new actions.UpdateSubscriptionsStateAction(action.payload.subscriptions));
-      // }
-
       if (action.payload.members.length > 0) {
         nextActions.push(
           new actions.UpdateMembersStateAction(action.payload.members)
         );
       }
-
-      // if (action.payload.payments.length > 0) {
-      //   nextActions.push(new actions.UpdatePaymentsStateAction(action.payload.payments));
-      // }
 
       if (action.payload.files.length > 0) {
         nextActions.push(

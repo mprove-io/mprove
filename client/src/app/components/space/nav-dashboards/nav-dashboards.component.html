@@ -21,7 +21,6 @@
         <button
           *ngFor="let subItem of mainItem.dashboards"
           mat-menu-item
-          [disabled]="!isAllowedDashboard(subItem)"
           [routerLink]="[
             '/project',
             projectId,
@@ -39,7 +38,6 @@
     <button
       mat-menu-item
       *ngFor="let dashboard of flatDashboards"
-      [disabled]="!isAllowedDashboard(dashboard)"
       [routerLink]="[
         '/project',
         projectId,
@@ -78,7 +76,6 @@
           <button
             *ngFor="let subItem of mainItem.dashboards"
             mat-menu-item
-            [disabled]="!isAllowedDashboard(subItem)"
             [routerLink]="[
               '/project',
               projectId,
@@ -99,7 +96,6 @@
             <mat-panel-title>
               <button
                 mat-menu-item
-                [disabled]="!isAllowedDashboard(dashboard)"
                 [routerLink]="[
                   '/project',
                   projectId,
@@ -125,7 +121,3 @@
 <div *ngIf="(dashboards$ | async)"></div>
 
 <div *ngIf="(projectIsSpecial$ | async)"></div>
-<div *ngIf="(planIsFree$ | async)"></div>
-<div *ngIf="(planIsBasic$ | async)"></div>
-<div *ngIf="(planIsStandard$ | async)"></div>
-<div *ngIf="(planIsBusiness$ | async)"></div>

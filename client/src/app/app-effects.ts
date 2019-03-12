@@ -152,15 +152,6 @@ export const APP_EFFECTS = [
   effects.SetRepoRemoteUrlFailEffect,
   effects.SetRepoRemoteUrlEffect,
 
-  // Subscriptions
-  effects.CancelSubscriptionsSuccessEffect,
-  effects.CancelSubscriptionsFailEffect,
-  effects.CancelSubscriptionsEffect,
-
-  effects.SwitchAnalyticsSubscriptionPlanSuccessEffect,
-  effects.SwitchAnalyticsSubscriptionPlanFailEffect,
-  effects.SwitchAnalyticsSubscriptionPlanEffect,
-
   // User
   effects.ConfirmUserEmailSuccessEffect,
   effects.ConfirmUserEmailFailEffect,

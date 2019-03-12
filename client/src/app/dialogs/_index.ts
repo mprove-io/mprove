@@ -1,6 +1,5 @@
 export * from './access-denied/access-denied.component';
 export * from './bq/bq-dialog.component';
-export * from './cancel-subscription/cancel-subscription-dialog.component';
 export * from './delete-file/delete-file-dialog.component';
 export * from './delete-folder/delete-folder-dialog.component';
 export * from './delete-project/delete-project-dialog.component';
@@ -18,6 +17,5 @@ export * from './reset-password/reset-password-dialog.component';
 export * from './sql/sql-dialog.component';
 export * from './rename-folder/rename-folder-dialog.component';
 export * from './req-dim-added/req-dim-added-dialog.component';
-export * from './switch-analytics-plan/switch-analytics-plan-dialog.component';
 export * from './update-credentials/update-credentials-dialog.component';
 export * from './update-remote-url/update-remote-url-dialog.component';

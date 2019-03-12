@@ -8,7 +8,6 @@ export enum busEnum {
   PDT_RESOLVER = <any>'PDTResolver:',
   TEAM_RESOLVER = <any>'TeamResolver:',
   SETTINGS_RESOLVER = <any>'SettingsResolver:',
-  BILLING_RESOLVER = <any>'BillingResolver:',
   FILE_SELECTED_RESOLVER = <any>'FileSelectedResolver:',
   TO_PROFILE_RESOLVER = <any>'ToProfileResolver:',
   MODE_RESOLVER = <any>'ModeResolver:',

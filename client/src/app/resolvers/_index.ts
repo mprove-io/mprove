@@ -1,4 +1,3 @@
-export * from './billing.resolver';
 export * from './chart.resolver';
 export * from './dashboard.resolver';
 export * from './file.resolver';

@@ -2,7 +2,6 @@ export * from './state/layout-state';
 export * from './state/lq-state';
 export * from './state/user-state';
 export * from './state/websocket-state';
-export * from './analytics-plan';
 export * from './app-config';
 export * from './app-state';
 export * from './auth-configuration';

@@ -19,11 +19,9 @@ export interface AppState {
   mconfigs: api.Mconfig[];
   members: api.Member[];
   models: api.Model[];
-  payments: api.Payment[];
   projects: api.Project[];
   queries: api.Query[];
   repos: api.Repo[];
-  subscriptions: api.Subscription[];
   user: UserState;
   webSocket: WebSocketState;
   lq: LqState;

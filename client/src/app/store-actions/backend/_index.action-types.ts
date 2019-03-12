@@ -9,5 +9,4 @@ export * from './pong/pong.action-types';
 export * from './projects/projects.action-types';
 export * from './queries/queries.action-types';
 export * from './repos/repos.action-types';
-export * from './subscriptions/subscriptions.action-types';
 export * from './user/user.action-types';

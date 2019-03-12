@@ -15,12 +15,8 @@ export class GetStateSuccessEffect {
       from([
         new actions.UpdateProjectsStateAction(action.payload.state.projects), // 1
 
-        new actions.UpdateSubscriptionsStateAction(
-          action.payload.state.subscriptions
-        ), // 2
         new actions.UpdateMembersStateAction(action.payload.state.members), // 2
 
-        new actions.UpdatePaymentsStateAction(action.payload.state.payments), // 3
         new actions.UpdateFilesStateAction(action.payload.state.files), // 3
 
         // new actions.ProcessStructsAction(action.payload.state.structs),

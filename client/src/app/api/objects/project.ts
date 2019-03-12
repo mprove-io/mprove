@@ -8,9 +8,6 @@ export interface Project {
   query_size_limit: number;
   week_start: apiEnums.ProjectWeekStartEnum;
   timezone: string;
-  analytics_plan_id: number;
-  analytics_max_plan_id: number;
-  analytics_subscription_id: number;
   deleted: boolean;
   server_ts: number;
 }

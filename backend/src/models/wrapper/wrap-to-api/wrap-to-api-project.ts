@@ -11,9 +11,6 @@ export function wrapToApiProject(project: entities.ProjectEntity): api.Project {
     query_size_limit: project.query_size_limit,
     week_start: project.week_start,
     timezone: project.timezone,
-    analytics_plan_id: Number(project.analytics_plan_id),
-    analytics_max_plan_id: Number(project.analytics_max_plan_id),
-    analytics_subscription_id: Number(project.analytics_subscription_id),
     deleted: helper.benumToBoolean(project.deleted),
     server_ts: Number(project.server_ts)
   };

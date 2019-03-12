@@ -20,13 +20,11 @@ export class ResetStateEffect {
 
         new actions.ResetMconfigsStateAction(),
 
-        new actions.ResetPaymentsStateAction(),
         new actions.ResetFilesStateAction(),
         new actions.ResetErrorsStateAction(),
         new actions.ResetModelsStateAction(),
         new actions.ResetQueriesStateAction(),
 
-        new actions.ResetSubscriptionsStateAction(),
         new actions.ResetMembersStateAction(),
         new actions.ResetReposStateAction(),
 

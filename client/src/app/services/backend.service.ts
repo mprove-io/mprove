@@ -295,33 +295,6 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_GET_STATE, payload);
   }
 
-  /**
-   * POST
-   * Запрос к backend на отмену всех (пока только analytics) подписок проекта.
-   * В ответе: - проект, у которого analytics_plan_id меняем на дефолтный -
-   * подписки, которые были отменены в результате запроса
-   * @param payload
-   */
-  cancelSubscriptions(
-    payload: api.CancelSubscriptionsRequestBody['payload']
-  ): Observable<api.CancelSubscriptionsResponse200Body> {
-    return this.myHttpService.req(api.PATH_CANCEL_SUBSCRIPTIONS, payload);
-  }
-
-  /**
-   * POST
-   * Запрос к backend на смену analytics плана проекта.
-   * @param payload
-   */
-  switchAnalyticsSubscriptionPlan(
-    payload: api.SwitchAnalyticsSubscriptionPlanRequestBody['payload']
-  ): Observable<api.SwitchAnalyticsSubscriptionPlanResponse200Body> {
-    return this.myHttpService.req(
-      api.PATH_SWITCH_ANALYTICS_SUBSCRIPTION_PLAN,
-      payload
-    );
-  }
-
   loginUser(
     payload: api.LoginUserRequestBody['payload']
   ): Observable<api.LoginUserResponse200Body> {

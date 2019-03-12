@@ -43,8 +43,6 @@ export * from './repos/revert-repo-to-last-commit';
 export * from './repos/revert-repo-to-production';
 export * from './repos/set-repo-remote-url';
 export * from './state/get-state';
-export * from './subscriptions/cancel-subscriptions';
-export * from './subscriptions/switch-analytics-subscription-plan';
 export * from './users/login-user';
 export * from './users/logout-user';
 export * from './users/register-user';

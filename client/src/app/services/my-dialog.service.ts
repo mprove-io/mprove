@@ -13,12 +13,6 @@ export class MyDialogService {
   pdtSqlDialogRef: MatDialogRef<dialogs.SqlDialogComponent>;
   newProjectDialogRef: MatDialogRef<dialogs.NewProjectDialogComponent>;
   resetPasswordDialogRef: MatDialogRef<dialogs.ResetPasswordDialogComponent>;
-  cancelSubscriptionDialogRef: MatDialogRef<
-    dialogs.CancelSubscriptionDialogComponent
-  >;
-  switchAnalyticsPlanDialogRef: MatDialogRef<
-    dialogs.SwitchAnalyticsPlanDialogComponent
-  >;
   updateRemoteUrlDialogRef: MatDialogRef<
     dialogs.UpdateRemoteUrlDialogComponent
   >;
@@ -137,35 +131,6 @@ export class MyDialogService {
 
     this.newProjectDialogRef.afterClosed().subscribe(() => {
       this.newProjectDialogRef = null;
-    });
-  }
-
-  showCancelSubscriptionDialog() {
-    this.cancelSubscriptionDialogRef = this.dialog.open(
-      dialogs.CancelSubscriptionDialogComponent,
-      {
-        disableClose: false,
-        autoFocus: false
-      }
-    );
-
-    this.cancelSubscriptionDialogRef.afterClosed().subscribe(() => {
-      this.cancelSubscriptionDialogRef = null;
-    });
-  }
-
-  showSwitchAnalyticsPlanDialog(data: { target_plan_id: string }) {
-    this.switchAnalyticsPlanDialogRef = this.dialog.open(
-      dialogs.SwitchAnalyticsPlanDialogComponent,
-      {
-        disableClose: false,
-        autoFocus: false,
-        data: data
-      }
-    );
-
-    this.switchAnalyticsPlanDialogRef.afterClosed().subscribe(() => {
-      this.switchAnalyticsPlanDialogRef = null;
     });
   }
 

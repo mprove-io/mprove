@@ -49,9 +49,6 @@ export const PATH_REVERT_REPO_TO_LAST_COMMIT = '/repos.revertRepoToLastCommit';
 export const PATH_REVERT_REPO_TO_PRODUCTION = '/repos.revertRepoToProduction';
 export const PATH_SET_REPO_REMOTE_URL = '/repos.setRepoRemoteUrl';
 export const PATH_GET_STATE = '/state.getState';
-export const PATH_CANCEL_SUBSCRIPTIONS = '/subscriptions.cancelSubscriptions';
-export const PATH_SWITCH_ANALYTICS_SUBSCRIPTION_PLAN =
-  '/subscriptions.switchAnalyticsSubscriptionPlan';
 export const PATH_LOGIN_USER = '/users.loginUser';
 export const PATH_LOGOUT_USER = '/users.logoutUser';
 export const PATH_REGISTER_USER = '/users.registerUser';

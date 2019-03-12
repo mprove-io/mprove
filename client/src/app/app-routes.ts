@@ -88,13 +88,6 @@ export const APP_ROUTES: Routes = [
             component: components.RemoteComponent
           },
           {
-            path: constants.PATH_BILLING,
-            component: components.BillingComponent,
-            resolve: {
-              billingResolver: resolvers.BillingResolver
-            }
-          },
-          {
             path: constants.PATH_MODE + '/:mode',
             component: components.RepoComponent,
             resolve: {

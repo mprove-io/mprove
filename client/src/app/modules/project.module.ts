@@ -36,9 +36,6 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
     components.ProjectComponent,
     components.RepoComponent,
     components.SettingsComponent,
-    components.BillingComponent,
-    components.NextPaymentComponent,
-    components.PaymentsComponent,
     components.TeamComponent,
     components.PdtsComponent
   ],
