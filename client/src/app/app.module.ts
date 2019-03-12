@@ -11,7 +11,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { ClipboardModule } from 'ngx-clipboard';
-import * as Raven from 'raven-js';
 import { APP_DIALOGS } from '@app/app-dialogs';
 import { APP_EFFECTS } from '@app/app-effects';
 import { APP_META_REDUCERS_ARRAY } from '@app/app-meta-reducers-array';
@@ -25,17 +24,6 @@ import { MyMaterialModule } from '@app/modules/my-material.module';
 import { SharedModule } from '@app/modules/shared.module';
 import { SpaceModule } from '@app/modules/space.module';
 import { ValidationMsgModule } from '@app/modules/validation-msg.module';
-import { environment } from '@env/environment';
-
-// let options2 = { 'release': 'a2.1.0', 'autoBreadcrumbs': { 'xhr': false } };
-// Raven
-//   .config('https://dce19ce2043947e4943a09a2255336d8@sentry.io/121453', options2)
-//   .install();
-if (environment.canUseRaven === true) {
-  Raven.config(
-    'https://3f5855e2b10b4c4c8b786ff69c1fe3a6@sentry.io/1208233'
-  ).install();
-}
 
 @NgModule({
   declarations: [AppComponent, ...APP_DIALOGS],

@@ -6,7 +6,6 @@ export interface Environment {
   test: boolean;
   production: boolean;
 
-  canUseRaven: boolean;
   canClickOkOnErrorDialog: boolean;
   canPrintToConsole: boolean;
   canUseStoreLogger: boolean;

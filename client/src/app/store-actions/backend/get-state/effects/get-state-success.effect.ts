@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import * as Raven from 'raven-js';
 import { from, Observable } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
@@ -12,11 +11,6 @@ import * as helper from '@app/helper/_index';
 export class GetStateSuccessEffect {
   @Effect() getStateSuccess$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.GET_STATE_SUCCESS),
-    tap((action: actions.GetStateSuccessAction) =>
-      Raven.setUserContext({
-        email: action.payload.state.user.user_id
-      })
-    ),
     mergeMap((action: actions.GetStateSuccessAction) =>
       from([
         new actions.UpdateProjectsStateAction(action.payload.state.projects), // 1
