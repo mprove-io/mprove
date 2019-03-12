@@ -33,7 +33,7 @@
       </button>
     </div>
 
-    <div
+    <!-- <div
       fxHide.lt-md
       fxLayout="row"
       *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)"
@@ -47,7 +47,7 @@
         (click)="pullFromRemote()"
         >Pull From Remote
       </button>
-    </div>
+    </div> -->
 
     <div
       fxHide.lt-md
@@ -178,7 +178,7 @@
         </button>
       </div>
 
-      <div *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)">
+      <!-- <div *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)">
         <button
           mat-raised-button
           color="accent"
@@ -187,7 +187,7 @@
           (click)="pullFromRemote()"
           >Pull From Remote
         </button>
-      </div>
+      </div> -->
 
       <div *ngIf="(isDev$ | async) && (repoIsNeedPull$ | async)">
         <button

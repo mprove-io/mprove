@@ -83,10 +83,10 @@ export const APP_ROUTES: Routes = [
               settingsResolver: resolvers.SettingsResolver
             }
           },
-          {
-            path: constants.PATH_REMOTE,
-            component: components.RemoteComponent
-          },
+          // {
+          //   path: constants.PATH_REMOTE,
+          //   component: components.RemoteComponent
+          // },
           {
             path: constants.PATH_MODE + '/:mode',
             component: components.RepoComponent,
