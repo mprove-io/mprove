@@ -223,7 +223,6 @@ export const APP_EFFECTS = [
 
   // Other
   effects.BackendFailEffect,
-  effects.RouterEffect,
 
   // WebSocket
   effects.CloseWebSocketSuccessEffect,

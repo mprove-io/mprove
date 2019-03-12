@@ -16,7 +16,6 @@ import * as services from '@app/services/_index';
 import * as actionTypes from '@app/store-actions/action-types';
 import * as actions from '@app/store-actions/actions';
 import * as effects from '@app/store-actions/effects';
-import * as metaReducers from '@app/store-meta-reducers/_index';
 import * as reducers from '@app/store-reducers/_index';
 import * as selectors from '@app/store-selectors/_index';
 import * as types from '@app/types/_index';

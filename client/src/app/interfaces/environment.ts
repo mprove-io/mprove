@@ -11,7 +11,6 @@ export interface Environment {
   canPrintToConsole: boolean;
   canUseStoreLogger: boolean;
   canUseStoreFreeze: boolean;
-  canUseSegmentMetaReducer: boolean;
 
   // dynamicAssetsBaseUrl: string;
   // httpUrl: string;

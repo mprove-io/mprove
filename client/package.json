@@ -100,7 +100,6 @@
 
     "@types/d3-shape": "^1.2.1",
     "@types/js-yaml": "^3.5.30",
-    "@types/segment-analytics": "^0.0.28",
     "@types/uuid": "^2.0.29",
 
     "lint-staged": "^7.3.0",

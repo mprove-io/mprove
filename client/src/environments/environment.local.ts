@@ -11,6 +11,5 @@ export const environment: interfaces.Environment = {
   canPrintToConsole: true,
   canUseStoreLogger: false,
   canUseStoreFreeze: false,
-  canUseRaven: false,
-  canUseSegmentMetaReducer: false
+  canUseRaven: false
 };

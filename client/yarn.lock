@@ -589,11 +589,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.26.tgz#2dec19f1f7981c95cb54bab8f618ecb5dc983d0e"
   integrity sha512-nMRqS+mL1TOnIJrL6LKJcNZPB8V3eTfRo9FQA2b5gDvrHurC8XbSA86KNe0dShlEL7ReWJv/OU9NL7Z0dnqWTg==
 
-"@types/segment-analytics@^0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@types/segment-analytics/-/segment-analytics-0.0.28.tgz#a23e26d3171cf6a735ae2ae12974b5f6a707c414"
-  integrity sha512-Oo+1ZQPMlmAXWnE2du97uWOyifMbRWdbmQZDWkXGgZppMLmQB55kAFREf0Z5AfMUD2iymqGJgmu+FsbK8+QNsw==
-
 "@types/uuid@^2.0.29":
   version "2.0.30"
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-2.0.30.tgz#4dca12da43ae530f89f46d6d203935d2199652d5"

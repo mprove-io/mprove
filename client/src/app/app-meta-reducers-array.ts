@@ -7,7 +7,6 @@ import { MetaReducer } from '@ngrx/store';
 import { storeFreeze } from 'ngrx-store-freeze';
 import { storeLogger } from 'ngrx-store-logger';
 import * as interfaces from '@app/interfaces/_index';
-import * as metaReducers from '@app/store-meta-reducers/_index';
 import { environment } from '@env/environment';
 
 /**
@@ -18,9 +17,6 @@ import { environment } from '@env/environment';
 export const APP_META_REDUCERS_ARRAY: Array<
   MetaReducer<interfaces.AppState>
 > = [
-  ...(environment.canUseSegmentMetaReducer === true
-    ? [metaReducers.segmentMetaReducer]
-    : []),
   ...(environment.canUseStoreLogger === true
     ? [storeLogger({ collapsed: true })]
     : []),
