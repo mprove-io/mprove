@@ -1,10 +1,10 @@
 # Mprove
 
-Mprove 
-
-[Demo](https://mprove.io/login)
-[Docs](https://mprove.io/docs)
+[Demo](https://mprove.io/login) |
+[Docs](https://mprove.io/docs) |
 [Website](https://mprove.io)
+
+Mprove - SQL analytics and dashboards for BigQuery. Inspired by [Looker](https://looker.com/).
 
 ## Deploy on server
 
