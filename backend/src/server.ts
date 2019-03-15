@@ -17,54 +17,24 @@ import { start } from './barrels/start';
 
 import { createExpress } from './create-express';
 
-// import {
-//   config.DB_TYPE,
-//   config.DB_HOST,
-//   config.DB_PORT,
-//   config.DB_USERNAME,
-//   config.DB_PASSWORD,
-//   config.DB_DATABASE
-// } from './configs/config';
-
 run().catch(e => {
   handler.errorToLog(e);
 });
 
 async function run() {
-  // read connection options from ormconfig file (or ENV variables)
+  // read connection options from ormconfig file
   const connectionOptions = <ConnectionOptions>(
     await getConnectionOptions().catch(e =>
       helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_GET_CONNECTION_OPTIONS)
     )
   );
 
+  // override
   Object.assign(connectionOptions, {
-    // synchronize: true, // TODO: #28-1 synchronize: false in prod
-    //   type: config.DB_TYPE,
-    //   host: config.DB_HOST,
-    //   port: config.DB_PORT,
-    //   username: config.DB_USERNAME,
     password: process.env.BACKEND_DATABASE_ROOT_PASSWORD,
     database: process.env.BACKEND_DATABASE,
     entities: [__dirname + '/models/store/entities/*.js'],
-    // entities: [
-    //   DashboardEntity,
-    //   ErrorEntity,
-    //   FileEntity,
-    //   MconfigEntity,
-    //   MemberEntity,
-    //   ModelEntity,
-    //   ProjectEntity,
-    //   QueryEntity,
-    //   RepoEntity,
-    //   SessionEntity,
-    //   UserEntity,
-    // ],
     migrations: [__dirname + '/migration/*.js']
-    // migrations: ['src/migration/*.js'],
-    //   cli: {
-    //     migrationsDir: 'src/migration'
-    //   }
   });
 
   // create connection with database
@@ -76,21 +46,28 @@ async function run() {
     )
   );
 
-  await connection
-    .dropDatabase() // TODO: #28-2 remove synchronize in prod
-    .catch(e =>
-      helper.reThrow(
-        e,
-        enums.typeormErrorsEnum.TYPEORM_CONNECTION_DROP_DATABASE
-      )
-    );
+  if (process.env.BACKEND_DROP_DATABASE_ON_START === 'TRUE') {
+    await connection
+      .dropDatabase()
+      .catch(e =>
+        helper.reThrow(
+          e,
+          enums.typeormErrorsEnum.TYPEORM_CONNECTION_DROP_DATABASE
+        )
+      );
 
-  await connection
-    .synchronize() // TODO: #28-3 remove synchronize in prod
-    .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_SYNCHRONIZE));
-
-  // await connection.runMigrations() // TODO: #28-4 runMigrations in prod
-  //   .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_RUN_MIGRATIONS));
+    await connection
+      .synchronize()
+      .catch(e =>
+        helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_SYNCHRONIZE)
+      );
+  } else {
+    await connection
+      .runMigrations()
+      .catch(e =>
+        helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_RUN_MIGRATIONS)
+      );
+  }
 
   await disk
     .emptyDir(config.DISK_BASE_PATH)

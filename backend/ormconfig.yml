@@ -4,7 +4,7 @@ default: # default connection
   port: 3306
   username: root
   password: root
-  database: my_dev
+  database: my_db
   logging: true
   logger: file
   entities: 
