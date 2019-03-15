@@ -44,8 +44,8 @@ async function run() {
     //   host: config.DB_HOST,
     //   port: config.DB_PORT,
     //   username: config.DB_USERNAME,
-    //   password: config.DB_PASSWORD,
-    //   database: config.DB_DATABASE,
+    password: process.env.BACKEND_DATABASE_ROOT_PASSWORD,
+    database: process.env.BACKEND_DATABASE,
     entities: [__dirname + '/models/store/entities/*.js'],
     // entities: [
     //   DashboardEntity,
