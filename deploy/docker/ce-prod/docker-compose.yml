@@ -16,10 +16,10 @@ services:
     image: redis:alpine
 
   blockml:
-    image: mprove/mprove-ce-blockml:$TAG
+    image: mprove/mprove-ce-blockml:$MPROVE_CE_RELEASE_TAG
 
   backend:
-    image: mprove/mprove-ce-backend:$TAG
+    image: mprove/mprove-ce-backend:$MPROVE_CE_RELEASE_TAG
     environment:
       BACKEND_DATABASE_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       BACKEND_DATABASE: $MYSQL_DATABASE    
@@ -34,10 +34,10 @@ services:
         target: /mprove_data/backend
 
   client:
-    image: mprove/mprove-ce-client-prod:$TAG
+    image: mprove/mprove-ce-client-prod:$MPROVE_CE_RELEASE_TAG
 
   proxy:
-    image: mprove/mprove-ce-proxy-https:$TAG
+    image: mprove/mprove-ce-proxy-https:$MPROVE_CE_RELEASE_TAG
     volumes:
       - type: bind
         source: /mprove_certs

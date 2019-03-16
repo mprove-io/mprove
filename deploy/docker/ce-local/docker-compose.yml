@@ -16,10 +16,10 @@ services:
     image: redis:alpine
 
   blockml:
-    image: mprove/mprove-ce-blockml:$TAG
+    image: mprove/mprove-ce-blockml:$MPROVE_CE_RELEASE_TAG
 
   backend:
-    image: mprove/mprove-ce-backend:$TAG
+    image: mprove/mprove-ce-backend:$MPROVE_CE_RELEASE_TAG
     environment:
       BACKEND_DATABASE_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       BACKEND_DATABASE: $MYSQL_DATABASE      
@@ -34,10 +34,10 @@ services:
         target: /mprove_data/backend
 
   client:
-    image: mprove/mprove-ce-client-local:$TAG
+    image: mprove/mprove-ce-client-local:$MPROVE_CE_RELEASE_TAG
 
   proxy:
-    image: mprove/mprove-ce-proxy-local:$TAG
+    image: mprove/mprove-ce-proxy-local:$MPROVE_CE_RELEASE_TAG
     ports:
       - '80:80'
       - '8080:80' # browser client app communicates with backend through 8080
