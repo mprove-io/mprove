@@ -53,5 +53,4 @@ services:
     ports:
       - '443:443'
       - '80:80'
-      - '8080:80' # browser client app communicates with backend through 8080
 
