@@ -40,15 +40,8 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
       config: {
         headerName: 'Auth',
         authScheme: 'Bearer ',
-        tokenGetter: helper.getToken, // for jwtInterceptor
-        whitelistedDomains: [
-          'localhost',
-          'localhost:4200',
-          'localhost:8080',
-          'test.mprove.io',
-          'stage.mprove.io',
-          'mprove.io'
-        ]
+        tokenGetter: helper.getToken,
+        whitelistedDomains: ['localhost:8080']
       }
     }),
     MyCovalentModule,
