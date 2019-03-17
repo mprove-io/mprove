@@ -79,9 +79,6 @@ export class MyHttpService {
 
     let url = this.httpUrl + path;
 
-    // url = 'https://t.mprove.io/check/code/400';
-    // const url = 'http://httpstat.us/500';
-
     let headers: HttpHeaders = new HttpHeaders({
       'Content-Type': 'application/json'
     });
