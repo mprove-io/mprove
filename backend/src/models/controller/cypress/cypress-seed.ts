@@ -20,7 +20,7 @@ import { generator } from '../../../barrels/generator';
 import { ServerError } from '../../../models/server-error';
 import { git } from '../../../barrels/git';
 import { config } from '../../../barrels/config';
-import { credentials } from '../../../barrels/credentials';
+import * as fse from 'fs-extra';
 
 export async function cypressSeed(req: Request, res: Response) {
   let payload: api.CypressSeedRequestBody['payload'] = validator.getPayload(
@@ -91,8 +91,12 @@ export async function cypressSeed(req: Request, res: Response) {
       });
 
       if (x.has_credentials === true) {
-        let credentialsString: string = JSON.stringify(
-          credentials.bigqueryMproveDemo
+        let filePath = config.DISK_TEST_CREDENTIALS_PATH + '/bigquery.json';
+
+        let credentialsString = <string>(
+          await fse
+            .readFile(filePath, 'utf8')
+            .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_READ_FILE))
         );
 
         let fileAbsoluteId = `${

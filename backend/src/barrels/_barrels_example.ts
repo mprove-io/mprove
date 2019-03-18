@@ -5,7 +5,6 @@ import { config } from './config';
 import { constants } from './constants';
 import { controller } from './controller';
 import { copier } from './copier';
-import { credentials } from './credentials';
 import { disk } from './disk';
 import { entities } from './entities';
 import { enums } from './enums';

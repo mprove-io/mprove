@@ -7,7 +7,6 @@ import {
 
 import { config } from './barrels/config';
 import { constants } from './barrels/constants';
-import { credentials } from './barrels/credentials';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 import { disk } from './barrels/disk';
