@@ -46,7 +46,7 @@ export async function commit(item: {
 
   let author = nodegit.Signature.now('mprove user', item.user_id);
 
-  let committer = nodegit.Signature.now('mprove server', 'support@mprove.io');
+  let committer = nodegit.Signature.now('mprove server', '@');
 
   await gitRepo
     .createCommit('HEAD', author, committer, 'message', oid, [parent])

@@ -74,8 +74,8 @@ export async function createInitialCommitToProd(item: {
       )
   );
 
-  let author = nodegit.Signature.now('mprove server', 'support@mprove.io');
-  let committer = nodegit.Signature.now('mprove server', 'support@mprove.io');
+  let author = nodegit.Signature.now('mprove server', '@');
+  let committer = nodegit.Signature.now('mprove server', '@');
 
   // Since we're creating an inital commit, it has no parents. Note that unlike
   // normal we don't get the head either, because there isn't one yet.

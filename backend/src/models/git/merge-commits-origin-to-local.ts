@@ -122,7 +122,7 @@ export async function mergeCommitsOriginToLocal(item: {
   );
 
   let author = nodegit.Signature.now('mprove user', item.user_id);
-  let committer = nodegit.Signature.now('mprove server', 'support@mprove.io');
+  let committer = nodegit.Signature.now('mprove server', '@');
 
   let commitOid = <nodegit.Oid>(
     await gitRepo
