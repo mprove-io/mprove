@@ -61,6 +61,16 @@ export class CloseWebSocketSuccessEffect {
           break;
         }
 
+        case 4504: {
+          throw new MyError({
+            name: `[WebSocketEffects] Websocket closed: ${
+              action.payload.code
+            } - Server: Authorization error`,
+            message: ``
+          });
+          // break;
+        }
+
         // case 1006: {
         //   // maintenance 1005 => 1006, 1006, 1006
         //   throw new MyError({

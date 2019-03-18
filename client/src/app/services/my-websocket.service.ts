@@ -81,8 +81,11 @@ export class MyWebSocketService {
       }
     };
 
+    let token = localStorage.getItem('token');
+
     let config: WebSocketSubjectConfig<any> = {
       url: fullPath,
+      protocol: ['token-' + token],
       openObserver: openObserver,
       closeObserver: closeObserver
     };

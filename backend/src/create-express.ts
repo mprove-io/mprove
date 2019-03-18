@@ -5,6 +5,7 @@ import * as compression from 'compression'; // compresses requests
 import * as logger from 'morgan';
 import * as lusca from 'lusca';
 import * as passport from 'passport';
+import * as jsonwebtoken from 'jsonwebtoken';
 
 import expressValidator = require('express-validator');
 
@@ -67,6 +68,26 @@ export function createExpress() {
 
   app.ws('/api/v1/webchat/:init_id', async (ws, req) => {
     let initId = req.params.init_id;
+
+    let protocolHeader = req.headers['sec-websocket-protocol'];
+
+    let token = protocolHeader
+      ? protocolHeader.toString().substring(6)
+      : undefined;
+
+    let isValid: boolean = true;
+
+    try {
+      let decoded = jsonwebtoken.verify(token, process.env.BACKEND_JWT_SECRET);
+    } catch (err) {
+      isValid = false;
+    }
+
+    if (!isValid) {
+      // Authorization error
+      ws.close(4504);
+      return;
+    }
 
     if (!initId) {
       // Init_id is missing in url
