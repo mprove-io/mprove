@@ -91,14 +91,6 @@ async function run() {
     })
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
 
-  await start
-    .addProject({
-      project_id: constants.PROJECT_WOOD,
-      bigquery_credentials: credentials.bigqueryMproveDemo,
-      member_ids: adminMemberIds
-    })
-    .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
-
   let itemCreateExpress = createExpress();
 
   scheduler.runScheduler({ ws_clients: itemCreateExpress.ws_clients });

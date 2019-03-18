@@ -1,5 +1,4 @@
 export const DEMO_PROJECT = 'demo';
-export const PROJECT_WOOD = 'wood';
 export const PROD_REPO_ID = 'prod';
 export const CENTRAL_REPO_ID = 'central';
 export const PROJECT_DEFAULT_TIMEZONE = 'UTC';
