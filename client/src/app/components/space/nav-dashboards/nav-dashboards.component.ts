@@ -100,11 +100,6 @@ export class NavDashboardsComponent {
       })
     );
 
-  projectIsSpecial: boolean;
-  projectIsSpecial$ = this.store
-    .select(selectors.getSelectedProjectIsSpecial) // no filter here
-    .pipe(tap(x => (this.projectIsSpecial = x)));
-
   constructor(private store: Store<interfaces.AppState>) {}
 
   getDashboardTitleOrName(dashboard: api.Dashboard) {
