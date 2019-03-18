@@ -15,7 +15,7 @@
     "files:check": "npm-run-all --parallel lint circular",
     "build": "npm run files:check && npm run clean && tsc",
     "start": "npm run build && npm run watch",
-    "server": "node dist/src/server.js",
+    "server": "node dist/server.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve\"",
     "watch-ts": "tsc -w",
     "jest": "JEST=yes jest",
