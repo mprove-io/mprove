@@ -23,7 +23,6 @@
 
           <button
             mat-menu-item
-            [disabled]="isDemo$ | async"
             [routerLink]="['/project', layoutProjectId$ | async, 'settings']"
           >
             <mat-icon>settings</mat-icon>Settings
@@ -31,7 +30,6 @@
 
           <button
             mat-menu-item
-            [disabled]="isDemo$ | async"
             [routerLink]="['/project', layoutProjectId$ | async, 'team']"
           >
             <mat-icon>people</mat-icon>Team
@@ -73,7 +71,6 @@
 
       <button
         mat-menu-item
-        [disabled]="(isDemo$ | async) || !(isAdmin$ | async)"
         [routerLink]="['/project', layoutProjectId$ | async, 'settings']"
       >
         <mat-icon>settings</mat-icon>Settings
@@ -81,7 +78,6 @@
 
       <button
         mat-menu-item
-        [disabled]="isDemo$ | async"
         [routerLink]="['/project', layoutProjectId$ | async, 'team']"
       >
         <mat-icon>people</mat-icon>Team
@@ -89,7 +85,6 @@
 
       <button
         mat-menu-item
-        [disabled]="isDemo$ | async"
         [routerLink]="[
           '/project',
           layoutProjectId$ | async,

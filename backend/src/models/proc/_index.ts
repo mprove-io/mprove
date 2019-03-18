@@ -1,4 +1,3 @@
-export * from './add-member-to-demo';
 export * from './check-running-query';
 export * from './check-waiting-query';
 export * from './create-dataset';

@@ -11,5 +11,4 @@ export * from './get-layout-mode-is-dev';
 export * from './get-layout-model-id';
 export * from './get-layout-need-save';
 export * from './get-layout-project-id';
-export * from './get-layout-project-id-is-demo';
 export * from './get-layout-query-id';

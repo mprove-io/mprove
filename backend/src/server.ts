@@ -81,16 +81,6 @@ async function run() {
     .addUsers()
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_USERS));
 
-  let adminMemberIds = config.admins.map(admin => admin.user_id);
-
-  await start
-    .addProject({
-      project_id: constants.DEMO_PROJECT,
-      bigquery_credentials: credentials.bigqueryMproveDemo,
-      member_ids: adminMemberIds
-    })
-    .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_PROJECT));
-
   let itemCreateExpress = createExpress();
 
   scheduler.runScheduler({ ws_clients: itemCreateExpress.ws_clients });

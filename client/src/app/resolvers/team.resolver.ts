@@ -38,16 +38,6 @@ export class TeamResolver implements Resolve<any> {
       .pipe(take(1))
       .subscribe(x => (projectId = x));
 
-    if (projectId === constants.DEMO && userId !== 'akalitenya@mprove.io') {
-      this.router.navigate(['/profile']);
-
-      this.myDialogService.showAccessDeniedDialog({
-        message: 'Team page is not accessible on Demo project'
-      });
-      this.printer.log(enums.busEnum.TEAM_RESOLVER, `resolved (false)`);
-      return of(false);
-    }
-
     return true;
   }
 }

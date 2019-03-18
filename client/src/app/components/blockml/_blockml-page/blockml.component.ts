@@ -45,8 +45,6 @@ export class BlockMLComponent implements OnDestroy {
     tap(x => (this.repoId = x))
   );
 
-  canPush$ = this.store.select(selectors.getCanPush);
-
   repoServerTs: number;
   repoServerTs$ = this.store
     .select(selectors.getSelectedProjectModeRepoServerTs)

@@ -18,7 +18,6 @@ export class ProjectSetupComponent {
 
   layoutProjectId$ = this.store.select(selectors.getLayoutProjectId); // no filter here
 
-  isDemo$ = this.store.select(selectors.getLayoutProjectIdIsDemo); // no filter here
   isAdmin$ = this.store.select(selectors.getSelectedProjectUserIsAdmin); // no filter here
   isEditor$ = this.store.select(selectors.getSelectedProjectUserIsEditor); // no filter here
   isDev$ = this.store.select(selectors.getLayoutModeIsDev); // no filter here
