@@ -143,7 +143,7 @@ export class MyHttpService {
               message: `-`
             })
           );
-        } else if (res.body.info.status !== api.ServerResponseStatusEnum.Ok) {
+        } else if (res.body.info.status !== api.ServerResponseStatusEnum.OK) {
           throw new MyError(
             Object.assign({}, resData, {
               name: `[MyHttpService] ServerResponse status is ${

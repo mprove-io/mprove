@@ -87,11 +87,11 @@ function mapErrors(name: string) {
     case enums.otherErrorsEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST:
       return api.ServerResponseStatusEnum.GET_STATE_ERROR_USER_DOES_NOT_EXIST;
 
-    case enums.otherErrorsEnum.API:
-      return api.ServerResponseStatusEnum.ApiError;
+    case enums.otherErrorsEnum.API_ERROR:
+      return api.ServerResponseStatusEnum.API_ERROR;
 
-    case enums.otherErrorsEnum.AUTHORIZATION_EMAIL:
-      return api.ServerResponseStatusEnum.AuthorizationEmailError;
+    case enums.otherErrorsEnum.AUTHORIZATION_EMAIL_ERROR:
+      return api.ServerResponseStatusEnum.AUTHORIZATION_EMAIL_ERROR;
 
     default:
       return api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR;

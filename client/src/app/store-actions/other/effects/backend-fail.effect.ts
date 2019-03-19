@@ -35,33 +35,27 @@ export class BackendFailEffect {
         return;
       }
 
-      if (status && status === api.ServerResponseStatusEnum.MaintenanceMode) {
-        let url = this.router.routerState.snapshot.url;
+      let err = action.payload.error;
 
-        window.location.href = url;
-      } else {
-        let err = action.payload.error;
-
-        if (!err.data) {
-          err.name = `[AppEffects] ${err.message}`;
-          err.message = `[AppEffects] ${err.message}: -`;
-
-          err.data = {
-            name: err.name,
-            message: '-'
-          };
-        }
-
-        err.name = `${action.type} ${err.name}`;
-        err.message = `${action.type} ${err.message}`;
+      if (!err.data) {
+        err.name = `[AppEffects] ${err.message}`;
+        err.message = `[AppEffects] ${err.message}: -`;
 
         err.data = {
           name: err.name,
-          message: err.data.message
+          message: '-'
         };
-
-        throw err;
       }
+
+      err.name = `${action.type} ${err.name}`;
+      err.message = `${action.type} ${err.message}`;
+
+      err.data = {
+        name: err.name,
+        message: err.data.message
+      };
+
+      throw err;
     })
   );
 

@@ -14,7 +14,7 @@ export function getPayload(req: Request) {
   }
 
   if (err || helper.isNullOrEmpty(payload)) {
-    throw new ServerError({ name: enums.otherErrorsEnum.API });
+    throw new ServerError({ name: enums.otherErrorsEnum.API_ERROR });
   }
 
   return payload;

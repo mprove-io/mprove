@@ -14,7 +14,7 @@ export function getRequestInfoInitId(req: Request) {
   }
 
   if (error || helper.isNullOrEmpty(initId)) {
-    throw new ServerError({ name: enums.otherErrorsEnum.API });
+    throw new ServerError({ name: enums.otherErrorsEnum.API_ERROR });
   }
 
   return initId;

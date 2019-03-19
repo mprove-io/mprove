@@ -20,7 +20,7 @@ export async function activateUser(req: any, res: any, next: any) {
       throw new Error();
     }
   } catch (e) {
-    throw new ServerError({ name: enums.otherErrorsEnum.AUTHORIZATION_EMAIL });
+    throw new ServerError({ name: enums.otherErrorsEnum.AUTHORIZATION_EMAIL_ERROR });
   }
 
   if (helper.isNotNullAndNotEmpty(userId)) {

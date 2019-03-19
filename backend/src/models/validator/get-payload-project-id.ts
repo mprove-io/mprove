@@ -14,7 +14,7 @@ export function getPayloadProjectId(req: Request) {
   }
 
   if (err || helper.isNullOrEmpty(projectId)) {
-    throw new ServerError({ name: enums.otherErrorsEnum.API });
+    throw new ServerError({ name: enums.otherErrorsEnum.API_ERROR });
   }
 
   return projectId;
