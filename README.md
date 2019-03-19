@@ -30,16 +30,18 @@ Create `.env` file in `/mprove-docker-deploy/` folder:
 MPROVE_CE_RELEASE_TAG=
 
 MYSQL_ROOT_PASSWORD=
-MYSQL_DATABASE=
+MYSQL_DATABASE=my_db
 
 BACKEND_DROP_DATABASE_ON_START=FALSE
 BACKEND_JWT_SECRET=
+BACKEND_FIRST_USER_EMAIL=
+BACKEND_FIRST_USER_PASSWORD=
+BACKEND_REGISTER_ONLY_INVITED_USERS=TRUE
 BACKEND_SEND_EMAIL_FROM='"Name" <name@example.com>'
 BACKEND_MAILGUN_ACTIVE_API_KEY=
 BACKEND_MAILGUN_DOMAIN=
 ```
 MPROVE_CE_RELEASE_TAG - see [Mprove releases](https://github.com/mprove-io/mprove/releases)  
-MYSQL_DATABASE - for example 'my_db'  
 BACKEND_JWT_SECRET - random string (recommended min length - 32 characters)  
 BACKEND_SEND_EMAIL_FROM - replace with your data  
 MailGun account is required for now. Mailgun is email delivery service with free tier.
