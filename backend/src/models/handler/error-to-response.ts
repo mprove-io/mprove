@@ -46,6 +46,9 @@ function mapErrors(name: string) {
     case enums.otherErrorsEnum.REGISTER_ERROR_USER_ALREADY_EXISTS:
       return api.ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS;
 
+    case enums.otherErrorsEnum.REGISTER_ERROR_USER_IS_NOT_INVITED:
+      return api.ServerResponseStatusEnum.REGISTER_ERROR_USER_IS_NOT_INVITED;
+
     case enums.otherErrorsEnum.INVITE_MEMBER_ERROR_USER_DELETED:
       return api.ServerResponseStatusEnum.INVITE_MEMBER_ERROR_USER_DELETED;
 

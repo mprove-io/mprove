@@ -17,9 +17,10 @@ export class RegisterUserFailEffect {
       let status = helper.getResponseBodyInfoStatus(action.payload.error);
       if (
         status &&
-        [ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS].indexOf(
-          status
-        ) > -1
+        [
+          ServerResponseStatusEnum.REGISTER_ERROR_USER_ALREADY_EXISTS,
+          ServerResponseStatusEnum.REGISTER_ERROR_USER_IS_NOT_INVITED
+        ].indexOf(status) > -1
       ) {
         this.myDialogService.showInfoDialog(status);
 

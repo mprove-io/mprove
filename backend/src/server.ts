@@ -77,7 +77,7 @@ async function run() {
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
 
   await start
-    .addUsers()
+    .addFirstUser()
     .catch(e => helper.reThrow(e, enums.startErrorsEnum.START_ADD_USERS));
 
   let itemCreateExpress = createExpress();

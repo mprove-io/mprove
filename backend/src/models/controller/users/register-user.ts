@@ -38,6 +38,12 @@ export async function registerUser(req: Request, res: Response) {
     });
   }
 
+  if (!user && process.env.BACKEND_REGISTER_ONLY_INVITED_USERS === 'TRUE') {
+    throw new ServerError({
+      name: enums.otherErrorsEnum.REGISTER_ERROR_USER_IS_NOT_INVITED
+    });
+  }
+
   if (user) {
     // A
     user.hash = hash;

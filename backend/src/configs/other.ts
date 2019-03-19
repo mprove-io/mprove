@@ -15,10 +15,3 @@ export const DISK_TEST_CREDENTIALS_PATH =
 
 export const GITHUB_TOKEN = 'a97933f0beee74169e58bd598a754e56875d225d';
 export const GITHUB_ORG = 'mprove-projects';
-
-export const admins = [
-  {
-    user_id: 'akalitenya@mprove.io',
-    first_password: '123123'
-  }
-];
