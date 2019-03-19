@@ -10,7 +10,6 @@ import { entities } from './entities';
 import { enums } from './enums';
 import { generator } from './generator';
 import { git } from './git';
-import { github } from './github';
 import { handler } from './handler';
 import { helper } from './helper';
 import { interfaces } from './interfaces';
