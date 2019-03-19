@@ -318,5 +318,5 @@ export async function cypressSeed(req: Request, res: Response) {
     empty: true
   };
 
-  res.json({ payload: payload });
+  res.json({ payload: responsePayload });
 }

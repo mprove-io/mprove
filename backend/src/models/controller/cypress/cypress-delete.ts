@@ -39,5 +39,5 @@ export async function cypressDelete(req: Request, res: Response) {
     empty: true
   };
 
-  res.json({ payload: payload });
+  res.json({ payload: responsePayload });
 }
