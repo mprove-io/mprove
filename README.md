@@ -24,7 +24,7 @@ Put your SSL certificate `cert.pem` and `key.pem` files to `mprove_certs` folder
 
 Copy `mprove/deploy/docker/ce-prod/docker-compose.yml` to `/mprove-docker-deploy/` folder.
 
-Create `.env` file in `/mprove-docker-deploy/` folder:
+Create `.env` file in `/mprove-docker-deploy/` folder. Fill in your values:
 
 ```
 MPROVE_CE_RELEASE_TAG=
