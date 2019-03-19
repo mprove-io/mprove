@@ -12,6 +12,3 @@ export const DISK_BIGQUERY_CREDENTIALS_PATH =
   '/mprove_data/backend/bigquery_credentials';
 export const DISK_TEST_CREDENTIALS_PATH =
   '/mprove_data/backend/test_credentials';
-
-export const GITHUB_TOKEN = 'a97933f0beee74169e58bd598a754e56875d225d';
-export const GITHUB_ORG = 'mprove-projects';
