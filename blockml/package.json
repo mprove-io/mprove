@@ -8,8 +8,7 @@
     "url": "https://github.com/mprove-io/mprove.git"
   },
   "scripts": {
-    "rimraf": "rimraf",
-    "clean": "npm run rimraf -- dist .awcache",
+    "clean": "rimraf -- dist .awcache",
     "lint": "tslint --config tslint.json -e 'node_modules/**' \"{src,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts ./",
     "files:check": "npm-run-all --parallel lint circular",    

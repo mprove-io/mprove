@@ -5,7 +5,7 @@
   "video": false,
   "watchForFileChanges": false,
   "viewportWidth": 1280,
-  "viewportHeight": 720,  
+  "viewportHeight": 720,
   "projectId": "y4yp8f",
   "fileServerFolder": "../",
   "fixturesFolder": "fixtures",
@@ -13,5 +13,6 @@
   "pluginsFile": "plugins/index.js",
   "screenshotsFolder": "screenshots",
   "supportFile": "support/index.js",
-  "videosFolder": "videos"
+  "videosFolder": "videos",
+  "blacklistHosts": ["*fonts.googleapis.com"]
 }
