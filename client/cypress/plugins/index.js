@@ -14,4 +14,8 @@ module.exports = on => {
   };
 
   on('file:preprocessor', webpack(options));
+
+  on('task', {
+    failed: require('cypress-failed-log/src/failed')()
+  });
 };
