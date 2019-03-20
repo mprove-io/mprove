@@ -44,7 +44,7 @@ export async function deleteProjectCredentials(req: Request, res: Response) {
 
   helper.checkServerTs(project, serverTs);
 
-  let fileId = `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`;
+  let fileId = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`;
 
   await disk
     .removePath(fileId)

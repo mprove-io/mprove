@@ -39,7 +39,7 @@ export async function createFolder(req: Request, res: Response) {
     throw new ServerError({ name: enums.otherErrorsEnum.REPO_NOT_FOUND });
   }
 
-  let repoDir = `${config.DISK_BASE_PATH}/${projectId}/${repoId}`;
+  let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${repoId}`;
 
   let parent = parentNodeId.substring(projectId.length + 1);
 

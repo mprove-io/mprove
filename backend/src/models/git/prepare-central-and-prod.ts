@@ -12,10 +12,10 @@ export async function prepareCentralAndProd(item: {
   project_id: string;
   use_data: boolean;
 }) {
-  let centralDir = `${config.DISK_BASE_PATH}/${item.project_id}/${
+  let centralDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
     constants.CENTRAL_REPO_ID
   }`;
-  let prodDir = `${config.DISK_BASE_PATH}/${item.project_id}/${
+  let prodDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
     constants.PROD_REPO_ID
   }`;
 

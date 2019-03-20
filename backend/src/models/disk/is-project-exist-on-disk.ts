@@ -4,7 +4,7 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 
 export async function isProjectExistOnDisk(projectId: string) {
-  let projectDir = `${config.DISK_BASE_PATH}/${projectId}`;
+  let projectDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}`;
 
   let isExist = await fse
     .pathExists(projectDir)

@@ -25,7 +25,7 @@ export async function checkRunningQuery(item: { query: entities.QueryEntity }) {
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_SAVE));
   }
 
-  let credentialsFilePath = `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${
+  let credentialsFilePath = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${
     query.project_id
   }.json`;
 

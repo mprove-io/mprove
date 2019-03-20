@@ -24,7 +24,7 @@ export async function getRepoStatus(item: {
 
   let conflicts: api.FileLine[] = [];
 
-  let repoPath = `${config.DISK_BASE_PATH}/${item.project_id}/${item.repo_id}`;
+  let repoPath = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${item.repo_id}`;
 
   let gitRepo = <nodegit.Repository>(
     await nodegit.Repository.open(repoPath).catch(e =>

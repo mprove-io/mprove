@@ -10,7 +10,7 @@ export async function createInitialCommitToProd(item: {
   project_id: string;
   use_data: boolean;
 }) {
-  let dirProd = `${config.DISK_BASE_PATH}/${item.project_id}/${
+  let dirProd = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
     constants.PROD_REPO_ID
   }`;
 

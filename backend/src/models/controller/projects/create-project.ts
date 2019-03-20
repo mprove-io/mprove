@@ -27,7 +27,7 @@ export async function createProject(req: Request, res: Response) {
 
   projectId = projectId.toLowerCase();
 
-  let projectDir = `${config.DISK_BASE_PATH}/${projectId}`;
+  let projectDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}`;
 
   await disk
     .emptyDir(projectDir)

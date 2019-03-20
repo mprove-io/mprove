@@ -8,7 +8,7 @@ export async function pushToCentral(item: {
   project_id: string;
   from_repo_id: string;
 }) {
-  let repoPath = `${config.DISK_BASE_PATH}/${item.project_id}/${
+  let repoPath = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
     item.from_repo_id
   }`;
 

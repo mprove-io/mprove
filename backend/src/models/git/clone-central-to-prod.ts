@@ -6,10 +6,10 @@ import { helper } from '../../barrels/helper';
 import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function cloneCentralToProd(projectId: string) {
-  let dirCentral = `${config.DISK_BASE_PATH}/${projectId}/${
+  let dirCentral = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${
     constants.CENTRAL_REPO_ID
   }`;
-  let dirProd = `${config.DISK_BASE_PATH}/${projectId}/${
+  let dirProd = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${
     constants.PROD_REPO_ID
   }`;
 

@@ -6,7 +6,7 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 
 export async function initCentralRepo(projectId: string) {
-  let dirCentral = `${config.DISK_BASE_PATH}/${projectId}/${
+  let dirCentral = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${
     constants.CENTRAL_REPO_ID
   }`;
 

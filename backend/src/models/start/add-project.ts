@@ -43,7 +43,7 @@ export async function addProject(item: {
     return;
   }
 
-  let projectDir = `${config.DISK_BASE_PATH}/${projectId}`;
+  let projectDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}`;
 
   await disk
     .ensureDir(projectDir)
@@ -56,7 +56,7 @@ export async function addProject(item: {
   let credentials = JSON.stringify(item.bigquery_credentials);
 
   let fileAbsoluteId = `${
-    config.DISK_BIGQUERY_CREDENTIALS_PATH
+    config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH
   }/${projectId}.json`;
 
   await disk
@@ -191,7 +191,7 @@ export async function addProject(item: {
   let memberIds = members.map(member => member.member_id);
 
   await forEach(memberIds, async (repoId: string) => {
-    let repoDir = `${config.DISK_BASE_PATH}/${projectId}/${repoId}`;
+    let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${repoId}`;
 
     await disk
       .emptyDir(repoDir)

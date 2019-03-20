@@ -59,7 +59,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
   }
 
   let id = helper.makeId();
-  let tempId = `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${id}.json`;
+  let tempId = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${id}.json`;
 
   await disk
     .writeToFile({
@@ -94,7 +94,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
     .removePath(tempId)
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
 
-  let fileId = `${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`;
+  let fileId = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`;
 
   await disk
     .writeToFile({

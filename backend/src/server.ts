@@ -60,6 +60,14 @@ async function run() {
       .catch(e =>
         helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_SYNCHRONIZE)
       );
+
+    await disk
+      .emptyDir(config.DISK_BACKEND_PROJECTS_PATH)
+      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
+
+    await disk
+      .emptyDir(config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH)
+      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
   } else {
     await connection
       .runMigrations()
@@ -67,14 +75,6 @@ async function run() {
         helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_RUN_MIGRATIONS)
       );
   }
-
-  await disk
-    .emptyDir(config.DISK_BASE_PATH)
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
-
-  await disk
-    .emptyDir(config.DISK_BIGQUERY_CREDENTIALS_PATH)
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_EMPTY_DIR));
 
   await start
     .addFirstUser()

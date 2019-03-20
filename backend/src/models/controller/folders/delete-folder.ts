@@ -41,7 +41,7 @@ export async function deleteFolder(req: Request, res: Response) {
 
   helper.checkServerTs(repo, serverTs);
 
-  let repoDir = `${config.DISK_BASE_PATH}/${projectId}/${repoId}`;
+  let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${repoId}`;
 
   let folderAbsolutePath =
     repoDir + '/' + nodeId.substring(projectId.length + 1);

@@ -80,7 +80,7 @@ export async function cypressSeed(req: Request, res: Response) {
     await forEach(payload.projects, async x => {
       let projectId = x.project_id;
 
-      let projectDir = `${config.DISK_BASE_PATH}/${projectId}`;
+      let projectDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}`;
 
       await disk
         .ensureDir(projectDir)
@@ -91,7 +91,7 @@ export async function cypressSeed(req: Request, res: Response) {
       });
 
       if (x.has_credentials === true) {
-        let filePath = config.DISK_TEST_CREDENTIALS_PATH + '/bigquery.json';
+        let filePath = config.DISK_BACKEND_TEST_CREDENTIALS_PATH + '/bigquery.json';
 
         let credentialsString = <string>(
           await fse
@@ -100,7 +100,7 @@ export async function cypressSeed(req: Request, res: Response) {
         );
 
         let fileAbsoluteId = `${
-          config.DISK_BIGQUERY_CREDENTIALS_PATH
+          config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH
         }/${projectId}.json`;
 
         await disk
@@ -210,7 +210,7 @@ export async function cypressSeed(req: Request, res: Response) {
       let memberIds = projectMembers.map(member => member.member_id);
 
       await forEach(memberIds, async (repoId: string) => {
-        let repoDir = `${config.DISK_BASE_PATH}/${projectId}/${repoId}`;
+        let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${repoId}`;
 
         await disk
           .emptyDir(repoDir)

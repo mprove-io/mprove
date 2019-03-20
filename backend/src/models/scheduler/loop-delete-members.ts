@@ -120,7 +120,7 @@ async function deleteMembers() {
     // disk
 
     await disk
-      .removePath(`${config.DISK_BASE_PATH}/${projectId}/${memberId}`)
+      .removePath(`${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${memberId}`)
       .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
   });
 }

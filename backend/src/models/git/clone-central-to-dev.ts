@@ -9,10 +9,10 @@ export async function cloneCentralToDev(item: {
   project_id: string;
   dev_repo_id: string;
 }) {
-  let dirCentral = `${config.DISK_BASE_PATH}/${item.project_id}/${
+  let dirCentral = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
     constants.CENTRAL_REPO_ID
   }`;
-  let dirDev = `${config.DISK_BASE_PATH}/${item.project_id}/${
+  let dirDev = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
     item.dev_repo_id
   }`;
 

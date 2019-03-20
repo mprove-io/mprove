@@ -72,11 +72,11 @@ export async function processDeletedProjects(projectIds: string[]) {
 
   await forEach(projectIds, async projectId => {
     await disk
-      .removePath(`${config.DISK_BASE_PATH}/${projectId}`)
+      .removePath(`${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}`)
       .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
 
     await disk
-      .removePath(`${config.DISK_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`)
+      .removePath(`${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`)
       .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
   });
 }
