@@ -6,7 +6,7 @@
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:run": "npm run clean && cypress run --spec 'integration/**/*'",
-    "clean": "rimraf -- cypress/logs"
+    "clean": "rimraf -- cypress/logs screenshots"
   },
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "devDependencies": {
