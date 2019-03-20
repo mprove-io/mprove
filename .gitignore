@@ -13,7 +13,7 @@ Thumbs.db
 # cypress
 /client/cypress/screenshots/
 /client/cypress/videos/
-/client/cypress-examples/
+/client/cypress/cypress/
 
 # compiled output
 dist/
