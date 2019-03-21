@@ -1,16 +1,14 @@
-# edit in mprove-api only
-
 arrowParens: avoid
 bracketSpacing: true
-endOfLine: lf # default: auto
+endOfLine: lf
 htmlWhitespaceSensitivity: strict
 # jsxBracketSameLine: false
 # jsxSingleQuote: false
 # parser: babylon
-printWidth: 80 # default: 80
+printWidth: 80
 proseWrap: preserve
 semi: true
-singleQuote: true # default: false
+singleQuote: true
 tabWidth: 2
 trailingComma: none
 useTabs: false
