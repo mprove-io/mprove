@@ -1,14 +1,18 @@
 {
   "name": "mprove-cypress",
-  "version": "0.0.0",
-  "main": "index.js",
+  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
+  "license": "Apache-2.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mprove-io/mprove.git"
+  },
+  "main": "index.js",
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:run": "npm run clean && cypress run --spec 'integration/**/*'",
     "clean": "rimraf -- cypress/logs screenshots"
   },
-  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "devDependencies": {
     "@cypress/webpack-preprocessor": "4.0.3",
     "cypress": "3.2.0",

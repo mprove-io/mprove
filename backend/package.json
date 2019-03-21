@@ -1,7 +1,7 @@
 {
-  "name": "mprove-node",
-  "version": "0.0.0",
+  "name": "mprove-backend",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
+  "license": "Apache-2.0",
   "private": true,
   "repository": {
     "type": "git",
