@@ -11,25 +11,6 @@ export function checkTopUnknownParameters(item: { filesAny: any[] }): any[] {
           return;
         }
 
-        // if (parameter === 'hidden'
-        //   && !file[parameter].toString().match(ApRegex.TRUE_FALSE())) {
-
-        //   // error e119
-        //   ErrorsCollector.addError(new AmError({
-        //     title: 'wrong hidden',
-        //     message: `parameter "hidden:" must be 'true' or 'false' if specified`,
-        //     lines: [{
-        //       line: file[parameter + '_line_num'],
-        //       name: file.name,
-        //       path: file.path,
-        //     }],
-        //   }));
-
-        //   delete file[parameter];
-        //   delete file[parameter + '_line_num'];
-        //   return;
-        // }
-
         switch (file.ext) {
           case '.udf': {
             if (['udf', 'sql'].indexOf(parameter) < 0) {
