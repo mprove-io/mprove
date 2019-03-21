@@ -14,12 +14,8 @@ export async function fetchBqViews(item: {
   structId: string;
 }) {
   await forEach(item.dashboards, async (x: interfaces.Dashboard) => {
-    // item.dashboards.forEach(x => {
-
-    let newReports: interfaces.Report[] = [];
 
     await forEach(x.reports, async (report: interfaces.Report) => {
-      // x.reports.forEach(report => {
 
       let model = item.models.find(m => m.name === report.model);
 
