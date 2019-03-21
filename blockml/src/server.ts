@@ -10,7 +10,6 @@ import { ServerProErrors } from './server-pro-errors';
 import { ServerWorkers } from './server-workers';
 
 redisClient.on('ready', () => {
-  // console.log('Redis is ready');
 });
 
 redisClient.on('error', () => {
@@ -27,7 +26,6 @@ if (cluster.isMaster) {
   } else {
     createExpress();
 
-    // const numCPUs = require('os').cpus().length;
     numWorkers = process.env.WORKERS ? Number(process.env.WORKERS) : 0;
   }
 
@@ -56,8 +54,6 @@ if (cluster.isMaster) {
 
 if (cluster.isWorker) {
   process.on('message', async (message: interfaces.ProcessMessage) => {
-    // console.log('worker received message with type', message.type);
-
     try {
       switch (message.type) {
         case enums.ProEnum.GEN_BQ_VIEWS_PRO: {
@@ -94,8 +90,6 @@ function listenToWorker(worker: ChildProcess) {
   console.log('worker started. process id %s', worker.pid);
 
   worker.on('message', async (message: interfaces.ProcessMessage) => {
-    // console.log('master received message with type', message.type);
-
     switch (message.type) {
       case enums.ProEnum.OUTCOME: {
         let outcomeItem = await redisClient.get(message.outcome_id);
