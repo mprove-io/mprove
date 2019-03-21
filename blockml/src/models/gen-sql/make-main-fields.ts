@@ -11,12 +11,11 @@ export function makeMainFields(item: interfaces.Vars) {
     element_name: string;
   }[] = [];
 
-  let selected: { [s: string]: number } = {}; // поля которые должны быть в main селекте
+  let selected: { [s: string]: number } = {};
   let processedFields: { [s: string]: string } = {};
 
-  let i: number = 0; // номер поля в селекте для group by
+  let i: number = 0;
 
-  // добавляем в mainFields поля выбранные пользователем по порядку
   item.select.forEach(element => {
     let reg = ApRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
@@ -30,16 +29,13 @@ export function makeMainFields(item: interfaces.Vars) {
       element_name: asName + '.' + fieldName
     });
 
-    // отмечаем что это поле понадобится в селекте
     selected[element] = 1;
   });
 
-  // добавляем в mainFields оставшиеся depMeasures
   Object.keys(item.dep_measures).forEach(asName => {
     Object.keys(item.dep_measures[asName]).forEach(fieldName => {
       let element = asName + '.' + fieldName;
 
-      // проверка что такое поле еще не добавлялось
       if (!selected[element]) {
         mainFields.push({
           as_name: asName,
@@ -48,12 +44,10 @@ export function makeMainFields(item: interfaces.Vars) {
         });
       }
 
-      // отмечаем что это поле понадобится в селекте
       selected[element] = 1;
     });
   });
 
-  // добавляем в main_fields поля из фильтров чтобы далее в этом же сабе обрабатывать
   Object.keys(item.filters).forEach(element => {
     let reg = ApRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
@@ -61,7 +55,6 @@ export function makeMainFields(item: interfaces.Vars) {
     let asName = r[1];
     let fieldName = r[2];
 
-    // проверка что такое поле еще не добавлялось
     if (!selected[element]) {
       mainFields.push({
         as_name: asName,
@@ -78,13 +71,11 @@ export function makeMainFields(item: interfaces.Vars) {
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName).field_class;
 
-    // если measure нужно фильтровать - будем добавлять в main select - HAVING станет короче
     if (fieldClass === enums.FieldClassEnum.Measure) {
       selected[element] = 1;
     }
   });
 
-  // набираем селект
   mainFields.forEach(mainField => {
     let asName = mainField.as_name;
     let fieldName = mainField.field_name;
