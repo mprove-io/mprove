@@ -5,7 +5,7 @@ import { enums } from '../../barrels/enums';
 import { ServerError } from '../server-error';
 
 export const constantAxiosInstance = axios.create({
-  baseURL: config.BLOCKML_BASE_PATH,
+  baseURL: config.BLOCKML_API_PATH,
   timeout: config.BLOCKML_TIMEOUT
 });
 
