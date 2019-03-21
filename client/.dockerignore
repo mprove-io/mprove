@@ -4,6 +4,6 @@
 .idea
 
 cypress
-cypress-examples
 dist
 node_modules
+nogit
