@@ -5,8 +5,6 @@ import { interfaces } from '../../barrels/interfaces';
 export function makeContents(item: interfaces.Vars) {
   let contents: string[] = [];
 
-  // let bqViews: MyBqView[] = [];
-
   let myWith: string[] = [];
 
   // prepare filters for ___timestamp
@@ -27,8 +25,6 @@ export function makeContents(item: interfaces.Vars) {
     filt[asName][fieldName] = 1;
   });
   // end of prepare
-
-  // let usedViews: { [s: string]: number } = {};
 
   item.model.joins_sorted.forEach(asName => {
     let flats: {
@@ -131,12 +127,6 @@ export function makeContents(item: interfaces.Vars) {
     let table;
 
     if (typeof join.view.table !== 'undefined' && join.view.table !== null) {
-      // if (typeof join.view.udfs !== 'undefined' && join.view.udfs !== null) {
-      //   join.view.udfs.forEach(udf => {
-      //     item.main_udfs[udf] = 1;
-      //   });
-      // }
-
       table = '`' + join.view.table + '`';
     } else {
       Object.keys(join.view.pdt_view_deps_all).forEach(viewName => {
@@ -164,14 +154,6 @@ export function makeContents(item: interfaces.Vars) {
         item.query_pdt_deps[permanentTableName] = 1;
         item.query_pdt_deps_all[permanentTableName] = 1;
 
-        // if (!usedViews[join.view.name]) {
-        //   bqViews.push({
-        //     bq_view_id: permanentTableName,
-        //     sql: permanentTable,
-        //     pdt_deps: Object.keys(join.view.pdt_view_deps).map(x => `${item.structId}_${x}`),
-        //   });
-        // }
-
         table =
           '`' +
           `${item.bqProject}.mprove_${item.projectId}.${permanentTableName}` +
@@ -190,7 +172,6 @@ export function makeContents(item: interfaces.Vars) {
 
         myWith.push(`  ${join.view.name}__${asName} AS (`);
         myWith.push(derivedSqlStartArray.map(s => `    ${s}`).join(`\n`));
-        // myWith.push(`${derivedSqlStart}`);
         myWith.push(`  ),`);
         myWith.push(``);
 
@@ -204,7 +185,6 @@ export function makeContents(item: interfaces.Vars) {
 
         table = `${join.view.name}__${asName}`;
       }
-      // usedViews[join.view.name] = 1;
     }
 
     contents.push(`  FROM ${table}`);
@@ -225,7 +205,6 @@ export function makeContents(item: interfaces.Vars) {
   });
 
   item.contents = contents;
-  // item.bqViews = bqViews;
   item.with = myWith;
 
   return item;
