@@ -3,7 +3,7 @@ import { api } from './barrels/api';
 import { interfaces } from './barrels/interfaces';
 
 let abc = ApStruct.rebuildStruct({
-  // dir: 'test/valid/11_wherecalc_refs_calc/v27',
+  // dir: 'test/sql/11_wherecalc_refs_calc/v27',
   dir: 'test/manual/m1',
   weekStart: api.ProjectWeekStartEnum.Monday,
   bqProject: 'flow-1202',
