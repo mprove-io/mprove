@@ -3,7 +3,6 @@ import { ServerError } from '../server-error';
 
 export function catchAsyncErrors(fnAsync: any, name: types.errorsType) {
   return async (req: any, res: any, next: any) => {
-    // await ?
     fnAsync(req, res, next).catch((e: any) => {
       let nextError;
 
@@ -20,16 +19,3 @@ export function catchAsyncErrors(fnAsync: any, name: types.errorsType) {
     });
   };
 }
-
-// export function handlerCatchAsyncErrors(fnAsync: any) {
-
-//   return async (req: any, res: any, next: any) => {
-
-//     try {
-//       await fnAsync(req, res, next);
-
-//     } catch (err) {
-//       next(err);
-//     }
-//   };
-// }
