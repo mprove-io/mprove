@@ -15,19 +15,11 @@ import { store } from '../../barrels/store';
 
 const { forEach } = require('p-iteration');
 
-// async function er() {
-//   return new Promise((resolve, reject) => {
-//     throw new Error('Boom');
-//     resolve();
-//   });
-// }
-
 export async function addProject(item: {
   project_id: string;
   bigquery_credentials: any;
   member_ids: string[];
 }) {
-  // let abc = await er();
 
   let projectId = item.project_id;
 
