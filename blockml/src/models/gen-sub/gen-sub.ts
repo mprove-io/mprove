@@ -43,13 +43,6 @@ export function genSub(item: {
   //    dep_measures
   vars = this.makeDepMeasuresAndDimensions(vars);
 
-  //
-  //
-  // makeDepDimensions
-  //
-  //
-
-  //    создаем main select
   // view
   // dep_measures
   // select
@@ -61,13 +54,11 @@ export function genSub(item: {
   //    extra_udfs
   vars = this.makeMainFields(vars);
 
-  //    создаем список всех необходимых полей
   // view
   // selected
   //    needs_all
   vars = this.makeNeedsAll(vars);
 
-  //    derived tables
   // view
   // needs_all
   // bqProject
