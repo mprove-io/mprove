@@ -6,7 +6,6 @@ import { helper } from '../../barrels/helper';
 export async function addChangesToStage(item: {
   project_id: string;
   repo_id: string;
-  // absolute_path: string
 }) {
   let repoPath = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${item.repo_id}`;
 
@@ -22,12 +21,8 @@ export async function addChangesToStage(item: {
       .catch(e => helper.reThrow(e, enums.nodegitErrorsEnum.NODEGIT_REPO_INDEX))
   );
 
-  // let repoDirPathLength = repoPath.length;
-
-  // let relativePath = item.absolute_path.substring(repoDirPathLength + 1);
-
   await (<any>index
-    .addAll(null, null) // await <any>index.addAll(relativePath, null);
+    .addAll(null, null)
     .catch(e =>
       helper.reThrow(e, enums.nodegitErrorsEnum.NODEGIT_INDEX_ADD_ALL)
     ));

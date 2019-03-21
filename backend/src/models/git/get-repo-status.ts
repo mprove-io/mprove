@@ -78,10 +78,6 @@ export async function getRepoStatus(item: {
       )
     );
 
-  // let {
-  //   nodes: nodes,
-  //   files: files } = itemDevRepoCatalog;
-
   itemDevRepoCatalog.files.forEach(file => {
     let fileArray = file.content.split('\n');
 
@@ -96,49 +92,9 @@ export async function getRepoStatus(item: {
     });
   });
 
-  // check conflicts using git
-
-  // let index = await gitRepo.index();
-
-  // if (index.hasConflicts()) {
-
-  //   let paths: string[] = [];
-
-  //   patchesTreeToIndex
-  //     .filter(patch => patch.isConflicted())
-  //     .forEach(conflictedPatch => {
-  //       let newFile = conflictedPatch.newFile();
-  //       let path = newFile.path();
-  //       paths.push(path);
-  //     });
-
-  //   await forEach(paths, async p => {
-  //     let fileAbsoluteId = repoPath + '/' + p;
-
-  //     let file = await toDatabase(storeFiles().findOne(fileAbsoluteId));
-
-  //     conflicts.push({
-  //       file_id: file.file_id,
-  //       file_name: file.name,
-  //       line_number: 1
-  //     });
-  //   });
-  // }
-
   if (conflicts.length > 0) {
     return { status: api.RepoStatusEnum.NeedResolve, conflicts: conflicts };
   }
-
-  // need_stage
-
-  // let diffIndexToWorkdir = await nodegit.Diff.indexToWorkdir(gitRepo, null, {
-  //   // tslint:disable-next-line:no-bitwise
-  //   flags: nodegit.Diff.OPTION.INCLUDE_UNTRACKED | nodegit.Diff.OPTION.RECURSE_UNTRACKED_DIRS
-  // });
-  // let patchesIndexToWorkDir = await diffIndexToWorkdir.patches();
-  // if (patchesIndexToWorkDir.length > 0) {
-  //   // return needStage
-  // }
 
   if (patchesTreeToIndex.length > 0) {
     return { status: api.RepoStatusEnum.NeedCommit, conflicts: conflicts };

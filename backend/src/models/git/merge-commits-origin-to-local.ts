@@ -72,25 +72,6 @@ export async function mergeCommitsOriginToLocal(item: {
   if (index.hasConflicts()) {
     // merge contains conflicting changes
 
-    // const head = await gitRepo.getHeadCommit();
-    // let treeHead = await head.getTree();
-    // const diffTreeToIndex = await nodegit.Diff.treeToIndex(gitRepo, treeHead, null);
-    // const patchesTreeToIndex = await diffTreeToIndex.patches();
-
-    // let paths: string[] = [];
-
-    // patchesTreeToIndex
-    //   .filter(patch => patch.isConflicted())
-    //   .forEach(conflictedPatch => {
-    //     let newFile = conflictedPatch.newFile();
-    //     let path = newFile.path();
-    //     paths.push(path);
-    //   });
-
-    // await forEach(paths, async relativePath => {
-    //   await index.addByPath(relativePath);
-    // });
-
     await (<any>(
       index
         .addAll(null, null)

@@ -55,7 +55,6 @@ export async function createInitialCommitToProd(item: {
   );
 
   await index
-    // .addByPath(fileName)
     .addAll(undefined, undefined)
     .catch(e =>
       helper.reThrow(e, enums.nodegitErrorsEnum.NODEGIT_INDEX_ADD_BY_PATH)
