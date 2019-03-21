@@ -1,4 +1,0 @@
-model: segment_tracks_flow_m
-joins:
-- from_view: segment_tracks_flow
-  as: a
