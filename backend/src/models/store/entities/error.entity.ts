@@ -4,7 +4,7 @@ import { api } from '../../../barrels/api';
 import { constants } from '../../../barrels/constants';
 
 @Entity('m_error')
-export class ErrorEntity implements ErrorInterface {
+export class ErrorEntity {
   @PrimaryColumn({ type: constants.ERROR_ID_DATATYPE })
   error_id: string;
 
@@ -28,9 +28,4 @@ export class ErrorEntity implements ErrorInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface ErrorInterface extends api.SwError {
-  lines: any;
-  server_ts: any;
 }

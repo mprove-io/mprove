@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_repo')
-export class RepoEntity implements RepoInterface {
+export class RepoEntity {
   @PrimaryColumn({ type: constants.REPO_ID_DATATYPE })
   repo_id: string;
 
@@ -62,16 +62,4 @@ export class RepoEntity implements RepoInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface RepoInterface extends api.Repo {
-  pdts_sorted: any;
-  nodes: any;
-  conflicts: any;
-  remote_push_access_is_ok: any;
-  remote_need_manual_pull: any;
-  remote_pull_access_is_ok: any;
-  remote_last_push_ts: any;
-  remote_last_pull_ts: any;
-  server_ts: any;
 }

@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_user')
-export class UserEntity implements UserInterface {
+export class UserEntity {
   @PrimaryColumn({ type: constants.USER_ID_DATATYPE })
   user_id: string;
 
@@ -72,18 +72,4 @@ export class UserEntity implements UserInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface UserInterface {
-  user_id: api.User['user_id'];
-  user_track_id: api.User['user_track_id'];
-  alias: api.User['alias'];
-  first_name: api.User['first_name'];
-  last_name: api.User['last_name'];
-  picture_url_small: api.User['picture_url_small'];
-  picture_url_big: api.User['picture_url_big'];
-  timezone: api.User['timezone'];
-  status: api.User['status'];
-  server_ts: any;
-  // deleted: flag is for api only
 }

@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_mconfig')
-export class MconfigEntity implements MconfigInterface {
+export class MconfigEntity {
   @PrimaryColumn({ type: constants.MCONFIG_ID_DATATYPE })
   mconfig_id: string;
 
@@ -50,13 +50,4 @@ export class MconfigEntity implements MconfigInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface MconfigInterface extends api.Mconfig {
-  select: any;
-  sortings: any;
-  filters: any;
-  charts: any;
-  temp: any;
-  server_ts: any;
 }

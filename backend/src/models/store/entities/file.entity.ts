@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_file')
-export class FileEntity implements CatalogFileInterface {
+export class FileEntity {
   @PrimaryColumn({ type: constants.FILE_ABSOLUTE_ID_DATATYPE })
   file_absolute_id: string;
 
@@ -32,14 +32,4 @@ export class FileEntity implements CatalogFileInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface CatalogFileInterface {
-  file_absolute_id: string;
-  file_id: api.CatalogFile['file_id'];
-  project_id: api.CatalogFile['project_id'];
-  repo_id: api.CatalogFile['repo_id'];
-  path: string; // string[];
-  server_ts: string; // number
-  // deleted: flag is for api only
 }

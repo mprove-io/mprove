@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_dashboard')
-export class DashboardEntity implements DashboardInterface {
+export class DashboardEntity {
   @PrimaryColumn({ type: constants.DASHBOARD_ID_DATATYPE })
   dashboard_id: string;
 
@@ -47,13 +47,4 @@ export class DashboardEntity implements DashboardInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface DashboardInterface extends api.Dashboard {
-  access_users: any;
-  hidden: any;
-  fields: any;
-  reports: any;
-  temp: any;
-  server_ts: any;
 }

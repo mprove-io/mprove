@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_query')
-export class QueryEntity implements QueryInterface {
+export class QueryEntity {
   @PrimaryColumn({ type: constants.QUERY_ID_DATATYPE })
   query_id: string; // globally unique
 
@@ -86,25 +86,4 @@ export class QueryEntity implements QueryInterface {
 
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE, nullable: true })
   refresh: enums.bEnum;
-}
-
-interface QueryInterface {
-  query_id: api.Query['query_id'];
-  project_id: api.Query['project_id'];
-  struct_id: api.Query['struct_id'];
-  is_pdt: any;
-  pdt_deps: string;
-  pdt_deps_all: string;
-  sql: string;
-  status: api.Query['status'];
-  last_run_by: api.Query['last_run_by'];
-  last_run_ts: any;
-  last_cancel_ts: any;
-  last_complete_ts: any;
-  last_complete_duration: any;
-  last_error_message: api.Query['last_error_message'];
-  last_error_ts: any;
-  data: api.Query['data'];
-  temp: any;
-  server_ts: any;
 }

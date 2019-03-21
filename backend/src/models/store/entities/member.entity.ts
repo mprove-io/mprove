@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_member')
-export class MemberEntity implements MemberInterface {
+export class MemberEntity {
   @PrimaryColumn({ type: constants.MEMBER_ID_DATATYPE })
   member_id: string;
 
@@ -41,12 +41,4 @@ export class MemberEntity implements MemberInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface MemberInterface extends api.Member {
-  status: any;
-  is_editor: any;
-  is_admin: any;
-  deleted: any;
-  server_ts: any;
 }

@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_project')
-export class ProjectEntity implements ProjectInterface {
+export class ProjectEntity {
   @PrimaryColumn({ type: constants.PROJECT_ID_DATATYPE })
   project_id: string;
 
@@ -47,17 +47,4 @@ export class ProjectEntity implements ProjectInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface ProjectInterface {
-  project_id: api.Project['project_id'];
-  has_credentials: enums.bEnum; // boolean
-  bigquery_project: string; // bigquery_project
-  bigquery_client_email: string; // client_email
-  bigquery_credentials: string; // not api
-  query_size_limit: api.Project['query_size_limit'];
-  week_start: api.Project['week_start'];
-  timezone: api.Project['timezone'];
-  deleted: enums.bEnum; // boolean
-  server_ts: string; // number
 }

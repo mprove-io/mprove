@@ -5,7 +5,7 @@ import { constants } from '../../../barrels/constants';
 import { enums } from '../../../barrels/enums';
 
 @Entity('m_model')
-export class ModelEntity implements ModelInterface {
+export class ModelEntity {
   @PrimaryColumn({ type: constants.MODEL_ID_DATATYPE })
   model_id: string;
 
@@ -44,12 +44,4 @@ export class ModelEntity implements ModelInterface {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
   server_ts: string;
-}
-
-interface ModelInterface extends api.Model {
-  access_users: any;
-  fields: any;
-  nodes: any;
-  hidden: any;
-  server_ts: any;
 }
