@@ -5,7 +5,6 @@ import { api } from '../../barrels/api';
 
 export function collectFiles(item: { dir: string }): Promise<api.File[]> {
   return new Promise((resolve, reject) => {
-    // if (Math.random() < 0.5) { throw new Error('boom1'); }
 
     let files: api.File[] = [];
 
