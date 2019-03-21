@@ -9,7 +9,6 @@ export async function deduplicateFileNames(item: {
 }): Promise<interfaces.File3[]> {
   let file3s: interfaces.File3[] = [];
 
-  // item.file2s.forEach(x => {
   await forEach(item.file2s, async (x: interfaces.File2) => {
     if (x.filePaths.length > 1) {
       let lines: interfaces.ErrorLine[] = x.filePaths.map(fp => ({
