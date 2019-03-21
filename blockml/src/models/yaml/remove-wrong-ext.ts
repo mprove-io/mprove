@@ -11,7 +11,6 @@ export async function removeWrongExt(item: {
 }): Promise<interfaces.File2[]> {
   let file2s: interfaces.File2[] = [];
 
-  // item.files.forEach(x => {
   await forEach(item.files, async (x: api.File) => {
     let fp = {
       path: x.path,
