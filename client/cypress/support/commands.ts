@@ -62,7 +62,6 @@ export function basicVisit(url: string) {
       username: Cypress.env('basic_login'),
       password: Cypress.env('basic_pass')
     }
-    // onBeforeLoad: contentWindow => {}
   });
 }
 

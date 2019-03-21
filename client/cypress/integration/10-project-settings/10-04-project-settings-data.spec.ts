@@ -41,5 +41,3 @@ describe('10-04 project-settings-data (logged in)', () => {
     cy.get('[data-cy=projectSettingsProjectIdData]').should('have.text', projectId);
   });
 });
-
-// {"project_id":"123","client_email":"456"}
