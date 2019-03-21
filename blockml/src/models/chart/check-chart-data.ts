@@ -10,44 +10,6 @@ export function checkChartData(item: { dashboards: interfaces.Dashboard[] }) {
     x.reports.forEach(report => {
       let nextReport: boolean = false;
 
-      // if ([
-      //   MyChartTypeEnum.Area,
-      //   MyChartTypeEnum.AreaNormalized,
-      //   MyChartTypeEnum.AreaStacked,
-      //   MyChartTypeEnum.BarHorizontal,
-      //   MyChartTypeEnum.BarHorizontalGrouped,
-      //   MyChartTypeEnum.BarHorizontalNormalized,
-      //   MyChartTypeEnum.BarHorizontalStacked,
-      //   MyChartTypeEnum.BarVertical,
-      //   MyChartTypeEnum.BarVerticalGrouped,
-      //   MyChartTypeEnum.BarVerticalNormalized,
-      //   MyChartTypeEnum.BarVerticalStacked,
-      //   MyChartTypeEnum.Gauge,
-      //   MyChartTypeEnum.GaugeLinear,
-      //   MyChartTypeEnum.HeatMap,
-      //   MyChartTypeEnum.Line,
-      //   MyChartTypeEnum.NumberCard,
-      //   MyChartTypeEnum.Pie,
-      //   MyChartTypeEnum.PieAdvanced,
-      //   MyChartTypeEnum.PieGrid,
-      //   MyChartTypeEnum.TreeMap,
-      // ].indexOf(report.type) > -1) {
-
-      //   if (typeof report.data === 'undefined' || report.data === null) {
-      //     // error e169
-      //     ErrorsCollector.addError(new AmError({
-      //       title: `missing 'data'`,
-      //       message: `report of type "${report.type}" must have 'data' parameter`,
-      //       lines: [{
-      //         line: report.title_line_num,
-      //         name: x.file,
-      //         path: x.path,
-      //       }],
-      //     }));
-      //     return;
-      //   }
-      // }
-
       if (typeof report.data === 'undefined' || report.data === null) {
         newReports.push(report);
         return;

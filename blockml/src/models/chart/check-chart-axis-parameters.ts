@@ -12,37 +12,6 @@ export function checkChartAxisParameters(item: {
     x.reports.forEach(report => {
       let nextReport: boolean = false;
 
-      // if ([
-      //   MyChartTypeEnum.Area,
-      //   MyChartTypeEnum.AreaNormalized,
-      //   MyChartTypeEnum.AreaStacked,
-      //   MyChartTypeEnum.BarHorizontal,
-      //   MyChartTypeEnum.BarHorizontalGrouped,
-      //   MyChartTypeEnum.BarHorizontalNormalized,
-      //   MyChartTypeEnum.BarHorizontalStacked,
-      //   MyChartTypeEnum.BarVertical,
-      //   MyChartTypeEnum.BarVerticalGrouped,
-      //   MyChartTypeEnum.BarVerticalNormalized,
-      //   MyChartTypeEnum.BarVerticalStacked,
-      //   MyChartTypeEnum.HeatMap,
-      //   MyChartTypeEnum.Line,
-      // ].indexOf(report.type) > -1) {
-
-      //   if (typeof report.axis === 'undefined' || report.axis === null) {
-      //     // error e272
-      //     ErrorsCollector.addError(new AmError({
-      //       title: `missing 'axis'`,
-      //       message: `report of type "${report.type}" must have 'axis' parameter`,
-      //       lines: [{
-      //         line: report.title_line_num,
-      //         name: x.file,
-      //         path: x.path,
-      //       }],
-      //     }));
-      //     return;
-      //   }
-      // }
-
       if (typeof report.axis === 'undefined' || report.axis === null) {
         newReports.push(report);
         return;
@@ -155,66 +124,6 @@ export function checkChartAxisParameters(item: {
             return;
           }
         });
-
-      // if ([
-      //   'bar_vertical',
-      //   'bar_vertical_grouped',
-      //   'bar_vertical_stacked',
-      //   'bar_vertical_normalized',
-      //   'bar_horizontal',
-      //   'bar_horizontal_grouped',
-      //   'bar_horizontal_stacked',
-      //   'bar_horizontal_normalized',
-      //   'line',
-      //   'area',
-      //   'area_stacked',
-      //   'area_normalized',
-      //   'heat_map',
-      // ].indexOf(report.type) > -1 &&
-      //   (typeof report.axis.x_axis_label === 'undefined' || report.axis.x_axis_label === null)) {
-      //   // error 273
-      //   ErrorsCollector.addError(new AmError({
-      //     title: `missing 'x_axis_label'`,
-      //     message: `report of type "${report.type}" must have 'x_axis_label' parameter in axis`,
-      //     lines: [{
-      //       line: report.axis_line_num,
-      //       name: x.file,
-      //       path: x.path,
-      //     }],
-      //   }));
-      //   nextReport = true;
-      //   return;
-      // }
-
-      // if ([
-      //   'bar_vertical',
-      //   'bar_vertical_grouped',
-      //   'bar_vertical_stacked',
-      //   'bar_vertical_normalized',
-      //   'bar_horizontal',
-      //   'bar_horizontal_grouped',
-      //   'bar_horizontal_stacked',
-      //   'bar_horizontal_normalized',
-      //   'line',
-      //   'area',
-      //   'area_stacked',
-      //   'area_normalized',
-      //   'heat_map',
-      // ].indexOf(report.type) > -1 &&
-      //   (typeof report.axis.y_axis_label === 'undefined' || report.axis.y_axis_label === null)) {
-      //   // error 274
-      //   ErrorsCollector.addError(new AmError({
-      //     title: `missing 'y_axis_label'`,
-      //     message: `report of type "${report.type}" must have 'y_axis_label' parameter in axis`,
-      //     lines: [{
-      //       line: report.axis_line_num,
-      //       name: x.file,
-      //       path: x.path,
-      //     }],
-      //   }));
-      //   nextReport = true;
-      //   return;
-      // }
 
       if (nextReport) {
         return;
