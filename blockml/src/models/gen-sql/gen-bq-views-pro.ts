@@ -15,7 +15,6 @@ export function genBqViewsPro(item: {
   projectId: string;
   structId: string;
 }) {
-  // if (Math.random() < 0.5) { throw new Error('boom2'); }
 
   let structId = item.structId ? item.structId : 'struct_id_not_provided';
 
@@ -61,15 +60,12 @@ export function genBqViewsPro(item: {
     query: undefined
   };
 
-  //    у calculation фильтр или select выбираются только вместе с селектом dimensions из force dims
-  //    подтягиваем зависимые measure для calculation (в селекте и фильтрах)
   // model
   // select
   // filters
   //    dep_measures_ref
   vars = this.makeDepMeasures(vars);
 
-  //    создаем main select
   // model
   // dep_measures
   // select
@@ -82,20 +78,17 @@ export function genBqViewsPro(item: {
   //    main_udfs_ref
   vars = this.makeMainFields(vars);
 
-  //    подтягиваем для полей зависимые double deps
   // selected
   // filters
   // model
   //    needs_doubles
   vars = this.makeNeedsDoubles(vars);
 
-  //    расширяем список джоинов через зависимости джоинов
   // model
   // need_doubles
   //    joins
   vars = this.findJoinsUsingJoinsDeps(vars);
 
-  //    создаем список всех необходимых полей
   // model
   // need_doubles
   // joins
@@ -113,7 +106,6 @@ export function genBqViewsPro(item: {
   //    untouched_filters_conditions
   vars = this.makeFilters(vars);
 
-  //    derived tables
   // model
   // needs_all
   // joins
