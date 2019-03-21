@@ -14,10 +14,8 @@ export async function bqViewsOnTheFly(item: {
   udfs: interfaces.Udf[];
   structId: string;
 }) {
-  // if (Math.random() < 0.5) { throw new Error('boom3'); }
 
   await forEach(item.dashboard.reports, async (report: interfaces.Report) => {
-    // item.dashboard.reports.forEach(report => {
 
     // build new report filters
     let filters: { [s: string]: string[] } = {};
