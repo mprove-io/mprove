@@ -37,18 +37,6 @@ export async function splitChunk(item: {
     ...content.repos
   ].map(x => x.project_id);
 
-  // let storeProjects = store.getProjectsRepo();
-
-  // let projectIdMemberIdList = await storeProjects
-  //   .createQueryBuilder('project')
-  //   .leftJoinAndMapMany(
-  //     'project.members',
-  //     MemberEntity,
-  //     'member',
-  //     'member.project_id = project.project_id'
-  //   )
-  //   .getMany();
-
   let projectMembersMap: interfaces.ProjectMembersMap = {};
 
   if (projectIds.length > 0) {
@@ -84,7 +72,6 @@ export async function splitChunk(item: {
       members: []
     };
 
-    // let isSameUser = chunk.source_user_id && chunk.source_user_id === wsClient.user_id;
     let isSameSession =
       chunk.source_session_id &&
       chunk.source_session_id === wsClient.session_id;
