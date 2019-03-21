@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as expressWs from 'express-ws';
 import * as bodyParser from 'body-parser';
-import * as compression from 'compression'; // compresses requests
+import * as compression from 'compression';
 import * as logger from 'morgan';
 import * as lusca from 'lusca';
 import * as passport from 'passport';
@@ -18,7 +18,6 @@ import { helper } from './barrels/helper';
 
 import { registerRoutes } from './register-routes';
 import { passportLocalStrategy } from './passport-local-strategy';
-import { config } from './barrels/config';
 
 export function createExpress() {
   passport.use(passportLocalStrategy);
@@ -129,19 +128,13 @@ export function createExpress() {
     };
 
     wsClients.push(wsClient);
-
-    // ws.on('message', (msg) => {});
   });
 
   app.use(handler.errorToResponse);
 
-  // app.use(errorHandler()); // Provides full stack - remove for production
-
   app.listen(app.get('port'), () => {
     console.log('Backend is running.');
   });
-
-  // module.exports = app;
 
   return {
     express_ws_instance: expressWsInstance,
