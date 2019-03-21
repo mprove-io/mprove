@@ -414,16 +414,9 @@ export class ApRegex {
     return input.replace(reg, `$1\_$2`);
   }
 
-  // static CAPTURE_VIEW_REF_G(): RegExp {
-  //   return cloneRegexp(
-  //     /\$\{(\w+)\s+[Aa][Ss]\s+(\w+)\}/g);
-  // }
-
   static replaceViewRefs(input: string, parentViewName: string): string {
     let reg = new RegExp(`\\$\\{(\\w+)\\s+[Aa][Ss]\\s+(\\w+)\\}`, 'g');
-    // let reg = new RegExp(`\\$\\{([^}.]+)[.]([^}.]+)\\}`, 'g');
 
-    // return input.replace(reg, `$1\_$2`);
     return input.replace(reg, `${parentViewName}\_\_$1\_\_$2 AS $2`);
   }
 
@@ -432,13 +425,4 @@ export class ApRegex {
 
     return input.replace(reg, `$1.$2`);
   }
-
-  // static escapeRegExp(text: string) {
-  //   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  // }
 }
-
-// function cloneAndLog(arg: any) {
-//   console.log('works');
-//   return cloneRegexp(arg);
-// }
