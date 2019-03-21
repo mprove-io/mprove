@@ -7,12 +7,11 @@ export function makeMainFields(item: interfaces.VarsSub) {
   let groupMainBy: string[] = [];
   let mainFields: string[] = [];
 
-  let selected: { [s: string]: number } = {}; // поля которые должны быть в main селекте
+  let selected: { [s: string]: number } = {};
   let processedFields: { [s: string]: string } = {};
 
-  let i: number = 0; // номер поля в селекте для group by
+  let i: number = 0;
 
-  // добавляем в mainFields поля выбранные пользователем по порядку
   item.select.forEach(fieldName => {
     mainFields.push(fieldName);
 
@@ -35,7 +34,6 @@ export function makeMainFields(item: interfaces.VarsSub) {
     selected[fieldName] = 1;
   });
 
-  // набираем селект
   mainFields.forEach(fieldName => {
     let field = item.view.fields.find(vField => vField.name === fieldName);
 
