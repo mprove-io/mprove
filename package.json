@@ -18,23 +18,23 @@
     }
   },
   "lint-staged": {
-    "backend/src/**/*.ts": [
+    "./backend/src/**/*.ts": [
       "prettier --write --config .prettierrc.yaml",
       "git add"
     ],
-    "blockml/{src,test}/**/*.ts": [
+    "./blockml/{src,test}/**/*.ts": [
       "prettier --write --config .prettierrc.yaml",
       "git add"
     ],
-    "client/src/**/*.{ts,js,json,scss,html}": [
+    "./client/src/**/*.{ts,js,json,scss,html}": [
       "prettier --write --config .prettierrc.yaml",
       "git add"
     ],
-    "common/api/src/**/*.ts": [
+    "./common/api/src/**/*.ts": [
       "prettier --write --config .prettierrc.yaml",
       "git add"
     ],
-    "common/tslint/**/*.json": [
+    "./common/tslint/**/*.json": [
       "prettier --write --config .prettierrc.yaml",
       "git add"
     ]
