@@ -11,10 +11,6 @@ export interface Environment {
   canUseStoreLogger: boolean;
   canUseStoreFreeze: boolean;
 
-  // dynamicAssetsBaseUrl: string;
-  // httpUrl: string;
-  // websocketUrl: string;
-
   i18nPrefix?: string;
   versions?: any;
 }
