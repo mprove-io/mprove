@@ -12,7 +12,6 @@
 @import 'styles/custom-palettes/dark-warn';
 
 @import '../node_modules/@angular/material/theming';
-// @import '../node_modules/@covalent/core/common/platform.scss';
 @import '../node_modules/@covalent/core/theming/all-theme';
 
 // Manually import since we're not using platform.css
@@ -254,8 +253,6 @@ ol {
   text-transform: uppercase;
 }
 .example-fill-remaining-space {
-  // This fills the remaining space, by using flexbox.
-  // Every toolbar row uses a flexbox row layout.
   flex: 1 1 auto;
 }
 
@@ -330,20 +327,6 @@ ol {
 .mp-float-right {
   float: right;
 }
-
-// /deep/.mp-space-10 {
-//   width: 10px;
-//   height: 10px;
-//   background: red;
-// }
-
-// .mp-space-24 {
-//   width: 24px;
-// }
-
-// .mp-space-50 {
-//   width: 50px;
-// }
 
 .mp-height-40 {
   height: 40px;
