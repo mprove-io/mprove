@@ -2,7 +2,6 @@ import { environment } from '@env/environment';
 
 const host = window.location.host;
 const protocol = window.location.protocol;
-// const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
 
 export let pathConfig = {
   devEmailLinkBaseUrl: `${protocol}//${host}`,
