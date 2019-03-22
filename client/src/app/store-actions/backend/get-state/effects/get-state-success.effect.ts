@@ -19,7 +19,6 @@ export class GetStateSuccessEffect {
 
         new actions.UpdateFilesStateAction(action.payload.state.files), // 3
 
-        // new actions.ProcessStructsAction(action.payload.state.structs),
         ...helper.processStructsHelper(action.payload.state.structs), // 3
 
         new actions.UpdateWebSocketInitIdAction(action.payload.init_id), //
