@@ -12,7 +12,6 @@ export class StateReceivedEffect {
   @Effect() stateReceived$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.STATE_RECEIVED),
     mergeMap((action: StateReceivedAction) => [
-      // TODO: #23-1 check need of from()
       new actions.ConfirmAction({ reply_to: action.payload.info.request_id }),
       new actions.UpdateLayoutLastWebsocketMessageTimestampAction(Date.now())
     ])

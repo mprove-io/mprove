@@ -245,7 +245,7 @@ export async function createMember(req: Request, res: Response) {
     (newProjectMember ? newProjectMember : projectMember)
   );
 
-  let url = process.env.BACKEND_EMAIL_APP_HOST_URL // TODO: document
+  let url = process.env.BACKEND_EMAIL_APP_HOST_URL
     ? process.env.BACKEND_EMAIL_APP_HOST_URL
     : payload.url;
 
