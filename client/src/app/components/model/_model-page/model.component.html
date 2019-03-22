@@ -102,13 +102,6 @@
       <div class="model__panel_text-overflow_ellipsis">
         <span>Completed - {{ completeTimeAgo$ | async }}</span>
 
-        <!--
-          <span matTooltip="PDTs duration: {{residueDuration}}s, Query duration: {{calcDurationFloor}}s"
-                [matTooltipShowDelay]="appConfig.tooltipDelay"
-                [matTooltipPosition]="'below'">{{fullDurationFloor}}s
-          </span>
-        -->
-
         <span> - {{ queryLastCompleteDuration }}s</span>
         <span> - {{ dataLength }} rows</span>
       </div>
@@ -346,12 +339,6 @@
         <div class="model__panel_text-overflow_ellipsis">
           <span>Completed - {{ completeTimeAgo$ | async }}</span>
 
-          <!--
-            <span matTooltip="PDTs duration: {{residueDuration}}s, Query duration: {{calcDurationFloor}}s"
-                  [matTooltipShowDelay]="appConfig.tooltipDelay"
-                  [matTooltipPosition]="'below'"> - {{fullDurationFloor}}s
-            </span>
-          -->
           <span> - {{ queryLastCompleteDuration }}s</span>
           <span> - {{ dataLength }} rows</span>
         </div>
