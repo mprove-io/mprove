@@ -27,12 +27,6 @@ export class CreateFileSuccessEffect {
         action.payload.created_dev_file.file_id
       );
     })
-    // mergeMap((action: actions.CreateFileSuccessAction) =>
-    //   from([
-    //     new actions.UpdateFilesStateAction([action.payload.created_dev_file]),
-    //     new actions.UpdateReposStateAction([action.payload.dev_repo])
-    //   ])
-    // )
   );
 
   constructor(
