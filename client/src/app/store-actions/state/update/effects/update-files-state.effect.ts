@@ -32,7 +32,6 @@ export class UpdateFilesStateEffect {
             'selected file deleted'
           );
 
-          // set needSave False
           this.printer.log(
             enums.busEnum.UPDATE_FILES_EFFECT,
             'setting needSave false...'
@@ -47,7 +46,6 @@ export class UpdateFilesStateEffect {
               }
             });
 
-          // navigate blockml
           this.printer.log(
             enums.busEnum.UPDATE_FILES_EFFECT,
             'navigating blockml...'
