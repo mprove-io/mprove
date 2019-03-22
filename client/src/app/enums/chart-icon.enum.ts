@@ -20,26 +20,4 @@ export enum ChartIconEnum {
   NumberCard = <any>'number_card',
   Gauge = <any>'gauge',
   GaugeLinear = <any>'gauge_linear'
-
-  // Table = <any>'insert_chart',
-  // BarVertical = <any>'bar_vertical',
-  // BarVerticalGrouped = <any>'insert_chart',
-  // BarVerticalStacked = <any>'insert_chart',
-  // BarVerticalNormalized = <any>'insert_chart',
-  // BarHorizontal = <any>'insert_chart',
-  // BarHorizontalGrouped = <any>'insert_chart',
-  // BarHorizontalStacked = <any>'insert_chart',
-  // BarHorizontalNormalized = <any>'insert_chart',
-  // Pie = <any>'insert_chart',
-  // PieAdvanced = <any>'insert_chart',
-  // PieGrid = <any>'insert_chart',
-  // Line = <any>'insert_chart',
-  // Area = <any>'insert_chart',
-  // AreaStacked = <any>'insert_chart',
-  // AreaNormalized = <any>'insert_chart',
-  // HeatMap = <any>'insert_chart',
-  // TreeMap = <any>'insert_chart',
-  // NumberCard = <any>'insert_chart',
-  // Gauge = <any>'insert_chart',
-  // GaugeLinear = <any>'insert_chart'
 }
