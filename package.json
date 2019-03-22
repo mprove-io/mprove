@@ -8,7 +8,7 @@
     "url": "https://github.com/mprove-io/mprove.git"
   },
   "scripts": {
-    "p:base": "prettier \"backend/src/**/*.ts\" \"blockml/{src,test}/**/*.ts\" \"client/src/**/*.{ts,js,json,scss,html}\" \"common/api/src/**/*.ts\" \"common/tslint/**/*.json\" --config .prettierrc.yaml",
+    "p:base": "prettier \"./**/*.{ts,js,json,scss,html}\" --config .prettierrc.yaml",
     "p:list": "npm run p:base -- --list-different",
     "p:write": "npm run p:base -- --write"
   },
@@ -18,26 +18,12 @@
     }
   },
   "lint-staged": {
-    "./backend/src/**/*.ts": [
-      "prettier --write --config .prettierrc.yaml",
-      "git add"
-    ],
-    "./blockml/{src,test}/**/*.ts": [
-      "prettier --write --config .prettierrc.yaml",
-      "git add"
-    ],
-    "./client/src/**/*.{ts,js,json,scss,html}": [
-      "prettier --write --config .prettierrc.yaml",
-      "git add"
-    ],
-    "./common/api/src/**/*.ts": [
-      "prettier --write --config .prettierrc.yaml",
-      "git add"
-    ],
-    "./common/tslint/**/*.json": [
-      "prettier --write --config .prettierrc.yaml",
-      "git add"
-    ]
+    "linters": {
+      "./**/*.{ts,js,json,scss,html}": [
+        "prettier --write --config .prettierrc.yaml",
+        "git add"
+      ]
+    }
   },
   "devDependencies": {
     "prettier": "1.15.2",

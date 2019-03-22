@@ -1,1 +1,4 @@
+backend/dist/
+blockml/dist/
+client/dist/
 client/src/app/components/visual/_visual-page/visual.component.html
