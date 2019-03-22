@@ -184,17 +184,6 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_SET_PROJECT_WEEK_START, payload);
   }
 
-  /**
-   * POST
-   * Команда на отмену действующих запросов.
-   * При обработке сервер находит все query по query_id и отменяет через Bigquery
-   * в случае если выполняются оба условия: - last_run_by совпадает с user_id отправителя
-   * (email) - у запроса статус Running  В ответе на запрос посылаем массив Query состоящий
-   * только из отмененных запросов, тех у которых поменяли статус на Canceled (при обработке запроса).
-   * То есть может быть ситуация что на отмену запрошено 8 запросов, а отменили только 5 или вообще 0.
-   * Оповещаем подписчиков livequeries по вебсокету
-   * @param payload
-   */
   cancelQueries(
     payload: api.CancelQueriesRequestBody['payload']
   ): Observable<api.CancelQueriesResponse200Body> {
@@ -231,16 +220,6 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_COMMIT_REPO, payload);
   }
 
-  /**
-   * POST
-   * Запрос к backend на pull в dev репозиторий из prod (from_remote: false) или remote (from_remote: true)
-   * репозитория.
-   * После успешного пула: - делаем запрос к блокмл rebuildStruct  После получения struct: -
-   * создаем/обновляем соответствующие записи dashboards, models, errors, mconfigs, queries в базе -
-   * удаляем в базе dashboards, models, errors, mconfigs, queries относящиеся к дев репозиторию,
-   * которые не были обновлены на предыдущем шаге (используя struct_id)
-   * @param payload
-   */
   pullRepo(
     payload: api.PullRepoRequestBody['payload']
   ): Observable<api.PullRepoResponse200Body> {
@@ -301,11 +280,6 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_LOGIN_USER, payload);
   }
 
-  /**
-   * POST
-   * Logout пользователя. Для того чтобы сервер более не принимал данный JWT token и init_id.
-   * @param payload
-   */
   logoutUser(
     payload: api.LogoutUserRequestBody['payload']
   ): Observable<api.LogoutUserResponse200Body> {
@@ -330,14 +304,6 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_DELETE_USER, payload);
   }
 
-  /**
-   * POST
-   * Обновление фото пользователя.  Сервер оповещает текущего клиента через: - users.updateUser
-   * Сервер оповещает подписанных клиентов,
-   * включая текущего, через: - members.updateMember  В ответе: - user - members -
-   * набор мемберов равный кол-ву проектов в которых пользователь участвует
-   * @param payload
-   */
   setUserPicture(
     payload: api.SetUserPictureRequestBody['payload']
   ): Observable<api.SetUserPictureResponse200Body> {
