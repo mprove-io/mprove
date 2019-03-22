@@ -9,7 +9,6 @@ import * as services from '@app/services/_index';
 
 @Injectable()
 export class SetLiveQueriesEffect {
-  // live queries
   @Effect() setLiveQueries$: Observable<Action> = this.actions$.pipe(
     ofType(actionTypes.SET_LIVE_QUERIES),
     mergeMap((action: actions.SetLiveQueriesAction) =>
