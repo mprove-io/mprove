@@ -41,7 +41,6 @@
 
 @import '../app/modules/colorpicker/_colorpicker-theme';
 
-// Styles for the docs app that are based on the current theme.
 @mixin material-app-theme($theme) {
   $sub-primary: map-get($theme, sub-primary);
   $primary: map-get($theme, primary);
@@ -96,7 +95,6 @@
     }
   }
 
-  /* Let's get this party started */
   ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -109,7 +107,6 @@
     // border-radius: 10px;
   }
 
-  /* Handle */
   ::-webkit-scrollbar-thumb {
     // -webkit-border-radius: 10px;
     // border-radius: 10px;
@@ -119,8 +116,6 @@
   ::-webkit-scrollbar-thumb:window-inactive {
     background: rgb(173, 173, 173);
   }
-
-  /* custom mat button */
 
   .mat-flat-fab {
     padding: 0 !important;
