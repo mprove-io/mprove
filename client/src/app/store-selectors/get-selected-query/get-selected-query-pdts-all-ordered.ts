@@ -6,7 +6,7 @@ import * as api from '@app/api/_index';
 
 export const getSelectedQueryPdtsAllOrdered = createSelector(
   getSelectedQuery,
-  getQueriesState, // getSelectedProjectModeRepoStructPdts,
+  getQueriesState,
   getSelectedProjectModeRepoPdtsSorted,
   (query: api.Query, queries: api.Query[], ptdsSorted: string[]) => {
     let queryPdtsOrdered: api.Query[] = [];
