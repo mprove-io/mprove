@@ -48,11 +48,7 @@ export class QueryComponent {
   queryLastErrorMessage: string;
   queryLastErrorMessage$ = this.store
     .select(selectors.getSelectedQueryLastErrorMessage)
-    .pipe(
-      // filter(v => !!v), // no filter
-      tap(x => (this.queryLastErrorMessage = x))
-      // tap(x => this.queryLastErrorMessage = x ? JSON.parse(x) : undefined)
-    );
+    .pipe(tap(x => (this.queryLastErrorMessage = x)));
 
   filters: api.Filter[] = [];
   filters$ = this.store.select(selectors.getSelectedMconfigFilters).pipe(
