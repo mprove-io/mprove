@@ -51,8 +51,6 @@ export class TeamComponent implements OnDestroy {
     );
 
   columns: ITdDataTableColumn[] = [
-    // { name: 'picture', label: '', tooltip: 'Stock Keeping Unit' },
-    // { name: 'member_id', label: '', numeric: true, format: v => v.toFixed(2) },
     { name: 'picture', label: '', width: 50 },
     { name: 'name', label: 'name' },
     { name: 'member_id', label: 'email' },
