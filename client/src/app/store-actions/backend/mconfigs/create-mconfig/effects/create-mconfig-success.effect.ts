@@ -14,9 +14,6 @@ export class CreateMconfigSuccessEffect {
   > = this.actions$.pipe(
     ofType(actionTypes.CREATE_MCONFIG_SUCCESS),
     tap((action: actions.CreateMconfigSuccessAction) => {
-      // this.store.dispatch(
-      //   new actions.UpdateQueriesStateAction(action.payload.api_payload.queries)
-      // );
       this.store.dispatch(
         new actions.UpdateMconfigsStateAction([
           action.payload.api_payload.mconfig
@@ -24,9 +21,6 @@ export class CreateMconfigSuccessEffect {
       );
       action.payload.navigate();
     })
-    // mergeMap((action: actions.CreateMconfigSuccessAction) =>
-    //   from([new actions.UpdateMconfigsStateAction([action.payload.mconfig])])
-    // )
   );
 
   constructor(
