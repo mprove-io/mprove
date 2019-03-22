@@ -38,36 +38,6 @@ export class UpdateReposStateEffect {
         .subscribe(x => (selectedDashboard = x));
 
       if (selectedRepo) {
-        // if (selectedRepo.deleted) {
-        //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'selected repo deleted');
-
-        //   // set needSave False
-        //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'setting needSave false...');
-
-        //   this.store.select(selectors.getLayoutNeedSave).take(1).subscribe(
-        //     needSave => {
-        //       if (needSave) {
-        //         this.store.dispatch(new SetLayoutNeedSaveFalseAction());
-        //       }
-        //     }
-        //   );
-
-        //   // navigate profile
-        //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'navigating profile...');
-        //   this.router.navigate(['profile']);
-
-        //   // set prod mode
-        //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'setting prod mode...');
-
-        //   let mode: LayoutModeEnum;
-        //   this.store.select(selectors.getLayoutMode).take(1).subscribe(x => mode = x);
-
-        //   if (mode === LayoutModeEnum.Dev) {
-        //     this.store.dispatch(new SetLayoutModeProdAction());
-        //   }
-
-        // }
-
         // repo updated before model
         if (
           selectedModel &&
@@ -103,24 +73,6 @@ export class UpdateReposStateEffect {
           );
 
           this.router.navigate(['profile']);
-
-          // this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'selected dashboard struct_id mismatch');
-
-          // if (selectedDashboard.temp) {
-          //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'selected dashboard is temp');
-          //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'navigating profile...');
-
-          //   this.router.navigate(['profile']);
-
-          // } else {
-          //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'selected dashboard is not temp');
-          //   this.printer.log(enums.busEnum.UPDATE_REPOS_EFFECT, 'renavigating using load...');
-
-          //   let url = this.router.routerState.snapshot.url;
-          //   console.log('url:', url);
-          //   localStorage.setItem('redirect_url', url);
-          //   this.router.navigate(['load']);
-          // }
         }
       }
 
