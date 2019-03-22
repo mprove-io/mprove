@@ -6,7 +6,9 @@ const password = '123123';
 
 const projectId = 'project_10_06';
 
-const error = api.ServerResponseStatusEnum.SET_PROJECT_CREDENTIALS_ERROR_CAN_NOT_CREATE_DATASET;
+const error =
+  api.ServerResponseStatusEnum
+    .SET_PROJECT_CREDENTIALS_ERROR_CAN_NOT_CREATE_DATASET;
 
 describe('10-06 project-settings-edit-credentials-can-not-create-dataset (logged in)', () => {
   it(`should see error`, () => {
@@ -43,7 +45,7 @@ describe('10-06 project-settings-edit-credentials-can-not-create-dataset (logged
     cy.get('[data-cy=projectSettingsEditCredentialsButton]').click();
     cy.get('[data-cy=dialogUpdateCredentialsInput]').type('123');
     cy.get('[data-cy=dialogUpdateCredentialsSaveButton]').click();
-    cy.loading();    
+    cy.loading();
     cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

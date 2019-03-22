@@ -20,7 +20,6 @@ export async function addProject(item: {
   bigquery_credentials: any;
   member_ids: string[];
 }) {
-
   let projectId = item.project_id;
 
   let storeProjects = store.getProjectsRepo();

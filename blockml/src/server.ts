@@ -9,8 +9,7 @@ import { ServerOutcomes } from './server-outcomes';
 import { ServerProErrors } from './server-pro-errors';
 import { ServerWorkers } from './server-workers';
 
-redisClient.on('ready', () => {
-});
+redisClient.on('ready', () => {});
 
 redisClient.on('error', () => {
   console.log('Error in Redis');

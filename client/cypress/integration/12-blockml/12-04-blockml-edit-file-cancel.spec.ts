@@ -50,6 +50,8 @@ describe('12-04 blockml-edit-file-cancel (logged in)', () => {
     cy.get('[data-cy=blockmlFileEditorCancelButton]').click();
     cy.loading();
     cy.get('[data-cy=blockmlFileEditorCancelButton]').should('not.be.visible');
-    cy.get('.view-line').contains('123').should('not.exist');
+    cy.get('.view-line')
+      .contains('123')
+      .should('not.exist');
   });
 });

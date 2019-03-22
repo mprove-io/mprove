@@ -11,7 +11,7 @@
     "clean": "rimraf -- dist .awcache",
     "lint": "tslint --config tslint.json -e 'node_modules/**' \"{src,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts ./",
-    "files:check": "npm-run-all --parallel lint circular",    
+    "files:check": "npm-run-all --parallel lint circular",
     "build": "npm run files:check && npm run clean && tsc",
     "start": "npm run build && npm run watch",
     "server": "node dist/src/server.js",
@@ -28,14 +28,12 @@
       "ts",
       "js"
     ],
-    "transform": {
-    },
+    "transform": {},
     "testMatch": [
       "**/test/**/*.test.js"
     ],
     "testEnvironment": "node"
   },
-
   "dependencies": {
     "async": "^2.1.2",
     "async-redis": "^1.1.4",
@@ -85,7 +83,7 @@
     "tslint-config-prettier": "1.16.0",
     "npm-run-all": "~4.1.3",
     "lint-staged": "^7.3.0",
-    "madge": "3.3.0",    
+    "madge": "3.3.0",
     "husky": "^1.1.3"
   }
 }

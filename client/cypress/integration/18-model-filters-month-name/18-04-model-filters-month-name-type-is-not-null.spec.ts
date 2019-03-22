@@ -52,7 +52,7 @@ describe('18-04 model-filters-month-name-type-is-not-null (logged in)', () => {
       .eq(0)
       .click({ force: true });
     cy.loading();
-    
+
     cy.get('[data-cy=fractionMonthNameType]').click();
     cy.get('[data-cy=fractionMonthNameTypeIsNotNull]').click();
     cy.loading();

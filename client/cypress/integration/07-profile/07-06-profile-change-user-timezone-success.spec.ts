@@ -22,7 +22,9 @@ describe('07-06 profile-change-user-timezone (logged in)', () => {
     cy.basicVisit(constants.PATH_PROFILE);
     cy.loading();
     cy.get('[data-cy=updateUserTimezoneSelect').click();
-    cy.get('[data-cy=updateUserTimezoneOption]').eq(1).click();
+    cy.get('[data-cy=updateUserTimezoneOption]')
+      .eq(1)
+      .click();
     cy.get('[data-cy=updateUserTimezoneApplyChange]').click();
     cy.loading();
     cy.get('[data-cy=updateUserTimezoneApplyChange]').should('not.exist');

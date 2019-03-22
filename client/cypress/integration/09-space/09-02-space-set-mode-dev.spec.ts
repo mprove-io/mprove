@@ -39,7 +39,9 @@ describe('09-02 space-set-mode-dev (logged in)', () => {
     cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/mode/prod/blockml`);
     cy.loading();
     cy.get('[data-cy=blockmlTitleMode]').should('have.text', 'Prod');
-    cy.get('[data-cy=spaceModeToggle]').eq(1).click();
+    cy.get('[data-cy=spaceModeToggle]')
+      .eq(1)
+      .click();
     cy.get('[data-cy=blockmlTitleMode]').should('have.text', 'Dev');
   });
 });

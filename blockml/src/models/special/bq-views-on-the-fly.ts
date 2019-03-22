@@ -14,9 +14,7 @@ export async function bqViewsOnTheFly(item: {
   udfs: interfaces.Udf[];
   structId: string;
 }) {
-
   await forEach(item.dashboard.reports, async (report: interfaces.Report) => {
-
     // build new report filters
     let filters: { [s: string]: string[] } = {};
 

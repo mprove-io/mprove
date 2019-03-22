@@ -52,7 +52,7 @@ describe('19-01 model-filters-quarter-of-year-type-is (logged in)', () => {
       .eq(0)
       .click({ force: true });
     cy.loading();
-    
+
     cy.get('[data-cy=fractionQuarterOfYearType]').click();
     cy.get('[data-cy=fractionQuarterOfYearTypeIs]').click();
     cy.loading();

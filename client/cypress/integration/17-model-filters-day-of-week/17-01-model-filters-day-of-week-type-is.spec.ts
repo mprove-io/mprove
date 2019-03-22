@@ -52,7 +52,7 @@ describe('17-01 model-filters-day-of-week-type-is (logged in)', () => {
       .eq(0)
       .click({ force: true });
     cy.loading();
-    
+
     cy.get('[data-cy=fractionDayOfWeekType]').click();
     cy.get('[data-cy=fractionDayOfWeekTypeIs]').click();
     cy.loading();

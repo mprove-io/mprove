@@ -21,7 +21,9 @@ export async function getRepoCatalogNodesAndFiles(item: {
     children: []
   };
 
-  let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${item.repo_id}`;
+  let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
+    item.repo_id
+  }`;
 
   let repoDirPathLength = repoDir.length;
 

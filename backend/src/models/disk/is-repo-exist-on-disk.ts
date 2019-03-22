@@ -7,7 +7,9 @@ export async function isRepoExistOnDisk(item: {
   project_id: string;
   repo_id: string;
 }) {
-  let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${item.repo_id}`;
+  let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
+    item.repo_id
+  }`;
 
   let isExist = await fse
     .pathExists(repoDir)

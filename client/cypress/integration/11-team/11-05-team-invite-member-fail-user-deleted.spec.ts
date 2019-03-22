@@ -8,7 +8,6 @@ const password = '123123';
 const projectId = 'project_11_05';
 const error = api.ServerResponseStatusEnum.INVITE_MEMBER_ERROR_USER_DELETED;
 
-
 describe('11-05 team-invite-member (logged in)', () => {
   it(`should be able to invite member`, () => {
     cy.deletePack({

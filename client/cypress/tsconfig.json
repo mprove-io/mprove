@@ -1,19 +1,13 @@
 {
   "include": [
     "node_modules/cypress",
-    "**/*.ts",
+    "**/*.ts"
     // "../src/app/constants/**/*.ts",
     // "../src/app/api/**/*.ts",
   ],
-  "exclude": [
-    "node_modules",
-    "../node_modules",
-  ],
+  "exclude": ["node_modules", "../node_modules"],
   "compilerOptions": {
     "types": ["cypress", "node"],
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2017", "dom"]
   }
 }

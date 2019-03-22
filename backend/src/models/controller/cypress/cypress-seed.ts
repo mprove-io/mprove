@@ -91,7 +91,8 @@ export async function cypressSeed(req: Request, res: Response) {
       });
 
       if (x.has_credentials === true) {
-        let filePath = config.DISK_BACKEND_TEST_CREDENTIALS_PATH + '/bigquery.json';
+        let filePath =
+          config.DISK_BACKEND_TEST_CREDENTIALS_PATH + '/bigquery.json';
 
         let credentialsString = <string>(
           await fse
@@ -210,7 +211,9 @@ export async function cypressSeed(req: Request, res: Response) {
       let memberIds = projectMembers.map(member => member.member_id);
 
       await forEach(memberIds, async (repoId: string) => {
-        let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${repoId}`;
+        let repoDir = `${
+          config.DISK_BACKEND_PROJECTS_PATH
+        }/${projectId}/${repoId}`;
 
         await disk
           .emptyDir(repoDir)

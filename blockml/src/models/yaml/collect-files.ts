@@ -5,7 +5,6 @@ import { api } from '../../barrels/api';
 
 export function collectFiles(item: { dir: string }): Promise<api.File[]> {
   return new Promise((resolve, reject) => {
-
     let files: api.File[] = [];
 
     let walker = walk.walk(item.dir, { followLinks: false });

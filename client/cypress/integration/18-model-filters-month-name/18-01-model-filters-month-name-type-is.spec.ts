@@ -52,7 +52,7 @@ describe('18-01 model-filters-month-name-type-is (logged in)', () => {
       .eq(0)
       .click({ force: true });
     cy.loading();
-    
+
     cy.get('[data-cy=fractionMonthNameType]').click();
     cy.get('[data-cy=fractionMonthNameTypeIs]').click();
     cy.loading();

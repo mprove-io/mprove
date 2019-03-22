@@ -56,6 +56,6 @@ describe('12-09 blockml-delete-file-success (logged in)', () => {
     cy.get('[data-cy=blockmlCommitButton]').should('be.enabled');
     cy.get('[data-cy=blockmlPullButton]').should('not.be.visible');
     cy.get('[data-cy=blockmlPushToProductionButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlOptionsButton]').should('be.enabled');   
+    cy.get('[data-cy=blockmlOptionsButton]').should('be.enabled');
   });
 });

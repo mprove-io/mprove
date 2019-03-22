@@ -59,7 +59,7 @@ describe('22-01 model-filters-ts-type-is-after-date (logged in)', () => {
 
     cy.get('[data-cy=fractionTsForOption]').click();
     cy.get('[data-cy=fractionTsForOptionForInfinity]').click();
-    cy.loading();      
+    cy.loading();
 
     cy.get('[data-cy=addModelFilterFraction]').click({ force: true });
     cy.loading();

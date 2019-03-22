@@ -38,6 +38,9 @@ describe('10-04 project-settings-data (logged in)', () => {
     cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/settings`);
     cy.loading();
     cy.get('[data-cy=projectSettingsTitle]').should('exist');
-    cy.get('[data-cy=projectSettingsProjectIdData]').should('have.text', projectId);
+    cy.get('[data-cy=projectSettingsProjectIdData]').should(
+      'have.text',
+      projectId
+    );
   });
 });

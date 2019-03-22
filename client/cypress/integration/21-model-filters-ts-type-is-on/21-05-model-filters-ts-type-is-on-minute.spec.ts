@@ -52,7 +52,7 @@ describe('21-05 model-filters-ts-type-is-on-minute (logged in)', () => {
       .eq(0)
       .click({ force: true });
     cy.loading();
-    
+
     cy.get('[data-cy=fractionTsType]').click();
     cy.get('[data-cy=fractionTsTypeIsOnMinute]').click();
     cy.loading();

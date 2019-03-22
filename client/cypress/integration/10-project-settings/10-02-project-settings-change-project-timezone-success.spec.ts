@@ -37,12 +37,20 @@ describe('10-02 project-settings-change-project-timezone-success (logged in)', (
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/settings`);
     cy.loading();
-    cy.get('[data-cy=projectSettingsTimezoneSelect]').should('have.text', 'UTC');
+    cy.get('[data-cy=projectSettingsTimezoneSelect]').should(
+      'have.text',
+      'UTC'
+    );
     cy.get('[data-cy=projectSettingsTimezoneSelect]').click();
-    cy.get('[data-cy=projectSettingsTimezoneOption]').eq(1).click();
+    cy.get('[data-cy=projectSettingsTimezoneOption]')
+      .eq(1)
+      .click();
     cy.get('[data-cy=projectSettingsTimezoneApplyChange]').click();
     cy.loading();
     cy.get('[data-cy=projectSettingsTimezoneApplyChange]').should('not.exist');
-    cy.get('[data-cy=projectSettingsTimezoneSelect]').should('have.text', 'America - Adak');
+    cy.get('[data-cy=projectSettingsTimezoneSelect]').should(
+      'have.text',
+      'America - Adak'
+    );
   });
 });

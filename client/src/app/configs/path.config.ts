@@ -8,9 +8,7 @@ export let pathConfig = {
   devEmailLinkBaseUrl: `${protocol}//${host}`,
   staticAssetsBaseUrl: `${protocol}//${host}`,
   dynamicAssetsBaseUrl:
-    environment.local || environment.dev
-      ? 'http://localhost:8080'
-      : `/`,
+    environment.local || environment.dev ? 'http://localhost:8080' : `/`,
   httpUrl:
     environment.local || environment.dev
       ? 'http://localhost:8080/api/v1'

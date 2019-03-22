@@ -37,12 +37,20 @@ describe('10-03 project-settings-change-week-start-day-success (logged in)', () 
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/settings`);
     cy.loading();
-    cy.get('[data-cy=projectSettingsWeekStartSelect]').should('have.text', 'Sunday');
+    cy.get('[data-cy=projectSettingsWeekStartSelect]').should(
+      'have.text',
+      'Sunday'
+    );
     cy.get('[data-cy=projectSettingsWeekStartSelect]').click();
-    cy.get('[data-cy=projectSettingsWeekStartOption]').eq(1).click();
+    cy.get('[data-cy=projectSettingsWeekStartOption]')
+      .eq(1)
+      .click();
     cy.get('[data-cy=projectSettingsWeekStartApplyChange]').click();
     cy.loading();
     cy.get('[data-cy=projectSettingsWeekStartApplyChange]').should('not.exist');
-    cy.get('[data-cy=projectSettingsWeekStartSelect]').should('have.text', 'Monday');
+    cy.get('[data-cy=projectSettingsWeekStartSelect]').should(
+      'have.text',
+      'Monday'
+    );
   });
 });

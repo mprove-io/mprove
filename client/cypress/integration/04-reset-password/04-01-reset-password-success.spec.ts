@@ -10,7 +10,7 @@ describe('04-01 reset-password-success (logged out)', () => {
       users: [
         {
           user_id: userId,
-          password: password, 
+          password: password,
           email_verified: false
         }
       ]
@@ -20,9 +20,6 @@ describe('04-01 reset-password-success (logged out)', () => {
     cy.get('[data-cy=dialogResetPasswordEmailInput]').type(userId);
     cy.get('[data-cy=dialogResetPasswordSendButton]').click();
     cy.loading();
-    cy.url().should(
-      'include',
-      constants.PATH_RESET_PASSWORD_SENT
-    );
+    cy.url().should('include', constants.PATH_RESET_PASSWORD_SENT);
   });
 });

@@ -28,6 +28,9 @@ describe('05-02 update-password-success (logged out)', () => {
     cy.get('[data-cy=updatePasswordSetPasswordButton]').click();
     cy.loading();
     cy.url().should('include', constants.PATH_LOGIN);
-    cy.get('[data-cy=dialogInfoMessage]').should('contain', 'New Password was set');
+    cy.get('[data-cy=dialogInfoMessage]').should(
+      'contain',
+      'New Password was set'
+    );
   });
 });

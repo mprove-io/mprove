@@ -15,7 +15,6 @@ export function genBqViewsPro(item: {
   projectId: string;
   structId: string;
 }) {
-
   let structId = item.structId ? item.structId : 'struct_id_not_provided';
 
   let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({

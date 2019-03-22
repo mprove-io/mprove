@@ -37,12 +37,20 @@ describe('10-01 project-settings-change-query-size-limit-success (logged in)', (
     cy.loginUser({ user_id: userId, password: password });
     cy.basicVisit(`${constants.PATH_PROJECT}/${projectId}/settings`);
     cy.loading();
-    cy.get('[data-cy=projectSettingsQuerySizeLimitInput]').should('have.value', '1');
+    cy.get('[data-cy=projectSettingsQuerySizeLimitInput]').should(
+      'have.value',
+      '1'
+    );
     cy.get('[data-cy=projectSettingsQuerySizeLimitInput]').clear();
     cy.get('[data-cy=projectSettingsQuerySizeLimitInput]').type('5');
     cy.get('[data-cy=projectSettingsQuerySizeLimitApplyChange]').click();
-    cy.get('[data-cy=projectSettingsQuerySizeLimitApplyChange]').should('not.exist');
+    cy.get('[data-cy=projectSettingsQuerySizeLimitApplyChange]').should(
+      'not.exist'
+    );
     cy.loading();
-    cy.get('[data-cy=projectSettingsQuerySizeLimitInput]').should('have.value', '5');
+    cy.get('[data-cy=projectSettingsQuerySizeLimitInput]').should(
+      'have.value',
+      '5'
+    );
   });
 });

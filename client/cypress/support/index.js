@@ -1,7 +1,7 @@
 import './commands';
 
 require('cypress-failed-log');
-require('cypress-plugin-retries')
+require('cypress-plugin-retries');
 
 Cypress.Server.defaults({
   whitelist: xhr => {

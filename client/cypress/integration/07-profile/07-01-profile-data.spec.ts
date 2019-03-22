@@ -21,8 +21,11 @@ describe('07-01 profile-data (logged in)', () => {
     cy.loading();
     cy.get('[data-cy=profileTitle]').should('exist');
     cy.get('[data-cy=editNameFirstNameInput]').should('have.value', '');
-    cy.get('[data-cy=editNameLastNameInput]').should('have.value', '');    
-    cy.get('[data-cy=updateUserTimezoneSelect]').should('have.text', 'Use Project Default');
+    cy.get('[data-cy=editNameLastNameInput]').should('have.value', '');
+    cy.get('[data-cy=updateUserTimezoneSelect]').should(
+      'have.text',
+      'Use Project Default'
+    );
     cy.get('[data-cy=profileEmailData]').should('have.text', userId);
   });
 });

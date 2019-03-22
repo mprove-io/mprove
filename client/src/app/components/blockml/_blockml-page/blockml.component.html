@@ -33,21 +33,23 @@
       </button>
     </div>
 
-    <!-- <div
-      fxHide.lt-md
-      fxLayout="row"
-      *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)"
-    >
-      <button
-        mat-raised-button
-        color="accent"
-        class="blockml-top-btn"
-        data-cy="blockmlPullFromRemoteButton"
-        [disabled]="needSave$ | async"
-        (click)="pullFromRemote()"
-        >Pull From Remote
-      </button>
-    </div> -->
+    <!--
+      <div
+        fxHide.lt-md
+        fxLayout="row"
+        *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)"
+      >
+        <button
+          mat-raised-button
+          color="accent"
+          class="blockml-top-btn"
+          data-cy="blockmlPullFromRemoteButton"
+          [disabled]="needSave$ | async"
+          (click)="pullFromRemote()"
+          >Pull From Remote
+        </button>
+      </div>
+    -->
 
     <div
       fxHide.lt-md
@@ -177,16 +179,18 @@
         </button>
       </div>
 
-      <!-- <div *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)">
-        <button
-          mat-raised-button
-          color="accent"
-          data-cy="blockmlPullFromRemoteButtonMobile"
-          [disabled]="needSave$ | async"
-          (click)="pullFromRemote()"
-          >Pull From Remote
-        </button>
-      </div> -->
+      <!--
+        <div *ngIf="(isDev$ | async) && (repoRemoteNeedManualPull$ | async)">
+          <button
+            mat-raised-button
+            color="accent"
+            data-cy="blockmlPullFromRemoteButtonMobile"
+            [disabled]="needSave$ | async"
+            (click)="pullFromRemote()"
+            >Pull From Remote
+          </button>
+        </div>
+      -->
 
       <div *ngIf="(isDev$ | async) && (repoIsNeedPull$ | async)">
         <button

@@ -52,7 +52,7 @@ describe('20-01 model-filters-ts-type-is-in-range (logged in)', () => {
       .eq(0)
       .click({ force: true });
     cy.loading();
-    
+
     cy.get('[data-cy=fractionTsType]').click();
     cy.get('[data-cy=fractionTsTypeIsInRange]').click();
     cy.loading();

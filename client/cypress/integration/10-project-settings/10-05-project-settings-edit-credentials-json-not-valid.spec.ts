@@ -6,7 +6,8 @@ const password = '123123';
 
 const projectId = 'project_10_05';
 
-const error = api.ServerResponseStatusEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID;
+const error =
+  api.ServerResponseStatusEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID;
 
 describe('10-05 project-settings-edit-credentials-json-not-valid (logged in)', () => {
   it(`should see error`, () => {
@@ -43,7 +44,7 @@ describe('10-05 project-settings-edit-credentials-json-not-valid (logged in)', (
     cy.get('[data-cy=projectSettingsEditCredentialsButton]').click();
     cy.get('[data-cy=dialogUpdateCredentialsInput]').type('-');
     cy.get('[data-cy=dialogUpdateCredentialsSaveButton]').click();
-    cy.loading();    
+    cy.loading();
     cy.get('[data-cy=dialogInfoMessage]').should('contain', error);
   });
 });

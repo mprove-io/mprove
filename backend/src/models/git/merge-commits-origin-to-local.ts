@@ -8,7 +8,9 @@ export async function mergeCommitsOriginToLocal(item: {
   repo_id: string;
   user_id: string;
 }) {
-  let repoPath = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${item.repo_id}`;
+  let repoPath = `${config.DISK_BACKEND_PROJECTS_PATH}/${item.project_id}/${
+    item.repo_id
+  }`;
 
   let gitRepo = <nodegit.Repository>(
     await nodegit.Repository.open(repoPath).catch(e =>

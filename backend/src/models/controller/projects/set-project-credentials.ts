@@ -94,7 +94,9 @@ export async function setProjectCredentials(req: Request, res: Response) {
     .removePath(tempId)
     .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
 
-  let fileId = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${projectId}.json`;
+  let fileId = `${
+    config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH
+  }/${projectId}.json`;
 
   await disk
     .writeToFile({
