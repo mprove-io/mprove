@@ -29,8 +29,6 @@
     min-width: 100% !important;
   }
   .td-data-table-cell {
-    // max-width: 390px !important;
-    // min-width: 390px !important;
     word-break: break-all;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -71,9 +69,6 @@ button.mat-menu-item {
 }
 .dark-theme .mat-sidenav-container {
   background: #606060;
-}
-.mat-dialog-container {
-  //padding: 10px !important;
 }
 .cdk-overlay-pane {
   max-width: 100vw !important;

@@ -18,7 +18,6 @@ export class AppComponent {
       name: 'app',
       type: LoadingType.Circular,
       mode: LoadingMode.Indeterminate
-      // color: 'accent',
     });
   }
 }
