@@ -93,7 +93,7 @@ export class DataComponent implements OnInit {
   buildLimitForm() {
     this.limitForm = this.fb.group({
       limit: [
-        this.mconfigLimit || 500, // fix because of bug https://github.com/angular/material2/issues/2441
+        this.mconfigLimit || 500,
         Validators.compose([
           Validators.required,
           services.ValidationService.integerValidator,
