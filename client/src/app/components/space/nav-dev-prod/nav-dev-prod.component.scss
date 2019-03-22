@@ -10,13 +10,6 @@
       color: rgba($can-toggle-off-color, 0.5);
     }
 
-    // &:focus ~ label, &:hover ~ label {
-    //   .can-toggle__switch {
-    //     background-color: $can-toggle-off-color;
-    //     &:after { color: darken($can-toggle-off-color, 10%); }
-    //   }
-    // }
-    // &:hover ~label { color: darken($can-toggle-off-color, 5%); }
     &:checked {
       ~ label {
         &:hover {
@@ -29,15 +22,6 @@
           }
         }
       }
-
-      // &:focus, &:hover {
-      //   ~ label {
-      //     .can-toggle__switch {
-      //       background-color: $can-toggle-on-color;
-      //       &:after { color: darken($can-toggle-on-color, 10%); }
-      //     }
-      //   }
-      // }
     }
   }
 
