@@ -115,9 +115,6 @@ export class MyHttpService {
 
     return this.authHttpClient.request('post', url, options).pipe(
       map((res: HttpResponse<any>) => {
-        // console.log('res:');
-        // console.log(res);
-
         let resData = {
           request: {
             url: url,
@@ -163,8 +160,6 @@ export class MyHttpService {
       // timeout(600000),
       // retry(1),
       catchError(e => {
-        // console.log(e);
-
         let eData = {
           request: {
             url: url,
