@@ -45,24 +45,6 @@
       </span>
     </ng-template>
 
-    <!--
-      <ng-template tdDataTableTemplate="is_completed"
-                   let-value="value"
-                   let-row="row"
-                   let-column="column">
-        <span flex>{{value ? 'Yes' : 'No'}}</span>
-      </ng-template>
-    -->
-
-    <!--
-      <ng-template tdDataTableTemplate="completed_time_ago_from_now"
-                   let-value="value"
-                   let-row="row"
-                   let-column="column">
-        <span flex>{{ value ? value : 'never' }}</span>
-      </ng-template>
-    -->
-
     <ng-template
       tdDataTableTemplate="last_run_ts"
       let-value="value"
@@ -118,4 +100,3 @@
 </mat-menu>
 
 <div *ngIf="(pdtsExtra$ | async)"></div>
-<!-- <div *ngIf="time$ | async"></div> -->

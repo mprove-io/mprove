@@ -29,34 +29,11 @@ export class PdtsComponent {
       })
     );
 
-  // time$ = interval(1000)
-  //   .pipe(
-  //     startWith(0),
-  //     tap(x => {
-  //       let pdts: any[] = [];
-  //       this.pdtsExtraTime.forEach(pe => {
-  //         if (pe.query_last_complete_ts !== 1) {
-  //           pdts.push(Object.assign({}, pe, {
-  //             completed_time_ago_from_now: this.timeService.timeAgoFromNow(pe.query_last_complete_ts),
-  //           }));
-
-  //         } else {
-
-  //           pdts.push(pe);
-  //         }
-  //       });
-  //       this.pdtsExtraTime = pdts;
-  //     })
-  //   );
   columns: ITdDataTableColumn[] = [
-    // { name: 'picture', label: '', tooltip: 'Stock Keeping Unit' },
-    // { name: 'member_id', label: '', numeric: true, format: v => v.toFixed(2) },
     { name: 'pdt_id', label: 'PDT' },
     { name: 'pdt_deps', label: 'Dependencies' },
     { name: 'show_sql', label: 'SQL', width: 150 },
-    // { name: 'is_completed', label: 'Completed', width: 100 },
     { name: 'status', label: 'Status', width: 150 },
-    // { name: 'completed_time_ago_from_now', label: 'Last completed', width: 200 },
     { name: 'last_run_ts', label: 'last_run_ts', width: 200 },
     { name: 'last_complete_ts', label: 'last_complete_ts', width: 200 },
     {
@@ -94,7 +71,6 @@ export class PdtsComponent {
       'from DashboardComponent:',
       event
     );
-    // this.store.dispatch(new SetLiveQueriesAction({ live_queries: [], server_ts: this.lqServerTs }));
     return true;
   }
 
