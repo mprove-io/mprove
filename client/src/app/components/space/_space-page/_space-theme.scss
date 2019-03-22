@@ -34,7 +34,6 @@
         background-color: mat-color($sub-primary, 900);
         color: mat-contrast($sub-primary, 900);
       } @else {
-        // background-color: mat-color($sub-primary, 0);
         background-color: #fff;
         color: mat-contrast($sub-primary, 0);
       }
