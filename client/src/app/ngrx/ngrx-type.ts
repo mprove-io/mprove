@@ -18,8 +18,6 @@ export function ngrxType<T>(label: T | ''): T {
       name: `Action type is not unique`,
       message: `type is ${label}`
     });
-
-    // throw new Error(`Action type "${label}" is not unique"`);
   }
 
   typeCache[<string>label] = true;
