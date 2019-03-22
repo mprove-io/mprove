@@ -13,10 +13,7 @@ export function queriesReducer(
       let newState = [...state];
 
       action.payload.forEach(cv => {
-        let index = newState.findIndex(
-          query => query.query_id === cv.query_id
-          // && query.project_id === cv.project_id     // no need because query_id is globally unique
-        );
+        let index = newState.findIndex(query => query.query_id === cv.query_id);
 
         if (index >= 0) {
           if (cv.server_ts > newState[index].server_ts) {
@@ -39,21 +36,12 @@ export function queriesReducer(
     }
 
     case actionTypes.CLEAN_QUERIES_STATE: {
-      // queries have not repo_id by desing
-
-      // let newState = state.filter(query =>
-      //   query.project_id !== action.payload.project_id ||
-      //   query.struct_id === action.payload.struct_id
-      // );
-
-      // return newState;
       return state;
     }
 
     case actionTypes.FILTER_QUERIES_STATE: {
       let newState = state.filter(
         query =>
-          // query.project_id !== action.payload.project_id ||
           action.payload.query_ids.indexOf(query.query_id) > -1 ||
           query.is_pdt === true // query component sets live query without pdt deps
       );
