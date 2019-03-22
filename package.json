@@ -20,7 +20,7 @@
   "lint-staged": {
     "linters": {
       "./**/*.{ts,js,json,scss,html}": [
-        "prettier --write --config .prettierrc.yaml",
+        "prettier --write",
         "git add"
       ]
     }

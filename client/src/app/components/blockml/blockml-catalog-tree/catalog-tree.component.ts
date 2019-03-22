@@ -20,23 +20,7 @@ import * as services from '@app/services/_index';
 })
 export class CatalogTreeComponent {
   actionMapping: IActionMapping = {
-    mouse: {
-      // drop: (tree: TreeModel, node: TreeNode, $event: any, { from, to }) => {
-      //   const { file_id } = from.data;
-      //   const { id } = to.parent.data;
-      //   const toPath = id.split('/');
-      //   this.store.select(selectors.getSelectedProjectModeRepo).take(1)
-      //     .subscribe(({ project_id, repo_id, server_ts }) => {
-      //       this.store.dispatch(new MoveFileAction({
-      //         project_id,
-      //         repo_id,
-      //         file_id,
-      //         server_ts,
-      //         to_path: toPath
-      //       }));
-      //     });
-      // },
-    },
+    mouse: {},
     keys: {
       [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
     }
@@ -87,8 +71,6 @@ export class CatalogTreeComponent {
       .pipe(
         tap(path => {
           if (path) {
-            // let slicedPath = path.slice(0, (path.length - 1));
-
             let cPath: string;
 
             path.forEach((p, i, a) => {
