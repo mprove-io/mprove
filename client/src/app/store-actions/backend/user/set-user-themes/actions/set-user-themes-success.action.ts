@@ -5,7 +5,5 @@ import * as actionTypes from '@app/store-actions/action-types';
 export class SetUserThemesSuccessAction implements Action {
   readonly type = actionTypes.SET_USER_THEMES_SUCCESS;
 
-  constructor(public payload: api.SetUserThemesResponse200Body['payload']) {
-    // for effects
-  }
+  constructor(public payload: api.SetUserThemesResponse200Body['payload']) {}
 }
