@@ -149,18 +149,6 @@ export class MyDialogService {
   }
 
   showUpdateCredentialsDialog() {
-    // setTimeout(
-    //   () => {
-    //     if (Math.random() > 0.00001) {
-    //       throw new Error('Boom!');
-    //     }
-    //   },
-    //   1);
-
-    // if (Math.random() > 0.00001) {
-    //   throw new Error('Boom!');
-    // }
-
     this.updateCredentialsDialogRef = this.dialog.open(
       dialogs.UpdateCredentialsDialogComponent,
       {
