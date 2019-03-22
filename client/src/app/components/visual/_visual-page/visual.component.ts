@@ -22,10 +22,6 @@ export class VisualComponent implements OnChanges {
 
   @Input() visual: interfaces.Visual;
 
-  // @Input() data: any;
-  // @Input() chart: Chart;
-  // @Input() selectFields: ModelField[];
-
   chart: api.Chart;
   selectFields: api.ModelField[];
   lastCompleteTs: number;
@@ -816,7 +812,6 @@ export class VisualComponent implements OnChanges {
   }
 
   transformIcon(type: any) {
-    // console.log(event);
     return '/assets/app/charts/' + this.chartIconPipe.transform(type) + '.svg';
   }
 }
