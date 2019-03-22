@@ -44,24 +44,6 @@ export class UpdateDashboardsStateEffect {
           );
 
           this.router.navigate(['profile']);
-
-          // this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard struct_id mismatch');
-
-          // if (selectedDashboard.temp) {
-          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard is temp');
-          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'navigating profile...');
-
-          //   this.router.navigate(['profile']);
-
-          // } else {
-          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'selected dashboard is not temp');
-          //   this.printer.log(enums.busEnum.UPDATE_DASHBOARDS_EFFECT, 'renavigating using load...');
-
-          //   let url = this.router.routerState.snapshot.url;
-          //   console.log('url:', url);
-          //   localStorage.setItem('redirect_url', url);
-          //   this.router.navigate(['load']);
-          // }
         }
       }
     })
