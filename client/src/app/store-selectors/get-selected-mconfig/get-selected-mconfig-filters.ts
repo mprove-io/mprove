@@ -35,5 +35,4 @@ export const getSelectedMconfigFilters = createSelector(
       return undefined;
     }
   }
-  // (mconfig ? mconfig.filters : undefined)
 );
