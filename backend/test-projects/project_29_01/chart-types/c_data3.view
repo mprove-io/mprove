@@ -1,0 +1,22 @@
+view: c_data3
+table: mprove-demo.ct.data3
+
+fields:
+- dimension: name
+  sql: name
+
+- time: s_name
+  timeframes:
+  - date
+  - hour
+  - minute
+  - month
+  - quarter
+  - time
+  - week
+  - year
+  sql: s_name
+
+- dimension: s_value
+  result: number
+  sql: s_value
