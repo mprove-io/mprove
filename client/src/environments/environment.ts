@@ -13,6 +13,6 @@ export const environment: interfaces.Environment = {
 
   canClickOkOnErrorDialog: true,
   canPrintToConsole: true,
-  canUseStoreLogger: true,
+  // canUseStoreLogger: true,
   canUseStoreFreeze: true
 };

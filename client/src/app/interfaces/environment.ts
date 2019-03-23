@@ -8,7 +8,7 @@ export interface Environment {
 
   canClickOkOnErrorDialog: boolean;
   canPrintToConsole: boolean;
-  canUseStoreLogger: boolean;
+  // canUseStoreLogger: boolean;
   canUseStoreFreeze: boolean;
 
   i18nPrefix?: string;

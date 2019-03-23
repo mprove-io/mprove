@@ -17,8 +17,8 @@ import { environment } from '@env/environment';
 export const APP_META_REDUCERS_ARRAY: Array<
   MetaReducer<interfaces.AppState>
 > = [
-  ...(environment.canUseStoreLogger === true
-    ? [storeLogger({ collapsed: true })]
-    : []),
+  // ...(environment.canUseStoreLogger === true
+  //   ? [storeLogger({ collapsed: true })]
+  //   : []),
   ...(environment.canUseStoreFreeze === true ? [storeFreeze] : [])
 ];
