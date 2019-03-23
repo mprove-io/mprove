@@ -39,7 +39,7 @@
     "@ngrx/router-store": "7.0.0",
     "@ngrx/store": "7.0.0",
     "@ngrx/store-devtools": "7.0.0",
-    "@swimlane/ngx-charts": "10.0.0",
+    "@swimlane/ngx-charts": "10.1.0",
     "angular-tree-component": "8.0.0",
     "browser-detect": "^0.2.28",
     "clone-regexp": "^1.0.0",
@@ -70,14 +70,14 @@
     "@types/js-yaml": "^3.5.30",
     "@types/node": "^10.12.2",
     "@types/uuid": "^2.0.29",
-    "codelyzer": "~4.5.0",
+    "codelyzer": "^4.5.0",
     "express": "^4.16.4",
     "madge": "3.3.0",
     "ngrx-store-freeze": "0.2.4",
     "npm-run-all": "^4.1.5",
-    "rimraf": "~2.6.2",
-    "tslint": "~5.11.0",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.11.0",
     "tslint-config-prettier": "1.16.0",
-    "typescript": "~3.1.1"
+    "typescript": "3.1.6"
   }
 }
