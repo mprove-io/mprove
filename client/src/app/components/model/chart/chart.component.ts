@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
 import { Store } from '@ngrx/store';
-import { filter, tap } from 'rxjs/operators';
+import { filter, tap, map } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
 import * as api from '@app/api/_index';
 import * as enums from '@app/enums/_index';
@@ -21,6 +21,7 @@ export class ChartComponent {
   visual: interfaces.Visual;
   visual$ = this.store.select(selectors.getSelectedVisual).pipe(
     filter(v => !!v),
+    map(x => JSON.parse(JSON.stringify(x))),
     tap(x => (this.visual = x))
   );
 
