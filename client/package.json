@@ -53,7 +53,6 @@
     "js-yaml": "^3.8.4",
     "moment": "^2.18.1",
     "ng2-date-picker": "2.11.0",
-    "ngrx-store-logger": "0.2.2",
     "ngx-clipboard": "11.1.9",
     "ngx-monaco-editor": "^6.0.0",
     "normalize.css": "^8.0.1",

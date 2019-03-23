@@ -5,7 +5,6 @@ import { MetaReducer } from '@ngrx/store';
  * ensure that none of the reducers accidentally mutates the state.
  */
 import { storeFreeze } from 'ngrx-store-freeze';
-import { storeLogger } from 'ngrx-store-logger';
 import * as interfaces from '@app/interfaces/_index';
 import { environment } from '@env/environment';
 
@@ -16,9 +15,4 @@ import { environment } from '@env/environment';
  */
 export const APP_META_REDUCERS_ARRAY: Array<
   MetaReducer<interfaces.AppState>
-> = [
-  // ...(environment.canUseStoreLogger === true
-  //   ? [storeLogger({ collapsed: true })]
-  //   : []),
-  ...(environment.canUseStoreFreeze === true ? [storeFreeze] : [])
-];
+> = [...(environment.canUseStoreFreeze === true ? [storeFreeze] : [])];
