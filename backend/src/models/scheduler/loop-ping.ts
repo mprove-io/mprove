@@ -16,10 +16,6 @@ export function loopPing(item: { ws_clients: interfaces.WebsocketClient[] }) {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('*/3 * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopPing.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

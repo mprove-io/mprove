@@ -16,6 +16,4 @@ const renderIndex = (req, res) => {
 };
 app.get('/*', renderIndex);
 
-app.listen(PORT, () =>
-  console.log(`App running on localhost:${PORT}${CONTEXT}`)
-);
+app.listen(PORT, () => console.log('Client is running.'));

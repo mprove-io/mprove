@@ -18,10 +18,6 @@ export function loopDeleteProjects() {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopDeleteProjects.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

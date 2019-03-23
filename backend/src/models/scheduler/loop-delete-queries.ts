@@ -11,10 +11,6 @@ export function loopDeleteQueries() {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopDeleteQueries.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

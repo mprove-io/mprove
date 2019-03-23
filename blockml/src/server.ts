@@ -45,7 +45,7 @@ if (cluster.isMaster) {
   });
 
   cluster.on('online', worker => {
-    console.log('New worker is online. worker: ' + worker.id);
+    // console.log('New worker is online. worker: ' + worker.id);
   });
 }
 
@@ -86,7 +86,7 @@ if (cluster.isWorker) {
 }
 
 function listenToWorker(worker: ChildProcess) {
-  console.log('worker started. process id %s', worker.pid);
+  // console.log('worker started. process id %s', worker.pid);
 
   worker.on('message', async (message: interfaces.ProcessMessage) => {
     switch (message.type) {

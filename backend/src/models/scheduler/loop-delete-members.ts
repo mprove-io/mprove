@@ -13,10 +13,6 @@ export function loopDeleteMembers() {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopDeleteMembers.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

@@ -13,10 +13,6 @@ export function loopCheckQueries() {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopCheckQueries.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

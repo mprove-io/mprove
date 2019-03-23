@@ -20,10 +20,6 @@ export function loopDeleteSessions(item: {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopDeleteSessions.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

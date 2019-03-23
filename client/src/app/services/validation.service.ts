@@ -77,7 +77,6 @@ export class ValidationService {
   }
 
   static numberValidator(control: FormControl) {
-    // console.log({ v: control.value });
     if (control.value === null) {
       return null;
     }

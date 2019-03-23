@@ -18,10 +18,6 @@ export function loopCheckChunks(item: {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopCheckChunks.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

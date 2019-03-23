@@ -19,10 +19,6 @@ export function loopResendMessage(item: {
   let isCronJobRunning = false;
 
   let cronJob = new cron.CronJob('* * * * * *', async () => {
-    if (isCronJobRunning) {
-      console.log(`${loopResendMessage.name} skip`);
-    }
-
     if (!isCronJobRunning) {
       isCronJobRunning = true;
 

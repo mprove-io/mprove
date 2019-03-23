@@ -783,9 +783,7 @@ export class VisualComponent implements OnChanges {
     }
   }
 
-  onSelect(event: any) {
-    // console.log(event);
-  }
+  onSelect(event: any) {}
 
   formatValue(
     value: string,

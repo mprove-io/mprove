@@ -27,7 +27,6 @@ export class FractionComponent {
   constructor() {}
 
   fractionChange(fraction: api.Fraction) {
-    // console.log(fraction);
     this.fractionUpdate.emit({
       fraction: fraction,
       fractionIndex: this.fractionIndex
