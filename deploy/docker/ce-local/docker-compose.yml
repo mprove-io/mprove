@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   db:
-    image: mysql:5.7
+    image: mysql:5.7.25
     volumes:
       - type: bind
         source: /mprove_data/db/mysql
