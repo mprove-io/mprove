@@ -57,12 +57,7 @@ export function loginUser(item: { user_id: string; password: string }) {
 }
 
 export function basicVisit(url: string) {
-  cy.visit(url, {
-    auth: {
-      username: Cypress.env('basic_login'),
-      password: Cypress.env('basic_pass')
-    }
-  });
+  cy.visit(url);
 }
 
 export function loading() {
