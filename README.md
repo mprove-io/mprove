@@ -4,7 +4,7 @@
 [Docs](https://mprove.io/docs) |
 [Website](https://mprove.io)
 
-Mprove - SQL analytics and dashboards. Inspired by [Looker](https://looker.com/).
+Mprove - SQL analytics and dashboards. Inspired by :heart: [Looker](https://looker.com/).
 
 Supported databases:
 * Google BigQuery
