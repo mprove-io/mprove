@@ -66,7 +66,6 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
       bigquery_project: project.bigquery_project,
       user_id: query.last_run_by,
       query: query,
-      refresh: helper.benumToBoolean(query.refresh),
       new_last_run_ts: query.last_run_ts
     }).catch(e =>
       helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY_WITHOUT_DEPS)
@@ -84,7 +83,6 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
       bigquery_project: project.bigquery_project,
       user_id: query.last_run_by,
       query: query,
-      refresh: helper.benumToBoolean(query.refresh),
       new_last_run_ts: query.last_run_ts
     }).catch(e =>
       helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY_WITHOUT_DEPS)

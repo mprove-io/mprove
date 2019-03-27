@@ -5,8 +5,11 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
 import { runQueryWithoutDeps } from './run-query-without-deps';
+import { forEach } from 'p-iteration';
 
 export async function runQuery(item: {
+  all_dep_queries: entities.QueryEntity[];
+  checked_query_ids_without_deps: string[];
   bigquery_project: string;
   is_top: boolean;
   query: entities.QueryEntity;
@@ -35,12 +38,17 @@ export async function runQuery(item: {
   let pdtDeps = JSON.parse(query.pdt_deps);
 
   if (pdtDeps.length === 0) {
+    if (item.checked_query_ids_without_deps.indexOf(query.query_id) > -1) {
+      return [];
+    }
+
+    item.checked_query_ids_without_deps.push(query.query_id);
+
     query = <entities.QueryEntity>await runQueryWithoutDeps({
       credentials_file_path: item.credentials_file_path,
       bigquery_project: item.bigquery_project,
       user_id: item.user_id,
       query: query,
-      refresh: item.refresh,
       new_last_run_ts: item.new_last_run_ts
     }).catch(e =>
       helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY_WITHOUT_DEPS)
@@ -50,32 +58,26 @@ export async function runQuery(item: {
   } else {
     let storeQueries = store.getQueriesRepo();
 
-    let queries = <entities.QueryEntity[]>await storeQueries
-      .find({
-        pdt_id: In(pdtDeps)
-      })
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
-
-    let queryPacks: entities.QueryEntity[][] = <entities.QueryEntity[][]>(
-      await Promise.all(
-        queries.map(async q =>
-          runQuery({
-            is_top: false,
-            query: q,
-            credentials_file_path: item.credentials_file_path,
-            bigquery_project: item.bigquery_project,
-            user_id: item.user_id,
-            refresh: item.refresh,
-            new_last_run_ts: item.new_last_run_ts
-          }).catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY))
-        )
-      ).catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL))
+    let queries = item.all_dep_queries.filter(
+      q => pdtDeps.indexOf(q.pdt_id) > -1
     );
 
     let processedQueries: entities.QueryEntity[] = [];
 
-    queryPacks.forEach(pack => {
-      processedQueries = helper.makeNewArray(processedQueries, pack);
+    await forEach(queries, async q => {
+      let depQueries = await (<Promise<entities.QueryEntity[]>>runQuery({
+        all_dep_queries: item.all_dep_queries,
+        checked_query_ids_without_deps: item.checked_query_ids_without_deps,
+        is_top: false,
+        query: q,
+        credentials_file_path: item.credentials_file_path,
+        bigquery_project: item.bigquery_project,
+        user_id: item.user_id,
+        refresh: item.refresh,
+        new_last_run_ts: item.new_last_run_ts
+      }).catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY)));
+
+      processedQueries = helper.makeNewArray(processedQueries, depQueries);
     });
 
     let errorQueries = processedQueries.filter(

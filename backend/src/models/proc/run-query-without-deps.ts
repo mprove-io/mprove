@@ -10,7 +10,6 @@ export async function runQueryWithoutDeps(item: {
   bigquery_project: string;
   user_id: string;
   query: entities.QueryEntity;
-  refresh: boolean;
   new_last_run_ts: string;
 }) {
   let query = item.query;
@@ -31,6 +30,24 @@ export async function runQueryWithoutDeps(item: {
     destinationTable = bigquery
       .dataset(`mprove_${query.project_id}`)
       .table(`${query.pdt_id}_${query.query_id}`);
+
+    // delete old destination table
+
+    let itemDestinationTableExists = await destinationTable
+      .exists()
+      .catch((e: any) =>
+        helper.reThrow(e, enums.bigqueryErrorsEnum.BIGQUERY_TABLE_EXISTS_CHECK)
+      );
+
+    let destinationTableExists: boolean = itemDestinationTableExists[0];
+
+    if (destinationTableExists === true) {
+      let itemPdtTableDelete = await destinationTable
+        .delete()
+        .catch((e: any) =>
+          helper.reThrow(e, enums.bigqueryErrorsEnum.BIGQUERY_TABLE_DELETE)
+        );
+    }
   }
 
   let createQueryJobItem = <any>await bigquery
