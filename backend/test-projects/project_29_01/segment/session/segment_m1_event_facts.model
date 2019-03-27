@@ -1,0 +1,34 @@
+model: segment_m1_event_facts
+group: 'segment'
+
+joins:
+- from_view: segment_event_facts
+  as: a
+
+# - join_view: segment_events
+#   as: b
+#   sql_on: ${a.event_id} = ${b.event_id}
+  
+- join_view: segment_sessions
+  as: c
+  sql_on: ${a.session_id} = ${c.session_id}   
+  
+- join_view: segment_session_event_facts
+  as: d
+  sql_on: ${a.session_id} = ${d.session_id}  
+  
+- join_view: segment_visitor_session_facts
+  as: e
+  sql_on: ${a.mprove_visitor_id} = ${e.mprove_visitor_id}
+  
+- join_view: segment_users
+  as: f
+  sql_on: ${a.mprove_visitor_id} = ${f.user_id}  
+
+fields: 
+  
+- calculation: sessions_to_users_ratio
+  sql: ${c.count_sessions} / nullif(${f.count_users}, 0)  
+  
+- calculation: sessions_to_visitors_ratio
+  sql: ${c.count_sessions} / nullif(${a.count_visitors}, 0)  

@@ -1,0 +1,44 @@
+view: segment_identifies
+derived_table: |
+  SELECT
+    * EXCEPT (ROW_NUMBER)
+  FROM (
+    SELECT
+      *,
+      ROW_NUMBER() OVER (PARTITION BY id ORDER BY received_at DESC) ROW_NUMBER
+    FROM
+      `mprove-demo.segment.identifies`)
+  WHERE
+    ROW_NUMBER = 1
+
+fields:
+
+- dimension: received_at
+  sql: received_at
+
+- dimension: name
+  sql: name
+  
+- dimension: id
+  sql: id
+
+- dimension: user_id
+  sql: user_id
+ 
+- dimension: email
+  sql: email
+ 
+- dimension: anonymous_id
+  sql: anonymous_id
+
+- measure: count
+  type: count_distinct
+  sql: ${id}
+
+# - measure: count
+#   type: custom
+#   sql: COUNT(DISTINCT ${id})  
+
+
+
+ 

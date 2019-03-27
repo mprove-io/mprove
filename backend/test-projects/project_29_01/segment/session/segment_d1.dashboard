@@ -1,0 +1,237 @@
+dashboard: segment_d1
+group: 'segment'
+
+fields:
+- filter: date
+  result: from_field
+  from_field: segment_m1_event_facts.a.received_at_frames___date
+  default:
+  - 'last 1 years complete plus current'
+
+reports:
+- title: 'Visitors'
+  model: segment_m1_event_facts
+  select:
+  - a.count_visitors
+  listen_filters:
+    date: a.received_at_frames___date
+  type: 'number_card'
+  data:
+    y_field: a.count_visitors
+  options:
+    color_scheme: 'ocean'    
+  tile:
+    tile_width: '2'
+    tile_height: '300'
+
+
+- title: 'Users'
+  model: segment_m1_event_facts
+  select:
+  - f.count_users
+  default_filters:
+    f.email:
+    - 'not null'
+  listen_filters:
+    date: a.received_at_frames___date
+  type: 'number_card'
+  data:
+    y_field: f.count_users
+  options:
+    color_scheme: 'ocean'
+  tile:
+    tile_width: '2'
+    tile_height: '300'
+
+
+- title: 'Sessions Count'
+  model: segment_m1_event_facts
+  select:
+  - c.count_sessions
+  listen_filters:
+    date: a.received_at_frames___date   
+  type: 'number_card'
+  data:
+    y_field: c.count_sessions
+  options:
+    color_scheme: 'ocean'     
+  tile:
+    tile_width: '2'
+    tile_height: '300'
+
+
+- title: 'Events'
+  model: segment_m1_event_facts
+  select:
+  - a.count_events
+  listen_filters:
+    date: a.received_at_frames___date
+  type: 'number_card'
+  data:
+    y_field: a.count_events
+  options:
+    color_scheme: 'ocean'    
+  tile:
+    tile_width: '2'
+    tile_height: '300'
+    
+    
+- title: 'Pages'
+  model: segment_m1_event_facts
+  select:
+  - a.count_pages
+  listen_filters:
+    date: a.received_at_frames___date
+  type: 'number_card'
+  data:
+    y_field: a.count_pages
+  options:
+    color_scheme: 'ocean'    
+  tile:
+    tile_width: '2'
+    tile_height: '300'    
+    
+    
+- title: 'Tracks'
+  model: segment_m1_event_facts
+  select:
+  - a.count_tracks
+  listen_filters:
+    date: a.received_at_frames___date
+  type: 'number_card'
+  data:
+    y_field: a.count_tracks
+  options:
+    color_scheme: 'ocean'    
+  tile:
+    tile_width: '2'
+    tile_height: '300'    
+
+    
+- title: 'New Visitors'
+  model: segment_m1_event_facts
+  select:
+  - a.count_visitors
+  listen_filters:
+    date: a.received_at_frames___date, e.first_session_start___date
+  type: 'number_card'
+  data:
+    y_field: a.count_visitors
+  options:
+    color_scheme: 'ocean'    
+  tile:
+    tile_width: '2'
+    tile_height: '300'    
+
+
+- title: 'New Users'
+  model: segment_m1_event_facts
+  select:
+  - f.count_users
+  default_filters:
+    f.email:
+    - 'not null'
+  listen_filters:
+    date: a.received_at_frames___date, e.first_session_start___date
+  type: 'number_card'
+  data:
+    y_field: f.count_users
+  options:
+    color_scheme: 'ocean'
+  tile:
+    tile_width: '2'
+    tile_height: '300'
+
+
+- title: 'New User Session Facts'
+  model: segment_m1_event_facts
+  select:
+  - a.mprove_visitor_id
+  - f.email
+  - e.number_of_sessions
+  - e.first_session_start___date
+  - e.last_session_start___date
+  sorts: 'e.number_of_sessions desc'
+  listen_filters:
+    date: a.received_at_frames___date, e.first_session_start___date
+  default_filters:
+    f.email:
+    - 'not null'
+  type: 'table'
+  options:
+    color_scheme: 'ocean'   
+  tile:
+    tile_width: '11'  
+    
+
+- title: 'Monthly Sessions Count'
+  model: segment_m1_event_facts
+  select:
+  - c.count_sessions
+  - a.received_at_frames___month
+  listen_filters:
+    date: a.received_at_frames___month  
+  sorts: 'a.received_at_frames___month'
+  type: 'line'
+  data:
+    x_field: a.received_at_frames___month
+    y_fields:
+    - c.count_sessions
+  axis:
+    x_axis_label: 'Month'
+    y_axis_label: 'Count'
+  options:
+    color_scheme: 'ocean'     
+  tile:
+    tile_width: '11'
+
+
+- title: 'Bounced Sessions'
+  model: segment_m1_event_facts
+  select:
+  - d.is_bounced_session
+  - c.count_sessions
+  sorts: 'd.is_bounced_session desc'
+  listen_filters:
+    date: a.received_at_frames___date
+  type: 'pie'
+  data:
+    x_field: d.is_bounced_session
+    y_field: c.count_sessions
+  options:
+    color_scheme: 'ocean'
+  tile:
+    tile_width: '2'
+    tile_height: '400'
+
+    
+- title: 'Top 10 referrers'
+  model: segment_m1_event_facts
+  select:
+  - d.session_first_referrer_domain_mapped
+  - c.count_sessions
+  sorts: 'c.count_sessions desc'
+  listen_filters:
+    date: a.received_at_frames___date  
+  limit: 10
+  default_filters:
+    d.session_first_referrer_domain_mapped:
+    - 'not null'
+  type: 'pie_advanced'
+  data:
+    x_field: d.session_first_referrer_domain_mapped
+    y_field: c.count_sessions
+  options:
+    color_scheme: 'ocean'    
+  tile:
+    tile_width: '10'
+    tile_height: '400'
+    
+     
+
+    
+
+    
+    
+  
+
