@@ -1,4 +1,4 @@
-FROM node:10.15.0-jessie
+FROM node:10.15.3-jessie
 
 RUN apt-get update && apt-get install -y wget
 
