@@ -10,6 +10,9 @@ Thumbs.db
 .env
 .envrc
 
+# backend
+/backend/test-projects/project_29_01/my
+
 # cypress
 /client/cypress/screenshots/
 /client/cypress/videos/
