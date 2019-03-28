@@ -405,6 +405,15 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
     )
   );
 
+  app.post(
+    '/api/v1' + api.PATH_CANCEL_QUERIES,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.cancelQueries,
+      enums.controllerErrorsEnum.CONTROLLER_CANCEL_QUERIES
+    )
+  );
+
   // REPOS
 
   app.post(

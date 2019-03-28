@@ -60,7 +60,8 @@ export async function duplicateMconfigAndQuery(req: Request, res: Response) {
           query.last_complete_ts > query.last_error_ts
         ? api.QueryStatusEnum.Completed
         : api.QueryStatusEnum.New,
-    temp: true
+    temp: true,
+    is_checking: false
   });
 
   // update server_ts

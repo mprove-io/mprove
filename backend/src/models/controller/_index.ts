@@ -39,6 +39,7 @@ export * from './queries/get-pdt-queries';
 export * from './queries/get-query-with-dep-queries';
 export * from './queries/run-queries';
 export * from './queries/run-queries-dry';
+export * from './queries/cancel-queries';
 
 export * from './repos/commit-repo';
 export * from './repos/pull-repo';
