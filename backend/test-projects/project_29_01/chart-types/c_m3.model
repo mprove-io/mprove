@@ -1,5 +1,0 @@
-model: c_m3
-group: 'Chart types web10'
-joins:
-- from_view: c_data3
-  as: a

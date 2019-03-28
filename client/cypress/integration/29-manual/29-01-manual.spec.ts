@@ -40,7 +40,7 @@ describe('29-01 manual (logged in)', () => {
     cy.basicVisit(
       `${constants.PATH_PROJECT}/${projectId}/${constants.PATH_MODE}/${
         enums.LayoutModeEnum.Prod
-      }/dashboard/c_d1`
+      }/${constants.PATH_BLOCKML}`
     );
     cy.loading();
   });

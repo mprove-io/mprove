@@ -1,7 +1,0 @@
-model: c_m2 
-
-group: 'Chart types web300'
-
-joins:
-- from_view: c_data2
-  as: a
