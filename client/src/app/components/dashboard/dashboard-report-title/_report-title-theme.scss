@@ -1,5 +1,12 @@
 @mixin report-title-theme($theme) {
+  $primary: map-get($theme, primary);
+  $is-dark: map-get($theme, is-dark);
+
+  .report-title__text {
+    color: mat-color($primary);
+  }
 }
+
 @mixin reportTitleStyle($titleHoverBackground) {
   .report-title:hover {
     cursor: pointer;

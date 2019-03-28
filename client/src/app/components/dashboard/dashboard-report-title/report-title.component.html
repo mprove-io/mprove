@@ -48,30 +48,23 @@
         "
         fxLayout="row"
         fxLayoutAlign="start center"
-        class="ml-10"
       >
-        <ng-template
-          tdLoading
-          [tdLoadingUntil]="false"
-          tdLoadingStrategy="replace"
-        >
-        </ng-template>
-        <div class="tdloading-size"></div>
-
         <div fxLayout="row" fxHide.lt-md>
-          <div class="report-title__text">{{ runSecondsAgo$ | async }}s</div>
-
           <div
             *ngIf="visual.query.status === queryStatusEnum.Running"
-            class="report-title__text ml-10"
-            >Running...</div
+            class="report-title__text"
+            >- Running...</div
           >
 
           <div
             *ngIf="visual.query.status === queryStatusEnum.Waiting"
-            class="report-title__text ml-10"
-            >Waiting...</div
+            class="report-title__text"
+            >- Waiting...</div
           >
+
+          <!--
+            <div class="report-title__text">{{ runSecondsAgo$ | async }}s</div>
+          -->
         </div>
       </div>
     </div>
