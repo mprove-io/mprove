@@ -37,23 +37,20 @@ export async function splitChunk(item: {
     ...content.repos
   ].map(x => x.project_id);
 
-  let projectMembersMap: interfaces.ProjectMembersMap = {};
+  let projectIdToMembersMap: interfaces.ProjectIdToMembersMap = {};
 
   if (projectIds.length > 0) {
     let storeMembers = store.getMembersRepo();
 
-    let memberIdProjectIdPairs = await storeMembers.find({
-      select: ['member_id', 'project_id'],
-      where: {
-        project_id: In(projectIds)
-      }
+    let allMembers = await storeMembers.find({
+      project_id: In(projectIds)
     });
 
-    memberIdProjectIdPairs.forEach(x => {
-      if (projectMembersMap[x.project_id]) {
-        projectMembersMap[x.project_id].push(x.member_id);
+    allMembers.forEach(x => {
+      if (projectIdToMembersMap[x.project_id]) {
+        projectIdToMembersMap[x.project_id].push(x);
       } else {
-        projectMembersMap[x.project_id] = [x.member_id];
+        projectIdToMembersMap[x.project_id] = [x];
       }
     });
   }
@@ -99,7 +96,9 @@ export async function splitChunk(item: {
 
     await forEach(content.projects, async project => {
       if (isDifferentSession) {
-        let projectMemberIds = projectMembersMap[project.project_id];
+        let projectMemberIds = projectIdToMembersMap[project.project_id].map(
+          x => x.member_id
+        );
 
         if (
           projectMemberIds &&
@@ -116,7 +115,9 @@ export async function splitChunk(item: {
     await forEach(content.repos, async repo => {
       if (isDifferentSession) {
         if (repo.repo_id === constants.PROD_REPO_ID) {
-          let projectMemberIds = projectMembersMap[repo.project_id];
+          let projectMemberIds = projectIdToMembersMap[repo.project_id].map(
+            x => x.member_id
+          );
 
           if (
             projectMemberIds &&
@@ -142,7 +143,9 @@ export async function splitChunk(item: {
       if (isDifferentSession) {
         if (file.repo_id === constants.PROD_REPO_ID) {
           // file of prod repo
-          let projectMemberIds = projectMembersMap[file.project_id];
+          let projectMemberIds = projectIdToMembersMap[file.project_id].map(
+            x => x.member_id
+          );
 
           if (
             projectMemberIds &&
@@ -173,7 +176,9 @@ export async function splitChunk(item: {
     await forEach(content.models, async model => {
       if (isDifferentSession) {
         if (model.repo_id === constants.PROD_REPO_ID) {
-          let projectMemberIds = projectMembersMap[model.project_id];
+          let projectMemberIds = projectIdToMembersMap[model.project_id].map(
+            x => x.member_id
+          );
 
           if (
             projectMemberIds &&
@@ -198,7 +203,9 @@ export async function splitChunk(item: {
     await forEach(content.dashboards, async dashboard => {
       if (isDifferentSession) {
         if (dashboard.repo_id === constants.PROD_REPO_ID) {
-          let projectMemberIds = projectMembersMap[dashboard.project_id];
+          let projectMemberIds = projectIdToMembersMap[
+            dashboard.project_id
+          ].map(x => x.member_id);
 
           if (
             projectMemberIds &&
@@ -223,7 +230,9 @@ export async function splitChunk(item: {
     await forEach(content.mconfigs, async mconfig => {
       if (isDifferentSession) {
         if (mconfig.repo_id === constants.PROD_REPO_ID) {
-          let projectMemberIds = projectMembersMap[mconfig.project_id];
+          let projectMemberIds = projectIdToMembersMap[mconfig.project_id].map(
+            x => x.member_id
+          );
 
           if (
             projectMemberIds &&
@@ -248,7 +257,9 @@ export async function splitChunk(item: {
     await forEach(content.errors, async error => {
       if (isDifferentSession) {
         if (error.repo_id === constants.PROD_REPO_ID) {
-          let projectMemberIds = projectMembersMap[error.project_id];
+          let projectMemberIds = projectIdToMembersMap[error.project_id].map(
+            x => x.member_id
+          );
 
           if (
             projectMemberIds &&
@@ -272,7 +283,9 @@ export async function splitChunk(item: {
 
     await forEach(content.members, async member => {
       if (isDifferentSession) {
-        let projectMemberIds = projectMembersMap[member.project_id];
+        let projectMemberIds = projectIdToMembersMap[member.project_id].map(
+          x => x.member_id
+        );
 
         if (
           projectMemberIds &&

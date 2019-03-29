@@ -10,5 +10,5 @@ export * from './item-status';
 export * from './item-struct-and-repo';
 export * from './item-struct';
 export * from './item-struct-copy';
-export * from './project-members-map';
+export * from './project-id-to-members-map';
 export * from './websocket-client';
