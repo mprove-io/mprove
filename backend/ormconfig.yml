@@ -5,6 +5,7 @@ default: # default connection
   username: root
   password: root
   database: my_db
+  charset: utf8mb4
   logging: true
   logger: file
   entities: 
