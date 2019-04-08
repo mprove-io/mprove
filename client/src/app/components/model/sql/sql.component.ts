@@ -1,10 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, tap } from 'rxjs/operators';
 import * as api from '@app/api/_index';
 import * as interfaces from '@app/interfaces/_index';
 import * as services from '@app/services/_index';
 import * as selectors from '@app/store-selectors/_index';
+import * as configs from '@app/configs/_index';
 import { ITdDataTableColumn } from '@covalent/core';
 
 @Component({
@@ -14,6 +15,8 @@ import { ITdDataTableColumn } from '@covalent/core';
   styleUrls: ['sql.component.scss']
 })
 export class SqlComponent {
+  queryStatusEnum = api.QueryStatusEnum;
+
   sqlEditorTheme: string = 'sqlserver';
 
   query: interfaces.SqlPart;
@@ -33,7 +36,9 @@ export class SqlComponent {
 
       this.query = {
         part: 'Query',
-        sql: sqlText
+        sql: sqlText,
+        status: query.status,
+        last_error_message: query.last_error_message
       };
 
       this.partsWithQuery = [...this.parts, this.query];
@@ -55,7 +60,9 @@ export class SqlComponent {
 
         parts.push({
           part: `PDT ${x.pdt_id}`,
-          sql: sqlText
+          sql: sqlText,
+          status: x.status,
+          last_error_message: x.last_error_message
         });
       });
 
@@ -77,10 +84,12 @@ export class SqlComponent {
 
   columns: ITdDataTableColumn[] = [
     { name: 'part', label: 'part', width: 150 },
-    { name: 'show_sql', label: 'SQL', width: 150 }
+    { name: 'show_sql', label: 'SQL', width: 150 },
+    { name: 'status', label: 'Status', width: 150 }
   ];
 
   constructor(
+    @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
     private store: Store<interfaces.AppState>,
     private myDialogService: services.MyDialogService
   ) {}

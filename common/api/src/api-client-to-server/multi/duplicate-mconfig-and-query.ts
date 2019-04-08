@@ -12,6 +12,6 @@ export interface DuplicateMconfigAndQueryResponse200Body {
   info: apiObjects.ServerResponse;
   payload: {
     mconfig: apiObjects.Mconfig;
-    query: apiObjects.Query;
+    queries: apiObjects.Query[];
   };
 }

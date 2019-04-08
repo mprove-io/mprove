@@ -24,6 +24,24 @@
           >SQL</button
         >
       </ng-template>
+
+      <ng-template
+        tdDataTableTemplate="status"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <span flex *ngIf="value !== queryStatusEnum.Error">{{ value }}</span>
+
+        <span
+          flex
+          *ngIf="value === queryStatusEnum.Error"
+          class="pdts__error"
+          matTooltip="{{row.last_error_message}}"
+          [matTooltipShowDelay]="appConfig.tooltipDelay"
+          >{{ value }}
+        </span>
+      </ng-template>
     </td-data-table>
   </div>
 </div>

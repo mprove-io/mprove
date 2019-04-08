@@ -19,6 +19,8 @@ export async function duplicateMconfigAndQuery(req: Request, res: Response) {
     req
   );
 
+  let queries: entities.QueryEntity[] = [];
+
   let storeMconfigs = store.getMconfigsRepo();
   let storeQueries = store.getQueriesRepo();
 
@@ -89,11 +91,28 @@ export async function duplicateMconfigAndQuery(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 
+  // add dep queries
+  queries.push(newQuery);
+
+  let pdtDepsAll = JSON.parse(newQuery.pdt_deps_all);
+
+  if (pdtDepsAll.length > 0) {
+    let depQueries = <entities.QueryEntity[]>await storeQueries
+      .find({
+        pdt_id: In(pdtDepsAll)
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
+
+    if (depQueries && depQueries.length > 0) {
+      queries = helper.makeNewArray(queries, depQueries);
+    }
+  }
+
   // response
 
   let responsePayload: api.DuplicateMconfigAndQueryResponse200Body['payload'] = {
     mconfig: wrapper.wrapToApiMconfig(newMconfig),
-    query: wrapper.wrapToApiQuery(newQuery)
+    queries: queries.map(q => wrapper.wrapToApiQuery(q))
   };
 
   sender.sendClientResponse(req, res, responsePayload);
