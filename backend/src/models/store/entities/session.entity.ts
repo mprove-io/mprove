@@ -16,4 +16,7 @@ export class SessionEntity {
 
   @Column({ type: constants.TS_TO_BIGINT_DATATYPE, nullable: true })
   last_pong_ts: string;
+
+  @Column({ type: constants.SESSION_LIVE_QUERIES_DATATYPE, nullable: true })
+  live_queries: string;
 }

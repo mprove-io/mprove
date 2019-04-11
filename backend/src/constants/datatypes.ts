@@ -116,6 +116,8 @@ export const REPO_PULL_ERROR_MESSAGE_DATATYPE = 'text';
 
 // SESSION
 
+export const SESSION_LIVE_QUERIES_DATATYPE = 'text';
+
 // USER
 
 export const USER_HASH_DATATYPE = 'varchar';
@@ -126,5 +128,5 @@ export const USER_LAST_NAME_DATATYPE = 'varchar';
 export const USER_PICTURE_URL_SMALL_DATATYPE = 'varchar';
 export const USER_PICTURE_URL_BIG_DATATYPE = 'varchar';
 export const USER_TIMEZONE_DATATYPE = 'varchar';
-export const USER_EMAIL_VERIFICATION_TOKEN = 'varchar';
-export const PASSWORD_RESET_TOKEN = 'varchar';
+export const USER_EMAIL_VERIFICATION_TOKEN_DATATYPE = 'varchar';
+export const PASSWORD_RESET_TOKEN_DATATYPE = 'varchar';

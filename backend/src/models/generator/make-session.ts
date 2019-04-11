@@ -10,6 +10,7 @@ export function makeSession(item: {
     session_id: item.session_id,
     user_id: item.user_id,
     is_activated: item.is_activated,
-    last_pong_ts: undefined
+    last_pong_ts: undefined,
+    live_queries: JSON.stringify([])
   };
 }

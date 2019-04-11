@@ -12,12 +12,15 @@ export class UserEntity {
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   email_verified: enums.bEnum;
 
-  @Column({ unique: true, type: constants.USER_EMAIL_VERIFICATION_TOKEN })
+  @Column({
+    unique: true,
+    type: constants.USER_EMAIL_VERIFICATION_TOKEN_DATATYPE
+  })
   email_verification_token: string;
 
   @Column({
     unique: true,
-    type: constants.PASSWORD_RESET_TOKEN,
+    type: constants.PASSWORD_RESET_TOKEN_DATATYPE,
     nullable: true
   })
   password_reset_token: string;
