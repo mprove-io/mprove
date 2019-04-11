@@ -38,13 +38,10 @@ export class QueryComponent {
     .select(selectors.getSelectedQueryStatus)
     .pipe(tap(x => (this.queryStatus = x)));
 
-  queryId$ = this.store.select(selectors.getSelectedQuery).pipe(
+  query$ = this.store.select(selectors.getSelectedQuery).pipe(
     filter(v => !!v),
     tap(query => {
-      this.liveQueriesService.setLiveQueries([
-        query.query_id,
-        ...query.pdt_deps_all
-      ]);
+      this.liveQueriesService.setLiveQueries([query.query_id]);
     })
   );
 

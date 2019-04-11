@@ -86,11 +86,6 @@ export class PDTResolver implements Resolve<any> {
             `pdt queries loaded from API`
           );
 
-          let queryIds = queries.map(q => q.query_id);
-          if (queryIds.length > 0) {
-            this.liveQueriesService.setLiveQueries(queryIds);
-          }
-
           return of(true);
         }),
         catchError(() => {

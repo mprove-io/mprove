@@ -72,8 +72,7 @@
   <div fxFlex="1 1 calc(100%-80px)"> <router-outlet></router-outlet> </div>
 </div>
 
-<div *ngIf="(queryId$ | async)"></div>
-<div *ngIf="(queryStatus$ | async)"></div>
+<div *ngIf="(query$ | async)"></div> <div *ngIf="(queryStatus$ | async)"></div>
 <div *ngIf="(queryLastErrorMessage$ | async)"></div>
 <div *ngIf="(filters$ | async)"></div> <div *ngIf="(mconfig$ | async)"></div>
 <div *ngIf="(charts$ | async)"></div> <div *ngIf="(routerPath$ | async)"></div>
