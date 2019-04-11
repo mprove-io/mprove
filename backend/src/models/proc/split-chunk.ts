@@ -10,7 +10,7 @@ import { handler } from '../../barrels/handler';
 import { interfaces } from '../../barrels/interfaces';
 import { store } from '../../barrels/store';
 import { wrapper } from '../../barrels/wrapper';
-import { MemberEntity } from '../store/entities/_index';
+import { MemberEntity, SessionEntity } from '../store/entities/_index';
 import { In } from 'typeorm';
 
 export async function splitChunk(item: {
@@ -39,6 +39,8 @@ export async function splitChunk(item: {
 
   let projectIdToMembersMap: interfaces.ProjectIdToMembersMap = {};
 
+  let allSessions: SessionEntity[] = [];
+
   if (projectIds.length > 0) {
     let storeMembers = store.getMembersRepo();
 
@@ -53,6 +55,18 @@ export async function splitChunk(item: {
         projectIdToMembersMap[x.project_id] = [x];
       }
     });
+
+    let sessionIds = item.ws_clients_open.map(x => x.session_id);
+
+    let storeSessions = store.getSessionsRepo();
+
+    allSessions = <SessionEntity[]>await storeSessions
+      .find({
+        session_id: In(sessionIds)
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_SESSIONS_FIND_ONE)
+      );
   }
 
   await forEach(item.ws_clients_open, async wsClient => {
@@ -167,8 +181,25 @@ export async function splitChunk(item: {
     // queries
 
     await forEach(content.queries, async query => {
-      let wrappedQuery = wrapper.wrapToApiQuery(query);
-      payload.queries.push(wrappedQuery);
+      let projectMemberIds = projectIdToMembersMap[query.project_id].map(
+        x => x.member_id
+      );
+
+      if (projectMemberIds && projectMemberIds.indexOf(wsClient.user_id) > -1) {
+        let session = allSessions.find(
+          x => x.session_id === wsClient.session_id
+        );
+
+        if (
+          query.is_pdt === enums.bEnum.TRUE ||
+          (session &&
+            !!session.live_queries &&
+            JSON.parse(session.live_queries).indexOf(query.query_id) > -1)
+        ) {
+          let wrappedQuery = wrapper.wrapToApiQuery(query);
+          payload.queries.push(wrappedQuery);
+        }
+      }
     }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
     // models
