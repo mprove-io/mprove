@@ -1,0 +1,229 @@
+dashboard: c_d2    
+description: 'This dashboard shows examples of visualizations by chart type'
+group: 'Chart types' 
+reports:
+
+- title: 'Area Normalized'
+  model: c_m3
+  select:
+  - a.name
+  - a.s_name___date
+  - a.s_value
+  sorts: 'a.name desc, a.s_name___date'
+  type: 'area_normalized'
+  data:
+    x_field: a.s_name___date
+    y_fields:
+    - a.s_value
+    multi_field: a.name
+  axis:
+    show_x_axis_label: true
+    x_axis_label: 'Census Date'
+    show_y_axis_label: true
+    y_axis_label: 'GDP Per Capita'
+  options:
+    legend: true
+    auto_scale: true
+  tile:
+    tile_width: '12'
+    tile_height: '400'
+    view_size: 'manual'
+    view_width: 1000
+    view_height: 300
+
+- title: 'Area Normalized'
+  model: c_m3
+  select:
+  - a.name
+  - a.s_name___hour
+  - a.s_value
+  sorts: 'a.name desc, a.s_name___hour'
+  type: 'area_normalized'
+  data:
+    x_field: a.s_name___hour
+    y_fields:
+    - a.s_value
+    multi_field: a.name
+  axis:
+    show_x_axis_label: true
+    x_axis_label: 'Census Date'
+    show_y_axis_label: true
+    y_axis_label: 'GDP Per Capita'
+  options:
+    legend: true
+    auto_scale: true
+  tile:
+    tile_width: '12'
+    tile_height: '400'
+    view_size: 'manual'
+    view_width: 1000
+    view_height: 300    
+
+- title: 'Area Normalized'
+  model: c_m3
+  select:
+  - a.name
+  - a.s_name___minute
+  - a.s_value
+  sorts: 'a.name desc, a.s_name___minute'
+  type: 'area_normalized'
+  data:
+    x_field: a.s_name___minute
+    y_fields:
+    - a.s_value
+    multi_field: a.name
+  axis:
+    show_x_axis_label: true
+    x_axis_label: 'Census Date'
+    show_y_axis_label: true
+    y_axis_label: 'GDP Per Capita'
+  options:
+    legend: true
+    auto_scale: true
+  tile:
+    tile_width: '12'
+    tile_height: '400'
+    view_size: 'manual'
+    view_width: 1000
+    view_height: 300
+
+
+# - title: 'Area Normalized'
+#   model: c_m3
+#   select:
+#   - a.name
+#   - a.s_name___month
+#   - a.s_value
+#   sorts: 'a.name desc, a.s_name___month'
+#   type: 'area_normalized'
+#   data:
+#     x_field: a.s_name___month
+#     y_fields:
+#     - a.s_value
+#     multi_field: a.name
+#   axis:
+#     show_x_axis_label: true
+#     x_axis_label: 'Census Date'
+#     show_y_axis_label: true
+#     y_axis_label: 'GDP Per Capita'
+#   options:
+#     legend: true
+#     auto_scale: true
+#   tile:
+#     tile_width: '12'
+#     tile_height: '400'
+#     view_size: 'manual'
+#     view_width: 1000
+#     view_height: 300       
+
+# - title: 'Area Normalized'
+#   model: c_m3
+#   select:
+#   - a.name
+#   - a.s_name___quarter
+#   - a.s_value
+#   sorts: 'a.name desc, a.s_name___quarter'
+#   type: 'area_normalized'
+#   data:
+#     x_field: a.s_name___quarter
+#     y_fields:
+#     - a.s_value
+#     multi_field: a.name
+#   axis:
+#     show_x_axis_label: true
+#     x_axis_label: 'Census Date'
+#     show_y_axis_label: true
+#     y_axis_label: 'GDP Per Capita'
+#   options:
+#     legend: true
+#     auto_scale: true
+#   tile:
+#     tile_width: '12'
+#     tile_height: '400'
+#     view_size: 'manual'
+#     view_width: 1000
+#     view_height: 300
+
+- title: 'Area Normalized'
+  model: c_m3
+  select:
+  - a.name
+  - a.s_name___time
+  - a.s_value
+  sorts: 'a.name desc, a.s_name___time'
+  type: 'area_normalized'
+  data:
+    x_field: a.s_name___time
+    y_fields:
+    - a.s_value
+    multi_field: a.name
+  axis:
+    show_x_axis_label: true
+    x_axis_label: 'Census Date'
+    show_y_axis_label: true
+    y_axis_label: 'GDP Per Capita'
+  options:
+    legend: true
+    auto_scale: true
+  tile:
+    tile_width: '12'
+    tile_height: '400'
+    view_size: 'manual'
+    view_width: 1000
+    view_height: 300       
+
+# - title: 'Area Normalized week'
+#   model: c_m3
+#   select:
+#   - a.name
+#   - a.s_name___week
+#   - a.s_value
+#   sorts: 'a.name desc, a.s_name___week'
+#   type: 'area_normalized'
+#   data:
+#     x_field: a.s_name___week
+#     y_fields:
+#     - a.s_value
+#     multi_field: a.name
+#   axis:
+#     show_x_axis_label: true
+#     x_axis_label: 'Census Date'
+#     show_y_axis_label: true
+#     y_axis_label: 'GDP Per Capita'
+#   options:
+#     legend: true
+#     auto_scale: true
+#   tile:
+#     tile_width: '12'
+#     tile_height: '400'
+#     view_size: 'manual'
+#     view_width: 1000
+#     view_height: 300  
+
+# - title: 'Area Normalized'
+#   model: c_m3
+#   select:
+#   - a.name
+#   - a.s_name___year
+#   - a.s_value
+#   sorts: 'a.name desc, a.s_name___year'
+#   type: 'area_normalized'
+#   data:
+#     x_field: a.s_name___year
+#     y_fields:
+#     - a.s_value
+#     multi_field: a.name
+#   axis:
+#     show_x_axis_label: true
+#     x_axis_label: 'Census Date'
+#     show_y_axis_label: true
+#     y_axis_label: 'GDP Per Capita'
+#   options:
+#     legend: true
+#     auto_scale: true
+#   tile:
+#     tile_width: '12'
+#     tile_height: '400'
+#     view_size: 'manual'
+#     view_width: 1000
+#     view_height: 300  

@@ -1,0 +1,14 @@
+view: c_data1
+table: mprove-demo.ct.data1
+
+fields:
+- dimension: name
+  description: 'field description...'
+  sql: name
+
+- dimension: value
+  result: number
+  sql: value
+  
+- dimension: legend_abc
+  sql: abc

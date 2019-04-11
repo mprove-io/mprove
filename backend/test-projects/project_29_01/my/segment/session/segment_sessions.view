@@ -1,0 +1,63 @@
+view: segment_sessions
+derived_table: |
+  SELECT
+    CONCAT(CAST(ROW_NUMBER() OVER(PARTITION BY ${a.mprove_visitor_id} ORDER BY ${a.received_at}) AS string), ' - ', ${a.mprove_visitor_id}) AS session_id,
+    ${a.mprove_visitor_id},
+    ${a.received_at} AS session_start_at,
+    ROW_NUMBER() OVER(PARTITION BY ${a.mprove_visitor_id} ORDER BY ${a.received_at}) AS session_sequence_number,
+    LEAD(${a.received_at}) OVER(PARTITION BY ${a.mprove_visitor_id} ORDER BY ${a.received_at}) AS next_session_start_at
+  FROM
+    ${segment_events_mapped AS a}
+  WHERE
+    (${a.idle_time_minutes} > 30
+      OR ${a.idle_time_minutes} IS NULL)
+# permanent: true
+        
+fields:
+- dimension: session_start_at
+  hidden: true
+  sql: session_start_at  
+
+- time: session_start
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: session_start_at
+  
+- dimension: session_id
+  sql: session_id
+  
+- dimension: mprove_visitor_id
+  sql: mprove_visitor_id
+  
+- dimension: session_sequence_number
+  sql: session_sequence_number
+  
+- dimension: is_first_session
+  sql: CASE WHEN ${session_sequence_number} = 1 THEN 'First Session' ELSE 'Repeat Session' END
+  
+- dimension: next_session_start_at
+  hidden: true
+  sql: next_session_start_at   
+  
+- time: next_session_start
+  source: timestamp
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  sql: next_session_start_at
+
+- measure: count_sessions
+  type: count_distinct
+  sql: ${session_id}
+  
+  
+  
+  
+  
+  
+  

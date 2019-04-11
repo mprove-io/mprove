@@ -1,0 +1,13 @@
+view: c_data2
+table: mprove-demo.ct.data2
+
+fields:
+- dimension: name
+  sql: name
+
+- dimension: s_name
+  sql: s_name
+
+- dimension: s_value
+  result: number
+  sql: s_value
