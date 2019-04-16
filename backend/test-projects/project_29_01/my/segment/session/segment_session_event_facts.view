@@ -13,7 +13,7 @@ derived_table: |
     ${s.session_id} = ${ef.session_id}
   GROUP BY
     1, 2
-# permanent: true
+permanent: true
 
 fields:
 

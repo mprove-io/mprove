@@ -10,6 +10,7 @@ derived_table: |
       `mprove-demo.segment.users`)
   WHERE
     ROW_NUMBER = 1
+permanent: true    
 
 fields:
   

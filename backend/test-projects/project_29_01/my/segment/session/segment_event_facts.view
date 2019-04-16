@@ -19,7 +19,7 @@ derived_table: |
     AND ${e.received_at} >= ${s.session_start_at}
     AND (${e.received_at} < ${s.next_session_start_at}
       OR ${s.next_session_start_at} IS NULL)
-# permanent: true
+permanent: true
 
 fields:
 

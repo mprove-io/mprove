@@ -10,7 +10,7 @@ derived_table: |
     ${segment_sessions AS s}
   GROUP BY
     1
-# permanent: true
+permanent: true
 
 fields:
 

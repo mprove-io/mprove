@@ -33,7 +33,7 @@ derived_table: |
       `mprove-demo.segment.tracks`)
   WHERE
     ROW_NUMBER = 1  
-# permanent: true
+permanent: true
 
 fields:
 

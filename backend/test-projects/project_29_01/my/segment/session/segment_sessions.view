@@ -11,7 +11,7 @@ derived_table: |
   WHERE
     (${a.idle_time_minutes} > 30
       OR ${a.idle_time_minutes} IS NULL)
-# permanent: true
+permanent: true
         
 fields:
 - dimension: session_start_at
