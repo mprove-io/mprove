@@ -63,6 +63,7 @@ export async function runQueryWithoutDeps(item: {
 
       query.status = api.QueryStatusEnum.Error;
       query.refresh = null;
+      query.is_checking = enums.bEnum.FALSE;
       query.last_error_message = e.message;
       query.last_error_ts = newLastErrorTs;
       query.last_run_by = item.user_id;
@@ -75,6 +76,7 @@ export async function runQueryWithoutDeps(item: {
 
     query.status = api.QueryStatusEnum.Running;
     query.refresh = null;
+    query.is_checking = enums.bEnum.FALSE;
     query.bigquery_query_job_id = queryJob.id;
     query.last_run_by = item.user_id;
     query.last_run_ts = item.new_last_run_ts;

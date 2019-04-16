@@ -9,7 +9,7 @@ import { forEach } from 'p-iteration';
 
 export async function runQuery(item: {
   all_dep_queries: entities.QueryEntity[];
-  checked_query_ids_without_deps: string[];
+  checked_query_ids: string[];
   bigquery_project: string;
   is_top: boolean;
   query: entities.QueryEntity;
@@ -19,6 +19,12 @@ export async function runQuery(item: {
   refresh: boolean;
 }): Promise<entities.QueryEntity[]> {
   let query = item.query;
+
+  if (item.checked_query_ids.indexOf(query.query_id) > -1) {
+    return [];
+  }
+
+  item.checked_query_ids.push(query.query_id);
 
   if (
     query.status === api.QueryStatusEnum.Waiting ||
@@ -38,12 +44,6 @@ export async function runQuery(item: {
   let pdtDeps = JSON.parse(query.pdt_deps);
 
   if (pdtDeps.length === 0) {
-    if (item.checked_query_ids_without_deps.indexOf(query.query_id) > -1) {
-      return [];
-    }
-
-    item.checked_query_ids_without_deps.push(query.query_id);
-
     query = <entities.QueryEntity>await runQueryWithoutDeps({
       credentials_file_path: item.credentials_file_path,
       bigquery_project: item.bigquery_project,
@@ -65,7 +65,7 @@ export async function runQuery(item: {
     await forEach(queries, async q => {
       let depQueries = await (<Promise<entities.QueryEntity[]>>runQuery({
         all_dep_queries: item.all_dep_queries,
-        checked_query_ids_without_deps: item.checked_query_ids_without_deps,
+        checked_query_ids: item.checked_query_ids,
         is_top: false,
         query: q,
         credentials_file_path: item.credentials_file_path,

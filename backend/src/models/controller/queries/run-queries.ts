@@ -71,13 +71,13 @@ export async function runQueries(req: Request, res: Response) {
 
   let processedQueries: entities.QueryEntity[] = [];
 
-  let checkedQueryIdsWithoutDeps: string[] = [];
+  let checkedQueryIds: string[] = [];
 
   await forEach(queries, async query => {
     let depQueries = await (<Promise<entities.QueryEntity[]>>proc
       .runQuery({
         all_dep_queries: allDepQueries,
-        checked_query_ids_without_deps: checkedQueryIdsWithoutDeps,
+        checked_query_ids: checkedQueryIds,
         is_top: true,
         query: query,
         new_last_run_ts: newLastRunTs,
