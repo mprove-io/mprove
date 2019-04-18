@@ -7,7 +7,7 @@
     @if $is-dark == true {
       background-image: url('/assets/app/mprove_logo_box_dark.png');
     } @else {
-      background-image: url('/assets/app/mprove_logo_box_white.png');
+      background-image: url('/assets/app/mprove_logo.svg');
     }
   }
 }
