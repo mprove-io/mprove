@@ -158,6 +158,11 @@ export class FileEditorComponent implements OnDestroy {
     this.editor.updateOptions({
       readOnly: !modeIsDev
     });
+
+    this.editor.getModel().updateOptions({
+      tabSize: 2
+    });
+
     this.refreshMarkers();
   }
 
