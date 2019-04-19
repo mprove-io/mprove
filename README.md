@@ -20,14 +20,14 @@ Create folders on server:
 mkdir -p /mprove_data/db/mysql
 mkdir -p /mprove_data/backend
 mkdir -p /mprove_certs
-mkdir -p /mprove-docker-deploy
+mkdir -p /mprove-deploy-docker
 ```
 
 Put your SSL certificate `cert.pem` and `key.pem` files to `mprove_certs` folder.
 
-Copy `mprove/deploy/docker/ce-prod/docker-compose.yml` to `/mprove-docker-deploy/` folder.
+Copy `mprove/deploy/docker/ce-prod/docker-compose.yml` to `/mprove-deploy-docker/` folder.
 
-Create `.env` file in `/mprove-docker-deploy/` folder. Fill in your values:
+Create `.env` file in `/mprove-deploy-docker/` folder. Fill in your values:
 
 ```
 MPROVE_CE_RELEASE_TAG=
