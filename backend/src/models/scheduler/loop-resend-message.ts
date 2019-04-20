@@ -64,6 +64,7 @@ async function resendMessage(item: {
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MESSAGES_FIND));
 
+  // no await
   Promise.all(
     wsClientsOpen.map(async wsClient => {
       let sessionMessages = messages.filter(

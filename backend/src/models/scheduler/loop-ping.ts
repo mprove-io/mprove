@@ -39,6 +39,7 @@ async function ping(item: { ws_clients: interfaces.WebsocketClient[] }) {
     wsClient => wsClient.ws.readyState === WebSocket.OPEN
   );
 
+  // no await
   Promise.all(
     wsClientsOpen.map(async wsClient => {
       let messageId = helper.makeId();
