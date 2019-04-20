@@ -62,7 +62,6 @@ export async function cancelQueries(req: Request, res: Response) {
 
       query.status = api.QueryStatusEnum.Canceled;
       query.last_cancel_ts = newLastCancelTs;
-      query.is_checking = enums.bEnum.FALSE;
     });
 
     // update server_ts

@@ -86,7 +86,6 @@ export async function runQuery(item: {
       let newLastErrorTs = helper.makeTs();
 
       query.status = api.QueryStatusEnum.Error;
-      query.is_checking = enums.bEnum.FALSE;
       query.refresh = null;
       query.last_error_message = 'required pdt(s) has error';
       query.last_error_ts = newLastErrorTs;
@@ -94,7 +93,6 @@ export async function runQuery(item: {
       query.last_run_ts = item.new_last_run_ts;
     } else {
       query.status = api.QueryStatusEnum.Waiting;
-      query.is_checking = enums.bEnum.FALSE;
       query.refresh = helper.booleanToBenum(item.refresh);
       query.last_run_by = item.user_id;
       query.last_run_ts = item.new_last_run_ts;

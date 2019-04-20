@@ -36,7 +36,6 @@ export function wrapToEntityQuery(query: api.Query): entities.QueryEntity {
     bigquery_query_job_id: null,
     bigquery_copy_job_id: null,
     bigquery_is_copying: helper.booleanToBenum(false),
-    is_checking: helper.booleanToBenum(false),
     refresh: null
   };
 }

@@ -66,7 +66,6 @@ export async function runQueryDry(item: {
         let lastErrorTs = helper.makeTs();
 
         query.status = api.QueryStatusEnum.Error; // do not set last_run_ts
-        query.is_checking = enums.bEnum.FALSE;
         query.refresh = null;
         query.last_error_message = e.message;
         query.last_error_ts = lastErrorTs;

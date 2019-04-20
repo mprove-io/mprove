@@ -15,16 +15,6 @@ export async function checkRunningQuery(item: { query: entities.QueryEntity }) {
 
   let storeQueries = store.getQueriesRepo();
 
-  if (query.is_checking === enums.bEnum.TRUE) {
-    return;
-  } else {
-    query.is_checking = enums.bEnum.TRUE;
-
-    await storeQueries
-      .save(query)
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_SAVE));
-  }
-
   let credentialsFilePath = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${
     query.project_id
   }.json`;
@@ -59,8 +49,6 @@ export async function checkRunningQuery(item: { query: entities.QueryEntity }) {
       helper.reThrow(e, enums.procErrorsEnum.PROC_CHECK_NOT_COPYING_QUERY)
     );
   }
-
-  query.is_checking = enums.bEnum.FALSE;
 
   // update server_ts
 

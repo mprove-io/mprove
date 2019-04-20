@@ -47,7 +47,7 @@ async function checkQueries() {
     query => query.status === api.QueryStatusEnum.Waiting
   );
 
-  Promise.all(
+  await Promise.all(
     runningQueries.map(async query =>
       proc
         .checkRunningQuery({
@@ -63,7 +63,7 @@ async function checkQueries() {
     )
   ).catch(e => helper.reThrow(e, enums.otherErrorsEnum.PROMISE_ALL));
 
-  Promise.all(
+  await Promise.all(
     waitingQueries.map(async query =>
       proc
         .checkWaitingQuery({

@@ -81,9 +81,6 @@ export class QueryEntity {
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   bigquery_is_copying: enums.bEnum;
 
-  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
-  is_checking: enums.bEnum;
-
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE, nullable: true })
   refresh: enums.bEnum;
 }

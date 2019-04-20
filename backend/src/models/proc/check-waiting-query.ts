@@ -13,16 +13,6 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
 
   let storeQueries = store.getQueriesRepo();
 
-  if (query.is_checking === enums.bEnum.TRUE) {
-    return;
-  } else {
-    query.is_checking = enums.bEnum.TRUE;
-
-    await storeQueries
-      .save(query)
-      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_SAVE));
-  }
-
   let storeProjects = store.getProjectsRepo();
 
   let project = <entities.ProjectEntity>await storeProjects
@@ -99,8 +89,6 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
   } else {
     // nothing to do, waiting for next scheduler cycle
   }
-
-  query.is_checking = enums.bEnum.FALSE;
 
   // update server_ts
 
