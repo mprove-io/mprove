@@ -7,6 +7,7 @@ import { redisClient } from '../../redis-client';
 import { ServerWorkers } from '../../server-workers';
 import { ServerOutcomes } from '../../server-outcomes';
 import { ServerProErrors } from '../../server-pro-errors';
+import { genBqViewsPro } from './gen-bq-views-pro';
 
 export async function genBqViews(item: {
   model: interfaces.Model;
@@ -28,7 +29,7 @@ export async function genBqViews(item: {
     await redisClient.del(itemId);
 
     let itemFromRedisParsed = JSON.parse(itemFromRedis);
-    let outcome = this.genBqViewsPro(itemFromRedisParsed);
+    let outcome = genBqViewsPro(itemFromRedisParsed);
 
     let outcomeId = helper.makeId();
     await redisClient.set(outcomeId, JSON.stringify(outcome));
@@ -38,7 +39,7 @@ export async function genBqViews(item: {
     let outcomeFromRedisParsed = JSON.parse(outcomeFromRedis);
     return outcomeFromRedisParsed;
 
-    // let outcome = this.genBqViewsPro(item);
+    // let outcome = genBqViewsPro(item);
     // return outcome;
   } else {
     let taskId = helper.makeId();

@@ -1,6 +1,7 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { wrapField } from './wrap-field';
 
 export function wrapModels(item: {
   projectId: string;
@@ -30,7 +31,7 @@ export function wrapModels(item: {
       };
 
       x.fields.forEach(field => {
-        this.wrapField({
+        wrapField({
           wrappedFields: wrappedFields,
           field: field,
           alias: 'mf',
@@ -65,7 +66,7 @@ export function wrapModels(item: {
       };
 
       join.view.fields.forEach(field => {
-        this.wrapField({
+        wrapField({
           wrappedFields: wrappedFields,
           field: field,
           alias: join.as,

@@ -1,6 +1,10 @@
 import { ApStruct } from '../../barrels/ap-struct';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { wrapErrors } from './wrap-errors';
+import { wrapModels } from './wrap-models';
+import { wrapDashboards } from './wrap-dashboards';
+import { wrapPdts } from './wrap-pdts';
 
 export async function wrapStruct(item: {
   files: api.File[];
@@ -18,28 +22,28 @@ export async function wrapStruct(item: {
     structId: item.structId
   });
 
-  let wrappedErrors = this.wrapErrors({
+  let wrappedErrors = wrapErrors({
     projectId: item.projectId,
     repoId: item.repoId,
     structId: item.structId,
     errors: struct.errors
   });
 
-  let wrappedModels = this.wrapModels({
+  let wrappedModels = wrapModels({
     projectId: item.projectId,
     repoId: item.repoId,
     structId: item.structId,
     models: struct.models
   });
 
-  let wd = this.wrapDashboards({
+  let wd = wrapDashboards({
     projectId: item.projectId,
     repoId: item.repoId,
     dashboards: struct.dashboards,
     structId: item.structId
   });
 
-  let wrappedPdtsQueries = this.wrapPdts({
+  let wrappedPdtsQueries = wrapPdts({
     projectId: item.projectId,
     pdts: struct.pdts,
     structId: item.structId

@@ -1,6 +1,7 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { checkCharsInRefs } from './check-chars-in-refs';
 
 export function makeFieldsDeps<
   T extends interfaces.View | interfaces.Model
@@ -14,9 +15,7 @@ export function makeFieldsDeps<
       x.fields_deps[field.name] = {};
 
       // check chars in captures of sql
-      if (
-        !this.checkCharsInRefs({ x: x, s: field.sql, line: field.sql_line_num })
-      ) {
+      if (!checkCharsInRefs({ x: x, s: field.sql, line: field.sql_line_num })) {
         return;
       }
 
@@ -36,7 +35,7 @@ export function makeFieldsDeps<
       ) {
         // check chars in captures of sql_key
         if (
-          !this.checkCharsInRefs({
+          !checkCharsInRefs({
             x: x,
             s: field.sql_key,
             line: field.sql_key_line_num

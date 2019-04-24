@@ -1,6 +1,7 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { substituteViewRefsRecursive } from './substitute-view-refs-recursive';
 
 const { forEach } = require('p-iteration');
 let Graph = require('graph.js/dist/graph.full.js'); // tslint:disable-line
@@ -25,7 +26,7 @@ export async function processViewRefs(item: {
 
     let derivedTableNew = x.derived_table;
 
-    derivedTableNew = this.substituteViewRefsRecursive({
+    derivedTableNew = substituteViewRefsRecursive({
       top_view: x,
       parent_view_name: x.name,
       parent_deps: {},

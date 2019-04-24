@@ -1,6 +1,7 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { applyFilter } from './apply-filter';
 
 export function makeContents(item: interfaces.Vars) {
   let contents: string[] = [];
@@ -166,7 +167,7 @@ export function makeContents(item: interfaces.Vars) {
 
         let derivedSqlStart = join.view.derived_table_start;
 
-        derivedSqlStart = this.applyFilter(item, asName, derivedSqlStart);
+        derivedSqlStart = applyFilter(item, asName, derivedSqlStart);
 
         let derivedSqlStartArray = derivedSqlStart.split('\n');
 

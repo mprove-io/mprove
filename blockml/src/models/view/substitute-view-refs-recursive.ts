@@ -1,6 +1,8 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { getAsDeps } from './get-as-deps';
+import { makeViewPart } from './make-view-part';
 
 export function substituteViewRefsRecursive(item: {
   top_view: interfaces.View;
@@ -23,7 +25,7 @@ export function substituteViewRefsRecursive(item: {
       view_name: string;
       fields: { [field: string]: number };
     };
-  } = this.getAsDeps({ input: input });
+  } = getAsDeps({ input: input });
 
   input = ApRegex.replaceViewRefs(input, item.parent_view_name);
   input = ApRegex.removeBracketsOnViewFieldRefs(input);
@@ -31,7 +33,7 @@ export function substituteViewRefsRecursive(item: {
   Object.keys(asDeps).forEach(as => {
     let view = item.views.find(v => v.name === asDeps[as].view_name);
 
-    let viewPart = this.makeViewPart({
+    let viewPart = makeViewPart({
       top_view: item.top_view,
       parent_view_name: item.parent_view_name,
       need_view_name: asDeps[as].view_name,
@@ -62,7 +64,7 @@ export function substituteViewRefsRecursive(item: {
         view_name: string;
         fields: { [field: string]: number };
       };
-    } = this.getAsDeps({ input: input });
+    } = getAsDeps({ input: input });
 
     if (Object.keys(newAsDeps).length > 0) {
       input = this.substituteViewRefsRecursive({

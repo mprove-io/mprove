@@ -1,6 +1,7 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { applyFilter } from './apply-filter';
 
 export function composeCalc(item: interfaces.Vars) {
   let calc: string[] = [];
@@ -64,7 +65,7 @@ export function composeCalc(item: interfaces.Vars) {
         sqlAlwaysWhereCalcFinal
       );
 
-      sqlAlwaysWhereCalcFinal = this.applyFilter(
+      sqlAlwaysWhereCalcFinal = applyFilter(
         item,
         'mf',
         sqlAlwaysWhereCalcFinal

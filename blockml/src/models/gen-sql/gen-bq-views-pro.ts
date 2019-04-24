@@ -1,6 +1,17 @@
 import { api } from '../../barrels/api';
 import { barUdf } from '../../barrels/bar-udf';
 import { interfaces } from '../../barrels/interfaces';
+import { makeDepMeasures } from './make-dep-measures';
+import { makeMainFields } from './make-main-fields';
+import { makeNeedsDoubles } from './make-needs-doubles';
+import { findJoinsUsingJoinsDeps } from './find-joins-using-joins-deps';
+import { makeNeedsAll } from './make-needs-all';
+import { makeFilters } from './make-filters';
+import { makeContents } from './make-contents';
+import { makeJoinsWhere } from './make-joins-where';
+import { composeMain } from './compose-main';
+import { processTimezone } from './process-timezone';
+import { composeCalc } from './compose-calc';
 
 export function genBqViewsPro(item: {
   model: interfaces.Model;
@@ -63,7 +74,7 @@ export function genBqViewsPro(item: {
   // select
   // filters
   //    dep_measures_ref
-  vars = this.makeDepMeasures(vars);
+  vars = makeDepMeasures(vars);
 
   // model
   // dep_measures
@@ -75,24 +86,24 @@ export function genBqViewsPro(item: {
   //    selected
   //    processed_fields
   //    main_udfs_ref
-  vars = this.makeMainFields(vars);
+  vars = makeMainFields(vars);
 
   // selected
   // filters
   // model
   //    needs_doubles
-  vars = this.makeNeedsDoubles(vars);
+  vars = makeNeedsDoubles(vars);
 
   // model
   // need_doubles
   //    joins
-  vars = this.findJoinsUsingJoinsDeps(vars);
+  vars = findJoinsUsingJoinsDeps(vars);
 
   // model
   // need_doubles
   // joins
   //    needs_all
-  vars = this.makeNeedsAll(vars);
+  vars = makeNeedsAll(vars);
 
   // joins
   // model
@@ -103,7 +114,7 @@ export function genBqViewsPro(item: {
   //    where_calc
   //    filters_conditions
   //    untouched_filters_conditions
-  vars = this.makeFilters(vars);
+  vars = makeFilters(vars);
 
   // model
   // needs_all
@@ -117,12 +128,12 @@ export function genBqViewsPro(item: {
   //    bq_views
   //    with
   //    main_udfs
-  vars = this.makeContents(vars);
+  vars = makeContents(vars);
 
   // model
   // joins
   //    joins_where
-  vars = this.makeJoinsWhere(vars);
+  vars = makeJoinsWhere(vars);
 
   // model
   // main_text
@@ -135,12 +146,12 @@ export function genBqViewsPro(item: {
   // udfs_dict
   // with
   //    query
-  vars = this.composeMain(vars);
+  vars = composeMain(vars);
 
   // query
   // timezone
   //    query
-  vars = this.processTimezone(vars);
+  vars = processTimezone(vars);
 
   // model
   // select
@@ -149,7 +160,7 @@ export function genBqViewsPro(item: {
   // processed_fields
   // query
   //    bq_views
-  vars = this.composeCalc(vars);
+  vars = composeCalc(vars);
 
   return {
     bq_views: vars.bqViews,

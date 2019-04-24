@@ -1,5 +1,12 @@
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { makeDepMeasuresAndDimensions } from './make-dep-measures-and-dimensions';
+import { makeMainFields } from './make-main-fields';
+import { makeNeedsAll } from './make-needs-all';
+import { makeContents } from './make-contents';
+import { composeMain } from './compose-main';
+import { processTimezone } from './process-timezone';
+import { composeCalc } from './compose-calc';
 
 export function genSub(item: {
   view: interfaces.View;
@@ -41,7 +48,7 @@ export function genSub(item: {
   // view
   // select
   //    dep_measures
-  vars = this.makeDepMeasuresAndDimensions(vars);
+  vars = makeDepMeasuresAndDimensions(vars);
 
   // view
   // dep_measures
@@ -52,12 +59,12 @@ export function genSub(item: {
   //    selected
   //    processed_fields
   //    extra_udfs
-  vars = this.makeMainFields(vars);
+  vars = makeMainFields(vars);
 
   // view
   // selected
   //    needs_all
-  vars = this.makeNeedsAll(vars);
+  vars = makeNeedsAll(vars);
 
   // view
   // needs_all
@@ -66,7 +73,7 @@ export function genSub(item: {
   // structId
   //    contents
   //    with
-  vars = this.makeContents(vars);
+  vars = makeContents(vars);
 
   // view
   // main_text
@@ -74,19 +81,19 @@ export function genSub(item: {
   // group_main_by
   // with
   //    query
-  vars = this.composeMain(vars);
+  vars = composeMain(vars);
 
   // query
   // timezone
   //    query
-  vars = this.processTimezone(vars);
+  vars = processTimezone(vars);
 
   // view
   // select
   // processed_fields
   // query
   //    calc_query
-  vars = this.composeCalc(vars);
+  vars = composeCalc(vars);
 
   return { query: vars.calc_query, extra_udfs: vars.extra_udfs };
 }

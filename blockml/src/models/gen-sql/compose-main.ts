@@ -1,5 +1,6 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
+import { applyFilter } from './apply-filter';
 
 let Graph = require('graph.js/dist/graph.full.js'); // tslint:disable-line
 
@@ -88,7 +89,7 @@ export function composeMain(item: interfaces.Vars) {
 
     if (item.joins_where.length > 0) {
       item.joins_where.forEach(element => {
-        element = this.applyFilter(item, 'mf', element);
+        element = applyFilter(item, 'mf', element);
 
         main.push(`    ${element}`);
       });
@@ -105,7 +106,7 @@ export function composeMain(item: interfaces.Vars) {
         item.model.sql_always_where_real
       );
 
-      sqlAlwaysWhereFinal = this.applyFilter(item, 'mf', sqlAlwaysWhereFinal);
+      sqlAlwaysWhereFinal = applyFilter(item, 'mf', sqlAlwaysWhereFinal);
 
       main.push(`      (${sqlAlwaysWhereFinal})`);
       main.push(`     AND`);
