@@ -326,6 +326,8 @@ export class StructService {
       sql: null,
       is_pdt: false,
       pdt_id: null,
+      pdt_trigger_time: null,
+      pdt_trigger_sql: null,
       status: api.QueryStatusEnum.New,
       last_run_by: null,
       last_run_ts: 1,

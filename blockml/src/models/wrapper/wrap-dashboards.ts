@@ -344,6 +344,8 @@ export function wrapDashboards(item: {
         pdt_deps_all: report.bq_views[0].pdt_deps_all,
         sql: report.bq_views[0].sql,
         is_pdt: false,
+        pdt_trigger_sql: undefined,
+        pdt_trigger_time: undefined,
         pdt_id: null,
         status: api.QueryStatusEnum.New,
         last_run_by: undefined,

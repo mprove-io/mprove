@@ -83,4 +83,31 @@ export class QueryEntity {
 
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE, nullable: true })
   refresh: enums.bEnum;
+
+  // trigger time
+
+  @Column({ type: constants.QUERY_PDT_TRIGGER_TIME_DATATYPE, nullable: true })
+  pdt_trigger_time: string;
+
+  @Column({
+    type: constants.QUERY_PDT_TRIGGER_TIME_JOB_ID_DATATYPE,
+    nullable: true
+  })
+  pdt_trigger_time_job_id: string;
+
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE, nullable: true })
+  pdt_need_start_by_time: enums.bEnum;
+
+  // trigger sql
+
+  @Column({ type: constants.QUERY_PDT_TRIGGER_SQL_DATATYPE, nullable: true })
+  pdt_trigger_sql: string;
+
+  @Column({
+    type: constants.QUERY_PDT_TRIGGER_SQL_VALUE_DATATYPE,
+    nullable: true
+  })
+  pdt_trigger_sql_value: string;
+
+  //
 }

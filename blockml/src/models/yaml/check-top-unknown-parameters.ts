@@ -46,6 +46,8 @@ export function checkTopUnknownParameters(item: { filesAny: any[] }): any[] {
                 'table',
                 'derived_table',
                 'permanent',
+                'pdt_trigger_time',
+                'pdt_trigger_sql',
                 'fields'
               ].indexOf(parameter) < 0
             ) {

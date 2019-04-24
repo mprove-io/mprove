@@ -8,6 +8,8 @@ export interface Query {
   pdt_deps_all: string[];
   sql: string[];
   is_pdt: boolean;
+  pdt_trigger_time: string;
+  pdt_trigger_sql: string;
   pdt_id: string;
   status: apiEnums.QueryStatusEnum;
   last_run_by: string;

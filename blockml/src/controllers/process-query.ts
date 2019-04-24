@@ -116,6 +116,8 @@ export let processQuery = async (req: Request, res: Response) => {
       pdt_deps_all: bqViews[0].pdt_deps_all,
       sql: bqViews[0].sql,
       is_pdt: false,
+      pdt_trigger_sql: undefined,
+      pdt_trigger_time: undefined,
       pdt_id: null,
       status: api.QueryStatusEnum.New,
       last_run_by: undefined,

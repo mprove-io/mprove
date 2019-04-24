@@ -46,7 +46,11 @@ export function makePdts(item: {
         name: item.structId + '_' + x.name,
         sql: permanentTable,
         pdt_deps: ptdDeps,
-        pdt_deps_all: ptdDepsAll
+        pdt_deps_all: ptdDepsAll,
+        pdt_trigger_time: x.pdt_trigger_time ? x.pdt_trigger_time : undefined,
+        pdt_trigger_sql: x.pdt_trigger_sql
+          ? '#standardSQL\n' + x.pdt_trigger_sql
+          : undefined
       });
     }
   });

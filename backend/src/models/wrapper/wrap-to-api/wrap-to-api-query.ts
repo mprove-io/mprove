@@ -12,6 +12,8 @@ export function wrapToApiQuery(query: entities.QueryEntity): api.Query {
     sql: JSON.parse(query.sql),
     is_pdt: helper.benumToBoolean(query.is_pdt),
     pdt_id: query.pdt_id,
+    pdt_trigger_sql: query.pdt_trigger_sql,
+    pdt_trigger_time: query.pdt_trigger_time,
     status: query.status,
     last_run_by: query.last_run_by,
     last_run_ts: Number(query.last_run_ts),

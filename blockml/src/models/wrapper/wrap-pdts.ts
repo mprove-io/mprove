@@ -20,6 +20,8 @@ export function wrapPdts(item: {
       pdt_deps_all: pdt.pdt_deps_all,
       sql: pdt.sql,
       is_pdt: true,
+      pdt_trigger_time: pdt.pdt_trigger_time,
+      pdt_trigger_sql: pdt.pdt_trigger_sql,
       pdt_id: pdt.name,
       status: api.QueryStatusEnum.New,
       last_run_by: undefined,
