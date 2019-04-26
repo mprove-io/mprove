@@ -109,5 +109,17 @@ export class QueryEntity {
   })
   pdt_trigger_sql_value: string;
 
+  @Column({
+    type: constants.QUERY_PDT_TRIGGER_SQL_BIGQUERY_QUERY_JOB_ID_DATATYPE,
+    nullable: true
+  })
+  pdt_trigger_sql_bigquery_query_job_id: string;
+
+  @Column({
+    type: constants.QUERY_PDT_TRIGGER_SQL_LAST_ERROR_MESSAGE_DATATYPE,
+    nullable: true
+  })
+  pdt_trigger_sql_last_error_message: string;
+
   //
 }

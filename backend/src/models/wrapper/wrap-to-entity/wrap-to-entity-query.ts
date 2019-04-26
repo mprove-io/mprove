@@ -20,6 +20,8 @@ export function wrapToEntityQuery(query: api.Query): entities.QueryEntity {
     pdt_need_start_by_time: null,
     pdt_trigger_time_job_id: null,
     pdt_trigger_sql_value: null,
+    pdt_trigger_sql_bigquery_query_job_id: null,
+    pdt_trigger_sql_last_error_message: null,
     pdt_id: helper.undefinedToNull(query.pdt_id),
     status: helper.undefinedToNull(query.status),
     last_run_by: helper.undefinedToNull(query.last_run_by),
