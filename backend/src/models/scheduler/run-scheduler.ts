@@ -9,6 +9,10 @@ import { loopDeleteProjects } from './loop-delete-projects';
 import { loopDeleteUsers } from './loop-delete-users';
 import { loopDeleteMembers } from './loop-delete-members';
 import { loopDeleteQueries } from './loop-delete-queries';
+import { loopCheckPdtTime } from './loop-check-pdt-time';
+import { loopStartPdt } from './loop-start-pdt';
+
+let pdtTimeJobs: interfaces.PdtTimeJob[] = [];
 
 export function runScheduler(item: {
   ws_clients: interfaces.WebsocketClient[];
@@ -22,4 +26,6 @@ export function runScheduler(item: {
   loopDeleteUsers();
   loopDeleteMembers();
   loopDeleteQueries();
+  loopCheckPdtTime(pdtTimeJobs);
+  loopStartPdt();
 }
