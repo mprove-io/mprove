@@ -17,6 +17,40 @@
     </ng-template>
 
     <ng-template
+      tdDataTableTemplate="scheduled"
+      let-value="value"
+      let-row="row"
+      let-column="column"
+    >
+      <span flex>{{
+        (row['pdt_trigger_sql'] || row['pdt_trigger_time']) &&
+        (prodStructId$ | async) === row['struct_id']
+          ? 'Yes'
+          : 'No'
+      }}</span>
+    </ng-template>
+
+    <ng-template
+      tdDataTableTemplate="pdt_trigger_sql_value"
+      let-value="value"
+      let-row="row"
+      let-column="column"
+    >
+      <span flex *ngIf="!row['pdt_trigger_sql_last_error_message']">{{
+        pdt_trigger_sql_value
+      }}</span>
+
+      <span
+        flex
+        *ngIf="row['pdt_trigger_sql_last_error_message']"
+        class="pdts__error"
+        matTooltip="{{row.last_error_message}}"
+        [matTooltipShowDelay]="appConfig.tooltipDelay"
+        >{{ row['pdt_trigger_sql_last_error_message'] }}
+      </span>
+    </ng-template>
+
+    <ng-template
       tdDataTableTemplate="show_sql"
       let-value="value"
       let-row="row"

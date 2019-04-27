@@ -148,6 +148,7 @@ async function startPdt() {
               }
 
               query.pdt_trigger_sql_value = newTriggerSqlValue;
+              query.pdt_trigger_sql_last_error_message = null;
             }
           }
         }

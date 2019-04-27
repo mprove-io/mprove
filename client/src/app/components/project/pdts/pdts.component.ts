@@ -32,13 +32,28 @@ export class PdtsComponent {
   columns: ITdDataTableColumn[] = [
     { name: 'pdt_id', label: 'PDT' },
     { name: 'pdt_deps', label: 'Dependencies' },
-    { name: 'show_sql', label: 'SQL', width: 150 },
-    { name: 'status', label: 'Status', width: 150 },
-    { name: 'last_run_ts', label: 'last_run_ts', width: 200 },
-    { name: 'last_complete_ts', label: 'last_complete_ts', width: 200 },
+    { name: 'scheduled', label: 'Scheduled', width: 100 },
+    {
+      name: 'struct_id',
+      label: 'struct_id',
+      width: 100,
+      hidden: true
+    },
+    { name: 'pdt_trigger_time', label: 'Trigger time', width: 100 },
+    { name: 'pdt_trigger_sql_value', label: 'Trigger value', width: 100 },
+    { name: 'show_sql', label: 'SQL', width: 100 },
+    {
+      name: 'pdt_trigger_sql_last_error_message',
+      label: 'pdt_trigger_sql_last_error_message',
+      width: 100,
+      hidden: true
+    },
+    { name: 'status', label: 'Status', width: 120 },
+    { name: 'last_run_ts', label: 'last_run_ts', width: 150 },
+    { name: 'last_complete_ts', label: 'last_complete_ts', width: 150 },
     {
       name: 'extra_last_complete_duration_ceil',
-      label: 'Duration',
+      label: 'Duration, s',
       width: 100
     },
     { name: 'menu', label: 'Menu', width: 80 }
@@ -49,6 +64,9 @@ export class PdtsComponent {
     .pipe(filter(v => !!v));
 
   isDev$ = this.store.select(selectors.getLayoutModeIsDev); // no filter here
+  prodStructId$ = this.store.select(
+    selectors.getSelectedProjectProdRepoStructId
+  ); // no filter here
 
   selectedProjectUserIsEditor$ = this.store.select(
     selectors.getSelectedProjectUserIsEditor

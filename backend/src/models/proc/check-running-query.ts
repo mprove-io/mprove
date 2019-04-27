@@ -179,6 +179,12 @@ async function checkNotCopyingQuery(item: {
     } else {
       // QUERY SUCCESS
 
+      let endTime = queryJobGetResponse.statistics.endTime;
+      let creationTime = queryJobGetResponse.statistics.creationTime;
+      let duration = endTime - creationTime;
+
+      query.last_complete_duration = duration.toString();
+
       let data: string;
 
       if (query.is_pdt === enums.bEnum.TRUE) {

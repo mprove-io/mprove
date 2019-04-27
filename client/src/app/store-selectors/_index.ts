@@ -16,6 +16,7 @@ export * from './get-selected-project-mode-repo-file/_index';
 export * from './get-selected-project-mode-repo-model/_index';
 export * from './get-selected-project-mode-repo-struct-models/_index';
 export * from './get-selected-project-mode-repo-struct-pdts-extra-ordered/_index';
+export * from './get-selected-project-prod-repo/_index';
 export * from './get-selected-project-repos/_index';
 export * from './get-selected-project-user/_index';
 export * from './get-selected-query/_index';
