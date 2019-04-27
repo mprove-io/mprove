@@ -10,7 +10,8 @@ derived_table: |
     ${segment_sessions AS s}
   GROUP BY
     1
-permanent: true
+permanent: true 
+pdt_trigger_sql: SELECT 888 as eights
 
 fields:
 

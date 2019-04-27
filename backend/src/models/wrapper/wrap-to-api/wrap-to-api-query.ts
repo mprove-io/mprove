@@ -16,7 +16,8 @@ export function wrapToApiQuery(query: entities.QueryEntity): api.Query {
     pdt_trigger_time: query.pdt_trigger_time,
     pdt_need_start_by_time: helper.benumToBoolean(query.pdt_need_start_by_time),
     pdt_trigger_sql_value: query.pdt_trigger_sql_value,
-    pdt_trigger_sql_last_error_message: query.last_error_message,
+    pdt_trigger_sql_last_error_message:
+      query.pdt_trigger_sql_last_error_message,
     status: query.status,
     last_run_by: query.last_run_by,
     last_run_ts: Number(query.last_run_ts),

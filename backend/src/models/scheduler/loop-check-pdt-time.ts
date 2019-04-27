@@ -118,7 +118,6 @@ async function checkPdtTime(pdtTimeJobs: interfaces.PdtTimeJob[]) {
       if (query) {
         query.pdt_need_start_by_time = undefined;
         query.pdt_trigger_time_job_id = undefined;
-        query.pdt_trigger_sql_value = undefined;
         changedQueries.push(query);
       }
     }

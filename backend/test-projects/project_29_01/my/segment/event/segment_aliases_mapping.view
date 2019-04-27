@@ -24,6 +24,7 @@ derived_table: |
   WHERE
     anonymous_id IS NOT NULL    
 permanent: true
+pdt_trigger_sql: 111
 
 fields:
 - dimension: alias

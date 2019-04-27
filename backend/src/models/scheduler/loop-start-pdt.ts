@@ -136,8 +136,29 @@ async function startPdt() {
 
               let rows = queryResultsItem[0];
 
-              let newTriggerSqlValue =
-                rows && rows[0] && rows[0][0] ? rows[0][0] : null;
+              let columnKey =
+                rows && rows[0] && Object.keys(rows[0]).length > 0
+                  ? Object.keys(rows[0])[0]
+                  : null;
+
+              let newTriggerSqlValue = columnKey
+                ? JSON.stringify(rows[0][columnKey])
+                : null;
+
+              console.log('rows: ', rows);
+              console.log('rowsStringify: ', JSON.stringify(rows));
+              console.log('query.pdt_id: ', query.pdt_id);
+              console.log('newTriggerSqlValue: ', newTriggerSqlValue);
+
+              // backend_1  | rows:  [ { f0_: BigQueryTimestamp { value: '2019-04-27T15:27:01.870Z' } } ]
+              // backend_1  | rowsStringify:  [{"f0_":{"value":"2019-04-27T15:27:01.870Z"}}]
+              // backend_1  | query.pdt_id:  3J4Q2WJMZKXG0RFHWIZ1_segment_events_mapped
+              // backend_1  | newTriggerSqlValue:  null
+
+              // backend_1  | rows:  [ { f0_: 555 } ]
+              // backend_1  | rowsStringify:  [{"f0_":555}]
+              // backend_1  | query.pdt_id:  XPTT733ZWN56XSIVCF7M_segment_events_mapped
+              // backend_1  | newTriggerSqlValue:  null
 
               if (
                 Number(query.last_complete_ts) === 1 || // pdt was never run
@@ -177,6 +198,8 @@ async function startPdt() {
           }
         }
       }
+
+      let queries = [query];
 
       // start pdt
       if (start) {
@@ -222,35 +245,35 @@ async function startPdt() {
           })
           .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY)));
 
-        // update server_ts
-        let newServerTs = helper.makeTs();
-
-        depQueries = helper.refreshServerTs(depQueries, newServerTs);
-
-        // save to database
-        let connection = getConnection();
-
         if (depQueries.length > 0) {
-          await connection
-            .transaction(async manager => {
-              await store
-                .save({
-                  manager: manager,
-                  records: {
-                    queries: depQueries
-                  },
-                  server_ts: newServerTs,
-                  source_init_id: undefined
-                })
-                .catch(e =>
-                  helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE)
-                );
-            })
-            .catch(e =>
-              helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION)
-            );
+          queries = depQueries;
         }
       }
+
+      // update server_ts
+      let newServerTs = helper.makeTs();
+
+      queries = helper.refreshServerTs(queries, newServerTs);
+
+      // save to database
+      let connection = getConnection();
+
+      await connection
+        .transaction(async manager => {
+          await store
+            .save({
+              manager: manager,
+              records: {
+                queries: queries
+              },
+              server_ts: newServerTs,
+              source_init_id: undefined
+            })
+            .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
+        })
+        .catch(e =>
+          helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION)
+        );
     }
   });
 }

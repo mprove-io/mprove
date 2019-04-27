@@ -1,6 +1,6 @@
 view: segment_users
 derived_table: |
-  SELECT
+  SELECT2
     * EXCEPT (ROW_NUMBER)
   FROM (
     SELECT
@@ -10,7 +10,8 @@ derived_table: |
       `mprove-demo.segment.users`)
   WHERE
     ROW_NUMBER = 1
-permanent: true    
+permanent: true  
+pdt_trigger_time: '0 * * * * *'  
 
 fields:
   

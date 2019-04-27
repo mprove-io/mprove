@@ -19,7 +19,8 @@ derived_table: |
     ON
       ${am.alias} = coalesce(${e.user_id}, ${e.anonymous_id}) 
     )
-permanent: true        
+permanent: true   
+pdt_trigger_sql: SELECT 555
         
 fields:
 - dimension: received_at

@@ -34,6 +34,7 @@ derived_table: |
   WHERE
     ROW_NUMBER = 1  
 permanent: true
+pdt_trigger_time: '0 * * * * *'
 
 fields:
 

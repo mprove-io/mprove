@@ -23,8 +23,8 @@
       let-column="column"
     >
       <span flex>{{
-        (row['pdt_trigger_sql'] || row['pdt_trigger_time']) &&
-        (prodStructId$ | async) === row['struct_id']
+        (row.pdt_trigger_sql || row.pdt_trigger_time) &&
+        (prodStructId$ | async) === row.struct_id
           ? 'Yes'
           : 'No'
       }}</span>
@@ -36,17 +36,17 @@
       let-row="row"
       let-column="column"
     >
-      <span flex *ngIf="!row['pdt_trigger_sql_last_error_message']">{{
-        pdt_trigger_sql_value
+      <span flex *ngIf="!row.pdt_trigger_sql_last_error_message">{{
+        value
       }}</span>
 
       <span
         flex
-        *ngIf="row['pdt_trigger_sql_last_error_message']"
+        *ngIf="row.pdt_trigger_sql_last_error_message"
         class="pdts__error"
-        matTooltip="{{row.last_error_message}}"
+        matTooltip="{{row.pdt_trigger_sql_last_error_message}}"
         [matTooltipShowDelay]="appConfig.tooltipDelay"
-        >{{ row['pdt_trigger_sql_last_error_message'] }}
+        >error
       </span>
     </ng-template>
 
