@@ -63,7 +63,7 @@ async function startPdt() {
 
   let startQueries = prodPdtQueries.filter(
     query =>
-      (!!query.pdt_trigger_time || !!query.pdt_trigger_sql) &&
+      (query.pdt_trigger_time || query.pdt_trigger_sql) &&
       query.status !== api.QueryStatusEnum.Waiting &&
       query.status !== api.QueryStatusEnum.Running
   );
@@ -71,14 +71,14 @@ async function startPdt() {
   await forEach(startQueries, async query => {
     if (
       !query.pdt_trigger_time ||
-      (!!query.pdt_trigger_time &&
-        query.pdt_need_start_by_time === enums.bEnum.TRUE)
+      query.pdt_need_start_by_time === enums.bEnum.TRUE
     ) {
       let start = false;
 
       if (!query.pdt_trigger_sql) {
         start = true;
-      } else {
+      } else if (query.pdt_trigger_sql_bigquery_query_job_id) {
+        // check trigger sql job result
         let storeProjects = store.getProjectsRepo();
 
         let project = <entities.ProjectEntity>await storeProjects
@@ -94,107 +94,64 @@ async function startPdt() {
           keyFilename: project.bigquery_credentials_file_path
         });
 
-        // check trigger sql job result
-        let previousJobIsDone = false;
+        let pdtTriggerSqlBigqueryQueryJob = bigquery.job(
+          query.pdt_trigger_sql_bigquery_query_job_id
+        );
 
-        if (!!query.pdt_trigger_sql_bigquery_query_job_id) {
-          let pdtTriggerSqlBigqueryQueryJob = bigquery.job(
-            query.pdt_trigger_sql_bigquery_query_job_id
+        let itemQueryJob = await pdtTriggerSqlBigqueryQueryJob
+          .get()
+          .catch((e: any) =>
+            helper.reThrow(e, enums.bigqueryErrorsEnum.BIGQUERY_JOB_GET)
           );
 
-          let itemQueryJob = await pdtTriggerSqlBigqueryQueryJob
-            .get()
-            .catch((e: any) =>
-              helper.reThrow(e, enums.bigqueryErrorsEnum.BIGQUERY_JOB_GET)
-            );
+        let triggerQueryJob = itemQueryJob[0];
+        let triggerQueryJobGetResponse = itemQueryJob[1];
 
-          let triggerQueryJob = itemQueryJob[0];
-          let triggerQueryJobGetResponse = itemQueryJob[1];
+        if (triggerQueryJobGetResponse.status.state === 'DONE') {
+          query.pdt_trigger_sql_bigquery_query_job_id = null;
 
-          if (triggerQueryJobGetResponse.status.state === 'DONE') {
-            previousJobIsDone = true;
+          if (triggerQueryJobGetResponse.status.errorResult) {
+            // PDT TRIGGER SQL FAIL
+            let errorResult = triggerQueryJobGetResponse.status.errorResult;
 
-            if (triggerQueryJobGetResponse.status.errorResult) {
-              // PDT TRIGGER SQL FAIL
-              let errorResult = triggerQueryJobGetResponse.status.errorResult;
+            query.pdt_trigger_sql_last_error_message =
+              `Query fail. ` +
+              `Message: '${errorResult.message}'. ` +
+              `Reason: '${errorResult.reason}'. ` +
+              `Location: '${errorResult.location}'.`;
+          } else {
+            // PDT TRIGGER SQL SUCCESS
+            query.pdt_trigger_sql_last_error_message = null;
 
-              query.pdt_trigger_sql_last_error_message =
-                `Query fail. ` +
-                `Message: '${errorResult.message}'. ` +
-                `Reason: '${errorResult.reason}'. ` +
-                `Location: '${errorResult.location}'.`;
-            } else {
-              // PDT TRIGGER SQL SUCCESS
-              let queryResultsItem = await triggerQueryJob
-                .getQueryResults()
-                .catch((e: any) =>
-                  helper.reThrow(
-                    e,
-                    enums.bigqueryErrorsEnum.BIGQUERY_JOB_GET_QUERY_RESULTS
-                  )
-                );
+            let queryResultsItem = await triggerQueryJob
+              .getQueryResults()
+              .catch((e: any) =>
+                helper.reThrow(
+                  e,
+                  enums.bigqueryErrorsEnum.BIGQUERY_JOB_GET_QUERY_RESULTS
+                )
+              );
 
-              let rows = queryResultsItem[0];
+            let rows = queryResultsItem[0];
 
-              let columnKey =
-                rows && rows[0] && Object.keys(rows[0]).length > 0
-                  ? Object.keys(rows[0])[0]
-                  : null;
-
-              let newTriggerSqlValue = columnKey
-                ? JSON.stringify(rows[0][columnKey])
+            let columnKey =
+              rows && rows[0] && Object.keys(rows[0]).length > 0
+                ? Object.keys(rows[0])[0]
                 : null;
 
-              console.log('rows: ', rows);
-              console.log('rowsStringify: ', JSON.stringify(rows));
-              console.log('query.pdt_id: ', query.pdt_id);
-              console.log('newTriggerSqlValue: ', newTriggerSqlValue);
+            let newTriggerSqlValue = columnKey
+              ? JSON.stringify(rows[0][columnKey])
+              : null;
 
-              // backend_1  | rows:  [ { f0_: BigQueryTimestamp { value: '2019-04-27T15:27:01.870Z' } } ]
-              // backend_1  | rowsStringify:  [{"f0_":{"value":"2019-04-27T15:27:01.870Z"}}]
-              // backend_1  | query.pdt_id:  3J4Q2WJMZKXG0RFHWIZ1_segment_events_mapped
-              // backend_1  | newTriggerSqlValue:  null
-
-              // backend_1  | rows:  [ { f0_: 555 } ]
-              // backend_1  | rowsStringify:  [{"f0_":555}]
-              // backend_1  | query.pdt_id:  XPTT733ZWN56XSIVCF7M_segment_events_mapped
-              // backend_1  | newTriggerSqlValue:  null
-
-              if (
-                Number(query.last_complete_ts) === 1 || // pdt was never run
-                (!!newTriggerSqlValue &&
-                  newTriggerSqlValue !== query.pdt_trigger_sql_value)
-              ) {
-                start = true;
-              }
-
-              query.pdt_trigger_sql_value = newTriggerSqlValue;
-              query.pdt_trigger_sql_last_error_message = null;
+            if (
+              Number(query.last_complete_ts) === 1 || // pdt was never complete
+              (newTriggerSqlValue &&
+                newTriggerSqlValue !== query.pdt_trigger_sql_value)
+            ) {
+              start = true;
             }
-          }
-        }
 
-        // run new trigger sql job
-        if (
-          !query.pdt_trigger_sql_bigquery_query_job_id ||
-          previousJobIsDone === true
-        ) {
-          let createQueryJobItem = <any>await bigquery
-            .createQueryJob({
-              destination: undefined,
-              dryRun: false,
-              useLegacySql: false,
-              query: query.pdt_trigger_sql
-            })
-            .catch((e: any) => {
-              query.pdt_trigger_sql_last_error_message = e.message;
-            });
-
-          if (createQueryJobItem) {
-            let queryJob = createQueryJobItem[0];
-            let createQueryJobApiResponse = createQueryJobItem[1];
-
-            query.pdt_trigger_sql_bigquery_query_job_id = queryJob.id;
+            query.pdt_trigger_sql_value = newTriggerSqlValue;
           }
         }
       }

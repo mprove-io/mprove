@@ -11,6 +11,7 @@ import { loopDeleteMembers } from './loop-delete-members';
 import { loopDeleteQueries } from './loop-delete-queries';
 import { loopCheckPdtTime } from './loop-check-pdt-time';
 import { loopStartPdt } from './loop-start-pdt';
+import { loopStartTriggerSqlJob } from './loop-start-trigger-sql-job';
 
 let pdtTimeJobs: interfaces.PdtTimeJob[] = [];
 
@@ -27,5 +28,6 @@ export function runScheduler(item: {
   loopDeleteMembers();
   loopDeleteQueries();
   loopCheckPdtTime(pdtTimeJobs);
+  loopStartTriggerSqlJob();
   loopStartPdt();
 }
