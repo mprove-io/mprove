@@ -1,4 +1,6 @@
 export * from './check-derived-table-apply-filter';
+export * from './check-pdt-trigger-sql';
+export * from './check-pdt-trigger-time';
 export * from './check-permanent';
 export * from './check-table';
 export * from './check-view-cycles';

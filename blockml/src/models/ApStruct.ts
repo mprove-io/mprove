@@ -124,6 +124,8 @@ export class ApStruct {
     // ApView
     views = barView.checkTable({ views: views });
     views = barView.checkPermanent({ views: views });
+    views = barView.checkPdtTriggerSql({ views: views });
+    views = barView.checkPdtTriggerTime({ views: views });
     views = barView.checkViewUdfs({
       views: views,
       udfs: udfs
