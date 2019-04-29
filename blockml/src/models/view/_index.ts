@@ -13,6 +13,8 @@ export * from './make-view-deps';
 export * from './make-view-part';
 export * from './pick-udfs-and-make-pdt-view-deps';
 export * from './process-view-refs';
+export * from './process-pdt-trigger-sql-table-id';
+export * from './process-pdt-trigger-sql-table-ref';
 export * from './sort-pdts';
 export * from './substitute-view-refs-recursive';
 export * from './swap-derived-tables';

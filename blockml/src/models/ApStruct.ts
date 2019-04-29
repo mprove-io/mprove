@@ -166,12 +166,15 @@ export class ApStruct {
     pdts = barView.makePdts({
       views: views,
       udfs_dict: udfsDict,
-      structId: item.structId
+      structId: item.structId,
+      bqProject: item.bqProject,
+      projectId: item.projectId
     });
 
-    let pdtsSorted = barView.sortPdts({
-      pdts: pdts
-    });
+    pdts = barView.processPdtTriggerSqlTableId({ pdts: pdts });
+    pdts = barView.processPdtTriggerSqlTableRef({ pdts: pdts });
+
+    let pdtsSorted = barView.sortPdts({ pdts: pdts });
 
     // ApModel
     models = barModel.checkModelAccessUsers({ models: models });

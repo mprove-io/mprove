@@ -1,0 +1,12 @@
+view: e292
+derived_table: |
+  'SELECT * FROM ...'
+permanent: true  
+pdt_trigger_sql: |
+  select * from `mprove-demo:mprove_demo.__TABLES__` WHERE table_id = ${unk.PDT_TABLE_ID}
+fields:
+- dimension: dim1
+  sql: 111
+
+
+

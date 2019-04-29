@@ -115,6 +115,14 @@ export class ApRegex {
     return cloneRegexp(/\$\{(\w+)[.](\w+)\}/g);
   }
 
+  static CAPTURE_PDT_TABLE_ID(): RegExp {
+    return cloneRegexp(/\$\{(\w+)[.]PDT_TABLE_ID\}/g);
+  }
+
+  static CAPTURE_PDT_TABLE_REF(): RegExp {
+    return cloneRegexp(/\$\{(\w+)[.]PDT_TABLE_REF\}/g);
+  }
+
   static CAPTURE_VIEW_REF_G(): RegExp {
     return cloneRegexp(/\$\{(\w+)\s+[Aa][Ss]\s+(\w+)\}/g);
   }
@@ -132,6 +140,7 @@ export class ApRegex {
   static CAPTURE_TRIPLE_REF_WITHOUT_BRACKETS_G(): RegExp {
     return cloneRegexp(/^(\w+)[.](\w+)[.](\w+)$/g);
   }
+
   static CAPTURE_SORT_WITH_OPTIONAL_DESC_G(): RegExp {
     return cloneRegexp(/^\s*(\w+[.]\w+)\s*(desc)?\s*$/g);
   }
@@ -333,6 +342,14 @@ export class ApRegex {
     // return input.replace(reg, `(${val})`);
 
     return input.split(`\$\{${ref}\}`).join(`(${val})`);
+  }
+
+  static replacePdtTableId(input: string, ref: string, val: string): string {
+    return input.split(`\$\{${ref}.PDT_TABLE_ID\}`).join(`${val}`);
+  }
+
+  static replacePdtTableRef(input: string, ref: string, val: string): string {
+    return input.split(`\$\{${ref}.PDT_TABLE_REF\}`).join(`${val}`);
   }
 
   static replaceAndConvert(
