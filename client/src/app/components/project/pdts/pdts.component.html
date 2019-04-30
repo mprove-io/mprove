@@ -16,18 +16,46 @@
       </div>
     </ng-template>
 
+    <!--
+      <ng-template
+        tdDataTableTemplate="scheduled"
+        let-value="value"
+        let-row="row"
+        let-column="column"
+      >
+        <span flex>{{
+          (row.pdt_trigger_sql || row.pdt_trigger_time) &&
+          (prodStructId$ | async) === row.struct_id
+            ? 'Yes'
+            : 'No'
+        }}</span>
+      </ng-template>
+    -->
+
     <ng-template
-      tdDataTableTemplate="scheduled"
+      tdDataTableTemplate="pdt_trigger_time"
       let-value="value"
       let-row="row"
       let-column="column"
     >
-      <span flex>{{
-        (row.pdt_trigger_sql || row.pdt_trigger_time) &&
-        (prodStructId$ | async) === row.struct_id
-          ? 'Yes'
-          : 'No'
+      <span *ngIf="row.pdt_trigger_time" flex>{{
+        row.pdt_trigger_time.substring(2)
       }}</span>
+    </ng-template>
+
+    <ng-template
+      tdDataTableTemplate="show_pdt_trigger_sql"
+      let-value="value"
+      let-row="row"
+      let-column="column"
+    >
+      <button
+        mat-raised-button
+        *ngIf="row.pdt_trigger_sql"
+        (click)="showPdtTriggerSql(row)"
+        data-cy="showPdtTriggerSql"
+        >Trigger SQL</button
+      >
     </ng-template>
 
     <ng-template

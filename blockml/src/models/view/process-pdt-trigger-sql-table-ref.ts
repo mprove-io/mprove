@@ -46,7 +46,7 @@ export function processPdtTriggerSqlTableRef(item: { pdts: interfaces.Pdt[] }) {
         Object.keys(tableRefViews).forEach(view => {
           let pdt = item.pdts.find(p => p.view === view);
 
-          x.pdt_trigger_sql = ApRegex.replacePdtTableId(
+          x.pdt_trigger_sql = ApRegex.replacePdtTableRef(
             x.pdt_trigger_sql,
             view,
             pdt.table_ref

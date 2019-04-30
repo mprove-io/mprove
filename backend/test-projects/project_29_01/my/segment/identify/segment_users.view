@@ -1,6 +1,6 @@
 view: segment_users
 derived_table: |
-  SELECT2
+  SELECT
     * EXCEPT (ROW_NUMBER)
   FROM (
     SELECT

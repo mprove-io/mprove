@@ -32,7 +32,7 @@ export class PdtsComponent {
   columns: ITdDataTableColumn[] = [
     { name: 'pdt_id', label: 'PDT' },
     { name: 'pdt_deps', label: 'Dependencies' },
-    { name: 'scheduled', label: 'Scheduled', width: 100 },
+    // { name: 'scheduled', label: 'Scheduled', width: 100 },
     {
       name: 'struct_id',
       label: 'struct_id',
@@ -40,6 +40,7 @@ export class PdtsComponent {
       hidden: true
     },
     { name: 'pdt_trigger_time', label: 'Trigger time', width: 100 },
+    { name: 'show_pdt_trigger_sql', label: 'Trigger SQL', width: 150 },
     { name: 'pdt_trigger_sql_value', label: 'Trigger value', width: 100 },
     { name: 'show_sql', label: 'SQL', width: 100 },
     {
@@ -100,6 +101,13 @@ export class PdtsComponent {
     this.myDialogService.showSqlDialog({
       name: row.pdt_id,
       sql: sqlText
+    });
+  }
+
+  showPdtTriggerSql(row: interfaces.QueryExtraTime) {
+    this.myDialogService.showSqlDialog({
+      name: `pdt_trigger_sql for ${row.pdt_id}:`,
+      sql: row.pdt_trigger_sql
     });
   }
 

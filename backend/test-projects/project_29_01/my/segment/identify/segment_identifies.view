@@ -12,8 +12,8 @@ derived_table: |
     ROW_NUMBER = 1
 permanent: true
 pdt_trigger_sql: |
-  select last_modified_time from `mprove-data:segment_prod.__TABLES__` 
-  WHERE table_id = ${segment_identifies.PDT_TABLE_ID}
+  select last_modified_time from `mprove-test-235804:mprove_project_29_01.__TABLES__` 
+  WHERE table_id = '${segment_identifies.PDT_TABLE_ID}'
 pdt_trigger_time: '* * * * *'
 
 fields:
