@@ -144,9 +144,8 @@ async function startPdt() {
               : null;
 
             if (
-              Number(query.last_complete_ts) === 1 || // pdt was never complete
-              (newTriggerSqlValue &&
-                newTriggerSqlValue !== query.pdt_trigger_sql_value)
+              newTriggerSqlValue &&
+              newTriggerSqlValue !== query.pdt_trigger_sql_value
             ) {
               start = true;
             }
