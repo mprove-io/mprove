@@ -11,7 +11,6 @@ derived_table: |
   GROUP BY
     1
 permanent: true 
-pdt_trigger_sql: SELECT 888 as eights
 
 fields:
 

@@ -5,6 +5,10 @@ export class ApRegex {
     return cloneRegexp(/\$\{.+\}/);
   }
 
+  static FIVE_ELEMENTS_SEPARATED_BY_SPACES(): RegExp {
+    return cloneRegexp(/^\S+\s+\S+\s+\S+\s+\S+\s+\S+$/);
+  }
+
   static STARTS_WITH_DOT(): RegExp {
     return cloneRegexp(/^[.]/);
   }

@@ -171,6 +171,7 @@ export class ApStruct {
       projectId: item.projectId
     });
 
+    pdts = barView.processPdtTriggerTime({ pdts: pdts });
     pdts = barView.processPdtTriggerSqlTableId({ pdts: pdts });
     pdts = barView.processPdtTriggerSqlTableRef({ pdts: pdts });
 

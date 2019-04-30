@@ -11,7 +11,9 @@ derived_table: |
   WHERE
     ROW_NUMBER = 1
 permanent: true  
-pdt_trigger_time: '0 * * * * *'  
+pdt_trigger_time: '* * * * *'  
+pdt_trigger_sql: SELECT 555
+
 
 fields:
   

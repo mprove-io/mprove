@@ -12,7 +12,6 @@ derived_table: |
     (${a.idle_time_minutes} > 30
       OR ${a.idle_time_minutes} IS NULL)
 permanent: true   
-pdt_trigger_sql: SELECT CURRENT_TIMESTAMP()
         
 fields:
 - dimension: session_start_at

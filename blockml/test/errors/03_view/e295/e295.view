@@ -1,0 +1,11 @@
+view: e295
+derived_table: |
+  'SELECT * FROM ...'
+permanent: true  
+pdt_trigger_time: '* * * * * *'
+fields:
+- dimension: dim1
+  sql: 111
+
+
+
