@@ -17,6 +17,15 @@ import * as services from '@app/services/_index';
   styleUrls: ['pdts.component.scss']
 })
 export class PdtsComponent {
+  displayedColumns: string[] = [
+    'pdt_id',
+    'pdt_deps',
+    'pdt_trigger_time',
+    'show_pdt_trigger_sql',
+    'pdt_trigger_sql_value',
+    'show_sql'
+  ];
+
   queryStatusEnum = api.QueryStatusEnum;
 
   pdtsExtra: interfaces.QueryExtra[];
