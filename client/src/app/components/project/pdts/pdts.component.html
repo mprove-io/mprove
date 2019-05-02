@@ -3,88 +3,181 @@
   {{ (isDev$ | async) ? 'Dev' : 'Prod' }} Permanent Derived Tables (PDTs)
 </mat-toolbar>
 
-<table mat-table [dataSource]="pdtsExtra" class="mat-elevation-z8">
-  <ng-container matColumnDef="pdt_id">
-    <th mat-header-cell *matHeaderCellDef>PDT</th>
-    <td mat-cell *matCellDef="let element"> {{ element.pdt_id }} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="pdt_deps">
-    <th mat-header-cell *matHeaderCellDef>Dependencies</th>
-    <td mat-cell *matCellDef="let element">
-      <div layout="column">
-        <span flex *ngFor="let dep of element.pdt_deps">{{ dep }}</span>
-      </div>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="pdt_trigger_time">
-    <th mat-header-cell *matHeaderCellDef>Trigger time</th>
-    <td mat-cell *matCellDef="let element">
-      <span *ngIf="element.pdt_trigger_time">{{
-        element.pdt_trigger_time.substring(2)
-      }}</span>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="show_pdt_trigger_sql">
-    <th mat-header-cell *matHeaderCellDef>Trigger SQL</th>
-    <td mat-cell *matCellDef="let element">
-      <button
-        mat-raised-button
-        *ngIf="element.pdt_trigger_sql"
-        (click)="showPdtTriggerSql(element)"
-        data-cy="showPdtTriggerSql"
-        >Trigger SQL</button
-      >
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="pdt_trigger_sql_value">
-    <th mat-header-cell *matHeaderCellDef>Trigger value</th>
-    <td mat-cell *matCellDef="let element">
-      <span flex *ngIf="!element.pdt_trigger_sql_last_error_message">{{
-        element.pdt_trigger_sql_value
-      }}</span>
-
-      <span
-        flex
-        *ngIf="element.pdt_trigger_sql_last_error_message"
-        class="pdts__error"
-        matTooltip="{{element.pdt_trigger_sql_last_error_message}}"
-        [matTooltipShowDelay]="appConfig.tooltipDelay"
-        >error
-      </span>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="show_sql">
-    <th mat-header-cell *matHeaderCellDef>SQL</th>
-    <td mat-cell *matCellDef="let element">
-      <button mat-raised-button (click)="showSql(element)" data-cy="showPdtSql"
-        >SQL</button
-      >
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
-
 <div class="pdts-table">
-  <td-data-table [data]="pdtsExtra" [columns]="columns" class="table--pdts">
-    <ng-template
-      tdDataTableTemplate="pdt_deps"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <div layout="column">
-        <span flex *ngFor="let dep of value">{{ dep }}</span>
-      </div>
-    </ng-template>
-
+  <table
+    mat-table
+    [dataSource]="pdtsExtra"
+    multiTemplateDataRows
+    class="mat-elevation-z8"
+  >
     <!--
+      Expanded Content Column - The detail row is made up of this one column that spans across all columns
+    -->
+    <ng-container matColumnDef="expandedDetail">
+      <td
+        mat-cell
+        *matCellDef="let element"
+        [attr.colspan]="columnsToDisplay.length"
+      >
+        <div fxLayout="row">
+          <div fxFlex="2.5"></div> <div fxFlex="10">Dependencies:</div>
+          <div fxFlex>
+            <div fxLayout="column">
+              <span fxFlex *ngFor="let dep of element.pdt_deps">{{ dep }}</span>
+            </div>
+          </div>
+        </div>
+        <div fxLayout="row">
+          <div fxFlex="2.5"></div> <div fxFlex="10">Last Run at:</div>
+          <div fxFlex>
+            <span>{{
+              element.last_run_ts === 1 ? 'never' : element.last_run_ts
+            }}</span>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pdt_id">
+      <th mat-header-cell *matHeaderCellDef>PDT</th>
+      <td mat-cell *matCellDef="let element"> {{ element.pdt_id }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pdt_deps">
+      <th mat-header-cell *matHeaderCellDef>Dependencies</th>
+      <td mat-cell *matCellDef="let element">
+        <div layout="column">
+          <span *ngFor="let dep of element.pdt_deps">{{ dep }}</span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pdt_trigger_time">
+      <th mat-header-cell *matHeaderCellDef>Trigger time</th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.pdt_trigger_time">{{
+          element.pdt_trigger_time.substring(2)
+        }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="show_pdt_trigger_sql">
+      <th mat-header-cell *matHeaderCellDef>Trigger SQL</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-raised-button
+          *ngIf="element.pdt_trigger_sql"
+          (click)="showPdtTriggerSql(element)"
+          data-cy="showPdtTriggerSql"
+          >Trigger SQL</button
+        >
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pdt_trigger_sql_value">
+      <th mat-header-cell *matHeaderCellDef>Trigger value</th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="!element.pdt_trigger_sql_last_error_message">{{
+          element.pdt_trigger_sql_value
+        }}</span>
+
+        <span
+          *ngIf="element.pdt_trigger_sql_last_error_message"
+          class="pdts__error"
+          matTooltip="{{element.pdt_trigger_sql_last_error_message}}"
+          [matTooltipShowDelay]="appConfig.tooltipDelay"
+          >error
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="show_sql">
+      <th mat-header-cell *matHeaderCellDef>SQL</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-raised-button
+          (click)="showSql(element)"
+          data-cy="showPdtSql"
+          >SQL</button
+        >
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.status !== queryStatusEnum.Error">{{
+          element.status
+        }}</span>
+
+        <span
+          *ngIf="element.status === queryStatusEnum.Error"
+          class="pdts__error"
+          matTooltip="{{row.last_error_message}}"
+          [matTooltipShowDelay]="appConfig.tooltipDelay"
+          >{{ element.status }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="last_run_ts">
+      <th mat-header-cell *matHeaderCellDef>last_run_ts</th>
+      <td mat-cell *matCellDef="let element">
+        <span>{{
+          element.last_run_ts === 1 ? 'never' : element.last_run_ts
+        }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="last_complete_ts">
+      <th mat-header-cell *matHeaderCellDef>last_complete_ts</th>
+      <td mat-cell *matCellDef="let element">
+        <span>{{
+          element.last_complete_ts === 1 ? 'never' : element.last_complete_ts
+        }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="extra_last_complete_duration_ceil">
+      <th mat-header-cell *matHeaderCellDef>Duration, s</th>
+      <td mat-cell *matCellDef="let element">
+        <span>{{ element.extra_last_complete_duration_ceil }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="menu">
+      <th mat-header-cell *matHeaderCellDef>Menu</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="pdtMenu"
+          [matMenuTriggerData]="{ r: element }"
+          data-cy="pdtMenu"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+    <!-- <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr> -->
+
+    <tr
+      mat-row
+      *matRowDef="let element; let index; columns: columnsToDisplay"
+      class="example-element-row"
+    >
+    </tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['expandedDetail']"
+      class="example-detail-row"
+    ></tr>
+  </table>
+
+  <!--
+    <td-data-table [data]="pdtsExtra" [columns]="columns" class="table--pdts">
+
       <ng-template
         tdDataTableTemplate="scheduled"
         let-value="value"
@@ -98,117 +191,9 @@
             : 'No'
         }}</span>
       </ng-template>
-    -->
 
-    <ng-template
-      tdDataTableTemplate="pdt_trigger_time"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <span *ngIf="row.pdt_trigger_time" flex>{{
-        row.pdt_trigger_time.substring(2)
-      }}</span>
-    </ng-template>
-
-    <ng-template
-      tdDataTableTemplate="show_pdt_trigger_sql"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <button
-        mat-raised-button
-        *ngIf="row.pdt_trigger_sql"
-        (click)="showPdtTriggerSql(row)"
-        data-cy="showPdtTriggerSql"
-        >Trigger SQL</button
-      >
-    </ng-template>
-
-    <ng-template
-      tdDataTableTemplate="pdt_trigger_sql_value"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <span flex *ngIf="!row.pdt_trigger_sql_last_error_message">{{
-        value
-      }}</span>
-
-      <span
-        flex
-        *ngIf="row.pdt_trigger_sql_last_error_message"
-        class="pdts__error"
-        matTooltip="{{row.pdt_trigger_sql_last_error_message}}"
-        [matTooltipShowDelay]="appConfig.tooltipDelay"
-        >error
-      </span>
-    </ng-template>
-
-    <ng-template
-      tdDataTableTemplate="show_sql"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <button mat-raised-button (click)="showSql(row)" data-cy="showPdtSql"
-        >SQL</button
-      >
-    </ng-template>
-
-    <ng-template
-      tdDataTableTemplate="status"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <span flex *ngIf="value !== queryStatusEnum.Error">{{ value }}</span>
-
-      <span
-        flex
-        *ngIf="value === queryStatusEnum.Error"
-        class="pdts__error"
-        matTooltip="{{row.last_error_message}}"
-        [matTooltipShowDelay]="appConfig.tooltipDelay"
-        >{{ value }}
-      </span>
-    </ng-template>
-
-    <ng-template
-      tdDataTableTemplate="last_run_ts"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <span flex>{{ value === 1 ? 'never' : value }}</span>
-    </ng-template>
-
-    <ng-template
-      tdDataTableTemplate="last_complete_ts"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <span flex>{{ value === 1 ? 'never' : value }}</span>
-    </ng-template>
-
-    <ng-template
-      tdDataTableTemplate="menu"
-      let-value="value"
-      let-row="row"
-      let-column="column"
-    >
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="pdtMenu"
-        [matMenuTriggerData]="{ r: row }"
-        data-cy="pdtMenu"
-      >
-        <mat-icon>more_vert</mat-icon>
-      </button>
-    </ng-template>
-  </td-data-table>
+    </td-data-table>
+  -->
 </div>
 
 <mat-menu #pdtMenu="matMenu">
