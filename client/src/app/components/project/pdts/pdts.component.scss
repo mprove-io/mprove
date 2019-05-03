@@ -24,7 +24,8 @@ tr.example-detail-row {
 }
 
 .mat-column-pdt_trigger_sql_value {
-  min-width: 100px;
+  min-width: 150px;
+  max-width: 150px;
 }
 
 .mat-column-show_sql {
@@ -33,18 +34,6 @@ tr.example-detail-row {
 
 .mat-column-status {
   min-width: 120px;
-}
-
-.mat-column-last_run_ts {
-  min-width: 150px;
-}
-
-.mat-column-last_complete_ts {
-  min-width: 150px;
-}
-
-.mat-column-extra_last_complete_duration_ceil {
-  min-width: 100px;
 }
 
 .mat-column-menu {

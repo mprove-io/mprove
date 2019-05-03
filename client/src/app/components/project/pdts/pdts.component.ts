@@ -18,15 +18,11 @@ import * as services from '@app/services/_index';
 export class PdtsComponent {
   columnsToDisplay: string[] = [
     'pdt_id',
-    // 'pdt_deps',
+    'show_sql',
     'pdt_trigger_time',
     'show_pdt_trigger_sql',
     'pdt_trigger_sql_value',
-    'show_sql',
     'status',
-    // 'last_run_ts',
-    'last_complete_ts',
-    'extra_last_complete_duration_ceil',
     'menu'
   ];
 
