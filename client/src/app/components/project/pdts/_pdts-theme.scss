@@ -22,4 +22,8 @@
       color: red;
     }
   }
+
+  .detail-error {
+    color: mat-color($warn);
+  }
 }
