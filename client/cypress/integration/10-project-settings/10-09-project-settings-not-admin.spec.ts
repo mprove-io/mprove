@@ -40,9 +40,6 @@ describe('10-09 project-settings-not-admin (logged in)', () => {
     cy.get('[data-cy=projectSettingsEditCredentialsButton]').should(
       'be.disabled'
     );
-    cy.get('[data-cy=projectSettingsQuerySizeLimitInput]').should(
-      'be.disabled'
-    );
     cy.get('[data-cy=projectSettingsTimezoneSelect]').should(
       'have.class',
       'mat-select-disabled'
