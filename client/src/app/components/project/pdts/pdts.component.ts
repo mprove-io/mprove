@@ -47,8 +47,8 @@ export class PdtsComponent {
     selectors.getSelectedProjectProdRepoStructId
   ); // no filter here
 
-  selectedProjectUserIsEditor$ = this.store.select(
-    selectors.getSelectedProjectUserIsEditor
+  getSelectedProjectUserIsAdminOrEditor$ = this.store.select(
+    selectors.getSelectedProjectUserIsAdminOrEditor
   );
 
   constructor(
