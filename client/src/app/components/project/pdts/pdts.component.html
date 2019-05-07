@@ -19,6 +19,12 @@
         [attr.colspan]="columnsToDisplay.length"
       >
         <div fxLayout="row">
+          <div fxFlex="3"></div> <div fxFlex="10">Table id:</div>
+          <div fxFlex>
+            <span>{{ element.pdt_id }}</span>
+          </div>
+        </div>
+        <div fxLayout="row">
           <div fxFlex="3"></div> <div fxFlex="10">Dependencies:</div>
           <div fxFlex>
             <div *ngIf="element.pdt_deps.length > 0" fxLayout="column">
@@ -70,7 +76,9 @@
 
     <ng-container matColumnDef="pdt_id">
       <th mat-header-cell *matHeaderCellDef>PDT</th>
-      <td mat-cell *matCellDef="let element"> {{ element.pdt_id }} </td>
+      <td mat-cell *matCellDef="let element">
+        {{ element.pdt_id.substring(element.pdt_id.indexOf('_') + 1) }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="pdt_trigger_time">
