@@ -211,7 +211,12 @@
         >Run Dry (estimate data size)</button
       >
 
-      <button mat-menu-item (click)="runRefresh()">Refresh PDTs and Run</button>
+      <button
+        mat-menu-item
+        (click)="runRefresh()"
+        [disabled]="!(selectedProjectUserIsAdminOrEditor$ | async)"
+        >Refresh PDTs and Run</button
+      >
 
       <div
         *ngIf="dryTs && drySize"
@@ -243,7 +248,12 @@
 
 <mat-menu #dashboardMenu="matMenu">
   <button mat-menu-item (click)="runDry()">Run Dry (estimate data size)</button>
-  <button mat-menu-item (click)="runRefresh()">Refresh PDTs and Run</button>
+  <button
+    mat-menu-item
+    [disabled]="!(selectedProjectUserIsAdminOrEditor$ | async)"
+    (click)="runRefresh()"
+    >Refresh PDTs and Run</button
+  >
 </mat-menu>
 
 <div *ngIf="(dashboardId$ | async)"></div>

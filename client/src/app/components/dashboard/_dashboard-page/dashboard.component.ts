@@ -40,6 +40,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   userId$ = this.store.select(selectors.getUserId);
 
+  selectedProjectUserIsAdminOrEditor$ = this.store.select(
+    selectors.getSelectedProjectUserIsAdminOrEditor
+  ); // no filter here
+
   layoutDry$ = this.store.select(selectors.getLayoutDry).pipe(
     filter(v => !!v),
     map(dry => {

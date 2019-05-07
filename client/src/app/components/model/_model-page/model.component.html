@@ -301,7 +301,10 @@
       <button
         mat-menu-item
         data-cy="modelQueryMenuRefreshButtonMobile"
-        [disabled]="!(queryServerTsMoreThanOne$ | async)"
+        [disabled]="
+          !(queryServerTsMoreThanOne$ | async) ||
+          !(selectedProjectUserIsAdminOrEditor$ | async)
+        "
         (click)="runRefresh()"
         >Refresh PDTs and Run</button
       >
@@ -385,7 +388,10 @@
   <button
     mat-menu-item
     data-cy="modelQueryMenuRefreshButton"
-    [disabled]="!(queryServerTsMoreThanOne$ | async)"
+    [disabled]="
+      !(queryServerTsMoreThanOne$ | async) ||
+      !(selectedProjectUserIsAdminOrEditor$ | async)
+    "
     (click)="runRefresh()"
     >Refresh PDTs and Run</button
   >

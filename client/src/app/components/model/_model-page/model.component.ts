@@ -38,6 +38,10 @@ export class ModelComponent implements OnDestroy {
 
   userId$ = this.store.select(selectors.getUserId);
 
+  selectedProjectUserIsAdminOrEditor$ = this.store.select(
+    selectors.getSelectedProjectUserIsAdminOrEditor
+  ); // no filter here
+
   queryLastRunBy$ = this.store.select(selectors.getSelectedQueryLastRunBy);
   queryLastRunTs$ = this.store.select(selectors.getSelectedQueryLastRunTs).pipe(
     filter(v => !!v),
