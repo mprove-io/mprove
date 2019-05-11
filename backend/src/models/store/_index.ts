@@ -8,6 +8,7 @@ export * from './get-mconfigs-repo';
 export * from './get-members-repo';
 export * from './get-messages-repo';
 export * from './get-models-repo';
+export * from './get-views-repo';
 export * from './get-projects-repo';
 export * from './get-queries-repo';
 export * from './get-repos-repo';

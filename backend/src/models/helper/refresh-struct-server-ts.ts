@@ -8,6 +8,7 @@ export function refreshStructServerTs(
   return {
     errors: refreshServerTs(struct.errors, newServerTs),
     models: refreshServerTs(struct.models, newServerTs),
+    views: refreshServerTs(struct.views, newServerTs),
     dashboards: refreshServerTs(struct.dashboards, newServerTs),
     repo: refreshServerTs([struct.repo], newServerTs)[0]
   };

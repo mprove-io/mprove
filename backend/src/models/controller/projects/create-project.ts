@@ -169,12 +169,14 @@ export async function createProject(req: Request, res: Response) {
     dev_struct: {
       errors: [],
       models: [],
+      views: [],
       dashboards: [],
       repo: wrapper.wrapToApiRepo(devRepo)
     },
     prod_struct: {
       errors: [],
       models: [],
+      views: [],
       dashboards: [],
       repo: wrapper.wrapToApiRepo(prodRepo)
     }

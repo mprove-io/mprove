@@ -102,6 +102,7 @@ export async function getState(req: Request, res: Response) {
   await forEach(repos, async repo => {
     let storeErrors = store.getErrorsRepo();
     let storeModels = store.getModelsRepo();
+    let storeViews = store.getViewsRepo();
     let storeDashboards = store.getDashboardsRepo();
 
     let errors = <entities.ErrorEntity[]>await storeErrors
@@ -118,6 +119,13 @@ export async function getState(req: Request, res: Response) {
       })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_FIND));
 
+    let views = <entities.ViewEntity[]>await storeViews
+      .find({
+        struct_id: repo.struct_id,
+        repo_id: repo.repo_id
+      })
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_FIND));
+
     let dashboards = <entities.DashboardEntity[]>await storeDashboards
       .find({
         struct_id: repo.struct_id,
@@ -131,6 +139,7 @@ export async function getState(req: Request, res: Response) {
       repo: wrapper.wrapToApiRepo(repo),
       errors: errors.map(error => wrapper.wrapToApiError(error)),
       models: models.map(model => wrapper.wrapToApiModel(model)),
+      views: views.map(view => wrapper.wrapToApiView(view)),
       dashboards: dashboards.map(dashboard =>
         wrapper.wrapToApiDashboard(dashboard)
       )

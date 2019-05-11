@@ -125,6 +125,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
   let errors: entities.ErrorEntity[] = [];
   let mconfigs: entities.MconfigEntity[] = [];
   let models: entities.ModelEntity[] = [];
+  let views: entities.ViewEntity[] = [];
   let queries: entities.QueryEntity[] = [];
 
   let prodStruct: interfaces.ItemStructAndRepo;
@@ -165,6 +166,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
       errors: repoErrors,
       mconfigs: repoMconfigs,
       models: repoModels,
+      views: repoViews,
       queries: repoQueries
     } = itemRebuildStruct;
 
@@ -176,6 +178,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
     queries = helper.makeNewArray(queries, repoQueries);
     models = helper.makeNewArray(models, repoModels);
+    views = helper.makeNewArray(views, repoViews);
     mconfigs = helper.makeNewArray(mconfigs, repoMconfigs);
     dashboards = helper.makeNewArray(dashboards, repoDashboards);
     errors = helper.makeNewArray(errors, repoErrors);
@@ -184,6 +187,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
       prodStruct = {
         errors: repoErrors,
         models: repoModels,
+        views: repoViews,
         dashboards: repoDashboards,
         repo: repo
       };
@@ -191,6 +195,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
       devStruct = {
         errors: repoErrors,
         models: repoModels,
+        views: repoViews,
         dashboards: repoDashboards,
         repo: repo
       };
@@ -206,6 +211,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
   repos = helper.refreshServerTs(repos, newServerTs);
   queries = helper.refreshServerTs(queries, newServerTs);
   models = helper.refreshServerTs(models, newServerTs);
+  views = helper.refreshServerTs(views, newServerTs);
   mconfigs = helper.refreshServerTs(mconfigs, newServerTs);
   dashboards = helper.refreshServerTs(dashboards, newServerTs);
   errors = helper.refreshServerTs(errors, newServerTs);
@@ -227,6 +233,7 @@ export async function setProjectCredentials(req: Request, res: Response) {
             repos: repos,
             queries: queries,
             models: models,
+            views: views,
             mconfigs: mconfigs,
             dashboards: dashboards,
             errors: errors

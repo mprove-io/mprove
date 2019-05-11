@@ -86,6 +86,7 @@ export async function renameFolder(req: Request, res: Response) {
     dev_struct: {
       errors: itemChanges.errors.map(error => wrapper.wrapToApiError(error)),
       models: itemChanges.models.map(model => wrapper.wrapToApiModel(model)),
+      views: itemChanges.views.map(view => wrapper.wrapToApiView(view)),
       dashboards: itemChanges.dashboards.map(dashboard =>
         wrapper.wrapToApiDashboard(dashboard)
       ),

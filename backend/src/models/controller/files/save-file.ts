@@ -138,6 +138,7 @@ export async function saveFile(req: Request, res: Response) {
   file.server_ts = newServerTs;
 
   itemStruct.models = helper.refreshServerTs(itemStruct.models, newServerTs);
+  itemStruct.views = helper.refreshServerTs(itemStruct.views, newServerTs);
   itemStruct.dashboards = helper.refreshServerTs(
     itemStruct.dashboards,
     newServerTs
@@ -162,6 +163,7 @@ export async function saveFile(req: Request, res: Response) {
             files: [file],
             queries: itemStruct.queries,
             models: itemStruct.models,
+            views: itemStruct.views,
             mconfigs: itemStruct.mconfigs,
             dashboards: itemStruct.dashboards,
             errors: itemStruct.errors
@@ -189,6 +191,7 @@ export async function saveFile(req: Request, res: Response) {
     dev_struct: {
       errors: itemStruct.errors.map(error => wrapper.wrapToApiError(error)),
       models: itemStruct.models.map(model => wrapper.wrapToApiModel(model)),
+      views: itemStruct.views.map(view => wrapper.wrapToApiView(view)),
       dashboards: itemStruct.dashboards.map(dashboard =>
         wrapper.wrapToApiDashboard(dashboard)
       ),

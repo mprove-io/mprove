@@ -170,6 +170,10 @@ export async function pushRepo(req: Request, res: Response) {
     itemStructCopy.models,
     newServerTs
   );
+  itemStructCopy.views = helper.refreshServerTs(
+    itemStructCopy.views,
+    newServerTs
+  );
   itemStructCopy.dashboards = helper.refreshServerTs(
     itemStructCopy.dashboards,
     newServerTs
@@ -200,6 +204,7 @@ export async function pushRepo(req: Request, res: Response) {
               itemFilesProd.deleted_files
             ),
             models: itemStructCopy.models,
+            views: itemStructCopy.views,
             dashboards: itemStructCopy.dashboards,
             mconfigs: itemStructCopy.mconfigs,
             errors: itemStructCopy.errors
@@ -247,6 +252,7 @@ export async function pushRepo(req: Request, res: Response) {
     prod_struct: {
       errors: itemStructCopy.errors.map(error => wrapper.wrapToApiError(error)),
       models: itemStructCopy.models.map(model => wrapper.wrapToApiModel(model)),
+      views: itemStructCopy.views.map(view => wrapper.wrapToApiView(view)),
       dashboards: itemStructCopy.dashboards.map(dashboard =>
         wrapper.wrapToApiDashboard(dashboard)
       ),

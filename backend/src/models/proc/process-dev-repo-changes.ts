@@ -101,6 +101,7 @@ export async function processDevRepoChanges(item: {
     newServerTs
   );
   itemStruct.models = helper.refreshServerTs(itemStruct.models, newServerTs);
+  itemStruct.views = helper.refreshServerTs(itemStruct.views, newServerTs);
   itemStruct.dashboards = helper.refreshServerTs(
     itemStruct.dashboards,
     newServerTs
@@ -129,6 +130,7 @@ export async function processDevRepoChanges(item: {
               filesItem.deleted_files
             ),
             models: itemStruct.models,
+            views: itemStruct.views,
             dashboards: itemStruct.dashboards,
             mconfigs: itemStruct.mconfigs,
             errors: itemStruct.errors,
@@ -170,6 +172,7 @@ export async function processDevRepoChanges(item: {
     new_dev_files: filesItem.new_files,
     errors: itemStruct.errors,
     models: itemStruct.models,
+    views: itemStruct.views,
     dashboards: itemStruct.dashboards,
     dev_repo: repo
   };

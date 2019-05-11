@@ -11,6 +11,7 @@ export async function copyStructFromDatabase(item: {
   to_repo_id: string;
 }): Promise<interfaces.ItemStructCopy> {
   let storeModels = store.getModelsRepo();
+  let storeViews = store.getViewsRepo();
   let storeErrors = store.getErrorsRepo();
   let storeMconfigs = store.getMconfigsRepo();
   let storeDashboards = store.getDashboardsRepo();
@@ -21,6 +22,13 @@ export async function copyStructFromDatabase(item: {
       repo_id: item.from_repo_id
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_FIND));
+
+  let viewsFrom = <entities.ViewEntity[]>await storeViews
+    .find({
+      project_id: item.project_id,
+      repo_id: item.from_repo_id
+    })
+    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_FIND));
 
   let errorsFrom = <entities.ErrorEntity[]>await storeErrors
     .find({
@@ -45,6 +53,12 @@ export async function copyStructFromDatabase(item: {
 
   let models: entities.ModelEntity[] = modelsFrom.map(model =>
     Object.assign({}, model, {
+      repo_id: item.to_repo_id
+    })
+  );
+
+  let views: entities.ViewEntity[] = viewsFrom.map(view =>
+    Object.assign({}, view, {
       repo_id: item.to_repo_id
     })
   );
@@ -85,6 +99,7 @@ export async function copyStructFromDatabase(item: {
 
   return {
     models: models,
+    views: views,
     dashboards: dashboards,
     mconfigs: mconfigs,
     errors: errors
