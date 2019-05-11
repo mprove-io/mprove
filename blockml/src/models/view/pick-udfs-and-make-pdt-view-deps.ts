@@ -104,6 +104,24 @@ export function pickUdfsAndMakePdtViewDeps(item: { views: interfaces.View[] }) {
 
     x.pdt_view_deps = permanentDeps;
     x.pdt_view_deps_all = permanentDepsAll;
+
+    let viewDeps: string[] = [];
+
+    Object.keys(x.as_deps).forEach(as => {
+      viewDeps.push(x.as_deps[as].view_name);
+    });
+
+    x.view_deps = viewDeps;
+
+    if (
+      typeof x.derived_table !== 'undefined' &&
+      x.derived_table !== null &&
+      x.permanent.match(ApRegex.TRUE())
+    ) {
+      x.is_pdt = true;
+    } else {
+      x.is_pdt = false;
+    }
   });
 
   return item.views;

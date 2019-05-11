@@ -5,6 +5,7 @@ import { wrapErrors } from './wrap-errors';
 import { wrapModels } from './wrap-models';
 import { wrapDashboards } from './wrap-dashboards';
 import { wrapPdts } from './wrap-pdts';
+import { wrapViews } from './wrap-views';
 
 export async function wrapStruct(item: {
   files: api.File[];
@@ -36,6 +37,13 @@ export async function wrapStruct(item: {
     models: struct.models
   });
 
+  let wrappedViews = wrapViews({
+    projectId: item.projectId,
+    repoId: item.repoId,
+    structId: item.structId,
+    views: struct.views
+  });
+
   let wd = wrapDashboards({
     projectId: item.projectId,
     repoId: item.repoId,
@@ -54,6 +62,7 @@ export async function wrapStruct(item: {
   let wrappedStruct: api.StructFull = {
     errors: wrappedErrors,
     models: wrappedModels,
+    views: wrappedViews,
     dashboards: wd.wrappedDashboards,
     mconfigs: wd.wrappedMconfigs,
     queries: wrappedQueries

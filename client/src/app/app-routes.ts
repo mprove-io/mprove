@@ -103,6 +103,14 @@ export const APP_ROUTES: Routes = [
                 }
               },
               {
+                path: constants.PATH_PDTS_GRAPH,
+                component: components.PdtsGraphComponent,
+                canDeactivate: [guards.ComponentDeactivateGuard],
+                resolve: {
+                  fileSelectedResolver: resolvers.PDTResolver
+                }
+              },
+              {
                 path: constants.PATH_BLOCKML,
                 component: components.BlockMLComponent,
                 children: [

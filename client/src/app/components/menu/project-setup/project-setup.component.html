@@ -45,7 +45,20 @@
               'pdts'
             ]"
           >
-            <mat-icon svgIcon="pdts" class="pdts-icon"></mat-icon>PDTs
+            <mat-icon svgIcon="pdts" class="pdts-icon"></mat-icon>PDTs List
+          </button>
+
+          <button
+            mat-menu-item
+            [routerLink]="[
+              '/project',
+              layoutProjectId$ | async,
+              'mode',
+              mode$ | async,
+              'pdts-graph'
+            ]"
+          >
+            <mat-icon svgIcon="pdts" class="pdts-icon"></mat-icon>PDTs Graph
           </button>
 
           <!--
@@ -95,7 +108,20 @@
           'pdts'
         ]"
       >
-        <mat-icon svgIcon="pdts" class="pdts-icon"></mat-icon>PDTs
+        <mat-icon svgIcon="pdts" class="pdts-icon"></mat-icon>PDTs List
+      </button>
+
+      <button
+        mat-menu-item
+        [routerLink]="[
+          '/project',
+          layoutProjectId$ | async,
+          'mode',
+          mode$ | async,
+          'pdts-graph'
+        ]"
+      >
+        <mat-icon svgIcon="pdts" class="pdts-icon"></mat-icon>PDTs Graph
       </button>
 
       <!--

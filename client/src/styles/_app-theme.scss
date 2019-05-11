@@ -31,6 +31,7 @@
 
 @import '../app/components/project/_project-page/_project-theme';
 @import '../app/components/project/pdts/_pdts-theme';
+@import '../app/components/project/pdts-graph/_pdts-graph-theme';
 @import '../app/components/model/sql/_sql-theme';
 @import '../app/components/project/repo/_repo-theme';
 @import '../app/components/project/settings/_setting-theme';
@@ -71,6 +72,7 @@
   @include theme-picker-theme($theme);
   @include query-theme($theme);
   @include pdts-theme($theme);
+  @include pdts-graph-theme($theme);
   @include sql-theme($theme);
   @include model-filters-theme($theme);
   @include dashboard-filters-theme($theme);

@@ -1,5 +1,6 @@
 export * from './_project-page/project.component';
 export * from './pdts/pdts.component';
+export * from './pdts-graph/pdts-graph.component';
 export * from './remote/remote.component';
 export * from './repo/repo.component';
 export * from './settings/settings.component';

@@ -12,6 +12,7 @@ import { MyCovalentModule } from '@app/modules/my-covalent.module';
 import { MyMaterialModule } from '@app/modules/my-material.module';
 import { SharedModule } from '@app/modules/shared.module';
 import { ValidationMsgModule } from '@app/modules/validation-msg.module';
+import { NgxGraphModule } from '@swimlane/ngx-graph';
 
 @NgModule({
   imports: [
@@ -26,7 +27,8 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
     ModelModule,
     DashboardModule,
     ValidationMsgModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NgxGraphModule
   ],
   declarations: [
     components.RemoteComponent,
@@ -37,7 +39,8 @@ import { ValidationMsgModule } from '@app/modules/validation-msg.module';
     components.RepoComponent,
     components.SettingsComponent,
     components.TeamComponent,
-    components.PdtsComponent
+    components.PdtsComponent,
+    components.PdtsGraphComponent
   ],
   entryComponents: [],
   exports: [components.ProjectComponent]

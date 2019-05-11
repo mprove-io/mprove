@@ -27,3 +27,4 @@ export * from './sw-error';
 export * from './timezone';
 export * from './timezone-group';
 export * from './user';
+export * from './view';

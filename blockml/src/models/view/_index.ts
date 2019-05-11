@@ -9,7 +9,7 @@ export * from './check-view-filters-from-field';
 export * from './check-view-udfs';
 export * from './get-as-deps';
 export * from './make-pdts';
-export * from './make-view-deps';
+export * from './make-view-as-deps';
 export * from './make-view-part';
 export * from './pick-udfs-and-make-pdt-view-deps';
 export * from './process-view-refs';

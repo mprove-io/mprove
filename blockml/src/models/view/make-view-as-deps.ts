@@ -3,7 +3,7 @@ import { ApRegex } from '../../barrels/am-regex';
 import { ErrorsCollector } from '../../barrels/errors-collector';
 import { interfaces } from '../../barrels/interfaces';
 
-export function makeViewDeps(item: { views: interfaces.View[] }) {
+export function makeViewAsDeps(item: { views: interfaces.View[] }) {
   let newViews: interfaces.View[] = [];
 
   item.views.forEach(x => {

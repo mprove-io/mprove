@@ -58,14 +58,14 @@ export class PdtsComponent {
     private myDialogService: services.MyDialogService,
     public pageTitle: services.PageTitleService
   ) {
-    this.pageTitle.setProjectSubtitle('Pdts');
+    this.pageTitle.setProjectSubtitle('PDTs List');
   }
 
   canDeactivate(): boolean {
     // used in component-deactivate-guard
     this.printer.log(
       enums.busEnum.CAN_DEACTIVATE_CHECK,
-      'from DashboardComponent:',
+      'from PdtsComponent:',
       event
     );
     return true;

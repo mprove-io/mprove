@@ -73,4 +73,7 @@ export interface View extends TopBasic {
   pdt_view_deps_all: {
     [view: string]: number;
   };
+
+  view_deps: string[];
+  is_pdt: boolean;
 }

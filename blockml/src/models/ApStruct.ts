@@ -146,7 +146,7 @@ export class ApStruct {
       udfs_user: udfs
     });
 
-    views = barView.makeViewDeps({ views: views });
+    views = barView.makeViewAsDeps({ views: views });
     views = barView.checkViewCycles({ views: views });
     views = barView.checkViewDeps({ views: views });
     views = barView.pickUdfsAndMakePdtViewDeps({ views: views });
