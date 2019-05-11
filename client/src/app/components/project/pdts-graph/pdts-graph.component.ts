@@ -8,7 +8,6 @@ import * as enums from '@app/enums/_index';
 import * as interfaces from '@app/interfaces/_index';
 import * as selectors from '@app/store-selectors/_index';
 import * as services from '@app/services/_index';
-import { Subject } from 'rxjs';
 
 @Component({
   moduleId: module.id,
@@ -22,29 +21,25 @@ export class PdtsGraphComponent {
   links = [];
   linksOriginalStr = JSON.stringify([]);
 
-  // update$: Subject<boolean> = new Subject();
-
-  pdtsExtra: interfaces.QueryExtra[];
-  pdtsExtra$ = this.store
-    .select(selectors.getSelectedProjectModeRepoStructPdtsExtraOrdered)
+  views: api.View[];
+  views$ = this.store
+    .select(selectors.getSelectedProjectModeRepoStructViewsSorted)
     .pipe(
       filter(v => !!v),
-      tap(pdtsExtra => {
+      tap(views => {
         let nodes = [];
         let links = [];
 
-        pdtsExtra.forEach(pdt => {
+        views.forEach(view => {
           nodes.push({
-            id: pdt.pdt_id,
-            label: this.removePrefix(pdt.pdt_id)
+            id: view.view_id,
+            label: view.view_id
           });
 
-          pdt.pdt_deps.forEach(x => {
+          view.view_deps.forEach(x => {
             links.push({
-              // id: x + '_' + pdt.pdt_id,
               source: x,
-              target: pdt.pdt_id
-              // label: 'is dependency of'
+              target: view.view_id
             });
           });
         });
@@ -53,25 +48,20 @@ export class PdtsGraphComponent {
           this.nodesOriginalStr !== JSON.stringify(nodes) ||
           this.linksOriginalStr !== JSON.stringify(links)
         ) {
-          if (this.nodesOriginalStr !== JSON.stringify(nodes)) {
-            console.log('this.nodesOriginalStr:', this.nodesOriginalStr);
-            console.log('JSON.stringify(nodes):', JSON.stringify(nodes));
-          }
-          if (this.linksOriginalStr !== JSON.stringify(links)) {
-            console.log('this.linksOriginalStr:', this.linksOriginalStr);
-            console.log('JSON.stringify(links):', JSON.stringify(links));
-          }
-
           this.nodes = nodes;
           this.links = links;
 
           this.nodesOriginalStr = JSON.stringify(nodes);
           this.linksOriginalStr = JSON.stringify(links);
 
-          // this.nodes.splice(0, this.nodes.length, ...nodes);
-          // this.links.splice(0, this.links.length, ...links);
-
-          // this.update$.next(true);
+          // if (this.nodesOriginalStr !== JSON.stringify(nodes)) {
+          //   console.log('this.nodesOriginalStr:', this.nodesOriginalStr);
+          //   console.log('JSON.stringify(nodes):', JSON.stringify(nodes));
+          // }
+          // if (this.linksOriginalStr !== JSON.stringify(links)) {
+          //   console.log('this.linksOriginalStr:', this.linksOriginalStr);
+          //   console.log('JSON.stringify(links):', JSON.stringify(links));
+          // }
         }
       })
     );
@@ -96,13 +86,13 @@ export class PdtsGraphComponent {
     // used in component-deactivate-guard
     this.printer.log(
       enums.busEnum.CAN_DEACTIVATE_CHECK,
-      'from PdtsGraphComponent:',
+      'from ViewsGraphComponent:',
       event
     );
     return true;
   }
 
-  removePrefix(text) {
-    return text.substring(text.indexOf('_') + 1);
-  }
+  // removePrefix(text) {
+  //   return text.substring(text.indexOf('_') + 1);
+  // }
 }

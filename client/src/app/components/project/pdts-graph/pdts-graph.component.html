@@ -1,5 +1,5 @@
 <mat-toolbar class="space__sub-toolbar space_border_bottom fixed-toolbar">
-  {{ selectedProjectId$ | async }} {{ (isDev$ | async) ? 'Dev' : 'Prod' }} PDTs
+  {{ selectedProjectId$ | async }} {{ (isDev$ | async) ? 'Dev' : 'Prod' }} Views
   Graph
 </mat-toolbar>
 
@@ -74,4 +74,4 @@
   </ngx-graph>
 </div>
 
-<div *ngIf="(pdtsExtra$ | async)"></div>
+<div *ngIf="(views$ | async)"></div>

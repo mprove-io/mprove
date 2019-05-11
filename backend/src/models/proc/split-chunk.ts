@@ -30,6 +30,7 @@ export async function splitChunk(item: {
     ...content.mconfigs,
     ...content.members,
     ...content.models,
+    ...content.views,
     ...content.projects,
     ...content.queries,
     ...content.projects,
@@ -77,6 +78,7 @@ export async function splitChunk(item: {
       files: [],
       queries: [],
       models: [],
+      views: [],
       mconfigs: [],
       dashboards: [],
       errors: [],
@@ -229,6 +231,33 @@ export async function splitChunk(item: {
       }
     }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
 
+    // views
+
+    await forEach(content.views, async view => {
+      if (isDifferentSession) {
+        if (view.repo_id === constants.PROD_REPO_ID) {
+          let projectMemberIds = projectIdToMembersMap[view.project_id].map(
+            x => x.member_id
+          );
+
+          if (
+            projectMemberIds &&
+            projectMemberIds.indexOf(wsClient.user_id) > -1
+          ) {
+            // view of prod repo && user is member
+            let wrappedView = wrapper.wrapToApiView(view);
+            payload.views.push(wrappedView);
+          }
+        } else if (view.repo_id === wsClient.user_id) {
+          // view of user dev repo
+          let wrappedView = wrapper.wrapToApiView(view);
+          payload.views.push(wrappedView);
+        } else {
+          // view of other user dev repo - ok
+        }
+      }
+    }).catch(e => helper.reThrow(e, enums.otherErrorsEnum.FOR_EACH));
+
     // dashboards
 
     await forEach(content.dashboards, async dashboard => {
@@ -337,6 +366,7 @@ export async function splitChunk(item: {
       payload.files.length > 0 ||
       payload.queries.length > 0 ||
       payload.models.length > 0 ||
+      payload.views.length > 0 ||
       payload.mconfigs.length > 0 ||
       payload.dashboards.length > 0 ||
       payload.errors.length > 0 ||

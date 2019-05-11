@@ -6,6 +6,7 @@ export * from './combined-actions/live-queries.actions';
 export * from './combined-actions/mconfigs-actions';
 export * from './combined-actions/members-actions';
 export * from './combined-actions/models-actions';
+export * from './combined-actions/views-actions';
 export * from './combined-actions/projects-actions';
 export * from './combined-actions/queries-actions';
 export * from './combined-actions/repos-actions';

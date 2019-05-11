@@ -14,6 +14,7 @@ export async function processDeletedProjects(projectIds: string[]) {
   let storeFiles = store.getFilesRepo();
   let storeErrors = store.getErrorsRepo();
   let storeModels = store.getModelsRepo();
+  let storeViews = store.getViewsRepo();
   let storeMconfigs = store.getMconfigsRepo();
   let storeDashboards = store.getDashboardsRepo();
   let storeProjects = store.getProjectsRepo();
@@ -61,6 +62,12 @@ export async function processDeletedProjects(projectIds: string[]) {
       project_id: In([projectIds])
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_DELETE));
+
+  await storeViews
+    .delete({
+      project_id: In([projectIds])
+    })
+    .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_DELETE));
 
   await storeProjects
     .delete({

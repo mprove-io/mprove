@@ -7,6 +7,7 @@ export interface ChunkContentParsed {
   files: entities.FileEntity[];
   queries: entities.QueryEntity[];
   models: entities.ModelEntity[];
+  views: entities.ViewEntity[];
   mconfigs: entities.MconfigEntity[];
   dashboards: entities.DashboardEntity[];
   errors: entities.ErrorEntity[];

@@ -86,6 +86,7 @@ export class UpdateReposStateEffect {
         this.store.dispatch(new actions.CleanQueriesStateAction(clean));
         this.store.dispatch(new actions.CleanMconfigsStateAction(clean));
         this.store.dispatch(new actions.CleanModelsStateAction(clean));
+        this.store.dispatch(new actions.CleanViewsStateAction(clean));
         this.store.dispatch(new actions.CleanDashboardsStateAction(clean));
         this.store.dispatch(new actions.CleanErrorsStateAction(clean));
       });

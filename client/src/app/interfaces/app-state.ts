@@ -19,6 +19,7 @@ export interface AppState {
   mconfigs: api.Mconfig[];
   members: api.Member[];
   models: api.Model[];
+  views: api.View[];
   projects: api.Project[];
   queries: api.Query[];
   repos: api.Repo[];

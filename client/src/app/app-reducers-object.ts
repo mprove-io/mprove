@@ -24,6 +24,7 @@ export const APP_REDUCERS_OBJECT: ActionReducerMap<interfaces.AppState> = {
   mconfigs: reducers.mconfigsReducer,
   members: reducers.membersReducer,
   models: reducers.modelsReducer,
+  views: reducers.viewsReducer,
   projects: reducers.projectsReducer,
   queries: reducers.queriesReducer,
   repos: reducers.reposReducer,

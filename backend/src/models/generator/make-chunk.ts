@@ -10,6 +10,7 @@ export function makeChunk(item: {
     files?: entities.FileEntity[];
     queries?: entities.QueryEntity[];
     models?: entities.ModelEntity[];
+    views?: entities.ViewEntity[];
     mconfigs?: entities.MconfigEntity[];
     dashboards?: entities.DashboardEntity[];
     errors?: entities.ErrorEntity[];
@@ -27,6 +28,7 @@ export function makeChunk(item: {
     files: records.files ? records.files : [],
     queries: records.queries ? records.queries : [],
     models: records.models ? records.models : [],
+    views: records.views ? records.views : [],
     mconfigs: records.mconfigs ? records.mconfigs : [],
     dashboards: records.dashboards ? records.dashboards : [],
     errors: records.errors ? records.errors : [],

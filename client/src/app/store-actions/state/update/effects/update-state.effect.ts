@@ -49,6 +49,12 @@ export class UpdateStateEffect {
         );
       }
 
+      if (action.payload.views.length > 0) {
+        nextActions.push(
+          new actions.UpdateViewsStateAction(action.payload.views)
+        );
+      }
+
       if (action.payload.queries.length > 0) {
         nextActions.push(
           new actions.UpdateQueriesStateAction(action.payload.queries)

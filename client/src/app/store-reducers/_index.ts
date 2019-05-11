@@ -6,6 +6,7 @@ export * from './lq.reducer';
 export * from './mconfigs.reducer';
 export * from './members.reducer';
 export * from './models.reducer';
+export * from './views.reducer';
 export * from './projects.reducer';
 export * from './queries.reducer';
 export * from './repos.reducer';

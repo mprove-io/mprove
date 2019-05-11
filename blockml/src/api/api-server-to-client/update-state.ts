@@ -9,6 +9,7 @@ export interface UpdateStateRequestBody {
     mconfigs: apiObjects.Mconfig[];
     members: apiObjects.Member[];
     models: apiObjects.Model[];
+    views: apiObjects.View[];
     projects: apiObjects.Project[];
     queries: apiObjects.Query[];
     repos: apiObjects.Repo[];

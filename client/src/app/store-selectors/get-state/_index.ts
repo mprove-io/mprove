@@ -6,6 +6,7 @@ export * from './get-lq-state';
 export * from './get-mconfigs-state';
 export * from './get-members-state';
 export * from './get-models-state';
+export * from './get-views-state';
 export * from './get-projects-state';
 export * from './get-queries-state';
 export * from './get-repos-state';

@@ -5,12 +5,14 @@ export function processStructsHelper(structs: api.Struct[]) {
   let repos: api.Repo[] = [];
   let errors: api.SwError[] = [];
   let models: api.Model[] = [];
+  let views: api.View[] = [];
   let dashboards: api.Dashboard[] = [];
 
   structs.forEach(struct => {
     repos = repos.concat([struct.repo]);
     errors = errors.concat(struct.errors);
     models = models.concat(struct.models);
+    views = views.concat(struct.views);
     dashboards = dashboards.concat(struct.dashboards);
   });
 
@@ -18,6 +20,7 @@ export function processStructsHelper(structs: api.Struct[]) {
     new actions.UpdateReposStateAction(repos), // 2
     new actions.UpdateErrorsStateAction(errors), // 3
     new actions.UpdateModelsStateAction(models), // 3
+    new actions.UpdateViewsStateAction(views), // 3
     new actions.UpdateDashboardsStateAction(dashboards) // 5
   ];
 }

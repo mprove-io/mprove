@@ -23,6 +23,7 @@ export class ResetStateEffect {
         new actions.ResetFilesStateAction(),
         new actions.ResetErrorsStateAction(),
         new actions.ResetModelsStateAction(),
+        new actions.ResetViewsStateAction(),
         new actions.ResetQueriesStateAction(),
 
         new actions.ResetMembersStateAction(),
