@@ -38,6 +38,7 @@ export async function cypressSeed(req: Request, res: Response) {
   let errors: entities.ErrorEntity[] = [];
   let mconfigs: entities.MconfigEntity[] = [];
   let models: entities.ModelEntity[] = [];
+  let views: entities.ViewEntity[] = [];
   let queries: entities.QueryEntity[] = [];
 
   if (payload.users) {
@@ -191,6 +192,7 @@ export async function cypressSeed(req: Request, res: Response) {
         errors: prodErrors,
         mconfigs: prodMconfigs,
         models: prodModels,
+        views: prodViews,
         queries: prodQueries
       } = itemStruct;
 
@@ -204,6 +206,7 @@ export async function cypressSeed(req: Request, res: Response) {
       errors = helper.makeNewArray(errors, prodErrors);
       mconfigs = helper.makeNewArray(mconfigs, prodMconfigs);
       models = helper.makeNewArray(models, prodModels);
+      views = helper.makeNewArray(views, prodViews);
       queries = helper.makeNewArray(queries, prodQueries);
 
       // dev repos
@@ -251,6 +254,7 @@ export async function cypressSeed(req: Request, res: Response) {
 
         let structCopyItem = copier.copyStructFromElements(repoId, {
           models: prodModels,
+          views: prodViews,
           dashboards: prodDashboards,
           mconfigs: prodMconfigs,
           errors: prodErrors
@@ -259,6 +263,7 @@ export async function cypressSeed(req: Request, res: Response) {
         let {
           dashboards: repoDashboards,
           models: repoModels,
+          views: repoViews,
           errors: repoErrors,
           mconfigs: repoMconfigs
         } = structCopyItem;
@@ -267,6 +272,7 @@ export async function cypressSeed(req: Request, res: Response) {
         errors = helper.makeNewArray(errors, repoErrors);
         mconfigs = helper.makeNewArray(mconfigs, repoMconfigs);
         models = helper.makeNewArray(models, repoModels);
+        views = helper.makeNewArray(views, repoViews);
       });
     });
   }
@@ -281,6 +287,7 @@ export async function cypressSeed(req: Request, res: Response) {
   files = helper.refreshServerTs(files, newServerTs);
   queries = helper.refreshServerTs(queries, newServerTs);
   models = helper.refreshServerTs(models, newServerTs);
+  views = helper.refreshServerTs(views, newServerTs);
   mconfigs = helper.refreshServerTs(mconfigs, newServerTs);
   dashboards = helper.refreshServerTs(dashboards, newServerTs);
   errors = helper.refreshServerTs(errors, newServerTs);
@@ -302,6 +309,7 @@ export async function cypressSeed(req: Request, res: Response) {
             files: files,
             queries: queries,
             models: models,
+            views: views,
             mconfigs: mconfigs,
             dashboards: dashboards,
             errors: errors,

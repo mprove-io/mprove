@@ -132,6 +132,7 @@ export async function deleteFile(req: Request, res: Response) {
   repo.server_ts = newServerTs;
   file.server_ts = newServerTs;
   itemStruct.models = helper.refreshServerTs(itemStruct.models, newServerTs);
+  itemStruct.views = helper.refreshServerTs(itemStruct.views, newServerTs);
   itemStruct.dashboards = helper.refreshServerTs(
     itemStruct.dashboards,
     newServerTs
@@ -155,6 +156,7 @@ export async function deleteFile(req: Request, res: Response) {
             repos: [repo],
             files: [file],
             models: itemStruct.models,
+            views: itemStruct.views,
             dashboards: itemStruct.dashboards,
             mconfigs: itemStruct.mconfigs,
             errors: itemStruct.errors,
@@ -187,6 +189,7 @@ export async function deleteFile(req: Request, res: Response) {
     dev_struct: {
       errors: itemStruct.errors.map(error => wrapper.wrapToApiError(error)),
       models: itemStruct.models.map(model => wrapper.wrapToApiModel(model)),
+      views: itemStruct.views.map(view => wrapper.wrapToApiView(view)),
       dashboards: itemStruct.dashboards.map(dashboard =>
         wrapper.wrapToApiDashboard(dashboard)
       ),

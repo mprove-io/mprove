@@ -10,6 +10,7 @@ export const ERROR_ID_DATATYPE = 'varchar';
 export const MCONFIG_ID_DATATYPE = 'varchar';
 export const MEMBER_ID_DATATYPE = 'varchar'; // email
 export const MODEL_ID_DATATYPE = 'varchar'; // name
+export const VIEW_ID_DATATYPE = 'varchar'; // name
 export const PDT_ID_DATATYPE = 'varchar';
 export const PROJECT_ID_DATATYPE = 'varchar'; // name
 export const QUERY_ID_DATATYPE = 'varchar';
@@ -70,6 +71,10 @@ export const MEMBER_FIRST_NAME_DATATYPE = 'varchar';
 export const MEMBER_LAST_NAME_DATATYPE = 'varchar';
 export const MEMBER_PICTURE_URL_SMALL_DATATYPE = 'varchar';
 export const MEMBER_PICTURE_URL_BIG_DATATYPE = 'varchar';
+
+// VIEW
+
+export const VIEW_DEPS_DATATYPE = 'text';
 
 // MODEL
 

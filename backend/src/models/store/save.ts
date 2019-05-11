@@ -14,6 +14,7 @@ import { getMconfigsRepo } from './get-mconfigs-repo';
 import { getDashboardsRepo } from './get-dashboards-repo';
 import { getErrorsRepo } from './get-errors-repo';
 import { getMembersRepo } from './get-members-repo';
+import { getViewsRepo } from './get-views-repo';
 
 export async function save(item: {
   manager: EntityManager;
@@ -27,6 +28,7 @@ export async function save(item: {
     files?: entities.FileEntity[];
     queries?: entities.QueryEntity[];
     models?: entities.ModelEntity[];
+    views?: entities.ViewEntity[];
     mconfigs?: entities.MconfigEntity[];
     dashboards?: entities.DashboardEntity[];
     errors?: entities.ErrorEntity[];
@@ -60,6 +62,7 @@ export async function save(item: {
   let files = records.files;
   let queries = records.queries;
   let models = records.models;
+  let views = records.views;
   let mconfigs = records.mconfigs;
   let dashboards = records.dashboards;
   let errors = records.errors;
@@ -111,6 +114,14 @@ export async function save(item: {
     await storeModels
       .save(models)
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_SAVE));
+  }
+
+  if (views && views.length > 0) {
+    let storeViews = getViewsRepo(manager);
+
+    await storeViews
+      .save(views)
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_SAVE));
   }
 
   if (mconfigs && mconfigs.length > 0) {

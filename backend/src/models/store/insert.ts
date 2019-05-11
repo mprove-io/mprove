@@ -14,6 +14,7 @@ import { getMconfigsRepo } from './get-mconfigs-repo';
 import { getDashboardsRepo } from './get-dashboards-repo';
 import { getErrorsRepo } from './get-errors-repo';
 import { getMembersRepo } from './get-members-repo';
+import { getViewsRepo } from './get-views-repo';
 
 export async function insert(item: {
   manager: EntityManager;
@@ -27,6 +28,7 @@ export async function insert(item: {
     files?: entities.FileEntity[];
     queries?: entities.QueryEntity[];
     models?: entities.ModelEntity[];
+    views?: entities.ViewEntity[];
     mconfigs?: entities.MconfigEntity[];
     dashboards?: entities.DashboardEntity[];
     errors?: entities.ErrorEntity[];
@@ -60,6 +62,7 @@ export async function insert(item: {
   let files = records.files;
   let queries = records.queries;
   let models = records.models;
+  let views = records.views;
   let mconfigs = records.mconfigs;
   let dashboards = records.dashboards;
   let errors = records.errors;
@@ -115,6 +118,14 @@ export async function insert(item: {
     await storeModels
       .insert(models)
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_INSERT));
+  }
+
+  if (views && views.length > 0) {
+    let storeViews = getViewsRepo(manager);
+
+    await storeViews
+      .insert(views)
+      .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_INSERT));
   }
 
   if (mconfigs && mconfigs.length > 0) {

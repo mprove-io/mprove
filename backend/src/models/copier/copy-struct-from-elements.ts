@@ -7,6 +7,7 @@ export function copyStructFromElements(
   repoId: string,
   item: {
     models: entities.ModelEntity[];
+    views: entities.ViewEntity[];
     dashboards: entities.DashboardEntity[];
     mconfigs: entities.MconfigEntity[];
     errors: entities.ErrorEntity[];
@@ -14,6 +15,12 @@ export function copyStructFromElements(
 ) {
   let models: entities.ModelEntity[] = item.models.map(model =>
     Object.assign({}, model, {
+      repo_id: repoId
+    })
+  );
+
+  let views: entities.ViewEntity[] = item.views.map(view =>
+    Object.assign({}, view, {
       repo_id: repoId
     })
   );
@@ -54,6 +61,7 @@ export function copyStructFromElements(
 
   return {
     models: models,
+    views: views,
     dashboards: dashboards,
     mconfigs: mconfigs,
     errors: errors

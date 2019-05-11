@@ -7,6 +7,7 @@ export * from './mconfig.repository';
 export * from './member.repository';
 export * from './message.repository';
 export * from './model.repository';
+export * from './view.repository';
 export * from './project.repository';
 export * from './query.repository';
 export * from './repo.repository';

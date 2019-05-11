@@ -7,6 +7,7 @@ export * from './mconfig.entity';
 export * from './member.entity';
 export * from './message.entity';
 export * from './model.entity';
+export * from './view.entity';
 export * from './project.entity';
 export * from './query.entity';
 export * from './repo.entity';

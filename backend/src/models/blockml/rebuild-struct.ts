@@ -57,41 +57,36 @@ export async function rebuildStruct(item: {
   let payload: api.RebuildStructResponse200Body['payload'] =
     response.data.payload;
 
-  let models = payload.struct.models.map(modelApi => {
-    let model = wrapper.wrapToEntityModel(modelApi);
+  let models = payload.struct.models.map(modelApi =>
+    wrapper.wrapToEntityModel(modelApi)
+  );
 
-    return model;
-  });
+  let dashboards = payload.struct.dashboards.map(dashboardApi =>
+    wrapper.wrapToEntityDashboard(dashboardApi)
+  );
 
-  let dashboards = payload.struct.dashboards.map(dashboardApi => {
-    let dashboard = wrapper.wrapToEntityDashboard(dashboardApi);
+  let mconfigs = payload.struct.mconfigs.map(mconfigApi =>
+    wrapper.wrapToEntityMconfig(mconfigApi)
+  );
 
-    return dashboard;
-  });
+  let errors = payload.struct.errors.map(errorApi =>
+    wrapper.wrapToEntityError(errorApi)
+  );
 
-  let mconfigs = payload.struct.mconfigs.map(mconfigApi => {
-    let mconfig = wrapper.wrapToEntityMconfig(mconfigApi);
+  let queries = payload.struct.queries.map(queryApi =>
+    wrapper.wrapToEntityQuery(queryApi)
+  );
 
-    return mconfig;
-  });
-
-  let errors = payload.struct.errors.map(errorApi => {
-    let error = wrapper.wrapToEntityError(errorApi);
-
-    return error;
-  });
-
-  let queries = payload.struct.queries.map(queryApi => {
-    let query = wrapper.wrapToEntityQuery(queryApi);
-
-    return query;
-  });
+  let views = payload.struct.views.map(viewApi =>
+    wrapper.wrapToEntityView(viewApi)
+  );
 
   let udfsContent = payload.udfs_content;
   let pdtsSorted = JSON.stringify(payload.pdts_sorted);
 
   return {
     models: models,
+    views: views,
     dashboards: dashboards,
     mconfigs: mconfigs,
     errors: errors,
