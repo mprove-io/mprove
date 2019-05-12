@@ -9,9 +9,6 @@ Mprove - SQL analytics and dashboards. Inspired by :heart: [Looker](https://look
 Supported databases:
 * Google BigQuery
 
-## Suggest a Feature
-[Roadmap](https://mprove.canny.io/)
-
 ## Deploy on server with https
 
 Docker and Docker compose must be installed. DigitalOcean docker droplet fits well.
