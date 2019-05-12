@@ -34,11 +34,11 @@
     -->
 
     <ng-template #nodeTemplate let-node>
-      <svg:g class="node">
+      <svg:g class="node" (click)="navigateFile(node)">
         <svg:rect
           [attr.width]="node.dimension.width"
           [attr.height]="node.dimension.height"
-          [attr.fill]="node.data.color"
+          [attr.fill]="node.color || node.data.color"
         />
         <svg:text
           alignment-baseline="central"

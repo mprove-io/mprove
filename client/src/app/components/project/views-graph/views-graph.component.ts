@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { filter, tap } from 'rxjs/operators';
+import { filter, tap, take } from 'rxjs/operators';
 import * as actions from '@app/store-actions/actions';
 import * as api from '@app/api/_index';
 import * as configs from '@app/configs/_index';
@@ -33,7 +33,8 @@ export class ViewsGraphComponent {
         views.forEach(view => {
           nodes.push({
             id: view.view_id,
-            label: view.view_id
+            label: view.view_id,
+            color: view.is_pdt ? 'rgb(122, 163, 229)' : 'rgb(165, 215, 198)'
           });
 
           view.view_deps.forEach(x => {
@@ -77,7 +78,8 @@ export class ViewsGraphComponent {
     private store: Store<interfaces.AppState>,
     @Inject(configs.APP_CONFIG) public appConfig: interfaces.AppConfig,
     private myDialogService: services.MyDialogService,
-    public pageTitle: services.PageTitleService
+    public pageTitle: services.PageTitleService,
+    private navigateService: services.NavigateService
   ) {
     this.pageTitle.setProjectSubtitle('Views Graph');
   }
@@ -95,4 +97,18 @@ export class ViewsGraphComponent {
   // removePrefix(text) {
   //   return text.substring(text.indexOf('_') + 1);
   // }
+
+  navigateFile(node: any): void {
+    let files: api.CatalogFile[] = [];
+    this.store
+      .select(selectors.getSelectedProjectModeRepoFiles)
+      .pipe(take(1))
+      .subscribe(x => (files = x));
+
+    let viewFileName = node.id + '.view';
+
+    let file = files.find(f => f.name === viewFileName);
+
+    this.navigateService.navigateToFileLine(file.file_id, 1);
+  }
 }
