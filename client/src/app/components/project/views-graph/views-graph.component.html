@@ -3,7 +3,7 @@
   Graph
 </mat-toolbar>
 
-<div class="graph">
+<div class="graph" *ngIf="nodes.length > 0">
   <ngx-graph [links]="links" [nodes]="nodes" [draggingEnabled]="false">
     <ng-template #defsTemplate>
       <svg:marker
