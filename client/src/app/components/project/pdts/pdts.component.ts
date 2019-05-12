@@ -58,7 +58,7 @@ export class PdtsComponent {
     private myDialogService: services.MyDialogService,
     public pageTitle: services.PageTitleService
   ) {
-    this.pageTitle.setProjectSubtitle('PDTs List');
+    this.pageTitle.setProjectSubtitle('PDTs');
   }
 
   canDeactivate(): boolean {

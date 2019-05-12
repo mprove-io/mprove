@@ -99,16 +99,13 @@ export const APP_ROUTES: Routes = [
                 component: components.PdtsComponent,
                 canDeactivate: [guards.ComponentDeactivateGuard],
                 resolve: {
-                  fileSelectedResolver: resolvers.PDTResolver
+                  pdtResolver: resolvers.PDTResolver
                 }
               },
               {
-                path: constants.PATH_PDTS_GRAPH,
-                component: components.PdtsGraphComponent,
-                canDeactivate: [guards.ComponentDeactivateGuard],
-                resolve: {
-                  fileSelectedResolver: resolvers.PDTResolver
-                }
+                path: constants.PATH_VIEWS_GRAPH,
+                component: components.ViewsGraphComponent,
+                canDeactivate: [guards.ComponentDeactivateGuard]
               },
               {
                 path: constants.PATH_BLOCKML,

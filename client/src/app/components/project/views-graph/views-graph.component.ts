@@ -11,11 +11,11 @@ import * as services from '@app/services/_index';
 
 @Component({
   moduleId: module.id,
-  selector: 'm-pdts-graph',
-  templateUrl: 'pdts-graph.component.html',
-  styleUrls: ['pdts-graph.component.scss']
+  selector: 'm-views-graph',
+  templateUrl: 'views-graph.component.html',
+  styleUrls: ['views-graph.component.scss']
 })
-export class PdtsGraphComponent {
+export class ViewsGraphComponent {
   nodes = [];
   nodesOriginalStr = JSON.stringify([]);
   links = [];
@@ -79,7 +79,7 @@ export class PdtsGraphComponent {
     private myDialogService: services.MyDialogService,
     public pageTitle: services.PageTitleService
   ) {
-    this.pageTitle.setProjectSubtitle('PDTs Graph');
+    this.pageTitle.setProjectSubtitle('Views Graph');
   }
 
   canDeactivate(): boolean {

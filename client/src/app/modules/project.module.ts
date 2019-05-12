@@ -40,7 +40,7 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
     components.SettingsComponent,
     components.TeamComponent,
     components.PdtsComponent,
-    components.PdtsGraphComponent
+    components.ViewsGraphComponent
   ],
   entryComponents: [],
   exports: [components.ProjectComponent]

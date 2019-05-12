@@ -44,5 +44,12 @@ export class ProjectSetupComponent {
         this.staticAssetsBaseUrl + '/assets/app/icons/pdts.svg'
       )
     );
+
+    iconRegistry.addSvgIcon(
+      'views-graph',
+      sanitizer.bypassSecurityTrustResourceUrl(
+        this.staticAssetsBaseUrl + '/assets/app/icons/views-graph.svg'
+      )
+    );
   }
 }

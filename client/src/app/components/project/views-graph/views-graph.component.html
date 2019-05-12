@@ -4,7 +4,7 @@
 </mat-toolbar>
 
 <div class="graph">
-  <ngx-graph [links]="links" [nodes]="nodes">
+  <ngx-graph [links]="links" [nodes]="nodes" [draggingEnabled]="false">
     <ng-template #defsTemplate>
       <svg:marker
         id="arrow"
