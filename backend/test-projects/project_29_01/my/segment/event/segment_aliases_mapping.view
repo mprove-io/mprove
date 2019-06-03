@@ -24,8 +24,8 @@ derived_table: |
   WHERE
     anonymous_id IS NOT NULL    
 permanent: true
-pdt_trigger_time: 'unk * * * *'
-pdt_trigger_sql: unk
+# pdt_trigger_time: 'unk * * * *'
+# pdt_trigger_sql: unk
 
 fields:
 - dimension: alias

@@ -1,4 +1,4 @@
-view: segment_events
+view: segment_events 
 derived_table: |
   SELECT
     anonymous_id,
@@ -34,8 +34,8 @@ derived_table: |
   WHERE
     ROW_NUMBER = 1  
 permanent: true
-pdt_trigger_sql: |
-  select MAX(received_at) from ${segment_events.PDT_TABLE_REF}
+# pdt_trigger_sql: |
+#   select MAX(received_at) from ${segment_events.PDT_TABLE_REF}
 
 fields:
 
@@ -59,4 +59,3 @@ fields:
 
 - dimension: event_source
   sql: event_source
-

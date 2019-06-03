@@ -6,7 +6,7 @@ fields:
   result: from_field
   from_field: segment_m1_event_facts.a.received_at_frames___date
   default:
-  - 'last 1 years complete plus current'
+  - 'last 2 years complete plus current'
 
 reports:
 - title: 'Visitors'
@@ -226,12 +226,3 @@ reports:
   tile:
     tile_width: '10'
     tile_height: '400'
-    
-     
-
-    
-
-    
-    
-  
-

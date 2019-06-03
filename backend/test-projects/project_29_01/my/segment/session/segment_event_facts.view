@@ -80,9 +80,3 @@ fields:
 - measure: count_action_b
   type: custom
   sql: COUNT(CASE WHEN ${event} = 'action B' THEN 1 ELSE NULL END)  
-  
-
-
-  
-  
-  

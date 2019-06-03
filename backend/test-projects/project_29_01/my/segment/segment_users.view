@@ -10,10 +10,7 @@ derived_table: |
       `mprove-demo.segment.users`)
   WHERE
     ROW_NUMBER = 1
-permanent: true  
-pdt_trigger_time: '* * * * *'  
-pdt_trigger_sql: SELECT 555
-
+# permanent: true
 
 fields:
   
@@ -35,4 +32,3 @@ fields:
 - measure: count_users
   type: count_distinct
   sql: ${user_id}
-

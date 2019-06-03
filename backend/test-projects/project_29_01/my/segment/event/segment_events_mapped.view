@@ -19,7 +19,7 @@ derived_table: |
     ON
       ${am.alias} = coalesce(${e.user_id}, ${e.anonymous_id}) 
     )
-permanent: true   
+permanent: true        
         
 fields:
 - dimension: received_at
@@ -44,17 +44,4 @@ fields:
   sql: referrer 
   
 - dimension: idle_time_minutes
-  sql: idle_time_minutes  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  sql: idle_time_minutes
