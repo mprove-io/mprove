@@ -1,9 +1,10 @@
-import { In, Not } from 'typeorm';
+import { In, Not, LessThan } from 'typeorm';
 import { entities } from '../../barrels/entities';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
 import { handler } from '../../barrels/handler';
+import { config } from '../../barrels/config';
 
 let cron = require('cron');
 
@@ -44,12 +45,20 @@ async function deleteQueries() {
   let structIds = repoParts.map(x => x.struct_id);
 
   if (structIds.length > 0) {
+    let currentTs = helper.makeTs();
+
+    let tsInPast = Number(currentTs) - config.QUERIES_DELETE_CUTOFF;
+
     await storeQueries
-      .delete({
-        struct_id: Not(In(structIds))
+      .createQueryBuilder()
+      .delete()
+      .where(`struct_id NOT IN (:...ids) AND server_ts < (:ts)`, {
+        ids: structIds,
+        ts: tsInPast
       })
+      .execute()
       .catch(e =>
-        helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_DELETE)
+        helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_QUERY_BUILDER)
       );
   }
 }
