@@ -6,7 +6,7 @@ default: # default connection
   password: root
   database: my_db
   charset: utf8mb4
-  logging: true
+  logging: false
   logger: file
   entities: 
   - src/models/store/entities/*.ts # CLI loads from ts files when use ts-node
