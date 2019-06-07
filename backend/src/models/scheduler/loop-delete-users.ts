@@ -23,7 +23,7 @@ export function loopDeleteUsers() {
 
       try {
         await deleteUsers().catch(e =>
-          helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_DELETE_PROJECTS)
+          helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_DELETE_USERS)
         );
       } catch (err) {
         handler.errorToLog(err);

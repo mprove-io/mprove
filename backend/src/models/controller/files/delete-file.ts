@@ -70,7 +70,7 @@ export async function deleteFile(req: Request, res: Response) {
   helper.checkServerTs(file, serverTs);
 
   let oldStructId = repo.struct_id;
-  let newStructId = helper.makeId();
+  let newStructId = helper.makeStructId();
 
   await disk
     .removePath(file.file_absolute_id)
@@ -112,7 +112,8 @@ export async function deleteFile(req: Request, res: Response) {
       project_id: projectId,
       repo_id: repoId,
       bigquery_project: project.bigquery_project,
-      week_start: <any>project.week_start,
+      week_start: project.week_start,
+      connection: project.connection,
       struct_id: newStructId
     })
     .catch(e =>

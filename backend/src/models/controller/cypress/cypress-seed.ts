@@ -12,7 +12,7 @@ import { store } from '../../../barrels/store';
 import { disk } from '../../../barrels/disk';
 import { validator } from '../../../barrels/validator';
 import { In, getConnection } from 'typeorm';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { entities } from '../../../barrels/entities';
 import * as crypto from 'crypto';
 import { proc } from '../../../barrels/proc';
@@ -42,7 +42,7 @@ export async function cypressSeed(req: Request, res: Response) {
   let queries: entities.QueryEntity[] = [];
 
   if (payload.users) {
-    await forEach(payload.users, async x => {
+    await forEachSeries(payload.users, async x => {
       let salt = x.password
         ? crypto.randomBytes(16).toString('hex')
         : undefined;
@@ -78,7 +78,7 @@ export async function cypressSeed(req: Request, res: Response) {
   }
 
   if (payload.projects) {
-    await forEach(payload.projects, async x => {
+    await forEachSeries(payload.projects, async x => {
       let projectId = x.project_id;
 
       let projectDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}`;
@@ -117,7 +117,7 @@ export async function cypressSeed(req: Request, res: Response) {
         let credentialsParsed = JSON.parse(credentialsString);
 
         await proc
-          .createDataset({
+          .createDatasetBigquery({
             bigquery_project: credentialsParsed.project_id,
             project_id: projectId,
             credentials_file_path: fileAbsoluteId
@@ -127,6 +127,7 @@ export async function cypressSeed(req: Request, res: Response) {
           );
 
         project.has_credentials = enums.bEnum.TRUE;
+        project.connection = api.ProjectConnectionEnum.BigQuery;
         project.bigquery_credentials = credentialsString;
         project.bigquery_credentials_file_path = fileAbsoluteId;
         project.bigquery_project = credentialsParsed.project_id;
@@ -163,7 +164,7 @@ export async function cypressSeed(req: Request, res: Response) {
         })
       );
 
-      let prodStructId = helper.makeId();
+      let prodStructId = helper.makeStructId();
 
       let prodRepo: entities.RepoEntity = generator.makeRepo({
         project_id: projectId,
@@ -178,7 +179,8 @@ export async function cypressSeed(req: Request, res: Response) {
           project_id: projectId,
           repo_id: constants.PROD_REPO_ID,
           bigquery_project: project.bigquery_project,
-          week_start: <any>project.week_start,
+          week_start: project.week_start,
+          connection: project.connection,
           struct_id: prodStructId
         })
         .catch(e =>
@@ -213,7 +215,7 @@ export async function cypressSeed(req: Request, res: Response) {
 
       let memberIds = projectMembers.map(member => member.member_id);
 
-      await forEach(memberIds, async (repoId: string) => {
+      await forEachSeries(memberIds, async (repoId: string) => {
         let repoDir = `${
           config.DISK_BACKEND_PROJECTS_PATH
         }/${projectId}/${repoId}`;

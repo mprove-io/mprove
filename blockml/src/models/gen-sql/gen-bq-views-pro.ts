@@ -22,6 +22,7 @@ export function genBqViewsPro(item: {
   udfs_user: interfaces.Udf[];
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   bqProject: string;
   projectId: string;
   structId: string;
@@ -41,6 +42,7 @@ export function genBqViewsPro(item: {
     filters: item.filters,
     filters_fractions: {},
     weekStart: item.weekStart,
+    connection: item.connection,
     bqProject: item.bqProject,
     projectId: item.projectId,
     structId: structId,
@@ -135,6 +137,7 @@ export function genBqViewsPro(item: {
   //    joins_where
   vars = makeJoinsWhere(vars);
 
+  // connection
   // model
   // main_text
   // contents

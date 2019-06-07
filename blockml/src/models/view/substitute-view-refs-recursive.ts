@@ -13,6 +13,7 @@ export function substituteViewRefsRecursive(item: {
   udfs_dict: interfaces.UdfsDict;
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   bqProject: string;
   projectId: string;
   structId: string;
@@ -43,6 +44,7 @@ export function substituteViewRefsRecursive(item: {
       udfs_dict: item.udfs_dict,
       timezone: item.timezone,
       weekStart: item.weekStart,
+      connection: item.connection,
       bqProject: item.bqProject,
       projectId: item.projectId,
       structId: item.structId
@@ -76,6 +78,7 @@ export function substituteViewRefsRecursive(item: {
         udfs_dict: item.udfs_dict,
         timezone: item.timezone,
         weekStart: item.weekStart,
+        connection: item.connection,
         bqProject: item.bqProject,
         projectId: item.projectId,
         structId: item.structId

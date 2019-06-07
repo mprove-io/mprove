@@ -8,7 +8,7 @@ import { store } from '../../barrels/store';
 
 const { BigQuery } = require('@google-cloud/bigquery');
 
-export async function runQueryDry(item: {
+export async function runQueryDryBigquery(item: {
   bigquery_project: string;
   query: entities.QueryEntity;
   new_last_run_dry_ts: number;

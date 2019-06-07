@@ -15,6 +15,11 @@ export class SetProjectCredentialsFailEffect {
     ofType(actionTypes.SET_PROJECT_CREDENTIALS_FAIL),
     mergeMap((action: actions.SetProjectCredentialsFailAction) => {
       let status = helper.getResponseBodyInfoStatus(action.payload.error);
+
+      let message = helper.getResponseBodyInfoErrorMessage(
+        action.payload.error
+      );
+
       if (
         status &&
         [
@@ -25,6 +30,16 @@ export class SetProjectCredentialsFailEffect {
         ].indexOf(status) > -1
       ) {
         this.myDialogService.showInfoDialog(status);
+
+        return of({ type: 'EMPTY ACTION' });
+      } else if (
+        status &&
+        [
+          api.ServerResponseStatusEnum
+            .SET_PROJECT_CREDENTIALS_ERROR_CAN_NOT_CREATE_SCHEMA_POSTGRES
+        ].indexOf(status) > -1
+      ) {
+        this.myDialogService.showInfoDialog(message);
 
         return of({ type: 'EMPTY ACTION' });
       } else {

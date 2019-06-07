@@ -14,6 +14,7 @@ export function genSub(item: {
   udfs_dict: interfaces.UdfsDict;
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   bqProject: string;
   projectId: string;
   structId: string;
@@ -25,6 +26,7 @@ export function genSub(item: {
     select: item.select,
     timezone: item.timezone,
     weekStart: item.weekStart,
+    connection: item.connection,
     bqProject: item.bqProject,
     projectId: item.projectId,
     structId: structId,

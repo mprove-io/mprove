@@ -18,6 +18,7 @@ export async function genBqViews(item: {
   udfs_user: interfaces.Udf[];
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   bqProject: string;
   projectId: string;
   structId: string;

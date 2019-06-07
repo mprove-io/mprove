@@ -67,6 +67,12 @@ export class QueryEntity {
   server_ts: string;
 
   @Column({
+    type: constants.QUERY_POSTGRES_QUERY_JOB_ID_DATATYPE,
+    nullable: true
+  })
+  postgres_query_job_id: string;
+
+  @Column({
     type: constants.QUERY_BIGQUERY_QUERY_JOB_ID_DATATYPE,
     nullable: true
   })
@@ -116,10 +122,19 @@ export class QueryEntity {
   pdt_trigger_sql_bigquery_query_job_id: string;
 
   @Column({
+    type: constants.QUERY_PDT_TRIGGER_SQL_POSTGRES_QUERY_JOB_ID_DATATYPE,
+    nullable: true
+  })
+  pdt_trigger_sql_postgres_query_job_id: string;
+
+  @Column({
     type: constants.QUERY_PDT_TRIGGER_SQL_LAST_ERROR_MESSAGE_DATATYPE,
     nullable: true
   })
   pdt_trigger_sql_last_error_message: string;
+
+  @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE, nullable: true })
+  pdt_need_start_by_trigger_sql: enums.bEnum;
 
   //
 }

@@ -2,6 +2,7 @@ import { ApRegex } from '../../barrels/am-regex';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { applyFilter } from './apply-filter';
+import { api } from '../../barrels/api';
 
 export function makeContents(item: interfaces.Vars) {
   let contents: string[] = [];
@@ -128,7 +129,11 @@ export function makeContents(item: interfaces.Vars) {
     let table;
 
     if (typeof join.view.table !== 'undefined' && join.view.table !== null) {
-      table = '`' + join.view.table + '`';
+      if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+        table = '`' + join.view.table + '`';
+      } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
+        table = join.view.table;
+      }
     } else {
       Object.keys(join.view.pdt_view_deps_all).forEach(viewName => {
         let pdtName = `${item.structId}_${viewName}`;
@@ -140,7 +145,9 @@ export function makeContents(item: interfaces.Vars) {
       if (join.view.permanent.match(ApRegex.TRUE())) {
         let permanentTable: string[] = [];
 
-        permanentTable.push(`#standardSQL`);
+        if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+          permanentTable.push(`#standardSQL`);
+        }
 
         if (typeof join.view.udfs !== 'undefined' && join.view.udfs !== null) {
           join.view.udfs.forEach(udf => {
@@ -155,10 +162,16 @@ export function makeContents(item: interfaces.Vars) {
         item.query_pdt_deps[permanentTableName] = 1;
         item.query_pdt_deps_all[permanentTableName] = 1;
 
-        table =
-          '`' +
-          `${item.bqProject}.mprove_${item.projectId}.${permanentTableName}` +
-          '`';
+        let mproveSchema = `mprove_${item.projectId}`;
+
+        if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+          table =
+            '`' +
+            `${item.bqProject}.${mproveSchema}.${permanentTableName}` +
+            '`';
+        } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
+          table = `${mproveSchema}.${permanentTableName}`;
+        }
       } else {
         Object.keys(join.view.pdt_view_deps).forEach(viewName => {
           let pdtName = `${item.structId}_${viewName}`;

@@ -1,5 +1,5 @@
 import * as fse from 'fs-extra';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { api } from '../../barrels/api';
 import { config } from '../../barrels/config';
 import { constants } from '../../barrels/constants';
@@ -75,7 +75,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
       .catch(e => helper.reThrow(e, enums.fseErrorsEnum.FSE_READ_DIR))
   );
 
-  await forEach(fileNames, async name => {
+  await forEachSeries(fileNames, async name => {
     if (!name.match(MyRegex.STARTS_WITH_DOT())) {
       let filePath = item.dir + '/' + name;
 

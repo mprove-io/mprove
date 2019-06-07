@@ -5,14 +5,14 @@ import { ApRegex } from '../../barrels/am-regex';
 import { ErrorsCollector } from '../../barrels/errors-collector';
 import { interfaces } from '../../barrels/interfaces';
 
-const { forEach } = require('p-iteration');
+import { forEachSeries } from 'p-iteration';
 
 export async function yamlToObjects(item: {
   file3s: interfaces.File3[];
 }): Promise<any[]> {
   let filesAny: any[] = [];
 
-  await forEach(item.file3s, async (x: interfaces.File3) => {
+  await forEachSeries(item.file3s, async (x: interfaces.File3) => {
     let tiedFileArray: string[] = [];
 
     // try YAML parsing

@@ -8,7 +8,7 @@ import { store } from '../../barrels/store';
 import { handler } from '../../barrels/handler';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 const { BigQuery } = require('@google-cloud/bigquery');
 
 let cron = require('cron');
@@ -22,7 +22,7 @@ export function loopStartPdt() {
 
       try {
         await startPdt().catch(e =>
-          helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_PDT_TIME)
+          helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_START_PDT)
         );
       } catch (err) {
         handler.errorToLog(err);
@@ -68,143 +68,61 @@ async function startPdt() {
       query.status !== api.QueryStatusEnum.Running
   );
 
-  await forEach(startQueries, async query => {
+  await forEachSeries(startQueries, async query => {
     if (
-      !query.pdt_trigger_time ||
-      query.pdt_need_start_by_time === enums.bEnum.TRUE
+      (!query.pdt_trigger_time &&
+        query.pdt_need_start_by_trigger_sql === enums.bEnum.TRUE) ||
+      (!query.pdt_trigger_sql &&
+        query.pdt_need_start_by_time === enums.bEnum.TRUE) ||
+      (query.pdt_need_start_by_trigger_sql === enums.bEnum.TRUE &&
+        query.pdt_need_start_by_time === enums.bEnum.TRUE)
     ) {
-      let start = false;
+      // start pdt
+      query.pdt_need_start_by_time = null;
+      query.pdt_need_start_by_trigger_sql = null;
 
-      if (!query.pdt_trigger_sql) {
-        start = true;
-      } else if (query.pdt_trigger_sql_bigquery_query_job_id) {
-        // check trigger sql job result
-        let storeProjects = store.getProjectsRepo();
+      let storeProjects = store.getProjectsRepo();
 
-        let project = <entities.ProjectEntity>await storeProjects
-          .findOne({
-            project_id: query.project_id
-          })
-          .catch(e =>
-            helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
-          );
-
-        let bigquery = new BigQuery({
-          projectId: project.bigquery_project,
-          keyFilename: project.bigquery_credentials_file_path
-        });
-
-        let pdtTriggerSqlBigqueryQueryJob = bigquery.job(
-          query.pdt_trigger_sql_bigquery_query_job_id
+      let project = <entities.ProjectEntity>await storeProjects
+        .findOne({
+          project_id: query.project_id
+        })
+        .catch(e =>
+          helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
         );
 
-        let itemQueryJob = await pdtTriggerSqlBigqueryQueryJob
-          .get()
-          .catch((e: any) =>
-            helper.reThrow(e, enums.bigqueryErrorsEnum.BIGQUERY_JOB_GET)
-          );
+      let depsAllQueryIds = JSON.parse(query.pdt_deps_all);
 
-        let triggerQueryJob = itemQueryJob[0];
-        let triggerQueryJobGetResponse = itemQueryJob[1];
+      let allDepQueries: entities.QueryEntity[] = [];
 
-        if (triggerQueryJobGetResponse.status.state === 'DONE') {
-          query.pdt_trigger_sql_bigquery_query_job_id = null;
-
-          if (triggerQueryJobGetResponse.status.errorResult) {
-            // PDT TRIGGER SQL FAIL
-            let errorResult = triggerQueryJobGetResponse.status.errorResult;
-
-            query.pdt_trigger_sql_last_error_message =
-              `Query fail. ` +
-              `Message: '${errorResult.message}'. ` +
-              `Reason: '${errorResult.reason}'. ` +
-              `Location: '${errorResult.location}'.`;
-          } else {
-            // PDT TRIGGER SQL SUCCESS
-            query.pdt_trigger_sql_last_error_message = null;
-
-            let queryResultsItem = await triggerQueryJob
-              .getQueryResults()
-              .catch((e: any) =>
-                helper.reThrow(
-                  e,
-                  enums.bigqueryErrorsEnum.BIGQUERY_JOB_GET_QUERY_RESULTS
-                )
-              );
-
-            let rows = queryResultsItem[0];
-
-            let columnKey =
-              rows && rows[0] && Object.keys(rows[0]).length > 0
-                ? Object.keys(rows[0])[0]
-                : null;
-
-            let newTriggerSqlValue = columnKey
-              ? JSON.stringify(rows[0][columnKey])
-              : null;
-
-            if (
-              newTriggerSqlValue &&
-              newTriggerSqlValue !== query.pdt_trigger_sql_value
-            ) {
-              start = true;
-            }
-
-            query.pdt_trigger_sql_value = newTriggerSqlValue;
-          }
-        }
-      }
-
-      let queries = [query];
-
-      // start pdt
-      if (start) {
-        query.pdt_need_start_by_time = null;
-
-        let storeProjects = store.getProjectsRepo();
-
-        let project = <entities.ProjectEntity>await storeProjects
-          .findOne({
-            project_id: query.project_id
+      if (depsAllQueryIds.length > 0) {
+        allDepQueries = <entities.QueryEntity[]>await storeQueries
+          .find({
+            pdt_id: In(depsAllQueryIds)
           })
           .catch(e =>
-            helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
+            helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND)
           );
-
-        let depsAllQueryIds = JSON.parse(query.pdt_deps_all);
-
-        let allDepQueries: entities.QueryEntity[] = [];
-
-        if (depsAllQueryIds.length > 0) {
-          allDepQueries = <entities.QueryEntity[]>await storeQueries
-            .find({
-              pdt_id: In(depsAllQueryIds)
-            })
-            .catch(e =>
-              helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND)
-            );
-        }
-
-        let newLastRunTs = helper.makeTs();
-
-        let depQueries = await (<Promise<entities.QueryEntity[]>>proc
-          .runQuery({
-            all_dep_queries: allDepQueries,
-            checked_query_ids: [],
-            is_top: true,
-            query: query,
-            new_last_run_ts: newLastRunTs,
-            bigquery_project: project.bigquery_project,
-            credentials_file_path: project.bigquery_credentials_file_path,
-            user_id: null,
-            refresh: false
-          })
-          .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY)));
-
-        if (depQueries.length > 0) {
-          queries = depQueries;
-        }
       }
+
+      let newLastRunTs = helper.makeTs();
+
+      let depQueries = await (<Promise<entities.QueryEntity[]>>proc
+        .runQuery({
+          project: project,
+          all_dep_queries: allDepQueries,
+          checked_query_ids: [],
+          is_top: true,
+          query: query,
+          new_last_run_ts: newLastRunTs,
+          bigquery_project: project.bigquery_project,
+          credentials_file_path: project.bigquery_credentials_file_path,
+          user_id: null,
+          refresh: false
+        })
+        .catch(e => helper.reThrow(e, enums.procErrorsEnum.PROC_RUN_QUERY)));
+
+      let queries = depQueries && depQueries.length > 0 ? depQueries : [query];
 
       // update server_ts
       let newServerTs = helper.makeTs();

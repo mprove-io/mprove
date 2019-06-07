@@ -24,6 +24,7 @@ export function wrapPdts(item: {
       pdt_trigger_sql: pdt.pdt_trigger_sql,
       pdt_id: pdt.name,
       pdt_need_start_by_time: undefined,
+      pdt_need_start_by_trigger_sql: undefined,
       pdt_trigger_sql_value: undefined,
       pdt_trigger_sql_last_error_message: undefined,
       status: api.QueryStatusEnum.New,

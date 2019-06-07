@@ -90,6 +90,10 @@ export const APP_EFFECTS = [
   effects.DeleteProjectCredentialsFailEffect,
   effects.DeleteProjectCredentialsEffect,
 
+  effects.SetProjectConnectionSuccessEffect,
+  effects.SetProjectConnectionFailEffect,
+  effects.SetProjectConnectionEffect,
+
   effects.SetProjectCredentialsSuccessEffect,
   effects.SetProjectCredentialsFailEffect,
   effects.SetProjectCredentialsEffect,

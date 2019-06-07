@@ -34,7 +34,7 @@
 
     <div
       fxHide.lt-md
-      *ngIf="dryTs && drySize"
+      *ngIf="connection === projectConnectionEnum.BigQuery && dryTs && drySize"
       fxLayout="row"
       fxLayoutAlign="start center"
       class="dashboard__report"
@@ -207,7 +207,10 @@
       class="mat-sidenav dashboard-mobile-side"
       disableClose
     >
-      <button mat-menu-item (click)="runDry()"
+      <button
+        *ngIf="connection === projectConnectionEnum.BigQuery"
+        mat-menu-item
+        (click)="runDry()"
         >Run Dry (estimate data size)</button
       >
 
@@ -219,7 +222,9 @@
       >
 
       <div
-        *ngIf="dryTs && drySize"
+        *ngIf="
+          connection === projectConnectionEnum.BigQuery && dryTs && drySize
+        "
         fxLayout="row"
         fxLayoutAlign="start center"
         class="dashboard__report"
@@ -247,7 +252,12 @@
 </div>
 
 <mat-menu #dashboardMenu="matMenu">
-  <button mat-menu-item (click)="runDry()">Run Dry (estimate data size)</button>
+  <button
+    *ngIf="connection === projectConnectionEnum.BigQuery"
+    mat-menu-item
+    (click)="runDry()"
+    >Run Dry (estimate data size)</button
+  >
   <button
     mat-menu-item
     [disabled]="!(selectedProjectUserIsAdminOrEditor$ | async)"
@@ -262,4 +272,4 @@
 <div *ngIf="(layoutDry$ | async)"></div> <div *ngIf="(reports$ | async)"></div>
 <div *ngIf="(dashboardFields$ | async)"></div>
 <div *ngIf="(visuals$ | async)"></div> <div *ngIf="(dashTheme$ | async)"></div>
-<div *ngIf="(fileId$ | async)"></div>
+<div *ngIf="(fileId$ | async)"></div> <div *ngIf="(connection$ | async)"></div>

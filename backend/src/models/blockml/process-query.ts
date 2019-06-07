@@ -10,6 +10,7 @@ export async function processQuery(item: {
   project_id: string;
   bigquery_project: string;
   week_start: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   mconfig: api.Mconfig;
   model_content: string;
   udfs_content: string;
@@ -19,6 +20,7 @@ export async function processQuery(item: {
     project_id: item.project_id,
     bigquery_project: item.bigquery_project,
     week_start: item.week_start,
+    connection: item.connection,
     mconfig: item.mconfig,
     model_content: item.model_content,
     udfs_content: item.udfs_content,

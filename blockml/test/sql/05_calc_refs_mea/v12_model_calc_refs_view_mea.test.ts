@@ -39,6 +39,7 @@ test('testName', () => {
   return ApStruct.rebuildStruct({
     dir: 'test/sql/05_calc_refs_mea/v12',
     weekStart: api.ProjectWeekStartEnum.Monday,
+    connection: api.ProjectConnectionEnum.BigQuery,
     bqProject: 'flow-1202',
     projectId: 'unkProjectId',
     structId: 'unkStructId'

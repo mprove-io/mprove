@@ -54,7 +54,7 @@
         <div fxLayout="row">
           <div fxFlex="3"></div> <div fxFlex="10">Query duration, s:</div>
           <div fxFlex>
-            <span>{{ element.extra_last_complete_duration_ceil }}</span>
+            <span>{{ element.last_complete_duration }}</span>
           </div>
         </div>
         <div fxLayout="row" *ngIf="element.pdt_trigger_sql_last_error_message">

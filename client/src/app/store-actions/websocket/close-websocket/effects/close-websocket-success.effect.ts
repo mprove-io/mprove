@@ -30,7 +30,7 @@ export class CloseWebSocketSuccessEffect {
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
             } - Server: init_id is missing in url`,
-            message: `-`
+            message: undefined
           });
           // break;
         }
@@ -40,7 +40,7 @@ export class CloseWebSocketSuccessEffect {
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
             } - Server: init_id not found`,
-            message: `-`
+            message: undefined
           });
           // break;
         }
@@ -50,7 +50,7 @@ export class CloseWebSocketSuccessEffect {
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
             } - Server: Unanswered ping limit exceeded`,
-            message: ``
+            message: undefined
           });
           // break;
         }
@@ -66,7 +66,7 @@ export class CloseWebSocketSuccessEffect {
             name: `[WebSocketEffects] Websocket closed: ${
               action.payload.code
             } - Server: Authorization error`,
-            message: ``
+            message: undefined
           });
           // break;
         }

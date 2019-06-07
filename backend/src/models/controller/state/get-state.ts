@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { Equal, In } from 'typeorm';
 import { api } from '../../../barrels/api';
 import { constants } from '../../../barrels/constants';
@@ -99,7 +99,7 @@ export async function getState(req: Request, res: Response) {
 
   let structs: api.Struct[] = [];
 
-  await forEach(repos, async repo => {
+  await forEachSeries(repos, async repo => {
     let storeErrors = store.getErrorsRepo();
     let storeModels = store.getModelsRepo();
     let storeViews = store.getViewsRepo();

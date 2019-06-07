@@ -1,11 +1,13 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
 export function makePdts(item: {
   views: interfaces.View[];
   udfs_dict: interfaces.UdfsDict;
   structId: string;
   bqProject: string;
+  connection: api.ProjectConnectionEnum;
   projectId: string;
 }) {
   let pdts: interfaces.Pdt[] = [];
@@ -18,7 +20,9 @@ export function makePdts(item: {
     ) {
       let permanentTable: string[] = [];
 
-      permanentTable.push('#standardSQL');
+      if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+        permanentTable.push('#standardSQL');
+      }
 
       if (typeof x.udfs !== 'undefined' && x.udfs !== null) {
         x.udfs.forEach(udf => {
@@ -49,6 +53,13 @@ export function makePdts(item: {
       let tableRef =
         '`' + `${item.bqProject}.mprove_${item.projectId}.${pdtName}` + '`';
 
+      if (
+        x.pdt_trigger_sql &&
+        item.connection === api.ProjectConnectionEnum.BigQuery
+      ) {
+        x.pdt_trigger_sql = '#standardSQL\n' + x.pdt_trigger_sql;
+      }
+
       pdts.push({
         view: x.name,
         name: pdtName,
@@ -57,9 +68,7 @@ export function makePdts(item: {
         pdt_deps: ptdDeps,
         pdt_deps_all: ptdDepsAll,
         pdt_trigger_time: x.pdt_trigger_time ? x.pdt_trigger_time : undefined,
-        pdt_trigger_sql: x.pdt_trigger_sql
-          ? '#standardSQL\n' + x.pdt_trigger_sql
-          : undefined,
+        pdt_trigger_sql: x.pdt_trigger_sql ? x.pdt_trigger_sql : undefined,
         pdt_trigger_sql_line_num: x.pdt_trigger_sql_line_num,
         pdt_trigger_time_line_num: x.pdt_trigger_time_line_num,
         file: x.file,

@@ -35,6 +35,7 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
     components.UpdateProjectTimezoneComponent,
     components.UpdateQuerySizeLimitComponent,
     components.UpdateWeekStartComponent,
+    components.UpdateConnectionComponent,
     components.ProjectComponent,
     components.RepoComponent,
     components.SettingsComponent,

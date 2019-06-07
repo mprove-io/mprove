@@ -10,6 +10,7 @@ import { wrapViews } from './wrap-views';
 export async function wrapStruct(item: {
   files: api.File[];
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   bqProject: string;
   projectId: string;
   repoId: string;
@@ -18,6 +19,7 @@ export async function wrapStruct(item: {
   let struct: interfaces.Struct = await ApStruct.rebuildStructStateless({
     files: item.files,
     weekStart: item.weekStart,
+    connection: item.connection,
     bqProject: item.bqProject,
     projectId: item.projectId,
     structId: item.structId

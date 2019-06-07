@@ -25,6 +25,7 @@ export * from './projects/check-project-id-unique';
 export * from './projects/create-project';
 export * from './projects/delete-project-credentials';
 export * from './projects/delete-project';
+export * from './projects/set-project-connection';
 export * from './projects/set-project-credentials';
 export * from './projects/set-project-query-size-limit';
 export * from './projects/set-project-timezone';

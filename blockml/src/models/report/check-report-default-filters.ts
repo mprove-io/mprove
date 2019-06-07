@@ -9,6 +9,7 @@ export function checkReportDefaultFilters(item: {
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
 }) {
   item.dashboards.forEach(x => {
     let newReports: interfaces.Report[] = [];
@@ -77,6 +78,7 @@ export function checkReportDefaultFilters(item: {
             filter_bricks: report.default_filters[defaultFilter],
             proc: 'proc',
             weekStart: item.weekStart,
+            connection: item.connection,
             timezone: report.timezone,
             sqlTimestampSelect: 'sql_timestamp_select',
             ORs: [],

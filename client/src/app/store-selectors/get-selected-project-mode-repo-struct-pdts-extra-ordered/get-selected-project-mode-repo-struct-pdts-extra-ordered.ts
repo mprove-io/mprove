@@ -15,13 +15,8 @@ export const getSelectedProjectModeRepoStructPdtsExtraOrdered = createSelector(
         let query: api.Query = queries.find((q: api.Query) => q.pdt_id === x);
 
         if (query) {
-          let durationCeil = query.last_complete_duration
-            ? Math.ceil(query.last_complete_duration / 1000)
-            : 0;
-
           let queryExtra: interfaces.QueryExtra = Object.assign({}, query, {
-            extra_is_completed: query.last_complete_ts > 1,
-            extra_last_complete_duration_ceil: durationCeil
+            extra_is_completed: query.last_complete_ts > 1
           });
 
           queriesPdtExtraOrdered.push(queryExtra);

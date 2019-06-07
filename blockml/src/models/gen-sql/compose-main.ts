@@ -1,13 +1,16 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
 import { applyFilter } from './apply-filter';
+import { api } from '../../barrels/api';
 
 let Graph = require('graph.js/dist/graph.full.js'); // tslint:disable-line
 
 export function composeMain(item: interfaces.Vars) {
   let main: string[] = [];
 
-  main.push(`#standardSQL`);
+  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+    main.push(`#standardSQL`);
+  }
 
   // adding model level udfs to main udfs
   if (typeof item.model.udfs !== 'undefined' && item.model.udfs !== null) {

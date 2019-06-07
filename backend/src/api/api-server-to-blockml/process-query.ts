@@ -7,6 +7,7 @@ export interface ProcessQueryRequestBody {
     project_id: string;
     bigquery_project: string;
     week_start: apiEnums.ProjectWeekStartEnum;
+    connection: apiEnums.ProjectConnectionEnum;
     mconfig: apiObjects.Mconfig;
     model_content: string;
     udfs_content: string;

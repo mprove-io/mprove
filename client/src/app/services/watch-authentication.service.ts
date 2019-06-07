@@ -84,7 +84,7 @@ export class WatchAuthenticationService {
             if (this.userId !== tokenEmail) {
               throw new MyError({
                 name: `[DoCheckAuthService] User ID is mismatch`,
-                message: `-`
+                message: undefined
               });
             }
 

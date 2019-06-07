@@ -51,7 +51,7 @@ export async function runQueriesDry(req: Request, res: Response) {
   let results = <interfaces.ItemRunQueryDry[]>await Promise.all(
     queries.map(
       async query => <Promise<interfaces.ItemRunQueryDry>>proc
-          .runQueryDry({
+          .runQueryDryBigquery({
             query: query,
             new_last_run_dry_ts: newLastRunDryTs,
             credentials_file_path: project.bigquery_credentials_file_path,

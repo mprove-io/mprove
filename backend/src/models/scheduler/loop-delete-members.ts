@@ -4,7 +4,7 @@ import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
 import { handler } from '../../barrels/handler';
 import { config } from '../../barrels/config';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { disk } from '../../barrels/disk';
 
 let cron = require('cron');
@@ -54,7 +54,7 @@ async function deleteMembers() {
       helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_QUERY_BUILDER)
     );
 
-  await forEach(members, async member => {
+  await forEachSeries(members, async member => {
     let memberId = member.member_id;
     let projectId = member.project_id;
 

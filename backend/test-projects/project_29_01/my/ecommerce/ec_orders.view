@@ -1,0 +1,31 @@
+view: ec_orders
+label: 'Orders'
+table: mprove-demo.ecommerce.orders
+
+fields:
+- dimension: order_id
+  sql: order_id
+  
+- dimension: user_id
+  sql: user_id
+  
+- dimension: status
+  sql: status
+  
+- dimension: created_at_ts
+  hidden: true
+  sql: TIMESTAMP_MICROS(created_at * 1000000)
+  
+- time: created
+  sql: ${created_at_ts}
+  timeframes:
+  - time
+  - date
+  - week
+  - month
+  - quarter
+  - year
+  
+- measure: count
+  type: count_distinct
+  sql: ${order_id}  

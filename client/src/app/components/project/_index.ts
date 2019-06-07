@@ -8,3 +8,4 @@ export * from './team/team.component';
 export * from './update-project-timezone/update-project-timezone.component';
 export * from './update-query-size-limit/update-query-size-limit.component';
 export * from './update-week-start/update-week-start.component';
+export * from './update-connection/update-connection.component';

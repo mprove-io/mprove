@@ -5,6 +5,11 @@ import { helper } from '../../../barrels/helper';
 export function wrapToApiProject(project: entities.ProjectEntity): api.Project {
   return {
     project_id: project.project_id,
+    connection: project.connection,
+    postgres_host: project.postgres_host,
+    postgres_port: project.postgres_port,
+    postgres_database: project.postgres_database,
+    postgres_user: project.postgres_user,
     has_credentials: helper.benumToBoolean(project.has_credentials),
     bigquery_project: project.bigquery_project,
     client_email: project.bigquery_client_email,

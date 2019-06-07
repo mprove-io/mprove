@@ -9,7 +9,7 @@ import { store } from '../../../barrels/store';
 import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 
 export async function deleteUser(req: Request, res: Response) {
   let initId = validator.getRequestInfoInitId(req);
@@ -48,7 +48,7 @@ export async function deleteUser(req: Request, res: Response) {
     .filter(x => x.is_admin === enums.bEnum.TRUE)
     .map(x => x.project_id);
 
-  await forEach(userAdminProjectIds, async projectId => {
+  await forEachSeries(userAdminProjectIds, async projectId => {
     let projectAdminMembers = <entities.MemberEntity[]>await storeMembers
       .find({
         project_id: projectId,

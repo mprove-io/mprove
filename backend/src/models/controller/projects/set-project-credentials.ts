@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { getConnection } from 'typeorm';
 import { api } from '../../../barrels/api';
 import { blockml } from '../../../barrels/blockml';
@@ -28,8 +28,13 @@ export async function setProjectCredentials(req: Request, res: Response) {
   );
 
   let projectId = payload.project_id;
-  let credentials = payload.credentials;
   let serverTs = payload.server_ts;
+  let credentials = payload.credentials;
+  let postgresHost = payload.postgres_host;
+  let postgresPort = payload.postgres_port;
+  let postgresDatabase = payload.postgres_database;
+  let postgresUser = payload.postgres_user;
+  let postgresPassword = payload.postgres_password;
 
   let storeProjects = store.getProjectsRepo();
 
@@ -47,68 +52,86 @@ export async function setProjectCredentials(req: Request, res: Response) {
 
   helper.checkServerTs(project, serverTs);
 
-  let credentialsParsed;
+  if (project.connection === api.ProjectConnectionEnum.BigQuery) {
+    // bigquery
+    let credentialsParsed;
 
-  try {
-    credentialsParsed = JSON.parse(credentials);
-  } catch (e) {
-    helper.reThrow(
-      e,
-      enums.otherErrorsEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID
-    );
+    try {
+      credentialsParsed = JSON.parse(credentials);
+    } catch (e) {
+      helper.reThrow(
+        e,
+        enums.otherErrorsEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID
+      );
+    }
+
+    let id = helper.makeId();
+    let tempId = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${id}.json`;
+
+    await disk
+      .writeToFile({
+        file_absolute_id: tempId,
+        content: credentials
+      })
+      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
+
+    await proc
+      .createDatasetBigquery({
+        bigquery_project: credentialsParsed.project_id,
+        project_id: projectId,
+        credentials_file_path: tempId
+      })
+      .catch(async e => {
+        try {
+          await disk
+            .removePath(tempId)
+            .catch(err =>
+              helper.reThrow(err, enums.diskErrorsEnum.DISK_REMOVE_PATH)
+            );
+        } catch (err) {
+          handler.errorToLog(err);
+        }
+
+        handler.errorToLog(e);
+
+        throw new ServerError({
+          name: enums.procErrorsEnum.PROC_CREATE_DATASET
+        });
+      });
+
+    await disk
+      .removePath(tempId)
+      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
+
+    let fileId = `${
+      config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH
+    }/${projectId}.json`;
+
+    await disk
+      .writeToFile({
+        file_absolute_id: fileId,
+        content: credentials
+      })
+      .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
+
+    project.bigquery_project = credentialsParsed.project_id;
+    project.bigquery_client_email = credentialsParsed.client_email;
+    project.bigquery_credentials = credentials;
+    project.bigquery_credentials_file_path = fileId;
+  } else if (project.connection === api.ProjectConnectionEnum.PostgreSQL) {
+    // postgres
+
+    project.postgres_host = postgresHost;
+    project.postgres_port = postgresPort;
+    project.postgres_database = postgresDatabase;
+    project.postgres_user = postgresUser;
+    project.postgres_password = postgresPassword;
+
+    await proc.createSchemaPostgres({ project: project }).catch((e: any) => {
+      helper.reThrow(e, enums.procErrorsEnum.PROC_CREATE_SCHEMA_POSTGRES);
+    });
   }
 
-  let id = helper.makeId();
-  let tempId = `${config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH}/${id}.json`;
-
-  await disk
-    .writeToFile({
-      file_absolute_id: tempId,
-      content: credentials
-    })
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
-
-  await proc
-    .createDataset({
-      bigquery_project: credentialsParsed.project_id,
-      project_id: projectId,
-      credentials_file_path: tempId
-    })
-    .catch(async e => {
-      try {
-        await disk
-          .removePath(tempId)
-          .catch(err =>
-            helper.reThrow(err, enums.diskErrorsEnum.DISK_REMOVE_PATH)
-          );
-      } catch (err) {
-        handler.errorToLog(err);
-      }
-
-      handler.errorToLog(e);
-
-      throw new ServerError({ name: enums.procErrorsEnum.PROC_CREATE_DATASET });
-    });
-
-  await disk
-    .removePath(tempId)
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));
-
-  let fileId = `${
-    config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH
-  }/${projectId}.json`;
-
-  await disk
-    .writeToFile({
-      file_absolute_id: fileId,
-      content: credentials
-    })
-    .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_WRITE_TO_FILE));
-
-  project.bigquery_project = credentialsParsed.project_id;
-  project.bigquery_client_email = credentialsParsed.client_email;
-  project.bigquery_credentials = credentials;
-  project.bigquery_credentials_file_path = fileId;
   project.has_credentials = enums.bEnum.TRUE;
 
   let storeRepos = store.getReposRepo();
@@ -131,8 +154,8 @@ export async function setProjectCredentials(req: Request, res: Response) {
   let prodStruct: interfaces.ItemStructAndRepo;
   let devStruct: interfaces.ItemStructAndRepo;
 
-  await forEach(projectRepos, async repo => {
-    let structId = helper.makeId();
+  await forEachSeries(projectRepos, async repo => {
+    let structId = helper.makeStructId();
 
     let itemCatalog = <interfaces.ItemCatalog>await disk
       .getRepoCatalogNodesAndFiles({
@@ -152,7 +175,8 @@ export async function setProjectCredentials(req: Request, res: Response) {
         project_id: projectId,
         repo_id: repo.repo_id,
         bigquery_project: project.bigquery_project,
-        week_start: <any>project.week_start,
+        week_start: project.week_start,
+        connection: project.connection,
         struct_id: structId
       })
       .catch(e =>

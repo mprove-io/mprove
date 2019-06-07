@@ -5,11 +5,7 @@ import { proc } from '../../../barrels/proc';
 import { enums } from '../../../barrels/enums';
 import { helper } from '../../../barrels/helper';
 import { store } from '../../../barrels/store';
-import { constants } from '../../../barrels/constants';
 import { In } from 'typeorm';
-import { forEach } from 'p-iteration';
-import { disk } from '../../../barrels/disk';
-import { config } from '../../../barrels/config';
 
 export async function cypressDelete(req: Request, res: Response) {
   let payload: api.CypressDeleteRequestBody['payload'] = validator.getPayload(

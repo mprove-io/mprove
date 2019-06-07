@@ -4,7 +4,7 @@ import { store } from '../../barrels/store';
 import { MyRegex } from '../../models/my-regex';
 import { ServerError } from '../../models/server-error';
 import { In } from 'typeorm';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { disk } from '../../barrels/disk';
 import { config } from '../../barrels/config';
 
@@ -77,7 +77,7 @@ export async function processDeletedProjects(projectIds: string[]) {
 
   // disk
 
-  await forEach(projectIds, async projectId => {
+  await forEachSeries(projectIds, async projectId => {
     await disk
       .removePath(`${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}`)
       .catch(e => helper.reThrow(e, enums.diskErrorsEnum.DISK_REMOVE_PATH));

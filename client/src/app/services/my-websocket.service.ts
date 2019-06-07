@@ -75,7 +75,7 @@ export class MyWebSocketService {
         } else {
           throw new MyError({
             name: `[MyWebSocketService] connect failed`,
-            message: '-'
+            message: undefined
           });
         }
       }
@@ -114,12 +114,9 @@ export class MyWebSocketService {
 
       err => {
         // if (!err.data) {
-        //   err.name = `[WebsocketService] ${err.message}`;
-        //   err.message = `[WebsocketService] ${err.message}: -`;
-
         //   err.data = {
-        //     name: err.name,
-        //     message: '-'
+        //     name: `[WebsocketService] ${err.message}`,
+        //     message: undefined
         //   };
         // }
 

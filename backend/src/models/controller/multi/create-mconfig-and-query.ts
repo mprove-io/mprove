@@ -73,7 +73,8 @@ export async function createMconfigAndQuery(req: Request, res: Response) {
     .processQuery({
       project_id: mconfig.project_id,
       bigquery_project: project.bigquery_project,
-      week_start: <any>project.week_start,
+      week_start: project.week_start,
+      connection: project.connection,
       mconfig: mconfig,
       model_content: model.content,
       udfs_content: repo.udfs_content,

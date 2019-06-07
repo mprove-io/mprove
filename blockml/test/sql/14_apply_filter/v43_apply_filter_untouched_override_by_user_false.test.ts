@@ -66,6 +66,7 @@ AND (target2 > 200))`,
   return ApStruct.rebuildStruct({
     dir: 'test/sql/14_apply_filter/v43',
     weekStart: api.ProjectWeekStartEnum.Monday,
+    connection: api.ProjectConnectionEnum.BigQuery,
     bqProject: 'flow-1202',
     projectId: 'unkProjectId',
     structId: 'unkStructId'

@@ -88,6 +88,11 @@ export const MODEL_DESCRIPTION_DATATYPE = 'text';
 
 // PROJECT
 
+export const PROJECT_POSTGRES_HOST_DATATYPE = 'varchar';
+export const PROJECT_POSTGRES_PORT_DATATYPE = 'int';
+export const PROJECT_POSTGRES_DATABASE_DATATYPE = 'varchar';
+export const PROJECT_POSTGRES_USER_DATATYPE = 'varchar';
+export const PROJECT_POSTGRES_PASSWORD_DATATYPE = 'varchar';
 export const PROJECT_BIGQUERY_PROJECT_DATATYPE = 'varchar';
 export const PROJECT_BIGQUERY_CLIENT_EMAIL_DATATYPE = 'varchar';
 export const PROJECT_QUERY_SIZE_LIMIT_DATATYPE = 'int';
@@ -105,11 +110,13 @@ export const QUERY_PDT_TRIGGER_TIME_JOB_ID_DATATYPE = 'varchar';
 export const QUERY_PDT_TRIGGER_SQL_DATATYPE = 'mediumtext';
 export const QUERY_PDT_TRIGGER_SQL_VALUE_DATATYPE = 'varchar';
 export const QUERY_PDT_TRIGGER_SQL_BIGQUERY_QUERY_JOB_ID_DATATYPE = 'varchar';
+export const QUERY_PDT_TRIGGER_SQL_POSTGRES_QUERY_JOB_ID_DATATYPE = 'varchar';
 export const QUERY_PDT_TRIGGER_SQL_LAST_ERROR_MESSAGE_DATATYPE = 'mediumtext';
 export const QUERY_LAST_RUN_BY_DATATYPE = 'varchar';
 export const QUERY_LAST_COMPLETE_DURATION_DATATYPE = 'bigint';
 export const QUERY_LAST_ERROR_MESSAGE_DATATYPE = 'mediumtext';
 export const QUERY_DATA_DATATYPE = 'mediumtext';
+export const QUERY_POSTGRES_QUERY_JOB_ID_DATATYPE = 'varchar';
 export const QUERY_BIGQUERY_QUERY_JOB_ID_DATATYPE = 'varchar';
 export const QUERY_BIGQUERY_COPY_JOB_ID_DATATYPE = 'varchar';
 

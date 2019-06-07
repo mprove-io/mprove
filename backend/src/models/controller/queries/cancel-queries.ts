@@ -9,7 +9,9 @@ import { store } from '../../../barrels/store';
 import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { config } from '../../../barrels/config';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
+import { handler } from '../../../barrels/handler';
+
 const { BigQuery } = require('@google-cloud/bigquery');
 
 export async function cancelQueries(req: Request, res: Response) {
@@ -43,23 +45,42 @@ export async function cancelQueries(req: Request, res: Response) {
         helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
       );
 
-    let credentialsFilePath = `${
-      config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH
-    }/${projectId}.json`;
+    let bigquery: any;
 
-    let bigquery = new BigQuery({
-      projectId: project.bigquery_project,
-      keyFilename: credentialsFilePath
-    });
+    if (project.connection === api.ProjectConnectionEnum.BigQuery) {
+      let credentialsFilePath = `${
+        config.DISK_BACKEND_BIGQUERY_CREDENTIALS_PATH
+      }/${projectId}.json`;
+
+      bigquery = new BigQuery({
+        projectId: project.bigquery_project,
+        keyFilename: credentialsFilePath
+      });
+    }
 
     let newLastCancelTs = helper.makeTs();
 
-    await forEach(queries, async query => {
-      if (query.status === api.QueryStatusEnum.Running) {
+    await forEachSeries(queries, async query => {
+      if (
+        project.connection === api.ProjectConnectionEnum.BigQuery &&
+        query.status === api.QueryStatusEnum.Running
+      ) {
         let bigqueryQueryJob = bigquery.job(query.bigquery_query_job_id);
-        await bigqueryQueryJob.cancel();
+        try {
+          await bigqueryQueryJob
+            .cancel()
+            .catch((e: any) =>
+              helper.reThrow(
+                e,
+                enums.bigqueryErrorsEnum.BIGQUERY_QUERY_JOB_CANCEL
+              )
+            );
+        } catch (err) {
+          handler.errorToLog(err);
+        }
       }
 
+      query.postgres_query_job_id = null;
       query.status = api.QueryStatusEnum.Canceled;
       query.last_cancel_ts = newLastCancelTs;
     });

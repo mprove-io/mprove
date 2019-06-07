@@ -5,9 +5,10 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
 import { runQueryWithoutDeps } from './run-query-without-deps';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 
 export async function runQuery(item: {
+  project: entities.ProjectEntity;
   all_dep_queries: entities.QueryEntity[];
   checked_query_ids: string[];
   bigquery_project: string;
@@ -45,6 +46,7 @@ export async function runQuery(item: {
 
   if (pdtDeps.length === 0) {
     query = <entities.QueryEntity>await runQueryWithoutDeps({
+      project: item.project,
       credentials_file_path: item.credentials_file_path,
       bigquery_project: item.bigquery_project,
       user_id: item.user_id,
@@ -62,8 +64,9 @@ export async function runQuery(item: {
 
     let processedQueries: entities.QueryEntity[] = [];
 
-    await forEach(queries, async q => {
+    await forEachSeries(queries, async q => {
       let depQueries = await (<Promise<entities.QueryEntity[]>>runQuery({
+        project: item.project,
         all_dep_queries: item.all_dep_queries,
         checked_query_ids: item.checked_query_ids,
         is_top: false,

@@ -43,7 +43,7 @@ export async function createProject(req: Request, res: Response) {
     project_id: projectId
   });
 
-  let structId = helper.makeId();
+  let structId = helper.makeStructId();
 
   // prod
 

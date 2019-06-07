@@ -62,7 +62,7 @@ export class WatchWebsocketService {
           if (diff > configs.PING_DIFF_SECONDS) {
             throw new MyError({
               name: `Connection Lost`,
-              message: `-`
+              message: undefined
             });
           }
         }

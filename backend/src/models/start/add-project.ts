@@ -12,8 +12,7 @@ import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { proc } from '../../barrels/proc';
 import { store } from '../../barrels/store';
-
-const { forEach } = require('p-iteration');
+import { forEachSeries } from 'p-iteration';
 
 export async function addProject(item: {
   project_id: string;
@@ -60,7 +59,7 @@ export async function addProject(item: {
   let credentialsParsed = JSON.parse(credentials);
 
   await proc
-    .createDataset({
+    .createDatasetBigquery({
       bigquery_project: credentialsParsed.project_id,
       project_id: projectId,
       credentials_file_path: fileAbsoluteId
@@ -134,7 +133,7 @@ export async function addProject(item: {
     })
   );
 
-  let prodStructId = helper.makeId();
+  let prodStructId = helper.makeStructId();
 
   let prodRepo: entities.RepoEntity = generator.makeRepo({
     project_id: projectId,
@@ -149,7 +148,8 @@ export async function addProject(item: {
       project_id: projectId,
       repo_id: constants.PROD_REPO_ID,
       bigquery_project: project.bigquery_project,
-      week_start: <any>project.week_start,
+      week_start: project.week_start,
+      connection: project.connection,
       struct_id: prodStructId
     })
     .catch(e =>
@@ -184,7 +184,7 @@ export async function addProject(item: {
 
   let memberIds = members.map(member => member.member_id);
 
-  await forEach(memberIds, async (repoId: string) => {
+  await forEachSeries(memberIds, async (repoId: string) => {
     let repoDir = `${config.DISK_BACKEND_PROJECTS_PATH}/${projectId}/${repoId}`;
 
     await disk

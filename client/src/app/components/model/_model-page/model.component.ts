@@ -24,6 +24,7 @@ export class ModelComponent implements OnDestroy {
   @ViewChild('sidenavRight') sidenavRight: MatSidenav;
 
   queryStatusEnum = api.QueryStatusEnum;
+  projectConnectionEnum = api.ProjectConnectionEnum;
 
   dryId: string;
   drySize: string;
@@ -31,10 +32,14 @@ export class ModelComponent implements OnDestroy {
   lastRunTs: number;
   dryTsIsAfterLastRunTs: boolean;
 
-  residueDuration: number;
-  calcDurationFloor: number;
-  fullDurationFloor: number;
   dataLength: number;
+
+  connection: api.ProjectConnectionEnum;
+  connection$ = this.store.select(selectors.getSelectedProjectConnection).pipe(
+    tap(x => {
+      this.connection = x;
+    })
+  );
 
   userId$ = this.store.select(selectors.getUserId);
 
@@ -58,10 +63,8 @@ export class ModelComponent implements OnDestroy {
   queryLastCompleteDuration$ = this.store
     .select(selectors.getSelectedQueryLastCompleteDuration)
     .pipe(
-      tap(duration => {
-        let durationCeil = duration ? Math.ceil(duration / 1000) : 0;
-
-        this.queryLastCompleteDuration = durationCeil;
+      tap(x => {
+        this.queryLastCompleteDuration = x;
       })
     );
 
@@ -80,16 +83,22 @@ export class ModelComponent implements OnDestroy {
       if (x) {
         this.dataLength = x.data ? JSON.parse(x.data).length : 0;
 
-        this.calcDurationFloor = Math.floor(x.last_complete_duration / 1000);
-
-        this.fullDurationFloor = Math.floor(
-          (x.last_complete_ts - x.last_run_ts) / 1000
-        );
-
-        this.residueDuration = this.fullDurationFloor - this.calcDurationFloor;
-
         // will auto runDry once
-        if (x.server_ts > 1 && x.query_id !== this.previousQueryId) {
+
+        let connection;
+        this.store
+          .select(selectors.getSelectedProjectConnection)
+          .pipe(
+            tap(c => (connection = c)),
+            take(1)
+          )
+          .subscribe();
+
+        if (
+          connection === api.ProjectConnectionEnum.BigQuery &&
+          x.server_ts > 1 &&
+          x.query_id !== this.previousQueryId
+        ) {
           this.runDry();
           this.previousQueryId = x.query_id;
         }

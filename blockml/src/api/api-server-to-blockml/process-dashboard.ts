@@ -8,6 +8,7 @@ export interface ProcessDashboardRequestBody {
     repo_id: string;
     bigquery_project: string;
     week_start: apiEnums.ProjectWeekStartEnum;
+    connection: apiEnums.ProjectConnectionEnum;
     old_dashboard_content: string;
     udfs_content: string;
     new_dashboard_id: string;

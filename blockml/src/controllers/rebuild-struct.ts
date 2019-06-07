@@ -10,6 +10,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
   let repoId: string;
   let bqProject: string;
   let weekStart: api.ProjectWeekStartEnum;
+  let connection: api.ProjectConnectionEnum;
   let structId: string;
 
   try {
@@ -19,6 +20,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
     files = req.body['payload']['files'];
     bqProject = req.body['payload']['bigquery_project'];
     weekStart = req.body['payload']['week_start'];
+    connection = req.body['payload']['connection'];
     structId = req.body['payload']['struct_id'];
   } catch (e) {
     res.json({
@@ -45,6 +47,7 @@ export let rebuildStruct = async (req: Request, res: Response) => {
     ws = await wrapper.wrapStruct({
       files: files,
       weekStart: weekStart,
+      connection: connection,
       bqProject: bqProject,
       projectId: projectId,
       repoId: repoId,

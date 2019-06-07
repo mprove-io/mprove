@@ -11,6 +11,7 @@ export let processDashboard = async (req: Request, res: Response) => {
   let projectId;
   let repoId;
   let weekStart;
+  let connection;
 
   let udfs: interfaces.Udf[];
   let dashboard: interfaces.Dashboard;
@@ -32,6 +33,7 @@ export let processDashboard = async (req: Request, res: Response) => {
     projectId = req.body['payload']['project_id'];
     repoId = req.body['payload']['repo_id'];
     weekStart = req.body['payload']['week_start'];
+    connection = req.body['payload']['connection'];
 
     udfs = JSON.parse(req.body['payload']['udfs_content']);
     dashboard = JSON.parse(req.body['payload']['old_dashboard_content']);
@@ -92,6 +94,7 @@ export let processDashboard = async (req: Request, res: Response) => {
       models: models,
       dashboardFilters: dashboardFilters,
       weekStart: weekStart,
+      connection: connection,
       bqProject: bqProject,
       projectId: projectId,
       udfs: udfs,

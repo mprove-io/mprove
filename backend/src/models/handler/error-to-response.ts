@@ -17,10 +17,10 @@ export async function errorToResponse(err: any, req: any, res: any, next: any) {
           err.name === enums.middlewareErrorsEnum.MIDDLEWARE_CHECK_JWT
             ? api.ServerResponseStatusEnum.AUTHORIZATION_ERROR
             : err instanceof ServerError
-            ? mapErrors(err.name)
+            ? mapInfoStatus(err.name)
             : api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR,
         error: {
-          message: undefined
+          message: mapInfoErrorMessage(err)
         }
       },
       payload: undefined
@@ -30,7 +30,7 @@ export async function errorToResponse(err: any, req: any, res: any, next: any) {
   }
 }
 
-function mapErrors(name: string) {
+function mapInfoStatus(name: string) {
   switch (name) {
     case enums.otherErrorsEnum.INTERNAL_SERVER_ERROR:
       return api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR;
@@ -38,6 +38,10 @@ function mapErrors(name: string) {
     case enums.otherErrorsEnum.SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID:
       return api.ServerResponseStatusEnum
         .SET_PROJECT_CREDENTIALS_ERROR_JSON_NOT_VALID;
+
+    case enums.postgresErrorsEnum.POSTGRES_CREATE_SCHEMA:
+      return api.ServerResponseStatusEnum
+        .SET_PROJECT_CREDENTIALS_ERROR_CAN_NOT_CREATE_SCHEMA_POSTGRES;
 
     case enums.procErrorsEnum.PROC_CREATE_DATASET:
       return api.ServerResponseStatusEnum
@@ -95,5 +99,15 @@ function mapErrors(name: string) {
 
     default:
       return api.ServerResponseStatusEnum.INTERNAL_SERVER_ERROR;
+  }
+}
+
+function mapInfoErrorMessage(err: any) {
+  switch (err.name) {
+    case enums.postgresErrorsEnum.POSTGRES_CREATE_SCHEMA:
+      return err.originalError ? err.originalError.message : err.message;
+
+    default:
+      return undefined;
   }
 }

@@ -3,7 +3,7 @@ import { helper } from '../../barrels/helper';
 
 const { BigQuery } = require('@google-cloud/bigquery');
 
-export async function createDataset(item: {
+export async function createDatasetBigquery(item: {
   bigquery_project: string;
   project_id: string;
   credentials_file_path: string;

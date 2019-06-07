@@ -1,0 +1,7 @@
+view: e296
+table: 1
+udfs: 
+- 'u1'
+fields:
+- dimension: dim5
+  sql: 555

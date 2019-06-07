@@ -130,14 +130,14 @@ export class MyHttpService {
           throw new MyError(
             Object.assign({}, resData, {
               name: `[MyHttpService] ${res.status} - response code is not 200`,
-              message: `-`
+              message: undefined
             })
           );
         } else if (!res.body.info) {
           throw new MyError(
             Object.assign({}, resData, {
               name: `[MyHttpService] ServerResponse does not have info`,
-              message: `-`
+              message: undefined
             })
           );
         } else if (res.body.info.status !== api.ServerResponseStatusEnum.OK) {
@@ -146,7 +146,7 @@ export class MyHttpService {
               name: `[MyHttpService] ServerResponse status is ${
                 res.body.info.status
               } (not Ok)`,
-              message: `-`
+              message: undefined
             })
           );
         } else {
@@ -184,7 +184,7 @@ export class MyHttpService {
                 name: `[MyHttpService] instance of HttpErrorResponse, Code is ${
                   e.status
                 }`,
-                message: `-`
+                message: undefined
               })
             )
           );
@@ -193,7 +193,7 @@ export class MyHttpService {
             new MyError(
               Object.assign({}, eData, {
                 name: `[MyHttpService] Delay exceeded`,
-                message: '-'
+                message: undefined
               })
             )
           );
@@ -202,7 +202,7 @@ export class MyHttpService {
             new MyError(
               Object.assign({}, eData, {
                 name: `[MyHttpService] Other`,
-                message: '-'
+                message: undefined
               })
             )
           );

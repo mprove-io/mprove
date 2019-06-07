@@ -4,10 +4,15 @@ import { ErrorsCollector } from '../../barrels/errors-collector';
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { gen } from '../../barrels/gen';
 
 export function transformTimes<
   T extends interfaces.View | interfaces.Model
->(item: { entities: Array<T>; weekStart: api.ProjectWeekStartEnum }): Array<T> {
+>(item: {
+  entities: Array<T>;
+  weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
+}): Array<T> {
   item.entities.forEach((x: T) => {
     let newFields: interfaces.FieldExt[] = [];
 
@@ -72,26 +77,23 @@ timeframes:
 
       let groupLabel = field.group_label ? field.group_label : field.name;
       let groupDescription = field.group_description;
-
-      let sqlTimestamp: string;
-
+      let ts;
       if (
         typeof field.source === 'undefined' ||
         field.source === null ||
         field.source === enums.TimeSourceEnum.Timestamp
       ) {
-        sqlTimestamp =
-          `mprovetimestampstart` + field.sql + `mprovetimestampend`;
+        ts = field.sql;
       } else if (field.source === enums.TimeSourceEnum.Epoch) {
-        sqlTimestamp =
-          `mprovetimestampstart` +
-          `TIMESTAMP_SECONDS(${field.sql})` +
-          `mprovetimestampend`;
+        ts = gen.makeSourceEpoch({
+          field: field,
+          connection: item.connection
+        });
       } else if (field.source === enums.TimeSourceEnum.YYYYMMDD) {
-        sqlTimestamp =
-          `mprovetimestampstart` +
-          `PARSE_TIMESTAMP('%Y%m%d', CAST(${field.sql} AS STRING))` +
-          `mprovetimestampend`;
+        ts = gen.makeSourceYYYYMMDD({
+          field: field,
+          connection: item.connection
+        });
       } else {
         // error e59
         ErrorsCollector.addError(
@@ -110,18 +112,24 @@ timeframes:
         return;
       }
 
+      let sqlTimestamp = `mprovetimestampstart${ts}mprovetimestampend`;
+
       field.timeframes.forEach(timeframe => {
         let sqlTransformed: string;
         let name: string;
         let label: string;
         let result: enums.FieldExtResultEnum;
 
+        // 2019-06-27 12:32:02.230908+00
         switch (true) {
           case timeframe === enums.TimeframeEnum.DayOfWeek: {
             name = field.name + `___day_of_week`;
             label = `Day of Week`;
 
-            sqlTransformed = `FORMAT_TIMESTAMP('%A', ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeDayOfWeek({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // Thursday
 
             result = enums.FieldExtResultEnum.DayOfWeek;
             break;
@@ -131,13 +139,11 @@ timeframes:
             name = field.name + `___day_of_week_index`;
             label = `Day of Week Index`;
 
-            sqlTransformed =
-              item.weekStart === api.ProjectWeekStartEnum.Sunday
-                ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
-                : `CASE
-      WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7
-      ELSE EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) - 1
-    END`;
+            sqlTransformed = gen.makeTimeframeDayOfWeekIndex({
+              sql_timestamp: sqlTimestamp,
+              week_start: item.weekStart,
+              connection: item.connection
+            }); // 5 or 4
 
             result = enums.FieldExtResultEnum.DayOfWeekIndex;
             break;
@@ -147,7 +153,10 @@ timeframes:
             name = field.name + `___day_of_year`;
             label = `Day of Year`;
             // no need for $week_start
-            sqlTransformed = `EXTRACT(DAYOFYEAR FROM ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeDayOfYear({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 178
 
             result = enums.FieldExtResultEnum.Number;
             break;
@@ -157,23 +166,11 @@ timeframes:
             name = field.name + `___week`;
             label = `Week`;
 
-            let dayOfYear = `EXTRACT(DAYOFYEAR FROM ${sqlTimestamp})`;
-
-            let dayOfWeekIndex =
-              item.weekStart === api.ProjectWeekStartEnum.Sunday
-                ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
-                : `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7 ELSE ` +
-                  `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) - 1 END)`;
-
-            let fullWeekStartDate =
-              item.weekStart === api.ProjectWeekStartEnum.Sunday
-                ? `CAST(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE) AS STRING)`
-                : `CAST(DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE), INTERVAL 1 DAY) AS STRING)`;
-
-            sqlTransformed = `CASE
-      WHEN ${dayOfYear} >= ${dayOfWeekIndex} THEN ${fullWeekStartDate}
-      ELSE CAST(DATE_ADD(CAST(${sqlTimestamp} AS DATE), INTERVAL -${dayOfYear} + 1 DAY) AS STRING)
-    END`;
+            sqlTransformed = gen.makeTimeframeWeek({
+              sql_timestamp: sqlTimestamp,
+              week_start: item.weekStart,
+              connection: item.connection
+            }); // 2019-06-24
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -183,18 +180,11 @@ timeframes:
             name = field.name + `___week_of_year`;
             label = `Week of Year`;
 
-            sqlTransformed =
-              item.weekStart === api.ProjectWeekStartEnum.Sunday
-                ? `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64)`
-                : `CASE
-      WHEN EXTRACT(DAYOFWEEK FROM TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), YEAR)) = 1 THEN ` +
-                  `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN ` +
-                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) ELSE ` +
-                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) + 1 END)
-      ELSE (CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN ` +
-                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) - 1 ELSE ` +
-                  `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64) END)
-    END`;
+            sqlTransformed = gen.makeTimeframeWeekOfYear({
+              sql_timestamp: sqlTimestamp,
+              week_start: item.weekStart,
+              connection: item.connection
+            }); // 26
 
             result = enums.FieldExtResultEnum.Number;
             break;
@@ -204,7 +194,10 @@ timeframes:
             name = field.name + `___date`;
             label = `Date`;
 
-            sqlTransformed = `CAST(CAST(${sqlTimestamp} AS DATE) AS STRING)`;
+            sqlTransformed = gen.makeTimeframeDate({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 2019-06-27
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -214,7 +207,10 @@ timeframes:
             name = field.name + `___day_of_month`;
             label = `Day of Month`;
 
-            sqlTransformed = `EXTRACT(DAY FROM ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeDayOfMonth({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 27
 
             result = enums.FieldExtResultEnum.Number;
             break;
@@ -224,7 +220,10 @@ timeframes:
             name = field.name + `___hour`;
             label = `Hour`;
 
-            sqlTransformed = `FORMAT_TIMESTAMP('%F %H', ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeHour({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 2019-06-27 12
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -234,7 +233,10 @@ timeframes:
             name = field.name + `___hour_of_day`;
             label = `Hour of Day`;
 
-            sqlTransformed = `EXTRACT(HOUR FROM ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeHourOfDay({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 12
 
             result = enums.FieldExtResultEnum.Number;
             break;
@@ -254,10 +256,11 @@ timeframes:
             name = field.name + `___${timeframe}`;
             label = timeframe;
 
-            sqlTransformed =
-              `FORMAT_TIMESTAMP('%F %H', ` +
-              `TIMESTAMP_TRUNC(TIMESTAMP_ADD(${sqlTimestamp}, INTERVAL ` +
-              `MOD(-1 * EXTRACT(HOUR FROM ${sqlTimestamp}), ${num}) HOUR), HOUR))`;
+            sqlTransformed = gen.makeTimeframeHourNum({
+              sql_timestamp: sqlTimestamp,
+              num: num,
+              connection: item.connection
+            }); // 2019-06-27 12
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -267,7 +270,10 @@ timeframes:
             name = field.name + `___minute`;
             label = `Minute`;
 
-            sqlTransformed = `FORMAT_TIMESTAMP('%F %H:%M', ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeMinute({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 2019-06-27 12:32
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -286,10 +292,11 @@ timeframes:
             name = field.name + `___${timeframe}`;
             label = timeframe;
 
-            sqlTransformed =
-              `FORMAT_TIMESTAMP('%F %H:%M', ` +
-              `TIMESTAMP_TRUNC(TIMESTAMP_SECONDS((UNIX_SECONDS(${sqlTimestamp}) - ` +
-              `MOD(UNIX_SECONDS(${sqlTimestamp}), (60*${num})))), MINUTE))`;
+            sqlTransformed = gen.makeTimeframeMinuteNum({
+              sql_timestamp: sqlTimestamp,
+              num: num,
+              connection: item.connection
+            }); // 2019-06-27 12:32
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -299,7 +306,10 @@ timeframes:
             name = field.name + `___month`;
             label = `Month`;
 
-            sqlTransformed = `FORMAT_TIMESTAMP('%Y-%m', ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeMonth({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 2019-06
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -309,20 +319,10 @@ timeframes:
             name = field.name + `___month_name`;
             label = `Month Name`;
 
-            sqlTransformed = `CASE
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 1 THEN 'January'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 2 THEN 'February'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 3 THEN 'March'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 4 THEN 'April'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 5 THEN 'May'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 6 THEN 'June'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 7 THEN 'July'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 8 THEN 'August'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 9 THEN 'September'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 10 THEN 'October'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 11 THEN 'November'
-      WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 12 THEN 'December'
-    END`;
+            sqlTransformed = gen.makeTimeframeMonthName({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // June
 
             result = enums.FieldExtResultEnum.MonthName;
             break;
@@ -332,7 +332,10 @@ timeframes:
             name = field.name + `___month_num`;
             label = `Month Num`;
 
-            sqlTransformed = `EXTRACT(MONTH FROM ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeMonthNum({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 6
 
             result = enums.FieldExtResultEnum.Number;
             break;
@@ -342,7 +345,10 @@ timeframes:
             name = field.name + `___quarter`;
             label = `Quarter`;
 
-            sqlTransformed = `FORMAT_TIMESTAMP('%Y-%m', TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), QUARTER))`;
+            sqlTransformed = gen.makeTimeframeQuarter({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 2019-04
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -352,7 +358,10 @@ timeframes:
             name = field.name + `___quarter_of_year`;
             label = `Quarter of Year`;
 
-            sqlTransformed = `CONCAT(CAST('Q' AS STRING), CAST(EXTRACT(QUARTER FROM ${sqlTimestamp}) AS STRING))`;
+            sqlTransformed = gen.makeTimeframeQuarterOfYear({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // Q2
 
             result = enums.FieldExtResultEnum.QuarterOfYear;
             break;
@@ -362,7 +371,10 @@ timeframes:
             name = field.name + `___time`;
             label = `Time`;
 
-            sqlTransformed = `FORMAT_TIMESTAMP('%F %T', ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeTime({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 2019-06-27 12:32:02
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -372,7 +384,10 @@ timeframes:
             name = field.name + `___time_of_day`;
             label = `Time of Day`;
 
-            sqlTransformed = `FORMAT_TIMESTAMP('%H:%M', ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeTimeOfDay({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 12:32
 
             result = enums.FieldExtResultEnum.String;
             break;
@@ -382,7 +397,10 @@ timeframes:
             name = field.name + `___year`;
             label = `Year`;
 
-            sqlTransformed = `EXTRACT(YEAR FROM ${sqlTimestamp})`;
+            sqlTransformed = gen.makeTimeframeYear({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // 2019
 
             result = enums.FieldExtResultEnum.Ts;
             break;
@@ -392,10 +410,10 @@ timeframes:
             name = field.name + `___yesno_has_value`;
             label = `Has value (Yes / No)`;
 
-            sqlTransformed = `CASE
-      WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes'
-      ELSE 'No'
-    END`;
+            sqlTransformed = gen.makeTimeframeYesNoHasValue({
+              sql_timestamp: sqlTimestamp,
+              connection: item.connection
+            }); // Yes
 
             result = enums.FieldExtResultEnum.Yesno;
             break;

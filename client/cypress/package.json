@@ -9,8 +9,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "cypress:open": "cypress open",
-    "cypress:run": "npm run clean && cypress run --spec 'integration/**/*'",
+    "cypress:open": "node_modules/.bin/cypress open",
+    "cypress:run": "npm run clean && node_modules/.bin/cypress run --spec 'integration/**/*'",
     "clean": "rimraf -- cypress/logs screenshots"
   },
   "devDependencies": {

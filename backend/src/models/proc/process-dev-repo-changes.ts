@@ -34,7 +34,7 @@ export async function processDevRepoChanges(item: {
   }
 
   let oldStructId = repo.struct_id;
-  let newStructId = helper.makeId();
+  let newStructId = helper.makeStructId();
 
   let itemStatus = <interfaces.ItemStatus>await git
     .getRepoStatus({
@@ -69,7 +69,8 @@ export async function processDevRepoChanges(item: {
       project_id: projectId,
       repo_id: item.repo_id,
       bigquery_project: project.bigquery_project,
-      week_start: <any>project.week_start,
+      week_start: project.week_start,
+      connection: project.connection,
       struct_id: newStructId
     })
     .catch(e =>

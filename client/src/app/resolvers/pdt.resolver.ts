@@ -28,16 +28,16 @@ export class PDTResolver implements Resolve<any> {
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     this.printer.log(enums.busEnum.PDT_RESOLVER, 'starts...');
 
-    let bqProject: string;
+    let projectHasCredentials: boolean;
     this.store
-      .select(selectors.getSelectedProjectBqProject)
+      .select(selectors.getSelectedProjectHasCredentials)
       .pipe(take(1))
-      .subscribe(x => (bqProject = x));
+      .subscribe(x => (projectHasCredentials = x));
 
-    if (!bqProject) {
+    if (!projectHasCredentials) {
       this.printer.log(
-        enums.busEnum.PDT_RESOLVER,
-        `bqProject empty, navigating profile...`
+        enums.busEnum.MODEL_SELECTED_RESOLVER,
+        `missing project connection credentials, navigating profile...`
       );
       this.router.navigate(['/profile']);
 

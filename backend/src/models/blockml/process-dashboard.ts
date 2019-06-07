@@ -10,7 +10,8 @@ export async function processDashboard(item: {
   project_id: string;
   repo_id: string;
   bigquery_project: string;
-  week_start: string;
+  week_start: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   old_dashboard_content: string;
   udfs_content: string;
   new_dashboard_id: string;
@@ -23,6 +24,7 @@ export async function processDashboard(item: {
     repo_id: item.repo_id,
     bigquery_project: item.bigquery_project,
     week_start: <any>item.week_start,
+    connection: <any>item.week_start,
     old_dashboard_content: item.old_dashboard_content,
     udfs_content: item.udfs_content,
     new_dashboard_id: item.new_dashboard_id,

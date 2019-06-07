@@ -17,21 +17,21 @@ export class MyErrorHandler extends ErrorHandler {
   }
 
   handleError(err: any): void {
-    if (!err.data) {
-      err.name = `[MyErrorHandler] ${err.message}`;
-      err.message = `[MyErrorHandler] ${err.message}: -`;
+    let dataName = err.data ? err.data.name : `[MyErrorHandler] ${err.message}`;
+    let dataMessage = err.data ? err.data.message : undefined;
+    let dataEventId = err.data ? err.data.event_id : undefined;
 
-      err.data = {
-        name: err.name,
-        message: '-'
-      };
-    }
+    let data = {
+      name: dataName,
+      message: dataMessage,
+      event_id: dataEventId
+    };
 
     let openDialogs = this.dialog.openDialogs;
 
     if (openDialogs.length < 5) {
       this.ngZone.run(() => {
-        this.myDialogService.showErDialog({ error: err });
+        this.myDialogService.showErDialog(data);
       });
     }
 

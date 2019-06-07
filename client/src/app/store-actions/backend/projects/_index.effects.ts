@@ -14,6 +14,10 @@ export * from './set-project-credentials/effects/set-project-credentials-success
 export * from './set-project-credentials/effects/set-project-credentials-fail.effect';
 export * from './set-project-credentials/effects/set-project-credentials.effect';
 
+export * from './set-project-connection/effects/set-project-connection-success.effect';
+export * from './set-project-connection/effects/set-project-connection-fail.effect';
+export * from './set-project-connection/effects/set-project-connection.effect';
+
 export * from './set-project-query-size-limit/effects/set-project-query-size-limit-success.effect';
 export * from './set-project-query-size-limit/effects/set-project-query-size-limit-fail.effect';
 export * from './set-project-query-size-limit/effects/set-project-query-size-limit.effect';

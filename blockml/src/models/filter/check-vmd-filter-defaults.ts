@@ -7,7 +7,11 @@ import { interfaces } from '../../barrels/interfaces';
 
 export function checkVMDFilterDefaults<
   T extends interfaces.View | interfaces.Model | interfaces.Dashboard
->(item: { entities: Array<T>; weekStart: api.ProjectWeekStartEnum }) {
+>(item: {
+  entities: Array<T>;
+  weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
+}) {
   item.entities.forEach(x => {
     x.filters = {};
 
@@ -47,6 +51,7 @@ export function checkVMDFilterDefaults<
           filter_bricks: field.default,
           proc: 'proc',
           weekStart: item.weekStart,
+          connection: item.connection,
           timezone: 'UTC',
           sqlTimestampSelect: 'sql_timestamp_select',
           ORs: [],

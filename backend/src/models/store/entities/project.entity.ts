@@ -9,6 +9,42 @@ export class ProjectEntity {
   @PrimaryColumn({ type: constants.PROJECT_ID_DATATYPE })
   project_id: string;
 
+  @Column({
+    type: constants.ENUM_TO_VARCHAR_DATATYPE,
+    default: api.ProjectConnectionEnum.BigQuery
+  })
+  connection: api.ProjectConnectionEnum;
+
+  @Column({
+    type: constants.PROJECT_POSTGRES_HOST_DATATYPE,
+    nullable: true
+  })
+  postgres_host: string;
+
+  @Column({
+    type: constants.PROJECT_POSTGRES_PORT_DATATYPE,
+    nullable: true
+  })
+  postgres_port: number;
+
+  @Column({
+    type: constants.PROJECT_POSTGRES_DATABASE_DATATYPE,
+    nullable: true
+  })
+  postgres_database: string;
+
+  @Column({
+    type: constants.PROJECT_POSTGRES_USER_DATATYPE,
+    nullable: true
+  })
+  postgres_user: string;
+
+  @Column({
+    type: constants.PROJECT_POSTGRES_PASSWORD_DATATYPE,
+    nullable: true
+  })
+  postgres_password: string;
+
   @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })
   has_credentials: enums.bEnum;
 

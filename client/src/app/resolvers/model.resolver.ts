@@ -13,6 +13,7 @@ import * as enums from '@app/enums/_index';
 import * as interfaces from '@app/interfaces/_index';
 import * as selectors from '@app/store-selectors/_index';
 import * as services from '@app/services/_index';
+import * as api from '@app/api/_index';
 
 @Injectable()
 export class ModelResolver implements Resolve<boolean> {
@@ -44,16 +45,16 @@ export class ModelResolver implements Resolve<boolean> {
       route.params['modelId']
     );
 
-    let bqProject: string;
+    let projectHasCredentials: boolean;
     this.store
-      .select(selectors.getSelectedProjectBqProject)
+      .select(selectors.getSelectedProjectHasCredentials)
       .pipe(take(1))
-      .subscribe(x => (bqProject = x));
+      .subscribe(x => (projectHasCredentials = x));
 
-    if (!bqProject) {
+    if (!projectHasCredentials) {
       this.printer.log(
         enums.busEnum.MODEL_SELECTED_RESOLVER,
-        `bqProject empty, navigating profile...`
+        `missing project connection credentials, navigating profile...`
       );
       this.router.navigate(['/profile']);
 

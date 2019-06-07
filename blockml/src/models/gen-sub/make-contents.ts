@@ -1,6 +1,7 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
 export function makeContents(item: interfaces.VarsSub) {
   let contents: string[] = [];
@@ -46,14 +47,22 @@ export function makeContents(item: interfaces.VarsSub) {
   let table;
 
   if (typeof item.view.table !== 'undefined' && item.view.table !== null) {
-    table = '`' + item.view.table + '`';
+    if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+      table = '`' + item.view.table + '`';
+    } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
+      table = item.view.table;
+    }
   } else if (item.view.permanent.match(ApRegex.TRUE())) {
-    table =
-      '`' +
-      `${item.bqProject}.mprove_${item.projectId}.${item.structId}_${
-        item.view.name
-      }` +
-      '`';
+    let mproveSchema = `mprove_${item.projectId}`;
+
+    let permanentTableName = `${item.structId}_${item.view.name}`;
+
+    if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+      table =
+        '`' + `${item.bqProject}.${mproveSchema}.${permanentTableName}` + '`';
+    } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
+      table = `${mproveSchema}.${permanentTableName}`;
+    }
   } else {
     let derivedSqlArray = item.view.derived_table.split('\n');
 
@@ -71,7 +80,7 @@ export function makeContents(item: interfaces.VarsSub) {
     contents.push(`    ${flat}`);
   });
 
-  contents.push(`  )`);
+  contents.push(`  ) as view_main_sub`);
 
   item.contents = contents;
   item.with = myWith;

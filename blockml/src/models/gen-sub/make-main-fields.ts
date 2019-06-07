@@ -1,6 +1,8 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { gen } from '../../barrels/gen';
+import { api } from '../../barrels/api';
 
 export function makeMainFields(item: interfaces.VarsSub) {
   let mainText: string[] = [];
@@ -69,36 +71,29 @@ export function makeMainFields(item: interfaces.VarsSub) {
 
       switch (true) {
         case field.type === enums.FieldExtTypeEnum.SumByKey: {
-          item.extra_udfs['mprove_array_sum'] = 1;
+          if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+            item.extra_udfs['mprove_array_sum'] = 1;
+          }
 
-          sqlSelect =
-            `COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(` +
-            sqlKeyFinal +
-            ` AS STRING), '||'), CAST(` +
-            sqlFinal +
-            ` AS STRING)))), 0)`;
+          sqlSelect = gen.makeMeasureSumByKey({
+            sql_key_final: sqlKeyFinal,
+            sql_final: sqlFinal,
+            connection: item.connection
+          });
 
           break;
         }
 
         case field.type === enums.FieldExtTypeEnum.AverageByKey: {
-          item.extra_udfs['mprove_array_sum'] = 1;
+          if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+            item.extra_udfs['mprove_array_sum'] = 1;
+          }
 
-          let numerator =
-            `mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(` +
-            sqlKeyFinal +
-            ` AS STRING), '||'), CAST(` +
-            sqlFinal +
-            ` AS STRING))))`;
-
-          let denominator =
-            `NULLIF(CAST(COUNT(DISTINCT CASE WHEN ` +
-            sqlFinal +
-            ` IS NOT NULL THEN ` +
-            sqlKeyFinal +
-            ` ELSE NULL END) AS FLOAT64), 0.0)`;
-
-          sqlSelect = `(${numerator} / ${denominator})`;
+          sqlSelect = gen.makeMeasureAverageByKey({
+            sql_key_final: sqlKeyFinal,
+            sql_final: sqlFinal,
+            connection: item.connection
+          });
 
           break;
         }
@@ -106,46 +101,60 @@ export function makeMainFields(item: interfaces.VarsSub) {
         case field.type === enums.FieldExtTypeEnum.MedianByKey: {
           item.extra_udfs['mprove_approx_percentile_distinct_disc'] = 1;
 
-          sqlSelect =
-            `mprove_approx_percentile_distinct_disc(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(` +
-            sqlKeyFinal +
-            ` AS STRING), '||'), CAST(` +
-            sqlFinal +
-            ` AS STRING))), 0.5)`;
+          sqlSelect = gen.makeMeasureMedianByKey({
+            sql_key_final: sqlKeyFinal,
+            sql_final: sqlFinal,
+            connection: item.connection
+          });
+
           break;
         }
 
         case field.type === enums.FieldExtTypeEnum.PercentileByKey: {
           item.extra_udfs['mprove_approx_percentile_distinct_disc'] = 1;
 
-          sqlSelect =
-            `mprove_approx_percentile_distinct_disc(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(` +
-            sqlKeyFinal +
-            ` AS STRING), '||'), CAST(` +
-            sqlFinal +
-            ` AS STRING))), ` +
-            Number(field.percentile) / 100 +
-            `)`;
+          sqlSelect = gen.makeMeasurePercentileByKey({
+            sql_key_final: sqlKeyFinal,
+            sql_final: sqlFinal,
+            percentile: field.percentile,
+            connection: item.connection
+          });
           break;
         }
 
         case field.type === enums.FieldExtTypeEnum.Min: {
-          sqlSelect = `MIN(${sqlFinal})`;
+          sqlSelect = gen.makeMeasureMin({
+            sql_final: sqlFinal,
+            connection: item.connection
+          });
+
           break;
         }
 
         case field.type === enums.FieldExtTypeEnum.Max: {
-          sqlSelect = `MAX(${sqlFinal})`;
+          sqlSelect = gen.makeMeasureMax({
+            sql_final: sqlFinal,
+            connection: item.connection
+          });
+
           break;
         }
 
         case field.type === enums.FieldExtTypeEnum.CountDistinct: {
-          sqlSelect = `COUNT(DISTINCT ${sqlFinal})`;
+          sqlSelect = gen.makeMeasureCountDistinct({
+            sql_final: sqlFinal,
+            connection: item.connection
+          });
+
           break;
         }
 
         case field.type === enums.FieldExtTypeEnum.List: {
-          sqlSelect = `STRING_AGG(DISTINCT CAST(${sqlFinal} AS STRING), ', ')`;
+          sqlSelect = gen.makeMeasureList({
+            sql_final: sqlFinal,
+            connection: item.connection
+          });
+
           break;
         }
 

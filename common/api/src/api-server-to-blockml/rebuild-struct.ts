@@ -9,6 +9,7 @@ export interface RebuildStructRequestBody {
     repo_id: string;
     bigquery_project: string;
     week_start: apiEnums.ProjectWeekStartEnum;
+    connection: apiEnums.ProjectConnectionEnum;
     struct_id: string;
   };
 }

@@ -2,19 +2,20 @@ import { api } from '../../barrels/api';
 import { genSql } from '../../barrels/gen-sql';
 import { interfaces } from '../../barrels/interfaces';
 
-const { forEach } = require('p-iteration');
+import { forEachSeries } from 'p-iteration';
 
 export async function fetchBqViews(item: {
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
   udfs: interfaces.Udf[];
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   bqProject: string;
   projectId: string;
   structId: string;
 }) {
-  await forEach(item.dashboards, async (x: interfaces.Dashboard) => {
-    await forEach(x.reports, async (report: interfaces.Report) => {
+  await forEachSeries(item.dashboards, async (x: interfaces.Dashboard) => {
+    await forEachSeries(x.reports, async (report: interfaces.Report) => {
       let model = item.models.find(m => m.name === report.model);
 
       let filters: { [filter: string]: string[] } = {};
@@ -36,6 +37,7 @@ export async function fetchBqViews(item: {
         limit: report.limit,
         filters: filters,
         weekStart: item.weekStart,
+        connection: item.connection,
         bqProject: item.bqProject,
         projectId: item.projectId,
         udfs_user: item.udfs,

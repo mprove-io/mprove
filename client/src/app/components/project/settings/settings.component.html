@@ -3,31 +3,82 @@
     {{ selectedProjectId$ | async }} Settings
   </div>
 </mat-toolbar>
+
 <div class="settings">
   <div class="settings__row">
-    <div class="settings__label ttu">
-      Google cloud project service account credentials
-    </div>
-    <div class="settings__value"></div>
-  </div>
-  <!-- settings__row -->
-
-  <div class="settings__row">
-    <div class="settings__label"> BigQuery project </div>
+    <div class="settings__label"> Connection </div>
     <div class="settings__value">
-      <div data-cy="projectSettingsBigqueryProjectData">{{
-        selectedProjectBqProject$ | async
-      }}</div>
+      <m-update-connection></m-update-connection>
     </div>
   </div>
-  <!-- settings__row -->
 
-  <div class="settings__row">
-    <div class="settings__label"> Client email </div>
-    <div class="settings__value">
-      <div data-cy="projectSettingsBigqueryClientEmailData">{{
-        selectedProjectClientEmail$ | async
-      }}</div>
+  <div *ngIf="projectConnection === projectConnectionEnum.BigQuery">
+    <div class="settings__row">
+      <div class="settings__label ttu">
+        Google cloud project service account credentials
+      </div>
+      <div class="settings__value"></div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__label"> BigQuery project </div>
+      <div class="settings__value">
+        <div data-cy="projectSettingsBigqueryProjectData">{{
+          selectedProjectBqProject$ | async
+        }}</div>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__label"> Client email </div>
+      <div class="settings__value">
+        <div data-cy="projectSettingsBigqueryClientEmailData">{{
+          selectedProjectClientEmail$ | async
+        }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="projectConnection === projectConnectionEnum.PostgreSQL">
+    <div class="settings__row">
+      <div class="settings__label ttu"> PostgreSQL credentials </div>
+      <div class="settings__value"></div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__label"> Host </div>
+      <div class="settings__value">
+        <div data-cy="projectSettingsPostgresHost">{{
+          postgresHost$ | async
+        }}</div>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__label"> Port </div>
+      <div class="settings__value">
+        <div data-cy="projectSettingsPostgresPort">{{
+          postgresPort$ | async
+        }}</div>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__label"> Database </div>
+      <div class="settings__value">
+        <div data-cy="projectSettingsPostgresDatabase">{{
+          postgresDatabase$ | async
+        }}</div>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__label"> User </div>
+      <div class="settings__value">
+        <div data-cy="projectSettingsPostgresUser">{{
+          postgresUser$ | async
+        }}</div>
+      </div>
     </div>
   </div>
 
@@ -42,8 +93,6 @@
     >
   </div>
 
-  <!-- settings__row -->
-
   <!--
     <div class="settings__row">
       <div class="settings__label"> Data Size Limit per request, GB </div>
@@ -52,7 +101,6 @@
       </div>
     </div>
   -->
-  <!-- settings__row -->
 
   <div class="settings__row">
     <div class="settings__label"> Timezone </div>
@@ -60,7 +108,6 @@
       <m-update-project-timezone></m-update-project-timezone>
     </div>
   </div>
-  <!-- settings__row -->
 
   <div class="settings__row">
     <div class="settings__label"> Week Start Day </div>
@@ -68,7 +115,6 @@
       <m-update-week-start></m-update-week-start>
     </div>
   </div>
-  <!-- settings__row -->
 
   <div class="settings__row">
     <div class="settings__label"> Mprove Project </div>
@@ -78,7 +124,6 @@
       }}</div>
     </div>
   </div>
-  <!-- settings__row -->
 
   <div class="settings__row settings__row-delete">
     <button
@@ -90,5 +135,6 @@
       >DELETE PROJECT</button
     >
   </div>
-  <!-- settings__row -->
 </div>
+
+<div *ngIf="(selectedProjectConnection$ | async)"></div>

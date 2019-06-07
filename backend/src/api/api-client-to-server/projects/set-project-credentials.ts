@@ -4,7 +4,12 @@ export interface SetProjectCredentialsRequestBody {
   info: apiObjects.ClientRequest;
   payload: {
     project_id: string;
-    credentials: string;
+    credentials?: string;
+    postgres_host?: string;
+    postgres_port?: number;
+    postgres_database?: string;
+    postgres_user?: string;
+    postgres_password?: string;
     server_ts: number;
   };
 }

@@ -38,22 +38,11 @@ export class BackendFailEffect {
       let err = action.payload.error;
 
       if (!err.data) {
-        err.name = `[AppEffects] ${err.message}`;
-        err.message = `[AppEffects] ${err.message}: -`;
-
         err.data = {
-          name: err.name,
-          message: '-'
+          name: `[BACKEND_FAIL] ${err.message}`,
+          message: undefined
         };
       }
-
-      err.name = `${action.type} ${err.name}`;
-      err.message = `${action.type} ${err.message}`;
-
-      err.data = {
-        name: err.name,
-        message: err.data.message
-      };
 
       throw err;
     })

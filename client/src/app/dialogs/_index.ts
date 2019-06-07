@@ -17,5 +17,6 @@ export * from './reset-password/reset-password-dialog.component';
 export * from './sql/sql-dialog.component';
 export * from './rename-folder/rename-folder-dialog.component';
 export * from './req-dim-added/req-dim-added-dialog.component';
+export * from './update-credentials-postgres/update-credentials-postgres-dialog.component';
 export * from './update-credentials/update-credentials-dialog.component';
 export * from './update-remote-url/update-remote-url-dialog.component';

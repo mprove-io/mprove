@@ -31,6 +31,7 @@ export const PATH_SET_PROJECT_CREDENTIALS = '/projects.setProjectCredentials';
 export const PATH_SET_PROJECT_QUERY_SIZE_LIMIT =
   '/projects.setProjectQuerySizeLimit';
 export const PATH_SET_PROJECT_TIMEZONE = '/projects.setProjectTimezone';
+export const PATH_SET_PROJECT_CONNECTION = '/projects.setProjectConnection';
 export const PATH_SET_PROJECT_WEEK_START = '/projects.setProjectWeekStart';
 export const PATH_CANCEL_QUERIES = '/queries.cancelQueries';
 export const PATH_GET_PDT_QUERIES = '/queries.getPdtQueries';

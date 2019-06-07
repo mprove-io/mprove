@@ -52,6 +52,7 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
     skipChunk = false;
 
     query = <entities.QueryEntity>await runQueryWithoutDeps({
+      project: project,
       credentials_file_path: project.bigquery_credentials_file_path,
       bigquery_project: project.bigquery_project,
       user_id: query.last_run_by,
@@ -69,6 +70,7 @@ export async function checkWaitingQuery(item: { query: entities.QueryEntity }) {
     skipChunk = false;
 
     query = <entities.QueryEntity>await runQueryWithoutDeps({
+      project: project,
       credentials_file_path: project.bigquery_credentials_file_path,
       bigquery_project: project.bigquery_project,
       user_id: query.last_run_by,

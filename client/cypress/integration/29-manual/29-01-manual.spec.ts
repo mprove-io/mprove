@@ -8,7 +8,7 @@ const password = '123123';
 const projectId = 'project_29_01';
 
 describe('29-01 manual (logged in)', () => {
-  it(`should be able to add chart`, () => {
+  it(`it should be testable`, () => {
     cy.deletePack({
       user_ids: [userId],
       project_ids: [projectId]

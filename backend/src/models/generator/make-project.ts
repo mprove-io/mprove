@@ -8,6 +8,12 @@ export function makeProject(item: {
 }): entities.ProjectEntity {
   return {
     project_id: item.project_id,
+    connection: api.ProjectConnectionEnum.BigQuery,
+    postgres_host: undefined,
+    postgres_port: undefined,
+    postgres_database: undefined,
+    postgres_user: undefined,
+    postgres_password: undefined,
     has_credentials: enums.bEnum.FALSE,
     bigquery_project: undefined,
     bigquery_client_email: undefined,

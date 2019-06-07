@@ -66,6 +66,7 @@
     "p-iteration": "^1.1.7",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "pg-promise": "^8.7.2",
     "request": "^2.83.0",
     "rimraf": "^2.6.2",
     "typeorm": "^0.2.7",

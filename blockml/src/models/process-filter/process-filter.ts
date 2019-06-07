@@ -1,12 +1,14 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
+import { gen } from '../../barrels/gen';
 
 export function processFilter(item: {
   result: enums.FieldExtResultEnum;
   filter_bricks: string[];
   proc: string;
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   timezone: string;
   sqlTimestampSelect: string;
   ORs: string[];
@@ -458,9 +460,15 @@ export function processFilter(item: {
         not = r[1];
         blank = r[2];
 
-        condition = `(${item.proc} IS NULL OR LENGTH(CAST(${
-          item.proc
-        } AS STRING)) = 0)`;
+        if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+          condition = `(${item.proc} IS NULL OR LENGTH(CAST(${
+            item.proc
+          } AS STRING)) = 0)`;
+        } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
+          condition = `(${item.proc} IS NULL OR LENGTH(CAST(${
+            item.proc
+          } AS TEXT)) = 0)`;
+        }
 
         if (not) {
           item.fractions.push({
@@ -544,28 +552,23 @@ export function processFilter(item: {
         return;
       }
     } else if (item.result === enums.FieldExtResultEnum.Ts) {
-      let currentTimestamp =
-        item.timezone === 'UTC'
-          ? `CURRENT_TIMESTAMP()`
-          : `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', CURRENT_TIMESTAMP(), '${
-              item.timezone
-            }'))`;
+      let tsItem = gen.makeTimestampsCurrent({
+        timezone: item.timezone,
+        week_start: item.weekStart,
+        connection: item.connection
+      });
 
-      let currentMinuteTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, MINUTE)`;
-      let currentHourTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, HOUR)`;
-      let currentDateTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, DAY)`;
-
-      let weekStartTimestamp =
-        item.weekStart === api.ProjectWeekStartEnum.Sunday
-          ? `TIMESTAMP_TRUNC(${currentTimestamp}, WEEK)`
-          : `TIMESTAMP_ADD(TIMESTAMP_TRUNC(${currentTimestamp}, WEEK), INTERVAL 1 DAY)`;
-
-      let currentMonthTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, MONTH)`;
-      let currentQuarterTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, QUARTER)`;
-      let currentYearTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, YEAR)`;
+      let currentTimestamp = tsItem.current_ts;
+      let currentMinuteTimestamp = tsItem.current_minute_ts;
+      let currentHourTimestamp = tsItem.current_hour_ts;
+      let currentDateTimestamp = tsItem.current_date_ts;
+      let currentWeekStartTimestamp = tsItem.current_week_start_ts;
+      let currentMonthTimestamp = tsItem.current_month_ts;
+      let currentQuarterTimestamp = tsItem.current_quarter_ts;
+      let currentYearTimestamp = tsItem.current_year_ts;
 
       let way;
-      let integer;
+      let integerStr: string;
       let unit;
 
       let year;
@@ -583,12 +586,12 @@ export function processFilter(item: {
       let complete;
       let when;
       let plusCurrent;
-      let forInteger;
+      let forIntegerStr: string;
       let forUnit;
 
       if ((r = ApRegex.BRICK_TS_INTERVALS().exec(brick))) {
         way = r[1];
-        integer = r[2];
+        integerStr = r[2];
         unit = r[3];
         year = r[4];
         month = r[5];
@@ -598,7 +601,7 @@ export function processFilter(item: {
         complete = r[9];
         when = r[10];
         plusCurrent = r[11];
-        forInteger = r[12];
+        forIntegerStr = r[12];
         forUnit = r[13];
 
         let open;
@@ -607,17 +610,14 @@ export function processFilter(item: {
         let two;
 
         if (year) {
-          if (minute) {
-            open = `TIMESTAMP('${year}-${month}-${day} ${hour}:${minute}:00')`;
-          } else if (hour) {
-            open = `TIMESTAMP('${year}-${month}-${day} ${hour}:00:00')`;
-          } else if (day) {
-            open = `TIMESTAMP('${year}-${month}-${day}')`;
-          } else if (month) {
-            open = `TIMESTAMP('${year}-${month}-01')`;
-          } else if (year) {
-            open = `TIMESTAMP('${year}-01-01')`;
-          }
+          open = gen.makeTimestampOpenFromDateParts({
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            connection: item.connection
+          });
 
           switch (true) {
             case way === 'after': {
@@ -637,115 +637,71 @@ export function processFilter(item: {
             (way.match(/^last$/) && complete) ||
             (way.match(/^before|after$/) && when.match(/^ago$/) && complete)
           ) {
-            open =
-              unit === enums.FractionUnitEnum.Minutes
-                ? `TIMESTAMP_ADD(${currentMinuteTimestamp}, INTERVAL -${integer} MINUTE)`
-                : unit === enums.FractionUnitEnum.Hours
-                ? `TIMESTAMP_ADD(${currentHourTimestamp}, INTERVAL -${integer} HOUR)`
-                : unit === enums.FractionUnitEnum.Days
-                ? `TIMESTAMP_ADD(${currentDateTimestamp}, INTERVAL -${integer} DAY)`
-                : unit === enums.FractionUnitEnum.Weeks
-                ? `TIMESTAMP_ADD(${weekStartTimestamp}, INTERVAL -${integer}*7 DAY)`
-                : unit === enums.FractionUnitEnum.Months
-                ? `CAST(DATE_ADD(CAST(${currentMonthTimestamp} AS DATE), ` +
-                  `INTERVAL -${integer} MONTH) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Quarters
-                ? `CAST(DATE_ADD(CAST(${currentQuarterTimestamp} AS DATE), ` +
-                  `INTERVAL -${integer} QUARTER) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Years
-                ? `CAST(DATE_ADD(CAST(${currentYearTimestamp} AS DATE), ` +
-                  `INTERVAL -${integer} YEAR) AS TIMESTAMP)`
-                : undefined;
+            open = gen.makeTimestampOpenLastBeforeAfterComplete({
+              unit: unit,
+              integer: Number(integerStr),
+              current_year_ts: currentYearTimestamp,
+              current_quarter_ts: currentQuarterTimestamp,
+              current_month_ts: currentMonthTimestamp,
+              current_week_start_ts: currentWeekStartTimestamp,
+              current_date_ts: currentDateTimestamp,
+              current_hour_ts: currentHourTimestamp,
+              current_minute_ts: currentMinuteTimestamp,
+              connection: item.connection
+            });
           } else if (
             way.match(/^last$/) ||
             (way.match(/^before|after$/) && when.match(/^ago$/))
           ) {
-            open =
-              unit === enums.FractionUnitEnum.Minutes
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL -${integer} MINUTE)`
-                : unit === enums.FractionUnitEnum.Hours
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL -${integer} HOUR)`
-                : unit === enums.FractionUnitEnum.Days
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL -${integer} DAY)`
-                : unit === enums.FractionUnitEnum.Weeks
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL -${integer}*7 DAY)`
-                : unit === enums.FractionUnitEnum.Months
-                ? `CAST(DATE_ADD(CAST(${currentTimestamp} AS DATE), ` +
-                  `INTERVAL -${integer} MONTH) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Quarters
-                ? `CAST(DATE_ADD(CAST(${currentTimestamp} AS DATE), ` +
-                  `INTERVAL -${integer} QUARTER) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Years
-                ? `CAST(DATE_ADD(CAST(${currentTimestamp} AS DATE), ` +
-                  `INTERVAL -${integer} YEAR) AS TIMESTAMP)`
-                : undefined;
+            open = gen.makeTimestampOpenLastBeforeAfter({
+              unit: unit,
+              integer: Number(integerStr),
+              current_ts: currentTimestamp,
+              connection: item.connection
+            });
           } else if (
             way.match(/^before|after$/) &&
             when.match(/^in\s+future$/) &&
             complete
           ) {
-            open =
-              unit === enums.FractionUnitEnum.Minutes
-                ? `TIMESTAMP_ADD(${currentMinuteTimestamp}, INTERVAL ${integer} + 1 MINUTE)`
-                : unit === enums.FractionUnitEnum.Hours
-                ? `TIMESTAMP_ADD(${currentHourTimestamp}, INTERVAL ${integer} + 1 HOUR)`
-                : unit === enums.FractionUnitEnum.Days
-                ? `TIMESTAMP_ADD(${currentDateTimestamp}, INTERVAL ${integer} + 1 DAY)`
-                : unit === enums.FractionUnitEnum.Weeks
-                ? `TIMESTAMP_ADD(${weekStartTimestamp}, INTERVAL ${integer}*7 + 1*7 DAY)`
-                : unit === enums.FractionUnitEnum.Months
-                ? `CAST(DATE_ADD(CAST(${currentMonthTimestamp} AS DATE), ` +
-                  `INTERVAL ${integer} + 1 MONTH) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Quarters
-                ? `CAST(DATE_ADD(CAST(${currentQuarterTimestamp} AS DATE), ` +
-                  `INTERVAL ${integer} + 1 QUARTER) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Years
-                ? `CAST(DATE_ADD(CAST(${currentYearTimestamp} AS DATE), ` +
-                  `INTERVAL ${integer} + 1 YEAR) AS TIMESTAMP)`
-                : undefined;
+            open = gen.makeTimestampOpenBeforeAfterInFutureComplete({
+              unit: unit,
+              integer: Number(integerStr),
+              current_year_ts: currentYearTimestamp,
+              current_quarter_ts: currentQuarterTimestamp,
+              current_month_ts: currentMonthTimestamp,
+              current_week_start_ts: currentWeekStartTimestamp,
+              current_date_ts: currentDateTimestamp,
+              current_hour_ts: currentHourTimestamp,
+              current_minute_ts: currentMinuteTimestamp,
+              connection: item.connection
+            });
           } else if (
             way.match(/^before|after$/) &&
             when.match(/^in\s+future$/)
           ) {
-            open =
-              unit === enums.FractionUnitEnum.Minutes
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL ${integer} MINUTE)`
-                : unit === enums.FractionUnitEnum.Hours
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL ${integer} HOUR)`
-                : unit === enums.FractionUnitEnum.Days
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL ${integer} DAY)`
-                : unit === enums.FractionUnitEnum.Weeks
-                ? `TIMESTAMP_ADD(${currentTimestamp}, INTERVAL ${integer}*7 DAY)`
-                : unit === enums.FractionUnitEnum.Months
-                ? `CAST(DATE_ADD(CAST(${currentTimestamp} AS DATE), ` +
-                  `INTERVAL ${integer} MONTH) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Quarters
-                ? `CAST(DATE_ADD(CAST(${currentTimestamp} AS DATE), ` +
-                  `INTERVAL ${integer} QUARTER) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Years
-                ? `CAST(DATE_ADD(CAST(${currentTimestamp} AS DATE), ` +
-                  `INTERVAL ${integer} YEAR) AS TIMESTAMP)`
-                : undefined;
+            open = gen.makeTimestampOpenBeforeAfterInFuture({
+              unit: unit,
+              integer: Number(integerStr),
+              current_ts: currentTimestamp,
+              connection: item.connection
+            });
           }
 
           // CLOSE INTERVAL
           if (way.match(/^last$/) && complete && plusCurrent) {
-            close =
-              unit === enums.FractionUnitEnum.Minutes
-                ? `TIMESTAMP_ADD(${currentMinuteTimestamp}, INTERVAL 1 MINUTE)`
-                : unit === enums.FractionUnitEnum.Hours
-                ? `TIMESTAMP_ADD(${currentHourTimestamp}, INTERVAL 1 HOUR)`
-                : unit === enums.FractionUnitEnum.Days
-                ? `TIMESTAMP_ADD(${currentDateTimestamp}, INTERVAL 1 DAY)`
-                : unit === enums.FractionUnitEnum.Weeks
-                ? `TIMESTAMP_ADD(${weekStartTimestamp}, INTERVAL 1*7 DAY)`
-                : unit === enums.FractionUnitEnum.Months
-                ? `CAST(DATE_ADD(CAST(${currentMonthTimestamp} AS DATE), INTERVAL 1 MONTH) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Quarters
-                ? `CAST(DATE_ADD(CAST(${currentQuarterTimestamp} AS DATE), INTERVAL 1 QUARTER) AS TIMESTAMP)`
-                : unit === enums.FractionUnitEnum.Years
-                ? `CAST(DATE_ADD(CAST(${currentYearTimestamp} AS DATE), INTERVAL 1 YEAR) AS TIMESTAMP)`
-                : undefined;
+            close = gen.makeTimestampCloseLastCompletePlusCurrent({
+              unit: unit,
+              integer: Number(integerStr),
+              current_year_ts: currentYearTimestamp,
+              current_quarter_ts: currentQuarterTimestamp,
+              current_month_ts: currentMonthTimestamp,
+              current_week_start_ts: currentWeekStartTimestamp,
+              current_date_ts: currentDateTimestamp,
+              current_hour_ts: currentHourTimestamp,
+              current_minute_ts: currentMinuteTimestamp,
+              connection: item.connection
+            });
           } else if (way.match(/^last$/) && complete) {
             close =
               unit === enums.FractionUnitEnum.Minutes
@@ -755,7 +711,7 @@ export function processFilter(item: {
                 : unit === enums.FractionUnitEnum.Days
                 ? currentDateTimestamp
                 : unit === enums.FractionUnitEnum.Weeks
-                ? weekStartTimestamp
+                ? currentWeekStartTimestamp
                 : unit === enums.FractionUnitEnum.Months
                 ? currentMonthTimestamp
                 : unit === enums.FractionUnitEnum.Quarters
@@ -769,26 +725,16 @@ export function processFilter(item: {
         }
 
         if (way.match(/^before|after$/) && forUnit) {
-          let sInteger = way.match(/^after$/)
-            ? `${forInteger}`
-            : `-${forInteger}`;
+          let sIntegerStr = way.match(/^after$/)
+            ? `${forIntegerStr}`
+            : `-${forIntegerStr}`;
 
-          close =
-            forUnit === enums.FractionUnitEnum.Minutes
-              ? `TIMESTAMP_ADD(${open}, INTERVAL ${sInteger} MINUTE)`
-              : forUnit === enums.FractionUnitEnum.Hours
-              ? `TIMESTAMP_ADD(${open}, INTERVAL ${sInteger} HOUR)`
-              : forUnit === enums.FractionUnitEnum.Days
-              ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL ${sInteger} DAY) AS TIMESTAMP)`
-              : forUnit === enums.FractionUnitEnum.Weeks
-              ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL ${sInteger}*7 DAY) AS TIMESTAMP)`
-              : forUnit === enums.FractionUnitEnum.Months
-              ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL ${sInteger} MONTH) AS TIMESTAMP)`
-              : forUnit === enums.FractionUnitEnum.Quarters
-              ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL ${sInteger} QUARTER) AS TIMESTAMP)`
-              : forUnit === enums.FractionUnitEnum.Years
-              ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL ${sInteger} YEAR) AS TIMESTAMP)`
-              : undefined;
+          close = gen.makeTimestampCloseBeforeAfterForUnit({
+            open: open,
+            for_unit: forUnit,
+            s_integer: Number(sIntegerStr),
+            connection: item.connection
+          });
         }
 
         if (way.match(/^last|after$/)) {
@@ -821,7 +767,7 @@ export function processFilter(item: {
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsInLast,
-            ts_last_value: Number(integer),
+            ts_last_value: Number(integerStr),
             ts_last_unit: <any>unit,
             ts_last_complete_option: tsLastCompleteOption
           });
@@ -838,7 +784,7 @@ export function processFilter(item: {
             ts_for_option: forUnit
               ? api.FractionTsForOptionEnum.For
               : api.FractionTsForOptionEnum.ForInfinity,
-            ts_for_value: Number(forInteger),
+            ts_for_value: Number(forIntegerStr),
             ts_for_unit: <any>forUnit
           });
         } else if (way.match(/^before$/)) {
@@ -846,7 +792,7 @@ export function processFilter(item: {
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsBeforeRelative,
-            ts_relative_value: Number(integer),
+            ts_relative_value: Number(integerStr),
             ts_relative_unit: <any>unit,
             ts_relative_complete_option: complete
               ? api.FractionTsRelativeCompleteOptionEnum.Complete
@@ -859,7 +805,7 @@ export function processFilter(item: {
             ts_for_option: forUnit
               ? api.FractionTsForOptionEnum.For
               : api.FractionTsForOptionEnum.ForInfinity,
-            ts_for_value: Number(forInteger),
+            ts_for_value: Number(forIntegerStr),
             ts_for_unit: <any>forUnit
           });
         } else if (way.match(/^after$/) && year) {
@@ -875,7 +821,7 @@ export function processFilter(item: {
             ts_for_option: forUnit
               ? api.FractionTsForOptionEnum.For
               : api.FractionTsForOptionEnum.ForInfinity,
-            ts_for_value: Number(forInteger),
+            ts_for_value: Number(forIntegerStr),
             ts_for_unit: <any>forUnit
           });
         } else if (way.match(/^after$/)) {
@@ -883,7 +829,7 @@ export function processFilter(item: {
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsAfterRelative,
-            ts_relative_value: Number(integer),
+            ts_relative_value: Number(integerStr),
             ts_relative_unit: <any>unit,
             ts_relative_complete_option: complete
               ? api.FractionTsRelativeCompleteOptionEnum.Complete
@@ -896,7 +842,7 @@ export function processFilter(item: {
             ts_for_option: forUnit
               ? api.FractionTsForOptionEnum.For
               : api.FractionTsForOptionEnum.ForInfinity,
-            ts_for_value: Number(forInteger),
+            ts_for_value: Number(forIntegerStr),
             ts_for_unit: <any>forUnit
           });
         }
@@ -920,43 +866,35 @@ export function processFilter(item: {
         let open;
         let close;
 
-        open = minute // 2016/10/05 21:07
-          ? `TIMESTAMP('${year}-${month}-${day} ${hour}:${minute}:00')`
-          : hour // 2016/10/05 21
-          ? `TIMESTAMP('${year}-${month}-${day} ${hour}:00:00')`
-          : day // 2016/10/05
-          ? `TIMESTAMP('${year}-${month}-${day}')`
-          : month // 2016/10
-          ? `TIMESTAMP('${year}-${month}-01')`
-          : year // 2016
-          ? `TIMESTAMP('${year}-01-01')`
-          : undefined;
+        open = gen.makeTimestampOpenFromDateParts({
+          year: year,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: minute,
+          connection: item.connection
+        });
 
         if (typeof toYear === 'undefined' || toYear === null) {
-          close = minute // 2016/10/05 21:07
-            ? `TIMESTAMP_ADD(${open}, INTERVAL 1 MINUTE)`
-            : hour // 2016/10/05 21
-            ? `TIMESTAMP_ADD(${open}, INTERVAL 1 HOUR)`
-            : day // 2016/10/05
-            ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 DAY) AS TIMESTAMP)`
-            : month // 2016/10
-            ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 MONTH) AS TIMESTAMP)`
-            : year // 2016
-            ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 YEAR) AS TIMESTAMP)`
-            : undefined;
+          close = gen.makeTimestampCloseBetween({
+            open: open,
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            connection: item.connection
+          });
         } else {
           // to
-          close = toMinute // 2016/10/05 21:07:15 to 2017/11/20 15:31
-            ? `TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00')`
-            : toHour // 2016/10/05 21:07:15 to 2017/11/20 15
-            ? `TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
-            : toDay // 2016/10/05 21:07:15 to 2017/11/20
-            ? `TIMESTAMP('${toYear}-${toMonth}-${toDay}')`
-            : toMonth // 2016/10/05 21:07:15 to 2017/11
-            ? `TIMESTAMP('${toYear}-${toMonth}-01')`
-            : toYear // 2016/10/05 21:07:15 to 2017
-            ? `TIMESTAMP('${toYear}-01-01')`
-            : undefined;
+          close = gen.makeTimestampCloseBetweenTo({
+            to_year: toYear,
+            to_month: toMonth,
+            to_day: toDay,
+            to_hour: toHour,
+            to_minute: toMinute,
+            connection: item.connection
+          });
         }
 
         item.ORs.push(

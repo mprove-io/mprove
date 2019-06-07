@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { getConnection } from 'typeorm';
 import { api } from '../../../barrels/api';
 import { blockml } from '../../../barrels/blockml';
@@ -66,8 +66,8 @@ export async function setProjectWeekStart(req: Request, res: Response) {
   let prodStruct: interfaces.ItemStructAndRepo;
   let devStruct: interfaces.ItemStructAndRepo;
 
-  await forEach(projectRepos, async repo => {
-    let structId = helper.makeId();
+  await forEachSeries(projectRepos, async repo => {
+    let structId = helper.makeStructId();
 
     let itemCatalog = <interfaces.ItemCatalog>await disk
       .getRepoCatalogNodesAndFiles({
@@ -87,7 +87,8 @@ export async function setProjectWeekStart(req: Request, res: Response) {
         project_id: projectId,
         repo_id: repo.repo_id,
         bigquery_project: project.bigquery_project,
-        week_start: <any>project.week_start,
+        week_start: project.week_start,
+        connection: project.connection,
         struct_id: structId
       })
       .catch((e: any) =>

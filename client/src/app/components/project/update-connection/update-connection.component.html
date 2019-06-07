@@ -1,0 +1,55 @@
+<div fxLayout="row">
+  <div fxFlex="100">
+    <form [formGroup]="updateProjectConnectionForm">
+      <mat-form-field>
+        <mat-select
+          [disableControl]="!(selectedProjectUserIsAdmin$ | async)"
+          placeholder="Connection"
+          formControlName="projectConnection"
+          class="settings__user-input"
+          data-cy="projectSettingsConnectionSelect"
+        >
+          <mat-option
+            data-cy="projectSettingsConnectionOption"
+            *ngFor="let cn of connectionEnumKeys()"
+            [value]="cn"
+            >{{ cn | capitalize }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </div>
+  <div
+    fxFlex="60"
+    fxFlexAlign="center"
+    class="settings-button-wrapper"
+    *ngIf="updateProjectConnectionForm.dirty"
+  >
+    <button
+      mat-button
+      type="submit"
+      [disabled]="
+        !(selectedProjectUserIsAdmin$ | async) ||
+        !updateProjectConnectionForm.valid
+      "
+      class="mat-flat-fab"
+      data-cy="projectSettingsConnectionApplyChange"
+      (click)="
+        onSubmit(updateProjectConnectionForm, updateProjectConnectionForm.value)
+      "
+    >
+      <mat-icon class="settings__button-success">done</mat-icon>
+    </button>
+    <button
+      mat-button
+      class="mat-flat-fab"
+      (click)="onReset(updateProjectConnectionForm)"
+    >
+      <mat-icon class="settings__button-warn">clear</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="(projectConnection$ | async)"></div>
+<div *ngIf="(selectedProjectServerTs$ | async)"></div>
+<div *ngIf="(selectedProjectId$ | async)"></div>

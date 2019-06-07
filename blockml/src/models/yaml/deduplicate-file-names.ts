@@ -2,14 +2,14 @@ import { AmError } from '../../barrels/am-error';
 import { ErrorsCollector } from '../../barrels/errors-collector';
 import { interfaces } from '../../barrels/interfaces';
 
-const { forEach } = require('p-iteration');
+import { forEachSeries } from 'p-iteration';
 
 export async function deduplicateFileNames(item: {
   file2s: interfaces.File2[];
 }): Promise<interfaces.File3[]> {
   let file3s: interfaces.File3[] = [];
 
-  await forEach(item.file2s, async (x: interfaces.File2) => {
+  await forEachSeries(item.file2s, async (x: interfaces.File2) => {
     if (x.filePaths.length > 1) {
       let lines: interfaces.ErrorLine[] = x.filePaths.map(fp => ({
         line: 0,

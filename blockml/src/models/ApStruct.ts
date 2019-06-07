@@ -19,6 +19,7 @@ export class ApStruct {
   static async rebuildStruct(item: {
     dir: string;
     weekStart: api.ProjectWeekStartEnum;
+    connection: api.ProjectConnectionEnum;
     bqProject: string;
     projectId: string;
     structId: string;
@@ -30,6 +31,7 @@ export class ApStruct {
     return await this.rebuildStructStateless({
       files: files,
       weekStart: item.weekStart,
+      connection: item.connection,
       bqProject: item.bqProject,
       projectId: item.projectId,
       structId: item.structId
@@ -39,6 +41,7 @@ export class ApStruct {
   static async rebuildStructStateless(item: {
     files: api.File[];
     weekStart: api.ProjectWeekStartEnum;
+    connection: api.ProjectConnectionEnum;
     bqProject: string;
     projectId: string;
     structId: string;
@@ -62,6 +65,10 @@ export class ApStruct {
     filesAny = barYaml.makeLineNumbers({ filesAny: filesAny });
     filesAny = barYaml.checkTopUnknownParameters({ filesAny: filesAny });
     filesAny = barYaml.checkTopValues({ filesAny: filesAny });
+    filesAny = barYaml.checkSupportUdfs({
+      filesAny: filesAny,
+      connection: item.connection
+    });
 
     let splitFilesResult = barYaml.splitFiles({ filesAny: filesAny });
 
@@ -80,15 +87,22 @@ export class ApStruct {
     views = barField.checkFieldNameDuplicates({ entities: views });
     views = barField.checkFieldUnknownParameters({ entities: views });
     views = barField.setImplicitLabel({ entities: views });
-    views = barField.checkDimensions({ entities: views });
+    views = barField.checkDimensions({
+      entities: views,
+      connection: item.connection
+    });
     views = barField.transformYesNoDimensions({ entities: views });
-    views = barField.checkMeasures({ entities: views });
+    views = barField.checkMeasures({
+      entities: views,
+      connection: item.connection
+    });
     views = barField.checkCalculations({ entities: views });
     views = barField.checkAndSetImplicitResults({ entities: views });
     views = barField.checkAndSetImplicitFormatNumber({ entities: views });
     views = barField.transformTimes({
       entities: views,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      connection: item.connection
     });
     // ->check_chars_in_refs
     views = barField.makeFieldsDeps({ entities: views });
@@ -106,15 +120,22 @@ export class ApStruct {
     models = barField.checkFieldNameDuplicates({ entities: models });
     models = barField.checkFieldUnknownParameters({ entities: models });
     models = barField.setImplicitLabel({ entities: models });
-    models = barField.checkDimensions({ entities: models });
+    models = barField.checkDimensions({
+      entities: models,
+      connection: item.connection
+    });
     models = barField.transformYesNoDimensions({ entities: models });
-    models = barField.checkMeasures({ entities: models });
+    models = barField.checkMeasures({
+      entities: models,
+      connection: item.connection
+    });
     models = barField.checkCalculations({ entities: models });
     models = barField.checkAndSetImplicitResults({ entities: models });
     models = barField.checkAndSetImplicitFormatNumber({ entities: models });
     models = barField.transformTimes({
       entities: models,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      connection: item.connection
     });
     models = barField.makeFieldsDeps({ entities: models });
     models = barField.checkFieldsDeps({ entities: models });
@@ -135,7 +156,8 @@ export class ApStruct {
     // ApFilter
     views = barFilter.checkVMDFilterDefaults({
       entities: views,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      connection: item.connection
     });
 
     // ApView
@@ -155,6 +177,7 @@ export class ApStruct {
       udfs_dict: udfsDict,
       timezone: 'UTC',
       weekStart: item.weekStart,
+      connection: item.connection,
       bqProject: item.bqProject,
       projectId: item.projectId,
       structId: item.structId
@@ -167,6 +190,7 @@ export class ApStruct {
       views: views,
       udfs_dict: udfsDict,
       structId: item.structId,
+      connection: item.connection,
       bqProject: item.bqProject,
       projectId: item.projectId
     });
@@ -204,7 +228,8 @@ export class ApStruct {
     // ApFilter
     models = barFilter.checkVMDFilterDefaults({
       entities: models,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      connection: item.connection
     });
 
     // ApJoin
@@ -302,7 +327,8 @@ export class ApStruct {
     // ApFilter
     dashboards = barFilter.checkVMDFilterDefaults({
       entities: dashboards,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      connection: item.connection
     });
 
     // ApReport
@@ -336,7 +362,8 @@ export class ApStruct {
     dashboards = barReport.checkReportDefaultFilters({
       dashboards: dashboards,
       models: models,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      connection: item.connection
     });
 
     dashboards = barReport.combineReportFilters({ dashboards: dashboards });
@@ -354,6 +381,7 @@ export class ApStruct {
       models: models,
       udfs: udfs,
       weekStart: item.weekStart,
+      connection: item.connection,
       bqProject: item.bqProject,
       projectId: item.projectId,
       structId: item.structId

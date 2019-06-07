@@ -4,14 +4,14 @@ import { ErrorsCollector } from '../../barrels/errors-collector';
 import { interfaces } from '../../barrels/interfaces';
 import { api } from '../../barrels/api';
 
-const { forEach } = require('p-iteration');
+import { forEachSeries } from 'p-iteration';
 
 export async function removeWrongExt(item: {
   files: api.File[];
 }): Promise<interfaces.File2[]> {
   let file2s: interfaces.File2[] = [];
 
-  await forEach(item.files, async (x: api.File) => {
+  await forEachSeries(item.files, async (x: api.File) => {
     let fp = {
       path: x.path,
       content: x.content

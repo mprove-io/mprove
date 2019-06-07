@@ -2,6 +2,7 @@ import { ApRegex } from '../../barrels/am-regex';
 import { barProcessFilter } from '../../barrels/bar-process-filter';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
 export function makeFilters(item: interfaces.Vars) {
   // prepare model and view filters defaults that is not in report default
@@ -71,12 +72,19 @@ export function makeFilters(item: interfaces.Vars) {
       let myIN: string[] = [];
       let myNOTIN: string[] = [];
 
-      let proc =
-        field.field_class === enums.FieldClassEnum.Measure
-          ? `${asName}_${fieldName}`
-          : field.field_class === enums.FieldClassEnum.Filter
-          ? `mproveFilter`
-          : item.processed_fields[element];
+      let proc;
+
+      if (field.field_class === enums.FieldClassEnum.Measure) {
+        if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+          proc = `${asName}_${fieldName}`;
+        } else if ((item.connection = api.ProjectConnectionEnum.PostgreSQL)) {
+          proc = item.processed_fields[element];
+        }
+      } else if (field.field_class === enums.FieldClassEnum.Filter) {
+        proc = `mproveFilter`;
+      } else {
+        proc = item.processed_fields[element];
+      }
 
       let filterBricks = item.filters[element]
         ? item.filters[element]
@@ -91,6 +99,7 @@ export function makeFilters(item: interfaces.Vars) {
         filter_bricks: filterBricks,
         proc: proc,
         weekStart: item.weekStart,
+        connection: item.connection,
         timezone: item.timezone,
         sqlTimestampSelect: sqlTimestampSelect,
         ORs: myORs,

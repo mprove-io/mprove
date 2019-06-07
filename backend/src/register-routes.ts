@@ -332,6 +332,15 @@ export function registerRoutes(app: expressWs.Application, middlewares: any) {
   );
 
   app.post(
+    '/api/v1' + api.PATH_SET_PROJECT_CONNECTION,
+    middlewares,
+    handler.catchAsyncErrors(
+      controller.setProjectConnection,
+      enums.controllerErrorsEnum.CONTROLLER_SET_PROJECT_CREDENTIALS
+    )
+  );
+
+  app.post(
     '/api/v1' + api.PATH_SET_PROJECT_CREDENTIALS,
     middlewares,
     handler.catchAsyncErrors(

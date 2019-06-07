@@ -184,6 +184,12 @@ export class BackendService {
     return this.myHttpService.req(api.PATH_SET_PROJECT_WEEK_START, payload);
   }
 
+  setProjectConnection(
+    payload: api.SetProjectConnectionRequestBody['payload']
+  ): Observable<api.SetProjectConnectionResponse200Body> {
+    return this.myHttpService.req(api.PATH_SET_PROJECT_CONNECTION, payload);
+  }
+
   cancelQueries(
     payload: api.CancelQueriesRequestBody['payload']
   ): Observable<api.CancelQueriesResponse200Body> {

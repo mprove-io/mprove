@@ -31,12 +31,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   tileWidthEnum = api.ChartTileWidthEnum;
   queryStatusEnum = api.QueryStatusEnum;
+  projectConnectionEnum = api.ProjectConnectionEnum;
 
   dashThemeEnum = api.UserDashThemeEnum;
 
   dryId: string;
   drySize: string;
   dryTs: number;
+
+  connection: api.ProjectConnectionEnum;
+  connection$ = this.store.select(selectors.getSelectedProjectConnection).pipe(
+    tap(x => {
+      this.connection = x;
+    })
+  );
 
   userId$ = this.store.select(selectors.getUserId);
 

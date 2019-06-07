@@ -19,6 +19,9 @@ export class MyDialogService {
   updateCredentialsDialogRef: MatDialogRef<
     dialogs.UpdateCredentialsDialogComponent
   >;
+  updateCredentialsPostgresDialogRef: MatDialogRef<
+    dialogs.UpdateCredentialsPostgresDialogComponent
+  >;
   deleteProjectDialogRef: MatDialogRef<dialogs.DeleteProjectDialogComponent>;
   deleteUserDialogRef: MatDialogRef<dialogs.DeleteUserDialogComponent>;
   inviteMemberDialogRef: MatDialogRef<dialogs.InviteMemberDialogComponent>;
@@ -159,6 +162,20 @@ export class MyDialogService {
 
     this.updateCredentialsDialogRef.afterClosed().subscribe(() => {
       this.updateCredentialsDialogRef = null;
+    });
+  }
+
+  showUpdateCredentialsPostgresDialog() {
+    this.updateCredentialsPostgresDialogRef = this.dialog.open(
+      dialogs.UpdateCredentialsPostgresDialogComponent,
+      {
+        disableClose: false,
+        autoFocus: false
+      }
+    );
+
+    this.updateCredentialsPostgresDialogRef.afterClosed().subscribe(() => {
+      this.updateCredentialsPostgresDialogRef = null;
     });
   }
 

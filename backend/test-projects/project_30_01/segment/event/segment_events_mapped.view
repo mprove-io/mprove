@@ -1,0 +1,49 @@
+view: segment_events_mapped
+derived_table: |
+  SELECT
+    *,
+    (DATE_PART('day', received_at - LAG(received_at) OVER(PARTITION BY mprove_visitor_id ORDER BY received_at)) * 24 + 
+     DATE_PART('hour', received_at - LAG(received_at) OVER(PARTITION BY mprove_visitor_id ORDER BY received_at))) * 60 +
+     DATE_PART('minute', received_at - LAG(received_at) OVER(PARTITION BY mprove_visitor_id ORDER BY received_at))  AS idle_time_minutes  
+  FROM (
+    SELECT
+      ${e.event_id},
+      ${e.anonymous_id},
+      ${am.mprove_visitor_id},
+      ${e.received_at},
+      ${e.event},
+      ${e.referrer},
+      ${e.event_source}
+    FROM
+      ${segment_events AS e}
+    INNER JOIN
+      ${segment_aliases_mapping AS am}
+    ON
+      ${am.alias} = coalesce(${e.user_id}, ${e.anonymous_id}) 
+    ) as sub
+permanent: true        
+        
+fields:
+- dimension: received_at
+  sql: received_at
+
+- dimension: event_id
+  sql: event_id
+
+- dimension: anonymous_id
+  sql: anonymous_id
+
+- dimension: mprove_visitor_id
+  sql: mprove_visitor_id
+  
+- dimension: event
+  sql: event
+  
+- dimension: event_source
+  sql: event_source    
+  
+- dimension: referrer
+  sql: referrer 
+  
+- dimension: idle_time_minutes
+  sql: idle_time_minutes

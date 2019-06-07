@@ -34,7 +34,12 @@
 
     <div
       fxHide.lt-md
-      *ngIf="dryTs && drySize && dryTsIsAfterLastRunTs"
+      *ngIf="
+        connection === projectConnectionEnum.BigQuery &&
+        dryTs &&
+        drySize &&
+        dryTsIsAfterLastRunTs
+      "
       fxLayout="row"
       fxLayoutAlign="start center"
       class="model__panel_width-third model__pdts_color_grey"
@@ -292,6 +297,7 @@
       </mat-form-field>
 
       <button
+        *ngIf="connection === projectConnectionEnum.BigQuery"
         mat-menu-item
         data-cy="modelQueryMenuRunDryButtonMobile"
         [disabled]="!(queryServerTsMoreThanOne$ | async)"
@@ -348,7 +354,12 @@
       </div>
 
       <div
-        *ngIf="dryTs && drySize && dryTsIsAfterLastRunTs"
+        *ngIf="
+          connection === projectConnectionEnum.BigQuery &&
+          dryTs &&
+          drySize &&
+          dryTsIsAfterLastRunTs
+        "
         fxLayout="row"
         fxLayoutAlign="start center"
         class="model__panel_width-third model__pdts_color_grey"
@@ -379,6 +390,7 @@
 
 <mat-menu #queryMenu="matMenu">
   <button
+    *ngIf="connection === projectConnectionEnum.BigQuery"
     mat-menu-item
     data-cy="modelQueryMenuRunDryButton"
     [disabled]="!(queryServerTsMoreThanOne$ | async)"
@@ -411,4 +423,4 @@
 <div *ngIf="(queryLastCompleteDuration$ | async)"></div>
 <div *ngIf="(query$ | async)"></div>
 <div *ngIf="(mconfigTimezone$ | async)"></div>
-<div *ngIf="(fileId$ | async)"></div>
+<div *ngIf="(fileId$ | async)"></div> <div *ngIf="(connection$ | async)"></div>

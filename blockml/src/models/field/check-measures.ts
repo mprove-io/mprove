@@ -3,10 +3,14 @@ import { ApRegex } from '../../barrels/am-regex';
 import { ErrorsCollector } from '../../barrels/errors-collector';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
 export function checkMeasures<
   T extends interfaces.View | interfaces.Model
->(item: { entities: Array<T> }): Array<T> {
+>(item: {
+  entities: Array<T>;
+  connection: api.ProjectConnectionEnum;
+}): Array<T> {
   item.entities.forEach((x: T) => {
     let newFields: interfaces.FieldExt[] = [];
 
@@ -88,6 +92,54 @@ export function checkMeasures<
           })
         );
         return;
+      }
+
+      if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
+        if (
+          field.type === enums.FieldExtTypeEnum.MedianByKey ||
+          field.type === enums.FieldExtTypeEnum.PercentileByKey
+        ) {
+          // error e299
+          ErrorsCollector.addError(
+            new AmError({
+              title: `measure type "${field.type}" is not supported for ${
+                api.ProjectConnectionEnum.PostgreSQL
+              }`,
+              message: `consider using a "custom" type for measure`,
+              lines: [
+                {
+                  line: field.type_line_num,
+                  name: x.file,
+                  path: x.path
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        if (
+          typeof field.percentile !== 'undefined' &&
+          field.percentile !== null
+        ) {
+          // error e300
+          ErrorsCollector.addError(
+            new AmError({
+              title: `percentile is not supported for ${
+                api.ProjectConnectionEnum.PostgreSQL
+              }`,
+              message: `consider using a "custom" type for measure`,
+              lines: [
+                {
+                  line: field.percentile_line_num,
+                  name: x.file,
+                  path: x.path
+                }
+              ]
+            })
+          );
+          return;
+        }
       }
 
       if (field.type === enums.FieldExtTypeEnum.PercentileByKey) {

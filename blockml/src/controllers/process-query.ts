@@ -10,6 +10,7 @@ export let processQuery = async (req: Request, res: Response) => {
   let bqProject;
   let projectId;
   let weekStart;
+  let connection;
   let model;
   let udfs;
 
@@ -32,7 +33,7 @@ export let processQuery = async (req: Request, res: Response) => {
     structId = req.body['payload']['struct_id'];
     bqProject = req.body['payload']['bigquery_project'];
     projectId = req.body['payload']['project_id'];
-    weekStart = req.body['payload']['week_start'];
+    connection = req.body['payload']['connection'];
     model = JSON.parse(req.body['payload']['model_content']);
     udfs = JSON.parse(req.body['payload']['udfs_content']);
 
@@ -85,6 +86,7 @@ export let processQuery = async (req: Request, res: Response) => {
       limit: limit,
       filters: filters,
       weekStart: weekStart,
+      connection: connection,
       bqProject: bqProject,
       projectId: projectId,
       udfs_user: udfs,
@@ -120,6 +122,7 @@ export let processQuery = async (req: Request, res: Response) => {
       pdt_trigger_time: undefined,
       pdt_id: undefined,
       pdt_need_start_by_time: undefined,
+      pdt_need_start_by_trigger_sql: undefined,
       pdt_trigger_sql_value: undefined,
       pdt_trigger_sql_last_error_message: undefined,
       status: api.QueryStatusEnum.New,

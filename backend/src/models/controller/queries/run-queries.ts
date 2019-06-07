@@ -10,7 +10,7 @@ import { store } from '../../../barrels/store';
 import { validator } from '../../../barrels/validator';
 import { wrapper } from '../../../barrels/wrapper';
 import { ServerError } from '../../server-error';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 import { QueryEntity } from '../../store/entities/_index';
 
 export async function runQueries(req: Request, res: Response) {
@@ -31,22 +31,22 @@ export async function runQueries(req: Request, res: Response) {
     })
     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
 
-  let depsAllQueryIdsMap: { [name: string]: number } = {};
+  let queriesDepsAllPdtIdsMap: { [name: string]: number } = {};
 
   queries.forEach(q => {
     JSON.parse(q.pdt_deps_all).forEach((x: string) => {
-      depsAllQueryIdsMap[x] = 1;
+      queriesDepsAllPdtIdsMap[x] = 1;
     });
   });
 
-  let depsAllQueryIds = Object.keys(depsAllQueryIdsMap);
+  let queriesDepsAllPdtIds = Object.keys(queriesDepsAllPdtIdsMap);
 
   let allDepQueries: QueryEntity[] = [];
 
-  if (depsAllQueryIds.length > 0) {
+  if (queriesDepsAllPdtIds.length > 0) {
     allDepQueries = <entities.QueryEntity[]>await storeQueries
       .find({
-        pdt_id: In(depsAllQueryIds)
+        pdt_id: In(queriesDepsAllPdtIds)
       })
       .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_FIND));
   }
@@ -73,9 +73,10 @@ export async function runQueries(req: Request, res: Response) {
 
   let checkedQueryIds: string[] = [];
 
-  await forEach(queries, async query => {
+  await forEachSeries(queries, async query => {
     let depQueries = await (<Promise<entities.QueryEntity[]>>proc
       .runQuery({
+        project: project,
         all_dep_queries: allDepQueries,
         checked_query_ids: checkedQueryIds,
         is_top: true,

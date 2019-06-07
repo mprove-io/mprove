@@ -11,6 +11,7 @@ export interface Query {
   pdt_trigger_time: string;
   pdt_trigger_sql: string;
   pdt_need_start_by_time: boolean;
+  pdt_need_start_by_trigger_sql: boolean;
   pdt_trigger_sql_value: string;
   pdt_trigger_sql_last_error_message: string;
   pdt_id: string;

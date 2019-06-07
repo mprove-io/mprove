@@ -14,6 +14,7 @@ export async function rebuildStruct(item: {
   repo_id: string;
   bigquery_project: string;
   week_start: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   struct_id: string;
 }): Promise<interfaces.ItemStruct> {
   let apiFiles: api.File[] = item.files
@@ -39,6 +40,7 @@ export async function rebuildStruct(item: {
     repo_id: item.repo_id,
     bigquery_project: item.bigquery_project,
     week_start: item.week_start,
+    connection: item.connection,
     struct_id: item.struct_id
   };
 

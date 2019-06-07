@@ -50,7 +50,7 @@ async function checkQueries() {
   await Promise.all(
     runningQueries.map(async query =>
       proc
-        .checkRunningQuery({
+        .checkRunningQueryBigquery({
           query: query
         })
         .catch(e => {

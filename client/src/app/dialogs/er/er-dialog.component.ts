@@ -21,13 +21,9 @@ export class ErDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let error = this.data.error;
-
-    if (error.data) {
-      this.eventId = error.data.event_id;
-      this.name = error.data.name;
-      this.message = error.data.message;
-    }
+    this.eventId = this.data.event_id;
+    this.name = this.data.name;
+    this.message = this.data.message;
   }
 
   reloadClick(): void {

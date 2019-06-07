@@ -24,6 +24,8 @@ export interface Vars {
 
   weekStart: api.ProjectWeekStartEnum;
 
+  connection: api.ProjectConnectionEnum;
+
   bqProject: string;
 
   projectId: string;

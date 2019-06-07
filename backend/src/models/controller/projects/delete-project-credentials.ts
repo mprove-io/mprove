@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { forEach } from 'p-iteration';
 import { getConnection } from 'typeorm';
 import { api } from '../../../barrels/api';
 import { blockml } from '../../../barrels/blockml';

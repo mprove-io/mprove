@@ -3,6 +3,7 @@ export * from './errors/by-lib/axios-errors.enum';
 export * from './errors/by-lib/bigquery-errors.enum';
 export * from './errors/by-lib/fse-errors.enum';
 export * from './errors/by-lib/nodegit-errors.enum';
+export * from './errors/by-lib/postgres-errors.enum';
 export * from './errors/by-lib/typeorm-errors.enum';
 export * from './errors/by-model/blockml-errors.enum';
 export * from './errors/by-model/controller-errors.enum';

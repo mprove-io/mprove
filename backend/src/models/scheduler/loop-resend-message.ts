@@ -9,7 +9,7 @@ import { store } from '../../barrels/store';
 import { handler } from '../../barrels/handler';
 import { wrapper } from '../../barrels/wrapper';
 import * as WebSocket from 'ws';
-import { forEach } from 'p-iteration';
+import { forEachSeries } from 'p-iteration';
 
 let cron = require('cron');
 
@@ -71,7 +71,7 @@ async function resendMessage(item: {
         x => x.session_id === wsClient.session_id
       );
 
-      await forEach(sessionMessages, async message => {
+      await forEachSeries(sessionMessages, async message => {
         let isSent = enums.bEnum.FALSE;
 
         await helper

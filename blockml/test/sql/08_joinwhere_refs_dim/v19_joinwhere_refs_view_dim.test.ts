@@ -47,6 +47,7 @@ test('testName', () => {
   return ApStruct.rebuildStruct({
     dir: 'test/sql/08_joinwhere_refs_dim/v19',
     weekStart: api.ProjectWeekStartEnum.Monday,
+    connection: api.ProjectConnectionEnum.BigQuery,
     bqProject: 'flow-1202',
     projectId: 'unkProjectId',
     structId: 'unkStructId'

@@ -26,6 +26,10 @@ export class DataService {
         ? data[0][currentValueName]
         : 0;
 
+      if (currentValueField.result === api.ModelFieldResultEnum.Number) {
+        currentValue = Number(currentValue);
+      }
+
       let previousValueField;
 
       previousValueField = selectFields.find(
@@ -41,6 +45,10 @@ export class DataService {
       let previousValue = isNumeric(data[0][previousValueName])
         ? data[0][previousValueName]
         : 0;
+
+      if (currentValueField.result === api.ModelFieldResultEnum.Number) {
+        previousValue = Number(previousValue);
+      }
 
       return [currentValue, previousValue];
     } else {
@@ -69,7 +77,13 @@ export class DataService {
         ? data.map((raw: any) =>
             Object.assign({
               name: raw[xName] ? raw[xName] : 'null',
-              value: isNumeric(raw[yName]) ? raw[yName] : 0
+              value:
+                isNumeric(raw[yName]) &&
+                yField.result === api.ModelFieldResultEnum.Number
+                  ? Number(raw[yName])
+                  : isNumeric(raw[yName])
+                  ? raw[yName]
+                  : 0
             })
           )
         : [];
@@ -109,7 +123,13 @@ export class DataService {
         ? item.data.map((raw: any) =>
             Object.assign({
               name: !xName ? ' ' : raw[xName] ? raw[xName] : 'null',
-              value: isNumeric(raw[yName]) ? raw[yName] : 0
+              value:
+                isNumeric(raw[yName]) &&
+                yField.result === api.ModelFieldResultEnum.Number
+                  ? Number(raw[yName])
+                  : isNumeric(raw[yName])
+                  ? raw[yName]
+                  : 0
             })
           )
         : [];
@@ -155,6 +175,10 @@ export class DataService {
       let xName = xField.sql_name;
       let xValue = this.getValue(xName);
 
+      if (xField.result === api.ModelFieldResultEnum.Number) {
+        xValue = Number(xValue);
+      }
+
       let multiField = multiFieldId
         ? selectFields.find(f => f.id === multiFieldId)
         : undefined;
@@ -189,7 +213,13 @@ export class DataService {
           if (raw[xName]) {
             let element = {
               name: xValue(raw, xName),
-              value: isNumeric(raw[yName]) ? raw[yName] : 0
+              value:
+                isNumeric(raw[yName]) &&
+                yField.result === api.ModelFieldResultEnum.Number
+                  ? Number(raw[yName])
+                  : isNumeric(raw[yName])
+                  ? raw[yName]
+                  : 0
             };
 
             if (prepareData[key]) {

@@ -10,9 +10,9 @@
 <br />
 
 <br />
-<p>event_id: {{ eventId }}</p> <br />
-<p>name: {{ name }}</p> <br />
-<p>message: {{ message }}</p> <br />
+<p *ngIf="eventId">event_id: {{ eventId }}</p> <br />
+<p *ngIf="name">name: {{ name }}</p> <br />
+<p *ngIf="message">message: {{ message }}</p> <br />
 <br />
 
 <mat-dialog-actions>

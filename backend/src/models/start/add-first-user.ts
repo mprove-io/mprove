@@ -8,7 +8,6 @@ import { helper } from '../../barrels/helper';
 import { store } from '../../barrels/store';
 import { proc } from '../../barrels/proc';
 import * as crypto from 'crypto';
-import { forEach } from 'p-iteration';
 import { UserEntity } from '../store/entities/_index';
 
 export async function addFirstUser() {

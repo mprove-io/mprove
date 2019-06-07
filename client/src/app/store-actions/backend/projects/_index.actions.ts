@@ -14,6 +14,10 @@ export * from './set-project-credentials/actions/set-project-credentials.action'
 export * from './set-project-credentials/actions/set-project-credentials-success.action';
 export * from './set-project-credentials/actions/set-project-credentials-fail.action';
 
+export * from './set-project-connection/actions/set-project-connection.action';
+export * from './set-project-connection/actions/set-project-connection-success.action';
+export * from './set-project-connection/actions/set-project-connection-fail.action';
+
 export * from './set-project-query-size-limit/actions/set-project-query-size-limit.action';
 export * from './set-project-query-size-limit/actions/set-project-query-size-limit-success.action';
 export * from './set-project-query-size-limit/actions/set-project-query-size-limit-fail.action';

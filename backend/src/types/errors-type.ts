@@ -4,6 +4,7 @@ export type errorsType =
   | enums.otherErrorsEnum
   | enums.axiosErrorsEnum
   | enums.bigqueryErrorsEnum
+  | enums.postgresErrorsEnum
   | enums.blockmlErrorsEnum
   | enums.controllerErrorsEnum
   | enums.copierErrorsEnum

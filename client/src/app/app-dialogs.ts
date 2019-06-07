@@ -10,6 +10,7 @@ export const APP_DIALOGS = [
   dialogs.NewProjectDialogComponent,
   dialogs.ResetPasswordDialogComponent,
   dialogs.UpdateRemoteUrlDialogComponent,
+  dialogs.UpdateCredentialsPostgresDialogComponent,
   dialogs.UpdateCredentialsDialogComponent,
   dialogs.DeleteProjectDialogComponent,
   dialogs.DeleteUserDialogComponent,

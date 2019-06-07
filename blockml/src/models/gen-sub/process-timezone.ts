@@ -1,5 +1,6 @@
 import { ApRegex } from '../../barrels/am-regex';
 import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
 export function processTimezone(item: interfaces.VarsSub) {
   item.query.forEach((element, i, a) => {
@@ -11,12 +12,17 @@ export function processTimezone(item: interfaces.VarsSub) {
       let two = r[2];
       let three = r[3];
 
-      element =
-        item.timezone === 'UTC'
-          ? one + two + three
-          : `${one}TIMESTAMP(FORMAT_TIMESTAMP('%F %T', ${two}, '${
-              item.timezone
-            }'))${three}`;
+      if (item.timezone === 'UTC') {
+        element = one + two + three;
+      } else if (item.connection === api.ProjectConnectionEnum.BigQuery) {
+        element =
+          one +
+          `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', ${two}, '${item.timezone}'))` +
+          three;
+      } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
+        element =
+          one + `TIMEZONE('${item.timezone}', ${two}::TIMESTAMPTZ)` + three;
+      }
     }
     a[i] = element;
   });

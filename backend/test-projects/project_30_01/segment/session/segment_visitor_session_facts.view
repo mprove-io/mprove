@@ -1,0 +1,41 @@
+view: segment_visitor_session_facts 
+derived_table: |
+
+  SELECT
+    ${s.mprove_visitor_id},
+    MIN(${s.session_start_at}) AS first_session_start_at,
+    MAX(${s.session_start_at}) AS last_session_start_at,
+    COUNT(*) AS number_of_sessions
+  FROM
+    ${segment_sessions AS s}
+  GROUP BY
+    1
+permanent: true
+
+fields:
+
+- dimension: mprove_visitor_id
+  sql: mprove_visitor_id  
+ 
+- dimension: number_of_sessions
+  sql: number_of_sessions  
+
+# - dimension: first_session_start_at
+#   sql: first_session_start_at
+  
+- time: first_session_start
+  timeframes:
+  - date
+  - week
+  - month
+  sql: first_session_start_at  
+  
+# - dimension: last_session_start_at
+#   sql: last_session_start_at
+ 
+- time: last_session_start
+  timeframes:
+  - date
+  - week
+  - month
+  sql: last_session_start_at

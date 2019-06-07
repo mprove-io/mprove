@@ -3,7 +3,7 @@ import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 import { substituteViewRefsRecursive } from './substitute-view-refs-recursive';
 
-const { forEach } = require('p-iteration');
+import { forEachSeries } from 'p-iteration';
 let Graph = require('graph.js/dist/graph.full.js'); // tslint:disable-line
 
 export async function processViewRefs(item: {
@@ -11,11 +11,12 @@ export async function processViewRefs(item: {
   udfs_dict: interfaces.UdfsDict;
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnectionEnum;
   bqProject: string;
   projectId: string;
   structId: string;
 }) {
-  await forEach(item.views, async (x: interfaces.View) => {
+  await forEachSeries(item.views, async (x: interfaces.View) => {
     x.parts = {};
 
     x.derived_table_start = x.derived_table;
@@ -35,6 +36,7 @@ export async function processViewRefs(item: {
       udfs_dict: item.udfs_dict,
       timezone: item.timezone,
       weekStart: item.weekStart,
+      connection: item.connection,
       bqProject: item.bqProject,
       projectId: item.projectId,
       structId: item.structId

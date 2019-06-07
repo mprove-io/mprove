@@ -8,7 +8,9 @@ import { store } from '../../barrels/store';
 
 const { BigQuery } = require('@google-cloud/bigquery');
 
-export async function checkRunningQuery(item: { query: entities.QueryEntity }) {
+export async function checkRunningQueryBigquery(item: {
+  query: entities.QueryEntity;
+}) {
   let skipChunk = true;
 
   let query = item.query;
@@ -29,55 +31,59 @@ export async function checkRunningQuery(item: { query: entities.QueryEntity }) {
       helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_FIND_ONE)
     );
 
-  let bigquery = new BigQuery({
-    projectId: project.bigquery_project,
-    keyFilename: credentialsFilePath
-  });
+  if (project.connection === api.ProjectConnectionEnum.BigQuery) {
+    let bigquery = new BigQuery({
+      projectId: project.bigquery_project,
+      keyFilename: credentialsFilePath
+    });
 
-  if (query.bigquery_is_copying === enums.bEnum.TRUE) {
-    query = <entities.QueryEntity>await checkCopyingQuery({
-      bigquery: bigquery,
-      query: query
-    }).catch(e =>
-      helper.reThrow(e, enums.procErrorsEnum.PROC_CHECK_COPYING_QUERY)
-    );
-  } else {
-    query = <entities.QueryEntity>await checkNotCopyingQuery({
-      bigquery: bigquery,
-      query: query
-    }).catch(e =>
-      helper.reThrow(e, enums.procErrorsEnum.PROC_CHECK_NOT_COPYING_QUERY)
-    );
+    if (query.bigquery_is_copying === enums.bEnum.TRUE) {
+      query = <entities.QueryEntity>await checkCopyingQuery({
+        bigquery: bigquery,
+        query: query
+      }).catch(e =>
+        helper.reThrow(e, enums.procErrorsEnum.PROC_CHECK_COPYING_QUERY)
+      );
+    } else {
+      query = <entities.QueryEntity>await checkNotCopyingQuery({
+        bigquery: bigquery,
+        query: query
+      }).catch(e =>
+        helper.reThrow(e, enums.procErrorsEnum.PROC_CHECK_NOT_COPYING_QUERY)
+      );
+    }
+
+    // update server_ts
+
+    let newServerTs = helper.makeTs();
+
+    if (query.status !== api.QueryStatusEnum.Running) {
+      skipChunk = false;
+      query.server_ts = newServerTs;
+    }
+
+    // save to database
+
+    let connection = getConnection();
+
+    await connection
+      .transaction(async manager => {
+        await store
+          .save({
+            manager: manager,
+            records: {
+              queries: [query]
+            },
+            server_ts: newServerTs,
+            skip_chunk: skipChunk,
+            source_init_id: undefined
+          })
+          .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
+      })
+      .catch(e =>
+        helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION)
+      );
   }
-
-  // update server_ts
-
-  let newServerTs = helper.makeTs();
-
-  if (query.status !== api.QueryStatusEnum.Running) {
-    skipChunk = false;
-    query.server_ts = newServerTs;
-  }
-
-  // save to database
-
-  let connection = getConnection();
-
-  await connection
-    .transaction(async manager => {
-      await store
-        .save({
-          manager: manager,
-          records: {
-            queries: [query]
-          },
-          server_ts: newServerTs,
-          skip_chunk: skipChunk,
-          source_init_id: undefined
-        })
-        .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_SAVE));
-    })
-    .catch(e => helper.reThrow(e, enums.typeormErrorsEnum.TYPEORM_TRANSACTION));
 }
 
 async function checkCopyingQuery(item: {
@@ -120,10 +126,15 @@ async function checkCopyingQuery(item: {
 
       let newLastCompleteTs = helper.makeTs();
 
+      let newLastCompleteDuration = Math.floor(
+        (Number(newLastCompleteTs) - Number(query.last_run_ts)) / 1000
+      ).toString();
+
       query.status = api.QueryStatusEnum.Completed;
       query.refresh = null;
       query.bigquery_is_copying = enums.bEnum.FALSE;
       query.last_complete_ts = newLastCompleteTs;
+      query.last_complete_duration = newLastCompleteDuration;
 
       // delete copied table
 
@@ -179,12 +190,6 @@ async function checkNotCopyingQuery(item: {
     } else {
       // QUERY SUCCESS
 
-      let endTime = queryJobGetResponse.statistics.endTime;
-      let creationTime = queryJobGetResponse.statistics.creationTime;
-      let duration = endTime - creationTime;
-
-      query.last_complete_duration = duration.toString();
-
       let data: string;
 
       if (query.is_pdt === enums.bEnum.TRUE) {
@@ -216,10 +221,15 @@ async function checkNotCopyingQuery(item: {
 
         let newLastCompleteTs = helper.makeTs();
 
+        let newLastCompleteDuration = Math.floor(
+          (Number(newLastCompleteTs) - Number(query.last_run_ts)) / 1000
+        ).toString();
+
         query.status = api.QueryStatusEnum.Completed;
         query.refresh = null;
         query.data = data;
         query.last_complete_ts = newLastCompleteTs;
+        query.last_complete_duration = newLastCompleteDuration;
       }
     }
   }

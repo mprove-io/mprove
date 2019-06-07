@@ -329,6 +329,7 @@ export class StructService {
       pdt_trigger_time: null,
       pdt_trigger_sql: null,
       pdt_need_start_by_time: null,
+      pdt_need_start_by_trigger_sql: null,
       pdt_trigger_sql_value: null,
       pdt_trigger_sql_last_error_message: null,
       status: api.QueryStatusEnum.New,
