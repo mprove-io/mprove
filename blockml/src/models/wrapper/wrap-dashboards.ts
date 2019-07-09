@@ -373,24 +373,25 @@ export function wrapDashboards(item: {
         query_id: queryId
       });
     });
-
-    wrappedDashboards.push({
-      project_id: item.projectId,
-      repo_id: item.repoId,
-      dashboard_id: x.name,
-      struct_id: item.structId,
-      content: JSON.stringify(x),
-      access_users: x.access_users || [],
-      title: x.title,
-      gr: x.group ? x.group : undefined,
-      hidden: x.hidden && x.hidden.match(ApRegex.TRUE()) ? true : false,
-      fields: wrappedDashboardFields,
-      reports: wrappedReports,
-      temp: false,
-      server_ts: 1,
-      // not required:
-      description: x.description
-    });
+    if (wrappedReports.length > 0) {
+      wrappedDashboards.push({
+        project_id: item.projectId,
+        repo_id: item.repoId,
+        dashboard_id: x.name,
+        struct_id: item.structId,
+        content: JSON.stringify(x),
+        access_users: x.access_users || [],
+        title: x.title,
+        gr: x.group ? x.group : undefined,
+        hidden: x.hidden && x.hidden.match(ApRegex.TRUE()) ? true : false,
+        fields: wrappedDashboardFields,
+        reports: wrappedReports,
+        temp: false,
+        server_ts: 1,
+        // not required:
+        description: x.description
+      });
+    }
   });
 
   return {

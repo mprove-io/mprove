@@ -214,22 +214,24 @@ export function wrapModels(item: {
       return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
     });
 
-    wrappedModels.push({
-      project_id: item.projectId,
-      repo_id: item.repoId,
-      struct_id: item.structId,
-      model_id: x.name,
-      content: JSON.stringify(x),
-      access_users: x.access_users ? x.access_users : [],
-      label: x.label,
-      gr: x.group ? x.group : undefined,
-      hidden: x.hidden && x.hidden.match(ApRegex.TRUE()) ? true : false,
-      fields: wrappedFields,
-      nodes: sortedNodes,
-      server_ts: 1,
-      // not required
-      description: x.description
-    });
+    if (sortedNodes.length > 0) {
+      wrappedModels.push({
+        project_id: item.projectId,
+        repo_id: item.repoId,
+        struct_id: item.structId,
+        model_id: x.name,
+        content: JSON.stringify(x),
+        access_users: x.access_users ? x.access_users : [],
+        label: x.label,
+        gr: x.group ? x.group : undefined,
+        hidden: x.hidden && x.hidden.match(ApRegex.TRUE()) ? true : false,
+        fields: wrappedFields,
+        nodes: sortedNodes,
+        server_ts: 1,
+        // not required
+        description: x.description
+      });
+    }
   });
 
   return wrappedModels;
