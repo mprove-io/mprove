@@ -47,7 +47,7 @@ export function checkDimensions<
       }
 
       if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-        if (typeof field.unnest !== 'undefined' || field.unnest !== null) {
+        if (typeof field.unnest !== 'undefined' && field.unnest !== null) {
           // error e298
           ErrorsCollector.addError(
             new AmError({
