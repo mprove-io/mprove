@@ -8,6 +8,7 @@ Mprove - SQL analytics with data modelling layer. Inspired by :heart: [Looker](h
 
 Supported databases:
 * Google BigQuery
+* PostgreSQL
 
 ## Deploy on server with https
 
