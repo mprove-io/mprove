@@ -1,0 +1,10 @@
+model: c_m1 
+
+description: 'Chart type examples' 
+
+group: 'Chart types'
+
+joins:
+- from_view: c_data1
+  description: 'join description...'
+  as: a

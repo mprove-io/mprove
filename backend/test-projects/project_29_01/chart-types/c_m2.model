@@ -1,6 +1,6 @@
 model: c_m2 
 
-group: 'Chart types web300'
+group: 'Chart types'
 
 joins:
 - from_view: c_data2
