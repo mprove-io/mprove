@@ -81,17 +81,21 @@
               *ngIf="isAuthenticated()"
               class="header-menu"
               fxLayout="row"
-              fxLayoutAlign="center center"
+              fxLayoutAlign="end center"
               class="menu"
             >
+              <div
+                fxLayout="row"
+                fxLayoutAlign="end center"
+                fxHide.lt-md
+                class="project-setup"
+              >
+                <m-project-setup class="project-selector"></m-project-setup>
+              </div>
+
               <m-project-select
                 class="menu__button_hover_primary m-project-select"
               ></m-project-select>
-
-              <m-project-setup
-                class="project-selector"
-                fxHide.lt-md
-              ></m-project-setup>
 
               <m-user class="m-user"></m-user>
             </div>
