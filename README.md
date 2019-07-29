@@ -42,20 +42,28 @@ BACKEND_FIRST_USER_EMAIL=
 BACKEND_FIRST_USER_PASSWORD=
 BACKEND_REGISTER_ONLY_INVITED_USERS=TRUE
 BACKEND_SEND_EMAIL_FROM="Name" <name@example.com>
-BACKEND_MAILGUN_ACTIVE_API_KEY=
-BACKEND_MAILGUN_DOMAIN=
+
+BACKEND_NODEMAILER_TRANSPORT= 
+
+BACKEND_MAILGUN_ACTIVE_API_KEY= 
+BACKEND_MAILGUN_DOMAIN= 
+
+BACKEND_SMTP_HOST=smtp.gmail.com
+BACKEND_SMTP_PORT=465
+BACKEND_SMTP_SECURE=TRUE 
+BACKEND_SMTP_AUTH_USER=***@gmail.com
+BACKEND_SMTP_AUTH_PASSWORD=******
 ```
 MPROVE_CE_RELEASE_TAG - see [Mprove releases](https://github.com/mprove-io/mprove/releases)  
 BACKEND_JWT_SECRET - random string (recommended min length - 32 characters)  
-BACKEND_SEND_EMAIL_FROM - replace with your data  
-MailGun account is required for now. Mailgun is email delivery service with free tier.
+BACKEND_SEND_EMAIL_FROM - replace with your data
+
+BACKEND_NODEMAILER_TRANSPORT - "SMTP" or "MAILGUN" (Mailgun is email delivery service with free tier)
 
 Run:
 ```
 docker-compose up -d
 ```
-
-
 
 ## License
 
