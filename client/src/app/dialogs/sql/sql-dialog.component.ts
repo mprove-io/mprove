@@ -16,12 +16,13 @@ export class SqlDialogComponent {
   automaticLayout: boolean = true;
 
   sqlEditorTheme: string = null;
+  sqlEditorLanguage: string = null;
 
   editorOptions = {
     theme: this.sqlEditorTheme,
     readOnly: true,
     fontSize: 16,
-    language: 'sql'
+    language: this.sqlEditorLanguage
   };
 
   editor: monaco.editor.IStandaloneCodeEditor = null;
@@ -38,6 +39,24 @@ export class SqlDialogComponent {
     })
   );
 
+  sqlEditorLanguage$ = this.store
+    .select(selectors.getSelectedProjectConnection)
+    .pipe(
+      filter(v => !!v),
+      delay(0),
+      tap(x => {
+        this.sqlEditorLanguage =
+          x === api.ProjectConnectionEnum.PostgreSQL ? 'pgsql' : 'sql';
+
+        if (this.editor) {
+          monaco.editor.setModelLanguage(
+            this.editor.getModel(),
+            this.sqlEditorLanguage
+          );
+        }
+      })
+    );
+
   constructor(
     private store: Store<interfaces.AppState>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -47,5 +66,6 @@ export class SqlDialogComponent {
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;
     monaco.editor.setTheme(this.sqlEditorTheme);
+    monaco.editor.setModelLanguage(editor.getModel(), this.sqlEditorLanguage);
   }
 }
