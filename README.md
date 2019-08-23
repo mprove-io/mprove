@@ -20,6 +20,7 @@ Create folders on server:
 ```
 mkdir -p /mprove_data/db/mysql
 mkdir -p /mprove_data/backend
+mkdir -p /mprove_data/backend/bigquery_credentials
 mkdir -p /mprove_certs
 mkdir -p /mprove-deploy-docker
 ```
