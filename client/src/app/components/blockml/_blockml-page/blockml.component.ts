@@ -116,7 +116,7 @@ export class BlockMLComponent implements OnDestroy {
     this.store.dispatch(
       new actions.CommitRepoAction({
         project_id: this.projectId,
-        repo_id: this.repoId,
+        repo_id: this.userId,
         server_ts: this.repoServerTs
       })
     );
@@ -126,7 +126,7 @@ export class BlockMLComponent implements OnDestroy {
     this.store.dispatch(
       new actions.PullRepoAction({
         project_id: this.projectId,
-        repo_id: this.repoId,
+        repo_id: this.userId,
         server_ts: this.repoServerTs,
         from_remote: false
       })
@@ -137,7 +137,7 @@ export class BlockMLComponent implements OnDestroy {
     this.store.dispatch(
       new actions.PullRepoAction({
         project_id: this.projectId,
-        repo_id: this.repoId,
+        repo_id: this.userId,
         server_ts: this.repoServerTs,
         from_remote: true
       })
@@ -148,7 +148,7 @@ export class BlockMLComponent implements OnDestroy {
     this.store.dispatch(
       new actions.PushRepoAction({
         project_id: this.projectId,
-        repo_id: this.repoId,
+        repo_id: this.userId,
         server_ts: this.repoServerTs
       })
     );
