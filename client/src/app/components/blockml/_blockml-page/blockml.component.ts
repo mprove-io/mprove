@@ -45,6 +45,12 @@ export class BlockMLComponent implements OnDestroy {
     tap(x => (this.repoId = x))
   );
 
+  userId: string;
+  userId$ = this.store.select(selectors.getUserId).pipe(
+    filter(v => !!v),
+    tap(x => (this.userId = x))
+  );
+
   repoServerTs: number;
   repoServerTs$ = this.store
     .select(selectors.getSelectedProjectModeRepoServerTs)
@@ -152,7 +158,7 @@ export class BlockMLComponent implements OnDestroy {
     this.store.dispatch(
       new actions.RevertRepoToLastCommitAction({
         project_id: this.projectId,
-        repo_id: this.repoId,
+        repo_id: this.userId,
         server_ts: this.repoServerTs
       })
     );
@@ -162,7 +168,7 @@ export class BlockMLComponent implements OnDestroy {
     this.store.dispatch(
       new actions.RevertRepoToProductionAction({
         project_id: this.projectId,
-        repo_id: this.repoId,
+        repo_id: this.userId,
         server_ts: this.repoServerTs
       })
     );
