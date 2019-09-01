@@ -27,3 +27,6 @@ yarn-error.log
 
 # 
 nogit/
+
+client/cypress/integration/31-manual
+backend/test-projects/project_31_01

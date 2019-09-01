@@ -82,6 +82,23 @@ export function checkVMDFilterDefaults<
         }
 
         x.filters[field.name] = JSON.parse(JSON.stringify(field.default));
+      } else if (x.ext === enums.FileExtensionEnum.Dashboard) {
+        // error e301 TODO: add test
+        ErrorsCollector.addError(
+          new AmError({
+            title: `dashboard filter must have "default" parameter`,
+            message: `"default:" must be a List with element(s) inside like:
+- 'filter expression'`,
+            lines: [
+              {
+                line: field.name_line_num,
+                name: x.file,
+                path: x.path
+              }
+            ]
+          })
+        );
+        return;
       } else {
         x.filters[field.name] = [];
       }
