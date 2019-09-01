@@ -150,6 +150,11 @@ export function composeMain(item: interfaces.Vars) {
   main.pop();
   main.push(`  )`);
 
+  // TODO: check apply_filter 'undefined as undefined'
+  main = main.map(x => {
+    return x.includes('undefined as undefined') ? '--' + x : x;
+  });
+
   item.query = main;
 
   return item;
