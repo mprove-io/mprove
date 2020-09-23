@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    # volumes:
+    #   - type: bind
+    #     source: ./.docker/rabbitmq/etc/
+    #     target: /etc/rabbitmq/   
+    #   - type: bind
+    #     source: ./.docker/rabbitmq/data/
+    #     target: /var/lib/rabbitmq/  
+    #   - type: bind
+    #     source: ./.docker/rabbitmq/logs/
+    #     target: /var/log/rabbitmq/    
+    environment:
+      RABBITMQ_ERLANG_COOKIE: $RABBITMQ_ERLANG_COOKIE
+      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
+      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS
+    ports:
+      - 5672:5672
+      - 15672:15672
+
