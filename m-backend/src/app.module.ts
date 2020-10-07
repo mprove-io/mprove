@@ -3,12 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { MessageService } from './services/message.service';
-import { ConsumerService } from './services/consumer.service';
 
 @Module({
   imports: [
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
+        {
+          name: 'm-blockml',
+          type: 'direct'
+        },
         {
           name: 'm-disk',
           type: 'direct'
@@ -23,6 +26,6 @@ import { ConsumerService } from './services/consumer.service';
     })
   ],
   controllers: [AppController],
-  providers: [AppService, MessageService, ConsumerService]
+  providers: [AppService, MessageService]
 })
 export class AppModule {}
