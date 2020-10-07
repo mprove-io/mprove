@@ -1,5 +1,6 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
+import { delay } from '../helper/delay';
 import { ConsumerService } from './consumer.service';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class MessageService {
     queue: 'organizations_abcdefghijklmnopqrstuvwxyz_projects_'
   })
   public async consumer1(payload: any, context: any) {
+    await delay(0);
     return this.consumerService.do();
   }
 
@@ -22,6 +24,7 @@ export class MessageService {
     queue: 'organizations_abcdefghijklmnopqrstuvwxyz_projects_abcdefghijklm'
   })
   public async consumer2(payload: any, context: any) {
+    await delay(1000);
     return this.consumerService.do();
   }
 
@@ -32,6 +35,7 @@ export class MessageService {
     queue: 'organizations_abcdefghijklmnopqrstuvwxyz_projects_nopqrstuvwxyz'
   })
   public async consumer3(payload: any, context: any) {
+    await delay(2000);
     return this.consumerService.do();
   }
 }

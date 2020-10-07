@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+
+# NEW
+
+
+# from common ESLINT
+# to m-backend
+cp -rf m-common/eslint/.eslintrc.js m-backend/.eslintrc.js
+
+# to m-disk
+cp -rf m-common/eslint/.eslintrc.js m-disk/.eslintrc.js
+
+# from common PRETTIER
+# to root
+cp -rf m-common/prettier/.prettierrc.yaml .prettierrc.yaml
+
+# to m-backend
+cp -rf m-common/prettier/.prettierrc.yaml m-backend/.prettierrc.yaml
+
+# to m-disk
+cp -rf m-common/prettier/.prettierrc.yaml m-disk/.prettierrc.yaml
+
+
+# OLD
+
+
 # from common TSLINT
 
 # to api
