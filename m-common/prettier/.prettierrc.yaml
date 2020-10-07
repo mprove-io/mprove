@@ -12,12 +12,3 @@ singleQuote: true
 tabWidth: 2
 trailingComma: none
 useTabs: false
-
-# see vscode settings https://github.com/prettier/prettier-vscode
-
-# prettier.eslintIntegration
-# prettier.tslintIntegration
-# prettier.stylelintIntegration
-# prettier.requireConfig
-# prettier.ignorePath
-# prettier.disableLanguages - used in vscode settings
