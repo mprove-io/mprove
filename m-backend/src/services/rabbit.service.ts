@@ -5,30 +5,30 @@ import { Injectable } from '@nestjs/common';
 import { Nack, AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
-export class MessageService {
+export class RabbitService {
   constructor(private amqpConnection: AmqpConnection) {}
 
-  public async sendToDisk(item: {
+  async sendToDisk(item: {
     routingKey: string;
-    payload?: object;
+    message: any;
   }): Promise<string> {
     const response = await this.amqpConnection.request<string>({
       exchange: 'm-disk',
       routingKey: item.routingKey,
-      payload: item.payload
+      payload: item.message
     });
 
     return response;
   }
 
-  public async sendToBlockml(item: {
+  async sendToBlockml(item: {
     routingKey: string;
-    payload?: object;
+    message: any;
   }): Promise<string> {
     const response = await this.amqpConnection.request<string>({
       exchange: 'm-blockml',
       routingKey: item.routingKey,
-      payload: item.payload
+      payload: item.message
     });
 
     return response;

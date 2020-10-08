@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { MessageService } from './services/message.service';
+import { RabbitService } from './services/rabbit.service';
+import { CreateOrganizationController } from './controllers/organizations/create-organization.controller';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { MessageService } from './services/message.service';
       connectionInitOptions: { wait: false }
     })
   ],
-  controllers: [AppController],
-  providers: [AppService, MessageService]
+  controllers: [AppController, CreateOrganizationController],
+  providers: [AppService, RabbitService]
 })
 export class AppModule {}

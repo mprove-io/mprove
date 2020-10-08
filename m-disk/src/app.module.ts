@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { MessageService } from './services/message.service';
 import { ConsumerService } from './services/consumer.service';
+import { MessageService } from './services/message.service';
 
 @Module({
   imports: [
@@ -21,6 +21,6 @@ import { ConsumerService } from './services/consumer.service';
     })
   ],
   controllers: [AppController],
-  providers: [AppService, MessageService, ConsumerService]
+  providers: [AppService, ConsumerService, MessageService]
 })
 export class AppModule {}
