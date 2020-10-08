@@ -1,8 +1,7 @@
 version: '3.7'
 services:
-  rabbitmq:
+  rabbit:
     image: rabbitmq:3-management
-    container_name: rabbitmq
     # volumes:
     #   - type: bind
     #     source: ./.docker/rabbitmq/etc/
@@ -20,4 +19,21 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+  m-backend:
+    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
+    environment:
+      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
+      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS     
+    ports:
+      - 3000:3000 
+
+  m-disk:
+    image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
+    environment:
+      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
+      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS      
+
+    
+      
 

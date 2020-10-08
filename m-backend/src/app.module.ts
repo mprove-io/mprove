@@ -18,9 +18,7 @@ import { MessageService } from './services/message.service';
         }
       ],
       uri: [
-        `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${
-          process.env.RABBITMQ_DEFAULT_PASS
-        }@localhost:5672`
+        `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${process.env.RABBITMQ_DEFAULT_PASS}@rabbit:5672`
       ],
       connectionInitOptions: { wait: false }
     })
