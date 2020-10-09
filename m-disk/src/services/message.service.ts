@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { createOrganization } from '../controllers/create-organization';
+import { CreateOrganization } from '../controllers/create-organization';
 import { api } from '../barrels/api';
 
 @Injectable()
@@ -9,10 +9,10 @@ export class MessageService {
       if (
         request.info.name === api.ToDiskRequestInfoNameEnum.CreateOrganization
       ) {
-        return await createOrganization(request);
+        return await CreateOrganization(request);
       }
 
-      throw new Error('Wrong request info name');
+      throw Error(api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME);
     } catch (e) {
       let info: api.ToDiskResponseInfo = {
         status: api.ToDiskResponseInfoStatusEnum.InternalError,

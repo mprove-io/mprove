@@ -36,7 +36,7 @@ module.exports = {
       'error',
       {
         selector: ['enumMember'],
-        format: ['PascalCase'],
+        format: ['PascalCase', 'UPPER_CASE'],
         leadingUnderscore: 'forbid'
       }
     ],

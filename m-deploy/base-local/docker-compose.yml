@@ -33,6 +33,10 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS      
+    volumes:
+      - type: bind
+        source: ~/mprove_m_data/m-disk
+        target: /mprove_m_data/m-disk      
 
     
       
