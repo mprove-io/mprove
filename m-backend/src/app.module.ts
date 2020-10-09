@@ -1,20 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { RabbitService } from './services/rabbit.service';
-import { CreateOrganizationController } from './controllers/organizations/create-organization.controller';
+import { api } from './barrels/api';
+import { CreateOrganizationController } from './controllers/to-disk/create-organization.controller';
 
 @Module({
   imports: [
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
         {
-          name: 'm-blockml',
+          name: api.M_BLOCKML,
           type: 'direct'
         },
         {
-          name: 'm-disk',
+          name: api.M_DISK,
           type: 'direct'
         }
       ],
@@ -24,7 +23,7 @@ import { CreateOrganizationController } from './controllers/organizations/create
       connectionInitOptions: { wait: false }
     })
   ],
-  controllers: [AppController, CreateOrganizationController],
-  providers: [AppService, RabbitService]
+  controllers: [CreateOrganizationController],
+  providers: [RabbitService]
 })
 export class AppModule {}

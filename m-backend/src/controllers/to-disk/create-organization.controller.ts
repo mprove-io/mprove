@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AppService } from 'src/app.service';
+import { makeRoutingKeyToDisk } from 'src/helper/make-routing-key-to-disk';
 import { RabbitService } from 'src/services/rabbit.service';
 import { api } from '../../barrels/api';
 
@@ -7,20 +7,27 @@ import { api } from '../../barrels/api';
 export class CreateOrganizationController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('createOrganization')
+  @Post('toDiskCreateOrganization')
   async createOrganization(@Body() body): Promise<any> {
+    let organizationId = body.organizationId;
+
     let message: api.CreateOrganizationRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.CreateOrganization,
         traceId: 'trace123'
       },
       payload: {
-        organizationId: body.organizationId
+        organizationId: organizationId
       }
     };
 
+    let routingKey = makeRoutingKeyToDisk({
+      organizationId: organizationId,
+      projectId: null
+    });
+
     let response = await this.rabbitService.sendToDisk({
-      routingKey: 'organizations_abcdefghijklmnopqrstuvwxyz_projects_',
+      routingKey: routingKey,
       message: message
     });
     return response;

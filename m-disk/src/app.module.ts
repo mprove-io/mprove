@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { ConsumerService } from './services/consumer.service';
 import { MessageService } from './services/message.service';
+import { api } from './barrels/api';
 
 @Module({
   imports: [
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
         {
-          name: 'm-disk',
+          name: api.M_DISK,
           type: 'direct'
         }
       ],
@@ -20,7 +19,7 @@ import { MessageService } from './services/message.service';
       connectionInitOptions: { wait: false }
     })
   ],
-  controllers: [AppController],
-  providers: [AppService, ConsumerService, MessageService]
+  controllers: [],
+  providers: [ConsumerService, MessageService]
 })
 export class AppModule {}

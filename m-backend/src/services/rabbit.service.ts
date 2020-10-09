@@ -3,6 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Nack, AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { api } from 'src/barrels/api';
 
 @Injectable()
 export class RabbitService {
@@ -13,7 +14,7 @@ export class RabbitService {
     message: any;
   }): Promise<string> {
     const response = await this.amqpConnection.request<string>({
-      exchange: 'm-disk',
+      exchange: api.M_DISK,
       routingKey: item.routingKey,
       payload: item.message
     });
@@ -26,7 +27,7 @@ export class RabbitService {
     message: any;
   }): Promise<string> {
     const response = await this.amqpConnection.request<string>({
-      exchange: 'm-blockml',
+      exchange: api.M_BLOCKML,
       routingKey: item.routingKey,
       payload: item.message
     });

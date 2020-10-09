@@ -1,4 +1,3 @@
-import { AppController } from 'src/app.controller';
 import { api } from '../barrels/api';
 
 export async function createOrganization(
