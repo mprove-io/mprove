@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Nack, AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { api } from 'src/barrels/api';
+import { api } from '../barrels/api';
 
 @Injectable()
 export class RabbitService {

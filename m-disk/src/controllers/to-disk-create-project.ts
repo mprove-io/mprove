@@ -3,11 +3,14 @@ import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
 
-export async function CreateProject(
-  request: api.CreateProjectRequest
-): Promise<api.CreateProjectResponse> {
-  let organizationIdLowerCase = request.payload.organizationId.toLowerCase();
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationIdLowerCase}`;
+export async function ToDiskCreateProject(
+  request: api.ToDiskCreateProjectRequest
+): Promise<api.ToDiskCreateProjectResponse> {
+  let organizationId = request.payload.organizationId;
+  let projectId = request.payload.projectId;
+  let devRepoId = request.payload.devRepoId;
+
+  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
 
@@ -15,8 +18,7 @@ export async function CreateProject(
     throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
   }
 
-  let projectIdLowerCase = request.payload.projectId.toLowerCase();
-  let projectDir = `${orgDir}/${projectIdLowerCase}`;
+  let projectDir = `${orgDir}/${projectId}`;
 
   let isProjectExist = await disk.isPathExist(projectDir);
 
@@ -27,9 +29,15 @@ export async function CreateProject(
   await disk.ensureDir(projectDir);
 
   await git.prepareCentralAndProd({
-    projectIdLowerCase: projectIdLowerCase,
+    projectId: projectId,
     projectDir: projectDir,
     useData: false
+  });
+
+  await git.cloneCentralToDev({
+    organizationId: organizationId,
+    projectId: projectId,
+    devRepoId: devRepoId
   });
 
   return {
@@ -39,7 +47,7 @@ export async function CreateProject(
     payload: {
       organizationId: request.payload.organizationId,
       projectId: request.payload.projectId,
-      repoId: request.payload.repoId
+      devRepoId: request.payload.devRepoId
     }
   };
 }

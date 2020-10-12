@@ -1,3 +1,4 @@
 export enum ToDiskRequestInfoNameEnum {
-  CreateOrganization = <any>'CreateOrganization'
+  ToDiskCreateOrganization = <any>'ToDiskCreateOrganization',
+  ToDiskCreateProject = <any>'ToDiskCreateProject'
 }

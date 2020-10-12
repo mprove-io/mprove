@@ -2,12 +2,12 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { constants } from '../barrels/constants';
 
-export async function CreateOrganization(
-  request: api.CreateOrganizationRequest
-): Promise<api.CreateOrganizationResponse> {
-  let organizationIdLowerCase = request.payload.organizationId.toLowerCase();
+export async function ToDiskCreateOrganization(
+  request: api.ToDiskCreateOrganizationRequest
+): Promise<api.ToDiskCreateOrganizationResponse> {
+  let organizationId = request.payload.organizationId;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationIdLowerCase}`;
+  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
 
@@ -22,7 +22,7 @@ export async function CreateOrganization(
       status: api.ToDiskResponseInfoStatusEnum.Ok
     },
     payload: {
-      organizationId: organizationIdLowerCase
+      organizationId: organizationId
     }
   };
 }

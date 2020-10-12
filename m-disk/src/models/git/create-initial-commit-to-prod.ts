@@ -5,12 +5,12 @@ import { constants } from '../../barrels/constants';
 
 export async function createInitialCommitToProd(item: {
   prodDir: string;
-  projectIdLowerCase: string;
+  projectId: string;
   useData: boolean;
 }) {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.prodDir);
 
-  let sourceDir = `${constants.TEST_PROJECTS}/${item.projectIdLowerCase}`;
+  let sourceDir = `${constants.TEST_PROJECTS}/${item.projectId}`;
 
   let isSourceExist = await disk.isPathExist(sourceDir);
 
@@ -23,7 +23,7 @@ export async function createInitialCommitToProd(item: {
     let fileName = constants.README_FILE_NAME;
     let fileAbsoluteId = `${item.prodDir}/${fileName}`;
 
-    let projectName = helper.capitalizeFirstLetter(item.projectIdLowerCase);
+    let projectName = helper.capitalizeFirstLetter(item.projectId);
     let content = `# ${projectName}`;
 
     await disk.writeToFile({

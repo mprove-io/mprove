@@ -1,18 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrganization } from '../controllers/create-organization';
+import { ToDiskCreateOrganization } from '../controllers/to-disk-create-organization';
 import { api } from '../barrels/api';
+import { ToDiskCreateProject } from '../controllers/to-disk-create-project';
 
 @Injectable()
 export class MessageService {
   async processRequest(request: any): Promise<any> {
     try {
-      if (
-        request.info.name === api.ToDiskRequestInfoNameEnum.CreateOrganization
-      ) {
-        return await CreateOrganization(request);
-      }
+      switch (request.info.name) {
+        case api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization:
+          return await ToDiskCreateOrganization(request);
 
-      throw Error(api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME);
+        case api.ToDiskRequestInfoNameEnum.ToDiskCreateProject:
+          return await ToDiskCreateProject(request);
+
+        default:
+          throw Error(api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME);
+      }
     } catch (e) {
       let info: api.ToDiskResponseInfo = {
         status: api.ToDiskResponseInfoStatusEnum.InternalError,

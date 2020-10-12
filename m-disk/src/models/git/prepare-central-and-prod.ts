@@ -6,7 +6,7 @@ import * as nodegit from 'nodegit';
 import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function prepareCentralAndProd(item: {
-  projectIdLowerCase: string;
+  projectId: string;
   projectDir: string;
   useData: boolean;
 }) {
@@ -27,7 +27,7 @@ export async function prepareCentralAndProd(item: {
   await createInitialCommitToProd({
     prodDir: prodDir,
     useData: item.useData,
-    projectIdLowerCase: item.projectIdLowerCase
+    projectId: item.projectId
   });
 
   await pushToCentral({ fromRepoDir: prodDir });
