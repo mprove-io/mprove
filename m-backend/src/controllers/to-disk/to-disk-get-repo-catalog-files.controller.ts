@@ -9,11 +9,11 @@ export class ToDiskGetRepoCatalogFilesController {
 
   @Post('toDiskGetRepoCatalogFiles')
   async toDiskGetRepoCatalogFiles(
-    @Body() body: api.ToDiskGetRepoCatalogFilesRequest['payload']
-  ): Promise<any> {
-    let organizationId = body.organizationId;
-    let projectId = body.projectId;
-    let repoId = body.repoId;
+    @Body() body: api.ToDiskGetRepoCatalogFilesRequest
+  ): Promise<api.ToDiskGetRepoCatalogFilesResponse> {
+    let organizationId = body.payload.organizationId;
+    let projectId = body.payload.projectId;
+    let repoId = body.payload.repoId;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,
@@ -22,8 +22,8 @@ export class ToDiskGetRepoCatalogFilesController {
 
     let message: api.ToDiskGetRepoCatalogFilesRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogFiles,
-        traceId: '123'
+        name: body.info.name,
+        traceId: body.info.traceId
       },
       payload: {
         organizationId: organizationId,
@@ -37,6 +37,6 @@ export class ToDiskGetRepoCatalogFilesController {
       message: message
     });
 
-    return response;
+    return (response as unknown) as api.ToDiskGetRepoCatalogFilesResponse;
   }
 }

@@ -9,9 +9,9 @@ export class ToDiskCreateOrganizationController {
 
   @Post('toDiskCreateOrganization')
   async toDiskCreateOrganization(
-    @Body() body: api.ToDiskCreateOrganizationRequest['payload']
-  ): Promise<any> {
-    let organizationId = body.organizationId;
+    @Body() body: api.ToDiskCreateOrganizationRequest
+  ): Promise<api.ToDiskCreateOrganizationResponse> {
+    let organizationId = body.payload.organizationId;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,
@@ -20,8 +20,8 @@ export class ToDiskCreateOrganizationController {
 
     let message: api.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-        traceId: '123'
+        name: body.info.name,
+        traceId: body.info.traceId
       },
       payload: {
         organizationId: organizationId
@@ -33,6 +33,6 @@ export class ToDiskCreateOrganizationController {
       message: message
     });
 
-    return response;
+    return (response as unknown) as api.ToDiskCreateOrganizationResponse;
   }
 }

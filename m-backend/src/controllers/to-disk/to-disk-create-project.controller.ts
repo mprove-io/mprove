@@ -9,11 +9,11 @@ export class ToDiskCreateProjectController {
 
   @Post('toDiskCreateProject')
   async toDiskCreateProject(
-    @Body() body: api.ToDiskCreateProjectRequest['payload']
-  ): Promise<any> {
-    let organizationId = body.organizationId;
-    let projectId = body.projectId;
-    let devRepoId = body.devRepoId;
+    @Body() body: api.ToDiskCreateProjectRequest
+  ): Promise<api.ToDiskCreateProjectResponse> {
+    let organizationId = body.payload.organizationId;
+    let projectId = body.payload.projectId;
+    let devRepoId = body.payload.devRepoId;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,
@@ -22,8 +22,8 @@ export class ToDiskCreateProjectController {
 
     let message: api.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: '123'
+        name: body.info.name,
+        traceId: body.info.traceId
       },
       payload: {
         organizationId: organizationId,
@@ -37,6 +37,6 @@ export class ToDiskCreateProjectController {
       message: message
     });
 
-    return response;
+    return (response as unknown) as api.ToDiskCreateProjectResponse;
   }
 }
