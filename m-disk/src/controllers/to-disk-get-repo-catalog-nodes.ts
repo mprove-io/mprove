@@ -3,14 +3,14 @@ import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
 
-export async function ToDiskCreateProject(
-  request: api.ToDiskCreateProjectRequest
-): Promise<api.ToDiskCreateProjectResponse> {
+export async function ToDiskGetRepoCatalogNodes(
+  request: api.ToDiskGetRepoCatalogNodesRequest
+): Promise<api.ToDiskGetRepoCatalogNodesResponse> {
   let traceId = request.info.traceId;
 
   let organizationId = request.payload.organizationId;
   let projectId = request.payload.projectId;
-  let devRepoId = request.payload.devRepoId;
+  let repoId = request.payload.repoId;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
@@ -22,28 +22,31 @@ export async function ToDiskCreateProject(
   let projectDir = `${orgDir}/${projectId}`;
 
   let isProjectExist = await disk.isPathExist(projectDir);
-  if (isProjectExist === true) {
-    throw Error(api.ErEnum.M_DISK_PROJECT_ALREADY_EXIST);
+  if (isProjectExist === false) {
+    throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
   }
 
-  await disk.ensureDir(projectDir);
+  let repoDir = `${projectDir}/${repoId}`;
 
-  await git.prepareCentralAndProd({
+  let isRepoExist = await disk.isPathExist(repoDir);
+  if (isRepoExist === false) {
+    throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
+  }
+
+  let itemCatalog = <api.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
     projectId: projectId,
     projectDir: projectDir,
-    useData: false
-  });
-
-  await git.cloneCentralToDev({
-    organizationId: organizationId,
-    projectId: projectId,
-    devRepoId: devRepoId
+    repoId: repoId,
+    readFiles: false
   });
 
   return {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
+    },
+    payload: {
+      nodes: itemCatalog.nodes
     }
   };
 }

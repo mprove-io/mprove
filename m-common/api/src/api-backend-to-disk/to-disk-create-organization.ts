@@ -9,7 +9,4 @@ export class ToDiskCreateOrganizationRequest {
 
 export class ToDiskCreateOrganizationResponse {
   readonly info: apiObjects.ToDiskResponseInfo;
-  readonly payload: {
-    readonly organizationId: string;
-  };
 }

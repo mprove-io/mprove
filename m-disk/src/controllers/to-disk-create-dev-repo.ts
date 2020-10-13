@@ -6,6 +6,8 @@ import { constants } from '../barrels/constants';
 export async function ToDiskCreateDevRepo(
   request: api.ToDiskCreateDevRepoRequest
 ): Promise<api.ToDiskCreateDevRepoResponse> {
+  let traceId = request.info.traceId;
+
   let organizationId = request.payload.organizationId;
   let projectId = request.payload.projectId;
   let devRepoId = request.payload.devRepoId;
@@ -13,7 +15,6 @@ export async function ToDiskCreateDevRepo(
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
-
   if (isOrgExist === false) {
     throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
   }
@@ -21,7 +22,6 @@ export async function ToDiskCreateDevRepo(
   let projectDir = `${orgDir}/${projectId}`;
 
   let isProjectExist = await disk.isPathExist(projectDir);
-
   if (isProjectExist === false) {
     throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
   }
@@ -29,7 +29,6 @@ export async function ToDiskCreateDevRepo(
   let devRepoDir = `${projectDir}/${devRepoId}`;
 
   let isDevRepoExist = await disk.isPathExist(devRepoDir);
-
   if (isDevRepoExist === true) {
     throw Error(api.ErEnum.M_DISK_DEV_REPO_ALREADY_EXIST);
   }
@@ -42,12 +41,8 @@ export async function ToDiskCreateDevRepo(
 
   return {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok
-    },
-    payload: {
-      organizationId: request.payload.organizationId,
-      projectId: request.payload.projectId,
-      devRepoId: request.payload.devRepoId
+      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      traceId: traceId
     }
   };
 }

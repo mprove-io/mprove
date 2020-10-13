@@ -4,27 +4,31 @@ import { RabbitService } from '../../services/rabbit.service';
 import { api } from '../../barrels/api';
 
 @Controller()
-export class ToDiskCreateOrganizationController {
+export class ToDiskGetRepoCatalogFilesController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskCreateOrganization')
-  async toDiskCreateOrganization(
-    @Body() body: api.ToDiskCreateOrganizationRequest['payload']
+  @Post('toDiskGetRepoCatalogFiles')
+  async toDiskGetRepoCatalogFiles(
+    @Body() body: api.ToDiskGetRepoCatalogFilesRequest['payload']
   ): Promise<any> {
     let organizationId = body.organizationId;
+    let projectId = body.projectId;
+    let repoId = body.repoId;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,
-      projectId: null
+      projectId: projectId
     });
 
-    let message: api.ToDiskCreateOrganizationRequest = {
+    let message: api.ToDiskGetRepoCatalogFilesRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogFiles,
         traceId: '123'
       },
       payload: {
-        organizationId: organizationId
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: repoId
       }
     };
 

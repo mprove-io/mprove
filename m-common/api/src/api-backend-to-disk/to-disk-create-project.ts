@@ -11,9 +11,4 @@ export class ToDiskCreateProjectRequest {
 
 export class ToDiskCreateProjectResponse {
   readonly info: apiObjects.ToDiskResponseInfo;
-  readonly payload: {
-    readonly organizationId: string;
-    readonly projectId: string;
-    readonly devRepoId: string;
-  };
 }

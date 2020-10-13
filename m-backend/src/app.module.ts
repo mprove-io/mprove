@@ -5,6 +5,8 @@ import { api } from './barrels/api';
 import { ToDiskCreateOrganizationController } from './controllers/to-disk/to-disk-create-organization.controller';
 import { ToDiskCreateProjectController } from './controllers/to-disk/to-disk-create-project.controller';
 import { ToDiskCreateDevRepoController } from './controllers/to-disk/to-disk-create-dev-repo.controller';
+import { ToDiskGetRepoCatalogFilesController } from './controllers/to-disk/to-disk-get-repo-catalog-files.controller';
+import { ToDiskGetRepoCatalogNodesController } from './controllers/to-disk/to-disk-get-repo-catalog-nodes.controller';
 
 @Module({
   imports: [
@@ -28,7 +30,9 @@ import { ToDiskCreateDevRepoController } from './controllers/to-disk/to-disk-cre
   controllers: [
     ToDiskCreateOrganizationController,
     ToDiskCreateProjectController,
-    ToDiskCreateDevRepoController
+    ToDiskCreateDevRepoController,
+    ToDiskGetRepoCatalogFilesController,
+    ToDiskGetRepoCatalogNodesController
   ],
   providers: [RabbitService]
 })

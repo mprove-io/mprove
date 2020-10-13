@@ -8,7 +8,9 @@ export class ToDiskCreateDevRepoController {
   constructor(private readonly rabbitService: RabbitService) {}
 
   @Post('toDiskCreateDevRepo')
-  async toDiskCreateDevRepo(@Body() body): Promise<any> {
+  async toDiskCreateDevRepo(
+    @Body() body: api.ToDiskCreateDevRepoRequest['payload']
+  ): Promise<any> {
     let organizationId = body.organizationId;
     let projectId = body.projectId;
     let devRepoId = body.devRepoId;
@@ -21,7 +23,7 @@ export class ToDiskCreateDevRepoController {
     let message: api.ToDiskCreateDevRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
-        traceId: 'trace123'
+        traceId: '123'
       },
       payload: {
         organizationId: organizationId,

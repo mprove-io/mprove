@@ -5,12 +5,13 @@ import { constants } from '../barrels/constants';
 export async function ToDiskCreateOrganization(
   request: api.ToDiskCreateOrganizationRequest
 ): Promise<api.ToDiskCreateOrganizationResponse> {
+  let traceId = request.info.traceId;
+
   let organizationId = request.payload.organizationId;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
-
   if (isOrgExist === true) {
     throw Error(api.ErEnum.M_DISK_ORGANIZATION_ALREADY_EXIST);
   }
@@ -19,10 +20,8 @@ export async function ToDiskCreateOrganization(
 
   return {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok
-    },
-    payload: {
-      organizationId: organizationId
+      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      traceId: traceId
     }
   };
 }

@@ -1,14 +1,17 @@
 import * as apiObjects from '../objects/_index';
 
-export class ToDiskCreateProjectRequest {
+export class ToDiskGetRepoCatalogFilesRequest {
   readonly info: apiObjects.ToDiskRequestInfo;
   readonly payload: {
     readonly organizationId: string;
     readonly projectId: string;
-    readonly devRepoId: string;
+    readonly repoId: string;
   };
 }
 
-export class ToDiskCreateProjectResponse {
+export class ToDiskGetRepoCatalogFilesResponse {
   readonly info: apiObjects.ToDiskResponseInfo;
+  readonly payload: {
+    readonly files: Array<apiObjects.CatalogItemFile>;
+  };
 }
