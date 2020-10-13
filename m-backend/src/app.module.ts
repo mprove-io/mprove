@@ -4,6 +4,7 @@ import { RabbitService } from './services/rabbit.service';
 import { api } from './barrels/api';
 import { ToDiskCreateOrganizationController } from './controllers/to-disk/to-disk-create-organization.controller';
 import { ToDiskCreateProjectController } from './controllers/to-disk/to-disk-create-project.controller';
+import { ToDiskCreateDevRepoController } from './controllers/to-disk/to-disk-create-dev-repo.controller';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ToDiskCreateProjectController } from './controllers/to-disk/to-disk-cre
   ],
   controllers: [
     ToDiskCreateOrganizationController,
-    ToDiskCreateProjectController
+    ToDiskCreateProjectController,
+    ToDiskCreateDevRepoController
   ],
   providers: [RabbitService]
 })

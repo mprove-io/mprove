@@ -7,6 +7,7 @@ export async function getRepoCatalogNodesAndFiles(item: {
   projectId: string;
   projectDir: string;
   repoId: string;
+  readFiles: boolean;
 }) {
   let topNode: api.CatalogNode = {
     id: item.projectId,
@@ -23,7 +24,8 @@ export async function getRepoCatalogNodesAndFiles(item: {
     dir: repoDir,
     projectId: item.projectId,
     repoId: item.repoId,
-    repoDirPathLength: repoDirPathLength
+    repoDirPathLength: repoDirPathLength,
+    readFiles: item.readFiles
   });
 
   topNode.children = itemDir.nodes;
@@ -41,6 +43,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   projectId: string;
   repoId: string;
   repoDirPathLength: number;
+  readFiles: boolean;
 }) {
   let files: api.CatalogItemFile[] = [];
 
@@ -72,7 +75,8 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             dir: filePath,
             projectId: item.projectId,
             repoId: item.repoId,
-            repoDirPathLength: item.repoDirPathLength
+            repoDirPathLength: item.repoDirPathLength,
+            readFiles: item.readFiles
           })
         );
 
@@ -125,21 +129,23 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             otherNodes.push(node);
         }
 
-        let path = JSON.stringify(nodeId.split('/'));
+        if (item.readFiles === true) {
+          let path = JSON.stringify(nodeId.split('/'));
 
-        let content = <string>await fse.readFile(filePath, 'utf8');
+          let content = <string>await fse.readFile(filePath, 'utf8');
 
-        let file: api.CatalogItemFile = {
-          projectId: item.projectId,
-          repoId: item.repoId,
-          fileId: fileId,
-          pathString: path,
-          fileAbsoluteId: filePath,
-          name: name,
-          content: content
-        };
+          let file: api.CatalogItemFile = {
+            projectId: item.projectId,
+            repoId: item.repoId,
+            fileId: fileId,
+            pathString: path,
+            fileAbsoluteId: filePath,
+            name: name,
+            content: content
+          };
 
-        files.push(file);
+          files.push(file);
+        }
       }
     }
   });
