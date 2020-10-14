@@ -3,14 +3,16 @@ import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
 
-export async function ToDiskCreateDevRepo(
-  request: api.ToDiskCreateDevRepoRequest
-): Promise<api.ToDiskCreateDevRepoResponse> {
+export async function ToDiskCreateBranch(
+  request: api.ToDiskCreateBranchRequest
+): Promise<api.ToDiskCreateBranchResponse> {
   let traceId = request.info.traceId;
 
   let organizationId = request.payload.organizationId;
   let projectId = request.payload.projectId;
-  let devRepoId = request.payload.devRepoId;
+  let repoId = request.payload.repoId;
+  let fromBranch = request.payload.fromBranch;
+  let newBranch = request.payload.newBranch;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
@@ -26,17 +28,22 @@ export async function ToDiskCreateDevRepo(
     throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
   }
 
-  let devRepoDir = `${projectDir}/${devRepoId}`;
+  let repoDir = `${projectDir}/${repoId}`;
 
-  let isDevRepoExist = await disk.isPathExist(devRepoDir);
-  if (isDevRepoExist === true) {
-    throw Error(api.ErEnum.M_DISK_REPO_ALREADY_EXIST);
+  let isRepoExist = await disk.isPathExist(repoDir);
+  if (isRepoExist === false) {
+    throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  await git.cloneCentralToDev({
-    organizationId: organizationId,
-    projectId: projectId,
-    devRepoId: devRepoId
+  await git.checkoutBranch({
+    repoDir: repoDir,
+    branchName: fromBranch
+  });
+
+  await git.createBranch({
+    repoDir: repoDir,
+    fromBranch: fromBranch,
+    newBranch: newBranch
   });
 
   return {
