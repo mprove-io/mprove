@@ -13,24 +13,13 @@ export class ToDiskGetRepoCatalogNodesController {
   ): Promise<api.ToDiskGetRepoCatalogNodesResponse> {
     let organizationId = body.payload.organizationId;
     let projectId = body.payload.projectId;
-    let repoId = body.payload.repoId;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,
       projectId: projectId
     });
 
-    let message: api.ToDiskGetRepoCatalogNodesRequest = {
-      info: {
-        name: body.info.name,
-        traceId: body.info.traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: repoId
-      }
-    };
+    let message = body;
 
     let response = await this.rabbitService.sendToDisk({
       routingKey: routingKey,

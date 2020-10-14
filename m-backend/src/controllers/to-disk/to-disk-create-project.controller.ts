@@ -13,24 +13,13 @@ export class ToDiskCreateProjectController {
   ): Promise<api.ToDiskCreateProjectResponse> {
     let organizationId = body.payload.organizationId;
     let projectId = body.payload.projectId;
-    let devRepoId = body.payload.devRepoId;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,
       projectId: projectId
     });
 
-    let message: api.ToDiskCreateProjectRequest = {
-      info: {
-        name: body.info.name,
-        traceId: body.info.traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        devRepoId: devRepoId
-      }
-    };
+    let message = body;
 
     let response = await this.rabbitService.sendToDisk({
       routingKey: routingKey,

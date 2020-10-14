@@ -18,15 +18,7 @@ export class ToDiskCreateOrganizationController {
       projectId: null
     });
 
-    let message: api.ToDiskCreateOrganizationRequest = {
-      info: {
-        name: body.info.name,
-        traceId: body.info.traceId
-      },
-      payload: {
-        organizationId: organizationId
-      }
-    };
+    let message = body;
 
     let response = await this.rabbitService.sendToDisk({
       routingKey: routingKey,
