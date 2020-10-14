@@ -35,10 +35,23 @@ export async function ToDiskCreateBranch(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  await git.checkoutBranch({
+  let isFromBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branchName: fromBranch
+    branch: fromBranch
   });
+
+  if (isFromBranchExist === false) {
+    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
+  }
+
+  let isNewBranchExist = await git.isLocalBranchExist({
+    repoDir: repoDir,
+    branch: newBranch
+  });
+
+  if (isNewBranchExist === true) {
+    throw Error(api.ErEnum.M_DISK_BRANCH_ALREADY_EXIST);
+  }
 
   await git.createBranch({
     repoDir: repoDir,
