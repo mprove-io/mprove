@@ -12,7 +12,10 @@
   },
   "dependencies": {
     "typescript": "4.0.3",
-    "madge": "3.11.0"
+    "madge": "3.11.0",
+    "class-transformer": "0.3.1",
+    "class-transformer-validator": "0.9.1",
+    "class-validator": "0.12.2"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.3",

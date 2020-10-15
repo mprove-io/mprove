@@ -47,9 +47,10 @@ export class MessageService {
         status: api.ToDiskResponseInfoStatusEnum.InternalError,
         error: {
           message: e.message,
-          at: e.stack.split('\n')[1],
-          stackArray: e.stack.split('\n'),
-          stack: e.stack
+          at: e.stack?.split('\n')[1],
+          stackArray: e.stack?.split('\n'),
+          stack: e.stack,
+          e: e
         }
       };
 

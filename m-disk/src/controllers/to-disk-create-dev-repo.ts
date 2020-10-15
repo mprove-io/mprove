@@ -2,15 +2,21 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
+import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateDevRepo(
   request: api.ToDiskCreateDevRepoRequest
 ): Promise<api.ToDiskCreateDevRepoResponse> {
-  let traceId = request.info.traceId;
+  const requestValid = await transformAndValidate(
+    api.ToDiskCreateDevRepoRequest,
+    request
+  );
 
-  let organizationId = request.payload.organizationId;
-  let projectId = request.payload.projectId;
-  let devRepoId = request.payload.devRepoId;
+  let traceId = requestValid.info.traceId;
+
+  let organizationId = requestValid.payload.organizationId;
+  let projectId = requestValid.payload.projectId;
+  let devRepoId = requestValid.payload.devRepoId;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;

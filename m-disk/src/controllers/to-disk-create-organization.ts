@@ -1,13 +1,19 @@
 import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { constants } from '../barrels/constants';
+import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateOrganization(
   request: api.ToDiskCreateOrganizationRequest
 ): Promise<api.ToDiskCreateOrganizationResponse> {
-  let traceId = request.info.traceId;
+  const requestValid = await transformAndValidate(
+    api.ToDiskCreateOrganizationRequest,
+    request
+  );
 
-  let organizationId = request.payload.organizationId;
+  let traceId = requestValid.info.traceId;
+
+  let organizationId = requestValid.payload.organizationId;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 

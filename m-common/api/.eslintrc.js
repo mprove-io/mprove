@@ -31,7 +31,8 @@ module.exports = {
         accessibility: 'no-public'
       }
     ],
-    '@typescript-eslint/member-ordering': 'error',
+    // '@typescript-eslint/member-ordering': 'error',
+    '@typescript-eslint/member-ordering': off,
     '@typescript-eslint/naming-convention': [
       'error',
       {
