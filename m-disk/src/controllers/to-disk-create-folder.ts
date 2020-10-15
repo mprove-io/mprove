@@ -3,20 +3,28 @@ import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
 
-export async function ToDiskCreateBranch(
-  request: api.ToDiskCreateBranchRequest
-): Promise<api.ToDiskCreateBranchResponse> {
+export async function ToDiskCreateFolder(
+  request: api.ToDiskCreateFolderRequest
+): Promise<api.ToDiskCreateFolderResponse> {
   let traceId = request.info.traceId;
 
   let organizationId = request.payload.organizationId;
   let projectId = request.payload.projectId;
   let repoId = request.payload.repoId;
-  let fromBranch = request.payload.fromBranch;
-  let newBranch = request.payload.newBranch;
+  let branch = request.payload.branch;
+  let folderName = request.payload.folderName;
+  let parentNodeId = request.payload.parentNodeId;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
+
+  let parent = parentNodeId.substring(projectId.length + 1);
+  parent = parent.length > 0 ? parent + '/' : parent;
+  let parentPath = repoDir + '/' + parent;
+
+  let folderAbsolutePath = parentPath + folderName;
+  let gitKeepFileAbsoluteId = folderAbsolutePath + '/' + '.gitkeep';
 
   //
 
@@ -35,29 +43,34 @@ export async function ToDiskCreateBranch(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  let isFromBranchExist = await git.isLocalBranchExist({
+  let isBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: fromBranch
+    branch: branch
   });
-  if (isFromBranchExist === false) {
+  if (isBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
   }
 
-  let isNewBranchExist = await git.isLocalBranchExist({
+  await git.checkoutBranch({
     repoDir: repoDir,
-    branch: newBranch
+    branchName: branch
   });
-  if (isNewBranchExist === true) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_ALREADY_EXIST);
+
+  let isParentPathExist = await disk.isPathExist(parentPath);
+  if (isParentPathExist === false) {
+    throw Error(api.ErEnum.M_DISK_PARENT_PATH_IS_NOT_EXIST);
+  }
+
+  let isFolderExist = await disk.isPathExist(folderAbsolutePath);
+  if (isFolderExist === true) {
+    throw Error(api.ErEnum.M_DISK_FOLDER_ALREADY_EXIST);
   }
 
   //
 
-  await git.createBranch({
-    repoDir: repoDir,
-    fromBranch: fromBranch,
-    newBranch: newBranch
-  });
+  await disk.ensureFile(gitKeepFileAbsoluteId);
+
+  await git.addChangesToStage({ repoDir: repoDir });
 
   return {
     info: {

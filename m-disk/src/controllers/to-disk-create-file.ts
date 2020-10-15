@@ -25,8 +25,9 @@ export async function ToDiskCreateFile(
   let parentPath = repoDir + '/' + parent;
 
   let fileAbsoluteId = parentPath + fileName;
-
   let content = getContentFromFileName({ fileName: fileName });
+
+  //
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -65,6 +66,8 @@ export async function ToDiskCreateFile(
   if (isFileExist === true) {
     throw Error(api.ErEnum.M_DISK_FILE_ALREADY_EXIST);
   }
+
+  //
 
   await disk.writeToFile({
     fileAbsoluteId: fileAbsoluteId,

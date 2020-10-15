@@ -9,6 +9,7 @@ import { ToDiskGetRepoCatalogFilesController } from './controllers/to-disk/to-di
 import { ToDiskGetRepoCatalogNodesController } from './controllers/to-disk/to-disk-get-repo-catalog-nodes.controller';
 import { ToDiskCreateBranchController } from './controllers/to-disk/to-disk-create-branch.controller';
 import { ToDiskCreateFileController } from './controllers/to-disk/to-disk-create-file.controller';
+import { ToDiskCreateFolderController } from './controllers/to-disk/to-disk-create-folder.controller';
 
 @Module({
   imports: [
@@ -33,10 +34,11 @@ import { ToDiskCreateFileController } from './controllers/to-disk/to-disk-create
     ToDiskCreateOrganizationController,
     ToDiskCreateProjectController,
     ToDiskCreateDevRepoController,
-    ToDiskGetRepoCatalogFilesController,
-    ToDiskGetRepoCatalogNodesController,
     ToDiskCreateBranchController,
-    ToDiskCreateFileController
+    ToDiskCreateFolderController,
+    ToDiskCreateFileController,
+    ToDiskGetRepoCatalogFilesController,
+    ToDiskGetRepoCatalogNodesController
   ],
   providers: [RabbitService]
 })
