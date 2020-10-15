@@ -13,13 +13,12 @@ export async function ToDiskCreateProject(
   let devRepoId = request.payload.devRepoId;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let projectDir = `${orgDir}/${projectId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
     throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
   }
-
-  let projectDir = `${orgDir}/${projectId}`;
 
   let isProjectExist = await disk.isPathExist(projectDir);
   if (isProjectExist === true) {

@@ -15,20 +15,18 @@ export async function ToDiskCreateBranch(
   let newBranch = request.payload.newBranch;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let projectDir = `${orgDir}/${projectId}`;
+  let repoDir = `${projectDir}/${repoId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
     throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
   }
 
-  let projectDir = `${orgDir}/${projectId}`;
-
   let isProjectExist = await disk.isPathExist(projectDir);
   if (isProjectExist === false) {
     throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
   }
-
-  let repoDir = `${projectDir}/${repoId}`;
 
   let isRepoExist = await disk.isPathExist(repoDir);
   if (isRepoExist === false) {
@@ -39,7 +37,6 @@ export async function ToDiskCreateBranch(
     repoDir: repoDir,
     branch: fromBranch
   });
-
   if (isFromBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
   }
@@ -48,7 +45,6 @@ export async function ToDiskCreateBranch(
     repoDir: repoDir,
     branch: newBranch
   });
-
   if (isNewBranchExist === true) {
     throw Error(api.ErEnum.M_DISK_BRANCH_ALREADY_EXIST);
   }

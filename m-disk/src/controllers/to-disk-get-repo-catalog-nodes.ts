@@ -13,20 +13,18 @@ export async function ToDiskGetRepoCatalogNodes(
   let repoId = request.payload.repoId;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let projectDir = `${orgDir}/${projectId}`;
+  let repoDir = `${projectDir}/${repoId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
     throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
   }
 
-  let projectDir = `${orgDir}/${projectId}`;
-
   let isProjectExist = await disk.isPathExist(projectDir);
   if (isProjectExist === false) {
     throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
   }
-
-  let repoDir = `${projectDir}/${repoId}`;
 
   let isRepoExist = await disk.isPathExist(repoDir);
   if (isRepoExist === false) {

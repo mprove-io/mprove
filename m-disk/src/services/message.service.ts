@@ -5,7 +5,8 @@ import { ToDiskCreateProject } from '../controllers/to-disk-create-project';
 import { ToDiskCreateDevRepo } from '../controllers/to-disk-create-dev-repo';
 import { ToDiskGetRepoCatalogNodes } from '../controllers/to-disk-get-repo-catalog-nodes';
 import { ToDiskGetRepoCatalogFiles } from '../controllers/to-disk-get-repo-catalog-files';
-import { ToDiskCreateBranch } from 'src/controllers/to-disk-create-branch';
+import { ToDiskCreateBranch } from '../controllers/to-disk-create-branch';
+import { ToDiskCreateFile } from '../controllers/to-disk-create-file';
 
 @Injectable()
 export class MessageService {
@@ -23,6 +24,9 @@ export class MessageService {
 
         case api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
           return await ToDiskCreateBranch(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskCreateFile:
+          return await ToDiskCreateFile(request);
 
         case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogNodes:
           return await ToDiskGetRepoCatalogNodes(request);
