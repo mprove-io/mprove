@@ -19,7 +19,7 @@ export class ToDiskSaveFileRequestPayload {
   readonly fileAbsoluteId: string;
 
   @IsString()
-  readonly fileContent: string;
+  readonly content: string;
 }
 
 export class ToDiskSaveFileRequest {

@@ -8,6 +8,7 @@ import { ToDiskGetRepoCatalogFiles } from '../controllers/to-disk-get-repo-catal
 import { ToDiskCreateBranch } from '../controllers/to-disk-create-branch';
 import { ToDiskCreateFile } from '../controllers/to-disk-create-file';
 import { ToDiskCreateFolder } from '../controllers/to-disk-create-folder';
+import { ToDiskSaveFile } from '../controllers/to-disk-save-file';
 
 @Injectable()
 export class MessageService {
@@ -31,6 +32,9 @@ export class MessageService {
 
         case api.ToDiskRequestInfoNameEnum.ToDiskCreateFile:
           return await ToDiskCreateFile(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskSaveFile:
+          return await ToDiskSaveFile(request);
 
         case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogNodes:
           return await ToDiskGetRepoCatalogNodes(request);
