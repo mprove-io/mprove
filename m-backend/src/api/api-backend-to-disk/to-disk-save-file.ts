@@ -33,5 +33,7 @@ export class ToDiskSaveFileRequest {
 }
 
 export class ToDiskSaveFileResponse {
+  @ValidateNested()
+  @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
 }

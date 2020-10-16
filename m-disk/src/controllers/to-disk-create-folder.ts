@@ -2,18 +2,24 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
+import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateFolder(
   request: api.ToDiskCreateFolderRequest
 ): Promise<api.ToDiskCreateFolderResponse> {
-  let traceId = request.info.traceId;
-
-  let organizationId = request.payload.organizationId;
-  let projectId = request.payload.projectId;
-  let repoId = request.payload.repoId;
-  let branch = request.payload.branch;
-  let folderName = request.payload.folderName;
-  let parentNodeId = request.payload.parentNodeId;
+  let requestValid = await transformAndValidate(
+    api.ToDiskCreateFolderRequest,
+    request
+  );
+  let { traceId } = requestValid.info;
+  let {
+    organizationId,
+    projectId,
+    repoId,
+    branch,
+    folderName,
+    parentNodeId
+  } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -72,10 +78,12 @@ export async function ToDiskCreateFolder(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  return {
+  let response = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
     }
   };
+
+  return response;
 }

@@ -18,5 +18,7 @@ export class ToDiskCreateOrganizationRequest {
 }
 
 export class ToDiskCreateOrganizationResponse {
+  @ValidateNested()
+  @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
 }

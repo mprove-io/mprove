@@ -12,9 +12,7 @@ export async function ToDiskSaveFile(
     api.ToDiskSaveFileRequest,
     request
   );
-
-  let traceId = requestValid.info.traceId;
-
+  let { traceId } = requestValid.info;
   let {
     organizationId,
     projectId,
@@ -70,10 +68,12 @@ export async function ToDiskSaveFile(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  return {
+  let response = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
     }
   };
+
+  return response;
 }

@@ -2,15 +2,17 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
+import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskGetRepoCatalogNodes(
   request: api.ToDiskGetRepoCatalogNodesRequest
 ): Promise<api.ToDiskGetRepoCatalogNodesResponse> {
-  let traceId = request.info.traceId;
-
-  let organizationId = request.payload.organizationId;
-  let projectId = request.payload.projectId;
-  let repoId = request.payload.repoId;
+  let requestValid = await transformAndValidate(
+    api.ToDiskGetRepoCatalogNodesRequest,
+    request
+  );
+  let { traceId } = requestValid.info;
+  let { organizationId, projectId, repoId } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -42,7 +44,7 @@ export async function ToDiskGetRepoCatalogNodes(
     readFiles: false
   });
 
-  return {
+  let response = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -51,4 +53,6 @@ export async function ToDiskGetRepoCatalogNodes(
       nodes: itemCatalog.nodes
     }
   };
+
+  return response;
 }

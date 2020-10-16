@@ -6,14 +6,12 @@ import { transformAndValidate } from 'class-transformer-validator';
 export async function ToDiskCreateOrganization(
   request: api.ToDiskCreateOrganizationRequest
 ): Promise<api.ToDiskCreateOrganizationResponse> {
-  const requestValid = await transformAndValidate(
+  let requestValid = await transformAndValidate(
     api.ToDiskCreateOrganizationRequest,
     request
   );
-
-  let traceId = requestValid.info.traceId;
-
-  let organizationId = requestValid.payload.organizationId;
+  let { traceId } = requestValid.info;
+  let { organizationId } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
@@ -24,10 +22,12 @@ export async function ToDiskCreateOrganization(
 
   await disk.ensureDir(orgDir);
 
-  return {
+  let response = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
     }
   };
+
+  return response;
 }

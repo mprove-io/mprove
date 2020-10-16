@@ -7,16 +7,12 @@ import { transformAndValidate } from 'class-transformer-validator';
 export async function ToDiskCreateDevRepo(
   request: api.ToDiskCreateDevRepoRequest
 ): Promise<api.ToDiskCreateDevRepoResponse> {
-  const requestValid = await transformAndValidate(
+  let requestValid = await transformAndValidate(
     api.ToDiskCreateDevRepoRequest,
     request
   );
-
-  let traceId = requestValid.info.traceId;
-
-  let organizationId = requestValid.payload.organizationId;
-  let projectId = requestValid.payload.projectId;
-  let devRepoId = requestValid.payload.devRepoId;
+  let { traceId } = requestValid.info;
+  let { organizationId, projectId, devRepoId } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -47,10 +43,12 @@ export async function ToDiskCreateDevRepo(
     devRepoId: devRepoId
   });
 
-  return {
+  let response = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
     }
   };
+
+  return response;
 }

@@ -3,18 +3,24 @@ import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
 import { MyRegex } from '../models/my-regex';
+import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateFile(
   request: api.ToDiskCreateFileRequest
 ): Promise<api.ToDiskCreateFileResponse> {
-  let traceId = request.info.traceId;
-
-  let organizationId = request.payload.organizationId;
-  let projectId = request.payload.projectId;
-  let repoId = request.payload.repoId;
-  let branch = request.payload.branch;
-  let fileName = request.payload.fileName;
-  let parentNodeId = request.payload.parentNodeId;
+  let requestValid = await transformAndValidate(
+    api.ToDiskCreateFileRequest,
+    request
+  );
+  let { traceId } = requestValid.info;
+  let {
+    organizationId,
+    projectId,
+    repoId,
+    branch,
+    fileName,
+    parentNodeId
+  } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -76,12 +82,14 @@ export async function ToDiskCreateFile(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  return {
+  let response = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
     }
   };
+
+  return response;
 }
 
 function getContentFromFileName(item: { fileName: string }) {

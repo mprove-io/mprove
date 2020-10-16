@@ -24,5 +24,7 @@ export class ToDiskCreateDevRepoRequest {
 }
 
 export class ToDiskCreateDevRepoResponse {
+  @ValidateNested()
+  @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
 }

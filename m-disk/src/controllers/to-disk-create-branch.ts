@@ -2,17 +2,23 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
+import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateBranch(
   request: api.ToDiskCreateBranchRequest
 ): Promise<api.ToDiskCreateBranchResponse> {
-  let traceId = request.info.traceId;
-
-  let organizationId = request.payload.organizationId;
-  let projectId = request.payload.projectId;
-  let repoId = request.payload.repoId;
-  let fromBranch = request.payload.fromBranch;
-  let newBranch = request.payload.newBranch;
+  let requestValid = await transformAndValidate(
+    api.ToDiskCreateBranchRequest,
+    request
+  );
+  let { traceId } = requestValid.info;
+  let {
+    organizationId,
+    projectId,
+    repoId,
+    fromBranch,
+    newBranch
+  } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -59,10 +65,12 @@ export async function ToDiskCreateBranch(
     newBranch: newBranch
   });
 
-  return {
+  let response = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
     }
   };
+
+  return response;
 }

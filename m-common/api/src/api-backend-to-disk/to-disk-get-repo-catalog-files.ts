@@ -1,17 +1,40 @@
+import { Type } from 'class-transformer';
+import { IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
 
+export class ToDiskGetRepoCatalogFilesRequestPayload {
+  @IsString()
+  readonly organizationId: string;
+
+  @IsString()
+  readonly projectId: string;
+
+  @IsString()
+  readonly repoId: string;
+}
+
 export class ToDiskGetRepoCatalogFilesRequest {
+  @ValidateNested()
+  @Type(() => apiObjects.ToDiskRequestInfo)
   readonly info: apiObjects.ToDiskRequestInfo;
-  readonly payload: {
-    readonly organizationId: string;
-    readonly projectId: string;
-    readonly repoId: string;
-  };
+
+  @ValidateNested()
+  @Type(() => ToDiskGetRepoCatalogFilesRequestPayload)
+  readonly payload: ToDiskGetRepoCatalogFilesRequestPayload;
+}
+
+export class ToDiskGetRepoCatalogFilesResponsePayload {
+  @ValidateNested()
+  @Type(() => apiObjects.CatalogItemFile)
+  readonly files: Array<apiObjects.CatalogItemFile>;
 }
 
 export class ToDiskGetRepoCatalogFilesResponse {
+  @ValidateNested()
+  @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
-  readonly payload: {
-    readonly files: Array<apiObjects.CatalogItemFile>;
-  };
+
+  @ValidateNested()
+  @Type(() => ToDiskGetRepoCatalogFilesResponsePayload)
+  readonly payload: ToDiskGetRepoCatalogFilesResponsePayload;
 }
