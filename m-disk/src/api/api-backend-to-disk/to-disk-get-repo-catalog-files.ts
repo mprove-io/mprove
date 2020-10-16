@@ -11,6 +11,9 @@ export class ToDiskGetRepoCatalogFilesRequestPayload {
 
   @IsString()
   readonly repoId: string;
+
+  @IsString()
+  readonly branch: string;
 }
 
 export class ToDiskGetRepoCatalogFilesRequest {

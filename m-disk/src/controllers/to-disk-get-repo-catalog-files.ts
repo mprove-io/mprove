@@ -12,7 +12,7 @@ export async function ToDiskGetRepoCatalogFiles(
     request
   );
   let { traceId } = requestValid.info;
-  let { organizationId, projectId, repoId } = requestValid.payload;
+  let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -34,6 +34,19 @@ export async function ToDiskGetRepoCatalogFiles(
   if (isRepoExist === false) {
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
+
+  let isBranchExist = await git.isLocalBranchExist({
+    repoDir: repoDir,
+    branch: branch
+  });
+  if (isBranchExist === false) {
+    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
+  }
+
+  await git.checkoutBranch({
+    repoDir: repoDir,
+    branchName: branch
+  });
 
   //
 
