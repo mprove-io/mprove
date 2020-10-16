@@ -57,12 +57,24 @@ export async function ToDiskGetRepoCatalogFiles(
     readFiles: true
   });
 
-  let response = {
+  let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
+    await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir
+    })
+  );
+
+  let response: api.ToDiskGetRepoCatalogFilesResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {
+      repoStatus: repoStatus,
+      currentBranch: currentBranch,
+      conflicts: conflicts,
       files: itemCatalog.files
     }
   };

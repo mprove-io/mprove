@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
+import * as apiEnums from '../enums/_index';
 
 export class ToDiskGetRepoCatalogNodesRequestPayload {
   @IsString()
@@ -27,6 +28,16 @@ export class ToDiskGetRepoCatalogNodesRequest {
 }
 
 export class ToDiskGetRepoCatalogNodesResponsePayload {
+  @IsEnum(apiEnums.RepoStatusEnum)
+  readonly repoStatus: apiEnums.RepoStatusEnum;
+
+  @IsString()
+  readonly currentBranch: string;
+
+  @ValidateNested()
+  @Type(() => apiObjects.FileLine)
+  readonly conflicts: apiObjects.FileLine[];
+
   @ValidateNested()
   @Type(() => apiObjects.CatalogNode)
   readonly nodes: Array<apiObjects.CatalogNode>;
