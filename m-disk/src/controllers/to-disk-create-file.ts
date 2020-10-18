@@ -82,10 +82,35 @@ export async function ToDiskCreateFile(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  let response = {
+  let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
+    await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir
+    })
+  );
+
+  let itemCatalog = <api.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
+    readFiles: false
+  });
+
+  let response: api.ToDiskCreateFileResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
+    },
+    payload: {
+      organizationId: organizationId,
+      projectId: projectId,
+      repoId: repoId,
+      repoStatus: repoStatus,
+      currentBranch: currentBranch,
+      conflicts: conflicts,
+      nodes: itemCatalog.nodes
     }
   };
 

@@ -72,6 +72,9 @@ export async function ToDiskGetRepoCatalogNodes(
       traceId: traceId
     },
     payload: {
+      organizationId: organizationId,
+      projectId: projectId,
+      repoId: repoId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,

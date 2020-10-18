@@ -45,10 +45,14 @@ export async function ToDiskCreateProject(
     devRepoId: devRepoId
   });
 
-  let response = {
+  let response: api.ToDiskCreateProjectResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
+    },
+    payload: {
+      organizationId: organizationId,
+      projectId: projectId
     }
   };
 

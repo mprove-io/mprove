@@ -22,10 +22,13 @@ export async function ToDiskCreateOrganization(
 
   await disk.ensureDir(orgDir);
 
-  let response = {
+  let response: api.ToDiskCreateOrganizationResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
+    },
+    payload: {
+      organizationId: organizationId
     }
   };
 

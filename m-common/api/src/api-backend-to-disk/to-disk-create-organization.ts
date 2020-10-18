@@ -17,8 +17,17 @@ export class ToDiskCreateOrganizationRequest {
   readonly payload: ToDiskCreateOrganizationRequestPayload;
 }
 
+export class ToDiskCreateOrganizationResponsePayload {
+  @IsString()
+  readonly organizationId: string;
+}
+
 export class ToDiskCreateOrganizationResponse {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
+
+  @ValidateNested()
+  @Type(() => ToDiskCreateOrganizationResponsePayload)
+  readonly payload: ToDiskCreateOrganizationResponsePayload;
 }

@@ -65,10 +65,27 @@ export async function ToDiskCreateBranch(
     newBranch: newBranch
   });
 
-  let response = {
+  let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
+    await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir
+    })
+  );
+
+  let response: api.ToDiskCreateBranchResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
+    },
+    payload: {
+      organizationId: organizationId,
+      projectId: projectId,
+      repoId: repoId,
+      repoStatus: repoStatus,
+      currentBranch: currentBranch,
+      conflicts: conflicts
     }
   };
 

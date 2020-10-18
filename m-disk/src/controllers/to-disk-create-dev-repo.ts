@@ -43,10 +43,27 @@ export async function ToDiskCreateDevRepo(
     devRepoId: devRepoId
   });
 
-  let response = {
+  let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
+    await git.getRepoStatus({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: devRepoId,
+      repoDir: devRepoDir
+    })
+  );
+
+  let response: api.ToDiskCreateDevRepoResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
+    },
+    payload: {
+      organizationId: organizationId,
+      projectId: projectId,
+      repoId: devRepoId,
+      repoStatus: repoStatus,
+      currentBranch: currentBranch,
+      conflicts: conflicts
     }
   };
 

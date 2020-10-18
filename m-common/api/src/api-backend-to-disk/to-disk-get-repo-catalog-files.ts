@@ -28,11 +28,20 @@ export class ToDiskGetRepoCatalogFilesRequest {
 }
 
 export class ToDiskGetRepoCatalogFilesResponsePayload {
-  @IsEnum(apiEnums.RepoStatusEnum)
-  readonly repoStatus: apiEnums.RepoStatusEnum;
+  @IsString()
+  readonly organizationId: string;
+
+  @IsString()
+  readonly projectId: string;
+
+  @IsString()
+  readonly repoId: string;
 
   @IsString()
   readonly currentBranch: string;
+
+  @IsEnum(apiEnums.RepoStatusEnum)
+  readonly repoStatus: apiEnums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => apiObjects.FileLine)
