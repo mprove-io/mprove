@@ -4,11 +4,11 @@ import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskSaveFile(
-  request: api.ToDiskSaveFileRequest
-): Promise<api.ToDiskSaveFileResponse> {
+export async function ToDiskGetFile(
+  request: api.ToDiskGetFileRequest
+): Promise<api.ToDiskGetFileResponse> {
   const requestValid = await transformAndValidate(
-    api.ToDiskSaveFileRequest,
+    api.ToDiskGetFileRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -17,8 +17,7 @@ export async function ToDiskSaveFile(
     projectId,
     repoId,
     branch,
-    fileAbsoluteId,
-    content
+    fileAbsoluteId
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
@@ -60,12 +59,7 @@ export async function ToDiskSaveFile(
 
   //
 
-  await disk.writeToFile({
-    fileAbsoluteId: fileAbsoluteId,
-    content: content
-  });
-
-  await git.addChangesToStage({ repoDir: repoDir });
+  let content = await disk.readFile(fileAbsoluteId);
 
   let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
     await git.getRepoStatus({
@@ -76,7 +70,7 @@ export async function ToDiskSaveFile(
     })
   );
 
-  let response: api.ToDiskSaveFileResponse = {
+  let response: api.ToDiskGetFileResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -87,7 +81,8 @@ export async function ToDiskSaveFile(
       repoId: repoId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts
+      conflicts: conflicts,
+      content: content
     }
   };
 

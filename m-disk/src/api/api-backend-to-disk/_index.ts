@@ -5,5 +5,6 @@ export * from './to-disk-create-branch';
 export * from './to-disk-create-folder';
 export * from './to-disk-create-file';
 export * from './to-disk-save-file';
+export * from './to-disk-get-file';
 export * from './to-disk-get-repo-catalog-files';
 export * from './to-disk-get-repo-catalog-nodes';

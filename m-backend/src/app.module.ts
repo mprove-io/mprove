@@ -11,6 +11,7 @@ import { ToDiskCreateBranchController } from './controllers/to-disk/to-disk-crea
 import { ToDiskCreateFileController } from './controllers/to-disk/to-disk-create-file.controller';
 import { ToDiskCreateFolderController } from './controllers/to-disk/to-disk-create-folder.controller';
 import { ToDiskSaveFileController } from './controllers/to-disk/to-disk-save-file.controller';
+import { ToDiskGetFileController } from './controllers/to-disk/to-disk-get-file.controller';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { ToDiskSaveFileController } from './controllers/to-disk/to-disk-save-fil
     ToDiskCreateFileController,
     ToDiskGetRepoCatalogFilesController,
     ToDiskGetRepoCatalogNodesController,
-    ToDiskSaveFileController
+    ToDiskSaveFileController,
+    ToDiskGetFileController
   ],
   providers: [RabbitService]
 })

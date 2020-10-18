@@ -6,6 +6,7 @@ export enum ToDiskRequestInfoNameEnum {
   ToDiskCreateFolder = <any>'ToDiskCreateFolder',
   ToDiskCreateFile = <any>'ToDiskCreateFile',
   ToDiskSaveFile = <any>'ToDiskSaveFile',
+  ToDiskGetFile = <any>'ToDiskGetFile',
   ToDiskGetRepoCatalogFiles = <any>'ToDiskGetRepoCatalogFiles',
   ToDiskGetRepoCatalogNodes = <any>'ToDiskGetRepoCatalogNodes'
 }
