@@ -2,6 +2,7 @@ import * as nodegit from 'nodegit';
 import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
 import { MyRegex } from '../my-regex';
+import { isRemoteBranchExist } from './is-remote-branch-exist';
 import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function getRepoStatus(item: {
@@ -83,6 +84,19 @@ export async function getRepoStatus(item: {
 
   await gitRepo.fetch('origin', constantFetchOptions);
 
+  let isBranchExistRemote = await isRemoteBranchExist({
+    repoDir: item.repoDir,
+    branch: currentBranchName
+  });
+  // RETURN NeedPush
+  if (isBranchExistRemote === false) {
+    return {
+      repoStatus: api.RepoStatusEnum.NeedPush,
+      conflicts: conflicts,
+      currentBranch: currentBranchName
+    };
+  }
+
   let localCommit = <nodegit.Commit>(
     await gitRepo.getReferenceCommit(`refs/heads/${currentBranchName}`)
   );
@@ -97,7 +111,7 @@ export async function getRepoStatus(item: {
   let remoteOriginCommitOid = remoteOriginCommit.id();
   let remoteOriginCommitId = remoteOriginCommitOid.tostrS();
 
-  // don't move
+  //
   let baseCommitOid = <nodegit.Oid>(
     await nodegit.Merge.base(gitRepo, localCommitOid, remoteOriginCommitOid)
   );
