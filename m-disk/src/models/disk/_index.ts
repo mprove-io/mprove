@@ -3,5 +3,8 @@ export * from './ensure-dir';
 export * from './ensure-file';
 export * from './read-file';
 export * from './copy-path';
+export * from './move-path';
+export * from './remove-path';
+export * from './rename-path';
 export * from './write-to-file';
 export * from './get-repo-catalog-nodes-and-files';

@@ -10,6 +10,8 @@ import { ToDiskCreateFile } from '../controllers/to-disk-create-file';
 import { ToDiskCreateFolder } from '../controllers/to-disk-create-folder';
 import { ToDiskSaveFile } from '../controllers/to-disk-save-file';
 import { ToDiskGetFile } from '../controllers/to-disk-get-file';
+import { ToDiskMoveNode } from '../controllers/to-disk-move-node';
+import { ToDiskRenameNode } from '../controllers/to-disk-rename-node';
 
 @Injectable()
 export class MessageService {
@@ -39,6 +41,12 @@ export class MessageService {
 
         case api.ToDiskRequestInfoNameEnum.ToDiskGetFile:
           return await ToDiskGetFile(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskMoveNode:
+          return await ToDiskMoveNode(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskRenameNode:
+          return await ToDiskRenameNode(request);
 
         case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogNodes:
           return await ToDiskGetRepoCatalogNodes(request);
