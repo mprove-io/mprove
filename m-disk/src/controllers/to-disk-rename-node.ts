@@ -67,10 +67,10 @@ export async function ToDiskRenameNode(
 
   //
 
-  if (oldPath.toLocaleLowerCase === newPath.toLocaleLowerCase) {
+  if (oldPath.toLowerCase() === newPath.toLowerCase()) {
     // abc -> Abc
-    let randomId = helper.makeRandomIdLetters();
-    let tempParentPath = parentPath + '/' + randomId;
+    let randomSubPath = 'temp-' + helper.makeRandomIdLetters();
+    let tempParentPath = parentPath + '/' + randomSubPath;
     let tempPath = tempParentPath + '/' + newName;
 
     await disk.movePath({

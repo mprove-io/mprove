@@ -32,11 +32,12 @@ services:
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
-      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS      
+      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS
+      MPROVE_M_DATA_ORGANIZATIONS_PATH: $MPROVE_M_DATA_ORGANIZATIONS_PATH     
     volumes:
       - type: bind
-        source: ~/mprove_m_data/m-disk
-        target: /mprove_m_data/m-disk      
+        source: $MPROVE_M_DATA_ORGANIZATIONS_PATH
+        target: $MPROVE_M_DATA_ORGANIZATIONS_PATH
 
     
       
