@@ -17,7 +17,7 @@ export class ToDiskGetFileRequestPayload {
   readonly branch: string;
 
   @IsString()
-  readonly fileAbsoluteId: string;
+  readonly fileNodeId: string;
 }
 
 export class ToDiskGetFileRequest {

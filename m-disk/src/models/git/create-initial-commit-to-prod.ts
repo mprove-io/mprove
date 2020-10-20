@@ -21,13 +21,13 @@ export async function createInitialCommitToProd(item: {
     });
   } else {
     let fileName = constants.README_FILE_NAME;
-    let fileAbsoluteId = `${item.prodDir}/${fileName}`;
+    let filePath = `${item.prodDir}/${fileName}`;
 
     let projectName = helper.capitalizeFirstLetter(item.projectId);
     let content = `# ${projectName}`;
 
     await disk.writeToFile({
-      fileAbsoluteId: fileAbsoluteId,
+      filePath: filePath,
       content: content
     });
   }

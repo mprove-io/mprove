@@ -17,7 +17,7 @@ export class ToDiskSaveFileRequestPayload {
   readonly branch: string;
 
   @IsString()
-  readonly fileAbsoluteId: string;
+  readonly fileNodeId: string;
 
   @IsString()
   readonly content: string;

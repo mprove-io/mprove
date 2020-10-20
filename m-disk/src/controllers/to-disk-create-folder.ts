@@ -30,7 +30,7 @@ export async function ToDiskCreateFolder(
   let parentPath = repoDir + '/' + parent;
 
   let folderAbsolutePath = parentPath + folderName;
-  let gitKeepFileAbsoluteId = folderAbsolutePath + '/' + '.gitkeep';
+  let gitKeepFileAbsolutePath = folderAbsolutePath + '/' + '.gitkeep';
 
   //
 
@@ -74,7 +74,7 @@ export async function ToDiskCreateFolder(
 
   //
 
-  await disk.ensureFile(gitKeepFileAbsoluteId);
+  await disk.ensureFile(gitKeepFileAbsolutePath);
 
   await git.addChangesToStage({ repoDir: repoDir });
 

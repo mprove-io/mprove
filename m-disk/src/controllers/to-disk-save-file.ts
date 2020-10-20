@@ -17,13 +17,15 @@ export async function ToDiskSaveFile(
     projectId,
     repoId,
     branch,
-    fileAbsoluteId,
+    fileNodeId,
     content
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
+
+  let filePath = repoDir + '/' + fileNodeId.substring(projectId.length + 1);
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -53,7 +55,7 @@ export async function ToDiskSaveFile(
     branchName: branch
   });
 
-  let isFileExist = await disk.isPathExist(fileAbsoluteId);
+  let isFileExist = await disk.isPathExist(filePath);
   if (isFileExist === false) {
     throw Error(api.ErEnum.M_DISK_FILE_IS_NOT_EXIST);
   }
@@ -61,7 +63,7 @@ export async function ToDiskSaveFile(
   //
 
   await disk.writeToFile({
-    fileAbsoluteId: fileAbsoluteId,
+    filePath: filePath,
     content: content
   });
 

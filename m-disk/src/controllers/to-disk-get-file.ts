@@ -17,12 +17,14 @@ export async function ToDiskGetFile(
     projectId,
     repoId,
     branch,
-    fileAbsoluteId
+    fileNodeId
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
+
+  let filePath = repoDir + '/' + fileNodeId.substring(projectId.length + 1);
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -52,14 +54,14 @@ export async function ToDiskGetFile(
     branchName: branch
   });
 
-  let isFileExist = await disk.isPathExist(fileAbsoluteId);
+  let isFileExist = await disk.isPathExist(filePath);
   if (isFileExist === false) {
     throw Error(api.ErEnum.M_DISK_FILE_IS_NOT_EXIST);
   }
 
   //
 
-  let content = await disk.readFile(fileAbsoluteId);
+  let content = await disk.readFile(filePath);
 
   let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
     await git.getRepoStatus({

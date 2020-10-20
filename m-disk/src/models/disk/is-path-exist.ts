@@ -1,7 +1,7 @@
 import * as fse from 'fs-extra';
 
-export async function isPathExist(dir: string): Promise<boolean> {
-  let isExist = await fse.pathExists(dir);
+export async function isPathExist(path: string): Promise<boolean> {
+  let isExist = await fse.pathExists(path);
 
   return isExist;
 }

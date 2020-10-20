@@ -61,18 +61,19 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
   await forEachSeries(fileNames, async name => {
     if (!name.match(MyRegex.STARTS_WITH_DOT())) {
-      let filePath = item.dir + '/' + name;
+      let fileAbsolutePath = item.dir + '/' + name;
 
-      let nodeId = item.projectId + filePath.substring(item.repoDirPathLength);
+      let nodeId =
+        item.projectId + fileAbsolutePath.substring(item.repoDirPathLength);
 
-      let stat = <fse.Stats>await fse.stat(filePath);
+      let stat = <fse.Stats>await fse.stat(fileAbsolutePath);
 
       let statIsDirectory = stat.isDirectory();
 
       if (statIsDirectory === true) {
         let itemDir = <api.ItemCatalog>(
           await getDirCatalogNodesAndFilesRecursive({
-            dir: filePath,
+            dir: fileAbsolutePath,
             projectId: item.projectId,
             repoId: item.repoId,
             repoDirPathLength: item.repoDirPathLength,
@@ -93,9 +94,10 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
         folderNodes.push(node);
       } else {
-        let fileId = MyRegex.replaceSlashesWithUnderscores(
-          filePath.substring(item.repoDirPathLength + 1)
+        let fileRelativePath = fileAbsolutePath.substring(
+          item.repoDirPathLength + 1
         );
+        let fileId = MyRegex.replaceSlashesWithUnderscores(fileRelativePath);
 
         let node = {
           id: nodeId,
@@ -132,14 +134,14 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         if (item.readFiles === true) {
           let path = JSON.stringify(nodeId.split('/'));
 
-          let content = <string>await fse.readFile(filePath, 'utf8');
+          let content = <string>await fse.readFile(fileAbsolutePath, 'utf8');
 
           let file: api.CatalogItemFile = {
             projectId: item.projectId,
             repoId: item.repoId,
             fileId: fileId,
             pathString: path,
-            fileAbsoluteId: filePath,
+            fileNodeId: nodeId,
             name: name,
             content: content
           };
