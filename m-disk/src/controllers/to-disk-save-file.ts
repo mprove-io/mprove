@@ -2,6 +2,7 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
+import { interfaces } from '../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskSaveFile(
@@ -69,7 +70,7 @@ export async function ToDiskSaveFile(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
+  let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,

@@ -1,5 +1,6 @@
 import * as nodegit from 'nodegit';
 import { api } from '../../barrels/api';
+import { interfaces } from '../../barrels/interfaces';
 import { disk } from '../../barrels/disk';
 import { MyRegex } from '../my-regex';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
@@ -10,7 +11,7 @@ export async function getRepoStatus(item: {
   repoId: string;
   projectDir: string;
   repoDir: string;
-}): Promise<api.ItemStatus> {
+}): Promise<interfaces.ItemStatus> {
   // priorities order:
   // NeedSave (frontend only)
   // NeedStage (no need because auto add file after each save)
@@ -20,7 +21,7 @@ export async function getRepoStatus(item: {
   // NeedPush
   // Ok
 
-  let conflicts: api.FileLine[] = [];
+  let conflicts: api.DiskFileLine[] = [];
 
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
@@ -41,7 +42,7 @@ export async function getRepoStatus(item: {
 
   // check conflicts manually instead of git - because they are already committed
 
-  let itemDevRepoCatalog = <api.ItemCatalog>(
+  let itemDevRepoCatalog = <interfaces.ItemCatalog>(
     await disk.getRepoCatalogNodesAndFiles({
       projectId: item.projectId,
       projectDir: item.projectDir,

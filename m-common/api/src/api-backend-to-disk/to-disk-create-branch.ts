@@ -47,8 +47,8 @@ export class ToDiskCreateBranchResponsePayload {
   readonly repoStatus: apiEnums.RepoStatusEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.FileLine)
-  readonly conflicts: apiObjects.FileLine[];
+  @Type(() => apiObjects.DiskFileLine)
+  readonly conflicts: apiObjects.DiskFileLine[];
 }
 
 export class ToDiskCreateBranchResponse {

@@ -50,12 +50,12 @@ export class ToDiskCreateFolderResponsePayload {
   readonly repoStatus: apiEnums.RepoStatusEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.FileLine)
-  readonly conflicts: apiObjects.FileLine[];
+  @Type(() => apiObjects.DiskFileLine)
+  readonly conflicts: apiObjects.DiskFileLine[];
 
   @ValidateNested()
-  @Type(() => apiObjects.CatalogNode)
-  readonly nodes: Array<apiObjects.CatalogNode>;
+  @Type(() => apiObjects.DiskCatalogNode)
+  readonly nodes: Array<apiObjects.DiskCatalogNode>;
 }
 
 export class ToDiskCreateFolderResponse {

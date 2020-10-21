@@ -2,6 +2,7 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
+import { interfaces } from '../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateFolder(
@@ -78,7 +79,7 @@ export async function ToDiskCreateFolder(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
+  let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
@@ -87,12 +88,14 @@ export async function ToDiskCreateFolder(
     })
   );
 
-  let itemCatalog = <api.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
-    projectId: projectId,
-    projectDir: projectDir,
-    repoId: repoId,
-    readFiles: false
-  });
+  let itemCatalog = <interfaces.ItemCatalog>(
+    await disk.getRepoCatalogNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: false
+    })
+  );
 
   let response: api.ToDiskCreateFolderResponse = {
     info: {

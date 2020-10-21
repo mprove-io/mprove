@@ -1,6 +1,6 @@
 import { IsInt, IsString } from 'class-validator';
 
-export class FileLine {
+export class DiskFileLine {
   @IsString()
   fileId: string;
 

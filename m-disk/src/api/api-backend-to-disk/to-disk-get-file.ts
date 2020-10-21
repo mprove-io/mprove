@@ -47,8 +47,8 @@ export class ToDiskGetFileResponsePayload {
   readonly repoStatus: apiEnums.RepoStatusEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.FileLine)
-  readonly conflicts: apiObjects.FileLine[];
+  @Type(() => apiObjects.DiskFileLine)
+  readonly conflicts: apiObjects.DiskFileLine[];
 
   @IsString()
   readonly content: string;

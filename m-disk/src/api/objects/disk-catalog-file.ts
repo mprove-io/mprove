@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class CatalogItemFile {
+export class DiskCatalogFile {
   @IsString()
   projectId: string;
 

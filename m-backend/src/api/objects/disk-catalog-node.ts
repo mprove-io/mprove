@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class CatalogNode {
+export class DiskCatalogNode {
   @IsString()
   id: string;
   // "p1/ec/s.view"
@@ -18,5 +18,5 @@ export class CatalogNode {
   // "ec___s.view"
 
   @IsString()
-  children?: CatalogNode[];
+  children?: DiskCatalogNode[];
 }

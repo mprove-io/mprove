@@ -44,12 +44,12 @@ export class ToDiskGetRepoCatalogFilesResponsePayload {
   readonly repoStatus: apiEnums.RepoStatusEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.FileLine)
-  readonly conflicts: apiObjects.FileLine[];
+  @Type(() => apiObjects.DiskFileLine)
+  readonly conflicts: apiObjects.DiskFileLine[];
 
   @ValidateNested()
-  @Type(() => apiObjects.CatalogItemFile)
-  readonly files: apiObjects.CatalogItemFile[];
+  @Type(() => apiObjects.DiskCatalogFile)
+  readonly files: apiObjects.DiskCatalogFile[];
 }
 
 export class ToDiskGetRepoCatalogFilesResponse {

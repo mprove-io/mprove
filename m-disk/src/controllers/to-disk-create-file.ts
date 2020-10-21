@@ -2,6 +2,7 @@ import { api } from '../barrels/api';
 import { disk } from '../barrels/disk';
 import { git } from '../barrels/git';
 import { constants } from '../barrels/constants';
+import { interfaces } from '../barrels/interfaces';
 import { MyRegex } from '../models/my-regex';
 import { transformAndValidate } from 'class-transformer-validator';
 
@@ -82,7 +83,7 @@ export async function ToDiskCreateFile(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  let { repoStatus, currentBranch, conflicts } = <api.ItemStatus>(
+  let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
@@ -91,12 +92,14 @@ export async function ToDiskCreateFile(
     })
   );
 
-  let itemCatalog = <api.ItemCatalog>await disk.getRepoCatalogNodesAndFiles({
-    projectId: projectId,
-    projectDir: projectDir,
-    repoId: repoId,
-    readFiles: false
-  });
+  let itemCatalog = <interfaces.ItemCatalog>(
+    await disk.getRepoCatalogNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: false
+    })
+  );
 
   let response: api.ToDiskCreateFileResponse = {
     info: {
