@@ -10,3 +10,6 @@ export * from './to-disk-move-node';
 export * from './to-disk-rename-node';
 export * from './to-disk-get-repo-catalog-files';
 export * from './to-disk-get-repo-catalog-nodes';
+export * from './to-disk-is-branch-exist';
+export * from './to-disk-is-organization-exist';
+export * from './to-disk-is-project-exist';

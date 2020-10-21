@@ -1,14 +1,17 @@
 export enum ToDiskRequestInfoNameEnum {
+  ToDiskCreateBranch = <any>'ToDiskCreateBranch',
+  ToDiskCreateDevRepo = <any>'ToDiskCreateDevRepo',
+  ToDiskCreateFile = <any>'ToDiskCreateFile',
+  ToDiskCreateFolder = <any>'ToDiskCreateFolder',
   ToDiskCreateOrganization = <any>'ToDiskCreateOrganization',
   ToDiskCreateProject = <any>'ToDiskCreateProject',
-  ToDiskCreateDevRepo = <any>'ToDiskCreateDevRepo',
-  ToDiskCreateBranch = <any>'ToDiskCreateBranch',
-  ToDiskCreateFolder = <any>'ToDiskCreateFolder',
-  ToDiskCreateFile = <any>'ToDiskCreateFile',
-  ToDiskSaveFile = <any>'ToDiskSaveFile',
   ToDiskGetFile = <any>'ToDiskGetFile',
-  ToDiskMoveNode = <any>'ToDiskMoveNode',
-  ToDiskRenameNode = <any>'ToDiskRenameNode',
   ToDiskGetRepoCatalogFiles = <any>'ToDiskGetRepoCatalogFiles',
-  ToDiskGetRepoCatalogNodes = <any>'ToDiskGetRepoCatalogNodes'
+  ToDiskGetRepoCatalogNodes = <any>'ToDiskGetRepoCatalogNodes',
+  ToDiskIsBranchExist = <any>'ToDiskIsBranchExist',
+  ToDiskIsOrganizationExist = <any>'ToDiskIsOrganizationExist',
+  ToDiskIsProjectExist = <any>'ToDiskIsProjectExist',
+  ToDiskMoveNode = <any>'ToDiskMoveNode',
+  ToDiskSaveFile = <any>'ToDiskSaveFile',
+  ToDiskRenameNode = <any>'ToDiskRenameNode'
 }

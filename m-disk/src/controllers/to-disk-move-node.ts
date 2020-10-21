@@ -59,12 +59,12 @@ export async function ToDiskMoveNode(
 
   let isFromPathExist = await disk.isPathExist(fromPath);
   if (isFromPathExist === false) {
-    throw Error(api.ErEnum.M_DISK_PATH_IS_NOT_EXIST);
+    throw Error(api.ErEnum.M_DISK_FROM_PATH_IS_NOT_EXIST);
   }
 
   let isToPathExist = await disk.isPathExist(toPath);
   if (isToPathExist === true) {
-    throw Error(api.ErEnum.M_DISK_PATH_ALREADY_EXIST);
+    throw Error(api.ErEnum.M_DISK_TO_PATH_ALREADY_EXIST);
   }
 
   //
@@ -73,6 +73,8 @@ export async function ToDiskMoveNode(
     sourcePath: fromPath,
     destinationPath: toPath
   });
+
+  await git.addChangesToStage({ repoDir: repoDir });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({

@@ -11,7 +11,7 @@ export class ToDiskCreateOrganizationController {
   async toDiskCreateOrganization(
     @Body() body: api.ToDiskCreateOrganizationRequest
   ): Promise<api.ToDiskCreateOrganizationResponse> {
-    let organizationId = body.payload.organizationId;
+    let { organizationId } = body.payload;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,

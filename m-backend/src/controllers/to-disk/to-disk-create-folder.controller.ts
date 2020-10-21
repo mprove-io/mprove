@@ -11,8 +11,7 @@ export class ToDiskCreateFolderController {
   async toDiskCreateFolder(
     @Body() body: api.ToDiskCreateFolderRequest
   ): Promise<api.ToDiskCreateFolderResponse> {
-    let organizationId = body.payload.organizationId;
-    let projectId = body.payload.projectId;
+    let { organizationId, projectId } = body.payload;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,

@@ -12,35 +12,50 @@ import { ToDiskSaveFile } from '../controllers/to-disk-save-file';
 import { ToDiskGetFile } from '../controllers/to-disk-get-file';
 import { ToDiskMoveNode } from '../controllers/to-disk-move-node';
 import { ToDiskRenameNode } from '../controllers/to-disk-rename-node';
+import { ToDiskIsOrganizationExist } from '../controllers/to-disk-is-organization-exist';
+import { ToDiskIsBranchExist } from '../controllers/to-disk-is-branch-exist';
+import { ToDiskIsProjectExist } from '../controllers/to-disk-is-project-exist';
 
 @Injectable()
 export class MessageService {
   async processRequest(request: any): Promise<any> {
     try {
       switch (request.info.name) {
+        case api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
+          return await ToDiskCreateBranch(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
+          return await ToDiskCreateDevRepo(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskCreateFile:
+          return await ToDiskCreateFile(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder:
+          return await ToDiskCreateFolder(request);
+
         case api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization:
           return await ToDiskCreateOrganization(request);
 
         case api.ToDiskRequestInfoNameEnum.ToDiskCreateProject:
           return await ToDiskCreateProject(request);
 
-        case api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
-          return await ToDiskCreateDevRepo(request);
-
-        case api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
-          return await ToDiskCreateBranch(request);
-
-        case api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder:
-          return await ToDiskCreateFolder(request);
-
-        case api.ToDiskRequestInfoNameEnum.ToDiskCreateFile:
-          return await ToDiskCreateFile(request);
-
-        case api.ToDiskRequestInfoNameEnum.ToDiskSaveFile:
-          return await ToDiskSaveFile(request);
-
         case api.ToDiskRequestInfoNameEnum.ToDiskGetFile:
           return await ToDiskGetFile(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogFiles:
+          return await ToDiskGetRepoCatalogFiles(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogNodes:
+          return await ToDiskGetRepoCatalogNodes(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist:
+          return await ToDiskIsBranchExist(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist:
+          return await ToDiskIsOrganizationExist(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist:
+          return await ToDiskIsProjectExist(request);
 
         case api.ToDiskRequestInfoNameEnum.ToDiskMoveNode:
           return await ToDiskMoveNode(request);
@@ -48,11 +63,8 @@ export class MessageService {
         case api.ToDiskRequestInfoNameEnum.ToDiskRenameNode:
           return await ToDiskRenameNode(request);
 
-        case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogNodes:
-          return await ToDiskGetRepoCatalogNodes(request);
-
-        case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogFiles:
-          return await ToDiskGetRepoCatalogFiles(request);
+        case api.ToDiskRequestInfoNameEnum.ToDiskSaveFile:
+          return await ToDiskSaveFile(request);
 
         default:
           throw Error(api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME);

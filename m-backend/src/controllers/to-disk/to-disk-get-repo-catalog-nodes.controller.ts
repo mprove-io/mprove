@@ -11,8 +11,7 @@ export class ToDiskGetRepoCatalogNodesController {
   async toDiskGetRepoCatalogNodes(
     @Body() body: api.ToDiskGetRepoCatalogNodesRequest
   ): Promise<api.ToDiskGetRepoCatalogNodesResponse> {
-    let organizationId = body.payload.organizationId;
-    let projectId = body.payload.projectId;
+    let { organizationId, projectId } = body.payload;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,

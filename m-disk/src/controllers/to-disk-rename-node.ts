@@ -63,37 +63,20 @@ export async function ToDiskRenameNode(
 
   let isOldPathExist = await disk.isPathExist(oldPath);
   if (isOldPathExist === false) {
-    throw Error(api.ErEnum.M_DISK_PATH_IS_NOT_EXIST);
+    throw Error(api.ErEnum.M_DISK_OLD_PATH_IS_NOT_EXIST);
   }
 
   //
-
-  if (oldPath.toLowerCase() === newPath.toLowerCase()) {
-    // abc -> Abc
-    let randomSubPath = 'temp-' + helper.makeRandomIdLetters();
-    let tempParentPath = parentPath + '/' + randomSubPath;
-    let tempPath = tempParentPath + '/' + newName;
-
-    await disk.movePath({
-      sourcePath: oldPath,
-      destinationPath: tempPath
-    });
-    await disk.movePath({
-      sourcePath: tempPath,
-      destinationPath: newPath
-    });
-    await disk.removePath(tempParentPath);
-  } else {
-    // abc -> qwe
-    let isNewPathExist = await disk.isPathExist(newPath);
-    if (isNewPathExist === true) {
-      throw Error(api.ErEnum.M_DISK_PATH_ALREADY_EXIST);
-    }
-    await disk.renamePath({
-      oldPath: oldPath,
-      newPath: newPath
-    });
+  let isNewPathExist = await disk.isPathExist(newPath);
+  if (isNewPathExist === true) {
+    throw Error(api.ErEnum.M_DISK_NEW_PATH_ALREADY_EXIST);
   }
+  await disk.renamePath({
+    oldPath: oldPath,
+    newPath: newPath
+  });
+
+  await git.addChangesToStage({ repoDir: repoDir });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({

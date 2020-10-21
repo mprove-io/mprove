@@ -4,13 +4,13 @@ import { RabbitService } from '../../services/rabbit.service';
 import { api } from '../../barrels/api';
 
 @Controller()
-export class ToDiskGetRepoCatalogFilesController {
+export class ToDiskIsBranchExistController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskGetRepoCatalogFiles')
-  async toDiskGetRepoCatalogFiles(
-    @Body() body: api.ToDiskGetRepoCatalogFilesRequest
-  ): Promise<api.ToDiskGetRepoCatalogFilesResponse> {
+  @Post('toDiskIsBranchExist')
+  async toDiskIsBranchExist(
+    @Body() body: api.ToDiskIsBranchExistRequest
+  ): Promise<api.ToDiskIsBranchExistResponse> {
     let { organizationId, projectId } = body.payload;
 
     let routingKey = makeRoutingKeyToDisk({
@@ -25,6 +25,6 @@ export class ToDiskGetRepoCatalogFilesController {
       message: message
     });
 
-    return (response as unknown) as api.ToDiskGetRepoCatalogFilesResponse;
+    return (response as unknown) as api.ToDiskIsBranchExistResponse;
   }
 }

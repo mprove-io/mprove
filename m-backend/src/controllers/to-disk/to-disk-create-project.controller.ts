@@ -11,8 +11,7 @@ export class ToDiskCreateProjectController {
   async toDiskCreateProject(
     @Body() body: api.ToDiskCreateProjectRequest
   ): Promise<api.ToDiskCreateProjectResponse> {
-    let organizationId = body.payload.organizationId;
-    let projectId = body.payload.projectId;
+    let { organizationId, projectId } = body.payload;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,

@@ -14,6 +14,9 @@ import { ToDiskSaveFileController } from './controllers/to-disk/to-disk-save-fil
 import { ToDiskGetFileController } from './controllers/to-disk/to-disk-get-file.controller';
 import { ToDiskMoveNodeController } from './controllers/to-disk/to-disk-move-node.controller';
 import { ToDiskRenameNodeController } from './controllers/to-disk/to-disk-rename-node.controller';
+import { ToDiskIsBranchExistController } from './controllers/to-disk/to-disk-is-branch-exist.controller';
+import { ToDiskIsOrganizationExistController } from './controllers/to-disk/to-disk-is-organization-exist.controller';
+import { ToDiskIsProjectExistController } from './controllers/to-disk/to-disk-is-project-exist.controller';
 
 @Module({
   imports: [
@@ -46,7 +49,10 @@ import { ToDiskRenameNodeController } from './controllers/to-disk/to-disk-rename
     ToDiskSaveFileController,
     ToDiskMoveNodeController,
     ToDiskRenameNodeController,
-    ToDiskGetFileController
+    ToDiskGetFileController,
+    ToDiskIsBranchExistController,
+    ToDiskIsOrganizationExistController,
+    ToDiskIsProjectExistController
   ],
   providers: [RabbitService]
 })

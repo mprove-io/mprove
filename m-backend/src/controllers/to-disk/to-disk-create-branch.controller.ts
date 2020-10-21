@@ -11,8 +11,7 @@ export class ToDiskCreateBranchController {
   async toDiskCreateBranch(
     @Body() body: api.ToDiskCreateBranchRequest
   ): Promise<api.ToDiskCreateBranchResponse> {
-    let organizationId = body.payload.organizationId;
-    let projectId = body.payload.projectId;
+    let { organizationId, projectId } = body.payload;
 
     let routingKey = makeRoutingKeyToDisk({
       organizationId: organizationId,
