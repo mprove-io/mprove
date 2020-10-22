@@ -6,6 +6,7 @@ export const ORGANIZATIONS_PATH = process.env.MPROVE_M_DATA_ORGANIZATIONS_PATH
   : '/mprove_m_data/m-disk/organizations';
 
 export const TEST_PROJECTS = 'test-projects';
+export const BRANCH_MASTER = 'master';
 export const README_FILE_NAME = 'readme.md';
 export const EXT_MD = '.md';
 export const EXT_DASHBOARD = '.dashboard';
