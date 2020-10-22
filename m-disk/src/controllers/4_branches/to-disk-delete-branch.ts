@@ -1,15 +1,15 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { constants } from '../../barrels/constants';
+import { git } from '../../barrels/git';
 import { transformAndValidate } from 'class-transformer-validator';
+import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskGetRepoCatalogFiles(
-  request: api.ToDiskGetRepoCatalogFilesRequest
-): Promise<api.ToDiskGetRepoCatalogFilesResponse> {
+export async function ToDiskDeleteBranch(
+  request: api.ToDiskDeleteBranchRequest
+): Promise<api.ToDiskDeleteBranchResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskGetRepoCatalogFilesRequest,
+    api.ToDiskDeleteBranchRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -36,29 +36,33 @@ export async function ToDiskGetRepoCatalogFiles(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  let isBranchExist = await git.isLocalBranchExist({
+  if (repoId === constants.PROD_REPO_ID) {
+    let isRemoteBranchExist = await git.isRemoteBranchExist({
+      repoDir: repoDir,
+      branch: branch
+    });
+
+    if (isRemoteBranchExist === true) {
+      await git.deleteRemoteBranch({
+        projectDir: projectDir,
+        branch: branch
+      });
+    }
+  }
+
+  let isLocalBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
     branch: branch
   });
-  if (isBranchExist === false) {
+
+  if (isLocalBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
   }
 
-  await git.checkoutBranch({
+  await git.deleteLocalBranch({
     repoDir: repoDir,
-    branchName: branch
+    branch: branch
   });
-
-  //
-
-  let itemCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true
-    })
-  );
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -69,7 +73,7 @@ export async function ToDiskGetRepoCatalogFiles(
     })
   );
 
-  let response: api.ToDiskGetRepoCatalogFilesResponse = {
+  let response: api.ToDiskDeleteBranchResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -78,10 +82,10 @@ export async function ToDiskGetRepoCatalogFiles(
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
+      deletedBranch: branch,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts,
-      files: itemCatalog.files
+      conflicts: conflicts
     }
   };
 

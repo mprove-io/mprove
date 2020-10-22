@@ -1,15 +1,15 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { git } from '../../barrels/git';
+import { constants } from '../../barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskGetFile(
-  request: api.ToDiskGetFileRequest
-): Promise<api.ToDiskGetFileResponse> {
-  const requestValid = await transformAndValidate(
-    api.ToDiskGetFileRequest,
+export async function ToDiskCreateBranch(
+  request: api.ToDiskCreateBranchRequest
+): Promise<api.ToDiskCreateBranchResponse> {
+  let requestValid = await transformAndValidate(
+    api.ToDiskCreateBranchRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -17,15 +17,15 @@ export async function ToDiskGetFile(
     organizationId,
     projectId,
     repoId,
-    branch,
-    fileNodeId
+    fromBranch,
+    newBranch
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 
-  let filePath = repoDir + '/' + fileNodeId.substring(projectId.length + 1);
+  //
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -42,27 +42,29 @@ export async function ToDiskGetFile(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  let isBranchExist = await git.isLocalBranchExist({
+  let isFromBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: branch
+    branch: fromBranch
   });
-  if (isBranchExist === false) {
+  if (isFromBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
   }
 
-  await git.checkoutBranch({
+  let isNewBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branchName: branch
+    branch: newBranch
   });
-
-  let isFileExist = await disk.isPathExist(filePath);
-  if (isFileExist === false) {
-    throw Error(api.ErEnum.M_DISK_FILE_IS_NOT_EXIST);
+  if (isNewBranchExist === true) {
+    throw Error(api.ErEnum.M_DISK_BRANCH_ALREADY_EXIST);
   }
 
   //
 
-  let content = await disk.readFile(filePath);
+  await git.createBranch({
+    repoDir: repoDir,
+    fromBranch: fromBranch,
+    newBranch: newBranch
+  });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -73,7 +75,7 @@ export async function ToDiskGetFile(
     })
   );
 
-  let response: api.ToDiskGetFileResponse = {
+  let response: api.ToDiskCreateBranchResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -84,8 +86,7 @@ export async function ToDiskGetFile(
       repoId: repoId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts,
-      content: content
+      conflicts: conflicts
     }
   };
 

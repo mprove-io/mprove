@@ -1,15 +1,15 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { git } from '../../barrels/git';
+import { constants } from '../../barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskCreateBranch(
-  request: api.ToDiskCreateBranchRequest
-): Promise<api.ToDiskCreateBranchResponse> {
+export async function ToDiskDeleteFolder(
+  request: api.ToDiskDeleteFolderRequest
+): Promise<api.ToDiskDeleteFolderResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskCreateBranchRequest,
+    api.ToDiskDeleteFolderRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -17,13 +17,16 @@ export async function ToDiskCreateBranch(
     organizationId,
     projectId,
     repoId,
-    fromBranch,
-    newBranch
+    branch,
+    folderNodeId
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
+
+  let folderAbsolutePath =
+    repoDir + '/' + folderNodeId.substring(projectId.length + 1);
 
   //
 
@@ -42,29 +45,29 @@ export async function ToDiskCreateBranch(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  let isFromBranchExist = await git.isLocalBranchExist({
+  let isBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: fromBranch
+    branch: branch
   });
-  if (isFromBranchExist === false) {
+  if (isBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
   }
 
-  let isNewBranchExist = await git.isLocalBranchExist({
+  await git.checkoutBranch({
     repoDir: repoDir,
-    branch: newBranch
+    branchName: branch
   });
-  if (isNewBranchExist === true) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_ALREADY_EXIST);
+
+  let isFolderExist = await disk.isPathExist(folderAbsolutePath);
+  if (isFolderExist === false) {
+    throw Error(api.ErEnum.M_DISK_FOLDER_IS_NOT_EXIST);
   }
 
   //
 
-  await git.createBranch({
-    repoDir: repoDir,
-    fromBranch: fromBranch,
-    newBranch: newBranch
-  });
+  await disk.removePath(folderAbsolutePath);
+
+  await git.addChangesToStage({ repoDir: repoDir });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -75,7 +78,16 @@ export async function ToDiskCreateBranch(
     })
   );
 
-  let response: api.ToDiskCreateBranchResponse = {
+  let itemCatalog = <interfaces.ItemCatalog>(
+    await disk.getRepoCatalogNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: false
+    })
+  );
+
+  let response: api.ToDiskDeleteFolderResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -84,9 +96,11 @@ export async function ToDiskCreateBranch(
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
+      deletedFolderNodeId: folderNodeId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts
+      conflicts: conflicts,
+      nodes: itemCatalog.nodes
     }
   };
 

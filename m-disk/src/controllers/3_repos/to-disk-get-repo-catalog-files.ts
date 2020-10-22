@@ -1,37 +1,23 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { git } from '../../barrels/git';
+import { constants } from '../../barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskCreateFolder(
-  request: api.ToDiskCreateFolderRequest
-): Promise<api.ToDiskCreateFolderResponse> {
+export async function ToDiskGetRepoCatalogFiles(
+  request: api.ToDiskGetRepoCatalogFilesRequest
+): Promise<api.ToDiskGetRepoCatalogFilesResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskCreateFolderRequest,
+    api.ToDiskGetRepoCatalogFilesRequest,
     request
   );
   let { traceId } = requestValid.info;
-  let {
-    organizationId,
-    projectId,
-    repoId,
-    branch,
-    folderName,
-    parentNodeId
-  } = requestValid.payload;
+  let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
-
-  let parent = parentNodeId.substring(projectId.length + 1);
-  parent = parent.length > 0 ? parent + '/' : parent;
-  let parentPath = repoDir + '/' + parent;
-
-  let folderAbsolutePath = parentPath + folderName;
-  let gitKeepFileAbsolutePath = folderAbsolutePath + '/' + '.gitkeep';
 
   //
 
@@ -63,21 +49,16 @@ export async function ToDiskCreateFolder(
     branchName: branch
   });
 
-  let isParentPathExist = await disk.isPathExist(parentPath);
-  if (isParentPathExist === false) {
-    throw Error(api.ErEnum.M_DISK_PARENT_PATH_IS_NOT_EXIST);
-  }
-
-  let isFolderExist = await disk.isPathExist(folderAbsolutePath);
-  if (isFolderExist === true) {
-    throw Error(api.ErEnum.M_DISK_FOLDER_ALREADY_EXIST);
-  }
-
   //
 
-  await disk.ensureFile(gitKeepFileAbsolutePath);
-
-  await git.addChangesToStage({ repoDir: repoDir });
+  let itemCatalog = <interfaces.ItemCatalog>(
+    await disk.getRepoCatalogNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: true
+    })
+  );
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -88,16 +69,7 @@ export async function ToDiskCreateFolder(
     })
   );
 
-  let itemCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: false
-    })
-  );
-
-  let response: api.ToDiskCreateFolderResponse = {
+  let response: api.ToDiskGetRepoCatalogFilesResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -109,7 +81,7 @@ export async function ToDiskCreateFolder(
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,
-      nodes: itemCatalog.nodes
+      files: itemCatalog.files
     }
   };
 

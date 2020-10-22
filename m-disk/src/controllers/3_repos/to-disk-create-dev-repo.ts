@@ -1,8 +1,8 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { git } from '../../barrels/git';
+import { constants } from '../../barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateDevRepo(

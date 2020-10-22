@@ -1,15 +1,15 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { git } from '../../barrels/git';
+import { constants } from '../../barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskSaveFile(
-  request: api.ToDiskSaveFileRequest
-): Promise<api.ToDiskSaveFileResponse> {
+export async function ToDiskGetFile(
+  request: api.ToDiskGetFileRequest
+): Promise<api.ToDiskGetFileResponse> {
   const requestValid = await transformAndValidate(
-    api.ToDiskSaveFileRequest,
+    api.ToDiskGetFileRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -18,8 +18,7 @@ export async function ToDiskSaveFile(
     projectId,
     repoId,
     branch,
-    fileNodeId,
-    content
+    fileNodeId
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
@@ -63,12 +62,7 @@ export async function ToDiskSaveFile(
 
   //
 
-  await disk.writeToFile({
-    filePath: filePath,
-    content: content
-  });
-
-  await git.addChangesToStage({ repoDir: repoDir });
+  let content = await disk.readFile(filePath);
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -79,7 +73,7 @@ export async function ToDiskSaveFile(
     })
   );
 
-  let response: api.ToDiskSaveFileResponse = {
+  let response: api.ToDiskGetFileResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -90,7 +84,8 @@ export async function ToDiskSaveFile(
       repoId: repoId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts
+      conflicts: conflicts,
+      content: content
     }
   };
 

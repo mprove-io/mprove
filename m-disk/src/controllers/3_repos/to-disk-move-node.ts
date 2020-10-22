@@ -1,16 +1,15 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { git } from '../../barrels/git';
+import { constants } from '../../barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
-import { helper } from '../barrels/helper';
 
-export async function ToDiskRenameNode(
-  request: api.ToDiskRenameNodeRequest
-): Promise<api.ToDiskRenameNodeResponse> {
+export async function ToDiskMoveNode(
+  request: api.ToDiskMoveNodeRequest
+): Promise<api.ToDiskMoveNodeResponse> {
   const requestValid = await transformAndValidate(
-    api.ToDiskRenameNodeRequest,
+    api.ToDiskMoveNodeRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -19,19 +18,16 @@ export async function ToDiskRenameNode(
     projectId,
     repoId,
     branch,
-    nodeId,
-    newName
+    fromNodeId,
+    toNodeId
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 
-  let oldPath = repoDir + '/' + nodeId.substring(projectId.length + 1);
-  let sourceArray = oldPath.split('/');
-  sourceArray.pop();
-  let parentPath = sourceArray.join('/');
-  let newPath = parentPath + '/' + newName;
+  let fromPath = repoDir + '/' + fromNodeId.substring(projectId.length + 1);
+  let toPath = repoDir + '/' + toNodeId.substring(projectId.length + 1);
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -61,19 +57,21 @@ export async function ToDiskRenameNode(
     branchName: branch
   });
 
-  let isOldPathExist = await disk.isPathExist(oldPath);
-  if (isOldPathExist === false) {
-    throw Error(api.ErEnum.M_DISK_OLD_PATH_IS_NOT_EXIST);
+  let isFromPathExist = await disk.isPathExist(fromPath);
+  if (isFromPathExist === false) {
+    throw Error(api.ErEnum.M_DISK_FROM_PATH_IS_NOT_EXIST);
+  }
+
+  let isToPathExist = await disk.isPathExist(toPath);
+  if (isToPathExist === true) {
+    throw Error(api.ErEnum.M_DISK_TO_PATH_ALREADY_EXIST);
   }
 
   //
-  let isNewPathExist = await disk.isPathExist(newPath);
-  if (isNewPathExist === true) {
-    throw Error(api.ErEnum.M_DISK_NEW_PATH_ALREADY_EXIST);
-  }
-  await disk.renamePath({
-    oldPath: oldPath,
-    newPath: newPath
+
+  await disk.movePath({
+    sourcePath: fromPath,
+    destinationPath: toPath
   });
 
   await git.addChangesToStage({ repoDir: repoDir });
@@ -96,7 +94,7 @@ export async function ToDiskRenameNode(
     })
   );
 
-  let response: api.ToDiskRenameNodeResponse = {
+  let response: api.ToDiskMoveNodeResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId

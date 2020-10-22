@@ -1,16 +1,15 @@
-import { api } from '../barrels/api';
-import { disk } from '../barrels/disk';
-import { git } from '../barrels/git';
-import { constants } from '../barrels/constants';
-import { interfaces } from '../barrels/interfaces';
-import { MyRegex } from '../models/my-regex';
+import { api } from '../../barrels/api';
+import { disk } from '../../barrels/disk';
+import { git } from '../../barrels/git';
+import { constants } from '../../barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskCreateFile(
-  request: api.ToDiskCreateFileRequest
-): Promise<api.ToDiskCreateFileResponse> {
+export async function ToDiskCreateFolder(
+  request: api.ToDiskCreateFolderRequest
+): Promise<api.ToDiskCreateFolderResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskCreateFileRequest,
+    api.ToDiskCreateFolderRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -19,7 +18,7 @@ export async function ToDiskCreateFile(
     projectId,
     repoId,
     branch,
-    fileName,
+    folderName,
     parentNodeId
   } = requestValid.payload;
 
@@ -31,8 +30,8 @@ export async function ToDiskCreateFile(
   parent = parent.length > 0 ? parent + '/' : parent;
   let parentPath = repoDir + '/' + parent;
 
-  let filePath = parentPath + fileName;
-  let content = getContentFromFileName({ fileName: fileName });
+  let folderAbsolutePath = parentPath + folderName;
+  let gitKeepFileAbsolutePath = folderAbsolutePath + '/' + '.gitkeep';
 
   //
 
@@ -69,17 +68,14 @@ export async function ToDiskCreateFile(
     throw Error(api.ErEnum.M_DISK_PARENT_PATH_IS_NOT_EXIST);
   }
 
-  let isFileExist = await disk.isPathExist(filePath);
-  if (isFileExist === true) {
-    throw Error(api.ErEnum.M_DISK_FILE_ALREADY_EXIST);
+  let isFolderExist = await disk.isPathExist(folderAbsolutePath);
+  if (isFolderExist === true) {
+    throw Error(api.ErEnum.M_DISK_FOLDER_ALREADY_EXIST);
   }
 
   //
 
-  await disk.writeToFile({
-    filePath: filePath,
-    content: content
-  });
+  await disk.ensureFile(gitKeepFileAbsolutePath);
 
   await git.addChangesToStage({ repoDir: repoDir });
 
@@ -101,7 +97,7 @@ export async function ToDiskCreateFile(
     })
   );
 
-  let response: api.ToDiskCreateFileResponse = {
+  let response: api.ToDiskCreateFolderResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -118,40 +114,4 @@ export async function ToDiskCreateFile(
   };
 
   return response;
-}
-
-function getContentFromFileName(item: { fileName: string }) {
-  let content: string;
-
-  let regPart = MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
-  let rPart = regPart.exec(item.fileName.toLowerCase());
-
-  let part: any = rPart ? rPart[1] : undefined;
-
-  let regExt = MyRegex.CAPTURE_EXT();
-  let rExt = regExt.exec(item.fileName.toLowerCase());
-
-  let ext: any = rExt ? rExt[1] : '';
-
-  switch (ext) {
-    case constants.EXT_MD:
-      content = '';
-      break;
-    case constants.EXT_DASHBOARD:
-      content = `dashboard: ${part}`;
-      break;
-    case constants.EXT_MODEL:
-      content = `model: ${part}`;
-      break;
-    case constants.EXT_VIEW:
-      content = `view: ${part}`;
-      break;
-    case constants.EXT_UDF:
-      content = `udf: ${part}`;
-      break;
-    default:
-      content = '';
-  }
-
-  return content;
 }
