@@ -15,6 +15,9 @@ export class ToDiskPushRepoRequestPayload {
 
   @IsString()
   readonly branch: string;
+
+  @IsString()
+  readonly userAlias: string;
 }
 
 export class ToDiskPushRepoRequest {

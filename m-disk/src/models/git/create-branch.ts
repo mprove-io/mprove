@@ -1,4 +1,5 @@
 import * as nodegit from 'nodegit';
+import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function createBranch(item: {
   repoDir: string;
@@ -6,6 +7,8 @@ export async function createBranch(item: {
   newBranch: string;
 }) {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
+
+  await gitRepo.fetch('origin', constantFetchOptions);
 
   let commit = <nodegit.Commit>await gitRepo.getBranchCommit(item.fromBranch);
 

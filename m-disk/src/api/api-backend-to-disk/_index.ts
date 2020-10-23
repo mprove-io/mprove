@@ -9,6 +9,7 @@ export * from './2_projects/to-disk-is-project-exist';
 export * from './3_repos/to-disk-commit-repo';
 export * from './3_repos/to-disk-create-dev-repo';
 export * from './3_repos/to-disk-delete-dev-repo';
+export * from './3_repos/to-disk-pull-repo';
 export * from './3_repos/to-disk-push-repo';
 
 export * from './4_catalogs/to-disk-get-catalog-files';

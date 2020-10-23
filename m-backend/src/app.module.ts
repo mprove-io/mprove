@@ -25,6 +25,7 @@ import { ToDiskGetCatalogFilesController } from './controllers/to-disk/4_catalog
 import { ToDiskGetCatalogNodesController } from './controllers/to-disk/4_catalogs/to-disk-get-catalog-nodes.controller';
 import { ToDiskMoveCatalogNodeController } from './controllers/to-disk/4_catalogs/to-disk-move-catalog-node.controller';
 import { ToDiskRenameCatalogNodeController } from './controllers/to-disk/4_catalogs/to-disk-rename-catalog-node.controller';
+import { ToDiskPullRepoController } from './controllers/to-disk/3_repos/to-disk-pull-repo.controller';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { ToDiskRenameCatalogNodeController } from './controllers/to-disk/4_catal
     ToDiskCommitRepoController,
     ToDiskCreateDevRepoController,
     ToDiskDeleteDevRepoController,
+    ToDiskPullRepoController,
     ToDiskPushRepoController,
 
     ToDiskGetCatalogFilesController,

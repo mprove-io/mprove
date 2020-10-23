@@ -3,7 +3,7 @@ import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../../objects/_index';
 import * as apiEnums from '../../enums/_index';
 
-export class ToDiskPushRepoRequestPayload {
+export class ToDiskPullRepoRequestPayload {
   @IsString()
   readonly organizationId: string;
 
@@ -20,17 +20,17 @@ export class ToDiskPushRepoRequestPayload {
   readonly userAlias: string;
 }
 
-export class ToDiskPushRepoRequest {
+export class ToDiskPullRepoRequest {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskRequestInfo)
   readonly info: apiObjects.ToDiskRequestInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskPushRepoRequestPayload)
-  readonly payload: ToDiskPushRepoRequestPayload;
+  @Type(() => ToDiskPullRepoRequestPayload)
+  readonly payload: ToDiskPullRepoRequestPayload;
 }
 
-export class ToDiskPushRepoResponsePayload {
+export class ToDiskPullRepoResponsePayload {
   @IsString()
   readonly organizationId: string;
 
@@ -51,12 +51,12 @@ export class ToDiskPushRepoResponsePayload {
   readonly conflicts: apiObjects.DiskFileLine[];
 }
 
-export class ToDiskPushRepoResponse {
+export class ToDiskPullRepoResponse {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskPushRepoResponsePayload)
-  readonly payload: ToDiskPushRepoResponsePayload;
+  @Type(() => ToDiskPullRepoResponsePayload)
+  readonly payload: ToDiskPullRepoResponsePayload;
 }

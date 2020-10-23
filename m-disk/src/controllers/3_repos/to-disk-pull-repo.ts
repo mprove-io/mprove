@@ -5,11 +5,11 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskPushRepo(
-  request: api.ToDiskPushRepoRequest
-): Promise<api.ToDiskPushRepoResponse> {
+export async function ToDiskPullRepo(
+  request: api.ToDiskPullRepoRequest
+): Promise<api.ToDiskPullRepoResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskPushRepoRequest,
+    api.ToDiskPullRepoRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -58,35 +58,12 @@ export async function ToDiskPushRepo(
 
   //
 
-  await git.pushToCentral({
+  await git.mergeCommitsOriginToLocal({
     projectId: projectId,
-    projectDir: projectDir,
-    repoId: repoId,
     repoDir: repoDir,
+    userAlias: userAlias,
     branch: branch
   });
-
-  if (repoId !== constants.PROD_REPO_ID) {
-    let prodDir = `${projectDir}/${constants.PROD_REPO_ID}`;
-
-    let isProdBranchExist = await git.isLocalBranchExist({
-      repoDir: prodDir,
-      branch: branch
-    });
-    if (isProdBranchExist === false) {
-      await git.createBranch({
-        repoDir: prodDir,
-        fromBranch: `origin/${branch}`,
-        newBranch: branch
-      });
-    }
-
-    await git.mergeBranchesOriginToLocal({
-      repoDir: prodDir,
-      userAlias: userAlias,
-      branch: branch
-    });
-  }
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -97,7 +74,7 @@ export async function ToDiskPushRepo(
     })
   );
 
-  let response: api.ToDiskPushRepoResponse = {
+  let response: api.ToDiskPullRepoResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId

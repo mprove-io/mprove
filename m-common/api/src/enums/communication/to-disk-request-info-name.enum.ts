@@ -10,6 +10,7 @@ export enum ToDiskRequestInfoNameEnum {
   ToDiskCommitRepo = <any>'ToDiskCommitRepo',
   ToDiskCreateDevRepo = <any>'ToDiskCreateDevRepo',
   ToDiskDeleteDevRepo = <any>'ToDiskDeleteDevRepo',
+  ToDiskPullRepo = <any>'ToDiskPullRepo',
   ToDiskPushRepo = <any>'ToDiskPushRepo',
 
   ToDiskGetCatalogFiles = <any>'ToDiskGetCatalogFiles',
