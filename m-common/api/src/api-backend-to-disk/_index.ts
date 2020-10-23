@@ -12,6 +12,7 @@ export * from './3_repos/to-disk-delete-dev-repo';
 export * from './3_repos/to-disk-get-repo-catalog-files';
 export * from './3_repos/to-disk-get-repo-catalog-nodes';
 export * from './3_repos/to-disk-move-node';
+export * from './3_repos/to-disk-push-repo';
 export * from './3_repos/to-disk-rename-node';
 
 export * from './4_branches/to-disk-create-branch';

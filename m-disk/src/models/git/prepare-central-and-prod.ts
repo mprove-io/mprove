@@ -30,5 +30,11 @@ export async function prepareCentralAndProd(item: {
     projectId: item.projectId
   });
 
-  await pushToCentral({ fromRepoDir: prodDir });
+  await pushToCentral({
+    projectId: item.projectId,
+    projectDir: item.projectDir,
+    repoId: constants.PROD_REPO_ID,
+    repoDir: prodDir,
+    branch: constants.BRANCH_MASTER
+  });
 }

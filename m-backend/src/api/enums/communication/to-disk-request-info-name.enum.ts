@@ -13,6 +13,7 @@ export enum ToDiskRequestInfoNameEnum {
   ToDiskGetRepoCatalogFiles = <any>'ToDiskGetRepoCatalogFiles',
   ToDiskGetRepoCatalogNodes = <any>'ToDiskGetRepoCatalogNodes',
   ToDiskMoveNode = <any>'ToDiskMoveNode',
+  ToDiskPushRepo = <any>'ToDiskPushRepo',
   ToDiskRenameNode = <any>'ToDiskRenameNode',
 
   ToDiskCreateBranch = <any>'ToDiskCreateBranch',
