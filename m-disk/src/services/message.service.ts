@@ -19,10 +19,11 @@ import { ToDiskDeleteFolder } from '../controllers/6_folders/to-disk-delete-fold
 import { ToDiskDeleteFile } from '../controllers/7_files/to-disk-delete-file';
 import { ToDiskCommitRepo } from '../controllers/3_repos/to-disk-commit-repo';
 import { ToDiskPushRepo } from '../controllers/3_repos/to-disk-push-repo';
-import { ToDiskGetCatalogFiles } from 'src/controllers/4_catalogs/to-disk-get-catalog-files';
-import { ToDiskGetCatalogNodes } from 'src/controllers/4_catalogs/to-disk-get-catalog-nodes';
-import { ToDiskMoveCatalogNode } from 'src/controllers/4_catalogs/to-disk-move-catalog-node';
-import { ToDiskRenameCatalogNode } from 'src/controllers/4_catalogs/to-disk-rename-catalog-node';
+import { ToDiskGetCatalogFiles } from '../controllers/4_catalogs/to-disk-get-catalog-files';
+import { ToDiskGetCatalogNodes } from '../controllers/4_catalogs/to-disk-get-catalog-nodes';
+import { ToDiskMoveCatalogNode } from '../controllers/4_catalogs/to-disk-move-catalog-node';
+import { ToDiskRenameCatalogNode } from '../controllers/4_catalogs/to-disk-rename-catalog-node';
+import { ToDiskPullRepo } from '../controllers/3_repos/to-disk-pull-repo';
 
 @Injectable()
 export class MessageService {
@@ -49,6 +50,8 @@ export class MessageService {
           return await ToDiskCreateDevRepo(request);
         case api.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:
           return await ToDiskDeleteDevRepo(request);
+        case api.ToDiskRequestInfoNameEnum.ToDiskPullRepo:
+          return await ToDiskPullRepo(request);
         case api.ToDiskRequestInfoNameEnum.ToDiskPushRepo:
           return await ToDiskPushRepo(request);
 
