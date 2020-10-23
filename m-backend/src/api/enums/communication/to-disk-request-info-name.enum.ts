@@ -7,16 +7,17 @@ export enum ToDiskRequestInfoNameEnum {
   ToDiskDeleteProject = <any>'ToDiskDeleteProject',
   ToDiskIsProjectExist = <any>'ToDiskIsProjectExist',
 
-  ToDiskCreateBranch = <any>'ToDiskCreateBranch',
-  ToDiskDeleteBranch = <any>'ToDiskDeleteBranch',
-  ToDiskIsBranchExist = <any>'ToDiskIsBranchExist',
-
+  ToDiskCommitRepo = <any>'ToDiskCommitRepo',
   ToDiskCreateDevRepo = <any>'ToDiskCreateDevRepo',
   ToDiskDeleteDevRepo = <any>'ToDiskDeleteDevRepo',
   ToDiskGetRepoCatalogFiles = <any>'ToDiskGetRepoCatalogFiles',
   ToDiskGetRepoCatalogNodes = <any>'ToDiskGetRepoCatalogNodes',
   ToDiskMoveNode = <any>'ToDiskMoveNode',
   ToDiskRenameNode = <any>'ToDiskRenameNode',
+
+  ToDiskCreateBranch = <any>'ToDiskCreateBranch',
+  ToDiskDeleteBranch = <any>'ToDiskDeleteBranch',
+  ToDiskIsBranchExist = <any>'ToDiskIsBranchExist',
 
   ToDiskCreateFolder = <any>'ToDiskCreateFolder',
   ToDiskDeleteFolder = <any>'ToDiskDeleteFolder',

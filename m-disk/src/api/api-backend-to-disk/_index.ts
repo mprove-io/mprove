@@ -6,6 +6,7 @@ export * from './2_projects/to-disk-create-project';
 export * from './2_projects/to-disk-delete-project';
 export * from './2_projects/to-disk-is-project-exist';
 
+export * from './3_repos/to-disk-commit-repo';
 export * from './3_repos/to-disk-create-dev-repo';
 export * from './3_repos/to-disk-delete-dev-repo';
 export * from './3_repos/to-disk-get-repo-catalog-files';

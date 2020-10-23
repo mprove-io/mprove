@@ -5,11 +5,11 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskDeleteFolder(
-  request: api.ToDiskDeleteFolderRequest
-): Promise<api.ToDiskDeleteFolderResponse> {
+export async function ToDiskCommitRepo(
+  request: api.ToDiskCommitRepoRequest
+): Promise<api.ToDiskCommitRepoResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskDeleteFolderRequest,
+    api.ToDiskCommitRepoRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -18,17 +18,13 @@ export async function ToDiskDeleteFolder(
     projectId,
     repoId,
     branch,
-    folderNodeId
+    userAlias,
+    commitMessage
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
-
-  let folderAbsolutePath =
-    repoDir + '/' + folderNodeId.substring(projectId.length + 1);
-
-  //
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -61,16 +57,13 @@ export async function ToDiskDeleteFolder(
     branchName: branch
   });
 
-  let isFolderExist = await disk.isPathExist(folderAbsolutePath);
-  if (isFolderExist === false) {
-    throw Error(api.ErEnum.M_DISK_FOLDER_IS_NOT_EXIST);
-  }
-
   //
 
-  await disk.removePath(folderAbsolutePath);
-
-  await git.addChangesToStage({ repoDir: repoDir });
+  await git.commit({
+    repoDir: repoDir,
+    userAlias: userAlias,
+    commitMessage: commitMessage
+  });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -81,16 +74,7 @@ export async function ToDiskDeleteFolder(
     })
   );
 
-  let itemCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: false
-    })
-  );
-
-  let response: api.ToDiskDeleteFolderResponse = {
+  let response: api.ToDiskCommitRepoResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -99,11 +83,9 @@ export async function ToDiskDeleteFolder(
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
-      deletedFolderNodeId: folderNodeId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes
+      conflicts: conflicts
     }
   };
 

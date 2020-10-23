@@ -55,6 +55,9 @@ export async function ToDiskDeleteFile(
   }
 
   await git.checkoutBranch({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
     repoDir: repoDir,
     branchName: branch
   });

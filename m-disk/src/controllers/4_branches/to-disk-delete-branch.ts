@@ -41,6 +41,9 @@ export async function ToDiskDeleteBranch(
   }
 
   await git.checkoutBranch({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
     repoDir: repoDir,
     branchName: constants.BRANCH_MASTER
   });

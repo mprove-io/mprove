@@ -21,6 +21,7 @@ import { ToDiskDeleteDevRepo } from '../controllers/3_repos/to-disk-delete-dev-r
 import { ToDiskDeleteBranch } from '../controllers/4_branches/to-disk-delete-branch';
 import { ToDiskDeleteFolder } from '../controllers/5_folders/to-disk-delete-folder';
 import { ToDiskDeleteFile } from '../controllers/6_files/to-disk-delete-file';
+import { ToDiskCommitRepo } from 'src/controllers/3_repos/to-disk-commit-repo';
 
 @Injectable()
 export class MessageService {
@@ -41,6 +42,8 @@ export class MessageService {
         case api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist:
           return await ToDiskIsProjectExist(request);
 
+        case api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo:
+          return await ToDiskCommitRepo(request);
         case api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
           return await ToDiskCreateDevRepo(request);
         case api.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:

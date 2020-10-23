@@ -53,6 +53,9 @@ export async function ToDiskMoveNode(
   }
 
   await git.checkoutBranch({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
     repoDir: repoDir,
     branchName: branch
   });

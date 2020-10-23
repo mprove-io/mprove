@@ -23,6 +23,7 @@ import { ToDiskDeleteDevRepoController } from './controllers/to-disk/3_repos/to-
 import { ToDiskDeleteBranchController } from './controllers/to-disk/4_branches/to-disk-delete-branch.controller';
 import { ToDiskDeleteFolderController } from './controllers/to-disk/5_folders/to-disk-delete-folder.controller';
 import { ToDiskDeleteFileController } from './controllers/to-disk/6_files/to-disk-delete-file.controller';
+import { ToDiskCommitRepoController } from './controllers/to-disk/3_repos/to-disk-commit-repo.controller';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ToDiskDeleteFileController } from './controllers/to-disk/6_files/to-dis
     ToDiskDeleteProjectController,
     ToDiskIsProjectExistController,
 
+    ToDiskCommitRepoController,
     ToDiskCreateDevRepoController,
     ToDiskDeleteDevRepoController,
     ToDiskGetRepoCatalogFilesController,
