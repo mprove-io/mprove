@@ -5,11 +5,11 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskRenameNode(
-  request: api.ToDiskRenameNodeRequest
-): Promise<api.ToDiskRenameNodeResponse> {
-  const requestValid = await transformAndValidate(
-    api.ToDiskRenameNodeRequest,
+export async function ToDiskDeleteFolder(
+  request: api.ToDiskDeleteFolderRequest
+): Promise<api.ToDiskDeleteFolderResponse> {
+  let requestValid = await transformAndValidate(
+    api.ToDiskDeleteFolderRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -18,19 +18,17 @@ export async function ToDiskRenameNode(
     projectId,
     repoId,
     branch,
-    nodeId,
-    newName
+    folderNodeId
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 
-  let oldPath = repoDir + '/' + nodeId.substring(projectId.length + 1);
-  let sourceArray = oldPath.split('/');
-  sourceArray.pop();
-  let parentPath = sourceArray.join('/');
-  let newPath = parentPath + '/' + newName;
+  let folderAbsolutePath =
+    repoDir + '/' + folderNodeId.substring(projectId.length + 1);
+
+  //
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -63,20 +61,14 @@ export async function ToDiskRenameNode(
     branchName: branch
   });
 
-  let isOldPathExist = await disk.isPathExist(oldPath);
-  if (isOldPathExist === false) {
-    throw Error(api.ErEnum.M_DISK_OLD_PATH_IS_NOT_EXIST);
+  let isFolderExist = await disk.isPathExist(folderAbsolutePath);
+  if (isFolderExist === false) {
+    throw Error(api.ErEnum.M_DISK_FOLDER_IS_NOT_EXIST);
   }
 
   //
-  let isNewPathExist = await disk.isPathExist(newPath);
-  if (isNewPathExist === true) {
-    throw Error(api.ErEnum.M_DISK_NEW_PATH_ALREADY_EXIST);
-  }
-  await disk.renamePath({
-    oldPath: oldPath,
-    newPath: newPath
-  });
+
+  await disk.removePath(folderAbsolutePath);
 
   await git.addChangesToStage({ repoDir: repoDir });
 
@@ -89,16 +81,14 @@ export async function ToDiskRenameNode(
     })
   );
 
-  let itemCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: false
-    })
-  );
+  let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
+    readFiles: false
+  });
 
-  let response: api.ToDiskRenameNodeResponse = {
+  let response: api.ToDiskDeleteFolderResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -107,6 +97,7 @@ export async function ToDiskRenameNode(
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
+      deletedFolderNodeId: folderNodeId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,

@@ -3,21 +3,31 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
+import { MyRegex } from '../../models/my-regex';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskGetRepoCatalogFiles(
-  request: api.ToDiskGetRepoCatalogFilesRequest
-): Promise<api.ToDiskGetRepoCatalogFilesResponse> {
+export async function ToDiskDeleteFile(
+  request: api.ToDiskDeleteFileRequest
+): Promise<api.ToDiskDeleteFileResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskGetRepoCatalogFilesRequest,
+    api.ToDiskDeleteFileRequest,
     request
   );
   let { traceId } = requestValid.info;
-  let { organizationId, projectId, repoId, branch } = requestValid.payload;
+  let {
+    organizationId,
+    projectId,
+    repoId,
+    branch,
+    fileNodeId
+  } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
+
+  let fileAbsolutePath =
+    repoDir + '/' + fileNodeId.substring(projectId.length + 1);
 
   //
 
@@ -52,16 +62,16 @@ export async function ToDiskGetRepoCatalogFiles(
     branchName: branch
   });
 
+  let isFileExist = await disk.isPathExist(fileAbsolutePath);
+  if (isFileExist === false) {
+    throw Error(api.ErEnum.M_DISK_FILE_IS_NOT_EXIST);
+  }
+
   //
 
-  let itemCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true
-    })
-  );
+  await disk.removePath(fileAbsolutePath);
+
+  await git.addChangesToStage({ repoDir: repoDir });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -72,7 +82,14 @@ export async function ToDiskGetRepoCatalogFiles(
     })
   );
 
-  let response: api.ToDiskGetRepoCatalogFilesResponse = {
+  let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
+    readFiles: false
+  });
+
+  let response: api.ToDiskDeleteFileResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -81,10 +98,11 @@ export async function ToDiskGetRepoCatalogFiles(
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
+      deletedFileNodeId: fileNodeId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,
-      files: itemCatalog.files
+      nodes: itemCatalog.nodes
     }
   };
 

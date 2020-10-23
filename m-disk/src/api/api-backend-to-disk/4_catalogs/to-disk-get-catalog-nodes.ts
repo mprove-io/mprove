@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '../../objects/_index';
+import * as apiObjects from '../../_index';
 import * as apiEnums from '../../enums/_index';
 
-export class ToDiskGetRepoCatalogFilesRequestPayload {
+export class ToDiskGetCatalogNodesRequestPayload {
   @IsString()
   readonly organizationId: string;
 
@@ -17,17 +17,17 @@ export class ToDiskGetRepoCatalogFilesRequestPayload {
   readonly branch: string;
 }
 
-export class ToDiskGetRepoCatalogFilesRequest {
+export class ToDiskGetCatalogNodesRequest {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskRequestInfo)
   readonly info: apiObjects.ToDiskRequestInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskGetRepoCatalogFilesRequestPayload)
-  readonly payload: ToDiskGetRepoCatalogFilesRequestPayload;
+  @Type(() => ToDiskGetCatalogNodesRequestPayload)
+  readonly payload: ToDiskGetCatalogNodesRequestPayload;
 }
 
-export class ToDiskGetRepoCatalogFilesResponsePayload {
+export class ToDiskGetCatalogNodesResponsePayload {
   @IsString()
   readonly organizationId: string;
 
@@ -48,16 +48,16 @@ export class ToDiskGetRepoCatalogFilesResponsePayload {
   readonly conflicts: apiObjects.DiskFileLine[];
 
   @ValidateNested()
-  @Type(() => apiObjects.DiskCatalogFile)
-  readonly files: apiObjects.DiskCatalogFile[];
+  @Type(() => apiObjects.DiskCatalogNode)
+  readonly nodes: Array<apiObjects.DiskCatalogNode>;
 }
 
-export class ToDiskGetRepoCatalogFilesResponse {
+export class ToDiskGetCatalogNodesResponse {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskGetRepoCatalogFilesResponsePayload)
-  readonly payload: ToDiskGetRepoCatalogFilesResponsePayload;
+  @Type(() => ToDiskGetCatalogNodesResponsePayload)
+  readonly payload: ToDiskGetCatalogNodesResponsePayload;
 }

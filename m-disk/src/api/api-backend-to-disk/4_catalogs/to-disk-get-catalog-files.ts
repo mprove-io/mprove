@@ -3,7 +3,7 @@ import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../../objects/_index';
 import * as apiEnums from '../../enums/_index';
 
-export class ToDiskMoveNodeRequestPayload {
+export class ToDiskGetCatalogFilesRequestPayload {
   @IsString()
   readonly organizationId: string;
 
@@ -15,25 +15,19 @@ export class ToDiskMoveNodeRequestPayload {
 
   @IsString()
   readonly branch: string;
-
-  @IsString()
-  readonly fromNodeId: string;
-
-  @IsString()
-  readonly toNodeId: string;
 }
 
-export class ToDiskMoveNodeRequest {
+export class ToDiskGetCatalogFilesRequest {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskRequestInfo)
   readonly info: apiObjects.ToDiskRequestInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskMoveNodeRequestPayload)
-  readonly payload: ToDiskMoveNodeRequestPayload;
+  @Type(() => ToDiskGetCatalogFilesRequestPayload)
+  readonly payload: ToDiskGetCatalogFilesRequestPayload;
 }
 
-export class ToDiskMoveNodeResponsePayload {
+export class ToDiskGetCatalogFilesResponsePayload {
   @IsString()
   readonly organizationId: string;
 
@@ -54,16 +48,16 @@ export class ToDiskMoveNodeResponsePayload {
   readonly conflicts: apiObjects.DiskFileLine[];
 
   @ValidateNested()
-  @Type(() => apiObjects.DiskCatalogNode)
-  readonly nodes: Array<apiObjects.DiskCatalogNode>;
+  @Type(() => apiObjects.DiskCatalogFile)
+  readonly files: apiObjects.DiskCatalogFile[];
 }
 
-export class ToDiskMoveNodeResponse {
+export class ToDiskGetCatalogFilesResponse {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskMoveNodeResponsePayload)
-  readonly payload: ToDiskMoveNodeResponsePayload;
+  @Type(() => ToDiskGetCatalogFilesResponsePayload)
+  readonly payload: ToDiskGetCatalogFilesResponsePayload;
 }

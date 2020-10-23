@@ -4,13 +4,13 @@ import { RabbitService } from '../../../services/rabbit.service';
 import { api } from '../../../barrels/api';
 
 @Controller()
-export class ToDiskMoveNodeController {
+export class ToDiskMoveCatalogNodeController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskMoveNode')
-  async toDiskMoveNode(
-    @Body() body: api.ToDiskMoveNodeRequest
-  ): Promise<api.ToDiskMoveNodeResponse> {
+  @Post('toDiskMoveCatalogNode')
+  async toDiskMoveCatalogNode(
+    @Body() body: api.ToDiskMoveCatalogNodeRequest
+  ): Promise<api.ToDiskMoveCatalogNodeResponse> {
     let { organizationId, projectId } = body.payload;
 
     let routingKey = makeRoutingKeyToDisk({
@@ -25,6 +25,6 @@ export class ToDiskMoveNodeController {
       message: message
     });
 
-    return (response as unknown) as api.ToDiskMoveNodeResponse;
+    return (response as unknown) as api.ToDiskMoveCatalogNodeResponse;
   }
 }

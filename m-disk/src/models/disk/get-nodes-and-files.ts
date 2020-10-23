@@ -4,7 +4,7 @@ import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 import { MyRegex } from '../my-regex';
 
-export async function getRepoCatalogNodesAndFiles(item: {
+export async function getNodesAndFiles(item: {
   projectId: string;
   projectDir: string;
   repoId: string;

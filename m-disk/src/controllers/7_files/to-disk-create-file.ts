@@ -95,14 +95,12 @@ export async function ToDiskCreateFile(
     })
   );
 
-  let itemCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: false
-    })
-  );
+  let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
+    readFiles: false
+  });
 
   let response: api.ToDiskCreateFileResponse = {
     info: {

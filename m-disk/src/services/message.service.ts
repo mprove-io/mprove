@@ -5,24 +5,24 @@ import { ToDiskIsOrganizationExist } from '../controllers/1_organizations/to-dis
 import { ToDiskCreateProject } from '../controllers/2_projects/to-disk-create-project';
 import { ToDiskIsProjectExist } from '../controllers/2_projects/to-disk-is-project-exist';
 import { ToDiskCreateDevRepo } from '../controllers/3_repos/to-disk-create-dev-repo';
-import { ToDiskGetRepoCatalogFiles } from '../controllers/3_repos/to-disk-get-repo-catalog-files';
-import { ToDiskGetRepoCatalogNodes } from '../controllers/3_repos/to-disk-get-repo-catalog-nodes';
-import { ToDiskMoveNode } from '../controllers/3_repos/to-disk-move-node';
-import { ToDiskRenameNode } from '../controllers/3_repos/to-disk-rename-node';
-import { ToDiskCreateBranch } from '../controllers/4_branches/to-disk-create-branch';
-import { ToDiskIsBranchExist } from '../controllers/4_branches/to-disk-is-branch-exist';
-import { ToDiskCreateFolder } from '../controllers/5_folders/to-disk-create-folder';
-import { ToDiskCreateFile } from '../controllers/6_files/to-disk-create-file';
-import { ToDiskGetFile } from '../controllers/6_files/to-disk-get-file';
-import { ToDiskSaveFile } from '../controllers/6_files/to-disk-save-file';
+import { ToDiskCreateBranch } from '../controllers/5_branches/to-disk-create-branch';
+import { ToDiskIsBranchExist } from '../controllers/5_branches/to-disk-is-branch-exist';
+import { ToDiskCreateFolder } from '../controllers/6_folders/to-disk-create-folder';
+import { ToDiskCreateFile } from '../controllers/7_files/to-disk-create-file';
+import { ToDiskGetFile } from '../controllers/7_files/to-disk-get-file';
+import { ToDiskSaveFile } from '../controllers/7_files/to-disk-save-file';
 import { ToDiskDeleteOrganization } from '../controllers/1_organizations/to-disk-delete-organization';
 import { ToDiskDeleteProject } from '../controllers/2_projects/to-disk-delete-project';
 import { ToDiskDeleteDevRepo } from '../controllers/3_repos/to-disk-delete-dev-repo';
-import { ToDiskDeleteBranch } from '../controllers/4_branches/to-disk-delete-branch';
-import { ToDiskDeleteFolder } from '../controllers/5_folders/to-disk-delete-folder';
-import { ToDiskDeleteFile } from '../controllers/6_files/to-disk-delete-file';
+import { ToDiskDeleteBranch } from '../controllers/5_branches/to-disk-delete-branch';
+import { ToDiskDeleteFolder } from '../controllers/6_folders/to-disk-delete-folder';
+import { ToDiskDeleteFile } from '../controllers/7_files/to-disk-delete-file';
 import { ToDiskCommitRepo } from '../controllers/3_repos/to-disk-commit-repo';
 import { ToDiskPushRepo } from '../controllers/3_repos/to-disk-push-repo';
+import { ToDiskGetCatalogFiles } from 'src/controllers/4_catalogs/to-disk-get-catalog-files';
+import { ToDiskGetCatalogNodes } from 'src/controllers/4_catalogs/to-disk-get-catalog-nodes';
+import { ToDiskMoveCatalogNode } from 'src/controllers/4_catalogs/to-disk-move-catalog-node';
+import { ToDiskRenameCatalogNode } from 'src/controllers/4_catalogs/to-disk-rename-catalog-node';
 
 @Injectable()
 export class MessageService {
@@ -49,16 +49,17 @@ export class MessageService {
           return await ToDiskCreateDevRepo(request);
         case api.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:
           return await ToDiskDeleteDevRepo(request);
-        case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogFiles:
-          return await ToDiskGetRepoCatalogFiles(request);
-        case api.ToDiskRequestInfoNameEnum.ToDiskGetRepoCatalogNodes:
-          return await ToDiskGetRepoCatalogNodes(request);
-        case api.ToDiskRequestInfoNameEnum.ToDiskMoveNode:
-          return await ToDiskMoveNode(request);
         case api.ToDiskRequestInfoNameEnum.ToDiskPushRepo:
           return await ToDiskPushRepo(request);
-        case api.ToDiskRequestInfoNameEnum.ToDiskRenameNode:
-          return await ToDiskRenameNode(request);
+
+        case api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
+          return await ToDiskGetCatalogFiles(request);
+        case api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes:
+          return await ToDiskGetCatalogNodes(request);
+        case api.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode:
+          return await ToDiskMoveCatalogNode(request);
+        case api.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode:
+          return await ToDiskRenameCatalogNode(request);
 
         case api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
           return await ToDiskCreateBranch(request);

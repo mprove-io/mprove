@@ -1,9 +1,9 @@
+import * as apiObjects from '../../objects/_index';
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '../../_index';
 import * as apiEnums from '../../enums/_index';
 
-export class ToDiskGetRepoCatalogNodesRequestPayload {
+export class ToDiskRenameCatalogNodeRequestPayload {
   @IsString()
   readonly organizationId: string;
 
@@ -15,19 +15,25 @@ export class ToDiskGetRepoCatalogNodesRequestPayload {
 
   @IsString()
   readonly branch: string;
+
+  @IsString()
+  readonly nodeId: string;
+
+  @IsString()
+  readonly newName: string;
 }
 
-export class ToDiskGetRepoCatalogNodesRequest {
+export class ToDiskRenameCatalogNodeRequest {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskRequestInfo)
   readonly info: apiObjects.ToDiskRequestInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskGetRepoCatalogNodesRequestPayload)
-  readonly payload: ToDiskGetRepoCatalogNodesRequestPayload;
+  @Type(() => ToDiskRenameCatalogNodeRequestPayload)
+  readonly payload: ToDiskRenameCatalogNodeRequestPayload;
 }
 
-export class ToDiskGetRepoCatalogNodesResponsePayload {
+export class ToDiskRenameCatalogNodeResponsePayload {
   @IsString()
   readonly organizationId: string;
 
@@ -52,12 +58,12 @@ export class ToDiskGetRepoCatalogNodesResponsePayload {
   readonly nodes: Array<apiObjects.DiskCatalogNode>;
 }
 
-export class ToDiskGetRepoCatalogNodesResponse {
+export class ToDiskRenameCatalogNodeResponse {
   @ValidateNested()
   @Type(() => apiObjects.ToDiskResponseInfo)
   readonly info: apiObjects.ToDiskResponseInfo;
 
   @ValidateNested()
-  @Type(() => ToDiskGetRepoCatalogNodesResponsePayload)
-  readonly payload: ToDiskGetRepoCatalogNodesResponsePayload;
+  @Type(() => ToDiskRenameCatalogNodeResponsePayload)
+  readonly payload: ToDiskRenameCatalogNodeResponsePayload;
 }

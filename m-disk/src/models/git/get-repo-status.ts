@@ -42,14 +42,12 @@ export async function getRepoStatus(item: {
 
   // check conflicts manually instead of git - because they are already committed
 
-  let itemDevRepoCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: item.projectId,
-      projectDir: item.projectDir,
-      repoId: item.repoId,
-      readFiles: true
-    })
-  );
+  let itemDevRepoCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    projectId: item.projectId,
+    projectDir: item.projectDir,
+    repoId: item.repoId,
+    readFiles: true
+  });
 
   itemDevRepoCatalog.files.forEach(file => {
     let fileArray = file.content.split('\n');

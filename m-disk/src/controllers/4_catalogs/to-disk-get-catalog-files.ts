@@ -3,31 +3,21 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { MyRegex } from '../../models/my-regex';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskDeleteFile(
-  request: api.ToDiskDeleteFileRequest
-): Promise<api.ToDiskDeleteFileResponse> {
+export async function ToDiskGetCatalogFiles(
+  request: api.ToDiskGetCatalogFilesRequest
+): Promise<api.ToDiskGetCatalogFilesResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskDeleteFileRequest,
+    api.ToDiskGetCatalogFilesRequest,
     request
   );
   let { traceId } = requestValid.info;
-  let {
-    organizationId,
-    projectId,
-    repoId,
-    branch,
-    fileNodeId
-  } = requestValid.payload;
+  let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
-
-  let fileAbsolutePath =
-    repoDir + '/' + fileNodeId.substring(projectId.length + 1);
 
   //
 
@@ -62,16 +52,14 @@ export async function ToDiskDeleteFile(
     branchName: branch
   });
 
-  let isFileExist = await disk.isPathExist(fileAbsolutePath);
-  if (isFileExist === false) {
-    throw Error(api.ErEnum.M_DISK_FILE_IS_NOT_EXIST);
-  }
-
   //
 
-  await disk.removePath(fileAbsolutePath);
-
-  await git.addChangesToStage({ repoDir: repoDir });
+  let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
+    readFiles: true
+  });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({
@@ -82,16 +70,7 @@ export async function ToDiskDeleteFile(
     })
   );
 
-  let itemCatalog = <interfaces.ItemCatalog>(
-    await disk.getRepoCatalogNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: false
-    })
-  );
-
-  let response: api.ToDiskDeleteFileResponse = {
+  let response: api.ToDiskGetCatalogFilesResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId
@@ -100,11 +79,10 @@ export async function ToDiskDeleteFile(
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
-      deletedFileNodeId: fileNodeId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,
-      nodes: itemCatalog.nodes
+      files: itemCatalog.files
     }
   };
 
