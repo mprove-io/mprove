@@ -7,6 +7,7 @@ export async function createInitialCommitToProd(item: {
   prodDir: string;
   projectId: string;
   useData: boolean;
+  userAlias: string;
 }) {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.prodDir);
 
@@ -40,10 +41,12 @@ export async function createInitialCommitToProd(item: {
 
   let oid = <nodegit.Oid>await index.writeTree();
 
-  let author = nodegit.Signature.now('mprove server', '@');
-  let committer = nodegit.Signature.now('mprove server', '@');
+  let author = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
+  let committer = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
+
+  let message = 'init';
 
   // Since we're creating an initial commit, it has no parents. Note that unlike
   // normal we don't get the head either, because there isn't one yet.
-  await gitRepo.createCommit('HEAD', author, committer, 'message', oid, []);
+  await gitRepo.createCommit('HEAD', author, committer, message, oid, []);
 }

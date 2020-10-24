@@ -48,7 +48,7 @@ export async function mergeCommitsOriginToLocal(item: {
   let committer = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
 
   let commitOid = <nodegit.Oid>(
-    await gitRepo.createCommit('HEAD', author, committer, 'message', oid, [
+    await gitRepo.createCommit('HEAD', author, committer, 'merge commit', oid, [
       ourCommit,
       theirCommit
     ])

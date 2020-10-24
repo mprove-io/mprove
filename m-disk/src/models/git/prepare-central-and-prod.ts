@@ -9,6 +9,7 @@ export async function prepareCentralAndProd(item: {
   projectId: string;
   projectDir: string;
   useData: boolean;
+  userAlias: string;
 }) {
   let centralDir = `${item.projectDir}/${constants.CENTRAL_REPO_ID}`;
   let prodDir = `${item.projectDir}/${constants.PROD_REPO_ID}`;
@@ -27,7 +28,8 @@ export async function prepareCentralAndProd(item: {
   await createInitialCommitToProd({
     prodDir: prodDir,
     useData: item.useData,
-    projectId: item.projectId
+    projectId: item.projectId,
+    userAlias: item.userAlias
   });
 
   await pushToCentral({

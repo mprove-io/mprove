@@ -12,7 +12,12 @@ export async function ToDiskCreateProject(
     request
   );
   let { traceId } = requestValid.info;
-  let { organizationId, projectId, devRepoId } = requestValid.payload;
+  let {
+    organizationId,
+    projectId,
+    devRepoId,
+    userAlias
+  } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -36,7 +41,8 @@ export async function ToDiskCreateProject(
   await git.prepareCentralAndProd({
     projectId: projectId,
     projectDir: projectDir,
-    useData: false
+    useData: false,
+    userAlias: userAlias
   });
 
   await git.cloneCentralToDev({

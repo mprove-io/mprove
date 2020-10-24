@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../../objects/_index';
-import * as apiEnums from '../../enums/_index';
 
 export class ToDiskCreateProjectRequestPayload {
   @IsString()
@@ -12,6 +11,9 @@ export class ToDiskCreateProjectRequestPayload {
 
   @IsString()
   readonly devRepoId: string;
+
+  @IsString()
+  readonly userAlias: string;
 }
 
 export class ToDiskCreateProjectRequest {
