@@ -81,10 +81,15 @@ export async function ToDiskPushRepo(
       });
     }
 
-    await git.mergeBranchesOriginToLocal({
-      repoDir: prodDir,
+    await git.merge({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
       userAlias: userAlias,
-      branch: branch
+      branch: branch,
+      theirBranch: `origin/${branch}`,
+      isTheirBranchRemote: true
     });
   }
 

@@ -58,11 +58,15 @@ export async function ToDiskPullRepo(
 
   //
 
-  await git.mergeCommitsOriginToLocal({
+  await git.merge({
     projectId: projectId,
+    projectDir: projectDir,
+    repoId: repoId,
     repoDir: repoDir,
     userAlias: userAlias,
-    branch: branch
+    branch: branch,
+    theirBranch: `origin/${branch}`,
+    isTheirBranchRemote: true
   });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
