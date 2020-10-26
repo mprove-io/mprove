@@ -1,19 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { constants } from '../../barrels/constants';
-import { disk } from '../../barrels/disk';
-import { api } from '../../barrels/api';
+import { constants } from '../../../barrels/constants';
+import { disk } from '../../../barrels/disk';
+import { api } from '../../../barrels/api';
 
-import { MessageService } from '../../services/message.service';
-import { helper } from '../../barrels/helper';
+import { MessageService } from '../../../services/message.service';
+import { helper } from '../../../barrels/helper';
 
-let testId = 't-3-1-2';
+let testId = 't-3-to-disk-merge-repo-1';
 
-describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
+describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
   let messageService: MessageService;
   let organizationId = testId;
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectId = 'p1';
   let traceId = '123';
+  // NeedPush because we merge with local branch
   let goalRepoStatus = api.RepoStatusEnum.NeedPush;
 
   beforeEach(async () => {
@@ -54,19 +55,21 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let createDevRepoRequest: api.ToDiskCreateDevRepoRequest = {
+    let r1_createBranchRequest: api.ToDiskCreateBranchRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
         traceId: traceId
       },
       payload: {
         organizationId: organizationId,
         projectId: projectId,
-        devRepoId: 'r2'
+        repoId: 'r1',
+        fromBranch: 'master',
+        newBranch: 'b2'
       }
     };
 
-    let r1_1_saveFileRequest: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_1: api.ToDiskSaveFileRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -81,7 +84,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_1_commitRepoRequest1: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_1: api.ToDiskCommitRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -96,7 +99,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_2_saveFileRequest: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_2: api.ToDiskSaveFileRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -111,7 +114,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_2_commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_2: api.ToDiskCommitRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -126,81 +129,36 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_pushRepoRequest: api.ToDiskPushRepoRequest = {
+    let b2_mergeRepoRequest: api.ToDiskMergeRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
         traceId: traceId
       },
       payload: {
         organizationId: organizationId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'master',
-        userAlias: 'r1'
-      }
-    };
-
-    let r2_1_createFileRequest: api.ToDiskCreateFileRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: 'master',
-        fileName: 's.view',
-        parentNodeId: `${projectId}/`
-      }
-    };
-
-    let r2_1_commitRepoRequest: api.ToDiskCommitRepoRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: 'master',
-        userAlias: 'r2',
-        commitMessage: 'r2-commitMessage-3'
-      }
-    };
-
-    let r2_pullRepoRequest: api.ToDiskPullRepoRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskPullRepo,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: 'master',
-        userAlias: 'r2'
+        branch: 'b2',
+        userAlias: 'r1',
+        theirBranch: 'master'
       }
     };
 
     await messageService.processRequest(createOrganizationRequest);
     await messageService.processRequest(createProjectRequest);
-    await messageService.processRequest(createDevRepoRequest);
 
     await helper.delay(1000);
 
-    await messageService.processRequest(r1_1_saveFileRequest);
-    await messageService.processRequest(r1_1_commitRepoRequest1);
-    await messageService.processRequest(r1_2_saveFileRequest);
-    await messageService.processRequest(r1_2_commitRepoRequest);
-    await messageService.processRequest(r1_pushRepoRequest);
+    await messageService.processRequest(r1_master_saveFileRequest_1);
+    await messageService.processRequest(r1_master_commitRepoRequest_1);
 
-    await messageService.processRequest(r2_1_createFileRequest);
-    await messageService.processRequest(r2_1_commitRepoRequest);
+    await messageService.processRequest(r1_createBranchRequest);
+
+    await messageService.processRequest(r1_master_saveFileRequest_2);
+    await messageService.processRequest(r1_master_commitRepoRequest_2);
 
     let pullRepoResponse = <api.ToDiskPullRepoResponse>(
-      await messageService.processRequest(r2_pullRepoRequest)
+      await messageService.processRequest(b2_mergeRepoRequest)
     );
 
     expect(pullRepoResponse.payload.repoStatus).toBe(goalRepoStatus);

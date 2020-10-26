@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { constants } from '../../barrels/constants';
-import { disk } from '../../barrels/disk';
-import { api } from '../../barrels/api';
+import { constants } from '../../../barrels/constants';
+import { disk } from '../../../barrels/disk';
+import { api } from '../../../barrels/api';
 
-import { MessageService } from '../../services/message.service';
-import { helper } from '../../barrels/helper';
+import { MessageService } from '../../../services/message.service';
+import { helper } from '../../../barrels/helper';
 
-let testId = 't-3-1-3';
+let testId = 't-3-to-disk-pull-repo-1';
 
 describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
   let messageService: MessageService;
@@ -14,7 +14,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectId = 'p1';
   let traceId = '123';
-  let goalRepoStatus = api.RepoStatusEnum.NeedResolve;
+  let goalRepoStatus = api.RepoStatusEnum.Ok;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -66,7 +66,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_1_saveFileRequest: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_1: api.ToDiskSaveFileRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -81,7 +81,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_1_commitRepoRequest1: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_1: api.ToDiskCommitRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -96,7 +96,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_2_saveFileRequest: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_2: api.ToDiskSaveFileRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -111,7 +111,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_2_commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_2: api.ToDiskCommitRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -126,7 +126,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    let r1_pushRepoRequest: api.ToDiskPushRepoRequest = {
+    let r1_master_pushRepoRequest: api.ToDiskPushRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
         traceId: traceId
@@ -137,36 +137,6 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
         repoId: 'r1',
         branch: 'master',
         userAlias: 'r1'
-      }
-    };
-
-    let r2_1_saveFileRequest: api.ToDiskSaveFileRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: 'master',
-        fileNodeId: `${projectId}/readme.md`,
-        content: '3'
-      }
-    };
-
-    let r2_1_commitRepoRequest: api.ToDiskCommitRepoRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: 'master',
-        userAlias: 'r2',
-        commitMessage: 'r2-commitMessage-3'
       }
     };
 
@@ -184,34 +154,17 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
       }
     };
 
-    // let r2_pushRepoRequest: api.ToDiskPushRepoRequest = {
-    //   info: {
-    //     name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
-    //     traceId: traceId
-    //   },
-    //   payload: {
-    //     organizationId: organizationId,
-    //     projectId: projectId,
-    //     repoId: 'r2',
-    //     branch: 'master',
-    //     userAlias: 'r2'
-    //   }
-    // };
-
     await messageService.processRequest(createOrganizationRequest);
     await messageService.processRequest(createProjectRequest);
     await messageService.processRequest(createDevRepoRequest);
 
     await helper.delay(1000);
 
-    await messageService.processRequest(r1_1_saveFileRequest);
-    await messageService.processRequest(r1_1_commitRepoRequest1);
-    await messageService.processRequest(r1_2_saveFileRequest);
-    await messageService.processRequest(r1_2_commitRepoRequest);
-    await messageService.processRequest(r1_pushRepoRequest);
-
-    await messageService.processRequest(r2_1_saveFileRequest);
-    await messageService.processRequest(r2_1_commitRepoRequest);
+    await messageService.processRequest(r1_master_saveFileRequest_1);
+    await messageService.processRequest(r1_master_commitRepoRequest_1);
+    await messageService.processRequest(r1_master_saveFileRequest_2);
+    await messageService.processRequest(r1_master_commitRepoRequest_2);
+    await messageService.processRequest(r1_master_pushRepoRequest);
 
     let pullRepoResponse = <api.ToDiskPullRepoResponse>(
       await messageService.processRequest(r2_pullRepoRequest)

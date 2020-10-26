@@ -1,7 +1,4 @@
 import * as nodegit from 'nodegit';
-import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
-import { getRepoStatus } from './get-repo-status';
 
 export async function merge(item: {
   projectId: string;
@@ -18,32 +15,19 @@ export async function merge(item: {
   // try fast forward
 
   let signature = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
-  await gitRepo.mergeBranches(
+  let mb = await gitRepo.mergeBranches(
     item.branch,
-    // `origin/${item.branch}`,
     item.theirBranch,
     signature,
     nodegit.Merge.PREFERENCE.FASTFORWARD_ONLY
   );
 
-  let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-    await getRepoStatus({
-      projectId: item.projectId,
-      projectDir: item.projectDir,
-      repoId: item.repoId,
-      repoDir: item.repoDir
-    })
-  );
-
-  if (repoStatus === api.RepoStatusEnum.Ok) {
-    return;
-  }
-
-  // force
-
   let ourCommit = <nodegit.Commit>(
     await gitRepo.getReferenceCommit(`refs/heads/${item.branch}`)
   );
+
+  let ourCommitOid = ourCommit.id();
+  let ourCommitId = ourCommitOid.tostrS();
 
   let theirStr =
     item.isTheirBranchRemote === true
@@ -51,6 +35,15 @@ export async function merge(item: {
       : `refs/heads/${item.theirBranch}`;
 
   let theirCommit = <nodegit.Commit>await gitRepo.getReferenceCommit(theirStr);
+  let theirCommitOid = theirCommit.id();
+  let theirCommitId = theirCommitOid.tostrS();
+
+  if (ourCommitId === theirCommitId) {
+    return;
+  }
+
+  // force
+
   let theirRef = <nodegit.Reference>await gitRepo.getReference(theirStr);
 
   let theirAnnotatedCommit = <nodegit.AnnotatedCommit>(
