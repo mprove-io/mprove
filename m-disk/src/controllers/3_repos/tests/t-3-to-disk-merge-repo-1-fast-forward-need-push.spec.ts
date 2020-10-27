@@ -10,12 +10,10 @@ let testId = 't-3-to-disk-merge-repo-1';
 
 describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
   let messageService: MessageService;
-  let organizationId = testId;
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
-  let projectId = 'p1';
   let traceId = '123';
-  // NeedPush because we merge with different branch
-  let goalRepoStatus = api.RepoStatusEnum.NeedPush;
+  let organizationId = testId;
+  let projectId = 'p1';
+  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -31,7 +29,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
     }
   });
 
-  it(`should return repo status "${goalRepoStatus}"`, async () => {
+  it('should pass', async () => {
     let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
@@ -163,6 +161,9 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
       await messageService.processRequest(b2_mergeRepoRequest)
     );
 
-    expect(pullRepoResponse.payload.repoStatus).toBe(goalRepoStatus);
+    // NeedPush because we merge with different branch
+    expect(pullRepoResponse.payload.repoStatus).toBe(
+      api.RepoStatusEnum.NeedPush
+    );
   });
 });

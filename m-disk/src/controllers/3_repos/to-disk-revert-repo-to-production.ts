@@ -5,11 +5,11 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 import { transformAndValidate } from 'class-transformer-validator';
 
-export async function ToDiskRevertRepoToLastCommit(
-  request: api.ToDiskRevertRepoToLastCommitRequest
-): Promise<api.ToDiskRevertRepoToLastCommitResponse> {
+export async function ToDiskRevertRepoToProduction(
+  request: api.ToDiskRevertRepoToProductionRequest
+): Promise<api.ToDiskRevertRepoToProductionResponse> {
   let requestValid = await transformAndValidate(
-    api.ToDiskRevertRepoToLastCommitRequest,
+    api.ToDiskRevertRepoToProductionRequest,
     request
   );
   let { traceId } = requestValid.info;
@@ -52,8 +52,9 @@ export async function ToDiskRevertRepoToLastCommit(
 
   //
 
-  await git.revertRepoToLastCommit({
-    repoDir: repoDir
+  await git.revertRepoToProduction({
+    repoDir: repoDir,
+    remoteBranch: branch
   });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
@@ -65,7 +66,7 @@ export async function ToDiskRevertRepoToLastCommit(
     })
   );
 
-  let response: api.ToDiskRevertRepoToLastCommitResponse = {
+  let response: api.ToDiskRevertRepoToProductionResponse = {
     info: {
       status: api.ToDiskResponseInfoStatusEnum.Ok,
       traceId: traceId

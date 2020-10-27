@@ -9,10 +9,10 @@ let testId = 't-5-to-disk-create-branch-2';
 
 describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch}`, () => {
   let messageService: MessageService;
-  let organizationId = testId;
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
-  let projectId = 'p1';
   let traceId = '123';
+  let organizationId = testId;
+  let projectId = 'p1';
+  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -28,7 +28,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch}`, () => 
     }
   });
 
-  it('should create new branch', async () => {
+  it('should pass', async () => {
     let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,

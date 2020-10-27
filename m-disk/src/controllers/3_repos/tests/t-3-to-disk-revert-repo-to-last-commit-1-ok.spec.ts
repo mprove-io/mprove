@@ -10,11 +10,10 @@ let testId = 't-3-to-disk-revert-repo-to-last-commit-1';
 
 describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit}`, () => {
   let messageService: MessageService;
-  let organizationId = testId;
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
-  let projectId = 'p1';
   let traceId = '123';
-  let goalRepoStatus = api.RepoStatusEnum.Ok;
+  let organizationId = testId;
+  let projectId = 'p1';
+  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -30,7 +29,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit
     }
   });
 
-  it(`repo status should be "${goalRepoStatus}"`, async () => {
+  it('should pass', async () => {
     let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
@@ -93,6 +92,6 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit
       revertRepoToLastCommitRequest
     );
 
-    expect(resp.payload.repoStatus).toBe(goalRepoStatus);
+    expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
   });
 });

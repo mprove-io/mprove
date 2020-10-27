@@ -15,12 +15,6 @@ export class ToDiskRevertRepoToProductionRequestPayload {
 
   @IsString()
   readonly branch: string;
-
-  @IsString()
-  readonly userAlias: string;
-
-  @IsString()
-  readonly commitMessage: string;
 }
 
 export class ToDiskRevertRepoToProductionRequest {

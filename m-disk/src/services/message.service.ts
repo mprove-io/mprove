@@ -26,6 +26,7 @@ import { ToDiskRenameCatalogNode } from '../controllers/4_catalogs/to-disk-renam
 import { ToDiskPullRepo } from '../controllers/3_repos/to-disk-pull-repo';
 import { ToDiskMergeRepo } from '../controllers/3_repos/to-disk-merge-repo';
 import { ToDiskRevertRepoToLastCommit } from '../controllers/3_repos/to-disk-revert-repo-to-last-commit';
+import { ToDiskRevertRepoToProduction } from '../controllers/3_repos/to-disk-revert-repo-to-production';
 
 @Injectable()
 export class MessageService {
@@ -82,6 +83,8 @@ export class MessageService {
         return await ToDiskPushRepo(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit:
         return await ToDiskRevertRepoToLastCommit(request);
+      case api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction:
+        return await ToDiskRevertRepoToProduction(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
         return await ToDiskGetCatalogFiles(request);
