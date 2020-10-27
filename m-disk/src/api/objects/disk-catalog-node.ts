@@ -1,11 +1,12 @@
-import { IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 
 export class DiskCatalogNode {
   @IsString()
   id: string;
   // "p1/ec/s.view"
 
-  @IsString()
+  @IsBoolean()
   isFolder: boolean;
   // true
 
@@ -17,6 +18,7 @@ export class DiskCatalogNode {
   fileId?: string;
   // "ec___s.view"
 
-  @IsString()
+  @ValidateNested()
+  @Type(() => DiskCatalogNode)
   children?: DiskCatalogNode[];
 }

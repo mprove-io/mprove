@@ -53,7 +53,7 @@ export async function ToDiskDeleteBranch(
   if (repoId === constants.PROD_REPO_ID) {
     let isRemoteBranchExist = await git.isRemoteBranchExist({
       repoDir: repoDir,
-      branch: branch
+      remoteBranch: branch
     });
 
     if (isRemoteBranchExist === true) {
@@ -67,7 +67,7 @@ export async function ToDiskDeleteBranch(
 
   let isLocalBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: branch
+    localBranch: branch
   });
 
   if (isLocalBranchExist === true) {

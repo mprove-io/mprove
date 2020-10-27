@@ -65,7 +65,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         projectId: projectId,
         repoId: 'r1',
         fromBranch: 'master',
-        newBranch: 'b2'
+        newBranch: 'b2',
+        isFromRemote: false
       }
     };
 

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../../objects/_index';
 import * as apiEnums from '../../enums/_index';
 
@@ -14,10 +14,13 @@ export class ToDiskCreateBranchRequestPayload {
   readonly repoId: string;
 
   @IsString()
-  readonly fromBranch: string;
+  readonly newBranch: string;
 
   @IsString()
-  readonly newBranch: string;
+  readonly fromBranch: string;
+
+  @IsBoolean()
+  readonly isFromRemote: boolean;
 }
 
 export class ToDiskCreateBranchRequest {

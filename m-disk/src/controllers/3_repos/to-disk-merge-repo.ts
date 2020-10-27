@@ -43,7 +43,7 @@ export async function ToDiskMergeRepo(
 
   let isBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: branch
+    localBranch: branch
   });
   if (isBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
@@ -51,7 +51,7 @@ export async function ToDiskMergeRepo(
 
   let isTheirBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: theirBranch
+    localBranch: theirBranch
   });
   if (isTheirBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_THEIR_BRANCH_IS_NOT_EXIST);

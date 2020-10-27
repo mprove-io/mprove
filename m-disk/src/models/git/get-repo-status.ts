@@ -85,7 +85,7 @@ export async function getRepoStatus(item: {
 
   let isBranchExistRemote = await isRemoteBranchExist({
     repoDir: item.repoDir,
-    branch: currentBranchName
+    remoteBranch: currentBranchName
   });
   // RETURN NeedPush
   if (isBranchExistRemote === false) {

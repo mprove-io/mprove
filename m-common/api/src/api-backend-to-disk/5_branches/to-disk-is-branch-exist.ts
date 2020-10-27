@@ -14,6 +14,9 @@ export class ToDiskIsBranchExistRequestPayload {
 
   @IsString()
   readonly branch: string;
+
+  @IsBoolean()
+  readonly isRemote: boolean;
 }
 
 export class ToDiskIsBranchExistRequest {
@@ -38,6 +41,9 @@ export class ToDiskIsBranchExistResponsePayload {
 
   @IsString()
   readonly branch: string;
+
+  @IsBoolean()
+  readonly isRemote: boolean;
 
   @IsBoolean()
   readonly isBranchExist: boolean;

@@ -17,8 +17,9 @@ export async function ToDiskCreateBranch(
     organizationId,
     projectId,
     repoId,
+    newBranch,
     fromBranch,
-    newBranch
+    isFromRemote
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
@@ -42,27 +43,33 @@ export async function ToDiskCreateBranch(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  let isFromBranchExist = await git.isLocalBranchExist({
-    repoDir: repoDir,
-    branch: fromBranch
-  });
-  if (isFromBranchExist === false) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
-  }
-
   let isNewBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: newBranch
+    localBranch: newBranch
   });
   if (isNewBranchExist === true) {
     throw Error(api.ErEnum.M_DISK_BRANCH_ALREADY_EXIST);
+  }
+
+  let isFromBranchExist =
+    isFromRemote === true
+      ? await git.isRemoteBranchExist({
+          repoDir: repoDir,
+          remoteBranch: fromBranch
+        })
+      : await git.isLocalBranchExist({
+          repoDir: repoDir,
+          localBranch: fromBranch
+        });
+  if (isFromBranchExist === false) {
+    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
   }
 
   //
 
   await git.createBranch({
     repoDir: repoDir,
-    fromBranch: fromBranch,
+    fromBranch: isFromRemote === true ? `origin/${fromBranch}` : fromBranch,
     newBranch: newBranch
   });
 

@@ -38,7 +38,7 @@ export async function ToDiskGetCatalogNodes(
 
   let isBranchExist = await git.isLocalBranchExist({
     repoDir: repoDir,
-    branch: branch
+    localBranch: branch
   });
   if (isBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);

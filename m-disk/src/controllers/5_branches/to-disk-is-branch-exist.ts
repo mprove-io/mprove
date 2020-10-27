@@ -12,7 +12,13 @@ export async function ToDiskIsBranchExist(
     request
   );
   let { traceId } = requestValid.info;
-  let { organizationId, projectId, repoId, branch } = requestValid.payload;
+  let {
+    organizationId,
+    projectId,
+    repoId,
+    branch,
+    isRemote
+  } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
@@ -35,10 +41,16 @@ export async function ToDiskIsBranchExist(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  let isBranchExist = await git.isLocalBranchExist({
-    repoDir: repoDir,
-    branch: branch
-  });
+  let isBranchExist =
+    isRemote === true
+      ? await git.isRemoteBranchExist({
+          repoDir: repoDir,
+          remoteBranch: branch
+        })
+      : await git.isLocalBranchExist({
+          repoDir: repoDir,
+          localBranch: branch
+        });
 
   let response: api.ToDiskIsBranchExistResponse = {
     info: {
@@ -50,6 +62,7 @@ export async function ToDiskIsBranchExist(
       projectId: projectId,
       repoId: repoId,
       branch: branch,
+      isRemote: isRemote,
       isBranchExist: isBranchExist
     }
   };

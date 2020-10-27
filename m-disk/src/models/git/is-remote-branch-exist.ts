@@ -3,7 +3,7 @@ import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function isRemoteBranchExist(item: {
   repoDir: string;
-  branch: string;
+  remoteBranch: string;
 }): Promise<boolean> {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
@@ -11,7 +11,7 @@ export async function isRemoteBranchExist(item: {
 
   let ref = await nodegit.Branch.lookup(
     gitRepo,
-    `origin/${item.branch}`,
+    `origin/${item.remoteBranch}`,
     nodegit.Branch.BRANCH.REMOTE
   ).catch(e => {
     if (e?.message?.includes('cannot locate remote-tracking branch')) {
