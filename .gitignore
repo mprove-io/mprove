@@ -42,3 +42,7 @@ lerna-debug.log*
 # Tests
 coverage/
 .nyc_output
+
+# api
+m-backend/src/api
+m-disk/src/api
