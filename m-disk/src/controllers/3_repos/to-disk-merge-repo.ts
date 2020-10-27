@@ -19,6 +19,7 @@ export async function ToDiskMergeRepo(
     repoId,
     branch,
     theirBranch,
+    isTheirBranchRemote,
     userAlias
   } = requestValid.payload;
 
@@ -49,10 +50,16 @@ export async function ToDiskMergeRepo(
     throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
   }
 
-  let isTheirBranchExist = await git.isLocalBranchExist({
-    repoDir: repoDir,
-    localBranch: theirBranch
-  });
+  let isTheirBranchExist =
+    isTheirBranchRemote === true
+      ? await git.isRemoteBranchExist({
+          repoDir: repoDir,
+          remoteBranch: theirBranch
+        })
+      : await git.isLocalBranchExist({
+          repoDir: repoDir,
+          localBranch: theirBranch
+        });
   if (isTheirBranchExist === false) {
     throw Error(api.ErEnum.M_DISK_THEIR_BRANCH_IS_NOT_EXIST);
   }
@@ -74,8 +81,9 @@ export async function ToDiskMergeRepo(
     repoDir: repoDir,
     userAlias: userAlias,
     branch: branch,
-    theirBranch: theirBranch,
-    isTheirBranchRemote: false
+    theirBranch:
+      isTheirBranchRemote === true ? `origin/${theirBranch}` : theirBranch,
+    isTheirBranchRemote: isTheirBranchRemote
   });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(

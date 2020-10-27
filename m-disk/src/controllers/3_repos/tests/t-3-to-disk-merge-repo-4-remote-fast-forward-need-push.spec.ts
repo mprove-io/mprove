@@ -6,7 +6,7 @@ import { api } from '../../../barrels/api';
 import { MessageService } from '../../../services/message.service';
 import { helper } from '../../../barrels/helper';
 
-let testId = 't-3-to-disk-merge-repo-3';
+let testId = 't-3-to-disk-merge-repo-4';
 
 describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
   let messageService: MessageService;
@@ -14,7 +14,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectId = 'p1';
   let traceId = '123';
-  let goalRepoStatus = api.RepoStatusEnum.NeedResolve;
+  // NeedPush because we merge with different branch
+  let goalRepoStatus = api.RepoStatusEnum.NeedPush;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -54,7 +55,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
       }
     };
 
-    let createBranchRequest: api.ToDiskCreateBranchRequest = {
+    let r1_createBranchRequest: api.ToDiskCreateBranchRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
         traceId: traceId
@@ -69,7 +70,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
       }
     };
 
-    let r1_master_saveFileRequest: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_1: api.ToDiskSaveFileRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -84,7 +85,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
       }
     };
 
-    let r1_master_commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_1: api.ToDiskCommitRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -95,11 +96,11 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         repoId: 'r1',
         branch: 'master',
         userAlias: 'r1',
-        commitMessage: 'commitMessage-1'
+        commitMessage: 'r1-commitMessage-1'
       }
     };
 
-    let r1_b2_saveFileRequest: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_2: api.ToDiskSaveFileRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
@@ -108,13 +109,13 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         organizationId: organizationId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'b2',
+        branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
         content: '2'
       }
     };
 
-    let r1_b2_commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_2: api.ToDiskCommitRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
@@ -123,13 +124,27 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         organizationId: organizationId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'b2',
+        branch: 'master',
         userAlias: 'r1',
-        commitMessage: 'commitMessage-2'
+        commitMessage: 'r1-commitMessage-2'
       }
     };
 
-    let r1_b2_mergeRepoRequest: api.ToDiskMergeRepoRequest = {
+    let r1_master_pushRepoRequest: api.ToDiskPushRepoRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        userAlias: 'r1'
+      }
+    };
+
+    let b2_mergeRepoRequest: api.ToDiskMergeRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
         traceId: traceId
@@ -141,7 +156,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         branch: 'b2',
         userAlias: 'r1',
         theirBranch: 'master',
-        isTheirBranchRemote: false
+        isTheirBranchRemote: true
       }
     };
 
@@ -150,18 +165,19 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
 
     await helper.delay(1000);
 
-    await messageService.processRequest(createBranchRequest);
+    await messageService.processRequest(r1_master_saveFileRequest_1);
+    await messageService.processRequest(r1_master_commitRepoRequest_1);
 
-    await messageService.processRequest(r1_master_saveFileRequest);
-    await messageService.processRequest(r1_master_commitRepoRequest);
+    await messageService.processRequest(r1_createBranchRequest);
 
-    await messageService.processRequest(r1_b2_saveFileRequest);
-    await messageService.processRequest(r1_b2_commitRepoRequest);
+    await messageService.processRequest(r1_master_saveFileRequest_2);
+    await messageService.processRequest(r1_master_commitRepoRequest_2);
+    await messageService.processRequest(r1_master_pushRepoRequest);
 
-    let mergeRepoResponse = <api.ToDiskMergeRepoResponse>(
-      await messageService.processRequest(r1_b2_mergeRepoRequest)
+    let pullRepoResponse = <api.ToDiskPullRepoResponse>(
+      await messageService.processRequest(b2_mergeRepoRequest)
     );
 
-    expect(mergeRepoResponse.payload.repoStatus).toBe(goalRepoStatus);
+    expect(pullRepoResponse.payload.repoStatus).toBe(goalRepoStatus);
   });
 });

@@ -6,7 +6,7 @@ import { api } from '../../../barrels/api';
 import { MessageService } from '../../../services/message.service';
 import { helper } from '../../../barrels/helper';
 
-let testId = 't-3-to-disk-merge-repo-3';
+let testId = 't-3-to-disk-merge-repo-6';
 
 describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
   let messageService: MessageService;
@@ -99,6 +99,20 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
       }
     };
 
+    let r1_master_pushRepoRequest: api.ToDiskPushRepoRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        userAlias: 'r1'
+      }
+    };
+
     let r1_b2_saveFileRequest: api.ToDiskSaveFileRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
@@ -141,7 +155,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         branch: 'b2',
         userAlias: 'r1',
         theirBranch: 'master',
-        isTheirBranchRemote: false
+        isTheirBranchRemote: true
       }
     };
 
@@ -154,6 +168,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
 
     await messageService.processRequest(r1_master_saveFileRequest);
     await messageService.processRequest(r1_master_commitRepoRequest);
+    await messageService.processRequest(r1_master_pushRepoRequest);
 
     await messageService.processRequest(r1_b2_saveFileRequest);
     await messageService.processRequest(r1_b2_commitRepoRequest);

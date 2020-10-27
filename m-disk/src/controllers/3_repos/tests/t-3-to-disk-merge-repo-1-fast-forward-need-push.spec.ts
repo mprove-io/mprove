@@ -14,7 +14,7 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectId = 'p1';
   let traceId = '123';
-  // NeedPush because we merge with local branch
+  // NeedPush because we merge with different branch
   let goalRepoStatus = api.RepoStatusEnum.NeedPush;
 
   beforeEach(async () => {
@@ -141,7 +141,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         repoId: 'r1',
         branch: 'b2',
         userAlias: 'r1',
-        theirBranch: 'master'
+        theirBranch: 'master',
+        isTheirBranchRemote: false
       }
     };
 

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../../objects/_index';
 import * as apiEnums from '../../enums/_index';
 
@@ -18,6 +18,9 @@ export class ToDiskMergeRepoRequestPayload {
 
   @IsString()
   readonly theirBranch: string;
+
+  @IsBoolean()
+  readonly isTheirBranchRemote: boolean;
 
   @IsString()
   readonly userAlias: string;
