@@ -36,21 +36,23 @@ export async function ToDiskGetCatalogNodes(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  let isBranchExist = await git.isLocalBranchExist({
-    repoDir: repoDir,
-    localBranch: branch
-  });
-  if (isBranchExist === false) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
-  }
+  if (branch !== null && typeof branch !== 'undefined') {
+    let isBranchExist = await git.isLocalBranchExist({
+      repoDir: repoDir,
+      localBranch: branch
+    });
+    if (isBranchExist === false) {
+      throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
+    }
 
-  await git.checkoutBranch({
-    projectId: projectId,
-    projectDir: projectDir,
-    repoId: repoId,
-    repoDir: repoDir,
-    branchName: branch
-  });
+    await git.checkoutBranch({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      branchName: branch
+    });
+  }
 
   //
 

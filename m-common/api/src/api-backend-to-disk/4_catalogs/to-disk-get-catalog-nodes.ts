@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../../_index';
 import * as apiEnums from '../../enums/_index';
 
@@ -13,8 +13,9 @@ export class ToDiskGetCatalogNodesRequestPayload {
   @IsString()
   readonly repoId: string;
 
+  @IsOptional()
   @IsString()
-  readonly branch: string;
+  readonly branch?: string;
 }
 
 export class ToDiskGetCatalogNodesRequest {
