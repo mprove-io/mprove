@@ -15,7 +15,7 @@ export async function merge(item: {
   // try fast forward
 
   let signature = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
-  let mb = await gitRepo.mergeBranches(
+  await gitRepo.mergeBranches(
     item.branch,
     item.theirBranch,
     signature,

@@ -12,6 +12,8 @@ export * from './3_repos/to-disk-delete-dev-repo';
 export * from './3_repos/to-disk-merge-repo';
 export * from './3_repos/to-disk-pull-repo';
 export * from './3_repos/to-disk-push-repo';
+export * from './3_repos/to-disk-revert-repo-to-last-commit';
+export * from './3_repos/to-disk-revert-repo-to-production';
 
 export * from './4_catalogs/to-disk-get-catalog-files';
 export * from './4_catalogs/to-disk-get-catalog-nodes';

@@ -13,6 +13,8 @@ export enum ToDiskRequestInfoNameEnum {
   ToDiskMergeRepo = <any>'ToDiskMergeRepo',
   ToDiskPullRepo = <any>'ToDiskPullRepo',
   ToDiskPushRepo = <any>'ToDiskPushRepo',
+  ToDiskRevertRepoToLastCommit = <any>'ToDiskRevertRepoToLastCommit',
+  ToDiskRevertRepoToProduction = <any>'ToDiskRevertRepoToProduction',
 
   ToDiskGetCatalogFiles = <any>'ToDiskGetCatalogFiles',
   ToDiskGetCatalogNodes = <any>'ToDiskGetCatalogNodes',

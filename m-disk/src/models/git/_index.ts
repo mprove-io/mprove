@@ -11,3 +11,4 @@ export * from './add-changes-to-stage';
 export * from './get-repo-status';
 export * from './push-to-central';
 export * from './commit';
+export * from './revert-repo-to-last-commit';
