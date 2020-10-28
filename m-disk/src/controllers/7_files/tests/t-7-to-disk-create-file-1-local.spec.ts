@@ -2,13 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { constants } from '../../../barrels/constants';
 import { disk } from '../../../barrels/disk';
 import { api } from '../../../barrels/api';
-
 import { MessageService } from '../../../services/message.service';
 import { helper } from '../../../barrels/helper';
 
-let testId = 't-3-to-disk-revert-repo-to-last-commit-1';
+let testId = 't-7-to-disk-create-file-1';
 
-describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit}`, () => {
+describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskCreateFile}`, () => {
   let messageService: MessageService;
   let traceId = '123';
   let organizationId = testId;
@@ -53,9 +52,9 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit
       }
     };
 
-    let saveFileRequest: api.ToDiskSaveFileRequest = {
+    let createFileRequest: api.ToDiskCreateFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
         traceId: traceId
       },
       payload: {
@@ -63,22 +62,9 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
-        fileNodeId: `${projectId}/readme.md`,
-        content: '1',
+        parentNodeId: `${projectId}/`,
+        fileName: 's.view',
         userAlias: 'r1'
-      }
-    };
-
-    let revertRepoToLastCommitRequest: api.ToDiskRevertRepoToLastCommitRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r1',
-        branch: 'master'
       }
     };
 
@@ -87,12 +73,12 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit
 
     await helper.delay(1000);
 
-    await messageService.processRequest(saveFileRequest);
-
-    let resp: api.ToDiskRevertRepoToLastCommitResponse = await messageService.processRequest(
-      revertRepoToLastCommitRequest
+    let createFileResponse = <api.ToDiskCreateFileResponse>(
+      await messageService.processRequest(createFileRequest)
     );
 
-    expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+    expect(createFileResponse.payload.repoStatus).toBe(
+      api.RepoStatusEnum.NeedCommit
+    );
   });
 });

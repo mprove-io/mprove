@@ -20,7 +20,8 @@ export async function ToDiskCreateFile(
     repoId,
     branch,
     fileName,
-    parentNodeId
+    parentNodeId,
+    userAlias
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
@@ -29,8 +30,9 @@ export async function ToDiskCreateFile(
 
   let parent = parentNodeId.substring(projectId.length + 1);
   parent = parent.length > 0 ? parent + '/' : parent;
-  let parentPath = repoDir + '/' + parent;
+  let relativeFilePath = parent + '/' + fileName;
 
+  let parentPath = repoDir + '/' + parent;
   let filePath = parentPath + fileName;
   let content = getContentFromFileName({ fileName: fileName });
 
@@ -85,6 +87,22 @@ export async function ToDiskCreateFile(
   });
 
   await git.addChangesToStage({ repoDir: repoDir });
+
+  if (repoId === constants.PROD_REPO_ID) {
+    await git.commit({
+      repoDir: repoDir,
+      userAlias: userAlias,
+      commitMessage: `created ${relativeFilePath}`
+    });
+
+    await git.pushToCentral({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      branch: branch
+    });
+  }
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({

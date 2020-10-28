@@ -79,7 +79,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         repoId: 'r1',
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
-        content: '1'
+        content: '1',
+        userAlias: 'r1'
       }
     };
 
@@ -109,7 +110,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, () => {
         repoId: 'r1',
         branch: 'b2',
         fileName: 's.view',
-        parentNodeId: `${projectId}/`
+        parentNodeId: `${projectId}/`,
+        userAlias: 'r1'
       }
     };
 

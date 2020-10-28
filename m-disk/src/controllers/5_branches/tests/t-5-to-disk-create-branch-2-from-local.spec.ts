@@ -63,7 +63,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch}`, () => 
         repoId: 'r1',
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
-        content: '1'
+        content: '1',
+        userAlias: 'r1'
       }
     };
 

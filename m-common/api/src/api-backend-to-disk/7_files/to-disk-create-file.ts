@@ -21,6 +21,9 @@ export class ToDiskCreateFileRequestPayload {
 
   @IsString()
   readonly fileName: string;
+
+  @IsString()
+  readonly userAlias: string;
 }
 
 export class ToDiskCreateFileRequest {

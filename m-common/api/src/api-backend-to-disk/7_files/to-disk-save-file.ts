@@ -21,6 +21,9 @@ export class ToDiskSaveFileRequestPayload {
 
   @IsString()
   readonly content: string;
+
+  @IsString()
+  readonly userAlias: string;
 }
 
 export class ToDiskSaveFileRequest {

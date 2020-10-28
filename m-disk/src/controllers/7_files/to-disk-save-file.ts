@@ -19,14 +19,16 @@ export async function ToDiskSaveFile(
     repoId,
     branch,
     fileNodeId,
-    content
+    content,
+    userAlias
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 
-  let filePath = repoDir + '/' + fileNodeId.substring(projectId.length + 1);
+  let relativeFilePath = fileNodeId.substring(projectId.length + 1);
+  let filePath = repoDir + '/' + relativeFilePath;
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
@@ -72,6 +74,22 @@ export async function ToDiskSaveFile(
   });
 
   await git.addChangesToStage({ repoDir: repoDir });
+
+  if (repoId === constants.PROD_REPO_ID) {
+    await git.commit({
+      repoDir: repoDir,
+      userAlias: userAlias,
+      commitMessage: `created ${relativeFilePath}`
+    });
+
+    await git.pushToCentral({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      branch: branch
+    });
+  }
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({

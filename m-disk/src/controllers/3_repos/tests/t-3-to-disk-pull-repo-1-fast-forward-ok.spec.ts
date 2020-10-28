@@ -76,7 +76,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
         repoId: 'r1',
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
-        content: '1'
+        content: '1',
+        userAlias: 'r1'
       }
     };
 
@@ -106,7 +107,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskPullRepo}`, () => {
         repoId: 'r1',
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
-        content: '2'
+        content: '2',
+        userAlias: 'r1'
       }
     };
 

@@ -65,7 +65,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction
         repoId: 'r1',
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
-        content: content1
+        content: content1,
+        userAlias: 'r1'
       }
     };
 
@@ -109,7 +110,8 @@ describe(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction
         repoId: 'r1',
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
-        content: '2'
+        content: '2',
+        userAlias: 'r1'
       }
     };
 

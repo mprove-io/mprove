@@ -3,7 +3,6 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { MyRegex } from '../../models/my-regex';
 import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskDeleteFile(
@@ -19,15 +18,16 @@ export async function ToDiskDeleteFile(
     projectId,
     repoId,
     branch,
-    fileNodeId
+    fileNodeId,
+    userAlias
   } = requestValid.payload;
 
   let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 
-  let fileAbsolutePath =
-    repoDir + '/' + fileNodeId.substring(projectId.length + 1);
+  let relativeFilePath = fileNodeId.substring(projectId.length + 1);
+  let filePath = repoDir + '/' + relativeFilePath;
 
   //
 
@@ -62,16 +62,32 @@ export async function ToDiskDeleteFile(
     branchName: branch
   });
 
-  let isFileExist = await disk.isPathExist(fileAbsolutePath);
+  let isFileExist = await disk.isPathExist(filePath);
   if (isFileExist === false) {
     throw Error(api.ErEnum.M_DISK_FILE_IS_NOT_EXIST);
   }
 
   //
 
-  await disk.removePath(fileAbsolutePath);
+  await disk.removePath(filePath);
 
   await git.addChangesToStage({ repoDir: repoDir });
+
+  if (repoId === constants.PROD_REPO_ID) {
+    await git.commit({
+      repoDir: repoDir,
+      userAlias: userAlias,
+      commitMessage: `deleted ${relativeFilePath}`
+    });
+
+    await git.pushToCentral({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      repoDir: repoDir,
+      branch: branch
+    });
+  }
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
     await git.getRepoStatus({

@@ -18,6 +18,9 @@ export class ToDiskDeleteFileRequestPayload {
 
   @IsString()
   readonly fileNodeId: string;
+
+  @IsString()
+  readonly userAlias: string;
 }
 
 export class ToDiskDeleteFileRequest {
