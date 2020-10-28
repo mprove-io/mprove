@@ -43,7 +43,7 @@
     "@nestjs/testing": "^7.0.0",
     "@types/express": "^4.17.3",
     "@types/fs-extra": "^9.0.1",
-    "@types/jest": "26.0.10",
+    "@types/jest": "^26.0.10",
     "@types/node": "^13.9.1",
     "@types/nodegit": "^0.26.10",
     "@types/supertest": "^2.0.8",
@@ -55,7 +55,7 @@
     "jest": "26.4.2",
     "prettier": "1.19.1",
     "supertest": "^4.0.2",
-    "ts-jest": "26.2.0",
+    "ts-jest": "26.4.3",
     "ts-loader": "^6.2.1",
     "ts-node": "9.0.0",
     "tsconfig-paths": "^3.9.0"
@@ -68,11 +68,14 @@
     ],
     "rootDir": "src",
     "testRegex": ".spec.ts$",
-    "testTimeout": 30000,
+    "testTimeout": 60000,
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFiles": [
+      "./jest-setup-file.ts"
+    ]
   }
 }
