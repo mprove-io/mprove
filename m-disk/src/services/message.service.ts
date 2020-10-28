@@ -27,6 +27,7 @@ import { ToDiskPullRepo } from '../controllers/3_repos/to-disk-pull-repo';
 import { ToDiskMergeRepo } from '../controllers/3_repos/to-disk-merge-repo';
 import { ToDiskRevertRepoToLastCommit } from '../controllers/3_repos/to-disk-revert-repo-to-last-commit';
 import { ToDiskRevertRepoToProduction } from '../controllers/3_repos/to-disk-revert-repo-to-production';
+import { ToDiskSeedProject } from '../controllers/8_seed/to-disk-seed-project';
 
 @Injectable()
 export class MessageService {
@@ -115,6 +116,9 @@ export class MessageService {
         return await ToDiskGetFile(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskSaveFile:
         return await ToDiskSaveFile(request);
+
+      case api.ToDiskRequestInfoNameEnum.ToDiskSeedProject:
+        return await ToDiskSeedProject(request);
 
       default:
         throw Error(api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME);
