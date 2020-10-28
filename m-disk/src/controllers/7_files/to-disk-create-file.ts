@@ -88,7 +88,7 @@ export async function ToDiskCreateFile(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  if (repoId === constants.PROD_REPO_ID) {
+  if (repoId === api.PROD_REPO_ID) {
     await git.commit({
       repoDir: repoDir,
       userAlias: userAlias,
@@ -153,19 +153,19 @@ function getContentFromFileName(item: { fileName: string }) {
   let ext: any = rExt ? rExt[1] : '';
 
   switch (ext) {
-    case constants.EXT_MD:
+    case api.EXT_MD:
       content = '';
       break;
-    case constants.EXT_DASHBOARD:
+    case api.EXT_DASHBOARD:
       content = `dashboard: ${part}`;
       break;
-    case constants.EXT_MODEL:
+    case api.EXT_MODEL:
       content = `model: ${part}`;
       break;
-    case constants.EXT_VIEW:
+    case api.EXT_VIEW:
       content = `view: ${part}`;
       break;
-    case constants.EXT_UDF:
+    case api.EXT_UDF:
       content = `udf: ${part}`;
       break;
     default:

@@ -59,7 +59,7 @@ test(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskCreateFile}`, async () => 
     payload: {
       organizationId: organizationId,
       projectId: projectId,
-      repoId: constants.PROD_REPO_ID,
+      repoId: api.PROD_REPO_ID,
       branch: 'master',
       parentNodeId: `${projectId}/`,
       fileName: 's.view',

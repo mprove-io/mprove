@@ -29,6 +29,7 @@ import { ToDiskPullRepoController } from './controllers/to-disk/3_repos/to-disk-
 import { ToDiskMergeRepoController } from './controllers/to-disk/3_repos/to-disk-merge-repo.controller';
 import { ToDiskRevertRepoToLastCommitController } from './controllers/to-disk/3_repos/to-disk-revert-repo-to-last-commit.controller';
 import { ToDiskRevertRepoToProductionController } from './controllers/to-disk/3_repos/to-disk-revert-repo-to-production.controller';
+import { ToDiskSeedProjectController } from './controllers/to-disk/8_seed/to-disk-seed-project.controller';
 
 @Module({
   imports: [
@@ -82,7 +83,9 @@ import { ToDiskRevertRepoToProductionController } from './controllers/to-disk/3_
     ToDiskCreateFileController,
     ToDiskDeleteFileController,
     ToDiskGetFileController,
-    ToDiskSaveFileController
+    ToDiskSaveFileController,
+
+    ToDiskSeedProjectController
   ],
   providers: [RabbitService]
 })

@@ -36,7 +36,7 @@ export async function ToDiskDeleteBranch(
     throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
   }
 
-  if (branch === constants.BRANCH_MASTER) {
+  if (branch === api.BRANCH_MASTER) {
     throw Error(api.ErEnum.M_DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED);
   }
 
@@ -45,12 +45,12 @@ export async function ToDiskDeleteBranch(
     projectDir: projectDir,
     repoId: repoId,
     repoDir: repoDir,
-    branchName: constants.BRANCH_MASTER
+    branchName: api.BRANCH_MASTER
   });
 
   let errorIfNoLocalBranch = true;
 
-  if (repoId === constants.PROD_REPO_ID) {
+  if (repoId === api.PROD_REPO_ID) {
     let isRemoteBranchExist = await git.isRemoteBranchExist({
       repoDir: repoDir,
       remoteBranch: branch

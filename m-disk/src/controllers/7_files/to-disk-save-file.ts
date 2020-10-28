@@ -75,7 +75,7 @@ export async function ToDiskSaveFile(
 
   await git.addChangesToStage({ repoDir: repoDir });
 
-  if (repoId === constants.PROD_REPO_ID) {
+  if (repoId === api.PROD_REPO_ID) {
     await git.commit({
       repoDir: repoDir,
       userAlias: userAlias,

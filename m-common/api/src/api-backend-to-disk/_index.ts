@@ -31,3 +31,5 @@ export * from './7_files/to-disk-create-file';
 export * from './7_files/to-disk-delete-file';
 export * from './7_files/to-disk-get-file';
 export * from './7_files/to-disk-save-file';
+
+export * from './8_seed/to-disk-seed-project';

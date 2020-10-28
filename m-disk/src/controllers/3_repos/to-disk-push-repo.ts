@@ -66,8 +66,8 @@ export async function ToDiskPushRepo(
     branch: branch
   });
 
-  if (repoId !== constants.PROD_REPO_ID) {
-    let prodDir = `${projectDir}/${constants.PROD_REPO_ID}`;
+  if (repoId !== api.PROD_REPO_ID) {
+    let prodDir = `${projectDir}/${api.PROD_REPO_ID}`;
 
     let isProdBranchExist = await git.isLocalBranchExist({
       repoDir: prodDir,

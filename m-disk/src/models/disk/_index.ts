@@ -1,4 +1,5 @@
 export * from './is-path-exist';
+export * from './empty-dir';
 export * from './ensure-dir';
 export * from './ensure-file';
 export * from './read-file';

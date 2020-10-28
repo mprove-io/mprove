@@ -1,5 +1,6 @@
 import { constants } from '../../barrels/constants';
 import { disk } from '../../barrels/disk';
+import { api } from '../../barrels/api';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
 import { pushToCentral } from './push-to-central';
 import * as nodegit from 'nodegit';
@@ -12,7 +13,7 @@ export async function prepareCentralAndProd(item: {
   userAlias: string;
 }) {
   let centralDir = `${item.projectDir}/${constants.CENTRAL_REPO_ID}`;
-  let prodDir = `${item.projectDir}/${constants.PROD_REPO_ID}`;
+  let prodDir = `${item.projectDir}/${api.PROD_REPO_ID}`;
 
   await disk.ensureDir(centralDir);
   await disk.ensureDir(prodDir);
@@ -35,8 +36,8 @@ export async function prepareCentralAndProd(item: {
   await pushToCentral({
     projectId: item.projectId,
     projectDir: item.projectDir,
-    repoId: constants.PROD_REPO_ID,
+    repoId: api.PROD_REPO_ID,
     repoDir: prodDir,
-    branch: constants.BRANCH_MASTER
+    branch: api.BRANCH_MASTER
   });
 }
