@@ -159,12 +159,10 @@ test(testId, async () => {
   await messageService.processRequest(r1_b2_createFileRequest);
   await messageService.processRequest(r1_b2_commitRepoRequest);
 
-  let mergeRepoResponse = <api.ToDiskMergeRepoResponse>(
+  let resp = <api.ToDiskMergeRepoResponse>(
     await messageService.processRequest(r1_b2_mergeRepoRequest)
   );
 
   // NeedPush because we merge with different branch
-  expect(mergeRepoResponse.payload.repoStatus).toBe(
-    api.RepoStatusEnum.NeedPush
-  );
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
 });

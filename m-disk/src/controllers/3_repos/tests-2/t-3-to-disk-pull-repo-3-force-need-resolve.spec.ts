@@ -201,11 +201,9 @@ test(testId, async () => {
   await messageService.processRequest(r2_master_saveFileRequest);
   await messageService.processRequest(r2_master_commitRepoRequest);
 
-  let pullRepoResponse = <api.ToDiskPullRepoResponse>(
+  let resp = <api.ToDiskPullRepoResponse>(
     await messageService.processRequest(r2_master_pullRepoRequest)
   );
 
-  expect(pullRepoResponse.payload.repoStatus).toBe(
-    api.RepoStatusEnum.NeedResolve
-  );
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedResolve);
 });

@@ -77,14 +77,14 @@ test(testId, async () => {
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  let isProjectExistResponse_1 = <api.ToDiskIsProjectExistResponse>(
+  let resp1 = <api.ToDiskIsProjectExistResponse>(
     await messageService.processRequest(isProjectExistRequest_1)
   );
 
-  let isProjectExistResponse_2 = <api.ToDiskIsProjectExistResponse>(
+  let resp2 = <api.ToDiskIsProjectExistResponse>(
     await messageService.processRequest(isProjectExistRequest_2)
   );
 
-  expect(isProjectExistResponse_1.payload.isProjectExist).toBe(true);
-  expect(isProjectExistResponse_2.payload.isProjectExist).toBe(false);
+  expect(resp1.payload.isProjectExist).toBe(true);
+  expect(resp2.payload.isProjectExist).toBe(false);
 });

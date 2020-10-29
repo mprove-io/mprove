@@ -174,10 +174,10 @@ test(testId, async () => {
   await messageService.processRequest(r1_master_commitRepoRequest_2);
   await messageService.processRequest(r1_master_pushRepoRequest);
 
-  let pullRepoResponse = <api.ToDiskPullRepoResponse>(
+  let resp = <api.ToDiskPullRepoResponse>(
     await messageService.processRequest(b2_mergeRepoRequest)
   );
 
   // NeedPush because we merge with different branch
-  expect(pullRepoResponse.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
 });

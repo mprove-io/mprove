@@ -3,9 +3,8 @@ import { constants } from '../../../barrels/constants';
 import { disk } from '../../../barrels/disk';
 import { api } from '../../../barrels/api';
 import { MessageService } from '../../../services/message.service';
-import { helper } from '../../../barrels/helper';
 
-let testId = 't-7-to-disk-save-file-2';
+let testId = 't-6-to-disk-create-folder';
 
 let traceId = '123';
 let organizationId = testId;
@@ -53,28 +52,27 @@ test(testId, async () => {
     }
   };
 
-  let saveFileRequest: api.ToDiskSaveFileRequest = {
+  let createFolderRequest: api.ToDiskCreateFolderRequest = {
     info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
       traceId: traceId
     },
     payload: {
       organizationId: organizationId,
       projectId: projectId,
-      repoId: api.PROD_REPO_ID,
+      repoId: 'r1',
       branch: 'master',
-      fileNodeId: `${projectId}/readme.md`,
-      content: '1',
-      userAlias: 'r1'
+      parentNodeId: `${projectId}/`,
+      folderName: 'fo1'
     }
   };
 
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  let resp = <api.ToDiskSaveFileResponse>(
-    await messageService.processRequest(saveFileRequest)
+  let resp = <api.ToDiskCreateFolderResponse>(
+    await messageService.processRequest(createFolderRequest)
   );
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedCommit);
 });

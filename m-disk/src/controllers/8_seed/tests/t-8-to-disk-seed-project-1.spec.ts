@@ -42,10 +42,10 @@ test(testId, async () => {
     }
   };
 
-  let seedProjectResponse = <api.ToDiskSeedProjectResponse>(
+  let resp = <api.ToDiskSeedProjectResponse>(
     await messageService.processRequest(seedProjectRequest)
   );
 
-  expect(seedProjectResponse.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
-  expect(seedProjectResponse.payload.files[0].content).toBe('# text');
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+  expect(resp.payload.files[0].content).toBe('# text');
 });

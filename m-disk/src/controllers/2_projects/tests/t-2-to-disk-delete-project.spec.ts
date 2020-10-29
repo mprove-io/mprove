@@ -78,9 +78,9 @@ test(testId, async () => {
   await messageService.processRequest(createProjectRequest);
   await messageService.processRequest(deleteProjectRequest);
 
-  let isProjectExistResponse = <api.ToDiskIsProjectExistResponse>(
+  let resp = <api.ToDiskIsProjectExistResponse>(
     await messageService.processRequest(isProjectExistRequest)
   );
 
-  expect(isProjectExistResponse.payload.isProjectExist).toBe(false);
+  expect(resp.payload.isProjectExist).toBe(false);
 });

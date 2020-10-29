@@ -5,7 +5,7 @@ import { api } from '../../../barrels/api';
 import { MessageService } from '../../../services/message.service';
 import { helper } from '../../../barrels/helper';
 
-let testId = 't-7-to-disk-save-file-2';
+let testId = 't-6-to-disk-delete-folder';
 
 let traceId = '123';
 let organizationId = testId;
@@ -53,28 +53,59 @@ test(testId, async () => {
     }
   };
 
-  let saveFileRequest: api.ToDiskSaveFileRequest = {
+  let createFolderRequest: api.ToDiskCreateFolderRequest = {
     info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
       traceId: traceId
     },
     payload: {
       organizationId: organizationId,
       projectId: projectId,
-      repoId: api.PROD_REPO_ID,
+      repoId: 'r1',
       branch: 'master',
-      fileNodeId: `${projectId}/readme.md`,
-      content: '1',
-      userAlias: 'r1'
+      parentNodeId: `${projectId}/`,
+      folderName: 'fo1'
+    }
+  };
+
+  let deleteFolderRequest: api.ToDiskDeleteFolderRequest = {
+    info: {
+      name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteFolder,
+      traceId: traceId
+    },
+    payload: {
+      organizationId: organizationId,
+      projectId: projectId,
+      repoId: 'r1',
+      branch: 'master',
+      folderNodeId: `${projectId}/fo1`
+    }
+  };
+
+  let commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    info: {
+      name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+      traceId: traceId
+    },
+    payload: {
+      organizationId: organizationId,
+      projectId: projectId,
+      repoId: 'r1',
+      branch: 'master',
+      userAlias: 'r1',
+      commitMessage: 'commitMessage-1'
     }
   };
 
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  let resp = <api.ToDiskSaveFileResponse>(
-    await messageService.processRequest(saveFileRequest)
+  await messageService.processRequest(createFolderRequest);
+  await messageService.processRequest(commitRepoRequest);
+
+  let resp = <api.ToDiskDeleteFolderResponse>(
+    await messageService.processRequest(deleteFolderRequest)
   );
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedCommit);
 });

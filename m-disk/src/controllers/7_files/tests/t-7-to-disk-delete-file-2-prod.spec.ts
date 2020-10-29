@@ -71,11 +71,9 @@ test(testId, async () => {
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  await helper.delay(1000);
-
-  let createFileResponse = <api.ToDiskCreateFileResponse>(
+  let resp = <api.ToDiskDeleteFolderResponse>(
     await messageService.processRequest(deleteFileRequest)
   );
 
-  expect(createFileResponse.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
 });

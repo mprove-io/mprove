@@ -72,13 +72,9 @@ test(testId, async () => {
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  await helper.delay(1000);
-
-  let createFileResponse = <api.ToDiskCreateFileResponse>(
+  let resp = <api.ToDiskSaveFileResponse>(
     await messageService.processRequest(saveFileRequest)
   );
 
-  expect(createFileResponse.payload.repoStatus).toBe(
-    api.RepoStatusEnum.NeedCommit
-  );
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedCommit);
 });

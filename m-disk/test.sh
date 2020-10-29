@@ -7,6 +7,7 @@ yarn test src/controllers/2_projects/tests
 yarn test src/controllers/3_repos/tests-1
 yarn test src/controllers/3_repos/tests-2
 yarn test src/controllers/5_branches/tests
+yarn test src/controllers/6_folders/tests
 yarn test src/controllers/7_files/tests
 yarn test src/controllers/8_seed/tests
 if ((failures == 0)); then

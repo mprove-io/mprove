@@ -66,9 +66,9 @@ test(testId, async () => {
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  let isProjectExistResponse = <api.ToDiskIsProjectExistResponse>(
+  let resp = <api.ToDiskIsProjectExistResponse>(
     await messageService.processRequest(isProjectExistRequest)
   );
 
-  expect(isProjectExistResponse.payload.isProjectExist).toBe(true);
+  expect(resp.payload.isProjectExist).toBe(true);
 });

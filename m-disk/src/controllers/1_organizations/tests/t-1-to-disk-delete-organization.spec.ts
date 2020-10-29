@@ -60,9 +60,9 @@ test(testId, async () => {
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(deleteOrganizationRequest);
 
-  let isOrganizationExistResponse = <api.ToDiskIsOrganizationExistResponse>(
+  let resp = <api.ToDiskIsOrganizationExistResponse>(
     await messageService.processRequest(isOrganizationExistRequest)
   );
 
-  expect(isOrganizationExistResponse.payload.isOrganizationExist).toBe(false);
+  expect(resp.payload.isOrganizationExist).toBe(false);
 });

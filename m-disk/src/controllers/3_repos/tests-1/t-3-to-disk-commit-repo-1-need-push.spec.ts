@@ -91,8 +91,8 @@ test(testId, async () => {
 
   await messageService.processRequest(saveFileRequest);
 
-  let resp1: api.ToDiskGetFileResponse = await messageService.processRequest(
+  let resp: api.ToDiskGetFileResponse = await messageService.processRequest(
     commitRepoRequest
   );
-  expect(resp1.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
 });

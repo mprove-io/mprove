@@ -53,7 +53,7 @@ test(testId, async () => {
     }
   };
 
-  let r1_master_saveFileRequest_1: api.ToDiskSaveFileRequest = {
+  let saveFileRequest: api.ToDiskSaveFileRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
       traceId: traceId
@@ -69,7 +69,7 @@ test(testId, async () => {
     }
   };
 
-  let r1_master_commitRepoRequest_1: api.ToDiskCommitRepoRequest = {
+  let commitRepoRequest: api.ToDiskCommitRepoRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
       traceId: traceId
@@ -84,7 +84,7 @@ test(testId, async () => {
     }
   };
 
-  let r1_master_pushRepoRequest: api.ToDiskPushRepoRequest = {
+  let pushRepoRequest: api.ToDiskPushRepoRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
       traceId: traceId
@@ -98,7 +98,7 @@ test(testId, async () => {
     }
   };
 
-  let r1_createBranchRequest: api.ToDiskCreateBranchRequest = {
+  let createBranchRequest: api.ToDiskCreateBranchRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
       traceId: traceId
@@ -113,7 +113,7 @@ test(testId, async () => {
     }
   };
 
-  let r1_isBranchExistRequest: api.ToDiskIsBranchExistRequest = {
+  let isBranchExistRequest: api.ToDiskIsBranchExistRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
       traceId: traceId
@@ -132,15 +132,15 @@ test(testId, async () => {
 
   await helper.delay(1000);
 
-  await messageService.processRequest(r1_master_saveFileRequest_1);
-  await messageService.processRequest(r1_master_commitRepoRequest_1);
-  await messageService.processRequest(r1_master_pushRepoRequest);
+  await messageService.processRequest(saveFileRequest);
+  await messageService.processRequest(commitRepoRequest);
+  await messageService.processRequest(pushRepoRequest);
 
-  await messageService.processRequest(r1_createBranchRequest);
+  await messageService.processRequest(createBranchRequest);
 
-  let isBranchExistResponse = <api.ToDiskIsBranchExistResponse>(
-    await messageService.processRequest(r1_isBranchExistRequest)
+  let resp = <api.ToDiskIsBranchExistResponse>(
+    await messageService.processRequest(isBranchExistRequest)
   );
 
-  expect(isBranchExistResponse.payload.isBranchExist).toBe(true);
+  expect(resp.payload.isBranchExist).toBe(true);
 });

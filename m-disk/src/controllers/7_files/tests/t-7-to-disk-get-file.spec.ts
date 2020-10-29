@@ -70,11 +70,9 @@ test(testId, async () => {
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  await helper.delay(1000);
-
-  let getFileResponse = <api.ToDiskGetFileResponse>(
+  let resp = <api.ToDiskGetFileResponse>(
     await messageService.processRequest(getFileRequest)
   );
 
-  expect(getFileResponse.payload.content).toBe('# P1');
+  expect(resp.payload.content).toBe('# P1');
 });

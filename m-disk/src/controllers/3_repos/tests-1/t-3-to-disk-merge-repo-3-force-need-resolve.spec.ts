@@ -159,11 +159,9 @@ test(testId, async () => {
   await messageService.processRequest(r1_b2_saveFileRequest);
   await messageService.processRequest(r1_b2_commitRepoRequest);
 
-  let mergeRepoResponse = <api.ToDiskMergeRepoResponse>(
+  let resp = <api.ToDiskMergeRepoResponse>(
     await messageService.processRequest(r1_b2_mergeRepoRequest)
   );
 
-  expect(mergeRepoResponse.payload.repoStatus).toBe(
-    api.RepoStatusEnum.NeedResolve
-  );
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedResolve);
 });

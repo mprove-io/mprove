@@ -167,9 +167,9 @@ test(testId, async () => {
   await messageService.processRequest(r1_master_commitRepoRequest_2);
   await messageService.processRequest(r1_master_pushRepoRequest);
 
-  let pullRepoResponse = <api.ToDiskPullRepoResponse>(
+  let resp = <api.ToDiskPullRepoResponse>(
     await messageService.processRequest(r2_pullRepoRequest)
   );
 
-  expect(pullRepoResponse.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
 });
