@@ -3,14 +3,11 @@ import { constants } from '../../../barrels/constants';
 import { disk } from '../../../barrels/disk';
 import { api } from '../../../barrels/api';
 import { MessageService } from '../../../services/message.service';
-import { helper } from '../../../barrels/helper';
 
-let testId = 't-7-to-disk-create-file-1';
+let testId = 't-1-to-disk-is-organization-exist';
 
 let traceId = '123';
 let organizationId = testId;
-let projectId = 'p1';
-
 let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
 
 let messageService: MessageService;
@@ -40,45 +37,36 @@ test(testId, async () => {
     }
   };
 
-  let createProjectRequest: api.ToDiskCreateProjectRequest = {
+  let isOrganizationExistRequest_1: api.ToDiskIsOrganizationExistRequest = {
     info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+      name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
       traceId: traceId
     },
     payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
+      organizationId: organizationId
     }
   };
 
-  let createFileRequest: api.ToDiskCreateFileRequest = {
+  let isOrganizationExistRequest_2: api.ToDiskIsOrganizationExistRequest = {
     info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+      name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
       traceId: traceId
     },
     payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      parentNodeId: `${projectId}/`,
-      fileName: 's.view',
-      userAlias: 'r1'
+      organizationId: 'unknown_org'
     }
   };
 
   await messageService.processRequest(createOrganizationRequest);
-  await messageService.processRequest(createProjectRequest);
 
-  await helper.delay(1000);
-
-  let createFileResponse = <api.ToDiskCreateFileResponse>(
-    await messageService.processRequest(createFileRequest)
+  let isOrganizationExistResponse_1 = <api.ToDiskIsOrganizationExistResponse>(
+    await messageService.processRequest(isOrganizationExistRequest_1)
   );
 
-  expect(createFileResponse.payload.repoStatus).toBe(
-    api.RepoStatusEnum.NeedCommit
+  let isOrganizationExistResponse_2 = <api.ToDiskIsOrganizationExistResponse>(
+    await messageService.processRequest(isOrganizationExistRequest_2)
   );
+
+  expect(isOrganizationExistResponse_1.payload.isOrganizationExist).toBe(true);
+  expect(isOrganizationExistResponse_2.payload.isOrganizationExist).toBe(false);
 });

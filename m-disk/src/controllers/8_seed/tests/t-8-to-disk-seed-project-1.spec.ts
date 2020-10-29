@@ -6,11 +6,13 @@ import { MessageService } from '../../../services/message.service';
 
 let testId = 't-8-to-disk-seed-project-1';
 
-let messageService: MessageService;
 let traceId = '123';
 let organizationId = testId;
 let projectId = 'project_1';
+
 let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+
+let messageService: MessageService;
 
 beforeEach(async () => {
   let moduleRef: TestingModule = await Test.createTestingModule({
@@ -26,7 +28,7 @@ beforeEach(async () => {
   }
 });
 
-test(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskSeedProject}`, async () => {
+test(testId, async () => {
   let seedProjectRequest: api.ToDiskSeedProjectRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskSeedProject,

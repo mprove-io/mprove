@@ -7,11 +7,13 @@ import { helper } from '../../../barrels/helper';
 
 let testId = 't-3-to-disk-merge-repo-5';
 
-let messageService: MessageService;
 let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
+
 let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+
+let messageService: MessageService;
 
 beforeEach(async () => {
   let moduleRef: TestingModule = await Test.createTestingModule({
@@ -27,7 +29,7 @@ beforeEach(async () => {
   }
 });
 
-test(`${testId} ${api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo}`, async () => {
+test(testId, async () => {
   let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,

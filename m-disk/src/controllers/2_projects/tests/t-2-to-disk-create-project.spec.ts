@@ -3,9 +3,8 @@ import { constants } from '../../../barrels/constants';
 import { disk } from '../../../barrels/disk';
 import { api } from '../../../barrels/api';
 import { MessageService } from '../../../services/message.service';
-import { helper } from '../../../barrels/helper';
 
-let testId = 't-7-to-disk-create-file-1';
+let testId = 't-2-to-disk-create-project';
 
 let traceId = '123';
 let organizationId = testId;
@@ -53,32 +52,23 @@ test(testId, async () => {
     }
   };
 
-  let createFileRequest: api.ToDiskCreateFileRequest = {
+  let isProjectExistRequest: api.ToDiskIsProjectExistRequest = {
     info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+      name: api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist,
       traceId: traceId
     },
     payload: {
       organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      parentNodeId: `${projectId}/`,
-      fileName: 's.view',
-      userAlias: 'r1'
+      projectId: projectId
     }
   };
 
   await messageService.processRequest(createOrganizationRequest);
   await messageService.processRequest(createProjectRequest);
 
-  await helper.delay(1000);
-
-  let createFileResponse = <api.ToDiskCreateFileResponse>(
-    await messageService.processRequest(createFileRequest)
+  let isProjectExistResponse = <api.ToDiskIsProjectExistResponse>(
+    await messageService.processRequest(isProjectExistRequest)
   );
 
-  expect(createFileResponse.payload.repoStatus).toBe(
-    api.RepoStatusEnum.NeedCommit
-  );
+  expect(isProjectExistResponse.payload.isProjectExist).toBe(true);
 });
