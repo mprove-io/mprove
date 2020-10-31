@@ -19,14 +19,37 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 0.0.0.0:24224
+        fluentd-async-connect: "true"
+        tag: rabbit
 
+  fluent:
+    image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/fluent_key
+      - STACKDRIVER_VM_ID=local
+      - STACKDRIVER_ZONE_ID=local
+    secrets:
+      - fluent_key
+    ports:
+      - 24224:24224
+  
   m-backend:
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS     
     ports:
-      - 3000:3000 
+      - 3000:3000
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 0.0.0.0:24224
+        fluentd-async-connect: "true"
+        tag: m-backend    
 
   m-disk:
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
@@ -38,6 +61,16 @@ services:
       - type: bind
         source: $MPROVE_M_DATA_ORGANIZATIONS_PATH
         target: $MPROVE_M_DATA_ORGANIZATIONS_PATH
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 0.0.0.0:24224
+        fluentd-async-connect: "true"
+        tag: m-disk      
+
+secrets:
+  fluent_key:
+    file: $MPROVE_M_DATA_FLUENT_KEY_PATH
 
     
       
