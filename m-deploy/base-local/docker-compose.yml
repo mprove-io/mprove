@@ -5,6 +5,17 @@ secrets:
     file: $MPROVE_M_DATA_FLUENT_KEY_PATH
 
 services:
+  fluent:
+    image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/fluent_key
+      - STACKDRIVER_VM_ID=local
+      - STACKDRIVER_ZONE_ID=local
+    secrets:
+      - fluent_key
+    ports:
+      - 24224:24224
+
   rabbit:
     image: rabbitmq:3-management
     # volumes:
@@ -31,17 +42,6 @@ services:
         fluentd-async-connect: "true"
         tag: rabbit
 
-  fluent:
-    image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/fluent_key
-      - STACKDRIVER_VM_ID=local
-      - STACKDRIVER_ZONE_ID=local
-    secrets:
-      - fluent_key
-    ports:
-      - 24224:24224
-  
   m-backend:
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
     environment:
