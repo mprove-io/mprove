@@ -1,4 +1,9 @@
 version: '3.7'
+
+secrets:
+  fluent_key:
+    file: $MPROVE_M_DATA_FLUENT_KEY_PATH
+
 services:
   rabbit:
     image: rabbitmq:3-management
@@ -68,9 +73,6 @@ services:
         fluentd-async-connect: "true"
         tag: m-disk      
 
-secrets:
-  fluent_key:
-    file: $MPROVE_M_DATA_FLUENT_KEY_PATH
 
     
       
