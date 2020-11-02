@@ -1,0 +1,8 @@
+.envrc
+.git
+.vscode
+.idea
+
+dist
+node_modules
+nogit

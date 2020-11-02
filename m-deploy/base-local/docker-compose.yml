@@ -6,6 +6,7 @@ secrets:
 
 services:
   fluent:
+    container_name: fluent
     image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/fluent_key
@@ -17,6 +18,7 @@ services:
       - 24224:24224
 
   rabbit:
+    container_name: rabbit
     image: rabbitmq:3-management
     # volumes:
     #   - type: bind
@@ -43,6 +45,7 @@ services:
         tag: rabbit
 
   m-backend:
+    container_name: m-backend
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
@@ -57,6 +60,7 @@ services:
         tag: m-backend    
 
   m-blockml:
+    container_name: m-blockml
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
@@ -69,6 +73,7 @@ services:
         tag: m-blockml
 
   m-disk:
+    container_name: m-disk
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
