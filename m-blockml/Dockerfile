@@ -22,4 +22,5 @@ RUN yarn build
 
 EXPOSE 3001
 
-CMD dockerize -wait tcp://fluent:24224 -wait tcp://rabbit:5672 -timeout 2m yarn start
+# CMD dockerize -wait tcp://fluent:24224 -wait tcp://rabbit:5672 -timeout 2m yarn start
+CMD yarn start
