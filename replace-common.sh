@@ -16,15 +16,18 @@ cp -rf m-common/eslint/.eslintrc.js m-backend/.eslintrc.js
 # to m-disk
 cp -rf m-common/eslint/.eslintrc.js m-disk/.eslintrc.js
 
+# to m-blockml
+cp -rf m-common/eslint/.eslintrc.js m-blockml/.eslintrc.js
+
 #
 # from m-common PRETTIER
 #
 
-# to m-common/api
-cp -rf m-common/prettier/.prettierrc.yaml m-common/api/.prettierrc.yaml
-
 # to root
 cp -rf m-common/prettier/.prettierrc.yaml .prettierrc.yaml
+
+# to m-common/api
+cp -rf m-common/prettier/.prettierrc.yaml m-common/api/.prettierrc.yaml
 
 # to m-backend
 cp -rf m-common/prettier/.prettierrc.yaml m-backend/.prettierrc.yaml
@@ -32,20 +35,27 @@ cp -rf m-common/prettier/.prettierrc.yaml m-backend/.prettierrc.yaml
 # to m-disk
 cp -rf m-common/prettier/.prettierrc.yaml m-disk/.prettierrc.yaml
 
+# to m-blockml
+cp -rf m-common/prettier/.prettierrc.yaml m-blockml/.prettierrc.yaml
+
 #
 # from m-common API
 #
-
-# to m-disk
-rm -rf m-disk/src/api
-mkdir m-disk/src/api
-cp -rf m-common/api/src/ m-disk/src/api
 
 # to m-backend
 rm -rf m-backend/src/api
 mkdir m-backend/src/api
 cp -rf m-common/api/src/ m-backend/src/api
 
+# to m-disk
+rm -rf m-disk/src/api
+mkdir m-disk/src/api
+cp -rf m-common/api/src/ m-disk/src/api
+
+# to m-blockml
+rm -rf m-blockml/src/api
+mkdir m-blockml/src/api
+cp -rf m-common/api/src/ m-blockml/src/api
 
 ############################## OLD ##############################
 
