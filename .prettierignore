@@ -1,8 +1,4 @@
-backend/dist/
-blockml/dist/
-client/dist/
+dist/
+node_modules/
 client/src/app/components/visual/_visual-page/visual.component.html
 
-m-backend/dist
-m-disk/dist
-m-blockml/dist

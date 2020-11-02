@@ -8,7 +8,7 @@
     "url": "https://github.com/mprove-io/mprove.git"
   },
   "scripts": {
-    "p:base": "prettier \"./**/*.{ts,js,json,scss,html}\" --config .prettierrc.yaml",
+    "p:base": "prettier \"m-backend/**/*.{ts,js,json,scss,html}\" \"m-blockml/**/*.{ts,js,json,scss,html}\" \"m-common/**/*.{ts,js,json,scss,html}\" \"m-deploy/**/*.{ts,js,json,scss,html}\" \"m-disk/**/*.{ts,js,json,scss,html}\"  --config .prettierrc.yaml",
     "p:list": "npm run p:base -- --list-different",
     "p:write": "npm run p:base -- --write"
   },
