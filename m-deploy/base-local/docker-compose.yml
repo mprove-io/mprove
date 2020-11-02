@@ -56,6 +56,18 @@ services:
         fluentd-async-connect: "true"
         tag: m-backend    
 
+  m-blockml:
+    image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
+    environment:
+      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
+      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS     
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 0.0.0.0:24224
+        fluentd-async-connect: "true"
+        tag: m-blockml
+
   m-disk:
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     environment:

@@ -20,6 +20,6 @@ COPY . .
 
 RUN yarn build
 
-EXPOSE 3002
+EXPOSE 3001
 
 CMD dockerize -wait tcp://fluent:24224 -wait tcp://rabbit:5672 -timeout 2m yarn start

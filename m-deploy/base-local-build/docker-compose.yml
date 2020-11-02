@@ -1,12 +1,16 @@
 version: '3.7'
 services:
-  m-disk:
-    build: ../../m-disk/
-    image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG    
-    
   m-backend:
     build: ../../m-backend/
-    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG     
+    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG
+    
+  m-blockml:
+    build: ../../m-blockml/
+    image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG    
+
+  m-disk:
+    build: ../../m-disk/
+    image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG 
 
   fluent:
     build:
