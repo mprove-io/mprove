@@ -18,7 +18,9 @@ export async function ToDiskCreateOrganization(
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === true) {
-    throw Error(api.ErEnum.M_DISK_ORGANIZATION_ALREADY_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_ORGANIZATION_ALREADY_EXIST
+    });
   }
 
   await disk.ensureDir(orgDir);

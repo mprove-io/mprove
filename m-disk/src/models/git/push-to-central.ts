@@ -23,7 +23,9 @@ export async function pushToCentral(item: {
   let okStatuses = [api.RepoStatusEnum.NeedPush];
 
   if (okStatuses.indexOf(repoStatus) < 0) {
-    throw Error(api.ErEnum.M_DISK_REPO_STATUS_IS_NOT_NEED_PUSH);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_REPO_STATUS_IS_NOT_NEED_PUSH
+    });
   }
 
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);

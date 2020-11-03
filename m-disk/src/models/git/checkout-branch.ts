@@ -30,7 +30,9 @@ export async function checkoutBranch(item: {
   ];
 
   if (okStatuses.indexOf(repoStatus) < 0) {
-    throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
+    });
   }
 
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);

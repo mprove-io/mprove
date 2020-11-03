@@ -22,17 +22,23 @@ export async function ToDiskRevertRepoToLastCommit(
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
-    throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+    });
   }
 
   let isProjectExist = await disk.isPathExist(projectDir);
   if (isProjectExist === false) {
-    throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST
+    });
   }
 
   let isRepoExist = await disk.isPathExist(repoDir);
   if (isRepoExist === false) {
-    throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_REPO_IS_NOT_EXIST
+    });
   }
 
   let isBranchExist = await git.isLocalBranchExist({
@@ -40,7 +46,9 @@ export async function ToDiskRevertRepoToLastCommit(
     localBranch: branch
   });
   if (isBranchExist === false) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST
+    });
   }
 
   await git.checkoutBranch({

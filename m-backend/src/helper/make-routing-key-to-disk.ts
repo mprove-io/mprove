@@ -21,9 +21,11 @@ export function makeRoutingKeyToDisk(item: {
   let orgGroup = orgGroups.find(x => x.includes(orgFirstLetter));
 
   if (!orgGroup) {
-    throw new Error(
-      api.ErEnum.M_BACKEND_ORGANIZATION_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
-    );
+    throw new api.ServerError({
+      message:
+        api.ErEnum
+          .M_BACKEND_ORGANIZATION_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+    });
   }
 
   let projectGroup: string;
@@ -36,9 +38,10 @@ export function makeRoutingKeyToDisk(item: {
     projectGroup = projectGroups.find(x => x.includes(projectFirstLetter));
 
     if (!projectGroup) {
-      throw new Error(
-        api.ErEnum.M_BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
-      );
+      throw new api.ServerError({
+        message:
+          api.ErEnum.M_BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+      });
     }
   }
 

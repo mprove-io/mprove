@@ -25,21 +25,29 @@ export async function ToDiskDeleteBranch(
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
-    throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+    });
   }
 
   let isProjectExist = await disk.isPathExist(projectDir);
   if (isProjectExist === false) {
-    throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST
+    });
   }
 
   let isRepoExist = await disk.isPathExist(repoDir);
   if (isRepoExist === false) {
-    throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_REPO_IS_NOT_EXIST
+    });
   }
 
   if (branch === api.BRANCH_MASTER) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED
+    });
   }
 
   await git.checkoutBranch({
@@ -78,7 +86,9 @@ export async function ToDiskDeleteBranch(
       branch: branch
     });
   } else if (errorIfNoLocalBranch === true) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST
+    });
   }
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(

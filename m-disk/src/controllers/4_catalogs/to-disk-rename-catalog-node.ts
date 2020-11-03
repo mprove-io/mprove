@@ -35,17 +35,23 @@ export async function ToDiskRenameCatalogNode(
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {
-    throw Error(api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+    });
   }
 
   let isProjectExist = await disk.isPathExist(projectDir);
   if (isProjectExist === false) {
-    throw Error(api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST
+    });
   }
 
   let isRepoExist = await disk.isPathExist(repoDir);
   if (isRepoExist === false) {
-    throw Error(api.ErEnum.M_DISK_REPO_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_REPO_IS_NOT_EXIST
+    });
   }
 
   let isBranchExist = await git.isLocalBranchExist({
@@ -53,7 +59,9 @@ export async function ToDiskRenameCatalogNode(
     localBranch: branch
   });
   if (isBranchExist === false) {
-    throw Error(api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST
+    });
   }
 
   await git.checkoutBranch({
@@ -66,13 +74,17 @@ export async function ToDiskRenameCatalogNode(
 
   let isOldPathExist = await disk.isPathExist(oldPath);
   if (isOldPathExist === false) {
-    throw Error(api.ErEnum.M_DISK_OLD_PATH_IS_NOT_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_OLD_PATH_IS_NOT_EXIST
+    });
   }
 
   //
   let isNewPathExist = await disk.isPathExist(newPath);
   if (isNewPathExist === true) {
-    throw Error(api.ErEnum.M_DISK_NEW_PATH_ALREADY_EXIST);
+    throw new api.ServerError({
+      message: api.ErEnum.M_DISK_NEW_PATH_ALREADY_EXIST
+    });
   }
   await disk.renamePath({
     oldPath: oldPath,

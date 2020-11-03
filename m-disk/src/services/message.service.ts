@@ -106,7 +106,9 @@ export class MessageService {
         return await ToDiskSeedProject(request);
 
       default:
-        throw Error(api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME);
+        throw new api.ServerError({
+          message: api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME
+        });
     }
   }
 }
