@@ -3,15 +3,16 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskGetFile(
   request: api.ToDiskGetFileRequest
 ): Promise<api.ToDiskGetFileResponse> {
-  const requestValid = await transformAndValidate(
-    api.ToDiskGetFileRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskGetFileRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let {
     organizationId,
@@ -78,7 +79,7 @@ export async function ToDiskGetFile(
 
   let response: api.ToDiskGetFileResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

@@ -8,23 +8,25 @@ export class ToDiskGetFileController {
   constructor(private readonly rabbitService: RabbitService) {}
 
   @Post('toDiskGetFile')
-  async toDiskGetFile(
-    @Body() body: api.ToDiskGetFileRequest
-  ): Promise<api.ToDiskGetFileResponse> {
-    let { organizationId, projectId } = body.payload;
+  async toDiskGetFile(@Body() body: api.ToDiskGetFileRequest): Promise<any> {
+    try {
+      let { organizationId, projectId } = body.payload;
 
-    let routingKey = makeRoutingKeyToDisk({
-      organizationId: organizationId,
-      projectId: projectId
-    });
+      let routingKey = makeRoutingKeyToDisk({
+        organizationId: organizationId,
+        projectId: projectId
+      });
 
-    let message = body;
+      let message = body;
 
-    let response = await this.rabbitService.sendToDisk({
-      routingKey: routingKey,
-      message: message
-    });
+      let response = await this.rabbitService.sendToDisk({
+        routingKey: routingKey,
+        message: message
+      });
 
-    return (response as unknown) as api.ToDiskGetFileResponse;
+      return (response as unknown) as api.ToDiskGetFileResponse;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

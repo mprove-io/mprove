@@ -20,31 +20,20 @@ export class ConsumerService {
         request.info?.name !==
         api.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
       ) {
-        throw Error(api.ErEnum.M_BLOCKML_WRONG_REQUEST_INFO_NAME);
+        throw new api.ServerError({
+          message: api.ErEnum.M_BLOCKML_WRONG_REQUEST_INFO_NAME
+        });
       }
 
-      return request.payload.structId;
+      let requestValid = await api.transformValid({
+        classType: api.ToBlockmlRebuildStructRequest,
+        object: request,
+        errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
+      });
+
+      return requestValid.payload.structId;
     } catch (e) {
-      return makeErrorResponse({ request: request, e: e });
+      return api.makeErrorResponse({ request: request, e: e });
     }
   }
-}
-
-function makeErrorResponse(item: { request: any; e: any }) {
-  let info: api.ToBlockmlResponseInfo = {
-    traceId: item.request.info?.traceId,
-    status: api.ToBlockmlResponseInfoStatusEnum.InternalError,
-    error: {
-      message: item.e.message,
-      at: item.e.stack?.split('\n')[1],
-      stackArray: item.e.stack?.split('\n'),
-      stack: item.e.stack,
-      e: item.e
-    }
-  };
-
-  return {
-    info: info,
-    payload: {}
-  };
 }

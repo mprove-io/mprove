@@ -10,21 +10,25 @@ export class ToDiskRenameCatalogNodeController {
   @Post('toDiskRenameCatalogNode')
   async toDiskRenameCatalogNode(
     @Body() body: api.ToDiskRenameCatalogNodeRequest
-  ): Promise<api.ToDiskRenameCatalogNodeResponse> {
-    let { organizationId, projectId } = body.payload;
+  ): Promise<any> {
+    try {
+      let { organizationId, projectId } = body.payload;
 
-    let routingKey = makeRoutingKeyToDisk({
-      organizationId: organizationId,
-      projectId: projectId
-    });
+      let routingKey = makeRoutingKeyToDisk({
+        organizationId: organizationId,
+        projectId: projectId
+      });
 
-    let message = body;
+      let message = body;
 
-    let response = await this.rabbitService.sendToDisk({
-      routingKey: routingKey,
-      message: message
-    });
+      let response = await this.rabbitService.sendToDisk({
+        routingKey: routingKey,
+        message: message
+      });
 
-    return (response as unknown) as api.ToDiskRenameCatalogNodeResponse;
+      return (response as unknown) as api.ToDiskRenameCatalogNodeResponse;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

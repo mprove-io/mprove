@@ -3,15 +3,16 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskRevertRepoToLastCommit(
   request: api.ToDiskRevertRepoToLastCommitRequest
 ): Promise<api.ToDiskRevertRepoToLastCommitResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskRevertRepoToLastCommitRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskRevertRepoToLastCommitRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
@@ -67,7 +68,7 @@ export async function ToDiskRevertRepoToLastCommit(
 
   let response: api.ToDiskRevertRepoToLastCommitResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

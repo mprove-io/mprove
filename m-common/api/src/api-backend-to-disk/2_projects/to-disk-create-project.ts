@@ -36,8 +36,8 @@ export class ToDiskCreateProjectResponsePayload {
 
 export class ToDiskCreateProjectResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskCreateProjectResponsePayload)

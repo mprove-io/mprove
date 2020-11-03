@@ -3,15 +3,16 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskMoveCatalogNode(
   request: api.ToDiskMoveCatalogNodeRequest
 ): Promise<api.ToDiskMoveCatalogNodeResponse> {
-  const requestValid = await transformAndValidate(
-    api.ToDiskMoveCatalogNodeRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskMoveCatalogNodeRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let {
     organizationId,
@@ -97,7 +98,7 @@ export async function ToDiskMoveCatalogNode(
 
   let response: api.ToDiskMoveCatalogNodeResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

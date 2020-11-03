@@ -4,15 +4,16 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 import { MyRegex } from '../../models/my-regex';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateFile(
   request: api.ToDiskCreateFileRequest
 ): Promise<api.ToDiskCreateFileResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskCreateFileRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskCreateFileRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let {
     organizationId,
@@ -122,7 +123,7 @@ export async function ToDiskCreateFile(
 
   let response: api.ToDiskCreateFileResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

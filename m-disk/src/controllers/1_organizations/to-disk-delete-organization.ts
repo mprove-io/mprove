@@ -1,15 +1,16 @@
 import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
 import { constants } from '../../barrels/constants';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskDeleteOrganization(
   request: api.ToDiskDeleteOrganizationRequest
 ): Promise<api.ToDiskDeleteOrganizationResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskDeleteOrganizationRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskDeleteOrganizationRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let { organizationId } = requestValid.payload;
 
@@ -24,7 +25,7 @@ export async function ToDiskDeleteOrganization(
 
   let response: api.ToDiskDeleteOrganizationResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

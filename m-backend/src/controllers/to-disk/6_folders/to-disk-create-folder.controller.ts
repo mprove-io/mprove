@@ -10,21 +10,25 @@ export class ToDiskCreateFolderController {
   @Post('toDiskCreateFolder')
   async toDiskCreateFolder(
     @Body() body: api.ToDiskCreateFolderRequest
-  ): Promise<api.ToDiskCreateFolderResponse> {
-    let { organizationId, projectId } = body.payload;
+  ): Promise<any> {
+    try {
+      let { organizationId, projectId } = body.payload;
 
-    let routingKey = makeRoutingKeyToDisk({
-      organizationId: organizationId,
-      projectId: projectId
-    });
+      let routingKey = makeRoutingKeyToDisk({
+        organizationId: organizationId,
+        projectId: projectId
+      });
 
-    let message = body;
+      let message = body;
 
-    let response = await this.rabbitService.sendToDisk({
-      routingKey: routingKey,
-      message: message
-    });
+      let response = await this.rabbitService.sendToDisk({
+        routingKey: routingKey,
+        message: message
+      });
 
-    return (response as unknown) as api.ToDiskCreateFolderResponse;
+      return (response as unknown) as api.ToDiskCreateFolderResponse;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

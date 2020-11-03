@@ -63,8 +63,8 @@ export class ToDiskDeleteFileResponsePayload {
 
 export class ToDiskDeleteFileResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskDeleteFileResponsePayload)

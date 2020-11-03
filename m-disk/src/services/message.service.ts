@@ -35,22 +35,7 @@ export class MessageService {
     try {
       return await this.processRequest(request);
     } catch (e) {
-      let info: api.ToDiskResponseInfo = {
-        traceId: request.info?.traceId,
-        status: api.ToDiskResponseInfoStatusEnum.InternalError,
-        error: {
-          message: e.message,
-          at: e.stack?.split('\n')[1],
-          stackArray: e.stack?.split('\n'),
-          stack: e.stack,
-          e: e
-        }
-      };
-
-      return {
-        info: info,
-        payload: {}
-      };
+      return api.makeErrorResponse({ request: request, e: e });
     }
   }
 

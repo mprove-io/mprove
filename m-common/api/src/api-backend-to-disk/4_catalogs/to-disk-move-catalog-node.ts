@@ -60,8 +60,8 @@ export class ToDiskMoveCatalogNodeResponsePayload {
 
 export class ToDiskMoveCatalogNodeResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskMoveCatalogNodeResponsePayload)

@@ -59,8 +59,8 @@ export class ToDiskSaveFileResponsePayload {
 
 export class ToDiskSaveFileResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskSaveFileResponsePayload)

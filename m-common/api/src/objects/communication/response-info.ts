@@ -1,9 +1,9 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import * as apiEnums from '../../enums/_index';
 
-export class ToBlockmlResponseInfo {
-  @IsEnum(apiEnums.ToBlockmlResponseInfoStatusEnum)
-  status: apiEnums.ToBlockmlResponseInfoStatusEnum;
+export class ResponseInfo {
+  @IsEnum(apiEnums.ResponseInfoStatusEnum)
+  status: apiEnums.ResponseInfoStatusEnum;
 
   @IsString()
   traceId: string;

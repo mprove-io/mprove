@@ -3,15 +3,16 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskPushRepo(
   request: api.ToDiskPushRepoRequest
 ): Promise<api.ToDiskPushRepoResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskPushRepoRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskPushRepoRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let {
     organizationId,
@@ -104,7 +105,7 @@ export async function ToDiskPushRepo(
 
   let response: api.ToDiskPushRepoResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

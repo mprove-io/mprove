@@ -27,8 +27,8 @@ export class ToDiskIsOrganizationExistResponsePayload {
 
 export class ToDiskIsOrganizationExistResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskIsOrganizationExistResponsePayload)

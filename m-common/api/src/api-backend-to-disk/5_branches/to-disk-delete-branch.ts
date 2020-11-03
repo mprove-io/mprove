@@ -53,8 +53,8 @@ export class ToDiskDeleteBranchResponsePayload {
 
 export class ToDiskDeleteBranchResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskDeleteBranchResponsePayload)

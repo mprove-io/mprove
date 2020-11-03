@@ -53,8 +53,8 @@ export class ToDiskPullRepoResponsePayload {
 
 export class ToDiskPullRepoResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskPullRepoResponsePayload)

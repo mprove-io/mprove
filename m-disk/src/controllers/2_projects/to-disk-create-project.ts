@@ -2,15 +2,16 @@ import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskCreateProject(
   request: api.ToDiskCreateProjectRequest
 ): Promise<api.ToDiskCreateProjectResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskCreateProjectRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskCreateProjectRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let {
     organizationId,
@@ -53,7 +54,7 @@ export async function ToDiskCreateProject(
 
   let response: api.ToDiskCreateProjectResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

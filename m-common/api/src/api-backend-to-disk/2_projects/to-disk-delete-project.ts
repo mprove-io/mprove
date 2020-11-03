@@ -31,8 +31,8 @@ export class ToDiskDeleteProjectResponsePayload {
 
 export class ToDiskDeleteProjectResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskDeleteProjectResponsePayload)

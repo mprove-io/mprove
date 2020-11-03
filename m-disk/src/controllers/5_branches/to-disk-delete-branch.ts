@@ -2,16 +2,18 @@ import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
 import { constants } from '../../barrels/constants';
 import { git } from '../../barrels/git';
-import { transformAndValidate } from 'class-transformer-validator';
+
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskDeleteBranch(
   request: api.ToDiskDeleteBranchRequest
 ): Promise<api.ToDiskDeleteBranchResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskDeleteBranchRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskDeleteBranchRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
@@ -90,7 +92,7 @@ export async function ToDiskDeleteBranch(
 
   let response: api.ToDiskDeleteBranchResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

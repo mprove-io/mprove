@@ -60,8 +60,8 @@ export class ToDiskRenameCatalogNodeResponsePayload {
 
 export class ToDiskRenameCatalogNodeResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskRenameCatalogNodeResponsePayload)

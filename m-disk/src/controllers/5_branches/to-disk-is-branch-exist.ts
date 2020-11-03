@@ -2,15 +2,16 @@ import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
 import { constants } from '../../barrels/constants';
 import { git } from '../../barrels/git';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskIsBranchExist(
   request: api.ToDiskIsBranchExistRequest
 ): Promise<api.ToDiskIsBranchExistResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskIsBranchExistRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskIsBranchExistRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let {
     organizationId,
@@ -54,7 +55,7 @@ export async function ToDiskIsBranchExist(
 
   let response: api.ToDiskIsBranchExistResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

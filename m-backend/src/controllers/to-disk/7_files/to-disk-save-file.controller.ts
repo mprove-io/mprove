@@ -8,23 +8,25 @@ export class ToDiskSaveFileController {
   constructor(private readonly rabbitService: RabbitService) {}
 
   @Post('toDiskSaveFile')
-  async toDiskSaveFile(
-    @Body() body: api.ToDiskSaveFileRequest
-  ): Promise<api.ToDiskSaveFileResponse> {
-    let { organizationId, projectId } = body.payload;
+  async toDiskSaveFile(@Body() body: api.ToDiskSaveFileRequest): Promise<any> {
+    try {
+      let { organizationId, projectId } = body.payload;
 
-    let routingKey = makeRoutingKeyToDisk({
-      organizationId: organizationId,
-      projectId: projectId
-    });
+      let routingKey = makeRoutingKeyToDisk({
+        organizationId: organizationId,
+        projectId: projectId
+      });
 
-    let message = body;
+      let message = body;
 
-    let response = await this.rabbitService.sendToDisk({
-      routingKey: routingKey,
-      message: message
-    });
+      let response = await this.rabbitService.sendToDisk({
+        routingKey: routingKey,
+        message: message
+      });
 
-    return (response as unknown) as api.ToDiskSaveFileResponse;
+      return (response as unknown) as api.ToDiskSaveFileResponse;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

@@ -10,21 +10,25 @@ export class ToDiskIsOrganizationExistController {
   @Post('toDiskIsOrganizationExist')
   async toDiskIsOrganizationExist(
     @Body() body: api.ToDiskIsOrganizationExistRequest
-  ): Promise<api.ToDiskIsOrganizationExistResponse> {
-    let { organizationId } = body.payload;
+  ): Promise<any> {
+    try {
+      let { organizationId } = body.payload;
 
-    let routingKey = makeRoutingKeyToDisk({
-      organizationId: organizationId,
-      projectId: null
-    });
+      let routingKey = makeRoutingKeyToDisk({
+        organizationId: organizationId,
+        projectId: null
+      });
 
-    let message = body;
+      let message = body;
 
-    let response = await this.rabbitService.sendToDisk({
-      routingKey: routingKey,
-      message: message
-    });
+      let response = await this.rabbitService.sendToDisk({
+        routingKey: routingKey,
+        message: message
+      });
 
-    return (response as unknown) as api.ToDiskIsOrganizationExistResponse;
+      return (response as unknown) as api.ToDiskIsOrganizationExistResponse;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

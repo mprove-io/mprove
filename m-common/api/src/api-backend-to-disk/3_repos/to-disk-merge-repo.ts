@@ -59,8 +59,8 @@ export class ToDiskMergeRepoResponsePayload {
 
 export class ToDiskMergeRepoResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToDiskResponseInfo)
-  readonly info: apiObjects.ToDiskResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToDiskMergeRepoResponsePayload)

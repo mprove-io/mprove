@@ -3,15 +3,16 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { transformAndValidate } from 'class-transformer-validator';
 
 export async function ToDiskDeleteFile(
   request: api.ToDiskDeleteFileRequest
 ): Promise<api.ToDiskDeleteFileResponse> {
-  let requestValid = await transformAndValidate(
-    api.ToDiskDeleteFileRequest,
-    request
-  );
+  let requestValid = await api.transformValid({
+    classType: api.ToDiskDeleteFileRequest,
+    object: request,
+    errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+  });
+
   let { traceId } = requestValid.info;
   let {
     organizationId,
@@ -107,7 +108,7 @@ export async function ToDiskDeleteFile(
 
   let response: api.ToDiskDeleteFileResponse = {
     info: {
-      status: api.ToDiskResponseInfoStatusEnum.Ok,
+      status: api.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {

@@ -24,8 +24,8 @@ export class ToBlockmlRebuildStructResponsePayload {
 
 export class ToBlockmlRebuildStructResponse {
   @ValidateNested()
-  @Type(() => apiObjects.ToBlockmlResponseInfo)
-  readonly info: apiObjects.ToBlockmlResponseInfo;
+  @Type(() => apiObjects.ResponseInfo)
+  readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
   @Type(() => ToBlockmlRebuildStructResponsePayload)
