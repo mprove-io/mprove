@@ -1,7 +1,7 @@
 export enum RepoStatusEnum {
-  NeedCommit = <any>'NeedCommit',
-  NeedResolve = <any>'NeedResolve',
-  NeedPull = <any>'NeedPull',
-  NeedPush = <any>'NeedPush',
-  Ok = <any>'Ok'
+  NeedCommit = 'NeedCommit',
+  NeedResolve = 'NeedResolve',
+  NeedPull = 'NeedPull',
+  NeedPush = 'NeedPush',
+  Ok = 'Ok'
 }

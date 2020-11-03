@@ -14,7 +14,7 @@ export class RabbitService {
     message: any;
   }): Promise<string> {
     const response = await this.amqpConnection.request<string>({
-      exchange: api.M_DISK,
+      exchange: api.RabbitExchangesEnum.MDisk.toString(),
       routingKey: item.routingKey,
       payload: item.message
     });
@@ -27,7 +27,7 @@ export class RabbitService {
     message: any;
   }): Promise<string> {
     const response = await this.amqpConnection.request<string>({
-      exchange: api.M_BLOCKML,
+      exchange: api.RabbitExchangesEnum.MBlockml.toString(),
       routingKey: item.routingKey,
       payload: item.message
     });

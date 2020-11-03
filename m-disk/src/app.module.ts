@@ -9,7 +9,7 @@ import { api } from './barrels/api';
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
         {
-          name: api.M_DISK,
+          name: api.RabbitExchangesEnum.MDisk.toString(),
           type: 'direct'
         }
       ],

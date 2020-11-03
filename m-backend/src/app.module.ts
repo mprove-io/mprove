@@ -30,17 +30,18 @@ import { ToDiskMergeRepoController } from './controllers/to-disk/3_repos/to-disk
 import { ToDiskRevertRepoToLastCommitController } from './controllers/to-disk/3_repos/to-disk-revert-repo-to-last-commit.controller';
 import { ToDiskRevertRepoToProductionController } from './controllers/to-disk/3_repos/to-disk-revert-repo-to-production.controller';
 import { ToDiskSeedProjectController } from './controllers/to-disk/8_seed/to-disk-seed-project.controller';
+import { ToBlockmlRebuildStructController } from './controllers/to-blockml/to-blockml-rebuild-struct.controller';
 
 @Module({
   imports: [
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
-        // {
-        //   name: api.M_BLOCKML,
-        //   type: 'direct'
-        // },
         {
-          name: api.M_DISK,
+          name: api.RabbitExchangesEnum.MBlockml.toString(),
+          type: 'direct'
+        },
+        {
+          name: api.RabbitExchangesEnum.MDisk.toString(),
           type: 'direct'
         }
       ],
@@ -85,7 +86,9 @@ import { ToDiskSeedProjectController } from './controllers/to-disk/8_seed/to-dis
     ToDiskGetFileController,
     ToDiskSaveFileController,
 
-    ToDiskSeedProjectController
+    ToDiskSeedProjectController,
+    //
+    ToBlockmlRebuildStructController
   ],
   providers: [RabbitService]
 })
