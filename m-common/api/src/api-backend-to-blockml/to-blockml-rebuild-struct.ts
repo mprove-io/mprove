@@ -1,10 +1,30 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
+import * as apiEnums from '../enums/_index';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
   readonly structId: string;
+
+  @IsString()
+  readonly projectId: string;
+
+  @IsString()
+  readonly repoId: string;
+
+  @IsEnum(apiEnums.ProjectWeekStartEnum)
+  readonly weekStart: apiEnums.ProjectWeekStartEnum;
+
+  @ValidateNested()
+  @Type(() => apiObjects.File)
+  readonly files: apiObjects.File[];
+
+  @IsEnum(apiEnums.ProjectConnectionEnum)
+  readonly connection: apiEnums.ProjectConnectionEnum;
+
+  @IsString()
+  readonly bigqueryProject: string;
 }
 
 export class ToBlockmlRebuildStructRequest {
@@ -18,8 +38,15 @@ export class ToBlockmlRebuildStructRequest {
 }
 
 export class ToBlockmlRebuildStructResponsePayload {
+  @ValidateNested()
+  @Type(() => apiObjects.StructFull)
+  struct: apiObjects.StructFull;
+
   @IsString()
-  readonly structId: string;
+  readonly udfsContent: string;
+
+  @IsString({ each: true })
+  readonly pdtsSorted: string[];
 }
 
 export class ToBlockmlRebuildStructResponse {
@@ -31,25 +58,3 @@ export class ToBlockmlRebuildStructResponse {
   @Type(() => ToBlockmlRebuildStructResponsePayload)
   readonly payload: ToBlockmlRebuildStructResponsePayload;
 }
-
-// export interface RebuildStructRequestBody {
-//   info: apiObjects.ServerRequestToBlockml;
-//   payload: {
-//     files: apiObjects.File[];
-//     project_id: string;
-//     repo_id: string;
-//     bigquery_project: string;
-//     week_start: apiEnums.ProjectWeekStartEnum;
-//     connection: apiEnums.ProjectConnectionEnum;
-//     struct_id: string;
-//   };
-// }
-
-// export interface RebuildStructResponse200Body {
-//   info: apiObjects.BlockmlResponse;
-//   payload: {
-//     struct: apiObjects.StructFull;
-//     udfs_content: string;
-//     pdts_sorted: string[];
-//   };
-// }
