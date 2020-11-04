@@ -31,6 +31,8 @@ import { ToDiskRevertRepoToLastCommitController } from './controllers/to-disk/3_
 import { ToDiskRevertRepoToProductionController } from './controllers/to-disk/3_repos/to-disk-revert-repo-to-production.controller';
 import { ToDiskSeedProjectController } from './controllers/to-disk/8_seed/to-disk-seed-project.controller';
 import { ToBlockmlRebuildStructController } from './controllers/to-blockml/to-blockml-rebuild-struct.controller';
+import { ToBlockmlProcessDashboardController } from './controllers/to-blockml/to-blockml-process-dashboard.controller';
+import { ToBlockmlProcessQueryController } from './controllers/to-blockml/to-blockml-process-query.controller';
 
 @Module({
   imports: [
@@ -88,6 +90,8 @@ import { ToBlockmlRebuildStructController } from './controllers/to-blockml/to-bl
 
     ToDiskSeedProjectController,
     //
+    ToBlockmlProcessDashboardController,
+    ToBlockmlProcessQueryController,
     ToBlockmlRebuildStructController
   ],
   providers: [RabbitService]

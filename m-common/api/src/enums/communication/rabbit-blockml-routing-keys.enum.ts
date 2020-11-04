@@ -1,3 +1,5 @@
 export enum RabbitBlockmlRoutingEnum {
-  RebuildStruct = 'RebuildStruct'
+  RebuildStruct = 'RebuildStruct',
+  ProcessQuery = 'ProcessQuery',
+  ProcessDashboard = 'ProcessDashboard'
 }

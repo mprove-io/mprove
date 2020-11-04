@@ -1,3 +1,5 @@
 export enum ToBlockmlRequestInfoNameEnum {
-  ToBlockmlRebuildStruct = 'ToBlockmlRebuildStruct'
+  ToBlockmlRebuildStruct = 'ToBlockmlRebuildStruct',
+  ToBlockmlProcessQuery = 'ToBlockmlProcessQuery',
+  ToBlockmlProcessDashboard = 'ToBlockmlProcessDashboard'
 }
