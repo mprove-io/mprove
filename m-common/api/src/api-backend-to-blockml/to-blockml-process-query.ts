@@ -3,22 +3,25 @@ import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
 import * as apiEnums from '../enums/_index';
 
-export class ToBlockmlRebuildStructRequestPayload {
-  @IsString()
-  readonly structId: string;
-
+export class ToBlockmlProcessQueryRequestPayload {
   @IsString()
   readonly projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  readonly structId: string;
 
   @IsEnum(apiEnums.ProjectWeekStartEnum)
   readonly weekStart: apiEnums.ProjectWeekStartEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.File)
-  readonly files: apiObjects.File[];
+  @Type(() => apiObjects.Mconfig)
+  readonly mconfig: apiObjects.Mconfig;
+
+  @IsString()
+  readonly modelContent: string;
+
+  @IsString()
+  readonly udfsContent: string;
 
   //
 
@@ -29,34 +32,32 @@ export class ToBlockmlRebuildStructRequestPayload {
   readonly bigqueryProject: string;
 }
 
-export class ToBlockmlRebuildStructRequest {
+export class ToBlockmlProcessQueryRequest {
   @ValidateNested()
   @Type(() => apiObjects.ToBlockmlRequestInfo)
   readonly info: apiObjects.ToBlockmlRequestInfo;
 
   @ValidateNested()
-  @Type(() => ToBlockmlRebuildStructRequestPayload)
-  readonly payload: ToBlockmlRebuildStructRequestPayload;
+  @Type(() => ToBlockmlProcessQueryRequestPayload)
+  readonly payload: ToBlockmlProcessQueryRequestPayload;
 }
 
-export class ToBlockmlRebuildStructResponsePayload {
+export class ToBlockmlProcessQueryResponsePayload {
   @ValidateNested()
-  @Type(() => apiObjects.StructFull)
-  readonly struct: apiObjects.StructFull;
+  @Type(() => apiObjects.Query)
+  readonly query: apiObjects.Query;
 
-  @IsString()
-  readonly udfsContent: string;
-
-  @IsString({ each: true })
-  readonly pdtsSorted: string[];
+  @ValidateNested()
+  @Type(() => apiObjects.Mconfig)
+  readonly mconfig: apiObjects.Mconfig;
 }
 
-export class ToBlockmlRebuildStructResponse {
+export class ToBlockmlProcessQueryResponse {
   @ValidateNested()
   @Type(() => apiObjects.ResponseInfo)
   readonly info: apiObjects.ResponseInfo;
 
   @ValidateNested()
-  @Type(() => ToBlockmlRebuildStructResponsePayload)
-  readonly payload: ToBlockmlRebuildStructResponsePayload;
+  @Type(() => ToBlockmlProcessQueryResponsePayload)
+  readonly payload: ToBlockmlProcessQueryResponsePayload;
 }
