@@ -2,7 +2,6 @@ import * as nodegit from 'nodegit';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 import { disk } from '../../barrels/disk';
-import { MyRegex } from '../my-regex';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
 import { constantFetchOptions } from './_constant-fetch-options';
 
@@ -53,7 +52,7 @@ export async function getRepoStatus(item: {
     let fileArray = file.content.split('\n');
 
     fileArray.forEach((s: string, ind) => {
-      if (s.match(MyRegex.CONTAINS_CONFLICT_START())) {
+      if (s.match(api.MyRegex.CONTAINS_CONFLICT_START())) {
         conflicts.push({
           fileId: file.fileId,
           fileName: file.name,

@@ -2,7 +2,6 @@ import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
-import { MyRegex } from '../my-regex';
 
 export async function getNodesAndFiles(item: {
   projectId: string;
@@ -63,7 +62,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let fileNames: string[] = <string[]>await fse.readdir(item.dir);
 
   await forEachSeries(fileNames, async name => {
-    if (!name.match(MyRegex.STARTS_WITH_DOT())) {
+    if (!name.match(api.MyRegex.STARTS_WITH_DOT())) {
       let fileAbsolutePath = item.dir + '/' + name;
 
       let nodeId =
@@ -100,7 +99,9 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         let fileRelativePath = fileAbsolutePath.substring(
           item.repoDirPathLength + 1
         );
-        let fileId = MyRegex.replaceSlashesWithUnderscores(fileRelativePath);
+        let fileId = api.MyRegex.replaceSlashesWithUnderscores(
+          fileRelativePath
+        );
 
         let node = {
           id: nodeId,
@@ -109,7 +110,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
           fileId: fileId
         };
 
-        let reg = MyRegex.CAPTURE_EXT();
+        let reg = api.MyRegex.CAPTURE_EXT();
         let r = reg.exec(name.toLowerCase());
 
         let ext: any = r ? r[1] : '';

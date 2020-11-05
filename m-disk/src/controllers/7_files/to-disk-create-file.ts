@@ -3,7 +3,6 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { MyRegex } from '../../models/my-regex';
 
 export async function ToDiskCreateFile(
   request: api.ToDiskCreateFileRequest
@@ -155,12 +154,12 @@ export async function ToDiskCreateFile(
 function getContentFromFileName(item: { fileName: string }) {
   let content: string;
 
-  let regPart = MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
+  let regPart = api.MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
   let rPart = regPart.exec(item.fileName.toLowerCase());
 
   let part: any = rPart ? rPart[1] : undefined;
 
-  let regExt = MyRegex.CAPTURE_EXT();
+  let regExt = api.MyRegex.CAPTURE_EXT();
   let rExt = regExt.exec(item.fileName.toLowerCase());
 
   let ext: any = rExt ? rExt[1] : '';
