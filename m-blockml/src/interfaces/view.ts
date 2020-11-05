@@ -3,77 +3,77 @@ import { FieldExt } from './field-ext';
 
 export interface View extends TopBasic {
   view: string;
-  view_line_num: number;
+  viewLineNum: number;
 
   label: string;
-  label_line_num: number;
+  labelLineNum: number;
 
   description: string;
-  description_line_num: number;
+  descriptionLineNum: number;
 
-  access_users: string[];
-  access_users_line_num: number;
+  accessUsers: string[];
+  accessUsersLineNum: number;
 
   table: string;
-  table_line_num: number;
+  tableLineNum: number;
 
-  derived_table: string;
-  derived_table_line_num: number;
+  derivedTable: string;
+  derivedTableLineNum: number;
 
-  derived_table_start: string;
-  derived_table_new: string;
+  derivedTableStart: string;
+  derivedTableNew: string;
 
   parts: {
     [viewPartName: string]: {
       content: string;
-      content_prepared: string;
-      parent_view_name: string;
+      contentPrepared: string;
+      parentViewName: string;
       deps: { [depName: string]: number };
     };
   };
 
   permanent: string; // boolean
-  permanent_line_num: number;
+  permanentLineNum: number;
 
-  pdt_trigger_time: string;
-  pdt_trigger_time_line_num: number;
+  // pdtTriggerTime: string;
+  // pdtTriggerTimeLineNum: number;
 
-  pdt_trigger_sql: string;
-  pdt_trigger_sql_line_num: number;
+  // pdtTriggerSql: string;
+  // pdtTriggerSqlLineNum: number;
 
   udfs: string[];
-  udfs_line_num: number;
+  udfsLineNum: number;
 
   fields: FieldExt[];
-  fields_line_num: number;
+  fieldsLineNum: number;
 
-  fields_deps: {
+  fieldsDeps: {
     [field: string]: {
       [dep: string]: number;
     };
   };
 
-  fields_deps_after_singles: {
+  fieldsDepsAfterSingles: {
     [field: string]: {
       [dep: string]: number;
     };
   };
 
-  as_deps: {
+  asDeps: {
     [as: string]: {
-      view_name: string;
+      viewName: string;
       fields: { [field: string]: number };
     };
   };
 
-  pdt_view_deps: {
-    [view: string]: number;
-  };
+  // pdtViewDeps: {
+  //   [view: string]: number;
+  // };
 
-  pdt_view_deps_all: {
-    [view: string]: number;
-  };
+  // pdtViewDepsAll: {
+  //   [view: string]: number;
+  // };
 
-  view_deps: string[];
-  is_pdt: boolean;
+  viewDeps: string[];
+  // isPdt: boolean;
 }

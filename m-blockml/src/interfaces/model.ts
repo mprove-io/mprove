@@ -4,60 +4,60 @@ import { FieldExt } from './field-ext';
 
 export interface Model extends TopBasic {
   model: string;
-  model_line_num: number;
+  modelLineNum: number;
 
   hidden: string; // boolean
-  hidden_line_num: number;
+  hiddenLineNum: number;
 
   label: string;
-  label_line_num: number;
+  labelLineNum: number;
 
   group: string;
-  group_line_num: number;
+  groupLineNum: number;
 
   description: string;
-  description_line_num: number;
+  descriptionLineNum: number;
 
-  access_users: string[];
-  access_users_line_num: number;
+  accessUsers: string[];
+  accessUsersLineNum: number;
 
-  always_join: string;
-  always_join_line_num: number;
-  always_join_list: {
+  alwaysJoin: string;
+  alwaysJoinLineNum: number;
+  alwaysJoinList: {
     [as: string]: number;
   };
 
-  sql_always_where: string;
-  sql_always_where_line_num: number;
-  sql_always_where_real: string;
+  sqlAlwaysWhere: string;
+  sqlAlwaysWhereLineNum: number;
+  sqlAlwaysWhereReal: string;
 
-  sql_always_where_calc: string;
-  sql_always_where_calc_line_num: number;
-  sql_always_where_calc_real: string;
+  sqlAlwaysWhereCalc: string;
+  sqlAlwaysWhereCalcLineNum: number;
+  sqlAlwaysWhereCalcReal: string;
 
   udfs: string[];
-  udfs_line_num: number;
+  udfsLineNum: number;
 
   joins: Join[];
-  joins_line_num: number;
+  joinsLineNum: number;
 
   fields: FieldExt[];
-  fields_line_num: number;
+  fieldsLineNum: number;
 
-  from_as: string;
+  fromAs: string;
 
-  fields_deps: {
+  fieldsDeps: {
     [field: string]: {
       [dep: string]: number;
     };
   };
-  fields_deps_after_singles: {
+  fieldsDepsAfterSingles: {
     [field: string]: {
       [dep: string]: number;
     };
   };
 
-  fields_double_deps: {
+  fieldsDoubleDeps: {
     [field: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -65,7 +65,7 @@ export interface Model extends TopBasic {
     };
   };
 
-  fields_double_deps_after_singles: {
+  fieldsDoubleDepsAfterSingles: {
     [field: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -73,7 +73,7 @@ export interface Model extends TopBasic {
     };
   };
 
-  joins_double_deps: {
+  joinsDoubleDeps: {
     [alias: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -81,13 +81,13 @@ export interface Model extends TopBasic {
     };
   };
 
-  joins_prepared_deps: {
+  joinsPreparedDeps: {
     [alias: string]: {
       [as: string]: number;
     };
   };
 
-  joins_double_deps_after_singles: {
+  joinsDoubleDepsAfterSingles: {
     [alias: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -95,37 +95,37 @@ export interface Model extends TopBasic {
     };
   };
 
-  joins_sorted: string[];
+  joinsSorted: string[];
 
-  sql_always_where_double_deps: {
+  sqlAlwaysWhereDoubleDeps: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sql_always_where_double_deps_after_singles: {
+  sqlAlwaysWhereDoubleDepsAfterSingles: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sql_always_where_calc_double_deps: {
+  sqlAlwaysWhereCalcDoubleDeps: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sql_always_where_calc_force_dims: {
+  sqlAlwaysWhereCalcForceDims: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sql_always_where_calc_deps_after_singles: {
+  sqlAlwaysWhereCalcDepsAfterSingles: {
     [dep: string]: number;
   };
 
-  sql_always_where_calc_double_deps_after_substitutions: {
+  sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions: {
     [as: string]: {
       [dep: string]: number;
     };

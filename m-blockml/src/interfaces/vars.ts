@@ -18,7 +18,7 @@ export interface Vars {
     [filter: string]: string[];
   };
 
-  filters_fractions: {
+  filtersFractions: {
     [s: string]: api.Fraction[];
   };
 
@@ -32,37 +32,37 @@ export interface Vars {
 
   structId: string;
 
-  udfs_dict: UdfsDict;
+  udfsDict: UdfsDict;
 
-  dep_measures: {
+  depMeasures: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  main_text: string[];
+  mainText: string[];
 
-  group_main_by: string[];
+  groupMainBy: string[];
 
-  main_fields: {
-    as_name: string;
-    field_name: string;
-    element_name: string;
+  mainFields: {
+    asName: string;
+    fieldName: string;
+    elementName: string;
   }[];
 
   selected: {
     [s: string]: number;
   };
 
-  processed_fields: {
+  processedFields: {
     [s: string]: string;
   };
 
-  main_udfs: {
+  mainUdfs: {
     [s: string]: number;
   };
 
-  needs_doubles: {
+  needsDoubles: {
     [a: string]: {
       [f: string]: number;
     };
@@ -72,50 +72,50 @@ export interface Vars {
     [s: string]: number;
   };
 
-  needs_all: {
+  needsAll: {
     [a: string]: {
       [f: string]: number;
     };
   };
 
-  where_main: {
+  whereMain: {
     [s: string]: string[];
   };
 
-  having_main: {
+  havingMain: {
     [s: string]: string[];
   };
 
-  where_calc: {
+  whereCalc: {
     [s: string]: string[];
   };
 
-  filters_conditions: {
+  filtersConditions: {
     [s: string]: string[];
   };
 
-  untouched_filters_conditions: {
+  untouchedFiltersConditions: {
     [s: string]: string[];
   };
 
   contents: string[];
 
-  query_pdt_deps: { [id: string]: number };
-  query_pdt_deps_all: { [id: string]: number };
+  // queryPdtDeps: { [id: string]: number };
+  // queryPdtDepsAll: { [id: string]: number };
 
   bqViews: BqView[];
 
   with: string[];
-  with_parts: {
+  withParts: {
     [viewPartName: string]: {
       content: string;
-      content_prepared: string;
-      parent_view_name: string;
+      contentPrepared: string;
+      parentViewName: string;
       deps: { [depName: string]: number };
     };
   };
 
-  joins_where: string[];
+  joinsWhere: string[];
 
   query: string[];
 }

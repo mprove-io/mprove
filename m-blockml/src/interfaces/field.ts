@@ -2,14 +2,19 @@ import { enums } from '../barrels/enums';
 
 export interface Field {
   name: string;
-  name_line_num: number;
-  field_class: enums.FieldClassEnum;
-  field_class_line_num: number;
+  nameLineNum: number;
+
+  fieldClass: enums.FieldClassEnum;
+  fieldClassLineNum: number;
+
   hidden: string; // boolean
-  hidden_line_num: number;
+  hiddenLineNum: number;
+
   description: string;
-  description_line_num: number;
+  descriptionLineNum: number;
+
   sql: string; // MyFilter uses it for fields deps check
-  sql_line_num: number; // MyFilter uses it for fields deps check
-  sql_real: string;
+  sqlLineNum: number; // MyFilter uses it for fields deps check
+
+  sqlReal: string;
 }

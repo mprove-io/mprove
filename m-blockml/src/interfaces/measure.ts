@@ -3,26 +3,28 @@ import { Field } from './field';
 
 export interface Measure extends Field {
   label: string;
-  label_line_num: number;
+  labelLineNum: number;
 
   type: enums.FieldExtTypeEnum;
-  type_line_num: number;
+  typeLineNum: number;
 
   result: enums.FieldExtResultEnum;
-  result_line_num: number;
+  resultLineNum: number;
 
-  format_number: string;
-  format_number_line_num: number;
-  currency_prefix: string;
-  currency_prefix_line_num: number;
-  currency_suffix: string;
-  currency_suffix_line_num: number;
+  formatNumber: string;
+  formatNumberLineNum: number;
 
-  sql_key: string;
-  sql_key_line_num: number;
+  currencyPrefix: string;
+  currencyPrefixLineNum: number;
+
+  currencySuffix: string;
+  currencySuffixLineNum: number;
+
+  sqlKey: string;
+  sqlKeyLineNum: number;
 
   percentile: string; // number
-  percentile_line_num: number;
+  percentileLineNum: number;
 
-  sql_key_real: string;
+  sqlKeyReal: string;
 }

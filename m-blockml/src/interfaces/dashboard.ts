@@ -4,26 +4,26 @@ import { Report } from './report';
 
 export interface Dashboard extends TopBasic {
   dashboard: string;
-  dashboard_line_num: number;
+  dashboardLineNum: number;
 
   hidden: string; // boolean
-  hidden_line_num: number;
+  hiddenLineNum: number;
 
   title: string;
-  title_line_num: number;
+  titleLineNum: number;
 
   group: string;
-  group_line_num: number;
+  groupLineNum: number;
 
   description: string;
-  description_line_num: number;
+  descriptionLineNum: number;
 
-  access_users: string[];
-  access_users_line_num: number;
+  accessUsers: string[];
+  accessUsersLineNum: number;
 
   fields: FieldExt[];
-  fields_line_num: number;
+  fieldsLineNum: number;
 
   reports: Report[];
-  reports_line_num: number;
+  reportsLineNum: number;
 }

@@ -1,22 +1,22 @@
 export interface ChartData {
-  x_field: string;
-  x_field_line_num: number;
+  xField: string;
+  xFieldLineNum: number;
 
-  y_field: string;
-  y_field_line_num: number;
+  yField: string;
+  yFieldLineNum: number;
 
-  y_fields: string[];
-  y_fields_line_num: number;
+  yFields: string[];
+  yFieldsLineNum: number;
 
-  hide_columns: string[];
-  hide_columns_line_num: number;
+  hideColumns: string[];
+  hideColumnsLineNum: number;
 
-  multi_field: string;
-  multi_field_line_num: number;
+  multiField: string;
+  multiFieldLineNum: number;
 
-  value_field: string;
-  value_field_line_num: number;
+  valueField: string;
+  valueFieldLineNum: number;
 
-  previous_value_field: string;
-  previous_value_field_line_num: number;
+  previousValueField: string;
+  previousValueFieldLineNum: number;
 }

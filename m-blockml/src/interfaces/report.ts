@@ -7,65 +7,65 @@ import { BqView } from './bq-view';
 
 export interface Report {
   title: string;
-  title_line_num: number;
+  titleLineNum: number;
 
   description: string;
-  description_line_num: number;
+  descriptionLineNum: number;
 
   model: string;
-  model_line_num: number;
+  modelLineNum: number;
 
   select: string[];
-  select_line_num: number;
+  selectLineNum: number;
 
-  select_hash: {
+  selectHash: {
     [element: string]: {
       [forceDim: string]: number;
     };
   };
 
   sorts: string;
-  sorts_line_num: number;
-  sortings_ary: {
-    field_id: string;
+  sortsLineNum: number;
+  sortingsAry: {
+    fieldId: string;
     desc: string; // boolean
   }[];
 
   timezone: string;
-  timezone_line_num: number;
+  timezoneLineNum: number;
 
   limit: string; // string
-  limit_line_num: number;
+  limitLineNum: number;
 
-  listen_filters: {
+  listenFilters: {
     [dashboardFilterName: string]: string;
   };
-  listen_filters_line_num: number;
+  listenFiltersLineNum: number;
 
-  default_filters: {
+  defaultFilters: {
     [aliasFieldName: string]: string[];
   };
-  default_filters_line_num: number;
+  defaultFiltersLineNum: number;
 
   listen: { [a: string]: string };
   default: { [filter: string]: string[] };
   filters: { [filter: string]: string[] };
 
   type: api.ChartTypeEnum;
-  type_line_num: number;
+  typeLineNum: number;
 
   data: ChartData;
-  data_line_num: number;
+  dataLineNum: number;
 
   axis: ChartAxis;
-  axis_line_num: number;
+  axisLineNum: number;
 
   options: ChartOptions;
-  options_line_num: number;
+  optionsLineNum: number;
 
   tile: ChartTile;
-  tile_line_num: number;
+  tileLineNum: number;
 
-  filters_fractions: any;
-  bq_views: BqView[];
+  filtersFractions: any;
+  bqViews: BqView[];
 }

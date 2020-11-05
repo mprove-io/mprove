@@ -16,8 +16,8 @@ export class View {
   @IsString({ each: true })
   viewDeps: string[];
 
-  @IsBoolean()
-  isPdt: boolean;
+  // @IsBoolean()
+  // isPdt: boolean;
 
   @IsInt()
   serverTs: number;

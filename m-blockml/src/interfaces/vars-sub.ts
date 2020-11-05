@@ -19,35 +19,35 @@ export interface VarsSub {
 
   structId: string;
 
-  udfs_dict: UdfsDict;
+  udfsDict: UdfsDict;
 
-  dep_measures: {
+  depMeasures: {
     [dep: string]: number;
   };
 
-  dep_dimensions: {
+  depDimensions: {
     [dep: string]: number;
   };
 
-  main_text: string[];
+  mainText: string[];
 
-  group_main_by: string[];
+  groupMainBy: string[];
 
-  main_fields: string[];
+  mainFields: string[];
 
   selected: {
     [s: string]: number;
   };
 
-  processed_fields: {
+  processedFields: {
     [s: string]: string;
   };
 
-  extra_udfs: {
+  extraUdfs: {
     [s: string]: number;
   };
 
-  needs_all: {
+  needsAll: {
     [a: string]: number;
   };
 
@@ -58,5 +58,5 @@ export interface VarsSub {
   with: string[];
 
   query: string[];
-  calc_query: string[];
+  calcQuery: string[];
 }

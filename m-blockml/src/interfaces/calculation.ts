@@ -3,20 +3,24 @@ import { Field } from './field';
 
 export interface Calculation extends Field {
   label: string;
-  label_line_num: number;
-  result: enums.FieldExtResultEnum;
-  result_line_num: number;
-  format_number: string;
-  format_number_line_num: number;
-  currency_prefix: string;
-  currency_prefix_line_num: number;
-  currency_suffix: string;
-  currency_suffix_line_num: number;
+  labelLineNum: number;
 
-  prep_force_dims: {
+  result: enums.FieldExtResultEnum;
+  resultLineNum: number;
+
+  formatNumber: string;
+  formatNumberLineNum: number;
+
+  currencyPrefix: string;
+  currencyPrefixLineNum: number;
+
+  currencySuffix: string;
+  currencySuffixLineNum: number;
+
+  prepForceDims: {
     [dim: string]: number;
   };
-  force_dims: {
+  forceDims: {
     [as: string]: {
       [dim: string]: number;
     };

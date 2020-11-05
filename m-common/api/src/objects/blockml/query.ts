@@ -18,38 +18,38 @@ export class Query {
   @IsString()
   structId: string;
 
-  @IsString({ each: true })
-  pdtDeps: string[];
+  // @IsString({ each: true })
+  // pdtDeps: string[];
 
-  @IsString({ each: true })
-  pdtDepsAll: string[];
+  // @IsString({ each: true })
+  // pdtDepsAll: string[];
 
   @IsString({ each: true })
   sql: string[];
 
-  @IsBoolean()
-  isPdt: boolean;
+  // @IsBoolean()
+  // isPdt: boolean;
 
-  @IsString()
-  pdtTriggerTime: string;
+  // @IsString()
+  // pdtTriggerTime: string;
 
-  @IsString()
-  pdtTriggerSql: string;
+  // @IsString()
+  // pdtTriggerSql: string;
 
-  @IsBoolean()
-  pdtNeedStartByTime: boolean;
+  // @IsBoolean()
+  // pdtNeedStartByTime: boolean;
 
-  @IsBoolean()
-  pdtNeedStartByTriggerSql: boolean;
+  // @IsBoolean()
+  // pdtNeedStartByTriggerSql: boolean;
 
-  @IsString()
-  pdtTriggerSqlValue: string;
+  // @IsString()
+  // pdtTriggerSqlValue: string;
 
-  @IsString()
-  pdtTriggerSqlLastErrorMessage: string;
+  // @IsString()
+  // pdtTriggerSqlLastErrorMessage: string;
 
-  @IsString()
-  pdtId: string;
+  // @IsString()
+  // pdtId: string;
 
   @IsEnum(apiEnums.QueryStatusEnum)
   status: apiEnums.QueryStatusEnum;

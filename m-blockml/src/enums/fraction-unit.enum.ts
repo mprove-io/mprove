@@ -1,9 +1,9 @@
 export enum FractionUnitEnum {
-  Minutes = 'minutes',
-  Hours = 'hours',
-  Days = 'days',
-  Weeks = 'weeks',
-  Months = 'months',
-  Quarters = 'quarters',
-  Years = 'years'
+  Minutes = 'Minutes',
+  Hours = 'Hours',
+  Days = 'Days',
+  Weeks = 'Weeks',
+  Months = 'Months',
+  Quarters = 'Quarters',
+  Years = 'Years'
 }

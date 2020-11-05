@@ -2,9 +2,9 @@ import { api } from '../barrels/api';
 import { BqView } from './bq-view';
 
 export interface ItemGenBqViews {
-  bq_views: BqView[];
+  bqViews: BqView[];
 
-  filters_fractions: {
+  filtersFractions: {
     [s: string]: api.Fraction[];
   };
 }

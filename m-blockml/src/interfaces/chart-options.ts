@@ -2,110 +2,110 @@ import { api } from '../barrels/api';
 
 export interface ChartOptions {
   animations: string; // boolean
-  animations_line_num: number;
+  animationsLineNum: number;
 
   gradient: string; // boolean
-  gradient_line_num: number;
+  gradientLineNum: number;
 
   legend: string; // boolean
-  legend_line_num: number;
+  legendLineNum: number;
 
-  legend_title: string;
-  legend_title_line_num: number;
+  legendTitle: string;
+  legendTitleLineNum: number;
 
-  tooltip_disabled: string; // boolean
-  tooltip_disabled_line_num: number;
+  tooltipDisabled: string; // boolean
+  tooltipDisabledLineNum: number;
 
-  round_edges: string; // boolean
-  round_edges_line_num: number;
+  roundEdges: string; // boolean
+  roundEdgesLineNum: number;
 
-  round_domains: string; // boolean
-  round_domains_line_num: number;
+  roundDomains: string; // boolean
+  roundDomainsLineNum: number;
 
-  show_grid_lines: string; // boolean
-  show_grid_lines_line_num: number;
+  showGridLines: string; // boolean
+  showGridLinesLineNum: number;
 
   timeline: string; // boolean
-  timeline_line_num: number;
+  timelineLineNum: number;
 
   interpolation: api.ChartInterpolationEnum;
-  interpolation_line_num: number;
+  interpolationLineNum: number;
 
-  auto_scale: string; // boolean
-  auto_scale_line_num: number;
+  autoScale: string; // boolean
+  autoScaleLineNum: number;
 
   doughnut: string; // boolean
-  doughnut_line_num: number;
+  doughnutLineNum: number;
 
-  explode_slices: string; // boolean
-  explode_slices_line_num: number;
+  explodeSlices: string; // boolean
+  explodeSlicesLineNum: number;
 
   labels: string; // boolean
-  labels_line_num: number;
+  labelsLineNum: number;
 
-  color_scheme: api.ChartColorSchemeEnum;
-  color_scheme_line_num: number;
+  colorScheme: api.ChartColorSchemeEnum;
+  colorSchemeLineNum: number;
 
-  scheme_type: api.ChartSchemeTypeEnum;
-  scheme_type_line_num: number;
+  schemeType: api.ChartSchemeTypeEnum;
+  schemeTypeLineNum: number;
 
-  page_size: string;
-  page_size_line_num: number;
+  pageSize: string;
+  pageSizeLineNum: number;
 
-  arc_width: string;
-  arc_width_line_num: number;
+  arcWidth: string;
+  arcWidthLineNum: number;
 
-  bar_padding: string;
-  bar_padding_line_num: number;
+  barPadding: string;
+  barPaddingLineNum: number;
 
-  group_padding: string;
-  group_padding_line_num: number;
+  groupPadding: string;
+  groupPaddingLineNum: number;
 
-  inner_padding: string;
-  inner_padding_line_num: number;
+  innerPadding: string;
+  innerPaddingLineNum: number;
 
-  range_fill_opacity: string;
-  range_fill_opacity_line_num: number;
+  rangeFillOpacity: string;
+  rangeFillOpacityLineNum: number;
 
-  angle_span: string;
-  angle_span_line_num: number;
+  angleSpan: string;
+  angleSpanLineNum: number;
 
-  start_angle: string;
-  start_angle_line_num: number;
+  startAngle: string;
+  startAngleLineNum: number;
 
-  big_segments: string;
-  big_segments_line_num: number;
+  bigSegments: string;
+  bigSegmentsLineNum: number;
 
-  small_segments: string;
-  small_segments_line_num: number;
+  smallSegments: string;
+  smallSegmentsLineNum: number;
 
   min: string;
-  min_line_num: number;
+  minLineNum: number;
 
   max: string;
-  max_line_num: number;
+  maxLineNum: number;
 
   units: string;
-  units_line_num: number;
+  unitsLineNum: number;
 
-  y_scale_min: string;
-  y_scale_min_line_num: number;
+  yScaleMin: string;
+  yScaleMinLineNum: number;
 
-  x_scale_max: string;
-  x_scale_max_line_num: number;
+  xScaleMax: string;
+  xScaleMaxLineNum: number;
 
-  y_scale_max: string;
-  y_scale_max_line_num: number;
+  yScaleMax: string;
+  yScaleMaxLineNum: number;
 
-  band_color: string;
-  band_color_line_num: number;
+  bandColor: string;
+  bandColorLineNum: number;
 
-  card_color: string;
-  card_color_line_num: number;
+  cardColor: string;
+  cardColorLineNum: number;
 
-  text_color: string;
-  text_color_line_num: number;
+  textColor: string;
+  textColorLineNum: number;
 
-  empty_color: string;
-  empty_color_line_num: number;
+  emptyColor: string;
+  emptyColorLineNum: number;
 }

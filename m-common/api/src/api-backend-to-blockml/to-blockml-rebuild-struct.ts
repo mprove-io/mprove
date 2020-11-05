@@ -47,8 +47,8 @@ export class ToBlockmlRebuildStructResponsePayload {
   @IsString()
   readonly udfsContent: string;
 
-  @IsString({ each: true })
-  readonly pdtsSorted: string[];
+  // @IsString({ each: true })
+  // readonly pdtsSorted: string[];
 }
 
 export class ToBlockmlRebuildStructResponse {

@@ -11,5 +11,5 @@ export interface Struct {
   models: Model[];
   dashboards: Dashboard[];
   // pdts: Pdt[];
-  // pdts_sorted: string[];
+  // pdtsSorted: string[];
 }
