@@ -1,8 +1,13 @@
 import * as walk from 'walk';
 import * as fse from 'fs-extra';
 import { api } from '../../../barrels/api';
+import { helper } from '../../../barrels/helper';
 
-export function collectFiles(item: { dir: string }): Promise<api.File[]> {
+let logPath = 'src/models/1-yaml/1-collect-files/';
+
+export async function collectFiles(item: { dir: string }): Promise<api.File[]> {
+  helper.logInputToFile(logPath, item);
+
   return new Promise((resolve, reject) => {
     let files: api.File[] = [];
 
@@ -41,6 +46,7 @@ export function collectFiles(item: { dir: string }): Promise<api.File[]> {
     });
 
     walker.on('end', () => {
+      helper.logOutputToFile(logPath, files);
       resolve(files);
     });
   });

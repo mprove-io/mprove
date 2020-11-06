@@ -50,15 +50,13 @@ export class StructService {
     structId: string;
   }): Promise<interfaces.Struct> {
     let errors: BmError[] = [];
-    // ErrorsCollector.clearErrors();
 
-    // let pdts: interfaces.Pdt[] = [];
+    // barYaml
 
-    // // ApYAML
-
-    // let file2s: interfaces.File2[] = await barYaml.removeWrongExt({
-    //   files: item.files
-    // });
+    let file2s: interfaces.File2[] = await barYaml.removeWrongExt({
+      files: item.files,
+      errors: errors
+    });
     // let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({
     //   file2s: file2s
     // });
