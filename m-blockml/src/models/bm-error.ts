@@ -1,12 +1,14 @@
 import { helper } from '../barrels/helper';
+import { interfaces } from '../barrels/interfaces';
 import { ErrorLine } from '../interfaces/error-line';
 
-export class BmError {
+export class BmError implements interfaces.BmErrorC {
   id: string;
   title: string;
   message: string;
   lines: ErrorLine[];
   at?: string;
+
   constructor(item: {
     title: string;
     message: string;

@@ -7,15 +7,15 @@ import {
 import * as apiEnums from '../enums/_index';
 import { ServerError } from './server-error';
 
-export async function transformValid<T extends object>(item: {
+export async function transformValidString<T extends object>(item: {
   classType: ClassType<T>;
-  object: object;
+  jsonString: string;
   options?: TransformValidationOptions;
   errorMessage: apiEnums.ErEnum;
 }) {
   let valid = await transformAndValidate(
     item.classType,
-    item.object,
+    item.jsonString,
     item.options
   ).catch(e => {
     if (process.env.MPROVE_LOG_IO === 'TRUE') {

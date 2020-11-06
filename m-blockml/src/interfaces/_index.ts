@@ -1,3 +1,4 @@
+export * from './bm-error-c';
 export * from './bq-view';
 export * from './calculation';
 export * from './chart-axis';
@@ -13,6 +14,7 @@ export * from './filter';
 export * from './join';
 export * from './measure';
 export * from './model';
+export * from './path-content';
 export * from './report';
 export * from './struct';
 export * from './time';

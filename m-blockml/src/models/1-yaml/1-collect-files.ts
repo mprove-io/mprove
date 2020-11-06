@@ -1,12 +1,17 @@
 import * as walk from 'walk';
 import * as fse from 'fs-extra';
-import { api } from '../../../barrels/api';
-import { helper } from '../../../barrels/helper';
+import { api } from '../../barrels/api';
+import { enums } from '../../barrels/enums';
+import { helper } from '../../barrels/helper';
 
-let logPath = 'src/models/1-yaml/1-collect-files/';
+let pack = '1-yaml';
+let log = '1-collect-files';
 
-export async function collectFiles(item: { dir: string }): Promise<api.File[]> {
-  helper.logInputToFile(logPath, item);
+export async function collectFiles(item: {
+  dir: string;
+  structId: string;
+}): Promise<api.File[]> {
+  helper.logToFile(item.structId, pack, log, enums.LogEnum.In, item);
 
   return new Promise((resolve, reject) => {
     let files: api.File[] = [];
@@ -46,7 +51,10 @@ export async function collectFiles(item: { dir: string }): Promise<api.File[]> {
     });
 
     walker.on('end', () => {
-      helper.logOutputToFile(logPath, files);
+      let errors = [];
+      let logContent = files;
+      helper.logToFile(item.structId, pack, log, enums.LogEnum.Errors, errors);
+      helper.logToFile(item.structId, pack, log, enums.LogEnum.Out, logContent);
       resolve(files);
     });
   });

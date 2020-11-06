@@ -28,7 +28,8 @@ export class StructService {
     structId: string;
   }): Promise<interfaces.Struct> {
     let files: api.File[] = await barYaml.collectFiles({
-      dir: item.dir
+      dir: item.dir,
+      structId: item.structId
     });
 
     return await this.rebuildStructStateless({
@@ -55,7 +56,8 @@ export class StructService {
 
     let file2s: interfaces.File2[] = await barYaml.removeWrongExt({
       files: item.files,
-      errors: errors
+      errors: errors,
+      structId: item.structId
     });
     // let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({
     //   file2s: file2s

@@ -1,5 +1,6 @@
-export * from './1-collect-files/collect-files';
-export * from './2-remove-wrong-ext/remove-wrong-ext';
+export * from './1-collect-files';
+export * from './2-remove-wrong-ext';
+
 // export * from './check-support-udfs';
 // export * from './check-top-unknown-parameters';
 // export * from './check-top-values';

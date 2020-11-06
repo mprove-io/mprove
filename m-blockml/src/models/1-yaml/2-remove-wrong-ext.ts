@@ -1,17 +1,20 @@
 import { forEachSeries } from 'p-iteration';
 
-import { interfaces } from '../../../barrels/interfaces';
-import { api } from '../../../barrels/api';
-import { BmError } from '../../bm-error';
-import { helper } from '../../../barrels/helper';
+import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { BmError } from '../bm-error';
+import { helper } from '../../barrels/helper';
+import { enums } from '../../barrels/enums';
 
-let logPath = 'src/models/1-yaml/2-remove-wrong-ext/';
+let pack = '1-yaml';
+let log = '2-remove-wrong-ext';
 
 export async function removeWrongExt(item: {
   files: api.File[];
   errors: BmError[];
+  structId: string;
 }): Promise<interfaces.File2[]> {
-  helper.logInputToFile(logPath, item);
+  helper.logToFile(item.structId, pack, log, enums.LogEnum.In, item);
 
   let file2s: interfaces.File2[] = [];
 
@@ -57,7 +60,8 @@ export async function removeWrongExt(item: {
     }
   });
 
-  helper.logOutputToFile(logPath, file2s);
+  helper.logToFile(item.structId, pack, log, enums.LogEnum.Out, file2s);
+  helper.logToFile(item.structId, pack, log, enums.LogEnum.Errors, item.errors);
 
   return file2s;
 }
