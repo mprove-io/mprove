@@ -31,17 +31,17 @@ test(testId, async () => {
     weekStart: api.ProjectWeekStartEnum.Monday
   });
 
-  let outContent = fse.readFileSync(
-    `src/logs/${structId}/${pack}/${testId}${enums.LogEnum.Out.toString()}.log`
+  let outFile2s = fse.readFileSync(
+    `src/logs/${structId}/${pack}/${testId}/${enums.LogEnum.OutFile2s.toString()}`
   );
 
   let outErrors = fse.readFileSync(
-    `src/logs/${structId}/${pack}/${testId}${enums.LogEnum.Errors.toString()}.log`
+    `src/logs/${structId}/${pack}/${testId}/${enums.LogEnum.OutErrors.toString()}`
   );
 
   let file2s: interfaces.File2[] = ((await api.transformValidString({
     classType: interfaces.File2,
-    jsonString: outContent.toString(),
+    jsonString: outFile2s.toString(),
     errorMessage: api.ErEnum.M_BLOCKML_WRONG_TEST_TRANSFORM_AND_VALIDATE
   })) as unknown) as interfaces.File2[];
 

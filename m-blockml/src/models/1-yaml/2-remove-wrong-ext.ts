@@ -6,15 +6,16 @@ import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 
-let pack = '1-yaml';
-let log = '2-remove-wrong-ext';
+let logPack = '1-yaml';
+let logFolder = '2-remove-wrong-ext';
 
 export async function removeWrongExt(item: {
   files: api.File[];
   errors: BmError[];
   structId: string;
 }): Promise<interfaces.File2[]> {
-  helper.logToFile(item.structId, pack, log, enums.LogEnum.In, item);
+  let logId = item.structId;
+  helper.log(logId, logPack, logFolder, enums.LogEnum.In, item);
 
   let file2s: interfaces.File2[] = [];
 
@@ -60,8 +61,8 @@ export async function removeWrongExt(item: {
     }
   });
 
-  helper.logToFile(item.structId, pack, log, enums.LogEnum.Out, file2s);
-  helper.logToFile(item.structId, pack, log, enums.LogEnum.Errors, item.errors);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.OutFile2s, file2s);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.OutErrors, item.errors);
 
   return file2s;
 }
