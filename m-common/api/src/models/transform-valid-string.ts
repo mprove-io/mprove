@@ -18,14 +18,10 @@ export async function transformValidString<T extends object>(item: {
     item.jsonString,
     item.options
   ).catch(e => {
-    if (process.env.MPROVE_LOG_IO === 'TRUE') {
-      console.log(e);
-    }
-
     throw new ServerError({
       message: item.errorMessage,
       data: e,
-      originalError: e
+      originalError: null
     });
   });
   return valid;

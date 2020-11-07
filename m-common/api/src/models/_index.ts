@@ -1,3 +1,4 @@
+export * from './log-to-console';
 export * from './make-error-response';
 export * from './make-struct-id';
 export * from './my-regex';

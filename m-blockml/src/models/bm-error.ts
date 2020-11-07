@@ -1,16 +1,17 @@
 import { helper } from '../barrels/helper';
 import { interfaces } from '../barrels/interfaces';
+import { enums } from '../barrels/enums';
 import { ErrorLine } from '../interfaces/error-line';
 
 export class BmError implements interfaces.BmErrorC {
   id: string;
-  title: string;
+  title: enums.ErTitleEnum;
   message: string;
   lines: ErrorLine[];
   at?: string;
 
   constructor(item: {
-    title: string;
+    title: enums.ErTitleEnum;
     message: string;
     lines: ErrorLine[];
     at?: string;

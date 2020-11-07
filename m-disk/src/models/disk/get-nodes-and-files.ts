@@ -54,6 +54,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let folderNodes: api.DiskCatalogNode[] = [];
   let mdNodes: api.DiskCatalogNode[] = [];
   let dashboardNodes: api.DiskCatalogNode[] = [];
+  let visNodes: api.DiskCatalogNode[] = [];
   let modelNodes: api.DiskCatalogNode[] = [];
   let viewNodes: api.DiskCatalogNode[] = [];
   let udfNodes: api.DiskCatalogNode[] = [];
@@ -116,20 +117,23 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         let ext: any = r ? r[1] : '';
 
         switch (ext) {
-          case api.EXT_MD:
-            mdNodes.push(node);
-            break;
-          case api.EXT_DASHBOARD:
-            dashboardNodes.push(node);
-            break;
-          case api.EXT_MODEL:
-            modelNodes.push(node);
-            break;
-          case api.EXT_VIEW:
+          case api.FileExtensionEnum.View:
             viewNodes.push(node);
             break;
-          case api.EXT_UDF:
+          case api.FileExtensionEnum.Model:
+            modelNodes.push(node);
+            break;
+          case api.FileExtensionEnum.Dashboard:
+            dashboardNodes.push(node);
+            break;
+          case api.FileExtensionEnum.Vis:
+            visNodes.push(node);
+            break;
+          case api.FileExtensionEnum.Udf:
             udfNodes.push(node);
+            break;
+          case api.FileExtensionEnum.Md:
+            mdNodes.push(node);
             break;
           default:
             otherNodes.push(node);
@@ -163,6 +167,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
     ...sortNodes(folderNodes),
     ...sortNodes(mdNodes),
     ...sortNodes(dashboardNodes),
+    ...sortNodes(visNodes),
     ...sortNodes(modelNodes),
     ...sortNodes(viewNodes),
     ...sortNodes(udfNodes),

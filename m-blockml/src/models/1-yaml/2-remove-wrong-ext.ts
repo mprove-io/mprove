@@ -30,7 +30,16 @@ export async function removeWrongExt(item: {
 
     let ext: any = r ? r[1] : ''; // any
 
-    if (['.udf', '.view', '.model', '.dashboard', '.md'].indexOf(ext) > -1) {
+    if (
+      [
+        api.FileExtensionEnum.View,
+        api.FileExtensionEnum.Model,
+        api.FileExtensionEnum.Dashboard,
+        api.FileExtensionEnum.Vis,
+        api.FileExtensionEnum.Udf,
+        api.FileExtensionEnum.Md
+      ].indexOf(ext) > -1
+    ) {
       let f: interfaces.File2 = file2s.find(z => z.name === x.name);
 
       if (f) {
@@ -46,9 +55,8 @@ export async function removeWrongExt(item: {
       // error e1
       item.errors.push(
         new BmError({
-          title: 'wrong file extension',
-          message:
-            'valid BlockML file extensions are: .udf .view .model .dashboard .md',
+          title: enums.ErTitleEnum.WRONG_FILE_EXTENSION,
+          message: `valid BlockML file extensions are: ${api.FileExtensionEnum.View} ${api.FileExtensionEnum.Model} ${api.FileExtensionEnum.Dashboard} ${api.FileExtensionEnum.Vis} ${api.FileExtensionEnum.Udf} ${api.FileExtensionEnum.Md}`,
           lines: [
             {
               line: 0,

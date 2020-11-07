@@ -1,13 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ErrorLine } from '../interfaces/error-line';
+import { enums } from '../barrels/enums';
 
 export class BmErrorC {
   @IsString()
   id: string;
 
-  @IsString()
-  title: string;
+  @IsEnum(enums.ErTitleEnum)
+  title: enums.ErTitleEnum;
 
   @IsString()
   message: string;

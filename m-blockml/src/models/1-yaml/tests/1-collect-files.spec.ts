@@ -6,6 +6,7 @@ import { barYaml } from '../../../barrels/bar-yaml';
 import * as fse from 'fs-extra';
 
 let pack = '1-yaml';
+let funcId = '1-collect-files';
 let testId = '1-collect-files';
 
 let structService: StructService;
@@ -20,26 +21,31 @@ beforeEach(async () => {
 });
 
 test(testId, async () => {
-  let structId = api.makeStructId();
+  let files: api.File[];
+  try {
+    let structId = api.makeStructId();
 
-  await structService.rebuildStruct({
-    dir: `src/models/${pack}/data/${testId}`,
-    structId: structId,
-    projectId: 'p1',
-    bqProject: 'bqp1',
-    connection: api.ProjectConnectionEnum.BigQuery,
-    weekStart: api.ProjectWeekStartEnum.Monday
-  });
+    await structService.rebuildStruct({
+      dir: `src/models/${pack}/data/${testId}`,
+      structId: structId,
+      projectId: 'p1',
+      bqProject: 'bqp1',
+      connection: api.ProjectConnectionEnum.BigQuery,
+      weekStart: api.ProjectWeekStartEnum.Monday
+    });
 
-  let outFiles = fse.readFileSync(
-    `src/logs/${structId}/${pack}/${testId}/${enums.LogEnum.OutFiles.toString()}`
-  );
+    let outFiles = fse.readFileSync(
+      `src/logs/${structId}/${pack}/${funcId}/${enums.LogEnum.OutFiles.toString()}`
+    );
 
-  let files: api.File[] = (await api.transformValidString({
-    classType: api.File,
-    jsonString: outFiles.toString(),
-    errorMessage: api.ErEnum.M_BLOCKML_WRONG_TEST_TRANSFORM_AND_VALIDATE
-  })) as api.File[];
+    files = (await api.transformValidString({
+      classType: api.File,
+      jsonString: outFiles.toString(),
+      errorMessage: api.ErEnum.M_BLOCKML_WRONG_TEST_TRANSFORM_AND_VALIDATE
+    })) as api.File[];
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
-  expect(files.length).toBe(4);
+  expect(files.length).toBe(5);
 });

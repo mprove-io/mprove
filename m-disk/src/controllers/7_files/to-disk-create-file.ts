@@ -165,20 +165,23 @@ function getContentFromFileName(item: { fileName: string }) {
   let ext: any = rExt ? rExt[1] : '';
 
   switch (ext) {
-    case api.EXT_MD:
-      content = '';
-      break;
-    case api.EXT_DASHBOARD:
-      content = `dashboard: ${part}`;
-      break;
-    case api.EXT_MODEL:
-      content = `model: ${part}`;
-      break;
-    case api.EXT_VIEW:
+    case api.FileExtensionEnum.View:
       content = `view: ${part}`;
       break;
-    case api.EXT_UDF:
+    case api.FileExtensionEnum.Model:
+      content = `model: ${part}`;
+      break;
+    case api.FileExtensionEnum.Dashboard:
+      content = `dashboard: ${part}`;
+      break;
+    case api.FileExtensionEnum.Vis:
+      content = `vis: ${part}`;
+      break;
+    case api.FileExtensionEnum.Udf:
       content = `udf: ${part}`;
+      break;
+    case api.FileExtensionEnum.Md:
+      content = '';
       break;
     default:
       content = '';

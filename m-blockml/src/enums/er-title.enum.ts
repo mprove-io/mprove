@@ -1,0 +1,3 @@
+export enum ErTitleEnum {
+  WRONG_FILE_EXTENSION = 'WRONG_FILE_EXTENSION'
+}
