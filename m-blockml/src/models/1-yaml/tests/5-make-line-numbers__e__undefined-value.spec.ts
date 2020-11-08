@@ -6,8 +6,8 @@ import * as fse from 'fs-extra';
 import { interfaces } from '../../../barrels/interfaces';
 
 let pack = '1-yaml';
-let funcId = '4-yaml-to-objects';
-let testId = '4-yaml-to-objects__e__processed-content-is-not-yaml';
+let funcId = '5-make-line-numbers';
+let testId = '5-make-line-numbers__e__undefined-value';
 
 let structService: StructService;
 
@@ -54,9 +54,6 @@ test(testId, async () => {
   }
 
   expect(filesAny.length).toBe(2);
-  expect(errors.length).toBe(0);
-  // no case for PROCESSED_CONTENT_IS_NOT_YAML yet
-  // expect(filesAny.length).toBe(1);
-  // expect(errors.length).toBe(1);
-  // expect(errors[0].title).toBe(enums.ErTitleEnum.PROCESSED_CONTENT_IS_NOT_YAML);
+  expect(errors.length).toBe(1);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.UNDEFINED_VALUE);
 });

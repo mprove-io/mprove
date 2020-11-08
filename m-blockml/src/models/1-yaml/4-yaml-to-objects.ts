@@ -4,23 +4,22 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
 
-import { forEachSeries } from 'p-iteration';
 import { BmError } from '../bm-error';
 
 let logPack = '1-yaml';
 let logFolder = '4-yaml-to-objects';
 
-export async function yamlToObjects(item: {
+export function yamlToObjects(item: {
   file3s: interfaces.File3[];
   errors: BmError[];
   structId: string;
-}): Promise<any[]> {
+}): any[] {
   let logId = item.structId;
   helper.log(logId, logPack, logFolder, enums.LogEnum.In, item);
 
   let filesAny: any[] = [];
 
-  await forEachSeries(item.file3s, async (x: interfaces.File3) => {
+  item.file3s.forEach((x: interfaces.File3) => {
     let tiedFileArray: string[] = [];
 
     // try YAML parsing
@@ -56,7 +55,8 @@ export async function yamlToObjects(item: {
       // remove comments
 
       let sReg = api.MyRegex.COMMENTS_G();
-      s = s.replace(sReg, '');
+      s = s.replace(sReg, '\t');
+      // s = s.replace(sReg, '');
 
       let reg = api.MyRegex.CAPTURE_PARAMETER_AND_VALUE();
       let r = reg.exec(s);

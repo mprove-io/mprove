@@ -1,0 +1,3 @@
+view: e1
+table: 1
+kfs:        #if parameters are specified, they can not have undefined values

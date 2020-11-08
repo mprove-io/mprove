@@ -56,23 +56,26 @@ export class StructService {
 
     // barYaml
 
-    let file2s: interfaces.File2[] = await barYaml.removeWrongExt({
+    let file2s: interfaces.File2[] = barYaml.removeWrongExt({
       files: item.files,
       errors: errors,
       structId: item.structId
     });
-    let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({
+    let file3s: interfaces.File3[] = barYaml.deduplicateFileNames({
       file2s: file2s,
       errors: errors,
       structId: item.structId
     });
-    let filesAny: any[] = await barYaml.yamlToObjects({
+    let filesAny: any[] = barYaml.yamlToObjects({
       file3s: file3s,
       errors: errors,
       structId: item.structId
     });
-    // // ->processLineNumbersRecursive
-    // filesAny = barYaml.makeLineNumbers({ filesAny: filesAny });
+    filesAny = barYaml.makeLineNumbers({
+      filesAny: filesAny,
+      errors: errors,
+      structId: item.structId
+    });
     // filesAny = barYaml.checkTopUnknownParameters({ filesAny: filesAny });
     // filesAny = barYaml.checkTopValues({ filesAny: filesAny });
     // filesAny = barYaml.checkSupportUdfs({
