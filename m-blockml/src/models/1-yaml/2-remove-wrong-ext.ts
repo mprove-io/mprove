@@ -43,11 +43,11 @@ export async function removeWrongExt(item: {
       let f: interfaces.File2 = file2s.find(z => z.name === x.name);
 
       if (f) {
-        f.filePaths.push(fp);
+        f.pathContents.push(fp);
       } else {
         file2s.push({
           name: x.name,
-          filePaths: [fp],
+          pathContents: [fp],
           ext: ext
         });
       }

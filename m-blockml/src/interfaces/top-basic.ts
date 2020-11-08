@@ -1,7 +1,7 @@
-import { enums } from '../barrels/enums';
+import { api } from '../barrels/api';
 
 export interface TopBasic {
-  ext: enums.FileExtensionEnum;
+  ext: api.FileExtensionEnum;
   file: string;
   name: string;
   path: string;

@@ -59,9 +59,11 @@ export class StructService {
       errors: errors,
       structId: item.structId
     });
-    // let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({
-    //   file2s: file2s
-    // });
+    let file3s: interfaces.File3[] = await barYaml.deduplicateFileNames({
+      file2s: file2s,
+      errors: errors,
+      structId: item.structId
+    });
     // let filesAny: any[] = await barYaml.yamlToObjects({
     //   file3s: file3s
     // });

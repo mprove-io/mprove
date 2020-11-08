@@ -12,5 +12,5 @@ export class File2 {
 
   @ValidateNested()
   @Type(() => PathContent)
-  filePaths: PathContent[];
+  pathContents: PathContent[];
 }
