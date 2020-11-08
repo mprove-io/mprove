@@ -35,7 +35,7 @@ export async function removeWrongExt(item: {
         api.FileExtensionEnum.View,
         api.FileExtensionEnum.Model,
         api.FileExtensionEnum.Dashboard,
-        api.FileExtensionEnum.Vis,
+        api.FileExtensionEnum.Visualization,
         api.FileExtensionEnum.Udf,
         api.FileExtensionEnum.Md
       ].indexOf(ext) > -1
@@ -56,7 +56,7 @@ export async function removeWrongExt(item: {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.WRONG_FILE_EXTENSION,
-          message: `valid BlockML file extensions are: ${api.FileExtensionEnum.View} ${api.FileExtensionEnum.Model} ${api.FileExtensionEnum.Dashboard} ${api.FileExtensionEnum.Vis} ${api.FileExtensionEnum.Udf} ${api.FileExtensionEnum.Md}`,
+          message: `valid BlockML file extensions are: ${api.FileExtensionEnum.View} ${api.FileExtensionEnum.Model} ${api.FileExtensionEnum.Dashboard} ${api.FileExtensionEnum.Visualization} ${api.FileExtensionEnum.Udf} ${api.FileExtensionEnum.Md}`,
           lines: [
             {
               line: 0,

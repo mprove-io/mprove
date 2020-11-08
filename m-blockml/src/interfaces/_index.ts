@@ -29,5 +29,7 @@ export * from './udfs-dict';
 export * from './vars';
 export * from './vars-sub';
 
+export * from './visualization';
+
 // export * from './pdt';
 // export * from './process-message';

@@ -23,13 +23,9 @@ export class ToBlockmlProcessQueryRequestPayload {
   @IsString()
   readonly udfsContent: string;
 
-  //
-
-  @IsEnum(apiEnums.ProjectConnectionEnum)
-  readonly connection: apiEnums.ProjectConnectionEnum;
-
-  @IsString()
-  readonly bigqueryProject: string;
+  @ValidateNested()
+  @Type(() => apiObjects.ProjectConnection)
+  readonly connections: apiObjects.ProjectConnection[];
 }
 
 export class ToBlockmlProcessQueryRequest {

@@ -126,7 +126,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
           case api.FileExtensionEnum.Dashboard:
             dashboardNodes.push(node);
             break;
-          case api.FileExtensionEnum.Vis:
+          case api.FileExtensionEnum.Visualization:
             visNodes.push(node);
             break;
           case api.FileExtensionEnum.Udf:

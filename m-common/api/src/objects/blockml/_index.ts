@@ -9,6 +9,7 @@ export * from './mconfig';
 export * from './model-field';
 export * from './model-node';
 export * from './model';
+export * from './project-connection';
 export * from './query';
 export * from './report';
 export * from './sorting';

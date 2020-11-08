@@ -33,13 +33,9 @@ export class ToBlockmlProcessDashboardRequestPayload {
   @Type(() => apiObjects.Cut)
   readonly cuts: apiObjects.Cut[];
 
-  //
-
-  @IsEnum(apiEnums.ProjectConnectionEnum)
-  readonly connection: apiEnums.ProjectConnectionEnum;
-
-  @IsString()
-  readonly bigqueryProject: string;
+  @ValidateNested()
+  @Type(() => apiObjects.ProjectConnection)
+  readonly connections: apiObjects.ProjectConnection[];
 }
 
 export class ToBlockmlProcessDashboardRequest {

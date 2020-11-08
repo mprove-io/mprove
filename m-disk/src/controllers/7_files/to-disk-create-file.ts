@@ -174,8 +174,8 @@ function getContentFromFileName(item: { fileName: string }) {
     case api.FileExtensionEnum.Dashboard:
       content = `dashboard: ${part}`;
       break;
-    case api.FileExtensionEnum.Vis:
-      content = `vis: ${part}`;
+    case api.FileExtensionEnum.Visualization:
+      content = `visualization: ${part}`;
       break;
     case api.FileExtensionEnum.Udf:
       content = `udf: ${part}`;

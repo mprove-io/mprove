@@ -20,13 +20,9 @@ export class ToBlockmlRebuildStructRequestPayload {
   @Type(() => apiObjects.File)
   readonly files: apiObjects.File[];
 
-  //
-
-  @IsEnum(apiEnums.ProjectConnectionEnum)
-  readonly connection: apiEnums.ProjectConnectionEnum;
-
-  @IsString()
-  readonly bigqueryProject: string;
+  @ValidateNested()
+  @Type(() => apiObjects.ProjectConnection)
+  readonly connections: apiObjects.ProjectConnection[];
 }
 
 export class ToBlockmlRebuildStructRequest {

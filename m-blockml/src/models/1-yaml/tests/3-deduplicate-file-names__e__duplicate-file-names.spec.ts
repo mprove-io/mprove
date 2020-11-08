@@ -30,8 +30,7 @@ test(testId, async () => {
       dir: `src/models/${pack}/data/${testId}`,
       structId: structId,
       projectId: 'p1',
-      bqProject: 'bqp1',
-      connection: api.ProjectConnectionEnum.BigQuery,
+      connections: [],
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 

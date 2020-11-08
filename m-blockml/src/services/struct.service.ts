@@ -21,11 +21,10 @@ import { BmError } from '../models/bm-error';
 export class StructService {
   async rebuildStruct(item: {
     dir: string;
-    weekStart: api.ProjectWeekStartEnum;
-    connection: api.ProjectConnectionEnum;
-    bqProject: string;
-    projectId: string;
     structId: string;
+    projectId: string;
+    weekStart: api.ProjectWeekStartEnum;
+    connections: api.ProjectConnection[];
   }): Promise<interfaces.Struct> {
     let files: api.File[] = await barYaml.collectFiles({
       dir: item.dir,
@@ -34,23 +33,26 @@ export class StructService {
 
     return await this.rebuildStructStateless({
       files: files,
-      weekStart: item.weekStart,
-      connection: item.connection,
-      bqProject: item.bqProject,
+      structId: item.structId,
       projectId: item.projectId,
-      structId: item.structId
+      weekStart: item.weekStart,
+      connections: item.connections
     });
   }
 
   async rebuildStructStateless(item: {
     files: api.File[];
-    weekStart: api.ProjectWeekStartEnum;
-    connection: api.ProjectConnectionEnum;
-    bqProject: string;
-    projectId: string;
     structId: string;
+    projectId: string;
+    weekStart: api.ProjectWeekStartEnum;
+    connections: api.ProjectConnection[];
   }): Promise<interfaces.Struct> {
     let errors: BmError[] = [];
+    let udfs: interfaces.Udf[] = [];
+    let views: interfaces.View[] = [];
+    let models: interfaces.Model[] = [];
+    let dashboards: interfaces.Dashboard[] = [];
+    let visualizations: interfaces.Visualization[] = [];
 
     // barYaml
 
@@ -405,16 +407,15 @@ export class StructService {
 
     // let errors = ErrorsCollector.getErrors();
 
-    return;
-
-    // return {
-    //   errors: errors,
-    //   udfs: udfs,
-    //   views: views,
-    //   models: models,
-    //   dashboards: dashboards,
-    //   pdts: pdts,
-    //   pdts_sorted: pdtsSorted
-    // };
+    return {
+      errors: errors,
+      udfs: udfs,
+      views: views,
+      models: models,
+      dashboards: dashboards,
+      visualizations: visualizations
+      // pdts: pdts,
+      // pdts_sorted: pdtsSorted
+    };
   }
 }
