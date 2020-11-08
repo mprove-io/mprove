@@ -66,9 +66,11 @@ export class StructService {
       errors: errors,
       structId: item.structId
     });
-    // let filesAny: any[] = await barYaml.yamlToObjects({
-    //   file3s: file3s
-    // });
+    let filesAny: any[] = await barYaml.yamlToObjects({
+      file3s: file3s,
+      errors: errors,
+      structId: item.structId
+    });
     // // ->processLineNumbersRecursive
     // filesAny = barYaml.makeLineNumbers({ filesAny: filesAny });
     // filesAny = barYaml.checkTopUnknownParameters({ filesAny: filesAny });

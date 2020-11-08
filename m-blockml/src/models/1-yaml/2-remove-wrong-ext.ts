@@ -52,7 +52,6 @@ export async function removeWrongExt(item: {
         });
       }
     } else {
-      // error e1
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.WRONG_FILE_EXTENSION,

@@ -25,7 +25,6 @@ export async function deduplicateFileNames(item: {
         path: fp.path
       }));
 
-      // error e2
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.DUPLICATE_FILE_NAMES,
