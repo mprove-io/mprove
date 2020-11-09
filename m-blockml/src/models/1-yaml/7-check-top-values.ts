@@ -41,7 +41,7 @@ export function checkTopValues(item: {
             new BmError({
               title: enums.ErTitleEnum.WRONG_HIDDEN,
               message:
-                "parameter \"hidden:\" must be 'true' or 'false' if specified",
+                'parameter "hidden:" must be "true" or "false" if specified',
               lines: [
                 {
                   line: file[parameter + constants.LINE_NUM],

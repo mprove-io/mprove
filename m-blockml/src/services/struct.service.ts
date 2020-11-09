@@ -93,10 +93,11 @@ export class StructService {
       structId: item.structId
     });
 
-    // filesAny = barYaml.checkSupportUdfs({
-    //   filesAny: filesAny,
-    //   connection: item.connection
-    // });
+    filesAny = barYaml.checkSupportUdfs({
+      filesAny: filesAny,
+      errors: errors,
+      structId: item.structId
+    });
 
     // let splitFilesResult = barYaml.splitFiles({ filesAny: filesAny });
 

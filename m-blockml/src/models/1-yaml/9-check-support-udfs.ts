@@ -1,63 +1,61 @@
-// import { api } from '../../barrels/api';
-// import { BmError } from '../bm-error';
+import { constants } from '../../barrels/constants';
+import { enums } from '../../barrels/enums';
+import { helper } from '../../barrels/helper';
+import { api } from '../../barrels/api';
+import { BmError } from '../bm-error';
 
-// export function checkSupportUdfs(item: {
-//   filesAny: any[];
-//   connections: api.ProjectConnection[];
-//   errors: BmError[];
-//   structId: string;
-// }): any[] {
-//   item.filesAny.forEach(file => {
-//     Object.keys(file)
-//       .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
-//       .forEach(parameter => {
-//         if (
-//           ['.view', '.model'].indexOf(file.ext) > -1 &&
-//           parameter === 'udfs'
-//         ) {
-//           if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-//             // error e296
-//             ErrorsCollector.addError(
-//               new AmError({
-//                 title: `UDFs are not supported for ${api.ProjectConnectionEnum.PostgreSQL}`,
-//                 message: `parameter "${parameter}" is useless`,
-//                 lines: [
-//                   {
-//                     line: file[parameter + '_line_num'],
-//                     name: file.name,
-//                     path: file.path
-//                   }
-//                 ]
-//               })
-//             );
+let logPack = '1-yaml';
+let logFolder = '9-check-support-udfs';
 
-//             delete file[parameter];
-//             delete file[parameter + '_line_num'];
-//             return;
-//           }
+export function checkSupportUdfs(item: {
+  filesAny: any[];
+  errors: BmError[];
+  structId: string;
+}): any[] {
+  let logId = item.structId;
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
-//           if (['.udf'].indexOf(file.ext) > -1 && parameter === 'udf') {
-//             // error e297
-//             ErrorsCollector.addError(
-//               new AmError({
-//                 title: `UDFs are not supported for ${api.ProjectConnectionEnum.PostgreSQL}`,
-//                 message: '.udf files are useless',
-//                 lines: [
-//                   {
-//                     line: file[parameter + '_line_num'],
-//                     name: file.name,
-//                     path: file.path
-//                   }
-//                 ]
-//               })
-//             );
-//           }
+  let newFilesAny: any[] = [];
 
-//           delete file[parameter];
-//           delete file[parameter + '_line_num'];
-//           return;
-//         }
-//       });
-//   });
-//   return item.filesAny;
-// }
+  item.filesAny.forEach(file => {
+    if (
+      [
+        api.FileExtensionEnum.View.toString(),
+        api.FileExtensionEnum.Model.toString()
+      ].indexOf(file.ext) > -1 &&
+      file.connection.connectionType !== api.ConnectionTypeEnum.BigQuery
+    ) {
+      let udfsParameter = Object.keys(file)
+        .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .find(p => p === enums.ParameterEnum.Udfs.toString());
+
+      if (!!udfsParameter) {
+        item.errors.push(
+          new BmError({
+            title:
+              enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_SPECIFIED_CONNECTION,
+            message: `parameter "udfs" can not be used for connection type "${file.connection.type}"`,
+            lines: [
+              {
+                line:
+                  file[
+                    enums.ParameterEnum.Udfs.toString() + constants.LINE_NUM
+                  ],
+                name: file.name,
+                path: file.path
+              }
+            ]
+          })
+        );
+
+        return;
+      }
+    }
+    newFilesAny.push(file);
+  });
+
+  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, newFilesAny);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
+
+  return newFilesAny;
+}
