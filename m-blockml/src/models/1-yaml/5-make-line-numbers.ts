@@ -15,21 +15,26 @@ export function makeLineNumbers(item: {
   let logId = item.structId;
   helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
-  let filesAny = item.filesAny;
+  let newFilesAny: any[] = [];
 
-  filesAny.map(element =>
+  item.filesAny.map(element => {
+    let errorsOnStart = item.errors.length;
     processLineNumbersRecursive({
       hash: element,
       fileName: element.name,
       filePath: element.path,
       errors: item.errors
-    })
-  );
+    });
+    let errorsOnEnd = item.errors.length;
+    if (errorsOnStart === errorsOnEnd) {
+      newFilesAny.push(element);
+    }
+  });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, filesAny);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, newFilesAny);
   helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
 
-  return filesAny;
+  return newFilesAny;
 }
 
 export function processLineNumbersRecursive(item: {

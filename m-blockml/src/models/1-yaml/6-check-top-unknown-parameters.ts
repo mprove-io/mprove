@@ -14,9 +14,10 @@ export function checkTopUnknownParameters(item: {
   let logId = item.structId;
   helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
-  let filesAny = item.filesAny;
+  let newFilesAny: any[] = [];
 
-  filesAny.forEach(file => {
+  item.filesAny.forEach(file => {
+    let errorsOnStart = item.errors.length;
     Object.keys(file)
       .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
@@ -41,9 +42,6 @@ export function checkTopUnknownParameters(item: {
                   ]
                 })
               );
-
-              delete file[parameter];
-              delete file[parameter + '_line_num'];
               return;
             }
             break;
@@ -78,9 +76,6 @@ export function checkTopUnknownParameters(item: {
                   ]
                 })
               );
-
-              delete file[parameter];
-              delete file[parameter + '_line_num'];
               return;
             }
             break;
@@ -117,9 +112,6 @@ export function checkTopUnknownParameters(item: {
                   ]
                 })
               );
-
-              delete file[parameter];
-              delete file[parameter + '_line_num'];
               return;
             }
             break;
@@ -152,9 +144,6 @@ export function checkTopUnknownParameters(item: {
                   ]
                 })
               );
-
-              delete file[parameter];
-              delete file[parameter + '_line_num'];
               return;
             }
             break;
@@ -181,9 +170,6 @@ export function checkTopUnknownParameters(item: {
               ]
             })
           );
-
-          delete file[parameter];
-          delete file[parameter + '_line_num'];
           return;
         } else if (
           !!file[parameter] &&
@@ -203,16 +189,18 @@ export function checkTopUnknownParameters(item: {
               ]
             })
           );
-
-          delete file[parameter];
-          delete file[parameter + '_line_num'];
           return;
         }
       });
+
+    let errorsOnEnd = item.errors.length;
+    if (errorsOnStart === errorsOnEnd) {
+      newFilesAny.push(file);
+    }
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, filesAny);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, newFilesAny);
   helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
 
-  return filesAny;
+  return newFilesAny;
 }

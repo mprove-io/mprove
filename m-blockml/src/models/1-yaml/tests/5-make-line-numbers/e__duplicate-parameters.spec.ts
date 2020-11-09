@@ -53,8 +53,8 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
+  // FILE_CONTENT_IS_NOT_YAML caught before DUPLICATE_PARAMETERS
   expect(filesAny.length).toBe(0);
   expect(errors.length).toBe(1);
-  // code does not reach DUPLICATE_PARAMETERS
   expect(errors[0].title).toBe(enums.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML);
 });

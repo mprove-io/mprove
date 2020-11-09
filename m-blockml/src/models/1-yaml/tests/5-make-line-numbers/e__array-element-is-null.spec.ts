@@ -53,7 +53,7 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(filesAny.length).toBe(1);
+  expect(filesAny.length).toBe(0);
   expect(errors.length).toBe(1);
   expect(errors[0].title).toBe(enums.ErTitleEnum.ARRAY_ELEMENT_IS_NULL);
 });

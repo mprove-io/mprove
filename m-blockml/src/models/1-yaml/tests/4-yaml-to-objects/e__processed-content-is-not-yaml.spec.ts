@@ -53,10 +53,7 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
+  // no case for PROCESSED_CONTENT_IS_NOT_YAML yet
   expect(filesAny.length).toBe(1);
   expect(errors.length).toBe(0);
-  // no case for PROCESSED_CONTENT_IS_NOT_YAML yet
-  // expect(filesAny.length).toBe(1);
-  // expect(errors.length).toBe(1);
-  // expect(errors[0].title).toBe(enums.ErTitleEnum.PROCESSED_CONTENT_IS_NOT_YAML);
 });
