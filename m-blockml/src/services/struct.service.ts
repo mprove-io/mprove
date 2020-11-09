@@ -76,7 +76,11 @@ export class StructService {
       errors: errors,
       structId: item.structId
     });
-    // filesAny = barYaml.checkTopUnknownParameters({ filesAny: filesAny });
+    filesAny = barYaml.checkTopUnknownParameters({
+      filesAny: filesAny,
+      errors: errors,
+      structId: item.structId
+    });
     // filesAny = barYaml.checkTopValues({ filesAny: filesAny });
     // filesAny = barYaml.checkSupportUdfs({
     //   filesAny: filesAny,

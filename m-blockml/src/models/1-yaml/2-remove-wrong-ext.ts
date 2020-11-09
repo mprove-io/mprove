@@ -13,7 +13,7 @@ export function removeWrongExt(item: {
   structId: string;
 }): interfaces.File2[] {
   let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.In, item);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
   let file2s: interfaces.File2[] = [];
 
@@ -66,8 +66,8 @@ export function removeWrongExt(item: {
     }
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutFile2s, file2s);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutErrors, item.errors);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.File2s, file2s);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
 
   return file2s;
 }

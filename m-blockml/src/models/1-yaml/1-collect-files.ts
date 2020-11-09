@@ -12,7 +12,7 @@ export async function collectFiles(item: {
   structId: string;
 }): Promise<api.File[]> {
   let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.In, item);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
   return new Promise((resolve, reject) => {
     let files: api.File[] = [];
@@ -52,8 +52,8 @@ export async function collectFiles(item: {
     });
 
     walker.on('end', () => {
-      helper.log(logId, logPack, logFolder, enums.LogEnum.OutErrors, []);
-      helper.log(logId, logPack, logFolder, enums.LogEnum.OutFiles, files);
+      helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, []);
+      helper.log(logId, logPack, logFolder, enums.LogEnum.Files, files);
       resolve(files);
     });
   });

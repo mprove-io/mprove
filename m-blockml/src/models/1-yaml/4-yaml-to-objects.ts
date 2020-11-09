@@ -15,7 +15,7 @@ export function yamlToObjects(item: {
   structId: string;
 }): any[] {
   let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.In, item);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
   let filesAny: any[] = [];
 
@@ -131,8 +131,8 @@ export function yamlToObjects(item: {
     filesAny.push(parsedYaml);
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutFilesAny, filesAny);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutErrors, item.errors);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, filesAny);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
 
   return filesAny;
 }

@@ -1,8 +1,8 @@
 export enum LogEnum {
-  In = 'in.log',
-  OutErrors = 'out_errors.log',
-  OutFiles = 'out_files.log',
-  OutFile2s = 'out_file2s.log',
-  OutFile3s = 'out_file3s.log',
-  OutFilesAny = 'out_filesAny.log'
+  Input = 'input.log',
+  Errors = 'out_errors.log',
+  Files = 'out_files.log',
+  File2s = 'out_file2s.log',
+  File3s = 'out_file3s.log',
+  FilesAny = 'out_filesAny.log'
 }

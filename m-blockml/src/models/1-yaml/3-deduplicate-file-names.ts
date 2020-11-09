@@ -12,7 +12,7 @@ export function deduplicateFileNames(item: {
   structId: string;
 }): interfaces.File3[] {
   let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.In, item);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
   let file3s: interfaces.File3[] = [];
 
@@ -43,8 +43,8 @@ export function deduplicateFileNames(item: {
     }
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutFile3s, file3s);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutErrors, item.errors);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.File3s, file3s);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
 
   return file3s;
 }

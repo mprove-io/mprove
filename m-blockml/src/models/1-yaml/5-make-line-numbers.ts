@@ -13,7 +13,7 @@ export function makeLineNumbers(item: {
   structId: string;
 }): any[] {
   let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.In, item);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
 
   let filesAny = item.filesAny;
 
@@ -26,8 +26,8 @@ export function makeLineNumbers(item: {
     })
   );
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutFilesAny, filesAny);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.OutErrors, item.errors);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, filesAny);
+  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
 
   return filesAny;
 }
@@ -51,7 +51,6 @@ export function processLineNumbersRecursive(item: {
       typeof item.hash[oldPar] === 'undefined' ||
       item.hash[oldPar] === null
     ) {
-      // error e6
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.UNDEFINED_VALUE,
@@ -168,7 +167,6 @@ export function processLineNumbersRecursive(item: {
           path: item.filePath
         }));
 
-        // error e7 - "file content is not YAML" is triggered before this stage
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.DUPLICATE_PARAMETERS,
