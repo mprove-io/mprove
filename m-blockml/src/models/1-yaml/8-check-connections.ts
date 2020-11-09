@@ -1,6 +1,7 @@
 import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
+import { constants } from '../../barrels/constants';
 import { BmError } from '../bm-error';
 
 let logPack = '1-yaml';
@@ -56,7 +57,7 @@ export function checkConnections(item: {
             message: `project connection "${connectionName}" not found`,
             lines: [
               {
-                line: file[enums.ParameterEnum.Connection + '_line_num'],
+                line: file[enums.ParameterEnum.Connection + constants.LINE_NUM],
                 name: file.name,
                 path: file.path
               }

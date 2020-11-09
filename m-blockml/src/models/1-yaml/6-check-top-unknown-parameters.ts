@@ -1,3 +1,4 @@
+import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
@@ -22,20 +23,31 @@ export function checkTopUnknownParameters(item: {
     Object.keys(file)
       .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
-        if (['path', 'ext', 'name'].indexOf(parameter) > -1) {
+        if (
+          [
+            enums.ParameterEnum.Path.toString(),
+            enums.ParameterEnum.Ext.toString(),
+            enums.ParameterEnum.Name.toString()
+          ].indexOf(parameter) > -1
+        ) {
           return;
         }
 
         switch (file.ext) {
-          case '.udf': {
-            if (['udf', 'sql'].indexOf(parameter) < 0) {
+          case api.FileExtensionEnum.Udf: {
+            if (
+              [
+                enums.ParameterEnum.Udf.toString(),
+                enums.ParameterEnum.Sql.toString()
+              ].indexOf(parameter) < 0
+            ) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_UDF_PARAMETER,
                   message: `parameter "${parameter}" can not be used on top level of .udf file`,
                   lines: [
                     {
-                      line: file[parameter + '_line_num'],
+                      line: file[parameter + constants.LINE_NUM],
                       name: file.name,
                       path: file.path
                     }
@@ -47,20 +59,20 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.view': {
+          case api.FileExtensionEnum.View: {
             if (
               [
-                'view',
-                enums.ParameterEnum.Connection,
-                'label',
-                'description',
-                'udfs',
-                'table',
-                'derived_table',
-                'permanent',
-                'pdt_trigger_time',
-                'pdt_trigger_sql',
-                'fields'
+                enums.ParameterEnum.View.toString(),
+                enums.ParameterEnum.Connection.toString(),
+                enums.ParameterEnum.Label.toString(),
+                enums.ParameterEnum.Description.toString(),
+                enums.ParameterEnum.Udfs.toString(),
+                enums.ParameterEnum.Table.toString(),
+                enums.ParameterEnum.DerivedTable.toString(),
+                enums.ParameterEnum.Fields.toString()
+                // 'permanent',
+                // 'pdt_trigger_time',
+                // 'pdt_trigger_sql',
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
@@ -69,7 +81,7 @@ export function checkTopUnknownParameters(item: {
                   message: `parameter "${parameter}" can not be used on top level of .view file`,
                   lines: [
                     {
-                      line: file[parameter + '_line_num'],
+                      line: file[parameter + constants.LINE_NUM],
                       name: file.name,
                       path: file.path
                     }
@@ -81,22 +93,22 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.model': {
+          case api.FileExtensionEnum.Model: {
             if (
               [
-                'model',
-                enums.ParameterEnum.Connection,
-                'hidden',
-                'label',
-                'group',
-                'description',
-                'access_users',
-                'always_join',
-                'sql_always_where',
-                'sql_always_where_calc',
-                'udfs',
-                'joins',
-                'fields'
+                enums.ParameterEnum.Model.toString(),
+                enums.ParameterEnum.Connection.toString(),
+                enums.ParameterEnum.Hidden.toString(),
+                enums.ParameterEnum.Label.toString(),
+                enums.ParameterEnum.Group.toString(),
+                enums.ParameterEnum.Description.toString(),
+                enums.ParameterEnum.AccessUsers.toString(),
+                enums.ParameterEnum.AlwaysJoin.toString(),
+                enums.ParameterEnum.SqlAlwaysWhere.toString(),
+                enums.ParameterEnum.SqlAlwaysWhereCalc.toString(),
+                enums.ParameterEnum.Udfs.toString(),
+                enums.ParameterEnum.Joins.toString(),
+                enums.ParameterEnum.Fields.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
@@ -105,7 +117,7 @@ export function checkTopUnknownParameters(item: {
                   message: `parameter "${parameter}" can not be used on top level of .model file`,
                   lines: [
                     {
-                      line: file[parameter + '_line_num'],
+                      line: file[parameter + constants.LINE_NUM],
                       name: file.name,
                       path: file.path
                     }
@@ -117,17 +129,17 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.dashboard': {
+          case api.FileExtensionEnum.Dashboard: {
             if (
               [
-                'dashboard',
-                'title',
-                'group',
-                'hidden',
-                'description',
-                'access_users',
-                'fields',
-                'reports'
+                enums.ParameterEnum.Dashboard.toString(),
+                enums.ParameterEnum.Title.toString(),
+                enums.ParameterEnum.Group.toString(),
+                enums.ParameterEnum.Hidden.toString(),
+                enums.ParameterEnum.Description.toString(),
+                enums.ParameterEnum.AccessUsers.toString(),
+                enums.ParameterEnum.Fields.toString(),
+                enums.ParameterEnum.Reports.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
@@ -136,7 +148,7 @@ export function checkTopUnknownParameters(item: {
                   message: `parameter "${parameter}" can not be used on top level of .dashboard file`,
                   lines: [
                     {
-                      line: file[parameter + '_line_num'],
+                      line: file[parameter + constants.LINE_NUM],
                       name: file.name,
                       path: file.path
                     }
@@ -151,9 +163,13 @@ export function checkTopUnknownParameters(item: {
 
         if (
           Array.isArray(file[parameter]) &&
-          ['udfs', 'fields', 'reports', 'joins', 'access_users'].indexOf(
-            parameter
-          ) < 0
+          [
+            enums.ParameterEnum.Udfs.toString(),
+            enums.ParameterEnum.Fields.toString(),
+            enums.ParameterEnum.Reports.toString(),
+            enums.ParameterEnum.Joins.toString(),
+            enums.ParameterEnum.AccessUsers.toString()
+          ].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
@@ -161,7 +177,7 @@ export function checkTopUnknownParameters(item: {
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
-                  line: file[parameter + '_line_num'],
+                  line: file[parameter + constants.LINE_NUM],
                   name: file.name,
                   path: file.path
                 }
@@ -179,7 +195,7 @@ export function checkTopUnknownParameters(item: {
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
-                  line: file[parameter + '_line_num'],
+                  line: file[parameter + constants.LINE_NUM],
                   name: file.name,
                   path: file.path
                 }

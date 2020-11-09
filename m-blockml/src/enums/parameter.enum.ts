@@ -1,3 +1,30 @@
 export enum ParameterEnum {
-  Connection = 'connection'
+  Name = 'name',
+  Path = 'path',
+  Ext = 'ext',
+  //
+  Connection = 'connection',
+  Udf = 'udf',
+  View = 'view',
+  Sql = 'sql',
+  Label = 'label',
+  Description = 'description',
+  Udfs = 'udfs',
+  Table = 'table',
+  DerivedTable = 'derived_table',
+  // 'permanent',
+  // 'pdt_trigger_time',
+  // 'pdt_trigger_sql',
+  Fields = 'fields',
+  Model = 'model',
+  Hidden = 'hidden',
+  Group = 'group',
+  AccessUsers = 'access_users',
+  AlwaysJoin = 'always_join',
+  SqlAlwaysWhere = 'sql_always_where',
+  SqlAlwaysWhereCalc = 'sql_always_where_calc',
+  Joins = 'joins',
+  Dashboard = 'dashboard',
+  Title = 'title',
+  Reports = 'reports'
 }

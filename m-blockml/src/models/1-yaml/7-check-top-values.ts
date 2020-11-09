@@ -1,6 +1,7 @@
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
+import { constants } from '../../barrels/constants';
 import { BmError } from '../bm-error';
 
 let logPack = '1-yaml';
@@ -22,12 +23,18 @@ export function checkTopValues(item: {
     Object.keys(file)
       .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
-        if (['path', 'ext', 'name'].indexOf(parameter) > -1) {
+        if (
+          [
+            enums.ParameterEnum.Path.toString(),
+            enums.ParameterEnum.Ext.toString(),
+            enums.ParameterEnum.Name.toString()
+          ].indexOf(parameter) > -1
+        ) {
           return;
         }
 
         if (
-          parameter === 'hidden' &&
+          parameter === enums.ParameterEnum.Hidden.toString() &&
           !file[parameter].toString().match(api.MyRegex.TRUE_FALSE())
         ) {
           item.errors.push(
@@ -37,7 +44,7 @@ export function checkTopValues(item: {
                 "parameter \"hidden:\" must be 'true' or 'false' if specified",
               lines: [
                 {
-                  line: file[parameter + '_line_num'],
+                  line: file[parameter + constants.LINE_NUM],
                   name: file.name,
                   path: file.path
                 }
@@ -49,7 +56,12 @@ export function checkTopValues(item: {
         }
 
         if (
-          ['udf', 'view', 'model', 'dashboard'].indexOf(parameter) > -1 &&
+          [
+            enums.ParameterEnum.Udf.toString(),
+            enums.ParameterEnum.View.toString(),
+            enums.ParameterEnum.Model.toString(),
+            enums.ParameterEnum.Dashboard.toString()
+          ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()
             .match(api.MyRegex.CAPTURE_SPECIAL_CHARS_G())
@@ -60,7 +72,7 @@ export function checkTopValues(item: {
               message: `parameter "${parameter}" contains wrong characters or whitespace`,
               lines: [
                 {
-                  line: file[parameter + '_line_num'],
+                  line: file[parameter + constants.LINE_NUM],
                   name: file.name,
                   path: file.path
                 }

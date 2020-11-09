@@ -32,7 +32,7 @@ export async function collectFiles(item: {
         let path = fullPath.substr(item.dir.length + 1);
 
         let pReg = api.MyRegex.SLASH_G();
-        path = path.replace(pReg, '___');
+        path = path.replace(pReg, api.TRIPLE_UNDERSCORE);
 
         // recreating absolute path
         let rpReg = api.MyRegex.TRIPLE_UNDERSCORE_G();

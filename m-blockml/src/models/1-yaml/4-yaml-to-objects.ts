@@ -3,6 +3,7 @@ import { interfaces } from '../../barrels/interfaces';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
+import { constants } from '../../barrels/constants';
 
 import { BmError } from '../bm-error';
 
@@ -67,9 +68,9 @@ export function yamlToObjects(item: {
         processedString =
           processedString +
           r[1] +
-          '_line_num___' +
+          constants.LINE_NUM_START +
           num +
-          '___line_num_' +
+          constants.LINE_NUM_END +
           ':' +
           r[2] +
           '\n';

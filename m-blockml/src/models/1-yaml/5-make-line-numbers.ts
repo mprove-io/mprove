@@ -1,5 +1,6 @@
 import { interfaces } from '../../barrels/interfaces';
 import { api } from '../../barrels/api';
+import { constants } from '../../barrels/constants';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
@@ -78,11 +79,11 @@ export function processLineNumbersRecursive(item: {
     if (oldPar !== newPar) {
       item.hash[newPar] = item.hash[oldPar];
 
-      if (!item.hash[newPar + 'LineNumbers']) {
-        item.hash[newPar + 'LineNumbers'] = [];
+      if (!item.hash[newPar + constants.LINE_NUMBERS]) {
+        item.hash[newPar + constants.LINE_NUMBERS] = [];
       }
 
-      item.hash[newPar + 'LineNumbers'].push(lineNumber);
+      item.hash[newPar + constants.LINE_NUMBERS].push(lineNumber);
 
       delete item.hash[oldPar];
     }
@@ -183,7 +184,7 @@ export function processLineNumbersRecursive(item: {
         delete item.hash[par];
         delete item.hash[p];
       } else {
-        item.hash[p + '_line_num'] = item.hash[par][0];
+        item.hash[p + constants.LINE_NUM] = item.hash[par][0];
         delete item.hash[par];
       }
     }
