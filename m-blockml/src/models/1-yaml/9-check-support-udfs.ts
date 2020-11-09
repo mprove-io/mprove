@@ -1,27 +1,25 @@
-// import { AmError } from '../../barrels/am-error';
-// import { ApRegex } from '../../barrels/am-regex';
-// import { ErrorsCollector } from '../../barrels/errors-collector';
 // import { api } from '../../barrels/api';
+// import { BmError } from '../bm-error';
 
 // export function checkSupportUdfs(item: {
 //   filesAny: any[];
-//   connection: api.ProjectConnectionEnum;
+//   connections: api.ProjectConnection[];
+//   errors: BmError[];
+//   structId: string;
 // }): any[] {
-//   if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-//     item.filesAny.forEach(file => {
-//       Object.keys(file)
-//         .filter(x => !x.toString().match(ApRegex.ENDS_WITH_LINE_NUM()))
-//         .forEach(parameter => {
-//           if (
-//             ['.view', '.model'].indexOf(file.ext) > -1 &&
-//             parameter === 'udfs'
-//           ) {
+//   item.filesAny.forEach(file => {
+//     Object.keys(file)
+//       .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+//       .forEach(parameter => {
+//         if (
+//           ['.view', '.model'].indexOf(file.ext) > -1 &&
+//           parameter === 'udfs'
+//         ) {
+//           if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
 //             // error e296
 //             ErrorsCollector.addError(
 //               new AmError({
-//                 title: `UDFs are not supported for ${
-//                   api.ProjectConnectionEnum.PostgreSQL
-//                 }`,
+//                 title: `UDFs are not supported for ${api.ProjectConnectionEnum.PostgreSQL}`,
 //                 message: `parameter "${parameter}" is useless`,
 //                 lines: [
 //                   {
@@ -42,10 +40,8 @@
 //             // error e297
 //             ErrorsCollector.addError(
 //               new AmError({
-//                 title: `UDFs are not supported for ${
-//                   api.ProjectConnectionEnum.PostgreSQL
-//                 }`,
-//                 message: `.udf files are useless`,
+//                 title: `UDFs are not supported for ${api.ProjectConnectionEnum.PostgreSQL}`,
+//                 message: '.udf files are useless',
 //                 lines: [
 //                   {
 //                     line: file[parameter + '_line_num'],
@@ -55,13 +51,13 @@
 //                 ]
 //               })
 //             );
-
-//             delete file[parameter];
-//             delete file[parameter + '_line_num'];
-//             return;
 //           }
-//         });
-//     });
-//   }
+
+//           delete file[parameter];
+//           delete file[parameter + '_line_num'];
+//           return;
+//         }
+//       });
+//   });
 //   return item.filesAny;
 // }

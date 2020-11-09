@@ -81,7 +81,18 @@ export class StructService {
       errors: errors,
       structId: item.structId
     });
-    // filesAny = barYaml.checkTopValues({ filesAny: filesAny });
+    filesAny = barYaml.checkTopValues({
+      filesAny: filesAny,
+      errors: errors,
+      structId: item.structId
+    });
+    filesAny = barYaml.checkConnections({
+      filesAny: filesAny,
+      connections: item.connections,
+      errors: errors,
+      structId: item.structId
+    });
+
     // filesAny = barYaml.checkSupportUdfs({
     //   filesAny: filesAny,
     //   connection: item.connection

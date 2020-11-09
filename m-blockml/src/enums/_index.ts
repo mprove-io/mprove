@@ -5,6 +5,7 @@ export * from './field-ext-type.enum';
 export * from './fraction-unit.enum';
 export * from './join-type.enum';
 export * from './log.enum';
+export * from './parameter.enum';
 export * from './time-source.enum';
 export * from './timeframe.enum';
 

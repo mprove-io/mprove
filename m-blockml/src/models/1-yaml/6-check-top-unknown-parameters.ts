@@ -18,6 +18,7 @@ export function checkTopUnknownParameters(item: {
 
   item.filesAny.forEach(file => {
     let errorsOnStart = item.errors.length;
+
     Object.keys(file)
       .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
@@ -28,7 +29,6 @@ export function checkTopUnknownParameters(item: {
         switch (file.ext) {
           case '.udf': {
             if (['udf', 'sql'].indexOf(parameter) < 0) {
-              // error e209
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_UDF_PARAMETER,
@@ -51,6 +51,7 @@ export function checkTopUnknownParameters(item: {
             if (
               [
                 'view',
+                enums.ParameterEnum.Connection,
                 'label',
                 'description',
                 'udfs',
@@ -62,7 +63,6 @@ export function checkTopUnknownParameters(item: {
                 'fields'
               ].indexOf(parameter) < 0
             ) {
-              // error e116
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_VIEW_PARAMETER,
@@ -85,6 +85,7 @@ export function checkTopUnknownParameters(item: {
             if (
               [
                 'model',
+                enums.ParameterEnum.Connection,
                 'hidden',
                 'label',
                 'group',
@@ -98,7 +99,6 @@ export function checkTopUnknownParameters(item: {
                 'fields'
               ].indexOf(parameter) < 0
             ) {
-              // error e117
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_MODEL_PARAMETER,
@@ -130,7 +130,6 @@ export function checkTopUnknownParameters(item: {
                 'reports'
               ].indexOf(parameter) < 0
             ) {
-              // error e118
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_DASHBOARD_PARAMETER,
@@ -156,7 +155,6 @@ export function checkTopUnknownParameters(item: {
             parameter
           ) < 0
         ) {
-          // error e120
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.UNEXPECTED_LIST,
@@ -175,7 +173,6 @@ export function checkTopUnknownParameters(item: {
           !!file[parameter] &&
           file[parameter].constructor === Object
         ) {
-          // error e121
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.UNEXPECTED_DICTIONARY,

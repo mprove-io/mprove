@@ -4,9 +4,10 @@ export * from './3-deduplicate-file-names';
 export * from './4-yaml-to-objects';
 export * from './5-make-line-numbers';
 export * from './6-check-top-unknown-parameters';
+export * from './7-check-top-values';
+export * from './8-check-connections';
 
 // export * from './check-support-udfs';
 // export * from './check-top-unknown-parameters';
-// export * from './check-top-values';
 // export * from './process-line-numbers-recursive';
 // export * from './split-files';
