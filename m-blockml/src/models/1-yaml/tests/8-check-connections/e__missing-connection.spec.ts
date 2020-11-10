@@ -1,54 +1,34 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { StructService } from '../../../../services/struct.service';
 import { api } from '../../../../barrels/api';
+import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
-import * as fse from 'fs-extra';
 import { interfaces } from '../../../../barrels/interfaces';
 
 let pack = '1-yaml';
-let funcId = '8-check-connections';
+let func = '8-check-connections';
 let testId = 'e__missing-connection';
-
-let structService: StructService;
-
-beforeEach(async () => {
-  let moduleRef: TestingModule = await Test.createTestingModule({
-    controllers: [],
-    providers: [StructService]
-  }).compile();
-
-  structService = moduleRef.get<StructService>(StructService);
-});
 
 test(testId, async () => {
   let filesAny: any[];
   let errors: interfaces.BmErrorC[];
+
   try {
-    let structId = api.makeStructId();
+    let {
+      structService,
+      structId,
+      dataDir,
+      logPath
+    } = await helper.prepareTest(pack, func, testId);
 
     await structService.rebuildStruct({
-      dir: `src/models/${pack}/data/${funcId}/${testId}`,
+      dir: dataDir,
       structId: structId,
       projectId: 'p1',
       connections: [],
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    let outFilesAny = fse.readFileSync(
-      `src/logs/${structId}/${pack}/${funcId}/${enums.LogEnum.FilesAny.toString()}`
-    );
-
-    let outErrors = fse.readFileSync(
-      `src/logs/${structId}/${pack}/${funcId}/${enums.LogEnum.Errors.toString()}`
-    );
-
-    filesAny = JSON.parse(outFilesAny.toString());
-
-    errors = ((await api.transformValidString({
-      classType: interfaces.BmErrorC,
-      jsonString: outErrors.toString(),
-      errorMessage: api.ErEnum.M_BLOCKML_WRONG_TEST_TRANSFORM_AND_VALIDATE
-    })) as unknown) as interfaces.BmErrorC[];
+    filesAny = await helper.readLog(logPath, enums.LogEnum.FilesAny);
+    errors = await helper.readLog(logPath, enums.LogEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }

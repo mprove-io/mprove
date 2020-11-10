@@ -1,9 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { StructService } from '../../../../services/struct.service';
 import { api } from '../../../../barrels/api';
-import { enums } from '../../../../barrels/enums';
 import { helper } from '../../../../barrels/helper';
-import * as fse from 'fs-extra';
+import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 
 let pack = '1-yaml';

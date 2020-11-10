@@ -1,1 +1,2 @@
-model: abc        
+model: abc   
+connection: c1     

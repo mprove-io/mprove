@@ -1,47 +1,31 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { StructService } from '../../../../services/struct.service';
 import { api } from '../../../../barrels/api';
+import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
-import { barYaml } from '../../../../barrels/bar-yaml';
-import * as fse from 'fs-extra';
 
 let pack = '1-yaml';
-let funcId = '1-collect-files';
+let func = '1-collect-files';
 let testId = 'v__files-length';
-
-let structService: StructService;
-
-beforeEach(async () => {
-  let moduleRef: TestingModule = await Test.createTestingModule({
-    controllers: [],
-    providers: [StructService]
-  }).compile();
-
-  structService = moduleRef.get<StructService>(StructService);
-});
 
 test(testId, async () => {
   let files: api.File[];
+
   try {
-    let structId = api.makeStructId();
+    let {
+      structService,
+      structId,
+      dataDir,
+      logPath
+    } = await helper.prepareTest(pack, func, testId);
 
     await structService.rebuildStruct({
-      dir: `src/models/${pack}/data/${funcId}/${testId}`,
+      dir: dataDir,
       structId: structId,
       projectId: 'p1',
       connections: [],
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    let outFiles = fse.readFileSync(
-      `src/logs/${structId}/${pack}/${funcId}/${enums.LogEnum.Files.toString()}`
-    );
-
-    files = (await api.transformValidString({
-      classType: api.File,
-      jsonString: outFiles.toString(),
-      errorMessage: api.ErEnum.M_BLOCKML_WRONG_TEST_TRANSFORM_AND_VALIDATE
-    })) as api.File[];
+    files = await helper.readLog(logPath, enums.LogEnum.Files);
   } catch (e) {
     api.logToConsole(e);
   }

@@ -9,6 +9,11 @@ let testId = 'e__wrong-dashboard-name';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
+  let udfs: interfaces.Udf[];
+  let views: interfaces.View[];
+  let models: interfaces.Model[];
+  let dashboards: interfaces.Dashboard[];
+  let visualizations: interfaces.Visualization[];
 
   try {
     let {
@@ -32,9 +37,20 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(logPath, enums.LogEnum.Errors);
+    udfs = await helper.readLog(logPath, enums.LogEnum.Udfs);
+    views = await helper.readLog(logPath, enums.LogEnum.Views);
+    models = await helper.readLog(logPath, enums.LogEnum.Models);
+    dashboards = await helper.readLog(logPath, enums.LogEnum.Dashboards);
+    visualizations = await helper.readLog(logPath, enums.LogEnum.Vis);
   } catch (e) {
     api.logToConsole(e);
   }
+
+  expect(udfs.length).toBe(0);
+  expect(views.length).toBe(0);
+  expect(models.length).toBe(0);
+  expect(dashboards.length).toBe(0);
+  expect(visualizations.length).toBe(0);
 
   expect(errors.length).toBe(1);
   expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_DASHBOARD_NAME);

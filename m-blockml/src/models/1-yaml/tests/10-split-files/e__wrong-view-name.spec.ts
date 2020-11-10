@@ -1,11 +1,11 @@
-import { api } from '../barrels/api';
-import { enums } from '../barrels/enums';
-import { helper } from '../barrels/helper';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../../../barrels/api';
+import { enums } from '../../../../barrels/enums';
+import { helper } from '../../../../barrels/helper';
+import { interfaces } from '../../../../barrels/interfaces';
 
 let pack = '1-yaml';
 let func = '10-split-files';
-let testId = 'v_';
+let testId = 'e__wrong-view-name';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -46,11 +46,12 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(udfs.length).toBe(1);
-  expect(views.length).toBe(1);
-  expect(models.length).toBe(1);
-  expect(dashboards.length).toBe(1);
-  expect(visualizations.length).toBe(1);
+  expect(udfs.length).toBe(0);
+  expect(views.length).toBe(0);
+  expect(models.length).toBe(0);
+  expect(dashboards.length).toBe(0);
+  expect(visualizations.length).toBe(0);
 
-  expect(errors.length).toBe(0);
+  expect(errors.length).toBe(1);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_VIEW_NAME);
 });
