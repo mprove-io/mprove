@@ -48,70 +48,28 @@ export class StructService {
     weekStart: api.ProjectWeekStartEnum;
     connections: api.ProjectConnection[];
   }): Promise<interfaces.Struct> {
+    //
     let errors: BmError[] = [];
-
     let udfs: interfaces.Udf[];
     let views: interfaces.View[];
     let models: interfaces.Model[];
     let dashboards: interfaces.Dashboard[];
     let visualizations: interfaces.Visualization[];
 
-    // barYaml
-
-    let file2s: interfaces.File2[] = barYaml.removeWrongExt({
+    let yamlBuildResult = barYaml.yamlBuild({
+      errors: errors,
       files: item.files,
-      errors: errors,
-      structId: item.structId
-    });
-    let file3s: interfaces.File3[] = barYaml.deduplicateFileNames({
-      file2s: file2s,
-      errors: errors,
-      structId: item.structId
-    });
-    let filesAny: any[] = barYaml.yamlToObjects({
-      file3s: file3s,
-      errors: errors,
-      structId: item.structId
-    });
-    filesAny = barYaml.makeLineNumbers({
-      filesAny: filesAny,
-      errors: errors,
-      structId: item.structId
-    });
-    filesAny = barYaml.checkTopUnknownParameters({
-      filesAny: filesAny,
-      errors: errors,
-      structId: item.structId
-    });
-    filesAny = barYaml.checkTopValues({
-      filesAny: filesAny,
-      errors: errors,
-      structId: item.structId
-    });
-    filesAny = barYaml.checkConnections({
-      filesAny: filesAny,
-      connections: item.connections,
-      errors: errors,
-      structId: item.structId
+      structId: item.structId,
+      projectId: item.projectId,
+      weekStart: item.weekStart,
+      connections: item.connections
     });
 
-    filesAny = barYaml.checkSupportUdfs({
-      filesAny: filesAny,
-      errors: errors,
-      structId: item.structId
-    });
-
-    let splitFilesResult = barYaml.splitFiles({
-      filesAny: filesAny,
-      errors: errors,
-      structId: item.structId
-    });
-
-    udfs = splitFilesResult.udfs;
-    views = splitFilesResult.views;
-    models = splitFilesResult.models;
-    dashboards = splitFilesResult.dashboards;
-    visualizations = splitFilesResult.visualizations;
+    udfs = yamlBuildResult.udfs;
+    views = yamlBuildResult.views;
+    models = yamlBuildResult.models;
+    dashboards = yamlBuildResult.dashboards;
+    visualizations = yamlBuildResult.visualizations;
 
     // // ApField - Views
     // views = barField.checkFieldsIsArray({ entities: views }); //           *prepare_fields_ary
