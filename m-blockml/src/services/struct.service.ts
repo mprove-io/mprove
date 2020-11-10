@@ -48,11 +48,12 @@ export class StructService {
     connections: api.ProjectConnection[];
   }): Promise<interfaces.Struct> {
     let errors: BmError[] = [];
-    let udfs: interfaces.Udf[] = [];
-    let views: interfaces.View[] = [];
-    let models: interfaces.Model[] = [];
-    let dashboards: interfaces.Dashboard[] = [];
-    let visualizations: interfaces.Visualization[] = [];
+
+    let udfs: interfaces.Udf[];
+    let views: interfaces.View[];
+    let models: interfaces.Model[];
+    let dashboards: interfaces.Dashboard[];
+    let visualizations: interfaces.Visualization[];
 
     // barYaml
 
@@ -99,12 +100,17 @@ export class StructService {
       structId: item.structId
     });
 
-    // let splitFilesResult = barYaml.splitFiles({ filesAny: filesAny });
+    let splitFilesResult = barYaml.splitFiles({
+      filesAny: filesAny,
+      errors: errors,
+      structId: item.structId
+    });
 
-    // let udfs: interfaces.Udf[] = splitFilesResult.udfs;
-    // let views: interfaces.View[] = splitFilesResult.views;
-    // let models: interfaces.Model[] = splitFilesResult.models;
-    // let dashboards: interfaces.Dashboard[] = splitFilesResult.dashboards;
+    udfs = splitFilesResult.udfs;
+    views = splitFilesResult.views;
+    models = splitFilesResult.models;
+    dashboards = splitFilesResult.dashboards;
+    visualizations = splitFilesResult.visualizations;
 
     // // ApField - Views
     // views = barField.checkFieldsIsArray({ entities: views }); //           *prepare_fields_ary

@@ -1,8 +1,8 @@
-import { TopBasic } from './top-basic';
+import { FileTopBasic } from './file-top-basic';
 import { Join } from './join';
 import { FieldExt } from './field-ext';
 
-export interface Model extends TopBasic {
+export interface Model extends FileTopBasic {
   model: string;
   modelLineNum: number;
 

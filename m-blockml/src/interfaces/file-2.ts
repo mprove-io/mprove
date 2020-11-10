@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { api } from '../barrels/api';
-import { PathContent } from './path-content';
+import { FilePathContent } from './file-path-content';
 
 export class File2 {
   @IsEnum(api.FileExtensionEnum)
@@ -11,6 +11,6 @@ export class File2 {
   name: string;
 
   @ValidateNested()
-  @Type(() => PathContent)
-  pathContents: PathContent[];
+  @Type(() => FilePathContent)
+  pathContents: FilePathContent[];
 }

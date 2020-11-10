@@ -2,63 +2,51 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { StructService } from '../../../../services/struct.service';
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
+import { helper } from '../../../../barrels/helper';
 import * as fse from 'fs-extra';
 import { interfaces } from '../../../../barrels/interfaces';
 
 let pack = '1-yaml';
-let funcId = '9-check-support-udfs';
+let func = '9-check-support-udfs';
 let testId = 'e__udfs-are-not-supported-for-specified-connection';
-
-let structService: StructService;
-
-beforeEach(async () => {
-  let moduleRef: TestingModule = await Test.createTestingModule({
-    controllers: [],
-    providers: [StructService]
-  }).compile();
-
-  structService = moduleRef.get<StructService>(StructService);
-});
 
 test(testId, async () => {
   let filesAny: any[];
   let errors: interfaces.BmErrorC[];
-  try {
-    let structId = api.makeStructId();
 
-    let connection: api.ProjectConnection = {
+  try {
+    let {
+      structService,
+      structId,
+      dataDir,
+      logPath
+    } = await helper.prepareTest(pack, func, testId);
+
+    let connection1: api.ProjectConnection = {
       name: 'c1',
       type: api.ConnectionTypeEnum.PostgreSQL
     };
+    let connection2: api.ProjectConnection = {
+      name: 'c2',
+      type: api.ConnectionTypeEnum.BigQuery
+    };
 
     await structService.rebuildStruct({
-      dir: `src/models/${pack}/data/${funcId}/${testId}`,
+      dir: dataDir,
       structId: structId,
       projectId: 'p1',
-      connections: [connection],
+      connections: [connection1, connection2],
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    let outFilesAny = fse.readFileSync(
-      `src/logs/${structId}/${pack}/${funcId}/${enums.LogEnum.FilesAny.toString()}`
-    );
-
-    let outErrors = fse.readFileSync(
-      `src/logs/${structId}/${pack}/${funcId}/${enums.LogEnum.Errors.toString()}`
-    );
-
-    filesAny = JSON.parse(outFilesAny.toString());
-
-    errors = ((await api.transformValidString({
-      classType: interfaces.BmErrorC,
-      jsonString: outErrors.toString(),
-      errorMessage: api.ErEnum.M_BLOCKML_WRONG_TEST_TRANSFORM_AND_VALIDATE
-    })) as unknown) as interfaces.BmErrorC[];
+    filesAny = await helper.readLog(logPath, enums.LogEnum.FilesAny);
+    errors = await helper.readLog(logPath, enums.LogEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(filesAny.length).toBe(0);
+  expect(filesAny.length).toBe(2);
+
   expect(errors.length).toBe(2);
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_SPECIFIED_CONNECTION

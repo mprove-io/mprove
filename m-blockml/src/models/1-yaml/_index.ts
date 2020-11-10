@@ -7,5 +7,4 @@ export * from './6-check-top-unknown-parameters';
 export * from './7-check-top-values';
 export * from './8-check-connections';
 export * from './9-check-support-udfs';
-
-// export * from './split-files';
+export * from './10-split-files';

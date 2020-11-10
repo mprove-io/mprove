@@ -23,7 +23,7 @@ export function checkSupportUdfs(item: {
         api.FileExtensionEnum.View.toString(),
         api.FileExtensionEnum.Model.toString()
       ].indexOf(file.ext) > -1 &&
-      file.connection.connectionType !== api.ConnectionTypeEnum.BigQuery
+      file.connection.type !== api.ConnectionTypeEnum.BigQuery
     ) {
       let udfsParameter = Object.keys(file)
         .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))

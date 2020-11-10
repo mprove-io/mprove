@@ -1,8 +1,8 @@
-import { TopBasic } from './top-basic';
+import { FileTopBasic } from './file-top-basic';
 import { FieldExt } from './field-ext';
 import { Report } from './report';
 
-export interface Dashboard extends TopBasic {
+export interface Dashboard extends FileTopBasic {
   dashboard: string;
   dashboardLineNum: number;
 

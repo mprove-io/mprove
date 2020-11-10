@@ -1,0 +1,25 @@
+import * as fse from 'fs-extra';
+
+import { enums } from '../barrels/enums';
+import { api } from '../barrels/api';
+import { interfaces } from '../barrels/interfaces';
+
+export async function readLog(logPath: string, log: enums.LogEnum) {
+  let path = logPath + '/' + log;
+  let buffer = fse.readFileSync(path);
+  let content = buffer.toString();
+
+  switch (log) {
+    case enums.LogEnum.FilesAny: {
+      return JSON.parse(content);
+    }
+
+    case enums.LogEnum.Errors: {
+      return await api.transformValidString({
+        classType: interfaces.BmErrorC,
+        jsonString: content,
+        errorMessage: api.ErEnum.M_BLOCKML_WRONG_TEST_TRANSFORM_AND_VALIDATE
+      });
+    }
+  }
+}

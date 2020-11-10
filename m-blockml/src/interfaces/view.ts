@@ -1,7 +1,7 @@
-import { TopBasic } from './top-basic';
+import { FileTopBasic } from './file-top-basic';
 import { FieldExt } from './field-ext';
 
-export interface View extends TopBasic {
+export interface View extends FileTopBasic {
   view: string;
   viewLineNum: number;
 

@@ -17,15 +17,9 @@ export function log(
 
   let logNameString = logName.toString();
 
-  let modelsParent = `src/models/${logPack}/logs/${logFolder}`;
-  let modelsPath = `${modelsParent}/${logNameString}`;
-
   let srcParent = `src/logs/${structId}/${logPack}/${logFolder}`;
   let srcPath = `${srcParent}/${logNameString}`;
 
-  fse.ensureDirSync(modelsParent);
   fse.ensureDirSync(srcParent);
-
-  fse.writeFileSync(modelsPath, str);
   fse.writeFileSync(srcPath, str);
 }

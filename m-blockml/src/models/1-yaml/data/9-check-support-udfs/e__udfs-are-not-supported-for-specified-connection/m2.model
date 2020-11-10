@@ -1,0 +1,4 @@
+model: m2
+connection: c2
+udfs: 
+- 'u1'
