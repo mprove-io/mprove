@@ -1,5 +1,6 @@
 import { api } from '../barrels/api';
 import { barYaml } from '../barrels/bar-yaml';
+import { barOutput } from '../barrels/bar-output';
 import { Injectable } from '@nestjs/common';
 import { interfaces } from '../barrels/interfaces';
 import { BmError } from '../models/bm-error';
@@ -433,6 +434,16 @@ export class StructService {
     // dashboards = barChart.checkChartTileParameters({ dashboards: dashboards });
 
     // let errors = ErrorsCollector.getErrors();
+
+    barOutput.logStruct({
+      structId: item.structId,
+      errors: errors,
+      udfs: udfs,
+      views: views,
+      models: models,
+      dashboards: dashboards,
+      visualizations: visualizations
+    });
 
     return {
       errors: errors,

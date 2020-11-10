@@ -1,11 +1,11 @@
-import { api } from '../barrels/api';
-import { enums } from '../barrels/enums';
-import { helper } from '../barrels/helper';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '../../../../barrels/api';
+import { enums } from '../../../../barrels/enums';
+import { helper } from '../../../../barrels/helper';
+import { interfaces } from '../../../../barrels/interfaces';
 
-let pack = '1-yaml';
-let func = '10-split-files';
-let testId = 'v_';
+let pack = '_output';
+let func = '1-log-struct';
+let testId = 'r1';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
