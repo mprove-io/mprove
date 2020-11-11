@@ -48,7 +48,9 @@ test(testId, async () => {
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_SPECIFIED_CONNECTION
   );
+  expect(errors[0].lines[0].line).toBe(3);
   expect(errors[1].title).toBe(
     enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_SPECIFIED_CONNECTION
   );
+  expect(errors[1].lines[0].line).toBe(3);
 });

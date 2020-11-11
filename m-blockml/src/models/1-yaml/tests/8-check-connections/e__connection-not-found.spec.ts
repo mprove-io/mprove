@@ -36,5 +36,7 @@ test(testId, async () => {
   expect(filesAny.length).toBe(0);
   expect(errors.length).toBe(2);
   expect(errors[0].title).toBe(enums.ErTitleEnum.CONNECTION_NOT_FOUND);
+  expect(errors[0].lines[0].line).toBe(2);
   expect(errors[1].title).toBe(enums.ErTitleEnum.CONNECTION_NOT_FOUND);
+  expect(errors[1].lines[0].line).toBe(2);
 });

@@ -36,4 +36,5 @@ test(testId, async () => {
   expect(file2s.length).toBe(4);
   expect(errors.length).toBe(1);
   expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_FILE_EXTENSION);
+  expect(errors[0].lines[0].line).toBe(0);
 });

@@ -36,4 +36,6 @@ test(testId, async () => {
   expect(file3s.length).toBe(1);
   expect(errors.length).toBe(1);
   expect(errors[0].title).toBe(enums.ErTitleEnum.DUPLICATE_FILE_NAMES);
+  expect(errors[0].lines.length).toBe(3);
+  expect(errors[0].lines[0].line).toBe(0);
 });

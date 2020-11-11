@@ -36,4 +36,5 @@ test(testId, async () => {
   expect(filesAny.length).toBe(0);
   expect(errors.length).toBe(1);
   expect(errors[0].title).toBe(enums.ErTitleEnum.UNEXPECTED_DICTIONARY);
+  expect(errors[0].lines[0].line).toBe(2);
 });
