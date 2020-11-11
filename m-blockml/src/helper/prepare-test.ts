@@ -9,7 +9,7 @@ export async function prepareTest(pack: string, func: string, testId: string) {
 
   fse.emptyDirSync(structDir);
 
-  let dataDir = `src/models/${pack}/data/${func}/${testId}`;
+  let dataDir = `src/models/${pack}/tests/${func}/data/${testId}`;
 
   let logPath = `src/logs/${structId}/${pack}/${func}`;
 

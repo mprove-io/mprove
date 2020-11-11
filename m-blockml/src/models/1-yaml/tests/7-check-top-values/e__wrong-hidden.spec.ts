@@ -5,7 +5,7 @@ import { interfaces } from '../../../../barrels/interfaces';
 
 let pack = '1-yaml';
 let func = '7-check-top-values';
-let testId = 'e__wrong-char-in-parameter-value';
+let testId = 'e__wrong-hidden';
 
 test(testId, async () => {
   let filesAny: any[];
@@ -34,6 +34,7 @@ test(testId, async () => {
   }
 
   expect(filesAny.length).toBe(0);
-  expect(errors.length).toBe(1);
-  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_CHAR_IN_PARAMETER_VALUE);
+  expect(errors.length).toBe(2);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_HIDDEN);
+  expect(errors[1].title).toBe(enums.ErTitleEnum.WRONG_HIDDEN);
 });
