@@ -8,51 +8,55 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp: api.ToDiskGetFileResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let createProjectRequest: api.ToDiskCreateProjectRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let getFileRequest: api.ToDiskGetFileRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskGetFile,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      fileNodeId: `${projectId}/readme.md`
-    }
-  };
+    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: 'r1',
+        userAlias: 'r1'
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
-  await messageService.processRequest(createProjectRequest);
+    let getFileRequest: api.ToDiskGetFileRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskGetFile,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        fileNodeId: `${projectId}/readme.md`
+      }
+    };
 
-  let resp = <api.ToDiskGetFileResponse>(
-    await messageService.processRequest(getFileRequest)
-  );
+    await messageService.processRequest(createOrganizationRequest);
+    await messageService.processRequest(createProjectRequest);
+
+    resp = await messageService.processRequest(getFileRequest);
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp.payload.content).toBe('# P1');
 });

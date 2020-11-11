@@ -8,52 +8,56 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp: api.ToDiskDeleteFileResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let createProjectRequest: api.ToDiskCreateProjectRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let deleteFileRequest: api.ToDiskDeleteFileRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      fileNodeId: `${projectId}/readme.md`,
-      userAlias: 'r1'
-    }
-  };
+    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: 'r1',
+        userAlias: 'r1'
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
-  await messageService.processRequest(createProjectRequest);
+    let deleteFileRequest: api.ToDiskDeleteFileRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        fileNodeId: `${projectId}/readme.md`,
+        userAlias: 'r1'
+      }
+    };
 
-  let resp = <api.ToDiskDeleteFolderResponse>(
-    await messageService.processRequest(deleteFileRequest)
-  );
+    await messageService.processRequest(createOrganizationRequest);
+    await messageService.processRequest(createProjectRequest);
+
+    resp = await messageService.processRequest(deleteFileRequest);
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedCommit);
 });

@@ -8,24 +8,28 @@ let organizationId = testId;
 let projectId = 'project_1';
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp: api.ToDiskSeedProjectResponse;
 
-  let seedProjectRequest: api.ToDiskSeedProjectRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let resp = <api.ToDiskSeedProjectResponse>(
-    await messageService.processRequest(seedProjectRequest)
-  );
+    let seedProjectRequest: api.ToDiskSeedProjectRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: 'r1',
+        userAlias: 'r1'
+      }
+    };
+
+    resp = await messageService.processRequest(seedProjectRequest);
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
   expect(resp.payload.files[0].content).toBe('# text');

@@ -8,82 +8,86 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp: api.ToDiskDeleteBranchResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let createProjectRequest: api.ToDiskCreateProjectRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let createBranchRequest: api.ToDiskCreateBranchRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      newBranch: 'b2',
-      fromBranch: 'master',
-      isFromRemote: true
-    }
-  };
+    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: 'r1',
+        userAlias: 'r1'
+      }
+    };
 
-  let pushRepoRequest: api.ToDiskPushRepoRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'b2',
-      userAlias: 'r1'
-    }
-  };
+    let createBranchRequest: api.ToDiskCreateBranchRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        newBranch: 'b2',
+        fromBranch: 'master',
+        isFromRemote: true
+      }
+    };
 
-  let deleteBranchRequest: api.ToDiskDeleteBranchRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: api.PROD_REPO_ID,
-      branch: 'b2'
-    }
-  };
+    let pushRepoRequest: api.ToDiskPushRepoRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'b2',
+        userAlias: 'r1'
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
-  await messageService.processRequest(createProjectRequest);
+    let deleteBranchRequest: api.ToDiskDeleteBranchRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: api.PROD_REPO_ID,
+        branch: 'b2'
+      }
+    };
 
-  await messageService.processRequest(createBranchRequest);
-  await messageService.processRequest(pushRepoRequest);
+    await messageService.processRequest(createOrganizationRequest);
+    await messageService.processRequest(createProjectRequest);
 
-  let resp = <api.ToDiskDeleteBranchResponse>(
-    await messageService.processRequest(deleteBranchRequest)
-  );
+    await messageService.processRequest(createBranchRequest);
+    await messageService.processRequest(pushRepoRequest);
+
+    resp = await messageService.processRequest(deleteBranchRequest);
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp.payload.deletedBranch).toBe('b2');
 });

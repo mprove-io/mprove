@@ -7,48 +7,49 @@ let traceId = '123';
 let organizationId = testId;
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp1: api.ToDiskIsOrganizationExistResponse;
+  let resp2: api.ToDiskIsOrganizationExistResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let isOrganizationExistRequest_1: api.ToDiskIsOrganizationExistRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let isOrganizationExistRequest_2: api.ToDiskIsOrganizationExistRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: 'unknown_org'
-    }
-  };
+    let isOrganizationExistRequest_1: api.ToDiskIsOrganizationExistRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
+    let isOrganizationExistRequest_2: api.ToDiskIsOrganizationExistRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: 'unknown_org'
+      }
+    };
 
-  let resp1 = <api.ToDiskIsOrganizationExistResponse>(
-    await messageService.processRequest(isOrganizationExistRequest_1)
-  );
+    await messageService.processRequest(createOrganizationRequest);
 
-  let resp2 = <api.ToDiskIsOrganizationExistResponse>(
-    await messageService.processRequest(isOrganizationExistRequest_2)
-  );
-
+    resp1 = await messageService.processRequest(isOrganizationExistRequest_1);
+    resp2 = await messageService.processRequest(isOrganizationExistRequest_2);
+  } catch (e) {
+    api.logToConsole(e);
+  }
   expect(resp1.payload.isOrganizationExist).toBe(true);
   expect(resp2.payload.isOrganizationExist).toBe(false);
 });

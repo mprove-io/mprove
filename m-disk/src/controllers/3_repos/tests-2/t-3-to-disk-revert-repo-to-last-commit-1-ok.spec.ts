@@ -8,70 +8,74 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp: api.ToDiskRevertRepoToLastCommitResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let createProjectRequest: api.ToDiskCreateProjectRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let saveFileRequest: api.ToDiskSaveFileRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      fileNodeId: `${projectId}/readme.md`,
-      content: '1',
-      userAlias: 'r1'
-    }
-  };
+    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: 'r1',
+        userAlias: 'r1'
+      }
+    };
 
-  let revertRepoToLastCommitRequest: api.ToDiskRevertRepoToLastCommitRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master'
-    }
-  };
+    let saveFileRequest: api.ToDiskSaveFileRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        fileNodeId: `${projectId}/readme.md`,
+        content: '1',
+        userAlias: 'r1'
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
-  await messageService.processRequest(createProjectRequest);
+    let revertRepoToLastCommitRequest: api.ToDiskRevertRepoToLastCommitRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master'
+      }
+    };
 
-  await helper.delay(1000);
+    await messageService.processRequest(createOrganizationRequest);
+    await messageService.processRequest(createProjectRequest);
 
-  await messageService.processRequest(saveFileRequest);
+    await helper.delay(1000);
 
-  let resp: api.ToDiskRevertRepoToLastCommitResponse = await messageService.processRequest(
-    revertRepoToLastCommitRequest
-  );
+    await messageService.processRequest(saveFileRequest);
+
+    resp = await messageService.processRequest(revertRepoToLastCommitRequest);
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
 });

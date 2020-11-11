@@ -8,105 +8,103 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp1: api.ToDiskIsBranchExistResponse;
+  let resp2: api.ToDiskIsBranchExistResponse;
+  let resp3: api.ToDiskIsBranchExistResponse;
+  let resp4: api.ToDiskIsBranchExistResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let createProjectRequest: api.ToDiskCreateProjectRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let isBranchExistRequest_1: api.ToDiskIsBranchExistRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      isRemote: false
-    }
-  };
+    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: 'r1',
+        userAlias: 'r1'
+      }
+    };
 
-  let isBranchExistRequest_2: api.ToDiskIsBranchExistRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      isRemote: true
-    }
-  };
+    let isBranchExistRequest_1: api.ToDiskIsBranchExistRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        isRemote: false
+      }
+    };
 
-  let isBranchExistRequest_3: api.ToDiskIsBranchExistRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'unknown_branch',
-      isRemote: false
-    }
-  };
+    let isBranchExistRequest_2: api.ToDiskIsBranchExistRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        isRemote: true
+      }
+    };
 
-  let isBranchExistRequest_4: api.ToDiskIsBranchExistRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'unknown_branch',
-      isRemote: true
-    }
-  };
+    let isBranchExistRequest_3: api.ToDiskIsBranchExistRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'unknown_branch',
+        isRemote: false
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
-  await messageService.processRequest(createProjectRequest);
+    let isBranchExistRequest_4: api.ToDiskIsBranchExistRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'unknown_branch',
+        isRemote: true
+      }
+    };
 
-  let resp1 = <api.ToDiskIsBranchExistResponse>(
-    await messageService.processRequest(isBranchExistRequest_1)
-  );
+    await messageService.processRequest(createOrganizationRequest);
+    await messageService.processRequest(createProjectRequest);
 
-  let resp2 = <api.ToDiskIsBranchExistResponse>(
-    await messageService.processRequest(isBranchExistRequest_2)
-  );
-
-  let resp3 = <api.ToDiskIsBranchExistResponse>(
-    await messageService.processRequest(isBranchExistRequest_3)
-  );
-
-  let resp4 = <api.ToDiskIsBranchExistResponse>(
-    await messageService.processRequest(isBranchExistRequest_4)
-  );
+    resp1 = await messageService.processRequest(isBranchExistRequest_1);
+    resp2 = await messageService.processRequest(isBranchExistRequest_2);
+    resp3 = await messageService.processRequest(isBranchExistRequest_3);
+    resp4 = await messageService.processRequest(isBranchExistRequest_4);
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp1.payload.isBranchExist).toBe(true);
   expect(resp2.payload.isBranchExist).toBe(true);

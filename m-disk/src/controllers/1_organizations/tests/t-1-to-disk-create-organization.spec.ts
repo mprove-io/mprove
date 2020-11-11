@@ -7,33 +7,40 @@ let traceId = '123';
 let organizationId = testId;
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp: api.ToDiskIsOrganizationExistResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let isOrganizationExistRequest: api.ToDiskIsOrganizationExistRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
+    let isOrganizationExistRequest: api.ToDiskIsOrganizationExistRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let resp = <api.ToDiskIsOrganizationExistResponse>(
-    await messageService.processRequest(isOrganizationExistRequest)
-  );
+    await messageService.processRequest(createOrganizationRequest);
+
+    resp = await messageService.processRequest(isOrganizationExistRequest);
+
+    // eslint-disable-next-line no-throw-literal
+    // throw { a: { b: 123 } };
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp.payload.isOrganizationExist).toBe(true);
 });

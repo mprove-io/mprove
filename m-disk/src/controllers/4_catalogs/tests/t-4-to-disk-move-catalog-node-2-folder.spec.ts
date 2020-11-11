@@ -8,85 +8,89 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test(testId, async () => {
-  let { messageService } = await helper.prepareTest(organizationId);
+  let resp: api.ToDiskMoveCatalogNodeResponse;
 
-  let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId
-    }
-  };
+  try {
+    let { messageService } = await helper.prepareTest(organizationId);
 
-  let createProjectRequest: api.ToDiskCreateProjectRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      devRepoId: 'r1',
-      userAlias: 'r1'
-    }
-  };
+    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId
+      }
+    };
 
-  let createFolderRequest_1: api.ToDiskCreateFolderRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      parentNodeId: `${projectId}/`,
-      folderName: 'fo1'
-    }
-  };
+    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: 'r1',
+        userAlias: 'r1'
+      }
+    };
 
-  let createFolderRequest_2: api.ToDiskCreateFolderRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      parentNodeId: `${projectId}/`,
-      folderName: 'fo2'
-    }
-  };
+    let createFolderRequest_1: api.ToDiskCreateFolderRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        parentNodeId: `${projectId}/`,
+        folderName: 'fo1'
+      }
+    };
 
-  let moveCatalogNodeRequest: api.ToDiskMoveCatalogNodeRequest = {
-    info: {
-      name: api.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: 'r1',
-      branch: 'master',
-      fromNodeId: 'p1/fo2',
-      toNodeId: 'p1/fo1/fo2'
-    }
-  };
+    let createFolderRequest_2: api.ToDiskCreateFolderRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        parentNodeId: `${projectId}/`,
+        folderName: 'fo2'
+      }
+    };
 
-  await messageService.processRequest(createOrganizationRequest);
-  await messageService.processRequest(createProjectRequest);
+    let moveCatalogNodeRequest: api.ToDiskMoveCatalogNodeRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        fromNodeId: 'p1/fo2',
+        toNodeId: 'p1/fo1/fo2'
+      }
+    };
 
-  await messageService.processRequest(createFolderRequest_1);
-  await messageService.processRequest(createFolderRequest_2);
+    await messageService.processRequest(createOrganizationRequest);
+    await messageService.processRequest(createProjectRequest);
 
-  let resp = <api.ToDiskMoveCatalogNodeResponse>(
-    await messageService.processRequest(moveCatalogNodeRequest)
-  );
+    await messageService.processRequest(createFolderRequest_1);
+    await messageService.processRequest(createFolderRequest_2);
+
+    resp = await messageService.processRequest(moveCatalogNodeRequest);
+  } catch (e) {
+    api.logToConsole(e);
+  }
 
   expect(resp.payload.nodes[0].children[0].children[0].id).toBe('p1/fo1/fo2');
 });
