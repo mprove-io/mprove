@@ -1,18 +1,18 @@
 import { api } from '../barrels/api';
 
 export interface ChartTile {
-  tileWidth: api.ChartTileWidthEnum;
-  tileWidthLineNum: number;
+  tile_width: api.ChartTileWidthEnum;
+  tile_width_line_num: number;
 
-  tileHeight: api.ChartTileHeightEnum;
-  tileHeightLineNum: number;
+  tile_height: api.ChartTileHeightEnum;
+  tile_height_line_num: number;
 
-  viewSize: api.ChartViewSizeEnum;
-  viewSizeLineNum: number;
+  view_size: api.ChartViewSizeEnum;
+  view_size_line_num: number;
 
-  viewWidth: string; // number
-  viewWidthLineNum: number;
+  view_width: string; // number
+  view_width_line_num: number;
 
-  viewHeight: string; // number
-  viewHeightLineNum: number;
+  view_height: string; // number
+  view_height_line_num: number;
 }

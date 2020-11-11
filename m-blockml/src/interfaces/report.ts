@@ -7,16 +7,52 @@ import { BqView } from './bq-view';
 
 export interface Report {
   title: string;
-  titleLineNum: number;
+  title_line_num: number;
 
   description: string;
-  descriptionLineNum: number;
+  description_line_num: number;
 
   model: string;
-  modelLineNum: number;
+  model_line_num: number;
 
   select: string[];
-  selectLineNum: number;
+  select_line_num: number;
+
+  sorts: string;
+  sorts_line_num: number;
+
+  timezone: string;
+  timezone_line_num: number;
+
+  limit: string; // string
+  limit_line_num: number;
+
+  type: api.ChartTypeEnum;
+  type_line_num: number;
+
+  data: ChartData;
+  data_line_num: number;
+
+  axis: ChartAxis;
+  axis_line_num: number;
+
+  options: ChartOptions;
+  options_line_num: number;
+
+  tile: ChartTile;
+  tile_line_num: number;
+
+  listen_filters: {
+    [dashboardFilterName: string]: string;
+  };
+  listen_filters_line_num: number;
+
+  default_filters: {
+    [aliasFieldName: string]: string[];
+  };
+  default_filters_line_num: number;
+
+  //
 
   selectHash: {
     [element: string]: {
@@ -24,48 +60,18 @@ export interface Report {
     };
   };
 
-  sorts: string;
-  sortsLineNum: number;
   sortingsAry: {
     fieldId: string;
     desc: string; // boolean
   }[];
 
-  timezone: string;
-  timezoneLineNum: number;
-
-  limit: string; // string
-  limitLineNum: number;
-
-  listenFilters: {
-    [dashboardFilterName: string]: string;
-  };
-  listenFiltersLineNum: number;
-
-  defaultFilters: {
-    [aliasFieldName: string]: string[];
-  };
-  defaultFiltersLineNum: number;
-
   listen: { [a: string]: string };
+
   default: { [filter: string]: string[] };
+
   filters: { [filter: string]: string[] };
 
-  type: api.ChartTypeEnum;
-  typeLineNum: number;
-
-  data: ChartData;
-  dataLineNum: number;
-
-  axis: ChartAxis;
-  axisLineNum: number;
-
-  options: ChartOptions;
-  optionsLineNum: number;
-
-  tile: ChartTile;
-  tileLineNum: number;
-
   filtersFractions: any;
+
   bqViews: BqView[];
 }

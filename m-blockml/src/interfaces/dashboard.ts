@@ -4,26 +4,26 @@ import { Report } from './report';
 
 export interface Dashboard extends FileTopBasic {
   dashboard: string;
-  dashboardLineNum: number;
+  dashboard_line_num: number;
 
   hidden: string; // boolean
-  hiddenLineNum: number;
+  hidden_line_num: number;
 
   title: string;
-  titleLineNum: number;
+  title_line_num: number;
 
   group: string;
-  groupLineNum: number;
+  group_line_num: number;
 
   description: string;
-  descriptionLineNum: number;
+  description_line_num: number;
 
-  accessUsers: string[];
-  accessUsersLineNum: number;
+  access_users: string[];
+  access_users_line_num: number;
 
   fields: FieldExt[];
-  fieldsLineNum: number;
+  fields_line_num: number;
 
   reports: Report[];
-  reportsLineNum: number;
+  reports_line_num: number;
 }

@@ -7,11 +7,13 @@ import { Visualization } from './visualization';
 
 export interface Struct {
   errors: BmError[];
+
   udfs: Udf[];
   views: View[];
   models: Model[];
   dashboards: Dashboard[];
   visualizations: Visualization[];
+
   // pdts: Pdt[];
   // pdtsSorted: string[];
 }

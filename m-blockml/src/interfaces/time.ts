@@ -2,18 +2,18 @@ import { enums } from '../barrels/enums';
 import { Field } from './field';
 
 export interface Time extends Field {
-  groupLabel: string;
-  groupLabelLineNum: number;
+  group_label: string;
+  group_label_line_num: number;
 
-  groupDescription: string;
-  groupDescriptionLineNum: number;
+  group_description: string;
+  group_description_line_num: number;
 
   source: enums.TimeSourceEnum;
-  sourceLineNum: number;
+  source_line_num: number;
 
   unnest: string;
-  unnestLineNum: number;
+  unnest_line_num: number;
 
   timeframes: enums.TimeframeEnum[];
-  timeframesLineNum: number;
+  timeframes_line_num: number;
 }

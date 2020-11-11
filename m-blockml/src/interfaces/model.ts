@@ -4,45 +4,49 @@ import { FieldExt } from './field-ext';
 
 export interface Model extends FileTopBasic {
   model: string;
-  modelLineNum: number;
+  model_line_num: number;
 
   hidden: string; // boolean
-  hiddenLineNum: number;
+  hidden_line_num: number;
 
   label: string;
-  labelLineNum: number;
+  label_line_num: number;
 
   group: string;
-  groupLineNum: number;
+  group_line_num: number;
 
   description: string;
-  descriptionLineNum: number;
+  description_line_num: number;
 
-  accessUsers: string[];
-  accessUsersLineNum: number;
+  access_users: string[];
+  access_users_line_num: number;
 
-  alwaysJoin: string;
-  alwaysJoinLineNum: number;
+  always_join: string;
+  always_join_line_num: number;
+
+  sql_always_where: string;
+  sql_always_where_line_num: number;
+
+  sql_always_where_calc: string;
+  sql_always_where_calc_line_num: number;
+
+  udfs: string[];
+  udfs_line_num: number;
+
+  joins: Join[];
+  joins_line_num: number;
+
+  fields: FieldExt[];
+  fields_line_num: number;
+
+  //
   alwaysJoinList: {
     [as: string]: number;
   };
 
-  sqlAlwaysWhere: string;
-  sqlAlwaysWhereLineNum: number;
   sqlAlwaysWhereReal: string;
 
-  sqlAlwaysWhereCalc: string;
-  sqlAlwaysWhereCalcLineNum: number;
   sqlAlwaysWhereCalcReal: string;
-
-  udfs: string[];
-  udfsLineNum: number;
-
-  joins: Join[];
-  joinsLineNum: number;
-
-  fields: FieldExt[];
-  fieldsLineNum: number;
 
   fromAs: string;
 

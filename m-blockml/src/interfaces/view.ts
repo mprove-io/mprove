@@ -3,24 +3,33 @@ import { FieldExt } from './field-ext';
 
 export interface View extends FileTopBasic {
   view: string;
-  viewLineNum: number;
+  view_line_num: number;
 
   label: string;
-  labelLineNum: number;
+  label_line_num: number;
 
   description: string;
-  descriptionLineNum: number;
+  description_line_num: number;
 
-  accessUsers: string[];
-  accessUsersLineNum: number;
+  access_users: string[];
+  access_users_line_num: number;
 
   table: string;
-  tableLineNum: number;
+  table_line_num: number;
 
-  derivedTable: string;
-  derivedTableLineNum: number;
+  derived_table: string;
+  derived_table_line_num: number;
+
+  udfs: string[];
+  udfs_line_num: number;
+
+  fields: FieldExt[];
+  fields_line_num: number;
+
+  //
 
   derivedTableStart: string;
+
   derivedTableNew: string;
 
   parts: {
@@ -31,21 +40,6 @@ export interface View extends FileTopBasic {
       deps: { [depName: string]: number };
     };
   };
-
-  permanent: string; // boolean
-  permanentLineNum: number;
-
-  // pdtTriggerTime: string;
-  // pdtTriggerTimeLineNum: number;
-
-  // pdtTriggerSql: string;
-  // pdtTriggerSqlLineNum: number;
-
-  udfs: string[];
-  udfsLineNum: number;
-
-  fields: FieldExt[];
-  fieldsLineNum: number;
 
   fieldsDeps: {
     [field: string]: {
@@ -66,6 +60,17 @@ export interface View extends FileTopBasic {
     };
   };
 
+  viewDeps: string[];
+
+  // permanent: string; // boolean
+  // permanent_line_num: number;
+
+  // pdt_trigger_time: string;
+  // pdt_trigger_time_line_num: number;
+
+  // pdt_trigger_sql: string;
+  // pdt_trigger_sql_line_num: number;
+
   // pdtViewDeps: {
   //   [view: string]: number;
   // };
@@ -74,6 +79,5 @@ export interface View extends FileTopBasic {
   //   [view: string]: number;
   // };
 
-  viewDeps: string[];
   // isPdt: boolean;
 }

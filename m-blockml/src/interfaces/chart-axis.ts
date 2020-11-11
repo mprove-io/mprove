@@ -1,22 +1,22 @@
 export interface ChartAxis {
-  xAxis: string; // boolean
-  xAxisLineNum: number;
+  x_axis: string; // boolean
+  x_axis_line_num: number;
 
-  showXAxisLabel: string; // boolean
-  showXAxisLabelLineNum: number;
+  show_x_axis_label: string; // boolean
+  show_x_axis_label_line_num: number;
 
-  xAxisLabel: string;
-  xAxisLabelLineNum: number;
+  x_axis_label: string;
+  x_axis_label_line_num: number;
 
-  yAxis: string; // boolean
-  yAxisLineNum: number;
+  y_axis: string; // boolean
+  y_axis_line_num: number;
 
-  showYAxisLabel: string; // boolean
-  showYAxisLabelLineNum: number;
+  show_y_axis_label: string; // boolean
+  show_y_axis_label_line_num: number;
 
-  yAxisLabel: string;
-  yAxisLabelLineNum: number;
+  y_axis_label: string;
+  y_axis_label_line_num: number;
 
-  showAxis: string; // boolean
-  showAxisLineNum: number;
+  show_axis: string; // boolean
+  show_axis_line_num: number;
 }

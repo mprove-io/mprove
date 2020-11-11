@@ -4,20 +4,22 @@ import { Field } from './field';
 
 export interface Filter extends Field {
   label: string;
-  labelLineNum: number;
+  label_line_num: number;
 
   result: enums.FieldExtResultEnum;
-  resultLineNum: number;
+  result_line_num: number;
 
   default: string[];
-  defaultLineNum: number;
+  default_line_num: number;
 
-  fromField: string;
-  fromFieldLineNum: number;
+  //
 
   prepForceDims: {
     [dim: string]: number;
   };
 
   fractions: api.Fraction[];
+
+  // from_field: string;
+  // from_field_line_num: number;
 }

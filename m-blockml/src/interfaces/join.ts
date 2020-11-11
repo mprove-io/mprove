@@ -2,33 +2,37 @@ import { enums } from '../barrels/enums';
 import { View } from './view';
 
 export interface Join {
-  fromView: string;
-  fromViewLineNum: number;
+  from_view: string;
+  from_view_line_num: number;
 
   hidden: string; // boolean
-  hiddenLineNum: number;
+  hidden_line_num: number;
 
   label: string;
-  labelLineNum: number;
+  label_line_num: number;
 
   description: string;
-  descriptionLineNum: number;
+  description_line_num: number;
 
   as: string;
-  asLineNum: number;
+  as_line_num: number;
 
-  joinView: string;
-  joinViewLineNum: number;
+  join_view: string;
+  join_view_line_num: number;
 
   type: enums.JoinTypeEnum;
-  typeLineNum: number;
+  type_line_num: number;
 
-  sqlOn: string;
-  sqlOnLineNum: number;
+  sql_on: string;
+  sql_on_line_num: number;
+
+  sql_where: string;
+  sql_where_line_num: number;
+
+  //
+
   sqlOnReal: string;
 
-  sqlWhere: string;
-  sqlWhereLineNum: number;
   sqlWhereReal: string;
 
   view: View;

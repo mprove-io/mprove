@@ -11,6 +11,7 @@ export interface VarsSub {
   timezone: string;
 
   weekStart: api.ProjectWeekStartEnum;
+
   connectionType: api.ConnectionTypeEnum;
 
   bqProject: string;
@@ -58,5 +59,6 @@ export interface VarsSub {
   with: string[];
 
   query: string[];
+
   calcQuery: string[];
 }

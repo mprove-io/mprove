@@ -2,110 +2,110 @@ import { api } from '../barrels/api';
 
 export interface ChartOptions {
   animations: string; // boolean
-  animationsLineNum: number;
+  animations_line_num: number;
 
   gradient: string; // boolean
-  gradientLineNum: number;
+  gradient_line_num: number;
 
   legend: string; // boolean
-  legendLineNum: number;
+  legend_line_num: number;
 
-  legendTitle: string;
-  legendTitleLineNum: number;
+  legend_title: string;
+  legend_title_line_num: number;
 
-  tooltipDisabled: string; // boolean
-  tooltipDisabledLineNum: number;
+  tooltip_disabled: string; // boolean
+  tooltip_disabled_line_num: number;
 
-  roundEdges: string; // boolean
-  roundEdgesLineNum: number;
+  round_edges: string; // boolean
+  round_edges_line_num: number;
 
-  roundDomains: string; // boolean
-  roundDomainsLineNum: number;
+  round_domains: string; // boolean
+  round_domains_line_num: number;
 
-  showGridLines: string; // boolean
-  showGridLinesLineNum: number;
+  show_grid_lines: string; // boolean
+  show_grid_lines_line_num: number;
 
   timeline: string; // boolean
-  timelineLineNum: number;
+  timeline_line_num: number;
 
   interpolation: api.ChartInterpolationEnum;
-  interpolationLineNum: number;
+  interpolation_line_num: number;
 
-  autoScale: string; // boolean
-  autoScaleLineNum: number;
+  auto_scale: string; // boolean
+  auto_scale_line_num: number;
 
   doughnut: string; // boolean
-  doughnutLineNum: number;
+  doughnut_line_num: number;
 
-  explodeSlices: string; // boolean
-  explodeSlicesLineNum: number;
+  explode_slices: string; // boolean
+  explode_slices_line_num: number;
 
   labels: string; // boolean
-  labelsLineNum: number;
+  labels_line_num: number;
 
-  colorScheme: api.ChartColorSchemeEnum;
-  colorSchemeLineNum: number;
+  color_scheme: api.ChartColorSchemeEnum;
+  color_scheme_line_num: number;
 
-  schemeType: api.ChartSchemeTypeEnum;
-  schemeTypeLineNum: number;
+  scheme_type: api.ChartSchemeTypeEnum;
+  scheme_type_line_num: number;
 
-  pageSize: string;
-  pageSizeLineNum: number;
+  page_size: string;
+  page_size_line_num: number;
 
-  arcWidth: string;
-  arcWidthLineNum: number;
+  arc_width: string;
+  arc_width_line_num: number;
 
-  barPadding: string;
-  barPaddingLineNum: number;
+  bar_padding: string;
+  bar_padding_line_num: number;
 
-  groupPadding: string;
-  groupPaddingLineNum: number;
+  group_padding: string;
+  group_padding_line_num: number;
 
-  innerPadding: string;
-  innerPaddingLineNum: number;
+  inner_padding: string;
+  inner_padding_line_num: number;
 
-  rangeFillOpacity: string;
-  rangeFillOpacityLineNum: number;
+  range_fill_opacity: string;
+  range_fill_opacity_line_num: number;
 
-  angleSpan: string;
-  angleSpanLineNum: number;
+  angle_span: string;
+  angle_span_line_num: number;
 
-  startAngle: string;
-  startAngleLineNum: number;
+  start_angle: string;
+  start_angle_line_num: number;
 
-  bigSegments: string;
-  bigSegmentsLineNum: number;
+  big_segments: string;
+  big_segments_line_num: number;
 
-  smallSegments: string;
-  smallSegmentsLineNum: number;
+  small_segments: string;
+  small_segments_line_num: number;
 
   min: string;
-  minLineNum: number;
+  min_line_num: number;
 
   max: string;
-  maxLineNum: number;
+  max_line_num: number;
 
   units: string;
-  unitsLineNum: number;
+  units_line_num: number;
 
-  yScaleMin: string;
-  yScaleMinLineNum: number;
+  y_scale_min: string;
+  y_scale_min_line_num: number;
 
-  xScaleMax: string;
-  xScaleMaxLineNum: number;
+  x_scale_max: string;
+  x_scale_max_line_num: number;
 
-  yScaleMax: string;
-  yScaleMaxLineNum: number;
+  y_scale_max: string;
+  y_scale_max_line_num: number;
 
-  bandColor: string;
-  bandColorLineNum: number;
+  band_color: string;
+  band_color_line_num: number;
 
-  cardColor: string;
-  cardColorLineNum: number;
+  card_color: string;
+  card_color_line_num: number;
 
-  textColor: string;
-  textColorLineNum: number;
+  text_color: string;
+  text_color_line_num: number;
 
-  emptyColor: string;
-  emptyColorLineNum: number;
+  empty_color: string;
+  empty_color_line_num: number;
 }

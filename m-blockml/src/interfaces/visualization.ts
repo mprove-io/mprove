@@ -4,26 +4,17 @@ import { Report } from './report';
 
 export interface Visualization extends FileTopBasic {
   visualization: string;
-  visualizationLineNum: number;
+  visualization_line_num: number;
 
-  // hidden: string; // boolean
-  // hiddenLineNum: number;
-
-  // title: string;
-  // titleLineNum: number;
+  hidden: string; // boolean
+  hidden_line_num: number;
 
   group: string;
-  groupLineNum: number;
-
-  // description: string;
-  // descriptionLineNum: number;
+  group_line_num: number;
 
   accessUsers: string[];
-  accessUsersLineNum: number;
-
-  // fields: FieldExt[];
-  // fieldsLineNum: number;
+  accessUsers_line_num: number;
 
   report: Report;
-  reportLineNum: number;
+  report_line_num: number;
 }

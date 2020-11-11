@@ -3,28 +3,33 @@ import { Field } from './field';
 
 export interface Dimension extends Field {
   label: string;
-  labelLineNum: number;
+  label_line_num: number;
 
   type: enums.FieldExtTypeEnum;
-  typeLineNum: number;
+  type_line_num: number;
 
   result: enums.FieldExtResultEnum;
-  resultLineNum: number;
+  result_line_num: number;
 
   unnest: string;
-  unnestLineNum: number;
+  unnest_line_num: number;
 
-  formatNumber: string;
-  formatNumberLineNum: number;
+  format_number: string;
+  format_number_line_num: number;
 
-  currencyPrefix: string;
-  currencyPrefixLineNum: number;
+  currency_prefix: string;
+  currency_prefix_line_num: number;
 
-  currencySuffix: string;
-  currencySuffixLineNum: number;
+  currency_suffix: string;
+  currency_suffix_line_num: number;
 
-  groupId: string;
-  sqlTimestampName: string;
-  sqlTimestamp: string;
-  sqlTimestampReal: string;
+  //
+
+  group_id: string;
+
+  sql_timestamp: string;
+
+  sql_timestamp_name: string;
+
+  sql_timestamp_real: string;
 }
