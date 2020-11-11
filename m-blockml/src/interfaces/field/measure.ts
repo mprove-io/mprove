@@ -1,9 +1,12 @@
 import { enums } from '../../barrels/enums';
-import { Field } from '../field/field';
+import { Field } from './field';
 
-export interface Calculation extends Field {
+export interface Measure extends Field {
   label: string;
   label_line_num: number;
+
+  type: enums.FieldAnyTypeEnum;
+  type_line_num: number;
 
   result: enums.FieldAnyResultEnum;
   result_line_num: number;
@@ -17,14 +20,13 @@ export interface Calculation extends Field {
   currency_suffix: string;
   currency_suffix_line_num: number;
 
+  sql_key: string;
+  sql_key_line_num: number;
+
+  percentile: string; // number
+  percentile_line_num: number;
+
   //
 
-  prepForceDims: {
-    [dim: string]: number;
-  };
-  forceDims: {
-    [as: string]: {
-      [dim: string]: number;
-    };
-  };
+  sqlKeyReal: string;
 }

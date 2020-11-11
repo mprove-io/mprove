@@ -1,7 +1,7 @@
 export enum FieldClassEnum {
-  Dimension = 'Dimension',
-  Time = 'Time',
-  Measure = 'Measure',
-  Calculation = 'Calculation',
-  Filter = 'Filter'
+  Dimension = 'dimension',
+  Time = 'time',
+  Measure = 'measure',
+  Calculation = 'calculation',
+  Filter = 'filter'
 }

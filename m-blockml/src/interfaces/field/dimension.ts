@@ -1,12 +1,18 @@
 import { enums } from '../../barrels/enums';
-import { Field } from '../field/field';
+import { Field } from './field';
 
-export interface Calculation extends Field {
+export interface Dimension extends Field {
   label: string;
   label_line_num: number;
 
+  type: enums.FieldAnyTypeEnum;
+  type_line_num: number;
+
   result: enums.FieldAnyResultEnum;
   result_line_num: number;
+
+  unnest: string;
+  unnest_line_num: number;
 
   format_number: string;
   format_number_line_num: number;
@@ -19,12 +25,11 @@ export interface Calculation extends Field {
 
   //
 
-  prepForceDims: {
-    [dim: string]: number;
-  };
-  forceDims: {
-    [as: string]: {
-      [dim: string]: number;
-    };
-  };
+  group_id: string;
+
+  sql_timestamp: string;
+
+  sql_timestamp_name: string;
+
+  sql_timestamp_real: string;
 }

@@ -5,10 +5,10 @@ export interface Dimension extends Field {
   label: string;
   label_line_num: number;
 
-  type: enums.FieldExtTypeEnum;
+  type: enums.FieldAnyTypeEnum;
   type_line_num: number;
 
-  result: enums.FieldExtResultEnum;
+  result: enums.FieldAnyResultEnum;
   result_line_num: number;
 
   unnest: string;
