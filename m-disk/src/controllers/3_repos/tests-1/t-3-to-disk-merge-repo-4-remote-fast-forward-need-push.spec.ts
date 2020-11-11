@@ -1,8 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { constants } from '../../../barrels/constants';
-import { disk } from '../../../barrels/disk';
 import { api } from '../../../barrels/api';
-import { MessageService } from '../../../services/message.service';
 import { helper } from '../../../barrels/helper';
 
 let testId = 't-3-to-disk-merge-repo-4';
@@ -11,25 +7,9 @@ let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
-
-let messageService: MessageService;
-
-beforeEach(async () => {
-  let moduleRef: TestingModule = await Test.createTestingModule({
-    controllers: [],
-    providers: [MessageService]
-  }).compile();
-
-  messageService = moduleRef.get<MessageService>(MessageService);
-
-  let isOrgExist = await disk.isPathExist(orgDir);
-  if (isOrgExist === true) {
-    await disk.removePath(orgDir);
-  }
-});
-
 test(testId, async () => {
+  let { messageService } = await helper.prepareTest(organizationId);
+
   let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
     info: {
       name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
