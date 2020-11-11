@@ -1,6 +1,6 @@
 import { IsInt, IsString } from 'class-validator';
 
-export class ErrorLine {
+export class BmErrorCLine {
   @IsInt()
   line: number;
 

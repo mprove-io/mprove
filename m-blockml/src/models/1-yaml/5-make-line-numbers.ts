@@ -167,11 +167,13 @@ export function processLineNumbersRecursive(item: {
       let p = r[1];
 
       if (item.hash[par].length > 1) {
-        let lines: interfaces.ErrorLine[] = item.hash[par].map((l: number) => ({
-          line: l,
-          name: item.fileName,
-          path: item.filePath
-        }));
+        let lines: interfaces.BmErrorCLine[] = item.hash[par].map(
+          (l: number) => ({
+            line: l,
+            name: item.fileName,
+            path: item.filePath
+          })
+        );
 
         item.errors.push(
           new BmError({

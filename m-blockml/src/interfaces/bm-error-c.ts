@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ErrorLine } from '../interfaces/error-line';
+import { BmErrorCLine } from '../interfaces/bm-error-c-line';
 import { enums } from '../barrels/enums';
 
 export class BmErrorC {
@@ -14,8 +14,8 @@ export class BmErrorC {
   message: string;
 
   @ValidateNested()
-  @Type(() => ErrorLine)
-  lines: ErrorLine[];
+  @Type(() => BmErrorCLine)
+  lines: BmErrorCLine[];
 
   @IsOptional()
   @IsString()

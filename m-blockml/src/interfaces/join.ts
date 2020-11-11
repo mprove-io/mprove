@@ -1,5 +1,5 @@
 import { enums } from '../barrels/enums';
-import { View } from './view';
+import { View } from './file-types/view';
 
 export interface Join {
   from_view: string;

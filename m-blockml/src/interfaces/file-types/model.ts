@@ -1,8 +1,8 @@
-import { FileTopBasic } from './file-top-basic';
-import { Join } from './join';
-import { FieldExt } from './field-ext';
+import { FileBasic } from '../file/file-basic';
+import { Join } from '../join';
+import { FieldAny } from '../field/field-any';
 
-export interface Model extends FileTopBasic {
+export interface Model extends FileBasic {
   model: string;
   model_line_num: number;
 
@@ -36,10 +36,15 @@ export interface Model extends FileTopBasic {
   joins: Join[];
   joins_line_num: number;
 
-  fields: FieldExt[];
+  fields: FieldAny[];
   fields_line_num: number;
 
   //
+
+  filters: {
+    [s: string]: string[];
+  };
+
   alwaysJoinList: {
     [as: string]: number;
   };

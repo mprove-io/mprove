@@ -1,4 +1,4 @@
-import { enums } from '../barrels/enums';
+import { enums } from '../../barrels/enums';
 
 export interface Field {
   name: string;

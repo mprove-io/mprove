@@ -1,8 +1,8 @@
-import { FileTopBasic } from './file-top-basic';
-import { FieldExt } from './field-ext';
-import { Report } from './report';
+import { FileBasic } from '../file/file-basic';
+import { FieldAny } from '../field/field-any';
+import { Report } from '../report';
 
-export interface Dashboard extends FileTopBasic {
+export interface Dashboard extends FileBasic {
   dashboard: string;
   dashboard_line_num: number;
 
@@ -21,9 +21,15 @@ export interface Dashboard extends FileTopBasic {
   access_users: string[];
   access_users_line_num: number;
 
-  fields: FieldExt[];
+  fields: FieldAny[];
   fields_line_num: number;
 
   reports: Report[];
   reports_line_num: number;
+
+  //
+
+  filters: {
+    [s: string]: string[];
+  };
 }

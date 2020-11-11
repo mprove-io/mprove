@@ -1,8 +1,7 @@
-import { FileTopBasic } from './file-top-basic';
-import { FieldExt } from './field-ext';
-import { Report } from './report';
+import { FileBasic } from '../file/file-basic';
+import { Report } from '../report';
 
-export interface Visualization extends FileTopBasic {
+export interface Visualization extends FileBasic {
   visualization: string;
   visualization_line_num: number;
 

@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class FilePathContent {
+export class File2PathContent {
   @IsString()
   path: string;
 

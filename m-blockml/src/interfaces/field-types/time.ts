@@ -1,5 +1,5 @@
-import { enums } from '../barrels/enums';
-import { Field } from './field';
+import { enums } from '../../barrels/enums';
+import { Field } from '../field/field';
 
 export interface Time extends Field {
   group_label: string;

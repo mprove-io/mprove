@@ -1,6 +1,6 @@
-import { api } from '../barrels/api';
-import { enums } from '../barrels/enums';
-import { Field } from './field';
+import { api } from '../../barrels/api';
+import { enums } from '../../barrels/enums';
+import { Field } from '../field/field';
 
 export interface Filter extends Field {
   label: string;

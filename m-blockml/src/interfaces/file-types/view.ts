@@ -1,7 +1,7 @@
-import { FileTopBasic } from './file-top-basic';
-import { FieldExt } from './field-ext';
+import { FileBasic } from '../file/file-basic';
+import { FieldAny } from '../field/field-any';
 
-export interface View extends FileTopBasic {
+export interface View extends FileBasic {
   view: string;
   view_line_num: number;
 
@@ -23,10 +23,14 @@ export interface View extends FileTopBasic {
   udfs: string[];
   udfs_line_num: number;
 
-  fields: FieldExt[];
+  fields: FieldAny[];
   fields_line_num: number;
 
   //
+
+  filters: {
+    [s: string]: string[];
+  };
 
   derivedTableStart: string;
 
