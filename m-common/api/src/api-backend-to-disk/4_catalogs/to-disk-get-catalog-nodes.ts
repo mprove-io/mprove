@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '../../_index';
+import * as apiObjects from '../../objects/_index';
 import * as apiEnums from '../../enums/_index';
 
 export class ToDiskGetCatalogNodesRequestPayload {

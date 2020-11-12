@@ -4,6 +4,7 @@ import { barOutput } from '../barrels/bar-output';
 import { Injectable } from '@nestjs/common';
 import { interfaces } from '../barrels/interfaces';
 import { BmError } from '../models/bm-error';
+import { barField } from '../barrels/bar-field';
 // import { barChart } from '../barrels/bar-chart';
 // import { barDashboard } from '../barrels/bar-dashboard';
 // import { barField } from '../barrels/bar-field';
@@ -56,7 +57,7 @@ export class StructService {
     let dashboards: interfaces.Dashboard[];
     let visualizations: interfaces.Visualization[];
 
-    let yamlBuildResult = barYaml.yamlBuild({
+    let yamlBuildItem = barYaml.yamlBuild({
       errors: errors,
       files: item.files,
       structId: item.structId,
@@ -64,12 +65,17 @@ export class StructService {
       weekStart: item.weekStart,
       connections: item.connections
     });
+    udfs = yamlBuildItem.udfs;
+    views = yamlBuildItem.views;
+    models = yamlBuildItem.models;
+    dashboards = yamlBuildItem.dashboards;
+    visualizations = yamlBuildItem.visualizations;
 
-    udfs = yamlBuildResult.udfs;
-    views = yamlBuildResult.views;
-    models = yamlBuildResult.models;
-    dashboards = yamlBuildResult.dashboards;
-    visualizations = yamlBuildResult.visualizations;
+    let fieldBuildViewsItem = barField.fieldBuildViews({
+      errors: errors,
+      views: views
+    });
+    views = fieldBuildViewsItem.views;
 
     // // ApField - Views
     // views = barField.checkFieldsIsArray({ entities: views }); //           *prepare_fields_ary

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '../../objects/_index';
+import { DiskFileLine } from '../disk/disk-file-line';
 
 export class SwError {
   @IsString()
@@ -22,8 +22,8 @@ export class SwError {
   message: string;
 
   @ValidateNested()
-  @Type(() => apiObjects.DiskFileLine)
-  lines: apiObjects.DiskFileLine[];
+  @Type(() => DiskFileLine)
+  lines: DiskFileLine[];
 
   @IsInt()
   serverTs: number;

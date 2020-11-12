@@ -1,7 +1,7 @@
 import { helper } from '../barrels/helper';
 import { interfaces } from '../barrels/interfaces';
 import { enums } from '../barrels/enums';
-import { BmErrorCLine } from '../interfaces/error-line';
+import { BmErrorCLine } from '../interfaces/bm-error-c-line';
 
 export class BmError implements interfaces.BmErrorC {
   id: string;

@@ -204,6 +204,32 @@ export function checkTopUnknownParameters(item: {
           );
           return;
         }
+
+        if (
+          !Array.isArray(file[parameter]) &&
+          [
+            enums.ParameterEnum.Udfs.toString(),
+            enums.ParameterEnum.Fields.toString(),
+            enums.ParameterEnum.Reports.toString(),
+            enums.ParameterEnum.Joins.toString(),
+            enums.ParameterEnum.AccessUsers.toString()
+          ].indexOf(parameter) > -1
+        ) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.PARAMETER_IS_NOT_A_LIST,
+              message: `parameter "${parameter}" must be a List`,
+              lines: [
+                {
+                  line: file[parameter + constants.LINE_NUM],
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+          return;
+        }
       });
 
     let errorsOnEnd = item.errors.length;
