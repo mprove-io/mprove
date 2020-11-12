@@ -1,5 +1,5 @@
 import { api } from '../../../barrels/api';
-import { helper } from '../../../barrels/helper';
+import { prepareTest } from '../../../functions/prepare-test';
 
 let testId = 't-3-to-disk-delete-dev-repo';
 
@@ -11,7 +11,7 @@ test(testId, async () => {
   let resp: api.ToDiskDeleteDevRepoResponse;
 
   try {
-    let { messageService } = await helper.prepareTest(organizationId);
+    let { messageService } = await prepareTest(organizationId);
 
     let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
       info: {

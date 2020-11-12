@@ -1,7 +1,7 @@
 import * as nodegit from 'nodegit';
-import { git } from '../../barrels/git';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { getRepoStatus } from './get-repo-status';
 import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function pushToCentral(item: {
@@ -12,7 +12,7 @@ export async function pushToCentral(item: {
   branch: string;
 }) {
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-    await git.getRepoStatus({
+    await getRepoStatus({
       projectId: item.projectId,
       projectDir: item.projectDir,
       repoId: item.repoId,

@@ -1,5 +1,5 @@
 import { api } from '../../../barrels/api';
-import { helper } from '../../../barrels/helper';
+import { prepareTest } from '../../../functions/prepare-test';
 
 let testId = 't-2-to-disk-is-project-exist';
 
@@ -12,7 +12,7 @@ test(testId, async () => {
   let resp2: api.ToDiskIsProjectExistResponse;
 
   try {
-    let { messageService } = await helper.prepareTest(organizationId);
+    let { messageService } = await prepareTest(organizationId);
 
     let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
       info: {

@@ -1,7 +1,7 @@
 import * as nodegit from 'nodegit';
 import { api } from '../../barrels/api';
-import { git } from '../../barrels/git';
 import { interfaces } from '../../barrels/interfaces';
+import { getRepoStatus } from './get-repo-status';
 
 export async function checkoutBranch(item: {
   projectId: string;
@@ -11,7 +11,7 @@ export async function checkoutBranch(item: {
   branchName: string;
 }) {
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
-    await git.getRepoStatus({
+    await getRepoStatus({
       projectId: item.projectId,
       projectDir: item.projectDir,
       repoId: item.repoId,

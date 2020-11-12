@@ -1,5 +1,5 @@
 import { api } from '../../../barrels/api';
-import { helper } from '../../../barrels/helper';
+import { prepareTest } from '../../../functions/prepare-test';
 
 let testId = 't-5-to-disk-is-branch-exist';
 
@@ -14,7 +14,7 @@ test(testId, async () => {
   let resp4: api.ToDiskIsBranchExistResponse;
 
   try {
-    let { messageService } = await helper.prepareTest(organizationId);
+    let { messageService } = await prepareTest(organizationId);
 
     let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
       info: {

@@ -31,7 +31,6 @@
     "class-validator": "0.12.2",
     "clone-regexp": "^2.2.0",
     "fs-extra": "^9.0.1",
-    "madge": "3.11.0",
     "p-iteration": "^1.1.8",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -40,6 +39,7 @@
     "walk": "^2.3.9"
   },
   "devDependencies": {
+    "madge": "3.11.0",
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
