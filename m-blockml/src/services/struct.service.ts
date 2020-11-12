@@ -1,10 +1,9 @@
 import { api } from '../barrels/api';
 import { barYaml } from '../barrels/bar-yaml';
-import { barOutput } from '../barrels/bar-output';
+import { barStruct } from '../barrels/bar-struct';
 import { Injectable } from '@nestjs/common';
 import { interfaces } from '../barrels/interfaces';
 import { BmError } from '../models/bm-error';
-import { barField } from '../barrels/bar-field';
 // import { barChart } from '../barrels/bar-chart';
 // import { barDashboard } from '../barrels/bar-dashboard';
 // import { barField } from '../barrels/bar-field';
@@ -57,7 +56,7 @@ export class StructService {
     let dashboards: interfaces.Dashboard[];
     let visualizations: interfaces.Visualization[];
 
-    let yamlBuildItem = barYaml.yamlBuild({
+    let yamlBuildItem = barStruct.yamlBuild({
       errors: errors,
       files: item.files,
       structId: item.structId,
@@ -71,7 +70,7 @@ export class StructService {
     dashboards = yamlBuildItem.dashboards;
     visualizations = yamlBuildItem.visualizations;
 
-    let fieldBuildViewsItem = barField.fieldBuildViews({
+    let fieldBuildViewsItem = barStruct.fieldBuildViews({
       errors: errors,
       views: views
     });
@@ -399,7 +398,7 @@ export class StructService {
 
     // let errors = ErrorsCollector.getErrors();
 
-    barOutput.logStruct({
+    barStruct.logStruct({
       structId: item.structId,
       errors: errors,
       udfs: udfs,

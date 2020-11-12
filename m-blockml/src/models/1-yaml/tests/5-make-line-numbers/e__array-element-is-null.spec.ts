@@ -2,6 +2,7 @@ import { api } from '../../../../barrels/api';
 import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
+import { prepareTest } from '../../../../functions/prepare-test';
 
 let pack = '1-yaml';
 let func = '5-make-line-numbers';
@@ -12,12 +13,11 @@ test(testId, async () => {
   let errors: interfaces.BmErrorC[];
 
   try {
-    let {
-      structService,
-      structId,
-      dataDir,
-      logPath
-    } = await helper.prepareTest(pack, func, testId);
+    let { structService, structId, dataDir, logPath } = await prepareTest(
+      pack,
+      func,
+      testId
+    );
 
     await structService.rebuildStruct({
       dir: dataDir,

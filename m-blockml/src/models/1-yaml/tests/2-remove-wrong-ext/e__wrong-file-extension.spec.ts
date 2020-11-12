@@ -1,7 +1,8 @@
 import { api } from '../../../../barrels/api';
-import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
+import { readLog } from '../../../../helper/_index';
+import { prepareTest } from '../../../../functions/prepare-test';
 
 let pack = '1-yaml';
 let func = '2-remove-wrong-ext';
@@ -12,12 +13,11 @@ test(testId, async () => {
   let errors: interfaces.BmErrorC[];
 
   try {
-    let {
-      structService,
-      structId,
-      dataDir,
-      logPath
-    } = await helper.prepareTest(pack, func, testId);
+    let { structService, structId, dataDir, logPath } = await prepareTest(
+      pack,
+      func,
+      testId
+    );
 
     await structService.rebuildStruct({
       dir: dataDir,
@@ -27,8 +27,8 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    file2s = await helper.readLog(logPath, enums.LogEnum.File2s);
-    errors = await helper.readLog(logPath, enums.LogEnum.Errors);
+    file2s = await readLog(logPath, enums.LogEnum.File2s);
+    errors = await readLog(logPath, enums.LogEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }

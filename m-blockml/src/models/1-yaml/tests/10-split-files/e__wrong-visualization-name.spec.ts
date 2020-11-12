@@ -2,6 +2,7 @@ import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { helper } from '../../../../barrels/helper';
 import { interfaces } from '../../../../barrels/interfaces';
+import { prepareTest } from '../../../../functions/prepare-test';
 
 let pack = '1-yaml';
 let func = '10-split-files';
@@ -16,12 +17,11 @@ test(testId, async () => {
   let visualizations: interfaces.Visualization[];
 
   try {
-    let {
-      structService,
-      structId,
-      dataDir,
-      logPath
-    } = await helper.prepareTest(pack, func, testId);
+    let { structService, structId, dataDir, logPath } = await prepareTest(
+      pack,
+      func,
+      testId
+    );
 
     let connection: api.ProjectConnection = {
       name: 'c1',

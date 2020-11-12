@@ -1,10 +1,11 @@
+import { prepareTest } from '../../../../functions/prepare-test';
+import { readLog } from '../../../../helper/read-log';
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
-import { helper } from '../../../../barrels/helper';
 import { interfaces } from '../../../../barrels/interfaces';
 
-let pack = '_output';
-let func = '1-log-struct';
+let pack = 'struct';
+let func = 'log-struct';
 let testId = 'r1';
 
 test(testId, async () => {
@@ -16,12 +17,11 @@ test(testId, async () => {
   let visualizations: interfaces.Visualization[];
 
   try {
-    let {
-      structService,
-      structId,
-      dataDir,
-      logPath
-    } = await helper.prepareTest(pack, func, testId);
+    let { structService, structId, dataDir, logPath } = await prepareTest(
+      pack,
+      func,
+      testId
+    );
 
     let connection: api.ProjectConnection = {
       name: 'c1',
@@ -36,12 +36,12 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    errors = await helper.readLog(logPath, enums.LogEnum.Errors);
-    udfs = await helper.readLog(logPath, enums.LogEnum.Udfs);
-    views = await helper.readLog(logPath, enums.LogEnum.Views);
-    models = await helper.readLog(logPath, enums.LogEnum.Models);
-    dashboards = await helper.readLog(logPath, enums.LogEnum.Dashboards);
-    visualizations = await helper.readLog(logPath, enums.LogEnum.Vis);
+    errors = await readLog(logPath, enums.LogEnum.Errors);
+    udfs = await readLog(logPath, enums.LogEnum.Udfs);
+    views = await readLog(logPath, enums.LogEnum.Views);
+    models = await readLog(logPath, enums.LogEnum.Models);
+    dashboards = await readLog(logPath, enums.LogEnum.Dashboards);
+    visualizations = await readLog(logPath, enums.LogEnum.Vis);
   } catch (e) {
     api.logToConsole(e);
   }

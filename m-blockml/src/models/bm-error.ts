@@ -1,9 +1,9 @@
-import { helper } from '../barrels/helper';
-import { interfaces } from '../barrels/interfaces';
 import { enums } from '../barrels/enums';
 import { BmErrorCLine } from '../interfaces/bm-error-c-line';
+import { BmErrorC } from '../interfaces/bm-error-c';
+import { makeErrorId } from '../functions/make-error-id';
 
-export class BmError implements interfaces.BmErrorC {
+export class BmError implements BmErrorC {
   id: string;
   title: enums.ErTitleEnum;
   message: string;
@@ -16,7 +16,7 @@ export class BmError implements interfaces.BmErrorC {
     lines: BmErrorCLine[];
     at?: string;
   }) {
-    this.id = helper.makeErrorId();
+    this.id = makeErrorId();
     this.title = item.title;
     this.message = item.message;
     this.lines = item.lines;

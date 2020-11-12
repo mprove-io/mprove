@@ -1,5 +1,3 @@
-export * from './_field-build-views';
-
 export * from './1-check-fields-exist';
 export * from './2-check-field-is-object';
 
