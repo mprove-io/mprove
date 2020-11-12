@@ -4,16 +4,16 @@ import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
 import { api } from '../../barrels/api';
 
-let logPack = '1-yaml';
-let logFolder = '10-split-files';
+let func = enums.FuncEnum.SplitFiles;
 
 export function splitFiles(item: {
   filesAny: any[];
   errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }) {
-  let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
+  let { caller, structId } = item;
+  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let udfs: interfaces.Udf[] = [];
   let views: interfaces.View[] = [];
@@ -211,12 +211,12 @@ export function splitFiles(item: {
     }
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Udfs, udfs);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Views, views);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Models, models);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Dashboards, dashboards);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Vis, visualizations);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Views, views);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Models, models);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Dashboards, dashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Vis, visualizations);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return {
     udfs: udfs,

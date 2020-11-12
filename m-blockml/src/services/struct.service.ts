@@ -18,6 +18,8 @@ import { BmError } from '../models/bm-error';
 // import { barView } from '../barrels/bar-view';
 // import { ErrorsCollector } from '../barrels/errors-collector';
 
+let caller = 'rebuild-struct';
+
 @Injectable()
 export class StructService {
   async rebuildStruct(item: {
@@ -29,7 +31,8 @@ export class StructService {
   }): Promise<interfaces.Struct> {
     let files: api.File[] = await barYaml.collectFiles({
       dir: item.dir,
-      structId: item.structId
+      structId: item.structId,
+      caller: caller
     });
 
     return await this.rebuildStructStateless({
@@ -72,7 +75,8 @@ export class StructService {
 
     let fieldBuildViewsItem = barStruct.fieldBuildViews({
       errors: errors,
-      views: views
+      views: views,
+      structId: item.structId
     });
     views = fieldBuildViewsItem.views;
 
@@ -80,6 +84,7 @@ export class StructService {
     // views = barField.checkFieldsIsArray({ entities: views }); //           *prepare_fields_ary
     // // missed in old blockml
     // views = barField.checkFieldIsObject({ entities: views });
+
     // views = barField.checkFieldDeclaration({ entities: views }); //        *prepare_fields_ary
     // views = barField.checkSqlExist({ entities: views }); //                *prepare_fields_ary
     // // *prepare_fields_keys && *make_fields
@@ -399,13 +404,14 @@ export class StructService {
     // let errors = ErrorsCollector.getErrors();
 
     barStruct.logStruct({
-      structId: item.structId,
       errors: errors,
       udfs: udfs,
       views: views,
       models: models,
       dashboards: dashboards,
-      visualizations: visualizations
+      visualizations: visualizations,
+      structId: item.structId,
+      caller: caller
     });
 
     return {

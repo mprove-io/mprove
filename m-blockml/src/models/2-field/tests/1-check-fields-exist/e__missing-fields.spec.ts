@@ -1,16 +1,16 @@
 import { api } from '../../../../barrels/api';
-import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
+import { readLog } from '../../../../helper/_index';
 import { prepareTest } from '../../../../functions/prepare-test';
 
-let pack = enums.PackEnum.Yaml;
-let caller = enums.CallerEnum.YamlBuild;
-let func = enums.FuncEnum.MakeLineNumbers;
-let testId = 'e__duplicate-parameters';
+let pack = enums.PackEnum.Field;
+let caller = enums.CallerEnum.FieldBuildViews;
+let func = enums.FuncEnum.CheckFieldsExist;
+let testId = 'e__missing-fields';
 
 test(testId, async () => {
-  let filesAny: any[];
+  let entities;
   let errors: interfaces.BmErrorC[];
 
   try {
@@ -21,22 +21,27 @@ test(testId, async () => {
       testId: testId
     });
 
+    let connection: api.ProjectConnection = {
+      name: 'c1',
+      type: api.ConnectionTypeEnum.PostgreSQL
+    };
+
     await structService.rebuildStruct({
       dir: dataDir,
       structId: structId,
       projectId: 'p1',
-      connections: [],
+      connections: [connection],
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    filesAny = await helper.readLog(logPath, enums.LogTypeEnum.FilesAny);
-    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
+    entities = await readLog(logPath, enums.LogTypeEnum.Entities);
+    errors = await readLog(logPath, enums.LogTypeEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  // FILE_CONTENT_IS_NOT_YAML caught before DUPLICATE_PARAMETERS
-  expect(filesAny.length).toBe(0);
+  expect(entities.length).toBe(0);
   expect(errors.length).toBe(1);
-  expect(errors[0].title).toBe(enums.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.MISSING_FIELDS);
+  expect(errors[0].lines[0].line).toBe(0);
 });

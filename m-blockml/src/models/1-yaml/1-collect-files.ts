@@ -4,15 +4,15 @@ import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 
-let logPack = '1-yaml';
-let logFolder = '1-collect-files';
+let func = enums.FuncEnum.CollectFiles;
 
 export async function collectFiles(item: {
   dir: string;
   structId: string;
+  caller: enums.CallerEnum;
 }): Promise<api.File[]> {
-  let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
+  let { caller, structId } = item;
+  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   return new Promise((resolve, reject) => {
     let files: api.File[] = [];
@@ -52,8 +52,8 @@ export async function collectFiles(item: {
     });
 
     walker.on('end', () => {
-      helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, []);
-      helper.log(logId, logPack, logFolder, enums.LogEnum.Files, files);
+      helper.log(caller, func, structId, enums.LogTypeEnum.Errors, []);
+      helper.log(caller, func, structId, enums.LogTypeEnum.Files, files);
       resolve(files);
     });
   });

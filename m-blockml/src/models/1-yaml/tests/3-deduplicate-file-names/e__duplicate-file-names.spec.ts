@@ -4,8 +4,9 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
 
-let pack = '1-yaml';
-let func = '3-deduplicate-file-names';
+let pack = enums.PackEnum.Yaml;
+let caller = enums.CallerEnum.YamlBuild;
+let func = enums.FuncEnum.DeduplicateFileNames;
 let testId = 'e__duplicate-file-names';
 
 test(testId, async () => {
@@ -13,11 +14,12 @@ test(testId, async () => {
   let errors: interfaces.BmErrorC[];
 
   try {
-    let { structService, structId, dataDir, logPath } = await prepareTest(
-      pack,
-      func,
-      testId
-    );
+    let { structService, structId, dataDir, logPath } = await prepareTest({
+      pack: pack,
+      caller: caller,
+      func: func,
+      testId: testId
+    });
 
     await structService.rebuildStruct({
       dir: dataDir,
@@ -27,8 +29,8 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    file3s = await helper.readLog(logPath, enums.LogEnum.File3s);
-    errors = await helper.readLog(logPath, enums.LogEnum.Errors);
+    file3s = await helper.readLog(logPath, enums.LogTypeEnum.File3s);
+    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }

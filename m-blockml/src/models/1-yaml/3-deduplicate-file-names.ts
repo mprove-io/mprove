@@ -3,16 +3,16 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 
-let logPack = '1-yaml';
-let logFolder = '3-deduplicate-file-names';
+let func = enums.FuncEnum.DeduplicateFileNames;
 
 export function deduplicateFileNames(item: {
   file2s: interfaces.File2[];
   errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }): interfaces.File3[] {
-  let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
+  let { caller, structId } = item;
+  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let file3s: interfaces.File3[] = [];
 
@@ -43,8 +43,8 @@ export function deduplicateFileNames(item: {
     }
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.File3s, file3s);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.File3s, file3s);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return file3s;
 }

@@ -4,16 +4,16 @@ import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 
-let logPack = '1-yaml';
-let logFolder = '9-check-support-udfs';
+let func = enums.FuncEnum.CheckSupportUdfs;
 
 export function checkSupportUdfs(item: {
   filesAny: any[];
   errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }): any[] {
-  let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
+  let { caller, structId } = item;
+  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
 
@@ -54,8 +54,8 @@ export function checkSupportUdfs(item: {
     newFilesAny.push(file);
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, newFilesAny);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.FilesAny, newFilesAny);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return newFilesAny;
 }

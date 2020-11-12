@@ -4,8 +4,9 @@ import { helper } from '../../../../barrels/helper';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
 
-let pack = '1-yaml';
-let func = '10-split-files';
+let pack = enums.PackEnum.Yaml;
+let caller = enums.CallerEnum.YamlBuild;
+let func = enums.FuncEnum.SplitFiles;
 let testId = 'e__wrong-dashboard-name';
 
 test(testId, async () => {
@@ -17,11 +18,12 @@ test(testId, async () => {
   let visualizations: interfaces.Visualization[];
 
   try {
-    let { structService, structId, dataDir, logPath } = await prepareTest(
-      pack,
-      func,
-      testId
-    );
+    let { structService, structId, dataDir, logPath } = await prepareTest({
+      pack: pack,
+      caller: caller,
+      func: func,
+      testId: testId
+    });
 
     let connection: api.ProjectConnection = {
       name: 'c1',
@@ -36,12 +38,12 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    errors = await helper.readLog(logPath, enums.LogEnum.Errors);
-    udfs = await helper.readLog(logPath, enums.LogEnum.Udfs);
-    views = await helper.readLog(logPath, enums.LogEnum.Views);
-    models = await helper.readLog(logPath, enums.LogEnum.Models);
-    dashboards = await helper.readLog(logPath, enums.LogEnum.Dashboards);
-    visualizations = await helper.readLog(logPath, enums.LogEnum.Vis);
+    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
+    udfs = await helper.readLog(logPath, enums.LogTypeEnum.Udfs);
+    views = await helper.readLog(logPath, enums.LogTypeEnum.Views);
+    models = await helper.readLog(logPath, enums.LogTypeEnum.Models);
+    dashboards = await helper.readLog(logPath, enums.LogTypeEnum.Dashboards);
+    visualizations = await helper.readLog(logPath, enums.LogTypeEnum.Vis);
   } catch (e) {
     api.logToConsole(e);
   }

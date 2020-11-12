@@ -4,8 +4,9 @@ import { interfaces } from '../../../../barrels/interfaces';
 import { readLog } from '../../../../helper/_index';
 import { prepareTest } from '../../../../functions/prepare-test';
 
-let pack = '1-yaml';
-let func = '2-remove-wrong-ext';
+let pack = enums.PackEnum.Yaml;
+let caller = enums.CallerEnum.YamlBuild;
+let func = enums.FuncEnum.RemoveWrongExt;
 let testId = 'e__wrong-file-extension';
 
 test(testId, async () => {
@@ -13,11 +14,12 @@ test(testId, async () => {
   let errors: interfaces.BmErrorC[];
 
   try {
-    let { structService, structId, dataDir, logPath } = await prepareTest(
-      pack,
-      func,
-      testId
-    );
+    let { structService, structId, dataDir, logPath } = await prepareTest({
+      pack: pack,
+      caller: caller,
+      func: func,
+      testId: testId
+    });
 
     await structService.rebuildStruct({
       dir: dataDir,
@@ -27,8 +29,8 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    file2s = await readLog(logPath, enums.LogEnum.File2s);
-    errors = await readLog(logPath, enums.LogEnum.Errors);
+    file2s = await readLog(logPath, enums.LogTypeEnum.File2s);
+    errors = await readLog(logPath, enums.LogTypeEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }

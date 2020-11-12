@@ -4,17 +4,17 @@ import { helper } from '../../barrels/helper';
 import { constants } from '../../barrels/constants';
 import { BmError } from '../bm-error';
 
-let logPack = '1-yaml';
-let logFolder = '8-check-connections';
+let func = enums.FuncEnum.CheckConnections;
 
 export function checkConnections(item: {
   filesAny: any[];
   connections: api.ProjectConnection[];
   errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }): any[] {
-  let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
+  let { caller, structId } = item;
+  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
 
@@ -73,8 +73,8 @@ export function checkConnections(item: {
     newFilesAny.push(file);
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.FilesAny, newFilesAny);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.FilesAny, newFilesAny);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return newFilesAny;
 }

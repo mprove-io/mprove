@@ -4,16 +4,16 @@ import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 
-let logPack = '1-yaml';
-let logFolder = '2-remove-wrong-ext';
+let func = enums.FuncEnum.RemoveWrongExt;
 
 export function removeWrongExt(item: {
   files: api.File[];
   errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }): interfaces.File2[] {
-  let logId = item.structId;
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Input, item);
+  let { caller, structId } = item;
+  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let file2s: interfaces.File2[] = [];
 
@@ -66,8 +66,8 @@ export function removeWrongExt(item: {
     }
   });
 
-  helper.log(logId, logPack, logFolder, enums.LogEnum.File2s, file2s);
-  helper.log(logId, logPack, logFolder, enums.LogEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.File2s, file2s);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return file2s;
 }

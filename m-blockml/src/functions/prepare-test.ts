@@ -1,17 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StructService } from '../services/struct.service';
 import * as fse from 'fs-extra';
+import { enums } from 'src/barrels/enums';
 
-export async function prepareTest(pack: string, func: string, testId: string) {
-  let structId = `${pack}__${func}__${testId}`;
+export async function prepareTest(item: {
+  pack: enums.PackEnum;
+  caller: enums.CallerEnum;
+  func: enums.FuncEnum;
+  testId: string;
+}) {
+  let { pack, caller, func, testId } = item;
 
-  let structDir = `src/logs/${structId}`;
+  let logsDir = `src/logs/${caller}/${func}/${testId}`;
 
-  fse.emptyDirSync(structDir);
+  fse.emptyDirSync(logsDir);
 
   let dataDir = `src/models/${pack}/tests/${func}/data/${testId}`;
-
-  let logPath = `src/logs/${structId}/${pack}/${func}`;
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     controllers: [],
@@ -22,8 +26,8 @@ export async function prepareTest(pack: string, func: string, testId: string) {
 
   return {
     structService: structService,
-    structId: structId,
     dataDir: dataDir,
-    logPath: logPath
+    logPath: logsDir,
+    structId: testId
   };
 }

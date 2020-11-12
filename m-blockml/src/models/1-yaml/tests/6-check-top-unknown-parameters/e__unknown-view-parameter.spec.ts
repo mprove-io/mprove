@@ -4,8 +4,9 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
 
-let pack = '1-yaml';
-let func = '6-check-top-unknown-parameters';
+let pack = enums.PackEnum.Yaml;
+let caller = enums.CallerEnum.YamlBuild;
+let func = enums.FuncEnum.CheckTopUnknownParameters;
 let testId = 'e__unknown-view-parameter';
 
 test(testId, async () => {
@@ -13,11 +14,12 @@ test(testId, async () => {
   let errors: interfaces.BmErrorC[];
 
   try {
-    let { structService, structId, dataDir, logPath } = await prepareTest(
-      pack,
-      func,
-      testId
-    );
+    let { structService, structId, dataDir, logPath } = await prepareTest({
+      pack: pack,
+      caller: caller,
+      func: func,
+      testId: testId
+    });
 
     await structService.rebuildStruct({
       dir: dataDir,
@@ -27,8 +29,8 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    filesAny = await helper.readLog(logPath, enums.LogEnum.FilesAny);
-    errors = await helper.readLog(logPath, enums.LogEnum.Errors);
+    filesAny = await helper.readLog(logPath, enums.LogTypeEnum.FilesAny);
+    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }

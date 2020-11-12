@@ -4,13 +4,13 @@ import { enums } from '../barrels/enums';
 import { api } from '../barrels/api';
 import { interfaces } from '../barrels/interfaces';
 
-export async function readLog(logPath: string, log: enums.LogEnum) {
+export async function readLog(logPath: string, log: enums.LogTypeEnum) {
   let path = logPath + '/' + log;
   let buffer = fse.readFileSync(path);
   let content = buffer.toString();
 
   switch (log) {
-    case enums.LogEnum.Errors: {
+    case enums.LogTypeEnum.Errors: {
       return await api.transformValidString({
         classType: interfaces.BmErrorC,
         jsonString: content,
