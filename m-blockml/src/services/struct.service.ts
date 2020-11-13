@@ -81,42 +81,6 @@ export class StructService {
     });
     views = fieldBuildViewsItem.views;
 
-    // // ApField - Views
-    // views = barField.checkFieldsIsArray({ entities: views }); //           *prepare_fields_ary
-    // // missed in old blockml
-    // views = barField.checkFieldIsObject({ entities: views });
-
-    // views = barField.checkFieldDeclaration({ entities: views }); //        *prepare_fields_ary
-    // views = barField.checkSqlExist({ entities: views }); //                *prepare_fields_ary
-    // // *prepare_fields_keys && *make_fields
-    // views = barField.checkFieldNameDuplicates({ entities: views });
-    // views = barField.checkFieldUnknownParameters({ entities: views });
-    // views = barField.setImplicitLabel({ entities: views });
-    // views = barField.checkDimensions({
-    //   entities: views,
-    //   connection: item.connection
-    // });
-    // views = barField.transformYesNoDimensions({ entities: views });
-    // views = barField.checkMeasures({
-    //   entities: views,
-    //   connection: item.connection
-    // });
-    // views = barField.checkCalculations({ entities: views });
-    // views = barField.checkAndSetImplicitResults({ entities: views });
-    // views = barField.checkAndSetImplicitFormatNumber({ entities: views });
-    // views = barField.transformTimes({
-    //   entities: views,
-    //   weekStart: item.weekStart,
-    //   connection: item.connection
-    // });
-    // // ->check_chars_in_refs
-    // views = barField.makeFieldsDeps({ entities: views });
-    // // with restart
-    // views = barField.checkFieldsDeps({ entities: views });
-    // views = barField.checkCycles({ entities: views });
-    // // {fields_deps_after_singles: ...} , {prep_force_dims: ...}
-    // views = barField.substituteSingleRefs({ entities: views });
-
     // // ApField - Models (same as for Views)
     // models = barField.checkFieldsIsArray({ entities: models });
     // models = barField.checkFieldIsObject({ entities: models });

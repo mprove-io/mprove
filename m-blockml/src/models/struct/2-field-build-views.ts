@@ -33,6 +33,42 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
+  views = barField.checkSqlExist({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
+  // // *prepare_fields_keys && *make_fields
+  // views = barField.checkFieldNameDuplicates({ entities: views });
+  // views = barField.checkFieldUnknownParameters({ entities: views });
+  // views = barField.setImplicitLabel({ entities: views });
+  // views = barField.checkDimensions({
+  //   entities: views,
+  //   connection: item.connection
+  // });
+  // views = barField.transformYesNoDimensions({ entities: views });
+  // views = barField.checkMeasures({
+  //   entities: views,
+  //   connection: item.connection
+  // });
+  // views = barField.checkCalculations({ entities: views });
+  // views = barField.checkAndSetImplicitResults({ entities: views });
+  // views = barField.checkAndSetImplicitFormatNumber({ entities: views });
+  // views = barField.transformTimes({
+  //   entities: views,
+  //   weekStart: item.weekStart,
+  //   connection: item.connection
+  // });
+  // // ->check_chars_in_refs
+  // views = barField.makeFieldsDeps({ entities: views });
+  // // with restart
+  // views = barField.checkFieldsDeps({ entities: views });
+  // views = barField.checkCycles({ entities: views });
+  // // {fields_deps_after_singles: ...} , {prep_force_dims: ...}
+  // views = barField.substituteSingleRefs({ entities: views });
+
   return {
     views: views
   };

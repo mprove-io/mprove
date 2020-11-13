@@ -13,6 +13,7 @@ export enum FuncEnum {
   CheckFieldsExist = '2-field/1-check-fields-exist',
   CheckFieldIsObject = '2-field/2-check-field-is-object',
   CheckFieldDeclaration = '2-field/3-check-field-declaration',
+  CheckSqlExist = '2-field/4-check-sql-exist',
 
   LogStruct = 'struct/log-struct'
 }

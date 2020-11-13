@@ -2,12 +2,11 @@ import { interfaces } from '../../barrels/interfaces';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
+import { vmdType } from './_vmd-type';
 
 let func = enums.FuncEnum.CheckFieldIsObject;
 
-type t1 = interfaces.View | interfaces.Model | interfaces.Dashboard;
-
-export function checkFieldIsObject<T extends t1>(item: {
+export function checkFieldIsObject<T extends vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

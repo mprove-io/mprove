@@ -4,12 +4,11 @@ import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { constants } from '../../barrels/constants';
+import { vmdType } from './_vmd-type';
 
 let func = enums.FuncEnum.CheckFieldDeclaration;
 
-type t1 = interfaces.View | interfaces.Model | interfaces.Dashboard;
-
-export function checkFieldDeclaration<T extends t1>(item: {
+export function checkFieldDeclaration<T extends vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;
@@ -56,7 +55,6 @@ export function checkFieldDeclaration<T extends t1>(item: {
         );
         return;
       } else if (declarations.length > 1) {
-        // error e23
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD,
@@ -78,7 +76,6 @@ export function checkFieldDeclaration<T extends t1>(item: {
       if (
         (<any>field)[declaration].match(api.MyRegex.CAPTURE_SPECIAL_CHARS_G())
       ) {
-        // error e276
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,

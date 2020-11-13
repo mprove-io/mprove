@@ -2,12 +2,11 @@ import { interfaces } from '../../barrels/interfaces';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
+import { vmdType } from './_vmd-type';
 
 let func = enums.FuncEnum.CheckFieldsExist;
 
-type t1 = interfaces.View | interfaces.Model | interfaces.Dashboard;
-
-export function checkFieldsExist<T extends t1>(item: {
+export function checkFieldsExist<T extends vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

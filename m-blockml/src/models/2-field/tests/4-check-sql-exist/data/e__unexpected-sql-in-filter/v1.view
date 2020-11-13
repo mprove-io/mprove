@@ -1,0 +1,6 @@
+view: v1
+connection: c1
+fields:
+- filter: f1
+  sql: 111   
+
