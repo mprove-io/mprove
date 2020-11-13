@@ -16,7 +16,10 @@ export function checkFieldIsObject<T extends t1>(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
+  let newEntities: T[] = [];
+
   item.entities.forEach(x => {
+    let errorsOnStart = item.errors.length;
     let newFields: interfaces.FieldAny[] = [];
 
     x.fields.forEach(field => {
@@ -39,8 +42,15 @@ export function checkFieldIsObject<T extends t1>(item: {
       newFields.push(field);
     });
 
-    x.fields = newFields;
+    let errorsOnEnd = item.errors.length;
+    if (errorsOnStart === errorsOnEnd) {
+      x.fields = newFields;
+      newEntities.push(x);
+    }
   });
+
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
   return item.entities;
 }

@@ -4,8 +4,8 @@ import { BmErrorCLine } from '../interfaces/bm-error-c-line';
 import { enums } from '../barrels/enums';
 
 export class BmErrorC {
-  @IsString()
-  id: string;
+  // @IsString()
+  // id: string;
 
   @IsEnum(enums.ErTitleEnum)
   title: enums.ErTitleEnum;

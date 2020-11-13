@@ -4,7 +4,7 @@ import { BmErrorC } from '../interfaces/bm-error-c';
 import { makeErrorId } from '../functions/make-error-id';
 
 export class BmError implements BmErrorC {
-  id: string;
+  // id: string;
   title: enums.ErTitleEnum;
   message: string;
   lines: BmErrorCLine[];
@@ -16,7 +16,7 @@ export class BmError implements BmErrorC {
     lines: BmErrorCLine[];
     at?: string;
   }) {
-    this.id = makeErrorId();
+    // this.id = makeErrorId();
     this.title = item.title;
     this.message = item.message;
     this.lines = item.lines;
