@@ -20,7 +20,7 @@ export function checkFieldsExist<T extends vmdType>(item: {
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (!x.fields) {
+    if (helper.isUndefined(x.fields)) {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.MISSING_FIELDS,

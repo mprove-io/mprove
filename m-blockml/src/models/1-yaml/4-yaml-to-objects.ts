@@ -105,7 +105,7 @@ export function yamlToObjects(item: {
       return;
     }
 
-    if (!parsedYaml) {
+    if (helper.isUndefined(parsedYaml)) {
       // empty file
       return;
     } else if (parsedYaml.constructor !== Object) {

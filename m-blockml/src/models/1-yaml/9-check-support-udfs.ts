@@ -29,7 +29,7 @@ export function checkSupportUdfs(item: {
         .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
         .find(p => p === enums.ParameterEnum.Udfs.toString());
 
-      if (!!udfsParameter) {
+      if (helper.isDefined(udfsParameter)) {
         item.errors.push(
           new BmError({
             title:

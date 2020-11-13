@@ -80,7 +80,7 @@ export function processLineNumbersRecursive(item: {
     if (oldPar !== newPar) {
       item.hash[newPar] = item.hash[oldPar];
 
-      if (!item.hash[newPar + constants.LINE_NUMBERS]) {
+      if (helper.isUndefined(item.hash[newPar + constants.LINE_NUMBERS])) {
         item.hash[newPar + constants.LINE_NUMBERS] = [];
       }
 
@@ -113,7 +113,7 @@ export function processLineNumbersRecursive(item: {
         }
 
         // hash
-        if (!!element && element.constructor === Object) {
+        if (helper.isDefined(element) && element.constructor === Object) {
           element = processLineNumbersRecursive({
             hash: element,
             fileName: item.fileName,
