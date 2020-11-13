@@ -1,5 +1,5 @@
 import { prepareTest } from '../../../../functions/prepare-test';
-import { readLog } from '../../../../helper/read-log';
+import { helper } from '../../../../barrels/helper';
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
@@ -38,12 +38,12 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    errors = await readLog(logPath, enums.LogTypeEnum.Errors);
-    udfs = await readLog(logPath, enums.LogTypeEnum.Udfs);
-    views = await readLog(logPath, enums.LogTypeEnum.Views);
-    models = await readLog(logPath, enums.LogTypeEnum.Models);
-    dashboards = await readLog(logPath, enums.LogTypeEnum.Dashboards);
-    visualizations = await readLog(logPath, enums.LogTypeEnum.Vis);
+    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
+    udfs = await helper.readLog(logPath, enums.LogTypeEnum.Udfs);
+    views = await helper.readLog(logPath, enums.LogTypeEnum.Views);
+    models = await helper.readLog(logPath, enums.LogTypeEnum.Models);
+    dashboards = await helper.readLog(logPath, enums.LogTypeEnum.Dashboards);
+    visualizations = await helper.readLog(logPath, enums.LogTypeEnum.Vis);
   } catch (e) {
     api.logToConsole(e);
   }

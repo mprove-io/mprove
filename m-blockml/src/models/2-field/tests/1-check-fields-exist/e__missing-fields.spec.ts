@@ -1,7 +1,7 @@
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
-import { readLog } from '../../../../helper/_index';
+import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 
 let pack = enums.PackEnum.Field;
@@ -34,8 +34,8 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    entities = await readLog(logPath, enums.LogTypeEnum.Entities);
-    errors = await readLog(logPath, enums.LogTypeEnum.Errors);
+    entities = await helper.readLog(logPath, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
   } catch (e) {
     api.logToConsole(e);
   }
