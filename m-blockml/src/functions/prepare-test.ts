@@ -11,7 +11,9 @@ export async function prepareTest(item: {
 }) {
   let { pack, caller, func, testId } = item;
 
-  let logsDir = `src/logs/${caller}/${func}/${testId}`;
+  let structId = `${caller}/${func}/${testId}`;
+
+  let logsDir = `src/logs/${caller}/${func}/${structId}`;
 
   fse.emptyDirSync(logsDir);
 
@@ -28,6 +30,6 @@ export async function prepareTest(item: {
     structService: structService,
     dataDir: dataDir,
     logPath: logsDir,
-    structId: testId
+    structId: structId
   };
 }

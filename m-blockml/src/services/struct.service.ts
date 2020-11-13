@@ -1,4 +1,5 @@
 import { api } from '../barrels/api';
+import { enums } from '../barrels/enums';
 import { barYaml } from '../barrels/bar-yaml';
 import { barStruct } from '../barrels/bar-struct';
 import { Injectable } from '@nestjs/common';
@@ -18,7 +19,7 @@ import { BmError } from '../models/bm-error';
 // import { barView } from '../barrels/bar-view';
 // import { ErrorsCollector } from '../barrels/errors-collector';
 
-let caller = 'rebuild-struct';
+let caller = enums.CallerEnum.RebuildStruct;
 
 @Injectable()
 export class StructService {
