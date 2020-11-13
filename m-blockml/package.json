@@ -19,8 +19,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
-    "test": "npm-run-all lint && npm run circular && jest",
-    "t": "jest"
+    "test": "npm-run-all clean-logs && npm run lint && npm run circular && jest",
+    "t": "npm-run-all clean-logs && jest",
+    "clean-logs": "rimraf \"./**/logs\""
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^1.15.2",
