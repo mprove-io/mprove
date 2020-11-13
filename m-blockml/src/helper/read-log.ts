@@ -4,8 +4,8 @@ import { enums } from '../barrels/enums';
 import { api } from '../barrels/api';
 import { interfaces } from '../barrels/interfaces';
 
-export async function readLog(logPath: string, log: enums.LogTypeEnum) {
-  let path = logPath + '/' + log;
+export async function readLog(dir: string, log: enums.LogTypeEnum) {
+  let path = dir + '/' + log;
   let buffer = fse.readFileSync(path);
   let content = buffer.toString();
 

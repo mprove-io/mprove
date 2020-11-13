@@ -1,6 +1,5 @@
 export * from './special/caller.enum';
 export * from './special/func.enum';
-export * from './special/pack.enum';
 
 export * from './er-title.enum';
 export * from './field-class.enum';

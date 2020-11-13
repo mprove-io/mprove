@@ -3,11 +3,11 @@ import { helper } from '../../../../barrels/helper';
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
+import * as fse from 'fs-extra';
 
-let pack = enums.PackEnum.Struct;
 let caller = enums.CallerEnum.RebuildStruct;
 let func = enums.FuncEnum.LogStruct;
-let testId = 'r1';
+let testId = 'v';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -18,12 +18,13 @@ test(testId, async () => {
   let visualizations: interfaces.Visualization[];
 
   try {
-    let { structService, structId, dataDir, logPath } = await prepareTest({
-      pack,
-      caller,
-      func,
-      testId
-    });
+    let {
+      structService,
+      structId,
+      dataDir,
+      fromDir,
+      toDir
+    } = await prepareTest(caller, func, testId);
 
     let connection: api.ProjectConnection = {
       name: 'c1',
@@ -38,12 +39,13 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
-    udfs = await helper.readLog(logPath, enums.LogTypeEnum.Udfs);
-    views = await helper.readLog(logPath, enums.LogTypeEnum.Views);
-    models = await helper.readLog(logPath, enums.LogTypeEnum.Models);
-    dashboards = await helper.readLog(logPath, enums.LogTypeEnum.Dashboards);
-    visualizations = await helper.readLog(logPath, enums.LogTypeEnum.Vis);
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    udfs = await helper.readLog(fromDir, enums.LogTypeEnum.Udfs);
+    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
+    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Dashboards);
+    visualizations = await helper.readLog(fromDir, enums.LogTypeEnum.Vis);
+    fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }

@@ -3,8 +3,8 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import * as fse from 'fs-extra';
 
-let pack = enums.PackEnum.Field;
 let caller = enums.CallerEnum.FieldBuildViews;
 let func = enums.FuncEnum.CheckFieldDeclaration;
 let testId = 'e__too-many-declarations-for-one-field';
@@ -14,12 +14,13 @@ test(testId, async () => {
   let errors: interfaces.BmErrorC[];
 
   try {
-    let { structService, structId, dataDir, logPath } = await prepareTest({
-      pack: pack,
-      caller: caller,
-      func: func,
-      testId: testId
-    });
+    let {
+      structService,
+      structId,
+      dataDir,
+      fromDir,
+      toDir
+    } = await prepareTest(caller, func, testId);
 
     let connection: api.ProjectConnection = {
       name: 'c1',
@@ -34,8 +35,9 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    entities = await helper.readLog(logPath, enums.LogTypeEnum.Entities);
-    errors = await helper.readLog(logPath, enums.LogTypeEnum.Errors);
+    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }

@@ -3,21 +3,26 @@ import { StructService } from '../services/struct.service';
 import * as fse from 'fs-extra';
 import { enums } from 'src/barrels/enums';
 
-export async function prepareTest(item: {
-  pack: enums.PackEnum;
-  caller: enums.CallerEnum;
-  func: enums.FuncEnum;
-  testId: string;
-}) {
-  let { pack, caller, func, testId } = item;
+export async function prepareTest(
+  caller: enums.CallerEnum,
+  func: enums.FuncEnum,
+  testId: string
+) {
+  // let { caller, func, testId } = item;
 
-  let structId = `${caller}/${func}/${testId}`;
+  let funcArray = func.toString().split('/');
 
-  let logsDir = `src/logs/${caller}/${func}/${structId}`;
+  let pack = funcArray[0];
+  let f = funcArray[1];
 
-  fse.emptyDirSync(logsDir);
+  let structId = `${caller}/${f}/${testId}`;
 
-  let dataDir = `src/models/${pack}/tests/${func}/data/${testId}`;
+  let fromDir = `src/logs/${caller}/${f}/${structId}`;
+
+  fse.emptyDirSync(fromDir);
+
+  let dataDir = `src/models/${pack}/tests/${f}/data/${testId}`;
+  let toDir = `src/models/${pack}/tests/${f}/logs/${testId}`;
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     controllers: [],
@@ -28,8 +33,9 @@ export async function prepareTest(item: {
 
   return {
     structService: structService,
+    structId: structId,
     dataDir: dataDir,
-    logPath: logsDir,
-    structId: structId
+    fromDir: fromDir,
+    toDir: toDir
   };
 }

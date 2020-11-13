@@ -14,6 +14,11 @@ export function log(
     return;
   }
 
+  let funcArray = func.toString().split('/');
+
+  // let pack = funcArray[0];
+  let f = funcArray[1];
+
   // if (Array.isArray(content)) {
   //   content.map(contentRecord => orderKeys(contentRecord));
   // } else {
@@ -30,7 +35,7 @@ export function log(
 
   let logTypeString = logType.toString();
 
-  let dir = `src/logs/${caller}/${func}/${structId}`;
+  let dir = `src/logs/${caller}/${f}/${structId}`;
   let path = `${dir}/${logTypeString}`;
 
   fse.ensureDirSync(dir);
