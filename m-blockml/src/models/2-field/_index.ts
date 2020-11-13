@@ -2,6 +2,7 @@ export * from './1-check-fields-exist';
 export * from './2-check-field-is-object';
 export * from './3-check-field-declaration';
 export * from './4-check-sql-exist';
+export * from './5-check-field-name-duplicates';
 
 // export * from './check-and-set-implicit-format-number';
 // export * from './check-and-set-implicit-results';
@@ -9,7 +10,6 @@ export * from './4-check-sql-exist';
 // export * from './check-chars-in-refs';
 // export * from './check-cycles';
 // export * from './check-dimensions';
-// export * from './check-field-name-duplicates';
 // export * from './check-field-unknown-parameters';
 // export * from './check-fields-deps';
 // export * from './check-measures';

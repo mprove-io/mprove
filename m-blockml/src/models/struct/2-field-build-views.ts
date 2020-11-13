@@ -40,8 +40,13 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // // *prepare_fields_keys && *make_fields
-  // views = barField.checkFieldNameDuplicates({ entities: views });
+  views = barField.checkFieldNameDuplicates({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // views = barField.checkFieldUnknownParameters({ entities: views });
   // views = barField.setImplicitLabel({ entities: views });
   // views = barField.checkDimensions({
