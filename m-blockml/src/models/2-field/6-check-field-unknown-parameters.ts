@@ -41,7 +41,7 @@ export function checkFieldUnknownParameters<T extends vmdType>(item: {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.WRONG_FIELD_HIDDEN,
-                message: `parameter "${enums.ParameterEnum.Hidden}" value must be 'true' or 'false' if specified`,
+                message: `parameter "${enums.ParameterEnum.Hidden}" must be 'true' or 'false' if specified`,
                 lines: [
                   {
                     line: (<any>field)[parameter + constants.LINE_NUM],
