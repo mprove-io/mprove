@@ -41,7 +41,6 @@ export function checkFieldDeclaration<T extends t1>(item: {
         .map(y => (<any>field)[y]);
 
       if (declarations.length === 0) {
-        // error e24
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MISSING_FIELD_DECLARATION,

@@ -1,0 +1,8 @@
+view: v1
+connection: c1
+fields:
+- dimension: a            
+  measure: b              
+  calculation: c          
+  time: d                 
+  filter: e 
