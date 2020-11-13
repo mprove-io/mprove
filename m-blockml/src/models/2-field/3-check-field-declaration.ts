@@ -21,7 +21,6 @@ export function checkFieldDeclaration<T extends vmdType>(item: {
 
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
-    let newFields: interfaces.FieldAny[] = [];
 
     x.fields.forEach(field => {
       let declarations: string[] = Object.keys(field).filter(
@@ -105,14 +104,11 @@ export function checkFieldDeclaration<T extends vmdType>(item: {
         name_line_num: fieldNameLineNum,
         fieldClass: <any>fieldClass
       };
-      let nField = Object.assign({}, field, newFieldProps);
-
-      newFields.push(nField);
+      Object.assign(field, newFieldProps);
     });
 
     let errorsOnEnd = item.errors.length;
     if (errorsOnStart === errorsOnEnd) {
-      x.fields = newFields;
       newEntities.push(x);
     }
   });

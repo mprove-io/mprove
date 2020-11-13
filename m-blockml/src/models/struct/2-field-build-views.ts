@@ -47,7 +47,13 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // views = barField.checkFieldUnknownParameters({ entities: views });
+  views = barField.checkFieldUnknownParameters({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // views = barField.setImplicitLabel({ entities: views });
   // views = barField.checkDimensions({
   //   entities: views,

@@ -19,7 +19,6 @@ export function checkFieldIsObject<T extends vmdType>(item: {
 
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
-    let newFields: interfaces.FieldAny[] = [];
 
     x.fields.forEach(field => {
       if (field.constructor !== Object) {
@@ -38,12 +37,10 @@ export function checkFieldIsObject<T extends vmdType>(item: {
         );
         return;
       }
-      newFields.push(field);
     });
 
     let errorsOnEnd = item.errors.length;
     if (errorsOnStart === errorsOnEnd) {
-      x.fields = newFields;
       newEntities.push(x);
     }
   });

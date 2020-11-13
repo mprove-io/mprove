@@ -19,7 +19,6 @@ export function checkSqlExist<T extends vmdType>(item: {
 
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
-    let newFields: interfaces.FieldAny[] = [];
 
     x.fields.forEach(field => {
       if (field.fieldClass === enums.FieldClassEnum.Filter) {
@@ -39,6 +38,7 @@ export function checkSqlExist<T extends vmdType>(item: {
           );
           return;
         } else {
+          // TODO: just for fields deps logic
           // just for fields deps logic
           field.sql = '';
           field.sql_line_num = 0;
@@ -67,13 +67,10 @@ export function checkSqlExist<T extends vmdType>(item: {
         );
         return;
       }
-
-      newFields.push(field);
     });
 
     let errorsOnEnd = item.errors.length;
     if (errorsOnStart === errorsOnEnd) {
-      x.fields = newFields;
       newEntities.push(x);
     }
   });

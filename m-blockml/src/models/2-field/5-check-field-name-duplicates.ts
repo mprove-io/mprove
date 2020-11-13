@@ -19,7 +19,6 @@ export function checkFieldNameDuplicates<T extends vmdType>(item: {
 
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
-    let newFields: interfaces.FieldAny[] = [];
 
     // prepare field names
 
@@ -42,7 +41,6 @@ export function checkFieldNameDuplicates<T extends vmdType>(item: {
 
     fieldNames.forEach(z => {
       if (z.lineNumbers.length > 1) {
-        // error e26
         let lines: interfaces.BmErrorCLine[] = z.lineNumbers.map(y => ({
           line: y,
           name: x.fileName,
@@ -58,13 +56,10 @@ export function checkFieldNameDuplicates<T extends vmdType>(item: {
         );
         return;
       }
-
-      newFields.push(x.fields.find(element => element.name === z.name));
     });
 
     let errorsOnEnd = item.errors.length;
     if (errorsOnStart === errorsOnEnd) {
-      x.fields = newFields;
       newEntities.push(x);
     }
   });
