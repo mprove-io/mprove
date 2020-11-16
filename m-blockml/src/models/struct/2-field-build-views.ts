@@ -81,8 +81,20 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // views = barField.checkCalculations({ entities: views });
-  // views = barField.checkAndSetImplicitResults({ entities: views });
+  views = barField.checkCalculations({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
+  views = barField.checkAndSetImplicitResults({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // views = barField.checkAndSetImplicitFormatNumber({ entities: views });
   // views = barField.transformTimes({
   //   entities: views,

@@ -1,0 +1,7 @@
+view: v1
+connection: c1
+fields:
+- calculation: calc1
+  sql: 1
+
+

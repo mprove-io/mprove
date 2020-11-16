@@ -7,6 +7,5 @@ export enum FieldAnyResultEnum {
   MonthName = 'month_name', // dimension_time
   QuarterOfYear = 'quarter_of_year', // dimension_time
   Ts = 'ts', // dimension_time
-  Yesno = 'yesno', // dimension_time, dimension_yesno_is_true
-  FromField = 'from_field' // filter
+  Yesno = 'yesno' // dimension_time, dimension_yesno_is_true
 }
