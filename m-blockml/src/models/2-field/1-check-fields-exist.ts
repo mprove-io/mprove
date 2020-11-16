@@ -1,4 +1,3 @@
-import { interfaces } from '../../barrels/interfaces';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';

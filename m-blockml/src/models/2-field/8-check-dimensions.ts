@@ -1,7 +1,5 @@
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
-import { interfaces } from '../../barrels/interfaces';
-import { constants } from '../../barrels/constants';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { vmType } from './_vm-type';

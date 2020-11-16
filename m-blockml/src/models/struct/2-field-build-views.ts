@@ -68,11 +68,19 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // views = barField.transformYesNoDimensions({ entities: views });
-  // views = barField.checkMeasures({
-  //   entities: views,
-  //   connection: item.connection
-  // });
+  views = barField.transformYesNoDimensions({
+    entities: views,
+    structId: item.structId,
+    caller: caller
+  });
+
+  views = barField.checkMeasures({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // views = barField.checkCalculations({ entities: views });
   // views = barField.checkAndSetImplicitResults({ entities: views });
   // views = barField.checkAndSetImplicitFormatNumber({ entities: views });

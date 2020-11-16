@@ -6,6 +6,8 @@ export * from './5-check-field-name-duplicates';
 export * from './6-check-field-unknown-parameters';
 export * from './7-set-implicit-label';
 export * from './8-check-dimensions';
+export * from './9-transform-yesno-dimensions';
+export * from './10-check-measures';
 
 // export * from './check-and-set-implicit-format-number';
 // export * from './check-and-set-implicit-results';
@@ -13,10 +15,8 @@ export * from './8-check-dimensions';
 // export * from './check-chars-in-refs';
 // export * from './check-cycles';
 // export * from './check-fields-deps';
-// export * from './check-measures';
 // export * from './make-fields-deps';
 // export * from './substitute-single-refs';
 // export * from './transform-times';
-// export * from './transform-yesno-dimensions';
 
 // export * from './check-fields-is-array';

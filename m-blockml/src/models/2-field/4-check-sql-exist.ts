@@ -1,5 +1,4 @@
 import { enums } from '../../barrels/enums';
-import { interfaces } from '../../barrels/interfaces';
 import { helper } from '../../barrels/helper';
 import { vmdType } from './_vmd-type';
 import { BmError } from '../bm-error';

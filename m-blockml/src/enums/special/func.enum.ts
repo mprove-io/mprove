@@ -18,6 +18,8 @@ export enum FuncEnum {
   CheckFieldUnknownParameters = '2-field/6-check-field-unknown-parameters',
   SetImplicitLabel = '2-field/7-set-implicit-label',
   CheckDimensions = '2-field/8-check-dimensions',
+  TransformYesNoDimensions = '2-field/9-transform-yesno-dimensions',
+  CheckMeasures = '2-field/10-check-measures',
 
   LogStruct = 'struct/log-struct'
 }
