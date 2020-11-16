@@ -97,7 +97,6 @@ export function checkMeasures<T extends vmType>(item: {
           field.type === enums.FieldAnyTypeEnum.MedianByKey ||
           field.type === enums.FieldAnyTypeEnum.PercentileByKey
         ) {
-          // error e299
           item.errors.push(
             new BmError({
               title:
@@ -116,7 +115,6 @@ export function checkMeasures<T extends vmType>(item: {
         }
 
         if (helper.isDefined(field.percentile)) {
-          // error e300
           item.errors.push(
             new BmError({
               title:
@@ -137,7 +135,6 @@ export function checkMeasures<T extends vmType>(item: {
 
       if (field.type === enums.FieldAnyTypeEnum.PercentileByKey) {
         if (helper.isUndefined(field.percentile)) {
-          // error e216
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISSING_PERCENTILE,
@@ -158,11 +155,10 @@ export function checkMeasures<T extends vmType>(item: {
           let r = reg.exec(field.percentile);
 
           if (!r) {
-            // error e217
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.WRONG_PERCENTILE,
-                message: `${enums.ParameterEnum.Percentile} value must be integer between 0 and 99`,
+                message: `${enums.ParameterEnum.Percentile} value must be integer between 1 and 99`,
                 lines: [
                   {
                     line: field.percentile_line_num,
@@ -181,7 +177,6 @@ export function checkMeasures<T extends vmType>(item: {
         helper.isDefined(field.sql) &&
         !field.sql.match(api.MyRegex.CONTAINS_BLOCKML_REF())
       ) {
-        // error e277
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MEASURE_SQL_MISSING_BLOCKML_REFERENCE,
@@ -202,7 +197,6 @@ export function checkMeasures<T extends vmType>(item: {
         helper.isDefined(field.sql_key) &&
         !field.sql_key.match(api.MyRegex.CONTAINS_BLOCKML_REF())
       ) {
-        // error e278
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MEASURE_SQL_KEY_MISSING_BLOCKML_REFERENCE,

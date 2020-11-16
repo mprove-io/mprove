@@ -20,7 +20,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
     "test": "npm-run-all clean-logs && npm run lint && npm run circular && jest",
-    "t": "npm-run-all clean-logs && jest",
+    "t": "jest",
     "clean-logs": "rimraf \"./**/logs\""
   },
   "dependencies": {
