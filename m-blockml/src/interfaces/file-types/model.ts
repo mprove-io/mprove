@@ -1,6 +1,7 @@
 import { FileBasic } from '../file/file-basic';
 import { Join } from '../join';
 import { FieldAny } from '../field/field-any';
+import { api } from '../../barrels/api';
 
 export interface Model extends FileBasic {
   model: string;
@@ -40,6 +41,8 @@ export interface Model extends FileBasic {
   fields_line_num: number;
 
   //
+
+  connection: api.ProjectConnection;
 
   filters: {
     [s: string]: string[];

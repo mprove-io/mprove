@@ -16,6 +16,8 @@ export enum FuncEnum {
   CheckSqlExist = '2-field/4-check-sql-exist',
   CheckFieldNameDuplicates = '2-field/5-check-field-name-duplicates',
   CheckFieldUnknownParameters = '2-field/6-check-field-unknown-parameters',
+  SetImplicitLabel = '2-field/7-set-implicit-label',
+  CheckDimensions = '2-field/8-check-dimensions',
 
   LogStruct = 'struct/log-struct'
 }

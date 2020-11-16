@@ -2,6 +2,7 @@ import { barField } from '../../barrels/bar-field';
 import { interfaces } from '../../barrels/interfaces';
 import { enums } from '../../barrels/enums';
 import { BmError } from '../../models/bm-error';
+import { api } from '../../barrels/api';
 
 let caller = enums.CallerEnum.FieldBuildViews;
 
@@ -54,11 +55,19 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // views = barField.setImplicitLabel({ entities: views });
-  // views = barField.checkDimensions({
-  //   entities: views,
-  //   connection: item.connection
-  // });
+  views = barField.setImplicitLabel({
+    entities: views,
+    structId: item.structId,
+    caller: caller
+  });
+
+  views = barField.checkDimensions({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // views = barField.transformYesNoDimensions({ entities: views });
   // views = barField.checkMeasures({
   //   entities: views,

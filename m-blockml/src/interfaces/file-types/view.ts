@@ -1,5 +1,6 @@
 import { FileBasic } from '../file/file-basic';
 import { FieldAny } from '../field/field-any';
+import { api } from '../../barrels/api';
 
 export interface View extends FileBasic {
   view: string;
@@ -27,6 +28,8 @@ export interface View extends FileBasic {
   fields_line_num: number;
 
   //
+
+  connection: api.ProjectConnection;
 
   filters: {
     [s: string]: string[];

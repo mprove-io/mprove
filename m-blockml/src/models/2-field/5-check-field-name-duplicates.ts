@@ -67,5 +67,5 @@ export function checkFieldNameDuplicates<T extends vmdType>(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return item.entities;
+  return newEntities;
 }

@@ -7,7 +7,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.YamlBuild;
 let func = enums.FuncEnum.CheckSupportUdfs;
-let testId = 'e__udfs-are-not-supported-for-specified-connection';
+let testId = 'e__udfs-are-not-supported-for-connection';
 
 test(testId, async () => {
   let filesAny: any[];
@@ -50,11 +50,11 @@ test(testId, async () => {
 
   expect(errors.length).toBe(2);
   expect(errors[0].title).toBe(
-    enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_SPECIFIED_CONNECTION
+    enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION
   );
   expect(errors[0].lines[0].line).toBe(3);
   expect(errors[1].title).toBe(
-    enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_SPECIFIED_CONNECTION
+    enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION
   );
   expect(errors[1].lines[0].line).toBe(3);
 });

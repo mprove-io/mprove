@@ -1,0 +1,6 @@
+view: e1
+connection: c1
+fields:
+- dimension: dim1
+  unnest: '...'      
+  sql: 1
