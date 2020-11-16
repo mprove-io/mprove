@@ -24,7 +24,6 @@ export function checkAndSetImplicitFormatNumber<T extends vmdType>(item: {
     x.fields.forEach(field => {
       if (field.result === enums.FieldAnyResultEnum.Number) {
         if (helper.isUndefined(field.format_number)) {
-          // set default
           field.format_number = '';
           field.format_number_line_num = 0;
         } else {
@@ -49,19 +48,16 @@ export function checkAndSetImplicitFormatNumber<T extends vmdType>(item: {
         }
 
         if (helper.isUndefined(field.currency_prefix)) {
-          // set default
           field.currency_prefix = '$';
           field.currency_prefix_line_num = 0;
         }
 
         if (helper.isUndefined(field.currency_suffix)) {
-          // set default
           field.currency_suffix = '';
           field.currency_suffix_line_num = 0;
         }
       } else {
-        if (helper.isUndefined(field.format_number)) {
-          // error e268
+        if (helper.isDefined(field.format_number)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_FORMAT_NUMBER,
@@ -81,7 +77,6 @@ export function checkAndSetImplicitFormatNumber<T extends vmdType>(item: {
         }
 
         if (helper.isDefined(field.currency_prefix)) {
-          // error e269
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_PREFIX,
@@ -101,7 +96,6 @@ export function checkAndSetImplicitFormatNumber<T extends vmdType>(item: {
         }
 
         if (helper.isDefined(field.currency_suffix)) {
-          // error e270
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_SUFFIX,
