@@ -3,9 +3,9 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { vmdType } from './_vmd-type';
 
-let func = enums.FuncEnum.CheckAndSetImplicitResults;
+let func = enums.FuncEnum.CheckAndSetImplicitResult;
 
-export function checkAndSetImplicitResults<T extends vmdType>(item: {
+export function checkAndSetImplicitResult<T extends vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;
@@ -179,6 +179,7 @@ export function checkAndSetImplicitResults<T extends vmdType>(item: {
         }
       }
     });
+
     let errorsOnEnd = item.errors.length;
     if (errorsOnStart === errorsOnEnd) {
       newEntities.push(x);

@@ -6,8 +6,8 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.FieldBuildViews;
-let func = enums.FuncEnum.CheckAndSetImplicitResults;
-let testId = 'e__missing-filter-result';
+let func = enums.FuncEnum.CheckAndSetImplicitResult;
+let testId = 'e__wrong-calculation-result';
 
 test(testId, async () => {
   let entities;
@@ -44,6 +44,6 @@ test(testId, async () => {
 
   expect(entities.length).toBe(0);
   expect(errors.length).toBe(1);
-  expect(errors[0].title).toBe(enums.ErTitleEnum.MISSING_FILTER_RESULT);
-  expect(errors[0].lines[0].line).toBe(4);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_CALCULATION_RESULT);
+  expect(errors[0].lines[0].line).toBe(6);
 });

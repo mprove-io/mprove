@@ -38,7 +38,9 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "typescript": "4.0.3",
-    "walk": "^2.3.9"
+    "walk": "^2.3.9",
+    "graph.js": "^1.21.1",
+    "d3-format": "^1.4.5"
   },
   "devDependencies": {
     "madge": "3.11.0",

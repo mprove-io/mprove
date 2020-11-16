@@ -88,14 +88,20 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  views = barField.checkAndSetImplicitResults({
+  views = barField.checkAndSetImplicitResult({
     entities: views,
     errors: item.errors,
     structId: item.structId,
     caller: caller
   });
 
-  // views = barField.checkAndSetImplicitFormatNumber({ entities: views });
+  views = barField.checkAndSetImplicitFormatNumber({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // views = barField.transformTimes({
   //   entities: views,
   //   weekStart: item.weekStart,

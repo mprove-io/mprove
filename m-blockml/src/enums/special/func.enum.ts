@@ -21,7 +21,8 @@ export enum FuncEnum {
   TransformYesNoDimensions = '2-field/9-transform-yesno-dimensions',
   CheckMeasures = '2-field/10-check-measures',
   CheckCalculations = '2-field/11-check-calculations',
-  CheckAndSetImplicitResults = '2-field/12-check-and-set-implicit-results',
+  CheckAndSetImplicitResult = '2-field/12-check-and-set-implicit-result',
+  CheckAndSetImplicitFormatNumber = '2-field/13-check-and-set-implicit-format-number',
 
   LogStruct = 'struct/log-struct'
 }

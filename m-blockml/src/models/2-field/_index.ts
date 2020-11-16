@@ -9,9 +9,9 @@ export * from './8-check-dimensions';
 export * from './9-transform-yesno-dimensions';
 export * from './10-check-measures';
 export * from './11-check-calculations';
-export * from './12-check-and-set-implicit-results';
+export * from './12-check-and-set-implicit-result';
+export * from './13-check-and-set-implicit-format-number';
 
-// export * from './check-and-set-implicit-format-number';
 // export * from './check-chars-in-refs';
 // export * from './check-cycles';
 // export * from './check-fields-deps';
