@@ -1,20 +1,27 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeHourNum(item: {
-  sql_timestamp: string;
   num: string;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
 }) {
-  let sql;
+  let { sqlTimestamp, connection, num } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    sql =
-      `FORMAT_TIMESTAMP('%F %H', ` +
-      `TIMESTAMP_TRUNC(TIMESTAMP_ADD(${item.sql_timestamp}, INTERVAL ` +
-      `MOD(-1 * EXTRACT(HOUR FROM ${item.sql_timestamp}), ${item.num}) HOUR), HOUR))`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `TO_CHAR(DATE_TRUNC('hour', DATE_TRUNC('hour', ${item.sql_timestamp} - (DATE_PART('hour', ${item.sql_timestamp})::INT % ${item.num} || 'HOURS')::INTERVAL)), 'YYYY-MM-DD HH24')`;
+  let sql: string;
+
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      sql =
+        "FORMAT_TIMESTAMP('%F %H', " +
+        `TIMESTAMP_TRUNC(TIMESTAMP_ADD(${sqlTimestamp}, INTERVAL ` +
+        `MOD(-1 * EXTRACT(HOUR FROM ${sqlTimestamp}), ${num}) HOUR), HOUR))`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `TO_CHAR(DATE_TRUNC('hour', DATE_TRUNC('hour', ${sqlTimestamp} - (DATE_PART('hour', ${sqlTimestamp})::INT % ${num} || 'HOURS')::INTERVAL)), 'YYYY-MM-DD HH24')`;
+      break;
+    }
   }
 
   return sql;

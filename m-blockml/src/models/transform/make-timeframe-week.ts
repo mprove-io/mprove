@@ -1,33 +1,41 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeWeek(item: {
-  sql_timestamp: string;
-  week_start: api.ProjectWeekStartEnum;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
+  weekStart: api.ProjectWeekStartEnum;
 }) {
-  let sql;
+  let { sqlTimestamp, connection, weekStart } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    let dayOfYear = `EXTRACT(DAYOFYEAR FROM ${item.sql_timestamp})`;
+  let sql: string;
 
-    let dayOfWeekIndex =
-      item.week_start === api.ProjectWeekStartEnum.Sunday
-        ? `EXTRACT(DAYOFWEEK FROM ${item.sql_timestamp})`
-        : `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${item.sql_timestamp}) = 1 THEN 7 ELSE ` +
-          `EXTRACT(DAYOFWEEK FROM ${item.sql_timestamp}) - 1 END)`;
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      let dayOfYear = `EXTRACT(DAYOFYEAR FROM ${sqlTimestamp})`;
 
-    let fullWeekStartDate =
-      item.week_start === api.ProjectWeekStartEnum.Sunday
-        ? `CAST(CAST(TIMESTAMP_TRUNC(CAST(${item.sql_timestamp} AS TIMESTAMP), WEEK) AS DATE) AS STRING)`
-        : `CAST(DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(${item.sql_timestamp} AS TIMESTAMP), WEEK) AS DATE), INTERVAL 1 DAY) AS STRING)`;
+      let dayOfWeekIndex =
+        weekStart === api.ProjectWeekStartEnum.Sunday
+          ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
+          : `(CASE WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7 ELSE ` +
+            `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) - 1 END)`;
 
-    sql = `CASE
+      let fullWeekStartDate =
+        weekStart === api.ProjectWeekStartEnum.Sunday
+          ? `CAST(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE) AS STRING)`
+          : `CAST(DATE_ADD(CAST(TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), WEEK) AS DATE), INTERVAL 1 DAY) AS STRING)`;
+
+      sql = `CASE
 WHEN ${dayOfYear} >= ${dayOfWeekIndex} THEN ${fullWeekStartDate}
-ELSE CAST(DATE_ADD(CAST(${item.sql_timestamp} AS DATE), INTERVAL -${dayOfYear} + 1 DAY) AS STRING)
+ELSE CAST(DATE_ADD(CAST(${sqlTimestamp} AS DATE), INTERVAL -${dayOfYear} + 1 DAY) AS STRING)
 END`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `TO_CHAR(DATE_TRUNC('week', ${item.sql_timestamp}), 'YYYY-MM-DD')`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `TO_CHAR(DATE_TRUNC('week', ${sqlTimestamp}), 'YYYY-MM-DD')`;
+
+      break;
+    }
   }
 
   return sql;

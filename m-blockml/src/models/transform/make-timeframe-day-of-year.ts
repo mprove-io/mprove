@@ -1,16 +1,23 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeDayOfYear(item: {
-  sql_timestamp: string;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
 }) {
-  let sql;
+  let { sqlTimestamp, connection } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    sql = `EXTRACT(DAYOFYEAR FROM ${item.sql_timestamp})`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `EXTRACT(DOY FROM ${item.sql_timestamp})`;
+  let sql: string;
+
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      sql = `EXTRACT(DAYOFYEAR FROM ${sqlTimestamp})`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `EXTRACT(DOY FROM ${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

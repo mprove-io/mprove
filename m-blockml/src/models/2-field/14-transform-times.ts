@@ -154,11 +154,11 @@ export function transformTimes<T extends vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfYear;
 
-            // no need for $week_start
+            // no need for weekStart
             sqlTransformed = barTransform.makeTimeframeDayOfYear({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 178
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Number;
             break;
@@ -169,10 +169,10 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Week;
 
             sqlTransformed = barTransform.makeTimeframeWeek({
-              sql_timestamp: sqlTimestamp,
-              week_start: item.weekStart,
-              connection: item.connection
-            }); // 2019-06-24
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection,
+              weekStart: item.weekStart
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -183,10 +183,10 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.WeekOfYear;
 
             sqlTransformed = barTransform.makeTimeframeWeekOfYear({
-              sql_timestamp: sqlTimestamp,
-              week_start: item.weekStart,
-              connection: item.connection
-            }); // 26
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection,
+              weekStart: item.weekStart
+            });
 
             result = enums.FieldAnyResultEnum.Number;
             break;
@@ -197,9 +197,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Date;
 
             sqlTransformed = barTransform.makeTimeframeDate({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 2019-06-27
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -210,9 +210,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.DayOfMonth;
 
             sqlTransformed = barTransform.makeTimeframeDayOfMonth({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 27
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Number;
             break;
@@ -223,9 +223,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Hour;
 
             sqlTransformed = barTransform.makeTimeframeHour({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 2019-06-27 12
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -236,9 +236,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.HourOfDay;
 
             sqlTransformed = barTransform.makeTimeframeHourOfDay({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 12
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Number;
             break;
@@ -259,10 +259,10 @@ export function transformTimes<T extends vmType>(item: {
             label = timeframe;
 
             sqlTransformed = barTransform.makeTimeframeHourNum({
-              sql_timestamp: sqlTimestamp,
               num: num,
-              connection: item.connection
-            }); // 2019-06-27 12
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -273,9 +273,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Minute;
 
             sqlTransformed = barTransform.makeTimeframeMinute({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 2019-06-27 12:32
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -295,10 +295,10 @@ export function transformTimes<T extends vmType>(item: {
             label = timeframe;
 
             sqlTransformed = barTransform.makeTimeframeMinuteNum({
-              sql_timestamp: sqlTimestamp,
               num: num,
-              connection: item.connection
-            }); // 2019-06-27 12:32
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -309,9 +309,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Month;
 
             sqlTransformed = barTransform.makeTimeframeMonth({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 2019-06
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;

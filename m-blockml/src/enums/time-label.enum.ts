@@ -12,7 +12,7 @@ export enum TimeLabelEnum {
   // Hour6 = 'hour6',
   // Hour8 = 'hour8',
   // Hour12 = 'hour12',
-  // Minute = 'Minute',
+  Minute = 'Minute',
   // Minute2 = 'minute2',
   // Minute3 = 'minute3',
   // Minute5 = 'minute5',

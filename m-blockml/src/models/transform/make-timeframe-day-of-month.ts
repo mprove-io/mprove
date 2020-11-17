@@ -1,16 +1,23 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeDayOfMonth(item: {
-  sql_timestamp: string;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
 }) {
-  let sql;
+  let { sqlTimestamp, connection } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    sql = `EXTRACT(DAY FROM ${item.sql_timestamp})`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `EXTRACT(DAY FROM ${item.sql_timestamp})`;
+  let sql: string;
+
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      sql = `EXTRACT(DAY FROM ${sqlTimestamp})`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `EXTRACT(DAY FROM ${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

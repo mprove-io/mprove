@@ -1,16 +1,23 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeDate(item: {
-  sql_timestamp: string;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
 }) {
-  let sql;
+  let { sqlTimestamp, connection } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    sql = `CAST(CAST(${item.sql_timestamp} AS DATE) AS STRING)`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `SUBSTRING((${item.sql_timestamp})::TEXT FROM 1 FOR 10)`;
+  let sql: string;
+
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      sql = `CAST(CAST(${sqlTimestamp} AS DATE) AS STRING)`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `SUBSTRING((${sqlTimestamp})::TEXT FROM 1 FOR 10)`;
+      break;
+    }
   }
 
   return sql;
