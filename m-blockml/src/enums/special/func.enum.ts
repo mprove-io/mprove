@@ -23,6 +23,7 @@ export enum FuncEnum {
   CheckCalculations = '2-field/11-check-calculations',
   CheckAndSetImplicitResult = '2-field/12-check-and-set-implicit-result',
   CheckAndSetImplicitFormatNumber = '2-field/13-check-and-set-implicit-format-number',
+  TransformTimes = '2-field/14-transform-times',
 
   LogStruct = 'struct/log-struct'
 }

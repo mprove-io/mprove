@@ -1,8 +1,9 @@
+// 2019-06-27 12:32:02.230908+00
 export enum TimeframeEnum {
   Date = 'date',
   DayOfMonth = 'day_of_month',
-  DayOfWeek = 'day_of_week',
-  DayOfWeekIndex = 'day_of_week_index',
+  DayOfWeek = 'day_of_week', // Thursday
+  DayOfWeekIndex = 'day_of_week_index', // 5 or 4
   DayOfYear = 'day_of_year',
   Hour = 'hour',
   HourOfDay = 'hour_of_day',

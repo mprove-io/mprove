@@ -9,5 +9,6 @@ export * from './fraction-unit.enum';
 export * from './join-type.enum';
 export * from './log-type.enum';
 export * from './parameter.enum';
+export * from './time-label.enum';
 export * from './time-source.enum';
 export * from './timeframe.enum';

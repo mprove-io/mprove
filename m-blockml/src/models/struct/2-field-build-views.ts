@@ -102,11 +102,11 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // views = barField.transformTimes({
-  //   entities: views,
-  //   weekStart: item.weekStart,
-  //   connection: item.connection
-  // });
+  views = barField.transformTimes({
+    entities: views,
+    weekStart: item.weekStart,
+    connection: item.connection
+  });
   // // ->check_chars_in_refs
   // views = barField.makeFieldsDeps({ entities: views });
   // // with restart
