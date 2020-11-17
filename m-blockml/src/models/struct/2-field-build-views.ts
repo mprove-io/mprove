@@ -10,6 +10,7 @@ export function fieldBuildViews(item: {
   views: interfaces.View[];
   errors: BmError[];
   structId: string;
+  weekStart: api.ProjectWeekStartEnum;
 }) {
   let views = item.views;
 
@@ -103,10 +104,13 @@ export function fieldBuildViews(item: {
   });
 
   views = barField.transformTimes({
-    entities: views,
     weekStart: item.weekStart,
-    connection: item.connection
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
   });
+
   // // ->check_chars_in_refs
   // views = barField.makeFieldsDeps({ entities: views });
   // // with restart

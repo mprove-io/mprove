@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StructService } from '../services/struct.service';
 import * as fse from 'fs-extra';
-import { enums } from 'src/barrels/enums';
+import { enums } from '../barrels/enums';
 
 export async function prepareTest(
   caller: enums.CallerEnum,

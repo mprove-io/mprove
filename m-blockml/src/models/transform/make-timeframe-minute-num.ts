@@ -11,9 +11,7 @@ export function makeTimeframeMinuteNum(item: {
 
   switch (connection.type) {
     case api.ConnectionTypeEnum.BigQuery: {
-      sql =
-        "FORMAT_TIMESTAMP('%F %H:%M', " +
-        `TIMESTAMP_TRUNC(TIMESTAMP_SECONDS((UNIX_SECONDS(${sqlTimestamp}) - MOD(UNIX_SECONDS(${sqlTimestamp}), (60*${num})))), MINUTE))`;
+      sql = `FORMAT_TIMESTAMP('%F %H:%M', TIMESTAMP_TRUNC(TIMESTAMP_SECONDS((UNIX_SECONDS(${sqlTimestamp}) - MOD(UNIX_SECONDS(${sqlTimestamp}), (60*${num})))), MINUTE))`;
       break;
     }
 

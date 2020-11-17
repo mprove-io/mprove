@@ -4,7 +4,6 @@ export * from './chart/chart-options';
 export * from './chart/chart-tile';
 
 export * from './field/field-any';
-export * from './field/field';
 
 export * from './field-types/calculation';
 export * from './field-types/dimension';

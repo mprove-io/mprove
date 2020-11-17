@@ -21,14 +21,14 @@ export enum TimeframeEnum {
   Minute15 = 'minute15',
   Minute30 = 'minute30',
   Month = 'month', // 2019-06
-  MonthName = 'month_name',
-  MonthNum = 'month_num',
-  Quarter = 'quarter',
-  QuarterOfYear = 'quarter_of_year',
-  Time = 'time',
-  TimeOfDay = 'time_of_day',
+  MonthName = 'month_name', // June
+  MonthNum = 'month_num', // 6
+  Quarter = 'quarter', // 2019-04
+  QuarterOfYear = 'quarter_of_year', // Q2
+  Time = 'time', // 2019-06-27 12:32:02
+  TimeOfDay = 'time_of_day', // 12:32
   Week = 'week', // 2019-06-24
   WeekOfYear = 'week_of_year', // 26
-  Year = 'year',
-  YesNoHasValue = 'yesno_has_value'
+  Year = 'year', // 2019
+  YesNoHasValue = 'yesno_has_value' // Yes
 }

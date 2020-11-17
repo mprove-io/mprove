@@ -1,16 +1,23 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeMonthNum(item: {
-  sql_timestamp: string;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
 }) {
-  let sql;
+  let { sqlTimestamp, connection } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    sql = `EXTRACT(MONTH FROM ${item.sql_timestamp})`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `DATE_PART('month', ${item.sql_timestamp})::INTEGER`;
+  let sql: string;
+
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      sql = `EXTRACT(MONTH FROM ${sqlTimestamp})`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `DATE_PART('month', ${sqlTimestamp})::INTEGER`;
+      break;
+    }
   }
 
   return sql;

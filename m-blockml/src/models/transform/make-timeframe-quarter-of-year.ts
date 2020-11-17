@@ -1,16 +1,23 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeQuarterOfYear(item: {
-  sql_timestamp: string;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
 }) {
-  let sql;
+  let { sqlTimestamp, connection } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    sql = `CONCAT(CAST('Q' AS STRING), CAST(EXTRACT(QUARTER FROM ${item.sql_timestamp}) AS STRING))`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `CAST('Q' AS VARCHAR) || CAST(EXTRACT(QUARTER FROM ${item.sql_timestamp})::integer AS VARCHAR)`;
+  let sql: string;
+
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      sql = `CONCAT(CAST('Q' AS STRING), CAST(EXTRACT(QUARTER FROM ${sqlTimestamp}) AS STRING))`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `CAST('Q' AS VARCHAR) || CAST(EXTRACT(QUARTER FROM ${sqlTimestamp})::integer AS VARCHAR)`;
+      break;
+    }
   }
 
   return sql;

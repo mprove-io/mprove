@@ -1,16 +1,23 @@
 import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
 
 export function makeTimeframeYear(item: {
-  sql_timestamp: string;
-  connection: api.ProjectConnectionEnum;
+  sqlTimestamp: string;
+  connection: api.ProjectConnection;
 }) {
-  let sql;
+  let { sqlTimestamp, connection } = item;
 
-  if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-    sql = `EXTRACT(YEAR FROM ${item.sql_timestamp})`;
-  } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-    sql = `DATE_PART('year', ${item.sql_timestamp})::INTEGER`;
+  let sql: string;
+
+  switch (connection.type) {
+    case api.ConnectionTypeEnum.BigQuery: {
+      sql = `EXTRACT(YEAR FROM ${sqlTimestamp})`;
+      break;
+    }
+
+    case api.ConnectionTypeEnum.PostgreSQL: {
+      sql = `DATE_PART('year', ${sqlTimestamp})::INTEGER`;
+      break;
+    }
   }
 
   return sql;

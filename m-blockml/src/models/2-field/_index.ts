@@ -11,12 +11,12 @@ export * from './10-check-measures';
 export * from './11-check-calculations';
 export * from './12-check-and-set-implicit-result';
 export * from './13-check-and-set-implicit-format-number';
+export * from './14-transform-times';
 
 // export * from './check-chars-in-refs';
 // export * from './check-cycles';
 // export * from './check-fields-deps';
 // export * from './make-fields-deps';
 // export * from './substitute-single-refs';
-// export * from './transform-times';
 
 // export * from './check-fields-is-array';

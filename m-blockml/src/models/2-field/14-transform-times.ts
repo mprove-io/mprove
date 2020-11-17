@@ -4,8 +4,8 @@ import { BmError } from '../bm-error';
 import { vmType } from './_vm-type';
 import { api } from '../../barrels/api';
 import { barTransform } from '../../barrels/bar-transform';
-import { interfaces } from 'src/barrels/interfaces';
-import { constants } from 'src/barrels/constants';
+import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
 
 let func = enums.FuncEnum.TransformTimes;
 
@@ -322,9 +322,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.MonthName;
 
             sqlTransformed = barTransform.makeTimeframeMonthName({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // June
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.MonthName;
             break;
@@ -335,9 +335,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.MonthNum;
 
             sqlTransformed = barTransform.makeTimeframeMonthNum({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 6
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Number;
             break;
@@ -348,9 +348,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Quarter;
 
             sqlTransformed = barTransform.makeTimeframeQuarter({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 2019-04
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -361,9 +361,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.QuarterOfYear;
 
             sqlTransformed = barTransform.makeTimeframeQuarterOfYear({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // Q2
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.QuarterOfYear;
             break;
@@ -374,9 +374,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Time;
 
             sqlTransformed = barTransform.makeTimeframeTime({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 2019-06-27 12:32:02
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -387,9 +387,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.TimeOfDay;
 
             sqlTransformed = barTransform.makeTimeframeTimeOfDay({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 12:32
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.String;
             break;
@@ -400,9 +400,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.Year;
 
             sqlTransformed = barTransform.makeTimeframeYear({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // 2019
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Ts;
             break;
@@ -413,9 +413,9 @@ export function transformTimes<T extends vmType>(item: {
             label = enums.TimeLabelEnum.YesNoHasValue;
 
             sqlTransformed = barTransform.makeTimeframeYesNoHasValue({
-              sql_timestamp: sqlTimestamp,
-              connection: item.connection
-            }); // Yes
+              sqlTimestamp: sqlTimestamp,
+              connection: x.connection
+            });
 
             result = enums.FieldAnyResultEnum.Yesno;
             break;

@@ -77,7 +77,8 @@ export class StructService {
     let fieldBuildViewsItem = barStruct.fieldBuildViews({
       errors: errors,
       views: views,
-      structId: item.structId
+      structId: item.structId,
+      weekStart: item.weekStart
     });
     views = fieldBuildViewsItem.views;
 

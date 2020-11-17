@@ -12,8 +12,7 @@ export function makeTimeframeHourNum(item: {
   switch (connection.type) {
     case api.ConnectionTypeEnum.BigQuery: {
       sql =
-        "FORMAT_TIMESTAMP('%F %H', " +
-        `TIMESTAMP_TRUNC(TIMESTAMP_ADD(${sqlTimestamp}, INTERVAL ` +
+        `FORMAT_TIMESTAMP('%F %H', TIMESTAMP_TRUNC(TIMESTAMP_ADD(${sqlTimestamp}, INTERVAL ` +
         `MOD(-1 * EXTRACT(HOUR FROM ${sqlTimestamp}), ${num}) HOUR), HOUR))`;
       break;
     }
