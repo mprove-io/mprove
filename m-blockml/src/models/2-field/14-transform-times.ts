@@ -57,7 +57,6 @@ export function transformTimes<T extends vmType>(item: {
 
         field.timeframes_line_num = 0;
       } else if (!Array.isArray(field.timeframes)) {
-        // error e58
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.TIMEFRAMES_IS_NOT_A_LIST,
@@ -96,7 +95,6 @@ export function transformTimes<T extends vmType>(item: {
           connection: x.connection
         });
       } else {
-        // error e59
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_TIME_SOURCE,
