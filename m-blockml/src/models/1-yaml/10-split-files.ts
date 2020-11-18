@@ -33,16 +33,15 @@ export function splitFiles(item: {
           delete file.name;
           delete file.path;
 
-          udfs.push(
-            Object.assign({}, file, {
-              name: file.udf,
-              fileName: fileName,
-              filePath: filePath,
-              fileExt: fileExt
-            })
-          );
+          let newUdfOptions: interfaces.Udf = {
+            name: file.udf,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          udfs.push(Object.assign(file, newUdfOptions));
         } else {
-          // error e210
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_UDF_NAME,
@@ -71,18 +70,17 @@ export function splitFiles(item: {
           delete file.name;
           delete file.path;
 
-          views.push(
-            Object.assign({}, file, {
-              name: file.view,
-              fileName: fileName,
-              filePath: filePath,
-              fileExt: fileExt,
-              label: label,
-              label_line_num: labelLineNum
-            })
-          );
+          let newViewOptions: interfaces.View = {
+            name: file.view,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt,
+            label: label,
+            label_line_num: labelLineNum
+          };
+
+          views.push(Object.assign(file, newViewOptions));
         } else {
-          // error e9
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_VIEW_NAME,
@@ -111,18 +109,17 @@ export function splitFiles(item: {
           delete file.name;
           delete file.path;
 
-          models.push(
-            Object.assign({}, file, {
-              name: file.model,
-              fileName: fileName,
-              filePath: filePath,
-              fileExt: fileExt,
-              label: label,
-              label_line_num: labelLineNum
-            })
-          );
+          let newModelOptions: interfaces.Model = {
+            name: file.model,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt,
+            label: label,
+            label_line_num: labelLineNum
+          };
+
+          models.push(Object.assign(file, newModelOptions));
         } else {
-          // error e8
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_MODEL_NAME,
@@ -146,16 +143,15 @@ export function splitFiles(item: {
           delete file.name;
           delete file.path;
 
-          dashboards.push(
-            Object.assign({}, file, {
-              name: file.dashboard,
-              fileName: fileName,
-              filePath: filePath,
-              fileExt: fileExt
-            })
-          );
+          let newDashboardOptions: interfaces.Dashboard = {
+            name: file.dashboard,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          dashboards.push(Object.assign(file, newDashboardOptions));
         } else {
-          // error e60
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_DASHBOARD_NAME,
@@ -182,14 +178,14 @@ export function splitFiles(item: {
           delete file.name;
           delete file.path;
 
-          visualizations.push(
-            Object.assign({}, file, {
-              name: file.visualization,
-              fileName: fileName,
-              filePath: filePath,
-              fileExt: fileExt
-            })
-          );
+          let newVisualizationOptions: interfaces.Visualization = {
+            name: file.visualization,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          visualizations.push(Object.assign(file, newVisualizationOptions));
         } else {
           // error
           item.errors.push(

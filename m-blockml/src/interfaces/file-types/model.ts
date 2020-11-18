@@ -4,73 +4,73 @@ import { FieldAny } from '../field/field-any';
 import { api } from '../../barrels/api';
 
 export interface Model extends FileBasic {
-  model: string;
-  model_line_num: number;
+  model?: string;
+  model_line_num?: number;
 
-  hidden: string; // boolean
-  hidden_line_num: number;
+  hidden?: string; // boolean
+  hidden_line_num?: number;
 
-  label: string;
-  label_line_num: number;
+  label?: string;
+  label_line_num?: number;
 
-  group: string;
-  group_line_num: number;
+  group?: string;
+  group_line_num?: number;
 
-  description: string;
-  description_line_num: number;
+  description?: string;
+  description_line_num?: number;
 
-  access_users: string[];
-  access_users_line_num: number;
+  access_users?: string[];
+  access_users_line_num?: number;
 
-  always_join: string;
-  always_join_line_num: number;
+  always_join?: string;
+  always_join_line_num?: number;
 
-  sql_always_where: string;
-  sql_always_where_line_num: number;
+  sql_always_where?: string;
+  sql_always_where_line_num?: number;
 
-  sql_always_where_calc: string;
-  sql_always_where_calc_line_num: number;
+  sql_always_where_calc?: string;
+  sql_always_where_calc_line_num?: number;
 
-  udfs: string[];
-  udfs_line_num: number;
+  udfs?: string[];
+  udfs_line_num?: number;
 
-  joins: Join[];
-  joins_line_num: number;
+  joins?: Join[];
+  joins_line_num?: number;
 
-  fields: FieldAny[];
-  fields_line_num: number;
+  fields?: FieldAny[];
+  fields_line_num?: number;
 
   //
 
-  connection: api.ProjectConnection;
+  connection?: api.ProjectConnection;
 
-  filters: {
-    [s: string]: string[];
-  };
-
-  alwaysJoinList: {
-    [as: string]: number;
-  };
-
-  sqlAlwaysWhereReal: string;
-
-  sqlAlwaysWhereCalcReal: string;
-
-  fromAs: string;
-
-  fieldsDeps: {
+  fieldsDeps?: {
     [fieldName: string]: {
       [depName: string]: number;
     };
   };
 
-  fieldsDepsAfterSingles: {
-    [field: string]: {
-      [dep: string]: number;
+  fieldsDepsAfterSingles?: {
+    [fieldName: string]: {
+      [depName: string]: number;
     };
   };
 
-  fieldsDoubleDeps: {
+  filters?: {
+    [s: string]: string[];
+  };
+
+  alwaysJoinList?: {
+    [as: string]: number;
+  };
+
+  sqlAlwaysWhereReal?: string;
+
+  sqlAlwaysWhereCalcReal?: string;
+
+  fromAs?: string;
+
+  fieldsDoubleDeps?: {
     [field: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -78,7 +78,7 @@ export interface Model extends FileBasic {
     };
   };
 
-  fieldsDoubleDepsAfterSingles: {
+  fieldsDoubleDepsAfterSingles?: {
     [field: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -86,7 +86,7 @@ export interface Model extends FileBasic {
     };
   };
 
-  joinsDoubleDeps: {
+  joinsDoubleDeps?: {
     [alias: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -94,13 +94,13 @@ export interface Model extends FileBasic {
     };
   };
 
-  joinsPreparedDeps: {
+  joinsPreparedDeps?: {
     [alias: string]: {
       [as: string]: number;
     };
   };
 
-  joinsDoubleDepsAfterSingles: {
+  joinsDoubleDepsAfterSingles?: {
     [alias: string]: {
       [as: string]: {
         [dep: string]: number;
@@ -108,37 +108,37 @@ export interface Model extends FileBasic {
     };
   };
 
-  joinsSorted: string[];
+  joinsSorted?: string[];
 
-  sqlAlwaysWhereDoubleDeps: {
+  sqlAlwaysWhereDoubleDeps?: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sqlAlwaysWhereDoubleDepsAfterSingles: {
+  sqlAlwaysWhereDoubleDepsAfterSingles?: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sqlAlwaysWhereCalcDoubleDeps: {
+  sqlAlwaysWhereCalcDoubleDeps?: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sqlAlwaysWhereCalcForceDims: {
+  sqlAlwaysWhereCalcForceDims?: {
     [as: string]: {
       [dep: string]: number;
     };
   };
 
-  sqlAlwaysWhereCalcDepsAfterSingles: {
+  sqlAlwaysWhereCalcDepsAfterSingles?: {
     [dep: string]: number;
   };
 
-  sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions: {
+  sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions?: {
     [as: string]: {
       [dep: string]: number;
     };
