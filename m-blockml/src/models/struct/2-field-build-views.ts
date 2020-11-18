@@ -118,8 +118,13 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // // with restart
-  // views = barField.checkFieldsDeps({ entities: views });
+  views = barField.checkFieldsDeps({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // views = barField.checkCycles({ entities: views });
   // // {fields_deps_after_singles: ...} , {prep_force_dims: ...}
   // views = barField.substituteSingleRefs({ entities: views });

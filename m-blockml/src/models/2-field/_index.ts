@@ -13,7 +13,7 @@ export * from './12-check-and-set-implicit-result';
 export * from './13-check-and-set-implicit-format-number';
 export * from './14-transform-times';
 export * from './15-make-fields-deps';
+export * from './16-check-fields-deps';
 
 // export * from './check-cycles';
-// export * from './check-fields-deps';
 // export * from './substitute-single-refs';
