@@ -59,10 +59,11 @@ export interface Model extends FileBasic {
   fromAs: string;
 
   fieldsDeps: {
-    [field: string]: {
-      [dep: string]: number;
+    [fieldName: string]: {
+      [depName: string]: number;
     };
   };
+
   fieldsDepsAfterSingles: {
     [field: string]: {
       [dep: string]: number;

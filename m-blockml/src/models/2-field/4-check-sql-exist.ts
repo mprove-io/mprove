@@ -36,11 +36,6 @@ export function checkSqlExist<T extends vmdType>(item: {
             })
           );
           return;
-        } else {
-          // TODO: just for fields deps logic
-          // just for fields deps logic
-          field.sql = '';
-          field.sql_line_num = 0;
         }
       } else if (
         helper.isUndefined(field.sql) &&

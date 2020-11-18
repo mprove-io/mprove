@@ -99,7 +99,7 @@ export function checkFieldDeclaration<T extends vmdType>(item: {
       delete (<any>field)[fieldClass];
       delete (<any>field)[fieldClass + constants.LINE_NUM];
 
-      let newFieldProps: interfaces.Field = {
+      let newFieldProps: interfaces.FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
         fieldClass: <any>fieldClass

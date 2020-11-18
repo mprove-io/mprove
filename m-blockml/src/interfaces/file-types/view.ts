@@ -49,8 +49,8 @@ export interface View extends FileBasic {
   };
 
   fieldsDeps: {
-    [field: string]: {
-      [dep: string]: number;
+    [fieldName: string]: {
+      [depName: string]: number;
     };
   };
 

@@ -111,8 +111,13 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // // ->check_chars_in_refs
-  // views = barField.makeFieldsDeps({ entities: views });
+  views = barField.makeFieldsDeps({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // // with restart
   // views = barField.checkFieldsDeps({ entities: views });
   // views = barField.checkCycles({ entities: views });

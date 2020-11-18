@@ -11,8 +11,8 @@ export interface Filter {
   description?: string;
   description_line_num?: number;
 
-  sql?: string;
-  sql_line_num?: number;
+  // sql?: string;
+  // sql_line_num?: number;
 
   result?: enums.FieldAnyResultEnum;
   result_line_num?: number;
