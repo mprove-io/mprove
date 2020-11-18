@@ -3600,11 +3600,6 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.4.tgz#2256bde14d3632958c465ebc96dc467ca07a29fb"
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
 
-graph.js@^1.21.1:
-  version "1.21.1"
-  resolved "https://registry.yarnpkg.com/graph.js/-/graph.js-1.21.1.tgz#7e0354b41f7494dfd1869b9dec1b77ef30653853"
-  integrity sha1-fgNUtB90lN/Rhpud7Bt37zBlOFM=
-
 graphviz@0.0.9:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/graphviz/-/graphviz-0.0.9.tgz#0bbf1df588c6a92259282da35323622528c4bbc4"
@@ -7124,6 +7119,11 @@ tapable@^1.0.0, tapable@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-1.1.3.tgz#a1fccc06b58db61fd7a45da2da44f5f3a3e67ba2"
   integrity sha512-4WK/bYZmj8xLr+HUCODHGF1ZFzsYffasLUgEiMBY4fgtltdO6B4WJtlSbPaDTLpYTcGVwM2qLnFTICEcNxs3kA==
+
+tarjan-graph@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/tarjan-graph/-/tarjan-graph-2.0.0.tgz#8d8e991f170600982f9b8081984112ea8390b4a3"
+  integrity sha512-fDe57nO2Ukw2A/jHwVeiEgERGrGHukf3aHmR/YZ9BrveOtHVlFs289AnVeb1wD2aj9g01ZZ6f7VyMJ2QxI2NBQ==
 
 temp@~0.4.0:
   version "0.4.0"

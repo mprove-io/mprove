@@ -125,7 +125,13 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // views = barField.checkCycles({ entities: views });
+  views = barField.checkCycles({
+    entities: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: caller
+  });
+
   // // {fields_deps_after_singles: ...} , {prep_force_dims: ...}
   // views = barField.substituteSingleRefs({ entities: views });
 

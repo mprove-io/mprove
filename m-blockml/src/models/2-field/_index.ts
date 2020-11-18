@@ -14,6 +14,6 @@ export * from './13-check-and-set-implicit-format-number';
 export * from './14-transform-times';
 export * from './15-make-fields-deps';
 export * from './16-check-fields-deps';
+export * from './17-check-cycles';
 
-// export * from './check-cycles';
 // export * from './substitute-single-refs';
