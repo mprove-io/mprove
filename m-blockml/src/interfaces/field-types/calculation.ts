@@ -38,6 +38,7 @@ export interface Calculation {
   prepForceDims?: {
     [dim: string]: number;
   };
+
   forceDims?: {
     [as: string]: {
       [dim: string]: number;

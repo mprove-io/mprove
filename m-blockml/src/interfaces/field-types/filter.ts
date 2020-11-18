@@ -28,14 +28,5 @@ export interface Filter {
 
   fieldClass?: enums.FieldClassEnum;
 
-  sqlReal?: string;
-
-  prepForceDims?: {
-    [dim: string]: number;
-  };
-
   fractions?: api.Fraction[];
-
-  // from_field: string;
-  // from_field_line_num: number;
 }

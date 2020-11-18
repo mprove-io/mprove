@@ -49,11 +49,11 @@ export interface Dimension {
 
   sqlReal?: string;
 
-  groupId?: string;
-
-  sqlTimestamp?: string;
+  sqlTimestampReal?: string;
 
   sqlTimestampName?: string;
 
-  sqlTimestampReal?: string;
+  sqlTimestamp?: string;
+
+  groupId?: string;
 }

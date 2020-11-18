@@ -27,6 +27,7 @@ export enum FuncEnum {
   MakeFieldsDeps = '2-field/15-make-fields-deps',
   CheckFieldsDeps = '2-field/16-check-fields-deps',
   CheckCycles = '2-field/17-check-cycles',
+  SubstituteSingleRefs = '2-field/18-substitute-single-refs',
 
   LogStruct = 'struct/log-struct'
 }

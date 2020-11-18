@@ -29,6 +29,4 @@ export interface Time {
   name_line_num?: number;
 
   fieldClass?: enums.FieldClassEnum;
-
-  sqlReal?: string;
 }

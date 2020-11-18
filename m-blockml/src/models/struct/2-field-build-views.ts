@@ -132,8 +132,11 @@ export function fieldBuildViews(item: {
     caller: caller
   });
 
-  // // {fields_deps_after_singles: ...} , {prep_force_dims: ...}
-  // views = barField.substituteSingleRefs({ entities: views });
+  views = barField.substituteSingleRefs({
+    entities: views,
+    structId: item.structId,
+    caller: caller
+  });
 
   return {
     views: views
