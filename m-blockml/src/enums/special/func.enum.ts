@@ -29,7 +29,7 @@ export enum FuncEnum {
   CheckCycles = '2-field/17-check-cycles',
   SubstituteSingleRefs = '2-field/18-substitute-single-refs',
 
-  CheckTable = '3-view/1-check-table',
+  CheckTable = '4-view/1-check-table',
 
   LogStruct = 'struct/log-struct'
 }

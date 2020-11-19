@@ -1,2 +1,2 @@
-import * as barView from '../models/3-view/_index';
+import * as barView from '../models/4-view/_index';
 export { barView };

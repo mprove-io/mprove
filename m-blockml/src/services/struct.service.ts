@@ -90,6 +90,10 @@ export class StructService {
       weekStart: item.weekStart
     });
 
+    // let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({
+    //   udfs_user: udfs
+    // });
+
     views = barStruct.viewBuild({
       caller: enums.CallerEnum.ViewBuild,
       views: views,
@@ -117,9 +121,6 @@ export class StructService {
     // views = barView.checkDerivedTableApplyFilter({ views: views });
 
     // // process view references
-    // let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({
-    //   udfs_user: udfs
-    // });
 
     // views = barView.makeViewAsDeps({ views: views });
     // views = barView.checkViewCycles({ views: views });
