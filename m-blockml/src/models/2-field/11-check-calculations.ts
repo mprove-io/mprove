@@ -2,11 +2,11 @@ import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
-import { vmType } from './_vm-type';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckCalculations;
 
-export function checkCalculations<T extends vmType>(item: {
+export function checkCalculations<T extends types.vmType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

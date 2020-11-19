@@ -1,10 +1,10 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
-import { vmType } from './_vm-type';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.TransformYesNoDimensions;
 
-export function transformYesNoDimensions<T extends vmType>(item: {
+export function transformYesNoDimensions<T extends types.vmType>(item: {
   entities: Array<T>;
   structId: string;
   caller: enums.CallerEnum;

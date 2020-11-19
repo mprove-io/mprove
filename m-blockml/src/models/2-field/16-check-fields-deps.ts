@@ -1,11 +1,11 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
-import { vmType } from './_vm-type';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckFieldsDeps;
 
-export function checkFieldsDeps<T extends vmType>(item: {
+export function checkFieldsDeps<T extends types.vmType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

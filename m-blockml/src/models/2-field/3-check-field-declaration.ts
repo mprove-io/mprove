@@ -4,11 +4,11 @@ import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { constants } from '../../barrels/constants';
-import { vmdType } from './_vmd-type';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckFieldDeclaration;
 
-export function checkFieldDeclaration<T extends vmdType>(item: {
+export function checkFieldDeclaration<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

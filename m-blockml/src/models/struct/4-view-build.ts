@@ -27,8 +27,6 @@ export function viewBuild(item: {
     caller: item.caller
   });
 
-  // views = barView.checkViewFiltersFromField({ views: views });
-
   // // ApFilter
   // views = barFilter.checkVMDFilterDefaults({
   //   entities: views,

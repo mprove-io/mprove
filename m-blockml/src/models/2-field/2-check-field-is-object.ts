@@ -1,11 +1,11 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
-import { vmdType } from './_vmd-type';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckFieldIsObject;
 
-export function checkFieldIsObject<T extends vmdType>(item: {
+export function checkFieldIsObject<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

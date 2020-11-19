@@ -1,13 +1,13 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
-import { vmdType } from './_vmd-type';
+import { types } from '../../barrels/types';
 
 import { formatSpecifier } from 'd3-format';
 
 let func = enums.FuncEnum.CheckAndSetImplicitFormatNumber;
 
-export function checkAndSetImplicitFormatNumber<T extends vmdType>(item: {
+export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

@@ -1,12 +1,12 @@
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { helper } from '../../barrels/helper';
-import { vmdType } from './_vmd-type';
+import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.CheckFieldNameDuplicates;
 
-export function checkFieldNameDuplicates<T extends vmdType>(item: {
+export function checkFieldNameDuplicates<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

@@ -1,12 +1,12 @@
 import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
-import { vmType } from './_vm-type';
+import { types } from '../../barrels/types';
 import { interfaces } from '../../barrels/interfaces';
 
 let func = enums.FuncEnum.SubstituteSingleRefs;
 
-export function substituteSingleRefs<T extends vmType>(item: {
+export function substituteSingleRefs<T extends types.vmType>(item: {
   entities: Array<T>;
   structId: string;
   caller: enums.CallerEnum;

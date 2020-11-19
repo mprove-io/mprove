@@ -1,11 +1,11 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
-import { vmdType } from './_vmd-type';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckFieldsExist;
 
-export function checkFieldsExist<T extends vmdType>(item: {
+export function checkFieldsExist<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

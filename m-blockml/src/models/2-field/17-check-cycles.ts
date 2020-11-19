@@ -2,12 +2,12 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../bm-error';
-import { vmType } from './_vm-type';
+import { types } from '../../barrels/types';
 let Graph = require('tarjan-graph');
 
 let func = enums.FuncEnum.CheckCycles;
 
-export function checkCycles<T extends vmType>(item: {
+export function checkCycles<T extends types.vmType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

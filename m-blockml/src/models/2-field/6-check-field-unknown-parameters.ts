@@ -2,12 +2,12 @@ import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { helper } from '../../barrels/helper';
-import { vmdType } from './_vmd-type';
+import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.CheckFieldUnknownParameters;
 
-export function checkFieldUnknownParameters<T extends vmdType>(item: {
+export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

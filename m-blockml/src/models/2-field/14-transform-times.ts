@@ -1,7 +1,7 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
-import { vmType } from './_vm-type';
+import { types } from '../../barrels/types';
 import { api } from '../../barrels/api';
 import { barTransform } from '../../barrels/bar-transform';
 import { interfaces } from '../../barrels/interfaces';
@@ -9,7 +9,7 @@ import { constants } from '../../barrels/constants';
 
 let func = enums.FuncEnum.TransformTimes;
 
-export function transformTimes<T extends vmType>(item: {
+export function transformTimes<T extends types.vmType>(item: {
   entities: Array<T>;
   weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];

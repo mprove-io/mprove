@@ -1,12 +1,12 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
-import { vmType } from './_vm-type';
+import { types } from '../../barrels/types';
 import { api } from '../../barrels/api';
 
 let func = enums.FuncEnum.MakeFieldsDeps;
 
-export function makeFieldsDeps<T extends vmType>(item: {
+export function makeFieldsDeps<T extends types.vmType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;
@@ -87,7 +87,7 @@ export function makeFieldsDeps<T extends vmType>(item: {
   return newEntities;
 }
 
-export function checkCharsInFieldRefs<T extends vmType>(item: {
+export function checkCharsInFieldRefs<T extends types.vmType>(item: {
   errors: BmError[];
   fileVM: T;
   value: string;

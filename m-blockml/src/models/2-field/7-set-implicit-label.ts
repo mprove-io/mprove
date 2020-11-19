@@ -1,10 +1,10 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
-import { vmdType } from './_vmd-type';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.SetImplicitLabel;
 
-export function setImplicitLabel<T extends vmdType>(item: {
+export function setImplicitLabel<T extends types.vmdType>(item: {
   entities: Array<T>;
   structId: string;
   caller: enums.CallerEnum;
