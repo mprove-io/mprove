@@ -74,43 +74,21 @@ export class StructService {
     dashboards = yamlBuildItem.dashboards;
     visualizations = yamlBuildItem.visualizations;
 
-    let fieldBuildViewsItem = barStruct.fieldBuildViews({
+    views = barStruct.fieldBuild({
+      caller: enums.CallerEnum.FieldBuildViews,
       errors: errors,
-      views: views,
+      entities: views,
       structId: item.structId,
       weekStart: item.weekStart
     });
-    views = fieldBuildViewsItem.views;
 
-    // // ApField - Models (same as for Views)
-    // models = barField.checkFieldsIsArray({ entities: models });
-    // models = barField.checkFieldIsObject({ entities: models });
-    // models = barField.checkFieldDeclaration({ entities: models });
-    // models = barField.checkSqlExist({ entities: models });
-    // models = barField.checkFieldNameDuplicates({ entities: models });
-    // models = barField.checkFieldUnknownParameters({ entities: models });
-    // models = barField.setImplicitLabel({ entities: models });
-    // models = barField.checkDimensions({
-    //   entities: models,
-    //   connection: item.connection
-    // });
-    // models = barField.transformYesNoDimensions({ entities: models });
-    // models = barField.checkMeasures({
-    //   entities: models,
-    //   connection: item.connection
-    // });
-    // models = barField.checkCalculations({ entities: models });
-    // models = barField.checkAndSetImplicitResults({ entities: models });
-    // models = barField.checkAndSetImplicitFormatNumber({ entities: models });
-    // models = barField.transformTimes({
-    //   entities: models,
-    //   weekStart: item.weekStart,
-    //   connection: item.connection
-    // });
-    // models = barField.makeFieldsDeps({ entities: models });
-    // models = barField.checkFieldsDeps({ entities: models });
-    // models = barField.checkCycles({ entities: models });
-    // models = barField.substituteSingleRefs({ entities: models });
+    models = barStruct.fieldBuild({
+      caller: enums.CallerEnum.FieldBuildModels,
+      errors: errors,
+      entities: models,
+      structId: item.structId,
+      weekStart: item.weekStart
+    });
 
     // // ApView
     // views = barView.checkTable({ views: views });

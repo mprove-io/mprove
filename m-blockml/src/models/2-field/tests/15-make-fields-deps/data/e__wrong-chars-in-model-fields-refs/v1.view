@@ -2,6 +2,6 @@ view: v1
 connection: c1
 fields:
 - dimension: dim1
-  sql: dim1
+  sql: d1
 
 

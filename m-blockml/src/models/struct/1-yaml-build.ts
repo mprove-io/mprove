@@ -26,36 +26,42 @@ export function yamlBuild(item: {
     structId: item.structId,
     caller: caller
   });
+
   let file3s: interfaces.File3[] = barYaml.deduplicateFileNames({
     file2s: file2s,
     errors: item.errors,
     structId: item.structId,
     caller: caller
   });
+
   let filesAny: any[] = barYaml.yamlToObjects({
     file3s: file3s,
     errors: item.errors,
     structId: item.structId,
     caller: caller
   });
+
   filesAny = barYaml.makeLineNumbers({
     filesAny: filesAny,
     errors: item.errors,
     structId: item.structId,
     caller: caller
   });
+
   filesAny = barYaml.checkTopUnknownParameters({
     filesAny: filesAny,
     errors: item.errors,
     structId: item.structId,
     caller: caller
   });
+
   filesAny = barYaml.checkTopValues({
     filesAny: filesAny,
     errors: item.errors,
     structId: item.structId,
     caller: caller
   });
+
   filesAny = barYaml.checkConnections({
     filesAny: filesAny,
     connections: item.connections,
