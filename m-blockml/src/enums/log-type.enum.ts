@@ -10,5 +10,6 @@ export enum LogTypeEnum {
   Models = 'out_models.log',
   Dashboards = 'out_dashboards.log',
   Vis = 'out_visualizations.log',
-  Entities = 'out_entities.log'
+  Entities = 'out_entities.log',
+  UdfsDict = 'out_udfs_dict.log'
 }

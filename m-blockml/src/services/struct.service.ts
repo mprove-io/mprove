@@ -75,68 +75,33 @@ export class StructService {
     visualizations = yamlBuildItem.visualizations;
 
     views = barStruct.fieldBuild({
-      caller: enums.CallerEnum.FieldBuildViews,
       errors: errors,
       entities: views,
       structId: item.structId,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      caller: enums.CallerEnum.FieldBuildViews
     });
 
     models = barStruct.fieldBuild({
-      caller: enums.CallerEnum.FieldBuildModels,
       errors: errors,
       entities: models,
       structId: item.structId,
-      weekStart: item.weekStart
+      weekStart: item.weekStart,
+      caller: enums.CallerEnum.FieldBuildModels
     });
 
-    // let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({
-    //   udfs_user: udfs
-    // });
+    let udfsDict: interfaces.UdfsDict = barStruct.udfBuild({
+      udfs: udfs,
+      structId: item.structId,
+      caller: enums.CallerEnum.UdfBuild
+    });
 
     views = barStruct.viewBuild({
-      caller: enums.CallerEnum.ViewBuild,
       views: views,
       structId: item.structId,
-      errors: errors
+      errors: errors,
+      caller: enums.CallerEnum.ViewBuild
     });
-
-    // views = barView.checkPermanent({ views: views });
-    // views = barView.checkPdtTriggerSql({ views: views });
-    // views = barView.checkPdtTriggerTime({ views: views });
-    // views = barView.checkViewUdfs({
-    //   views: views,
-    //   udfs: udfs
-    // });
-    // views = barView.checkViewFiltersFromField({ views: views });
-
-    // // ApFilter
-    // views = barFilter.checkVMDFilterDefaults({
-    //   entities: views,
-    //   weekStart: item.weekStart,
-    //   connection: item.connection
-    // });
-
-    // // ApView
-    // views = barView.checkDerivedTableApplyFilter({ views: views });
-
-    // // process view references
-
-    // views = barView.makeViewAsDeps({ views: views });
-    // views = barView.checkViewCycles({ views: views });
-    // views = barView.checkViewDeps({ views: views });
-    // views = barView.pickUdfsAndMakePdtViewDeps({ views: views });
-    // views = await barView.processViewRefs({
-    //   views: views,
-    //   udfs_dict: udfsDict,
-    //   timezone: 'UTC',
-    //   weekStart: item.weekStart,
-    //   connection: item.connection,
-    //   bqProject: item.bqProject,
-    //   projectId: item.projectId,
-    //   structId: item.structId
-    // });
-    // views = barView.swapDerivedTables({ views: views });
 
     // // api pdt_deps
 

@@ -29,6 +29,8 @@ export enum FuncEnum {
   CheckCycles = '2-field/17-check-cycles',
   SubstituteSingleRefs = '2-field/18-substitute-single-refs',
 
+  MakeUdfsDict = '3-udf/1-make-udfs-dict',
+
   CheckTable = '4-view/1-check-table',
 
   LogStruct = 'struct/log-struct'
