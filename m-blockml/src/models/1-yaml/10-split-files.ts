@@ -187,7 +187,6 @@ export function splitFiles(item: {
 
           visualizations.push(Object.assign(file, newVisualizationOptions));
         } else {
-          // error
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_VISUALIZATION_NAME,

@@ -157,7 +157,6 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(item: {
                 enums.FieldAnyResultEnum.Yesno
               ].indexOf(field.result) < 0
             ) {
-              // error e221
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_FILTER_RESULT,

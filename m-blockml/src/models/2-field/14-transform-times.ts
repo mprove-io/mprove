@@ -420,7 +420,6 @@ export function transformTimes<T extends types.vmType>(item: {
           }
 
           default: {
-            // error e141
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.WRONG_TIMEFRAMES_ELEMENT,

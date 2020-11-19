@@ -93,7 +93,6 @@ export function processLineNumbersRecursive(item: {
     if (Array.isArray(item.hash[newPar])) {
       item.hash[newPar].forEach((element: any, i: number, a: any[]) => {
         if (element === null) {
-          // error e279
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.ARRAY_ELEMENT_IS_NULL,

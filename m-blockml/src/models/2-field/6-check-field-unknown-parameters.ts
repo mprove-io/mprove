@@ -36,7 +36,6 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
             parameter === enums.ParameterEnum.Hidden &&
             !field[parameter].match(api.MyRegex.TRUE_FALSE())
           ) {
-            // error e115
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.WRONG_FIELD_HIDDEN,
@@ -70,7 +69,6 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                   enums.ParameterEnum.CurrencySuffix.toString()
                 ].indexOf(parameter) < 0
               ) {
-                // error e109
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
@@ -102,7 +100,6 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                   enums.ParameterEnum.Timeframes.toString()
                 ].indexOf(parameter) < 0
               ) {
-                // error e110
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
@@ -138,7 +135,6 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                   enums.ParameterEnum.CurrencySuffix.toString()
                 ].indexOf(parameter) < 0
               ) {
-                // error e111
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
@@ -171,7 +167,6 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                   enums.ParameterEnum.CurrencySuffix.toString()
                 ].indexOf(parameter) < 0
               ) {
-                // error e112
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
@@ -198,12 +193,9 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                   enums.ParameterEnum.Label.toString(),
                   enums.ParameterEnum.Description.toString(),
                   enums.ParameterEnum.Result.toString(),
-                  // 'from_field',
-                  enums.ParameterEnum.Default.toString(),
-                  enums.ParameterEnum.Sql.toString() // checked before, just for deps logic
+                  enums.ParameterEnum.Default.toString()
                 ].indexOf(parameter) < 0
               ) {
-                // error e219
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
@@ -230,7 +222,6 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
               enums.ParameterEnum.Default.toString()
             ].indexOf(parameter) < 0
           ) {
-            // error e113
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.UNEXPECTED_LIST_IN_FIELD_PARAMETERS,
@@ -249,7 +240,6 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
             !!(<any>field)[parameter] &&
             (<any>field)[parameter].constructor === Object
           ) {
-            // error e114
             item.errors.push(
               new BmError({
                 title:
