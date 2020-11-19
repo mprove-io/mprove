@@ -1,13 +1,10 @@
 export * from './1-check-table';
+export * from './2-check-view-udfs';
 
 // export * from './check-derived-table-apply-filter';
-// export * from './check-pdt-trigger-sql';
-// export * from './check-pdt-trigger-time';
-// export * from './check-permanent';
 // export * from './check-view-cycles';
 // export * from './check-view-deps';
 // export * from './check-view-filters-from-field';
-// export * from './check-view-udfs';
 // export * from './get-as-deps';
 // export * from './make-pdts';
 // export * from './make-view-as-deps';

@@ -32,6 +32,7 @@ export enum FuncEnum {
   MakeUdfsDict = '3-udf/1-make-udfs-dict',
 
   CheckTable = '4-view/1-check-table',
+  CheckViewUdfs = '4-view/2-check-view-udfs',
 
   LogStruct = 'struct/log-struct'
 }

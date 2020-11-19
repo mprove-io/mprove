@@ -1,13 +1,13 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckTable;
+let func = enums.FuncEnum.CheckViewUdfs;
 
-export function checkTable(item: {
+export function checkViewUdfs(item: {
   views: interfaces.View[];
+  udfs: interfaces.Udf[];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -20,24 +20,25 @@ export function checkTable(item: {
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (
-      Object.keys(x).indexOf(enums.ParameterEnum.Table) < 0 &&
-      Object.keys(x).indexOf(enums.ParameterEnum.DerivedTable) < 0
-    ) {
-      item.errors.push(
-        new BmError({
-          title: enums.ErTitleEnum.MISSING_TABLE,
-          message: `${api.FileExtensionEnum.View} must have "${enums.ParameterEnum.Table}" or "${enums.ParameterEnum.DerivedTable}" parameter`,
-          lines: [
-            {
-              line: x.view_line_num,
-              name: x.fileName,
-              path: x.filePath
-            }
-          ]
-        })
-      );
-      return;
+    if (helper.isDefined(x.udfs)) {
+      x.udfs.forEach(u => {
+        if (item.udfs.findIndex(udf => udf.name === u) < 0) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_UDF,
+              message: `found element "- ${u}" references missing or not valid ${enums.ParameterEnum.Udf}`,
+              lines: [
+                {
+                  line: x.udfs_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+      });
     }
 
     let errorsOnEnd = item.errors.length;

@@ -98,6 +98,7 @@ export class StructService {
 
     views = barStruct.viewBuild({
       views: views,
+      udfs: udfs,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.ViewBuild

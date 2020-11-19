@@ -5,6 +5,7 @@ import { barView } from '../../barrels/bar-view';
 
 export function viewBuild(item: {
   views: interfaces.View[];
+  udfs: interfaces.Udf[];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -18,13 +19,14 @@ export function viewBuild(item: {
     caller: item.caller
   });
 
-  // views = barView.checkPermanent({ views: views });
-  // views = barView.checkPdtTriggerSql({ views: views });
-  // views = barView.checkPdtTriggerTime({ views: views });
-  // views = barView.checkViewUdfs({
-  //   views: views,
-  //   udfs: udfs
-  // });
+  views = barView.checkViewUdfs({
+    views: views,
+    udfs: item.udfs,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
+
   // views = barView.checkViewFiltersFromField({ views: views });
 
   // // ApFilter
