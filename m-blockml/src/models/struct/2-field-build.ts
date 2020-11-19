@@ -5,11 +5,11 @@ import { api } from '../../barrels/api';
 import { vmdType } from '../2-field/_vmd-type';
 
 export function fieldBuild<T extends vmdType>(item: {
-  caller: enums.CallerEnum;
   entities: Array<T>;
   errors: BmError[];
   structId: string;
   weekStart: api.ProjectWeekStartEnum;
+  caller: enums.CallerEnum;
 }) {
   let entities = item.entities;
 

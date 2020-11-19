@@ -1,10 +1,11 @@
 import { api } from '../barrels/api';
 import { enums } from '../barrels/enums';
-import { barYaml } from '../barrels/bar-yaml';
-import { barStruct } from '../barrels/bar-struct';
 import { Injectable } from '@nestjs/common';
 import { interfaces } from '../barrels/interfaces';
 import { BmError } from '../models/bm-error';
+import { barYaml } from '../barrels/bar-yaml';
+import { barStruct } from '../barrels/bar-struct';
+
 // import { barChart } from '../barrels/bar-chart';
 // import { barDashboard } from '../barrels/bar-dashboard';
 // import { barField } from '../barrels/bar-field';
@@ -19,8 +20,6 @@ import { BmError } from '../models/bm-error';
 // import { barView } from '../barrels/bar-view';
 // import { ErrorsCollector } from '../barrels/errors-collector';
 
-let caller = enums.CallerEnum.RebuildStruct;
-
 @Injectable()
 export class StructService {
   async rebuildStruct(item: {
@@ -33,7 +32,7 @@ export class StructService {
     let files: api.File[] = await barYaml.collectFiles({
       dir: item.dir,
       structId: item.structId,
-      caller: caller
+      caller: enums.CallerEnum.RebuildStruct
     });
 
     return await this.rebuildStructStateless({
@@ -61,6 +60,7 @@ export class StructService {
     let visualizations: interfaces.Visualization[];
 
     let yamlBuildItem = barStruct.yamlBuild({
+      caller: enums.CallerEnum.YamlBuild,
       errors: errors,
       files: item.files,
       structId: item.structId,
@@ -90,8 +90,13 @@ export class StructService {
       weekStart: item.weekStart
     });
 
-    // // ApView
-    // views = barView.checkTable({ views: views });
+    views = barStruct.viewBuild({
+      caller: enums.CallerEnum.ViewBuild,
+      views: views,
+      structId: item.structId,
+      errors: errors
+    });
+
     // views = barView.checkPermanent({ views: views });
     // views = barView.checkPdtTriggerSql({ views: views });
     // views = barView.checkPdtTriggerTime({ views: views });
@@ -355,7 +360,7 @@ export class StructService {
       dashboards: dashboards,
       visualizations: visualizations,
       structId: item.structId,
-      caller: caller
+      caller: enums.CallerEnum.RebuildStruct
     });
 
     return {
