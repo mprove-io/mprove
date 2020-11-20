@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from 'src/barrels/interfaces';
 import { barView } from '../../barrels/bar-view';
@@ -6,6 +7,7 @@ import { barView } from '../../barrels/bar-view';
 export function viewBuild(item: {
   views: interfaces.View[];
   udfs: interfaces.Udf[];
+  weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -27,14 +29,14 @@ export function viewBuild(item: {
     caller: item.caller
   });
 
-  // // ApFilter
-  // views = barFilter.checkVMDFilterDefaults({
-  //   entities: views,
-  //   weekStart: item.weekStart,
-  //   connection: item.connection
-  // });
+  views = barView.checkViewFilterDefaults({
+    views: views,
+    weekStart: item.weekStart,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
-  // // ApView
   // views = barView.checkDerivedTableApplyFilter({ views: views });
 
   // // process view references

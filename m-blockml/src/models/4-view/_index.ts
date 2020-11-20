@@ -1,5 +1,6 @@
 export * from './1-check-table';
 export * from './2-check-view-udfs';
+export * from './3-check-view-filter-defaults';
 
 // export * from './check-derived-table-apply-filter';
 // export * from './check-view-cycles';

@@ -1,10 +1,10 @@
 import { barField } from '../../barrels/bar-field';
 import { enums } from '../../barrels/enums';
+import { types } from '../../barrels/types';
 import { BmError } from '../../models/bm-error';
 import { api } from '../../barrels/api';
-import { vmdType } from '../2-field/_vmd-type';
 
-export function fieldBuild<T extends vmdType>(item: {
+export function fieldBuild<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

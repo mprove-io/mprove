@@ -42,7 +42,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 message: `parameter "${enums.ParameterEnum.Hidden}" must be 'true' or 'false' if specified`,
                 lines: [
                   {
-                    line: (<any>field)[parameter + constants.LINE_NUM],
+                    line: field[parameter + constants.LINE_NUM],
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -75,7 +75,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                     message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Dimension}`,
                     lines: [
                       {
-                        line: (<any>field)[parameter + constants.LINE_NUM],
+                        line: field[parameter + constants.LINE_NUM],
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -106,7 +106,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                     message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Time}`,
                     lines: [
                       {
-                        line: (<any>field)[parameter + constants.LINE_NUM],
+                        line: field[parameter + constants.LINE_NUM],
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -141,7 +141,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                     message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Measure}`,
                     lines: [
                       {
-                        line: (<any>field)[parameter + constants.LINE_NUM],
+                        line: field[parameter + constants.LINE_NUM],
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -173,7 +173,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                     message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Calculation}`,
                     lines: [
                       {
-                        line: (<any>field)[parameter + constants.LINE_NUM],
+                        line: field[parameter + constants.LINE_NUM],
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -202,7 +202,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                     message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Filter}`,
                     lines: [
                       {
-                        line: (<any>field)[parameter + constants.LINE_NUM],
+                        line: field[parameter + constants.LINE_NUM],
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -216,7 +216,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
           }
 
           if (
-            Array.isArray((<any>field)[parameter]) &&
+            Array.isArray(field[parameter]) &&
             [
               enums.ParameterEnum.Timeframes.toString(),
               enums.ParameterEnum.Default.toString()
@@ -228,7 +228,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
-                    line: (<any>field)[parameter + constants.LINE_NUM],
+                    line: field[parameter + constants.LINE_NUM],
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -237,8 +237,8 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
             );
             return;
           } else if (
-            !!(<any>field)[parameter] &&
-            (<any>field)[parameter].constructor === Object
+            helper.isDefined(field[parameter]) &&
+            field[parameter].constructor === Object
           ) {
             item.errors.push(
               new BmError({
@@ -247,7 +247,30 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
-                    line: (<any>field)[parameter + constants.LINE_NUM],
+                    line: field[parameter + constants.LINE_NUM],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (
+            !Array.isArray(field[parameter]) &&
+            [
+              enums.ParameterEnum.Default.toString(),
+              enums.ParameterEnum.Timeframes.toString()
+            ].indexOf(parameter) > -1
+          ) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.FIELD_PARAMETER_IS_NOT_A_LIST,
+                message: `parameter "${parameter}" must be a List`,
+                lines: [
+                  {
+                    line: field[parameter + constants.LINE_NUM],
                     name: x.fileName,
                     path: x.filePath
                   }

@@ -33,6 +33,9 @@ export enum FuncEnum {
 
   CheckTable = '4-view/1-check-table',
   CheckViewUdfs = '4-view/2-check-view-udfs',
+  CheckViewFilterDefaults = '4-view/3-check-view-filter-defaults',
+
+  CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'struct/log-struct'
 }
