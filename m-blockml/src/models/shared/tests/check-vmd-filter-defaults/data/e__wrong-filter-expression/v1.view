@@ -1,0 +1,8 @@
+view: v1
+connection: c1
+table: 1
+fields:
+- filter: size
+  result: number
+  default:      
+  - 'abc'

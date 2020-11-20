@@ -71,7 +71,6 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
         });
 
         if (p.valid === 0) {
-          // error e105, 237, 238
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_FILTER_EXPRESSION,

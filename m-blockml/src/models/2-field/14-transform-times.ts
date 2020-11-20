@@ -56,21 +56,6 @@ export function transformTimes<T extends types.vmType>(item: {
         ];
 
         field.timeframes_line_num = 0;
-      } else if (!Array.isArray(field.timeframes)) {
-        item.errors.push(
-          new BmError({
-            title: enums.ErTitleEnum.TIMEFRAMES_IS_NOT_A_LIST,
-            message: `"${enums.ParameterEnum.Timeframes}" must be a List of values.`,
-            lines: [
-              {
-                line: field.timeframes_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
       }
 
       let groupLabel = field.group_label ? field.group_label : field.name;
