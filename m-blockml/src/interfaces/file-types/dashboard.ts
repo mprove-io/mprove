@@ -1,6 +1,7 @@
 import { FileBasic } from '../file/file-basic';
 import { FieldAny } from '../field/field-any';
 import { Report } from '../report';
+import { api } from '../../barrels/api';
 
 export interface Dashboard extends FileBasic {
   dashboard?: string;
@@ -28,6 +29,8 @@ export interface Dashboard extends FileBasic {
   reports_line_num?: number;
 
   //
+  // TODO: check dashboard connection
+  connection?: api.ProjectConnection;
 
   filters?: {
     [s: string]: string[];

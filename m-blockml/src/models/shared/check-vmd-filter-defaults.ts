@@ -3,6 +3,7 @@ import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
+import { processFilter } from './process-filter';
 
 let func = enums.FuncEnum.CheckVMDFilterDefaults;
 
@@ -52,39 +53,42 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
       if (helper.isUndefined(field.default)) {
         x.filters[field.name] = [];
       } else {
-        // field.fractions = [];
-        // let p = processFilter({
-        //   result: field.result,
-        //   filter_bricks: field.default,
-        //   proc: 'proc',
-        //   weekStart: item.weekStart,
-        //   connection: item.connection,
-        //   timezone: 'UTC',
-        //   sqlTimestampSelect: 'sql_timestamp_select',
-        //   ORs: [],
-        //   NOTs: [],
-        //   IN: [],
-        //   NOTIN: [],
-        //   fractions: field.fractions
-        // });
-        // if (p.valid === 0) {
-        //   // error e105, 237, 238
-        //   item.errors.push(
-        //     new BmError({
-        //       title: enums.ErTitleEnum.WRONG_FILTER_EXPRESSION,
-        //       message: `found expression "${p.brick}" for result "${field.result}" of filter "${field.name}"`,
-        //       lines: [
-        //         {
-        //           line: field.default_line_num,
-        //           name: x.fileName,
-        //           path: x.filePath
-        //         }
-        //       ]
-        //     })
-        //   );
-        //   return;
-        // }
-        // x.filters[field.name] = JSON.parse(JSON.stringify(field.default));
+        field.fractions = [];
+        // TODO: check constants
+        let p = processFilter({
+          weekStart: item.weekStart,
+          connection: x.connection,
+          timezone: 'UTC',
+          result: field.result,
+          filterBricks: field.default,
+          proc: 'proc',
+          sqlTimestampSelect: 'sql_timestamp_select',
+          ORs: [],
+          NOTs: [],
+          IN: [],
+          NOTIN: [],
+          fractions: field.fractions
+        });
+
+        if (p.valid === 0) {
+          // error e105, 237, 238
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_FILTER_EXPRESSION,
+              message: `found expression "${p.brick}" for result "${field.result}" of filter "${field.name}"`,
+              lines: [
+                {
+                  line: field.default_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        x.filters[field.name] = JSON.parse(JSON.stringify(field.default));
       }
     });
 
