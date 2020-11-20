@@ -2,13 +2,13 @@ export * from './1-check-table';
 export * from './2-check-view-udfs';
 export * from './3-check-view-filter-defaults';
 export * from './4-check-derived-table-apply-filter';
+export * from './5-make-view-as-deps';
 
 // export * from './check-view-cycles';
 // export * from './check-view-deps';
 // export * from './check-view-filters-from-field';
 // export * from './get-as-deps';
 // export * from './make-pdts';
-// export * from './make-view-as-deps';
 // export * from './make-view-part';
 // export * from './pick-udfs-and-make-pdt-view-deps';
 // export * from './process-view-refs';

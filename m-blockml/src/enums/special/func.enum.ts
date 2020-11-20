@@ -35,6 +35,7 @@ export enum FuncEnum {
   CheckViewUdfs = '4-view/2-check-view-udfs',
   CheckViewFilterDefaults = '4-view/3-check-view-filter-defaults',
   CheckDerivedTableApplyFilter = '4-view/4-check-derived-table-apply-filter',
+  MakeViewAsDeps = '4-view/5-make-view-as-deps',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

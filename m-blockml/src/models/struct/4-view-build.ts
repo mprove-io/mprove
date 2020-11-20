@@ -44,12 +44,19 @@ export function viewBuild(item: {
     caller: item.caller
   });
 
-  // // process view references
+  views = barView.makeViewAsDeps({
+    views: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
-  // views = barView.makeViewAsDeps({ views: views });
   // views = barView.checkViewCycles({ views: views });
+
   // views = barView.checkViewDeps({ views: views });
+
   // views = barView.pickUdfsAndMakePdtViewDeps({ views: views });
+
   // views = await barView.processViewRefs({
   //   views: views,
   //   udfs_dict: udfsDict,
@@ -60,6 +67,7 @@ export function viewBuild(item: {
   //   projectId: item.projectId,
   //   structId: item.structId
   // });
+
   // views = barView.swapDerivedTables({ views: views });
 
   return views;
