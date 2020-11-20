@@ -37,7 +37,12 @@ export function viewBuild(item: {
     caller: item.caller
   });
 
-  // views = barView.checkDerivedTableApplyFilter({ views: views });
+  views = barView.checkDerivedTableApplyFilter({
+    views: views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // // process view references
 
