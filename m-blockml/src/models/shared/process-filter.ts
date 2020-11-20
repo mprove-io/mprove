@@ -1,6 +1,7 @@
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
+import { helper } from '../../barrels/helper';
 import { barTimestamp } from '../../barrels/bar-timestamp';
 
 export function processFilter(item: {
@@ -17,9 +18,24 @@ export function processFilter(item: {
   NOTIN: string[];
   fractions: api.Fraction[];
 }): { valid: number; brick?: string } {
+  let {
+    weekStart,
+    connection,
+    timezone,
+    result,
+    filterBricks,
+    proc,
+    sqlTimestampSelect,
+    ORs,
+    NOTs,
+    IN,
+    NOTIN,
+    fractions
+  } = item;
+
   let answerError: { valid: number; brick?: string };
 
-  let bricks = [...new Set(item.filterBricks)];
+  let bricks = [...new Set(filterBricks)];
 
   bricks.forEach(brick => {
     let r;
@@ -36,7 +52,7 @@ export function processFilter(item: {
       return;
     }
 
-    if (item.result === enums.FieldAnyResultEnum.Number) {
+    if (result === enums.FieldAnyResultEnum.Number) {
       // IS EQUAL TO
       // IS NOT EQUAL TO
       if ((r = api.MyRegex.BRICK_NUMBER_NOT_AND_DIGITS().exec(brick))) {
@@ -59,17 +75,17 @@ export function processFilter(item: {
           }
 
           if (not && num) {
-            item.NOTIN.push(num);
+            NOTIN.push(num);
             nums.push(num);
           } else if (num) {
-            item.IN.push(num);
+            IN.push(num);
             nums.push(num);
           } else if (not) {
-            item.NOTs.push(constants.FAIL);
+            NOTs.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           } else {
-            item.ORs.push(constants.FAIL);
+            ORs.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           }
@@ -78,14 +94,14 @@ export function processFilter(item: {
         let numValues = nums.join(', ');
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.NumberIsNotEqualTo,
             numberValues: numValues
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.NumberIsEqualTo,
@@ -99,9 +115,9 @@ export function processFilter(item: {
       ) {
         value = r[1];
 
-        item.ORs.push(`${item.proc} >= ${value}`);
+        ORs.push(`${proc} >= ${value}`);
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.NumberIsGreaterThanOrEqualTo,
@@ -112,9 +128,9 @@ export function processFilter(item: {
       } else if ((r = api.MyRegex.BRICK_NUMBER_IS_GREATER_THAN().exec(brick))) {
         value = r[1];
 
-        item.ORs.push(`${item.proc} > ${value}`);
+        ORs.push(`${proc} > ${value}`);
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.NumberIsGreaterThan,
@@ -127,9 +143,9 @@ export function processFilter(item: {
       ) {
         value = r[1];
 
-        item.ORs.push(`${item.proc} <= ${value}`);
+        ORs.push(`${proc} <= ${value}`);
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.NumberIsLessThanOrEqualTo,
@@ -140,9 +156,9 @@ export function processFilter(item: {
       } else if ((r = api.MyRegex.BRICK_NUMBER_IS_LESS_THAN().exec(brick))) {
         value = r[1];
 
-        item.ORs.push(`${item.proc} < ${value}`);
+        ORs.push(`${proc} < ${value}`);
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.NumberIsLessThan,
@@ -151,9 +167,9 @@ export function processFilter(item: {
 
         // IS ANY VALUE
       } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        item.ORs.push("'any' = 'any'");
+        ORs.push(constants.SQL_TRUE_CONDITION);
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.NumberIsAnyValue
@@ -166,10 +182,10 @@ export function processFilter(item: {
           value1 = r[2];
           value2 = r[3];
 
-          condition = `((${item.proc} >= ${value1}) AND (${item.proc} <= ${value2}))`;
+          condition = `((${proc} >= ${value1}) AND (${proc} <= ${value2}))`;
 
           if (not) {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.And,
               type: api.FractionTypeEnum.NumberIsNotBetween,
@@ -178,7 +194,7 @@ export function processFilter(item: {
               numberBetweenOption: api.FractionNumberBetweenOptionEnum.Inclusive
             });
           } else {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.Or,
               type: api.FractionTypeEnum.NumberIsBetween,
@@ -197,10 +213,10 @@ export function processFilter(item: {
           value1 = r[2];
           value2 = r[3];
 
-          condition = `((${item.proc} >= ${value1}) AND (${item.proc} < ${value2}))`;
+          condition = `((${proc} >= ${value1}) AND (${proc} < ${value2}))`;
 
           if (not) {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.And,
               type: api.FractionTypeEnum.NumberIsNotBetween,
@@ -210,7 +226,7 @@ export function processFilter(item: {
                 api.FractionNumberBetweenOptionEnum.LeftInclusive
             });
           } else {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.Or,
               type: api.FractionTypeEnum.NumberIsBetween,
@@ -232,10 +248,10 @@ export function processFilter(item: {
           value1 = r[2];
           value2 = r[3];
 
-          condition = `((${item.proc} > ${value1}) AND (${item.proc} <= ${value2}))`;
+          condition = `((${proc} > ${value1}) AND (${proc} <= ${value2}))`;
 
           if (not) {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.And,
               type: api.FractionTypeEnum.NumberIsNotBetween,
@@ -245,7 +261,7 @@ export function processFilter(item: {
                 api.FractionNumberBetweenOptionEnum.RightInclusive
             });
           } else {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.Or,
               type: api.FractionTypeEnum.NumberIsBetween,
@@ -265,10 +281,10 @@ export function processFilter(item: {
           value1 = r[2];
           value2 = r[3];
 
-          condition = `((${item.proc} > ${value1}) AND (${item.proc} < ${value2}))`;
+          condition = `((${proc} > ${value1}) AND (${proc} < ${value2}))`;
 
           if (not) {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.And,
               type: api.FractionTypeEnum.NumberIsNotBetween,
@@ -277,7 +293,7 @@ export function processFilter(item: {
               numberBetweenOption: api.FractionNumberBetweenOptionEnum.Exclusive
             });
           } else {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.Or,
               type: api.FractionTypeEnum.NumberIsBetween,
@@ -293,16 +309,16 @@ export function processFilter(item: {
           not = r[1];
           nullValue = r[2];
 
-          condition = `(${item.proc} IS NULL)`;
+          condition = `(${proc} IS NULL)`;
 
           if (not) {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.And,
               type: api.FractionTypeEnum.NumberIsNotNull
             });
           } else {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.Or,
               type: api.FractionTypeEnum.NumberIsNull
@@ -312,37 +328,37 @@ export function processFilter(item: {
 
         // common for else of number
         if (not && condition) {
-          item.NOTs.push(`NOT ${condition}`);
+          NOTs.push(`NOT ${condition}`);
         } else if (condition) {
-          item.ORs.push(condition);
+          ORs.push(condition);
         } else if (not) {
-          item.NOTs.push(constants.FAIL);
+          NOTs.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         } else {
-          item.ORs.push(constants.FAIL);
+          ORs.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         }
       }
-    } else if (item.result === enums.FieldAnyResultEnum.String) {
+    } else if (result === enums.FieldAnyResultEnum.String) {
       // IS EQUAL TO
       // IS NOT EQUAL TO
       if ((r = api.MyRegex.BRICK_STRING_IS_EQUAL_TO().exec(brick))) {
         not = r[1];
         value = r[2];
 
-        condition = `${item.proc} = '${value}'`;
+        condition = `${proc} = '${value}'`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.StringIsNotEqualTo,
             stringValue: value
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.StringIsEqualTo,
@@ -356,17 +372,17 @@ export function processFilter(item: {
         not = r[1];
         value = r[2];
 
-        condition = `${item.proc} LIKE '%${value}%'`;
+        condition = `${proc} LIKE '%${value}%'`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.StringDoesNotContain,
             stringValue: value
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.StringContains,
@@ -380,17 +396,17 @@ export function processFilter(item: {
         value = r[1];
         not = r[2];
 
-        condition = `${item.proc} LIKE '${value}%'`;
+        condition = `${proc} LIKE '${value}%'`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.StringDoesNotStartWith,
             stringValue: value
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.StringStartsWith,
@@ -404,17 +420,17 @@ export function processFilter(item: {
         not = r[1];
         value = r[2];
 
-        condition = `${item.proc} LIKE '%${value}'`;
+        condition = `${proc} LIKE '%${value}'`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.StringDoesNotEndWith,
             stringValue: value
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.StringEndsWith,
@@ -428,16 +444,16 @@ export function processFilter(item: {
         not = r[1];
         nullValue = r[2];
 
-        condition = `(${item.proc} IS NULL)`;
+        condition = `(${proc} IS NULL)`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.StringIsNotNull
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.StringIsNull
@@ -450,20 +466,20 @@ export function processFilter(item: {
         not = r[1];
         blank = r[2];
 
-        if (item.connection.type === api.ConnectionTypeEnum.BigQuery) {
-          condition = `(${item.proc} IS NULL OR LENGTH(CAST(${item.proc} AS STRING)) = 0)`;
-        } else if (item.connection.type === api.ConnectionTypeEnum.PostgreSQL) {
-          condition = `(${item.proc} IS NULL OR LENGTH(CAST(${item.proc} AS TEXT)) = 0)`;
+        if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+          condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS STRING)) = 0)`;
+        } else if (connection.type === api.ConnectionTypeEnum.PostgreSQL) {
+          condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS TEXT)) = 0)`;
         }
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.StringIsNotBlank
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.StringIsBlank
@@ -472,9 +488,9 @@ export function processFilter(item: {
 
         // IS ANY VALUE
       } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        condition = "'any' = 'any'";
+        condition = constants.SQL_TRUE_CONDITION;
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.StringIsAnyValue
@@ -483,24 +499,24 @@ export function processFilter(item: {
 
       // common for string
       if (not && condition) {
-        item.NOTs.push(`NOT ${condition}`);
+        NOTs.push(`NOT ${condition}`);
       } else if (condition) {
-        item.ORs.push(condition);
+        ORs.push(condition);
       } else if (not) {
-        item.NOTs.push(constants.FAIL);
+        NOTs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        item.ORs.push(constants.FAIL);
+        ORs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (item.result === enums.FieldAnyResultEnum.Yesno) {
+    } else if (result === enums.FieldAnyResultEnum.Yesno) {
       // YESNO YES
       if ((r = api.MyRegex.BRICK_YESNO_IS_YES().exec(brick))) {
-        condition = `${item.proc} = 'Yes'`;
+        condition = `${proc} = 'Yes'`;
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.YesnoIs,
@@ -509,9 +525,9 @@ export function processFilter(item: {
 
         // YESNO NO
       } else if ((r = api.MyRegex.BRICK_YESNO_IS_NO().exec(brick))) {
-        condition = `${item.proc} = 'No'`;
+        condition = `${proc} = 'No'`;
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.YesnoIs,
@@ -520,9 +536,9 @@ export function processFilter(item: {
 
         // IS ANY VALUE
       } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        condition = "'any' = 'any'";
+        condition = constants.SQL_TRUE_CONDITION;
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.YesnoIsAnyValue
@@ -531,13 +547,13 @@ export function processFilter(item: {
 
       // common for yesno
       if (condition) {
-        item.ORs.push(condition);
+        ORs.push(condition);
       } else {
-        item.ORs.push(constants.FAIL);
+        ORs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (item.result === enums.FieldAnyResultEnum.Ts) {
+    } else if (result === enums.FieldAnyResultEnum.Ts) {
       let {
         currentTs,
         currentMinuteTs,
@@ -548,9 +564,9 @@ export function processFilter(item: {
         currentQuarterTs,
         currentYearTs
       } = barTimestamp.makeTimestampsCurrent({
-        timezone: item.timezone,
-        weekStart: item.weekStart,
-        connection: item.connection
+        timezone: timezone,
+        weekStart: weekStart,
+        connection: connection
       });
 
       let way;
@@ -602,17 +618,17 @@ export function processFilter(item: {
             day: day,
             hour: hour,
             minute: minute,
-            connection: item.connection
+            connection: connection
           });
 
           switch (true) {
             case way === 'after': {
-              one = `${item.sqlTimestampSelect} >= ${open}`;
+              one = `${sqlTimestampSelect} >= ${open}`;
               two = '';
               break;
             }
             case way === 'before': {
-              one = `${item.sqlTimestampSelect} < ${open}`;
+              one = `${sqlTimestampSelect} < ${open}`;
               two = '';
               break;
             }
@@ -633,7 +649,7 @@ export function processFilter(item: {
               currentDateTs: currentDateTs,
               currentHourTs: currentHourTs,
               currentMinuteTs: currentMinuteTs,
-              connection: item.connection
+              connection: connection
             });
           } else if (
             way.match(/^last$/) ||
@@ -643,7 +659,7 @@ export function processFilter(item: {
               unit: unit,
               integer: Number(integerStr),
               currentTs: currentTs,
-              connection: item.connection
+              connection: connection
             });
           } else if (
             way.match(/^before|after$/) &&
@@ -660,7 +676,7 @@ export function processFilter(item: {
               currentDateTs: currentDateTs,
               currentHourTs: currentHourTs,
               currentMinuteTs: currentMinuteTs,
-              connection: item.connection
+              connection: connection
             });
           } else if (
             way.match(/^before|after$/) &&
@@ -670,7 +686,7 @@ export function processFilter(item: {
               unit: unit,
               integer: Number(integerStr),
               currentTs: currentTs,
-              connection: item.connection
+              connection: connection
             });
           }
 
@@ -686,7 +702,7 @@ export function processFilter(item: {
               currentDateTs: currentDateTs,
               currentHourTs: currentHourTs,
               currentMinuteTs: currentMinuteTs,
-              connection: item.connection
+              connection: connection
             });
           } else if (way.match(/^last$/) && complete) {
             close =
@@ -719,27 +735,27 @@ export function processFilter(item: {
             open: open,
             forUnit: forUnit,
             sInteger: Number(sIntegerStr),
-            connection: item.connection
+            connection: connection
           });
         }
 
         if (way.match(/^last|after$/)) {
-          one = `${item.sqlTimestampSelect} >= ${open}`;
+          one = `${sqlTimestampSelect} >= ${open}`;
         } else if (way.match(/^before$/)) {
-          one = `${item.sqlTimestampSelect} < ${open}`;
+          one = `${sqlTimestampSelect} < ${open}`;
         }
 
         if (way.match(/^last$/)) {
-          two = ` AND ${item.sqlTimestampSelect} < ${close}`;
+          two = ` AND ${sqlTimestampSelect} < ${close}`;
         } else if (way.match(/^after$/) && forUnit) {
-          two = ` AND ${item.sqlTimestampSelect} < ${close}`;
+          two = ` AND ${sqlTimestampSelect} < ${close}`;
         } else if (way.match(/^before$/) && forUnit) {
-          two = ` AND ${item.sqlTimestampSelect} >= ${close}`;
+          two = ` AND ${sqlTimestampSelect} >= ${close}`;
         } else if (way.match(/^before|after$/)) {
           two = '';
         }
 
-        item.ORs.push(`(${one}` + `${two})`);
+        ORs.push(`(${one}` + `${two})`);
 
         if (way.match(/^last$/)) {
           let tsLastCompleteOption =
@@ -749,7 +765,7 @@ export function processFilter(item: {
               ? api.FractionTsLastCompleteOptionEnum.Complete
               : api.FractionTsLastCompleteOptionEnum.Incomplete;
 
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsInLast,
@@ -758,7 +774,7 @@ export function processFilter(item: {
             tsLastCompleteOption: tsLastCompleteOption
           });
         } else if (way.match(/^before$/) && year) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsBeforeDate,
@@ -774,7 +790,7 @@ export function processFilter(item: {
             tsForUnit: <any>forUnit
           });
         } else if (way.match(/^before$/)) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsBeforeRelative,
@@ -795,7 +811,7 @@ export function processFilter(item: {
             tsForUnit: <any>forUnit
           });
         } else if (way.match(/^after$/) && year) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsAfterDate,
@@ -811,7 +827,7 @@ export function processFilter(item: {
             tsForUnit: <any>forUnit
           });
         } else if (way.match(/^after$/)) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsAfterRelative,
@@ -858,10 +874,10 @@ export function processFilter(item: {
           day: day,
           hour: hour,
           minute: minute,
-          connection: item.connection
+          connection: connection
         });
 
-        if (typeof toYear === 'undefined' || toYear === null) {
+        if (helper.isUndefined(toYear)) {
           close = barTimestamp.makeTimestampCloseBetween({
             open: open,
             year: year,
@@ -869,7 +885,7 @@ export function processFilter(item: {
             day: day,
             hour: hour,
             minute: minute,
-            connection: item.connection
+            connection: connection
           });
         } else {
           // to
@@ -879,16 +895,16 @@ export function processFilter(item: {
             toDay: toDay,
             toHour: toHour,
             toMinute: toMinute,
-            connection: item.connection
+            connection: connection
           });
         }
 
-        item.ORs.push(
-          `(${item.sqlTimestampSelect} >= ${open} AND ${item.sqlTimestampSelect} < ${close})`
+        ORs.push(
+          `(${sqlTimestampSelect} >= ${open} AND ${sqlTimestampSelect} < ${close})`
         );
 
         if (toYear) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsInRange,
@@ -906,7 +922,7 @@ export function processFilter(item: {
             tsDateToMinute: Number(toMinute)
           });
         } else if (minute) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsOnMinute,
@@ -918,7 +934,7 @@ export function processFilter(item: {
             tsDateMinute: Number(minute)
           });
         } else if (hour) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsOnHour,
@@ -929,7 +945,7 @@ export function processFilter(item: {
             tsDateHour: Number(hour)
           });
         } else if (day) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsOnDay,
@@ -939,7 +955,7 @@ export function processFilter(item: {
             tsDateDay: Number(day)
           });
         } else if (month) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsOnMonth,
@@ -948,7 +964,7 @@ export function processFilter(item: {
             tsDateMonth: Number(month)
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsOnYear,
@@ -963,16 +979,16 @@ export function processFilter(item: {
         not = r[1];
         nullValue = r[2];
 
-        condition = `(${item.sqlTimestampSelect} IS NULL)`;
+        condition = `(${sqlTimestampSelect} IS NULL)`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.TsIsNotNull
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.TsIsNull
@@ -980,49 +996,49 @@ export function processFilter(item: {
         }
 
         if (not && condition) {
-          item.NOTs.push(`NOT ${condition}`);
+          NOTs.push(`NOT ${condition}`);
         } else if (condition) {
-          item.ORs.push(condition);
+          ORs.push(condition);
         }
 
         // IS ANY VALUE
       } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        item.ORs.push("'any' = 'any'");
+        ORs.push(constants.SQL_TRUE_CONDITION);
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.TsIsAnyValue
         });
 
         if (not && condition) {
-          item.NOTs.push(`NOT ${condition}`);
+          NOTs.push(`NOT ${condition}`);
         } else if (condition) {
-          item.ORs.push(condition);
+          ORs.push(condition);
         }
       } else {
-        item.ORs.push(constants.FAIL);
+        ORs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (item.result === enums.FieldAnyResultEnum.DayOfWeek) {
+    } else if (result === enums.FieldAnyResultEnum.DayOfWeek) {
       // IS
       // IS NOT
       if ((r = api.MyRegex.BRICK_DAY_OF_WEEK_IS().exec(brick))) {
         not = r[1];
         value = r[2];
 
-        condition = `UPPER(${item.proc}) = UPPER('${value}')`;
+        condition = `UPPER(${proc}) = UPPER('${value}')`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.DayOfWeekIsNot,
             dayOfWeekValue: <any>value.toLowerCase()
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.DayOfWeekIs,
@@ -1036,16 +1052,16 @@ export function processFilter(item: {
         not = r[1];
         nullValue = r[2];
 
-        condition = `(${item.proc} IS NULL)`;
+        condition = `(${proc} IS NULL)`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.DayOfWeekIsNotNull
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.DayOfWeekIsNull
@@ -1054,9 +1070,9 @@ export function processFilter(item: {
 
         // IS ANY VALUE
       } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        condition = "'any' = 'any'";
+        condition = constants.SQL_TRUE_CONDITION;
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.DayOfWeekIsAnyValue
@@ -1065,19 +1081,19 @@ export function processFilter(item: {
 
       // common for DayOfWeek
       if (not && condition) {
-        item.NOTs.push(`NOT ${condition}`);
+        NOTs.push(`NOT ${condition}`);
       } else if (condition) {
-        item.ORs.push(condition);
+        ORs.push(condition);
       } else if (not) {
-        item.NOTs.push(constants.FAIL);
+        NOTs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        item.ORs.push(constants.FAIL);
+        ORs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (item.result === enums.FieldAnyResultEnum.DayOfWeekIndex) {
+    } else if (result === enums.FieldAnyResultEnum.DayOfWeekIndex) {
       if ((r = api.MyRegex.BRICK_DAY_OF_WEEK_INDEX_IS_EQUAL().exec(brick))) {
         not = r[1];
 
@@ -1098,17 +1114,17 @@ export function processFilter(item: {
           }
 
           if (not && num) {
-            item.NOTIN.push(num);
+            NOTIN.push(num);
             dayOfWeekIndexValues.push(num);
           } else if (num) {
-            item.IN.push(num);
+            IN.push(num);
             dayOfWeekIndexValues.push(num);
           } else if (not) {
-            item.NOTs.push(constants.FAIL);
+            NOTs.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           } else {
-            item.ORs.push(constants.FAIL);
+            ORs.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           }
@@ -1117,14 +1133,14 @@ export function processFilter(item: {
         let dayOfWeekIndexValuesString = dayOfWeekIndexValues.join(', ');
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.DayOfWeekIndexIsNotEqualTo,
             dayOfWeekIndexValues: dayOfWeekIndexValuesString
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.DayOfWeekIndexIsEqualTo,
@@ -1138,16 +1154,16 @@ export function processFilter(item: {
           not = r[1];
           nullValue = r[2];
 
-          condition = `(${item.proc} IS NULL)`;
+          condition = `(${proc} IS NULL)`;
 
           if (not) {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.And,
               type: api.FractionTypeEnum.DayOfWeekIndexIsNotNull
             });
           } else {
-            item.fractions.push({
+            fractions.push({
               brick: brick,
               operator: api.FractionOperatorEnum.Or,
               type: api.FractionTypeEnum.DayOfWeekIndexIsNull
@@ -1156,9 +1172,9 @@ export function processFilter(item: {
 
           // IS ANY VALUE
         } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-          condition = "'any' = 'any'";
+          condition = constants.SQL_TRUE_CONDITION;
 
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.DayOfWeekIndexIsAnyValue
@@ -1167,37 +1183,37 @@ export function processFilter(item: {
 
         // common for DayOfWeekIndex
         if (not && condition) {
-          item.NOTs.push(`NOT ${condition}`);
+          NOTs.push(`NOT ${condition}`);
         } else if (condition) {
-          item.ORs.push(condition);
+          ORs.push(condition);
         } else if (not) {
-          item.NOTs.push(constants.FAIL);
+          NOTs.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         } else {
-          item.ORs.push(constants.FAIL);
+          ORs.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         }
       }
-    } else if (item.result === enums.FieldAnyResultEnum.MonthName) {
+    } else if (result === enums.FieldAnyResultEnum.MonthName) {
       // IS
       // IS NOT
       if ((r = api.MyRegex.BRICK_MONTH_NAME_IS().exec(brick))) {
         not = r[1];
         value = r[2];
 
-        condition = `UPPER(${item.proc}) = UPPER('${value}')`;
+        condition = `UPPER(${proc}) = UPPER('${value}')`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.MonthNameIsNot,
             monthNameValue: <any>value.toLowerCase()
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.MonthNameIs,
@@ -1211,16 +1227,16 @@ export function processFilter(item: {
         not = r[1];
         nullValue = r[2];
 
-        condition = `(${item.proc} IS NULL)`;
+        condition = `(${proc} IS NULL)`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.MonthNameIsNotNull
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.MonthNameIsNull
@@ -1229,9 +1245,9 @@ export function processFilter(item: {
 
         // IS ANY VALUE
       } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        condition = "'any' = 'any'";
+        condition = constants.SQL_TRUE_CONDITION;
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.MonthNameIsAnyValue
@@ -1240,36 +1256,36 @@ export function processFilter(item: {
 
       // common for MonthName
       if (not && condition) {
-        item.NOTs.push(`NOT ${condition}`);
+        NOTs.push(`NOT ${condition}`);
       } else if (condition) {
-        item.ORs.push(condition);
+        ORs.push(condition);
       } else if (not) {
-        item.NOTs.push(constants.FAIL);
+        NOTs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        item.ORs.push(constants.FAIL);
+        ORs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (item.result === enums.FieldAnyResultEnum.QuarterOfYear) {
+    } else if (result === enums.FieldAnyResultEnum.QuarterOfYear) {
       // IS
       // IS NOT
       if ((r = api.MyRegex.BRICK_QUARTER_OF_YEAR_IS().exec(brick))) {
         not = r[1];
         value = r[2];
 
-        condition = `UPPER(${item.proc}) = UPPER('${value}')`;
+        condition = `UPPER(${proc}) = UPPER('${value}')`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.QuarterOfYearIsNot,
             quarterOfYearValue: <any>value
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.QuarterOfYearIs,
@@ -1283,16 +1299,16 @@ export function processFilter(item: {
         not = r[1];
         nullValue = r[2];
 
-        condition = `(${item.proc} IS NULL)`;
+        condition = `(${proc} IS NULL)`;
 
         if (not) {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.And,
             type: api.FractionTypeEnum.QuarterOfYearIsNotNull
           });
         } else {
-          item.fractions.push({
+          fractions.push({
             brick: brick,
             operator: api.FractionOperatorEnum.Or,
             type: api.FractionTypeEnum.QuarterOfYearIsNull
@@ -1301,9 +1317,9 @@ export function processFilter(item: {
 
         // IS ANY VALUE
       } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        condition = "'any' = 'any'";
+        condition = constants.SQL_TRUE_CONDITION;
 
-        item.fractions.push({
+        fractions.push({
           brick: brick,
           operator: api.FractionOperatorEnum.Or,
           type: api.FractionTypeEnum.QuarterOfYearIsAnyValue
@@ -1312,15 +1328,15 @@ export function processFilter(item: {
 
       // common for QuarterOfYear
       if (not && condition) {
-        item.NOTs.push(`NOT ${condition}`);
+        NOTs.push(`NOT ${condition}`);
       } else if (condition) {
-        item.ORs.push(condition);
+        ORs.push(condition);
       } else if (not) {
-        item.NOTs.push(constants.FAIL);
+        NOTs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        item.ORs.push(constants.FAIL);
+        ORs.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
