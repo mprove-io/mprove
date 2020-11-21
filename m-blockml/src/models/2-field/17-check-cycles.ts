@@ -34,7 +34,7 @@ export function checkCycles<T extends types.vmType>(item: {
       let cycles: any[] = g.getCycles();
       // api.logToConsole(cycles);
 
-      let cycledNames = cycles[0].map(cycle => cycle.name);
+      let cycledNames = cycles[0].map(c => c.name);
 
       cycledNames.forEach(cName => {
         if (x.fieldsDeps[cName]) {
