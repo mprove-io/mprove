@@ -7,7 +7,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.ViewBuild;
 let func = enums.FuncEnum.CheckViewCycles;
-let testId = 'e__cycle-in-view-references';
+let testId = 'e__derived-table-cycle-in-view-references';
 
 test(testId, async () => {
   let views: interfaces.View[];
@@ -44,7 +44,9 @@ test(testId, async () => {
 
   expect(views.length).toBe(0);
   expect(errors.length).toBe(2);
-  expect(errors[0].title).toBe(enums.ErTitleEnum.CYCLE_IN_VIEW_REFERENCES);
+  expect(errors[0].title).toBe(
+    enums.ErTitleEnum.DERIVED_TABLE_CYCLE_IN_VIEW_REFERENCES
+  );
   expect(errors[0].lines.length).toBe(3);
   expect(errors[0].lines[0].line).toBe(3);
 });

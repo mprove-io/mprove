@@ -4,8 +4,8 @@ export * from './3-check-view-filter-defaults';
 export * from './4-check-derived-table-apply-filter';
 export * from './5-make-view-as-deps';
 export * from './6-check-view-cycles';
+export * from './7-check-view-deps';
 
-// export * from './check-view-deps';
 // export * from './check-view-filters-from-field';
 // export * from './get-as-deps';
 // export * from './make-pdts';

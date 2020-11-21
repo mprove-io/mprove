@@ -49,7 +49,7 @@ export function checkViewCycles(item: {
       // error e285
       item.errors.push(
         new BmError({
-          title: enums.ErTitleEnum.CYCLE_IN_VIEW_REFERENCES,
+          title: enums.ErTitleEnum.DERIVED_TABLE_CYCLE_IN_VIEW_REFERENCES,
           message: `Views "${cycledNamesString}" references each other by cycle`,
           lines: lines
         })
