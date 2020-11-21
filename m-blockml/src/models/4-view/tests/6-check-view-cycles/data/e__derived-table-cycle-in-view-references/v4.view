@@ -6,4 +6,4 @@ derived_table: |
     ${v5 AS a}
 fields:
 - dimension: dim1
-  sql: a.dim1
+  sql: d1

@@ -1,4 +1,4 @@
-view: v3
+view: v2
 connection: c1
 derived_table: |
   SELECT ${a.dim1}

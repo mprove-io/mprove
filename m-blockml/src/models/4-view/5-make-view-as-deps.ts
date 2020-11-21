@@ -52,7 +52,7 @@ export function makeViewAsDeps(item: {
         }
 
         if (!x.asDeps[alias]) {
-          x.asDeps[alias] = { viewName: view, fields: {} };
+          x.asDeps[alias] = { viewName: view, fieldNames: {} };
         } else if (x.asDeps[alias].viewName !== view) {
           item.errors.push(
             new BmError({
@@ -101,7 +101,7 @@ export function makeViewAsDeps(item: {
           );
           return;
         } else {
-          x.asDeps[as].fields[dep] = 1;
+          x.asDeps[as].fieldNames[dep] = 1;
         }
       }
     }
@@ -110,6 +110,14 @@ export function makeViewAsDeps(item: {
     if (errorsOnStart === errorsOnEnd) {
       newViews.push(x);
     }
+
+    let viewDeps: string[] = [];
+
+    Object.keys(x.asDeps).forEach(as => {
+      viewDeps.push(x.asDeps[as].viewName);
+    });
+
+    x.viewDeps = viewDeps;
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);

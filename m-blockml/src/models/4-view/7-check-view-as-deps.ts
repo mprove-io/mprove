@@ -5,9 +5,9 @@ import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 
-let func = enums.FuncEnum.CheckViewDeps;
+let func = enums.FuncEnum.CheckViewAsDeps;
 
-export function checkViewDeps(item: {
+export function checkViewAsDeps(item: {
   views: interfaces.View[];
   errors: BmError[];
   structId: string;
@@ -76,7 +76,7 @@ export function checkViewDeps(item: {
           }
         }
 
-        Object.keys(x.asDeps[as].fields).forEach(fieldName => {
+        Object.keys(x.asDeps[as].fieldNames).forEach(fieldName => {
           let field = referencedView.fields.find(f => f.name === fieldName);
 
           if (!field) {
@@ -95,7 +95,6 @@ export function checkViewDeps(item: {
             );
             return;
           } else if (field.fieldClass === enums.FieldClassEnum.Filter) {
-            // error e287
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER,
@@ -123,7 +122,7 @@ export function checkViewDeps(item: {
     }
   });
 
-  // return zero views if at least 1 error found
+  // return zero views if at least 1 error found (no restart needed)
   newViews = item.views.length === newViews.length ? newViews : [];
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);

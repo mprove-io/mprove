@@ -6,12 +6,11 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.ViewBuild;
-let func = enums.FuncEnum.CheckViewDeps;
-let testId = 'e__derived-table-references-filter';
+let func = enums.FuncEnum.PickUdfsFromAsDeps;
+let testId = 'v__1';
 
 test(testId, async () => {
   let views: interfaces.View[];
-  let errors: interfaces.BmErrorC[];
 
   try {
     let {
@@ -36,16 +35,12 @@ test(testId, async () => {
     });
 
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(views.length).toBe(0);
-  expect(errors.length).toBe(1);
-  expect(errors[0].title).toBe(
-    enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER
-  );
-  expect(errors[0].lines[0].line).toBe(3);
+  expect(views.length).toBe(2);
+  expect(views[0].udfs.length).toBe(1);
+  expect(views[1].udfs.length).toBe(1);
 });

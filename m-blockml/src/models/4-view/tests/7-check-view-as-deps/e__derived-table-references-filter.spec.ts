@@ -6,8 +6,8 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.ViewBuild;
-let func = enums.FuncEnum.CheckViewDeps;
-let testId = 'e__derived-table-references-missing-field';
+let func = enums.FuncEnum.CheckViewAsDeps;
+let testId = 'e__derived-table-references-filter';
 
 test(testId, async () => {
   let views: interfaces.View[];
@@ -45,7 +45,7 @@ test(testId, async () => {
   expect(views.length).toBe(0);
   expect(errors.length).toBe(1);
   expect(errors[0].title).toBe(
-    enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_FIELD
+    enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER
   );
   expect(errors[0].lines[0].line).toBe(3);
 });

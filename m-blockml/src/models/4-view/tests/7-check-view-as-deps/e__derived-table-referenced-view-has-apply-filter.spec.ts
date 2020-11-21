@@ -6,7 +6,7 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.ViewBuild;
-let func = enums.FuncEnum.CheckViewDeps;
+let func = enums.FuncEnum.CheckViewAsDeps;
 let testId = 'e__derived-table-referenced-view-has-apply-filter';
 
 test(testId, async () => {

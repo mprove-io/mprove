@@ -44,13 +44,14 @@ export interface View extends FileBasic {
   };
 
   asDeps?: {
+    // derived table deps
     [as: string]: {
       viewName: string;
-      fields: { [field: string]: number };
+      fieldNames: { [fieldName: string]: number };
     };
   };
 
-  viewDeps?: string[];
+  viewDeps?: string[]; // for web deps graph
 
   filters?: {
     [s: string]: string[];
