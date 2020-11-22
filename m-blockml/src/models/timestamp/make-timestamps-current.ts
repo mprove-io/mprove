@@ -1,4 +1,5 @@
 import { api } from '../../barrels/api';
+import { constants } from '../../barrels/constants';
 
 export function makeTimestampsCurrent(item: {
   connection: api.ProjectConnection;
@@ -19,7 +20,7 @@ export function makeTimestampsCurrent(item: {
   switch (connection.type) {
     case api.ConnectionTypeEnum.BigQuery: {
       currentTimestamp =
-        timezone === 'UTC'
+        timezone === constants.UTC
           ? 'CURRENT_TIMESTAMP()'
           : `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', CURRENT_TIMESTAMP(), '${timezone}'))`;
 
@@ -40,7 +41,7 @@ export function makeTimestampsCurrent(item: {
 
     case api.ConnectionTypeEnum.PostgreSQL: {
       currentTimestamp =
-        timezone === 'UTC'
+        timezone === constants.UTC
           ? 'CURRENT_TIMESTAMP'
           : `TIMEZONE('${timezone}', CURRENT_TIMESTAMP::TIMESTAMPTZ)`;
 

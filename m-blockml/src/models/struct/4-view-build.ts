@@ -1,14 +1,17 @@
 import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
-import { interfaces } from 'src/barrels/interfaces';
+import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
 import { barView } from '../../barrels/bar-view';
 
 export function viewBuild(item: {
   views: interfaces.View[];
   udfs: interfaces.Udf[];
+  udfsDict: interfaces.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
+  projectId: string;
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -71,18 +74,15 @@ export function viewBuild(item: {
     caller: item.caller
   });
 
-  // views = await barView.processViewRefs({
-  //   views: views,
-  //   udfs_dict: udfsDict,
-  //   timezone: 'UTC',
-  //   weekStart: item.weekStart,
-  //   connection: item.connection,
-  //   bqProject: item.bqProject,
-  //   projectId: item.projectId,
-  //   structId: item.structId
-  // });
-
-  // views = barView.swapDerivedTables({ views: views });
+  views = barView.processViewRefs({
+    views: views,
+    udfsDict: item.udfsDict,
+    timezone: constants.UTC,
+    weekStart: item.weekStart,
+    projectId: item.projectId,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   return views;
 }

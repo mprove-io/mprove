@@ -83,6 +83,4 @@ export interface Vars {
   };
   joinsWhere: string[];
   query: string[];
-  // queryPdtDeps: { [id: string]: number };
-  // queryPdtDepsAll: { [id: string]: number };
 }

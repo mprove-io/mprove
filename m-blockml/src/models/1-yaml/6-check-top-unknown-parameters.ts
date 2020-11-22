@@ -70,9 +70,6 @@ export function checkTopUnknownParameters(item: {
                 enums.ParameterEnum.Table.toString(),
                 enums.ParameterEnum.DerivedTable.toString(),
                 enums.ParameterEnum.Fields.toString()
-                // 'permanent',
-                // 'pdt_trigger_time',
-                // 'pdt_trigger_sql',
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(

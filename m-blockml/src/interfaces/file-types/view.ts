@@ -59,8 +59,6 @@ export interface View extends FileBasic {
 
   derivedTableStart?: string;
 
-  derivedTableNew?: string;
-
   parts?: {
     [viewPartName: string]: {
       content: string;
@@ -69,23 +67,4 @@ export interface View extends FileBasic {
       deps: { [depName: string]: number };
     };
   };
-
-  // permanent: string; // boolean
-  // permanent_line_num: number;
-
-  // pdt_trigger_time: string;
-  // pdt_trigger_time_line_num: number;
-
-  // pdt_trigger_sql: string;
-  // pdt_trigger_sql_line_num: number;
-
-  // pdtViewDeps: {
-  //   [view: string]: number;
-  // };
-
-  // pdtViewDepsAll: {
-  //   [view: string]: number;
-  // };
-
-  // isPdt: boolean;
 }

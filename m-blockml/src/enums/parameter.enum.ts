@@ -46,7 +46,4 @@ export enum ParameterEnum {
   Unnest = 'unnest',
   UnnestOn = 'unnest_on',
   View = 'view'
-  // 'pdt_trigger_sql',
-  // 'pdt_trigger_time',
-  // 'permanent',
 }

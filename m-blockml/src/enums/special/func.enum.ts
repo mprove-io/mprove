@@ -39,6 +39,7 @@ export enum FuncEnum {
   CheckViewCycles = '4-view/6-check-view-cycles',
   CheckViewAsDeps = '4-view/7-check-view-as-deps',
   PickUdfsFromAsDeps = '4-view/8-pick-udfs-from-as-deps',
+  ProcessViewRefs = '4-view/9-process-view-refs',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

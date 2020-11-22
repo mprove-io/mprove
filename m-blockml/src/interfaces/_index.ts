@@ -32,6 +32,3 @@ export * from './struct';
 export * from './udfs-dict';
 export * from './vars-sub';
 export * from './vars';
-
-// export * from './pdt';
-// export * from './process-message';

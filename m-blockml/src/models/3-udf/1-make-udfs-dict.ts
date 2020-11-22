@@ -19,10 +19,10 @@ export function makeUdfsDict(item: {
     udfsDict[u.name] = u.sql;
   });
 
-  let udfArraySum = `CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS
+  let udfArraySum = `CREATE TEMPORARY FUNCTION ${constants.UDF_MPROVE_ARRAY_SUM}(ar ARRAY<STRING>) AS
   ((SELECT SUM(CAST(REGEXP_EXTRACT(val, '\\\\|\\\\|(\\\\-?\\\\d+(?:.\\\\d+)?)\$') AS FLOAT64)) FROM UNNEST(ar) as val));`;
 
-  let udfAPDD = `CREATE TEMPORARY FUNCTION mprove_approx_percentile_distinct_disc(a_num ARRAY<STRING>, fraction FLOAT64) RETURNS FLOAT64 AS
+  let udfAPDD = `CREATE TEMPORARY FUNCTION ${constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC}(a_num ARRAY<STRING>, fraction FLOAT64) RETURNS FLOAT64 AS
   ((
   SELECT
     MAX(num1)

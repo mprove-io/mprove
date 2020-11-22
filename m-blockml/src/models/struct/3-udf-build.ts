@@ -1,5 +1,5 @@
 import { enums } from '../../barrels/enums';
-import { interfaces } from 'src/barrels/interfaces';
+import { interfaces } from '../../barrels/interfaces';
 import { barUdf } from '../../barrels/bar-udf';
 
 export function udfBuild(item: {

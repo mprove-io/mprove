@@ -12,7 +12,4 @@ export interface Struct {
   models: Model[];
   dashboards: Dashboard[];
   visualizations: Visualization[];
-
-  // pdts: Pdt[];
-  // pdtsSorted: string[];
 }

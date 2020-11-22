@@ -53,10 +53,7 @@ export function processLineNumbersRecursive(item: {
     let npReg = api.MyRegex.BETWEEN_LINE_NUM_G();
     let newPar = oldPar.replace(npReg, '');
 
-    if (
-      typeof item.hash[oldPar] === 'undefined' ||
-      item.hash[oldPar] === null
-    ) {
+    if (helper.isUndefined(item.hash[oldPar])) {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.UNDEFINED_VALUE,

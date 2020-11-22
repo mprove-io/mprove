@@ -1,5 +1,6 @@
 import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
+import { constants } from '../../barrels/constants';
 import { enums } from '../../barrels/enums';
 import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
@@ -58,7 +59,7 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
         let p = processFilter({
           weekStart: item.weekStart,
           connection: x.connection,
-          timezone: 'UTC',
+          timezone: constants.UTC,
           result: field.result,
           filterBricks: field.default,
           proc: 'proc',

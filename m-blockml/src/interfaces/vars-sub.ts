@@ -8,8 +8,7 @@ export interface VarsSub {
   select: string[];
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
-  connectionType: api.ConnectionTypeEnum;
-  bqProject: string;
+  connection: api.ProjectConnection;
   projectId: string;
   structId: string;
   udfsDict: UdfsDict;
