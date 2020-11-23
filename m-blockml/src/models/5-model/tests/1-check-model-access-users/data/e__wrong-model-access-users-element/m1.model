@@ -1,0 +1,9 @@
+model: m1
+connection: c1
+access_users:  
+- a: 'abc'
+
+fields:
+- dimension: dim1
+  sql: d1
+

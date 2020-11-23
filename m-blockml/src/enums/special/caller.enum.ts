@@ -4,5 +4,7 @@ export enum CallerEnum {
   FieldBuildModels = '2-field-build-models',
   UdfBuild = '3-udf-build',
   ViewBuild = '4-view-build',
+  ModelBuild = '5-model-build',
+
   RebuildStruct = 'rebuild-struct'
 }

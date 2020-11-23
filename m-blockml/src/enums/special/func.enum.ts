@@ -41,6 +41,8 @@ export enum FuncEnum {
   PickUdfsFromAsDeps = '4-view/8-pick-udfs-from-as-deps',
   ProcessViewRefs = '4-view/9-process-view-refs',
 
+  CheckModelAccessUsers = '5-model/1-check-model-access-users',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'struct/log-struct'

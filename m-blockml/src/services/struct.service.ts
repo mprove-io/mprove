@@ -107,36 +107,16 @@ export class StructService {
       caller: enums.CallerEnum.ViewBuild
     });
 
-    // // ApModel
-    // models = barModel.checkModelAccessUsers({ models: models });
-    // models = barModel.checkModelUdfs({
-    //   models: models,
-    //   udfs: udfs
-    // });
-    // models = barModel.checkJoinsIsArray({ models: models });
-    // models = barModel.checkJoinsFromView({ models: models });
-    // models = barModel.checkAliases({ models: models });
-    // models = barModel.makeJoinsAndSetLabelsAndDescriptions({
-    //   models: models,
-    //   views: views
-    // });
-
-    // models = barModel.upgradeMfCalcForceDims({ models: models });
-
-    // models = barModel.makeFieldsDoubleDeps({ models: models });
-    // models = barModel.checkFieldsDoubleDeps({ models: models });
-    // models = barModel.afterDoubleCheckFieldsDeps({ models: models });
-    // // substitute double calc with restart #add doubles to 'force_dims'
-    // models = barModel.makeFieldsDoubleDepsAfterSingles({ models: models });
-
-    // models = barModel.checkModelFiltersFromField({ models: models });
-
-    // // ApFilter
-    // models = barFilter.checkVMDFilterDefaults({
-    //   entities: models,
-    //   weekStart: item.weekStart,
-    //   connection: item.connection
-    // });
+    models = barStruct.modelBuild({
+      models: models,
+      views: views,
+      udfs: udfs,
+      weekStart: item.weekStart,
+      projectId: item.projectId,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.ModelBuild
+    });
 
     // // ApJoin
     // models = barJoin.checkJoinUnknownParameters({ models: models });
