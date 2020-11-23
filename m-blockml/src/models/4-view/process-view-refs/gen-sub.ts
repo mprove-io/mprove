@@ -1,6 +1,6 @@
-import { barSub } from '../../barrels/bar-sub';
-import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
+import { barSub } from '../../../barrels/bar-sub';
+import { api } from '../../../barrels/api';
+import { interfaces } from '../../../barrels/interfaces';
 
 export function genSub(item: {
   view: interfaces.View;

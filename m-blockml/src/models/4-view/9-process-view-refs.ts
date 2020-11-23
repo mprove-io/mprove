@@ -3,7 +3,7 @@ import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
-import { substituteViewRefsRecursive } from './9-2-substitute-view-refs-recursive';
+import { substituteViewRefsRecursive } from './process-view-refs/substitute-view-refs-recursive';
 let toposort = require('toposort');
 
 let func = enums.FuncEnum.ProcessViewRefs;
@@ -22,26 +22,29 @@ export function processViewRefs(item: {
   item.views.forEach(x => {
     x.parts = {};
 
-    x.derivedTableStart = x.derived_table;
+    if (helper.isDefined(x.derived_table)) {
+      // x.derivedTableFullArray = x.derived_table.split('\n');
+      x.derivedTableStart = x.derived_table;
+      x.derivedTableNew = x.derived_table;
+    }
 
     if (Object.keys(x.asDeps).length === 0) {
       return;
     }
 
-    let derivedTableNew = x.derived_table;
-
-    derivedTableNew = substituteViewRefsRecursive({
+    // x.derivedTableFullArray =
+    substituteViewRefsRecursive({
       topView: x,
       parentViewName: x.name,
       parentDeps: {},
-      input: derivedTableNew,
+      input: x.derived_table,
       views: item.views,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       connection: x.connection,
       projectId: item.projectId,
       structId: item.structId
-    });
+    }).split('\n');
 
     let text = x.derived_table;
 
@@ -54,6 +57,8 @@ export function processViewRefs(item: {
 
     let graph = [];
 
+    let zeroDepsViewPartNames = [];
+
     Object.keys(x.parts).forEach(viewPartName => {
       Object.keys(x.parts[viewPartName].deps).forEach(dep => {
         graph.push([viewPartName, dep]);
@@ -62,31 +67,51 @@ export function processViewRefs(item: {
 
     partNamesSorted = toposort(graph).reverse();
 
+    Object.keys(x.parts).forEach(viewPartName => {
+      if (partNamesSorted.indexOf(viewPartName) < 0) {
+        zeroDepsViewPartNames.push(viewPartName);
+      }
+    });
+
+    partNamesSorted = [...zeroDepsViewPartNames, ...partNamesSorted];
+    api.logToConsole(partNamesSorted);
+    api.logToConsole(partNamesSorted[0]);
+
     let count = 0;
+
+    let textStart;
 
     partNamesSorted.forEach(viewPartName => {
       count++;
 
       let content = x.parts[viewPartName].content;
+
       content = api.MyRegex.replaceViewRefs(
         content,
         x.parts[viewPartName].parentViewName
       );
+
       content = api.MyRegex.removeBracketsOnViewFieldRefs(content);
 
       x.parts[viewPartName].contentPrepared = content;
 
-      if (count === 1) {
+      if (count === Object.keys(x.parts).length) {
         // remove last comma
         content = content.slice(0, -1);
       }
 
-      text = [content, text].join('\n');
+      textStart = [textStart, content].join('\n');
     });
+
+    text = [textStart, text].join('\n');
 
     text = [constants.WITH, text].join('\n');
 
-    x.derived_table = text;
+    x.derivedTableNew = text;
+    x.derivedTableNewArray = text.split('\n');
+    // TODO: do not swap derived tables
+    // make-contents line 143
+    // let derivedSql = join.view.derived_table; -> join.view.derivedTableNew
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);

@@ -57,7 +57,12 @@ export interface View extends FileBasic {
     [s: string]: string[];
   };
 
+  // derivedTableFullArray?: string[];
+
   derivedTableStart?: string;
+
+  derivedTableNew?: string;
+  derivedTableNewArray?: string[];
 
   parts?: {
     [viewPartName: string]: {

@@ -1,0 +1,12 @@
+view: v2
+connection: c1
+derived_table: |
+  SELECT ${c.dim3}
+  FROM 
+    ${v3 AS c}
+fields:
+- dimension: dim2
+  sql: d2
+
+
+

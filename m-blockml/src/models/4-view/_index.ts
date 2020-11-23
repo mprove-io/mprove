@@ -6,4 +6,4 @@ export * from './5-make-view-as-deps';
 export * from './6-check-view-cycles';
 export * from './7-check-view-as-deps';
 export * from './8-pick-udfs-from-as-deps';
-export * from './9-1-process-view-refs';
+export * from './9-process-view-refs';

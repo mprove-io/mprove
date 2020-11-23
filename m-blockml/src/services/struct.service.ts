@@ -107,23 +107,6 @@ export class StructService {
       caller: enums.CallerEnum.ViewBuild
     });
 
-    // // api pdt_deps
-
-    // pdts = barView.makePdts({
-    //   views: views,
-    //   udfs_dict: udfsDict,
-    //   structId: item.structId,
-    //   connection: item.connection,
-    //   bqProject: item.bqProject,
-    //   projectId: item.projectId
-    // });
-
-    // pdts = barView.processPdtTriggerTime({ pdts: pdts });
-    // pdts = barView.processPdtTriggerSqlTableId({ pdts: pdts });
-    // pdts = barView.processPdtTriggerSqlTableRef({ pdts: pdts });
-
-    // let pdtsSorted = barView.sortPdts({ pdts: pdts });
-
     // // ApModel
     // models = barModel.checkModelAccessUsers({ models: models });
     // models = barModel.checkModelUdfs({

@@ -1,12 +1,8 @@
-import { api } from '../../barrels/api';
+import { interfaces } from 'src/barrels/interfaces';
+import { api } from '../../../barrels/api';
 
 export function getAsDeps(input: string) {
-  let asDeps: {
-    [as: string]: {
-      view_name: string;
-      fields: { [field: string]: number };
-    };
-  } = {};
+  let asDeps: interfaces.View['asDeps'] = {};
 
   let reg = api.MyRegex.CAPTURE_VIEW_REF_G();
   let r;
@@ -16,7 +12,7 @@ export function getAsDeps(input: string) {
     let alias: string = r[2];
 
     if (!asDeps[alias]) {
-      asDeps[alias] = { view_name: view, fields: {} };
+      asDeps[alias] = { viewName: view, fieldNames: {} };
     }
   }
 
@@ -27,7 +23,7 @@ export function getAsDeps(input: string) {
     let as: string = r2[1];
     let dep: string = r2[2];
 
-    asDeps[as].fields[dep] = 1;
+    asDeps[as].fieldNames[dep] = 1;
   }
 
   return asDeps;

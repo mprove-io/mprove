@@ -1,7 +1,7 @@
-import { barSub } from '../../barrels/bar-sub';
-import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
-import { genSub } from './9-5-gen-sub';
+import { barSub } from '../../../barrels/bar-sub';
+import { api } from '../../../barrels/api';
+import { interfaces } from '../../../barrels/interfaces';
+import { genSub } from './gen-sub';
 
 export function makeViewPart(item: {
   topView: interfaces.View;
