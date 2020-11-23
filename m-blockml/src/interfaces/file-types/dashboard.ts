@@ -29,8 +29,6 @@ export interface Dashboard extends FileBasic {
   reports_line_num?: number;
 
   //
-  // TODO: check dashboard connection
-  connection?: api.ProjectConnection;
 
   filters?: {
     [s: string]: string[];

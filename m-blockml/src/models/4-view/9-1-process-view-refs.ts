@@ -11,7 +11,6 @@ let func = enums.FuncEnum.ProcessViewRefs;
 export function processViewRefs(item: {
   views: interfaces.View[];
   udfsDict: interfaces.UdfsDict;
-  timezone: string;
   weekStart: api.ProjectWeekStartEnum;
   projectId: string;
   structId: string;
@@ -38,7 +37,6 @@ export function processViewRefs(item: {
       input: derivedTableNew,
       views: item.views,
       udfsDict: item.udfsDict,
-      timezone: item.timezone,
       weekStart: item.weekStart,
       connection: x.connection,
       projectId: item.projectId,

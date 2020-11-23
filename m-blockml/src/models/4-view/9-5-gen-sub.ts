@@ -6,7 +6,6 @@ export function genSub(item: {
   view: interfaces.View;
   select: string[];
   udfsDict: interfaces.UdfsDict;
-  timezone: string;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
   projectId: string;
@@ -17,7 +16,6 @@ export function genSub(item: {
   let vars: interfaces.VarsSub = {
     view: item.view,
     select: item.select,
-    timezone: item.timezone,
     weekStart: item.weekStart,
     connection: item.connection,
     projectId: item.projectId,
@@ -80,7 +78,7 @@ export function genSub(item: {
   // query
   // timezone
   //    query
-  vars = barSub.processTimezone(vars);
+  // vars = barSub.processTimezone(vars);
 
   // view
   // select

@@ -5,11 +5,11 @@ import { helper } from '../../barrels/helper';
 import { barTimestamp } from '../../barrels/bar-timestamp';
 
 export function processFilter(item: {
+  filterBricks: string[];
+  result: enums.FieldAnyResultEnum;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
   timezone: string;
-  result: enums.FieldAnyResultEnum;
-  filterBricks: string[];
   proc: string;
   sqlTimestampSelect: string;
   ORs: string[];

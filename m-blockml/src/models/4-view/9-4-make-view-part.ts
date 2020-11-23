@@ -11,7 +11,6 @@ export function makeViewPart(item: {
   needViewFields: { [field: string]: number };
   view: interfaces.View;
   udfsDict: interfaces.UdfsDict;
-  timezone: string;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
   projectId: string;
@@ -21,7 +20,6 @@ export function makeViewPart(item: {
     select: Object.keys(item.needViewFields),
     view: item.view,
     udfsDict: item.udfsDict,
-    timezone: item.timezone,
     weekStart: item.weekStart,
     connection: item.connection,
     projectId: item.projectId,

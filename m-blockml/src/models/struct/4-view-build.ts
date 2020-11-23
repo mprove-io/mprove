@@ -2,7 +2,6 @@ import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
-import { constants } from '../../barrels/constants';
 import { barView } from '../../barrels/bar-view';
 
 export function viewBuild(item: {
@@ -77,7 +76,6 @@ export function viewBuild(item: {
   views = barView.processViewRefs({
     views: views,
     udfsDict: item.udfsDict,
-    timezone: constants.UTC,
     weekStart: item.weekStart,
     projectId: item.projectId,
     structId: item.structId,

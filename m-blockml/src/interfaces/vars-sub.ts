@@ -6,7 +6,6 @@ import { BqView } from './bq-view';
 export interface VarsSub {
   view: View;
   select: string[];
-  timezone: string;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
   projectId: string;

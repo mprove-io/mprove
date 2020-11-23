@@ -54,21 +54,25 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
       if (helper.isUndefined(field.default)) {
         x.filters[field.name] = [];
       } else {
-        field.fractions = [];
-        // TODO: check constants
+        let cn: api.ProjectConnection = {
+          name: 'cn',
+          type: api.ConnectionTypeEnum.PostgreSQL
+        };
+
         let p = processFilter({
-          weekStart: item.weekStart,
-          connection: x.connection,
-          timezone: constants.UTC,
-          result: field.result,
           filterBricks: field.default,
+          result: field.result,
+          // parameters below do not affect validation
+          weekStart: api.ProjectWeekStartEnum.Monday,
+          timezone: constants.UTC,
+          connection: cn,
           proc: 'proc',
-          sqlTimestampSelect: 'sql_timestamp_select',
+          sqlTimestampSelect: 'sqlTimestampSelect',
           ORs: [],
           NOTs: [],
           IN: [],
           NOTIN: [],
-          fractions: field.fractions
+          fractions: []
         });
 
         if (p.valid === 0) {
