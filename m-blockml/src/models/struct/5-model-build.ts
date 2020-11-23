@@ -31,7 +31,12 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.checkJoinsIsArray({ models: models });
+  models = barModel.checkJoinsExist({
+    models: models,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // models = barModel.checkJoinsFromView({ models: models });
 
