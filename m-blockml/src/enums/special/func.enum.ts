@@ -42,6 +42,7 @@ export enum FuncEnum {
   ProcessViewRefs = '4-view/9-process-view-refs',
 
   CheckModelAccessUsers = '5-model/1-check-model-access-users',
+  CheckModelUdfs = '5-model/2-check-model-udfs',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

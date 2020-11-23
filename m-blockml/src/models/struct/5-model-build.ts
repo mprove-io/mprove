@@ -23,10 +23,13 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.checkModelUdfs({
-  //   models: models,
-  //   udfs: udfs
-  // });
+  models = barModel.checkModelUdfs({
+    models: models,
+    udfs: item.udfs,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // models = barModel.checkJoinsIsArray({ models: models });
 

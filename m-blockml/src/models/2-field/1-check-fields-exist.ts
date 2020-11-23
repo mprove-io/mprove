@@ -2,6 +2,7 @@ import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
 import { types } from '../../barrels/types';
+import { api } from '../../barrels/api';
 
 let func = enums.FuncEnum.CheckFieldsExist;
 
@@ -19,7 +20,10 @@ export function checkFieldsExist<T extends types.vmdType>(item: {
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.fields)) {
+    if (
+      helper.isUndefined(x.fields) &&
+      x.fileExt === api.FileExtensionEnum.View
+    ) {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.MISSING_FIELDS,
@@ -34,6 +38,10 @@ export function checkFieldsExist<T extends types.vmdType>(item: {
         })
       );
       return;
+    }
+
+    if (helper.isUndefined(x.fields)) {
+      x.fields = [];
     }
 
     let errorsOnEnd = item.errors.length;

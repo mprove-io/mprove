@@ -1,4 +1,4 @@
-import { interfaces } from 'src/barrels/interfaces';
+import { interfaces } from '../../../barrels/interfaces';
 import { api } from '../../../barrels/api';
 
 export function getAsDeps(input: string) {
