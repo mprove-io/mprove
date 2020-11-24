@@ -45,6 +45,7 @@ export enum FuncEnum {
   CheckModelUdfs = '5-model/2-check-model-udfs',
   CheckJoinsExist = '5-model/3-check-joins-exist',
   CheckJoinsFromView = '5-model/4-check-joins-from-view',
+  CheckAliases = '5-model/5-check-aliases',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

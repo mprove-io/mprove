@@ -7,6 +7,7 @@ export enum ParameterEnum {
   //
   AccessUsers = 'access_users',
   AlwaysJoin = 'always_join',
+  As = 'as',
   Calculation = 'calculation',
   Connection = 'connection',
   CurrencyPrefix = 'currency_prefix',

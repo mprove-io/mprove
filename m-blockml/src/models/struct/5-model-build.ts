@@ -45,7 +45,12 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.checkAliases({ models: models });
+  models = barModel.checkAliases({
+    models: models,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // models = barModel.makeJoinsAndSetLabelsAndDescriptions({
   //   models: models,
