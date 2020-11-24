@@ -73,7 +73,12 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.checkFieldsDoubleDeps({ models: models });
+  models = barModel.checkFieldsDoubleDeps({
+    models: models,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // models = barModel.afterDoubleCheckFieldsDeps({ models: models });
 

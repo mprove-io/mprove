@@ -6,10 +6,10 @@ export * from './5-check-aliases';
 export * from './6-make-joins';
 export * from './7-upgrade-mf-calc-force-dims';
 export * from './8-make-fields-double-deps';
+export * from './9-check-fields-double-deps';
 
 // export * from './after-double-check-fields-deps';
 // export * from './check-always-join';
-// export * from './check-fields-double-deps';
 // export * from './check-joins-cycles-and-toposort';
 // export * from './check-model-filters-from-field';
 // export * from './make-fields-double-deps-after-singles';
