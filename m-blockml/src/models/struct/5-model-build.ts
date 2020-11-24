@@ -60,7 +60,11 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.upgradeMfCalcForceDims({ models: models });
+  models = barModel.upgradeMfCalcForceDims({
+    models: models,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // models = barModel.makeFieldsDoubleDeps({ models: models });
 

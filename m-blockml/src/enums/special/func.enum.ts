@@ -47,6 +47,7 @@ export enum FuncEnum {
   CheckJoinsFromView = '5-model/4-check-joins-from-view',
   CheckAliases = '5-model/5-check-aliases',
   MakeJoins = '5-model/6-make-joins',
+  UpgradeMfCalcForceDims = '5-model/7-upgrade-mf-calc-force-dims',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
