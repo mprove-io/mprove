@@ -47,8 +47,8 @@ export function makeJoins(item: {
         return;
       }
 
-      let viewLabel = j.view.label;
-      let viewDescription = j.view.description;
+      let viewLabel = view.label;
+      let viewDescription = view.description;
 
       j.view = JSON.parse(JSON.stringify(view));
 

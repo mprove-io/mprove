@@ -66,7 +66,12 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.makeFieldsDoubleDeps({ models: models });
+  models = barModel.makeFieldsDoubleDeps({
+    models: models,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // models = barModel.checkFieldsDoubleDeps({ models: models });
 
