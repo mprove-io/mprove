@@ -40,8 +40,7 @@ export function checkTable(item: {
       return;
     }
 
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+    if (errorsOnStart === item.errors.length) {
       newViews.push(x);
     }
   });

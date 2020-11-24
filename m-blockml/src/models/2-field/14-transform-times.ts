@@ -474,8 +474,7 @@ export function transformTimes<T extends types.vmType>(item: {
       // no push of time field (transformed to dimensions)
     });
 
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+    if (errorsOnStart === item.errors.length) {
       x.fields = newFields;
       newEntities.push(x);
     }

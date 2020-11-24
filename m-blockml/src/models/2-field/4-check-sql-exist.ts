@@ -63,8 +63,7 @@ export function checkSqlExist<T extends types.vmdType>(item: {
       }
     });
 
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+    if (errorsOnStart === item.errors.length) {
       newEntities.push(x);
     }
   });

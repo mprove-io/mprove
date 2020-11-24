@@ -106,8 +106,7 @@ export function makeViewAsDeps(item: {
       }
     }
 
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+    if (errorsOnStart === item.errors.length) {
       newViews.push(x);
     }
 

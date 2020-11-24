@@ -26,8 +26,8 @@ export function makeLineNumbers(item: {
       filePath: element.path,
       errors: item.errors
     });
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+
+    if (errorsOnStart === item.errors.length) {
       newFilesAny.push(element);
     }
   });

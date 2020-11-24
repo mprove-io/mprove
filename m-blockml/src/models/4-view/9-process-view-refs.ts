@@ -74,8 +74,6 @@ export function processViewRefs(item: {
     });
 
     partNamesSorted = [...zeroDepsViewPartNames, ...partNamesSorted];
-    api.logToConsole(partNamesSorted);
-    api.logToConsole(partNamesSorted[0]);
 
     let count = 0;
 

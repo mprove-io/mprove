@@ -107,8 +107,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(item: {
       Object.assign(field, newFieldProps);
     });
 
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+    if (errorsOnStart === item.errors.length) {
       newEntities.push(x);
     }
   });

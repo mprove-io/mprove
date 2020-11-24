@@ -44,8 +44,7 @@ export function checkFieldsExist<T extends types.vmdType>(item: {
       x.fields = [];
     }
 
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+    if (errorsOnStart === item.errors.length) {
       newEntities.push(x);
     }
   });

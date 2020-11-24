@@ -61,8 +61,7 @@ export function checkCycles<T extends types.vmType>(item: {
       return;
     }
 
-    let errorsOnEnd = item.errors.length;
-    if (errorsOnStart === errorsOnEnd) {
+    if (errorsOnStart === item.errors.length) {
       newEntities.push(x);
     }
   });

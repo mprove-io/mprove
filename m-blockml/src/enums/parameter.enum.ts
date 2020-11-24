@@ -19,6 +19,8 @@ export enum ParameterEnum {
   Fields = 'fields',
   Filter = 'filter',
   FormatNumber = 'format_number',
+  FromView = 'from_view',
+  JoinView = 'join_view',
   Group = 'group',
   GroupLabel = 'group_label',
   GroupDescription = 'group_description',
