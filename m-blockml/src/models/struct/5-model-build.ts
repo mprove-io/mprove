@@ -52,10 +52,13 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.makeJoinsAndSetLabelsAndDescriptions({
-  //   models: models,
-  //   views: views
-  // });
+  models = barModel.makeJoins({
+    models: models,
+    views: item.views,
+    errors: item.errors,
+    structId: item.structId,
+    caller: item.caller
+  });
 
   // models = barModel.upgradeMfCalcForceDims({ models: models });
 

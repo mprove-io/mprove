@@ -29,7 +29,6 @@ export function checkAliases(item: {
           .filter(p => p.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(l => lineNums.push((<any>j)[l]));
 
-        // error e16
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MISSING_AS,
@@ -62,7 +61,6 @@ export function checkAliases(item: {
     if (errorsOnStart === item.errors.length) {
       aliases.forEach(alias => {
         if (alias.asLineNums.length > 1) {
-          // error e17
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.DUPLICATE_ALIASES,
