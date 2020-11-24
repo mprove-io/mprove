@@ -50,13 +50,13 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
+  expect(errors.length).toBe(1);
   expect(udfs.length).toBe(0);
   expect(views.length).toBe(0);
   expect(models.length).toBe(0);
   expect(dashboards.length).toBe(0);
   expect(visualizations.length).toBe(0);
 
-  expect(errors.length).toBe(1);
   expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_VISUALIZATION_NAME);
   expect(errors[0].lines[0].line).toBe(1);
 });

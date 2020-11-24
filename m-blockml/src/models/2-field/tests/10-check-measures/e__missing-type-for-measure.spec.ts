@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckMeasures;
 let testId = 'e__missing-type-for-measure';
 
 test(testId, async () => {
-  let entities;
   let errors: interfaces.BmErrorC[];
+  let entities;
 
   try {
     let {
@@ -35,15 +35,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(entities.length).toBe(0);
   expect(errors.length).toBe(1);
+  expect(entities.length).toBe(0);
+
   expect(errors[0].title).toBe(enums.ErTitleEnum.MISSING_TYPE_FOR_MEASURE);
   expect(errors[0].lines[0].line).toBe(4);
 });

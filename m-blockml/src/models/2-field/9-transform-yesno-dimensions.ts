@@ -1,11 +1,13 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { types } from '../../barrels/types';
+import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.TransformYesNoDimensions;
 
 export function transformYesNoDimensions<T extends types.vmType>(item: {
   entities: Array<T>;
+  errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -26,6 +28,8 @@ export function transformYesNoDimensions<T extends types.vmType>(item: {
     });
   });
 
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Entities, item.entities);
+
   return item.entities;
 }

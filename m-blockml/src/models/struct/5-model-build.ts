@@ -18,65 +18,66 @@ export function modelBuild(item: {
 
   models = barModel.checkModelAccessUsers({
     models: models,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.checkModelUdfs({
     models: models,
     udfs: item.udfs,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.checkJoinsExist({
     models: models,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.checkJoinsFromView({
     models: models,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.checkAliases({
     models: models,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.makeJoins({
     models: models,
     views: item.views,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.upgradeMfCalcForceDims({
     models: models,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.makeFieldsDoubleDeps({
     models: models,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   models = barModel.checkFieldsDoubleDeps({
     models: models,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 

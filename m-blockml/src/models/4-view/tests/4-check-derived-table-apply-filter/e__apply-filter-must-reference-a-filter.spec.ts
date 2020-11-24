@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckDerivedTableApplyFilter;
 let testId = 'e__apply-filter-must-reference-a-filter';
 
 test(testId, async () => {
-  let views: interfaces.View[];
   let errors: interfaces.BmErrorC[];
+  let views: interfaces.View[];
 
   try {
     let {
@@ -35,15 +35,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(views.length).toBe(0);
   expect(errors.length).toBe(1);
+  expect(views.length).toBe(0);
+
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER
   );

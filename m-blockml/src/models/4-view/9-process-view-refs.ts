@@ -4,6 +4,7 @@ import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 import { substituteViewRefsRecursive } from './process-view-refs/substitute-view-refs-recursive';
+import { BmError } from '../bm-error';
 let toposort = require('toposort');
 
 let func = enums.FuncEnum.ProcessViewRefs;
@@ -13,6 +14,7 @@ export function processViewRefs(item: {
   udfsDict: interfaces.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   projectId: string;
+  errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -112,6 +114,7 @@ export function processViewRefs(item: {
     // let derivedSql = join.view.derived_table; -> join.view.derivedTableNew
   });
 
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
 
   return item.views;

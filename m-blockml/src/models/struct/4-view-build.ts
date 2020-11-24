@@ -18,58 +18,59 @@ export function viewBuild(item: {
 
   views = barView.checkTable({
     views: views,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   views = barView.checkViewUdfs({
     views: views,
     udfs: item.udfs,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   views = barView.checkViewFilterDefaults({
     views: views,
     weekStart: item.weekStart,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   views = barView.checkDerivedTableApplyFilter({
     views: views,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   views = barView.makeViewAsDeps({
     views: views,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   views = barView.checkViewCycles({
     views: views,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   views = barView.checkViewAsDeps({
     views: views,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   views = barView.pickUdfsFromAsDeps({
     views: views,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
@@ -79,6 +80,7 @@ export function viewBuild(item: {
     weekStart: item.weekStart,
     projectId: item.projectId,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 

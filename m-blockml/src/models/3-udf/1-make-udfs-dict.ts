@@ -2,11 +2,13 @@ import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
+import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.MakeUdfsDict;
 
 export function makeUdfsDict(item: {
   udfsUser: interfaces.Udf[];
+  errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -40,6 +42,7 @@ export function makeUdfsDict(item: {
 
   udfsDict[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = udfAPDD;
 
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.UdfsDict, udfsDict);
 
   return udfsDict;

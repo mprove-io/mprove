@@ -60,13 +60,13 @@ export class StructService {
     let visualizations: interfaces.Visualization[];
 
     let yamlBuildItem = barStruct.yamlBuild({
-      caller: enums.CallerEnum.YamlBuild,
-      errors: errors,
       files: item.files,
-      structId: item.structId,
       projectId: item.projectId,
       weekStart: item.weekStart,
-      connections: item.connections
+      connections: item.connections,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.YamlBuild
     });
     udfs = yamlBuildItem.udfs;
     views = yamlBuildItem.views;
@@ -75,24 +75,25 @@ export class StructService {
     visualizations = yamlBuildItem.visualizations;
 
     views = barStruct.fieldBuild({
-      errors: errors,
       entities: views,
-      structId: item.structId,
       weekStart: item.weekStart,
+      structId: item.structId,
+      errors: errors,
       caller: enums.CallerEnum.FieldBuildViews
     });
 
     models = barStruct.fieldBuild({
-      errors: errors,
       entities: models,
-      structId: item.structId,
       weekStart: item.weekStart,
+      structId: item.structId,
+      errors: errors,
       caller: enums.CallerEnum.FieldBuildModels
     });
 
     let udfsDict: interfaces.UdfsDict = barStruct.udfBuild({
       udfs: udfs,
       structId: item.structId,
+      errors: errors,
       caller: enums.CallerEnum.UdfBuild
     });
 

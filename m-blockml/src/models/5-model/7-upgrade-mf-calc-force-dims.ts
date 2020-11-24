@@ -1,11 +1,13 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.UpgradeMfCalcForceDims;
 
 export function upgradeMfCalcForceDims(item: {
   models: interfaces.Model[];
+  errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -30,6 +32,7 @@ export function upgradeMfCalcForceDims(item: {
     });
   });
 
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Models, item.models);
 
   return item.models;

@@ -10,8 +10,8 @@ let func = enums.FuncEnum.MakeFieldsDoubleDeps;
 let testId = 'v__1';
 
 test(testId, async () => {
-  let models: interfaces.Model[];
   let errors: interfaces.BmErrorC[];
+  let models: interfaces.Model[];
 
   try {
     let {
@@ -35,17 +35,13 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(models.length).toBe(1);
   expect(errors.length).toBe(0);
-  // expect(errors[0].title).toBe(enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW);
-  // expect(errors[0].lines[0].line).toBe(4);
-  // expect(errors[1].title).toBe(enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW);
-  // expect(errors[1].lines[0].line).toBe(7);
+  expect(models.length).toBe(1);
 });

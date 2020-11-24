@@ -10,8 +10,8 @@ let func = enums.FuncEnum.MakeUdfsDict;
 let testId = 'v__1';
 
 test(testId, async () => {
-  let udfsDict;
   let errors: interfaces.BmErrorC[];
+  let udfsDict;
 
   try {
     let {
@@ -35,11 +35,14 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     udfsDict = await helper.readLog(fromDir, enums.LogTypeEnum.UdfsDict);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
+
+  expect(errors.length).toBe(0);
 
   expect(Object.keys(udfsDict).length).toBe(3);
 });

@@ -1,11 +1,13 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { types } from '../../barrels/types';
+import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.SetImplicitLabel;
 
 export function setImplicitLabel<T extends types.vmdType>(item: {
   entities: Array<T>;
+  errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -24,6 +26,8 @@ export function setImplicitLabel<T extends types.vmdType>(item: {
     });
   });
 
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Entities, item.entities);
+
   return item.entities;
 }

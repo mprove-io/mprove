@@ -15,125 +15,128 @@ export function fieldBuild<T extends types.vmdType>(item: {
 
   entities = barField.checkFieldsExist({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkFieldIsObject({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkFieldDeclaration({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkSqlExist({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkFieldNameDuplicates({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkFieldUnknownParameters({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.setImplicitLabel({
     entities: entities,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkDimensions({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.transformYesNoDimensions({
     entities: entities,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkMeasures({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkCalculations({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkAndSetImplicitResult({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkAndSetImplicitFormatNumber({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.transformTimes({
     weekStart: item.weekStart,
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.makeFieldsDeps({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkFieldsDeps({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.checkCycles({
     entities: entities,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   entities = barField.substituteSingleRefs({
-    entities: entities,
+    errors: item.errors,
     structId: item.structId,
+    entities: entities,
     caller: item.caller
   });
 

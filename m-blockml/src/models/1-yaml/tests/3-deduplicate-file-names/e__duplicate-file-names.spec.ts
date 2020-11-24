@@ -10,8 +10,8 @@ let func = enums.FuncEnum.DeduplicateFileNames;
 let testId = 'e__duplicate-file-names';
 
 test(testId, async () => {
-  let file3s: interfaces.File3[];
   let errors: interfaces.BmErrorC[];
+  let file3s: interfaces.File3[];
 
   try {
     let {
@@ -30,15 +30,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    file3s = await helper.readLog(fromDir, enums.LogTypeEnum.File3s);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    file3s = await helper.readLog(fromDir, enums.LogTypeEnum.File3s);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(file3s.length).toBe(1);
   expect(errors.length).toBe(1);
+  expect(file3s.length).toBe(1);
+
   expect(errors[0].title).toBe(enums.ErTitleEnum.DUPLICATE_FILE_NAMES);
   expect(errors[0].lines.length).toBe(3);
   expect(errors[0].lines[0].line).toBe(0);

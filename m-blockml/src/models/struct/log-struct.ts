@@ -6,13 +6,13 @@ import { BmError } from '../bm-error';
 let func = enums.FuncEnum.LogStruct;
 
 export async function logStruct(item: {
-  errors: BmError[];
   udfs: interfaces.Udf[];
   views: interfaces.View[];
   models: interfaces.Model[];
   dashboards: interfaces.Dashboard[];
   visualizations: interfaces.Visualization[];
   structId: string;
+  errors: BmError[];
   caller: enums.CallerEnum;
 }) {
   let {

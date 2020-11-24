@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckFieldUnknownParameters;
 let testId = 'e__unknown-dimension-parameter';
 
 test(testId, async () => {
-  let entities;
   let errors: interfaces.BmErrorC[];
+  let entities;
 
   try {
     let {
@@ -35,15 +35,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(entities.length).toBe(0);
   expect(errors.length).toBe(1);
+  expect(entities.length).toBe(0);
+
   expect(errors[0].title).toBe(enums.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER);
   expect(errors[0].lines[0].line).toBe(6);
 });

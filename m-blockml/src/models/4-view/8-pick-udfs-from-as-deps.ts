@@ -1,11 +1,13 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.PickUdfsFromAsDeps;
 
 export function pickUdfsFromAsDeps(item: {
   views: interfaces.View[];
+  errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -56,6 +58,7 @@ export function pickUdfsFromAsDeps(item: {
     }
   });
 
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
 
   return item.views;

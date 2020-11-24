@@ -10,6 +10,7 @@ let func = enums.FuncEnum.SubstituteSingleRefs;
 let testId = 'v__2';
 
 test(testId, async () => {
+  let errors: interfaces.BmErrorC[];
   let entitiesViews: interfaces.View[];
 
   try {
@@ -34,12 +35,14 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     entitiesViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
+  expect(errors.length).toBe(0);
   expect(entitiesViews.length).toBe(1);
 
   expect(entitiesViews[0].fields.length).toBe(3);

@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckConnections;
 let testId = 'e__connection-not-found';
 
 test(testId, async () => {
-  let filesAny: any[];
   let errors: interfaces.BmErrorC[];
+  let filesAny: any[];
 
   try {
     let {
@@ -30,15 +30,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(filesAny.length).toBe(0);
   expect(errors.length).toBe(2);
+  expect(filesAny.length).toBe(0);
+
   expect(errors[0].title).toBe(enums.ErTitleEnum.CONNECTION_NOT_FOUND);
   expect(errors[0].lines[0].line).toBe(2);
   expect(errors[1].title).toBe(enums.ErTitleEnum.CONNECTION_NOT_FOUND);

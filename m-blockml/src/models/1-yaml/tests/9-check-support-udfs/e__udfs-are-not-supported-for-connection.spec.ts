@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckSupportUdfs;
 let testId = 'e__udfs-are-not-supported-for-connection';
 
 test(testId, async () => {
-  let filesAny: any[];
   let errors: interfaces.BmErrorC[];
+  let filesAny: any[];
 
   try {
     let {
@@ -39,16 +39,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
+  expect(errors.length).toBe(2);
   expect(filesAny.length).toBe(2);
 
-  expect(errors.length).toBe(2);
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION
   );

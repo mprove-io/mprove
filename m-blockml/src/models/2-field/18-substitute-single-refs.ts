@@ -3,10 +3,12 @@ import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { types } from '../../barrels/types';
 import { interfaces } from '../../barrels/interfaces';
+import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.SubstituteSingleRefs;
 
 export function substituteSingleRefs<T extends types.vmType>(item: {
+  errors: BmError[];
   entities: Array<T>;
   structId: string;
   caller: enums.CallerEnum;
@@ -260,6 +262,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
     });
   });
 
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Entities, item.entities);
 
   return item.entities;

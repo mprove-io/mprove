@@ -10,8 +10,8 @@ let func = enums.FuncEnum.YamlToObjects;
 let testId = 'e__file-content-is-not-yaml';
 
 test(testId, async () => {
-  let filesAny: any[];
   let errors: interfaces.BmErrorC[];
+  let filesAny: any[];
 
   try {
     let {
@@ -30,15 +30,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(filesAny.length).toBe(0);
   expect(errors.length).toBe(1);
+  expect(filesAny.length).toBe(0);
+
   expect(errors[0].title).toBe(enums.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML);
   expect(errors[0].lines[0].line).toBe(0);
 });

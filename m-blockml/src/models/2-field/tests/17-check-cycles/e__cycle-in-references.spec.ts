@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckCycles;
 let testId = 'e__cycle-in-references';
 
 test(testId, async () => {
-  let entities;
   let errors: interfaces.BmErrorC[];
+  let entities;
 
   try {
     let {
@@ -42,8 +42,9 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(entities.length).toBe(0);
   expect(errors.length).toBe(1);
+  expect(entities.length).toBe(0);
+
   expect(errors[0].title).toBe(enums.ErTitleEnum.CYCLE_IN_REFERENCES);
   expect(errors[0].lines.length).toBe(3);
   expect(errors[0].lines[0].line).toBe(5);

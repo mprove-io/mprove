@@ -11,6 +11,7 @@ let testId = 'v__1';
 
 test(testId, async () => {
   let views: interfaces.View[];
+  let errors: interfaces.BmErrorC[];
 
   try {
     let {
@@ -35,12 +36,15 @@ test(testId, async () => {
     });
 
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(views.length).toBe(2);
+  expect(errors.length).toBe(0);
+
   expect(views[0].udfs.length).toBe(1);
   expect(views[1].udfs.length).toBe(1);
 });

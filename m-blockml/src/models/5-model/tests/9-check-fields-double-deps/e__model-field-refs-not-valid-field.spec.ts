@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckFieldsDoubleDeps;
 let testId = 'e__model-field-refs-not-valid-field';
 
 test(testId, async () => {
-  let models: interfaces.Model[];
   let errors: interfaces.BmErrorC[];
+  let models: interfaces.Model[];
 
   try {
     let {
@@ -35,15 +35,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(models.length).toBe(0);
   expect(errors.length).toBe(1);
+  expect(models.length).toBe(0);
+
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.MODEL_FIELD_REFS_NOT_VALID_FIELD
   );

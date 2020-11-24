@@ -10,8 +10,8 @@ let func = enums.FuncEnum.CheckJoinsFromView;
 let testId = 'e__too-many-from-view';
 
 test(testId, async () => {
-  let models: interfaces.Model[];
   let errors: interfaces.BmErrorC[];
+  let models: interfaces.Model[];
 
   try {
     let {
@@ -35,15 +35,16 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(models.length).toBe(0);
   expect(errors.length).toBe(1);
+  expect(models.length).toBe(0);
+
   expect(errors[0].title).toBe(enums.ErTitleEnum.TOO_MANY_FROM_VIEW);
   expect(errors[0].lines.length).toBe(2);
   expect(errors[0].lines[0].line).toBe(4);

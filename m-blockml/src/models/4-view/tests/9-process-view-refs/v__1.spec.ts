@@ -10,6 +10,7 @@ let func = enums.FuncEnum.ProcessViewRefs;
 let testId = 'v__1';
 
 test(testId, async () => {
+  let errors: interfaces.BmErrorC[];
   let views: interfaces.View[];
 
   try {
@@ -34,11 +35,13 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
+  expect(errors.length).toBe(0);
   expect(views.length).toBe(3);
 });

@@ -21,65 +21,65 @@ export function yamlBuild(item: {
 
   let file2s: interfaces.File2[] = barYaml.removeWrongExt({
     files: item.files,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   let file3s: interfaces.File3[] = barYaml.deduplicateFileNames({
     file2s: file2s,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   let filesAny: any[] = barYaml.yamlToObjects({
     file3s: file3s,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   filesAny = barYaml.makeLineNumbers({
     filesAny: filesAny,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   filesAny = barYaml.checkTopUnknownParameters({
     filesAny: filesAny,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   filesAny = barYaml.checkTopValues({
     filesAny: filesAny,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   filesAny = barYaml.checkConnections({
     filesAny: filesAny,
     connections: item.connections,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   filesAny = barYaml.checkSupportUdfs({
     filesAny: filesAny,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
   let splitFilesResult = barYaml.splitFiles({
     filesAny: filesAny,
-    errors: item.errors,
     structId: item.structId,
+    errors: item.errors,
     caller: item.caller
   });
 
