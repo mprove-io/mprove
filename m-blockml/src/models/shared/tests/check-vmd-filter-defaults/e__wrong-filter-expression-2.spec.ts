@@ -5,9 +5,9 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.ViewBuild;
+let caller = enums.CallerEnum.ModelBuild;
 let func = enums.FuncEnum.CheckVMDFilterDefaults;
-let testId = 'e__wrong-filter-expression';
+let testId = 'e__wrong-filter-expression-2';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -46,5 +46,5 @@ test(testId, async () => {
   expect(entitiesViews.length).toBe(0);
 
   expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_FILTER_EXPRESSION);
-  expect(errors[0].lines[0].line).toBe(7);
+  expect(errors[0].lines[0].line).toBe(9);
 });

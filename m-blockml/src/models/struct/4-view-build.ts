@@ -33,7 +33,6 @@ export function viewBuild(item: {
 
   views = barView.checkViewFilterDefaults({
     views: views,
-    weekStart: item.weekStart,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller

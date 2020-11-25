@@ -8,8 +8,7 @@ export * from './7-upgrade-mf-calc-force-dims';
 export * from './8-make-fields-double-deps';
 export * from './9-check-fields-double-deps';
 export * from './10-make-fields-double-deps-after-singles';
+export * from './11-check-model-filter-defaults';
 
-// export * from './after-double-check-fields-deps';
 // export * from './check-always-join';
 // export * from './check-joins-cycles-and-toposort';
-// export * from './check-model-filters-from-field';

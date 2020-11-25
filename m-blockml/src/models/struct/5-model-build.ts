@@ -8,9 +8,7 @@ export function modelBuild(item: {
   models: interfaces.Model[];
   views: interfaces.View[];
   udfs: interfaces.Udf[];
-  weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
-  projectId: string;
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -90,12 +88,12 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // // ApFilter
-  // models = barFilter.checkVMDFilterDefaults({
-  //   entities: models,
-  //   weekStart: item.weekStart,
-  //   connection: item.connection
-  // });
+  models = barModel.checkModelFilterDefaults({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   return models;
 }

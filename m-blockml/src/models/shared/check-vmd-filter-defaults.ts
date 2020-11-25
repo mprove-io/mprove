@@ -10,7 +10,6 @@ let func = enums.FuncEnum.CheckVMDFilterDefaults;
 
 export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
   entities: Array<T>;
-  weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -38,7 +37,9 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.DASHBOARD_FILTER_MUST_HAVE_DEFAULT,
-            message: `${api.FileExtensionEnum.Dashboard} ${enums.FieldClassEnum.Filter} must have "${enums.ParameterEnum.Default}" parameter`,
+            message:
+              `${api.FileExtensionEnum.Dashboard} ${enums.FieldClassEnum.Filter} must ` +
+              `have "${enums.ParameterEnum.Default}" parameter`,
             lines: [
               {
                 line: field.name_line_num,
@@ -79,7 +80,9 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_FILTER_EXPRESSION,
-              message: `found expression "${p.brick}" for result "${field.result}" of filter "${field.name}"`,
+              message:
+                `found expression "${p.brick}" for result "${field.result}" of ` +
+                `filter "${field.name}"`,
               lines: [
                 {
                   line: field.default_line_num,

@@ -112,8 +112,6 @@ export class StructService {
       models: models,
       views: views,
       udfs: udfs,
-      weekStart: item.weekStart,
-      projectId: item.projectId,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.ModelBuild

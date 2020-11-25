@@ -51,6 +51,7 @@ export enum FuncEnum {
   MakeFieldsDoubleDeps = '5-model/8-make-fields-double-deps',
   CheckFieldsDoubleDeps = '5-model/9-check-fields-double-deps',
   MakeFieldsDoubleDepsAfterSingles = '5-model/10-make-fields-double-deps-after-singles',
+  CheckModelFilterDefaults = '5-model/11-check-model-filter-defaults',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
