@@ -81,12 +81,14 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  // models = barModel.afterDoubleCheckFieldsDeps({ models: models });
-
-  // // substitute double calc with restart #add doubles to 'force_dims'
-  // models = barModel.makeFieldsDoubleDepsAfterSingles({ models: models });
-
-  // models = barModel.checkModelFiltersFromField({ models: models });
+  // substitute double calculations with restart
+  // add doubles to forceDims
+  models = barModel.makeFieldsDoubleDepsAfterSingles({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // // ApFilter
   // models = barFilter.checkVMDFilterDefaults({

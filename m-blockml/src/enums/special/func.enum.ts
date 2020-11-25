@@ -50,6 +50,7 @@ export enum FuncEnum {
   UpgradeMfCalcForceDims = '5-model/7-upgrade-mf-calc-force-dims',
   MakeFieldsDoubleDeps = '5-model/8-make-fields-double-deps',
   CheckFieldsDoubleDeps = '5-model/9-check-fields-double-deps',
+  MakeFieldsDoubleDepsAfterSingles = '5-model/10-make-fields-double-deps-after-singles',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
