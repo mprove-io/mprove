@@ -56,6 +56,7 @@ export enum FuncEnum {
   CheckJoinUnknownParameters = '6-join/1-check-join-unknown-parameters',
   CheckJoinType = '6-join/2-check-join-type',
   UpgradeJoinCalculationsForceDims = '6-join/3-upgrade-join-calculations-force-dims',
+  CheckSqlOnExist = '6-join/4-check-sql-on-exist',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

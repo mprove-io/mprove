@@ -33,7 +33,13 @@ export function joinBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoin.checkSqlOnExist({ models: models });
+  models = barJoin.checkSqlOnExist({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   // models = barJoin.checkCharsInSqlOnRefs({ models: models });
   // models = barJoin.makeJoinsDoubleDeps({ models: models });
   // models = barJoin.checkJoinsDoubleDeps({ models: models });
