@@ -6,6 +6,5 @@ export * from './5-check-chars-in-sql-on-refs';
 export * from './6-make-joins-double-deps';
 export * from './7-check-joins-double-deps';
 export * from './8-check-sql-on-single-refs';
-
-// export * from './make-joins-double-deps-after-singles';
-// export * from './substitute-sql-on-single-refs';
+export * from './9-make-joins-double-deps-after-singles';
+export * from './10-substitute-sql-on-single-refs';

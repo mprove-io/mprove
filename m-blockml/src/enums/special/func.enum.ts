@@ -61,6 +61,8 @@ export enum FuncEnum {
   MakeJoinsDoubleDeps = '6-join/6-make-joins-double-deps',
   CheckJoinsDoubleDeps = '6-join/7-check-joins-double-deps',
   CheckSqlOnSingleRefs = '6-join/8-check-sql-on-single-refs',
+  MakeJoinsDoubleDepsAfterSingles = '6-join/9-make-joins-double-deps-after-singles',
+  SubstituteSqlOnSingleRefs = '6-join/10-substitute-sql-on-single-refs.ts',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

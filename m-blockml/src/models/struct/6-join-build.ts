@@ -1,5 +1,4 @@
 import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barJoin } from '../../barrels/bar-join';
@@ -68,10 +67,20 @@ export function joinBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoin.substituteSqlOnSingleRefs({ models: models });
+  models = barJoin.substituteSqlOnSingleRefs({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
-  // // and joins_prepared_deps
-  // models = barJoin.makeJoinsDoubleDepsAfterSingles({ models: models });
+  // and joinsPreparedDeps
+  models = barJoin.makeJoinsDoubleDepsAfterSingles({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   return models;
 }
