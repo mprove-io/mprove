@@ -54,7 +54,12 @@ export function joinBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoin.checkJoinsDoubleDeps({ models: models });
+  models = barJoin.checkJoinsDoubleDeps({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barJoin.checkSqlOnSingleRefs({ models: models });
 
