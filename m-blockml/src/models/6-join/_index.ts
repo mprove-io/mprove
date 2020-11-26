@@ -1,7 +1,8 @@
 export * from './1-check-join-unknown-parameters';
+export * from './2-check-join-type';
+export * from './3-upgrade-join-calculations-force-dims';
 
 // export * from './check-chars-in-sql-on-refs';
-// export * from './check-join-type';
 // export * from './check-joins-double-deps';
 // export * from './check-sql-on-exist';
 // export * from './check-sql-on-single-refs';

@@ -58,7 +58,7 @@ export function modelBuild(item: {
     caller: item.caller
   });
 
-  models = barModel.upgradeMfCalcForceDims({
+  models = barModel.upgradeModelCalculationsForceDims({
     models: models,
     structId: item.structId,
     errors: item.errors,

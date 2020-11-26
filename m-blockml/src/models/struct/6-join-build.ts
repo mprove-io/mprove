@@ -19,9 +19,19 @@ export function joinBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoin.checkJoinType({ models: models });
+  models = barJoin.checkJoinType({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
-  // models = barJoin.upgradeJoinForceDims({ models: models });
+  models = barJoin.upgradeJoinCalculationsForceDims({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barJoin.checkSqlOnExist({ models: models });
   // models = barJoin.checkCharsInSqlOnRefs({ models: models });

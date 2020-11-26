@@ -47,13 +47,15 @@ export enum FuncEnum {
   CheckJoinsFromView = '5-model/4-check-joins-from-view',
   CheckAliases = '5-model/5-check-aliases',
   MakeJoins = '5-model/6-make-joins',
-  UpgradeMfCalcForceDims = '5-model/7-upgrade-mf-calc-force-dims',
+  UpgradeModelCalculationsForceDims = '5-model/7-upgrade-model-calculations-force-dims',
   MakeFieldsDoubleDeps = '5-model/8-make-fields-double-deps',
   CheckFieldsDoubleDeps = '5-model/9-check-fields-double-deps',
   MakeFieldsDoubleDepsAfterSingles = '5-model/10-make-fields-double-deps-after-singles',
   CheckModelFilterDefaults = '5-model/11-check-model-filter-defaults',
 
   CheckJoinUnknownParameters = '6-join/1-check-join-unknown-parameters',
+  CheckJoinType = '6-join/2-check-join-type',
+  UpgradeJoinCalculationsForceDims = '6-join/3-upgrade-join-calculations-force-dims',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

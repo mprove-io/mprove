@@ -3,9 +3,9 @@ import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../bm-error';
 
-let func = enums.FuncEnum.UpgradeMfCalcForceDims;
+let func = enums.FuncEnum.UpgradeModelCalculationsForceDims;
 
-export function upgradeMfCalcForceDims(item: {
+export function upgradeModelCalculationsForceDims(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
