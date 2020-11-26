@@ -39,6 +39,8 @@ export enum ParameterEnum {
   SqlAlwaysWhere = 'sql_always_where',
   SqlAlwaysWhereCalc = 'sql_always_where_calc',
   SqlKey = 'sql_key',
+  SqlOn = 'sql_on',
+  SqlWhere = 'sql_where',
   Table = 'table',
   Time = 'time',
   Timeframes = 'timeframes',

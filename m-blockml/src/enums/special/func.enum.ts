@@ -53,6 +53,8 @@ export enum FuncEnum {
   MakeFieldsDoubleDepsAfterSingles = '5-model/10-make-fields-double-deps-after-singles',
   CheckModelFilterDefaults = '5-model/11-check-model-filter-defaults',
 
+  CheckJoinUnknownParameters = '6-join/1-check-join-unknown-parameters',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'struct/log-struct'

@@ -117,21 +117,12 @@ export class StructService {
       caller: enums.CallerEnum.ModelBuild
     });
 
-    // // ApJoin
-    // models = barJoin.checkJoinUnknownParameters({ models: models });
-    // models = barJoin.checkJoinType({ models: models });
-
-    // models = barJoin.upgradeJoinForceDims({ models: models });
-
-    // models = barJoin.checkSqlOnExist({ models: models });
-    // models = barJoin.checkCharsInSqlOnRefs({ models: models });
-    // models = barJoin.makeJoinsDoubleDeps({ models: models });
-    // models = barJoin.checkJoinsDoubleDeps({ models: models });
-
-    // models = barJoin.checkSqlOnSingleRefs({ models: models });
-    // models = barJoin.substituteSqlOnSingleRefs({ models: models });
-    // // and joins_prepared_deps
-    // models = barJoin.makeJoinsDoubleDepsAfterSingles({ models: models });
+    models = barStruct.joinBuild({
+      models: models,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.JoinBuild
+    });
 
     // // ApJoinSqlWhere
     // models = barJoinSqlWhere.checkCharsInRefs({ models: models });
