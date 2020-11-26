@@ -40,12 +40,26 @@ export function joinBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoin.checkCharsInSqlOnRefs({ models: models });
-  // models = barJoin.makeJoinsDoubleDeps({ models: models });
+  models = barJoin.checkCharsInSqlOnRefs({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
+  models = barJoin.makeJoinsDoubleDeps({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   // models = barJoin.checkJoinsDoubleDeps({ models: models });
 
   // models = barJoin.checkSqlOnSingleRefs({ models: models });
+
   // models = barJoin.substituteSqlOnSingleRefs({ models: models });
+
   // // and joins_prepared_deps
   // models = barJoin.makeJoinsDoubleDepsAfterSingles({ models: models });
 
