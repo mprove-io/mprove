@@ -60,6 +60,7 @@ export enum FuncEnum {
   CheckCharsInSqlOnRefs = '6-join/5-check-chars-in-sql-on-refs',
   MakeJoinsDoubleDeps = '6-join/6-make-joins-double-deps',
   CheckJoinsDoubleDeps = '6-join/7-check-joins-double-deps',
+  CheckSqlOnSingleRefs = '6-join/8-check-sql-on-single-refs',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

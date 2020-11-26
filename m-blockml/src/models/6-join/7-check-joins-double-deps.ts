@@ -28,7 +28,7 @@ export function checkJoinsDoubleDeps(item: {
         Object.keys(x.joinsDoubleDeps[alias]).forEach(depAs => {
           let depJoin = x.joins.find(j => j.as === depAs);
 
-          if (!depJoin) {
+          if (helper.isUndefined(depJoin)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.JOIN_WRONG_ALIAS_IN_SQL_ON_REFERENCE,
@@ -52,7 +52,7 @@ export function checkJoinsDoubleDeps(item: {
               f => f.name === depFieldName
             );
 
-            if (!depField) {
+            if (helper.isUndefined(depField)) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MISSING_FIELD,
@@ -69,7 +69,9 @@ export function checkJoinsDoubleDeps(item: {
                 })
               );
               return;
-            } else if (depField.fieldClass === enums.FieldClassEnum.Filter) {
+            }
+
+            if (depField.fieldClass === enums.FieldClassEnum.Filter) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_FILTER,
@@ -87,7 +89,9 @@ export function checkJoinsDoubleDeps(item: {
                 })
               );
               return;
-            } else if (depField.fieldClass === enums.FieldClassEnum.Measure) {
+            }
+
+            if (depField.fieldClass === enums.FieldClassEnum.Measure) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE,
@@ -105,9 +109,9 @@ export function checkJoinsDoubleDeps(item: {
                 })
               );
               return;
-            } else if (
-              depField.fieldClass === enums.FieldClassEnum.Calculation
-            ) {
+            }
+
+            if (depField.fieldClass === enums.FieldClassEnum.Calculation) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION,

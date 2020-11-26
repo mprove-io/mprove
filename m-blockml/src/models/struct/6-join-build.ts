@@ -61,7 +61,12 @@ export function joinBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoin.checkSqlOnSingleRefs({ models: models });
+  models = barJoin.checkSqlOnSingleRefs({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barJoin.substituteSqlOnSingleRefs({ models: models });
 
