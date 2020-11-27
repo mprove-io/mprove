@@ -46,9 +46,12 @@ export function joinSqlWhereBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoinSqlWhere.updateJoinsDoubleDepsAfterSingles({
-  //   models: models
-  // });
+  models = barJoinSqlWhere.jswUpdateJoinsDoubleDepsAfterSingles({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barJoinSqlWhere.checkApplyFilter({ models: models });
 
