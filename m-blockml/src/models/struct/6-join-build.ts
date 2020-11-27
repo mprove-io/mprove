@@ -74,7 +74,6 @@ export function joinBuild(item: {
     caller: item.caller
   });
 
-  // and joinsPreparedDeps
   models = barJoin.makeJoinsDoubleDepsAfterSingles({
     models: models,
     structId: item.structId,

@@ -86,19 +86,19 @@ export interface Model extends FileBasic {
     };
   };
 
-  joinsDoubleDeps?: {
-    [alias: string]: {
-      [as: string]: {
-        [dep: string]: number;
-      };
-    };
-  };
+  // joinsDoubleDeps?: {
+  //   [alias: string]: {
+  //     [as: string]: {
+  //       [dep: string]: number;
+  //     };
+  //   };
+  // };
 
-  joinsPreparedDeps?: {
-    [alias: string]: {
-      [as: string]: number;
-    };
-  };
+  // joinsPreparedDeps?: {
+  //   [alias: string]: {
+  //     [as: string]: number;
+  //   };
+  // };
 
   joinsDoubleDepsAfterSingles?: {
     [alias: string]: {

@@ -37,11 +37,6 @@ export function jswUpdateJoinsDoubleDepsAfterSingles(item: {
           }
 
           x.joinsDoubleDepsAfterSingles[join.as][asName][dep] = 1;
-
-          // m-blockml - update joinsPreparedDeps
-          if (asName !== x.fromAs && asName !== join.as) {
-            x.joinsPreparedDeps[join.as][asName] = 1;
-          }
         }
       });
   });

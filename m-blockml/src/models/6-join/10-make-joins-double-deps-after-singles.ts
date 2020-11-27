@@ -16,13 +16,11 @@ export function makeJoinsDoubleDepsAfterSingles(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
-    x.joinsPreparedDeps = {};
     x.joinsDoubleDepsAfterSingles = {};
 
     x.joins
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
-        x.joinsPreparedDeps[join.as] = {};
         x.joinsDoubleDepsAfterSingles[join.as] = {};
 
         let sqlOnReal = join.sqlOnReal;
@@ -41,10 +39,6 @@ export function makeJoinsDoubleDepsAfterSingles(item: {
           }
 
           x.joinsDoubleDepsAfterSingles[join.as][asName][dep] = 1;
-
-          if (asName !== x.fromAs && asName !== join.as) {
-            x.joinsPreparedDeps[join.as][asName] = 1;
-          }
         }
       });
   });

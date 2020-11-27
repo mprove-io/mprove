@@ -20,12 +20,10 @@ export function checkJoinsDoubleDeps(item: {
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    Object.keys(x.joinsDoubleDeps)
-      .filter(aliasName => aliasName !== x.fromAs)
-      .forEach(alias => {
-        let join = x.joins.find(j => j.as === alias);
-
-        Object.keys(x.joinsDoubleDeps[alias]).forEach(depAs => {
+    x.joins
+      .filter(j => j.as !== x.fromAs)
+      .forEach(join => {
+        Object.keys(join.sqlOnDoubleDeps).forEach(depAs => {
           let depJoin = x.joins.find(j => j.as === depAs);
 
           if (helper.isUndefined(depJoin)) {
@@ -46,8 +44,7 @@ export function checkJoinsDoubleDeps(item: {
             );
             return;
           }
-
-          Object.keys(x.joinsDoubleDeps[alias][depAs]).forEach(depFieldName => {
+          Object.keys(join.sqlOnDoubleDeps[depAs]).forEach(depFieldName => {
             let depField = depJoin.view.fields.find(
               f => f.name === depFieldName
             );

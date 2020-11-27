@@ -45,10 +45,22 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(models.length).toBe(1);
 
-  expect(models[0].joinsPreparedDeps).toStrictEqual({
-    b: {},
+  expect(models[0].joinsDoubleDepsAfterSingles).toStrictEqual({
+    b: {
+      a: {
+        dim1: 1
+      },
+      b: {
+        dim1: 1
+      }
+    },
     c: {
-      b: 1
+      b: {
+        dim1: 1
+      },
+      c: {
+        dim1: 1
+      }
     }
   });
 });

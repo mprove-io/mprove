@@ -45,14 +45,12 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(models.length).toBe(1);
 
-  expect(models[0].joinsDoubleDeps).toStrictEqual({
+  expect(models[0].joins[1].sqlOnDoubleDeps).toStrictEqual({
+    a: {
+      dim1: 8
+    },
     b: {
-      a: {
-        dim1: 8
-      },
-      b: {
-        dim1: 8
-      }
+      dim1: 8
     }
   });
 });

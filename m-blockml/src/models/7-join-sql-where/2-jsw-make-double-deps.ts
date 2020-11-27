@@ -32,7 +32,7 @@ export function jswMakeDoubleDeps(item: {
           let as: string = r[1];
           let dep: string = r[2];
 
-          if (!join.sqlWhereDoubleDeps[as]) {
+          if (helper.isUndefined(join.sqlWhereDoubleDeps[as])) {
             join.sqlWhereDoubleDeps[as] = {};
           }
 

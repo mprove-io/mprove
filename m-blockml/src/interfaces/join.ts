@@ -31,14 +31,20 @@ export interface Join {
 
   //
 
+  view: View;
+
   sqlOnReal: string;
 
   sqlWhereReal: string;
 
-  view: View;
+  sqlOnDoubleDeps: {
+    [as: string]: {
+      [dep: string]: number;
+    };
+  };
 
   sqlWhereDoubleDeps: {
-    [field: string]: {
+    [as: string]: {
       [dep: string]: number;
     };
   };
