@@ -4,7 +4,7 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckSqlOnSingleRefs;
+let func = enums.FuncEnum.MakeJoinsDoubleDepsAfterSingles;
 
 export function makeJoinsDoubleDepsAfterSingles(item: {
   models: interfaces.Model[];
