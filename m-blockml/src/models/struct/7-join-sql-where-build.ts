@@ -39,10 +39,18 @@ export function joinSqlWhereBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoinSqlWhere.substituteSingleRefs({ models: models });
+  models = barJoinSqlWhere.jswSubstituteSingleRefs({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   // models = barJoinSqlWhere.updateJoinsDoubleDepsAfterSingles({
   //   models: models
   // });
+
   // models = barJoinSqlWhere.checkApplyFilter({ models: models });
+
   return models;
 }
