@@ -25,16 +25,18 @@ export function joinSqlWhereBuild(item: {
     caller: item.caller
   });
 
-  // models = barJoinSqlWhere.checkDoubleDeps({ models: models });
+  models = barJoinSqlWhere.jswCheckDoubleDeps({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barJoinSqlWhere.checkSingleRefs({ models: models });
-
   // models = barJoinSqlWhere.substituteSingleRefs({ models: models });
-
   // models = barJoinSqlWhere.updateJoinsDoubleDepsAfterSingles({
   //   models: models
   // });
-
   // models = barJoinSqlWhere.checkApplyFilter({ models: models });
   return models;
 }

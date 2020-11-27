@@ -4,9 +4,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckJoinsDoubleDeps;
+let func = enums.FuncEnum.JswCheckDoubleDeps;
 
-export function checkJoinsDoubleDeps(item: {
+export function jswCheckDoubleDeps(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -20,24 +20,24 @@ export function checkJoinsDoubleDeps(item: {
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    Object.keys(x.joinsDoubleDeps)
-      .filter(aliasName => aliasName !== x.fromAs)
-      .forEach(alias => {
-        let join = x.joins.find(j => j.as === alias);
-
-        Object.keys(x.joinsDoubleDeps[alias]).forEach(depAs => {
+    x.joins
+      .filter(j => j.as !== x.fromAs)
+      .forEach(join => {
+        Object.keys(join.sqlWhereDoubleDeps).forEach(depAs => {
           let depJoin = x.joins.find(j => j.as === depAs);
 
           if (helper.isUndefined(depJoin)) {
+            // error e158
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_WRONG_ALIAS_IN_SQL_ON_REFERENCE,
+                title:
+                  enums.ErTitleEnum.JOIN_WRONG_ALIAS_IN_SQL_WHERE_REFERENCE,
                 message:
                   `found reference using alias "${depAs}" that is ` +
                   `missing in joins elements. Check "${enums.ParameterEnum.As}" values.`,
                 lines: [
                   {
-                    line: join.sql_on_line_num,
+                    line: join.sql_where_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -47,21 +47,22 @@ export function checkJoinsDoubleDeps(item: {
             return;
           }
 
-          Object.keys(x.joinsDoubleDeps[alias][depAs]).forEach(depFieldName => {
+          Object.keys(join.sqlWhereDoubleDeps[depAs]).forEach(depFieldName => {
             let depField = depJoin.view.fields.find(
               f => f.name === depFieldName
             );
 
             if (helper.isUndefined(depField)) {
+              // error e159
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MISSING_FIELD,
+                  title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MISSING_FIELD,
                   message:
                     `found referencing to field "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
                     {
-                      line: join.sql_on_line_num,
+                      line: join.sql_where_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }
@@ -69,19 +70,18 @@ export function checkJoinsDoubleDeps(item: {
                 })
               );
               return;
-            }
-
-            if (depField.fieldClass === enums.FieldClassEnum.Filter) {
+            } else if (depField.fieldClass === enums.FieldClassEnum.Filter) {
+              // error e243
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_FILTER,
+                  title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_FILTER,
                   message:
-                    `"${enums.ParameterEnum.SqlOn}" can not reference filters. ` +
+                    `"${enums.ParameterEnum.SqlWhere}" can not reference filters. ` +
                     `found referencing filter "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
                     {
-                      line: join.sql_on_line_num,
+                      line: join.sql_where_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }
@@ -89,19 +89,18 @@ export function checkJoinsDoubleDeps(item: {
                 })
               );
               return;
-            }
-
-            if (depField.fieldClass === enums.FieldClassEnum.Measure) {
+            } else if (depField.fieldClass === enums.FieldClassEnum.Measure) {
+              // error e160
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE,
+                  title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MEASURE,
                   message:
-                    `"${enums.ParameterEnum.SqlOn}" can not reference measures. ` +
+                    `"${enums.ParameterEnum.SqlWhere}" can not reference measures. ` +
                     `found referencing measure "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
                     {
-                      line: join.sql_on_line_num,
+                      line: join.sql_where_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }
@@ -109,19 +108,20 @@ export function checkJoinsDoubleDeps(item: {
                 })
               );
               return;
-            }
-
-            if (depField.fieldClass === enums.FieldClassEnum.Calculation) {
+            } else if (
+              depField.fieldClass === enums.FieldClassEnum.Calculation
+            ) {
+              // error e161
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION,
+                  title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_CALCULATION,
                   message:
-                    `"${enums.ParameterEnum.SqlOn}" can not reference calculations. ` +
-                    `found referencing calculation "${depFieldName}" ` +
-                    `of view "${depJoin.view.name}" as "${depAs}"`,
+                    `"${enums.ParameterEnum.SqlWhere}" can not reference calculations. ` +
+                    `found referencing calculation "${depFieldName}" of ` +
+                    `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
                     {
-                      line: join.sql_on_line_num,
+                      line: join.sql_where_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }
