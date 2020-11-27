@@ -4,9 +4,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckCharsInSqlOnRefs;
+let func = enums.FuncEnum.JsoCheckCharsInRefs;
 
-export function checkCharsInSqlOnRefs(item: {
+export function jsoCheckCharsInRefs(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;

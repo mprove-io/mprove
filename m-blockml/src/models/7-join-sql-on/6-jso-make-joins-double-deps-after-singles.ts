@@ -4,9 +4,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.MakeJoinsDoubleDeps;
+let func = enums.FuncEnum.JsoMakeJoinsDoubleDepsAfterSingles;
 
-export function makeJoinsDoubleDeps(item: {
+export function jsoMakeJoinsDoubleDepsAfterSingles(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -16,23 +16,29 @@ export function makeJoinsDoubleDeps(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
+    x.joinsDoubleDepsAfterSingles = {};
+
     x.joins
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
-        join.sqlOnDoubleDeps = {};
+        x.joinsDoubleDepsAfterSingles[join.as] = {};
 
-        let reg = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+        let sqlOnReal = join.sqlOnReal;
+
         let r;
+        let reg = api.MyRegex.CAPTURE_DOUBLE_REF_G();
 
-        while ((r = reg.exec(join.sql_on))) {
-          let as: string = r[1];
+        while ((r = reg.exec(sqlOnReal))) {
+          let asName: string = r[1];
           let dep: string = r[2];
 
-          if (helper.isUndefined(join.sqlOnDoubleDeps[as])) {
-            join.sqlOnDoubleDeps[as] = {};
+          if (
+            helper.isUndefined(x.joinsDoubleDepsAfterSingles[join.as][asName])
+          ) {
+            x.joinsDoubleDepsAfterSingles[join.as][asName] = {};
           }
 
-          join.sqlOnDoubleDeps[as][dep] = join.sql_on_line_num;
+          x.joinsDoubleDepsAfterSingles[join.as][asName][dep] = 1;
         }
       });
   });

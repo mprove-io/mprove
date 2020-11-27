@@ -4,9 +4,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.SubstituteSqlOnSingleRefs;
+let func = enums.FuncEnum.JsoSubstituteSingleRefs;
 
-export function substituteSqlOnSingleRefs(item: {
+export function jsoSubstituteSingleRefs(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;

@@ -5,9 +5,9 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinBuild;
-let func = enums.FuncEnum.MakeJoinsDoubleDepsAfterSingles;
-let testId = 'v__1';
+let caller = enums.CallerEnum.JoinSqlOnBuild;
+let func = enums.FuncEnum.JsoCheckDoubleDeps;
+let testId = 'e__join-wrong-alias-in-sql-on-reference';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -42,17 +42,11 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(0);
-  expect(models.length).toBe(1);
+  expect(errors.length).toBe(1);
+  expect(models.length).toBe(0);
 
-  expect(models[0].joinsDoubleDepsAfterSingles).toStrictEqual({
-    b: {
-      a: {
-        dim1: 1
-      },
-      b: {
-        dim1: 1
-      }
-    }
-  });
+  expect(errors[0].title).toBe(
+    enums.ErTitleEnum.JOIN_WRONG_ALIAS_IN_SQL_ON_REFERENCE
+  );
+  expect(errors[0].lines[0].line).toBe(9);
 });

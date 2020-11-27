@@ -5,9 +5,9 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinBuild;
-let func = enums.FuncEnum.CheckJoinsDoubleDeps;
-let testId = 'e__join-sql-on-refs-missing-field';
+let caller = enums.CallerEnum.JoinSqlOnBuild;
+let func = enums.FuncEnum.JsoCheckCharsInRefs;
+let testId = 'e__join-wrong-chars-in-sql-on-refs';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -46,7 +46,7 @@ test(testId, async () => {
   expect(models.length).toBe(0);
 
   expect(errors[0].title).toBe(
-    enums.ErTitleEnum.JOIN_SQL_ON_REFS_MISSING_FIELD
+    enums.ErTitleEnum.JOIN_WRONG_CHARS_IN_SQL_ON_REFS
   );
   expect(errors[0].lines[0].line).toBe(9);
 });

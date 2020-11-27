@@ -5,8 +5,8 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinBuild;
-let func = enums.FuncEnum.SubstituteSqlOnSingleRefs;
+let caller = enums.CallerEnum.JoinSqlOnBuild;
+let func = enums.FuncEnum.JsoMakeJoinsDoubleDepsAfterSingles;
 let testId = 'v__1';
 
 test(testId, async () => {
@@ -45,5 +45,14 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(models.length).toBe(1);
 
-  expect(models[0].joins[1].sqlOnReal).toBe('${a.dim1} = (${b.dim1} + dim10)');
+  expect(models[0].joinsDoubleDepsAfterSingles).toStrictEqual({
+    b: {
+      a: {
+        dim1: 1
+      },
+      b: {
+        dim1: 1
+      }
+    }
+  });
 });

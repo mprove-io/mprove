@@ -6,7 +6,8 @@ export enum CallerEnum {
   ViewBuild = '4-view-build',
   ModelBuild = '5-model-build',
   JoinBuild = '6-join-build',
-  JoinSqlWhereBuild = '7-join-sql-where-build',
+  JoinSqlOnBuild = '7-join-sql-on-build',
+  JoinSqlWhereBuild = '8-join-sql-where-build',
 
   RebuildStruct = 'rebuild-struct'
 }

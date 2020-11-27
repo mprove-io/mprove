@@ -5,9 +5,9 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinBuild;
-let func = enums.FuncEnum.CheckSqlOnSingleRefs;
-let testId = 'e__join-sql-on-refs-model-missing-field';
+let caller = enums.CallerEnum.JoinSqlOnBuild;
+let func = enums.FuncEnum.JsoCheckDoubleDeps;
+let testId = 'e__join-sql-on-refs-measure';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -45,8 +45,6 @@ test(testId, async () => {
   expect(errors.length).toBe(1);
   expect(models.length).toBe(0);
 
-  expect(errors[0].title).toBe(
-    enums.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_MISSING_FIELD
-  );
+  expect(errors[0].title).toBe(enums.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE);
   expect(errors[0].lines[0].line).toBe(9);
 });

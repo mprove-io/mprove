@@ -5,8 +5,8 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinBuild;
-let func = enums.FuncEnum.MakeJoinsDoubleDepsAfterSingles;
+let caller = enums.CallerEnum.JoinSqlOnBuild;
+let func = enums.FuncEnum.JsoMakeJoinsDoubleDepsAfterSingles;
 let testId = 'v__2';
 
 test(testId, async () => {

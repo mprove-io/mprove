@@ -124,6 +124,13 @@ export class StructService {
       caller: enums.CallerEnum.JoinBuild
     });
 
+    models = barStruct.joinSqlOnBuild({
+      models: models,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.JoinSqlOnBuild
+    });
+
     models = barStruct.joinSqlWhereBuild({
       models: models,
       structId: item.structId,

@@ -5,9 +5,9 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinBuild;
-let func = enums.FuncEnum.CheckJoinsDoubleDeps;
-let testId = 'e__join-sql-on-refs-calculation';
+let caller = enums.CallerEnum.JoinSqlOnBuild;
+let func = enums.FuncEnum.JsoMakeDoubleDeps;
+let testId = 'v__1';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -42,9 +42,15 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(models.length).toBe(0);
+  expect(errors.length).toBe(0);
+  expect(models.length).toBe(1);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION);
-  expect(errors[0].lines[0].line).toBe(9);
+  expect(models[0].joins[1].sqlOnDoubleDeps).toStrictEqual({
+    a: {
+      dim1: 8
+    },
+    b: {
+      dim1: 8
+    }
+  });
 });
