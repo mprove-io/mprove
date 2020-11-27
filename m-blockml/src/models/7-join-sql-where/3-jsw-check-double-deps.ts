@@ -27,7 +27,6 @@ export function jswCheckDoubleDeps(item: {
           let depJoin = x.joins.find(j => j.as === depAs);
 
           if (helper.isUndefined(depJoin)) {
-            // error e158
             item.errors.push(
               new BmError({
                 title:
@@ -53,7 +52,6 @@ export function jswCheckDoubleDeps(item: {
             );
 
             if (helper.isUndefined(depField)) {
-              // error e159
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MISSING_FIELD,
@@ -71,7 +69,6 @@ export function jswCheckDoubleDeps(item: {
               );
               return;
             } else if (depField.fieldClass === enums.FieldClassEnum.Filter) {
-              // error e243
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_FILTER,
@@ -90,7 +87,6 @@ export function jswCheckDoubleDeps(item: {
               );
               return;
             } else if (depField.fieldClass === enums.FieldClassEnum.Measure) {
-              // error e160
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MEASURE,
@@ -111,7 +107,6 @@ export function jswCheckDoubleDeps(item: {
             } else if (
               depField.fieldClass === enums.FieldClassEnum.Calculation
             ) {
-              // error e161
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_CALCULATION,

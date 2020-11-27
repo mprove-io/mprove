@@ -4,9 +4,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckSqlOnSingleRefs;
+let func = enums.FuncEnum.JswCheckSingleRefs;
 
-export function checkSqlOnSingleRefs(item: {
+export function jswCheckSingleRefs(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -23,12 +23,16 @@ export function checkSqlOnSingleRefs(item: {
     x.joins
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
+        if (helper.isUndefined(join.sql_where)) {
+          return;
+        }
+
         let reg = api.MyRegex.CAPTURE_SINGLE_REF_G();
         let r;
 
         let references: string[] = [];
 
-        while ((r = reg.exec(join.sql_on))) {
+        while ((r = reg.exec(join.sql_where))) {
           references.push(r[1]);
         }
 
@@ -36,13 +40,15 @@ export function checkSqlOnSingleRefs(item: {
           let referenceField = x.fields.find(f => f.name === reference);
 
           if (helper.isUndefined(referenceField)) {
+            // error e162
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_MISSING_FIELD,
+                title:
+                  enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MISSING_FIELD,
                 message: `field "${reference}" is missing or not valid`,
                 lines: [
                   {
-                    line: join.sql_on_line_num,
+                    line: join.sql_where_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -50,18 +56,19 @@ export function checkSqlOnSingleRefs(item: {
               })
             );
             return;
-          }
-
-          if (referenceField.fieldClass === enums.FieldClassEnum.Filter) {
+          } else if (
+            referenceField.fieldClass === enums.FieldClassEnum.Filter
+          ) {
+            // error e244
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_FILTER,
+                title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_FILTER,
                 message:
-                  `"${enums.ParameterEnum.SqlOn}" can not reference filters. ` +
+                  `"${enums.ParameterEnum.SqlWhere}" can not reference filters. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
-                    line: join.sql_on_line_num,
+                    line: join.sql_where_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -69,18 +76,19 @@ export function checkSqlOnSingleRefs(item: {
               })
             );
             return;
-          }
-
-          if (referenceField.fieldClass === enums.FieldClassEnum.Calculation) {
+          } else if (
+            referenceField.fieldClass === enums.FieldClassEnum.Measure
+          ) {
+            // error e163
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_CALCULATION,
+                title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MEASURE,
                 message:
-                  `"${enums.ParameterEnum.SqlOn}" can not reference calculations. ` +
+                  `"${enums.ParameterEnum.SqlWhere}" can not reference measures. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
-                    line: join.sql_on_line_num,
+                    line: join.sql_where_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -88,18 +96,19 @@ export function checkSqlOnSingleRefs(item: {
               })
             );
             return;
-          }
-
-          if (referenceField.fieldClass === enums.FieldClassEnum.Measure) {
+          } else if (
+            referenceField.fieldClass === enums.FieldClassEnum.Calculation
+          ) {
+            // error e164
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_MEASURE,
+                title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_CALCULATION,
                 message:
-                  `"${enums.ParameterEnum.SqlOn}" can not reference measures. ` +
+                  `"${enums.ParameterEnum.SqlWhere}" can not reference calculations. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
-                    line: join.sql_on_line_num,
+                    line: join.sql_where_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }
