@@ -64,6 +64,8 @@ export enum FuncEnum {
   SubstituteSqlOnSingleRefs = '6-join/9-substitute-sql-on-single-refs',
   MakeJoinsDoubleDepsAfterSingles = '6-join/10-make-joins-double-deps-after-singles',
 
+  JswCheckCharsInRefs = '7-join-sql-where/1-jsw-check-chars-in-refs',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'struct/log-struct'

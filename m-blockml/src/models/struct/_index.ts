@@ -4,5 +4,6 @@ export * from './3-udf-build';
 export * from './4-view-build';
 export * from './5-model-build';
 export * from './6-join-build';
+export * from './7-join-sql-where-build';
 
 export * from './log-struct';

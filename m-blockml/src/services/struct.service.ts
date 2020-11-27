@@ -124,17 +124,12 @@ export class StructService {
       caller: enums.CallerEnum.JoinBuild
     });
 
-    // // ApJoinSqlWhere
-    // models = barJoinSqlWhere.checkCharsInRefs({ models: models });
-    // models = barJoinSqlWhere.makeDoubleDeps({ models: models });
-    // models = barJoinSqlWhere.checkDoubleDeps({ models: models });
-
-    // models = barJoinSqlWhere.checkSingleRefs({ models: models });
-    // models = barJoinSqlWhere.substituteSingleRefs({ models: models });
-    // models = barJoinSqlWhere.updateJoinsDoubleDepsAfterSingles({
-    //   models: models
-    // });
-    // models = barJoinSqlWhere.checkApplyFilter({ models: models });
+    models = barStruct.joinSqlWhereBuild({
+      models: models,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.JoinSqlWhereBuild
+    });
 
     // // Back to ApModel
     // models = barModel.checkJoinsCyclesAndToposort({ models: models });
