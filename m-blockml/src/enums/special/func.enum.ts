@@ -65,6 +65,7 @@ export enum FuncEnum {
   MakeJoinsDoubleDepsAfterSingles = '6-join/10-make-joins-double-deps-after-singles',
 
   JswCheckCharsInRefs = '7-join-sql-where/1-jsw-check-chars-in-refs',
+  JswMakeDoubleDeps = '7-join-sql-where/2-jsw-make-double-deps',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

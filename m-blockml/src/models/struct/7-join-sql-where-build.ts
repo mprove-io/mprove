@@ -17,7 +17,13 @@ export function joinSqlWhereBuild(item: {
     errors: item.errors,
     caller: item.caller
   });
-  // models = barJoinSqlWhere.makeDoubleDeps({ models: models });
+
+  models = barJoinSqlWhere.jswMakeDoubleDeps({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barJoinSqlWhere.checkDoubleDeps({ models: models });
 

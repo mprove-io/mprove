@@ -47,7 +47,6 @@ export function jswCheckCharsInRefs(item: {
         jswWrongCharsString = [...new Set(jswWrongChars)].join(', ');
 
         if (jswWrongChars.length > 0) {
-          // error e157
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.JOIN_WRONG_CHARS_IN_SQL_WHERE_REFS,
