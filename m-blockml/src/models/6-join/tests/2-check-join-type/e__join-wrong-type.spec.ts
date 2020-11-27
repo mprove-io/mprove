@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinBuild;
+let caller = enums.CallerEnum.BuildJoin;
 let func = enums.FuncEnum.CheckJoinType;
 let testId = 'e__join-wrong-type';
 

@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { interfaces } from '../barrels/interfaces';
 import { BmError } from '../models/bm-error';
 import { barYaml } from '../barrels/bar-yaml';
-import { barStruct } from '../barrels/bar-struct';
+import { barBuilder } from '../barrels/bar-builder';
 
 // import { barChart } from '../barrels/bar-chart';
 // import { barDashboard } from '../barrels/bar-dashboard';
@@ -59,14 +59,14 @@ export class StructService {
     let dashboards: interfaces.Dashboard[];
     let visualizations: interfaces.Visualization[];
 
-    let yamlBuildItem = barStruct.yamlBuild({
+    let yamlBuildItem = barBuilder.buildYaml({
       files: item.files,
       projectId: item.projectId,
       weekStart: item.weekStart,
       connections: item.connections,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.YamlBuild
+      caller: enums.CallerEnum.BuildYaml
     });
     udfs = yamlBuildItem.udfs;
     views = yamlBuildItem.views;
@@ -74,30 +74,30 @@ export class StructService {
     dashboards = yamlBuildItem.dashboards;
     visualizations = yamlBuildItem.visualizations;
 
-    views = barStruct.fieldBuild({
+    views = barBuilder.buildField({
       entities: views,
       weekStart: item.weekStart,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.FieldBuildViews
+      caller: enums.CallerEnum.BuildViewField
     });
 
-    models = barStruct.fieldBuild({
+    models = barBuilder.buildField({
       entities: models,
       weekStart: item.weekStart,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.FieldBuildModels
+      caller: enums.CallerEnum.BuildModelField
     });
 
-    let udfsDict: interfaces.UdfsDict = barStruct.udfBuild({
+    let udfsDict: interfaces.UdfsDict = barBuilder.buildUdf({
       udfs: udfs,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.UdfBuild
+      caller: enums.CallerEnum.BuildUdf
     });
 
-    views = barStruct.viewBuild({
+    views = barBuilder.buildView({
       views: views,
       udfs: udfs,
       udfsDict: udfsDict,
@@ -105,37 +105,37 @@ export class StructService {
       projectId: item.projectId,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.ViewBuild
+      caller: enums.CallerEnum.BuildView
     });
 
-    models = barStruct.modelBuild({
+    models = barBuilder.buildModel({
       models: models,
       views: views,
       udfs: udfs,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.ModelBuild
+      caller: enums.CallerEnum.BuildModel
     });
 
-    models = barStruct.joinBuild({
+    models = barBuilder.buildJoin({
       models: models,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.JoinBuild
+      caller: enums.CallerEnum.BuildJoin
     });
 
-    models = barStruct.joinSqlOnBuild({
+    models = barBuilder.buildJoinSqlOn({
       models: models,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.JoinSqlOnBuild
+      caller: enums.CallerEnum.BuildJoinSqlOn
     });
 
-    models = barStruct.joinSqlWhereBuild({
+    models = barBuilder.buildJoinSqlWhere({
       models: models,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.JoinSqlWhereBuild
+      caller: enums.CallerEnum.BuildJoinSqlWhere
     });
 
     // // Back to ApModel
@@ -277,7 +277,7 @@ export class StructService {
 
     // let errors = ErrorsCollector.getErrors();
 
-    barStruct.logStruct({
+    barBuilder.logStruct({
       errors: errors,
       udfs: udfs,
       views: views,

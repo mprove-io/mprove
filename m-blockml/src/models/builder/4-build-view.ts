@@ -4,7 +4,7 @@ import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barView } from '../../barrels/bar-view';
 
-export function viewBuild(item: {
+export function buildView(item: {
   views: interfaces.View[];
   udfs: interfaces.Udf[];
   udfsDict: interfaces.UdfsDict;

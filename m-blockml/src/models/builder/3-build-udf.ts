@@ -3,7 +3,7 @@ import { interfaces } from '../../barrels/interfaces';
 import { barUdf } from '../../barrels/bar-udf';
 import { BmError } from '../bm-error';
 
-export function udfBuild(item: {
+export function buildUdf(item: {
   udfs: interfaces.Udf[];
   errors: BmError[];
   structId: string;

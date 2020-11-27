@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinSqlOnBuild;
+let caller = enums.CallerEnum.BuildJoinSqlOn;
 let func = enums.FuncEnum.JsoCheckSingleRefs;
 let testId = 'e__join-sql-on-refs-model-calculation';
 

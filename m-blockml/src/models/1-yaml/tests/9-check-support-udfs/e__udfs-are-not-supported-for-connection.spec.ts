@@ -5,7 +5,7 @@ import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.YamlBuild;
+let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.CheckSupportUdfs;
 let testId = 'e__udfs-are-not-supported-for-connection';
 

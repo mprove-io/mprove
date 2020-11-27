@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.ViewBuild;
+let caller = enums.CallerEnum.BuildView;
 let func = enums.FuncEnum.CheckVMDFilterDefaults;
 let testId = 'e__wrong-filter-expression-1';
 

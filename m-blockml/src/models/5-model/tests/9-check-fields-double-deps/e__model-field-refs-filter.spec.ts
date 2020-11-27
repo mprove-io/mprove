@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.ModelBuild;
+let caller = enums.CallerEnum.BuildModel;
 let func = enums.FuncEnum.CheckFieldsDoubleDeps;
 let testId = 'e__model-field-refs-filter';
 

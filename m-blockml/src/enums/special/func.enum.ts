@@ -74,5 +74,5 @@ export enum FuncEnum {
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
-  LogStruct = 'struct/log-struct'
+  LogStruct = 'builder/log-struct'
 }

@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.FieldBuildModels;
+let caller = enums.CallerEnum.BuildModelField;
 let func = enums.FuncEnum.MakeFieldsDeps;
 let testId = 'e__wrong-chars-in-model-fields-refs';
 

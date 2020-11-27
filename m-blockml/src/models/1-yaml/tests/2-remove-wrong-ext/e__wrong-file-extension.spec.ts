@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.YamlBuild;
+let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.RemoveWrongExt;
 let testId = 'e__wrong-file-extension';
 

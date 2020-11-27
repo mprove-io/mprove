@@ -1,9 +1,9 @@
 import { enums } from '../../barrels/enums';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
-import { barJoinSqlWhere } from '../../barrels/bar-join-sql-where';
+import { barJoin } from '../../barrels/bar-join';
 
-export function joinSqlWhereBuild(item: {
+export function buildJoin(item: {
   models: interfaces.Model[];
   structId: string;
   errors: BmError[];
@@ -11,49 +11,33 @@ export function joinSqlWhereBuild(item: {
 }) {
   let models = item.models;
 
-  models = barJoinSqlWhere.jswCheckCharsInRefs({
+  models = barJoin.checkJoinUnknownParameters({
     models: models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  models = barJoinSqlWhere.jswMakeDoubleDeps({
+  models = barJoin.checkJoinType({
     models: models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  models = barJoinSqlWhere.jswCheckDoubleDeps({
+  models = barJoin.upgradeJoinCalculationsForceDims({
     models: models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  models = barJoinSqlWhere.jswCheckSingleRefs({
+  models = barJoin.checkSqlOnExist({
     models: models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
-
-  models = barJoinSqlWhere.jswSubstituteSingleRefs({
-    models: models,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
-  models = barJoinSqlWhere.jswUpdateJoinsDoubleDepsAfterSingles({
-    models: models,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
-  // models = barJoinSqlWhere.checkApplyFilter({ models: models });
 
   return models;
 }

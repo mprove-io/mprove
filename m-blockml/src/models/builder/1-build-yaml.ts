@@ -4,7 +4,7 @@ import { barYaml } from '../../barrels/bar-yaml';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../../models/bm-error';
 
-export function yamlBuild(item: {
+export function buildYaml(item: {
   errors: BmError[];
   files: api.File[];
   structId: string;

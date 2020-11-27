@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.JoinSqlWhereBuild;
+let caller = enums.CallerEnum.BuildJoinSqlWhere;
 let func = enums.FuncEnum.JswUpdateJoinsDoubleDepsAfterSingles;
 let testId = 'v__2';
 

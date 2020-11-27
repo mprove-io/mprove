@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.FieldBuildViews;
+let caller = enums.CallerEnum.BuildViewField;
 let func = enums.FuncEnum.CheckAndSetImplicitFormatNumber;
 let testId = 'e__misuse-of-currency-prefix';
 

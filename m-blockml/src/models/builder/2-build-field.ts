@@ -4,7 +4,7 @@ import { types } from '../../barrels/types';
 import { BmError } from '../../models/bm-error';
 import { api } from '../../barrels/api';
 
-export function fieldBuild<T extends types.vmdType>(item: {
+export function buildField<T extends types.vmdType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

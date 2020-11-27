@@ -3,7 +3,7 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { types } from '../../barrels/types';
 import { api } from '../../barrels/api';
-import { barTransform } from '../../barrels/bar-transform';
+import { barTimeframe } from '../../barrels/bar-timeframe';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 
@@ -70,12 +70,12 @@ export function transformTimes<T extends types.vmType>(item: {
       ) {
         ts = field.sql;
       } else if (field.source === enums.TimeSourceEnum.Epoch) {
-        ts = barTransform.makeTsFromSourceEpoch({
+        ts = barTimeframe.makeTsFromSourceEpoch({
           sql: field.sql,
           connection: x.connection
         });
       } else if (field.source === enums.TimeSourceEnum.YYYYMMDD) {
-        ts = barTransform.makeTsFromSourceYYYYMMDD({
+        ts = barTimeframe.makeTsFromSourceYYYYMMDD({
           sql: field.sql,
           connection: x.connection
         });
@@ -110,7 +110,7 @@ export function transformTimes<T extends types.vmType>(item: {
 
             label = enums.TimeLabelEnum.DayOfWeek;
 
-            sqlTransformed = barTransform.makeTimeframeDayOfWeek({
+            sqlTransformed = barTimeframe.makeTimeframeDayOfWeek({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -123,7 +123,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfWeekIndex;
 
-            sqlTransformed = barTransform.makeTimeframeDayOfWeekIndex({
+            sqlTransformed = barTimeframe.makeTimeframeDayOfWeekIndex({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection,
               weekStart: item.weekStart
@@ -138,7 +138,7 @@ export function transformTimes<T extends types.vmType>(item: {
             label = enums.TimeLabelEnum.DayOfYear;
 
             // no need for weekStart
-            sqlTransformed = barTransform.makeTimeframeDayOfYear({
+            sqlTransformed = barTimeframe.makeTimeframeDayOfYear({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -151,7 +151,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Week;
 
-            sqlTransformed = barTransform.makeTimeframeWeek({
+            sqlTransformed = barTimeframe.makeTimeframeWeek({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection,
               weekStart: item.weekStart
@@ -165,7 +165,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.WeekOfYear;
 
-            sqlTransformed = barTransform.makeTimeframeWeekOfYear({
+            sqlTransformed = barTimeframe.makeTimeframeWeekOfYear({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection,
               weekStart: item.weekStart
@@ -179,7 +179,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Date;
 
-            sqlTransformed = barTransform.makeTimeframeDate({
+            sqlTransformed = barTimeframe.makeTimeframeDate({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -192,7 +192,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfMonth;
 
-            sqlTransformed = barTransform.makeTimeframeDayOfMonth({
+            sqlTransformed = barTimeframe.makeTimeframeDayOfMonth({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -205,7 +205,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Hour;
 
-            sqlTransformed = barTransform.makeTimeframeHour({
+            sqlTransformed = barTimeframe.makeTimeframeHour({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -218,7 +218,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.HourOfDay;
 
-            sqlTransformed = barTransform.makeTimeframeHourOfDay({
+            sqlTransformed = barTimeframe.makeTimeframeHourOfDay({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -241,7 +241,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = timeframe;
 
-            sqlTransformed = barTransform.makeTimeframeHourNum({
+            sqlTransformed = barTimeframe.makeTimeframeHourNum({
               num: num,
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
@@ -255,7 +255,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Minute;
 
-            sqlTransformed = barTransform.makeTimeframeMinute({
+            sqlTransformed = barTimeframe.makeTimeframeMinute({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -277,7 +277,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = timeframe;
 
-            sqlTransformed = barTransform.makeTimeframeMinuteNum({
+            sqlTransformed = barTimeframe.makeTimeframeMinuteNum({
               num: num,
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
@@ -291,7 +291,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Month;
 
-            sqlTransformed = barTransform.makeTimeframeMonth({
+            sqlTransformed = barTimeframe.makeTimeframeMonth({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -304,7 +304,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.MonthName;
 
-            sqlTransformed = barTransform.makeTimeframeMonthName({
+            sqlTransformed = barTimeframe.makeTimeframeMonthName({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -317,7 +317,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.MonthNum;
 
-            sqlTransformed = barTransform.makeTimeframeMonthNum({
+            sqlTransformed = barTimeframe.makeTimeframeMonthNum({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -330,7 +330,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Quarter;
 
-            sqlTransformed = barTransform.makeTimeframeQuarter({
+            sqlTransformed = barTimeframe.makeTimeframeQuarter({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -343,7 +343,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.QuarterOfYear;
 
-            sqlTransformed = barTransform.makeTimeframeQuarterOfYear({
+            sqlTransformed = barTimeframe.makeTimeframeQuarterOfYear({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -356,7 +356,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Time;
 
-            sqlTransformed = barTransform.makeTimeframeTime({
+            sqlTransformed = barTimeframe.makeTimeframeTime({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -369,7 +369,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.TimeOfDay;
 
-            sqlTransformed = barTransform.makeTimeframeTimeOfDay({
+            sqlTransformed = barTimeframe.makeTimeframeTimeOfDay({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -382,7 +382,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Year;
 
-            sqlTransformed = barTransform.makeTimeframeYear({
+            sqlTransformed = barTimeframe.makeTimeframeYear({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });
@@ -395,7 +395,7 @@ export function transformTimes<T extends types.vmType>(item: {
             name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.YesNoHasValue;
 
-            sqlTransformed = barTransform.makeTimeframeYesNoHasValue({
+            sqlTransformed = barTimeframe.makeTimeframeYesNoHasValue({
               sqlTimestamp: sqlTimestamp,
               connection: x.connection
             });

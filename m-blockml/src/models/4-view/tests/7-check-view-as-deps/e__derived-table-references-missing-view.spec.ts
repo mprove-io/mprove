@@ -5,7 +5,7 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.ViewBuild;
+let caller = enums.CallerEnum.BuildView;
 let func = enums.FuncEnum.CheckViewAsDeps;
 let testId = 'e__derived-table-references-missing-view';
 

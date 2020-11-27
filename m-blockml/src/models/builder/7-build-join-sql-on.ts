@@ -1,9 +1,9 @@
 import { enums } from '../../barrels/enums';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
-import { barJoin } from '../../barrels/bar-join';
+import { barJoinSqlOn } from '../../barrels/bar-join-sql-on';
 
-export function joinBuild(item: {
+export function buildJoinSqlOn(item: {
   models: interfaces.Model[];
   structId: string;
   errors: BmError[];
@@ -11,28 +11,42 @@ export function joinBuild(item: {
 }) {
   let models = item.models;
 
-  models = barJoin.checkJoinUnknownParameters({
+  models = barJoinSqlOn.jsoCheckCharsInRefs({
     models: models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  models = barJoin.checkJoinType({
+  models = barJoinSqlOn.jsoMakeDoubleDeps({
     models: models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  models = barJoin.upgradeJoinCalculationsForceDims({
+  models = barJoinSqlOn.jsoCheckDoubleDeps({
     models: models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  models = barJoin.checkSqlOnExist({
+  models = barJoinSqlOn.jsoCheckSingleRefs({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
+  models = barJoinSqlOn.jsoSubstituteSingleRefs({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
+  models = barJoinSqlOn.jsoMakeJoinsDoubleDepsAfterSingles({
     models: models,
     structId: item.structId,
     errors: item.errors,

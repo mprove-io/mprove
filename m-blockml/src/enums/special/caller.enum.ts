@@ -1,13 +1,13 @@
 export enum CallerEnum {
-  YamlBuild = '1-yaml-build',
-  FieldBuildViews = '2-field-build-views',
-  FieldBuildModels = '2-field-build-models',
-  UdfBuild = '3-udf-build',
-  ViewBuild = '4-view-build',
-  ModelBuild = '5-model-build',
-  JoinBuild = '6-join-build',
-  JoinSqlOnBuild = '7-join-sql-on-build',
-  JoinSqlWhereBuild = '8-join-sql-where-build',
+  BuildYaml = '1-build-yaml',
+  BuildViewField = '2-build-view-field',
+  BuildModelField = '2-build-model-field',
+  BuildUdf = '3-build-udf',
+  BuildView = '4-build-view',
+  BuildModel = '5-build-model',
+  BuildJoin = '6-build-join',
+  BuildJoinSqlOn = '7-build-join-sql-on',
+  BuildJoinSqlWhere = '8-build-join-sql-where',
 
   RebuildStruct = 'rebuild-struct'
 }
