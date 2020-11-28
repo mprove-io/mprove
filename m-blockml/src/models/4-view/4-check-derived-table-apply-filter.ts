@@ -20,54 +20,59 @@ export function checkDerivedTableApplyFilter(item: {
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isDefined(x.derived_table)) {
-      let input = x.derived_table;
+    if (helper.isUndefined(x.derived_table)) {
+      newViews.push(x);
+      return;
+    }
 
-      let reg2 = api.MyRegex.CAPTURE_START_FIELD_TARGET_END();
-      let r2;
+    let input = x.derived_table;
 
-      while ((r2 = reg2.exec(input))) {
-        let start = r2[1];
-        let fieldName = r2[2];
-        let target = r2[3];
-        let end = r2[4];
+    let reg2 = api.MyRegex.CAPTURE_START_FIELD_TARGET_END();
+    let r2;
 
-        let field = x.fields.find(f => f.name === fieldName);
+    while ((r2 = reg2.exec(input))) {
+      let start = r2[1];
+      let fieldName = r2[2];
+      let target = r2[3];
+      let end = r2[4];
 
-        if (!field) {
-          item.errors.push(
-            new BmError({
-              title: enums.ErTitleEnum.APPLY_FILTER_REFERENCES_MISSING_FILTER,
-              message: `Filter '${fieldName}' is missing or not valid`,
-              lines: [
-                {
-                  line: x.derived_table_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        } else if (field.fieldClass !== enums.FieldClassEnum.Filter) {
-          // error e251
-          item.errors.push(
-            new BmError({
-              title: enums.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER,
-              message: `Found field '${fieldName}' that is ${field.fieldClass}`,
-              lines: [
-                {
-                  line: x.derived_table_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-        input = start + end;
+      let field = x.fields.find(f => f.name === fieldName);
+
+      if (helper.isUndefined(field)) {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.APPLY_FILTER_REFS_MISSING_FILTER,
+            message: `Filter '${fieldName}' is missing or not valid`,
+            lines: [
+              {
+                line: x.derived_table_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
       }
+
+      if (field.fieldClass !== enums.FieldClassEnum.Filter) {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER,
+            message: `Found field '${fieldName}' that is ${field.fieldClass}`,
+            lines: [
+              {
+                line: x.derived_table_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      input = start + end;
     }
 
     if (errorsOnStart === item.errors.length) {

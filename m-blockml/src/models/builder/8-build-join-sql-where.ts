@@ -53,7 +53,12 @@ export function buildJoinSqlWhere(item: {
     caller: item.caller
   });
 
-  // models = barJoinSqlWhere.checkApplyFilter({ models: models });
+  models = barJoinSqlWhere.jswCheckApplyFilter({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   return models;
 }

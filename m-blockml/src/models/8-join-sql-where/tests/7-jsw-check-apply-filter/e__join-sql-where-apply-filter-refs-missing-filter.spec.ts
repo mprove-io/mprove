@@ -5,13 +5,13 @@ import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildView;
-let func = enums.FuncEnum.CheckDerivedTableApplyFilter;
-let testId = 'e__apply-filter-references-missing-filter';
+let caller = enums.CallerEnum.BuildJoinSqlWhere;
+let func = enums.FuncEnum.JswCheckApplyFilter;
+let testId = 'e__join-sql-where-apply-filter-refs-missing-filter';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
-  let views: interfaces.View[];
+  let models: interfaces.Model[];
 
   try {
     let {
@@ -36,17 +36,17 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(views.length).toBe(0);
+  expect(models.length).toBe(0);
 
   expect(errors[0].title).toBe(
-    enums.ErTitleEnum.APPLY_FILTER_REFERENCES_MISSING_FILTER
+    enums.ErTitleEnum.JOIN_SQL_WHERE_APPLY_FILTER_REFS_MISSING_FILTER
   );
-  expect(errors[0].lines[0].line).toBe(3);
+  expect(errors[0].lines[0].line).toBe(10);
 });
