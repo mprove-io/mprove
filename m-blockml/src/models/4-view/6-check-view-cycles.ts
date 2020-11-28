@@ -46,7 +46,6 @@ export function checkViewCycles(item: {
       });
 
       let cycledNamesString: string = cycledNames.join('", "');
-      // error e285
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.DERIVED_TABLE_CYCLE_IN_VIEW_REFERENCES,

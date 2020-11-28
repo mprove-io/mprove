@@ -23,7 +23,6 @@ export function checkSqlOnExist(item: {
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
         if (helper.isUndefined(join.sql_on)) {
-          // error e19
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.JOIN_MISSING_SQL_ON,

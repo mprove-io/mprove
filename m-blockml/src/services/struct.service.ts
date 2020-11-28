@@ -6,20 +6,6 @@ import { BmError } from '../models/bm-error';
 import { barYaml } from '../barrels/bar-yaml';
 import { barBuilder } from '../barrels/bar-builder';
 
-// import { barChart } from '../barrels/bar-chart';
-// import { barDashboard } from '../barrels/bar-dashboard';
-// import { barField } from '../barrels/bar-field';
-// import { barFilter } from '../barrels/bar-filter';
-// import { barJoin } from '../barrels/bar-join';
-// import { barJoinSqlWhere } from '../barrels/bar-join-sql-where';
-// import { barModel } from '../barrels/bar-model';
-// import { barModelSqlAlwaysWhere } from '../barrels/bar-model-sql-always-where';
-// import { barModelSqlAlwaysWhereCalc } from '../barrels/bar-model-sql-always-where-calc';
-// import { barReport } from '../barrels/bar-report';
-// import { barUdf } from '../barrels/bar-udf';
-// import { barView } from '../barrels/bar-view';
-// import { ErrorsCollector } from '../barrels/errors-collector';
-
 @Injectable()
 export class StructService {
   async rebuildStruct(item: {
@@ -138,9 +124,12 @@ export class StructService {
       caller: enums.CallerEnum.BuildJoinSqlWhere
     });
 
-    // // Back to ApModel
-    // models = barModel.checkJoinsCyclesAndToposort({ models: models });
-    // models = barModel.checkAlwaysJoin({ models: models });
+    models = barBuilder.buildSortJoins({
+      models: models,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildSortJoins
+    });
 
     // // ApModelSqlAlwaysWhere
     // models = barModelSqlAlwaysWhere.checkCharsInRefs({ models: models });

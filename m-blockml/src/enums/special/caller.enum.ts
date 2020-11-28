@@ -8,6 +8,7 @@ export enum CallerEnum {
   BuildJoin = '6-build-join',
   BuildJoinSqlOn = '7-build-join-sql-on',
   BuildJoinSqlWhere = '8-build-join-sql-where',
+  BuildSortJoins = '9-build-sort-joins',
 
   RebuildStruct = 'rebuild-struct'
 }

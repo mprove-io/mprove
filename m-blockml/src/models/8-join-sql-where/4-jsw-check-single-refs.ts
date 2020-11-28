@@ -40,7 +40,6 @@ export function jswCheckSingleRefs(item: {
           let referenceField = x.fields.find(f => f.name === reference);
 
           if (helper.isUndefined(referenceField)) {
-            // error e162
             item.errors.push(
               new BmError({
                 title:
@@ -59,7 +58,6 @@ export function jswCheckSingleRefs(item: {
           } else if (
             referenceField.fieldClass === enums.FieldClassEnum.Filter
           ) {
-            // error e244
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_FILTER,
@@ -79,7 +77,6 @@ export function jswCheckSingleRefs(item: {
           } else if (
             referenceField.fieldClass === enums.FieldClassEnum.Measure
           ) {
-            // error e163
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MEASURE,
@@ -99,7 +96,6 @@ export function jswCheckSingleRefs(item: {
           } else if (
             referenceField.fieldClass === enums.FieldClassEnum.Calculation
           ) {
-            // error e164
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_CALCULATION,

@@ -73,6 +73,9 @@ export enum FuncEnum {
   JswUpdateJoinsDoubleDepsAfterSingles = '8-join-sql-where/6-jsw-update-joins-double-deps-after-singles',
   JswCheckApplyFilter = '8-join-sql-where/7-jsw-check-apply-filter',
 
+  CheckJoinsCyclesAndToposort = '9-sort-joins/1-check-joins-cycles-and-toposort',
+  CheckAlwaysJoin = '9-sort-joins/2-check-always-join',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'

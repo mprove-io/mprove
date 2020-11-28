@@ -6,5 +6,6 @@ export * from './5-build-model';
 export * from './6-build-join';
 export * from './7-build-join-sql-on';
 export * from './8-build-join-sql-where';
+export * from './9-build-sort-joins';
 
 export * from './log-struct';

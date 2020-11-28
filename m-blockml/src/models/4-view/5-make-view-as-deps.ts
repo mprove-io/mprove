@@ -83,7 +83,6 @@ export function makeViewAsDeps(item: {
         let dep: string = r2[2];
 
         if (!x.asDeps[as]) {
-          // error e281
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.DERIVED_TABLE_NO_VIEW_REFERENCE,

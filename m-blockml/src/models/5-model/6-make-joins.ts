@@ -27,7 +27,6 @@ export function makeJoins(item: {
       let view = item.views.find(v => v.name === viewName);
 
       if (helper.isUndefined(view)) {
-        // error e40, e41
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW,

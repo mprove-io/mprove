@@ -21,7 +21,6 @@ export function checkJoinsExist(item: {
     let errorsOnStart = item.errors.length;
 
     if (helper.isUndefined(x.joins)) {
-      // error e10
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.MISSING_JOINS,

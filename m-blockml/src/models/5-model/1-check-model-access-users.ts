@@ -22,8 +22,6 @@ export function checkModelAccessUsers(item: {
     if (helper.isDefined(x.access_users)) {
       x.access_users.forEach(u => {
         if (typeof u !== 'string' && !(<any>u instanceof String)) {
-          // error e259
-
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_MODEL_ACCESS_USERS_ELEMENT,
