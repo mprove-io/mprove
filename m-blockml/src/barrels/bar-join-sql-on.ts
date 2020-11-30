@@ -1,2 +1,2 @@
-import * as barJoinSqlOn from '../models/7-join-sql-on/_index';
+import * as barJoinSqlOn from '../models/07-join-sql-on/_index';
 export { barJoinSqlOn };
