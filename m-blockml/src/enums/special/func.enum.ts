@@ -83,6 +83,7 @@ export enum FuncEnum {
   SawSubstituteSingleRefs = '10-sql-always-where/5-saw-substitute-single-refs',
   SawMakeDoubleDepsAfterSingles = '10-sql-always-where/6-saw-make-double-deps-after-singles',
   SawCheckApplyFilter = '10-sql-always-where/7-saw-check-apply-filter',
+  SawUpdateAlwaysJoinUnique = '10-sql-always-where/8-saw-update-always-join-unique',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

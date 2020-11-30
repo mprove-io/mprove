@@ -5,3 +5,4 @@ export * from './4-saw-check-single-refs';
 export * from './5-saw-substitute-single-refs';
 export * from './6-saw-make-double-deps-after-singles';
 export * from './7-saw-check-apply-filter';
+export * from './8-saw-update-always-join-unique';

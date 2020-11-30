@@ -60,5 +60,12 @@ export function buildSqlAlwaysWhere(item: {
     caller: item.caller
   });
 
+  models = barSqlAlwaysWhere.sawUpdateAlwaysJoinUnique({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   return models;
 }
