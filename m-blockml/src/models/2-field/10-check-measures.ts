@@ -154,7 +154,7 @@ export function checkMeasures<T extends types.vmType>(item: {
 
           let r = reg.exec(field.percentile);
 
-          if (!r) {
+          if (helper.isUndefined(r)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.WRONG_PERCENTILE,

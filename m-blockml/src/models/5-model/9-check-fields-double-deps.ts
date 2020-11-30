@@ -23,7 +23,7 @@ export function checkFieldsDoubleDeps(item: {
       Object.keys(x.fieldsDoubleDeps[fieldName]).forEach(as => {
         let join = x.joins.find(j => j.as === as);
 
-        if (!join) {
+        if (helper.isUndefined(join)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MODEL_FIELD_WRONG_ALIAS_IN_REFERENCE,
@@ -44,7 +44,7 @@ export function checkFieldsDoubleDeps(item: {
           let field = x.fields.find(f => f.name === fieldName);
           let depField = join.view.fields.find(f => f.name === depName);
 
-          if (!depField) {
+          if (helper.isUndefined(depField)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.MODEL_FIELD_REFS_NOT_VALID_FIELD,

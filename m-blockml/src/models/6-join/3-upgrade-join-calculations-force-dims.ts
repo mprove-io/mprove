@@ -21,7 +21,7 @@ export function upgradeJoinCalculationsForceDims(item: {
           field.forceDims = {};
 
           Object.keys(field.prepForceDims).forEach(dimName => {
-            if (!field.forceDims[join.as]) {
+            if (helper.isUndefined(field.forceDims[join.as])) {
               field.forceDims[join.as] = {};
             }
 

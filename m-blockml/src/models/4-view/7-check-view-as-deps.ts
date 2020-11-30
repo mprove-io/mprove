@@ -29,7 +29,7 @@ export function checkViewAsDeps(item: {
           v => v.name === referencedViewName
         );
 
-        if (!referencedView) {
+        if (helper.isUndefined(referencedView)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_VIEW,
@@ -79,7 +79,7 @@ export function checkViewAsDeps(item: {
         Object.keys(x.asDeps[as].fieldNames).forEach(fieldName => {
           let field = referencedView.fields.find(f => f.name === fieldName);
 
-          if (!field) {
+          if (helper.isUndefined(field)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_FIELD,

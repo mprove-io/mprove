@@ -3,6 +3,7 @@ import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { barMeasure } from '../../barrels/bar-measure';
+import { helper } from '../../barrels/helper';
 
 export function makeMainFields(item: interfaces.VarsSub) {
   let mainText: string[] = [];
@@ -21,7 +22,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
   });
 
   Object.keys(item.depMeasures).forEach(fieldName => {
-    if (!selected[fieldName]) {
+    if (helper.isUndefined(selected[fieldName])) {
       mainFields.push(fieldName);
     }
 
@@ -29,7 +30,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
   });
 
   Object.keys(item.depDimensions).forEach(fieldName => {
-    if (!selected[fieldName]) {
+    if (helper.isUndefined(selected[fieldName])) {
       mainFields.push(fieldName);
     }
 

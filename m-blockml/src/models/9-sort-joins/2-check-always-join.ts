@@ -38,7 +38,7 @@ export function checkAlwaysJoin(item: {
 
         let join = x.joins.find(j => j.as === asName);
 
-        if (!join) {
+        if (helper.isUndefined(join)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.ALWAYS_JOIN_REFS_MISSING_JOIN,

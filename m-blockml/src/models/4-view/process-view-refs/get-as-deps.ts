@@ -1,5 +1,6 @@
 import { interfaces } from '../../../barrels/interfaces';
 import { api } from '../../../barrels/api';
+import { helper } from '../../../barrels/helper';
 
 export function getAsDeps(input: string) {
   let asDeps: interfaces.View['asDeps'] = {};
@@ -11,7 +12,7 @@ export function getAsDeps(input: string) {
     let view: string = r[1];
     let alias: string = r[2];
 
-    if (!asDeps[alias]) {
+    if (helper.isUndefined(asDeps[alias])) {
       asDeps[alias] = { viewName: view, fieldNames: {} };
     }
   }

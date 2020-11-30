@@ -51,7 +51,9 @@ export function makeFieldsDoubleDepsAfterSingles(item: {
             break;
           } else {
             // ok
-            if (!x.fieldsDoubleDepsAfterSingles[f.name][asName]) {
+            if (
+              helper.isUndefined(x.fieldsDoubleDepsAfterSingles[f.name][asName])
+            ) {
               x.fieldsDoubleDepsAfterSingles[f.name][asName] = {};
             }
 
@@ -62,7 +64,7 @@ export function makeFieldsDoubleDepsAfterSingles(item: {
               f.fieldClass === enums.FieldClassEnum.Calculation &&
               depField.fieldClass === enums.FieldClassEnum.Dimension
             ) {
-              if (!f.forceDims[asName]) {
+              if (helper.isUndefined(f.forceDims[asName])) {
                 f.forceDims[asName] = {};
               }
 
@@ -89,7 +91,9 @@ export function makeFieldsDoubleDepsAfterSingles(item: {
           let asName2: string = r2[1];
           let depName2: string = r2[2];
 
-          if (!x.fieldsDoubleDepsAfterSingles[f.name][asName2]) {
+          if (
+            helper.isUndefined(x.fieldsDoubleDepsAfterSingles[f.name][asName2])
+          ) {
             x.fieldsDoubleDepsAfterSingles[f.name][asName2] = {};
           }
 
