@@ -59,7 +59,6 @@ export function checkJoinsCyclesAndToposort(item: {
         });
 
         let cycledNamesString: string = cycledNames.join('", "');
-        // error e56
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.CYCLE_IN_JOINS_SQL_ON_OR_SQL_WHERE,
@@ -69,31 +68,29 @@ export function checkJoinsCyclesAndToposort(item: {
         );
         return;
       });
-    }
+    } else {
+      // not cyclic - toposort
+      let graph = [];
+      let zeroDepsJoins = [];
 
-    // not cyclic - toposort
-    let graph = [];
-    let zeroDepsJoins = [];
+      Object.keys(x.joinsDoubleDepsAfterSingles).forEach(alias => {
+        Object.keys(x.joinsDoubleDepsAfterSingles[alias]).forEach(as => {
+          if (alias !== as) {
+            graph.push([alias, as]);
+          }
+        });
+      });
 
-    Object.keys(x.joinsDoubleDepsAfterSingles).forEach(alias => {
-      Object.keys(x.joinsDoubleDepsAfterSingles[alias]).forEach(as => {
-        if (alias !== as) {
-          graph.push([alias, as]);
+      let sorted = toposort(graph).reverse();
+
+      Object.keys(x.joinsDoubleDepsAfterSingles).forEach(alias => {
+        if (sorted.indexOf(alias) < 0) {
+          zeroDepsJoins.push(alias);
         }
       });
-    });
 
-    let sorted = toposort(graph).reverse();
-
-    Object.keys(x.joinsDoubleDepsAfterSingles).forEach(alias => {
-      if (sorted.indexOf(alias) < 0) {
-        zeroDepsJoins.push(alias);
-      }
-    });
-
-    sorted = [...zeroDepsJoins, ...sorted];
-
-    x.joinsSorted = [x.fromAs, ...sorted];
+      x.joinsSorted = [...zeroDepsJoins, ...sorted];
+    }
 
     if (errorsOnStart === item.errors.length) {
       newModels.push(x);

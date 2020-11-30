@@ -20,7 +20,7 @@ export function checkAlwaysJoin(item: {
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.alwaysJoinList = {};
+    x.alwaysJoinUnique = {};
 
     if (helper.isUndefined(x.always_join)) {
       newModels.push(x);
@@ -39,7 +39,6 @@ export function checkAlwaysJoin(item: {
         let join = x.joins.find(j => j.as === asName);
 
         if (!join) {
-          // error e142
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.ALWAYS_JOIN_REFS_MISSING_JOIN,
@@ -59,7 +58,7 @@ export function checkAlwaysJoin(item: {
         }
 
         // ok
-        x.alwaysJoinList[asName] = 1;
+        x.alwaysJoinUnique[asName] = 1;
       } else {
         // error e143
         item.errors.push(

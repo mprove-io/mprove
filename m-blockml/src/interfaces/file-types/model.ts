@@ -60,7 +60,7 @@ export interface Model extends FileBasic {
     [s: string]: string[];
   };
 
-  alwaysJoinList?: {
+  alwaysJoinUnique?: {
     [as: string]: number;
   };
 
