@@ -53,7 +53,12 @@ export function buildSqlAlwaysWhere(item: {
     caller: item.caller
   });
 
-  // models = barModelSqlAlwaysWhere.checkApplyFilter({ models: models });
+  models = barSqlAlwaysWhere.sawCheckApplyFilter({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   return models;
 }

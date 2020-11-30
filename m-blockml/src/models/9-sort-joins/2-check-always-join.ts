@@ -60,7 +60,6 @@ export function checkAlwaysJoin(item: {
         // ok
         x.alwaysJoinUnique[asName] = 1;
       } else {
-        // error e143
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_ALWAYS_JOIN,

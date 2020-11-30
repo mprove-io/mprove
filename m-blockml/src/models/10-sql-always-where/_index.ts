@@ -4,5 +4,4 @@ export * from './3-saw-check-double-deps';
 export * from './4-saw-check-single-refs';
 export * from './5-saw-substitute-single-refs';
 export * from './6-saw-make-double-deps-after-singles';
-
-// export * from './check-apply-filter';
+export * from './7-saw-check-apply-filter';

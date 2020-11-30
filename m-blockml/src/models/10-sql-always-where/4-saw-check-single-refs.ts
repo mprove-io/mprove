@@ -38,7 +38,6 @@ export function sawCheckSingleRefs(item: {
       let referenceField = x.fields.find(f => f.name === reference);
 
       if (helper.isUndefined(referenceField)) {
-        // error e149
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_MISSING_FIELD,
@@ -56,7 +55,6 @@ export function sawCheckSingleRefs(item: {
       }
 
       if (referenceField.fieldClass === enums.FieldClassEnum.Filter) {
-        // error e246
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_FILTER,
@@ -76,7 +74,6 @@ export function sawCheckSingleRefs(item: {
       }
 
       if (referenceField.fieldClass === enums.FieldClassEnum.Measure) {
-        // error e151
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_MEASURE,
@@ -96,7 +93,6 @@ export function sawCheckSingleRefs(item: {
       }
 
       if (referenceField.fieldClass === enums.FieldClassEnum.Calculation) {
-        // error e150
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_CALCULATION,

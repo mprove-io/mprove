@@ -42,7 +42,7 @@ export function jswCheckApplyFilter(item: {
                 title:
                   enums.ErTitleEnum
                     .JOIN_SQL_WHERE_APPLY_FILTER_REFS_MISSING_FILTER,
-                message: `Filter '${fieldName}' is missing or not valid`,
+                message: `Filter "${fieldName}" is missing or not valid`,
                 lines: [
                   {
                     line: join.sql_where_line_num,
@@ -61,7 +61,7 @@ export function jswCheckApplyFilter(item: {
                 title:
                   enums.ErTitleEnum
                     .JOIN_SQL_WHERE_APPLY_FILTER_MUST_REFERENCE_A_FILTER,
-                message: `Found field '${fieldName}' that is ${field.fieldClass}`,
+                message: `Found field "${fieldName}" that is ${field.fieldClass}`,
                 lines: [
                   {
                     line: join.sql_where_line_num,
