@@ -7,5 +7,6 @@ export * from './6-build-join';
 export * from './7-build-join-sql-on';
 export * from './8-build-join-sql-where';
 export * from './9-build-sort-joins';
+export * from './10-build-sql-always-where';
 
 export * from './log-struct';

@@ -131,17 +131,12 @@ export class StructService {
       caller: enums.CallerEnum.BuildSortJoins
     });
 
-    // // ApModelSqlAlwaysWhere
-    // models = barModelSqlAlwaysWhere.checkCharsInRefs({ models: models });
-    // models = barModelSqlAlwaysWhere.makeDoubleDeps({ models: models });
-    // models = barModelSqlAlwaysWhere.checkDoubleDeps({ models: models });
-
-    // models = barModelSqlAlwaysWhere.checkSingleRefs({ models: models });
-    // models = barModelSqlAlwaysWhere.substituteSingleRefs({ models: models });
-    // models = barModelSqlAlwaysWhere.makeDoubleDepsAfterSingles({
-    //   models: models
-    // });
-    // models = barModelSqlAlwaysWhere.checkApplyFilter({ models: models });
+    models = barBuilder.buildSqlAlwaysWhere({
+      models: models,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildSqlAlwaysWhere
+    });
 
     // // ApModelSqlAlwaysWhereCalc
     // models = barModelSqlAlwaysWhereCalc.checkCharsInRefs({ models: models });

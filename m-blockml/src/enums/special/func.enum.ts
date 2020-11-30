@@ -76,6 +76,8 @@ export enum FuncEnum {
   CheckJoinsCyclesAndToposort = '9-sort-joins/1-check-joins-cycles-and-toposort',
   CheckAlwaysJoin = '9-sort-joins/2-check-always-join',
 
+  SawCheckCharsInRefs = '10-sql-always-where/1-saw-check-chars-in-refs',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'

@@ -31,27 +31,27 @@ export function jsoCheckCharsInRefs(item: {
           captures.push(r[1]);
         }
 
-        let joinWrongChars: string[] = [];
+        let wrongChars: string[] = [];
 
         captures.forEach(cap => {
           let reg2 = api.MyRegex.CAPTURE_NOT_ALLOWED_MODEL_REF_CHARS_G();
           let r2;
 
           while ((r2 = reg2.exec(cap))) {
-            joinWrongChars.push(r2[1]);
+            wrongChars.push(r2[1]);
           }
         });
 
-        let joinWrongCharsString = '';
+        let wrongCharsString = '';
 
-        joinWrongCharsString = [...new Set(joinWrongChars)].join(', '); // unique
+        wrongCharsString = [...new Set(wrongChars)].join(', ');
 
-        if (joinWrongChars.length > 0) {
+        if (wrongChars.length > 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.JOIN_WRONG_CHARS_IN_SQL_ON_REFS,
               message:
-                `characters "${joinWrongCharsString}" can not be used ` +
+                `characters "${wrongCharsString}" can not be used ` +
                 `inside \$\{\} of ${api.FileExtensionEnum.Model}`,
               lines: [
                 {
