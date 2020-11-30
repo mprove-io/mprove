@@ -77,6 +77,7 @@ export enum FuncEnum {
   CheckAlwaysJoin = '9-sort-joins/2-check-always-join',
 
   SawCheckCharsInRefs = '10-sql-always-where/1-saw-check-chars-in-refs',
+  SawMakeDoubleDeps = '10-sql-always-where/2-saw-make-double-deps',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
