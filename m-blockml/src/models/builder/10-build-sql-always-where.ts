@@ -32,11 +32,19 @@ export function buildSqlAlwaysWhere(item: {
     caller: item.caller
   });
 
-  // models = barModelSqlAlwaysWhere.checkSingleRefs({ models: models });
+  models = barSqlAlwaysWhere.sawCheckSingleRefs({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   // models = barModelSqlAlwaysWhere.substituteSingleRefs({ models: models });
+
   // models = barModelSqlAlwaysWhere.makeDoubleDepsAfterSingles({
   //   models: models
   // });
+
   // models = barModelSqlAlwaysWhere.checkApplyFilter({ models: models });
 
   return models;

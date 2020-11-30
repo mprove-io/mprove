@@ -28,8 +28,7 @@ export function sawCheckDoubleDeps(item: {
     Object.keys(x.sqlAlwaysWhereDoubleDeps).forEach(depAs => {
       let depJoin = x.joins.find(j => j.as === depAs);
 
-      if (!depJoin) {
-        // error e145
+      if (helper.isUndefined(depJoin)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_ALIAS_IN_SQL_ALWAYS_WHERE_REFERENCE,
@@ -51,8 +50,7 @@ export function sawCheckDoubleDeps(item: {
       Object.keys(x.sqlAlwaysWhereDoubleDeps[depAs]).forEach(depFieldName => {
         let depField = depJoin.view.fields.find(f => f.name === depFieldName);
 
-        if (!depField) {
-          // error e146
+        if (helper.isUndefined(depField)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MISSING_FIELD,
@@ -71,7 +69,6 @@ export function sawCheckDoubleDeps(item: {
 
           return;
         } else if (depField.fieldClass === enums.FieldClassEnum.Filter) {
-          // error e245
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_FILTER,
@@ -91,7 +88,6 @@ export function sawCheckDoubleDeps(item: {
 
           return;
         } else if (depField.fieldClass === enums.FieldClassEnum.Measure) {
-          // error e147
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MEASURE,
@@ -111,7 +107,6 @@ export function sawCheckDoubleDeps(item: {
 
           return;
         } else if (depField.fieldClass === enums.FieldClassEnum.Calculation) {
-          // error e148
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_CALCULATION,
