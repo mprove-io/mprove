@@ -25,7 +25,12 @@ export function buildSqlAlwaysWhere(item: {
     caller: item.caller
   });
 
-  // models = barModelSqlAlwaysWhere.checkDoubleDeps({ models: models });
+  models = barSqlAlwaysWhere.sawCheckDoubleDeps({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barModelSqlAlwaysWhere.checkSingleRefs({ models: models });
   // models = barModelSqlAlwaysWhere.substituteSingleRefs({ models: models });
