@@ -46,9 +46,12 @@ export function buildSqlAlwaysWhere(item: {
     caller: item.caller
   });
 
-  // models = barModelSqlAlwaysWhere.makeDoubleDepsAfterSingles({
-  //   models: models
-  // });
+  models = barSqlAlwaysWhere.sawMakeDoubleDepsAfterSingles({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // models = barModelSqlAlwaysWhere.checkApplyFilter({ models: models });
 

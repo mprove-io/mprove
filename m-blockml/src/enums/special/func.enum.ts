@@ -81,6 +81,7 @@ export enum FuncEnum {
   SawCheckDoubleDeps = '10-sql-always-where/3-saw-check-double-deps',
   SawCheckSingleRefs = '10-sql-always-where/4-saw-check-single-refs',
   SawSubstituteSingleRefs = '10-sql-always-where/5-saw-substitute-single-refs',
+  SawMakeDoubleDepsAfterSingles = '10-sql-always-where/6-saw-make-double-deps-after-singles',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
