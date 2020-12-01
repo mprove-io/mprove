@@ -153,27 +153,15 @@ export class StructService {
       caller: enums.CallerEnum.BuildSqlAlwaysWhereCalc
     });
 
-    // // ApDashboard
-    // dashboards = barDashboard.checkDashboardAccessUsers({
-    //   dashboards: dashboards
-    // });
-
-    // // *dash_check_and_set_implicit_results
-    // dashboards = barDashboard.checkDashboardFiltersFromField({
-    //   dashboards: dashboards,
-    //   models: models
-    // });
-    // // *make_reports
-    // dashboards = barDashboard.checkReportsIsArray({ dashboards: dashboards });
-
-    // // ApFilter
-    // dashboards = barFilter.checkVMDFilterDefaults({
-    //   entities: dashboards,
-    //   weekStart: item.weekStart,
-    //   connection: item.connection
-    // });
+    dashboards = barBuilder.buildDashboard({
+      dashboards: dashboards,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildDashboard
+    });
 
     // // ApReport
+
     // dashboards = barReport.checkReportIsObject({ dashboards: dashboards });
     // dashboards = barReport.checkReportUnknownParameters({
     //   dashboards: dashboards
@@ -230,6 +218,7 @@ export class StructService {
     // });
 
     // // ApChart
+
     // dashboards = barChart.checkChartType({ dashboards: dashboards });
     // dashboards = barChart.checkChartData({ dashboards: dashboards });
     // dashboards = barChart.checkChartDataParameters({ dashboards: dashboards });

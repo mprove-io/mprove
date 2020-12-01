@@ -3,10 +3,10 @@ import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckModelAccessUsers;
+let func = enums.FuncEnum.CheckDashboardAccessUsers;
 
-export function checkModelAccessUsers(item: {
-  models: interfaces.Model[];
+export function checkDashboardAccessUsers(item: {
+  dashboards: interfaces.Dashboard[];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -14,9 +14,9 @@ export function checkModelAccessUsers(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newModels: interfaces.Model[] = [];
+  let newDashboards: interfaces.Dashboard[] = [];
 
-  item.models.forEach(x => {
+  item.dashboards.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     if (helper.isDefined(x.access_users)) {
@@ -24,7 +24,7 @@ export function checkModelAccessUsers(item: {
         if (typeof u !== 'string' && !(<any>u instanceof String)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_MODEL_ACCESS_USERS_ELEMENT,
+              title: enums.ErTitleEnum.WRONG_DASHBOARD_ACCESS_USERS_ELEMENT,
               message: 'found array element that is not a single value',
               lines: [
                 {
@@ -41,12 +41,18 @@ export function checkModelAccessUsers(item: {
     }
 
     if (errorsOnStart === item.errors.length) {
-      newModels.push(x);
+      newDashboards.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(
+    caller,
+    func,
+    structId,
+    enums.LogTypeEnum.Dashboards,
+    newDashboards
+  );
 
-  return newModels;
+  return newDashboards;
 }

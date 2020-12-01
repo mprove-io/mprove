@@ -14,6 +14,7 @@ export enum CallerEnum {
   BuildSortJoins = 'BuildSortJoins',
   BuildSqlAlwaysWhere = 'BuildSqlAlwaysWhere',
   BuildSqlAlwaysWhereCalc = 'BuildSqlAlwaysWhereCalc',
+  BuildDashboard = 'BuildDashboard',
 
   RebuildStruct = 'RebuildStruct'
 }

@@ -94,6 +94,8 @@ export enum FuncEnum {
   AwcCheckApplyFilter = '11-sql-always-where-calc/7-awc-check-apply-filter',
   AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/8-awc-update-always-join-unique',
 
+  CheckDashboardAccessUsers = '12-dashboard/1-check-dashboard-access-users',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'
