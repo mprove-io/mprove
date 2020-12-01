@@ -91,8 +91,8 @@ export enum FuncEnum {
   AwcCheckSingleRefs = '11-sql-always-where-calc/4-awc-check-single-refs',
   AwcSubstituteSingleRefs = '11-sql-always-where-calc/5-awc-substitute-single-refs',
   AwcMakeDoubleDepsAfterSingles = '11-sql-always-where-calc/6-awc-make-double-deps-after-singles',
-  AwcCheckApplyFilter = '11-sql-always-where-calc/6-awc-check-apply-filter',
-  AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/7-awc-update-always-join-unique',
+  AwcCheckApplyFilter = '11-sql-always-where-calc/7-awc-check-apply-filter',
+  AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/8-awc-update-always-join-unique',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
