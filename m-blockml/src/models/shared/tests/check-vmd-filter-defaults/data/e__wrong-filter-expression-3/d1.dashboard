@@ -1,0 +1,6 @@
+dashboard: d1
+fields:
+- filter: size
+  result: number
+  default:      
+  - 'abc'

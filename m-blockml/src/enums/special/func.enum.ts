@@ -95,6 +95,7 @@ export enum FuncEnum {
   AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/8-awc-update-always-join-unique',
 
   CheckDashboardAccessUsers = '12-dashboard/1-check-dashboard-access-users',
+  CheckDashboardFilterDefaults = '12-dashboard/2-check-dashboard-filter-defaults',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

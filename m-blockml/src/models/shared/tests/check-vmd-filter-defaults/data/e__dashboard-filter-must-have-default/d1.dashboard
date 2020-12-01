@@ -1,3 +1,4 @@
 dashboard: d1
 fields:
 - filter: f1
+  result: number

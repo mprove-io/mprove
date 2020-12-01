@@ -19,27 +19,15 @@ export function buildDashboard(item: {
     caller: item.caller
   });
 
-  // dashboards = barDashboard.checkViewFilterDefaults({
-  //   views: dashboards,
-  //   structId: item.structId,
-  //   errors: item.errors,
-  //   caller: item.caller
-  // });
-
-  // dashboards = barDashboard.checkDashboardFiltersFromField({
-  //   dashboards: dashboards,
-  //   models: models
-  // });
+  dashboards = barDashboard.checkDashboardFilterDefaults({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // // *make_reports
   // dashboards = barDashboard.checkReportsIsArray({ dashboards: dashboards });
-
-  // // ApFilter
-  // dashboards = barFilter.checkVMDFilterDefaults({
-  //   entities: dashboards,
-  //   weekStart: item.weekStart,
-  //   connection: item.connection
-  // });
 
   return dashboards;
 }

@@ -33,7 +33,6 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
         x.fileExt === api.FileExtensionEnum.Dashboard &&
         helper.isUndefined(field.default)
       ) {
-        // TODO: add test DASHBOARD_FILTER_MUST_HAVE_DEFAULT
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.DASHBOARD_FILTER_MUST_HAVE_DEFAULT,
