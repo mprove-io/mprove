@@ -22,6 +22,10 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(item: {
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
+      if (field.fieldClass === enums.FieldClassEnum.Filter) {
+        return;
+      }
+
       if (field.result === enums.FieldAnyResultEnum.Number) {
         if (helper.isUndefined(field.format_number)) {
           field.format_number = '';

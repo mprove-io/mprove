@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../bm-error';
@@ -20,6 +21,11 @@ export function checkCycles<T extends types.vmType>(item: {
 
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
+
+    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+      newEntities.push(x);
+      return;
+    }
 
     let g = new Graph();
     Object.keys(x.fieldsDeps).forEach(fieldName => {

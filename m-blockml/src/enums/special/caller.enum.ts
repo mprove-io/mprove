@@ -1,7 +1,10 @@
 export enum CallerEnum {
   BuildYaml = 'BuildYaml',
+
   BuildViewField = 'BuildViewField',
   BuildModelField = 'BuildModelField',
+  BuildDashboardField = 'BuildDashboardField',
+
   BuildUdf = 'BuildUdf',
   BuildView = 'BuildView',
   BuildModel = 'BuildModel',

@@ -76,6 +76,14 @@ export class StructService {
       caller: enums.CallerEnum.BuildModelField
     });
 
+    dashboards = barBuilder.buildField({
+      entities: dashboards,
+      weekStart: item.weekStart,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildDashboardField
+    });
+
     let udfsDict: interfaces.UdfsDict = barBuilder.buildUdf({
       udfs: udfs,
       structId: item.structId,
@@ -150,32 +158,6 @@ export class StructService {
     //   dashboards: dashboards
     // });
 
-    // // ApField
-    // dashboards = barField.checkFieldsIsArray({ entities: dashboards }); //   *dash_prepare_fields_ary
-    // dashboards = barField.checkFieldIsObject({ entities: dashboards }); //   *dash_prepare_fields_ary
-    // // *dash_prepare_fields_ary && *dash_check_field_declaration
-    // dashboards = barField.checkFieldDeclaration({ entities: dashboards });
-
-    // // ApDashboard
-    // // *dash_check_field_declaration
-    // dashboards = barDashboard.checkFieldIsFilter({ dashboards: dashboards });
-
-    // // ApField
-    // // missed in old blockml
-    // dashboards = barField.checkSqlExist({ entities: dashboards });
-    // // *dash_prepare_fields_keys && *dash_make_fields
-    // dashboards = barField.checkFieldNameDuplicates({ entities: dashboards });
-    // // *dash_check_field_unknown_parameters
-    // dashboards = barField.checkFieldUnknownParameters({ entities: dashboards });
-    // // *dash_set_implicit_label
-    // dashboards = barField.setImplicitLabel({ entities: dashboards });
-    // // *dash_check_and_set_implicit_results
-    // dashboards = barField.checkAndSetImplicitResults({ entities: dashboards });
-    // dashboards = barField.checkAndSetImplicitFormatNumber({
-    //   entities: dashboards
-    // });
-
-    // // ApDashboard
     // // *dash_check_and_set_implicit_results
     // dashboards = barDashboard.checkDashboardFiltersFromField({
     //   dashboards: dashboards,

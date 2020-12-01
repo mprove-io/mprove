@@ -36,7 +36,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(item: {
 
       let fieldKeysLineNums: number[] = Object.keys(field)
         .filter(y => y.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
-        .map(y => (<any>field)[y]);
+        .map(y => field[y]);
 
       if (declarations.length === 0) {
         item.errors.push(
@@ -53,7 +53,9 @@ export function checkFieldDeclaration<T extends types.vmdType>(item: {
           })
         );
         return;
-      } else if (declarations.length > 1) {
+      }
+
+      if (declarations.length > 1) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD,
@@ -72,16 +74,14 @@ export function checkFieldDeclaration<T extends types.vmdType>(item: {
 
       let declaration = declarations[0];
 
-      if (
-        (<any>field)[declaration].match(api.MyRegex.CAPTURE_SPECIAL_CHARS_G())
-      ) {
+      if (field[declaration].match(api.MyRegex.CAPTURE_SPECIAL_CHARS_G())) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,
             message: `parameter "${declaration}" contains wrong characters or whitespace`,
             lines: [
               {
-                line: (<any>field)[declaration + constants.LINE_NUM],
+                line: field[declaration + constants.LINE_NUM],
                 name: x.fileName,
                 path: x.filePath
               }
@@ -91,18 +91,38 @@ export function checkFieldDeclaration<T extends types.vmdType>(item: {
         return;
       }
 
-      let fieldClass = declarations[0];
+      let fieldClass = declaration;
+      let fieldName = field[fieldClass];
 
-      let fieldName = (<any>field)[fieldClass];
-      let fieldNameLineNum = (<any>field)[fieldClass + constants.LINE_NUM];
+      if (
+        x.fileExt === api.FileExtensionEnum.Dashboard &&
+        fieldClass !== enums.FieldClassEnum.Filter
+      ) {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER,
+            message: `Found field '${fieldName}' that is ${fieldClass}`,
+            lines: [
+              {
+                line: field[declaration + constants.LINE_NUM],
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
 
-      delete (<any>field)[fieldClass];
-      delete (<any>field)[fieldClass + constants.LINE_NUM];
+      let fieldNameLineNum = field[fieldClass + constants.LINE_NUM];
+
+      delete field[fieldClass];
+      delete field[fieldClass + constants.LINE_NUM];
 
       let newFieldProps: interfaces.FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
-        fieldClass: <any>fieldClass
+        fieldClass: <enums.FieldClassEnum>fieldClass
       };
       Object.assign(field, newFieldProps);
     });

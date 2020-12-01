@@ -20,6 +20,11 @@ export function makeFieldsDeps<T extends types.vmType>(item: {
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
+    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+      newEntities.push(x);
+      return;
+    }
+
     x.fieldsDeps = {};
 
     x.fields.forEach(field => {

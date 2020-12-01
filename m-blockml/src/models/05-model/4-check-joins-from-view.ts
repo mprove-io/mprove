@@ -49,7 +49,7 @@ export function checkJoinsFromView(item: {
         let lineNums: number[] = [];
         Object.keys(j)
           .filter(p => p.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
-          .forEach(l => lineNums.push((<any>j)[l]));
+          .forEach(l => lineNums.push(j[l]));
 
         item.errors.push(
           new BmError({

@@ -20,6 +20,11 @@ export function checkDimensions<T extends types.vmType>(item: {
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
+    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+      newEntities.push(x);
+      return;
+    }
+
     x.fields.forEach(field => {
       if (field.fieldClass !== enums.FieldClassEnum.Dimension) {
         return;

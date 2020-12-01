@@ -17,6 +17,10 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.entities.forEach(x => {
+    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+      return;
+    }
+
     x.fieldsDepsAfterSingles = {};
 
     x.fields.forEach(field => {

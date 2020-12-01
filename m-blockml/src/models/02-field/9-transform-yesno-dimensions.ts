@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
@@ -15,6 +16,10 @@ export function transformYesNoDimensions<T extends types.vmType>(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.entities.forEach((x: T) => {
+    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+      return;
+    }
+
     x.fields.forEach(field => {
       if (
         field.fieldClass === enums.FieldClassEnum.Dimension &&

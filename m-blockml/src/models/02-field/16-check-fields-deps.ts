@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { types } from '../../barrels/types';
@@ -18,6 +19,11 @@ export function checkFieldsDeps<T extends types.vmType>(item: {
 
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
+
+    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+      newEntities.push(x);
+      return;
+    }
 
     x.fields.forEach(field => {
       Object.keys(x.fieldsDeps[field.name]).forEach(depName => {
