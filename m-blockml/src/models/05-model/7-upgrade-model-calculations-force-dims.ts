@@ -1,6 +1,7 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
 import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.UpgradeModelCalculationsForceDims;
@@ -20,10 +21,10 @@ export function upgradeModelCalculationsForceDims(item: {
         f.forceDims = {};
 
         Object.keys(f.prepForceDims).forEach(dimName => {
-          if (helper.isDefined(f.forceDims['mf'])) {
-            f.forceDims['mf'][dimName] = f.prepForceDims[dimName];
+          if (helper.isDefined(f.forceDims[constants.MF])) {
+            f.forceDims[constants.MF][dimName] = f.prepForceDims[dimName];
           } else {
-            f.forceDims['mf'] = {
+            f.forceDims[constants.MF] = {
               [dimName]: f.prepForceDims[dimName]
             };
           }

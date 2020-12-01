@@ -85,6 +85,14 @@ export enum FuncEnum {
   SawCheckApplyFilter = '10-sql-always-where/7-saw-check-apply-filter',
   SawUpdateAlwaysJoinUnique = '10-sql-always-where/8-saw-update-always-join-unique',
 
+  AwcCheckCharsInRefs = '11-sql-always-where-calc/1-awc-check-chars-in-refs',
+  AwcMakeDoubleDeps = '11-sql-always-where-calc/2-awc-make-double-deps',
+  AwcCheckDoubleDeps = '11-sql-always-where-calc/3-awc-check-double-deps',
+  AwcCheckSingleRefs = '11-sql-always-where-calc/4-awc-check-single-refs',
+  AwcSubstituteRefs = '11-sql-always-where-calc/5-awc-substitute-refs',
+  AwcCheckApplyFilter = '11-sql-always-where-calc/6-awc-check-apply-filter',
+  AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/7-awc-update-always-join-unique',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'

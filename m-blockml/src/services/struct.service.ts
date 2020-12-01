@@ -138,14 +138,12 @@ export class StructService {
       caller: enums.CallerEnum.BuildSqlAlwaysWhere
     });
 
-    // // ApModelSqlAlwaysWhereCalc
-    // models = barModelSqlAlwaysWhereCalc.checkCharsInRefs({ models: models });
-    // models = barModelSqlAlwaysWhereCalc.makeDoubleDeps({ models: models });
-    // models = barModelSqlAlwaysWhereCalc.checkDoubleDeps({ models: models });
-
-    // models = barModelSqlAlwaysWhereCalc.checkSingleRefs({ models: models });
-    // models = barModelSqlAlwaysWhereCalc.substituteRefs({ models: models });
-    // models = barModelSqlAlwaysWhereCalc.checkApplyFilter({ models: models });
+    models = barBuilder.buildSqlAlwaysWhereCalc({
+      models: models,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildSqlAlwaysWhereCalc
+    });
 
     // // ApDashboard
     // dashboards = barDashboard.checkDashboardAccessUsers({

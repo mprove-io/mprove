@@ -29,3 +29,5 @@ export const VIEW_MAIN = 'view_main';
 export const VIEW_MAIN_SUB = 'view_main_sub';
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 export const DERIVED_TABLE_SUFFIX = '__derived_table';
+
+export const MF = 'mf';

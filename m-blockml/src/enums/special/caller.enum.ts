@@ -10,6 +10,7 @@ export enum CallerEnum {
   BuildJoinSqlWhere = 'BuildJoinSqlWhere',
   BuildSortJoins = 'BuildSortJoins',
   BuildSqlAlwaysWhere = 'BuildSqlAlwaysWhere',
+  BuildSqlAlwaysWhereCalc = 'BuildSqlAlwaysWhereCalc',
 
   RebuildStruct = 'RebuildStruct'
 }

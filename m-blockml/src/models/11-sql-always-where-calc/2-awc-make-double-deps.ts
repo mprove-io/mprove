@@ -4,9 +4,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.SawMakeDoubleDeps;
+let func = enums.FuncEnum.AwcMakeDoubleDeps;
 
-export function sawMakeDoubleDeps(item: {
+export function awcMakeDoubleDeps(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -16,24 +16,25 @@ export function sawMakeDoubleDeps(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
-    x.sqlAlwaysWhereDoubleDeps = {};
+    x.sqlAlwaysWhereCalcDoubleDeps = {};
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (helper.isUndefined(x.sql_always_where_calc)) {
       return;
     }
 
     let reg = api.MyRegex.CAPTURE_DOUBLE_REF_G();
     let r;
 
-    while ((r = reg.exec(x.sql_always_where))) {
+    while ((r = reg.exec(x.sql_always_where_calc))) {
       let as: string = r[1];
       let dep: string = r[2];
 
-      if (helper.isUndefined(x.sqlAlwaysWhereDoubleDeps[as])) {
-        x.sqlAlwaysWhereDoubleDeps[as] = {};
+      if (helper.isUndefined(x.sqlAlwaysWhereCalcDoubleDeps[as])) {
+        x.sqlAlwaysWhereCalcDoubleDeps[as] = {};
       }
 
-      x.sqlAlwaysWhereDoubleDeps[as][dep] = x.sql_always_where_line_num;
+      x.sqlAlwaysWhereCalcDoubleDeps[as][dep] =
+        x.sql_always_where_calc_line_num;
     }
   });
 
