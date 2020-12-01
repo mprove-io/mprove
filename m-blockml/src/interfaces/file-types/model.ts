@@ -138,7 +138,7 @@ export interface Model extends FileBasic {
     [dep: string]: number;
   };
 
-  sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions?: {
+  sqlAlwaysWhereCalcDoubleDepsAfterSingles?: {
     [as: string]: {
       [dep: string]: number;
     };

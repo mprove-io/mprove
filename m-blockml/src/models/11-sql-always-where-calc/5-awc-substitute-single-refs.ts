@@ -5,9 +5,9 @@ import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 
-let func = enums.FuncEnum.AwcSubstituteRefs;
+let func = enums.FuncEnum.AwcSubstituteSingleRefs;
 
-export function awcSubstituteRefs(item: {
+export function awcSubstituteSingleRefs(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -19,7 +19,6 @@ export function awcSubstituteRefs(item: {
   item.models.forEach(x => {
     x.sqlAlwaysWhereCalcForceDims = {};
     x.sqlAlwaysWhereCalcDepsAfterSingles = {};
-    x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions = {};
 
     if (helper.isUndefined(x.sql_always_where_calc)) {
       return;
@@ -72,72 +71,6 @@ export function awcSubstituteRefs(item: {
 
           case referenceField.fieldClass === enums.FieldClassEnum.Measure: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
-              x.sql_always_where_calc_line_num;
-            break;
-          }
-        }
-      }
-    }
-
-    // substitute DOUBLE calculations
-    let restart2 = true;
-
-    while (restart2) {
-      restart2 = false;
-
-      let reg2 = api.MyRegex.CAPTURE_DOUBLE_REF_G(); // g works because of restart
-      let r2;
-
-      while ((r2 = reg2.exec(sqlAlwaysWhereCalcReal))) {
-        let asName = r2[1];
-        let depName = r2[2];
-
-        let join = x.joins.find(j => j.as === asName);
-
-        let depField = join.view.fields.find(f => f.name === depName);
-
-        switch (true) {
-          case depField.fieldClass === enums.FieldClassEnum.Calculation: {
-            sqlAlwaysWhereCalcReal = api.MyRegex.replaceAndConvert(
-              sqlAlwaysWhereCalcReal,
-              depField.sqlReal,
-              asName,
-              depName
-            );
-
-            restart2 = true;
-            break;
-          }
-
-          case depField.fieldClass === enums.FieldClassEnum.Dimension: {
-            if (
-              helper.isUndefined(
-                x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
-              )
-            ) {
-              x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName] = {};
-            }
-            x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName][depName] =
-              x.sql_always_where_calc_line_num;
-
-            if (helper.isUndefined(x.sqlAlwaysWhereCalcForceDims[asName])) {
-              x.sqlAlwaysWhereCalcForceDims[asName] = {};
-            }
-            x.sqlAlwaysWhereCalcForceDims[asName][depName] =
-              x.sql_always_where_calc_line_num;
-
-            break;
-          }
-
-          case depField.fieldClass === enums.FieldClassEnum.Measure: {
-            if (
-              helper.isUndefined(
-                x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
-              )
-            ) {
-              x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName] = {};
-            }
-            x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName][depName] =
               x.sql_always_where_calc_line_num;
             break;
           }
