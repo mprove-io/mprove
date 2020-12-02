@@ -160,65 +160,14 @@ export class StructService {
       caller: enums.CallerEnum.BuildDashboard
     });
 
-    // // ApReport
-
-    // dashboards = barReport.checkReportIsObject({ dashboards: dashboards });
-    // dashboards = barReport.checkReportUnknownParameters({
-    //   dashboards: dashboards
-    // });
-    // // *check_reports *check_select_exists
-    // dashboards = barReport.checkReportsTitleModelSelect({
-    //   dashboards: dashboards,
-    //   models: models
-    // });
-    // dashboards = barReport.checkSelectElements({
-    //   dashboards: dashboards,
-    //   models: models
-    // });
-    // dashboards = barReport.checkSelectForceDims({ dashboards: dashboards });
-    // dashboards = barReport.checkSorts({ dashboards: dashboards });
-
-    // dashboards = barReport.checkTimezone({ dashboards: dashboards });
-    // dashboards = barReport.checkLimit({ dashboards: dashboards });
-
-    // dashboards = barReport.processListenFilters({
-    //   dashboards: dashboards,
-    //   models: models
-    // });
-    // dashboards = barReport.processDefaultFilters({
-    //   dashboards: dashboards,
-    //   models: models
-    // });
-    // dashboards = barReport.checkReportDefaultFilters({
-    //   dashboards: dashboards,
-    //   models: models,
-    //   weekStart: item.weekStart,
-    //   connection: item.connection
-    // });
-
-    // dashboards = barReport.combineReportFilters({ dashboards: dashboards });
-    // dashboards = barReport.checkFiltersForceDims({
-    //   dashboards: dashboards,
-    //   models: models
-    // });
-    // dashboards = barReport.checkWhereCalcForceDims({
-    //   dashboards: dashboards,
-    //   models: models
-    // });
-
-    // dashboards = await barReport.fetchBqViews({
-    //   dashboards: dashboards,
-    //   models: models,
-    //   udfs: udfs,
-    //   weekStart: item.weekStart,
-    //   connection: item.connection,
-    //   bqProject: item.bqProject,
-    //   projectId: item.projectId,
-    //   structId: item.structId
-    // });
+    dashboards = barBuilder.buildReport({
+      dashboards: dashboards,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildReport
+    });
 
     // // ApChart
-
     // dashboards = barChart.checkChartType({ dashboards: dashboards });
     // dashboards = barChart.checkChartData({ dashboards: dashboards });
     // dashboards = barChart.checkChartDataParameters({ dashboards: dashboards });
@@ -227,8 +176,9 @@ export class StructService {
     //   dashboards: dashboards
     // });
     // dashboards = barChart.checkChartTileParameters({ dashboards: dashboards });
-
     // let errors = ErrorsCollector.getErrors();
+
+    // Visualizations
 
     barBuilder.logStruct({
       errors: errors,

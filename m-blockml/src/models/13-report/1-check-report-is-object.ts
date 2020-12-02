@@ -2,11 +2,12 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { types } from '../../barrels/types';
+import { interfaces } from 'src/barrels/interfaces';
 
-let func = enums.FuncEnum.CheckFieldIsObject;
+let func = enums.FuncEnum.CheckReportIsObject;
 
-export function checkFieldIsObject<T extends types.vmdType>(item: {
-  entities: Array<T>;
+export function checkReportIsObject(item: {
+  dashboards: interfaces.Dashboard[];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -14,20 +15,21 @@ export function checkFieldIsObject<T extends types.vmdType>(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newEntities: T[] = [];
+  let newDashboards: interfaces.Dashboard[] = [];
 
-  item.entities.forEach(x => {
+  item.dashboards.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.fields.forEach(field => {
-      if (field.constructor !== Object) {
+    x.reports.forEach(report => {
+      if (report.constructor !== Object) {
+        // error e131
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.FIELD_IS_NOT_A_DICTIONARY,
-            message: 'found at least one field that is not a dictionary',
+            title: enums.ErTitleEnum.REPORT_IS_NOT_A_DICTIONARY,
+            message: 'found at least one report that is not a dictionary',
             lines: [
               {
-                line: x.fields_line_num,
+                line: x.reports_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -39,12 +41,18 @@ export function checkFieldIsObject<T extends types.vmdType>(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newEntities.push(x);
+      newDashboards.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
+  helper.log(
+    caller,
+    func,
+    structId,
+    enums.LogTypeEnum.Dashboards,
+    newDashboards
+  );
 
-  return newEntities;
+  return newDashboards;
 }

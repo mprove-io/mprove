@@ -98,6 +98,8 @@ export enum FuncEnum {
   CheckDashboardFilterDefaults = '12-dashboard/2-check-dashboard-filter-defaults',
   CheckReportsExist = '12-dashboard/3-check-reports-exist',
 
+  CheckReportIsObject = '13-report/1-check-report-is-object',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'
