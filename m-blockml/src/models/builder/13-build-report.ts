@@ -35,24 +35,32 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.checkSelectElements({
-  //   dashboards: dashboards,
-  //   models: models
-  // });
+  dashboards = barReport.checkSelectElements({
+    dashboards: dashboards,
+    models: item.models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   // dashboards = barReport.checkSelectForceDims({ dashboards: dashboards });
+
   // dashboards = barReport.checkSorts({ dashboards: dashboards });
 
   // dashboards = barReport.checkTimezone({ dashboards: dashboards });
+
   // dashboards = barReport.checkLimit({ dashboards: dashboards });
 
   // dashboards = barReport.processListenFilters({
   //   dashboards: dashboards,
   //   models: models
   // });
+
   // dashboards = barReport.processDefaultFilters({
   //   dashboards: dashboards,
   //   models: models
   // });
+
   // dashboards = barReport.checkReportDefaultFilters({
   //   dashboards: dashboards,
   //   models: models,
@@ -61,10 +69,12 @@ export function buildReport(item: {
   // });
 
   // dashboards = barReport.combineReportFilters({ dashboards: dashboards });
+
   // dashboards = barReport.checkFiltersForceDims({
   //   dashboards: dashboards,
   //   models: models
   // });
+
   // dashboards = barReport.checkWhereCalcForceDims({
   //   dashboards: dashboards,
   //   models: models
