@@ -21,13 +21,7 @@ export function checkReportsExist(item: {
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(
-    caller,
-    func,
-    structId,
-    enums.LogTypeEnum.Dashboards,
-    item.dashboards
-  );
+  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, item.dashboards);
 
   return item.dashboards;
 }

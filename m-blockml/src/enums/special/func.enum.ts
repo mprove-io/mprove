@@ -99,6 +99,7 @@ export enum FuncEnum {
   CheckReportsExist = '12-dashboard/3-check-reports-exist',
 
   CheckReportIsObject = '13-report/1-check-report-is-object',
+  CheckReportUnknownParameters = '13-report/2-check-report-unknown-parameters',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

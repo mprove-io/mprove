@@ -19,9 +19,13 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.checkReportUnknownParameters({
-  //   dashboards: dashboards
-  // });
+  dashboards = barReport.checkReportUnknownParameters({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   // // *check_reports *check_select_exists
   // dashboards = barReport.checkReportsTitleModelSelect({
   //   dashboards: dashboards,

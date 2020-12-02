@@ -209,7 +209,7 @@ export function splitFiles(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, views);
   helper.log(caller, func, structId, enums.LogTypeEnum.Models, models);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Dashboards, dashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
   helper.log(caller, func, structId, enums.LogTypeEnum.Vis, visualizations);
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 

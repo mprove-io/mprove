@@ -36,7 +36,7 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Dashboards);
+    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);

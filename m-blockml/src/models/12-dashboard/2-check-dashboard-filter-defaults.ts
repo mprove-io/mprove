@@ -24,13 +24,7 @@ export function checkDashboardFilterDefaults(item: {
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(
-    caller,
-    func,
-    structId,
-    enums.LogTypeEnum.Dashboards,
-    newDashboards
-  );
+  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
 
   return newDashboards;
 }

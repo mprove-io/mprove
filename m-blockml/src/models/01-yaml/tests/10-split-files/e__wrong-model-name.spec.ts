@@ -43,7 +43,7 @@ test(testId, async () => {
     udfs = await helper.readLog(fromDir, enums.LogTypeEnum.Udfs);
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Dashboards);
+    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
     visualizations = await helper.readLog(fromDir, enums.LogTypeEnum.Vis);
     fse.copySync(fromDir, toDir);
   } catch (e) {

@@ -29,6 +29,6 @@ export async function logStruct(item: {
   log(caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
   log(caller, func, structId, enums.LogTypeEnum.Views, views);
   log(caller, func, structId, enums.LogTypeEnum.Models, models);
-  log(caller, func, structId, enums.LogTypeEnum.Dashboards, dashboards);
+  log(caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
   log(caller, func, structId, enums.LogTypeEnum.Vis, visualizations);
 }
