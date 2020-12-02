@@ -26,8 +26,12 @@ export function buildDashboard(item: {
     caller: item.caller
   });
 
-  // // *make_reports
-  // dashboards = barDashboard.checkReportsIsArray({ dashboards: dashboards });
+  dashboards = barDashboard.checkReportsExist({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   return dashboards;
 }

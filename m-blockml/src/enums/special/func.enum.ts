@@ -96,6 +96,7 @@ export enum FuncEnum {
 
   CheckDashboardAccessUsers = '12-dashboard/1-check-dashboard-access-users',
   CheckDashboardFilterDefaults = '12-dashboard/2-check-dashboard-filter-defaults',
+  CheckReportsExist = '12-dashboard/3-check-reports-exist',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
