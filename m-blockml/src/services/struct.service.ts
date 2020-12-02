@@ -162,6 +162,7 @@ export class StructService {
 
     dashboards = barBuilder.buildReport({
       dashboards: dashboards,
+      models: models,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.BuildReport

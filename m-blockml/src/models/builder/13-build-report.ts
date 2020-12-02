@@ -6,6 +6,7 @@ import { barReport } from '../../barrels/bar-report';
 
 export function buildReport(item: {
   dashboards: interfaces.Dashboard[];
+  models: interfaces.Model[];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -26,11 +27,14 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // // *check_reports *check_select_exists
-  // dashboards = barReport.checkReportsTitleModelSelect({
-  //   dashboards: dashboards,
-  //   models: models
-  // });
+  dashboards = barReport.checkReportTitleModelSelect({
+    dashboards: dashboards,
+    models: item.models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   // dashboards = barReport.checkSelectElements({
   //   dashboards: dashboards,
   //   models: models
