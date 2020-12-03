@@ -5,9 +5,9 @@ export * from './4-check-select-elements';
 export * from './5-check-select-force-dims';
 export * from './6-check-sorts';
 export * from './7-check-timezone';
+export * from './8-check-limit';
 
 // export * from './check-filters-force-dims';
-// export * from './check-limit';
 // export * from './check-report-default-filters';
 // export * from './check-where-calc-force-dims';
 // export * from './combine-report-filters';

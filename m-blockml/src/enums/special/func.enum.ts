@@ -105,6 +105,7 @@ export enum FuncEnum {
   CheckSelectForceDims = '13-report/5-check-select-force-dims',
   CheckSorts = '13-report/6-check-sorts',
   CheckTimezone = '13-report/7-check-timezone',
+  CheckLimit = '13-report/8-check-limit',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

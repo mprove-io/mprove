@@ -5,9 +5,9 @@ import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 
-let func = enums.FuncEnum.CheckTimezone;
+let func = enums.FuncEnum.CheckLimit;
 
-export function checkTimezone(item: {
+export function checkLimit(item: {
   dashboards: interfaces.Dashboard[];
   errors: BmError[];
   structId: string;
@@ -16,36 +16,29 @@ export function checkTimezone(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let timezonesHash: { [tzValue: string]: number } = {};
-
-  api.timezones.forEach(group => {
-    group.zones.forEach(tz => {
-      timezonesHash[tz.value] = 1;
-    });
-  });
-
   let newDashboards: interfaces.Dashboard[] = [];
 
   item.dashboards.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (!report.timezone) {
-        report.timezone = constants.UTC;
+      if (!report.limit) {
+        report.limit = constants.LIMIT_500;
         return;
       }
 
-      if (Object.keys(timezonesHash).indexOf(report.timezone) < 0) {
-        // error e218
+      let reg = api.MyRegex.CAPTURE_DIGITS_START_TO_END_G();
+      let r = reg.exec(report.limit);
+
+      if (helper.isUndefined(r)) {
+        // error e168
         item.errors.push(
           new BmError({
-            title: enums.ErTitleEnum.REPORT_WRONG_TIMEZONE,
-            message:
-              `${enums.ParameterEnum.Timezone} must be one of ` +
-              'Mprove Timezone Selector values',
+            title: enums.ErTitleEnum.REPORT_WRONG_LIMIT,
+            message: `"${enums.ParameterEnum.Limit}" must contain positive integer value`,
             lines: [
               {
-                line: report.timezone_line_num,
+                line: report.limit_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -54,6 +47,11 @@ export function checkTimezone(item: {
         );
         return;
       }
+
+      let limitNumber = Number(r[1]);
+
+      report.limit =
+        limitNumber > 500 ? constants.LIMIT_500 : limitNumber.toString();
     });
 
     if (errorsOnStart === item.errors.length) {
