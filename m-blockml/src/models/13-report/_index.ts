@@ -6,6 +6,7 @@ export * from './5-check-select-force-dims';
 export * from './6-check-sorts';
 export * from './7-check-timezone';
 export * from './8-check-limit';
+export * from './9-process-listen-filters';
 
 // export * from './check-filters-force-dims';
 // export * from './check-report-default-filters';
@@ -13,4 +14,3 @@ export * from './8-check-limit';
 // export * from './combine-report-filters';
 // export * from './fetch-bq-views';
 // export * from './process-default-filters';
-// export * from './process-listen-filters';
