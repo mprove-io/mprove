@@ -57,7 +57,12 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.checkTimezone({ dashboards: dashboards });
+  dashboards = barReport.checkTimezone({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = barReport.checkLimit({ dashboards: dashboards });
 
