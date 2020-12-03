@@ -64,7 +64,7 @@ export interface Report {
 
   sortingsAry: {
     fieldId: string;
-    desc: string; // boolean
+    desc: boolean;
   }[];
 
   listen: { [a: string]: string };
