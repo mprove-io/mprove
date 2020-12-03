@@ -43,7 +43,12 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.checkSelectForceDims({ dashboards: dashboards });
+  dashboards = barReport.checkSelectForceDims({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = barReport.checkSorts({ dashboards: dashboards });
 

@@ -102,6 +102,7 @@ export enum FuncEnum {
   CheckReportUnknownParameters = '13-report/2-check-report-unknown-parameters',
   CheckReportTitleModelSelect = '13-report/3-check-report-title-model-select',
   CheckSelectElements = '13-report/4-check-select-elements',
+  CheckSelectForceDims = '13-report/5-check-select-force-dims',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

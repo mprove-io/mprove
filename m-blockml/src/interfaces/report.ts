@@ -60,6 +60,8 @@ export interface Report {
     };
   };
 
+  selectWithForceDims: string[];
+
   sortingsAry: {
     fieldId: string;
     desc: string; // boolean
