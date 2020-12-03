@@ -37,7 +37,6 @@ export function processListenFilters(item: {
           let dashboardField = x.fields.find(f => f.name === filterName);
 
           if (helper.isUndefined(dashboardField)) {
-            // error e91
             item.errors.push(
               new BmError({
                 title:
@@ -95,10 +94,9 @@ export function processListenFilters(item: {
               );
 
               if (helper.isUndefined(modelField)) {
-                // error e93
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_MODEL_FILTER,
+                    title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_MODEL_FIELD,
                     message:
                       `found listener "${listener}" references missing or not valid ` +
                       `field "${fieldName}" of model "${model.name}" fields section`,
@@ -117,7 +115,6 @@ export function processListenFilters(item: {
               }
 
               if (helper.isDefined(report.listen[listener])) {
-                // error e94
                 item.errors.push(
                   new BmError({
                     title:
@@ -137,7 +134,6 @@ export function processListenFilters(item: {
               }
 
               if (dashboardField.result !== modelField.result) {
-                // error e95
                 item.errors.push(
                   new BmError({
                     title:
@@ -192,7 +188,7 @@ export function processListenFilters(item: {
                 // error e97
                 item.errors.push(
                   new BmError({
-                    title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_VIEW_FILTER,
+                    title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_VIEW_FIELD,
                     message:
                       `found listener "${listener}" references missing or not valid ` +
                       `field "${fieldName}" of view "${join.view.name}" fields section. ` +
