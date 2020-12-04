@@ -6,8 +6,8 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildReport;
-let func = enums.FuncEnum.ProcessListenFilters;
-let testId = 'e__report-wrong-listener';
+let func = enums.FuncEnum.CheckDefaultFilters;
+let testId = 'e__report-same-field-in-default-and-listen-filters';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -45,6 +45,8 @@ test(testId, async () => {
   expect(errors.length).toBe(1);
   expect(dashboards.length).toBe(0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.REPORT_WRONG_LISTENER);
-  expect(errors[0].lines[0].line).toBe(14);
+  expect(errors[0].title).toBe(
+    enums.ErTitleEnum.REPORT_SAME_FIELD_IN_DEFAULT_AND_LISTEN_FILTERS
+  );
+  expect(errors[0].lines[0].line).toBe(16);
 });

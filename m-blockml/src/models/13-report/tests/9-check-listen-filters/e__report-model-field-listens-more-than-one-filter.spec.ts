@@ -6,7 +6,7 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildReport;
-let func = enums.FuncEnum.ProcessListenFilters;
+let func = enums.FuncEnum.CheckListenFilters;
 let testId = 'e__report-model-field-listens-more-than-one-filter';
 
 test(testId, async () => {

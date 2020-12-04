@@ -6,8 +6,8 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildReport;
-let func = enums.FuncEnum.ProcessListenFilters;
-let testId = 'e__report-wrong-listener-alias';
+let func = enums.FuncEnum.CheckDefaultFilters;
+let testId = 'e__report-default-filter-refs-missing-view-field';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -45,6 +45,8 @@ test(testId, async () => {
   expect(errors.length).toBe(1);
   expect(dashboards.length).toBe(0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.REPORT_WRONG_LISTENER_ALIAS);
-  expect(errors[0].lines[0].line).toBe(14);
+  expect(errors[0].title).toBe(
+    enums.ErTitleEnum.REPORT_DEFAULT_FILTER_REFS_MISSING_VIEW_FIELD
+  );
+  expect(errors[0].lines[0].line).toBe(8);
 });

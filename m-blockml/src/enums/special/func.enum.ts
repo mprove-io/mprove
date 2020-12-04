@@ -106,7 +106,8 @@ export enum FuncEnum {
   CheckSorts = '13-report/6-check-sorts',
   CheckTimezone = '13-report/7-check-timezone',
   CheckLimit = '13-report/8-check-limit',
-  ProcessListenFilters = '13-report/9-process-listen-filters',
+  CheckListenFilters = '13-report/9-check-listen-filters',
+  CheckDefaultFilters = '13-report/10-check-default-filters',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

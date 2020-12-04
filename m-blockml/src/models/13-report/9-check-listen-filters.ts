@@ -5,9 +5,9 @@ import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 
-let func = enums.FuncEnum.ProcessListenFilters;
+let func = enums.FuncEnum.CheckListenFilters;
 
-export function processListenFilters(item: {
+export function checkListenFilters(item: {
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
   errors: BmError[];

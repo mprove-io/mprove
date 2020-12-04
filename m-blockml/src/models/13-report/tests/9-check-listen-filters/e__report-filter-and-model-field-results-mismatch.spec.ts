@@ -6,8 +6,8 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildReport;
-let func = enums.FuncEnum.ProcessListenFilters;
-let testId = 'e__report-listens-missing-dashboard-filter';
+let func = enums.FuncEnum.CheckListenFilters;
+let testId = 'e__report-filter-and-model-field-results-mismatch';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -46,7 +46,7 @@ test(testId, async () => {
   expect(dashboards.length).toBe(0);
 
   expect(errors[0].title).toBe(
-    enums.ErTitleEnum.REPORT_LISTENS_MISSING_DASHBOARD_FILTER
+    enums.ErTitleEnum.REPORT_FILTER_AND_MODEL_FIELD_RESULTS_MISMATCH
   );
   expect(errors[0].lines[0].line).toBe(14);
 });

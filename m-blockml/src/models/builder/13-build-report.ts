@@ -71,7 +71,7 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  dashboards = barReport.processListenFilters({
+  dashboards = barReport.checkListenFilters({
     dashboards: dashboards,
     models: item.models,
     structId: item.structId,
@@ -79,10 +79,13 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.processDefaultFilters({
-  //   dashboards: dashboards,
-  //   models: models
-  // });
+  dashboards = barReport.checkDefaultFilters({
+    dashboards: dashboards,
+    models: item.models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = barReport.checkReportDefaultFilters({
   //   dashboards: dashboards,
