@@ -94,10 +94,13 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.checkFiltersForceDims({
-  //   dashboards: dashboards,
-  //   models: models
-  // });
+  dashboards = barReport.checkFiltersForceDims({
+    dashboards: dashboards,
+    models: item.models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = barReport.checkWhereCalcForceDims({
   //   dashboards: dashboards,

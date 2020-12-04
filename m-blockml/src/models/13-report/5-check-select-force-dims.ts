@@ -25,7 +25,7 @@ export function checkSelectForceDims(item: {
       report.selectWithForceDims = [...report.select];
 
       Object.keys(report.selectHash).forEach(element => {
-        Object.keys(report.selectHash[element]).forEach(dim => {
+        Object.keys(report.selectHash[element]).forEach(fDim => {
           // if (!report.selectHash[dim]) {
           //   // error e90
           //   item.errors.push(
@@ -44,9 +44,14 @@ export function checkSelectForceDims(item: {
           //   return;
           // }
 
-          report.selectHash[dim] = {};
-          report.selectWithForceDims.push(dim);
+          report.selectWithForceDims.push(fDim);
         });
+      });
+
+      report.selectWithForceDims.forEach(el => {
+        if (helper.isUndefined(report.selectHash[el])) {
+          report.selectHash[el] = {};
+        }
       });
     });
 
