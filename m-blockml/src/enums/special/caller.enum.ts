@@ -16,6 +16,7 @@ export enum CallerEnum {
   BuildSqlAlwaysWhereCalc = 'BuildSqlAlwaysWhereCalc',
   BuildDashboard = 'BuildDashboard',
   BuildReport = 'BuildReport',
+  BuildChart = 'BuildChart',
 
   RebuildStruct = 'RebuildStruct'
 }

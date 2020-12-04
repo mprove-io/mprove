@@ -168,16 +168,12 @@ export class StructService {
       caller: enums.CallerEnum.BuildReport
     });
 
-    // // ApChart
-    // dashboards = barChart.checkChartType({ dashboards: dashboards });
-    // dashboards = barChart.checkChartData({ dashboards: dashboards });
-    // dashboards = barChart.checkChartDataParameters({ dashboards: dashboards });
-    // dashboards = barChart.checkChartAxisParameters({ dashboards: dashboards });
-    // dashboards = barChart.checkChartOptionsParameters({
-    //   dashboards: dashboards
-    // });
-    // dashboards = barChart.checkChartTileParameters({ dashboards: dashboards });
-    // let errors = ErrorsCollector.getErrors();
+    dashboards = barBuilder.buildChart({
+      dashboards: dashboards,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildChart
+    });
 
     // Visualizations
 

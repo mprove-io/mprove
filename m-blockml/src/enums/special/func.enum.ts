@@ -112,6 +112,8 @@ export enum FuncEnum {
   CheckFiltersForceDims = '13-report/12-check-filters-force-dims',
   CheckSqlAlwaysWhereCalcForceDims = '13-report/13-check-sql-always-where-calc-force-dims',
 
+  CheckChartType = '14-chart/1-check-chart-type',
+
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'
