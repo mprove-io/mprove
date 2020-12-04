@@ -108,6 +108,7 @@ export enum FuncEnum {
   CheckLimit = '13-report/8-check-limit',
   CheckListenFilters = '13-report/9-check-listen-filters',
   CheckDefaultFilters = '13-report/10-check-default-filters',
+  CombineReportFilters = '13-report/11-combine-report-filters',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

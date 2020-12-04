@@ -8,8 +8,8 @@ export * from './7-check-timezone';
 export * from './8-check-limit';
 export * from './9-check-listen-filters';
 export * from './10-check-default-filters';
+export * from './11-combine-report-filters';
 
 // export * from './check-filters-force-dims';
 // export * from './check-where-calc-force-dims';
-// export * from './combine-report-filters';
 // export * from './fetch-bq-views';

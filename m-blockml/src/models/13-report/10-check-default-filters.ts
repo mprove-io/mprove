@@ -25,7 +25,6 @@ export function checkDefaultFilters(item: {
 
     x.reports.forEach(report => {
       report.default = {};
-      report.filters = {};
 
       if (helper.isUndefined(report.default_filters)) {
         return;
@@ -148,7 +147,9 @@ export function checkDefaultFilters(item: {
                 title:
                   enums.ErTitleEnum
                     .REPORT_SAME_FIELD_IN_DEFAULT_AND_LISTEN_FILTERS,
-                message: `found "${defaultFilter}" in default and listen filters at the same time`,
+                message:
+                  `found "${defaultFilter}" in default and listen filters ` +
+                  'at the same time',
                 lines: [
                   {
                     line: (<any>report.default_filters)[
@@ -167,7 +168,9 @@ export function checkDefaultFilters(item: {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DEFAULT_FILTER_MUST_BE_A_LIST,
-                message: `default filter ${defaultFilter} must be a list of filter expressions`,
+                message:
+                  `default filter ${defaultFilter} must be a list of ` +
+                  'filter expressions',
                 lines: [
                   {
                     line: (<any>report.default_filters)[
@@ -218,9 +221,6 @@ export function checkDefaultFilters(item: {
           }
 
           report.default[defaultFilter] = JSON.parse(
-            JSON.stringify(report.default_filters[defaultFilter])
-          );
-          report.filters[defaultFilter] = JSON.parse(
             JSON.stringify(report.default_filters[defaultFilter])
           );
         });
