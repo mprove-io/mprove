@@ -54,25 +54,9 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
       if (helper.isUndefined(field.default)) {
         x.filters[field.name] = [];
       } else {
-        let cn: api.ProjectConnection = {
-          name: 'cn',
-          type: api.ConnectionTypeEnum.PostgreSQL
-        };
-
         let p = processFilter({
           filterBricks: field.default,
-          result: field.result,
-          // parameters below do not affect validation
-          weekStart: api.ProjectWeekStartEnum.Monday,
-          timezone: constants.UTC,
-          connection: cn,
-          proc: 'proc',
-          sqlTimestampSelect: 'sqlTimestampSelect',
-          ORs: [],
-          NOTs: [],
-          IN: [],
-          NOTIN: [],
-          fractions: []
+          result: field.result
         });
 
         if (p.valid === 0) {

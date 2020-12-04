@@ -4,6 +4,7 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
+import { barShared } from '../../barrels/bar-shared';
 
 let func = enums.FuncEnum.CheckDefaultFilters;
 
@@ -23,6 +24,9 @@ export function checkDefaultFilters(item: {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
+      report.default = {};
+      report.filters = {};
+
       if (helper.isUndefined(report.default_filters)) {
         return;
       }
@@ -136,28 +140,89 @@ export function checkDefaultFilters(item: {
               );
               return;
             }
-
-            if (helper.isDefined(report.listen[defaultFilter])) {
-              item.errors.push(
-                new BmError({
-                  title:
-                    enums.ErTitleEnum
-                      .REPORT_SAME_FIELD_IN_DEFAULT_AND_LISTEN_FILTERS,
-                  message: `found "${defaultFilter}" in default and listen filters at the same time`,
-                  lines: [
-                    {
-                      line: (<any>report.default_filters)[
-                        defaultFilter + constants.LINE_NUM
-                      ],
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
-            }
           }
+
+          if (helper.isDefined(report.listen[defaultFilter])) {
+            item.errors.push(
+              new BmError({
+                title:
+                  enums.ErTitleEnum
+                    .REPORT_SAME_FIELD_IN_DEFAULT_AND_LISTEN_FILTERS,
+                message: `found "${defaultFilter}" in default and listen filters at the same time`,
+                lines: [
+                  {
+                    line: (<any>report.default_filters)[
+                      defaultFilter + constants.LINE_NUM
+                    ],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (!Array.isArray(report.default_filters[defaultFilter])) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DEFAULT_FILTER_MUST_BE_A_LIST,
+                message: `default filter ${defaultFilter} must be a list of filter expressions`,
+                lines: [
+                  {
+                    line: (<any>report.default_filters)[
+                      defaultFilter + constants.LINE_NUM
+                    ],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          let result =
+            asName === constants.MF
+              ? model.fields.find(mField => mField.name === fieldName).result
+              : model.joins
+                  .find(j => j.as === asName)
+                  .view.fields.find(vField => vField.name === fieldName).result;
+
+          let p = barShared.processFilter({
+            filterBricks: report.default_filters[defaultFilter],
+            result: result
+          });
+
+          if (p.valid === 0) {
+            item.errors.push(
+              new BmError({
+                title:
+                  enums.ErTitleEnum
+                    .REPORT_DEFAULT_FILTER_WRONG_FILTER_EXPRESSION,
+                message:
+                  `wrong expression "${p.brick}" of filter "${defaultFilter}" ` +
+                  `for ${enums.ParameterEnum.Result} "${result}" `,
+                lines: [
+                  {
+                    line: (<any>report.default_filters)[
+                      defaultFilter + constants.LINE_NUM
+                    ],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          report.default[defaultFilter] = JSON.parse(
+            JSON.stringify(report.default_filters[defaultFilter])
+          );
+          report.filters[defaultFilter] = JSON.parse(
+            JSON.stringify(report.default_filters[defaultFilter])
+          );
         });
     });
 

@@ -7,7 +7,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildReport;
 let func = enums.FuncEnum.CheckDefaultFilters;
-let testId = 'e__report-same-field-in-default-and-listen-filters';
+let testId = 'e__report-default-filter-wrong-filter-expression';
 
 test(testId, async () => {
   let errors: interfaces.BmErrorC[];
@@ -46,7 +46,7 @@ test(testId, async () => {
   expect(dashboards.length).toBe(0);
 
   expect(errors[0].title).toBe(
-    enums.ErTitleEnum.REPORT_SAME_FIELD_IN_DEFAULT_AND_LISTEN_FILTERS
+    enums.ErTitleEnum.REPORT_DEFAULT_FILTER_WRONG_FILTER_EXPRESSION
   );
-  expect(errors[0].lines[0].line).toBe(16);
+  expect(errors[0].lines[0].line).toBe(8);
 });

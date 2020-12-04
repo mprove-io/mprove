@@ -7,31 +7,51 @@ import { barTimestamp } from '../../barrels/bar-timestamp';
 export function processFilter(item: {
   filterBricks: string[];
   result: enums.FieldAnyResultEnum;
-  weekStart: api.ProjectWeekStartEnum;
-  connection: api.ProjectConnection;
-  timezone: string;
-  proc: string;
-  sqlTimestampSelect: string;
-  ORs: string[];
-  NOTs: string[];
-  IN: string[];
-  NOTIN: string[];
-  fractions: api.Fraction[];
+  // parameters below do not affect validation
+  weekStart?: api.ProjectWeekStartEnum;
+  connection?: api.ProjectConnection;
+  timezone?: string;
+  proc?: string;
+  sqlTsSelect?: string;
+  ORs?: string[];
+  NOTs?: string[];
+  INs?: string[];
+  NOTINs?: string[];
+  fractions?: api.Fraction[];
 }): { valid: number; brick?: string } {
   let {
+    filterBricks,
+    result,
     weekStart,
     connection,
     timezone,
-    result,
-    filterBricks,
     proc,
-    sqlTimestampSelect,
+    sqlTsSelect,
     ORs,
     NOTs,
-    IN,
-    NOTIN,
+    INs,
+    NOTINs,
     fractions
   } = item;
+
+  weekStart = helper.isDefined(weekStart)
+    ? weekStart
+    : api.ProjectWeekStartEnum.Monday;
+
+  let cn = {
+    name: 'cn',
+    type: api.ConnectionTypeEnum.PostgreSQL
+  };
+  connection = helper.isDefined(connection) ? connection : cn;
+
+  timezone = helper.isDefined(timezone) ? timezone : constants.UTC;
+  proc = helper.isDefined(proc) ? proc : 'proc';
+  sqlTsSelect = helper.isDefined(sqlTsSelect) ? sqlTsSelect : 'sqlTsSelect';
+  ORs = helper.isDefined(ORs) ? ORs : [];
+  NOTs = helper.isDefined(NOTs) ? NOTs : [];
+  INs = helper.isDefined(INs) ? INs : [];
+  NOTINs = helper.isDefined(NOTINs) ? NOTINs : [];
+  fractions = helper.isDefined(fractions) ? fractions : [];
 
   let answerError: { valid: number; brick?: string };
 
@@ -75,10 +95,10 @@ export function processFilter(item: {
           }
 
           if (not && num) {
-            NOTIN.push(num);
+            NOTINs.push(num);
             nums.push(num);
           } else if (num) {
-            IN.push(num);
+            INs.push(num);
             nums.push(num);
           } else if (not) {
             NOTs.push(constants.FAIL);
@@ -623,12 +643,12 @@ export function processFilter(item: {
 
           switch (true) {
             case way === 'after': {
-              one = `${sqlTimestampSelect} >= ${open}`;
+              one = `${sqlTsSelect} >= ${open}`;
               two = '';
               break;
             }
             case way === 'before': {
-              one = `${sqlTimestampSelect} < ${open}`;
+              one = `${sqlTsSelect} < ${open}`;
               two = '';
               break;
             }
@@ -740,17 +760,17 @@ export function processFilter(item: {
         }
 
         if (way.match(/^last|after$/)) {
-          one = `${sqlTimestampSelect} >= ${open}`;
+          one = `${sqlTsSelect} >= ${open}`;
         } else if (way.match(/^before$/)) {
-          one = `${sqlTimestampSelect} < ${open}`;
+          one = `${sqlTsSelect} < ${open}`;
         }
 
         if (way.match(/^last$/)) {
-          two = ` AND ${sqlTimestampSelect} < ${close}`;
+          two = ` AND ${sqlTsSelect} < ${close}`;
         } else if (way.match(/^after$/) && forUnit) {
-          two = ` AND ${sqlTimestampSelect} < ${close}`;
+          two = ` AND ${sqlTsSelect} < ${close}`;
         } else if (way.match(/^before$/) && forUnit) {
-          two = ` AND ${sqlTimestampSelect} >= ${close}`;
+          two = ` AND ${sqlTsSelect} >= ${close}`;
         } else if (way.match(/^before|after$/)) {
           two = '';
         }
@@ -899,9 +919,7 @@ export function processFilter(item: {
           });
         }
 
-        ORs.push(
-          `(${sqlTimestampSelect} >= ${open} AND ${sqlTimestampSelect} < ${close})`
-        );
+        ORs.push(`(${sqlTsSelect} >= ${open} AND ${sqlTsSelect} < ${close})`);
 
         if (toYear) {
           fractions.push({
@@ -979,7 +997,7 @@ export function processFilter(item: {
         not = r[1];
         nullValue = r[2];
 
-        condition = `(${sqlTimestampSelect} IS NULL)`;
+        condition = `(${sqlTsSelect} IS NULL)`;
 
         if (not) {
           fractions.push({
@@ -1114,10 +1132,10 @@ export function processFilter(item: {
           }
 
           if (not && num) {
-            NOTIN.push(num);
+            NOTINs.push(num);
             dayOfWeekIndexValues.push(num);
           } else if (num) {
-            IN.push(num);
+            INs.push(num);
             dayOfWeekIndexValues.push(num);
           } else if (not) {
             NOTs.push(constants.FAIL);

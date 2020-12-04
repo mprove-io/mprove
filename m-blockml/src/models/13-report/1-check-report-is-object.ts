@@ -1,8 +1,7 @@
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
-import { types } from '../../barrels/types';
-import { interfaces } from 'src/barrels/interfaces';
+import { interfaces } from '../../barrels/interfaces';
 
 let func = enums.FuncEnum.CheckReportIsObject;
 

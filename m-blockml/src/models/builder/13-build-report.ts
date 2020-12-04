@@ -87,13 +87,6 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.checkReportDefaultFilters({
-  //   dashboards: dashboards,
-  //   models: models,
-  //   weekStart: item.weekStart,
-  //   connection: item.connection
-  // });
-
   // dashboards = barReport.combineReportFilters({ dashboards: dashboards });
 
   // dashboards = barReport.checkFiltersForceDims({
