@@ -110,6 +110,7 @@ export enum FuncEnum {
   CheckDefaultFilters = '13-report/10-check-default-filters',
   CombineReportFilters = '13-report/11-combine-report-filters',
   CheckFiltersForceDims = '13-report/12-check-filters-force-dims',
+  CheckSqlAlwaysWhereCalcForceDims = '13-report/13-check-sql-always-where-calc-force-dims',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

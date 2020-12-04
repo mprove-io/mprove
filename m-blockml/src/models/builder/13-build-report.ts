@@ -102,10 +102,13 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = barReport.checkWhereCalcForceDims({
-  //   dashboards: dashboards,
-  //   models: models
-  // });
+  dashboards = barReport.checkSqlAlwaysWhereCalcForceDims({
+    dashboards: dashboards,
+    models: item.models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = await barReport.fetchBqViews({
   //   dashboards: dashboards,
