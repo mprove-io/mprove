@@ -1,0 +1,118 @@
+import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
+import { helper } from '../../barrels/helper';
+import { BmError } from '../bm-error';
+import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
+
+let func = enums.FuncEnum.CheckChartData;
+
+export function checkChartData(item: {
+  dashboards: interfaces.Dashboard[];
+  errors: BmError[];
+  structId: string;
+  caller: enums.CallerEnum;
+}) {
+  let { caller, structId } = item;
+  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+
+  let newDashboards: interfaces.Dashboard[] = [];
+
+  item.dashboards.forEach(x => {
+    let errorsOnStart = item.errors.length;
+
+    x.reports.forEach(report => {
+      if (helper.isUndefined(report.data)) {
+        return;
+      }
+
+      Object.keys(report.data)
+        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .forEach(parameter => {
+          if (
+            [
+              enums.ParameterEnum.XField.toString(),
+              enums.ParameterEnum.YField.toString(),
+              enums.ParameterEnum.YFields.toString(),
+              enums.ParameterEnum.HideColumns.toString(),
+              enums.ParameterEnum.MultiField.toString(),
+              enums.ParameterEnum.ValueField.toString(),
+              enums.ParameterEnum.PreviousValueField.toString()
+            ].indexOf(parameter) < 0
+          ) {
+            // error e172
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_UNKNOWN_PARAMETER,
+                message:
+                  `parameter "${parameter}" can not be used ` +
+                  'inside Report Data',
+                lines: [
+                  {
+                    line: report.data[parameter + constants.LINE_NUM],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (
+            Array.isArray((<any>report.data)[parameter]) &&
+            [
+              enums.ParameterEnum.YFields.toString(),
+              enums.ParameterEnum.HideColumns.toString()
+            ].indexOf(parameter) < 0
+          ) {
+            // error e173
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_LIST,
+                message: `parameter '${parameter}' can not be a List`,
+                lines: [
+                  {
+                    line: report.data[parameter + constants.LINE_NUM],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (
+            helper.isDefined(report.data[parameter]) &&
+            report.data[parameter].constructor === Object
+          ) {
+            // error e174
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_DICTIONARY,
+                message: `parameter '${parameter}' can not be a Hash`,
+                lines: [
+                  {
+                    line: report.data[parameter + constants.LINE_NUM],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        });
+    });
+
+    if (errorsOnStart === item.errors.length) {
+      newDashboards.push(x);
+    }
+  });
+
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+
+  return newDashboards;
+}

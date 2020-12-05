@@ -113,6 +113,7 @@ export enum FuncEnum {
   CheckSqlAlwaysWhereCalcForceDims = '13-report/13-check-sql-always-where-calc-force-dims',
 
   CheckChartType = '14-chart/1-check-chart-type',
+  CheckChartData = '14-chart/2-check-chart-data',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 
