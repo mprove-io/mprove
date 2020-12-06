@@ -25,7 +25,12 @@ export function buildChart(item: {
     caller: item.caller
   });
 
-  // dashboards = barChart.checkChartDataParameters({ dashboards: dashboards });
+  dashboards = barChart.checkChartDataParameters({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = barChart.checkChartAxisParameters({ dashboards: dashboards });
 
