@@ -32,7 +32,12 @@ export function buildChart(item: {
     caller: item.caller
   });
 
-  // dashboards = barChart.checkChartAxisParameters({ dashboards: dashboards });
+  dashboards = barChart.checkChartAxisParameters({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = barChart.checkChartOptionsParameters({
   //   dashboards: dashboards

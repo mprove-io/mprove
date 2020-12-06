@@ -68,5 +68,12 @@ export enum ParameterEnum {
   HideColumns = 'hide_columns',
   MultiField = 'multi_field',
   ValueField = 'value_field',
-  PreviousValueField = 'previous_value_field'
+  PreviousValueField = 'previous_value_field',
+  XAxis = 'x_axis',
+  ShowXAxisLabel = 'show_x_axis_label',
+  XAxisLabel = 'x_axis_label',
+  YAxis = 'y_axis',
+  ShowYAxisLabel = 'show_y_axis_label',
+  YAxisLabel = 'y_axis_label',
+  ShowAxis = 'show_axis'
 }

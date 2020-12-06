@@ -70,7 +70,7 @@ export function checkChartData(item: {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_LIST,
-                message: `parameter '${parameter}' can not be a List`,
+                message: `parameter "${parameter}" can not be a List`,
                 lines: [
                   {
                     line: report.data[parameter + constants.LINE_NUM],
@@ -91,7 +91,7 @@ export function checkChartData(item: {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_DICTIONARY,
-                message: `parameter '${parameter}' can not be a Hash`,
+                message: `parameter "${parameter}" can not be a Dictionary`,
                 lines: [
                   {
                     line: report.data[parameter + constants.LINE_NUM],
