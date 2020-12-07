@@ -181,7 +181,6 @@ export function checkChartOptionsParameters(item: {
               api.ChartInterpolationEnum.StepBefore
             ].indexOf(report.options[parameter]) < 0
           ) {
-            // error e267
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_INTERPOLATION,
@@ -220,7 +219,6 @@ export function checkChartOptionsParameters(item: {
               api.ChartColorSchemeEnum.Vivid
             ].indexOf(report.options[parameter]) < 0
           ) {
-            // error e192
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_COLOR_SCHEME,
@@ -246,7 +244,6 @@ export function checkChartOptionsParameters(item: {
               api.ChartSchemeTypeEnum.Ordinal
             ].indexOf(report.options[parameter]) < 0
           ) {
-            // error e193
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_SCHEME_TYPE,
@@ -281,7 +278,6 @@ export function checkChartOptionsParameters(item: {
               api.MyRegex.CAPTURE_DIGITS_START_TO_END_G()
             )
           ) {
-            // error e194
             item.errors.push(
               new BmError({
                 title:
@@ -311,7 +307,6 @@ export function checkChartOptionsParameters(item: {
               api.MyRegex.CAPTURE_FLOAT_START_TO_END_G()
             )
           ) {
-            // error e195
             item.errors.push(
               new BmError({
                 title:
@@ -342,7 +337,6 @@ export function checkChartOptionsParameters(item: {
               api.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G()
             )
           ) {
-            // error e197
             item.errors.push(
               new BmError({
                 title:
@@ -372,7 +366,6 @@ export function checkChartOptionsParameters(item: {
             !report.options[parameter].match(api.MyRegex.CAPTURE_RGB_G()) &&
             !report.options[parameter].match(api.MyRegex.CAPTURE_RGBA_G())
           ) {
-            // error e198
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_COLOR,

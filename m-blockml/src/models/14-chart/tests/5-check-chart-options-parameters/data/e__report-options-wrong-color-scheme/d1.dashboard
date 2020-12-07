@@ -1,0 +1,11 @@
+dashboard: d1
+reports:  
+- title: t1
+  model: m1
+  select: 
+  - a.dim1
+  type: gauge_linear
+  data:
+    value_field: a.dim1
+  options:
+    color_scheme: unk 
