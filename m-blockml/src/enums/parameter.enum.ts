@@ -57,7 +57,7 @@ export enum ParameterEnum {
   Unnest = 'unnest',
   UnnestOn = 'unnest_on',
   View = 'view',
-  //
+  // chart axis
   Axis = 'axis',
   Data = 'data',
   Options = 'options',
@@ -113,5 +113,12 @@ export enum ParameterEnum {
   Interpolation = 'interpolation',
   XScaleMax = 'x_scale_max',
   YScaleMin = 'y_scale_min',
-  YScaleMax = 'y_scale_max'
+  YScaleMax = 'y_scale_max',
+  // chart tile
+  TileWidth = 'tile_width',
+  TileHeight = 'tile_height',
+  TileSize = 'view_size',
+  ViewWidth = 'view_width',
+  ViewHeight = 'view_height',
+  ViewSize = 'view_size'
 }

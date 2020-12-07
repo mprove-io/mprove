@@ -46,7 +46,12 @@ export function buildChart(item: {
     caller: item.caller
   });
 
-  // dashboards = barChart.checkChartTileParameters({ dashboards: dashboards });
+  dashboards = barChart.checkChartTileParameters({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   return dashboards;
 }
