@@ -116,6 +116,7 @@ export enum FuncEnum {
   CheckChartData = '14-chart/2-check-chart-data',
   CheckChartDataParameters = '14-chart/3-check-chart-data-parameters',
   CheckChartAxisParameters = '14-chart/4-check-chart-axis-parameters',
+  CheckChartOptionsParameters = '14-chart/5-check-chart-options-parameters',
 
   CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
 

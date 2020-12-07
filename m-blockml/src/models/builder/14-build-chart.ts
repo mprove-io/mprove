@@ -39,9 +39,12 @@ export function buildChart(item: {
     caller: item.caller
   });
 
-  // dashboards = barChart.checkChartOptionsParameters({
-  //   dashboards: dashboards
-  // });
+  dashboards = barChart.checkChartOptionsParameters({
+    dashboards: dashboards,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   // dashboards = barChart.checkChartTileParameters({ dashboards: dashboards });
 
