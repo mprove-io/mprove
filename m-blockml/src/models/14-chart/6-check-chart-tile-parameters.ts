@@ -58,7 +58,6 @@ export function checkChartTileParameters(item: {
           }
 
           if (Array.isArray(report.tile[parameter])) {
-            // error e200
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_TILE_UNEXPECTED_LIST,
@@ -79,7 +78,6 @@ export function checkChartTileParameters(item: {
             helper.isDefined(report.tile[parameter]) &&
             report.tile[parameter].constructor === Object
           ) {
-            // error e201
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_TILE_UNEXPECTED_DICTIONARY,
@@ -113,7 +111,6 @@ export function checkChartTileParameters(item: {
               api.ChartTileWidthEnum._12
             ].indexOf(report.tile[parameter]) < 0
           ) {
-            // error e202
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_TILE_WRONG_TILE_WIDTH,
@@ -154,7 +151,6 @@ export function checkChartTileParameters(item: {
               api.ChartTileHeightEnum._1900
             ].indexOf(report.tile[parameter]) < 0
           ) {
-            // error e203
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_TILE_WRONG_TILE_HEIGHT,
@@ -179,7 +175,6 @@ export function checkChartTileParameters(item: {
               report.tile[parameter]
             ) < 0
           ) {
-            // error e204
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_TILE_WRONG_VIEW_SIZE,
