@@ -156,41 +156,41 @@ function genSqlPro(item: {
   //    needs_doubles
   vars = barSql.makeNeedsDoubles(vars);
 
-  // // model
-  // // need_doubles
-  // //    joins
-  // vars = findJoinsUsingJoinsDeps(vars);
+  // model
+  // need_doubles
+  //    joins
+  vars = barSql.findJoinsUsingJoinsDeps(vars);
 
-  // // model
-  // // need_doubles
-  // // joins
-  // //    needs_all
-  // vars = makeNeedsAll(vars);
+  // model
+  // need_doubles
+  // joins
+  //    needs_all
+  vars = barSql.makeNeedsAll(vars);
 
-  // // joins
-  // // model
-  // // filters
-  // // weekStart
-  // //    where_main
-  // //    having_main
-  // //    where_calc
-  // //    filters_conditions
-  // //    untouched_filters_conditions
-  // vars = makeFilters(vars);
+  // joins
+  // model
+  // filters
+  // weekStart
+  //    where_main
+  //    having_main
+  //    where_calc
+  //    filters_conditions
+  //    untouched_filters_conditions
+  vars = barSql.makeFilters(vars);
 
-  // // model
-  // // needs_all
-  // // joins
-  // // bqProject
-  // // projectId
-  // // structId
-  // // filters
-  // // udfs
-  // //    contents
-  // //    bq_views
-  // //    with
-  // //    main_udfs
-  // vars = makeContents(vars);
+  // model
+  // needs_all
+  // joins
+  // bqProject
+  // projectId
+  // structId
+  // filters
+  // udfs
+  //    contents
+  //    bq_views
+  //    with
+  //    main_udfs
+  vars = barSql.makeContents(vars);
 
   // // model
   // // joins

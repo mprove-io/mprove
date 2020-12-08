@@ -1,225 +1,184 @@
-// import { ApRegex } from '../../barrels/am-regex';
-// import { enums } from '../../barrels/enums';
-// import { interfaces } from '../../barrels/interfaces';
-// import { applyFilter } from './apply-filter';
-// import { api } from '../../barrels/api';
+import { enums } from '../../barrels/enums';
+import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
+import { constants } from '../../barrels/constants';
+import { helper } from '../../barrels/helper';
+import { applyFilter } from './apply-filter';
 
-// export function makeContents(item: interfaces.Vars) {
-//   let contents: string[] = [];
+export function makeContents(item: interfaces.VarsSql) {
+  let contents: string[] = [];
 
-//   let myWith: string[] = [];
+  let myWith: string[] = [];
 
-//   // prepare filters for ___timestamp
-//   let filt: {
-//     [s: string]: {
-//       [f: string]: number;
-//     };
-//   } = {};
+  // prepare filters for ___timestamp
+  let filt: {
+    [s: string]: {
+      [f: string]: number;
+    };
+  } = {};
 
-//   Object.keys(item.filters).forEach(element => {
-//     let r = ApRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
-//     let asName = r[1];
-//     let fieldName = r[2];
+  Object.keys(item.filters).forEach(element => {
+    let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
+    let asName = r[1];
+    let fieldName = r[2];
 
-//     if (!filt[asName]) {
-//       filt[asName] = {};
-//     }
-//     filt[asName][fieldName] = 1;
-//   });
-//   // end of prepare
+    if (!filt[asName]) {
+      filt[asName] = {};
+    }
+    filt[asName][fieldName] = 1;
+  });
+  // end of prepare
 
-//   item.model.joins_sorted.forEach(asName => {
-//     let flats: {
-//       [s: string]: number;
-//     } = {};
+  item.model.joinsSorted.forEach(asName => {
+    let flats: {
+      [s: string]: number;
+    } = {};
 
-//     let join = item.model.joins.find(j => j.as === asName);
+    let join = item.model.joins.find(j => j.as === asName);
 
-//     if (asName === item.model.from_as) {
-//       contents.push(`FROM (`);
-//     } else if (item.joins[asName]) {
-//       let joinTypeString =
-//         join.type === enums.JoinTypeEnum.Inner
-//           ? `INNER JOIN (`
-//           : join.type === enums.JoinTypeEnum.Cross
-//           ? `CROSS JOIN (`
-//           : join.type === enums.JoinTypeEnum.Full
-//           ? `FULL JOIN (`
-//           : join.type === enums.JoinTypeEnum.FullOuter
-//           ? `FULL OUTER JOIN (`
-//           : join.type === enums.JoinTypeEnum.Left
-//           ? `LEFT JOIN (`
-//           : join.type === enums.JoinTypeEnum.LeftOuter
-//           ? `LEFT OUTER JOIN (`
-//           : join.type === enums.JoinTypeEnum.Right
-//           ? `RIGHT JOIN (`
-//           : join.type === enums.JoinTypeEnum.RightOuter
-//           ? `RIGHT OUTER JOIN (`
-//           : undefined;
+    if (asName === item.model.fromAs) {
+      contents.push(`${constants.FROM} (`);
+    } else if (item.joins[asName]) {
+      let joinTypeString =
+        join.type === enums.JoinTypeEnum.Inner
+          ? 'INNER JOIN ('
+          : join.type === enums.JoinTypeEnum.Cross
+          ? 'CROSS JOIN ('
+          : join.type === enums.JoinTypeEnum.Full
+          ? 'FULL JOIN ('
+          : join.type === enums.JoinTypeEnum.FullOuter
+          ? 'FULL OUTER JOIN ('
+          : join.type === enums.JoinTypeEnum.Left
+          ? 'LEFT JOIN ('
+          : join.type === enums.JoinTypeEnum.LeftOuter
+          ? 'LEFT OUTER JOIN ('
+          : join.type === enums.JoinTypeEnum.Right
+          ? 'RIGHT JOIN ('
+          : join.type === enums.JoinTypeEnum.RightOuter
+          ? 'RIGHT OUTER JOIN ('
+          : undefined;
 
-//       contents.push(joinTypeString);
-//     } else {
-//       return;
-//     }
+      contents.push(joinTypeString);
+    } else {
+      return;
+    }
 
-//     contents.push(`  SELECT`);
+    contents.push(`  ${constants.SELECT}`);
 
-//     let i: number = 0;
+    let i = 0;
 
-//     // check for need of ___timestamp
-//     // $as ne 'mf' (by design)
-//     if (filt[asName]) {
-//       let once: { [s: string]: number } = {};
+    // check for need of ___timestamp
+    // $as ne 'mf' (by design)
+    if (filt[asName]) {
+      let once: { [s: string]: number } = {};
 
-//       Object.keys(filt[asName]).forEach(fieldName => {
-//         let field = join.view.fields.find(
-//           viewField => viewField.name === fieldName
-//         );
+      Object.keys(filt[asName]).forEach(fieldName => {
+        let field = join.view.fields.find(
+          viewField => viewField.name === fieldName
+        );
 
-//         if (field.result === enums.FieldExtResultEnum.Ts) {
-//           // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
-//           let sqlTimestampSelect = field.sql_timestamp_real;
+        if (field.result === enums.FieldAnyResultEnum.Ts) {
+          // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
+          let sqlTimestampSelect = field.sqlTimestampReal;
 
-//           let sqlTimestampName = field.sql_timestamp_name;
+          let sqlTimestampName = field.sqlTimestampName;
 
-//           if (once[sqlTimestampName]) {
-//             return;
-//           }
+          if (once[sqlTimestampName]) {
+            return;
+          }
 
-//           once[sqlTimestampName] = 1;
+          once[sqlTimestampName] = 1;
 
-//           contents.push(`    ${sqlTimestampSelect} as ${sqlTimestampName},`);
+          contents.push(`    ${sqlTimestampSelect} as ${sqlTimestampName},`);
 
-//           i++;
-//         }
-//       });
-//     }
-//     // end of check
+          i++;
+        }
+      });
+    }
+    // end of check
 
-//     if (item.needs_all[asName]) {
-//       // $as ne 'mf' (by design)
+    if (item.needsAll[asName]) {
+      // $as ne 'mf' (by design)
 
-//       Object.keys(item.needs_all[asName]).forEach(fieldName => {
-//         let field = join.view.fields.find(
-//           viewField => viewField.name === fieldName
-//         );
+      Object.keys(item.needsAll[asName]).forEach(fieldName => {
+        let field = join.view.fields.find(
+          viewField => viewField.name === fieldName
+        );
 
-//         if (field.field_class === enums.FieldClassEnum.Dimension) {
-//           if (typeof field.unnest !== 'undefined' && field.unnest !== null) {
-//             flats[field.unnest] = 1;
-//           }
+        if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+          if (helper.isDefined(field.unnest)) {
+            flats[field.unnest] = 1;
+          }
 
-//           // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
-//           let sqlSelect = field.sql_real;
+          // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
+          let sqlSelect = field.sqlReal;
 
-//           contents.push(`    ${sqlSelect} as ${fieldName},`);
+          contents.push(`    ${sqlSelect} as ${fieldName},`);
 
-//           i++;
-//         }
-//       });
-//     }
+          i++;
+        }
+      });
+    }
 
-//     if (i === 0) {
-//       contents.push(`    1 as no_fields_selected,`);
-//     }
+    if (i === 0) {
+      contents.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+    }
 
-//     // chop
-//     contents[contents.length - 1] = contents[contents.length - 1].slice(0, -1);
+    // chop
+    contents[contents.length - 1] = contents[contents.length - 1].slice(0, -1);
 
-//     let table;
+    let table;
 
-//     if (typeof join.view.table !== 'undefined' && join.view.table !== null) {
-//       if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-//         table = '`' + join.view.table + '`';
-//       } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-//         table = join.view.table;
-//       }
-//     } else {
-//       Object.keys(join.view.pdt_view_deps_all).forEach(viewName => {
-//         let pdtName = `${item.structId}_${viewName}`;
-//         item.query_pdt_deps_all[pdtName] = 1;
-//       });
+    if (helper.isDefined(join.view.table)) {
+      if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+        table = '`' + join.view.table + '`';
+      } else if (
+        item.model.connection.type === api.ConnectionTypeEnum.PostgreSQL
+      ) {
+        table = join.view.table;
+      }
+    } else {
+      let derivedSqlStart = join.view.derivedTableStart;
 
-//       let derivedSql = join.view.derived_table;
+      derivedSqlStart = applyFilter(item, asName, derivedSqlStart);
 
-//       if (join.view.permanent.match(ApRegex.TRUE())) {
-//         let permanentTable: string[] = [];
+      let derivedSqlStartArray = derivedSqlStart.split('\n');
 
-//         if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-//           permanentTable.push(`#standardSQL`);
-//         }
+      myWith.push(`  ${join.view.name}__${asName} AS (`);
+      myWith.push(derivedSqlStartArray.map(s => `    ${s}`).join('\n'));
+      myWith.push('  ),');
+      myWith.push('');
 
-//         if (typeof join.view.udfs !== 'undefined' && join.view.udfs !== null) {
-//           join.view.udfs.forEach(udf => {
-//             permanentTable.push(item.udfs_dict[udf]);
-//           });
-//         }
+      item.withParts = Object.assign({}, item.withParts, join.view.parts);
 
-//         permanentTable.push(derivedSql);
+      if (helper.isDefined(join.view.udfs)) {
+        join.view.udfs.forEach(udf => {
+          item.mainUdfs[udf] = 1;
+        });
+      }
 
-//         let permanentTableName = `${item.structId}_${join.view.name}`;
+      table = `${join.view.name}__${asName}`;
+    }
 
-//         item.query_pdt_deps[permanentTableName] = 1;
-//         item.query_pdt_deps_all[permanentTableName] = 1;
+    contents.push(`  ${constants.FROM} ${table}`);
 
-//         let mproveSchema = `mprove_${item.projectId}`;
+    Object.keys(flats).forEach(flat => {
+      contents.push(`    ${flat}`);
+    });
 
-//         if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-//           table =
-//             '`' +
-//             `${item.bqProject}.${mproveSchema}.${permanentTableName}` +
-//             '`';
-//         } else if (item.connection === api.ProjectConnectionEnum.PostgreSQL) {
-//           table = `${mproveSchema}.${permanentTableName}`;
-//         }
-//       } else {
-//         Object.keys(join.view.pdt_view_deps).forEach(viewName => {
-//           let pdtName = `${item.structId}_${viewName}`;
-//           item.query_pdt_deps[pdtName] = 1;
-//         });
+    contents.push(`  ) as ${asName}`);
 
-//         let derivedSqlStart = join.view.derived_table_start;
+    if (asName !== item.model.fromAs) {
+      let sqlOnFinal = api.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
 
-//         derivedSqlStart = applyFilter(item, asName, derivedSqlStart);
+      contents.push(`${constants.ON} ${sqlOnFinal}`);
+    }
 
-//         let derivedSqlStartArray = derivedSqlStart.split('\n');
+    contents.push('');
+  });
 
-//         myWith.push(`  ${join.view.name}__${asName} AS (`);
-//         myWith.push(derivedSqlStartArray.map(s => `    ${s}`).join(`\n`));
-//         myWith.push(`  ),`);
-//         myWith.push(``);
+  item.contents = contents;
+  item.with = myWith;
 
-//         item.with_parts = Object.assign({}, item.with_parts, join.view.parts);
-
-//         if (typeof join.view.udfs !== 'undefined' && join.view.udfs !== null) {
-//           join.view.udfs.forEach(udf => {
-//             item.main_udfs[udf] = 1;
-//           });
-//         }
-
-//         table = `${join.view.name}__${asName}`;
-//       }
-//     }
-
-//     contents.push(`  FROM ${table}`);
-
-//     Object.keys(flats).forEach(flat => {
-//       contents.push(`    ${flat}`);
-//     });
-
-//     contents.push(`  ) as ${asName}`);
-
-//     if (asName !== item.model.from_as) {
-//       let sqlOnFinal = ApRegex.removeBracketsOnDoubles(join.sql_on_real);
-
-//       contents.push(`ON ${sqlOnFinal}`);
-//     }
-
-//     contents.push(``);
-//   });
-
-//   item.contents = contents;
-//   item.with = myWith;
-
-//   return item;
-// }
+  return item;
+}

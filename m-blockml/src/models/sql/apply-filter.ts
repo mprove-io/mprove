@@ -1,35 +1,42 @@
-// import { ApRegex } from '../../barrels/am-regex';
-// import { interfaces } from '../../barrels/interfaces';
+import { interfaces } from '../../barrels/interfaces';
+import { api } from '../../barrels/api';
 
-// export function applyFilter(item: interfaces.Vars, as: string, input: string) {
-//   let reg = ApRegex.APPLY_FILTER();
-//   let r;
+export function applyFilter(
+  item: interfaces.VarsSql,
+  as: string,
+  input: string
+) {
+  let reg = api.MyRegex.APPLY_FILTER();
+  let r;
 
-//   while ((r = reg.exec(input))) {
-//     let start = r[1];
-//     let f = r[2];
-//     let target = r[3];
-//     let end = r[4];
+  while ((r = reg.exec(input))) {
+    let start = r[1];
+    let f = r[2];
+    let target = r[3];
+    let end = r[4];
 
-//     let filterName = `${as}.${f}`;
+    let filterName = `${as}.${f}`;
 
-//     let conditions = item.filters_conditions[filterName]
-//       ? item.filters_conditions[filterName]
-//       : item.untouched_filters_conditions[filterName]
-//       ? item.untouched_filters_conditions[filterName]
-//       : [];
+    let conditions = item.filtersConditions[filterName]
+      ? item.filtersConditions[filterName]
+      : item.untouchedFiltersConditions[filterName]
+      ? item.untouchedFiltersConditions[filterName]
+      : [];
 
-//     let conditionsString =
-//       conditions.length > 0
-//         ? conditions.join(`\n`)
-//         : `'empty filter ${as}.${f} applied' = 'empty filter ${as}.${f} applied'`;
+    let conditionsString =
+      conditions.length > 0
+        ? conditions.join('\n')
+        : `'empty filter ${as}.${f} applied' = 'empty filter ${as}.${f} applied'`;
 
-//     conditionsString = ApRegex.replaceMproveFilter(conditionsString, target);
+    conditionsString = api.MyRegex.replaceMproveFilter(
+      conditionsString,
+      target
+    );
 
-//     input = start + conditionsString + end;
-//   }
+    input = start + conditionsString + end;
+  }
 
-//   input = ApRegex.removeLastN(input);
+  input = api.MyRegex.removeLastN(input);
 
-//   return input;
-// }
+  return input;
+}

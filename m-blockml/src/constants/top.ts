@@ -3,6 +3,7 @@ export const LINE_NUM_END = '___line_num_';
 export const LINE_NUMBERS = 'LineNumbers';
 export const LINE_NUM = '_line_num';
 
+export const MPROVE_FILTER = 'mproveFilter';
 export const MPROVE_TIMESTAMP_START = 'mprovetimestampstart';
 export const MPROVE_TIMESTAMP_END = 'mprovetimestampend';
 export const TIMESTAMP = 'timestamp';
@@ -23,6 +24,7 @@ export const UTC = 'UTC';
 export const WITH = 'WITH';
 export const SELECT = 'SELECT';
 export const FROM = 'FROM';
+export const ON = 'ON';
 export const GROUP_BY = 'GROUP_BY';
 
 export const VIEW_MAIN = 'view_main';
