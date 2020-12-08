@@ -4,7 +4,7 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
-import { barShared } from '../../barrels/bar-shared';
+import { barSpecial } from '../../barrels/bar-special';
 
 let func = enums.FuncEnum.CheckDefaultFilters;
 
@@ -192,7 +192,7 @@ export function checkDefaultFilters(item: {
                   .find(j => j.as === asName)
                   .view.fields.find(vField => vField.name === fieldName).result;
 
-          let p = barShared.processFilter({
+          let p = barSpecial.processFilter({
             filterBricks: report.default_filters[defaultFilter],
             result: result
           });

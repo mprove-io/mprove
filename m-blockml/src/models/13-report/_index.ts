@@ -11,5 +11,4 @@ export * from './10-check-default-filters';
 export * from './11-combine-report-filters';
 export * from './12-check-filters-force-dims';
 export * from './13-check-sql-always-where-calc-force-dims';
-
-// export * from './fetch-bq-views';
+export * from './14-fetch-sql';

@@ -1,7 +1,6 @@
-import { barSub } from '../../../barrels/bar-sub';
 import { api } from '../../../barrels/api';
 import { interfaces } from '../../../barrels/interfaces';
-import { genSub } from './gen-sub';
+import { barSpecial } from '../../../barrels/bar-special';
 
 export function makeViewPart(item: {
   topView: interfaces.View;
@@ -16,7 +15,7 @@ export function makeViewPart(item: {
   projectId: string;
   structId: string;
 }) {
-  let sub = genSub({
+  let sub = barSpecial.genSub({
     select: Object.keys(item.needViewFields),
     view: item.view,
     udfsDict: item.udfsDict,

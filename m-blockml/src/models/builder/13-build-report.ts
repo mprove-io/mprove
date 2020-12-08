@@ -4,9 +4,12 @@ import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barReport } from '../../barrels/bar-report';
 
-export function buildReport(item: {
+export async function buildReport(item: {
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
+  udfs: interfaces.Udf[];
+  projectId: string;
+  weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -110,16 +113,16 @@ export function buildReport(item: {
     caller: item.caller
   });
 
-  // dashboards = await barReport.fetchBqViews({
-  //   dashboards: dashboards,
-  //   models: models,
-  //   udfs: udfs,
-  //   weekStart: item.weekStart,
-  //   connection: item.connection,
-  //   bqProject: item.bqProject,
-  //   projectId: item.projectId,
-  //   structId: item.structId
-  // });
+  dashboards = await barReport.fetchSql({
+    dashboards: dashboards,
+    models: item.models,
+    udfs: item.udfs,
+    weekStart: item.weekStart,
+    projectId: item.projectId,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
 
   return dashboards;
 }

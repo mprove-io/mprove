@@ -1,7 +1,6 @@
 import { api } from '../barrels/api';
 import { Model } from './file-types/model';
 import { UdfsDict } from './udfs-dict';
-import { BqView } from './bq-view';
 
 export interface Vars {
   model: Model;
@@ -71,7 +70,6 @@ export interface Vars {
     [s: string]: string[];
   };
   contents: string[];
-  bqViews: BqView[];
   with: string[];
   withParts: {
     [viewPartName: string]: {

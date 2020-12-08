@@ -3,7 +3,6 @@ import { ChartData } from './chart/chart-data';
 import { ChartAxis } from './chart/chart-axis';
 import { ChartOptions } from './chart/chart-options';
 import { ChartTile } from './chart/chart-tile';
-import { BqView } from './bq-view';
 
 export interface Report {
   title: string;
@@ -73,7 +72,9 @@ export interface Report {
 
   filters: { [filter: string]: string[] };
 
-  filtersFractions: any;
+  filtersFractions: {
+    [s: string]: api.Fraction[];
+  };
 
-  bqViews: BqView[];
+  sql: string[];
 }

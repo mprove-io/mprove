@@ -1,7 +1,6 @@
 import { api } from '../barrels/api';
 import { View } from './file-types/view';
 import { UdfsDict } from './udfs-dict';
-import { BqView } from './bq-view';
 
 export interface VarsSub {
   view: View;
@@ -33,7 +32,6 @@ export interface VarsSub {
     [a: string]: number;
   };
   contents: string[];
-  bqViews: BqView[];
   with: string[];
   query: string[];
   calcQuery: string[];

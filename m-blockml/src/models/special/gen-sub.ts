@@ -1,6 +1,6 @@
-import { barSub } from '../../../barrels/bar-sub';
-import { api } from '../../../barrels/api';
-import { interfaces } from '../../../barrels/interfaces';
+import { barSub } from '../../barrels/bar-sub';
+import { api } from '../../barrels/api';
+import { interfaces } from '../../barrels/interfaces';
 
 export function genSub(item: {
   view: interfaces.View;
@@ -31,7 +31,6 @@ export function genSub(item: {
     extraUdfs: {},
     needsAll: undefined,
     contents: undefined,
-    bqViews: undefined,
     with: undefined,
     query: undefined,
     calcQuery: undefined

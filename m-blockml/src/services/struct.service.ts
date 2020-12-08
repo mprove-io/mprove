@@ -160,9 +160,12 @@ export class StructService {
       caller: enums.CallerEnum.BuildDashboard
     });
 
-    dashboards = barBuilder.buildReport({
+    dashboards = await barBuilder.buildReport({
       dashboards: dashboards,
       models: models,
+      udfs: udfs,
+      weekStart: item.weekStart,
+      projectId: item.projectId,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.BuildReport
@@ -175,7 +178,7 @@ export class StructService {
       caller: enums.CallerEnum.BuildChart
     });
 
-    // Visualizations
+    // TODO: Visualizations
 
     barBuilder.logStruct({
       errors: errors,

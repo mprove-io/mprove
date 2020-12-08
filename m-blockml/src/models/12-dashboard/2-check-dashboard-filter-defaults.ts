@@ -3,7 +3,7 @@ import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
-import { barShared } from '../../barrels/bar-shared';
+import { barSpecial } from '../../barrels/bar-special';
 
 let func = enums.FuncEnum.CheckDashboardFilterDefaults;
 
@@ -16,7 +16,7 @@ export function checkDashboardFilterDefaults(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards = barShared.checkVMDFilterDefaults({
+  let newDashboards = barSpecial.checkVMDFilterDefaults({
     entities: item.dashboards,
     errors: item.errors,
     structId: item.structId,

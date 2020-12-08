@@ -111,6 +111,7 @@ export enum FuncEnum {
   CombineReportFilters = '13-report/11-combine-report-filters',
   CheckFiltersForceDims = '13-report/12-check-filters-force-dims',
   CheckSqlAlwaysWhereCalcForceDims = '13-report/13-check-sql-always-where-calc-force-dims',
+  FetchSql = '13-report/14-fetch-sql',
 
   CheckChartType = '14-chart/1-check-chart-type',
   CheckChartData = '14-chart/2-check-chart-data',
@@ -119,7 +120,7 @@ export enum FuncEnum {
   CheckChartOptionsParameters = '14-chart/5-check-chart-options-parameters',
   CheckChartTileParameters = '14-chart/6-check-chart-tile-parameters',
 
-  CheckVMDFilterDefaults = 'shared/check-vmd-filter-defaults',
+  CheckVMDFilterDefaults = 'special/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'
 }

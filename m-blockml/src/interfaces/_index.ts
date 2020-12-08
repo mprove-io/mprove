@@ -24,8 +24,6 @@ export * from './file-types/visualization';
 
 export * from './bm-error-c';
 export * from './bm-error-c-line';
-export * from './bq-view';
-export * from './item-gen-bq-views';
 export * from './join';
 export * from './report';
 export * from './struct';
