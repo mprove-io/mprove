@@ -16,10 +16,10 @@ export function combineReportFilters(item: {
 
   item.dashboards.forEach(x => {
     x.reports.forEach(report => {
-      report.filters = {};
+      report.combinedFilters = {};
 
       Object.keys(report.default).forEach(defaultFilter => {
-        report.filters[defaultFilter] = JSON.parse(
+        report.combinedFilters[defaultFilter] = JSON.parse(
           JSON.stringify(report.default_filters[defaultFilter])
         );
       });
@@ -29,7 +29,7 @@ export function combineReportFilters(item: {
 
         let dashFilter = Object.keys(x.filters).find(f => f === listen);
 
-        report.filters[listenFilter] = JSON.parse(
+        report.combinedFilters[listenFilter] = JSON.parse(
           JSON.stringify(x.filters[dashFilter])
         );
       });

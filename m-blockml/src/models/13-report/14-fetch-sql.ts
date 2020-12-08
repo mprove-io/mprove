@@ -27,11 +27,11 @@ export async function fetchSql(item: {
 
       let filters: { [filter: string]: string[] } = {};
 
-      if (helper.isDefined(report.filters)) {
-        Object.keys(report.filters).forEach(filter => {
+      if (helper.isDefined(report.combinedFilters)) {
+        Object.keys(report.combinedFilters).forEach(filter => {
           // remove empty filters
-          if (report.filters[filter].length > 0) {
-            filters[filter] = report.filters[filter];
+          if (report.combinedFilters[filter].length > 0) {
+            filters[filter] = report.combinedFilters[filter];
           }
         });
       }
@@ -45,8 +45,10 @@ export async function fetchSql(item: {
         filters: filters,
         weekStart: item.weekStart,
         projectId: item.projectId,
-        udfs_user: item.udfs,
-        structId: item.structId
+        udfs: item.udfs,
+        structId: item.structId,
+        errors: item.errors,
+        caller: item.caller
       });
 
       report.filtersFractions = resItem.filtersFractions;

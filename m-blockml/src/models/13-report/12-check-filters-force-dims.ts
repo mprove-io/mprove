@@ -25,7 +25,7 @@ export function checkFiltersForceDims(item: {
     x.reports.forEach(report => {
       let model = item.models.find(m => m.name === report.model);
 
-      Object.keys(report.filters).forEach(element => {
+      Object.keys(report.combinedFilters).forEach(element => {
         let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
         let r = reg.exec(element);
 

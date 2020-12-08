@@ -45,7 +45,7 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(dashboards.length).toBe(1);
 
-  expect(dashboards[0].reports[0].filters).toStrictEqual({
+  expect(dashboards[0].reports[0].combinedFilters).toStrictEqual({
     'a.dim2': ['-foo-'],
     'a.dim1': ['-bar-']
   });

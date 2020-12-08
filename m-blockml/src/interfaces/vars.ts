@@ -15,8 +15,8 @@ export interface Vars {
     [s: string]: api.Fraction[];
   };
   weekStart: api.ProjectWeekStartEnum;
-  connectionType: api.ConnectionTypeEnum;
-  bqProject: string;
+  // connectionType: api.ConnectionTypeEnum;
+  // bqProject: string;
   projectId: string;
   structId: string;
   udfsDict: UdfsDict;

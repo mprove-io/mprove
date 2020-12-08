@@ -70,7 +70,7 @@ export interface Report {
 
   default: { [filter: string]: string[] };
 
-  filters: { [filter: string]: string[] };
+  combinedFilters: { [filter: string]: string[] };
 
   filtersFractions: {
     [s: string]: api.Fraction[];

@@ -1,5 +1,8 @@
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { BmError } from '../bm-error';
+import { enums } from '../../barrels/enums';
+import { genSqlPro } from './gen-sql-pro';
 
 export async function genSql(item: {
   model: interfaces.Model;
@@ -7,11 +10,13 @@ export async function genSql(item: {
   sorts: string;
   limit: string;
   filters: { [filter: string]: string[] };
-  udfs_user: interfaces.Udf[];
+  udfs: interfaces.Udf[];
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
   projectId: string;
+  errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }) {
   // if (Object.keys(cluster.workers).length === 0) {
   //   let itemId = helper.makeId();
@@ -64,5 +69,6 @@ export async function genSql(item: {
   //   }
   // }
 
-  return { sql: [], filtersFractions: {} };
+  let outcome = genSqlPro(item);
+  return outcome;
 }
