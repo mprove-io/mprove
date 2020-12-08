@@ -16,11 +16,11 @@ export function sawMakeDoubleDepsAfterSingles(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
+    x.sqlAlwaysWhereDoubleDepsAfterSingles = {};
+
     if (helper.isUndefined(x.sql_always_where)) {
       return;
     }
-
-    x.sqlAlwaysWhereDoubleDepsAfterSingles = {};
 
     if (helper.isUndefined(x.sql_always_where)) {
       return;

@@ -150,11 +150,11 @@ function genSqlPro(item: {
   //    main_udfs_ref
   vars = barSql.makeMainFields(vars);
 
-  // // selected
-  // // filters
-  // // model
-  // //    needs_doubles
-  // vars = makeNeedsDoubles(vars);
+  // selected
+  // filters
+  // model
+  //    needs_doubles
+  vars = barSql.makeNeedsDoubles(vars);
 
   // // model
   // // need_doubles

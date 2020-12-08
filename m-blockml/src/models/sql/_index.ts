@@ -1,5 +1,6 @@
 export * from './1-make-dep-measures';
 export * from './2-make-main-fields';
+export * from './3-make-needs-doubles';
 
 // export * from './apply-filter';
 // export * from './compose-calc';
@@ -11,5 +12,4 @@ export * from './2-make-main-fields';
 // export * from './make-filters';
 // export * from './make-joins-where';
 // export * from './make-needs-all';
-// export * from './make-needs-doubles';
 // export * from './process-timezone';
