@@ -1,280 +1,281 @@
-// import { ApRegex } from '../../barrels/am-regex';
-// import { enums } from '../../barrels/enums';
-// import { interfaces } from '../../barrels/interfaces';
-// import { gen } from '../../barrels/gen';
-// import { api } from '../../barrels/api';
+import { enums } from '../../barrels/enums';
+import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
+import { api } from '../../barrels/api';
+import { barMeasure } from '../../barrels/bar-measure';
 
-// export function makeMainFields(item: interfaces.Vars) {
-//   let mainText: string[] = [];
-//   let groupMainBy: string[] = [];
-//   let mainFields: {
-//     as_name: string;
-//     field_name: string;
-//     element_name: string;
-//   }[] = [];
+export function makeMainFields(item: interfaces.VarsSql) {
+  let mainText: string[] = [];
+  let groupMainBy: string[] = [];
+  let mainFields: interfaces.VarsSql['mainFields'] = [];
 
-//   let selected: { [s: string]: number } = {};
-//   let processedFields: { [s: string]: string } = {};
+  let selected: { [s: string]: number } = {};
+  let processedFields: { [s: string]: string } = {};
 
-//   let i: number = 0;
+  let i = 0;
 
-//   item.select.forEach(element => {
-//     let reg = ApRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
-//     let r = reg.exec(element);
+  item.select.forEach(element => {
+    let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+    let r = reg.exec(element);
 
-//     let asName = r[1];
-//     let fieldName = r[2];
+    let asName = r[1];
+    let fieldName = r[2];
 
-//     mainFields.push({
-//       as_name: asName,
-//       field_name: fieldName,
-//       element_name: asName + '.' + fieldName
-//     });
+    mainFields.push({
+      asName: asName,
+      fieldName: fieldName,
+      elementName: `${asName}.${fieldName}`
+    });
 
-//     selected[element] = 1;
-//   });
+    selected[element] = 1;
+  });
 
-//   Object.keys(item.dep_measures).forEach(asName => {
-//     Object.keys(item.dep_measures[asName]).forEach(fieldName => {
-//       let element = asName + '.' + fieldName;
+  Object.keys(item.depMeasures).forEach(asName => {
+    Object.keys(item.depMeasures[asName]).forEach(fieldName => {
+      let element = `${asName}.${fieldName}`;
 
-//       if (!selected[element]) {
-//         mainFields.push({
-//           as_name: asName,
-//           field_name: fieldName,
-//           element_name: asName + '.' + fieldName
-//         });
-//       }
+      if (!selected[element]) {
+        mainFields.push({
+          asName: asName,
+          fieldName: fieldName,
+          elementName: `${asName}.${fieldName}`
+        });
+      }
 
-//       selected[element] = 1;
-//     });
-//   });
+      selected[element] = 1;
+    });
+  });
 
-//   Object.keys(item.filters).forEach(element => {
-//     let reg = ApRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
-//     let r = reg.exec(element);
+  Object.keys(item.filters).forEach(element => {
+    let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+    let r = reg.exec(element);
 
-//     let asName = r[1];
-//     let fieldName = r[2];
+    let asName = r[1];
+    let fieldName = r[2];
 
-//     if (!selected[element]) {
-//       mainFields.push({
-//         as_name: asName,
-//         field_name: fieldName,
-//         element_name: asName + '.' + fieldName
-//       });
-//     }
+    if (!selected[element]) {
+      mainFields.push({
+        asName: asName,
+        fieldName: fieldName,
+        elementName: `${asName}.${fieldName}`
+      });
+    }
 
-//     let fieldClass: enums.FieldClassEnum =
-//       asName === 'mf'
-//         ? item.model.fields.find(mField => mField.name === fieldName)
-//             .field_class
-//         : item.model.joins
-//             .find(j => j.as === asName)
-//             .view.fields.find(vField => vField.name === fieldName).field_class;
+    let fieldClass: enums.FieldClassEnum =
+      asName === constants.MF
+        ? item.model.fields.find(mField => mField.name === fieldName).fieldClass
+        : item.model.joins
+            .find(j => j.as === asName)
+            .view.fields.find(vField => vField.name === fieldName).fieldClass;
 
-//     if (fieldClass === enums.FieldClassEnum.Measure) {
-//       selected[element] = 1;
-//     }
-//   });
+    if (fieldClass === enums.FieldClassEnum.Measure) {
+      selected[element] = 1;
+    }
+  });
 
-//   mainFields.forEach(mainField => {
-//     let asName = mainField.as_name;
-//     let fieldName = mainField.field_name;
-//     let element = mainField.element_name;
+  mainFields.forEach(mainField => {
+    let asName = mainField.asName;
+    let fieldName = mainField.fieldName;
+    let element = mainField.elementName;
 
-//     let field =
-//       asName === 'mf'
-//         ? item.model.fields.find(mField => mField.name === fieldName)
-//         : item.model.joins
-//             .find(j => j.as === asName)
-//             .view.fields.find(vField => vField.name === fieldName);
+    let field =
+      asName === constants.MF
+        ? item.model.fields.find(mField => mField.name === fieldName)
+        : item.model.joins
+            .find(j => j.as === asName)
+            .view.fields.find(vField => vField.name === fieldName);
 
-//     let sqlFinal;
-//     let sqlKeyFinal;
-//     let sqlSelect;
+    let sqlFinal;
+    let sqlKeyFinal;
+    let sqlSelect;
 
-//     if (field.field_class === enums.FieldClassEnum.Dimension) {
-//       i++;
+    if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+      i++;
 
-//       if (asName === 'mf') {
-//         // remove ${ } on doubles (no singles exists in _real of model dimensions)
-//         sqlSelect = ApRegex.removeBracketsOnDoubles(field.sql_real);
-//       } else {
-//         sqlSelect = `${asName}.${fieldName}`;
-//       }
+      if (asName === constants.MF) {
+        // remove ${ } on doubles (no singles exists in _real of model dimensions)
+        sqlSelect = api.MyRegex.removeBracketsOnDoubles(field.sqlReal);
+      } else {
+        sqlSelect = `${asName}.${fieldName}`;
+      }
 
-//       if (selected[element]) {
-//         groupMainBy.push(`${i}`); // toString
-//       }
-//     } else if (field.field_class === enums.FieldClassEnum.Measure) {
-//       i++;
+      if (selected[element]) {
+        groupMainBy.push(`${i}`); // toString
+      }
+    } else if (field.fieldClass === enums.FieldClassEnum.Measure) {
+      i++;
 
-//       if (asName === 'mf') {
-//         // remove ${ } on doubles (no singles exists in _real of model measures)
-//         sqlFinal = ApRegex.removeBracketsOnDoubles(field.sql_real);
+      if (asName === constants.MF) {
+        // remove ${ } on doubles (no singles exists in _real of model measures)
+        sqlFinal = api.MyRegex.removeBracketsOnDoubles(field.sqlReal);
 
-//         if (
-//           [
-//             enums.FieldExtTypeEnum.SumByKey,
-//             enums.FieldExtTypeEnum.AverageByKey,
-//             enums.FieldExtTypeEnum.MedianByKey,
-//             enums.FieldExtTypeEnum.PercentileByKey
-//           ].indexOf(field.type) > -1
-//         ) {
-//           // remove ${ } on doubles (no singles exists in _real of model measures)
-//           sqlKeyFinal = ApRegex.removeBracketsOnDoubles(field.sql_key_real);
-//         }
-//       } else {
-//         // remove ${ } on singles (no doubles exists in _real of view measures)
-//         sqlFinal = ApRegex.removeBracketsOnSinglesWithAlias(
-//           field.sql_real,
-//           asName
-//         );
+        if (
+          [
+            enums.FieldAnyTypeEnum.SumByKey,
+            enums.FieldAnyTypeEnum.AverageByKey,
+            enums.FieldAnyTypeEnum.MedianByKey,
+            enums.FieldAnyTypeEnum.PercentileByKey
+          ].indexOf(field.type) > -1
+        ) {
+          // remove ${ } on doubles (no singles exists in _real of model measures)
+          sqlKeyFinal = api.MyRegex.removeBracketsOnDoubles(field.sqlKeyReal);
+        }
+      } else {
+        // remove ${ } on singles (no doubles exists in _real of view measures)
+        sqlFinal = api.MyRegex.removeBracketsOnSinglesWithAlias(
+          field.sqlReal,
+          asName
+        );
 
-//         if (
-//           [
-//             enums.FieldExtTypeEnum.SumByKey,
-//             enums.FieldExtTypeEnum.AverageByKey,
-//             enums.FieldExtTypeEnum.MedianByKey,
-//             enums.FieldExtTypeEnum.PercentileByKey
-//           ].indexOf(field.type) > -1
-//         ) {
-//           // remove ${ } on singles (no doubles exists in _real of view measures)
-//           sqlKeyFinal = ApRegex.removeBracketsOnSinglesWithAlias(
-//             field.sql_key_real,
-//             asName
-//           );
-//         }
-//       }
+        if (
+          [
+            enums.FieldAnyTypeEnum.SumByKey,
+            enums.FieldAnyTypeEnum.AverageByKey,
+            enums.FieldAnyTypeEnum.MedianByKey,
+            enums.FieldAnyTypeEnum.PercentileByKey
+          ].indexOf(field.type) > -1
+        ) {
+          // remove ${ } on singles (no doubles exists in _real of view measures)
+          sqlKeyFinal = api.MyRegex.removeBracketsOnSinglesWithAlias(
+            field.sqlKeyReal,
+            asName
+          );
+        }
+      }
 
-//       switch (true) {
-//         case field.type === enums.FieldExtTypeEnum.SumByKey: {
-//           if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-//             item.main_udfs['mprove_array_sum'] = 1;
-//           }
+      switch (true) {
+        case field.type === enums.FieldAnyTypeEnum.SumByKey: {
+          if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+            item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
+          }
 
-//           sqlSelect = gen.makeMeasureSumByKey({
-//             sql_key_final: sqlKeyFinal,
-//             sql_final: sqlFinal,
-//             connection: item.connection
-//           });
+          sqlSelect = barMeasure.makeMeasureSumByKey({
+            sqlKeyFinal: sqlKeyFinal,
+            sqlFinal: sqlFinal,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.AverageByKey: {
-//           if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-//             item.main_udfs['mprove_array_sum'] = 1;
-//           }
+        case field.type === enums.FieldAnyTypeEnum.AverageByKey: {
+          if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+            item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
+          }
 
-//           sqlSelect = gen.makeMeasureAverageByKey({
-//             sql_key_final: sqlKeyFinal,
-//             sql_final: sqlFinal,
-//             connection: item.connection
-//           });
+          sqlSelect = barMeasure.makeMeasureAverageByKey({
+            sqlKeyFinal: sqlKeyFinal,
+            sqlFinal: sqlFinal,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.MedianByKey: {
-//           item.main_udfs['mprove_approx_percentile_distinct_disc'] = 1;
+        case field.type === enums.FieldAnyTypeEnum.MedianByKey: {
+          item.mainUdfs[
+            constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
+          ] = 1;
 
-//           sqlSelect = gen.makeMeasureMedianByKey({
-//             sql_key_final: sqlKeyFinal,
-//             sql_final: sqlFinal,
-//             connection: item.connection
-//           });
+          sqlSelect = barMeasure.makeMeasureMedianByKey({
+            sqlKeyFinal: sqlKeyFinal,
+            sqlFinal: sqlFinal,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.PercentileByKey: {
-//           item.main_udfs['mprove_approx_percentile_distinct_disc'] = 1;
+        case field.type === enums.FieldAnyTypeEnum.PercentileByKey: {
+          item.mainUdfs[
+            constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
+          ] = 1;
 
-//           sqlSelect = gen.makeMeasurePercentileByKey({
-//             sql_key_final: sqlKeyFinal,
-//             sql_final: sqlFinal,
-//             percentile: field.percentile,
-//             connection: item.connection
-//           });
+          sqlSelect = barMeasure.makeMeasurePercentileByKey({
+            sqlKeyFinal: sqlKeyFinal,
+            sqlFinal: sqlFinal,
+            percentile: field.percentile,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.Min: {
-//           sqlSelect = gen.makeMeasureMin({
-//             sql_final: sqlFinal,
-//             connection: item.connection
-//           });
+        case field.type === enums.FieldAnyTypeEnum.Min: {
+          sqlSelect = barMeasure.makeMeasureMin({
+            sqlFinal: sqlFinal,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.Max: {
-//           sqlSelect = gen.makeMeasureMax({
-//             sql_final: sqlFinal,
-//             connection: item.connection
-//           });
+        case field.type === enums.FieldAnyTypeEnum.Max: {
+          sqlSelect = barMeasure.makeMeasureMax({
+            sqlFinal: sqlFinal,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.CountDistinct: {
-//           sqlSelect = gen.makeMeasureCountDistinct({
-//             sql_final: sqlFinal,
-//             connection: item.connection
-//           });
+        case field.type === enums.FieldAnyTypeEnum.CountDistinct: {
+          sqlSelect = barMeasure.makeMeasureCountDistinct({
+            sqlFinal: sqlFinal,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.List: {
-//           sqlSelect = gen.makeMeasureList({
-//             sql_final: sqlFinal,
-//             connection: item.connection
-//           });
+        case field.type === enums.FieldAnyTypeEnum.List: {
+          sqlSelect = barMeasure.makeMeasureList({
+            sqlFinal: sqlFinal,
+            connection: item.model.connection
+          });
 
-//           break;
-//         }
+          break;
+        }
 
-//         case field.type === enums.FieldExtTypeEnum.Custom: {
-//           sqlSelect = sqlFinal;
-//           break;
-//         }
-//       }
-//     } else if (field.field_class === enums.FieldClassEnum.Calculation) {
-//       if (asName === 'mf') {
-//         sqlFinal = ApRegex.removeBracketsOnCalculationSinglesMf(field.sql_real);
-//         sqlFinal = ApRegex.removeBracketsOnCalculationDoubles(sqlFinal);
+        case field.type === enums.FieldAnyTypeEnum.Custom: {
+          sqlSelect = sqlFinal;
+          break;
+        }
+      }
+    } else if (field.fieldClass === enums.FieldClassEnum.Calculation) {
+      if (asName === constants.MF) {
+        sqlFinal = api.MyRegex.removeBracketsOnCalculationSinglesMf(
+          field.sqlReal
+        );
+        sqlFinal = api.MyRegex.removeBracketsOnCalculationDoubles(sqlFinal);
 
-//         sqlSelect = sqlFinal;
-//       } else {
-//         sqlFinal = ApRegex.removeBracketsOnCalculationSinglesWithAlias(
-//           field.sql_real,
-//           asName
-//         );
-//         // no need to substitute doubles (they not exists in view fields)
+        sqlSelect = sqlFinal;
+      } else {
+        sqlFinal = api.MyRegex.removeBracketsOnCalculationSinglesWithAlias(
+          field.sqlReal,
+          asName
+        );
+        // no need to substitute doubles (they not exists in view fields)
 
-//         sqlSelect = sqlFinal;
-//       }
-//     }
+        sqlSelect = sqlFinal;
+      }
+    }
 
-//     if (
-//       selected[element] &&
-//       field.field_class !== enums.FieldClassEnum.Calculation
-//     ) {
-//       mainText.push(`  ${sqlSelect} as ${asName}_${fieldName},`);
-//     }
+    if (
+      selected[element] &&
+      field.fieldClass !== enums.FieldClassEnum.Calculation
+    ) {
+      mainText.push(`  ${sqlSelect} as ${asName}_${fieldName},`);
+    }
 
-//     processedFields[element] = sqlSelect;
-//   });
+    processedFields[element] = sqlSelect;
+  });
 
-//   item.main_text = mainText;
-//   item.group_main_by = groupMainBy;
-//   item.main_fields = mainFields;
-//   item.selected = selected;
-//   item.processed_fields = processedFields;
+  item.mainText = mainText;
+  item.groupMainBy = groupMainBy;
+  item.mainFields = mainFields;
+  item.selected = selected;
+  item.processedFields = processedFields;
 
-//   return item;
-// }
+  return item;
+}

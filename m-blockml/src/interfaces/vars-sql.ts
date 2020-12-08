@@ -2,7 +2,7 @@ import { api } from '../barrels/api';
 import { Model } from './file-types/model';
 import { UdfsDict } from './udfs-dict';
 
-export interface Vars {
+export interface VarsSql {
   model: Model;
   select: string[];
   sorts: string;
