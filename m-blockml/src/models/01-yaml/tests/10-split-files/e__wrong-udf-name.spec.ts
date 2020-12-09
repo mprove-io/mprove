@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { helper } from '../../../../barrels/helper';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
+import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildYaml;
@@ -10,7 +11,7 @@ let func = enums.FuncEnum.SplitFiles;
 let testId = 'e__wrong-udf-name';
 
 test(testId, async () => {
-  let errors: interfaces.BmErrorC[];
+  let errors: BmError[];
   let udfs: interfaces.Udf[];
   let views: interfaces.View[];
   let models: interfaces.Model[];

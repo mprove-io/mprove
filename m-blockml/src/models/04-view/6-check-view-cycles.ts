@@ -33,7 +33,7 @@ export function checkViewCycles(item: {
     cycles.forEach(cycle => {
       let cycledNames: string[] = cycle.map(c => c.name);
 
-      let lines: interfaces.BmErrorCLine[] = [];
+      let lines: interfaces.BmErrorLine[] = [];
 
       cycledNames.forEach(cName => {
         let cycledView = item.views.find(v => v.name === cName);

@@ -1,6 +1,4 @@
-import { isArray } from 'class-validator';
 import * as fse from 'fs-extra';
-
 import { enums } from '../barrels/enums';
 
 export function log(

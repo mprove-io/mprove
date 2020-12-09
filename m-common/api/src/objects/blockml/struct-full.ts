@@ -1,34 +1,35 @@
-import { SwError } from './sw-error';
 import { Model } from './model';
 import { Dashboard } from './dashboard';
 import { Mconfig } from './mconfig';
 import { Query } from './query';
-import { View } from './view';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ErrorsPack } from './errors-pack';
+import { ViewsPack } from './views-pack';
 
 export class StructFull {
   @ValidateNested()
-  @Type(() => SwError)
-  errors: SwError[];
+  @Type(() => ErrorsPack)
+  errorsPack: ErrorsPack;
 
   @ValidateNested()
-  @Type(() => Model)
-  models: Model[];
+  @Type(() => ViewsPack)
+  viewsPack: ViewsPack;
+  // TODO: structFull udfsContent --> udfsDict, vizs
 
-  @ValidateNested()
-  @Type(() => View)
-  views: View[];
+  // @ValidateNested()
+  // @Type(() => Model)
+  // models: Model[];
 
-  @ValidateNested()
-  @Type(() => Dashboard)
-  dashboards: Dashboard[];
+  // @ValidateNested()
+  // @Type(() => Dashboard)
+  // dashboards: Dashboard[];
 
-  @ValidateNested()
-  @Type(() => Mconfig)
-  mconfigs: Mconfig[];
+  // @ValidateNested()
+  // @Type(() => Mconfig)
+  // mconfigs: Mconfig[];
 
-  @ValidateNested()
-  @Type(() => Query)
-  queries: Query[];
+  // @ValidateNested()
+  // @Type(() => Query)
+  // queries: Query[];
 }

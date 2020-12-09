@@ -3,6 +3,7 @@ import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
+import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildYaml;
@@ -10,7 +11,7 @@ let func = enums.FuncEnum.DeduplicateFileNames;
 let testId = 'e__duplicate-file-names';
 
 test(testId, async () => {
-  let errors: interfaces.BmErrorC[];
+  let errors: BmError[];
   let file3s: interfaces.File3[];
 
   try {

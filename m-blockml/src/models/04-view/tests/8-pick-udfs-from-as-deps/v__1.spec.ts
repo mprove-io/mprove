@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildView;
@@ -11,7 +12,7 @@ let testId = 'v__1';
 
 test(testId, async () => {
   let views: interfaces.View[];
-  let errors: interfaces.BmErrorC[];
+  let errors: BmError[];
 
   try {
     let {

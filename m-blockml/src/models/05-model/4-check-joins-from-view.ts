@@ -91,7 +91,7 @@ export function checkJoinsFromView(item: {
       }
 
       if (froms.length > 1) {
-        let lines: interfaces.BmErrorCLine[] = froms.map(num => ({
+        let lines: interfaces.BmErrorLine[] = froms.map(num => ({
           line: num,
           name: x.fileName,
           path: x.filePath

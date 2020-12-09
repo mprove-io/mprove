@@ -38,13 +38,7 @@ export class ToBlockmlRebuildStructRequest {
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
   @Type(() => apiObjects.StructFull)
-  readonly struct: apiObjects.StructFull;
-
-  @IsString()
-  readonly udfsContent: string;
-
-  // @IsString({ each: true })
-  // readonly pdtsSorted: string[];
+  readonly structFull: apiObjects.StructFull;
 }
 
 export class ToBlockmlRebuildStructResponse {

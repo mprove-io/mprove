@@ -1,9 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class File2PathContent {
-  @IsString()
+export interface File2PathContent {
   path: string;
-
-  @IsString()
   content: string;
 }

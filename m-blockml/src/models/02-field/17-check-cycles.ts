@@ -35,7 +35,7 @@ export function checkCycles<T extends types.vmType>(item: {
     });
 
     if (g.hasCycle()) {
-      let lines: interfaces.BmErrorCLine[] = [];
+      let lines: interfaces.BmErrorLine[] = [];
 
       let cycles: any[] = g.getCycles();
       // api.logToConsole(cycles);

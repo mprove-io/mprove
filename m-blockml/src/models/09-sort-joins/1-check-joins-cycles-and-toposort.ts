@@ -38,7 +38,7 @@ export function checkJoinsCyclesAndToposort(item: {
       cycles.forEach(cycle => {
         let cycledNames: string[] = cycle.map(c => c.name);
 
-        let lines: interfaces.BmErrorCLine[] = [];
+        let lines: interfaces.BmErrorLine[] = [];
 
         cycledNames.forEach(cName => {
           let cycledJoin = x.joins.find(j => j.as === cName);

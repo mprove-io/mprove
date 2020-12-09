@@ -1,9 +1,12 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { api } from '../barrels/api';
+import { StructService } from './struct.service';
 
 @Injectable()
 export class ConsumerService {
+  constructor(private readonly structService: StructService) {}
+
   @RabbitRPC({
     exchange: api.RabbitExchangesEnum.MBlockml.toString(),
     routingKey: api.RabbitBlockmlRoutingEnum.ProcessDashboard.toString(),
@@ -92,7 +95,34 @@ export class ConsumerService {
         errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
       });
 
-      let response = requestValid.payload.structId;
+      let { traceId } = requestValid.info;
+      let {
+        structId,
+        projectId,
+        repoId,
+        weekStart,
+        files,
+        connections
+      } = requestValid.payload;
+
+      let structFull = await this.structService.wrapStruct({
+        structId: structId,
+        projectId: projectId,
+        repoId: repoId,
+        weekStart: weekStart,
+        files: files,
+        connections: connections
+      });
+
+      let response: api.ToBlockmlRebuildStructResponse = {
+        info: {
+          status: api.ResponseInfoStatusEnum.Ok,
+          traceId: traceId
+        },
+        payload: {
+          structFull: structFull
+        }
+      };
 
       return response;
     } catch (e) {

@@ -3,6 +3,7 @@ import { helper } from '../../../../barrels/helper';
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
+import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.RebuildStruct;
@@ -10,7 +11,7 @@ let func = enums.FuncEnum.LogStruct;
 let testId = 'v';
 
 test(testId, async () => {
-  let errors: interfaces.BmErrorC[];
+  let errors: BmError[];
   let udfs: interfaces.Udf[];
   let views: interfaces.View[];
   let models: interfaces.Model[];

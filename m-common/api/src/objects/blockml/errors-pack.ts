@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsString, ValidateNested } from 'class-validator';
-import { DiskFileLine } from '../disk/disk-file-line';
+import { ErrorsPackError } from './errors-pack-error';
 
-export class SwError {
+export class ErrorsPack {
   @IsString()
   projectId: string;
 
@@ -12,18 +12,9 @@ export class SwError {
   @IsString()
   structId: string;
 
-  @IsString()
-  errorId: string;
-
-  @IsString()
-  type: string;
-
-  @IsString()
-  message: string;
-
   @ValidateNested()
-  @Type(() => DiskFileLine)
-  lines: DiskFileLine[];
+  @Type(() => ErrorsPackError)
+  errors: ErrorsPackError[];
 
   @IsInt()
   serverTs: number;

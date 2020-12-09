@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildJoinSqlWhere;
@@ -10,7 +11,7 @@ let func = enums.FuncEnum.JswCheckCharsInRefs;
 let testId = 'e__join-wrong-chars-in-sql-where-refs';
 
 test(testId, async () => {
-  let errors: interfaces.BmErrorC[];
+  let errors: BmError[];
   let models: interfaces.Model[];
 
   try {

@@ -18,7 +18,7 @@ export function deduplicateFileNames(item: {
 
   item.file2s.forEach((x: interfaces.File2) => {
     if (x.pathContents.length > 1) {
-      let lines: interfaces.BmErrorCLine[] = x.pathContents.map(fp => ({
+      let lines: interfaces.BmErrorLine[] = x.pathContents.map(fp => ({
         line: 0,
         name: x.name,
         path: fp.path

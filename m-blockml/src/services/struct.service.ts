@@ -5,9 +5,74 @@ import { interfaces } from '../barrels/interfaces';
 import { BmError } from '../models/bm-error';
 import { barYaml } from '../barrels/bar-yaml';
 import { barBuilder } from '../barrels/bar-builder';
+import { barWrapper } from '../barrels/bar-wrapper';
 
 @Injectable()
 export class StructService {
+  async wrapStruct(item: {
+    files: api.File[];
+    weekStart: api.ProjectWeekStartEnum;
+    connections: api.ProjectConnection[];
+    projectId: string;
+    repoId: string;
+    structId: string;
+  }) {
+    let struct: interfaces.Struct = await this.rebuildStructStateless({
+      files: item.files,
+      weekStart: item.weekStart,
+      projectId: item.projectId,
+      structId: item.structId,
+      connections: item.connections
+    });
+
+    let errorsPack = barWrapper.wrapErrors({
+      projectId: item.projectId,
+      repoId: item.repoId,
+      structId: item.structId,
+      errors: struct.errors
+    });
+
+    let viewsPack = barWrapper.wrapViews({
+      projectId: item.projectId,
+      repoId: item.repoId,
+      structId: item.structId,
+      views: struct.views
+    });
+
+    // let wrappedModels = wrapModels({
+    //   projectId: item.projectId,
+    //   repoId: item.repoId,
+    //   structId: item.structId,
+    //   models: struct.models
+    // });
+
+    // let wd = wrapDashboards({
+    //   projectId: item.projectId,
+    //   repoId: item.repoId,
+    //   dashboards: struct.dashboards,
+    //   structId: item.structId
+    // });
+
+    // let wrappedPdtsQueries = wrapPdts({
+    //   projectId: item.projectId,
+    //   pdts: struct.pdts,
+    //   structId: item.structId
+    // });
+
+    // let wrappedQueries = [...wd.wrappedDashboardsQueries, ...wrappedPdtsQueries];
+
+    let wrappedStruct: api.StructFull = {
+      errorsPack: errorsPack,
+      // models: wrappedModels,
+      viewsPack: viewsPack
+      // dashboards: wd.wrappedDashboards,
+      // mconfigs: wd.wrappedMconfigs,
+      // queries: wrappedQueries
+    };
+
+    return wrappedStruct;
+  }
+
   async rebuildStruct(item: {
     dir: string;
     structId: string;

@@ -1,27 +1,18 @@
 import { enums } from '../barrels/enums';
-import { BmErrorCLine } from '../interfaces/bm-error-c-line';
-import { BmErrorC } from '../interfaces/bm-error-c';
-import { makeErrorId } from '../functions/make-error-id';
+import { BmErrorLine } from '../interfaces/bm-error-line';
 
-export class BmError implements BmErrorC {
-  // id: string;
+export class BmError {
   title: enums.ErTitleEnum;
   message: string;
-  lines: BmErrorCLine[];
-  at?: string;
+  lines: BmErrorLine[];
 
   constructor(item: {
     title: enums.ErTitleEnum;
     message: string;
-    lines: BmErrorCLine[];
-    at?: string;
+    lines: BmErrorLine[];
   }) {
-    // this.id = makeErrorId();
     this.title = item.title;
     this.message = item.message;
     this.lines = item.lines;
-    if (item.at) {
-      this.at = item.at;
-    }
   }
 }
