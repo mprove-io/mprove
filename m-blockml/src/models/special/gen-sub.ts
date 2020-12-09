@@ -11,15 +11,13 @@ export function genSub(item: {
   projectId: string;
   structId: string;
 }) {
-  let structId = item.structId ? item.structId : 'struct_id_not_provided';
-
   let vars: interfaces.VarsSub = {
     view: item.view,
     select: item.select,
     weekStart: item.weekStart,
     connection: item.connection,
     projectId: item.projectId,
-    structId: structId,
+    structId: item.structId,
     udfsDict: item.udfsDict,
     depMeasures: undefined,
     depDimensions: undefined,

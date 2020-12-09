@@ -5,6 +5,7 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 import { substituteViewRefsRecursive } from './process-view-refs/substitute-view-refs-recursive';
 import { BmError } from '../bm-error';
+
 let toposort = require('toposort');
 
 let func = enums.FuncEnum.ProcessViewRefs;

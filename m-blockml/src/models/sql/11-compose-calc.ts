@@ -1,129 +1,120 @@
-// import { ApRegex } from '../../barrels/am-regex';
-// import { enums } from '../../barrels/enums';
-// import { interfaces } from '../../barrels/interfaces';
-// import { applyFilter } from './apply-filter';
+import { enums } from '../../barrels/enums';
+import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
+import { api } from '../../barrels/api';
+import { applyFilter } from './apply-filter';
+import { helper } from '../../barrels/helper';
 
-// export function composeCalc(item: interfaces.Vars) {
-//   let calc: string[] = [];
+export function composeCalc(item: interfaces.VarsSql) {
+  let calc: string[] = [];
 
-//   calc = calc.concat(item.query);
+  calc = calc.concat(item.query);
 
-//   calc.push(``);
-//   calc.push(`SELECT`);
+  calc.push(constants.EMPTY_STRING);
+  calc.push(`${constants.SELECT}`);
 
-//   if (item.select.length === 0) {
-//     calc.push(`    1 as no_fields_selected,`);
-//   }
+  if (item.select.length === 0) {
+    calc.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+  }
 
-//   item.select.forEach(element => {
-//     let r = ApRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
+  item.select.forEach(element => {
+    let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
 
-//     let asName = r[1];
-//     let fieldName = r[2];
+    let asName = r[1];
+    let fieldName = r[2];
 
-//     let field =
-//       asName === 'mf'
-//         ? item.model.fields.find(mField => mField.name === fieldName)
-//         : item.model.joins
-//             .find(j => j.as === asName)
-//             .view.fields.find(vField => vField.name === fieldName);
+    let field =
+      asName === constants.MF
+        ? item.model.fields.find(mField => mField.name === fieldName)
+        : item.model.joins
+            .find(j => j.as === asName)
+            .view.fields.find(vField => vField.name === fieldName);
 
-//     let selectString =
-//       field.field_class === enums.FieldClassEnum.Dimension
-//         ? `  ${asName}_${fieldName},`
-//         : field.field_class === enums.FieldClassEnum.Measure
-//         ? `  ${asName}_${fieldName},`
-//         : field.field_class === enums.FieldClassEnum.Calculation
-//         ? `  ${item.processed_fields[element]} as ${asName}_${fieldName},`
-//         : ``;
+    let selectString =
+      field.fieldClass === enums.FieldClassEnum.Dimension
+        ? `  ${asName}_${fieldName},`
+        : field.fieldClass === enums.FieldClassEnum.Measure
+        ? `  ${asName}_${fieldName},`
+        : field.fieldClass === enums.FieldClassEnum.Calculation
+        ? `  ${item.processedFields[element]} as ${asName}_${fieldName},`
+        : constants.EMPTY_STRING;
 
-//     calc.push(selectString);
-//   });
+    calc.push(selectString);
+  });
 
-//   // chop
-//   calc[calc.length - 1] = calc[calc.length - 1].slice(0, -1);
+  // chop
+  calc[calc.length - 1] = calc[calc.length - 1].slice(0, -1);
 
-//   calc.push(`FROM model_main`);
-//   calc.push(``);
+  calc.push(`${constants.FROM} ${constants.MODEL_MAIN}`);
+  calc.push(constants.EMPTY_STRING);
 
-//   if (
-//     Object.keys(item.where_calc).length > 0 ||
-//     (typeof item.model.sql_always_where_calc_real !== 'undefined' &&
-//       item.model.sql_always_where_calc_real !== null)
-//   ) {
-//     calc.push(`WHERE`);
+  if (
+    Object.keys(item.whereCalc).length > 0 ||
+    helper.isDefined(item.model.sqlAlwaysWhereCalcReal)
+  ) {
+    calc.push(`${constants.WHERE}`);
 
-//     if (
-//       typeof item.model.sql_always_where_calc_real !== 'undefined' &&
-//       item.model.sql_always_where_calc_real !== null
-//     ) {
-//       let sqlAlwaysWhereCalcFinal = ApRegex.removeBracketsOnCalculationSinglesMf(
-//         item.model.sql_always_where_calc_real
-//       );
+    if (helper.isDefined(item.model.sqlAlwaysWhereCalcReal)) {
+      let sqlAlwaysWhereCalcFinal = api.MyRegex.removeBracketsOnCalculationSinglesMf(
+        item.model.sqlAlwaysWhereCalcReal
+      );
 
-//       sqlAlwaysWhereCalcFinal = ApRegex.removeBracketsOnCalculationDoubles(
-//         sqlAlwaysWhereCalcFinal
-//       );
+      sqlAlwaysWhereCalcFinal = api.MyRegex.removeBracketsOnCalculationDoubles(
+        sqlAlwaysWhereCalcFinal
+      );
 
-//       sqlAlwaysWhereCalcFinal = applyFilter(
-//         item,
-//         'mf',
-//         sqlAlwaysWhereCalcFinal
-//       );
+      sqlAlwaysWhereCalcFinal = applyFilter(
+        item,
+        constants.MF,
+        sqlAlwaysWhereCalcFinal
+      );
 
-//       calc.push(`  (${sqlAlwaysWhereCalcFinal})`);
-//       calc.push(` AND`);
-//     }
+      calc.push(`  (${sqlAlwaysWhereCalcFinal})`);
+      calc.push(` ${constants.AND}`);
+    }
 
-//     Object.keys(item.where_calc).forEach(element => {
-//       if (item.where_calc[element].length > 0) {
-//         calc = calc.concat(item.where_calc[element]);
-//         calc.push(` AND`);
-//       }
-//     });
+    Object.keys(item.whereCalc).forEach(element => {
+      if (item.whereCalc[element].length > 0) {
+        calc = calc.concat(item.whereCalc[element]);
+        calc.push(` ${constants.AND}`);
+      }
+    });
 
-//     calc.pop();
-//     calc.push(``);
-//   }
+    calc.pop();
+    calc.push(constants.EMPTY_STRING);
+  }
 
-//   if (item.sorts) {
-//     let mySorts = item.sorts.split(',');
+  if (item.sorts) {
+    let mySorts = item.sorts.split(',');
 
-//     let orderBy: string[] = [];
+    let orderBy: string[] = [];
 
-//     mySorts.forEach(part => {
-//       let r;
+    mySorts.forEach(part => {
+      let r;
 
-//       if ((r = ApRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G().exec(part))) {
-//         let sorter = r[1];
-//         let desc = r[2];
+      if ((r = api.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G().exec(part))) {
+        let sorter = r[1];
+        let desc = r[2];
 
-//         let index = item.select.findIndex(e => e === sorter);
-//         let n = index + 1;
+        let index = item.select.findIndex(e => e === sorter);
+        let n = index + 1;
 
-//         let eString = desc ? `${n} DESC` : `${n}`;
+        let eString = desc ? `${n} ${constants.DESC}` : `${n}`;
 
-//         orderBy.push(eString);
-//       }
-//     });
+        orderBy.push(eString);
+      }
+    });
 
-//     let orderByString = orderBy.join(', ');
+    let orderByString = orderBy.join(', ');
 
-//     if (orderByString) {
-//       calc.push(`ORDER BY ${orderByString}`);
-//     }
-//   }
+    if (orderByString) {
+      calc.push(`${constants.ORDER_BY} ${orderByString}`);
+    }
+  }
 
-//   calc.push(`LIMIT ${item.limit}`);
+  calc.push(`${constants.LIMIT} ${item.limit}`);
 
-//   item.bqViews = [
-//     {
-//       bq_view_id: 'query',
-//       sql: calc,
-//       pdt_deps: Object.keys(item.query_pdt_deps),
-//       pdt_deps_all: Object.keys(item.query_pdt_deps_all)
-//     }
-//   ];
+  item.query = calc;
 
-//   return item;
-// }
+  return item;
+}

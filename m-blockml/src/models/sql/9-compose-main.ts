@@ -1,161 +1,161 @@
-// import { ApRegex } from '../../barrels/am-regex';
-// import { interfaces } from '../../barrels/interfaces';
-// import { applyFilter } from './apply-filter';
-// import { api } from '../../barrels/api';
+import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
+import { applyFilter } from './apply-filter';
+import { api } from '../../barrels/api';
+import { helper } from '../../barrels/helper';
 
-// let Graph = require('graph.js/dist/graph.full.js'); // tslint:disable-line
+let toposort = require('toposort');
 
-// export function composeMain(item: interfaces.Vars) {
-//   let main: string[] = [];
+export function composeMain(item: interfaces.VarsSql) {
+  let main: string[] = [];
 
-//   if (item.connection === api.ProjectConnectionEnum.BigQuery) {
-//     main.push(`#standardSQL`);
-//   }
+  if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+    main.push(`${constants.STANDARD_SQL}`);
+  }
 
-//   // adding model level udfs to main udfs
-//   if (typeof item.model.udfs !== 'undefined' && item.model.udfs !== null) {
-//     item.model.udfs.forEach(udf => {
-//       item.main_udfs[udf] = 1;
-//     });
-//   }
+  // adding model level udfs to main udfs
+  if (helper.isDefined(item.model.udfs)) {
+    item.model.udfs.forEach(udf => {
+      item.mainUdfs[udf] = 1;
+    });
+  }
 
-//   // extracting main udfs
-//   Object.keys(item.main_udfs).forEach(udf => {
-//     main.push(item.udfs_dict[udf]);
-//   });
+  // extracting main udfs
+  Object.keys(item.mainUdfs).forEach(udf => {
+    main.push(item.udfsDict[udf]);
+  });
 
-//   main.push(`WITH`);
+  main.push(`${constants.WITH}`);
 
-//   if (Object.keys(item.with_parts).length > 0) {
-//     // sort parts
-//     let partNamesSorted: string[] = [];
+  if (Object.keys(item.withParts).length > 0) {
+    let partNamesSorted: string[] = [];
 
-//     let g = new Graph();
+    let graph = [];
+    let zeroDepsViewPartNames = [];
 
-//     Object.keys(item.with_parts).forEach(viewPartName => {
-//       g.addVertex(viewPartName);
+    Object.keys(item.withParts).forEach(viewPartName => {
+      Object.keys(item.withParts[viewPartName].deps).forEach(dep => {
+        graph.push([viewPartName, dep]);
+      });
+    });
 
-//       Object.keys(item.with_parts[viewPartName].deps).forEach(dep => {
-//         g.createEdge(viewPartName, dep);
-//       });
-//     });
+    partNamesSorted = toposort(graph).reverse();
 
-//     for (let [key, value] of g.vertices_topologically()) {
-//       // iterates over all vertices of the graph in topological order
-//       partNamesSorted.unshift(key);
-//     }
+    Object.keys(item.withParts).forEach(viewPartName => {
+      if (partNamesSorted.indexOf(viewPartName) < 0) {
+        zeroDepsViewPartNames.push(viewPartName);
+      }
+    });
 
-//     // unshift parts to text
+    partNamesSorted = [...zeroDepsViewPartNames, ...partNamesSorted];
 
-//     let text: string = ``;
+    let text = constants.EMPTY_STRING;
 
-//     partNamesSorted.reverse().forEach(viewPartName => {
-//       let contentPrepared = item.with_parts[viewPartName].content_prepared;
+    partNamesSorted.forEach(viewPartName => {
+      text = [text, item.withParts[viewPartName].contentPrepared + '\n'].join(
+        '\n'
+      );
+    });
 
-//       text = [contentPrepared + `\n`, text].join(`\n`);
-//     });
+    text = text.slice(0, -1);
 
-//     text = text.slice(0, -1);
+    main = main.concat(text);
+  }
 
-//     main = main.concat(text);
-//   }
+  main = main.concat(item.with);
 
-//   main = main.concat(item.with);
+  main.push(`  ${constants.MODEL_MAIN} AS (`);
+  main.push(`    ${constants.SELECT}`);
 
-//   main.push(`  model_main AS (`);
-//   main.push(`    SELECT`);
+  if (item.mainText.length === 0) {
+    main.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+  }
 
-//   if (item.main_text.length === 0) {
-//     main.push(`    1 as no_fields_selected,`);
-//   }
+  main = main.concat(item.mainText.map(s => `    ${s}`));
 
-//   main = main.concat(item.main_text.map(s => `    ${s}`));
+  // chop
+  main[main.length - 1] = main[main.length - 1].slice(0, -1);
 
-//   // chop
-//   main[main.length - 1] = main[main.length - 1].slice(0, -1);
+  main = main.concat(item.contents.map(s => `    ${s}`));
 
-//   main = main.concat(item.contents.map(s => `    ${s}`));
+  let whereMainLength = 0;
 
-//   let whereMainLength: number = 0;
+  Object.keys(item.whereMain).forEach(s => {
+    whereMainLength = whereMainLength + item.whereMain[s].length;
+  });
 
-//   Object.keys(item.where_main).forEach(s => {
-//     whereMainLength = whereMainLength + item.where_main[s].length;
-//   });
+  if (
+    item.joinsWhere.length > 0 ||
+    whereMainLength > 0 ||
+    helper.isDefined(item.model.sqlAlwaysWhereReal)
+  ) {
+    main.push(`    ${constants.WHERE}`);
 
-//   if (
-//     item.joins_where.length > 0 ||
-//     whereMainLength > 0 ||
-//     (typeof item.model.sql_always_where_real !== 'undefined' &&
-//       item.model.sql_always_where_real !== null)
-//   ) {
-//     main.push(`    WHERE`);
+    if (item.joinsWhere.length > 0) {
+      item.joinsWhere.forEach(element => {
+        element = applyFilter(item, constants.MF, element);
 
-//     if (item.joins_where.length > 0) {
-//       item.joins_where.forEach(element => {
-//         element = applyFilter(item, 'mf', element);
+        main.push(`    ${element}`);
+      });
+    }
 
-//         main.push(`    ${element}`);
-//       });
-//     }
+    if (helper.isDefined(item.model.sqlAlwaysWhereReal)) {
+      // remove ${ } on doubles (no singles exists in _real of sql_always_where)
+      // ${a.city} + ${b.country}   >>>   a.city + b.country
 
-//     if (
-//       typeof item.model.sql_always_where_real !== 'undefined' &&
-//       item.model.sql_always_where_real !== null
-//     ) {
-//       // remove ${ } on doubles (no singles exists in _real of sql_always_where)
-//       // ${a.city} + ${b.country}   >>>   a.city + b.country
+      let sqlAlwaysWhereFinal = api.MyRegex.removeBracketsOnDoubles(
+        item.model.sqlAlwaysWhereReal
+      );
 
-//       let sqlAlwaysWhereFinal = ApRegex.removeBracketsOnDoubles(
-//         item.model.sql_always_where_real
-//       );
+      sqlAlwaysWhereFinal = applyFilter(
+        item,
+        constants.MF,
+        sqlAlwaysWhereFinal
+      );
 
-//       sqlAlwaysWhereFinal = applyFilter(item, 'mf', sqlAlwaysWhereFinal);
+      main.push(`      (${sqlAlwaysWhereFinal})`);
+      main.push(`     ${constants.AND}`);
+    }
 
-//       main.push(`      (${sqlAlwaysWhereFinal})`);
-//       main.push(`     AND`);
-//     }
+    Object.keys(item.whereMain).forEach(element => {
+      if (item.whereMain[element].length > 0) {
+        main = main.concat(item.whereMain[element].map(s => `    ${s}`));
+        main.push(`     ${constants.AND}`);
+      }
+    });
 
-//     Object.keys(item.where_main).forEach(element => {
-//       if (item.where_main[element].length > 0) {
-//         main = main.concat(item.where_main[element].map(s => `    ${s}`));
-//         main.push(`     AND`);
-//       }
-//     });
+    main.pop();
+    main.push(constants.EMPTY_STRING);
+  }
 
-//     main.pop();
-//     main.push(``);
-//   }
+  if (item.groupMainBy.length > 0) {
+    let groupMainByString = item.groupMainBy.join(', ');
 
-//   if (item.group_main_by.length > 0) {
-//     let groupMainByString = item.group_main_by.join(`, `);
+    main.push(`    ${constants.GROUP_BY} ${groupMainByString}`);
+    main.push(constants.EMPTY_STRING);
+  }
 
-//     main.push(`    GROUP BY ${groupMainByString}`);
-//     main.push(``);
-//   }
+  if (Object.keys(item.havingMain).length > 0) {
+    main.push(`    ${constants.HAVING}`);
 
-//   if (Object.keys(item.having_main).length > 0) {
-//     main.push(`    HAVING`);
+    Object.keys(item.havingMain).forEach(element => {
+      if (item.havingMain[element].length > 0) {
+        main = main.concat(item.havingMain[element]);
+        main.push(`     ${constants.AND}`);
+      }
+    });
 
-//     Object.keys(item.having_main).forEach(element => {
-//       if (item.having_main[element].length > 0) {
-//         main = main.concat(item.having_main[element]);
-//         main.push(`     AND`);
-//       }
-//     });
+    main.pop();
+    main.push(constants.EMPTY_STRING);
+  }
 
-//     main.pop();
-//     main.push(``);
-//   }
+  main.pop();
+  main.push('  )');
 
-//   main.pop();
-//   main.push(`  )`);
+  // TODO: check apply_filter 'undefined as undefined'
+  main = main.map(x => (x.includes('undefined as undefined') ? '--' + x : x));
 
-//   // TODO: check apply_filter 'undefined as undefined'
-//   main = main.map(x => {
-//     return x.includes('undefined as undefined') ? '--' + x : x;
-//   });
+  item.query = main;
 
-//   item.query = main;
-
-//   return item;
-// }
+  return item;
+}

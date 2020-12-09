@@ -25,13 +25,25 @@ export const WITH = 'WITH';
 export const SELECT = 'SELECT';
 export const FROM = 'FROM';
 export const ON = 'ON';
-export const GROUP_BY = 'GROUP_BY';
+export const WHERE = 'WHERE';
+export const GROUP_BY = 'GROUP BY';
+export const HAVING = 'HAVING';
+export const DESC = 'DESC';
+export const ORDER_BY = 'ORDER BY';
+export const LIMIT = 'LIMIT';
+
+export const AND = 'AND';
+export const EMPTY_STRING = '';
 
 export const VIEW_MAIN = 'view_main';
 export const VIEW_MAIN_SUB = 'view_main_sub';
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 export const DERIVED_TABLE_SUFFIX = '__derived_table';
 
+export const MODEL_MAIN = 'model_main';
+
 export const MF = 'mf';
 
 export const LIMIT_500 = '500';
+
+export const STANDARD_SQL = '#standardSQL';

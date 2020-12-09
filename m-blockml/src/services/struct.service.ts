@@ -198,8 +198,6 @@ export class StructService {
       models: models,
       dashboards: dashboards,
       visualizations: visualizations
-      // pdts: pdts,
-      // pdts_sorted: pdtsSorted
     };
   }
 }

@@ -192,38 +192,38 @@ function genSqlPro(item: {
   //    main_udfs
   vars = barSql.makeContents(vars);
 
-  // // model
-  // // joins
-  // //    joins_where
-  // vars = makeJoinsWhere(vars);
+  // model
+  // joins
+  //    joins_where
+  vars = barSql.makeJoinsWhere(vars);
 
-  // // connection
-  // // model
-  // // main_text
-  // // contents
-  // // joins_where
-  // // where_main
-  // // having_main
-  // // group_main_by
-  // // main_udfs
-  // // udfs_dict
-  // // with
-  // //    query
-  // vars = composeMain(vars);
+  // connection
+  // model
+  // main_text
+  // contents
+  // joins_where
+  // where_main
+  // having_main
+  // group_main_by
+  // main_udfs
+  // udfs_dict
+  // with
+  //    query
+  vars = barSql.composeMain(vars);
 
-  // // query
-  // // timezone
-  // //    query
-  // vars = processTimezone(vars);
+  // query
+  // timezone
+  //    query
+  vars = barSql.processTimezone(vars);
 
-  // // model
-  // // select
-  // // where_calc
-  // // bq_views
-  // // processed_fields
-  // // query
-  // //    bq_views
-  // vars = composeCalc(vars);
+  // model
+  // select
+  // where_calc
+  // bq_views
+  // processed_fields
+  // query
+  //    bq_views
+  vars = barSql.composeCalc(vars);
 
   return {
     sql: vars.query,
