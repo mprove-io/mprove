@@ -57,6 +57,7 @@ export enum ParameterEnum {
   Unnest = 'unnest',
   UnnestOn = 'unnest_on',
   View = 'view',
+  Viz = 'viz',
   // chart axis
   Axis = 'axis',
   Data = 'data',

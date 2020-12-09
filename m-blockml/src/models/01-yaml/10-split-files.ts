@@ -19,7 +19,7 @@ export function splitFiles(item: {
   let views: interfaces.View[] = [];
   let models: interfaces.Model[] = [];
   let dashboards: interfaces.Dashboard[] = [];
-  let visualizations: interfaces.Visualization[] = [];
+  let vizs: interfaces.Viz[] = [];
 
   item.filesAny.forEach(file => {
     let fileExt = file.ext;
@@ -169,31 +169,28 @@ export function splitFiles(item: {
         break;
       }
 
-      case api.FileExtensionEnum.Visualization: {
-        if (
-          file.name ===
-          file.visualization + api.FileExtensionEnum.Visualization
-        ) {
+      case api.FileExtensionEnum.Viz: {
+        if (file.name === file.viz + api.FileExtensionEnum.Viz) {
           delete file.ext;
           delete file.name;
           delete file.path;
 
-          let newVisualizationOptions: interfaces.Visualization = {
-            name: file.visualization,
+          let newVizOptions: interfaces.Viz = {
+            name: file.viz,
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt
           };
 
-          visualizations.push(Object.assign(file, newVisualizationOptions));
+          vizs.push(Object.assign(file, newVizOptions));
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_VISUALIZATION_NAME,
-              message: `filename ${file.name} does not match "visualization: ${file.visualization}"`,
+              title: enums.ErTitleEnum.WRONG_VIZ_NAME,
+              message: `filename ${file.name} does not match "viz: ${file.viz}"`,
               lines: [
                 {
-                  line: file.visualization_line_num,
+                  line: file.viz_line_num,
                   name: file.name,
                   path: file.path
                 }
@@ -210,7 +207,7 @@ export function splitFiles(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, views);
   helper.log(caller, func, structId, enums.LogTypeEnum.Models, models);
   helper.log(caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Vis, visualizations);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return {
@@ -218,6 +215,6 @@ export function splitFiles(item: {
     views: views,
     models: models,
     dashboards: dashboards,
-    visualizations: visualizations
+    vizs: vizs
   };
 }

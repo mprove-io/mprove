@@ -5,20 +5,22 @@ import { BmError } from '../bm-error';
 import { enums } from '../../barrels/enums';
 import { barSql } from '../../barrels/bar-sql';
 
-export async function genSql(item: {
+interface GenSqlItem {
   model: interfaces.Model;
   select: string[];
   sorts: string;
   limit: string;
   filters: { [filter: string]: string[] };
-  udfs: interfaces.Udf[];
+  udfsDict: interfaces.UdfsDict;
   timezone: string;
   weekStart: api.ProjectWeekStartEnum;
   projectId: string;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
-}) {
+}
+
+export async function genSql(item: GenSqlItem) {
   // if (Object.keys(cluster.workers).length === 0) {
   //   let itemId = helper.makeId();
   //   await redisClient.set(itemId, JSON.stringify(item));
@@ -74,27 +76,7 @@ export async function genSql(item: {
   return outcome;
 }
 
-function genSqlPro(item: {
-  model: interfaces.Model;
-  select: string[];
-  sorts: string;
-  limit: string;
-  filters: { [filter: string]: string[] };
-  udfs: interfaces.Udf[];
-  timezone: string;
-  weekStart: api.ProjectWeekStartEnum;
-  projectId: string;
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-}) {
-  let udfsDict: interfaces.UdfsDict = barUdf.makeUdfsDict({
-    udfsUser: item.udfs,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
+function genSqlPro(item: GenSqlItem) {
   let vars: interfaces.VarsSql = {
     model: item.model,
     select: item.select,
@@ -106,7 +88,7 @@ function genSqlPro(item: {
     weekStart: item.weekStart,
     projectId: item.projectId,
     structId: item.structId,
-    udfsDict: udfsDict,
+    udfsDict: item.udfsDict,
     depMeasures: undefined,
     mainText: undefined,
     groupMainBy: undefined,

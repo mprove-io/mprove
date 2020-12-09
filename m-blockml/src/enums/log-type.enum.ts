@@ -9,7 +9,7 @@ export enum LogTypeEnum {
   Views = 'out_views.log',
   Models = 'out_models.log',
   Ds = 'out_dashboards.log',
-  Vis = 'out_visualizations.log',
+  Vizs = 'out_vizs.log',
   Entities = 'out_entities.log',
   UdfsDict = 'out_udfs_dict.log'
 }

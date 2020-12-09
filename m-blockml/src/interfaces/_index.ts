@@ -20,7 +20,7 @@ export * from './file-types/dashboard';
 export * from './file-types/model';
 export * from './file-types/udf';
 export * from './file-types/view';
-export * from './file-types/visualization';
+export * from './file-types/viz';
 
 export * from './bm-error-c';
 export * from './bm-error-c-line';

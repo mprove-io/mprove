@@ -1,9 +1,9 @@
 import { FileBasic } from '../file/file-basic';
 import { Report } from '../report';
 
-export interface Visualization extends FileBasic {
-  visualization?: string;
-  visualization_line_num?: number;
+export interface Viz extends FileBasic {
+  viz?: string;
+  viz_line_num?: number;
 
   hidden?: string; // boolean
   hidden_line_num?: number;

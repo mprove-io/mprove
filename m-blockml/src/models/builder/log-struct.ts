@@ -10,25 +10,17 @@ export async function logStruct(item: {
   views: interfaces.View[];
   models: interfaces.Model[];
   dashboards: interfaces.Dashboard[];
-  visualizations: interfaces.Visualization[];
+  vizs: interfaces.Viz[];
   structId: string;
   errors: BmError[];
   caller: enums.CallerEnum;
 }) {
-  let {
-    udfs,
-    views,
-    models,
-    dashboards,
-    visualizations,
-    structId,
-    caller
-  } = item;
+  let { udfs, views, models, dashboards, vizs, structId, caller } = item;
 
   log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   log(caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
   log(caller, func, structId, enums.LogTypeEnum.Views, views);
   log(caller, func, structId, enums.LogTypeEnum.Models, models);
   log(caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
-  log(caller, func, structId, enums.LogTypeEnum.Vis, visualizations);
+  log(caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
 }

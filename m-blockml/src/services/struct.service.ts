@@ -43,7 +43,7 @@ export class StructService {
     let views: interfaces.View[];
     let models: interfaces.Model[];
     let dashboards: interfaces.Dashboard[];
-    let visualizations: interfaces.Visualization[];
+    let vizs: interfaces.Viz[];
 
     let yamlBuildItem = barBuilder.buildYaml({
       files: item.files,
@@ -58,7 +58,7 @@ export class StructService {
     views = yamlBuildItem.views;
     models = yamlBuildItem.models;
     dashboards = yamlBuildItem.dashboards;
-    visualizations = yamlBuildItem.visualizations;
+    vizs = yamlBuildItem.vizs;
 
     views = barBuilder.buildField({
       entities: views,
@@ -163,7 +163,7 @@ export class StructService {
     dashboards = await barBuilder.buildReport({
       dashboards: dashboards,
       models: models,
-      udfs: udfs,
+      udfsDict: udfsDict,
       weekStart: item.weekStart,
       projectId: item.projectId,
       structId: item.structId,
@@ -186,18 +186,18 @@ export class StructService {
       views: views,
       models: models,
       dashboards: dashboards,
-      visualizations: visualizations,
+      vizs: vizs,
       structId: item.structId,
       caller: enums.CallerEnum.RebuildStruct
     });
 
     return {
       errors: errors,
-      udfs: udfs,
+      udfsDict: udfsDict,
       views: views,
       models: models,
       dashboards: dashboards,
-      visualizations: visualizations
+      vizs: vizs
     };
   }
 }

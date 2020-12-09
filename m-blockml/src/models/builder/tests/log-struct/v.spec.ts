@@ -15,7 +15,7 @@ test(testId, async () => {
   let views: interfaces.View[];
   let models: interfaces.Model[];
   let dashboards: interfaces.Dashboard[];
-  let visualizations: interfaces.Visualization[];
+  let vizs: interfaces.Viz[];
 
   try {
     let {
@@ -44,7 +44,7 @@ test(testId, async () => {
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
-    visualizations = await helper.readLog(fromDir, enums.LogTypeEnum.Vis);
+    vizs = await helper.readLog(fromDir, enums.LogTypeEnum.Vizs);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
@@ -56,7 +56,7 @@ test(testId, async () => {
   // expect(views.length).toBe(1);
   // expect(models.length).toBe(1);
   // expect(dashboards.length).toBe(1);
-  // expect(visualizations.length).toBe(1);
+  // expect(vizs.length).toBe(1);
 
   // expect(errors.length).toBe(0);
 });

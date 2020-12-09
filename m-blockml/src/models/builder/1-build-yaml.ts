@@ -17,7 +17,7 @@ export function buildYaml(item: {
   let views: interfaces.View[];
   let models: interfaces.Model[];
   let dashboards: interfaces.Dashboard[];
-  let visualizations: interfaces.Visualization[];
+  let vizs: interfaces.Viz[];
 
   let file2s: interfaces.File2[] = barYaml.removeWrongExt({
     files: item.files,
@@ -87,13 +87,13 @@ export function buildYaml(item: {
   views = splitFilesResult.views;
   models = splitFilesResult.models;
   dashboards = splitFilesResult.dashboards;
-  visualizations = splitFilesResult.visualizations;
+  vizs = splitFilesResult.vizs;
 
   return {
     udfs: udfs,
     views: views,
     models: models,
     dashboards: dashboards,
-    visualizations: visualizations
+    vizs: vizs
   };
 }
