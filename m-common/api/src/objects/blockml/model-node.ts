@@ -11,10 +11,10 @@ import * as apiEnums from '../../enums/_index';
 
 export class ModelNode {
   @IsString()
-  id: string;
+  id: string; // uses ModelNodeIdSuffixEnum
 
   @IsString()
-  label: string;
+  label: string; // ModelNodeLabelEnum or join name
 
   @IsOptional()
   @IsString()

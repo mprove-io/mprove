@@ -105,7 +105,7 @@ export class ConsumerService {
         connections
       } = requestValid.payload;
 
-      let structFull = await this.structService.wrapStruct({
+      let payload = await this.structService.wrapStruct({
         structId: structId,
         projectId: projectId,
         repoId: repoId,
@@ -119,9 +119,7 @@ export class ConsumerService {
           status: api.ResponseInfoStatusEnum.Ok,
           traceId: traceId
         },
-        payload: {
-          structFull: structFull
-        }
+        payload: payload
       };
 
       return response;

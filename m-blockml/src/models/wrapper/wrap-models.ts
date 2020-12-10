@@ -1,238 +1,243 @@
-// import { ApRegex } from '../../barrels/am-regex';
-// import { api } from '../../barrels/api';
-// import { interfaces } from '../../barrels/interfaces';
-// import { wrapField } from './wrap-field';
+import { api } from '../../barrels/api';
+import { interfaces } from '../../barrels/interfaces';
+import { constants } from '../../barrels/constants';
+import { wrapField } from './wrap-field';
+import { helper } from '../../barrels/helper';
 
-// export function wrapModels(item: {
-//   projectId: string;
-//   repoId: string;
-//   structId: string;
-//   models: interfaces.Model[];
-// }): api.Model[] {
-//   let wrappedModels: api.Model[] = [];
+export function wrapModels(item: {
+  projectId: string;
+  repoId: string;
+  structId: string;
+  models: interfaces.Model[];
+}): api.Model[] {
+  let wrappedModels: api.Model[] = [];
 
-//   item.models.forEach(x => {
-//     let wrappedFields: api.ModelField[] = [];
-//     let nodes: api.ModelNode[] = [];
+  item.models.forEach(x => {
+    let wrappedFields: api.ModelField[] = [];
+    let nodes: api.ModelNode[] = [];
 
-//     {
-//       // model fields scope
+    {
+      // model fields scope
 
-//       let children: api.ModelNode[] = [];
+      let children: api.ModelNode[] = [];
 
-//       let node: api.ModelNode = {
-//         id: 'mf',
-//         label: 'Model Fields',
-//         description: undefined,
-//         hidden: false,
-//         is_field: false,
-//         children: children,
-//         node_class: api.ModelNodeNodeClassEnum.Join
-//       };
+      let node: api.ModelNode = {
+        id: constants.MF,
+        label: api.ModelNodeLabelEnum.ModelFields,
+        description: undefined,
+        hidden: false,
+        isField: false,
+        children: children,
+        nodeClass: api.ModelNodeNodeClassEnum.Join
+      };
 
-//       x.fields.forEach(field => {
-//         wrapField({
-//           wrappedFields: wrappedFields,
-//           field: field,
-//           alias: 'mf',
-//           fileName: x.file,
-//           children: children,
-//           node: node
-//         });
-//       });
+      x.fields.forEach(field => {
+        wrapField({
+          wrappedFields: wrappedFields,
+          field: field,
+          alias: constants.MF,
+          fileName: x.fileName,
+          children: children,
+          node: node
+        });
+      });
 
-//       if (x.fields.length > 0) {
-//         nodes.push(node);
-//       }
-//     }
+      if (x.fields.length > 0) {
+        nodes.push(node);
+      }
+    }
 
-//     x.joins.forEach(join => {
-//       // join fields scope
+    x.joins.forEach(join => {
+      // join fields scope
 
-//       let children: api.ModelNode[] = [];
+      let children: api.ModelNode[] = [];
 
-//       let joinHidden =
-//         join.hidden && join.hidden.match(ApRegex.TRUE()) ? true : false;
+      let joinHidden =
+        helper.isDefined(join.hidden) && join.hidden.match(api.MyRegex.TRUE())
+          ? true
+          : false;
 
-//       let node: api.ModelNode = {
-//         id: join.as,
-//         label: join.label,
-//         description: join.description,
-//         hidden: joinHidden,
-//         is_field: false,
-//         children: children,
-//         node_class: api.ModelNodeNodeClassEnum.Join,
-//         view_name: join.view.name
-//       };
+      let node: api.ModelNode = {
+        id: join.as,
+        label: join.label,
+        description: join.description,
+        hidden: joinHidden,
+        isField: false,
+        children: children,
+        nodeClass: api.ModelNodeNodeClassEnum.Join,
+        viewName: join.view.name
+      };
 
-//       join.view.fields.forEach(field => {
-//         wrapField({
-//           wrappedFields: wrappedFields,
-//           field: field,
-//           alias: join.as,
-//           fileName: join.view.file,
-//           children: children,
-//           node: node
-//         });
-//       });
+      join.view.fields.forEach(field => {
+        wrapField({
+          wrappedFields: wrappedFields,
+          field: field,
+          alias: join.as,
+          fileName: join.view.fileName,
+          children: children,
+          node: node
+        });
+      });
 
-//       if (join.view.fields.length > 0) {
-//         nodes.push(node);
-//       }
-//     });
+      if (join.view.fields.length > 0) {
+        nodes.push(node);
+      }
+    });
 
-//     nodes.forEach(node => {
-//       if (typeof node.children !== 'undefined' && node.children !== null) {
-//         let filters: api.ModelNode[] = [];
-//         let dimensions: api.ModelNode[] = [];
-//         let measures: api.ModelNode[] = [];
-//         let calculations: api.ModelNode[] = [];
+    nodes.forEach(node => {
+      if (helper.isDefined(node.children)) {
+        let filters: api.ModelNode[] = [];
+        let dimensions: api.ModelNode[] = [];
+        let measures: api.ModelNode[] = [];
+        let calculations: api.ModelNode[] = [];
 
-//         node.children.forEach(n => {
-//           switch (true) {
-//             case n.node_class === api.ModelNodeNodeClassEnum.Filter: {
-//               filters.push(n);
-//               break;
-//             }
+        node.children.forEach(n => {
+          switch (true) {
+            case n.nodeClass === api.ModelNodeNodeClassEnum.Filter: {
+              filters.push(n);
+              break;
+            }
 
-//             case n.node_class === api.ModelNodeNodeClassEnum.Dimension: {
-//               dimensions.push(n);
-//               break;
-//             }
+            case n.nodeClass === api.ModelNodeNodeClassEnum.Dimension: {
+              dimensions.push(n);
+              break;
+            }
 
-//             case n.node_class === api.ModelNodeNodeClassEnum.Measure: {
-//               measures.push(n);
-//               break;
-//             }
+            case n.nodeClass === api.ModelNodeNodeClassEnum.Measure: {
+              measures.push(n);
+              break;
+            }
 
-//             case n.node_class === api.ModelNodeNodeClassEnum.Calculation: {
-//               calculations.push(n);
-//               break;
-//             }
-//           }
-//         });
+            case n.nodeClass === api.ModelNodeNodeClassEnum.Calculation: {
+              calculations.push(n);
+              break;
+            }
+          }
+        });
 
-//         let sortedFilters = filters.sort((a, b) => {
-//           let labelA = a.label.toUpperCase();
-//           let labelB = b.label.toUpperCase();
-//           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-//         });
+        let sortedFilters = filters.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
-//         let sortedDimensions = dimensions.sort((a, b) => {
-//           let labelA = a.label.toUpperCase();
-//           let labelB = b.label.toUpperCase();
-//           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-//         });
+        let sortedDimensions = dimensions.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
-//         let sortedMeasures = measures.sort((a, b) => {
-//           let labelA = a.label.toUpperCase();
-//           let labelB = b.label.toUpperCase();
-//           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-//         });
+        let sortedMeasures = measures.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
-//         let sortedCalculations = calculations.sort((a, b) => {
-//           let labelA = a.label.toUpperCase();
-//           let labelB = b.label.toUpperCase();
-//           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-//         });
+        let sortedCalculations = calculations.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
-//         let sortedChildren: any = [];
+        let sortedChildren: any = [];
 
-//         if (sortedDimensions.length > 0) {
-//           sortedChildren.push({
-//             id: `${node.id}.dimensions`,
-//             label: 'Dimensions',
-//             description: undefined,
-//             hidden: false,
-//             is_field: false,
-//             children: [],
-//             node_class: api.ModelNodeNodeClassEnum.Info
-//           });
+        if (sortedDimensions.length > 0) {
+          sortedChildren.push({
+            id: `${node.id}.${api.ModelNodeIdSuffixEnum.Dimensions}`,
+            label: api.ModelNodeLabelEnum.Dimensions,
+            description: undefined,
+            hidden: false,
+            is_field: false,
+            children: [],
+            nodeClass: api.ModelNodeNodeClassEnum.Info
+          });
 
-//           sortedChildren = sortedChildren.concat(sortedDimensions);
-//         }
+          sortedChildren = sortedChildren.concat(sortedDimensions);
+        }
 
-//         if (sortedMeasures.length > 0) {
-//           sortedChildren.push({
-//             id: `${node.id}.measures`,
-//             label: 'Measures',
-//             description: undefined,
-//             hidden: false,
-//             is_field: false,
-//             children: [],
-//             node_class: api.ModelNodeNodeClassEnum.Info
-//           });
+        if (sortedMeasures.length > 0) {
+          sortedChildren.push({
+            id: `${node.id}.${api.ModelNodeIdSuffixEnum.Measures}`,
+            label: api.ModelNodeLabelEnum.Measures,
+            description: undefined,
+            hidden: false,
+            is_field: false,
+            children: [],
+            nodeClass: api.ModelNodeNodeClassEnum.Info
+          });
 
-//           sortedChildren = sortedChildren.concat(sortedMeasures);
-//         }
+          sortedChildren = sortedChildren.concat(sortedMeasures);
+        }
 
-//         if (sortedCalculations.length > 0) {
-//           sortedChildren.push({
-//             id: `${node.id}.calculations`,
-//             label: 'Calculations',
-//             description: undefined,
-//             hidden: false,
-//             is_field: false,
-//             children: [],
-//             node_class: api.ModelNodeNodeClassEnum.Info
-//           });
+        if (sortedCalculations.length > 0) {
+          sortedChildren.push({
+            id: `${node.id}.${api.ModelNodeIdSuffixEnum.Calculations}`,
+            label: api.ModelNodeLabelEnum.Calculations,
+            description: undefined,
+            hidden: false,
+            is_field: false,
+            children: [],
+            nodeClass: api.ModelNodeNodeClassEnum.Info
+          });
 
-//           sortedChildren = sortedChildren.concat(sortedCalculations);
-//         }
+          sortedChildren = sortedChildren.concat(sortedCalculations);
+        }
 
-//         if (sortedFilters.length > 0) {
-//           sortedChildren.push({
-//             id: `${node.id}.filters`,
-//             label: 'Filter-only fields',
-//             description: undefined,
-//             hidden: false,
-//             is_field: false,
-//             children: [],
-//             node_class: api.ModelNodeNodeClassEnum.Info
-//           });
+        if (sortedFilters.length > 0) {
+          sortedChildren.push({
+            id: `${node.id}.${api.ModelNodeIdSuffixEnum.Filters}`,
+            label: api.ModelNodeLabelEnum.FilterOnlyFields,
+            description: undefined,
+            hidden: false,
+            is_field: false,
+            children: [],
+            nodeClass: api.ModelNodeNodeClassEnum.Info
+          });
 
-//           sortedChildren = sortedChildren.concat(sortedFilters);
-//         }
+          sortedChildren = sortedChildren.concat(sortedFilters);
+        }
 
-//         node.children = sortedChildren;
+        node.children = sortedChildren;
 
-//         node.children.forEach(nc => {
-//           if (typeof nc.children !== 'undefined' && nc.children !== null) {
-//             nc.children = nc.children.sort((a, b) => {
-//               let labelA = a.label.toUpperCase();
-//               let labelB = b.label.toUpperCase();
-//               return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-//             });
-//           }
-//         });
-//       }
-//     });
+        node.children.forEach(nc => {
+          if (helper.isDefined(nc.children)) {
+            nc.children = nc.children.sort((a, b) => {
+              let labelA = a.label.toUpperCase();
+              let labelB = b.label.toUpperCase();
+              return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+            });
+          }
+        });
+      }
+    });
 
-//     let sortedNodes = nodes.sort((a, b) => {
-//       let labelA = a.label.toUpperCase();
-//       let labelB = b.label.toUpperCase();
-//       return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-//     });
+    let sortedNodes = nodes.sort((a, b) => {
+      let labelA = a.label.toUpperCase();
+      let labelB = b.label.toUpperCase();
+      return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+    });
 
-//     if (sortedNodes.length > 0) {
-//       wrappedModels.push({
-//         project_id: item.projectId,
-//         repo_id: item.repoId,
-//         struct_id: item.structId,
-//         model_id: x.name,
-//         content: JSON.stringify(x),
-//         access_users: x.access_users ? x.access_users : [],
-//         label: x.label,
-//         gr: x.group ? x.group : undefined,
-//         hidden: x.hidden && x.hidden.match(ApRegex.TRUE()) ? true : false,
-//         fields: wrappedFields,
-//         nodes: sortedNodes,
-//         server_ts: 1,
-//         // not required
-//         description: x.description
-//       });
-//     }
-//   });
+    if (sortedNodes.length > 0) {
+      wrappedModels.push({
+        projectId: item.projectId,
+        repoId: item.repoId,
+        structId: item.structId,
+        modelId: x.name,
+        content: JSON.stringify(x),
+        accessUsers: x.access_users ? x.access_users : [],
+        label: x.label,
+        description: x.description,
+        gr: x.group ? x.group : undefined,
+        hidden:
+          helper.isDefined(x.hidden) && x.hidden.match(api.MyRegex.TRUE())
+            ? true
+            : false,
+        fields: wrappedFields,
+        nodes: sortedNodes,
+        serverTs: 1
+      });
+    }
+  });
 
-//   return wrappedModels;
-// }
+  return wrappedModels;
+}

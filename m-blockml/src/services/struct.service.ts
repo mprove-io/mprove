@@ -39,12 +39,12 @@ export class StructService {
       views: struct.views
     });
 
-    // let wrappedModels = wrapModels({
-    //   projectId: item.projectId,
-    //   repoId: item.repoId,
-    //   structId: item.structId,
-    //   models: struct.models
-    // });
+    let wrappedModels = barWrapper.wrapModels({
+      projectId: item.projectId,
+      repoId: item.repoId,
+      structId: item.structId,
+      models: struct.models
+    });
 
     // let wd = wrapDashboards({
     //   projectId: item.projectId,
@@ -53,24 +53,18 @@ export class StructService {
     //   structId: item.structId
     // });
 
-    // let wrappedPdtsQueries = wrapPdts({
-    //   projectId: item.projectId,
-    //   pdts: struct.pdts,
-    //   structId: item.structId
-    // });
-
     // let wrappedQueries = [...wd.wrappedDashboardsQueries, ...wrappedPdtsQueries];
 
-    let wrappedStruct: api.StructFull = {
+    let payload: api.ToBlockmlRebuildStructResponsePayload = {
       errorsPack: errorsPack,
-      // models: wrappedModels,
+      models: wrappedModels,
       viewsPack: viewsPack
       // dashboards: wd.wrappedDashboards,
       // mconfigs: wd.wrappedMconfigs,
       // queries: wrappedQueries
     };
 
-    return wrappedStruct;
+    return payload;
   }
 
   async rebuildStruct(item: {

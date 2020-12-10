@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
 import * as apiEnums from '../enums/_index';
+import { ErrorsPack, Model, ViewsPack } from '../objects/_index';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
@@ -37,8 +38,29 @@ export class ToBlockmlRebuildStructRequest {
 
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
-  @Type(() => apiObjects.StructFull)
-  readonly structFull: apiObjects.StructFull;
+  @Type(() => ErrorsPack)
+  errorsPack: ErrorsPack;
+
+  @ValidateNested()
+  @Type(() => ViewsPack)
+  viewsPack: ViewsPack;
+  // TODO: structFull udfsContent --> udfsDict, vizs
+
+  @ValidateNested()
+  @Type(() => Model)
+  models: Model[];
+
+  // @ValidateNested()
+  // @Type(() => Dashboard)
+  // dashboards: Dashboard[];
+
+  // @ValidateNested()
+  // @Type(() => Mconfig)
+  // mconfigs: Mconfig[];
+
+  // @ValidateNested()
+  // @Type(() => Query)
+  // queries: Query[];
 }
 
 export class ToBlockmlRebuildStructResponse {

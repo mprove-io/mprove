@@ -13,7 +13,6 @@ export * from './project-connection';
 export * from './query';
 export * from './report';
 export * from './sorting';
-export * from './struct-full';
 export * from './errors-pack-error';
 export * from './errors-pack';
 export * from './timezone-group';
