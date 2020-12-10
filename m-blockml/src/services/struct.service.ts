@@ -39,29 +39,34 @@ export class StructService {
       views: struct.views
     });
 
-    let wrappedModels = barWrapper.wrapModels({
+    let apiModels = barWrapper.wrapModels({
       projectId: item.projectId,
       repoId: item.repoId,
       structId: item.structId,
       models: struct.models
     });
 
-    // let wd = wrapDashboards({
-    //   projectId: item.projectId,
-    //   repoId: item.repoId,
-    //   dashboards: struct.dashboards,
-    //   structId: item.structId
-    // });
+    let {
+      apiDashboards,
+      dashMconfigs,
+      dashQueries
+    } = barWrapper.wrapDashboards({
+      projectId: item.projectId,
+      repoId: item.repoId,
+      structId: item.structId,
+      dashboards: struct.dashboards
+    });
 
-    // let wrappedQueries = [...wd.wrappedDashboardsQueries, ...wrappedPdtsQueries];
+    let queries = [...dashQueries];
+    let mconfigs = [...dashMconfigs];
 
     let payload: api.ToBlockmlRebuildStructResponsePayload = {
       errorsPack: errorsPack,
-      models: wrappedModels,
-      viewsPack: viewsPack
-      // dashboards: wd.wrappedDashboards,
-      // mconfigs: wd.wrappedMconfigs,
-      // queries: wrappedQueries
+      viewsPack: viewsPack,
+      models: apiModels,
+      dashboards: apiDashboards,
+      mconfigs: mconfigs,
+      queries: queries
     };
 
     return payload;

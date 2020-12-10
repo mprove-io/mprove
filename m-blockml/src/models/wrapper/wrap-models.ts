@@ -10,15 +10,14 @@ export function wrapModels(item: {
   structId: string;
   models: interfaces.Model[];
 }): api.Model[] {
-  let wrappedModels: api.Model[] = [];
+  let apiModels: api.Model[] = [];
 
   item.models.forEach(x => {
-    let wrappedFields: api.ModelField[] = [];
+    let apiFields: api.ModelField[] = [];
     let nodes: api.ModelNode[] = [];
 
     {
       // model fields scope
-
       let children: api.ModelNode[] = [];
 
       let node: api.ModelNode = {
@@ -33,7 +32,7 @@ export function wrapModels(item: {
 
       x.fields.forEach(field => {
         wrapField({
-          wrappedFields: wrappedFields,
+          wrappedFields: apiFields,
           field: field,
           alias: constants.MF,
           fileName: x.fileName,
@@ -49,13 +48,8 @@ export function wrapModels(item: {
 
     x.joins.forEach(join => {
       // join fields scope
-
       let children: api.ModelNode[] = [];
-
-      let joinHidden =
-        helper.isDefined(join.hidden) && join.hidden.match(api.MyRegex.TRUE())
-          ? true
-          : false;
+      let joinHidden = helper.toBoolean(join.hidden);
 
       let node: api.ModelNode = {
         id: join.as,
@@ -70,7 +64,7 @@ export function wrapModels(item: {
 
       join.view.fields.forEach(field => {
         wrapField({
-          wrappedFields: wrappedFields,
+          wrappedFields: apiFields,
           field: field,
           alias: join.as,
           fileName: join.view.fileName,
@@ -218,7 +212,7 @@ export function wrapModels(item: {
     });
 
     if (sortedNodes.length > 0) {
-      wrappedModels.push({
+      apiModels.push({
         projectId: item.projectId,
         repoId: item.repoId,
         structId: item.structId,
@@ -227,17 +221,14 @@ export function wrapModels(item: {
         accessUsers: x.access_users ? x.access_users : [],
         label: x.label,
         description: x.description,
-        gr: x.group ? x.group : undefined,
-        hidden:
-          helper.isDefined(x.hidden) && x.hidden.match(api.MyRegex.TRUE())
-            ? true
-            : false,
-        fields: wrappedFields,
+        gr: x.group,
+        hidden: helper.toBoolean(x.hidden),
+        fields: apiFields,
         nodes: sortedNodes,
         serverTs: 1
       });
     }
   });
 
-  return wrappedModels;
+  return apiModels;
 }

@@ -16,10 +16,7 @@ export function wrapField(item: {
   let children = item.children;
   let node = item.node;
 
-  let fieldHidden =
-    helper.isDefined(field.hidden) && field.hidden.match(api.MyRegex.TRUE())
-      ? true
-      : false;
+  let fieldHidden = helper.toBoolean(field.hidden);
 
   let forceDims: string[] = [];
 

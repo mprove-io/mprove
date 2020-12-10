@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
 import * as apiEnums from '../enums/_index';
-import { ErrorsPack, Model, ViewsPack } from '../objects/_index';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
@@ -38,29 +37,30 @@ export class ToBlockmlRebuildStructRequest {
 
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
-  @Type(() => ErrorsPack)
-  errorsPack: ErrorsPack;
+  @Type(() => apiObjects.ErrorsPack)
+  errorsPack: apiObjects.ErrorsPack;
 
   @ValidateNested()
-  @Type(() => ViewsPack)
-  viewsPack: ViewsPack;
+  @Type(() => apiObjects.ViewsPack)
+  viewsPack: apiObjects.ViewsPack;
+
+  @ValidateNested()
+  @Type(() => apiObjects.Model)
+  models: apiObjects.Model[];
+
+  @ValidateNested()
+  @Type(() => apiObjects.Dashboard)
+  dashboards: apiObjects.Dashboard[];
+
+  @ValidateNested()
+  @Type(() => apiObjects.Mconfig)
+  mconfigs: apiObjects.Mconfig[];
+
+  @ValidateNested()
+  @Type(() => apiObjects.Query)
+  queries: apiObjects.Query[];
+
   // TODO: structFull udfsContent --> udfsDict, vizs
-
-  @ValidateNested()
-  @Type(() => Model)
-  models: Model[];
-
-  // @ValidateNested()
-  // @Type(() => Dashboard)
-  // dashboards: Dashboard[];
-
-  // @ValidateNested()
-  // @Type(() => Mconfig)
-  // mconfigs: Mconfig[];
-
-  // @ValidateNested()
-  // @Type(() => Query)
-  // queries: Query[];
 }
 
 export class ToBlockmlRebuildStructResponse {
