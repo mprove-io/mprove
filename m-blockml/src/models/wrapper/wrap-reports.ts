@@ -32,7 +32,7 @@ export function wrapReports(item: {
       isValid: true,
       title: report.title,
       description: report.description,
-      type: <any>report.type,
+      type: report.type,
 
       // data
       xField: report.data?.x_field,

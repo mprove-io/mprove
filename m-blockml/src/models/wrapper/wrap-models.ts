@@ -133,7 +133,7 @@ export function wrapModels(item: {
           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
         });
 
-        let sortedChildren: any = [];
+        let sortedChildren: api.ModelNode[] = [];
 
         if (sortedDimensions.length > 0) {
           sortedChildren.push({
@@ -141,7 +141,7 @@ export function wrapModels(item: {
             label: api.ModelNodeLabelEnum.Dimensions,
             description: undefined,
             hidden: false,
-            is_field: false,
+            isField: false,
             children: [],
             nodeClass: api.ModelNodeNodeClassEnum.Info
           });
@@ -155,7 +155,7 @@ export function wrapModels(item: {
             label: api.ModelNodeLabelEnum.Measures,
             description: undefined,
             hidden: false,
-            is_field: false,
+            isField: false,
             children: [],
             nodeClass: api.ModelNodeNodeClassEnum.Info
           });
@@ -169,7 +169,7 @@ export function wrapModels(item: {
             label: api.ModelNodeLabelEnum.Calculations,
             description: undefined,
             hidden: false,
-            is_field: false,
+            isField: false,
             children: [],
             nodeClass: api.ModelNodeNodeClassEnum.Info
           });
@@ -183,7 +183,7 @@ export function wrapModels(item: {
             label: api.ModelNodeLabelEnum.FilterOnlyFields,
             description: undefined,
             hidden: false,
-            is_field: false,
+            isField: false,
             children: [],
             nodeClass: api.ModelNodeNodeClassEnum.Info
           });

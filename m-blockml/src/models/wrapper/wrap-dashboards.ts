@@ -22,7 +22,7 @@ export function wrapDashboards(item: {
         hidden: helper.toBoolean(field.hidden),
         label: field.label,
         result: <any>field.result,
-        fractions: <any>field.fractions,
+        fractions: field.fractions,
         description: field.description
       });
     });
