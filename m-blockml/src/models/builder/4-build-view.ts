@@ -7,7 +7,7 @@ import { barView } from '../../barrels/bar-view';
 export function buildView(item: {
   views: interfaces.View[];
   udfs: interfaces.Udf[];
-  udfsDict: interfaces.UdfsDict;
+  udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   projectId: string;

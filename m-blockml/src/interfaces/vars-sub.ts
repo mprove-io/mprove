@@ -1,6 +1,5 @@
 import { api } from '../barrels/api';
 import { View } from './file-types/view';
-import { UdfsDict } from './udfs-dict';
 
 export interface VarsSub {
   view: View;
@@ -9,7 +8,7 @@ export interface VarsSub {
   connection: api.ProjectConnection;
   projectId: string;
   structId: string;
-  udfsDict: UdfsDict;
+  udfsDict: api.UdfsDict;
   depMeasures: {
     [dep: string]: number;
   };

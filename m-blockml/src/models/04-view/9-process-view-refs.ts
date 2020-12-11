@@ -12,7 +12,7 @@ let func = enums.FuncEnum.ProcessViewRefs;
 
 export function processViewRefs(item: {
   views: interfaces.View[];
-  udfsDict: interfaces.UdfsDict;
+  udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   projectId: string;
   errors: BmError[];

@@ -1,11 +1,4 @@
-import {
-  IsBoolean,
-  IsEnum,
-  IsIn,
-  IsInt,
-  IsNumber,
-  IsString
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 import * as apiEnums from '../../enums/_index';
 
 export class Query {

@@ -1,6 +1,7 @@
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 
@@ -15,7 +16,7 @@ export function makeUdfsDict(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let udfsDict: interfaces.UdfsDict = {};
+  let udfsDict: api.UdfsDict = {};
 
   item.udfsUser.forEach(u => {
     udfsDict[u.name] = u.sql;

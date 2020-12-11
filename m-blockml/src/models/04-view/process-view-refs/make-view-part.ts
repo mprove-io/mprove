@@ -9,7 +9,7 @@ export function makeViewPart(item: {
   needViewAs: string;
   needViewFields: { [field: string]: number };
   view: interfaces.View;
-  udfsDict: interfaces.UdfsDict;
+  udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
   projectId: string;

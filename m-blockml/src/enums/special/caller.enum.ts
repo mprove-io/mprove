@@ -18,5 +18,6 @@ export enum CallerEnum {
   BuildReport = 'BuildReport',
   BuildChart = 'BuildChart',
 
-  RebuildStruct = 'RebuildStruct'
+  RebuildStruct = 'RebuildStruct',
+  ProcessQuery = 'ProcessQuery'
 }

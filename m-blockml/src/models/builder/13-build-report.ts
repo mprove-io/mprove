@@ -7,7 +7,7 @@ import { barReport } from '../../barrels/bar-report';
 export async function buildReport(item: {
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
-  udfsDict: interfaces.UdfsDict;
+  udfsDict: api.UdfsDict;
   projectId: string;
   weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];

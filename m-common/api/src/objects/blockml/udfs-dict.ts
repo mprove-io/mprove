@@ -1,3 +1,3 @@
-export interface UdfsDict {
+export class UdfsDict {
   [name: string]: string;
 }

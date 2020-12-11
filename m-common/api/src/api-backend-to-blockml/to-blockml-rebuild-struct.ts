@@ -38,29 +38,33 @@ export class ToBlockmlRebuildStructRequest {
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
   @Type(() => apiObjects.ErrorsPack)
-  errorsPack: apiObjects.ErrorsPack;
+  readonly errorsPack: apiObjects.ErrorsPack;
 
   @ValidateNested()
   @Type(() => apiObjects.ViewsPack)
-  viewsPack: apiObjects.ViewsPack;
+  readonly viewsPack: apiObjects.ViewsPack;
+
+  @ValidateNested()
+  @Type(() => apiObjects.UdfsDict)
+  readonly udfsDict: apiObjects.UdfsDict;
 
   @ValidateNested()
   @Type(() => apiObjects.Model)
-  models: apiObjects.Model[];
+  readonly models: apiObjects.Model[];
 
   @ValidateNested()
   @Type(() => apiObjects.Dashboard)
-  dashboards: apiObjects.Dashboard[];
+  readonly dashboards: apiObjects.Dashboard[];
+
+  // TODO: vizs
 
   @ValidateNested()
   @Type(() => apiObjects.Mconfig)
-  mconfigs: apiObjects.Mconfig[];
+  readonly mconfigs: apiObjects.Mconfig[];
 
   @ValidateNested()
   @Type(() => apiObjects.Query)
-  queries: apiObjects.Query[];
-
-  // TODO: structFull udfsContent --> udfsDict, vizs
+  readonly queries: apiObjects.Query[];
 }
 
 export class ToBlockmlRebuildStructResponse {

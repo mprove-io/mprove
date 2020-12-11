@@ -11,7 +11,7 @@ let func = enums.FuncEnum.FetchSql;
 export async function fetchSql(item: {
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
-  udfsDict: interfaces.UdfsDict;
+  udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   projectId: string;
   errors: BmError[];

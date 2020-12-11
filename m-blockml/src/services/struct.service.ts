@@ -17,33 +17,37 @@ export class StructService {
     repoId: string;
     structId: string;
   }) {
+    let { files, weekStart, connections, projectId, repoId, structId } = item;
+
     let struct: interfaces.Struct = await this.rebuildStructStateless({
-      files: item.files,
-      weekStart: item.weekStart,
-      projectId: item.projectId,
-      structId: item.structId,
-      connections: item.connections
+      files: files,
+      weekStart: weekStart,
+      projectId: projectId,
+      structId: structId,
+      connections: connections
     });
 
+    let { udfsDict, errors, models, views, dashboards } = struct;
+
     let errorsPack = barWrapper.wrapErrors({
-      projectId: item.projectId,
-      repoId: item.repoId,
-      structId: item.structId,
-      errors: struct.errors
+      projectId: projectId,
+      repoId: repoId,
+      structId: structId,
+      errors: errors
     });
 
     let viewsPack = barWrapper.wrapViews({
-      projectId: item.projectId,
-      repoId: item.repoId,
-      structId: item.structId,
-      views: struct.views
+      projectId: projectId,
+      repoId: repoId,
+      structId: structId,
+      views: views
     });
 
     let apiModels = barWrapper.wrapModels({
-      projectId: item.projectId,
-      repoId: item.repoId,
-      structId: item.structId,
-      models: struct.models
+      projectId: projectId,
+      repoId: repoId,
+      structId: structId,
+      models: models
     });
 
     let {
@@ -51,10 +55,10 @@ export class StructService {
       dashMconfigs,
       dashQueries
     } = barWrapper.wrapDashboards({
-      projectId: item.projectId,
-      repoId: item.repoId,
-      structId: item.structId,
-      dashboards: struct.dashboards
+      projectId: projectId,
+      repoId: repoId,
+      structId: structId,
+      dashboards: dashboards
     });
 
     let queries = [...dashQueries];
@@ -63,6 +67,7 @@ export class StructService {
     let payload: api.ToBlockmlRebuildStructResponsePayload = {
       errorsPack: errorsPack,
       viewsPack: viewsPack,
+      udfsDict: udfsDict,
       models: apiModels,
       dashboards: apiDashboards,
       mconfigs: mconfigs,
@@ -148,7 +153,7 @@ export class StructService {
       caller: enums.CallerEnum.BuildDashboardField
     });
 
-    let udfsDict: interfaces.UdfsDict = barBuilder.buildUdf({
+    let udfsDict: api.UdfsDict = barBuilder.buildUdf({
       udfs: udfs,
       structId: item.structId,
       errors: errors,
@@ -246,7 +251,7 @@ export class StructService {
 
     barBuilder.logStruct({
       errors: errors,
-      udfs: udfs,
+      udfsDict: udfsDict,
       views: views,
       models: models,
       dashboards: dashboards,

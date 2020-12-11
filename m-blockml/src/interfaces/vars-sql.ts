@@ -1,6 +1,5 @@
 import { api } from '../barrels/api';
 import { Model } from './file-types/model';
-import { UdfsDict } from './udfs-dict';
 
 export interface VarsSql {
   model: Model;
@@ -19,7 +18,7 @@ export interface VarsSql {
   // bqProject: string;
   projectId: string;
   structId: string;
-  udfsDict: UdfsDict;
+  udfsDict: api.UdfsDict;
   depMeasures: {
     [as: string]: {
       [dep: string]: number;

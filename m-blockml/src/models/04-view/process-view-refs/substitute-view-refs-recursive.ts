@@ -9,7 +9,7 @@ export function substituteViewRefsRecursive(item: {
   parentDeps: { [dep: string]: number };
   input: string;
   views: interfaces.View[];
-  udfsDict: interfaces.UdfsDict;
+  udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
   projectId: string;

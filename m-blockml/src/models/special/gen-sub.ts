@@ -5,7 +5,7 @@ import { interfaces } from '../../barrels/interfaces';
 export function genSub(item: {
   view: interfaces.View;
   select: string[];
-  udfsDict: interfaces.UdfsDict;
+  udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
   projectId: string;

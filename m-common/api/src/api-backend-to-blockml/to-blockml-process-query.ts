@@ -14,18 +14,15 @@ export class ToBlockmlProcessQueryRequestPayload {
   readonly weekStart: apiEnums.ProjectWeekStartEnum;
 
   @ValidateNested()
+  @Type(() => apiObjects.UdfsDict)
+  readonly udfsDict: apiObjects.UdfsDict;
+
+  @ValidateNested()
   @Type(() => apiObjects.Mconfig)
   readonly mconfig: apiObjects.Mconfig;
 
   @IsString()
   readonly modelContent: string;
-
-  @IsString()
-  readonly udfsContent: string;
-
-  @ValidateNested()
-  @Type(() => apiObjects.ProjectConnection)
-  readonly connections: apiObjects.ProjectConnection[];
 }
 
 export class ToBlockmlProcessQueryRequest {

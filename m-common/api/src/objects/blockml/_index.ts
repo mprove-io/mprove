@@ -17,5 +17,6 @@ export * from './errors-pack-error';
 export * from './errors-pack';
 export * from './timezone-group';
 export * from './timezone';
+export * from './udfs-dict';
 export * from './views-pack-view';
 export * from './views-pack';

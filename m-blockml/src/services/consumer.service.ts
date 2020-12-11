@@ -1,5 +1,6 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
+import { barSpecial } from 'src/barrels/bar-special';
 import { api } from '../barrels/api';
 import { StructService } from './struct.service';
 
@@ -62,7 +63,32 @@ export class ConsumerService {
         errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
       });
 
-      let response = requestValid.payload.structId;
+      let { traceId } = requestValid.info;
+      let {
+        projectId,
+        structId,
+        weekStart,
+        udfsDict,
+        mconfig,
+        modelContent
+      } = requestValid.payload;
+
+      let payload = await barSpecial.processQuery({
+        structId: structId,
+        projectId: projectId,
+        weekStart: weekStart,
+        udfsDict: udfsDict,
+        mconfig: mconfig,
+        modelContent: modelContent
+      });
+
+      let response: api.ToBlockmlProcessQueryResponse = {
+        info: {
+          status: api.ResponseInfoStatusEnum.Ok,
+          traceId: traceId
+        },
+        payload: payload
+      };
 
       return response;
     } catch (e) {

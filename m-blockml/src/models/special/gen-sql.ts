@@ -1,5 +1,4 @@
 import { api } from '../../barrels/api';
-import { barUdf } from '../../barrels/bar-udf';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../bm-error';
 import { enums } from '../../barrels/enums';
@@ -9,12 +8,12 @@ interface GenSqlItem {
   model: interfaces.Model;
   select: string[];
   sorts: string;
+  timezone: string;
   limit: string;
   filters: { [filter: string]: string[] };
-  udfsDict: interfaces.UdfsDict;
-  timezone: string;
-  weekStart: api.ProjectWeekStartEnum;
+  udfsDict: api.UdfsDict;
   projectId: string;
+  weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
