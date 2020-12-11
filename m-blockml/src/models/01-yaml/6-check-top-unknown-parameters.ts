@@ -182,10 +182,7 @@ export function checkTopUnknownParameters(item: {
             })
           );
           return;
-        } else if (
-          !!file[parameter] &&
-          file[parameter].constructor === Object
-        ) {
+        } else if (file[parameter]?.constructor === Object) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.UNEXPECTED_DICTIONARY,

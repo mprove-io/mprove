@@ -20,7 +20,7 @@ export function checkReportIsObject(item: {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (report.constructor !== Object) {
+      if (helper.isDefined(report) && report.constructor !== Object) {
         // error e131
         item.errors.push(
           new BmError({

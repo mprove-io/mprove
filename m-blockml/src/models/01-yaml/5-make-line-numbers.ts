@@ -109,7 +109,7 @@ export function processLineNumbersRecursive(item: {
         }
 
         // hash
-        if (helper.isDefined(element) && element.constructor === Object) {
+        if (element?.constructor === Object) {
           element = processLineNumbersRecursive({
             hash: element,
             fileName: item.fileName,
@@ -133,10 +133,7 @@ export function processLineNumbersRecursive(item: {
       });
 
       // hash
-    } else if (
-      !!item.hash[newPar] &&
-      item.hash[newPar].constructor === Object
-    ) {
+    } else if (item.hash[newPar]?.constructor === Object) {
       item.hash[newPar] = processLineNumbersRecursive({
         hash: item.hash[newPar],
         fileName: item.fileName,

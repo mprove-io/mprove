@@ -80,7 +80,7 @@ export function checkReportUnknownParameters(item: {
           }
 
           if (
-            report[parameter].constructor === Object &&
+            report[parameter]?.constructor === Object &&
             [
               enums.ParameterEnum.DefaultFilters.toString(),
               enums.ParameterEnum.ListenFilters.toString(),
@@ -128,6 +128,8 @@ export function checkReportUnknownParameters(item: {
           }
 
           if (
+            helper.isDefined(report[parameter]) &&
+            report[parameter].constructor !== Object &&
             [
               enums.ParameterEnum.DefaultFilters.toString(),
               enums.ParameterEnum.ListenFilters.toString(),
@@ -135,8 +137,7 @@ export function checkReportUnknownParameters(item: {
               enums.ParameterEnum.Axis.toString(),
               enums.ParameterEnum.Options.toString(),
               enums.ParameterEnum.Tile.toString()
-            ].indexOf(parameter) > -1 &&
-            report[parameter].constructor !== Object
+            ].indexOf(parameter) > -1
           ) {
             item.errors.push(
               new BmError({

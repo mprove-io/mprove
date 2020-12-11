@@ -58,7 +58,7 @@ export function checkChartAxisParameters(item: {
             return;
           }
 
-          if (Array.isArray((<any>report.axis)[parameter])) {
+          if (Array.isArray(report.axis[parameter])) {
             // error e185
             item.errors.push(
               new BmError({
@@ -76,10 +76,7 @@ export function checkChartAxisParameters(item: {
             return;
           }
 
-          if (
-            helper.isDefined(report.axis[parameter]) &&
-            (<any>report.axis)[parameter].constructor === Object
-          ) {
+          if (report.axis[parameter]?.constructor === Object) {
             // error e186
             item.errors.push(
               new BmError({
@@ -116,7 +113,7 @@ export function checkChartAxisParameters(item: {
                   '"true" or "false" if specified',
                 lines: [
                   {
-                    line: (<any>report.axis)[parameter + constants.LINE_NUM],
+                    line: report.axis[parameter + constants.LINE_NUM],
                     name: x.fileName,
                     path: x.filePath
                   }

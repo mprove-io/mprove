@@ -20,7 +20,7 @@ export function checkFieldIsObject<T extends types.vmdType>(item: {
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (field.constructor !== Object) {
+      if (helper.isDefined(field) && field.constructor !== Object) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FIELD_IS_NOT_A_DICTIONARY,

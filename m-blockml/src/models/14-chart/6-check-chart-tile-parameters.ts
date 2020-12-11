@@ -74,10 +74,7 @@ export function checkChartTileParameters(item: {
             return;
           }
 
-          if (
-            helper.isDefined(report.tile[parameter]) &&
-            report.tile[parameter].constructor === Object
-          ) {
+          if (report.tile[parameter]?.constructor === Object) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_TILE_UNEXPECTED_DICTIONARY,

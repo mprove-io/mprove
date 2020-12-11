@@ -236,10 +236,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
               })
             );
             return;
-          } else if (
-            helper.isDefined(field[parameter]) &&
-            field[parameter].constructor === Object
-          ) {
+          } else if (field[parameter]?.constructor === Object) {
             item.errors.push(
               new BmError({
                 title:

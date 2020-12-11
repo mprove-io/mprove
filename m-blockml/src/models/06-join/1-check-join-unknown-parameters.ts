@@ -127,7 +127,7 @@ export function checkJoinUnknownParameters(item: {
             return;
           }
 
-          if (join[parameter].constructor === Object) {
+          if (join[parameter]?.constructor === Object) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.JOIN_UNEXPECTED_DICTIONARY,

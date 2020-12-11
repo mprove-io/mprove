@@ -104,10 +104,7 @@ export function checkChartOptionsParameters(item: {
             return;
           }
 
-          if (
-            helper.isDefined(report.options[parameter]) &&
-            report.options[parameter].constructor === Object
-          ) {
+          if (report.options[parameter]?.constructor === Object) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_UNEXPECTED_DICTIONARY,

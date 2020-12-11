@@ -60,7 +60,7 @@ export function checkChartData(item: {
           }
 
           if (
-            Array.isArray((<any>report.data)[parameter]) &&
+            Array.isArray(report.data[parameter]) &&
             [
               enums.ParameterEnum.YFields.toString(),
               enums.ParameterEnum.HideColumns.toString()
@@ -83,10 +83,7 @@ export function checkChartData(item: {
             return;
           }
 
-          if (
-            helper.isDefined(report.data[parameter]) &&
-            report.data[parameter].constructor === Object
-          ) {
+          if (report.data[parameter]?.constructor === Object) {
             // error e174
             item.errors.push(
               new BmError({
