@@ -2,11 +2,15 @@ import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { barSpecial } from 'src/barrels/bar-special';
 import { api } from '../barrels/api';
+import { QueryService } from './query.service';
 import { StructService } from './struct.service';
 
 @Injectable()
 export class ConsumerService {
-  constructor(private readonly structService: StructService) {}
+  constructor(
+    private readonly structService: StructService,
+    private readonly queryService: QueryService
+  ) {}
 
   @RabbitRPC({
     exchange: api.RabbitExchangesEnum.MBlockml.toString(),
@@ -73,7 +77,7 @@ export class ConsumerService {
         modelContent
       } = requestValid.payload;
 
-      let payload = await barSpecial.processQuery({
+      let payload = await this.queryService.processQuery({
         structId: structId,
         projectId: projectId,
         weekStart: weekStart,

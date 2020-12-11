@@ -3,6 +3,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { ConsumerService } from './services/consumer.service';
 import { api } from './barrels/api';
 import { StructService } from './services/struct.service';
+import { QueryService } from './services/query.service';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { StructService } from './services/struct.service';
     })
   ],
   controllers: [],
-  providers: [ConsumerService, StructService]
+  providers: [ConsumerService, QueryService, StructService]
 })
 export class AppModule {}

@@ -12,7 +12,7 @@ let testId = 'v';
 
 test(testId, async () => {
   let errors: BmError[];
-  let udfs: interfaces.Udf[];
+  let udfsDict: api.UdfsDict;
   let views: interfaces.View[];
   let models: interfaces.Model[];
   let dashboards: interfaces.Dashboard[];
@@ -41,7 +41,7 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    udfs = await helper.readLog(fromDir, enums.LogTypeEnum.Udfs);
+    udfsDict = await helper.readLog(fromDir, enums.LogTypeEnum.UdfsDict);
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
@@ -53,11 +53,10 @@ test(testId, async () => {
 
   expect(1).toBe(1);
 
-  // expect(udfs.length).toBe(1);
+  // expect(errors.length).toBe(0);
+
   // expect(views.length).toBe(1);
   // expect(models.length).toBe(1);
   // expect(dashboards.length).toBe(1);
   // expect(vizs.length).toBe(1);
-
-  // expect(errors.length).toBe(0);
 });
