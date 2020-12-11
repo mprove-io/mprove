@@ -10,7 +10,7 @@ interface GenSqlItem {
   sorts: string;
   timezone: string;
   limit: string;
-  filters: { [filter: string]: string[] };
+  filters: interfaces.FilterBricksDictionary;
   udfsDict: api.UdfsDict;
   projectId: string;
   weekStart: api.ProjectWeekStartEnum;

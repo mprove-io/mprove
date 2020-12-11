@@ -1,6 +1,7 @@
+import { Injectable } from '@nestjs/common';
 import { api } from '../barrels/api';
 import { enums } from '../barrels/enums';
-import { Injectable } from '@nestjs/common';
+import { interfaces } from '../barrels/interfaces';
 import { barSpecial } from '../barrels/bar-special';
 
 @Injectable()
@@ -24,12 +25,11 @@ export class QueryService {
 
     let { select, sorts, timezone, limit, filters } = mconfig;
 
-    let newFilters: { [s: string]: string[] } = {};
+    let newFilters: interfaces.FilterBricksDictionary = {};
 
     filters.forEach(f => {
       let fieldId = f.fieldId;
       let bricks = f.fractions.map(fraction => fraction.brick);
-
       newFilters[fieldId] = bricks;
     });
 

@@ -2,6 +2,7 @@ import { FileBasic } from '../file/file-basic';
 import { Join } from '../join';
 import { FieldAny } from '../field/field-any';
 import { api } from '../../barrels/api';
+import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 
 export interface Model extends FileBasic {
   model?: string;
@@ -56,9 +57,7 @@ export interface Model extends FileBasic {
     };
   };
 
-  filters?: {
-    [s: string]: string[];
-  };
+  filters?: FilterBricksDictionary;
 
   alwaysJoinUnique?: {
     [as: string]: number;

@@ -1,6 +1,7 @@
 import { FileBasic } from '../file/file-basic';
 import { FieldAny } from '../field/field-any';
 import { api } from '../../barrels/api';
+import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 
 export interface View extends FileBasic {
   view?: string;
@@ -53,9 +54,7 @@ export interface View extends FileBasic {
 
   viewDeps?: string[]; // for web deps graph
 
-  filters?: {
-    [s: string]: string[];
-  };
+  filters?: FilterBricksDictionary;
 
   // derivedTableFullArray?: string[];
 

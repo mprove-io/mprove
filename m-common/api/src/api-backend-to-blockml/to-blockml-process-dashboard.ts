@@ -16,26 +16,22 @@ export class ToBlockmlProcessDashboardRequestPayload {
   @IsEnum(apiEnums.ProjectWeekStartEnum)
   readonly weekStart: apiEnums.ProjectWeekStartEnum;
 
+  @ValidateNested()
+  @Type(() => apiObjects.UdfsDict)
+  readonly udfsDict: apiObjects.UdfsDict;
+
+  @IsString({ each: true })
+  readonly modelsContent: string[];
+
+  @IsString()
+  readonly dashboardContent: string;
+
   @IsString()
   readonly newDashboardId: string;
 
   @ValidateNested()
   @Type(() => apiObjects.DashboardField)
   readonly newDashboardFields: apiObjects.DashboardField[];
-
-  @IsString()
-  readonly oldDashboardContent: string;
-
-  @IsString()
-  readonly udfsContent: string;
-
-  @ValidateNested()
-  @Type(() => apiObjects.Cut)
-  readonly cuts: apiObjects.Cut[];
-
-  @ValidateNested()
-  @Type(() => apiObjects.ProjectConnection)
-  readonly connections: apiObjects.ProjectConnection[];
 }
 
 export class ToBlockmlProcessDashboardRequest {

@@ -2,6 +2,7 @@ import { FileBasic } from '../file/file-basic';
 import { FieldAny } from '../field/field-any';
 import { Report } from '../report';
 import { api } from '../../barrels/api';
+import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 
 export interface Dashboard extends FileBasic {
   dashboard?: string;
@@ -30,7 +31,5 @@ export interface Dashboard extends FileBasic {
 
   //
 
-  filters?: {
-    [s: string]: string[];
-  };
+  filters?: FilterBricksDictionary;
 }

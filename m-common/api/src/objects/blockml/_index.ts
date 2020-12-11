@@ -1,5 +1,4 @@
 export * from './chart';
-export * from './cut';
 export * from './dashboard-field';
 export * from './dashboard';
 export * from './file';

@@ -3,6 +3,7 @@ import { ChartData } from './chart/chart-data';
 import { ChartAxis } from './chart/chart-axis';
 import { ChartOptions } from './chart/chart-options';
 import { ChartTile } from './chart/chart-tile';
+import { FilterBricksDictionary } from './filter-bricks-dictionary';
 
 export interface Report {
   title: string;
@@ -46,9 +47,7 @@ export interface Report {
   };
   listen_filters_line_num: number;
 
-  default_filters: {
-    [aliasFieldName: string]: string[];
-  };
+  default_filters: FilterBricksDictionary;
   default_filters_line_num: number;
 
   //
@@ -68,9 +67,9 @@ export interface Report {
 
   listen: { [a: string]: string };
 
-  default: { [filter: string]: string[] };
+  default: FilterBricksDictionary;
 
-  combinedFilters: { [filter: string]: string[] };
+  combinedFilters: FilterBricksDictionary;
 
   filtersFractions: {
     [s: string]: api.Fraction[];

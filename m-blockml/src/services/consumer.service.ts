@@ -1,7 +1,7 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
-import { barSpecial } from 'src/barrels/bar-special';
 import { api } from '../barrels/api';
+import { DashboardService } from './dashboard.service';
 import { QueryService } from './query.service';
 import { StructService } from './struct.service';
 
@@ -9,7 +9,8 @@ import { StructService } from './struct.service';
 export class ConsumerService {
   constructor(
     private readonly structService: StructService,
-    private readonly queryService: QueryService
+    private readonly queryService: QueryService,
+    private readonly dashboardService: DashboardService
   ) {}
 
   @RabbitRPC({
@@ -37,7 +38,38 @@ export class ConsumerService {
         errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
       });
 
-      let response = requestValid.payload.structId;
+      let { traceId } = requestValid.info;
+      let {
+        projectId,
+        structId,
+        repoId,
+        weekStart,
+        udfsDict,
+        modelsContent,
+        dashboardContent,
+        newDashboardId,
+        newDashboardFields
+      } = requestValid.payload;
+
+      let payload = await this.dashboardService.processDashboard({
+        projectId: projectId,
+        structId: structId,
+        repoId: repoId,
+        weekStart: weekStart,
+        udfsDict: udfsDict,
+        modelsContent: modelsContent,
+        dashboardContent: dashboardContent,
+        newDashboardId: newDashboardId,
+        newDashboardFields: newDashboardFields
+      });
+
+      let response: api.ToBlockmlProcessDashboardResponse = {
+        info: {
+          status: api.ResponseInfoStatusEnum.Ok,
+          traceId: traceId
+        },
+        payload: payload
+      };
 
       return response;
     } catch (e) {

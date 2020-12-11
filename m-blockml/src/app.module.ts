@@ -4,6 +4,7 @@ import { ConsumerService } from './services/consumer.service';
 import { api } from './barrels/api';
 import { StructService } from './services/struct.service';
 import { QueryService } from './services/query.service';
+import { DashboardService } from './services/dashboard.service';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { QueryService } from './services/query.service';
     })
   ],
   controllers: [],
-  providers: [ConsumerService, QueryService, StructService]
+  providers: [ConsumerService, DashboardService, QueryService, StructService]
 })
 export class AppModule {}

@@ -1,5 +1,6 @@
 import { api } from '../barrels/api';
 import { Model } from './file-types/model';
+import { FilterBricksDictionary } from './filter-bricks-dictionary';
 
 export interface VarsSql {
   model: Model;
@@ -7,9 +8,7 @@ export interface VarsSql {
   sorts: string;
   timezone: string;
   limit: string;
-  filters: {
-    [filter: string]: string[];
-  };
+  filters: FilterBricksDictionary;
   filtersFractions: {
     [s: string]: api.Fraction[];
   };

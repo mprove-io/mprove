@@ -25,7 +25,7 @@ export async function fetchSql(item: {
     await forEachSeries(x.reports, async (report: interfaces.Report) => {
       let model = item.models.find(m => m.name === report.model);
 
-      let filters: { [filter: string]: string[] } = {};
+      let filters: interfaces.FilterBricksDictionary = {};
 
       if (helper.isDefined(report.combinedFilters)) {
         Object.keys(report.combinedFilters).forEach(filter => {
@@ -36,7 +36,7 @@ export async function fetchSql(item: {
         });
       }
 
-      let resItem = await barSpecial.genSql({
+      let { sql, filtersFractions } = await barSpecial.genSql({
         model: model,
         select: report.select,
         sorts: report.sorts,
@@ -51,8 +51,8 @@ export async function fetchSql(item: {
         caller: item.caller
       });
 
-      report.filtersFractions = resItem.filtersFractions;
-      report.sql = resItem.sql;
+      report.sql = sql;
+      report.filtersFractions = filtersFractions;
     });
   });
 

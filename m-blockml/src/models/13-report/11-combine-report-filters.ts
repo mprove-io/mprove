@@ -23,6 +23,7 @@ export function combineReportFilters(item: {
           JSON.stringify(report.default_filters[defaultFilter])
         );
       });
+
       // default override by listen
       Object.keys(report.listen).forEach(listenFilter => {
         let listen = report.listen[listenFilter];

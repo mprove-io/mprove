@@ -6,7 +6,7 @@ import { processFilter } from '../special/process-filter';
 
 export function makeFilters(item: interfaces.VarsSql) {
   // prepare model and view filters defaults that is not in report default
-  let untouchedFilters: { [s: string]: string[] } = {};
+  let untouchedFilters: interfaces.FilterBricksDictionary = {};
 
   Object.keys(item.model.filters).forEach(modelFilter => {
     let modelFilterName = `${constants.MF}.${modelFilter}`;
