@@ -94,7 +94,7 @@ export function checkViewAsDeps(item: {
               })
             );
             return;
-          } else if (field.fieldClass === enums.FieldClassEnum.Filter) {
+          } else if (field.fieldClass === api.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER,

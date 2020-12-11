@@ -20,8 +20,8 @@ export class ModelNode {
   @IsString()
   description?: string;
 
-  @IsEnum(apiEnums.ModelNodeNodeClassEnum)
-  nodeClass: apiEnums.ModelNodeNodeClassEnum;
+  @IsEnum(apiEnums.FieldClassEnum)
+  nodeClass: apiEnums.FieldClassEnum;
 
   @IsOptional()
   @IsString()

@@ -1,4 +1,4 @@
-import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 
 export interface Calculation {
   hidden?: string; // boolean
@@ -13,7 +13,7 @@ export interface Calculation {
   sql?: string;
   sql_line_num?: number;
 
-  result?: enums.FieldAnyResultEnum;
+  result?: api.FieldAnyResultEnum;
   result_line_num?: number;
 
   format_number?: string;
@@ -31,7 +31,7 @@ export interface Calculation {
 
   name_line_num?: number;
 
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: api.FieldClassEnum;
 
   sqlReal?: string;
 

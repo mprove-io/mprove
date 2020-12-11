@@ -68,7 +68,7 @@ export function sawCheckDoubleDeps(item: {
           );
 
           return;
-        } else if (depField.fieldClass === enums.FieldClassEnum.Filter) {
+        } else if (depField.fieldClass === api.FieldClassEnum.Filter) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_FILTER,
@@ -87,7 +87,7 @@ export function sawCheckDoubleDeps(item: {
           );
 
           return;
-        } else if (depField.fieldClass === enums.FieldClassEnum.Measure) {
+        } else if (depField.fieldClass === api.FieldClassEnum.Measure) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MEASURE,
@@ -106,7 +106,7 @@ export function sawCheckDoubleDeps(item: {
           );
 
           return;
-        } else if (depField.fieldClass === enums.FieldClassEnum.Calculation) {
+        } else if (depField.fieldClass === api.FieldClassEnum.Calculation) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_CALCULATION,

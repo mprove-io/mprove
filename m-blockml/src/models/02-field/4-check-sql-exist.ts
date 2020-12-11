@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
@@ -20,12 +21,12 @@ export function checkSqlExist<T extends types.vmdType>(item: {
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (field.fieldClass === enums.FieldClassEnum.Filter) {
+      if (field.fieldClass === api.FieldClassEnum.Filter) {
         if (helper.isDefined(field.sql)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.UNEXPECTED_SQL_IN_FILTER,
-              message: `parameter "${enums.ParameterEnum.Sql}" can not be used with ${enums.FieldClassEnum.Filter} field`,
+              message: `parameter "${enums.ParameterEnum.Sql}" can not be used with ${api.FieldClassEnum.Filter} field`,
               lines: [
                 {
                   line: field.sql_line_num,
@@ -40,10 +41,10 @@ export function checkSqlExist<T extends types.vmdType>(item: {
       } else if (
         helper.isUndefined(field.sql) &&
         [
-          enums.FieldClassEnum.Dimension,
-          enums.FieldClassEnum.Time,
-          enums.FieldClassEnum.Measure,
-          enums.FieldClassEnum.Calculation
+          api.FieldClassEnum.Dimension,
+          api.FieldClassEnum.Time,
+          api.FieldClassEnum.Measure,
+          api.FieldClassEnum.Calculation
         ].indexOf(field.fieldClass) > -1
       ) {
         item.errors.push(

@@ -28,7 +28,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
 
       switch (true) {
         // process dimensions (they can reference only dimensions - already checked)
-        case field.fieldClass === enums.FieldClassEnum.Dimension: {
+        case field.fieldClass === api.FieldClassEnum.Dimension: {
           let dimension: interfaces.Dimension = field;
 
           // sqlReal
@@ -51,7 +51,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           dimension.sqlReal = sqlReal;
 
           // sqlTimestampReal
-          if (dimension.result === enums.FieldAnyResultEnum.Ts) {
+          if (dimension.result === api.FieldAnyResultEnum.Ts) {
             let sqlTimestampReal = dimension.sqlTimestamp; // init
 
             let reg2 = api.MyRegex.CAPTURE_SINGLE_REF();
@@ -74,7 +74,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
         }
 
         // process measures of Models (they can reference only dimensions - already checked)
-        case field.fieldClass === enums.FieldClassEnum.Measure &&
+        case field.fieldClass === api.FieldClassEnum.Measure &&
           x.fileExt === api.FileExtensionEnum.Model: {
           let measure: interfaces.Measure = field;
 
@@ -100,10 +100,10 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           // sqlKeyReal
           if (
             [
-              enums.FieldAnyTypeEnum.SumByKey,
-              enums.FieldAnyTypeEnum.AverageByKey,
-              enums.FieldAnyTypeEnum.MedianByKey,
-              enums.FieldAnyTypeEnum.PercentileByKey
+              api.FieldAnyTypeEnum.SumByKey,
+              api.FieldAnyTypeEnum.AverageByKey,
+              api.FieldAnyTypeEnum.MedianByKey,
+              api.FieldAnyTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init
@@ -128,7 +128,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
         }
 
         // process measures of Views (they can reference only dimensions - already checked)
-        case field.fieldClass === enums.FieldClassEnum.Measure &&
+        case field.fieldClass === api.FieldClassEnum.Measure &&
           x.fileExt === api.FileExtensionEnum.View: {
           let measure: interfaces.Measure = field;
 
@@ -151,10 +151,10 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           // sqlKeyReal
           if (
             [
-              enums.FieldAnyTypeEnum.SumByKey,
-              enums.FieldAnyTypeEnum.AverageByKey,
-              enums.FieldAnyTypeEnum.MedianByKey,
-              enums.FieldAnyTypeEnum.PercentileByKey
+              api.FieldAnyTypeEnum.SumByKey,
+              api.FieldAnyTypeEnum.AverageByKey,
+              api.FieldAnyTypeEnum.MedianByKey,
+              api.FieldAnyTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init
@@ -176,7 +176,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
         }
 
         // process calculations (they can reference anything - already checked)
-        case field.fieldClass === enums.FieldClassEnum.Calculation: {
+        case field.fieldClass === api.FieldClassEnum.Calculation: {
           let calculation: interfaces.Calculation = field;
 
           // calculation.prepForceDims initialized inside while
@@ -208,7 +208,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
 
               switch (true) {
                 case referenceField.fieldClass ===
-                  enums.FieldClassEnum.Calculation: {
+                  api.FieldClassEnum.Calculation: {
                   sqlReal = api.MyRegex.replaceSingleRefs(
                     sqlReal,
                     reference,
@@ -220,7 +220,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
                 }
 
                 case referenceField.fieldClass ===
-                  enums.FieldClassEnum.Dimension: {
+                  api.FieldClassEnum.Dimension: {
                   deps.push({
                     depName: reference,
                     depLineNum: calculation.sql_line_num
@@ -231,8 +231,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
                   break;
                 }
 
-                case referenceField.fieldClass ===
-                  enums.FieldClassEnum.Measure: {
+                case referenceField.fieldClass === api.FieldClassEnum.Measure: {
                   deps.push({
                     depName: reference,
                     depLineNum: calculation.sql_line_num
@@ -254,7 +253,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
         }
 
         // process filters
-        // case field.fieldClass === enums.FieldClassEnum.Filter: {
+        // case field.fieldClass === api.FieldClassEnum.Filter: {
         //   let filter: interfaces.Filter = field;
         //   // sqlReal
         //   let sqlReal = field.sql; // init

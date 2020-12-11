@@ -1,4 +1,4 @@
-import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 
 export interface Dimension {
   hidden?: string; // boolean
@@ -13,10 +13,10 @@ export interface Dimension {
   sql?: string;
   sql_line_num?: number;
 
-  type?: enums.FieldAnyTypeEnum;
+  type?: api.FieldAnyTypeEnum;
   type_line_num?: number;
 
-  result?: enums.FieldAnyResultEnum;
+  result?: api.FieldAnyResultEnum;
   result_line_num?: number;
 
   unnest?: string;
@@ -45,7 +45,7 @@ export interface Dimension {
 
   name_line_num?: number;
 
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: api.FieldClassEnum;
 
   sqlReal?: string;
 

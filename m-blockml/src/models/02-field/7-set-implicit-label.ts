@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
@@ -18,7 +19,7 @@ export function setImplicitLabel<T extends types.vmdType>(item: {
     x.fields.forEach(field => {
       if (
         helper.isUndefined(field.label) &&
-        field.fieldClass !== enums.FieldClassEnum.Time
+        field.fieldClass !== api.FieldClassEnum.Time
       ) {
         field.label = field.name;
         field.label_line_num = 0;

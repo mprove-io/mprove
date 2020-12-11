@@ -1,5 +1,6 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
@@ -73,7 +74,7 @@ export function awcCheckDoubleDeps(item: {
             return;
           }
 
-          if (depField.fieldClass === enums.FieldClassEnum.Filter) {
+          if (depField.fieldClass === api.FieldClassEnum.Filter) {
             // error e247
             item.errors.push(
               new BmError({

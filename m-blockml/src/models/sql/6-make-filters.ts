@@ -1,4 +1,3 @@
-import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
@@ -48,8 +47,8 @@ export function makeFilters(item: interfaces.VarsSql) {
               .find(j => j.as === asName)
               .view.fields.find(vField => vField.name === fieldName);
 
-      if (field.result === enums.FieldAnyResultEnum.Ts) {
-        if (field.fieldClass === enums.FieldClassEnum.Filter) {
+      if (field.result === api.FieldAnyResultEnum.Ts) {
+        if (field.fieldClass === api.FieldClassEnum.Filter) {
           sqlTimestampSelect = constants.MPROVE_FILTER;
         } else if (asName === constants.MF) {
           // remove ${ } on doubles (no singles exists in _real of model dimensions)
@@ -69,7 +68,7 @@ export function makeFilters(item: interfaces.VarsSql) {
 
       let proc;
 
-      if (field.fieldClass === enums.FieldClassEnum.Measure) {
+      if (field.fieldClass === api.FieldClassEnum.Measure) {
         if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
           proc = `${asName}_${fieldName}`;
         } else if (
@@ -77,7 +76,7 @@ export function makeFilters(item: interfaces.VarsSql) {
         ) {
           proc = item.processedFields[element];
         }
-      } else if (field.fieldClass === enums.FieldClassEnum.Filter) {
+      } else if (field.fieldClass === api.FieldClassEnum.Filter) {
         proc = constants.MPROVE_FILTER;
       } else {
         proc = item.processedFields[element];
@@ -222,13 +221,13 @@ export function makeFilters(item: interfaces.VarsSql) {
         }
       }
 
-      if (field.fieldClass === enums.FieldClassEnum.Calculation) {
+      if (field.fieldClass === api.FieldClassEnum.Calculation) {
         item.whereCalc[element] = conds;
-      } else if (field.fieldClass === enums.FieldClassEnum.Measure) {
+      } else if (field.fieldClass === api.FieldClassEnum.Measure) {
         item.havingMain[element] = conds;
-      } else if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+      } else if (field.fieldClass === api.FieldClassEnum.Dimension) {
         item.whereMain[element] = conds;
-      } else if (field.fieldClass === enums.FieldClassEnum.Filter) {
+      } else if (field.fieldClass === api.FieldClassEnum.Filter) {
         if (item.filters[element]) {
           item.filtersConditions[element] = conds;
         } else {

@@ -21,7 +21,7 @@ export function wrapDashboards(item: {
         id: field.name,
         hidden: helper.toBoolean(field.hidden),
         label: field.label,
-        result: <any>field.result,
+        result: field.result,
         fractions: field.fractions,
         description: field.description
       });

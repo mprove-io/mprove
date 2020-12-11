@@ -26,23 +26,22 @@ export function checkDimensions<T extends types.vmType>(item: {
     }
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== enums.FieldClassEnum.Dimension) {
+      if (field.fieldClass !== api.FieldClassEnum.Dimension) {
         return;
       }
 
       if (helper.isUndefined(field.type)) {
-        field.type = enums.FieldAnyTypeEnum.Custom;
+        field.type = api.FieldAnyTypeEnum.Custom;
         field.type_line_num = 0;
       } else if (
-        [
-          enums.FieldAnyTypeEnum.Custom,
-          enums.FieldAnyTypeEnum.YesnoIsTrue
-        ].indexOf(field.type) < 0
+        [api.FieldAnyTypeEnum.Custom, api.FieldAnyTypeEnum.YesnoIsTrue].indexOf(
+          field.type
+        ) < 0
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_DIMENSION_TYPE,
-            message: `"${field.type}" is not valid type for ${enums.FieldClassEnum.Dimension}`,
+            message: `"${field.type}" is not valid type for ${api.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.type_line_num,

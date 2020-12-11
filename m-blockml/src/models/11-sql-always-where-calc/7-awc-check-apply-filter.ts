@@ -58,7 +58,7 @@ export function awcCheckApplyFilter(item: {
         return;
       }
 
-      if (field.fieldClass !== enums.FieldClassEnum.Filter) {
+      if (field.fieldClass !== api.FieldClassEnum.Filter) {
         // error e257
         item.errors.push(
           new BmError({

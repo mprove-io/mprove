@@ -77,7 +77,7 @@ export function makeContents(item: interfaces.VarsSql) {
           viewField => viewField.name === fieldName
         );
 
-        if (field.result === enums.FieldAnyResultEnum.Ts) {
+        if (field.result === api.FieldAnyResultEnum.Ts) {
           // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
           let sqlTimestampSelect = field.sqlTimestampReal;
 
@@ -105,7 +105,7 @@ export function makeContents(item: interfaces.VarsSql) {
           viewField => viewField.name === fieldName
         );
 
-        if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+        if (field.fieldClass === api.FieldClassEnum.Dimension) {
           if (helper.isDefined(field.unnest)) {
             flats[field.unnest] = 1;
           }

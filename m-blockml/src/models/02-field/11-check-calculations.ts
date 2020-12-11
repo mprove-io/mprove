@@ -26,14 +26,14 @@ export function checkCalculations<T extends types.vmType>(item: {
     }
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== enums.FieldClassEnum.Calculation) {
+      if (field.fieldClass !== api.FieldClassEnum.Calculation) {
         return;
       }
       if (field.sql && !field.sql.match(api.MyRegex.CONTAINS_BLOCKML_REF())) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.CALCULATION_SQL_MISSING_BLOCKML_REFERENCE,
-            message: `${enums.FieldClassEnum.Calculation} ${enums.ParameterEnum.Sql} must have a BlockML reference`,
+            message: `${api.FieldClassEnum.Calculation} ${enums.ParameterEnum.Sql} must have a BlockML reference`,
             lines: [
               {
                 line: field.sql_line_num,

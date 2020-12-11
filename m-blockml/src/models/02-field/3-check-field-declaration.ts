@@ -96,7 +96,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(item: {
 
       if (
         x.fileExt === api.FileExtensionEnum.Dashboard &&
-        fieldClass !== enums.FieldClassEnum.Filter
+        fieldClass !== api.FieldClassEnum.Filter
       ) {
         item.errors.push(
           new BmError({
@@ -122,7 +122,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(item: {
       let newFieldProps: interfaces.FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
-        fieldClass: <enums.FieldClassEnum>fieldClass
+        fieldClass: <api.FieldClassEnum>fieldClass
       };
       Object.assign(field, newFieldProps);
     });

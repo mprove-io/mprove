@@ -54,7 +54,7 @@ export function sawCheckSingleRefs(item: {
         return;
       }
 
-      if (referenceField.fieldClass === enums.FieldClassEnum.Filter) {
+      if (referenceField.fieldClass === api.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_FILTER,
@@ -73,7 +73,7 @@ export function sawCheckSingleRefs(item: {
         return;
       }
 
-      if (referenceField.fieldClass === enums.FieldClassEnum.Measure) {
+      if (referenceField.fieldClass === api.FieldClassEnum.Measure) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_MEASURE,
@@ -92,7 +92,7 @@ export function sawCheckSingleRefs(item: {
         return;
       }
 
-      if (referenceField.fieldClass === enums.FieldClassEnum.Calculation) {
+      if (referenceField.fieldClass === api.FieldClassEnum.Calculation) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_CALCULATION,

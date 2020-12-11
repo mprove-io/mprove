@@ -1,4 +1,3 @@
-import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
@@ -31,11 +30,11 @@ export function composeCalc(item: interfaces.VarsSql) {
             .view.fields.find(vField => vField.name === fieldName);
 
     let selectString =
-      field.fieldClass === enums.FieldClassEnum.Dimension
+      field.fieldClass === api.FieldClassEnum.Dimension
         ? `  ${asName}_${fieldName},`
-        : field.fieldClass === enums.FieldClassEnum.Measure
+        : field.fieldClass === api.FieldClassEnum.Measure
         ? `  ${asName}_${fieldName},`
-        : field.fieldClass === enums.FieldClassEnum.Calculation
+        : field.fieldClass === api.FieldClassEnum.Calculation
         ? `  ${item.processedFields[element]} as ${asName}_${fieldName},`
         : constants.EMPTY_STRING;
 

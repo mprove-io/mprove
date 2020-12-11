@@ -56,7 +56,7 @@ export function awcCheckSingleRefs(item: {
         return;
       }
 
-      if (referenceField.fieldClass === enums.FieldClassEnum.Filter) {
+      if (referenceField.fieldClass === api.FieldClassEnum.Filter) {
         // error e248
         item.errors.push(
           new BmError({

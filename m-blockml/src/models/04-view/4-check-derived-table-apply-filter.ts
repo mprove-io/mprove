@@ -55,7 +55,7 @@ export function checkDerivedTableApplyFilter(item: {
         return;
       }
 
-      if (field.fieldClass !== enums.FieldClassEnum.Filter) {
+      if (field.fieldClass !== api.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER,

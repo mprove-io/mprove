@@ -27,7 +27,7 @@ export function wrapModels(item: {
         hidden: false,
         isField: false,
         children: children,
-        nodeClass: api.ModelNodeNodeClassEnum.Join
+        nodeClass: api.FieldClassEnum.Join
       };
 
       x.fields.forEach(field => {
@@ -58,7 +58,7 @@ export function wrapModels(item: {
         hidden: joinHidden,
         isField: false,
         children: children,
-        nodeClass: api.ModelNodeNodeClassEnum.Join,
+        nodeClass: api.FieldClassEnum.Join,
         viewName: join.view.name
       };
 
@@ -87,22 +87,22 @@ export function wrapModels(item: {
 
         node.children.forEach(n => {
           switch (true) {
-            case n.nodeClass === api.ModelNodeNodeClassEnum.Filter: {
+            case n.nodeClass === api.FieldClassEnum.Filter: {
               filters.push(n);
               break;
             }
 
-            case n.nodeClass === api.ModelNodeNodeClassEnum.Dimension: {
+            case n.nodeClass === api.FieldClassEnum.Dimension: {
               dimensions.push(n);
               break;
             }
 
-            case n.nodeClass === api.ModelNodeNodeClassEnum.Measure: {
+            case n.nodeClass === api.FieldClassEnum.Measure: {
               measures.push(n);
               break;
             }
 
-            case n.nodeClass === api.ModelNodeNodeClassEnum.Calculation: {
+            case n.nodeClass === api.FieldClassEnum.Calculation: {
               calculations.push(n);
               break;
             }
@@ -143,7 +143,7 @@ export function wrapModels(item: {
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: api.ModelNodeNodeClassEnum.Info
+            nodeClass: api.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedDimensions);
@@ -157,7 +157,7 @@ export function wrapModels(item: {
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: api.ModelNodeNodeClassEnum.Info
+            nodeClass: api.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedMeasures);
@@ -171,7 +171,7 @@ export function wrapModels(item: {
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: api.ModelNodeNodeClassEnum.Info
+            nodeClass: api.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedCalculations);
@@ -185,7 +185,7 @@ export function wrapModels(item: {
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: api.ModelNodeNodeClassEnum.Info
+            nodeClass: api.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedFilters);

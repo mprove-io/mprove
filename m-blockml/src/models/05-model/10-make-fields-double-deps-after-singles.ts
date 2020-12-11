@@ -39,7 +39,7 @@ export function makeFieldsDoubleDepsAfterSingles(item: {
             field => field.name === depName
           );
 
-          if (depField.fieldClass === enums.FieldClassEnum.Calculation) {
+          if (depField.fieldClass === api.FieldClassEnum.Calculation) {
             f.sqlReal = api.MyRegex.replaceAndConvert(
               f.sqlReal,
               depField.sqlReal,
@@ -61,8 +61,8 @@ export function makeFieldsDoubleDepsAfterSingles(item: {
               f.sql_line_num;
 
             if (
-              f.fieldClass === enums.FieldClassEnum.Calculation &&
-              depField.fieldClass === enums.FieldClassEnum.Dimension
+              f.fieldClass === api.FieldClassEnum.Calculation &&
+              depField.fieldClass === api.FieldClassEnum.Dimension
             ) {
               if (helper.isUndefined(f.forceDims[asName])) {
                 f.forceDims[asName] = {};
@@ -76,12 +76,12 @@ export function makeFieldsDoubleDepsAfterSingles(item: {
 
       // work with sqlKeyReal
       if (
-        f.fieldClass === enums.FieldClassEnum.Measure &&
+        f.fieldClass === api.FieldClassEnum.Measure &&
         [
-          enums.FieldAnyTypeEnum.SumByKey,
-          enums.FieldAnyTypeEnum.AverageByKey,
-          enums.FieldAnyTypeEnum.MedianByKey,
-          enums.FieldAnyTypeEnum.PercentileByKey
+          api.FieldAnyTypeEnum.SumByKey,
+          api.FieldAnyTypeEnum.AverageByKey,
+          api.FieldAnyTypeEnum.MedianByKey,
+          api.FieldAnyTypeEnum.PercentileByKey
         ].indexOf(f.type) > -1
       ) {
         let r2;

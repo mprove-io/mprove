@@ -79,7 +79,7 @@ export function checkSelectElements(item: {
             report.selectHash[element] = {};
           }
 
-          if (modelField.fieldClass === enums.FieldClassEnum.Calculation) {
+          if (modelField.fieldClass === api.FieldClassEnum.Calculation) {
             Object.keys(modelField.forceDims).forEach(alias => {
               Object.keys(modelField.forceDims[alias]).forEach(dim => {
                 let forceDim = `${alias}.${dim}`;
@@ -136,7 +136,7 @@ export function checkSelectElements(item: {
             report.selectHash[element] = {};
           }
 
-          if (viewField.fieldClass === enums.FieldClassEnum.Calculation) {
+          if (viewField.fieldClass === api.FieldClassEnum.Calculation) {
             Object.keys(viewField.forceDims).forEach(alias => {
               Object.keys(viewField.forceDims[alias]).forEach(dim => {
                 let forceDim = `${alias}.${dim}`;

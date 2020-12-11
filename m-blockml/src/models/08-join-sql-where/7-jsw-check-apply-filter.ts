@@ -55,7 +55,7 @@ export function jswCheckApplyFilter(item: {
             return;
           }
 
-          if (field.fieldClass !== enums.FieldClassEnum.Filter) {
+          if (field.fieldClass !== api.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
                 title:

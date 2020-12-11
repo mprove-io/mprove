@@ -1,4 +1,3 @@
-import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
@@ -61,14 +60,14 @@ export function makeMainFields(item: interfaces.VarsSql) {
       });
     }
 
-    let fieldClass: enums.FieldClassEnum =
+    let fieldClass: api.FieldClassEnum =
       asName === constants.MF
         ? item.model.fields.find(mField => mField.name === fieldName).fieldClass
         : item.model.joins
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName).fieldClass;
 
-    if (fieldClass === enums.FieldClassEnum.Measure) {
+    if (fieldClass === api.FieldClassEnum.Measure) {
       selected[element] = 1;
     }
   });
@@ -89,7 +88,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
     let sqlKeyFinal;
     let sqlSelect;
 
-    if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+    if (field.fieldClass === api.FieldClassEnum.Dimension) {
       i++;
 
       if (asName === constants.MF) {
@@ -102,7 +101,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
       if (selected[element]) {
         groupMainBy.push(`${i}`); // toString
       }
-    } else if (field.fieldClass === enums.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === api.FieldClassEnum.Measure) {
       i++;
 
       if (asName === constants.MF) {
@@ -111,10 +110,10 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
         if (
           [
-            enums.FieldAnyTypeEnum.SumByKey,
-            enums.FieldAnyTypeEnum.AverageByKey,
-            enums.FieldAnyTypeEnum.MedianByKey,
-            enums.FieldAnyTypeEnum.PercentileByKey
+            api.FieldAnyTypeEnum.SumByKey,
+            api.FieldAnyTypeEnum.AverageByKey,
+            api.FieldAnyTypeEnum.MedianByKey,
+            api.FieldAnyTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on doubles (no singles exists in _real of model measures)
@@ -129,10 +128,10 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
         if (
           [
-            enums.FieldAnyTypeEnum.SumByKey,
-            enums.FieldAnyTypeEnum.AverageByKey,
-            enums.FieldAnyTypeEnum.MedianByKey,
-            enums.FieldAnyTypeEnum.PercentileByKey
+            api.FieldAnyTypeEnum.SumByKey,
+            api.FieldAnyTypeEnum.AverageByKey,
+            api.FieldAnyTypeEnum.MedianByKey,
+            api.FieldAnyTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on singles (no doubles exists in _real of view measures)
@@ -144,7 +143,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
       }
 
       switch (true) {
-        case field.type === enums.FieldAnyTypeEnum.SumByKey: {
+        case field.type === api.FieldAnyTypeEnum.SumByKey: {
           if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
             item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -158,7 +157,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.AverageByKey: {
+        case field.type === api.FieldAnyTypeEnum.AverageByKey: {
           if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
             item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -172,7 +171,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.MedianByKey: {
+        case field.type === api.FieldAnyTypeEnum.MedianByKey: {
           item.mainUdfs[
             constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
           ] = 1;
@@ -186,7 +185,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.PercentileByKey: {
+        case field.type === api.FieldAnyTypeEnum.PercentileByKey: {
           item.mainUdfs[
             constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
           ] = 1;
@@ -201,7 +200,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.Min: {
+        case field.type === api.FieldAnyTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -210,7 +209,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.Max: {
+        case field.type === api.FieldAnyTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -219,7 +218,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.CountDistinct: {
+        case field.type === api.FieldAnyTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -228,7 +227,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.List: {
+        case field.type === api.FieldAnyTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -237,12 +236,12 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.Custom: {
+        case field.type === api.FieldAnyTypeEnum.Custom: {
           sqlSelect = sqlFinal;
           break;
         }
       }
-    } else if (field.fieldClass === enums.FieldClassEnum.Calculation) {
+    } else if (field.fieldClass === api.FieldClassEnum.Calculation) {
       if (asName === constants.MF) {
         sqlFinal = api.MyRegex.removeBracketsOnCalculationSinglesMf(
           field.sqlReal
@@ -263,7 +262,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
     if (
       selected[element] &&
-      field.fieldClass !== enums.FieldClassEnum.Calculation
+      field.fieldClass !== api.FieldClassEnum.Calculation
     ) {
       mainText.push(`  ${sqlSelect} as ${asName}_${fieldName},`);
     }

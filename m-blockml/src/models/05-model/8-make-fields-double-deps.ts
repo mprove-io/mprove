@@ -19,7 +19,7 @@ export function makeFieldsDoubleDeps(item: {
     x.fieldsDoubleDeps = {};
 
     x.fields.forEach(f => {
-      if (f.fieldClass === enums.FieldClassEnum.Filter) {
+      if (f.fieldClass === api.FieldClassEnum.Filter) {
         return;
       }
 
@@ -42,12 +42,12 @@ export function makeFieldsDoubleDeps(item: {
 
       // work with sqlKey
       if (
-        f.fieldClass === enums.FieldClassEnum.Measure &&
+        f.fieldClass === api.FieldClassEnum.Measure &&
         [
-          enums.FieldAnyTypeEnum.SumByKey,
-          enums.FieldAnyTypeEnum.AverageByKey,
-          enums.FieldAnyTypeEnum.MedianByKey,
-          enums.FieldAnyTypeEnum.PercentileByKey
+          api.FieldAnyTypeEnum.SumByKey,
+          api.FieldAnyTypeEnum.AverageByKey,
+          api.FieldAnyTypeEnum.MedianByKey,
+          api.FieldAnyTypeEnum.PercentileByKey
         ].indexOf(f.type) > -1
       ) {
         let r2;

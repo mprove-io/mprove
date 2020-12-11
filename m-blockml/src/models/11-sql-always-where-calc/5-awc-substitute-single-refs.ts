@@ -40,7 +40,7 @@ export function awcSubstituteSingleRefs(item: {
         let referenceField = x.fields.find(f => f.name === fieldName);
 
         switch (true) {
-          case referenceField.fieldClass === enums.FieldClassEnum.Calculation: {
+          case referenceField.fieldClass === api.FieldClassEnum.Calculation: {
             // referenceField.sqlReal
             // ${calc1}   >>>   (${dim2} + ${b.order_items_total} + ${mea1})
             sqlAlwaysWhereCalcReal = api.MyRegex.replaceSingleRefs(
@@ -53,7 +53,7 @@ export function awcSubstituteSingleRefs(item: {
             break;
           }
 
-          case referenceField.fieldClass === enums.FieldClassEnum.Dimension: {
+          case referenceField.fieldClass === api.FieldClassEnum.Dimension: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
               x.sql_always_where_calc_line_num;
 
@@ -69,7 +69,7 @@ export function awcSubstituteSingleRefs(item: {
             break;
           }
 
-          case referenceField.fieldClass === enums.FieldClassEnum.Measure: {
+          case referenceField.fieldClass === api.FieldClassEnum.Measure: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
               x.sql_always_where_calc_line_num;
             break;

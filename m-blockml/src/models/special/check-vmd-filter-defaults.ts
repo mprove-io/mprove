@@ -1,6 +1,5 @@
 import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
-import { constants } from '../../barrels/constants';
 import { enums } from '../../barrels/enums';
 import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
@@ -25,7 +24,7 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
     x.filters = {};
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== enums.FieldClassEnum.Filter) {
+      if (field.fieldClass !== api.FieldClassEnum.Filter) {
         return;
       }
 
@@ -37,7 +36,7 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
           new BmError({
             title: enums.ErTitleEnum.DASHBOARD_FILTER_MUST_HAVE_DEFAULT,
             message:
-              `${api.FileExtensionEnum.Dashboard} ${enums.FieldClassEnum.Filter} must ` +
+              `${api.FileExtensionEnum.Dashboard} ${api.FieldClassEnum.Filter} must ` +
               `have "${enums.ParameterEnum.Default}" parameter`,
             lines: [
               {

@@ -1,4 +1,3 @@
-import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
@@ -18,14 +17,14 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
     if (asName === constants.MF) {
       let field = item.model.fields.find(mField => mField.name === fieldName);
 
-      if (field.fieldClass === enums.FieldClassEnum.Calculation) {
+      if (field.fieldClass === api.FieldClassEnum.Calculation) {
         Object.keys(item.model.fieldsDepsAfterSingles[fieldName]).forEach(
           depName => {
             let depModelField = item.model.fields.find(
               mField => mField.name === depName
             );
 
-            if (depModelField.fieldClass === enums.FieldClassEnum.Measure) {
+            if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
               if (!depMeasures[asName]) {
                 depMeasures[asName] = {};
               }
@@ -46,7 +45,7 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
               vField => vField.name === depName
             );
 
-            if (depViewField.fieldClass === enums.FieldClassEnum.Measure) {
+            if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
               if (!depMeasures[alias]) {
                 depMeasures[alias] = {};
               }
@@ -63,14 +62,14 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
 
       let field = join.view.fields.find(vField => vField.name === fieldName);
 
-      if (field.fieldClass === enums.FieldClassEnum.Calculation) {
+      if (field.fieldClass === api.FieldClassEnum.Calculation) {
         Object.keys(join.view.fieldsDepsAfterSingles[fieldName]).forEach(
           depName => {
             let depViewField = join.view.fields.find(
               vField => vField.name === depName
             );
 
-            if (depViewField.fieldClass === enums.FieldClassEnum.Measure) {
+            if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
               if (!depMeasures[asName]) {
                 depMeasures[asName] = {};
               }
@@ -89,7 +88,7 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
             mField => mField.name === depName
           );
 
-          if (depModelField.fieldClass === enums.FieldClassEnum.Measure) {
+          if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
             if (!depMeasures[constants.MF]) {
               depMeasures[constants.MF] = {};
             }
@@ -112,7 +111,7 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
               vField => vField.name === depName
             );
 
-            if (depViewField.fieldClass === enums.FieldClassEnum.Measure) {
+            if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
               if (!depMeasures[asName]) {
                 depMeasures[asName] = {};
               }

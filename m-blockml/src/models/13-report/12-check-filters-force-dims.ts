@@ -43,7 +43,7 @@ export function checkFiltersForceDims(item: {
           field = join.view.fields.find(vField => vField.name === fieldName);
         }
 
-        if (field.fieldClass !== enums.FieldClassEnum.Calculation) {
+        if (field.fieldClass !== api.FieldClassEnum.Calculation) {
           return;
         }
 

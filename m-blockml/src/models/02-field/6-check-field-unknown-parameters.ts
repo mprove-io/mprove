@@ -53,7 +53,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
           }
 
           switch (field.fieldClass) {
-            case enums.FieldClassEnum.Dimension: {
+            case api.FieldClassEnum.Dimension: {
               if (
                 [
                   enums.ParameterEnum.Dimension.toString(),
@@ -72,7 +72,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Dimension}`,
+                    message: `parameter "${parameter}" can not be used with ${api.FieldClassEnum.Dimension}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -87,7 +87,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
               break;
             }
 
-            case enums.FieldClassEnum.Time: {
+            case api.FieldClassEnum.Time: {
               if (
                 [
                   enums.ParameterEnum.Time.toString(),
@@ -103,7 +103,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Time}`,
+                    message: `parameter "${parameter}" can not be used with ${api.FieldClassEnum.Time}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -118,7 +118,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
               break;
             }
 
-            case enums.FieldClassEnum.Measure: {
+            case api.FieldClassEnum.Measure: {
               if (
                 [
                   enums.ParameterEnum.Measure.toString(),
@@ -138,7 +138,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Measure}`,
+                    message: `parameter "${parameter}" can not be used with ${api.FieldClassEnum.Measure}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -153,7 +153,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
               break;
             }
 
-            case enums.FieldClassEnum.Calculation: {
+            case api.FieldClassEnum.Calculation: {
               if (
                 [
                   enums.ParameterEnum.Calculation.toString(),
@@ -170,7 +170,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Calculation}`,
+                    message: `parameter "${parameter}" can not be used with ${api.FieldClassEnum.Calculation}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -185,7 +185,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
               break;
             }
 
-            case enums.FieldClassEnum.Filter: {
+            case api.FieldClassEnum.Filter: {
               if (
                 [
                   enums.ParameterEnum.Filter.toString(),
@@ -199,7 +199,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${enums.FieldClassEnum.Filter}`,
+                    message: `parameter "${parameter}" can not be used with ${api.FieldClassEnum.Filter}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],

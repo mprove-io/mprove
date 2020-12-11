@@ -32,7 +32,7 @@ export function transformTimes<T extends types.vmType>(item: {
     let newFields: interfaces.FieldAny[] = [];
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== enums.FieldClassEnum.Time) {
+      if (field.fieldClass !== api.FieldClassEnum.Time) {
         newFields.push(field);
         return;
       }
@@ -107,7 +107,7 @@ export function transformTimes<T extends types.vmType>(item: {
         let sqlTransformed: string;
         let name: string;
         let label: string;
-        let result: enums.FieldAnyResultEnum;
+        let result: api.FieldAnyResultEnum;
 
         switch (true) {
           case timeframe === enums.TimeframeEnum.DayOfWeek: {
@@ -120,7 +120,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.DayOfWeek;
+            result = api.FieldAnyResultEnum.DayOfWeek;
             break;
           }
 
@@ -134,7 +134,7 @@ export function transformTimes<T extends types.vmType>(item: {
               weekStart: item.weekStart
             });
 
-            result = enums.FieldAnyResultEnum.DayOfWeekIndex;
+            result = api.FieldAnyResultEnum.DayOfWeekIndex;
             break;
           }
 
@@ -148,7 +148,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Number;
+            result = api.FieldAnyResultEnum.Number;
             break;
           }
 
@@ -162,7 +162,7 @@ export function transformTimes<T extends types.vmType>(item: {
               weekStart: item.weekStart
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -176,7 +176,7 @@ export function transformTimes<T extends types.vmType>(item: {
               weekStart: item.weekStart
             });
 
-            result = enums.FieldAnyResultEnum.Number;
+            result = api.FieldAnyResultEnum.Number;
             break;
           }
 
@@ -189,7 +189,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -202,7 +202,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Number;
+            result = api.FieldAnyResultEnum.Number;
             break;
           }
 
@@ -215,7 +215,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -228,7 +228,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Number;
+            result = api.FieldAnyResultEnum.Number;
             break;
           }
 
@@ -252,7 +252,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -265,7 +265,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -288,7 +288,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -301,7 +301,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -314,7 +314,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.MonthName;
+            result = api.FieldAnyResultEnum.MonthName;
             break;
           }
 
@@ -327,7 +327,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Number;
+            result = api.FieldAnyResultEnum.Number;
             break;
           }
 
@@ -340,7 +340,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -353,7 +353,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.QuarterOfYear;
+            result = api.FieldAnyResultEnum.QuarterOfYear;
             break;
           }
 
@@ -366,7 +366,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -379,7 +379,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.String;
+            result = api.FieldAnyResultEnum.String;
             break;
           }
 
@@ -392,7 +392,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Ts;
+            result = api.FieldAnyResultEnum.Ts;
             break;
           }
 
@@ -405,7 +405,7 @@ export function transformTimes<T extends types.vmType>(item: {
               connection: x.connection
             });
 
-            result = enums.FieldAnyResultEnum.Yesno;
+            result = api.FieldAnyResultEnum.Yesno;
             break;
           }
 
@@ -439,7 +439,7 @@ export function transformTimes<T extends types.vmType>(item: {
           sql: sqlTransformed,
           sql_line_num: field.sql_line_num,
 
-          type: enums.FieldAnyTypeEnum.Custom,
+          type: api.FieldAnyTypeEnum.Custom,
           type_line_num: 0,
 
           result: result,
@@ -461,13 +461,13 @@ export function transformTimes<T extends types.vmType>(item: {
           //
           name: name,
           name_line_num: field.name_line_num,
-          fieldClass: enums.FieldClassEnum.Dimension,
+          fieldClass: api.FieldClassEnum.Dimension,
           // sqlReal: undefined,
           groupId: field.name,
           sqlTimestamp:
-            result === enums.FieldAnyResultEnum.Ts ? sqlTimestamp : undefined,
+            result === api.FieldAnyResultEnum.Ts ? sqlTimestamp : undefined,
           sqlTimestampName:
-            result === enums.FieldAnyResultEnum.Ts
+            result === api.FieldAnyResultEnum.Ts
               ? field.name + api.TRIPLE_UNDERSCORE + constants.TIMESTAMP
               : undefined
           // sqlTimestampReal: undefined,

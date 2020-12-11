@@ -1,4 +1,3 @@
-import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
@@ -24,7 +23,7 @@ export function makeContents(item: interfaces.VarsSub) {
       viewField => viewField.name === fieldName
     );
 
-    if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+    if (field.fieldClass === api.FieldClassEnum.Dimension) {
       if (helper.isDefined(field.unnest)) {
         flats[field.unnest] = 1;
       }

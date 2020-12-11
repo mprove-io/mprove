@@ -22,8 +22,8 @@ export function transformYesNoDimensions<T extends types.vmType>(item: {
 
     x.fields.forEach(field => {
       if (
-        field.fieldClass === enums.FieldClassEnum.Dimension &&
-        field.type === enums.FieldAnyTypeEnum.YesnoIsTrue
+        field.fieldClass === api.FieldClassEnum.Dimension &&
+        field.type === api.FieldAnyTypeEnum.YesnoIsTrue
       ) {
         field.sql = `CASE
       WHEN (${field.sql}) IS TRUE THEN 'Yes'

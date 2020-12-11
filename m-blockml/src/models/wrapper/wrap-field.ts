@@ -32,8 +32,8 @@ export function wrapField(item: {
     id: `${alias}.${field.name}`,
     hidden: fieldHidden,
     label: field.label,
-    fieldClass: <any>field.fieldClass,
-    result: <any>field.result,
+    fieldClass: field.fieldClass,
+    result: field.result,
     formatNumber: field.format_number,
     currencyPrefix: field.currency_prefix,
     currencySuffix: field.currency_suffix,
@@ -42,7 +42,7 @@ export function wrapField(item: {
     topLabel: node.label,
     forceDims: forceDims,
     description: field.description,
-    type: <any>field.type,
+    type: field.type,
     groupId: field.groupId,
     groupLabel: field.group_label,
     groupDescription: field.group_description
@@ -59,7 +59,7 @@ export function wrapField(item: {
     children: [],
     fieldFileName: item.fileName,
     fieldLineNum: field.name_line_num,
-    nodeClass: <any>field.fieldClass
+    nodeClass: field.fieldClass
   };
 
   if (helper.isDefined(field.groupId)) {
@@ -75,7 +75,7 @@ export function wrapField(item: {
         hidden: fieldHidden,
         isField: false,
         children: [fieldNode],
-        nodeClass: api.ModelNodeNodeClassEnum.Dimension
+        nodeClass: api.FieldClassEnum.Dimension
       };
 
       children.push(newGroupNode);

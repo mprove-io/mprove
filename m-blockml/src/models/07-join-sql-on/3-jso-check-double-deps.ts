@@ -68,7 +68,7 @@ export function jsoCheckDoubleDeps(item: {
               return;
             }
 
-            if (depField.fieldClass === enums.FieldClassEnum.Filter) {
+            if (depField.fieldClass === api.FieldClassEnum.Filter) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_FILTER,
@@ -88,7 +88,7 @@ export function jsoCheckDoubleDeps(item: {
               return;
             }
 
-            if (depField.fieldClass === enums.FieldClassEnum.Measure) {
+            if (depField.fieldClass === api.FieldClassEnum.Measure) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE,
@@ -108,7 +108,7 @@ export function jsoCheckDoubleDeps(item: {
               return;
             }
 
-            if (depField.fieldClass === enums.FieldClassEnum.Calculation) {
+            if (depField.fieldClass === api.FieldClassEnum.Calculation) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION,

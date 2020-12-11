@@ -59,7 +59,7 @@ export function checkFieldsDeps<T extends types.vmType>(item: {
             })
           );
           return;
-        } else if (dependentField.fieldClass === enums.FieldClassEnum.Filter) {
+        } else if (dependentField.fieldClass === api.FieldClassEnum.Filter) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.FIELD_REFS_FILTER,
@@ -77,8 +77,8 @@ export function checkFieldsDeps<T extends types.vmType>(item: {
           );
           return;
         } else if (
-          field.fieldClass === enums.FieldClassEnum.Dimension &&
-          dependentField.fieldClass === enums.FieldClassEnum.Measure
+          field.fieldClass === api.FieldClassEnum.Dimension &&
+          dependentField.fieldClass === api.FieldClassEnum.Measure
         ) {
           item.errors.push(
             new BmError({
@@ -97,8 +97,8 @@ export function checkFieldsDeps<T extends types.vmType>(item: {
           );
           return;
         } else if (
-          field.fieldClass === enums.FieldClassEnum.Dimension &&
-          dependentField.fieldClass === enums.FieldClassEnum.Calculation
+          field.fieldClass === api.FieldClassEnum.Dimension &&
+          dependentField.fieldClass === api.FieldClassEnum.Calculation
         ) {
           item.errors.push(
             new BmError({
@@ -117,8 +117,8 @@ export function checkFieldsDeps<T extends types.vmType>(item: {
           );
           return;
         } else if (
-          field.fieldClass === enums.FieldClassEnum.Measure &&
-          dependentField.fieldClass === enums.FieldClassEnum.Measure
+          field.fieldClass === api.FieldClassEnum.Measure &&
+          dependentField.fieldClass === api.FieldClassEnum.Measure
         ) {
           item.errors.push(
             new BmError({
@@ -137,8 +137,8 @@ export function checkFieldsDeps<T extends types.vmType>(item: {
           );
           return;
         } else if (
-          field.fieldClass === enums.FieldClassEnum.Measure &&
-          dependentField.fieldClass === enums.FieldClassEnum.Calculation
+          field.fieldClass === api.FieldClassEnum.Measure &&
+          dependentField.fieldClass === api.FieldClassEnum.Calculation
         ) {
           item.errors.push(
             new BmError({

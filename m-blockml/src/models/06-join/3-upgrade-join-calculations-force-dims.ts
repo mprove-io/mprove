@@ -1,5 +1,6 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
@@ -17,7 +18,7 @@ export function upgradeJoinCalculationsForceDims(item: {
   item.models.forEach(x => {
     x.joins.forEach(join => {
       join.view.fields.forEach(field => {
-        if (field.fieldClass === enums.FieldClassEnum.Calculation) {
+        if (field.fieldClass === api.FieldClassEnum.Calculation) {
           field.forceDims = {};
 
           Object.keys(field.prepForceDims).forEach(dimName => {

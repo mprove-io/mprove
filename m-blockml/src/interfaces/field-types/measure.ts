@@ -1,4 +1,4 @@
-import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 
 export interface Measure {
   hidden?: string; // boolean
@@ -13,10 +13,10 @@ export interface Measure {
   sql?: string;
   sql_line_num?: number;
 
-  type?: enums.FieldAnyTypeEnum;
+  type?: api.FieldAnyTypeEnum;
   type_line_num?: number;
 
-  result?: enums.FieldAnyResultEnum;
+  result?: api.FieldAnyResultEnum;
   result_line_num?: number;
 
   format_number?: string;
@@ -40,7 +40,7 @@ export interface Measure {
 
   name_line_num?: number;
 
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: api.FieldClassEnum;
 
   sqlReal?: string;
 

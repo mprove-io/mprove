@@ -30,7 +30,7 @@ export function makeFieldsDeps<T extends types.vmType>(item: {
     x.fields.forEach(field => {
       x.fieldsDeps[field.name] = {};
       if (
-        field.fieldClass !== enums.FieldClassEnum.Filter &&
+        field.fieldClass !== api.FieldClassEnum.Filter &&
         helper.isDefined(field.sql)
       ) {
         if (
@@ -55,7 +55,7 @@ export function makeFieldsDeps<T extends types.vmType>(item: {
       }
 
       if (
-        field.fieldClass === enums.FieldClassEnum.Measure &&
+        field.fieldClass === api.FieldClassEnum.Measure &&
         helper.isDefined(field.sql_key)
       ) {
         if (

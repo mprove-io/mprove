@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 
 export interface Time {
   hidden?: string; // boolean
@@ -28,5 +29,5 @@ export interface Time {
 
   name_line_num?: number;
 
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: api.FieldClassEnum;
 }

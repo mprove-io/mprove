@@ -1,4 +1,3 @@
-import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
@@ -44,7 +43,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
     let sqlKeyFinal;
     let sqlSelect;
 
-    if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+    if (field.fieldClass === api.FieldClassEnum.Dimension) {
       i++;
 
       sqlSelect = fieldName;
@@ -52,7 +51,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
       if (selected[fieldName]) {
         groupMainBy.push(`${i}`); // toString
       }
-    } else if (field.fieldClass === enums.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === api.FieldClassEnum.Measure) {
       i++;
 
       // remove ${ } on singles (no doubles exists in _real of view measures)
@@ -60,10 +59,10 @@ export function makeMainFields(item: interfaces.VarsSub) {
 
       if (
         [
-          enums.FieldAnyTypeEnum.SumByKey,
-          enums.FieldAnyTypeEnum.AverageByKey,
-          enums.FieldAnyTypeEnum.MedianByKey,
-          enums.FieldAnyTypeEnum.PercentileByKey
+          api.FieldAnyTypeEnum.SumByKey,
+          api.FieldAnyTypeEnum.AverageByKey,
+          api.FieldAnyTypeEnum.MedianByKey,
+          api.FieldAnyTypeEnum.PercentileByKey
         ].indexOf(field.type) > -1
       ) {
         // remove ${ } on singles (no doubles exists in _real of view measures)
@@ -71,7 +70,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
       }
 
       switch (true) {
-        case field.type === enums.FieldAnyTypeEnum.SumByKey: {
+        case field.type === api.FieldAnyTypeEnum.SumByKey: {
           if (item.connection.type === api.ConnectionTypeEnum.BigQuery) {
             item.extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -85,7 +84,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.AverageByKey: {
+        case field.type === api.FieldAnyTypeEnum.AverageByKey: {
           if (item.connection.type === api.ConnectionTypeEnum.BigQuery) {
             item.extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -99,7 +98,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.MedianByKey: {
+        case field.type === api.FieldAnyTypeEnum.MedianByKey: {
           item.extraUdfs[
             constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
           ] = 1;
@@ -113,7 +112,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.PercentileByKey: {
+        case field.type === api.FieldAnyTypeEnum.PercentileByKey: {
           item.extraUdfs[
             constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
           ] = 1;
@@ -127,7 +126,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.Min: {
+        case field.type === api.FieldAnyTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
             connection: item.connection
@@ -136,7 +135,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.Max: {
+        case field.type === api.FieldAnyTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
             connection: item.connection
@@ -145,7 +144,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.CountDistinct: {
+        case field.type === api.FieldAnyTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
             connection: item.connection
@@ -154,7 +153,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.List: {
+        case field.type === api.FieldAnyTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
             connection: item.connection
@@ -163,12 +162,12 @@ export function makeMainFields(item: interfaces.VarsSub) {
           break;
         }
 
-        case field.type === enums.FieldAnyTypeEnum.Custom: {
+        case field.type === api.FieldAnyTypeEnum.Custom: {
           sqlSelect = sqlFinal;
           break;
         }
       }
-    } else if (field.fieldClass === enums.FieldClassEnum.Calculation) {
+    } else if (field.fieldClass === api.FieldClassEnum.Calculation) {
       sqlFinal = api.MyRegex.removeBracketsOnCalculationSingles(field.sqlReal);
       // no need to substitute doubles (they not exists in view fields)
 
@@ -177,7 +176,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
 
     if (
       selected[fieldName] &&
-      field.fieldClass !== enums.FieldClassEnum.Calculation
+      field.fieldClass !== api.FieldClassEnum.Calculation
     ) {
       mainText.push(`  ${sqlSelect} as ${fieldName},`);
     }

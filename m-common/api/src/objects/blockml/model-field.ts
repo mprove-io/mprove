@@ -11,11 +11,11 @@ export class ModelField {
   @IsString()
   label: string;
 
-  @IsEnum(apiEnums.ModelFieldFieldClassEnum)
-  fieldClass: apiEnums.ModelFieldFieldClassEnum;
+  @IsEnum(apiEnums.FieldClassEnum)
+  fieldClass: apiEnums.FieldClassEnum;
 
-  @IsEnum(apiEnums.ModelFieldResultEnum)
-  result: apiEnums.ModelFieldResultEnum;
+  @IsEnum(apiEnums.FieldAnyResultEnum)
+  result: apiEnums.FieldAnyResultEnum;
 
   @IsString()
   sqlName: string;
@@ -34,8 +34,8 @@ export class ModelField {
   description?: string;
 
   @IsOptional()
-  @IsEnum(apiEnums.ModelFieldTypeEnum)
-  type?: apiEnums.ModelFieldTypeEnum;
+  @IsEnum(apiEnums.FieldAnyTypeEnum)
+  type?: apiEnums.FieldAnyTypeEnum;
 
   @IsOptional()
   @IsString()

@@ -3,7 +3,6 @@ import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
-import { constants } from '../../barrels/constants';
 
 let func = enums.FuncEnum.AwcMakeDoubleDepsAfterSingles;
 
@@ -43,7 +42,7 @@ export function awcMakeDoubleDepsAfterSingles(item: {
         let depField = join.view.fields.find(f => f.name === depName);
 
         switch (true) {
-          case depField.fieldClass === enums.FieldClassEnum.Calculation: {
+          case depField.fieldClass === api.FieldClassEnum.Calculation: {
             sqlAlwaysWhereCalcReal = api.MyRegex.replaceAndConvert(
               sqlAlwaysWhereCalcReal,
               depField.sqlReal,
@@ -55,7 +54,7 @@ export function awcMakeDoubleDepsAfterSingles(item: {
             break;
           }
 
-          case depField.fieldClass === enums.FieldClassEnum.Dimension: {
+          case depField.fieldClass === api.FieldClassEnum.Dimension: {
             if (
               helper.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName]
@@ -75,7 +74,7 @@ export function awcMakeDoubleDepsAfterSingles(item: {
             break;
           }
 
-          case depField.fieldClass === enums.FieldClassEnum.Measure: {
+          case depField.fieldClass === api.FieldClassEnum.Measure: {
             if (
               helper.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName]

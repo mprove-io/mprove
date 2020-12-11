@@ -1,5 +1,6 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
@@ -61,7 +62,7 @@ export function checkFieldsDoubleDeps(item: {
             return;
           }
 
-          if (depField.fieldClass === enums.FieldClassEnum.Filter) {
+          if (depField.fieldClass === api.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.MODEL_FIELD_REFS_FILTER,
@@ -79,8 +80,8 @@ export function checkFieldsDoubleDeps(item: {
           }
 
           if (
-            field.fieldClass === enums.FieldClassEnum.Dimension &&
-            depField.fieldClass === enums.FieldClassEnum.Measure
+            field.fieldClass === api.FieldClassEnum.Dimension &&
+            depField.fieldClass === api.FieldClassEnum.Measure
           ) {
             item.errors.push(
               new BmError({
@@ -102,8 +103,8 @@ export function checkFieldsDoubleDeps(item: {
           }
 
           if (
-            field.fieldClass === enums.FieldClassEnum.Dimension &&
-            depField.fieldClass === enums.FieldClassEnum.Calculation
+            field.fieldClass === api.FieldClassEnum.Dimension &&
+            depField.fieldClass === api.FieldClassEnum.Calculation
           ) {
             item.errors.push(
               new BmError({
@@ -125,8 +126,8 @@ export function checkFieldsDoubleDeps(item: {
           }
 
           if (
-            field.fieldClass === enums.FieldClassEnum.Measure &&
-            depField.fieldClass === enums.FieldClassEnum.Measure
+            field.fieldClass === api.FieldClassEnum.Measure &&
+            depField.fieldClass === api.FieldClassEnum.Measure
           ) {
             item.errors.push(
               new BmError({
@@ -148,8 +149,8 @@ export function checkFieldsDoubleDeps(item: {
           }
 
           if (
-            field.fieldClass === enums.FieldClassEnum.Measure &&
-            depField.fieldClass === enums.FieldClassEnum.Calculation
+            field.fieldClass === api.FieldClassEnum.Measure &&
+            depField.fieldClass === api.FieldClassEnum.Calculation
           ) {
             item.errors.push(
               new BmError({
