@@ -3,8 +3,8 @@ export * from './fraction/_index';
 
 export * from './connection-type.enum';
 
-export * from './field-any-result.enum';
-export * from './field-any-type.enum';
+export * from './field-result.enum';
+export * from './field-type.enum';
 export * from './field-class.enum';
 
 export * from './model-node-id-suffix.enum';

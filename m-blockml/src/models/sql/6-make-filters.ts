@@ -47,7 +47,7 @@ export function makeFilters(item: interfaces.VarsSql) {
               .find(j => j.as === asName)
               .view.fields.find(vField => vField.name === fieldName);
 
-      if (field.result === api.FieldAnyResultEnum.Ts) {
+      if (field.result === api.FieldResultEnum.Ts) {
         if (field.fieldClass === api.FieldClassEnum.Filter) {
           sqlTimestampSelect = constants.MPROVE_FILTER;
         } else if (asName === constants.MF) {

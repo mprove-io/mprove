@@ -1,4 +1,4 @@
-export enum FieldAnyTypeEnum {
+export enum FieldTypeEnum {
   CountDistinct = 'count_distinct', // measure
   SumByKey = 'sum_by_key', // measure
   AverageByKey = 'average_by_key', // measure

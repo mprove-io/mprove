@@ -51,7 +51,7 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           dimension.sqlReal = sqlReal;
 
           // sqlTimestampReal
-          if (dimension.result === api.FieldAnyResultEnum.Ts) {
+          if (dimension.result === api.FieldResultEnum.Ts) {
             let sqlTimestampReal = dimension.sqlTimestamp; // init
 
             let reg2 = api.MyRegex.CAPTURE_SINGLE_REF();
@@ -100,10 +100,10 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           // sqlKeyReal
           if (
             [
-              api.FieldAnyTypeEnum.SumByKey,
-              api.FieldAnyTypeEnum.AverageByKey,
-              api.FieldAnyTypeEnum.MedianByKey,
-              api.FieldAnyTypeEnum.PercentileByKey
+              api.FieldTypeEnum.SumByKey,
+              api.FieldTypeEnum.AverageByKey,
+              api.FieldTypeEnum.MedianByKey,
+              api.FieldTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init
@@ -151,10 +151,10 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           // sqlKeyReal
           if (
             [
-              api.FieldAnyTypeEnum.SumByKey,
-              api.FieldAnyTypeEnum.AverageByKey,
-              api.FieldAnyTypeEnum.MedianByKey,
-              api.FieldAnyTypeEnum.PercentileByKey
+              api.FieldTypeEnum.SumByKey,
+              api.FieldTypeEnum.AverageByKey,
+              api.FieldTypeEnum.MedianByKey,
+              api.FieldTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init

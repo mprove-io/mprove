@@ -110,10 +110,10 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
         if (
           [
-            api.FieldAnyTypeEnum.SumByKey,
-            api.FieldAnyTypeEnum.AverageByKey,
-            api.FieldAnyTypeEnum.MedianByKey,
-            api.FieldAnyTypeEnum.PercentileByKey
+            api.FieldTypeEnum.SumByKey,
+            api.FieldTypeEnum.AverageByKey,
+            api.FieldTypeEnum.MedianByKey,
+            api.FieldTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on doubles (no singles exists in _real of model measures)
@@ -128,10 +128,10 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
         if (
           [
-            api.FieldAnyTypeEnum.SumByKey,
-            api.FieldAnyTypeEnum.AverageByKey,
-            api.FieldAnyTypeEnum.MedianByKey,
-            api.FieldAnyTypeEnum.PercentileByKey
+            api.FieldTypeEnum.SumByKey,
+            api.FieldTypeEnum.AverageByKey,
+            api.FieldTypeEnum.MedianByKey,
+            api.FieldTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on singles (no doubles exists in _real of view measures)
@@ -143,7 +143,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
       }
 
       switch (true) {
-        case field.type === api.FieldAnyTypeEnum.SumByKey: {
+        case field.type === api.FieldTypeEnum.SumByKey: {
           if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
             item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -157,7 +157,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.AverageByKey: {
+        case field.type === api.FieldTypeEnum.AverageByKey: {
           if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
             item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -171,7 +171,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.MedianByKey: {
+        case field.type === api.FieldTypeEnum.MedianByKey: {
           item.mainUdfs[
             constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
           ] = 1;
@@ -185,7 +185,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.PercentileByKey: {
+        case field.type === api.FieldTypeEnum.PercentileByKey: {
           item.mainUdfs[
             constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
           ] = 1;
@@ -200,7 +200,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.Min: {
+        case field.type === api.FieldTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -209,7 +209,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.Max: {
+        case field.type === api.FieldTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -218,7 +218,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.CountDistinct: {
+        case field.type === api.FieldTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -227,7 +227,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.List: {
+        case field.type === api.FieldTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
             connection: item.model.connection
@@ -236,7 +236,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
           break;
         }
 
-        case field.type === api.FieldAnyTypeEnum.Custom: {
+        case field.type === api.FieldTypeEnum.Custom: {
           sqlSelect = sqlFinal;
           break;
         }

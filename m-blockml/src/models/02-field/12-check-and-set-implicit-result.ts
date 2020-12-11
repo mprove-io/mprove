@@ -24,29 +24,29 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(item: {
       if (helper.isUndefined(field.result)) {
         switch (field.fieldClass) {
           case api.FieldClassEnum.Dimension: {
-            if (field.type === api.FieldAnyTypeEnum.YesnoIsTrue) {
-              field.result = api.FieldAnyResultEnum.Yesno;
+            if (field.type === api.FieldTypeEnum.YesnoIsTrue) {
+              field.result = api.FieldResultEnum.Yesno;
               field.result_line_num = 0;
             } else {
-              field.result = api.FieldAnyResultEnum.String;
+              field.result = api.FieldResultEnum.String;
               field.result_line_num = 0;
             }
             return;
           }
 
           case api.FieldClassEnum.Measure: {
-            if (field.type === api.FieldAnyTypeEnum.List) {
-              field.result = api.FieldAnyResultEnum.String;
+            if (field.type === api.FieldTypeEnum.List) {
+              field.result = api.FieldResultEnum.String;
               field.result_line_num = 0;
             } else {
-              field.result = api.FieldAnyResultEnum.Number;
+              field.result = api.FieldResultEnum.Number;
               field.result_line_num = 0;
             }
             return;
           }
 
           case api.FieldClassEnum.Calculation: {
-            field.result = api.FieldAnyResultEnum.Number;
+            field.result = api.FieldResultEnum.Number;
             field.result_line_num = 0;
             return;
           }
@@ -72,10 +72,9 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(item: {
         switch (field.fieldClass) {
           case api.FieldClassEnum.Dimension: {
             if (
-              [
-                api.FieldAnyResultEnum.String,
-                api.FieldAnyResultEnum.Number
-              ].indexOf(field.result) < 0
+              [api.FieldResultEnum.String, api.FieldResultEnum.Number].indexOf(
+                field.result
+              ) < 0
             ) {
               item.errors.push(
                 new BmError({
@@ -97,10 +96,9 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(item: {
 
           case api.FieldClassEnum.Measure: {
             if (
-              [
-                api.FieldAnyResultEnum.String,
-                api.FieldAnyResultEnum.Number
-              ].indexOf(field.result) < 0
+              [api.FieldResultEnum.String, api.FieldResultEnum.Number].indexOf(
+                field.result
+              ) < 0
             ) {
               item.errors.push(
                 new BmError({
@@ -122,10 +120,9 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(item: {
 
           case api.FieldClassEnum.Calculation: {
             if (
-              [
-                api.FieldAnyResultEnum.String,
-                api.FieldAnyResultEnum.Number
-              ].indexOf(field.result) < 0
+              [api.FieldResultEnum.String, api.FieldResultEnum.Number].indexOf(
+                field.result
+              ) < 0
             ) {
               item.errors.push(
                 new BmError({
@@ -148,14 +145,14 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(item: {
           case api.FieldClassEnum.Filter: {
             if (
               [
-                api.FieldAnyResultEnum.String,
-                api.FieldAnyResultEnum.Number,
-                api.FieldAnyResultEnum.DayOfWeek,
-                api.FieldAnyResultEnum.DayOfWeekIndex,
-                api.FieldAnyResultEnum.MonthName,
-                api.FieldAnyResultEnum.QuarterOfYear,
-                api.FieldAnyResultEnum.Ts,
-                api.FieldAnyResultEnum.Yesno
+                api.FieldResultEnum.String,
+                api.FieldResultEnum.Number,
+                api.FieldResultEnum.DayOfWeek,
+                api.FieldResultEnum.DayOfWeekIndex,
+                api.FieldResultEnum.MonthName,
+                api.FieldResultEnum.QuarterOfYear,
+                api.FieldResultEnum.Ts,
+                api.FieldResultEnum.Yesno
               ].indexOf(field.result) < 0
             ) {
               item.errors.push(

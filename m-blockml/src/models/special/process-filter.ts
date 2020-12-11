@@ -6,7 +6,7 @@ import { barTimestamp } from '../../barrels/bar-timestamp';
 
 export function processFilter(item: {
   filterBricks: string[];
-  result: api.FieldAnyResultEnum;
+  result: api.FieldResultEnum;
   // parameters below do not affect validation
   weekStart?: api.ProjectWeekStartEnum;
   connection?: api.ProjectConnection;
@@ -72,7 +72,7 @@ export function processFilter(item: {
       return;
     }
 
-    if (result === api.FieldAnyResultEnum.Number) {
+    if (result === api.FieldResultEnum.Number) {
       // IS EQUAL TO
       // IS NOT EQUAL TO
       if ((r = api.MyRegex.BRICK_NUMBER_NOT_AND_DIGITS().exec(brick))) {
@@ -361,7 +361,7 @@ export function processFilter(item: {
           return;
         }
       }
-    } else if (result === api.FieldAnyResultEnum.String) {
+    } else if (result === api.FieldResultEnum.String) {
       // IS EQUAL TO
       // IS NOT EQUAL TO
       if ((r = api.MyRegex.BRICK_STRING_IS_EQUAL_TO().exec(brick))) {
@@ -531,7 +531,7 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldAnyResultEnum.Yesno) {
+    } else if (result === api.FieldResultEnum.Yesno) {
       // YESNO YES
       if ((r = api.MyRegex.BRICK_YESNO_IS_YES().exec(brick))) {
         condition = `${proc} = 'Yes'`;
@@ -573,7 +573,7 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldAnyResultEnum.Ts) {
+    } else if (result === api.FieldResultEnum.Ts) {
       let {
         currentTs,
         currentMinuteTs,
@@ -1039,7 +1039,7 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldAnyResultEnum.DayOfWeek) {
+    } else if (result === api.FieldResultEnum.DayOfWeek) {
       // IS
       // IS NOT
       if ((r = api.MyRegex.BRICK_DAY_OF_WEEK_IS().exec(brick))) {
@@ -1111,7 +1111,7 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldAnyResultEnum.DayOfWeekIndex) {
+    } else if (result === api.FieldResultEnum.DayOfWeekIndex) {
       if ((r = api.MyRegex.BRICK_DAY_OF_WEEK_INDEX_IS_EQUAL().exec(brick))) {
         not = r[1];
 
@@ -1214,7 +1214,7 @@ export function processFilter(item: {
           return;
         }
       }
-    } else if (result === api.FieldAnyResultEnum.MonthName) {
+    } else if (result === api.FieldResultEnum.MonthName) {
       // IS
       // IS NOT
       if ((r = api.MyRegex.BRICK_MONTH_NAME_IS().exec(brick))) {
@@ -1286,7 +1286,7 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldAnyResultEnum.QuarterOfYear) {
+    } else if (result === api.FieldResultEnum.QuarterOfYear) {
       // IS
       // IS NOT
       if ((r = api.MyRegex.BRICK_QUARTER_OF_YEAR_IS().exec(brick))) {

@@ -1,5 +1,5 @@
 /* eslint-disable id-blacklist */
-export enum FieldAnyResultEnum {
+export enum FieldResultEnum {
   String = 'string', // dimension, dimension_time, measure, calculation, filter
   Number = 'number', // dimension, dimension_time, measure, calculation, filter
   DayOfWeek = 'day_of_week', // dimension_time

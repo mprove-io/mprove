@@ -47,15 +47,15 @@ export function checkMeasures<T extends types.vmType>(item: {
         return;
       } else if (
         [
-          api.FieldAnyTypeEnum.CountDistinct,
-          api.FieldAnyTypeEnum.SumByKey,
-          api.FieldAnyTypeEnum.AverageByKey,
-          api.FieldAnyTypeEnum.MedianByKey,
-          api.FieldAnyTypeEnum.PercentileByKey,
-          api.FieldAnyTypeEnum.Min,
-          api.FieldAnyTypeEnum.Max,
-          api.FieldAnyTypeEnum.List,
-          api.FieldAnyTypeEnum.Custom
+          api.FieldTypeEnum.CountDistinct,
+          api.FieldTypeEnum.SumByKey,
+          api.FieldTypeEnum.AverageByKey,
+          api.FieldTypeEnum.MedianByKey,
+          api.FieldTypeEnum.PercentileByKey,
+          api.FieldTypeEnum.Min,
+          api.FieldTypeEnum.Max,
+          api.FieldTypeEnum.List,
+          api.FieldTypeEnum.Custom
         ].indexOf(field.type) < 0
       ) {
         item.errors.push(
@@ -75,10 +75,10 @@ export function checkMeasures<T extends types.vmType>(item: {
       } else if (
         !field.sql_key &&
         [
-          api.FieldAnyTypeEnum.SumByKey,
-          api.FieldAnyTypeEnum.AverageByKey,
-          api.FieldAnyTypeEnum.MedianByKey,
-          api.FieldAnyTypeEnum.PercentileByKey
+          api.FieldTypeEnum.SumByKey,
+          api.FieldTypeEnum.AverageByKey,
+          api.FieldTypeEnum.MedianByKey,
+          api.FieldTypeEnum.PercentileByKey
         ].indexOf(field.type) > -1
       ) {
         item.errors.push(
@@ -99,14 +99,14 @@ export function checkMeasures<T extends types.vmType>(item: {
 
       if ([api.ConnectionTypeEnum.BigQuery].indexOf(x.connection.type) < 0) {
         if (
-          field.type === api.FieldAnyTypeEnum.MedianByKey ||
-          field.type === api.FieldAnyTypeEnum.PercentileByKey
+          field.type === api.FieldTypeEnum.MedianByKey ||
+          field.type === api.FieldTypeEnum.PercentileByKey
         ) {
           item.errors.push(
             new BmError({
               title:
                 enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `consider using a "${api.FieldAnyTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
+              message: `consider using a "${api.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
               lines: [
                 {
                   line: field.type_line_num,
@@ -124,7 +124,7 @@ export function checkMeasures<T extends types.vmType>(item: {
             new BmError({
               title:
                 enums.ErTitleEnum.PERCENTILE_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `consider using a "${api.FieldAnyTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
+              message: `consider using a "${api.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
               lines: [
                 {
                   line: field.percentile_line_num,
@@ -138,7 +138,7 @@ export function checkMeasures<T extends types.vmType>(item: {
         }
       }
 
-      if (field.type === api.FieldAnyTypeEnum.PercentileByKey) {
+      if (field.type === api.FieldTypeEnum.PercentileByKey) {
         if (helper.isUndefined(field.percentile)) {
           item.errors.push(
             new BmError({

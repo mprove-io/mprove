@@ -13,7 +13,7 @@ export interface Filter {
   // sql?: string;
   // sql_line_num?: number;
 
-  result?: api.FieldAnyResultEnum;
+  result?: api.FieldResultEnum;
   result_line_num?: number;
 
   default?: string[];

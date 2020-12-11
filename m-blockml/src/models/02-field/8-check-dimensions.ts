@@ -31,10 +31,10 @@ export function checkDimensions<T extends types.vmType>(item: {
       }
 
       if (helper.isUndefined(field.type)) {
-        field.type = api.FieldAnyTypeEnum.Custom;
+        field.type = api.FieldTypeEnum.Custom;
         field.type_line_num = 0;
       } else if (
-        [api.FieldAnyTypeEnum.Custom, api.FieldAnyTypeEnum.YesnoIsTrue].indexOf(
+        [api.FieldTypeEnum.Custom, api.FieldTypeEnum.YesnoIsTrue].indexOf(
           field.type
         ) < 0
       ) {

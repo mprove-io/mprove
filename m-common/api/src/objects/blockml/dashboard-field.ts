@@ -19,8 +19,8 @@ export class DashboardField {
   @IsString()
   label: string;
 
-  @IsEnum(apiEnums.FieldAnyResultEnum)
-  result: apiEnums.FieldAnyResultEnum;
+  @IsEnum(apiEnums.FieldResultEnum)
+  result: apiEnums.FieldResultEnum;
 
   @ValidateNested()
   @Type(() => Fraction)

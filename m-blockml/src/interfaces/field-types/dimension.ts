@@ -13,10 +13,10 @@ export interface Dimension {
   sql?: string;
   sql_line_num?: number;
 
-  type?: api.FieldAnyTypeEnum;
+  type?: api.FieldTypeEnum;
   type_line_num?: number;
 
-  result?: api.FieldAnyResultEnum;
+  result?: api.FieldResultEnum;
   result_line_num?: number;
 
   unnest?: string;

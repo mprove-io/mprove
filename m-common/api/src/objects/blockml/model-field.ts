@@ -14,8 +14,8 @@ export class ModelField {
   @IsEnum(apiEnums.FieldClassEnum)
   fieldClass: apiEnums.FieldClassEnum;
 
-  @IsEnum(apiEnums.FieldAnyResultEnum)
-  result: apiEnums.FieldAnyResultEnum;
+  @IsEnum(apiEnums.FieldResultEnum)
+  result: apiEnums.FieldResultEnum;
 
   @IsString()
   sqlName: string;
@@ -34,8 +34,8 @@ export class ModelField {
   description?: string;
 
   @IsOptional()
-  @IsEnum(apiEnums.FieldAnyTypeEnum)
-  type?: apiEnums.FieldAnyTypeEnum;
+  @IsEnum(apiEnums.FieldTypeEnum)
+  type?: apiEnums.FieldTypeEnum;
 
   @IsOptional()
   @IsString()

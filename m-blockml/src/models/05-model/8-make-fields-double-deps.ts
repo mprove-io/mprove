@@ -44,10 +44,10 @@ export function makeFieldsDoubleDeps(item: {
       if (
         f.fieldClass === api.FieldClassEnum.Measure &&
         [
-          api.FieldAnyTypeEnum.SumByKey,
-          api.FieldAnyTypeEnum.AverageByKey,
-          api.FieldAnyTypeEnum.MedianByKey,
-          api.FieldAnyTypeEnum.PercentileByKey
+          api.FieldTypeEnum.SumByKey,
+          api.FieldTypeEnum.AverageByKey,
+          api.FieldTypeEnum.MedianByKey,
+          api.FieldTypeEnum.PercentileByKey
         ].indexOf(f.type) > -1
       ) {
         let r2;

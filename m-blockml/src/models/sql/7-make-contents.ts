@@ -77,7 +77,7 @@ export function makeContents(item: interfaces.VarsSql) {
           viewField => viewField.name === fieldName
         );
 
-        if (field.result === api.FieldAnyResultEnum.Ts) {
+        if (field.result === api.FieldResultEnum.Ts) {
           // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
           let sqlTimestampSelect = field.sqlTimestampReal;
 
