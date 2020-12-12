@@ -26,7 +26,7 @@ export function buildDashboard(item: {
     caller: item.caller
   });
 
-  dashboards = barDashboard.checkReportsExist({
+  dashboards = barDashboard.checkDashboardReportsExist({
     dashboards: dashboards,
     structId: item.structId,
     errors: item.errors,

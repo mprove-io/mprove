@@ -14,6 +14,6 @@ export interface Viz extends FileBasic {
   access_users?: string[];
   access_users_line_num?: number;
 
-  report?: Report;
-  report_line_num?: number;
+  reports?: Report[];
+  reports_line_num?: number;
 }

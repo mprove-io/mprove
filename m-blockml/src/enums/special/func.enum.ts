@@ -96,7 +96,10 @@ export enum FuncEnum {
 
   CheckDashboardAccessUsers = '12-dashboard/1-check-dashboard-access-users',
   CheckDashboardFilterDefaults = '12-dashboard/2-check-dashboard-filter-defaults',
-  CheckReportsExist = '12-dashboard/3-check-reports-exist',
+  CheckDashboardReportsExist = '12-dashboard/3-check-dashboard-reports-exist',
+
+  CheckVizAccessUsers = '13-viz/1-check-viz-access-users',
+  CheckVizReportsExist = '13-viz/2-check-viz-reports-exist',
 
   CheckReportIsObject = '14-report/1-check-report-is-object',
   CheckReportUnknownParameters = '14-report/2-check-report-unknown-parameters',

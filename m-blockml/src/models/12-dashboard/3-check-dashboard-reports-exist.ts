@@ -3,9 +3,9 @@ import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckReportsExist;
+let func = enums.FuncEnum.CheckDashboardReportsExist;
 
-export function checkReportsExist(item: {
+export function checkDashboardReportsExist(item: {
   dashboards: interfaces.Dashboard[];
   errors: BmError[];
   structId: string;

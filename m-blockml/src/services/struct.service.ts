@@ -229,6 +229,13 @@ export class StructService {
       caller: enums.CallerEnum.BuildDashboard
     });
 
+    vizs = barBuilder.buildViz({
+      vizs: vizs,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildViz
+    });
+
     dashboards = await barBuilder.buildReport({
       dashboards: dashboards,
       models: models,
@@ -246,8 +253,6 @@ export class StructService {
       errors: errors,
       caller: enums.CallerEnum.BuildDashboardChart
     });
-
-    // TODO: Visualizations
 
     barBuilder.logStruct({
       errors: errors,

@@ -6,13 +6,13 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildDashboard;
-let func = enums.FuncEnum.CheckReportsExist;
-let testId = 'v__1';
+let caller = enums.CallerEnum.BuildViz;
+let func = enums.FuncEnum.CheckVizReportsExist;
+let testId = 'e__viz_missing_reports';
 
 test(testId, async () => {
   let errors: BmError[];
-  let dashboards: interfaces.Dashboard[];
+  let vizs: interfaces.Viz[];
 
   try {
     let {
@@ -37,14 +37,15 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
+    vizs = await helper.readLog(fromDir, enums.LogTypeEnum.Vizs);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(0);
-  expect(dashboards.length).toBe(1);
+  expect(errors.length).toBe(1);
+  expect(vizs.length).toBe(0);
 
-  expect(dashboards[0].reports).toStrictEqual([]);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.VIZ_MISSING_REPORTS);
+  expect(errors[0].lines[0].line).toBe(1);
 });

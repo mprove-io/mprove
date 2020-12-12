@@ -35,7 +35,6 @@ export enum ParameterEnum {
   Model = 'model',
   Percentile = 'percentile',
   Reports = 'reports',
-  Report = 'report',
   Result = 'result',
   Select = 'select',
   Sorts = 'sorts',
