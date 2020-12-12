@@ -237,14 +237,14 @@ export class StructService {
       projectId: item.projectId,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.BuildReport
+      caller: enums.CallerEnum.BuildDashboardReport
     });
 
     dashboards = barBuilder.buildChart({
       dashboards: dashboards,
       structId: item.structId,
       errors: errors,
-      caller: enums.CallerEnum.BuildChart
+      caller: enums.CallerEnum.BuildDashboardChart
     });
 
     // TODO: Visualizations

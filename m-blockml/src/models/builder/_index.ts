@@ -10,7 +10,7 @@ export * from './9-build-sort-joins';
 export * from './10-build-sql-always-where';
 export * from './11-build-sql-always-where-calc';
 export * from './12-build-dashboard';
-export * from './13-build-report';
-export * from './14-build-chart';
+export * from './14-build-report';
+export * from './15-build-chart';
 
 export * from './log-struct';

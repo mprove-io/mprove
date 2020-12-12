@@ -15,8 +15,13 @@ export enum CallerEnum {
   BuildSqlAlwaysWhere = '10-BuildSqlAlwaysWhere',
   BuildSqlAlwaysWhereCalc = '11-BuildSqlAlwaysWhereCalc',
   BuildDashboard = '12-BuildDashboard',
-  BuildReport = '13-BuildReport',
-  BuildChart = '14-BuildChart',
+  BuildViz = '13-BuildViz',
+
+  BuildDashboardReport = '14-BuildDashboardReport',
+  BuildVizReport = '14-BuildVizReport',
+
+  BuildDashboardChart = '15-BuildDashboardChart',
+  BuildVizChart = '15-BuildVizChart',
 
   RebuildStruct = 'RebuildStruct',
   ProcessDashboard = 'ProcessDashboard',
