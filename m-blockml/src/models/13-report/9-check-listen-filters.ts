@@ -26,6 +26,7 @@ export function checkListenFilters(item: {
       report.listen = {};
 
       if (helper.isUndefined(report.listen_filters)) {
+        report.listen_filters = {};
         return;
       }
 

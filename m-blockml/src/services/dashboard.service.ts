@@ -15,8 +15,8 @@ export class DashboardService {
     repoId: string;
     weekStart: api.ProjectWeekStartEnum;
     udfsDict: api.UdfsDict;
-    modelsContent: string[];
-    dashboardContent: string;
+    models: interfaces.Model[];
+    dashboard: interfaces.Dashboard;
     newDashboardId: string;
     newDashboardFields: api.DashboardField[];
   }) {
@@ -26,14 +26,11 @@ export class DashboardService {
       repoId,
       weekStart,
       udfsDict,
-      modelsContent,
-      dashboardContent,
+      models,
+      dashboard,
       newDashboardId,
       newDashboardFields
     } = item;
-
-    let models: interfaces.Model[] = modelsContent.map(mc => JSON.parse(mc));
-    let dashboard: interfaces.Dashboard = JSON.parse(dashboardContent);
 
     let dashboardFilters: interfaces.FilterBricksDictionary = {};
 
@@ -48,11 +45,13 @@ export class DashboardService {
     await forEachSeries(dashboard.reports, async report => {
       let filters: interfaces.FilterBricksDictionary = {};
 
-      Object.keys(report.default).forEach(defaultFilter => {
-        if (report.default[defaultFilter].length > 0) {
-          filters[defaultFilter] = report.default[defaultFilter];
-        }
-      });
+      Object.keys(report.default_filters)
+        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .forEach(defaultFilter => {
+          if (report.default_filters[defaultFilter].length > 0) {
+            filters[defaultFilter] = report.default_filters[defaultFilter];
+          }
+        });
 
       // default override by listen
       Object.keys(report.listen).forEach(filter => {

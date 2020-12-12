@@ -24,9 +24,8 @@ export function checkDefaultFilters(item: {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      report.default = {};
-
       if (helper.isUndefined(report.default_filters)) {
+        report.default_filters = {};
         return;
       }
 
@@ -219,10 +218,6 @@ export function checkDefaultFilters(item: {
             );
             return;
           }
-
-          report.default[defaultFilter] = JSON.parse(
-            JSON.stringify(report.default_filters[defaultFilter])
-          );
         });
     });
 

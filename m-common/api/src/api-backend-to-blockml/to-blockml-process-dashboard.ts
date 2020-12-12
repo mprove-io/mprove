@@ -20,11 +20,9 @@ export class ToBlockmlProcessDashboardRequestPayload {
   @Type(() => apiObjects.UdfsDict)
   readonly udfsDict: apiObjects.UdfsDict;
 
-  @IsString({ each: true })
-  readonly modelsContent: string[];
+  readonly modelContents: any[];
 
-  @IsString()
-  readonly dashboardContent: string;
+  readonly dashboardContent: any;
 
   @IsString()
   readonly newDashboardId: string;

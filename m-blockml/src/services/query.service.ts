@@ -12,16 +12,9 @@ export class QueryService {
     weekStart: api.ProjectWeekStartEnum;
     udfsDict: api.UdfsDict;
     mconfig: api.Mconfig;
-    modelContent: string;
+    model: interfaces.Model;
   }) {
-    let {
-      projectId,
-      structId,
-      weekStart,
-      udfsDict,
-      mconfig,
-      modelContent
-    } = item;
+    let { projectId, structId, weekStart, udfsDict, mconfig, model } = item;
 
     let { select, sorts, timezone, limit, filters } = mconfig;
 
@@ -34,7 +27,7 @@ export class QueryService {
     });
 
     let { sql, filtersFractions } = await barSpecial.genSql({
-      model: JSON.parse(modelContent),
+      model: model,
       select: select,
       sorts: sorts,
       timezone: timezone,

@@ -21,8 +21,7 @@ export class ToBlockmlProcessQueryRequestPayload {
   @Type(() => apiObjects.Mconfig)
   readonly mconfig: apiObjects.Mconfig;
 
-  @IsString()
-  readonly modelContent: string;
+  readonly modelContent: any;
 }
 
 export class ToBlockmlProcessQueryRequest {

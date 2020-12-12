@@ -67,8 +67,6 @@ export interface Report {
 
   listen: { [a: string]: string };
 
-  default: FilterBricksDictionary;
-
   combinedFilters: FilterBricksDictionary;
 
   filtersFractions: {

@@ -1,7 +1,8 @@
 import { interfaces } from '../../barrels/interfaces';
+import { helper } from '../../barrels/helper';
 
 export function makeNeedsAll(item: interfaces.VarsSql) {
-  let needsAll = JSON.parse(JSON.stringify(item.needsDoubles));
+  let needsAll = helper.makeCopy(item.needsDoubles);
 
   Object.keys(item.joins)
     .filter(alias => alias !== item.model.fromAs)

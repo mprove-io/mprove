@@ -22,8 +22,7 @@ export class Dashboard {
   @IsString()
   dashboardId: string;
 
-  @IsString()
-  content: string;
+  content: any;
 
   @IsString({ each: true })
   accessUsers: string[];

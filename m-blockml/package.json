@@ -21,7 +21,7 @@
     "circular": "madge --circular --extensions ts src",
     "test": "npm-run-all clean-logs && npm run lint && npm run circular && jest",
     "t": "jest",
-    "clean-logs": "rimraf \"./**/logs\""
+    "clean-logs": "rimraf \"./src/**/logs\""
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^1.15.2",

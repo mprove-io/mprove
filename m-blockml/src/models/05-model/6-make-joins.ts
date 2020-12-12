@@ -49,7 +49,7 @@ export function makeJoins(item: {
       let viewLabel = view.label;
       let viewDescription = view.description;
 
-      j.view = JSON.parse(JSON.stringify(view));
+      j.view = helper.makeCopy(view);
 
       j.label = helper.isDefined(j.label) ? j.label : viewLabel;
 

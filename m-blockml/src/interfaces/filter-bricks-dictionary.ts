@@ -1,3 +1,3 @@
 export class FilterBricksDictionary {
-  [fieldId: string]: string[];
+  [filterName: string]: string[];
 }

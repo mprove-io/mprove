@@ -77,7 +77,7 @@ export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
           return;
         }
 
-        x.filters[field.name] = JSON.parse(JSON.stringify(field.default));
+        x.filters[field.name] = helper.makeCopy(field.default);
       }
     });
 

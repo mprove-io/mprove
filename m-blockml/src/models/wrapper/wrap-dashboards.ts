@@ -42,7 +42,7 @@ export function wrapDashboards(item: {
       repoId: item.repoId,
       dashboardId: x.name,
       structId: item.structId,
-      content: JSON.stringify(x),
+      content: x,
       accessUsers: x.access_users || [],
       title: x.title,
       description: x.description,

@@ -217,7 +217,7 @@ export function wrapModels(item: {
         repoId: item.repoId,
         structId: item.structId,
         modelId: x.name,
-        content: JSON.stringify(x),
+        content: x,
         accessUsers: x.access_users ? x.access_users : [],
         label: x.label,
         description: x.description,

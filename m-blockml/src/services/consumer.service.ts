@@ -45,7 +45,7 @@ export class ConsumerService {
         repoId,
         weekStart,
         udfsDict,
-        modelsContent,
+        modelContents,
         dashboardContent,
         newDashboardId,
         newDashboardFields
@@ -57,8 +57,8 @@ export class ConsumerService {
         repoId: repoId,
         weekStart: weekStart,
         udfsDict: udfsDict,
-        modelsContent: modelsContent,
-        dashboardContent: dashboardContent,
+        models: modelContents,
+        dashboard: dashboardContent,
         newDashboardId: newDashboardId,
         newDashboardFields: newDashboardFields
       });
@@ -115,7 +115,7 @@ export class ConsumerService {
         weekStart: weekStart,
         udfsDict: udfsDict,
         mconfig: mconfig,
-        modelContent: modelContent
+        model: modelContent
       });
 
       let response: api.ToBlockmlProcessQueryResponse = {

@@ -1,4 +1,5 @@
 import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
@@ -18,11 +19,13 @@ export function combineReportFilters(item: {
     x.reports.forEach(report => {
       report.combinedFilters = {};
 
-      Object.keys(report.default).forEach(defaultFilter => {
-        report.combinedFilters[defaultFilter] = JSON.parse(
-          JSON.stringify(report.default_filters[defaultFilter])
-        );
-      });
+      Object.keys(report.default_filters)
+        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .forEach(defaultFilter => {
+          report.combinedFilters[defaultFilter] = helper.makeCopy(
+            report.default_filters[defaultFilter]
+          );
+        });
 
       // default override by listen
       Object.keys(report.listen).forEach(listenFilter => {
@@ -30,8 +33,8 @@ export function combineReportFilters(item: {
 
         let dashFilter = Object.keys(x.filters).find(f => f === listen);
 
-        report.combinedFilters[listenFilter] = JSON.parse(
-          JSON.stringify(x.filters[dashFilter])
+        report.combinedFilters[listenFilter] = helper.makeCopy(
+          x.filters[dashFilter]
         );
       });
     });

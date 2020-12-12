@@ -22,8 +22,7 @@ export class Model {
   @IsString()
   modelId: string;
 
-  @IsString()
-  content: string;
+  content: any;
 
   @IsString({ each: true })
   accessUsers: string[];
