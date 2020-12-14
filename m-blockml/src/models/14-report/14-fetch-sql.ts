@@ -14,7 +14,6 @@ export async function fetchSql<T extends types.vdType>(item: {
   models: interfaces.Model[];
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
-  projectId: string;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -45,7 +44,6 @@ export async function fetchSql<T extends types.vdType>(item: {
         limit: report.limit,
         filters: filters,
         weekStart: item.weekStart,
-        projectId: item.projectId,
         udfsDict: item.udfsDict,
         structId: item.structId,
         errors: item.errors,

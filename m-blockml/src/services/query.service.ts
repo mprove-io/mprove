@@ -34,7 +34,6 @@ export class QueryService {
       limit: limit.toString(),
       filters: newFilters,
       weekStart: weekStart,
-      projectId: projectId,
       udfsDict: udfsDict,
       structId: structId,
       errors: [],

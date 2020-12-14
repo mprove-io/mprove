@@ -14,7 +14,6 @@ export function processViewRefs(item: {
   views: interfaces.View[];
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
-  projectId: string;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -45,7 +44,6 @@ export function processViewRefs(item: {
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       connection: x.connection,
-      projectId: item.projectId,
       structId: item.structId
     }).split('\n');
 

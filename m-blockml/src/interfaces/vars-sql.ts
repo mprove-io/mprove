@@ -13,9 +13,6 @@ export interface VarsSql {
     [s: string]: api.Fraction[];
   };
   weekStart: api.ProjectWeekStartEnum;
-  // connectionType: api.ConnectionTypeEnum;
-  // bqProject: string;
-  projectId: string;
   structId: string;
   udfsDict: api.UdfsDict;
   depMeasures: {

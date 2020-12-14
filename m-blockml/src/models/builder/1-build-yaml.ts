@@ -8,7 +8,6 @@ export function buildYaml(item: {
   errors: BmError[];
   files: api.File[];
   structId: string;
-  projectId: string;
   weekStart: api.ProjectWeekStartEnum;
   connections: api.ProjectConnection[];
   caller: enums.CallerEnum;

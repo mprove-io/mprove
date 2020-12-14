@@ -12,7 +12,6 @@ export function substituteViewRefsRecursive(item: {
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
-  projectId: string;
   structId: string;
 }) {
   let input = item.input;
@@ -35,7 +34,6 @@ export function substituteViewRefsRecursive(item: {
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       connection: item.connection,
-      projectId: item.projectId,
       structId: item.structId
     });
 
@@ -62,7 +60,6 @@ export function substituteViewRefsRecursive(item: {
         udfsDict: item.udfsDict,
         weekStart: item.weekStart,
         connection: item.connection,
-        projectId: item.projectId,
         structId: item.structId
       });
     }

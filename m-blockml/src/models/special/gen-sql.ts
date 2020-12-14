@@ -12,7 +12,6 @@ interface GenSqlItem {
   limit: string;
   filters: interfaces.FilterBricksDictionary;
   udfsDict: api.UdfsDict;
-  projectId: string;
   weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   structId: string;
@@ -34,7 +33,6 @@ function genSqlPro(item: GenSqlItem) {
     filters: item.filters,
     filtersFractions: {},
     weekStart: item.weekStart,
-    projectId: item.projectId,
     structId: item.structId,
     udfsDict: item.udfsDict,
     depMeasures: undefined,

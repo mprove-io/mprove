@@ -29,7 +29,6 @@ export function wrapVizs(item: {
       repoId: item.repoId,
       vizId: x.name,
       structId: item.structId,
-      content: x,
       accessUsers: x.access_users || [],
       gr: x.group,
       hidden: helper.toBoolean(x.hidden),

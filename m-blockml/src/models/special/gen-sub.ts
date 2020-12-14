@@ -8,7 +8,6 @@ export function genSub(item: {
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
-  projectId: string;
   structId: string;
 }) {
   let vars: interfaces.VarsSub = {
@@ -16,7 +15,6 @@ export function genSub(item: {
     select: item.select,
     weekStart: item.weekStart,
     connection: item.connection,
-    projectId: item.projectId,
     structId: item.structId,
     udfsDict: item.udfsDict,
     depMeasures: undefined,

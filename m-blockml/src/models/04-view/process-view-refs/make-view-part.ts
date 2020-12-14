@@ -12,7 +12,6 @@ export function makeViewPart(item: {
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
-  projectId: string;
   structId: string;
 }) {
   let sub = barSpecial.genSub({
@@ -21,7 +20,6 @@ export function makeViewPart(item: {
     udfsDict: item.udfsDict,
     weekStart: item.weekStart,
     connection: item.connection,
-    projectId: item.projectId,
     structId: item.structId
   });
 

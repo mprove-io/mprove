@@ -29,7 +29,6 @@ export class StructService {
     } = await this.rebuildStructStateless({
       files: files,
       weekStart: weekStart,
-      projectId: projectId,
       structId: structId,
       connections: connections
     });
@@ -93,7 +92,6 @@ export class StructService {
   async rebuildStruct(item: {
     dir: string;
     structId: string;
-    projectId: string;
     weekStart: api.ProjectWeekStartEnum;
     connections: api.ProjectConnection[];
   }): Promise<interfaces.Struct> {
@@ -106,7 +104,6 @@ export class StructService {
     return await this.rebuildStructStateless({
       files: files,
       structId: item.structId,
-      projectId: item.projectId,
       weekStart: item.weekStart,
       connections: item.connections
     });
@@ -115,7 +112,6 @@ export class StructService {
   async rebuildStructStateless(item: {
     files: api.File[];
     structId: string;
-    projectId: string;
     weekStart: api.ProjectWeekStartEnum;
     connections: api.ProjectConnection[];
   }): Promise<interfaces.Struct> {
@@ -129,7 +125,6 @@ export class StructService {
 
     let yamlBuildItem = barBuilder.buildYaml({
       files: item.files,
-      projectId: item.projectId,
       weekStart: item.weekStart,
       connections: item.connections,
       structId: item.structId,
@@ -178,7 +173,6 @@ export class StructService {
       udfs: udfs,
       udfsDict: udfsDict,
       weekStart: item.weekStart,
-      projectId: item.projectId,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.BuildView
@@ -254,7 +248,6 @@ export class StructService {
       models: models,
       udfsDict: udfsDict,
       weekStart: item.weekStart,
-      projectId: item.projectId,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.BuildDashboardReport
@@ -265,7 +258,6 @@ export class StructService {
       models: models,
       udfsDict: udfsDict,
       weekStart: item.weekStart,
-      projectId: item.projectId,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.BuildVizReport

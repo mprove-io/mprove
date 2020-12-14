@@ -10,7 +10,6 @@ export function buildView(item: {
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
-  projectId: string;
   structId: string;
   caller: enums.CallerEnum;
 }) {
@@ -77,7 +76,6 @@ export function buildView(item: {
     views: views,
     udfsDict: item.udfsDict,
     weekStart: item.weekStart,
-    projectId: item.projectId,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller

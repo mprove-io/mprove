@@ -6,7 +6,6 @@ export interface VarsSub {
   select: string[];
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
-  projectId: string;
   structId: string;
   udfsDict: api.UdfsDict;
   depMeasures: {

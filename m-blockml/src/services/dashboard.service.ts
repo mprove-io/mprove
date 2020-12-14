@@ -74,7 +74,6 @@ export class DashboardService {
         limit: report.limit,
         filters: filters,
         weekStart: weekStart,
-        projectId: projectId,
         udfsDict: udfsDict,
         structId: structId,
         errors: [],

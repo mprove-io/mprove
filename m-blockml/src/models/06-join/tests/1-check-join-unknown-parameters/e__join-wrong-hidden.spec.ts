@@ -31,7 +31,6 @@ test(testId, async () => {
     await structService.rebuildStruct({
       dir: dataDir,
       structId: structId,
-      projectId: 'p1',
       connections: [connection],
       weekStart: api.ProjectWeekStartEnum.Monday
     });

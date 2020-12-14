@@ -9,7 +9,6 @@ export async function buildReport<T extends types.vdType>(item: {
   entities: Array<T>;
   models: interfaces.Model[];
   udfsDict: api.UdfsDict;
-  projectId: string;
   weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   structId: string;
@@ -119,7 +118,6 @@ export async function buildReport<T extends types.vdType>(item: {
     models: item.models,
     udfsDict: item.udfsDict,
     weekStart: item.weekStart,
-    projectId: item.projectId,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
