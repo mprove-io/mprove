@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildViz;
 let func = enums.FuncEnum.CheckVizReportsExist;
-let testId = 'e__viz_missing_reports';
+let testId = 'e__viz-too-many-reports-reports';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -46,6 +46,6 @@ test(testId, async () => {
   expect(errors.length).toBe(1);
   expect(vizs.length).toBe(0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.VIZ_MISSING_REPORTS);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.VIZ_TOO_MANY_REPORTS);
   expect(errors[0].lines[0].line).toBe(1);
 });

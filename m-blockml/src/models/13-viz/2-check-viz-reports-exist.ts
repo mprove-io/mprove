@@ -39,6 +39,23 @@ export function checkVizReportsExist(item: {
       return;
     }
 
+    if (x.reports.length > 1) {
+      item.errors.push(
+        new BmError({
+          title: enums.ErTitleEnum.VIZ_TOO_MANY_REPORTS,
+          message: `${api.FileExtensionEnum.Viz} must have exactly one report`,
+          lines: [
+            {
+              line: x.viz_line_num,
+              name: x.fileName,
+              path: x.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
     if (errorsOnStart === item.errors.length) {
       newVizs.push(x);
     }
