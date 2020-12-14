@@ -19,3 +19,4 @@ export * from './timezone';
 export * from './udfs-dict';
 export * from './views-pack-view';
 export * from './views-pack';
+export * from './viz';

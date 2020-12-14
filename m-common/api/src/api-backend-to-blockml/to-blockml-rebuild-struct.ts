@@ -41,12 +41,12 @@ export class ToBlockmlRebuildStructResponsePayload {
   readonly errorsPack: apiObjects.ErrorsPack;
 
   @ValidateNested()
-  @Type(() => apiObjects.ViewsPack)
-  readonly viewsPack: apiObjects.ViewsPack;
-
-  @ValidateNested()
   @Type(() => apiObjects.UdfsDict)
   readonly udfsDict: apiObjects.UdfsDict;
+
+  @ValidateNested()
+  @Type(() => apiObjects.ViewsPack)
+  readonly viewsPack: apiObjects.ViewsPack;
 
   @ValidateNested()
   @Type(() => apiObjects.Model)
@@ -56,7 +56,9 @@ export class ToBlockmlRebuildStructResponsePayload {
   @Type(() => apiObjects.Dashboard)
   readonly dashboards: apiObjects.Dashboard[];
 
-  // TODO: vizs
+  @ValidateNested()
+  @Type(() => apiObjects.Viz)
+  readonly vizs: apiObjects.Viz[];
 
   @ValidateNested()
   @Type(() => apiObjects.Mconfig)

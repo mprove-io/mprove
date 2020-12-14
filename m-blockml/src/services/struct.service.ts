@@ -19,15 +19,20 @@ export class StructService {
   }) {
     let { files, weekStart, connections, projectId, repoId, structId } = item;
 
-    let struct: interfaces.Struct = await this.rebuildStructStateless({
+    let {
+      errors,
+      udfsDict,
+      views,
+      models,
+      dashboards,
+      vizs
+    } = await this.rebuildStructStateless({
       files: files,
       weekStart: weekStart,
       projectId: projectId,
       structId: structId,
       connections: connections
     });
-
-    let { udfsDict, errors, models, views, dashboards } = struct;
 
     let errorsPack = barWrapper.wrapErrors({
       projectId: projectId,
@@ -61,15 +66,23 @@ export class StructService {
       dashboards: dashboards
     });
 
-    let queries = [...dashQueries];
-    let mconfigs = [...dashMconfigs];
+    let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapVizs({
+      projectId: projectId,
+      repoId: repoId,
+      structId: structId,
+      vizs: vizs
+    });
+
+    let queries = [...dashQueries, ...vizQueries];
+    let mconfigs = [...dashMconfigs, ...vizMconfigs];
 
     let payload: api.ToBlockmlRebuildStructResponsePayload = {
       errorsPack: errorsPack,
-      viewsPack: viewsPack,
       udfsDict: udfsDict,
+      viewsPack: viewsPack,
       models: apiModels,
       dashboards: apiDashboards,
+      vizs: apiVizs,
       mconfigs: mconfigs,
       queries: queries
     };
