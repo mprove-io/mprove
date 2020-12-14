@@ -44,7 +44,9 @@ export function checkTopUnknownParameters(item: {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_UDF_PARAMETER,
-                  message: `parameter "${parameter}" can not be used on top level of .udf file`,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${api.FileExtensionEnum.Udf} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -75,7 +77,9 @@ export function checkTopUnknownParameters(item: {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_VIEW_PARAMETER,
-                  message: `parameter "${parameter}" can not be used on top level of .view file`,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${api.FileExtensionEnum.View} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -111,7 +115,9 @@ export function checkTopUnknownParameters(item: {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_MODEL_PARAMETER,
-                  message: `parameter "${parameter}" can not be used on top level of .model file`,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${api.FileExtensionEnum.Model} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -142,7 +148,39 @@ export function checkTopUnknownParameters(item: {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.UNKNOWN_DASHBOARD_PARAMETER,
-                  message: `parameter "${parameter}" can not be used on top level of .dashboard file`,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${api.FileExtensionEnum.Dashboard} file`,
+                  lines: [
+                    {
+                      line: file[parameter + constants.LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
+
+          case api.FileExtensionEnum.Viz: {
+            if (
+              [
+                enums.ParameterEnum.Viz.toString(),
+                enums.ParameterEnum.Group.toString(),
+                enums.ParameterEnum.Hidden.toString(),
+                enums.ParameterEnum.AccessUsers.toString(),
+                enums.ParameterEnum.Reports.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: enums.ErTitleEnum.UNKNOWN_VIZ_PARAMETER,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${api.FileExtensionEnum.Viz} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
