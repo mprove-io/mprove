@@ -10,14 +10,23 @@ import { barWrapper } from '../barrels/bar-wrapper';
 @Injectable()
 export class StructService {
   async wrapStruct(item: {
-    files: api.File[];
-    weekStart: api.ProjectWeekStartEnum;
-    connections: api.ProjectConnection[];
+    organizationId: string;
     projectId: string;
     repoId: string;
     structId: string;
+    files: api.File[];
+    weekStart: api.ProjectWeekStartEnum;
+    connections: api.ProjectConnection[];
   }) {
-    let { files, weekStart, connections, projectId, repoId, structId } = item;
+    let {
+      organizationId,
+      projectId,
+      repoId,
+      structId,
+      files,
+      weekStart,
+      connections
+    } = item;
 
     let {
       errors,
@@ -33,21 +42,12 @@ export class StructService {
       connections: connections
     });
 
-    let errorsPack = barWrapper.wrapErrors({
-      projectId: projectId,
-      repoId: repoId,
-      structId: structId,
-      errors: errors
-    });
+    let apiErrors = barWrapper.wrapErrors({ errors: errors });
 
-    let viewsPack = barWrapper.wrapViews({
-      projectId: projectId,
-      repoId: repoId,
-      structId: structId,
-      views: views
-    });
+    let apiViews = barWrapper.wrapViews({ views: views });
 
     let apiModels = barWrapper.wrapModels({
+      organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
       structId: structId,
@@ -59,6 +59,7 @@ export class StructService {
       dashMconfigs,
       dashQueries
     } = barWrapper.wrapDashboards({
+      organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
       structId: structId,
@@ -66,6 +67,7 @@ export class StructService {
     });
 
     let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapVizs({
+      organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
       structId: structId,
@@ -76,9 +78,9 @@ export class StructService {
     let mconfigs = [...dashMconfigs, ...vizMconfigs];
 
     let payload: api.ToBlockmlRebuildStructResponsePayload = {
-      errorsPack: errorsPack,
+      errors: apiErrors,
       udfsDict: udfsDict,
-      viewsPack: viewsPack,
+      views: apiViews,
       models: apiModels,
       dashboards: apiDashboards,
       vizs: apiVizs,

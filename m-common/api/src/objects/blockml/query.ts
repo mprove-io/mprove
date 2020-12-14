@@ -3,13 +3,16 @@ import * as apiEnums from '../../enums/_index';
 
 export class Query {
   @IsString()
-  queryId: string;
+  organizationId: string;
 
   @IsString()
   projectId: string;
 
   @IsString()
   structId: string;
+
+  @IsString()
+  queryId: string;
 
   // @IsString({ each: true })
   // pdtDeps: string[];

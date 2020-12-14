@@ -11,6 +11,9 @@ import { Report } from './report';
 
 export class Dashboard {
   @IsString()
+  organizationId: string;
+
+  @IsString()
   projectId: string;
 
   @IsString()

@@ -11,6 +11,9 @@ import { ModelNode } from './model-node';
 
 export class Model {
   @IsString()
+  organizationId: string;
+
+  @IsString()
   projectId: string;
 
   @IsString()

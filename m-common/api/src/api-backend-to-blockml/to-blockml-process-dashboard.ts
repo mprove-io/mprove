@@ -5,6 +5,9 @@ import * as apiEnums from '../enums/_index';
 
 export class ToBlockmlProcessDashboardRequestPayload {
   @IsString()
+  readonly organizationId: string;
+
+  @IsString()
   readonly projectId: string;
 
   @IsString()

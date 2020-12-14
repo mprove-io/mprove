@@ -10,6 +10,7 @@ import { forEachSeries } from 'p-iteration';
 @Injectable()
 export class DashboardService {
   async processDashboard(item: {
+    organizationId: string;
     projectId: string;
     structId: string;
     repoId: string;
@@ -21,6 +22,7 @@ export class DashboardService {
     newDashboardFields: api.DashboardField[];
   }) {
     let {
+      organizationId,
       projectId,
       structId,
       repoId,
@@ -89,6 +91,7 @@ export class DashboardService {
       dashMconfigs,
       dashQueries
     } = barWrapper.wrapDashboards({
+      organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
       dashboards: [dashboard],

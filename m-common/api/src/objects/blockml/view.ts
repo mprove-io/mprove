@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class ViewsPackView {
+export class View {
   @IsString()
   viewId: string;
 

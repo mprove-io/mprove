@@ -4,6 +4,7 @@ import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 
 export function wrapReports(item: {
+  organizationId: string;
   projectId: string;
   repoId: string;
   structId: string;
@@ -161,6 +162,7 @@ export function wrapReports(item: {
     };
 
     let mconfig: api.Mconfig = {
+      organizationId: item.organizationId,
       mconfigId: mconfigId,
       queryId: queryId,
       projectId: item.projectId,
@@ -182,6 +184,7 @@ export function wrapReports(item: {
     };
 
     let query: api.Query = {
+      organizationId: item.organizationId,
       queryId: queryId,
       projectId: item.projectId,
       structId: item.structId,

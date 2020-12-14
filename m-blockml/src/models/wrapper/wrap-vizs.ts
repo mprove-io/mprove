@@ -4,6 +4,7 @@ import { interfaces } from '../../barrels/interfaces';
 import { wrapReports } from './wrap-reports';
 
 export function wrapVizs(item: {
+  organizationId: string;
   projectId: string;
   repoId: string;
   structId: string;
@@ -15,6 +16,7 @@ export function wrapVizs(item: {
 
   item.vizs.forEach(x => {
     let { apiReports, mconfigs, queries } = wrapReports({
+      organizationId: item.organizationId,
       projectId: item.projectId,
       repoId: item.repoId,
       structId: item.structId,
@@ -25,6 +27,7 @@ export function wrapVizs(item: {
     vizQueries = [...vizQueries, ...queries];
 
     apiVizs.push({
+      organizationId: item.organizationId,
       projectId: item.projectId,
       repoId: item.repoId,
       vizId: x.name,

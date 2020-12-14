@@ -12,10 +12,7 @@ import { Type } from 'class-transformer';
 
 export class Mconfig {
   @IsString()
-  mconfigId: string;
-
-  @IsString()
-  queryId: string;
+  organizationId: string;
 
   @IsString()
   projectId: string;
@@ -25,6 +22,12 @@ export class Mconfig {
 
   @IsString()
   structId: string;
+
+  @IsString()
+  mconfigId: string;
+
+  @IsString()
+  queryId: string;
 
   @IsString()
   modelId: string;

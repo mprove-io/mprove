@@ -2,16 +2,20 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
 import * as apiEnums from '../enums/_index';
+import { BmlError, View } from '../objects/_index';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
-  readonly structId: string;
+  readonly organizationId: string;
 
   @IsString()
   readonly projectId: string;
 
   @IsString()
   readonly repoId: string;
+
+  @IsString()
+  readonly structId: string;
 
   @IsEnum(apiEnums.ProjectWeekStartEnum)
   readonly weekStart: apiEnums.ProjectWeekStartEnum;
@@ -37,16 +41,16 @@ export class ToBlockmlRebuildStructRequest {
 
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
-  @Type(() => apiObjects.ErrorsPack)
-  readonly errorsPack: apiObjects.ErrorsPack;
+  @Type(() => BmlError)
+  readonly errors: BmlError[];
 
   @ValidateNested()
   @Type(() => apiObjects.UdfsDict)
   readonly udfsDict: apiObjects.UdfsDict;
 
   @ValidateNested()
-  @Type(() => apiObjects.ViewsPack)
-  readonly viewsPack: apiObjects.ViewsPack;
+  @Type(() => View)
+  readonly views: View[];
 
   @ValidateNested()
   @Type(() => apiObjects.Model)
