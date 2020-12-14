@@ -2,11 +2,12 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckSqlAlwaysWhereCalcForceDims;
 
-export function checkSqlAlwaysWhereCalcForceDims(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkSqlAlwaysWhereCalcForceDims<T extends types.vdType>(item: {
+  entities: Array<T>;
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -15,9 +16,9 @@ export function checkSqlAlwaysWhereCalcForceDims(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
@@ -56,12 +57,12 @@ export function checkSqlAlwaysWhereCalcForceDims(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

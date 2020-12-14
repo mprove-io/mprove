@@ -237,7 +237,7 @@ export class StructService {
     });
 
     dashboards = await barBuilder.buildReport({
-      dashboards: dashboards,
+      entities: dashboards,
       models: models,
       udfsDict: udfsDict,
       weekStart: item.weekStart,
@@ -247,11 +247,29 @@ export class StructService {
       caller: enums.CallerEnum.BuildDashboardReport
     });
 
+    vizs = await barBuilder.buildReport({
+      entities: vizs,
+      models: models,
+      udfsDict: udfsDict,
+      weekStart: item.weekStart,
+      projectId: item.projectId,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildVizReport
+    });
+
     dashboards = barBuilder.buildChart({
-      dashboards: dashboards,
+      entities: dashboards,
       structId: item.structId,
       errors: errors,
       caller: enums.CallerEnum.BuildDashboardChart
+    });
+
+    vizs = barBuilder.buildChart({
+      entities: vizs,
+      structId: item.structId,
+      errors: errors,
+      caller: enums.CallerEnum.BuildVizChart
     });
 
     barBuilder.logStruct({

@@ -5,11 +5,12 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barSpecial } from '../../barrels/bar-special';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.FetchSql;
 
-export async function fetchSql(item: {
-  dashboards: interfaces.Dashboard[];
+export async function fetchSql<T extends types.vdType>(item: {
+  entities: Array<T>;
   models: interfaces.Model[];
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
@@ -21,7 +22,7 @@ export async function fetchSql(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  await forEachSeries(item.dashboards, async (x: interfaces.Dashboard) => {
+  await forEachSeries(item.entities, async x => {
     await forEachSeries(x.reports, async (report: interfaces.Report) => {
       let model = item.models.find(m => m.name === report.model);
 
@@ -57,7 +58,7 @@ export async function fetchSql(item: {
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, item.dashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, item.entities);
 
-  return item.dashboards;
+  return item.entities;
 }

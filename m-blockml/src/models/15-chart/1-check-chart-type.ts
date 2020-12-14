@@ -3,11 +3,12 @@ import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckChartType;
 
-export function checkChartType(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkChartType<T extends types.vdType>(item: {
+  entities: Array<T>;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -15,14 +16,13 @@ export function checkChartType(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
       if (helper.isUndefined(report.type)) {
-        // error e175
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_MISSING_TYPE,
@@ -64,7 +64,6 @@ export function checkChartType(item: {
           api.ChartTypeEnum.TreeMap
         ].indexOf(report.type) < 0
       ) {
-        // error e171
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_WRONG_TYPE,
@@ -83,12 +82,12 @@ export function checkChartType(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

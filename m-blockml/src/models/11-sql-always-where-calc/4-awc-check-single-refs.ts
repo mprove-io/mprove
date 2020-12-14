@@ -38,7 +38,6 @@ export function awcCheckSingleRefs(item: {
       let referenceField = x.fields.find(f => f.name === reference);
 
       if (helper.isUndefined(referenceField)) {
-        // error e155
         item.errors.push(
           new BmError({
             title:
@@ -57,7 +56,6 @@ export function awcCheckSingleRefs(item: {
       }
 
       if (referenceField.fieldClass === api.FieldClassEnum.Filter) {
-        // error e248
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_MODEL_FILTER,

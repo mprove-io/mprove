@@ -49,7 +49,6 @@ export function awcCheckCharsInRefs(item: {
     wrongCharsString = [...new Set(wrongChars)].join(', ');
 
     if (wrongChars.length > 0) {
-      // error e152
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.WRONG_CHARS_IN_SQL_ALWAYS_WHERE_CALC_REFS,

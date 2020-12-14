@@ -4,11 +4,12 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckChartData;
 
-export function checkChartData(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkChartData<T extends types.vdType>(item: {
+  entities: Array<T>;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -16,9 +17,9 @@ export function checkChartData(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
@@ -40,7 +41,6 @@ export function checkChartData(item: {
               enums.ParameterEnum.PreviousValueField.toString()
             ].indexOf(parameter) < 0
           ) {
-            // error e172
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DATA_UNKNOWN_PARAMETER,
@@ -66,7 +66,6 @@ export function checkChartData(item: {
               enums.ParameterEnum.HideColumns.toString()
             ].indexOf(parameter) < 0
           ) {
-            // error e173
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_LIST,
@@ -84,7 +83,6 @@ export function checkChartData(item: {
           }
 
           if (report.data[parameter]?.constructor === Object) {
-            // error e174
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_DICTIONARY,
@@ -104,12 +102,12 @@ export function checkChartData(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

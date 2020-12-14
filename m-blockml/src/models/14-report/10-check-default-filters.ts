@@ -5,11 +5,12 @@ import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 import { barSpecial } from '../../barrels/bar-special';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckDefaultFilters;
 
-export function checkDefaultFilters(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkDefaultFilters<T extends types.vdType>(item: {
+  entities: Array<T>;
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -18,9 +19,9 @@ export function checkDefaultFilters(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
@@ -222,12 +223,12 @@ export function checkDefaultFilters(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

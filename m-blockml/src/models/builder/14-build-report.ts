@@ -3,9 +3,10 @@ import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barReport } from '../../barrels/bar-report';
+import { types } from '../../barrels/types';
 
-export async function buildReport(item: {
-  dashboards: interfaces.Dashboard[];
+export async function buildReport<T extends types.vdType>(item: {
+  entities: Array<T>;
   models: interfaces.Model[];
   udfsDict: api.UdfsDict;
   projectId: string;
@@ -14,107 +15,107 @@ export async function buildReport(item: {
   structId: string;
   caller: enums.CallerEnum;
 }) {
-  let dashboards = item.dashboards;
+  let entities = item.entities;
 
-  dashboards = barReport.checkReportIsObject({
-    dashboards: dashboards,
+  entities = barReport.checkReportIsObject({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkReportUnknownParameters({
-    dashboards: dashboards,
+  entities = barReport.checkReportUnknownParameters({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkReportTitleModelSelect({
-    dashboards: dashboards,
+  entities = barReport.checkReportTitleModelSelect({
+    entities: entities,
     models: item.models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkSelectElements({
-    dashboards: dashboards,
+  entities = barReport.checkSelectElements({
+    entities: entities,
     models: item.models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkSelectForceDims({
-    dashboards: dashboards,
+  entities = barReport.checkSelectForceDims({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkSorts({
-    dashboards: dashboards,
+  entities = barReport.checkSorts({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkTimezone({
-    dashboards: dashboards,
+  entities = barReport.checkTimezone({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkLimit({
-    dashboards: dashboards,
+  entities = barReport.checkLimit({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkListenFilters({
-    dashboards: dashboards,
+  entities = barReport.checkListenFilters({
+    entities: entities,
     models: item.models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkDefaultFilters({
-    dashboards: dashboards,
+  entities = barReport.checkDefaultFilters({
+    entities: entities,
     models: item.models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.combineReportFilters({
-    dashboards: dashboards,
+  entities = barReport.combineReportFilters({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkFiltersForceDims({
-    dashboards: dashboards,
+  entities = barReport.checkFiltersForceDims({
+    entities: entities,
     models: item.models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barReport.checkSqlAlwaysWhereCalcForceDims({
-    dashboards: dashboards,
+  entities = barReport.checkSqlAlwaysWhereCalcForceDims({
+    entities: entities,
     models: item.models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = await barReport.fetchSql({
-    dashboards: dashboards,
+  entities = await barReport.fetchSql({
+    entities: entities,
     models: item.models,
     udfsDict: item.udfsDict,
     weekStart: item.weekStart,
@@ -124,5 +125,5 @@ export async function buildReport(item: {
     caller: item.caller
   });
 
-  return dashboards;
+  return entities;
 }

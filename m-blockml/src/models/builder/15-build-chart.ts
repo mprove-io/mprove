@@ -1,57 +1,57 @@
 import { enums } from '../../barrels/enums';
 import { BmError } from '../../models/bm-error';
-import { interfaces } from '../../barrels/interfaces';
 import { barChart } from '../../barrels/bar-chart';
+import { types } from '../../barrels/types';
 
-export function buildChart(item: {
-  dashboards: interfaces.Dashboard[];
+export function buildChart<T extends types.vdType>(item: {
+  entities: Array<T>;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
-  let dashboards = item.dashboards;
+  let entities = item.entities;
 
-  dashboards = barChart.checkChartType({
-    dashboards: dashboards,
+  entities = barChart.checkChartType({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barChart.checkChartData({
-    dashboards: dashboards,
+  entities = barChart.checkChartData({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barChart.checkChartDataParameters({
-    dashboards: dashboards,
+  entities = barChart.checkChartDataParameters({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barChart.checkChartAxisParameters({
-    dashboards: dashboards,
+  entities = barChart.checkChartAxisParameters({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barChart.checkChartOptionsParameters({
-    dashboards: dashboards,
+  entities = barChart.checkChartOptionsParameters({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  dashboards = barChart.checkChartTileParameters({
-    dashboards: dashboards,
+  entities = barChart.checkChartTileParameters({
+    entities: entities,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller
   });
 
-  return dashboards;
+  return entities;
 }

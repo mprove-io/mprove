@@ -4,11 +4,12 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckTimezone;
 
-export function checkTimezone(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkTimezone<T extends types.vdType>(item: {
+  entities: Array<T>;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -24,9 +25,9 @@ export function checkTimezone(item: {
     });
   });
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
@@ -36,7 +37,6 @@ export function checkTimezone(item: {
       }
 
       if (Object.keys(timezonesHash).indexOf(report.timezone) < 0) {
-        // error e218
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_WRONG_TIMEZONE,
@@ -57,12 +57,12 @@ export function checkTimezone(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

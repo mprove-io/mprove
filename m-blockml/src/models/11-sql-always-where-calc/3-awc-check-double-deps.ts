@@ -29,7 +29,6 @@ export function awcCheckDoubleDeps(item: {
       let depJoin = x.joins.find(j => j.as === depAs);
 
       if (helper.isUndefined(depJoin)) {
-        // error e153
         item.errors.push(
           new BmError({
             title:
@@ -54,7 +53,6 @@ export function awcCheckDoubleDeps(item: {
           let depField = depJoin.view.fields.find(f => f.name === depFieldName);
 
           if (helper.isUndefined(depField)) {
-            // error e154
             item.errors.push(
               new BmError({
                 title:
@@ -75,7 +73,6 @@ export function awcCheckDoubleDeps(item: {
           }
 
           if (depField.fieldClass === api.FieldClassEnum.Filter) {
-            // error e247
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_FILTER,

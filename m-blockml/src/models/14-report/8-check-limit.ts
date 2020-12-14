@@ -4,11 +4,12 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckLimit;
 
-export function checkLimit(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkLimit<T extends types.vdType>(item: {
+  entities: Array<T>;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -16,9 +17,9 @@ export function checkLimit(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
@@ -31,7 +32,6 @@ export function checkLimit(item: {
       let r = reg.exec(report.limit);
 
       if (helper.isUndefined(r)) {
-        // error e168
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_WRONG_LIMIT,
@@ -55,12 +55,12 @@ export function checkLimit(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

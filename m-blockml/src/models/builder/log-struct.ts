@@ -2,7 +2,7 @@ import { log } from '../../helper/_index';
 import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../bm-error';
-import { api } from 'src/barrels/api';
+import { api } from '../../barrels/api';
 
 let func = enums.FuncEnum.LogStruct;
 

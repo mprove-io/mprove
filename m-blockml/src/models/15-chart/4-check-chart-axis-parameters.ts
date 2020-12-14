@@ -4,11 +4,12 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
+import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckChartAxisParameters;
 
-export function checkChartAxisParameters(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkChartAxisParameters<T extends types.vdType>(item: {
+  entities: Array<T>;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -16,9 +17,9 @@ export function checkChartAxisParameters(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
@@ -59,7 +60,6 @@ export function checkChartAxisParameters(item: {
           }
 
           if (Array.isArray(report.axis[parameter])) {
-            // error e185
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_AXIS_UNEXPECTED_LIST,
@@ -77,7 +77,6 @@ export function checkChartAxisParameters(item: {
           }
 
           if (report.axis[parameter]?.constructor === Object) {
-            // error e186
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_AXIS_UNEXPECTED_DICTIONARY,
@@ -104,7 +103,6 @@ export function checkChartAxisParameters(item: {
             ].indexOf(parameter) > -1 &&
             !report.axis[parameter].toString().match(api.MyRegex.TRUE_FALSE())
           ) {
-            // error e187
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_AXIS_WRONG_PARAMETER_VALUE,
@@ -126,12 +124,12 @@ export function checkChartAxisParameters(item: {
     });
 
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

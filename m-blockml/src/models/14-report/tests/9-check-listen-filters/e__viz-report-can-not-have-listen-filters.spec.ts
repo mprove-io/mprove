@@ -6,13 +6,13 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildDashboardReport;
+let caller = enums.CallerEnum.BuildVizReport;
 let func = enums.FuncEnum.CheckListenFilters;
-let testId = 'e__report-filter-and-model-field-results-mismatch';
+let testId = 'e__viz-report-can-not-have-listen-filters';
 
 test(testId, async () => {
   let errors: BmError[];
-  let dashboards: interfaces.Dashboard[];
+  let entities;
 
   try {
     let {
@@ -37,17 +37,17 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(dashboards.length).toBe(0);
+  expect(entities.length).toBe(0);
 
   expect(errors[0].title).toBe(
-    enums.ErTitleEnum.REPORT_FILTER_AND_MODEL_FIELD_RESULTS_MISMATCH
+    enums.ErTitleEnum.VIZ_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS
   );
-  expect(errors[0].lines[0].line).toBe(14);
+  expect(errors[0].lines[0].line).toBe(7);
 });

@@ -39,7 +39,6 @@ export function awcCheckApplyFilter(item: {
       let field = x.fields.find(f => f.name === fieldName);
 
       if (helper.isUndefined(field)) {
-        // error e256
         item.errors.push(
           new BmError({
             title:
@@ -59,7 +58,6 @@ export function awcCheckApplyFilter(item: {
       }
 
       if (field.fieldClass !== api.FieldClassEnum.Filter) {
-        // error e257
         item.errors.push(
           new BmError({
             title:
