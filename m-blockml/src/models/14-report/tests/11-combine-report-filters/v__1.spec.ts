@@ -12,7 +12,7 @@ let testId = 'v__1';
 
 test(testId, async () => {
   let errors: BmError[];
-  let dashboards: interfaces.Dashboard[];
+  let entDashboards: interfaces.Dashboard[];
 
   try {
     let {
@@ -37,16 +37,16 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(0);
-  expect(dashboards.length).toBe(1);
+  expect(entDashboards.length).toBe(1);
 
-  expect(dashboards[0].reports[0].combinedFilters).toStrictEqual({
+  expect(entDashboards[0].reports[0].combinedFilters).toStrictEqual({
     'a.dim2': ['-foo-'],
     'a.dim1': ['-bar-']
   });

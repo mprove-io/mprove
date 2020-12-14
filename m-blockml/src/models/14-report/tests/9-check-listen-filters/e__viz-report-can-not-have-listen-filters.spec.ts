@@ -12,7 +12,7 @@ let testId = 'e__viz-report-can-not-have-listen-filters';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entities;
+  let entVizs: interfaces.Viz[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entVizs = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entities.length).toBe(0);
+  expect(entVizs.length).toBe(0);
 
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.VIZ_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS

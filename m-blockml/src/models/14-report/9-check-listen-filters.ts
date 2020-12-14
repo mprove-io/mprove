@@ -35,7 +35,6 @@ export function checkListenFilters<T extends types.vdType>(item: {
         helper.isDefined(report.listen_filters) &&
         x.fileExt === api.FileExtensionEnum.Viz
       ) {
-        // TODO: VIZ_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.VIZ_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS,

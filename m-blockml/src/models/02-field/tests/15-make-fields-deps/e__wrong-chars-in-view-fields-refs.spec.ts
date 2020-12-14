@@ -12,7 +12,7 @@ let testId = 'e__wrong-chars-in-view-fields-refs';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entitiesViews: interfaces.View[];
+  let entViews: interfaces.View[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entitiesViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entitiesViews.length).toBe(0);
+  expect(entViews.length).toBe(0);
 
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.WRONG_CHARS_IN_VIEW_FIELDS_REFS

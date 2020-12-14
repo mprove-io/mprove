@@ -12,7 +12,7 @@ let testId = 'e__dashboard-field-must-be-a-filter';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entities;
+  let entDashboards: interfaces.Dashboard[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entities.length).toBe(0);
+  expect(entDashboards.length).toBe(0);
 
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER

@@ -12,7 +12,7 @@ let testId = 'e__too-many-declarations-for-one-field';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entities;
+  let entViews: interfaces.View[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entities.length).toBe(0);
+  expect(entViews.length).toBe(0);
 
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD

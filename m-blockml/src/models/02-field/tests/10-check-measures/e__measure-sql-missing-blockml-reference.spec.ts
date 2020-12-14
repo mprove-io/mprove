@@ -11,8 +11,8 @@ let func = enums.FuncEnum.CheckMeasures;
 let testId = 'e__measure-sql-missing-blockml-reference';
 
 test(testId, async () => {
-  let entities;
   let errors: BmError[];
+  let entViews: interfaces.View[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entities.length).toBe(0);
+  expect(entViews.length).toBe(0);
 
   expect(errors[0].title).toBe(
     enums.ErTitleEnum.MEASURE_SQL_MISSING_BLOCKML_REFERENCE

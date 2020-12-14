@@ -12,7 +12,7 @@ let testId = 'e__report-data-wrong-y-field';
 
 test(testId, async () => {
   let errors: BmError[];
-  let dashboards: interfaces.Dashboard[];
+  let entDashboards: interfaces.Dashboard[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(dashboards.length).toBe(0);
+  expect(entDashboards.length).toBe(0);
 
   expect(errors[0].title).toBe(enums.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELD);
   expect(errors[0].lines[0].line).toBe(10);

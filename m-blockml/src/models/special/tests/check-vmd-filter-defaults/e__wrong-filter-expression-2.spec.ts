@@ -12,7 +12,7 @@ let testId = 'e__wrong-filter-expression-2';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entitiesModels: interfaces.Model[];
+  let entModels: interfaces.Model[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entitiesModels = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entModels = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entitiesModels.length).toBe(0);
+  expect(entModels.length).toBe(0);
 
   expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_FILTER_EXPRESSION);
   expect(errors[0].lines[0].line).toBe(9);

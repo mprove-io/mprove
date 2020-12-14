@@ -12,7 +12,7 @@ let testId = 'e__cycle-in-references';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entities;
+  let entViews: interfaces.View[];
 
   try {
     let {
@@ -36,7 +36,7 @@ test(testId, async () => {
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     fse.copySync(fromDir, toDir);
   } catch (e) {
@@ -44,7 +44,7 @@ test(testId, async () => {
   }
 
   expect(errors.length).toBe(1);
-  expect(entities.length).toBe(0);
+  expect(entViews.length).toBe(0);
 
   expect(errors[0].title).toBe(enums.ErTitleEnum.CYCLE_IN_REFERENCES);
   expect(errors[0].lines.length).toBe(3);

@@ -12,7 +12,7 @@ let testId = 'v__1';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entitiesViews: interfaces.View[];
+  let entViews: interfaces.View[];
 
   try {
     let {
@@ -37,38 +37,38 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entitiesViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(0);
-  expect(entitiesViews.length).toBe(1);
+  expect(entViews.length).toBe(1);
 
-  expect(entitiesViews[0].fields.length).toBe(7);
-  expect(entitiesViews[0].fields[0].sqlReal).toBe('d1');
-  expect(entitiesViews[0].fields[1].sqlReal).toBe('(d1) + d2');
-  expect(entitiesViews[0].fields[2].sqlReal).toBe('((d1) + d2) + d3');
-  expect(entitiesViews[0].fields[3].sqlReal).toBe('d4');
+  expect(entViews[0].fields.length).toBe(7);
+  expect(entViews[0].fields[0].sqlReal).toBe('d1');
+  expect(entViews[0].fields[1].sqlReal).toBe('(d1) + d2');
+  expect(entViews[0].fields[2].sqlReal).toBe('((d1) + d2) + d3');
+  expect(entViews[0].fields[3].sqlReal).toBe('d4');
 
-  expect(entitiesViews[0].fields[4].sqlReal).toBe('${dim3} + m1');
+  expect(entViews[0].fields[4].sqlReal).toBe('${dim3} + m1');
 
-  expect(entitiesViews[0].fields[5].sqlReal).toBe('${mea1} + ${dim3} + c1');
-  expect(entitiesViews[0].fields[6].sqlReal).toBe(
+  expect(entViews[0].fields[5].sqlReal).toBe('${mea1} + ${dim3} + c1');
+  expect(entViews[0].fields[6].sqlReal).toBe(
     '(${mea1} + ${dim3} + c1) + ${dim4} + c2'
   );
 
-  expect(entitiesViews[0].fields[5].prepForceDims).toStrictEqual({
+  expect(entViews[0].fields[5].prepForceDims).toStrictEqual({
     dim3: 21
   });
 
-  expect(entitiesViews[0].fields[6].prepForceDims).toStrictEqual({
+  expect(entViews[0].fields[6].prepForceDims).toStrictEqual({
     dim3: 24,
     dim4: 24
   });
 
-  expect(entitiesViews[0].fieldsDeps).toStrictEqual({
+  expect(entViews[0].fieldsDeps).toStrictEqual({
     dim1: {},
     dim2: {
       dim1: 8
@@ -90,7 +90,7 @@ test(testId, async () => {
     }
   });
 
-  expect(entitiesViews[0].fieldsDepsAfterSingles).toStrictEqual({
+  expect(entViews[0].fieldsDepsAfterSingles).toStrictEqual({
     dim1: {},
     dim2: {},
     dim3: {},

@@ -12,7 +12,7 @@ let testId = 'e__reference-to-not-valid-field';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entities;
+  let entViews: interfaces.View[];
 
   try {
     let {
@@ -37,14 +37,14 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entities = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    entViews = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entities.length).toBe(0);
+  expect(entViews.length).toBe(0);
 
   expect(errors[0].title).toBe(enums.ErTitleEnum.REFERENCE_TO_NOT_VALID_FIELD);
   expect(errors[0].lines[0].line).toBe(5);
