@@ -1,4 +1,4 @@
 export enum ChartViewSizeEnum {
-  Auto = 'Auto',
-  Manual = 'Manual'
+  Auto = 'auto',
+  Manual = 'manual'
 }

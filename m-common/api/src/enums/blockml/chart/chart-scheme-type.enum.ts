@@ -1,4 +1,4 @@
 export enum ChartSchemeTypeEnum {
-  Ordinal = 'Ordinal',
-  Linear = 'Linear'
+  Ordinal = 'ordinal',
+  Linear = 'linear'
 }
