@@ -12,15 +12,6 @@ import { Type } from 'class-transformer';
 
 export class Mconfig {
   @IsString()
-  organizationId: string;
-
-  @IsString()
-  projectId: string;
-
-  @IsString()
-  repoId: string;
-
-  @IsString()
   structId: string;
 
   @IsString()

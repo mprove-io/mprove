@@ -10,15 +10,6 @@ import { Report } from './report';
 
 export class Viz {
   @IsString()
-  organizationId: string;
-
-  @IsString()
-  projectId: string;
-
-  @IsString()
-  repoId: string;
-
-  @IsString()
   structId: string;
 
   @IsString()

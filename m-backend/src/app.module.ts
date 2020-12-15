@@ -33,6 +33,7 @@ import { ToDiskSeedProjectController } from './controllers/to-disk/8_seed/to-dis
 import { ToBlockmlRebuildStructController } from './controllers/to-blockml/to-blockml-rebuild-struct.controller';
 import { ToBlockmlProcessDashboardController } from './controllers/to-blockml/to-blockml-process-dashboard.controller';
 import { ToBlockmlProcessQueryController } from './controllers/to-blockml/to-blockml-process-query.controller';
+import { SpecialRebuildStructController } from './controllers/special/special-rebuild-struct.controller';
 
 @Module({
   imports: [
@@ -92,7 +93,9 @@ import { ToBlockmlProcessQueryController } from './controllers/to-blockml/to-blo
     //
     ToBlockmlProcessDashboardController,
     ToBlockmlProcessQueryController,
-    ToBlockmlRebuildStructController
+    ToBlockmlRebuildStructController,
+    //
+    SpecialRebuildStructController
   ],
   providers: [RabbitService]
 })

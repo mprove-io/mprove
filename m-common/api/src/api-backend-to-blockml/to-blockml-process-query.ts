@@ -5,12 +5,6 @@ import * as apiEnums from '../enums/_index';
 
 export class ToBlockmlProcessQueryRequestPayload {
   @IsString()
-  readonly organizationId: string;
-
-  @IsString()
-  readonly projectId: string;
-
-  @IsString()
   readonly structId: string;
 
   @IsEnum(apiEnums.ProjectWeekStartEnum)

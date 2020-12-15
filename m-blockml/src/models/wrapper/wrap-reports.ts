@@ -4,9 +4,6 @@ import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
 
 export function wrapReports(item: {
-  organizationId: string;
-  projectId: string;
-  repoId: string;
   structId: string;
   reports: interfaces.Report[];
 }) {
@@ -162,12 +159,9 @@ export function wrapReports(item: {
     };
 
     let mconfig: api.Mconfig = {
-      organizationId: item.organizationId,
+      structId: item.structId,
       mconfigId: mconfigId,
       queryId: queryId,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      structId: item.structId,
       modelId: report.model,
       select: report.select,
       sortings: report.sortingsAry.map(s => ({
@@ -184,10 +178,8 @@ export function wrapReports(item: {
     };
 
     let query: api.Query = {
-      organizationId: item.organizationId,
-      queryId: queryId,
-      projectId: item.projectId,
       structId: item.structId,
+      queryId: queryId,
       sql: report.sql,
       status: api.QueryStatusEnum.New,
       lastRunBy: undefined,

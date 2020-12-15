@@ -5,9 +5,6 @@ import { wrapField } from './wrap-field';
 import { helper } from '../../barrels/helper';
 
 export function wrapModels(item: {
-  organizationId: string;
-  projectId: string;
-  repoId: string;
   structId: string;
   models: interfaces.Model[];
 }): api.Model[] {
@@ -214,9 +211,6 @@ export function wrapModels(item: {
 
     if (sortedNodes.length > 0) {
       apiModels.push({
-        organizationId: item.organizationId,
-        projectId: item.projectId,
-        repoId: item.repoId,
         structId: item.structId,
         modelId: x.name,
         content: x,

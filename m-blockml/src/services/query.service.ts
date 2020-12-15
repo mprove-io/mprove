@@ -7,23 +7,13 @@ import { barSpecial } from '../barrels/bar-special';
 @Injectable()
 export class QueryService {
   async processQuery(item: {
-    organizationId: string;
-    projectId: string;
     structId: string;
     weekStart: api.ProjectWeekStartEnum;
     udfsDict: api.UdfsDict;
     mconfig: api.Mconfig;
     model: interfaces.Model;
   }) {
-    let {
-      organizationId,
-      projectId,
-      structId,
-      weekStart,
-      udfsDict,
-      mconfig,
-      model
-    } = item;
+    let { structId, weekStart, udfsDict, mconfig, model } = item;
 
     let { select, sorts, timezone, limit, filters } = mconfig;
 
@@ -55,8 +45,6 @@ export class QueryService {
     }));
 
     let query: api.Query = {
-      organizationId: organizationId,
-      projectId: projectId,
       structId: structId,
       queryId: mconfig.queryId,
       sql: sql,

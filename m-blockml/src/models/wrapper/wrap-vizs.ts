@@ -3,22 +3,13 @@ import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
 import { wrapReports } from './wrap-reports';
 
-export function wrapVizs(item: {
-  organizationId: string;
-  projectId: string;
-  repoId: string;
-  structId: string;
-  vizs: interfaces.Viz[];
-}) {
+export function wrapVizs(item: { structId: string; vizs: interfaces.Viz[] }) {
   let apiVizs: api.Viz[] = [];
   let vizMconfigs: api.Mconfig[] = [];
   let vizQueries: api.Query[] = [];
 
   item.vizs.forEach(x => {
     let { apiReports, mconfigs, queries } = wrapReports({
-      organizationId: item.organizationId,
-      projectId: item.projectId,
-      repoId: item.repoId,
       structId: item.structId,
       reports: x.reports
     });
@@ -27,11 +18,8 @@ export function wrapVizs(item: {
     vizQueries = [...vizQueries, ...queries];
 
     apiVizs.push({
-      organizationId: item.organizationId,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      vizId: x.name,
       structId: item.structId,
+      vizId: x.name,
       accessUsers: x.access_users || [],
       gr: x.group,
       hidden: helper.toBoolean(x.hidden),

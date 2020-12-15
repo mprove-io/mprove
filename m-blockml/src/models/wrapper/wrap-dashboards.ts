@@ -4,9 +4,6 @@ import { interfaces } from '../../barrels/interfaces';
 import { wrapReports } from './wrap-reports';
 
 export function wrapDashboards(item: {
-  organizationId: string;
-  projectId: string;
-  repoId: string;
   structId: string;
   dashboards: interfaces.Dashboard[];
 }) {
@@ -29,9 +26,6 @@ export function wrapDashboards(item: {
     });
 
     let { apiReports, mconfigs, queries } = wrapReports({
-      organizationId: item.organizationId,
-      projectId: item.projectId,
-      repoId: item.repoId,
       structId: item.structId,
       reports: x.reports
     });
@@ -40,11 +34,8 @@ export function wrapDashboards(item: {
     dashQueries = [...dashQueries, ...queries];
 
     apiDashboards.push({
-      organizationId: item.organizationId,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      dashboardId: x.name,
       structId: item.structId,
+      dashboardId: x.name,
       content: x,
       accessUsers: x.access_users || [],
       title: x.title,

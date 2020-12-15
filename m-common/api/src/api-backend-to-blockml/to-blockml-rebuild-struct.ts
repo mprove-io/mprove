@@ -6,15 +6,6 @@ import { BmlError, View } from '../objects/_index';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
-  readonly organizationId: string;
-
-  @IsString()
-  readonly projectId: string;
-
-  @IsString()
-  readonly repoId: string;
-
-  @IsString()
   readonly structId: string;
 
   @IsEnum(apiEnums.ProjectWeekStartEnum)

@@ -10,23 +10,12 @@ import { barWrapper } from '../barrels/bar-wrapper';
 @Injectable()
 export class StructService {
   async wrapStruct(item: {
-    organizationId: string;
-    projectId: string;
-    repoId: string;
     structId: string;
     files: api.File[];
     weekStart: api.ProjectWeekStartEnum;
     connections: api.ProjectConnection[];
   }) {
-    let {
-      organizationId,
-      projectId,
-      repoId,
-      structId,
-      files,
-      weekStart,
-      connections
-    } = item;
+    let { structId, files, weekStart, connections } = item;
 
     let {
       errors,
@@ -47,9 +36,6 @@ export class StructService {
     let apiViews = barWrapper.wrapViews({ views: views });
 
     let apiModels = barWrapper.wrapModels({
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
       structId: structId,
       models: models
     });
@@ -59,17 +45,11 @@ export class StructService {
       dashMconfigs,
       dashQueries
     } = barWrapper.wrapDashboards({
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
       structId: structId,
       dashboards: dashboards
     });
 
     let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapVizs({
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
       structId: structId,
       vizs: vizs
     });
