@@ -10,7 +10,7 @@ export class ToDiskCreateOrganizationController {
   @Post('toDiskCreateOrganization')
   async toDiskCreateOrganization(
     @Body() body: api.ToDiskCreateOrganizationRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskCreateOrganizationResponse | api.ErrorResponse> {
     try {
       let { organizationId } = body.payload;
 
@@ -21,12 +21,14 @@ export class ToDiskCreateOrganizationController {
 
       let message = body;
 
-      let response = await this.rabbitService.sendToDisk({
+      let response = await this.rabbitService.sendToDisk<
+        api.ToDiskCreateOrganizationResponse
+      >({
         routingKey: routingKey,
         message: message
       });
 
-      return (response as unknown) as api.ToDiskCreateOrganizationResponse;
+      return response;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

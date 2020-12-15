@@ -2,7 +2,10 @@ import * as apiEnums from '../enums/_index';
 import * as apiObjects from '../objects/_index';
 import { ServerError } from './server-error';
 
-export function makeErrorResponse(item: { request: any; e: any }) {
+export function makeErrorResponse(item: {
+  request: any;
+  e: any;
+}): apiObjects.ErrorResponse {
   let info: apiObjects.ResponseInfo = {
     traceId: item.request.info?.traceId,
     status:
@@ -19,8 +22,10 @@ export function makeErrorResponse(item: { request: any; e: any }) {
     }
   };
 
-  return {
+  let response: apiObjects.ErrorResponse = {
     info: info,
     payload: {}
   };
+
+  return response;
 }

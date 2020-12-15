@@ -10,7 +10,7 @@ export class SpecialRebuildStructController {
   @Post('specialRebuildStruct')
   async specialRebuildStruct(
     @Body() body: api.SpecialRebuildStructRequest
-  ): Promise<any> {
+  ): Promise<api.ToBlockmlRebuildStructResponse | api.ErrorResponse> {
     try {
       let { traceId } = body.info;
       let {
