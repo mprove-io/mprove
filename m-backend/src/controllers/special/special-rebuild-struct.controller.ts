@@ -43,14 +43,12 @@ export class SpecialRebuildStructController {
         }
       };
 
-      let getCatalogFilesResponse = await this.rabbitService.sendToDisk({
+      let resp1 = await this.rabbitService.sendToDisk<
+        api.ToDiskGetCatalogFilesResponse
+      >({
         routingKey: routingKey,
         message: getCatalogFilesRequest
       });
-
-      let parsed: api.ToDiskGetCatalogFilesResponse = JSON.parse(
-        getCatalogFilesResponse
-      );
 
       // to blockml
 
@@ -62,7 +60,7 @@ export class SpecialRebuildStructController {
         payload: {
           structId: structId,
           weekStart: weekStart,
-          files: parsed.payload.files.map((f: api.DiskCatalogFile) => {
+          files: resp1.payload.files.map((f: api.DiskCatalogFile) => {
             let file: api.File = {
               content: f.content,
               name: f.name,
@@ -74,12 +72,14 @@ export class SpecialRebuildStructController {
         }
       };
 
-      let rebuildStructResponse = await this.rabbitService.sendToBlockml({
+      let resp2 = await this.rabbitService.sendToBlockml<
+        api.ToBlockmlRebuildStructResponse
+      >({
         routingKey: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
         message: rebuildStructRequest
       });
 
-      return (rebuildStructResponse as unknown) as api.ToBlockmlRebuildStructResponse;
+      return resp2;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }
