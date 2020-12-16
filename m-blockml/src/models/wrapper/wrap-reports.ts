@@ -21,8 +21,6 @@ export function wrapReports(item: {
       });
     });
 
-    let mconfigId = helper.makeId();
-    let queryId = helper.makeId();
     let chartId = helper.makeId();
 
     let chart: api.Chart = {
@@ -158,6 +156,29 @@ export function wrapReports(item: {
         : 200
     };
 
+    let queryId = helper.makeQueryId({
+      sql: report.sql
+    });
+
+    let query: api.Query = {
+      structId: item.structId,
+      queryId: queryId,
+      sql: report.sql,
+      status: api.QueryStatusEnum.New,
+      lastRunBy: undefined,
+      lastRunTs: 1,
+      lastCancelTs: 1,
+      lastCompleteTs: 1,
+      lastCompleteDuration: undefined,
+      lastErrorMessage: undefined,
+      lastErrorTs: 1,
+      data: undefined,
+      temp: false,
+      serverTs: 1
+    };
+
+    let mconfigId = helper.makeId();
+
     let mconfig: api.Mconfig = {
       structId: item.structId,
       mconfigId: mconfigId,
@@ -173,23 +194,6 @@ export function wrapReports(item: {
       limit: report.limit ? Number(report.limit) : undefined,
       filters: filters,
       charts: [chart],
-      temp: false,
-      serverTs: 1
-    };
-
-    let query: api.Query = {
-      structId: item.structId,
-      queryId: queryId,
-      sql: report.sql,
-      status: api.QueryStatusEnum.New,
-      lastRunBy: undefined,
-      lastRunTs: 1,
-      lastCancelTs: 1,
-      lastCompleteTs: 1,
-      lastCompleteDuration: undefined,
-      lastErrorMessage: undefined,
-      lastErrorTs: 1,
-      data: undefined,
       temp: false,
       serverTs: 1
     };

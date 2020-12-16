@@ -3,6 +3,7 @@ import { api } from '../barrels/api';
 import { enums } from '../barrels/enums';
 import { interfaces } from '../barrels/interfaces';
 import { barSpecial } from '../barrels/bar-special';
+import { helper } from '../barrels/helper';
 
 @Injectable()
 export class QueryService {
@@ -39,14 +40,13 @@ export class QueryService {
       caller: enums.CallerEnum.ProcessQuery
     });
 
-    mconfig.filters = Object.keys(filtersFractions).map(fieldId => ({
-      fieldId: fieldId,
-      fractions: filtersFractions[fieldId]
-    }));
+    let queryId = helper.makeQueryId({
+      sql: sql
+    });
 
     let query: api.Query = {
       structId: structId,
-      queryId: mconfig.queryId,
+      queryId: queryId,
       sql: sql,
       status: api.QueryStatusEnum.New,
       lastRunBy: undefined,
@@ -60,6 +60,13 @@ export class QueryService {
       temp: true,
       serverTs: 1
     };
+
+    mconfig.queryId = queryId;
+
+    mconfig.filters = Object.keys(filtersFractions).map(fieldId => ({
+      fieldId: fieldId,
+      fractions: filtersFractions[fieldId]
+    }));
 
     let payload: api.ToBlockmlProcessQueryResponsePayload = {
       mconfig: mconfig,
