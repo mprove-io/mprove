@@ -41,6 +41,8 @@ export class ConsumerService {
       let { traceId } = requestValid.info;
       let {
         structId,
+        organizationId,
+        projectId,
         weekStart,
         udfsDict,
         modelContents,
@@ -51,6 +53,8 @@ export class ConsumerService {
 
       let payload = await this.dashboardService.processDashboard({
         structId: structId,
+        organizationId: organizationId,
+        projectId: projectId,
         weekStart: weekStart,
         udfsDict: udfsDict,
         models: modelContents,
@@ -98,6 +102,8 @@ export class ConsumerService {
       let { traceId } = requestValid.info;
       let {
         structId,
+        organizationId,
+        projectId,
         weekStart,
         udfsDict,
         mconfig,
@@ -106,6 +112,8 @@ export class ConsumerService {
 
       let payload = await this.queryService.processQuery({
         structId: structId,
+        organizationId: organizationId,
+        projectId: projectId,
         weekStart: weekStart,
         udfsDict: udfsDict,
         mconfig: mconfig,
@@ -152,10 +160,19 @@ export class ConsumerService {
       });
 
       let { traceId } = requestValid.info;
-      let { structId, weekStart, files, connections } = requestValid.payload;
+      let {
+        structId,
+        organizationId,
+        projectId,
+        weekStart,
+        files,
+        connections
+      } = requestValid.payload;
 
       let payload = await this.structService.wrapStruct({
         structId: structId,
+        organizationId: organizationId,
+        projectId: projectId,
         weekStart: weekStart,
         files: files,
         connections: connections

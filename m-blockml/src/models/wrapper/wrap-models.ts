@@ -8,9 +8,11 @@ export function wrapModels(item: {
   structId: string;
   models: interfaces.Model[];
 }): api.Model[] {
+  let { structId, models } = item;
+
   let apiModels: api.Model[] = [];
 
-  item.models.forEach(x => {
+  models.forEach(x => {
     let apiFields: api.ModelField[] = [];
     let nodes: api.ModelNode[] = [];
 
@@ -211,7 +213,7 @@ export function wrapModels(item: {
 
     if (sortedNodes.length > 0) {
       apiModels.push({
-        structId: item.structId,
+        structId: structId,
         modelId: x.name,
         content: x,
         accessUsers: x.access_users ? x.access_users : [],

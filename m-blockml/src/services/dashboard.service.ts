@@ -11,6 +11,8 @@ import { forEachSeries } from 'p-iteration';
 export class DashboardService {
   async processDashboard(item: {
     structId: string;
+    organizationId: string;
+    projectId: string;
     weekStart: api.ProjectWeekStartEnum;
     udfsDict: api.UdfsDict;
     models: interfaces.Model[];
@@ -20,6 +22,8 @@ export class DashboardService {
   }) {
     let {
       structId,
+      organizationId,
+      projectId,
       weekStart,
       udfsDict,
       models,
@@ -85,8 +89,11 @@ export class DashboardService {
       dashMconfigs,
       dashQueries
     } = barWrapper.wrapDashboards({
-      dashboards: [dashboard],
-      structId: structId
+      structId: structId,
+      organizationId: organizationId,
+      projectId: projectId,
+      models: models,
+      dashboards: [dashboard]
     });
 
     let newDashboard = apiDashboards[0];

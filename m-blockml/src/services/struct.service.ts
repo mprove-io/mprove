@@ -11,11 +11,20 @@ import { barWrapper } from '../barrels/bar-wrapper';
 export class StructService {
   async wrapStruct(item: {
     structId: string;
+    organizationId: string;
+    projectId: string;
     files: api.File[];
     weekStart: api.ProjectWeekStartEnum;
     connections: api.ProjectConnection[];
   }) {
-    let { structId, files, weekStart, connections } = item;
+    let {
+      structId,
+      organizationId,
+      projectId,
+      files,
+      weekStart,
+      connections
+    } = item;
 
     let {
       errors,
@@ -46,11 +55,17 @@ export class StructService {
       dashQueries
     } = barWrapper.wrapDashboards({
       structId: structId,
+      organizationId: organizationId,
+      projectId: projectId,
+      models: models,
       dashboards: dashboards
     });
 
     let { apiVizs, vizMconfigs, vizQueries } = barWrapper.wrapVizs({
       structId: structId,
+      organizationId: organizationId,
+      projectId: projectId,
+      models: models,
       vizs: vizs
     });
 
@@ -76,7 +91,7 @@ export class StructService {
     structId: string;
     weekStart: api.ProjectWeekStartEnum;
     connections: api.ProjectConnection[];
-  }): Promise<interfaces.Struct> {
+  }) {
     let files: api.File[] = await barYaml.collectFiles({
       dir: item.dir,
       structId: item.structId,
@@ -96,7 +111,7 @@ export class StructService {
     structId: string;
     weekStart: api.ProjectWeekStartEnum;
     connections: api.ProjectConnection[];
-  }): Promise<interfaces.Struct> {
+  }) {
     //
     let errors: BmError[] = [];
     let udfs: interfaces.Udf[];

@@ -5,13 +5,18 @@ import { constants } from '../../barrels/constants';
 
 export function wrapReports(item: {
   structId: string;
+  organizationId: string;
+  projectId: string;
   reports: interfaces.Report[];
+  models: interfaces.Model[];
 }) {
+  let { structId, organizationId, projectId, models, reports } = item;
+
   let apiReports: api.Report[] = [];
   let mconfigs: api.Mconfig[] = [];
   let queries: api.Query[] = [];
 
-  item.reports.forEach(report => {
+  reports.forEach(report => {
     let filters: api.Filter[] = [];
 
     Object.keys(report.filtersFractions).forEach(fieldId => {
@@ -156,12 +161,16 @@ export function wrapReports(item: {
         : 200
     };
 
+    let model = models.find(m => m.name === report.model);
+
     let queryId = helper.makeQueryId({
-      sql: report.sql
+      sql: report.sql,
+      organizationId: organizationId,
+      projectId: projectId,
+      connection: model.connection
     });
 
     let query: api.Query = {
-      structId: item.structId,
       queryId: queryId,
       sql: report.sql,
       status: api.QueryStatusEnum.New,
@@ -180,7 +189,7 @@ export function wrapReports(item: {
     let mconfigId = helper.makeId();
 
     let mconfig: api.Mconfig = {
-      structId: item.structId,
+      structId: structId,
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: report.model,

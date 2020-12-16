@@ -3,43 +3,10 @@ import * as apiEnums from '../../enums/_index';
 
 export class Query {
   @IsString()
-  structId: string;
-
-  @IsString()
   queryId: string;
-
-  // @IsString({ each: true })
-  // pdtDeps: string[];
-
-  // @IsString({ each: true })
-  // pdtDepsAll: string[];
 
   @IsString({ each: true })
   sql: string[];
-
-  // @IsBoolean()
-  // isPdt: boolean;
-
-  // @IsString()
-  // pdtTriggerTime: string;
-
-  // @IsString()
-  // pdtTriggerSql: string;
-
-  // @IsBoolean()
-  // pdtNeedStartByTime: boolean;
-
-  // @IsBoolean()
-  // pdtNeedStartByTriggerSql: boolean;
-
-  // @IsString()
-  // pdtTriggerSqlValue: string;
-
-  // @IsString()
-  // pdtTriggerSqlLastErrorMessage: string;
-
-  // @IsString()
-  // pdtId: string;
 
   @IsEnum(apiEnums.QueryStatusEnum)
   status: apiEnums.QueryStatusEnum;

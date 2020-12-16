@@ -9,12 +9,22 @@ import { helper } from '../barrels/helper';
 export class QueryService {
   async processQuery(item: {
     structId: string;
+    organizationId: string;
+    projectId: string;
     weekStart: api.ProjectWeekStartEnum;
     udfsDict: api.UdfsDict;
     mconfig: api.Mconfig;
     model: interfaces.Model;
   }) {
-    let { structId, weekStart, udfsDict, mconfig, model } = item;
+    let {
+      structId,
+      organizationId,
+      projectId,
+      weekStart,
+      udfsDict,
+      mconfig,
+      model
+    } = item;
 
     let { select, sorts, timezone, limit, filters } = mconfig;
 
@@ -41,11 +51,13 @@ export class QueryService {
     });
 
     let queryId = helper.makeQueryId({
+      organizationId: organizationId,
+      projectId: projectId,
+      connection: model.connection,
       sql: sql
     });
 
     let query: api.Query = {
-      structId: structId,
       queryId: queryId,
       sql: sql,
       status: api.QueryStatusEnum.New,

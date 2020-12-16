@@ -59,6 +59,8 @@ export class SpecialRebuildStructController {
         },
         payload: {
           structId: structId,
+          organizationId: organizationId,
+          projectId: projectId,
           weekStart: weekStart,
           files: resp1.payload.files.map((f: api.DiskCatalogFile) => {
             let file: api.File = {

@@ -5,13 +5,18 @@ import { wrapReports } from './wrap-reports';
 
 export function wrapDashboards(item: {
   structId: string;
+  organizationId: string;
+  projectId: string;
   dashboards: interfaces.Dashboard[];
+  models: interfaces.Model[];
 }) {
+  let { structId, organizationId, projectId, models, dashboards } = item;
+
   let apiDashboards: api.Dashboard[] = [];
   let dashMconfigs: api.Mconfig[] = [];
   let dashQueries: api.Query[] = [];
 
-  item.dashboards.forEach(x => {
+  dashboards.forEach(x => {
     let dashFields: api.DashboardField[] = [];
 
     x.fields.forEach(field => {
@@ -26,7 +31,10 @@ export function wrapDashboards(item: {
     });
 
     let { apiReports, mconfigs, queries } = wrapReports({
-      structId: item.structId,
+      organizationId: organizationId,
+      projectId: projectId,
+      structId: structId,
+      models: models,
       reports: x.reports
     });
 
@@ -34,7 +42,7 @@ export function wrapDashboards(item: {
     dashQueries = [...dashQueries, ...queries];
 
     apiDashboards.push({
-      structId: item.structId,
+      structId: structId,
       dashboardId: x.name,
       content: x,
       accessUsers: x.access_users || [],

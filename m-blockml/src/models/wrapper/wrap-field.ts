@@ -10,11 +10,7 @@ export function wrapField(item: {
   children: api.ModelNode[];
   node: api.ModelNode;
 }) {
-  let wrappedFields = item.wrappedFields;
-  let field = item.field;
-  let alias = item.alias;
-  let children = item.children;
-  let node = item.node;
+  let { wrappedFields, field, alias, fileName, children, node } = item;
 
   let fieldHidden = helper.toBoolean(field.hidden);
 
@@ -57,7 +53,7 @@ export function wrapField(item: {
     hidden: fieldHidden,
     isField: true,
     children: [],
-    fieldFileName: item.fileName,
+    fieldFileName: fileName,
     fieldLineNum: field.name_line_num,
     nodeClass: field.fieldClass
   };

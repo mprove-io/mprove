@@ -2,7 +2,9 @@ import { BmError } from '../bm-error';
 import { api } from '../../barrels/api';
 
 export function wrapErrors(item: { errors: BmError[] }) {
-  let bmlErrors: api.BmlError[] = item.errors.map(x => {
+  let { errors } = item;
+
+  let bmlErrors: api.BmlError[] = errors.map(x => {
     let bmlError: api.BmlError = {
       title: x.title.toString(),
       message: x.message,

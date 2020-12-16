@@ -26,6 +26,5 @@ export * from './bm-error-line';
 export * from './filter-bricks-dictionary';
 export * from './join';
 export * from './report';
-export * from './struct';
 export * from './vars-sql';
 export * from './vars-sub';
