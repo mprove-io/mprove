@@ -10,7 +10,7 @@ export class ToDiskSeedProjectController {
   @Post('toDiskSeedProject')
   async toDiskSeedProject(
     @Body() body: api.ToDiskSeedProjectRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskSeedProjectResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskSeedProjectController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskSeedProjectResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskSeedProjectResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

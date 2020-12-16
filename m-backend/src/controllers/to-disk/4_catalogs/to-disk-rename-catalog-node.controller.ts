@@ -10,7 +10,7 @@ export class ToDiskRenameCatalogNodeController {
   @Post('toDiskRenameCatalogNode')
   async toDiskRenameCatalogNode(
     @Body() body: api.ToDiskRenameCatalogNodeRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskRenameCatalogNodeResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskRenameCatalogNodeController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskRenameCatalogNodeResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskRenameCatalogNodeResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

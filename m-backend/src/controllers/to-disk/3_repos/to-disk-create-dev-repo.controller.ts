@@ -10,7 +10,7 @@ export class ToDiskCreateDevRepoController {
   @Post('toDiskCreateDevRepo')
   async toDiskCreateDevRepo(
     @Body() body: api.ToDiskCreateDevRepoRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskCreateDevRepoResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskCreateDevRepoController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskCreateDevRepoResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskCreateDevRepoResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

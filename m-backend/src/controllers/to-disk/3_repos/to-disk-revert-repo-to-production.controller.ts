@@ -10,7 +10,7 @@ export class ToDiskRevertRepoToProductionController {
   @Post('toDiskRevertRepoToProduction')
   async toDiskRevertRepoToProduction(
     @Body() body: api.ToDiskRevertRepoToProductionRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskRevertRepoToProductionResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskRevertRepoToProductionController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskRevertRepoToProductionResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskRevertRepoToProductionResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

@@ -10,7 +10,7 @@ export class ToDiskDeleteOrganizationController {
   @Post('toDiskDeleteOrganization')
   async toDiskDeleteOrganization(
     @Body() body: api.ToDiskDeleteOrganizationRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskDeleteOrganizationResponse | api.ErrorResponse> {
     try {
       let { organizationId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskDeleteOrganizationController {
         projectId: null
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskDeleteOrganizationResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskDeleteOrganizationResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

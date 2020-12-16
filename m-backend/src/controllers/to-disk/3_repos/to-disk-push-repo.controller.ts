@@ -8,7 +8,9 @@ export class ToDiskPushRepoController {
   constructor(private readonly rabbitService: RabbitService) {}
 
   @Post('toDiskPushRepo')
-  async toDiskPushRepo(@Body() body: api.ToDiskPushRepoRequest): Promise<any> {
+  async toDiskPushRepo(
+    @Body() body: api.ToDiskPushRepoRequest
+  ): Promise<api.ToDiskPushRepoResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -17,14 +19,14 @@ export class ToDiskPushRepoController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskPushRepoResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskPushRepoResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

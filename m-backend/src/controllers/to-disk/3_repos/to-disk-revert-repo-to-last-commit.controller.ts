@@ -10,7 +10,7 @@ export class ToDiskRevertRepoToLastCommitController {
   @Post('toDiskRevertRepoToLastCommit')
   async toDiskRevertRepoToLastCommit(
     @Body() body: api.ToDiskRevertRepoToLastCommitRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskRevertRepoToLastCommitResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskRevertRepoToLastCommitController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskRevertRepoToLastCommitResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskRevertRepoToLastCommitResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

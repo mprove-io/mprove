@@ -9,12 +9,18 @@ export class ToBlockmlRebuildStructController {
   @Post('toBlockmlRebuildStruct')
   async toBlockmlRebuildStruct(
     @Body() body: api.ToBlockmlRebuildStructRequest
-  ): Promise<api.ToBlockmlRebuildStructResponse> {
-    let response = await this.rabbitService.sendToBlockml({
-      routingKey: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-      message: body
-    });
+  ): Promise<api.ToBlockmlRebuildStructResponse | api.ErrorResponse> {
+    try {
+      let resp = await this.rabbitService.sendToBlockml<
+        api.ToBlockmlRebuildStructResponse
+      >({
+        routingKey: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+        message: body
+      });
 
-    return (response as unknown) as api.ToBlockmlRebuildStructResponse;
+      return resp;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

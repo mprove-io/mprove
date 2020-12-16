@@ -9,12 +9,18 @@ export class ToBlockmlProcessQueryController {
   @Post('toBlockmlProcessQuery')
   async toBlockmlProcessQuery(
     @Body() body: api.ToBlockmlProcessQueryRequest
-  ): Promise<api.ToBlockmlProcessQueryResponse> {
-    let response = await this.rabbitService.sendToBlockml({
-      routingKey: api.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-      message: body
-    });
+  ): Promise<api.ToBlockmlProcessQueryResponse | api.ErrorResponse> {
+    try {
+      let resp = await this.rabbitService.sendToBlockml<
+        api.ToBlockmlProcessQueryResponse
+      >({
+        routingKey: api.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+        message: body
+      });
 
-    return (response as unknown) as api.ToBlockmlProcessQueryResponse;
+      return resp;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

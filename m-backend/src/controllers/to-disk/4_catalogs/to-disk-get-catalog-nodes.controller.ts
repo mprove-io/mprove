@@ -10,7 +10,7 @@ export class ToDiskGetCatalogNodesController {
   @Post('toDiskGetCatalogNodes')
   async toDiskGetCatalogNodes(
     @Body() body: api.ToDiskGetCatalogNodesRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskGetCatalogNodesResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskGetCatalogNodesController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskGetCatalogNodesResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskGetCatalogNodesResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

@@ -9,12 +9,18 @@ export class ToBlockmlProcessDashboardController {
   @Post('toBlockmlProcessDashboard')
   async toBlockmlProcessDashboard(
     @Body() body: api.ToBlockmlProcessDashboardRequest
-  ): Promise<api.ToBlockmlProcessDashboardResponse> {
-    let response = await this.rabbitService.sendToBlockml({
-      routingKey: api.RabbitBlockmlRoutingEnum.ProcessDashboard.toString(),
-      message: body
-    });
+  ): Promise<api.ToBlockmlProcessDashboardResponse | api.ErrorResponse> {
+    try {
+      let resp = await this.rabbitService.sendToBlockml<
+        api.ToBlockmlProcessDashboardResponse
+      >({
+        routingKey: api.RabbitBlockmlRoutingEnum.ProcessDashboard.toString(),
+        message: body
+      });
 
-    return (response as unknown) as api.ToBlockmlProcessDashboardResponse;
+      return resp;
+    } catch (e) {
+      return api.makeErrorResponse({ request: body, e: e });
+    }
   }
 }

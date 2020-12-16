@@ -8,7 +8,9 @@ export class ToDiskSaveFileController {
   constructor(private readonly rabbitService: RabbitService) {}
 
   @Post('toDiskSaveFile')
-  async toDiskSaveFile(@Body() body: api.ToDiskSaveFileRequest): Promise<any> {
+  async toDiskSaveFile(
+    @Body() body: api.ToDiskSaveFileRequest
+  ): Promise<api.ToDiskSaveFileResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -17,14 +19,14 @@ export class ToDiskSaveFileController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskSaveFileResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskSaveFileResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }

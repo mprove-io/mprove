@@ -10,7 +10,7 @@ export class ToDiskDeleteFolderController {
   @Post('toDiskDeleteFolder')
   async toDiskDeleteFolder(
     @Body() body: api.ToDiskDeleteFolderRequest
-  ): Promise<any> {
+  ): Promise<api.ToDiskDeleteFolderResponse | api.ErrorResponse> {
     try {
       let { organizationId, projectId } = body.payload;
 
@@ -19,14 +19,14 @@ export class ToDiskDeleteFolderController {
         projectId: projectId
       });
 
-      let message = body;
-
-      let response = await this.rabbitService.sendToDisk({
+      let resp = await this.rabbitService.sendToDisk<
+        api.ToDiskDeleteFolderResponse
+      >({
         routingKey: routingKey,
-        message: message
+        message: body
       });
 
-      return (response as unknown) as api.ToDiskDeleteFolderResponse;
+      return resp;
     } catch (e) {
       return api.makeErrorResponse({ request: body, e: e });
     }
