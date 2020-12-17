@@ -7,6 +7,7 @@ import { types } from '../../barrels/types';
 import { RabbitService } from '../../services/rabbit.service';
 
 export async function buildReport<T extends types.vdType>(item: {
+  traceId: string;
   rabbitService: RabbitService;
   entities: Array<T>;
   models: interfaces.Model[];
@@ -116,6 +117,8 @@ export async function buildReport<T extends types.vdType>(item: {
   });
 
   entities = await barReport.fetchSql({
+    traceId: item.traceId,
+    rabbitService: item.rabbitService,
     entities: entities,
     models: item.models,
     udfsDict: item.udfsDict,

@@ -13,6 +13,7 @@ export class StructService {
   constructor(private readonly rabbitService: RabbitService) {}
 
   async wrapStruct(item: {
+    traceId: string;
     structId: string;
     organizationId: string;
     projectId: string;
@@ -21,6 +22,7 @@ export class StructService {
     connections: api.ProjectConnection[];
   }) {
     let {
+      traceId,
       structId,
       organizationId,
       projectId,
@@ -37,6 +39,7 @@ export class StructService {
       dashboards,
       vizs
     } = await this.rebuildStructStateless({
+      traceId: traceId,
       files: files,
       weekStart: weekStart,
       structId: structId,
@@ -90,6 +93,7 @@ export class StructService {
   }
 
   async rebuildStruct(item: {
+    traceId: string;
     dir: string;
     structId: string;
     weekStart: api.ProjectWeekStartEnum;
@@ -102,6 +106,7 @@ export class StructService {
     });
 
     return await this.rebuildStructStateless({
+      traceId: item.traceId,
       files: files,
       structId: item.structId,
       weekStart: item.weekStart,
@@ -110,6 +115,7 @@ export class StructService {
   }
 
   async rebuildStructStateless(item: {
+    traceId: string;
     files: api.File[];
     structId: string;
     weekStart: api.ProjectWeekStartEnum;
@@ -244,6 +250,7 @@ export class StructService {
     });
 
     dashboards = await barBuilder.buildReport({
+      traceId: item.traceId,
       rabbitService: this.rabbitService,
       entities: dashboards,
       models: models,
@@ -255,6 +262,7 @@ export class StructService {
     });
 
     vizs = await barBuilder.buildReport({
+      traceId: item.traceId,
       rabbitService: this.rabbitService,
       entities: vizs,
       models: models,

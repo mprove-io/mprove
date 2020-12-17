@@ -1,23 +1,32 @@
 import { interfaces } from '../../barrels/interfaces';
 import { api } from '../../barrels/api';
 import { barSql } from '../../barrels/bar-sql';
-import { RabbitService } from 'src/services/rabbit.service';
+import { RabbitService } from '../../services/rabbit.service';
 
 export async function genSql(
   rabbitService: RabbitService,
-  item: interfaces.GenSqlItem
+  traceId: string,
+  genSqlItem: interfaces.GenSqlItem
 ) {
   let outcome: interfaces.GenSqlProOutcome;
 
   if (process.env.MPROVE_BLOCKML_IS_SINGLE === 'TRUE') {
-    outcome = genSqlPro(item);
+    outcome = genSqlPro(genSqlItem);
   } else {
+    let genSqlRequest: api.ToBlockmlWorkerGenSqlRequest = {
+      info: {
+        name: api.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql,
+        traceId: traceId
+      },
+      payload: genSqlItem
+    };
+
     // is main
     let resp = await rabbitService.sendToBlockmlWorker<
       api.ToBlockmlWorkerGenSqlResponse | api.ErrorResponse
     >({
       routingKey: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
-      message: item
+      message: genSqlRequest
     });
 
     if (resp.info.status !== api.ResponseInfoStatusEnum.Ok) {

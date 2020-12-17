@@ -52,6 +52,7 @@ export class ConsumerMainService {
       } = requestValid.payload;
 
       let payload = await this.dashboardService.processDashboard({
+        traceId: traceId,
         structId: structId,
         organizationId: organizationId,
         projectId: projectId,
@@ -111,6 +112,7 @@ export class ConsumerMainService {
       } = requestValid.payload;
 
       let payload = await this.queryService.processQuery({
+        traceId: traceId,
         structId: structId,
         organizationId: organizationId,
         projectId: projectId,
@@ -170,6 +172,7 @@ export class ConsumerMainService {
       } = requestValid.payload;
 
       let payload = await this.structService.wrapStruct({
+        traceId: traceId,
         structId: structId,
         organizationId: organizationId,
         projectId: projectId,

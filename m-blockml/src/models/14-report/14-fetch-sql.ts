@@ -11,6 +11,7 @@ import { RabbitService } from '../../services/rabbit.service';
 let func = enums.FuncEnum.FetchSql;
 
 export async function fetchSql<T extends types.vdType>(item: {
+  traceId: string;
   rabbitService: RabbitService;
   entities: Array<T>;
   models: interfaces.Model[];
@@ -42,6 +43,7 @@ export async function fetchSql<T extends types.vdType>(item: {
 
       let { sql, filtersFractions } = await barSpecial.genSql(
         item.rabbitService,
+        item.traceId,
         {
           model: model,
           select: report.select,

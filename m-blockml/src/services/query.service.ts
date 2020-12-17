@@ -11,6 +11,7 @@ export class QueryService {
   constructor(private readonly rabbitService: RabbitService) {}
 
   async processQuery(item: {
+    traceId: string;
     structId: string;
     organizationId: string;
     projectId: string;
@@ -20,6 +21,7 @@ export class QueryService {
     model: interfaces.Model;
   }) {
     let {
+      traceId,
       structId,
       organizationId,
       projectId,
@@ -41,6 +43,7 @@ export class QueryService {
 
     let { sql, filtersFractions } = await barSpecial.genSql(
       this.rabbitService,
+      traceId,
       {
         model: model,
         select: select,

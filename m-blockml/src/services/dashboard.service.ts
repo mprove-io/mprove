@@ -13,6 +13,7 @@ export class DashboardService {
   constructor(private readonly rabbitService: RabbitService) {}
 
   async processDashboard(item: {
+    traceId: string;
     structId: string;
     organizationId: string;
     projectId: string;
@@ -24,6 +25,7 @@ export class DashboardService {
     newDashboardFields: api.DashboardField[];
   }) {
     let {
+      traceId,
       structId,
       organizationId,
       projectId,
@@ -71,6 +73,7 @@ export class DashboardService {
 
       let { sql, filtersFractions } = await barSpecial.genSql(
         this.rabbitService,
+        traceId,
         {
           model: model,
           select: report.select,
