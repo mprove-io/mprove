@@ -65,15 +65,32 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS   
-      MPROVE_BLOCKML_IS_SINGLE: $MPROVE_BLOCKML_IS_SINGLE  
-      MPROVE_BLOCKML_IS_MAIN: $MPROVE_BLOCKML_IS_MAIN  
-      MPROVE_BLOCKML_IS_WORKER: $MPROVE_BLOCKML_IS_WORKER  
+      MPROVE_BLOCKML_IS_SINGLE: "FALSE"
+      MPROVE_BLOCKML_IS_MAIN: "TRUE"  
+      MPROVE_BLOCKML_IS_WORKER: "FALSE" 
+      MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"        
     logging:
       driver: fluentd
       options:
         fluentd-address: 0.0.0.0:24224
         fluentd-async-connect: "true"
         tag: m-blockml
+
+  m-blockml-worker:
+    image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
+    environment:
+      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
+      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS   
+      MPROVE_BLOCKML_IS_SINGLE: "FALSE"
+      MPROVE_BLOCKML_IS_MAIN: "FALSE"  
+      MPROVE_BLOCKML_IS_WORKER: "TRUE"
+      MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"        
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 0.0.0.0:24224
+        fluentd-async-connect: "true"
+        tag: m-blockml-worker
 
   m-disk:
     container_name: m-disk

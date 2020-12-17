@@ -1,12 +1,13 @@
 import { api } from '../barrels/api';
 import { enums } from '../barrels/enums';
 import { interfaces } from '../barrels/interfaces';
+import { constants } from '../barrels/constants';
 import { barSpecial } from '../barrels/bar-special';
 import { barWrapper } from '../barrels/bar-wrapper';
+import { RabbitService } from './rabbit.service';
 
 import { Injectable } from '@nestjs/common';
-import { forEachSeries } from 'p-iteration';
-import { RabbitService } from './rabbit.service';
+import asyncPool from 'tiny-async-pool';
 
 @Injectable()
 export class DashboardService {
@@ -46,52 +47,56 @@ export class DashboardService {
     });
 
     dashboard.filters = dashboardFilters;
-    // TODO: parallel reports
-    await forEachSeries(dashboard.reports, async report => {
-      let filters: interfaces.FilterBricksDictionary = {};
 
-      Object.keys(report.default_filters)
-        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
-        .forEach(defaultFilter => {
-          if (report.default_filters[defaultFilter].length > 0) {
-            filters[defaultFilter] = report.default_filters[defaultFilter];
+    await asyncPool(
+      constants.CONCURRENCY_LIMIT,
+      dashboard.reports,
+      async report => {
+        let filters: interfaces.FilterBricksDictionary = {};
+
+        Object.keys(report.default_filters)
+          .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+          .forEach(defaultFilter => {
+            if (report.default_filters[defaultFilter].length > 0) {
+              filters[defaultFilter] = report.default_filters[defaultFilter];
+            }
+          });
+
+        // default override by listen
+        Object.keys(report.listen).forEach(filter => {
+          let listen = report.listen[filter];
+
+          if (dashboardFilters[listen].length > 0) {
+            filters[filter] = dashboardFilters[listen];
           }
         });
 
-      // default override by listen
-      Object.keys(report.listen).forEach(filter => {
-        let listen = report.listen[filter];
+        report.combinedFilters = filters;
 
-        if (dashboardFilters[listen].length > 0) {
-          filters[filter] = dashboardFilters[listen];
-        }
-      });
+        let model = models.find(m => m.name === report.model);
 
-      report.combinedFilters = filters;
+        let { sql, filtersFractions } = await barSpecial.genSql(
+          this.rabbitService,
+          traceId,
+          {
+            model: model,
+            select: report.select,
+            sorts: report.sorts,
+            timezone: report.timezone,
+            limit: report.limit,
+            filters: filters,
+            weekStart: weekStart,
+            udfsDict: udfsDict,
+            structId: structId,
+            errors: [],
+            caller: enums.CallerEnum.ProcessDashboard
+          }
+        );
 
-      let model = models.find(m => m.name === report.model);
-
-      let { sql, filtersFractions } = await barSpecial.genSql(
-        this.rabbitService,
-        traceId,
-        {
-          model: model,
-          select: report.select,
-          sorts: report.sorts,
-          timezone: report.timezone,
-          limit: report.limit,
-          filters: filters,
-          weekStart: weekStart,
-          udfsDict: udfsDict,
-          structId: structId,
-          errors: [],
-          caller: enums.CallerEnum.ProcessDashboard
-        }
-      );
-
-      report.sql = sql;
-      report.filtersFractions = filtersFractions;
-    });
+        report.sql = sql;
+        report.filtersFractions = filtersFractions;
+      }
+    );
 
     let {
       apiDashboards,
