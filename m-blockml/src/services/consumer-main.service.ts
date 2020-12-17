@@ -6,7 +6,7 @@ import { QueryService } from './query.service';
 import { StructService } from './struct.service';
 
 @Injectable()
-export class ConsumerService {
+export class ConsumerMainService {
   constructor(
     private readonly structService: StructService,
     private readonly queryService: QueryService,

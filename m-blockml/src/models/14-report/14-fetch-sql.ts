@@ -6,10 +6,12 @@ import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barSpecial } from '../../barrels/bar-special';
 import { types } from '../../barrels/types';
+import { RabbitService } from '../../services/rabbit.service';
 
 let func = enums.FuncEnum.FetchSql;
 
 export async function fetchSql<T extends types.vdType>(item: {
+  rabbitService: RabbitService;
   entities: Array<T>;
   models: interfaces.Model[];
   udfsDict: api.UdfsDict;
@@ -20,6 +22,8 @@ export async function fetchSql<T extends types.vdType>(item: {
 }) {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+
+  // TODO: parallel reports
 
   await forEachSeries(item.entities, async x => {
     await forEachSeries(x.reports, async (report: interfaces.Report) => {
@@ -36,19 +40,22 @@ export async function fetchSql<T extends types.vdType>(item: {
         });
       }
 
-      let { sql, filtersFractions } = await barSpecial.genSql({
-        model: model,
-        select: report.select,
-        sorts: report.sorts,
-        timezone: report.timezone,
-        limit: report.limit,
-        filters: filters,
-        weekStart: item.weekStart,
-        udfsDict: item.udfsDict,
-        structId: item.structId,
-        errors: item.errors,
-        caller: item.caller
-      });
+      let { sql, filtersFractions } = await barSpecial.genSql(
+        item.rabbitService,
+        {
+          model: model,
+          select: report.select,
+          sorts: report.sorts,
+          timezone: report.timezone,
+          limit: report.limit,
+          filters: filters,
+          weekStart: item.weekStart,
+          udfsDict: item.udfsDict,
+          structId: item.structId,
+          errors: item.errors,
+          caller: item.caller
+        }
+      );
 
       report.sql = sql;
       report.filtersFractions = filtersFractions;

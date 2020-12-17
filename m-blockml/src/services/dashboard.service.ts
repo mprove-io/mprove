@@ -6,9 +6,12 @@ import { barWrapper } from '../barrels/bar-wrapper';
 
 import { Injectable } from '@nestjs/common';
 import { forEachSeries } from 'p-iteration';
+import { RabbitService } from './rabbit.service';
 
 @Injectable()
 export class DashboardService {
+  constructor(private readonly rabbitService: RabbitService) {}
+
   async processDashboard(item: {
     structId: string;
     organizationId: string;
@@ -41,7 +44,7 @@ export class DashboardService {
     });
 
     dashboard.filters = dashboardFilters;
-
+    // TODO: parallel reports
     await forEachSeries(dashboard.reports, async report => {
       let filters: interfaces.FilterBricksDictionary = {};
 
@@ -66,19 +69,22 @@ export class DashboardService {
 
       let model = models.find(m => m.name === report.model);
 
-      let { sql, filtersFractions } = await barSpecial.genSql({
-        model: model,
-        select: report.select,
-        sorts: report.sorts,
-        timezone: report.timezone,
-        limit: report.limit,
-        filters: filters,
-        weekStart: weekStart,
-        udfsDict: udfsDict,
-        structId: structId,
-        errors: [],
-        caller: enums.CallerEnum.ProcessDashboard
-      });
+      let { sql, filtersFractions } = await barSpecial.genSql(
+        this.rabbitService,
+        {
+          model: model,
+          select: report.select,
+          sorts: report.sorts,
+          timezone: report.timezone,
+          limit: report.limit,
+          filters: filters,
+          weekStart: weekStart,
+          udfsDict: udfsDict,
+          structId: structId,
+          errors: [],
+          caller: enums.CallerEnum.ProcessDashboard
+        }
+      );
 
       report.sql = sql;
       report.filtersFractions = filtersFractions;

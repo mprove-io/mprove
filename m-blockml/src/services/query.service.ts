@@ -4,9 +4,12 @@ import { enums } from '../barrels/enums';
 import { interfaces } from '../barrels/interfaces';
 import { barSpecial } from '../barrels/bar-special';
 import { helper } from '../barrels/helper';
+import { RabbitService } from './rabbit.service';
 
 @Injectable()
 export class QueryService {
+  constructor(private readonly rabbitService: RabbitService) {}
+
   async processQuery(item: {
     structId: string;
     organizationId: string;
@@ -36,19 +39,22 @@ export class QueryService {
       newFilters[fieldId] = bricks;
     });
 
-    let { sql, filtersFractions } = await barSpecial.genSql({
-      model: model,
-      select: select,
-      sorts: sorts,
-      timezone: timezone,
-      limit: limit.toString(),
-      filters: newFilters,
-      weekStart: weekStart,
-      udfsDict: udfsDict,
-      structId: structId,
-      errors: [],
-      caller: enums.CallerEnum.ProcessQuery
-    });
+    let { sql, filtersFractions } = await barSpecial.genSql(
+      this.rabbitService,
+      {
+        model: model,
+        select: select,
+        sorts: sorts,
+        timezone: timezone,
+        limit: limit.toString(),
+        filters: newFilters,
+        weekStart: weekStart,
+        udfsDict: udfsDict,
+        structId: structId,
+        errors: [],
+        caller: enums.CallerEnum.ProcessQuery
+      }
+    );
 
     let queryId = helper.makeQueryId({
       organizationId: organizationId,

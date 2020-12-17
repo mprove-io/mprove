@@ -6,9 +6,12 @@ import { BmError } from '../models/bm-error';
 import { barYaml } from '../barrels/bar-yaml';
 import { barBuilder } from '../barrels/bar-builder';
 import { barWrapper } from '../barrels/bar-wrapper';
+import { RabbitService } from './rabbit.service';
 
 @Injectable()
 export class StructService {
+  constructor(private readonly rabbitService: RabbitService) {}
+
   async wrapStruct(item: {
     structId: string;
     organizationId: string;
@@ -241,6 +244,7 @@ export class StructService {
     });
 
     dashboards = await barBuilder.buildReport({
+      rabbitService: this.rabbitService,
       entities: dashboards,
       models: models,
       udfsDict: udfsDict,
@@ -251,6 +255,7 @@ export class StructService {
     });
 
     vizs = await barBuilder.buildReport({
+      rabbitService: this.rabbitService,
       entities: vizs,
       models: models,
       udfsDict: udfsDict,

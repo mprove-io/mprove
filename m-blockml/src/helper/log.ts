@@ -8,7 +8,7 @@ export function log(
   logType: enums.LogTypeEnum,
   content: any
 ) {
-  if (process.env.MPROVE_LOG_IO !== 'TRUE') {
+  if (process.env.MPROVE_BLOCKML_LOG_IO !== 'TRUE') {
     return;
   }
 

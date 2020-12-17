@@ -1,29 +1,41 @@
-import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
-import { BmError } from '../bm-error';
-import { enums } from '../../barrels/enums';
+import { api } from '../../barrels/api';
 import { barSql } from '../../barrels/bar-sql';
+import { RabbitService } from 'src/services/rabbit.service';
 
-interface GenSqlItem {
-  model: interfaces.Model;
-  select: string[];
-  sorts: string;
-  timezone: string;
-  limit: string;
-  filters: interfaces.FilterBricksDictionary;
-  udfsDict: api.UdfsDict;
-  weekStart: api.ProjectWeekStartEnum;
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-}
+export async function genSql(
+  rabbitService: RabbitService,
+  item: interfaces.GenSqlItem
+) {
+  let outcome: interfaces.GenSqlProOutcome;
 
-export async function genSql(item: GenSqlItem) {
-  let outcome = genSqlPro(item);
+  if (process.env.MPROVE_BLOCKML_IS_SINGLE === 'TRUE') {
+    outcome = genSqlPro(item);
+  } else {
+    // is main
+    let resp = await rabbitService.sendToBlockmlWorker<
+      api.ToBlockmlWorkerGenSqlResponse | api.ErrorResponse
+    >({
+      routingKey: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
+      message: item
+    });
+
+    if (resp.info.status !== api.ResponseInfoStatusEnum.Ok) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BLOCKML_GEN_SQL_OUTCOME_ERROR,
+        originalError: resp.info.error
+      });
+    }
+
+    outcome = resp.payload;
+  }
+
+  // TODO: item.errors update
+
   return outcome;
 }
 
-function genSqlPro(item: GenSqlItem) {
+export function genSqlPro(item: interfaces.GenSqlItem) {
   let vars: interfaces.VarsSql = {
     model: item.model,
     select: item.select,

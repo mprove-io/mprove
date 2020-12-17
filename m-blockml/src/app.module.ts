@@ -1,10 +1,32 @@
 import { Module } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { ConsumerService } from './services/consumer.service';
+import { ConsumerMainService } from './services/consumer-main.service';
 import { api } from './barrels/api';
 import { StructService } from './services/struct.service';
 import { QueryService } from './services/query.service';
 import { DashboardService } from './services/dashboard.service';
+import { ConsumerWorkerService } from './services/consumer-worker.service';
+import { RabbitService } from './services/rabbit.service';
+
+let providers: any[] = [];
+
+if (
+  process.env.MPROVE_BLOCKML_IS_SINGLE === 'TRUE' ||
+  process.env.MPROVE_BLOCKML_IS_MAIN === 'TRUE'
+) {
+  providers = [
+    ...providers,
+    RabbitService,
+    ConsumerMainService,
+    DashboardService,
+    QueryService,
+    StructService
+  ];
+}
+
+if (process.env.MPROVE_BLOCKML_IS_WORKER === 'TRUE') {
+  providers = [...providers, ConsumerWorkerService];
+}
 
 @Module({
   imports: [
@@ -12,6 +34,10 @@ import { DashboardService } from './services/dashboard.service';
       exchanges: [
         {
           name: api.RabbitExchangesEnum.MBlockml.toString(),
+          type: 'direct'
+        },
+        {
+          name: api.RabbitExchangesEnum.MBlockmlWorker.toString(),
           type: 'direct'
         }
       ],
@@ -22,6 +48,6 @@ import { DashboardService } from './services/dashboard.service';
     })
   ],
   controllers: [],
-  providers: [ConsumerService, DashboardService, QueryService, StructService]
+  providers: providers
 })
 export class AppModule {}

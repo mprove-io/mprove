@@ -24,6 +24,8 @@ export * from './file-types/viz';
 
 export * from './bm-error-line';
 export * from './filter-bricks-dictionary';
+export * from './gen-sql-item';
+export * from './gen-sql-pro-outcome';
 export * from './join';
 export * from './report';
 export * from './vars-sql';

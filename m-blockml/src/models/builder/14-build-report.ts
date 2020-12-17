@@ -4,8 +4,10 @@ import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barReport } from '../../barrels/bar-report';
 import { types } from '../../barrels/types';
+import { RabbitService } from '../../services/rabbit.service';
 
 export async function buildReport<T extends types.vdType>(item: {
+  rabbitService: RabbitService;
   entities: Array<T>;
   models: interfaces.Model[];
   udfsDict: api.UdfsDict;
