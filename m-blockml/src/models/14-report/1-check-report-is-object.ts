@@ -6,7 +6,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckReportIsObject;
 
-export function checkReportIsObject<T extends types.vdType>(item: {
+export function checkReportIsObject<T extends types.dzType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

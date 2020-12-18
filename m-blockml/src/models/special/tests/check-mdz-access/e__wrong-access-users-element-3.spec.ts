@@ -6,13 +6,13 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildModel;
-let func = enums.FuncEnum.CheckModelAccessUsers;
-let testId = 'e__wrong-model-access-users-element';
+let caller = enums.CallerEnum.BuildViz;
+let func = enums.FuncEnum.CheckMdzAccess;
+let testId = 'e__wrong-access-users-element-3';
 
 test(testId, async () => {
   let errors: BmError[];
-  let models: interfaces.Model[];
+  let entVizs: interfaces.Viz[];
 
   try {
     let {
@@ -38,17 +38,15 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
+    entVizs = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(models.length).toBe(0);
+  expect(entVizs.length).toBe(0);
 
-  expect(errors[0].title).toBe(
-    enums.ErTitleEnum.WRONG_MODEL_ACCESS_USERS_ELEMENT
-  );
-  expect(errors[0].lines[0].line).toBe(3);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
+  expect(errors[0].lines[0].line).toBe(2);
 });

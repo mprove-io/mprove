@@ -46,6 +46,7 @@ export function wrapDashboards(item: {
       dashboardId: x.name,
       content: x,
       accessUsers: x.access_users || [],
+      accessRoles: x.access_roles || [],
       title: x.title,
       description: x.description,
       gr: x.group,

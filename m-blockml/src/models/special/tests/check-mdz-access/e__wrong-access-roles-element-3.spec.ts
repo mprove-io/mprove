@@ -7,12 +7,12 @@ import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildViz;
-let func = enums.FuncEnum.CheckVizAccessUsers;
-let testId = 'e__wrong-viz-access-users-element';
+let func = enums.FuncEnum.CheckMdzAccess;
+let testId = 'e__wrong-access-roles-element-3';
 
 test(testId, async () => {
   let errors: BmError[];
-  let vizs: interfaces.Viz[];
+  let entVizs: interfaces.Viz[];
 
   try {
     let {
@@ -38,17 +38,15 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    vizs = await helper.readLog(fromDir, enums.LogTypeEnum.Vizs);
+    entVizs = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(vizs.length).toBe(0);
+  expect(entVizs.length).toBe(0);
 
-  expect(errors[0].title).toBe(
-    enums.ErTitleEnum.WRONG_VIZ_ACCESS_USERS_ELEMENT
-  );
+  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_ACCESS_ROLES_ELEMENT);
   expect(errors[0].lines[0].line).toBe(2);
 });

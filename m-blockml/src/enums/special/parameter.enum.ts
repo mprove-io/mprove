@@ -5,6 +5,7 @@ export enum ParameterEnum {
   //
   FieldClass = 'fieldClass',
   //
+  AccessRoles = 'access_roles',
   AccessUsers = 'access_users',
   AlwaysJoin = 'always_join',
   As = 'as',

@@ -5,7 +5,7 @@ import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
 import { processFilter } from './process-filter';
 
-let func = enums.FuncEnum.CheckVMDFilterDefaults;
+let func = enums.FuncEnum.CheckVmdFilterDefaults;
 
 export function checkVMDFilterDefaults<T extends types.vmdType>(item: {
   entities: Array<T>;

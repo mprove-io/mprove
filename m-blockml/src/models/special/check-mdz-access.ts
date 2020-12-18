@@ -1,12 +1,12 @@
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
+import { types } from '../../barrels/types';
 import { BmError } from '../bm-error';
-import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.CheckDashboardAccessUsers;
+let func = enums.FuncEnum.CheckMdzAccess;
 
-export function checkDashboardAccessUsers(item: {
-  dashboards: interfaces.Dashboard[];
+export function checkMdzAccess<T extends types.mdzType>(item: {
+  entities: Array<T>;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -14,9 +14,9 @@ export function checkDashboardAccessUsers(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards: interfaces.Dashboard[] = [];
+  let newEntities: T[] = [];
 
-  item.dashboards.forEach(x => {
+  item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
     if (helper.isDefined(x.access_users)) {
@@ -24,7 +24,7 @@ export function checkDashboardAccessUsers(item: {
         if (typeof u !== 'string' && !(<any>u instanceof String)) {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_DASHBOARD_ACCESS_USERS_ELEMENT,
+              title: enums.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT,
               message: 'found array element that is not a single value',
               lines: [
                 {
@@ -40,13 +40,34 @@ export function checkDashboardAccessUsers(item: {
       });
     }
 
+    if (helper.isDefined(x.access_roles)) {
+      x.access_roles.forEach(u => {
+        if (typeof u !== 'string' && !(<any>u instanceof String)) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_ACCESS_ROLES_ELEMENT,
+              message: 'found array element that is not a single value',
+              lines: [
+                {
+                  line: x.access_roles_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+      });
+    }
+
     if (errorsOnStart === item.errors.length) {
-      newDashboards.push(x);
+      newEntities.push(x);
     }
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
 
-  return newDashboards;
+  return newEntities;
 }

@@ -21,6 +21,9 @@ export class Dashboard {
   @IsString({ each: true })
   accessUsers: string[];
 
+  @IsString({ each: true })
+  accessRoles: string[];
+
   @IsString()
   title: string;
 

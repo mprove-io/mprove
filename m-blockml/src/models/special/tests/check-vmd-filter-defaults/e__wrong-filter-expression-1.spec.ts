@@ -7,7 +7,7 @@ import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildView;
-let func = enums.FuncEnum.CheckVMDFilterDefaults;
+let func = enums.FuncEnum.CheckVmdFilterDefaults;
 let testId = 'e__wrong-filter-expression-1';
 
 test(testId, async () => {

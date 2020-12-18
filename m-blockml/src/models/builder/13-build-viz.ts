@@ -12,7 +12,7 @@ export function buildViz(item: {
 }) {
   let vizs = item.vizs;
 
-  vizs = barViz.checkVizAccessUsers({
+  vizs = barViz.checkVizAccess({
     vizs: vizs,
     structId: item.structId,
     errors: item.errors,

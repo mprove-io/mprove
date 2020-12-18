@@ -9,7 +9,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckDefaultFilters;
 
-export function checkDefaultFilters<T extends types.vdType>(item: {
+export function checkDefaultFilters<T extends types.dzType>(item: {
   entities: Array<T>;
   models: interfaces.Model[];
   errors: BmError[];

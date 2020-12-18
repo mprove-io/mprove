@@ -18,6 +18,9 @@ export class Viz {
   @IsString({ each: true })
   accessUsers: string[];
 
+  @IsString({ each: true })
+  accessRoles: string[];
+
   @IsOptional()
   @IsString()
   gr?: string;

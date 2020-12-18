@@ -8,7 +8,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckSelectElements;
 
-export function checkSelectElements<T extends types.vdType>(item: {
+export function checkSelectElements<T extends types.dzType>(item: {
   entities: Array<T>;
   models: interfaces.Model[];
   errors: BmError[];

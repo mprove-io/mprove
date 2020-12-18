@@ -104,6 +104,7 @@ export function checkTopUnknownParameters(item: {
                 enums.ParameterEnum.Group.toString(),
                 enums.ParameterEnum.Description.toString(),
                 enums.ParameterEnum.AccessUsers.toString(),
+                enums.ParameterEnum.AccessRoles.toString(),
                 enums.ParameterEnum.AlwaysJoin.toString(),
                 enums.ParameterEnum.SqlAlwaysWhere.toString(),
                 enums.ParameterEnum.SqlAlwaysWhereCalc.toString(),
@@ -141,6 +142,7 @@ export function checkTopUnknownParameters(item: {
                 enums.ParameterEnum.Hidden.toString(),
                 enums.ParameterEnum.Description.toString(),
                 enums.ParameterEnum.AccessUsers.toString(),
+                enums.ParameterEnum.AccessRoles.toString(),
                 enums.ParameterEnum.Fields.toString(),
                 enums.ParameterEnum.Reports.toString()
               ].indexOf(parameter) < 0
@@ -172,6 +174,7 @@ export function checkTopUnknownParameters(item: {
                 enums.ParameterEnum.Group.toString(),
                 enums.ParameterEnum.Hidden.toString(),
                 enums.ParameterEnum.AccessUsers.toString(),
+                enums.ParameterEnum.AccessRoles.toString(),
                 enums.ParameterEnum.Reports.toString()
               ].indexOf(parameter) < 0
             ) {
@@ -203,7 +206,8 @@ export function checkTopUnknownParameters(item: {
             enums.ParameterEnum.Fields.toString(),
             enums.ParameterEnum.Reports.toString(),
             enums.ParameterEnum.Joins.toString(),
-            enums.ParameterEnum.AccessUsers.toString()
+            enums.ParameterEnum.AccessUsers.toString(),
+            enums.ParameterEnum.AccessRoles.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
@@ -244,7 +248,8 @@ export function checkTopUnknownParameters(item: {
             enums.ParameterEnum.Fields.toString(),
             enums.ParameterEnum.Reports.toString(),
             enums.ParameterEnum.Joins.toString(),
-            enums.ParameterEnum.AccessUsers.toString()
+            enums.ParameterEnum.AccessUsers.toString(),
+            enums.ParameterEnum.AccessRoles.toString()
           ].indexOf(parameter) > -1
         ) {
           item.errors.push(

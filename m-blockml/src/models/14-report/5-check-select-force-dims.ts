@@ -7,7 +7,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckSelectForceDims;
 
-export function checkSelectForceDims<T extends types.vdType>(item: {
+export function checkSelectForceDims<T extends types.dzType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

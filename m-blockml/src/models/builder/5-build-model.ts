@@ -14,7 +14,7 @@ export function buildModel(item: {
 }) {
   let models = item.models;
 
-  models = barModel.checkModelAccessUsers({
+  models = barModel.checkModelAccess({
     models: models,
     structId: item.structId,
     errors: item.errors,

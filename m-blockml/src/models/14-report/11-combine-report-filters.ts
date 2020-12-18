@@ -7,7 +7,7 @@ import { interfaces } from '../../barrels/interfaces';
 
 let func = enums.FuncEnum.CombineReportFilters;
 
-export function combineReportFilters<T extends types.vdType>(item: {
+export function combineReportFilters<T extends types.dzType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

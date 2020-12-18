@@ -6,7 +6,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckSqlAlwaysWhereCalcForceDims;
 
-export function checkSqlAlwaysWhereCalcForceDims<T extends types.vdType>(item: {
+export function checkSqlAlwaysWhereCalcForceDims<T extends types.dzType>(item: {
   entities: Array<T>;
   models: interfaces.Model[];
   errors: BmError[];

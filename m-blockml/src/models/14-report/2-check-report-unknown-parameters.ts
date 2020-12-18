@@ -8,7 +8,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckReportUnknownParameters;
 
-export function checkReportUnknownParameters<T extends types.vdType>(item: {
+export function checkReportUnknownParameters<T extends types.dzType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

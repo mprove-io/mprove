@@ -7,7 +7,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckChartDataParameters;
 
-export function checkChartDataParameters<T extends types.vdType>(item: {
+export function checkChartDataParameters<T extends types.dzType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

@@ -12,7 +12,7 @@ export function buildDashboard(item: {
 }) {
   let dashboards = item.dashboards;
 
-  dashboards = barDashboard.checkDashboardAccessUsers({
+  dashboards = barDashboard.checkDashboardAccess({
     dashboards: dashboards,
     structId: item.structId,
     errors: item.errors,

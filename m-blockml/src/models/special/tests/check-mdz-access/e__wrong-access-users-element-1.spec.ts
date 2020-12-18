@@ -6,13 +6,13 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildDashboard;
-let func = enums.FuncEnum.CheckVmdFilterDefaults;
-let testId = 'e__wrong-filter-expression-3';
+let caller = enums.CallerEnum.BuildModel;
+let func = enums.FuncEnum.CheckMdzAccess;
+let testId = 'e__wrong-access-users-element-1';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entitiesDashboards: interfaces.Dashboard[];
+  let entModels: interfaces.Model[];
 
   try {
     let {
@@ -38,18 +38,15 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entitiesDashboards = await helper.readLog(
-      fromDir,
-      enums.LogTypeEnum.Entities
-    );
+    entModels = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(entitiesDashboards.length).toBe(0);
+  expect(entModels.length).toBe(0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_FILTER_EXPRESSION);
-  expect(errors[0].lines[0].line).toBe(5);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
+  expect(errors[0].lines[0].line).toBe(3);
 });

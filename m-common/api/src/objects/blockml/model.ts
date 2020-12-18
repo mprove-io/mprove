@@ -21,6 +21,9 @@ export class Model {
   @IsString({ each: true })
   accessUsers: string[];
 
+  @IsString({ each: true })
+  accessRoles: string[];
+
   @IsString()
   label: string;
 

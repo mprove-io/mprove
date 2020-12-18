@@ -7,7 +7,7 @@ import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboard;
-let func = enums.FuncEnum.CheckVMDFilterDefaults;
+let func = enums.FuncEnum.CheckVmdFilterDefaults;
 let testId = 'e__dashboard-filter-must-have-default';
 
 test(testId, async () => {

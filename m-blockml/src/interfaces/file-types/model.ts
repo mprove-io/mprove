@@ -23,6 +23,9 @@ export interface Model extends FileBasic {
   access_users?: string[];
   access_users_line_num?: number;
 
+  access_roles?: string[];
+  access_roles_line_num?: number;
+
   always_join?: string;
   always_join_line_num?: number;
 

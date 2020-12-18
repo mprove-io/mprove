@@ -32,6 +32,7 @@ export function wrapVizs(item: {
       structId: structId,
       vizId: x.name,
       accessUsers: x.access_users || [],
+      accessRoles: x.access_roles || [],
       gr: x.group,
       hidden: helper.toBoolean(x.hidden),
       reports: apiReports,

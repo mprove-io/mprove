@@ -11,7 +11,7 @@ import asyncPool from 'tiny-async-pool';
 
 let func = enums.FuncEnum.FetchSql;
 
-export async function fetchSql<T extends types.vdType>(item: {
+export async function fetchSql<T extends types.dzType>(item: {
   traceId: string;
   rabbitService: RabbitService;
   entities: Array<T>;

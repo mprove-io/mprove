@@ -3,7 +3,7 @@ import { BmError } from '../../models/bm-error';
 import { barChart } from '../../barrels/bar-chart';
 import { types } from '../../barrels/types';
 
-export function buildChart<T extends types.vdType>(item: {
+export function buildChart<T extends types.dzType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

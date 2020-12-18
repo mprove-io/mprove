@@ -6,13 +6,13 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildDashboard;
-let func = enums.FuncEnum.CheckDashboardAccessUsers;
-let testId = 'e__wrong-dashboard-access-users-element';
+let caller = enums.CallerEnum.BuildModel;
+let func = enums.FuncEnum.CheckMdzAccess;
+let testId = 'e__wrong-access-roles-element-1';
 
 test(testId, async () => {
   let errors: BmError[];
-  let dashboards: interfaces.Dashboard[];
+  let entModels: interfaces.Model[];
 
   try {
     let {
@@ -38,17 +38,15 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
+    entModels = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(1);
-  expect(dashboards.length).toBe(0);
+  expect(entModels.length).toBe(0);
 
-  expect(errors[0].title).toBe(
-    enums.ErTitleEnum.WRONG_DASHBOARD_ACCESS_USERS_ELEMENT
-  );
-  expect(errors[0].lines[0].line).toBe(2);
+  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_ACCESS_ROLES_ELEMENT);
+  expect(errors[0].lines[0].line).toBe(3);
 });

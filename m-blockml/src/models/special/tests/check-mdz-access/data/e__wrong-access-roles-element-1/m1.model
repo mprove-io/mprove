@@ -1,0 +1,6 @@
+model: m1
+connection: c1
+access_roles:  
+- a: 'abc'
+
+

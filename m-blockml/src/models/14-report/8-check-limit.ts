@@ -8,7 +8,7 @@ import { types } from '../../barrels/types';
 
 let func = enums.FuncEnum.CheckLimit;
 
-export function checkLimit<T extends types.vdType>(item: {
+export function checkLimit<T extends types.dzType>(item: {
   entities: Array<T>;
   errors: BmError[];
   structId: string;

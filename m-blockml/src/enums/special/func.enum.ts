@@ -41,7 +41,7 @@ export enum FuncEnum {
   PickUdfsFromAsDeps = '04-view/8-pick-udfs-from-as-deps',
   ProcessViewRefs = '04-view/9-process-view-refs',
 
-  CheckModelAccessUsers = '05-model/1-check-model-access-users',
+  CheckModelAccess = '05-model/1-check-model-access',
   CheckModelUdfs = '05-model/2-check-model-udfs',
   CheckJoinsExist = '05-model/3-check-joins-exist',
   CheckJoinsFromView = '05-model/4-check-joins-from-view',
@@ -94,11 +94,11 @@ export enum FuncEnum {
   AwcCheckApplyFilter = '11-sql-always-where-calc/7-awc-check-apply-filter',
   AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/8-awc-update-always-join-unique',
 
-  CheckDashboardAccessUsers = '12-dashboard/1-check-dashboard-access-users',
+  CheckDashboardAccess = '12-dashboard/1-check-dashboard-access',
   CheckDashboardFilterDefaults = '12-dashboard/2-check-dashboard-filter-defaults',
   CheckDashboardReportsExist = '12-dashboard/3-check-dashboard-reports-exist',
 
-  CheckVizAccessUsers = '13-viz/1-check-viz-access-users',
+  CheckVizAccess = '13-viz/1-check-viz-access',
   CheckVizReportsExist = '13-viz/2-check-viz-reports-exist',
 
   CheckReportIsObject = '14-report/1-check-report-is-object',
@@ -123,7 +123,8 @@ export enum FuncEnum {
   CheckChartOptionsParameters = '15-chart/5-check-chart-options-parameters',
   CheckChartTileParameters = '15-chart/6-check-chart-tile-parameters',
 
-  CheckVMDFilterDefaults = 'special/check-vmd-filter-defaults',
+  CheckMdzAccess = 'special/check-mdz-access',
+  CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
 
   LogStruct = 'builder/log-struct'
 }
