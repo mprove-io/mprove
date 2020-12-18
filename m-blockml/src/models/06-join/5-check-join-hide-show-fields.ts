@@ -22,6 +22,18 @@ export function checkJoinHideShowFields(item: {
     let errorsOnStart = item.errors.length;
 
     x.joins.forEach(join => {
+      let hideFieldsErrorLine = {
+        line: join[enums.ParameterEnum.HideFields + constants.LINE_NUM],
+        name: x.fileName,
+        path: x.filePath
+      };
+
+      let showFieldsErrorLine = {
+        line: join[enums.ParameterEnum.ShowFields + constants.LINE_NUM],
+        name: x.fileName,
+        path: x.filePath
+      };
+
       if (
         helper.isDefined(join[enums.ParameterEnum.HideFields]) &&
         helper.isDefined(join[enums.ParameterEnum.ShowFields])
@@ -32,27 +44,138 @@ export function checkJoinHideShowFields(item: {
             message:
               `parameters "${enums.ParameterEnum.ShowFields}" ` +
               `and "${enums.ParameterEnum.HideFields}" can not be specified at the same time`,
-            lines: [
-              {
-                line: join[enums.ParameterEnum.HideFields + constants.LINE_NUM],
-                name: x.fileName,
-                path: x.filePath
-              },
-              {
-                line: join[enums.ParameterEnum.ShowFields + constants.LINE_NUM],
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
+            lines: [hideFieldsErrorLine, showFieldsErrorLine]
           })
         );
         return;
       }
 
       if (helper.isDefined(join[enums.ParameterEnum.HideFields])) {
+        join[enums.ParameterEnum.HideFields]
+          .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+          .forEach(asFieldName => {
+            let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let r = reg.exec(asFieldName);
+
+            if (helper.isUndefined(r)) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    enums.ErTitleEnum
+                      .JOIN_HIDE_FIELDS_ELEMENT_HAS_WRONG_REFERENCE,
+                  message:
+                    `found field reference ${asFieldName} that is not ` +
+                    'in form "alias.field_name"',
+                  lines: [hideFieldsErrorLine]
+                })
+              );
+              return;
+            }
+
+            let asName = r[1];
+            let fieldName = r[2];
+
+            if (asName !== join.as) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    enums.ErTitleEnum.JOIN_HIDE_FIELDS_ELEMENT_HAS_WRONG_ALIAS,
+                  message:
+                    `"${asFieldName}" alias "${asName}" must match` +
+                    `join "${enums.ParameterEnum.As}" parameter value`,
+                  lines: [hideFieldsErrorLine]
+                })
+              );
+              return;
+            }
+
+            let viewField = join.view.fields.find(
+              vField => vField.name === fieldName
+            );
+
+            if (helper.isUndefined(viewField)) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    enums.ErTitleEnum
+                      .JOIN_HIDE_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
+                  message:
+                    `"${asFieldName}" references missing or not valid field ` +
+                    `"${fieldName}" of view "${join.view.name}". ` +
+                    `View has "${asName}" alias in "${x.name}" model.`,
+                  lines: [hideFieldsErrorLine]
+                })
+              );
+              return;
+            }
+
+            // override
+            viewField.hidden = 'true';
+          });
       }
 
       if (helper.isDefined(join[enums.ParameterEnum.ShowFields])) {
+        join[enums.ParameterEnum.ShowFields]
+          .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+          .forEach(asFieldName => {
+            let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let r = reg.exec(asFieldName);
+
+            if (helper.isUndefined(r)) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    enums.ErTitleEnum
+                      .JOIN_SHOW_FIELDS_ELEMENT_HAS_WRONG_REFERENCE,
+                  message:
+                    `found field reference ${asFieldName} that is not ` +
+                    'in form "alias.field_name"',
+                  lines: [showFieldsErrorLine]
+                })
+              );
+              return;
+            }
+
+            let asName = r[1];
+            let fieldName = r[2];
+
+            if (asName !== join.as) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    enums.ErTitleEnum.JOIN_SHOW_FIELDS_ELEMENT_HAS_WRONG_ALIAS,
+                  message:
+                    `"${asFieldName}" alias "${asName}" must match` +
+                    `join "${enums.ParameterEnum.As}" parameter value`,
+                  lines: [showFieldsErrorLine]
+                })
+              );
+              return;
+            }
+
+            let viewField = join.view.fields.find(
+              vField => vField.name === fieldName
+            );
+
+            if (helper.isUndefined(viewField)) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    enums.ErTitleEnum
+                      .JOIN_SHOW_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
+                  message:
+                    `"${asFieldName}" references missing or not valid field ` +
+                    `"${fieldName}" of view "${join.view.name}". ` +
+                    `View has "${asName}" alias in "${x.name}" model.`,
+                  lines: [showFieldsErrorLine]
+                })
+              );
+              return;
+            }
+
+            // override
+            viewField.hidden = 'false';
+          });
       }
     });
 
