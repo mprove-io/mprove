@@ -16,7 +16,7 @@ export function checkDashboardFilterDefaults(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newDashboards = barSpecial.checkVMDFilterDefaults({
+  let newDashboards = barSpecial.checkVmdFilterDefaults({
     entities: item.dashboards,
     errors: item.errors,
     structId: item.structId,

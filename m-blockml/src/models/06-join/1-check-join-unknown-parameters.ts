@@ -58,7 +58,9 @@ export function checkJoinUnknownParameters(item: {
               enums.ParameterEnum.Label.toString(),
               enums.ParameterEnum.Description.toString(),
               enums.ParameterEnum.As.toString(),
-              enums.ParameterEnum.SqlWhere.toString()
+              enums.ParameterEnum.SqlWhere.toString(),
+              enums.ParameterEnum.HideFields.toString(),
+              enums.ParameterEnum.ShowFields.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
@@ -89,7 +91,9 @@ export function checkJoinUnknownParameters(item: {
               enums.ParameterEnum.As.toString(),
               enums.ParameterEnum.Type.toString(),
               enums.ParameterEnum.SqlOn.toString(),
-              enums.ParameterEnum.SqlWhere.toString()
+              enums.ParameterEnum.SqlWhere.toString(),
+              enums.ParameterEnum.HideFields.toString(),
+              enums.ParameterEnum.ShowFields.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
@@ -110,7 +114,13 @@ export function checkJoinUnknownParameters(item: {
             return;
           }
 
-          if (Array.isArray(join[parameter])) {
+          if (
+            Array.isArray(join[parameter]) &&
+            [
+              enums.ParameterEnum.HideFields.toString(),
+              enums.ParameterEnum.ShowFields.toString()
+            ].indexOf(parameter) < 0
+          ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.JOIN_UNEXPECTED_LIST,
@@ -132,6 +142,29 @@ export function checkJoinUnknownParameters(item: {
               new BmError({
                 title: enums.ErTitleEnum.JOIN_UNEXPECTED_DICTIONARY,
                 message: `parameter '${parameter}' must have a single value`,
+                lines: [
+                  {
+                    line: join[parameter + constants.LINE_NUM],
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (
+            !Array.isArray(join[parameter]) &&
+            [
+              enums.ParameterEnum.HideFields.toString(),
+              enums.ParameterEnum.ShowFields.toString()
+            ].indexOf(parameter) > -1
+          ) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.JOIN_PARAMETER_IS_NOT_A_LIST,
+                message: `parameter "${parameter}" must be a List`,
                 lines: [
                   {
                     line: join[parameter + constants.LINE_NUM],

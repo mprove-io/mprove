@@ -16,7 +16,7 @@ export function checkViewFilterDefaults(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let newViews = barSpecial.checkVMDFilterDefaults({
+  let newViews = barSpecial.checkVmdFilterDefaults({
     entities: item.views,
     errors: item.errors,
     structId: item.structId,

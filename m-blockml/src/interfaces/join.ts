@@ -29,6 +29,12 @@ export interface Join {
   sql_where: string;
   sql_where_line_num: number;
 
+  hide_fields?: string[];
+  hide_fields_line_num?: number;
+
+  show_fields?: string[];
+  show_fields_line_num?: number;
+
   //
 
   view: View;

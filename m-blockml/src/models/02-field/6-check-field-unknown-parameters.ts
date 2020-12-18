@@ -236,7 +236,9 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
               })
             );
             return;
-          } else if (field[parameter]?.constructor === Object) {
+          }
+
+          if (field[parameter]?.constructor === Object) {
             item.errors.push(
               new BmError({
                 title:
