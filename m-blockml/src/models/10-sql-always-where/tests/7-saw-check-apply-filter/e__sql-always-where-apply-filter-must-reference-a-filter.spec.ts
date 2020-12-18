@@ -17,6 +17,7 @@ test(testId, async () => {
   try {
     let {
       structService,
+      traceId,
       structId,
       dataDir,
       fromDir,
@@ -29,6 +30,7 @@ test(testId, async () => {
     };
 
     await structService.rebuildStruct({
+      traceId: traceId,
       dir: dataDir,
       structId: structId,
       connections: [connection],
