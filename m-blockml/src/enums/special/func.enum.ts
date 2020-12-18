@@ -57,6 +57,7 @@ export enum FuncEnum {
   CheckJoinType = '06-join/2-check-join-type',
   UpgradeJoinCalculationsForceDims = '06-join/3-upgrade-join-calculations-force-dims',
   CheckSqlOnExist = '06-join/4-check-sql-on-exist',
+  CheckJoinHideShowFields = '06-join/5-check-join-hide-show-fields',
 
   JsoCheckCharsInRefs = '07-join-sql-on/1-jso-check-chars-in-refs',
   JsoMakeDoubleDeps = '07-join-sql-on/2-jso-make-double-deps',

@@ -39,5 +39,12 @@ export function buildJoin(item: {
     caller: item.caller
   });
 
+  models = barJoin.checkJoinHideShowFields({
+    models: models,
+    structId: item.structId,
+    errors: item.errors,
+    caller: item.caller
+  });
+
   return models;
 }

@@ -25,7 +25,6 @@ export function checkJoinUnknownParameters(item: {
       Object.keys(join)
         .filter(
           k =>
-            helper.isDefined(join[k]) &&
             !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()) &&
             [enums.ParameterEnum.View.toString()].indexOf(k) < 0
         )
