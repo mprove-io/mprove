@@ -93,24 +93,34 @@ export function checkJoinHideShowFields(item: {
               vField => vField.name === fieldName
             );
 
-            if (helper.isUndefined(viewField)) {
-              item.errors.push(
-                new BmError({
-                  title:
-                    enums.ErTitleEnum
-                      .JOIN_HIDE_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
-                  message:
-                    `"${asFieldName}" references missing or not valid field ` +
-                    `"${fieldName}" of view "${join.view.name}". ` +
-                    `View has "${asName}" alias in "${x.name}" model.`,
-                  lines: [hideFieldsErrorLine]
-                })
+            if (helper.isDefined(viewField)) {
+              // override
+              viewField.hidden = 'true';
+            } else {
+              let timeDimensions = join.view.fields.filter(
+                vField => vField.groupId === fieldName
               );
-              return;
+              if (timeDimensions.length > 0) {
+                timeDimensions.forEach(d => {
+                  // override
+                  d.hidden = 'true';
+                });
+              } else {
+                item.errors.push(
+                  new BmError({
+                    title:
+                      enums.ErTitleEnum
+                        .JOIN_HIDE_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
+                    message:
+                      `"${asFieldName}" references missing or not valid field ` +
+                      `"${fieldName}" of view "${join.view.name}". ` +
+                      `View has "${asName}" alias in "${x.name}" model.`,
+                    lines: [hideFieldsErrorLine]
+                  })
+                );
+                return;
+              }
             }
-
-            // override
-            viewField.hidden = 'true';
           });
       }
 
@@ -157,24 +167,34 @@ export function checkJoinHideShowFields(item: {
               vField => vField.name === fieldName
             );
 
-            if (helper.isUndefined(viewField)) {
-              item.errors.push(
-                new BmError({
-                  title:
-                    enums.ErTitleEnum
-                      .JOIN_SHOW_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
-                  message:
-                    `"${asFieldName}" references missing or not valid field ` +
-                    `"${fieldName}" of view "${join.view.name}". ` +
-                    `View has "${asName}" alias in "${x.name}" model.`,
-                  lines: [showFieldsErrorLine]
-                })
+            if (helper.isDefined(viewField)) {
+              // override
+              viewField.hidden = 'false';
+            } else {
+              let timeDimensions = join.view.fields.filter(
+                vField => vField.groupId === fieldName
               );
-              return;
+              if (timeDimensions.length > 0) {
+                timeDimensions.forEach(d => {
+                  // override
+                  d.hidden = 'false';
+                });
+              } else {
+                item.errors.push(
+                  new BmError({
+                    title:
+                      enums.ErTitleEnum
+                        .JOIN_SHOW_FIELDS_ELEMENT_REFS_MISSING_VIEW_FIELD,
+                    message:
+                      `"${asFieldName}" references missing or not valid field ` +
+                      `"${fieldName}" of view "${join.view.name}". ` +
+                      `View has "${asName}" alias in "${x.name}" model.`,
+                    lines: [showFieldsErrorLine]
+                  })
+                );
+                return;
+              }
             }
-
-            // override
-            viewField.hidden = 'false';
           });
       }
     });
