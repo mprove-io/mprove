@@ -89,7 +89,13 @@ export function checkJoinsCyclesAndToposort(item: {
         }
       });
 
-      x.joinsSorted = [...zeroDepsJoins, ...sorted];
+      let joinsSorted = [...zeroDepsJoins, ...sorted];
+
+      if (joinsSorted.indexOf(x.fromAs) < 0) {
+        joinsSorted = [x.fromAs, ...joinsSorted];
+      }
+
+      x.joinsSorted = joinsSorted;
     }
 
     if (errorsOnStart === item.errors.length) {

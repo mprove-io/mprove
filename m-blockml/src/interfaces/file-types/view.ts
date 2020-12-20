@@ -56,12 +56,7 @@ export interface View extends FileBasic {
 
   filters?: FilterBricksDictionary;
 
-  // derivedTableFullArray?: string[];
-
   derivedTableStart?: string;
-
-  derivedTableNew?: string;
-  derivedTableNewArray?: string[];
 
   parts?: {
     [viewPartName: string]: {

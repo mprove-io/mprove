@@ -10,7 +10,7 @@ let caller = enums.CallerEnum.RebuildStruct;
 let func = enums.FuncEnum.LogStruct;
 let testId = 'v';
 
-test(testId, async () => {
+async function run() {
   let errors: BmError[];
   let udfsDict: api.UdfsDict;
   let views: interfaces.View[];
@@ -51,13 +51,6 @@ test(testId, async () => {
   } catch (e) {
     api.logToConsole(e);
   }
+}
 
-  expect(1).toBe(1);
-
-  // expect(errors.length).toBe(0);
-
-  // expect(views.length).toBe(1);
-  // expect(models.length).toBe(1);
-  // expect(dashboards.length).toBe(1);
-  // expect(vizs.length).toBe(1);
-});
+run();

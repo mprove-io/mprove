@@ -24,17 +24,11 @@ export function processViewRefs(item: {
   item.views.forEach(x => {
     x.parts = {};
 
-    if (helper.isDefined(x.derived_table)) {
-      // x.derivedTableFullArray = x.derived_table.split('\n');
-      x.derivedTableStart = x.derived_table;
-      x.derivedTableNew = x.derived_table;
-    }
-
     if (Object.keys(x.asDeps).length === 0) {
+      x.derivedTableStart = x.derived_table;
       return;
     }
 
-    // x.derivedTableFullArray =
     substituteViewRefsRecursive({
       topView: x,
       parentViewName: x.name,
@@ -76,12 +70,11 @@ export function processViewRefs(item: {
 
     partNamesSorted = [...zeroDepsViewPartNames, ...partNamesSorted];
 
-    let count = 0;
-
-    let textStart;
+    // let count = 0;
+    // let textStart;
 
     partNamesSorted.forEach(viewPartName => {
-      count++;
+      // count++;
 
       let content = x.parts[viewPartName].content;
 
@@ -94,23 +87,18 @@ export function processViewRefs(item: {
 
       x.parts[viewPartName].contentPrepared = content;
 
-      if (count === Object.keys(x.parts).length) {
-        // remove last comma
-        content = content.slice(0, -1);
-      }
-
-      textStart = [textStart, content].join('\n');
+      // if (count === Object.keys(x.parts).length) {
+      //   // remove last comma
+      //   content = content.slice(0, -1);
+      // }
+      // textStart = [textStart, content].join('\n');
     });
 
-    text = [textStart, text].join('\n');
+    // text = [textStart, text].join('\n');
+    // text = [constants.WITH, text].join('\n');
 
-    text = [constants.WITH, text].join('\n');
-
-    x.derivedTableNew = text;
-    x.derivedTableNewArray = text.split('\n');
-    // TODO: do not swap derived tables
-    // make-contents line 143
-    // let derivedSql = join.view.derived_table; -> join.view.derivedTableNew
+    // x.derivedTableNew = text;
+    // x.derivedTableNewArray = text.split('\n');
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);

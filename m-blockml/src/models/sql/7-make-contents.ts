@@ -149,7 +149,7 @@ export function makeContents(item: interfaces.VarsSql) {
       myWith.push('  ),');
       myWith.push('');
 
-      item.withParts = Object.assign({}, item.withParts, join.view.parts);
+      item.withParts = Object.assign(item.withParts, join.view.parts);
 
       if (helper.isDefined(join.view.udfs)) {
         join.view.udfs.forEach(udf => {
