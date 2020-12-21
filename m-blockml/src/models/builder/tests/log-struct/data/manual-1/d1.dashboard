@@ -3,6 +3,5 @@ reports:
 - title: t1
   model: m1
   select: 
-  - a.dim3
-  - b.dim3
+  - z.dim5
   type: table

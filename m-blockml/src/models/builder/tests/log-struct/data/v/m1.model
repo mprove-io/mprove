@@ -1,8 +1,0 @@
-model: m1
-connection: c1
-joins:
-- from_view: v3
-  as: a
-- join_view: v3
-  as: b
-  sql_on: ${a.dim3} = ${b.dim3} 

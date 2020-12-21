@@ -31,8 +31,8 @@ export function processViewRefs(item: {
         : substituteViewRefsRecursive({
             topView: x,
             viewName: x.name,
-            deps: {},
             input: x.derived_table,
+            partDeps: {},
             views: item.views,
             udfsDict: item.udfsDict,
             weekStart: item.weekStart,
@@ -52,8 +52,8 @@ export function processViewRefs(item: {
 function substituteViewRefsRecursive(item: {
   topView: interfaces.View;
   viewName: string;
-  deps: { [dep: string]: number };
   input: string;
+  partDeps: interfaces.ViewPart['deps'];
   views: interfaces.View[];
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
@@ -102,19 +102,19 @@ function substituteViewRefsRecursive(item: {
       deps: {}
     };
 
-    item.deps[viewPartName] = 1;
+    item.partDeps[viewPartName] = 1;
 
     item.topView.parts[viewPartName] = viewPart;
 
-    let newInput = [...content, input].join('\n');
+    let newInput = content.join('\n');
 
     let newAsDeps: interfaces.View['asDeps'] = getAsDeps(newInput);
 
     if (Object.keys(newAsDeps).length > 0) {
       substituteViewRefsRecursive({
         topView: item.topView,
-        viewName: asDeps[as].viewName,
-        deps: item.topView.parts[viewPartName].deps,
+        viewName: depView.name,
+        partDeps: viewPart.deps,
         input: newInput,
         views: item.views,
         udfsDict: item.udfsDict,

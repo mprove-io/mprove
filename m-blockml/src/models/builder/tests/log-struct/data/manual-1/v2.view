@@ -1,9 +1,9 @@
 view: v2
 connection: c1
 derived_table: |
-  SELECT ${h.dim1}
+  SELECT ${a.dim1}
   FROM 
-    ${v1 AS h}
+    ${v1 AS a}
 fields:
 - dimension: dim2
   sql: d2
