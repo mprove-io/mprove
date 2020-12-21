@@ -49,15 +49,13 @@ export function composeMain(item: interfaces.VarsSql) {
 
     partNamesSorted = [...zeroDepsViewPartNames, ...partNamesSorted];
 
-    let text = constants.EMPTY_STRING;
+    let text: string[] = [];
 
     partNamesSorted.forEach(viewPartName => {
-      text = [text, item.withParts[viewPartName].contentPrepared + '\n'].join(
-        '\n'
-      );
+      text = text.concat(item.withParts[viewPartName].sql);
     });
 
-    text = text.slice(0, -1);
+    // text = text.slice(0, -1);
 
     main = main.concat(text);
   }

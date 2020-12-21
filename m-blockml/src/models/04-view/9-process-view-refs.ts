@@ -1,12 +1,9 @@
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
-import { constants } from '../../barrels/constants';
+import { barSpecial } from '../../barrels/bar-special';
 import { interfaces } from '../../barrels/interfaces';
-import { substituteViewRefsRecursive } from './process-view-refs/substitute-view-refs-recursive';
 import { BmError } from '../bm-error';
-
-let toposort = require('toposort');
 
 let func = enums.FuncEnum.ProcessViewRefs;
 
@@ -22,87 +19,139 @@ export function processViewRefs(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.views.forEach(x => {
-    x.parts = {};
-
-    if (Object.keys(x.asDeps).length === 0) {
-      x.derivedTableStart = x.derived_table;
+    if (helper.isUndefined(x.derived_table)) {
       return;
     }
 
-    substituteViewRefsRecursive({
-      topView: x,
-      parentViewName: x.name,
-      parentDeps: {},
-      input: x.derived_table,
-      views: item.views,
-      udfsDict: item.udfsDict,
-      weekStart: item.weekStart,
-      connection: x.connection,
-      structId: item.structId
-    }).split('\n');
+    x.parts = {};
 
-    let text = x.derived_table;
+    let text =
+      Object.keys(x.asDeps).length === 0
+        ? x.derived_table
+        : substituteViewRefsRecursive({
+            topView: x,
+            viewName: x.name,
+            deps: {},
+            input: x.derived_table,
+            views: item.views,
+            udfsDict: item.udfsDict,
+            weekStart: item.weekStart,
+            connection: x.connection,
+            structId: item.structId
+          });
 
-    text = api.MyRegex.replaceViewRefs(text, x.name);
-    text = api.MyRegex.removeBracketsOnViewFieldRefs(text);
-
-    x.derivedTableStart = text;
-
-    let partNamesSorted: string[] = [];
-
-    let graph = [];
-
-    let zeroDepsViewPartNames = [];
-
-    Object.keys(x.parts).forEach(viewPartName => {
-      Object.keys(x.parts[viewPartName].deps).forEach(dep => {
-        graph.push([viewPartName, dep]);
-      });
-    });
-
-    partNamesSorted = toposort(graph).reverse();
-
-    Object.keys(x.parts).forEach(viewPartName => {
-      if (partNamesSorted.indexOf(viewPartName) < 0) {
-        zeroDepsViewPartNames.push(viewPartName);
-      }
-    });
-
-    partNamesSorted = [...zeroDepsViewPartNames, ...partNamesSorted];
-
-    // let count = 0;
-    // let textStart;
-
-    partNamesSorted.forEach(viewPartName => {
-      // count++;
-
-      let content = x.parts[viewPartName].content;
-
-      content = api.MyRegex.replaceViewRefs(
-        content,
-        x.parts[viewPartName].parentViewName
-      );
-
-      content = api.MyRegex.removeBracketsOnViewFieldRefs(content);
-
-      x.parts[viewPartName].contentPrepared = content;
-
-      // if (count === Object.keys(x.parts).length) {
-      //   // remove last comma
-      //   content = content.slice(0, -1);
-      // }
-      // textStart = [textStart, content].join('\n');
-    });
-
-    // text = [textStart, text].join('\n');
-    // text = [constants.WITH, text].join('\n');
-
-    // x.derivedTableNew = text;
-    // x.derivedTableNewArray = text.split('\n');
+    x.derivedTableStart = text.split('\n');
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
 
   return item.views;
+}
+
+function substituteViewRefsRecursive(item: {
+  topView: interfaces.View;
+  viewName: string;
+  deps: { [dep: string]: number };
+  input: string;
+  views: interfaces.View[];
+  udfsDict: api.UdfsDict;
+  weekStart: api.ProjectWeekStartEnum;
+  connection: api.ProjectConnection;
+  structId: string;
+}) {
+  let input = item.input;
+
+  let asDeps: interfaces.View['asDeps'] = getAsDeps(input);
+
+  input = api.MyRegex.replaceViewRefs(input, item.viewName);
+  input = api.MyRegex.removeBracketsOnViewFieldRefs(input);
+
+  Object.keys(asDeps).forEach(as => {
+    let depView = item.views.find(v => v.name === asDeps[as].viewName);
+
+    let viewPartName = `${item.viewName}__${depView.name}__${as}`;
+
+    let sub = barSpecial.genSub({
+      select: Object.keys(asDeps[as].fieldNames),
+      view: depView,
+      udfsDict: item.udfsDict,
+      weekStart: item.weekStart,
+      connection: item.connection,
+      structId: item.structId
+    });
+
+    Object.keys(sub.extraUdfs).forEach(udfName => {
+      if (item.topView.udfs.indexOf(udfName) < 0) {
+        item.topView.udfs.push(udfName);
+      }
+    });
+
+    let content: string[] = [];
+    content.push(`  ${viewPartName} AS (`);
+    content = content.concat(sub.query.map((s: string) => `    ${s}`));
+    content.push('  ),');
+
+    let text = content.join('\n');
+    text = api.MyRegex.replaceViewRefs(text, depView.name);
+    text = api.MyRegex.removeBracketsOnViewFieldRefs(text);
+
+    let viewPart: interfaces.ViewPart = {
+      viewName: depView.name,
+      sql: text.split('\n'),
+      deps: {}
+    };
+
+    item.deps[viewPartName] = 1;
+
+    item.topView.parts[viewPartName] = viewPart;
+
+    let newInput = [...content, input].join('\n');
+
+    let newAsDeps: interfaces.View['asDeps'] = getAsDeps(newInput);
+
+    if (Object.keys(newAsDeps).length > 0) {
+      substituteViewRefsRecursive({
+        topView: item.topView,
+        viewName: asDeps[as].viewName,
+        deps: item.topView.parts[viewPartName].deps,
+        input: newInput,
+        views: item.views,
+        udfsDict: item.udfsDict,
+        weekStart: item.weekStart,
+        connection: item.connection,
+        structId: item.structId
+      });
+    }
+  });
+
+  return input;
+}
+
+function getAsDeps(input: string) {
+  let asDeps: interfaces.View['asDeps'] = {};
+
+  let reg = api.MyRegex.CAPTURE_VIEW_REF_G();
+  let r;
+
+  while ((r = reg.exec(input))) {
+    let view: string = r[1];
+    let alias: string = r[2];
+
+    if (helper.isUndefined(asDeps[alias])) {
+      asDeps[alias] = { viewName: view, fieldNames: {} };
+    }
+  }
+
+  let reg2 = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+  let r2;
+
+  while ((r2 = reg2.exec(input))) {
+    let as: string = r2[1];
+    let dep: string = r2[2];
+
+    asDeps[as].fieldNames[dep] = 1;
+  }
+
+  return asDeps;
 }

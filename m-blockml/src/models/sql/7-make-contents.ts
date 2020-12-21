@@ -138,16 +138,15 @@ export function makeContents(item: interfaces.VarsSql) {
         table = join.view.table;
       }
     } else {
-      let derivedSqlStart = join.view.derivedTableStart;
+      let derivedSqlStartText = join.view.derivedTableStart.join('\n');
+      derivedSqlStartText = applyFilter(item, asName, derivedSqlStartText);
 
-      derivedSqlStart = applyFilter(item, asName, derivedSqlStart);
-
-      let derivedSqlStartArray = derivedSqlStart.split('\n');
+      let derivedSqlStartTextArray = derivedSqlStartText.split('\n');
 
       myWith.push(`  ${join.view.name}__${asName} AS (`);
-      myWith.push(derivedSqlStartArray.map(s => `    ${s}`).join('\n'));
+      myWith = myWith.concat(derivedSqlStartTextArray.map(s => `    ${s}`));
       myWith.push('  ),');
-      myWith.push('');
+      // myWith.push('');
 
       item.withParts = Object.assign(item.withParts, join.view.parts);
 

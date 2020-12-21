@@ -30,3 +30,4 @@ export * from './join';
 export * from './report';
 export * from './vars-sql';
 export * from './vars-sub';
+export * from './view-part';

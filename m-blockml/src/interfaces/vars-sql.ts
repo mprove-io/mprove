@@ -1,6 +1,7 @@
 import { api } from '../barrels/api';
 import { Model } from './file-types/model';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
+import { ViewPart } from './view-part';
 
 export interface VarsSql {
   model: Model;
@@ -67,12 +68,7 @@ export interface VarsSql {
   contents: string[];
   with: string[];
   withParts: {
-    [viewPartName: string]: {
-      content: string;
-      contentPrepared: string;
-      parentViewName: string;
-      deps: { [depName: string]: number };
-    };
+    [viewPartName: string]: ViewPart;
   };
   joinsWhere: string[];
   query: string[];

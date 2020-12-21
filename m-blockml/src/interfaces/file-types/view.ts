@@ -2,6 +2,7 @@ import { FileBasic } from '../file/file-basic';
 import { FieldAny } from '../field/field-any';
 import { api } from '../../barrels/api';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
+import { ViewPart } from '../view-part';
 
 export interface View extends FileBasic {
   view?: string;
@@ -56,14 +57,9 @@ export interface View extends FileBasic {
 
   filters?: FilterBricksDictionary;
 
-  derivedTableStart?: string;
+  derivedTableStart?: string[];
 
   parts?: {
-    [viewPartName: string]: {
-      content: string;
-      contentPrepared: string;
-      parentViewName: string;
-      deps: { [depName: string]: number };
-    };
+    [viewPartName: string]: ViewPart;
   };
 }
