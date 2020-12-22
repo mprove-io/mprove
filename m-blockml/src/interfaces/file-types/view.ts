@@ -3,6 +3,7 @@ import { FieldAny } from '../field/field-any';
 import { api } from '../../barrels/api';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { ViewPart } from '../view-part';
+import { VarsSub } from '../vars-sub';
 
 export interface View extends FileBasic {
   view?: string;
@@ -62,4 +63,6 @@ export interface View extends FileBasic {
   parts?: {
     [viewPartName: string]: ViewPart;
   };
+
+  varsSub?: VarsSub;
 }

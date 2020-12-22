@@ -11,5 +11,6 @@ export enum LogTypeEnum {
   Ds = 'out_dashboards.log',
   Vizs = 'out_vizs.log',
   Entities = 'out_entities.log',
-  UdfsDict = 'out_udfs_dict.log'
+  UdfsDict = 'out_udfs_dict.log',
+  SubStart = 'in_views_vars_sub_start.log'
 }

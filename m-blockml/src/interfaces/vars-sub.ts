@@ -1,36 +1,35 @@
 import { api } from '../barrels/api';
-import { View } from './file-types/view';
 
 export interface VarsSub {
-  view: View;
-  select: string[];
-  weekStart: api.ProjectWeekStartEnum;
-  connection: api.ProjectConnection;
-  structId: string;
-  udfsDict: api.UdfsDict;
-  depMeasures: {
+  view?: any;
+  select?: string[];
+  weekStart?: api.ProjectWeekStartEnum;
+  connection?: api.ProjectConnection;
+  structId?: string;
+  udfsDict?: api.UdfsDict;
+  depMeasures?: {
     [dep: string]: number;
   };
-  depDimensions: {
+  depDimensions?: {
     [dep: string]: number;
   };
-  mainText: string[];
-  groupMainBy: string[];
-  mainFields: string[];
-  selected: {
+  mainText?: string[];
+  groupMainBy?: string[];
+  mainFields?: string[];
+  selected?: {
     [s: string]: number;
   };
-  processedFields: {
+  processedFields?: {
     [s: string]: string;
   };
-  extraUdfs: {
+  extraUdfs?: {
     [s: string]: number;
   };
-  needsAll: {
+  needsAll?: {
     [a: string]: number;
   };
-  contents: string[];
-  with: string[];
-  query: string[];
-  calcQuery: string[];
+  contents?: string[];
+  with?: string[];
+  query?: string[];
+  calcQuery?: string[];
 }

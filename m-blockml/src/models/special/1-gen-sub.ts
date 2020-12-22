@@ -1,6 +1,8 @@
 import { barSub } from '../../barrels/bar-sub';
 import { api } from '../../barrels/api';
+import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
+import { BmError } from '../bm-error';
 
 export function genSub(item: {
   view: interfaces.View;
@@ -8,8 +10,23 @@ export function genSub(item: {
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
+  views: interfaces.View[];
+  errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }) {
+  let {
+    view,
+    select,
+    udfsDict,
+    weekStart,
+    connection,
+    views,
+    errors,
+    structId,
+    caller
+  } = item;
+
   let vars: interfaces.VarsSub = {
     view: item.view,
     select: item.select,
@@ -32,10 +49,18 @@ export function genSub(item: {
     calcQuery: undefined
   };
 
-  // view
-  // select
-  //    depMeasures
-  vars = barSub.makeDepMeasuresAndDimensions(vars);
+  view.varsSub = {};
+
+  let { depMeasures, depDimensions } = barSub.makeDepMeasuresAndDimensions({
+    view: view,
+    select: select,
+    views: views,
+    errors: errors,
+    structId: structId,
+    caller: caller
+  });
+  vars.depMeasures = depMeasures;
+  vars.depDimensions = depDimensions;
 
   // view
   // depMeasures

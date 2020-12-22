@@ -127,5 +127,7 @@ export enum FuncEnum {
   CheckMdzAccess = 'special/check-mdz-access',
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
 
+  MakeDepMeasuresAndDimensions = 'sub/1-make-dep-measures-and-dimensions',
+
   LogStruct = 'builder/log-struct'
 }

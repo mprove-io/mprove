@@ -39,7 +39,9 @@ export function processViewRefs(item: {
         udfsDict: item.udfsDict,
         weekStart: item.weekStart,
         connection: x.connection,
-        structId: item.structId
+        errors: item.errors,
+        structId: item.structId,
+        caller: item.caller
       });
     }
 
@@ -60,7 +62,9 @@ function substituteViewRefsRecursive(item: {
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
+  errors: BmError[];
   structId: string;
+  caller: enums.CallerEnum;
 }) {
   Object.keys(item.view.asDeps).forEach(as => {
     let depView = item.views.find(
@@ -75,7 +79,10 @@ function substituteViewRefsRecursive(item: {
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       connection: item.connection,
-      structId: item.structId
+      views: item.views,
+      errors: item.errors,
+      structId: item.structId,
+      caller: enums.CallerEnum.Sub
     });
 
     Object.keys(sub.extraUdfs).forEach(udfName => {
@@ -112,7 +119,9 @@ function substituteViewRefsRecursive(item: {
         udfsDict: item.udfsDict,
         weekStart: item.weekStart,
         connection: item.connection,
-        structId: item.structId
+        errors: item.errors,
+        structId: item.structId,
+        caller: item.caller
       });
     }
   });
