@@ -19,7 +19,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
-    "test": "npm-run-all clean-src-logs && npm run clean-models-logs && npm run lint && npm run circular && jest",
+    "test": "npm-run-all clean-src-logs && npm run clean-models-logs && npm run lint && npm run circular && jest && npm run clean-src-logs",
     "t": "jest",
     "clean-src-logs": "rimraf \"./src/logs\"",
     "clean-models-logs": "rimraf \"./src/models/**/logs\""
