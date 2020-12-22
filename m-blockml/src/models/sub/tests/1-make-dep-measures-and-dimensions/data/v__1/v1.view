@@ -7,3 +7,13 @@ derived_table: |
 fields:
 - dimension: dim1
   sql: d1
+
+- dimension: dim2
+  sql: d2
+
+- measure: mea1
+  type: min
+  sql: ${dim1} + ${dim2} + m1
+
+- calculation: calc1
+  sql: ${dim1} + ${mea1} + c1 

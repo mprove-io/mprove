@@ -1,3 +1,3 @@
-export function makeCopy(x: any) {
+export function makeCopy<T>(x: T): T {
   return JSON.parse(JSON.stringify(x));
 }

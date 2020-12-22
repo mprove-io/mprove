@@ -10,6 +10,7 @@ export function genSub(item: {
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
   connection: api.ProjectConnection;
+  varsSubArray: interfaces.ViewPart['varsSubElements'];
   views: interfaces.View[];
   errors: BmError[];
   structId: string;
@@ -49,11 +50,10 @@ export function genSub(item: {
     calcQuery: undefined
   };
 
-  view.varsSub = {};
-
   let { depMeasures, depDimensions } = barSub.makeDepMeasuresAndDimensions({
     view: view,
     select: select,
+    varsSubArray: item.varsSubArray,
     views: views,
     errors: errors,
     structId: structId,

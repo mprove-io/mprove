@@ -73,19 +73,31 @@ function substituteViewRefsRecursive(item: {
 
     let viewPartName = `${item.view.name}__${depView.name}__${as}`;
 
-    let sub = barSpecial.genSub({
+    // view part placed in parts before genSub for logs to work (sub)
+    let viewPart: interfaces.ViewPart = {
+      viewName: depView.name,
+      sql: undefined,
+      deps: {},
+      varsSubElements: []
+    };
+
+    item.topView.parts[viewPartName] = viewPart;
+    item.partDeps[viewPartName] = 1;
+
+    let { query, extraUdfs } = barSpecial.genSub({
       select: Object.keys(item.view.asDeps[as].fieldNames),
       view: depView,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       connection: item.connection,
+      varsSubArray: viewPart.varsSubElements,
       views: item.views,
       errors: item.errors,
       structId: item.structId,
       caller: enums.CallerEnum.Sub
     });
 
-    Object.keys(sub.extraUdfs).forEach(udfName => {
+    Object.keys(extraUdfs).forEach(udfName => {
       if (item.topView.udfs.indexOf(udfName) < 0) {
         item.topView.udfs.push(udfName);
       }
@@ -93,22 +105,14 @@ function substituteViewRefsRecursive(item: {
 
     let content: string[] = [];
     content.push(`  ${viewPartName} AS (`);
-    content = content.concat(sub.query.map((s: string) => `    ${s}`));
+    content = content.concat(query.map((s: string) => `    ${s}`));
     content.push('  ),');
 
     let text = content.join('\n');
     text = api.MyRegex.replaceViewRefs(text, depView.name);
     text = api.MyRegex.removeBracketsOnViewFieldRefs(text);
 
-    let viewPart: interfaces.ViewPart = {
-      viewName: depView.name,
-      sql: text.split('\n'),
-      deps: {}
-    };
-
-    item.partDeps[viewPartName] = 1;
-
-    item.topView.parts[viewPartName] = viewPart;
+    viewPart.sql = text.split('\n');
 
     if (Object.keys(depView.asDeps).length > 0) {
       substituteViewRefsRecursive({

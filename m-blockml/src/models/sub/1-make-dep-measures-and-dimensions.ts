@@ -10,15 +10,14 @@ export function makeDepMeasuresAndDimensions(item: {
   select: interfaces.VarsSub['select'];
   view: interfaces.VarsSub['view'];
   views: interfaces.View[];
+  varsSubArray: interfaces.ViewPart['varsSubElements'];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
 }) {
   let { select, view, structId, caller } = item;
 
-  Object.assign(item.view.varsSub, { select });
-
-  helper.log(caller, func, structId, enums.LogTypeEnum.SubStart, item.views);
+  let varsSubInput: interfaces.VarsSub = helper.makeCopy({ select });
 
   let depMeasures: interfaces.VarsSub['depMeasures'] = {};
   let depDimensions: interfaces.VarsSub['depDimensions'] = {};
@@ -26,6 +25,8 @@ export function makeDepMeasuresAndDimensions(item: {
   select.forEach(fieldName => {
     // in view fields - calculations and measures can have fieldsDepsAfterSingles
     // we interested in calculation class now
+
+    // TODO: check that we don't need dep dimensions of found measures (test v__1)
     let field = view.fields.find(vField => vField.name === fieldName);
 
     if (field.fieldClass === api.FieldClassEnum.Calculation) {
@@ -43,9 +44,14 @@ export function makeDepMeasuresAndDimensions(item: {
     }
   });
 
-  let output = { depMeasures, depDimensions };
-  Object.assign(item.view.varsSub, output);
+  let output: interfaces.VarsSub = { depMeasures, depDimensions };
 
+  let varsSubElement: interfaces.VarsSubElement = {
+    func: func,
+    varsSubInput: varsSubInput,
+    varsSubOutput: output
+  };
+  item.varsSubArray.push(varsSubElement);
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
 

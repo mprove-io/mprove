@@ -63,6 +63,4 @@ export interface View extends FileBasic {
   parts?: {
     [viewPartName: string]: ViewPart;
   };
-
-  varsSub?: VarsSub;
 }
