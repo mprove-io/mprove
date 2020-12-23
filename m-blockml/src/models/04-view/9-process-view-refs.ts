@@ -80,8 +80,8 @@ function substituteViewRefsRecursive(item: {
 
     let { calcQuery, extraUdfs } = barSpecial.genSub({
       select: Object.keys(item.view.asDeps[as].fieldNames),
-      view: depView,
       varsSubArray: viewPart.varsSubElements,
+      view: depView,
       views: item.views,
       errors: item.errors,
       structId: item.structId,

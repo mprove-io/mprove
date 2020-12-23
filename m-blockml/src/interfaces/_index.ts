@@ -28,6 +28,7 @@ export * from './gen-sql-item';
 export * from './gen-sql-pro-outcome';
 export * from './join';
 export * from './report';
+export * from './vars-sql-element';
 export * from './vars-sql';
 export * from './vars-sub-element';
 export * from './vars-sub';

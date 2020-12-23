@@ -1,11 +1,24 @@
 import { api } from '../../barrels/api';
 import { interfaces } from '../../barrels/interfaces';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
+import { helper } from '../../barrels/helper';
 
-export function makeDepMeasures(item: interfaces.VarsSql) {
-  let depMeasures: { [as: string]: { [dep: string]: number } } = {};
+let func = enums.FuncEnum.MakeDepMeasures;
 
-  [...item.select, ...Object.keys(item.filters)].forEach(element => {
+export function makeDepMeasures(item: {
+  select: interfaces.VarsSql['select'];
+  filters: interfaces.VarsSql['filters'];
+  model: interfaces.Model;
+  varsSqlElements: interfaces.Report['varsSqlElements'];
+}) {
+  let { select, filters, model, varsSqlElements } = item;
+
+  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({ select, filters });
+
+  let depMeasures: interfaces.VarsSql['depMeasures'] = {};
+
+  [...select, ...Object.keys(filters)].forEach(element => {
     let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 
@@ -15,12 +28,12 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
     // in model fields - only calculations can have fieldsDepsAfterSingles
     // we interested in calculation class now
     if (asName === constants.MF) {
-      let field = item.model.fields.find(mField => mField.name === fieldName);
+      let field = model.fields.find(mField => mField.name === fieldName);
 
       if (field.fieldClass === api.FieldClassEnum.Calculation) {
-        Object.keys(item.model.fieldsDepsAfterSingles[fieldName]).forEach(
+        Object.keys(model.fieldsDepsAfterSingles[fieldName]).forEach(
           depName => {
-            let depModelField = item.model.fields.find(
+            let depModelField = model.fields.find(
               mField => mField.name === depName
             );
 
@@ -34,12 +47,12 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
         );
       }
 
-      Object.keys(item.model.fieldsDoubleDepsAfterSingles[fieldName]).forEach(
+      Object.keys(model.fieldsDoubleDepsAfterSingles[fieldName]).forEach(
         alias => {
           Object.keys(
-            item.model.fieldsDoubleDepsAfterSingles[fieldName][alias]
+            model.fieldsDoubleDepsAfterSingles[fieldName][alias]
           ).forEach(depName => {
-            let join = item.model.joins.find(j => j.as === alias);
+            let join = model.joins.find(j => j.as === alias);
 
             let depViewField = join.view.fields.find(
               vField => vField.name === depName
@@ -58,7 +71,7 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
       // in view fields - calculations and measures can have fieldsDepsAfterSingles
       // we interested in calculation class now
     } else {
-      let join = item.model.joins.find(j => j.as === asName);
+      let join = model.joins.find(j => j.as === asName);
 
       let field = join.view.fields.find(vField => vField.name === fieldName);
 
@@ -81,31 +94,29 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
     }
 
     // process sqlAlwaysWhereCalcDepsAfterSingles
-    if (item.model.sqlAlwaysWhereCalcDepsAfterSingles) {
-      Object.keys(item.model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(
-        depName => {
-          let depModelField = item.model.fields.find(
-            mField => mField.name === depName
-          );
+    if (model.sqlAlwaysWhereCalcDepsAfterSingles) {
+      Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(depName => {
+        let depModelField = model.fields.find(
+          mField => mField.name === depName
+        );
 
-          if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
-            if (!depMeasures[constants.MF]) {
-              depMeasures[constants.MF] = {};
-            }
-            depMeasures[constants.MF][depName] = 1;
+        if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
+          if (!depMeasures[constants.MF]) {
+            depMeasures[constants.MF] = {};
           }
+          depMeasures[constants.MF][depName] = 1;
         }
-      );
+      });
     }
 
     // process sqlAlwaysWhereCalcDoubleDepsAfterSingles
-    if (item.model.sqlAlwaysWhereCalcDoubleDepsAfterSingles) {
-      Object.keys(item.model.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(
+    if (model.sqlAlwaysWhereCalcDoubleDepsAfterSingles) {
+      Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(
         alias => {
           Object.keys(
-            item.model.sqlAlwaysWhereCalcDoubleDepsAfterSingles[alias]
+            model.sqlAlwaysWhereCalcDoubleDepsAfterSingles[alias]
           ).forEach(depName => {
-            let join = item.model.joins.find(j => j.as === alias);
+            let join = model.joins.find(j => j.as === alias);
 
             let depViewField = join.view.fields.find(
               vField => vField.name === depName
@@ -123,7 +134,14 @@ export function makeDepMeasures(item: interfaces.VarsSql) {
     }
   });
 
-  item.depMeasures = depMeasures;
+  let output: interfaces.VarsSql = { depMeasures };
 
-  return item;
+  let varsSqlElement: interfaces.VarsSqlElement = {
+    func: func,
+    varsSqlInput: varsSqlInput,
+    varsSqlOutput: output
+  };
+  varsSqlElements.push(varsSqlElement);
+
+  return output;
 }

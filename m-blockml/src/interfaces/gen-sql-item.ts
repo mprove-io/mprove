@@ -1,8 +1,7 @@
-import { BmError } from '../models/bm-error';
 import { Model } from './file-types/model';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
 import { api } from '../barrels/api';
-import { enums } from '../barrels/enums';
+import { VarsSqlElement } from './vars-sql-element';
 
 export interface GenSqlItem {
   model: Model;
@@ -13,7 +12,6 @@ export interface GenSqlItem {
   filters: FilterBricksDictionary;
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
-  errors: BmError[];
+  varsSqlElements: VarsSqlElement[];
   structId: string;
-  caller: enums.CallerEnum;
 }

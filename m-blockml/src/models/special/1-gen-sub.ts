@@ -5,8 +5,8 @@ import { BmError } from '../bm-error';
 
 export function genSub(item: {
   select: string[];
-  view: interfaces.View;
   varsSubArray: interfaces.ViewPart['varsSubElements'];
+  view: interfaces.View;
   views: interfaces.View[];
   errors: BmError[];
   structId: string;

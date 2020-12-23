@@ -52,10 +52,9 @@ export class QueryService {
         limit: limit.toString(),
         filters: newFilters,
         weekStart: weekStart,
+        varsSqlElements: [],
         udfsDict: udfsDict,
-        structId: structId,
-        errors: [],
-        caller: enums.CallerEnum.ProcessQuery
+        structId: structId
       }
     );
 

@@ -134,5 +134,7 @@ export enum FuncEnum {
   SubComposeMain = 'special-1-sub/5-sub-compose-main',
   SubComposeCalc = 'special-1-sub/6-sub-compose-calc',
 
+  MakeDepMeasures = 'special-2-sql/1-make-dep-measures',
+
   LogStruct = 'builder/log-struct'
 }

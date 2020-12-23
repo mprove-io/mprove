@@ -39,23 +39,34 @@ export async function genSql(
     outcome = resp.payload;
   }
 
-  // TODO: item.errors update
-
   return outcome;
 }
 
 export function genSqlPro(item: interfaces.GenSqlItem) {
+  let {
+    model,
+    select,
+    sorts,
+    timezone,
+    limit,
+    filters,
+    udfsDict,
+    weekStart,
+    varsSqlElements,
+    structId
+  } = item;
+
   let vars: interfaces.VarsSql = {
-    model: item.model,
-    select: item.select,
-    sorts: item.sorts,
-    timezone: item.timezone,
-    limit: item.limit,
-    filters: item.filters,
+    model: model,
+    select: select,
+    sorts: sorts,
+    timezone: timezone,
+    limit: limit,
+    filters: filters,
     filtersFractions: {},
-    weekStart: item.weekStart,
-    structId: item.structId,
-    udfsDict: item.udfsDict,
+    weekStart: weekStart,
+    structId: structId,
+    udfsDict: udfsDict,
     depMeasures: undefined,
     mainText: undefined,
     groupMainBy: undefined,
@@ -72,20 +83,19 @@ export function genSqlPro(item: interfaces.GenSqlItem) {
     filtersConditions: {},
     untouchedFiltersConditions: {},
     contents: undefined,
-    // query_pdt_deps: {},
-    // query_pdt_deps_all: {},
-    // bqViews: undefined,
     withParts: {},
     with: undefined,
     joinsWhere: undefined,
     query: []
   };
 
-  // model
-  // select
-  // filters
-  //    dep_measures_ref
-  vars = barSql.makeDepMeasures(vars);
+  let { depMeasures } = barSql.makeDepMeasures({
+    select: select,
+    filters: filters,
+    model: model,
+    varsSqlElements: varsSqlElements
+  });
+  vars.depMeasures = depMeasures;
 
   // model
   // dep_measures

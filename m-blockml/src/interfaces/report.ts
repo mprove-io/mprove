@@ -4,6 +4,7 @@ import { ChartAxis } from './chart/chart-axis';
 import { ChartOptions } from './chart/chart-options';
 import { ChartTile } from './chart/chart-tile';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
+import { VarsSqlElement } from './vars-sql-element';
 
 export interface Report {
   title: string;
@@ -74,4 +75,6 @@ export interface Report {
   };
 
   sql: string[];
+
+  varsSqlElements: VarsSqlElement[];
 }

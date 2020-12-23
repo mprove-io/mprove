@@ -4,72 +4,72 @@ import { FilterBricksDictionary } from './filter-bricks-dictionary';
 import { ViewPart } from './view-part';
 
 export interface VarsSql {
-  model: Model;
-  select: string[];
-  sorts: string;
-  timezone: string;
-  limit: string;
-  filters: FilterBricksDictionary;
-  filtersFractions: {
+  model?: Model;
+  select?: string[];
+  sorts?: string;
+  timezone?: string;
+  limit?: string;
+  filters?: FilterBricksDictionary;
+  filtersFractions?: {
     [s: string]: api.Fraction[];
   };
-  weekStart: api.ProjectWeekStartEnum;
-  structId: string;
-  udfsDict: api.UdfsDict;
-  depMeasures: {
+  weekStart?: api.ProjectWeekStartEnum;
+  structId?: string;
+  udfsDict?: api.UdfsDict;
+  depMeasures?: {
     [as: string]: {
       [dep: string]: number;
     };
   };
-  mainText: string[];
-  groupMainBy: string[];
-  mainFields: {
+  mainText?: string[];
+  groupMainBy?: string[];
+  mainFields?: {
     asName: string;
     fieldName: string;
     elementName: string;
   }[];
-  selected: {
+  selected?: {
     [s: string]: number;
   };
-  processedFields: {
+  processedFields?: {
     [s: string]: string;
   };
-  mainUdfs: {
+  mainUdfs?: {
     [s: string]: number;
   };
-  needsDoubles: {
+  needsDoubles?: {
     [a: string]: {
       [f: string]: number;
     };
   };
-  joins: {
+  joins?: {
     [s: string]: number;
   };
-  needsAll: {
+  needsAll?: {
     [a: string]: {
       [f: string]: number;
     };
   };
-  whereMain: {
+  whereMain?: {
     [s: string]: string[];
   };
-  havingMain: {
+  havingMain?: {
     [s: string]: string[];
   };
-  whereCalc: {
+  whereCalc?: {
     [s: string]: string[];
   };
-  filtersConditions: {
+  filtersConditions?: {
     [s: string]: string[];
   };
-  untouchedFiltersConditions: {
+  untouchedFiltersConditions?: {
     [s: string]: string[];
   };
-  contents: string[];
-  with: string[];
-  withParts: {
+  contents?: string[];
+  with?: string[];
+  withParts?: {
     [viewPartName: string]: ViewPart;
   };
-  joinsWhere: string[];
-  query: string[];
+  joinsWhere?: string[];
+  query?: string[];
 }

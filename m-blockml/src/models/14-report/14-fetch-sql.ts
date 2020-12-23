@@ -48,6 +48,9 @@ export async function fetchSql<T extends types.dzType>(item: {
         });
       }
 
+      // placed before genSql for logs to work
+      report.varsSqlElements = [];
+
       let { sql, filtersFractions } = await barSpecial.genSql(
         item.rabbitService,
         item.traceId,
@@ -59,10 +62,9 @@ export async function fetchSql<T extends types.dzType>(item: {
           limit: report.limit,
           filters: filters,
           weekStart: item.weekStart,
+          varsSqlElements: report.varsSqlElements,
           udfsDict: item.udfsDict,
-          structId: item.structId,
-          errors: item.errors,
-          caller: item.caller
+          structId: item.structId
         }
       );
 
@@ -72,7 +74,7 @@ export async function fetchSql<T extends types.dzType>(item: {
   );
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, item.entities);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, item.entities);
 
   return item.entities;
 }
