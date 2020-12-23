@@ -1,21 +1,44 @@
 import { interfaces } from '../../barrels/interfaces';
-import { constants } from '../../barrels/constants';
+import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
+import { constants } from '../../barrels/constants';
+import { BmError } from '../bm-error';
+import { helper } from '../../barrels/helper';
 
-export function composeCalc(item: interfaces.VarsSub) {
-  let calc: string[] = [];
+let func = enums.FuncEnum.ComposeCalc;
 
-  calc = calc.concat(item.query);
+export function composeCalc(item: {
+  mainQuery: interfaces.VarsSub['mainQuery'];
+  select: interfaces.VarsSub['select'];
+  processedFields: interfaces.VarsSub['processedFields'];
+  varsSubArray: interfaces.ViewPart['varsSubElements'];
+  view: interfaces.View;
+  views: interfaces.View[];
+  errors: BmError[];
+  structId: string;
+  caller: enums.CallerEnum;
+}) {
+  let { mainQuery, select, processedFields, view, structId, caller } = item;
 
-  calc.push('');
-  calc.push(`${constants.SELECT}`);
+  let varsSubInput: interfaces.VarsSub = helper.makeCopy({
+    mainQuery,
+    select,
+    processedFields
+  });
 
-  if (item.select.length === 0) {
-    calc.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+  let calcQuery: interfaces.VarsSub['calcQuery'] = [];
+
+  calcQuery = calcQuery.concat(mainQuery);
+
+  calcQuery.push('');
+  calcQuery.push(`${constants.SELECT}`);
+
+  if (select.length === 0) {
+    calcQuery.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
-  item.select.forEach(fieldName => {
-    let field = item.view.fields.find(vField => vField.name === fieldName);
+  select.forEach(fieldName => {
+    let field = view.fields.find(vField => vField.name === fieldName);
 
     let selectString =
       field.fieldClass === api.FieldClassEnum.Dimension
@@ -23,18 +46,29 @@ export function composeCalc(item: interfaces.VarsSub) {
         : field.fieldClass === api.FieldClassEnum.Measure
         ? `  ${fieldName},`
         : field.fieldClass === api.FieldClassEnum.Calculation
-        ? `  ${item.processedFields[fieldName]} as ${fieldName},`
+        ? `  ${processedFields[fieldName]} as ${fieldName},`
         : '';
 
-    calc.push(selectString);
+    calcQuery.push(selectString);
   });
 
   // chop
-  calc[calc.length - 1] = calc[calc.length - 1].slice(0, -1);
+  let lastIndex = calcQuery.length - 1;
+  calcQuery[lastIndex] = calcQuery[lastIndex].slice(0, -1);
 
-  calc.push(`${constants.FROM} ${constants.VIEW_MAIN}`);
+  calcQuery.push(`${constants.FROM} ${constants.VIEW_MAIN}`);
 
-  item.calcQuery = calc;
+  let output: interfaces.VarsSub = { calcQuery };
 
-  return item;
+  let varsSubElement: interfaces.VarsSubElement = {
+    func: func,
+    varsSubInput: varsSubInput,
+    varsSubOutput: output
+  };
+  item.varsSubArray.push(varsSubElement);
+
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+
+  return output;
 }

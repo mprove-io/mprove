@@ -1,12 +1,30 @@
-import { helper } from '../../barrels/helper';
 import { interfaces } from '../../barrels/interfaces';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
+import { BmError } from '../bm-error';
+import { helper } from '../../barrels/helper';
 
-export function makeContents(item: interfaces.VarsSub) {
-  let contents: string[] = [];
+let func = enums.FuncEnum.MakeContents;
 
-  let myWith: string[] = [];
+export function makeContents(item: {
+  needsAll: interfaces.VarsSub['needsAll'];
+  view: interfaces.View;
+  varsSubArray: interfaces.ViewPart['varsSubElements'];
+  views: interfaces.View[];
+  errors: BmError[];
+  structId: string;
+  caller: enums.CallerEnum;
+}) {
+  let { needsAll, view, structId, caller } = item;
+
+  let varsSubInput: interfaces.VarsSub = helper.makeCopy({ needsAll });
+
+  let connection = view.connection;
+
+  let contents: interfaces.VarsSub['contents'] = [];
+
+  let myWith: interfaces.VarsSub['myWith'] = [];
 
   let flats: {
     [s: string]: number;
@@ -18,10 +36,8 @@ export function makeContents(item: interfaces.VarsSub) {
 
   let i = 0;
 
-  Object.keys(item.needsAll).forEach(fieldName => {
-    let field = item.view.fields.find(
-      viewField => viewField.name === fieldName
-    );
+  Object.keys(needsAll).forEach(fieldName => {
+    let field = view.fields.find(viewField => viewField.name === fieldName);
 
     if (field.fieldClass === api.FieldClassEnum.Dimension) {
       if (helper.isDefined(field.unnest)) {
@@ -46,16 +62,16 @@ export function makeContents(item: interfaces.VarsSub) {
 
   let table: string;
 
-  if (helper.isDefined(item.view.table)) {
-    if (item.connection.type === api.ConnectionTypeEnum.BigQuery) {
-      table = '`' + item.view.table + '`';
-    } else if (item.connection.type === api.ConnectionTypeEnum.PostgreSQL) {
-      table = item.view.table;
+  if (helper.isDefined(view.table)) {
+    if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+      table = '`' + view.table + '`';
+    } else if (connection.type === api.ConnectionTypeEnum.PostgreSQL) {
+      table = view.table;
     }
   } else {
-    let derivedSqlArray = item.view.derived_table.split('\n');
+    let derivedSqlArray = view.derived_table.split('\n');
 
-    table = item.view.name + constants.DERIVED_TABLE_SUFFIX;
+    table = view.name + constants.DERIVED_TABLE_SUFFIX;
 
     myWith.push(`  ${table} AS (`);
     myWith = myWith.concat(derivedSqlArray.map(s => `    ${s}`));
@@ -71,8 +87,17 @@ export function makeContents(item: interfaces.VarsSub) {
 
   contents.push(`  ) as ${constants.VIEW_MAIN_SUB}`);
 
-  item.contents = contents;
-  item.with = myWith;
+  let output: interfaces.VarsSub = { contents, myWith };
 
-  return item;
+  let varsSubElement: interfaces.VarsSubElement = {
+    func: func,
+    varsSubInput: varsSubInput,
+    varsSubOutput: output
+  };
+  item.varsSubArray.push(varsSubElement);
+
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+
+  return output;
 }

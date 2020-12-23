@@ -130,6 +130,9 @@ export enum FuncEnum {
   MakeDepMeasuresAndDimensions = 'sub/1-make-dep-measures-and-dimensions',
   MakeMainFields = 'sub/2-make-main-fields',
   MakeNeedsAll = 'sub/3-make-needs-all',
+  MakeContents = 'sub/4-make-contents',
+  ComposeMain = 'sub/5-compose-main',
+  ComposeCalc = 'sub/6-compose-calc',
 
   LogStruct = 'builder/log-struct'
 }

@@ -7,8 +7,8 @@ let func = enums.FuncEnum.MakeNeedsAll;
 
 export function makeNeedsAll(item: {
   selected: interfaces.VarsSub['selected'];
+  view: interfaces.View;
   varsSubArray: interfaces.ViewPart['varsSubElements'];
-  view: interfaces.VarsSub['view'];
   views: interfaces.View[];
   errors: BmError[];
   structId: string;

@@ -23,8 +23,6 @@ export enum CallerEnum {
   BuildDashboardChart = '15-BuildDashboardChart',
   BuildVizChart = '15-BuildVizChart',
 
-  Sub = 'Sub',
-
   RebuildStruct = 'RebuildStruct',
   ProcessDashboard = 'ProcessDashboard',
   ProcessQuery = 'ProcessQuery'

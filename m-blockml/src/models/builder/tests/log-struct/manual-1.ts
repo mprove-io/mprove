@@ -1,9 +1,6 @@
 import { prepareTest } from '../../../../functions/prepare-test';
-import { helper } from '../../../../barrels/helper';
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
-import { interfaces } from '../../../../barrels/interfaces';
-import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.RebuildStruct;

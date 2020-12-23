@@ -1,12 +1,5 @@
-import { api } from '../barrels/api';
-
 export interface VarsSub {
-  view?: any;
   select?: string[];
-  weekStart?: api.ProjectWeekStartEnum;
-  connection?: api.ProjectConnection;
-  structId?: string;
-  udfsDict?: api.UdfsDict;
   depMeasures?: {
     [dep: string]: number;
   };
@@ -29,7 +22,7 @@ export interface VarsSub {
     [a: string]: number;
   };
   contents?: string[];
-  with?: string[];
-  query?: string[];
+  myWith?: string[];
+  mainQuery?: string[];
   calcQuery?: string[];
 }

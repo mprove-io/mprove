@@ -8,8 +8,8 @@ let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
 
 export function makeDepMeasuresAndDimensions(item: {
   select: interfaces.VarsSub['select'];
+  view: interfaces.View;
   varsSubArray: interfaces.ViewPart['varsSubElements'];
-  view: interfaces.VarsSub['view'];
   views: interfaces.View[];
   errors: BmError[];
   structId: string;

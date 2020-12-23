@@ -12,8 +12,8 @@ export function makeMainFields(item: {
   select: interfaces.VarsSub['select'];
   depMeasures: interfaces.VarsSub['depMeasures'];
   depDimensions: interfaces.VarsSub['depDimensions'];
+  view: interfaces.View;
   varsSubArray: interfaces.ViewPart['varsSubElements'];
-  view: interfaces.VarsSub['view'];
   views: interfaces.View[];
   errors: BmError[];
   structId: string;
@@ -27,8 +27,9 @@ export function makeMainFields(item: {
     depDimensions
   });
 
-  let extraUdfs: interfaces.VarsSub['extraUdfs'] = {};
   let connection = view.connection;
+
+  let extraUdfs: interfaces.VarsSub['extraUdfs'] = {};
 
   let mainText: string[] = [];
   let groupMainBy: string[] = [];
@@ -208,7 +209,7 @@ export function makeMainFields(item: {
   let output: interfaces.VarsSub = {
     mainText,
     groupMainBy,
-    mainFields,
+    mainFields, // only for logs
     selected,
     processedFields,
     extraUdfs

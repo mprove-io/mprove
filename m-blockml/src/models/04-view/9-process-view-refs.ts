@@ -36,8 +36,6 @@ export function processViewRefs(item: {
         view: x,
         partDeps: {},
         views: item.views,
-        udfsDict: item.udfsDict,
-        weekStart: item.weekStart,
         errors: item.errors,
         structId: item.structId,
         caller: item.caller
@@ -58,8 +56,6 @@ function substituteViewRefsRecursive(item: {
   view: interfaces.View;
   partDeps: interfaces.ViewPart['deps'];
   views: interfaces.View[];
-  udfsDict: api.UdfsDict;
-  weekStart: api.ProjectWeekStartEnum;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -82,16 +78,14 @@ function substituteViewRefsRecursive(item: {
     item.topView.parts[viewPartName] = viewPart;
     item.partDeps[viewPartName] = 1;
 
-    let { query, extraUdfs } = barSpecial.genSub({
+    let { calcQuery, extraUdfs } = barSpecial.genSub({
       select: Object.keys(item.view.asDeps[as].fieldNames),
       view: depView,
-      udfsDict: item.udfsDict,
-      weekStart: item.weekStart,
       varsSubArray: viewPart.varsSubElements,
       views: item.views,
       errors: item.errors,
       structId: item.structId,
-      caller: enums.CallerEnum.Sub
+      caller: item.caller
     });
 
     Object.keys(extraUdfs).forEach(udfName => {
@@ -102,7 +96,7 @@ function substituteViewRefsRecursive(item: {
 
     let content: string[] = [];
     content.push(`  ${viewPartName} AS (`);
-    content = content.concat(query.map((s: string) => `    ${s}`));
+    content = content.concat(calcQuery.map((s: string) => `    ${s}`));
     content.push('  ),');
 
     let text = content.join('\n');
@@ -117,8 +111,6 @@ function substituteViewRefsRecursive(item: {
         view: depView,
         partDeps: viewPart.deps,
         views: item.views,
-        udfsDict: item.udfsDict,
-        weekStart: item.weekStart,
         errors: item.errors,
         structId: item.structId,
         caller: item.caller

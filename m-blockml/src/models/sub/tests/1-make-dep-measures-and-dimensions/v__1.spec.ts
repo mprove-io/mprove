@@ -6,7 +6,7 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.Sub;
+let caller = enums.CallerEnum.BuildView;
 let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
 let testId = 'v__1';
 
