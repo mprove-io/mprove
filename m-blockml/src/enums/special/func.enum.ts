@@ -128,6 +128,8 @@ export enum FuncEnum {
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
 
   MakeDepMeasuresAndDimensions = 'sub/1-make-dep-measures-and-dimensions',
+  MakeMainFields = 'sub/2-make-main-fields',
+  MakeNeedsAll = 'sub/3-make-needs-all',
 
   LogStruct = 'builder/log-struct'
 }

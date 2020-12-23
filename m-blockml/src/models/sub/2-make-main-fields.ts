@@ -3,8 +3,33 @@ import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { barMeasure } from '../../barrels/bar-measure';
 import { helper } from '../../barrels/helper';
+import { BmError } from '../bm-error';
+import { enums } from '../../barrels/enums';
 
-export function makeMainFields(item: interfaces.VarsSub) {
+let func = enums.FuncEnum.MakeMainFields;
+
+export function makeMainFields(item: {
+  select: interfaces.VarsSub['select'];
+  depMeasures: interfaces.VarsSub['depMeasures'];
+  depDimensions: interfaces.VarsSub['depDimensions'];
+  varsSubArray: interfaces.ViewPart['varsSubElements'];
+  view: interfaces.VarsSub['view'];
+  views: interfaces.View[];
+  errors: BmError[];
+  structId: string;
+  caller: enums.CallerEnum;
+}) {
+  let { select, depMeasures, depDimensions, view, structId, caller } = item;
+
+  let varsSubInput: interfaces.VarsSub = helper.makeCopy({
+    select,
+    depMeasures,
+    depDimensions
+  });
+
+  let extraUdfs: interfaces.VarsSub['extraUdfs'] = {};
+  let connection = view.connection;
+
   let mainText: string[] = [];
   let groupMainBy: string[] = [];
   let mainFields: string[] = [];
@@ -14,13 +39,13 @@ export function makeMainFields(item: interfaces.VarsSub) {
 
   let i = 0;
 
-  item.select.forEach(fieldName => {
+  select.forEach(fieldName => {
     mainFields.push(fieldName);
 
     selected[fieldName] = 1;
   });
 
-  Object.keys(item.depMeasures).forEach(fieldName => {
+  Object.keys(depMeasures).forEach(fieldName => {
     if (helper.isUndefined(selected[fieldName])) {
       mainFields.push(fieldName);
     }
@@ -28,7 +53,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
     selected[fieldName] = 1;
   });
 
-  Object.keys(item.depDimensions).forEach(fieldName => {
+  Object.keys(depDimensions).forEach(fieldName => {
     if (helper.isUndefined(selected[fieldName])) {
       mainFields.push(fieldName);
     }
@@ -37,7 +62,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
   });
 
   mainFields.forEach(fieldName => {
-    let field = item.view.fields.find(vField => vField.name === fieldName);
+    let field = view.fields.find(vField => vField.name === fieldName);
 
     let sqlFinal;
     let sqlKeyFinal;
@@ -71,57 +96,53 @@ export function makeMainFields(item: interfaces.VarsSub) {
 
       switch (true) {
         case field.type === api.FieldTypeEnum.SumByKey: {
-          if (item.connection.type === api.ConnectionTypeEnum.BigQuery) {
-            item.extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
+          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+            extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
           sqlSelect = barMeasure.makeMeasureSumByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
-            connection: item.connection
+            connection: connection
           });
 
           break;
         }
 
         case field.type === api.FieldTypeEnum.AverageByKey: {
-          if (item.connection.type === api.ConnectionTypeEnum.BigQuery) {
-            item.extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
+          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+            extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
           sqlSelect = barMeasure.makeMeasureAverageByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
-            connection: item.connection
+            connection: connection
           });
 
           break;
         }
 
         case field.type === api.FieldTypeEnum.MedianByKey: {
-          item.extraUdfs[
-            constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
-          ] = 1;
+          extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasureMedianByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
-            connection: item.connection
+            connection: connection
           });
 
           break;
         }
 
         case field.type === api.FieldTypeEnum.PercentileByKey: {
-          item.extraUdfs[
-            constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
-          ] = 1;
+          extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasurePercentileByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
             percentile: field.percentile,
-            connection: item.connection
+            connection: connection
           });
           break;
         }
@@ -129,7 +150,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
         case field.type === api.FieldTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
-            connection: item.connection
+            connection: connection
           });
 
           break;
@@ -138,7 +159,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
         case field.type === api.FieldTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
-            connection: item.connection
+            connection: connection
           });
 
           break;
@@ -147,7 +168,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
         case field.type === api.FieldTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
-            connection: item.connection
+            connection: connection
           });
 
           break;
@@ -156,7 +177,7 @@ export function makeMainFields(item: interfaces.VarsSub) {
         case field.type === api.FieldTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
-            connection: item.connection
+            connection: connection
           });
 
           break;
@@ -184,11 +205,24 @@ export function makeMainFields(item: interfaces.VarsSub) {
     processedFields[fieldName] = sqlSelect;
   });
 
-  item.mainText = mainText;
-  item.groupMainBy = groupMainBy;
-  item.mainFields = mainFields;
-  item.selected = selected;
-  item.processedFields = processedFields;
+  let output: interfaces.VarsSub = {
+    mainText,
+    groupMainBy,
+    mainFields,
+    selected,
+    processedFields,
+    extraUdfs
+  };
 
-  return item;
+  let varsSubElement: interfaces.VarsSubElement = {
+    func: func,
+    varsSubInput: varsSubInput,
+    varsSubOutput: output
+  };
+  item.varsSubArray.push(varsSubElement);
+
+  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+
+  return output;
 }

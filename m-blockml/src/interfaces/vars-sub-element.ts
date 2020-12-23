@@ -1,4 +1,4 @@
-import { enums } from 'src/barrels/enums';
+import { enums } from '../barrels/enums';
 import { VarsSub } from './vars-sub';
 
 export interface VarsSubElement {

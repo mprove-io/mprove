@@ -8,9 +8,9 @@ let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
 
 export function makeDepMeasuresAndDimensions(item: {
   select: interfaces.VarsSub['select'];
+  varsSubArray: interfaces.ViewPart['varsSubElements'];
   view: interfaces.VarsSub['view'];
   views: interfaces.View[];
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -52,6 +52,7 @@ export function makeDepMeasuresAndDimensions(item: {
     varsSubOutput: output
   };
   item.varsSubArray.push(varsSubElement);
+
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
 

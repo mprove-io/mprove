@@ -38,7 +38,6 @@ export function processViewRefs(item: {
         views: item.views,
         udfsDict: item.udfsDict,
         weekStart: item.weekStart,
-        connection: x.connection,
         errors: item.errors,
         structId: item.structId,
         caller: item.caller
@@ -61,7 +60,6 @@ function substituteViewRefsRecursive(item: {
   views: interfaces.View[];
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
-  connection: api.ProjectConnection;
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
@@ -89,7 +87,6 @@ function substituteViewRefsRecursive(item: {
       view: depView,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
-      connection: item.connection,
       varsSubArray: viewPart.varsSubElements,
       views: item.views,
       errors: item.errors,
@@ -122,7 +119,6 @@ function substituteViewRefsRecursive(item: {
         views: item.views,
         udfsDict: item.udfsDict,
         weekStart: item.weekStart,
-        connection: item.connection,
         errors: item.errors,
         structId: item.structId,
         caller: item.caller

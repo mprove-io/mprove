@@ -9,7 +9,6 @@ export function genSub(item: {
   select: string[];
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
-  connection: api.ProjectConnection;
   varsSubArray: interfaces.ViewPart['varsSubElements'];
   views: interfaces.View[];
   errors: BmError[];
@@ -21,7 +20,6 @@ export function genSub(item: {
     select,
     udfsDict,
     weekStart,
-    connection,
     views,
     errors,
     structId,
@@ -32,7 +30,7 @@ export function genSub(item: {
     view: item.view,
     select: item.select,
     weekStart: item.weekStart,
-    connection: item.connection,
+    connection: view.connection,
     structId: item.structId,
     udfsDict: item.udfsDict,
     depMeasures: undefined,
@@ -51,9 +49,9 @@ export function genSub(item: {
   };
 
   let { depMeasures, depDimensions } = barSub.makeDepMeasuresAndDimensions({
-    view: view,
     select: select,
     varsSubArray: item.varsSubArray,
+    view: view,
     views: views,
     errors: errors,
     structId: structId,
@@ -62,21 +60,41 @@ export function genSub(item: {
   vars.depMeasures = depMeasures;
   vars.depDimensions = depDimensions;
 
-  // view
-  // depMeasures
-  // select
-  //    mainText
-  //    groupMainBy
-  //    mainFields
-  //    selected
-  //    processedFields
-  //    extraUdfs
-  vars = barSub.makeMainFields(vars);
+  let {
+    mainText,
+    groupMainBy,
+    mainFields,
+    selected,
+    processedFields,
+    extraUdfs
+  } = barSub.makeMainFields({
+    select: item.select,
+    depMeasures: depMeasures,
+    depDimensions: depDimensions,
+    varsSubArray: item.varsSubArray,
+    view: view,
+    views: views,
+    errors: errors,
+    structId: structId,
+    caller: caller
+  });
+  vars.mainText = mainText;
+  vars.groupMainBy = groupMainBy;
+  vars.mainFields = mainFields;
+  vars.selected = selected;
+  vars.processedFields = processedFields;
+  vars.extraUdfs = extraUdfs;
 
-  // view
-  // selected
-  //    needsAll
-  vars = barSub.makeNeedsAll(vars);
+  let { needsAll } = barSub.makeNeedsAll({
+    selected: selected,
+    varsSubArray: item.varsSubArray,
+    view: view,
+    views: views,
+    errors: errors,
+    structId: structId,
+    caller: caller
+  });
+  vars.needsAll = needsAll;
 
   // view
   // needsAll
