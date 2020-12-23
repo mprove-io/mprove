@@ -4,9 +4,9 @@ import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 
-let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
+let func = enums.FuncEnum.SubMakeDepMeasuresAndDimensions;
 
-export function makeDepMeasuresAndDimensions(item: {
+export function subMakeDepMeasuresAndDimensions(item: {
   select: interfaces.VarsSub['select'];
   view: interfaces.View;
   varsSubArray: interfaces.ViewPart['varsSubElements'];

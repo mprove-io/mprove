@@ -7,7 +7,7 @@ import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildView;
-let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
+let func = enums.FuncEnum.SubMakeDepMeasuresAndDimensions;
 let testId = 'v__1';
 
 test(testId, async () => {

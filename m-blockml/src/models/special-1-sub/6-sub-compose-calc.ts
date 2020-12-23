@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 
-let func = enums.FuncEnum.ComposeCalc;
+let func = enums.FuncEnum.SubComposeCalc;
 
-export function composeCalc(item: {
+export function subComposeCalc(item: {
   mainQuery: interfaces.VarsSub['mainQuery'];
   select: interfaces.VarsSub['select'];
   processedFields: interfaces.VarsSub['processedFields'];

@@ -3,9 +3,9 @@ import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 
-let func = enums.FuncEnum.MakeNeedsAll;
+let func = enums.FuncEnum.SubMakeNeedsAll;
 
-export function makeNeedsAll(item: {
+export function subMakeNeedsAll(item: {
   selected: interfaces.VarsSub['selected'];
   view: interfaces.View;
   varsSubArray: interfaces.ViewPart['varsSubElements'];

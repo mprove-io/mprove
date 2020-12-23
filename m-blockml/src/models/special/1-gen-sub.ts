@@ -14,7 +14,7 @@ export function genSub(item: {
 }) {
   let { select, varsSubArray, view, views, errors, structId, caller } = item;
 
-  let { depMeasures, depDimensions } = barSub.makeDepMeasuresAndDimensions({
+  let { depMeasures, depDimensions } = barSub.subMakeDepMeasuresAndDimensions({
     select: select,
     varsSubArray: varsSubArray,
     view: view,
@@ -27,10 +27,11 @@ export function genSub(item: {
   let {
     mainText,
     groupMainBy,
+    mainFields,
     selected,
     processedFields,
     extraUdfs
-  } = barSub.makeMainFields({
+  } = barSub.subMakeMainFields({
     select: select,
     depMeasures: depMeasures,
     depDimensions: depDimensions,
@@ -42,7 +43,7 @@ export function genSub(item: {
     caller: caller
   });
 
-  let { needsAll } = barSub.makeNeedsAll({
+  let { needsAll } = barSub.subMakeNeedsAll({
     selected: selected,
     varsSubArray: varsSubArray,
     view: view,
@@ -52,7 +53,7 @@ export function genSub(item: {
     caller: caller
   });
 
-  let { contents, myWith } = barSub.makeContents({
+  let { contents, myWith } = barSub.subMakeContents({
     needsAll: needsAll,
     varsSubArray: varsSubArray,
     view: view,
@@ -62,7 +63,7 @@ export function genSub(item: {
     caller: caller
   });
 
-  let { mainQuery } = barSub.composeMain({
+  let { mainQuery } = barSub.subComposeMain({
     mainText: mainText,
     contents: contents,
     groupMainBy: groupMainBy,
@@ -74,7 +75,7 @@ export function genSub(item: {
     caller: caller
   });
 
-  let { calcQuery } = barSub.composeCalc({
+  let { calcQuery } = barSub.subComposeCalc({
     select: select,
     processedFields: processedFields,
     mainQuery: mainQuery,

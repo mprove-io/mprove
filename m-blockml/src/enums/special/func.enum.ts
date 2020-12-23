@@ -127,12 +127,12 @@ export enum FuncEnum {
   CheckMdzAccess = 'special/check-mdz-access',
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
 
-  MakeDepMeasuresAndDimensions = 'sub/1-make-dep-measures-and-dimensions',
-  MakeMainFields = 'sub/2-make-main-fields',
-  MakeNeedsAll = 'sub/3-make-needs-all',
-  MakeContents = 'sub/4-make-contents',
-  ComposeMain = 'sub/5-compose-main',
-  ComposeCalc = 'sub/6-compose-calc',
+  SubMakeDepMeasuresAndDimensions = 'special-1-sub/1-sub-make-dep-measures-and-dimensions',
+  SubMakeMainFields = 'special-1-sub/2-sub-make-main-fields',
+  SubMakeNeedsAll = 'special-1-sub/3-sub-make-needs-all',
+  SubMakeContents = 'special-1-sub/4-sub-make-contents',
+  SubComposeMain = 'special-1-sub/5-sub-compose-main',
+  SubComposeCalc = 'special-1-sub/6-sub-compose-calc',
 
   LogStruct = 'builder/log-struct'
 }

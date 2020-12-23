@@ -6,9 +6,9 @@ import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
 import { enums } from '../../barrels/enums';
 
-let func = enums.FuncEnum.MakeMainFields;
+let func = enums.FuncEnum.SubMakeMainFields;
 
-export function makeMainFields(item: {
+export function subMakeMainFields(item: {
   select: interfaces.VarsSub['select'];
   depMeasures: interfaces.VarsSub['depMeasures'];
   depDimensions: interfaces.VarsSub['depDimensions'];

@@ -5,9 +5,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 
-let func = enums.FuncEnum.MakeContents;
+let func = enums.FuncEnum.SubMakeContents;
 
-export function makeContents(item: {
+export function subMakeContents(item: {
   needsAll: interfaces.VarsSub['needsAll'];
   view: interfaces.View;
   varsSubArray: interfaces.ViewPart['varsSubElements'];

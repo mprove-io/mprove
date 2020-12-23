@@ -4,9 +4,9 @@ import { constants } from '../../barrels/constants';
 import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 
-let func = enums.FuncEnum.ComposeMain;
+let func = enums.FuncEnum.SubComposeMain;
 
-export function composeMain(item: {
+export function subComposeMain(item: {
   myWith: interfaces.VarsSub['myWith'];
   mainText: interfaces.VarsSub['mainText'];
   contents: interfaces.VarsSub['contents'];
