@@ -136,6 +136,15 @@ export enum FuncEnum {
 
   MakeDepMeasures = 'special-2-sql/1-make-dep-measures',
   MakeMainFields = 'special-2-sql/2-make-main-fields',
+  MakeNeedsDoubles = 'special-2-sql/3-make-needs-doubles',
+  FindJoinsUsingJoinsDeps = 'special-2-sql/4-find-joins-using-joins-deps',
+  MakeNeedsAll = 'special-2-sql/5-make-needs-all',
+  MakeFilters = 'special-2-sql/6-make-filters',
+  MakeContents = 'special-2-sql/7-make-contents',
+  MakeJoinsWhere = 'special-2-sql/8-make-joins-where',
+  ComposeMain = 'special-2-sql/9-compose-main',
+  ProcessTimezone = 'special-2-sql/10-process-timezone',
+  ComposeCalc = 'special-2-sql/11-compose-calc',
 
   LogStruct = 'builder/log-struct'
 }

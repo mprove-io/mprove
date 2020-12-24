@@ -1,8 +1,24 @@
 import { interfaces } from '../../barrels/interfaces';
+import { helper } from '../../barrels/helper';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 
-export function makeNeedsDoubles(item: interfaces.VarsSql) {
+let func = enums.FuncEnum.MakeNeedsDoubles;
+
+export function makeNeedsDoubles(item: {
+  selected: interfaces.VarsSql['selected'];
+  filters: interfaces.VarsSql['filters'];
+  varsSqlElements: interfaces.Report['varsSqlElements'];
+  model: interfaces.Model;
+}) {
+  let { selected, filters, varsSqlElements, model } = item;
+
+  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
+    selected,
+    filters
+  });
+
   let needsDoubles: interfaces.VarsSql['needsDoubles'] = {};
 
   let whereDoubleDeps: { [s: string]: number } = {};
@@ -10,29 +26,25 @@ export function makeNeedsDoubles(item: interfaces.VarsSql) {
   let whereCalcDeps: { [s: string]: number } = {};
 
   // pick double deps from sqlAlwaysWhere
-  Object.keys(item.model.sqlAlwaysWhereDoubleDepsAfterSingles).forEach(as => {
-    Object.keys(item.model.sqlAlwaysWhereDoubleDepsAfterSingles[as]).forEach(
+  Object.keys(model.sqlAlwaysWhereDoubleDepsAfterSingles).forEach(as => {
+    Object.keys(model.sqlAlwaysWhereDoubleDepsAfterSingles[as]).forEach(dep => {
+      let f = `${as}.${dep}`;
+      whereDoubleDeps[f] = 1;
+    });
+  });
+
+  // pick double deps from sqlAlwaysWhereCalc
+  Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(as => {
+    Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles[as]).forEach(
       dep => {
         let f = `${as}.${dep}`;
-        whereDoubleDeps[f] = 1;
+        whereCalcDoubleDeps[f] = 1;
       }
     );
   });
 
-  // pick double deps from sqlAlwaysWhereCalc
-  Object.keys(item.model.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(
-    as => {
-      Object.keys(
-        item.model.sqlAlwaysWhereCalcDoubleDepsAfterSingles[as]
-      ).forEach(dep => {
-        let f = `${as}.${dep}`;
-        whereCalcDoubleDeps[f] = 1;
-      });
-    }
-  );
-
   // pick deps from sqlAlwaysWhereCalc
-  Object.keys(item.model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(dep => {
+  Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(dep => {
     let f = `${constants.MF}.${dep}`;
     whereCalcDeps[f] = 1;
   });
@@ -40,8 +52,8 @@ export function makeNeedsDoubles(item: interfaces.VarsSql) {
   // unique
   let elements = [
     ...new Set([
-      ...Object.keys(item.selected),
-      ...Object.keys(item.filters),
+      ...Object.keys(selected),
+      ...Object.keys(filters),
       ...Object.keys(whereDoubleDeps),
       ...Object.keys(whereCalcDoubleDeps),
       ...Object.keys(whereCalcDeps)
@@ -64,17 +76,17 @@ export function makeNeedsDoubles(item: interfaces.VarsSql) {
   if (needsDoubles[constants.MF]) {
     // pick deps for all model fields
     Object.keys(needsDoubles[constants.MF]).forEach(fieldName => {
-      Object.keys(item.model.fieldsDepsAfterSingles[fieldName]).forEach(dep => {
+      Object.keys(model.fieldsDepsAfterSingles[fieldName]).forEach(dep => {
         needsDoubles[constants.MF][dep] = 1;
       });
     });
 
     // pick double deps for all model fields
     Object.keys(needsDoubles[constants.MF]).forEach(fieldName => {
-      Object.keys(item.model.fieldsDoubleDepsAfterSingles[fieldName]).forEach(
+      Object.keys(model.fieldsDoubleDepsAfterSingles[fieldName]).forEach(
         alias => {
           Object.keys(
-            item.model.fieldsDoubleDepsAfterSingles[fieldName][alias]
+            model.fieldsDoubleDepsAfterSingles[fieldName][alias]
           ).forEach(dep => {
             if (!needsDoubles[alias]) {
               needsDoubles[alias] = {};
@@ -91,7 +103,7 @@ export function makeNeedsDoubles(item: interfaces.VarsSql) {
     .filter(a => a !== constants.MF)
     .forEach(asName => {
       Object.keys(needsDoubles[asName]).forEach(fieldName => {
-        let join = item.model.joins.find(j => j.as === asName);
+        let join = model.joins.find(j => j.as === asName);
 
         Object.keys(join.view.fieldsDepsAfterSingles[fieldName]).forEach(
           dep => {
@@ -101,7 +113,13 @@ export function makeNeedsDoubles(item: interfaces.VarsSql) {
       });
     });
 
-  item.needsDoubles = needsDoubles;
+  let output: interfaces.VarsSql = { needsDoubles };
 
-  return item;
+  varsSqlElements.push({
+    func: func,
+    varsSqlInput: varsSqlInput,
+    varsSqlOutput: output
+  });
+
+  return output;
 }

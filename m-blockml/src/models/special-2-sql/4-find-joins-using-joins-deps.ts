@@ -1,14 +1,23 @@
 import { interfaces } from '../../barrels/interfaces';
+import { helper } from '../../barrels/helper';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 
-export function findJoinsUsingJoinsDeps(item: interfaces.VarsSql) {
-  let joins: { [s: string]: number } = {};
+let func = enums.FuncEnum.FindJoinsUsingJoinsDeps;
 
-  [
-    ...Object.keys(item.needsDoubles),
-    ...Object.keys(item.model.alwaysJoinUnique)
-  ]
-    .filter(asName => asName !== item.model.fromAs && asName !== constants.MF)
+export function findJoinsUsingJoinsDeps(item: {
+  needsDoubles: interfaces.VarsSql['needsDoubles'];
+  varsSqlElements: interfaces.Report['varsSqlElements'];
+  model: interfaces.Model;
+}) {
+  let { needsDoubles, varsSqlElements, model } = item;
+
+  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({ needsDoubles });
+
+  let joins: interfaces.VarsSql['joins'] = {};
+
+  [...Object.keys(needsDoubles), ...Object.keys(model.alwaysJoinUnique)]
+    .filter(asName => asName !== model.fromAs && asName !== constants.MF)
     .forEach(asName => {
       joins[asName] = 1;
     });
@@ -19,8 +28,8 @@ export function findJoinsUsingJoinsDeps(item: interfaces.VarsSql) {
     restart = false;
 
     Object.keys(joins).forEach(asName => {
-      Object.keys(item.model.joinsDoubleDepsAfterSingles[asName])
-        .filter(depAs => depAs !== item.model.fromAs && depAs !== constants.MF)
+      Object.keys(model.joinsDoubleDepsAfterSingles[asName])
+        .filter(depAs => depAs !== model.fromAs && depAs !== constants.MF)
         .forEach(depAs => {
           if (!joins[depAs]) {
             joins[depAs] = 1;
@@ -30,9 +39,15 @@ export function findJoinsUsingJoinsDeps(item: interfaces.VarsSql) {
     });
   }
 
-  joins[item.model.fromAs] = 1;
+  joins[model.fromAs] = 1;
 
-  item.joins = joins;
+  let output: interfaces.VarsSql = { joins };
 
-  return item;
+  varsSqlElements.push({
+    func: func,
+    varsSqlInput: varsSqlInput,
+    varsSqlOutput: output
+  });
+
+  return output;
 }

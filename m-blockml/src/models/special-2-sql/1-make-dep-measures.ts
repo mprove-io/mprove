@@ -12,7 +12,7 @@ export function makeDepMeasures(item: {
   varsSqlElements: interfaces.Report['varsSqlElements'];
   model: interfaces.Model;
 }) {
-  let { select, filters, model, varsSqlElements } = item;
+  let { select, filters, varsSqlElements, model } = item;
 
   let varsSqlInput: interfaces.VarsSql = helper.makeCopy({ select, filters });
 

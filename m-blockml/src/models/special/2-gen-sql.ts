@@ -121,22 +121,28 @@ export function genSqlPro(
   vars.selected = selected;
   vars.processedFields = processedFields;
 
-  // selected
-  // filters
-  // model
-  //    needs_doubles
-  vars = barSql.makeNeedsDoubles(vars);
+  let { needsDoubles } = barSql.makeNeedsDoubles({
+    selected: selected,
+    filters: filters,
+    varsSqlElements: varsSqlElements,
+    model: model
+  });
+  vars.needsDoubles = needsDoubles;
 
-  // model
-  // need_doubles
-  //    joins
-  vars = barSql.findJoinsUsingJoinsDeps(vars);
+  let { joins } = barSql.findJoinsUsingJoinsDeps({
+    needsDoubles: needsDoubles,
+    varsSqlElements: varsSqlElements,
+    model: model
+  });
+  vars.joins = joins;
 
-  // model
-  // need_doubles
-  // joins
-  //    needs_all
-  vars = barSql.makeNeedsAll(vars);
+  let { needsAll } = barSql.makeNeedsAll({
+    needsDoubles: needsDoubles,
+    joins: joins,
+    varsSqlElements: varsSqlElements,
+    model: model
+  });
+  vars.needsAll = needsAll;
 
   // joins
   // model

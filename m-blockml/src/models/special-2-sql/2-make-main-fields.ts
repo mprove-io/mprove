@@ -14,7 +14,7 @@ export function makeMainFields(item: {
   varsSqlElements: interfaces.Report['varsSqlElements'];
   model: interfaces.Model;
 }) {
-  let { select, filters, depMeasures, varsSqlElements, model } = item;
+  let { select, filters, depMeasures, model, varsSqlElements } = item;
 
   let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
     select,
