@@ -11,14 +11,10 @@ export function subComposeCalc(item: {
   mainQuery: interfaces.VarsSub['mainQuery'];
   select: interfaces.VarsSub['select'];
   processedFields: interfaces.VarsSub['processedFields'];
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
+  varsSubElements: interfaces.ViewPart['varsSubElements'];
   view: interfaces.View;
-  views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
 }) {
-  let { mainQuery, select, processedFields, view, structId, caller } = item;
+  let { mainQuery, select, processedFields, view } = item;
 
   let varsSubInput: interfaces.VarsSub = helper.makeCopy({
     mainQuery,
@@ -60,15 +56,11 @@ export function subComposeCalc(item: {
 
   let output: interfaces.VarsSub = { calcQuery };
 
-  let varsSubElement: interfaces.VarsSubElement = {
+  item.varsSubElements.push({
     func: func,
     varsSubInput: varsSubInput,
     varsSubOutput: output
-  };
-  item.varsSubArray.push(varsSubElement);
-
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  });
 
   return output;
 }

@@ -9,14 +9,10 @@ let func = enums.FuncEnum.SubMakeContents;
 
 export function subMakeContents(item: {
   needsAll: interfaces.VarsSub['needsAll'];
+  varsSubElements: interfaces.ViewPart['varsSubElements'];
   view: interfaces.View;
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
-  views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
 }) {
-  let { needsAll, view, structId, caller } = item;
+  let { needsAll, view } = item;
 
   let varsSubInput: interfaces.VarsSub = helper.makeCopy({ needsAll });
 
@@ -89,15 +85,11 @@ export function subMakeContents(item: {
 
   let output: interfaces.VarsSub = { contents, myWith };
 
-  let varsSubElement: interfaces.VarsSubElement = {
+  item.varsSubElements.push({
     func: func,
     varsSubInput: varsSubInput,
     varsSubOutput: output
-  };
-  item.varsSubArray.push(varsSubElement);
-
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  });
 
   return output;
 }

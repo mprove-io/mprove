@@ -12,14 +12,10 @@ export function subMakeMainFields(item: {
   select: interfaces.VarsSub['select'];
   depMeasures: interfaces.VarsSub['depMeasures'];
   depDimensions: interfaces.VarsSub['depDimensions'];
+  varsSubElements: interfaces.ViewPart['varsSubElements'];
   view: interfaces.View;
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
-  views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
 }) {
-  let { select, depMeasures, depDimensions, view, structId, caller } = item;
+  let { select, depMeasures, depDimensions, view } = item;
 
   let varsSubInput: interfaces.VarsSub = helper.makeCopy({
     select,
@@ -215,15 +211,11 @@ export function subMakeMainFields(item: {
     extraUdfs
   };
 
-  let varsSubElement: interfaces.VarsSubElement = {
+  item.varsSubElements.push({
     func: func,
     varsSubInput: varsSubInput,
     varsSubOutput: output
-  };
-  item.varsSubArray.push(varsSubElement);
-
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  });
 
   return output;
 }

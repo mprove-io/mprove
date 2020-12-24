@@ -35,10 +35,7 @@ export function processViewRefs(item: {
         topView: x,
         view: x,
         partDeps: {},
-        views: item.views,
-        errors: item.errors,
-        structId: item.structId,
-        caller: item.caller
+        views: item.views
       });
     }
 
@@ -47,6 +44,7 @@ export function processViewRefs(item: {
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  helper.log(caller, func, structId, enums.LogTypeEnum.UdfsDict, item.udfsDict);
 
   return item.views;
 }
@@ -56,9 +54,6 @@ function substituteViewRefsRecursive(item: {
   view: interfaces.View;
   partDeps: interfaces.ViewPart['deps'];
   views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
 }) {
   Object.keys(item.view.asDeps).forEach(as => {
     let depView = item.views.find(
@@ -67,25 +62,9 @@ function substituteViewRefsRecursive(item: {
 
     let viewPartName = `${item.view.name}__${depView.name}__${as}`;
 
-    // view part placed in parts before genSub for logs to work (sub)
-    let viewPart: interfaces.ViewPart = {
-      viewName: depView.name,
-      sql: undefined,
-      deps: {},
-      varsSubElements: []
-    };
-
-    item.topView.parts[viewPartName] = viewPart;
-    item.partDeps[viewPartName] = 1;
-
-    let { calcQuery, extraUdfs } = barSpecial.genSub({
+    let { calcQuery, extraUdfs, varsSubElements } = barSpecial.genSub({
       select: Object.keys(item.view.asDeps[as].fieldNames),
-      varsSubArray: viewPart.varsSubElements,
-      view: depView,
-      views: item.views,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
+      view: depView
     });
 
     Object.keys(extraUdfs).forEach(udfName => {
@@ -103,17 +82,22 @@ function substituteViewRefsRecursive(item: {
     text = api.MyRegex.replaceViewRefs(text, depView.name);
     text = api.MyRegex.removeBracketsOnViewFieldRefs(text);
 
-    viewPart.sql = text.split('\n');
+    let viewPart: interfaces.ViewPart = {
+      viewName: depView.name,
+      sql: text.split('\n'),
+      deps: {},
+      varsSubElements: varsSubElements
+    };
+
+    item.topView.parts[viewPartName] = viewPart;
+    item.partDeps[viewPartName] = 1;
 
     if (Object.keys(depView.asDeps).length > 0) {
       substituteViewRefsRecursive({
         topView: item.topView,
         view: depView,
         partDeps: viewPart.deps,
-        views: item.views,
-        errors: item.errors,
-        structId: item.structId,
-        caller: item.caller
+        views: item.views
       });
     }
   });

@@ -1,27 +1,15 @@
 import { barSub } from '../../barrels/bar-sub';
-import { enums } from '../../barrels/enums';
 import { interfaces } from '../../barrels/interfaces';
-import { BmError } from '../bm-error';
 
-export function genSub(item: {
-  select: string[];
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
-  view: interfaces.View;
-  views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-}) {
-  let { select, varsSubArray, view, views, errors, structId, caller } = item;
+export function genSub(item: { select: string[]; view: interfaces.View }) {
+  let { select, view } = item;
+
+  let varsSubElements: interfaces.ViewPart['varsSubElements'] = [];
 
   let { depMeasures, depDimensions } = barSub.subMakeDepMeasuresAndDimensions({
     select: select,
-    varsSubArray: varsSubArray,
-    view: view,
-    views: views,
-    errors: errors,
-    structId: structId,
-    caller: caller
+    varsSubElements: varsSubElements,
+    view: view
   });
 
   let {
@@ -35,32 +23,20 @@ export function genSub(item: {
     select: select,
     depMeasures: depMeasures,
     depDimensions: depDimensions,
-    varsSubArray: varsSubArray,
-    view: view,
-    views: views,
-    errors: errors,
-    structId: structId,
-    caller: caller
+    varsSubElements: varsSubElements,
+    view: view
   });
 
   let { needsAll } = barSub.subMakeNeedsAll({
     selected: selected,
-    varsSubArray: varsSubArray,
-    view: view,
-    views: views,
-    errors: errors,
-    structId: structId,
-    caller: caller
+    varsSubElements: varsSubElements,
+    view: view
   });
 
   let { contents, myWith } = barSub.subMakeContents({
     needsAll: needsAll,
-    varsSubArray: varsSubArray,
-    view: view,
-    views: views,
-    errors: errors,
-    structId: structId,
-    caller: caller
+    varsSubElements: varsSubElements,
+    view: view
   });
 
   let { mainQuery } = barSub.subComposeMain({
@@ -68,24 +44,16 @@ export function genSub(item: {
     contents: contents,
     groupMainBy: groupMainBy,
     myWith: myWith,
-    varsSubArray: varsSubArray,
-    views: views,
-    errors: errors,
-    structId: structId,
-    caller: caller
+    varsSubElements: varsSubElements
   });
 
   let { calcQuery } = barSub.subComposeCalc({
     select: select,
     processedFields: processedFields,
     mainQuery: mainQuery,
-    varsSubArray: varsSubArray,
-    view: view,
-    views: views,
-    errors: errors,
-    structId: structId,
-    caller: caller
+    varsSubElements: varsSubElements,
+    view: view
   });
 
-  return { calcQuery, extraUdfs };
+  return { calcQuery, extraUdfs, varsSubElements };
 }

@@ -7,8 +7,8 @@ import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildView;
-let func = enums.FuncEnum.SubMakeDepMeasuresAndDimensions;
-let testId = 'v__1';
+let func = enums.FuncEnum.ProcessViewRefs;
+let testId = 'v__sub__1-sub-make-dep-measures-and-dimensions__1';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -47,11 +47,10 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(views.length).toBe(2);
 
-  let v2 = views[1];
-  let part = v2.parts['v2__v1__a'];
-  let varsSubElement = part.varsSubElements.find(x => x.func === func);
-  let varsSubOutput = varsSubElement.varsSubOutput;
+  let varsSubElement = views[1].parts['v2__v1__a'].varsSubElements.find(
+    x => x.func === enums.FuncEnum.SubMakeDepMeasuresAndDimensions
+  );
 
-  expect(varsSubOutput.depMeasures).toEqual({ mea1: 1 });
-  expect(varsSubOutput.depDimensions).toEqual({ dim1: 1 });
+  expect(varsSubElement.varsSubOutput.depMeasures).toEqual({ mea1: 1 });
+  expect(varsSubElement.varsSubOutput.depDimensions).toEqual({ dim1: 1 });
 });

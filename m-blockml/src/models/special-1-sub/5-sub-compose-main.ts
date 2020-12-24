@@ -11,13 +11,9 @@ export function subComposeMain(item: {
   mainText: interfaces.VarsSub['mainText'];
   contents: interfaces.VarsSub['contents'];
   groupMainBy: interfaces.VarsSub['groupMainBy'];
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
-  views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
+  varsSubElements: interfaces.ViewPart['varsSubElements'];
 }) {
-  let { myWith, mainText, contents, groupMainBy, structId, caller } = item;
+  let { myWith, mainText, contents, groupMainBy } = item;
 
   let varsSubInput: interfaces.VarsSub = helper.makeCopy({
     myWith,
@@ -57,15 +53,11 @@ export function subComposeMain(item: {
 
   let output: interfaces.VarsSub = { mainQuery };
 
-  let varsSubElement: interfaces.VarsSubElement = {
+  item.varsSubElements.push({
     func: func,
     varsSubInput: varsSubInput,
     varsSubOutput: output
-  };
-  item.varsSubArray.push(varsSubElement);
-
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  });
 
   return output;
 }

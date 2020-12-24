@@ -2,20 +2,15 @@ import { interfaces } from '../../barrels/interfaces';
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
-import { BmError } from '../bm-error';
 
 let func = enums.FuncEnum.SubMakeDepMeasuresAndDimensions;
 
 export function subMakeDepMeasuresAndDimensions(item: {
   select: interfaces.VarsSub['select'];
+  varsSubElements: interfaces.ViewPart['varsSubElements'];
   view: interfaces.View;
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
-  views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
 }) {
-  let { select, view, structId, caller } = item;
+  let { select, view } = item;
 
   let varsSubInput: interfaces.VarsSub = helper.makeCopy({ select });
 
@@ -46,15 +41,11 @@ export function subMakeDepMeasuresAndDimensions(item: {
 
   let output: interfaces.VarsSub = { depMeasures, depDimensions };
 
-  let varsSubElement: interfaces.VarsSubElement = {
+  item.varsSubElements.push({
     func: func,
     varsSubInput: varsSubInput,
     varsSubOutput: output
-  };
-  item.varsSubArray.push(varsSubElement);
-
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  });
 
   return output;
 }

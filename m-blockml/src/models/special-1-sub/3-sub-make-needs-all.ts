@@ -7,14 +7,10 @@ let func = enums.FuncEnum.SubMakeNeedsAll;
 
 export function subMakeNeedsAll(item: {
   selected: interfaces.VarsSub['selected'];
+  varsSubElements: interfaces.ViewPart['varsSubElements'];
   view: interfaces.View;
-  varsSubArray: interfaces.ViewPart['varsSubElements'];
-  views: interfaces.View[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
 }) {
-  let { selected, view, structId, caller } = item;
+  let { selected, view } = item;
 
   let varsSubInput: interfaces.VarsSub = helper.makeCopy({ selected });
 
@@ -28,19 +24,13 @@ export function subMakeNeedsAll(item: {
     });
   });
 
-  // item.needsAll = needsAll;
-
   let output: interfaces.VarsSub = { needsAll };
 
-  let varsSubElement: interfaces.VarsSubElement = {
+  item.varsSubElements.push({
     func: func,
     varsSubInput: varsSubInput,
     varsSubOutput: output
-  };
-  item.varsSubArray.push(varsSubElement);
-
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  });
 
   return output;
 }
