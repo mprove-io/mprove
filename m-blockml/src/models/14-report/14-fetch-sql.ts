@@ -50,25 +50,24 @@ export async function fetchSql<T extends types.dzType>(item: {
 
       report.combinedFilters = filters;
 
-      let { sql, filtersFractions, varsSqlElements } = await barSpecial.genSql(
+      let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
         item.rabbitService,
         item.traceId,
         {
+          weekStart: item.weekStart,
+          timezone: report.timezone,
           select: report.select,
           sorts: report.sorts,
-          timezone: report.timezone,
           limit: report.limit,
           filters: report.combinedFilters,
           model: model,
-          weekStart: item.weekStart,
-          udfsDict: item.udfsDict,
-          structId: item.structId
+          udfsDict: item.udfsDict
         }
       );
 
       report.sql = sql;
       report.filtersFractions = filtersFractions;
-      report.varsSqlElements = varsSqlElements;
+      report.varsSqlSteps = varsSqlSteps;
     }
   );
 

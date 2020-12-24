@@ -13,7 +13,7 @@ export function makeFilters(item: {
   weekStart: interfaces.VarsSql['weekStart'];
   processedFields: interfaces.VarsSql['processedFields'];
   timezone: interfaces.VarsSql['timezone'];
-  varsSqlElements: interfaces.Report['varsSqlElements'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
   let {
@@ -22,11 +22,11 @@ export function makeFilters(item: {
     weekStart,
     processedFields,
     timezone,
-    varsSqlElements,
+    varsSqlSteps,
     model
   } = item;
 
-  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
     joins,
     filters,
     weekStart,
@@ -271,20 +271,16 @@ export function makeFilters(item: {
     }
   );
 
-  let output: interfaces.VarsSql = {
+  let varsOutput: interfaces.VarsSql = {
     filtersFractions,
     whereCalc,
     havingMain,
     whereMain,
-    filtersConditions,
-    untouchedFiltersConditions
+    filtersConditions, // for logs
+    untouchedFiltersConditions // for logs
   };
 
-  varsSqlElements.push({
-    func: func,
-    varsSqlInput: varsSqlInput,
-    varsSqlOutput: output
-  });
+  varsSqlSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

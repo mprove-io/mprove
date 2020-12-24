@@ -7,12 +7,12 @@ let func = enums.FuncEnum.FindJoinsUsingJoinsDeps;
 
 export function findJoinsUsingJoinsDeps(item: {
   needsDoubles: interfaces.VarsSql['needsDoubles'];
-  varsSqlElements: interfaces.Report['varsSqlElements'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { needsDoubles, varsSqlElements, model } = item;
+  let { needsDoubles, varsSqlSteps, model } = item;
 
-  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({ needsDoubles });
+  let varsInput: interfaces.VarsSql = helper.makeCopy({ needsDoubles });
 
   let joins: interfaces.VarsSql['joins'] = {};
 
@@ -41,13 +41,9 @@ export function findJoinsUsingJoinsDeps(item: {
 
   joins[model.fromAs] = 1;
 
-  let output: interfaces.VarsSql = { joins };
+  let varsOutput: interfaces.VarsSql = { joins };
 
-  varsSqlElements.push({
-    func: func,
-    varsSqlInput: varsSqlInput,
-    varsSqlOutput: output
-  });
+  varsSqlSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

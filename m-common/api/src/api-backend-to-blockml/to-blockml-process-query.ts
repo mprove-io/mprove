@@ -10,9 +10,6 @@ export class ToBlockmlProcessQueryRequestPayload {
   @IsString()
   readonly projectId: string;
 
-  @IsString()
-  readonly structId: string;
-
   @IsEnum(apiEnums.ProjectWeekStartEnum)
   readonly weekStart: apiEnums.ProjectWeekStartEnum;
 

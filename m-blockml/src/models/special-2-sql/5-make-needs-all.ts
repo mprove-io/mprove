@@ -7,12 +7,12 @@ let func = enums.FuncEnum.MakeNeedsAll;
 export function makeNeedsAll(item: {
   needsDoubles: interfaces.VarsSql['needsDoubles'];
   joins: interfaces.VarsSql['joins'];
-  varsSqlElements: interfaces.Report['varsSqlElements'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { needsDoubles, joins, varsSqlElements, model } = item;
+  let { needsDoubles, joins, varsSqlSteps, model } = item;
 
-  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
     needsDoubles,
     joins
   });
@@ -34,13 +34,9 @@ export function makeNeedsAll(item: {
       });
     });
 
-  let output: interfaces.VarsSql = { needsAll };
+  let varsOutput: interfaces.VarsSql = { needsAll };
 
-  varsSqlElements.push({
-    func: func,
-    varsSqlInput: varsSqlInput,
-    varsSqlOutput: output
-  });
+  varsSqlSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

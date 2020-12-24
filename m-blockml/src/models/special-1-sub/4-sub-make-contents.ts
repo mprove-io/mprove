@@ -2,19 +2,18 @@ import { interfaces } from '../../barrels/interfaces';
 import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
-import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 
 let func = enums.FuncEnum.SubMakeContents;
 
 export function subMakeContents(item: {
   needsAll: interfaces.VarsSub['needsAll'];
-  varsSubElements: interfaces.ViewPart['varsSubElements'];
+  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
   view: interfaces.View;
 }) {
-  let { needsAll, view } = item;
+  let { needsAll, varsSubSteps, view } = item;
 
-  let varsSubInput: interfaces.VarsSub = helper.makeCopy({ needsAll });
+  let varsInput: interfaces.VarsSub = helper.makeCopy({ needsAll });
 
   let connection = view.connection;
 
@@ -83,13 +82,9 @@ export function subMakeContents(item: {
 
   contents.push(`  ) as ${constants.VIEW_MAIN_SUB}`);
 
-  let output: interfaces.VarsSub = { contents, myWith };
+  let varsOutput: interfaces.VarsSub = { contents, myWith };
 
-  item.varsSubElements.push({
-    func: func,
-    varsSubInput: varsSubInput,
-    varsSubOutput: output
-  });
+  varsSubSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

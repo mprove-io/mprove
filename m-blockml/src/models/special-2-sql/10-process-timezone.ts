@@ -1,35 +1,56 @@
 import { interfaces } from '../../barrels/interfaces';
+import { helper } from '../../barrels/helper';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 
-export function processTimezone(item: interfaces.VarsSql) {
-  item.query.forEach((element, i, a) => {
+let func = enums.FuncEnum.ProcessTimezone;
+
+export function processTimezone(item: {
+  mainQuery: interfaces.VarsSql['mainQuery'];
+  timezone: interfaces.VarsSql['timezone'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
+  model: interfaces.Model;
+}) {
+  let { mainQuery, timezone, varsSqlSteps, model } = item;
+
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
+    mainQuery,
+    timezone
+  });
+
+  let mainQueryProcessed: interfaces.VarsSql['mainQueryProcessed'] = [];
+
+  mainQueryProcessed = mainQuery.map(x => {
     let reg = api.MyRegex.TIMESTAMP_START_END();
     let r;
 
-    while ((r = reg.exec(element))) {
+    while ((r = reg.exec(x))) {
       let one = r[1];
       let two = r[2];
       let three = r[3];
 
-      if (item.timezone === constants.UTC) {
-        element = one + two + three;
-      } else if (
-        item.model.connection.type === api.ConnectionTypeEnum.BigQuery
-      ) {
-        element =
-          one +
-          `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', ${two}, '${item.timezone}'))` +
-          three;
-      } else if (
-        item.model.connection.type === api.ConnectionTypeEnum.PostgreSQL
-      ) {
-        element =
-          one + `TIMEZONE('${item.timezone}', ${two}::TIMESTAMPTZ)` + three;
+      if (timezone !== constants.UTC) {
+        switch (model.connection.type) {
+          case api.ConnectionTypeEnum.BigQuery: {
+            two = `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', ${two}, '${timezone}'))`;
+            break;
+          }
+
+          case api.ConnectionTypeEnum.PostgreSQL: {
+            two = `TIMEZONE('${timezone}', ${two}::TIMESTAMPTZ)`;
+            break;
+          }
+        }
       }
+      x = one + two + three;
     }
-    a[i] = element;
+    return x;
   });
 
-  return item;
+  let varsOutput: interfaces.VarsSql = { mainQueryProcessed };
+
+  varsSqlSteps.push({ func, varsInput, varsOutput });
+
+  return varsOutput;
 }

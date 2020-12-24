@@ -102,7 +102,6 @@ export class ConsumerMainService {
 
       let { traceId } = requestValid.info;
       let {
-        structId,
         organizationId,
         projectId,
         weekStart,
@@ -113,7 +112,6 @@ export class ConsumerMainService {
 
       let payload = await this.queryService.processQuery({
         traceId: traceId,
-        structId: structId,
         organizationId: organizationId,
         projectId: projectId,
         weekStart: weekStart,

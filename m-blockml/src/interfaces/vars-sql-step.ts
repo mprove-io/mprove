@@ -1,8 +1,8 @@
 import { enums } from '../barrels/enums';
 import { VarsSql } from './vars-sql';
 
-export interface VarsSqlElement {
+export interface VarsSqlStep {
   func: enums.FuncEnum;
-  varsSqlInput: VarsSql;
-  varsSqlOutput: VarsSql;
+  varsInput: VarsSql;
+  varsOutput: VarsSql;
 }

@@ -9,12 +9,12 @@ let func = enums.FuncEnum.MakeNeedsDoubles;
 export function makeNeedsDoubles(item: {
   selected: interfaces.VarsSql['selected'];
   filters: interfaces.VarsSql['filters'];
-  varsSqlElements: interfaces.Report['varsSqlElements'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { selected, filters, varsSqlElements, model } = item;
+  let { selected, filters, varsSqlSteps, model } = item;
 
-  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
     selected,
     filters
   });
@@ -113,13 +113,9 @@ export function makeNeedsDoubles(item: {
       });
     });
 
-  let output: interfaces.VarsSql = { needsDoubles };
+  let varsOutput: interfaces.VarsSql = { needsDoubles };
 
-  varsSqlElements.push({
-    func: func,
-    varsSqlInput: varsSqlInput,
-    varsSqlOutput: output
-  });
+  varsSqlSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

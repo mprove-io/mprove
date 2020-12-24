@@ -1,7 +1,6 @@
 import { interfaces } from '../../barrels/interfaces';
 import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
-import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 
 let func = enums.FuncEnum.SubComposeMain;
@@ -11,11 +10,11 @@ export function subComposeMain(item: {
   mainText: interfaces.VarsSub['mainText'];
   contents: interfaces.VarsSub['contents'];
   groupMainBy: interfaces.VarsSub['groupMainBy'];
-  varsSubElements: interfaces.ViewPart['varsSubElements'];
+  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
 }) {
-  let { myWith, mainText, contents, groupMainBy } = item;
+  let { myWith, mainText, contents, groupMainBy, varsSubSteps } = item;
 
-  let varsSubInput: interfaces.VarsSub = helper.makeCopy({
+  let varsInput: interfaces.VarsSub = helper.makeCopy({
     myWith,
     mainText,
     contents,
@@ -51,13 +50,9 @@ export function subComposeMain(item: {
   mainQuery.pop();
   mainQuery.push('  )');
 
-  let output: interfaces.VarsSub = { mainQuery };
+  let varsOutput: interfaces.VarsSub = { mainQuery };
 
-  item.varsSubElements.push({
-    func: func,
-    varsSubInput: varsSubInput,
-    varsSubOutput: output
-  });
+  varsSubSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

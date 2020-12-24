@@ -11,12 +11,12 @@ export function makeMainFields(item: {
   select: interfaces.VarsSql['select'];
   depMeasures: interfaces.VarsSql['depMeasures'];
   filters: interfaces.VarsSql['filters'];
-  varsSqlElements: interfaces.Report['varsSqlElements'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { select, filters, depMeasures, model, varsSqlElements } = item;
+  let { select, filters, depMeasures, model, varsSqlSteps } = item;
 
-  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
     select,
     filters,
     depMeasures
@@ -284,20 +284,16 @@ export function makeMainFields(item: {
     processedFields[element] = sqlSelect;
   });
 
-  let output: interfaces.VarsSql = {
+  let varsOutput: interfaces.VarsSql = {
     mainUdfs,
     mainText,
     groupMainBy,
-    mainFields,
+    mainFields, // for logs
     selected,
     processedFields
   };
 
-  varsSqlElements.push({
-    func: func,
-    varsSqlInput: varsSqlInput,
-    varsSqlOutput: output
-  });
+  varsSqlSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

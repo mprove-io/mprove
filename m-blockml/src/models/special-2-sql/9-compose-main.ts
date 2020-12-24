@@ -1,4 +1,5 @@
 import { interfaces } from '../../barrels/interfaces';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { applyFilter } from './apply-filter';
 import { api } from '../../barrels/api';
@@ -6,42 +7,85 @@ import { helper } from '../../barrels/helper';
 
 let toposort = require('toposort');
 
-export function composeMain(item: interfaces.VarsSql) {
-  let main: string[] = [];
+let func = enums.FuncEnum.ComposeMain;
 
-  if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
-    main.push(`${constants.STANDARD_SQL}`);
+export function composeMain(item: {
+  mainUdfs: interfaces.VarsSql['mainUdfs'];
+  withParts: interfaces.VarsSql['withParts'];
+  myWith: interfaces.VarsSql['myWith'];
+  mainText: interfaces.VarsSql['mainText'];
+  contents: interfaces.VarsSql['contents'];
+  whereMain: interfaces.VarsSql['whereMain'];
+  joinsWhere: interfaces.VarsSql['joinsWhere'];
+  groupMainBy: interfaces.VarsSql['groupMainBy'];
+  havingMain: interfaces.VarsSql['havingMain'];
+  udfsDict: api.UdfsDict;
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
+  model: interfaces.Model;
+}) {
+  let {
+    mainUdfs,
+    udfsDict,
+    withParts,
+    myWith,
+    mainText,
+    contents,
+    whereMain,
+    joinsWhere,
+    groupMainBy,
+    havingMain,
+    varsSqlSteps,
+    model
+  } = item;
+
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
+    mainUdfs,
+    udfsDict,
+    withParts,
+    myWith,
+    mainText,
+    contents,
+    whereMain,
+    joinsWhere,
+    groupMainBy,
+    havingMain
+  });
+
+  let mainQuery: interfaces.VarsSql['mainQuery'] = [];
+
+  if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+    mainQuery.push(`${constants.STANDARD_SQL}`);
   }
 
   // adding model level udfs to main udfs
-  if (helper.isDefined(item.model.udfs)) {
-    item.model.udfs.forEach(udf => {
-      item.mainUdfs[udf] = 1;
+  if (helper.isDefined(model.udfs)) {
+    model.udfs.forEach(udf => {
+      mainUdfs[udf] = 1;
     });
   }
 
   // extracting main udfs
-  Object.keys(item.mainUdfs).forEach(udf => {
-    main.push(item.udfsDict[udf]);
+  Object.keys(mainUdfs).forEach(udf => {
+    mainQuery.push(udfsDict[udf]);
   });
 
-  main.push(`${constants.WITH}`);
+  mainQuery.push(`${constants.WITH}`);
 
-  if (Object.keys(item.withParts).length > 0) {
+  if (Object.keys(withParts).length > 0) {
     let partNamesSorted: string[] = [];
 
     let graph = [];
     let zeroDepsViewPartNames = [];
 
-    Object.keys(item.withParts).forEach(viewPartName => {
-      Object.keys(item.withParts[viewPartName].deps).forEach(dep => {
+    Object.keys(withParts).forEach(viewPartName => {
+      Object.keys(withParts[viewPartName].deps).forEach(dep => {
         graph.push([viewPartName, dep]);
       });
     });
 
     partNamesSorted = toposort(graph).reverse();
 
-    Object.keys(item.withParts).forEach(viewPartName => {
+    Object.keys(withParts).forEach(viewPartName => {
       if (partNamesSorted.indexOf(viewPartName) < 0) {
         zeroDepsViewPartNames.push(viewPartName);
       }
@@ -52,57 +96,60 @@ export function composeMain(item: interfaces.VarsSql) {
     let text: string[] = [];
 
     partNamesSorted.forEach(viewPartName => {
-      text = text.concat(item.withParts[viewPartName].sql);
+      text = text.concat(withParts[viewPartName].sql);
     });
 
     // text = text.slice(0, -1);
 
-    main = main.concat(text);
+    mainQuery = mainQuery.concat(text);
   }
 
-  main = main.concat(item.with);
+  mainQuery = mainQuery.concat(myWith);
 
-  main.push(`  ${constants.MODEL_MAIN} AS (`);
-  main.push(`    ${constants.SELECT}`);
+  mainQuery.push(`  ${constants.MODEL_MAIN} AS (`);
+  mainQuery.push(`    ${constants.SELECT}`);
 
-  if (item.mainText.length === 0) {
-    main.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+  if (mainText.length === 0) {
+    mainQuery.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
-  main = main.concat(item.mainText.map(s => `    ${s}`));
+  mainQuery = mainQuery.concat(mainText.map(s => `    ${s}`));
 
   // chop
-  main[main.length - 1] = main[main.length - 1].slice(0, -1);
+  mainQuery[mainQuery.length - 1] = mainQuery[mainQuery.length - 1].slice(
+    0,
+    -1
+  );
 
-  main = main.concat(item.contents.map(s => `    ${s}`));
+  mainQuery = mainQuery.concat(contents.map(s => `    ${s}`));
 
   let whereMainLength = 0;
 
-  Object.keys(item.whereMain).forEach(s => {
-    whereMainLength = whereMainLength + item.whereMain[s].length;
+  Object.keys(whereMain).forEach(s => {
+    whereMainLength = whereMainLength + whereMain[s].length;
   });
 
   if (
-    item.joinsWhere.length > 0 ||
+    joinsWhere.length > 0 ||
     whereMainLength > 0 ||
-    helper.isDefined(item.model.sqlAlwaysWhereReal)
+    helper.isDefined(model.sqlAlwaysWhereReal)
   ) {
-    main.push(`    ${constants.WHERE}`);
+    mainQuery.push(`    ${constants.WHERE}`);
 
-    if (item.joinsWhere.length > 0) {
-      item.joinsWhere.forEach(element => {
+    if (joinsWhere.length > 0) {
+      joinsWhere.forEach(element => {
         element = applyFilter(item, constants.MF, element);
 
-        main.push(`    ${element}`);
+        mainQuery.push(`    ${element}`);
       });
     }
 
-    if (helper.isDefined(item.model.sqlAlwaysWhereReal)) {
+    if (helper.isDefined(model.sqlAlwaysWhereReal)) {
       // remove ${ } on doubles (no singles exists in _real of sql_always_where)
       // ${a.city} + ${b.country}   >>>   a.city + b.country
 
       let sqlAlwaysWhereFinal = api.MyRegex.removeBracketsOnDoubles(
-        item.model.sqlAlwaysWhereReal
+        model.sqlAlwaysWhereReal
       );
 
       sqlAlwaysWhereFinal = applyFilter(
@@ -111,49 +158,53 @@ export function composeMain(item: interfaces.VarsSql) {
         sqlAlwaysWhereFinal
       );
 
-      main.push(`      (${sqlAlwaysWhereFinal})`);
-      main.push(`     ${constants.AND}`);
+      mainQuery.push(`      (${sqlAlwaysWhereFinal})`);
+      mainQuery.push(`     ${constants.AND}`);
     }
 
-    Object.keys(item.whereMain).forEach(element => {
-      if (item.whereMain[element].length > 0) {
-        main = main.concat(item.whereMain[element].map(s => `    ${s}`));
-        main.push(`     ${constants.AND}`);
+    Object.keys(whereMain).forEach(element => {
+      if (whereMain[element].length > 0) {
+        mainQuery = mainQuery.concat(whereMain[element].map(s => `    ${s}`));
+        mainQuery.push(`     ${constants.AND}`);
       }
     });
 
-    main.pop();
-    main.push(constants.EMPTY_STRING);
+    mainQuery.pop();
+    mainQuery.push(constants.EMPTY_STRING);
   }
 
-  if (item.groupMainBy.length > 0) {
-    let groupMainByString = item.groupMainBy.join(', ');
+  if (groupMainBy.length > 0) {
+    let groupMainByString = groupMainBy.join(', ');
 
-    main.push(`    ${constants.GROUP_BY} ${groupMainByString}`);
-    main.push(constants.EMPTY_STRING);
+    mainQuery.push(`    ${constants.GROUP_BY} ${groupMainByString}`);
+    mainQuery.push(constants.EMPTY_STRING);
   }
 
-  if (Object.keys(item.havingMain).length > 0) {
-    main.push(`    ${constants.HAVING}`);
+  if (Object.keys(havingMain).length > 0) {
+    mainQuery.push(`    ${constants.HAVING}`);
 
-    Object.keys(item.havingMain).forEach(element => {
-      if (item.havingMain[element].length > 0) {
-        main = main.concat(item.havingMain[element]);
-        main.push(`     ${constants.AND}`);
+    Object.keys(havingMain).forEach(element => {
+      if (havingMain[element].length > 0) {
+        mainQuery = mainQuery.concat(havingMain[element]);
+        mainQuery.push(`     ${constants.AND}`);
       }
     });
 
-    main.pop();
-    main.push(constants.EMPTY_STRING);
+    mainQuery.pop();
+    mainQuery.push(constants.EMPTY_STRING);
   }
 
-  main.pop();
-  main.push('  )');
+  mainQuery.pop();
+  mainQuery.push('  )');
 
   // TODO: check apply_filter 'undefined as undefined'
-  main = main.map(x => (x.includes('undefined as undefined') ? '--' + x : x));
+  mainQuery = mainQuery.map(x =>
+    x.includes('undefined as undefined') ? '--' + x : x
+  );
 
-  item.query = main;
+  let varsOutput: interfaces.VarsSql = { mainQuery };
 
-  return item;
+  varsSqlSteps.push({ func, varsInput, varsOutput });
+
+  return varsOutput;
 }

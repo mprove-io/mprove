@@ -9,12 +9,12 @@ let func = enums.FuncEnum.MakeDepMeasures;
 export function makeDepMeasures(item: {
   select: interfaces.VarsSql['select'];
   filters: interfaces.VarsSql['filters'];
-  varsSqlElements: interfaces.Report['varsSqlElements'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { select, filters, varsSqlElements, model } = item;
+  let { select, filters, varsSqlSteps, model } = item;
 
-  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({ select, filters });
+  let varsInput: interfaces.VarsSql = helper.makeCopy({ select, filters });
 
   let depMeasures: interfaces.VarsSql['depMeasures'] = {};
 
@@ -134,13 +134,9 @@ export function makeDepMeasures(item: {
     }
   });
 
-  let output: interfaces.VarsSql = { depMeasures };
+  let varsOutput: interfaces.VarsSql = { depMeasures };
 
-  varsSqlElements.push({
-    func: func,
-    varsSqlInput: varsSqlInput,
-    varsSqlOutput: output
-  });
+  varsSqlSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

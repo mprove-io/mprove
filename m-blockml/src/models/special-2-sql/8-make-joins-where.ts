@@ -1,10 +1,21 @@
 import { interfaces } from '../../barrels/interfaces';
+import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { api } from '../../barrels/api';
 import { constants } from '../../barrels/constants';
 
-export function makeJoinsWhere(item: interfaces.VarsSql) {
-  let joinsWhere: string[] = [];
+let func = enums.FuncEnum.MakeJoinsWhere;
+
+export function makeJoinsWhere(item: {
+  joins: interfaces.VarsSql['joins'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
+  model: interfaces.Model;
+}) {
+  let { joins, varsSqlSteps, model } = item;
+
+  let varsInput: interfaces.VarsSql = helper.makeCopy({ joins });
+
+  let joinsWhere: interfaces.VarsSql['joinsWhere'] = [];
 
   item.model.joinsSorted
     .filter(asName => asName !== item.model.fromAs)
@@ -27,7 +38,9 @@ export function makeJoinsWhere(item: interfaces.VarsSql) {
       }
     });
 
-  item.joinsWhere = joinsWhere;
+  let varsOutput: interfaces.VarsSql = { joinsWhere };
 
-  return item;
+  varsSqlSteps.push({ func, varsInput, varsOutput });
+
+  return varsOutput;
 }

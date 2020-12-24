@@ -62,7 +62,7 @@ function substituteViewRefsRecursive(item: {
 
     let viewPartName = `${item.view.name}__${depView.name}__${as}`;
 
-    let { calcQuery, extraUdfs, varsSubElements } = barSpecial.genSub({
+    let { sub, extraUdfs, varsSubSteps } = barSpecial.genSub({
       select: Object.keys(item.view.asDeps[as].fieldNames),
       view: depView
     });
@@ -75,7 +75,7 @@ function substituteViewRefsRecursive(item: {
 
     let content: string[] = [];
     content.push(`  ${viewPartName} AS (`);
-    content = content.concat(calcQuery.map((s: string) => `    ${s}`));
+    content = content.concat(sub.map((s: string) => `    ${s}`));
     content.push('  ),');
 
     let text = content.join('\n');
@@ -86,7 +86,7 @@ function substituteViewRefsRecursive(item: {
       viewName: depView.name,
       sql: text.split('\n'),
       deps: {},
-      varsSubElements: varsSubElements
+      varsSubSteps: varsSubSteps
     };
 
     item.topView.parts[viewPartName] = viewPart;

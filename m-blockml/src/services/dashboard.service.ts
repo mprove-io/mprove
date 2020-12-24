@@ -75,25 +75,24 @@ export class DashboardService {
 
         let model = models.find(m => m.name === report.model);
 
-        let {
-          sql,
-          filtersFractions,
-          varsSqlElements
-        } = await barSpecial.genSql(this.rabbitService, traceId, {
-          select: report.select,
-          sorts: report.sorts,
-          timezone: report.timezone,
-          limit: report.limit,
-          filters: report.combinedFilters,
-          model: model,
-          weekStart: weekStart,
-          udfsDict: udfsDict,
-          structId: structId
-        });
+        let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
+          this.rabbitService,
+          traceId,
+          {
+            weekStart: weekStart,
+            timezone: report.timezone,
+            select: report.select,
+            sorts: report.sorts,
+            limit: report.limit,
+            filters: report.combinedFilters,
+            model: model,
+            udfsDict: udfsDict
+          }
+        );
 
         report.sql = sql;
         report.filtersFractions = filtersFractions;
-        report.varsSqlElements = varsSqlElements;
+        report.varsSqlSteps = varsSqlSteps;
       }
     );
 

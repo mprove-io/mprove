@@ -1,22 +1,54 @@
 import { interfaces } from '../../barrels/interfaces';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { applyFilter } from './apply-filter';
 import { helper } from '../../barrels/helper';
 
-export function composeCalc(item: interfaces.VarsSql) {
-  let calc: string[] = [];
+let func = enums.FuncEnum.ComposeCalc;
 
-  calc = calc.concat(item.query);
+export function composeCalc(item: {
+  mainQueryProcessed: interfaces.VarsSql['mainQueryProcessed'];
+  select: interfaces.VarsSql['select'];
+  processedFields: interfaces.VarsSql['processedFields'];
+  whereCalc: interfaces.VarsSql['whereCalc'];
+  sorts: interfaces.VarsSql['sorts'];
+  limit: interfaces.VarsSql['limit'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
+  model: interfaces.Model;
+}) {
+  let {
+    mainQueryProcessed,
+    select,
+    processedFields,
+    whereCalc,
+    sorts,
+    limit,
+    varsSqlSteps,
+    model
+  } = item;
 
-  calc.push(constants.EMPTY_STRING);
-  calc.push(`${constants.SELECT}`);
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
+    mainQueryProcessed,
+    select,
+    processedFields,
+    whereCalc,
+    sorts,
+    limit
+  });
 
-  if (item.select.length === 0) {
-    calc.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+  let sql: interfaces.VarsSql['sql'] = [];
+
+  sql = sql.concat(mainQueryProcessed);
+
+  sql.push(constants.EMPTY_STRING);
+  sql.push(`${constants.SELECT}`);
+
+  if (select.length === 0) {
+    sql.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
-  item.select.forEach(element => {
+  select.forEach(element => {
     let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
 
     let asName = r[1];
@@ -24,8 +56,8 @@ export function composeCalc(item: interfaces.VarsSql) {
 
     let field =
       asName === constants.MF
-        ? item.model.fields.find(mField => mField.name === fieldName)
-        : item.model.joins
+        ? model.fields.find(mField => mField.name === fieldName)
+        : model.joins
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName);
 
@@ -35,27 +67,28 @@ export function composeCalc(item: interfaces.VarsSql) {
         : field.fieldClass === api.FieldClassEnum.Measure
         ? `  ${asName}_${fieldName},`
         : field.fieldClass === api.FieldClassEnum.Calculation
-        ? `  ${item.processedFields[element]} as ${asName}_${fieldName},`
+        ? `  ${processedFields[element]} as ${asName}_${fieldName},`
         : constants.EMPTY_STRING;
 
-    calc.push(selectString);
+    sql.push(selectString);
   });
 
   // chop
-  calc[calc.length - 1] = calc[calc.length - 1].slice(0, -1);
+  let lastIndex = sql.length - 1;
+  sql[lastIndex] = sql[lastIndex].slice(0, -1);
 
-  calc.push(`${constants.FROM} ${constants.MODEL_MAIN}`);
-  calc.push(constants.EMPTY_STRING);
+  sql.push(`${constants.FROM} ${constants.MODEL_MAIN}`);
+  sql.push(constants.EMPTY_STRING);
 
   if (
-    Object.keys(item.whereCalc).length > 0 ||
-    helper.isDefined(item.model.sqlAlwaysWhereCalcReal)
+    Object.keys(whereCalc).length > 0 ||
+    helper.isDefined(model.sqlAlwaysWhereCalcReal)
   ) {
-    calc.push(`${constants.WHERE}`);
+    sql.push(`${constants.WHERE}`);
 
-    if (helper.isDefined(item.model.sqlAlwaysWhereCalcReal)) {
+    if (helper.isDefined(model.sqlAlwaysWhereCalcReal)) {
       let sqlAlwaysWhereCalcFinal = api.MyRegex.removeBracketsOnCalculationSinglesMf(
-        item.model.sqlAlwaysWhereCalcReal
+        model.sqlAlwaysWhereCalcReal
       );
 
       sqlAlwaysWhereCalcFinal = api.MyRegex.removeBracketsOnCalculationDoubles(
@@ -68,23 +101,23 @@ export function composeCalc(item: interfaces.VarsSql) {
         sqlAlwaysWhereCalcFinal
       );
 
-      calc.push(`  (${sqlAlwaysWhereCalcFinal})`);
-      calc.push(` ${constants.AND}`);
+      sql.push(`  (${sqlAlwaysWhereCalcFinal})`);
+      sql.push(` ${constants.AND}`);
     }
 
-    Object.keys(item.whereCalc).forEach(element => {
-      if (item.whereCalc[element].length > 0) {
-        calc = calc.concat(item.whereCalc[element]);
-        calc.push(` ${constants.AND}`);
+    Object.keys(whereCalc).forEach(element => {
+      if (whereCalc[element].length > 0) {
+        sql = sql.concat(whereCalc[element]);
+        sql.push(` ${constants.AND}`);
       }
     });
 
-    calc.pop();
-    calc.push(constants.EMPTY_STRING);
+    sql.pop();
+    sql.push(constants.EMPTY_STRING);
   }
 
-  if (item.sorts) {
-    let mySorts = item.sorts.split(',');
+  if (sorts) {
+    let mySorts = sorts.split(',');
 
     let orderBy: string[] = [];
 
@@ -95,7 +128,7 @@ export function composeCalc(item: interfaces.VarsSql) {
         let sorter = r[1];
         let desc = r[2];
 
-        let index = item.select.findIndex(e => e === sorter);
+        let index = select.findIndex(e => e === sorter);
         let n = index + 1;
 
         let eString = desc ? `${n} ${constants.DESC}` : `${n}`;
@@ -107,13 +140,15 @@ export function composeCalc(item: interfaces.VarsSql) {
     let orderByString = orderBy.join(', ');
 
     if (orderByString) {
-      calc.push(`${constants.ORDER_BY} ${orderByString}`);
+      sql.push(`${constants.ORDER_BY} ${orderByString}`);
     }
   }
 
-  calc.push(`${constants.LIMIT} ${item.limit}`);
+  sql.push(`${constants.LIMIT} ${limit}`);
 
-  item.query = calc;
+  let varsOutput: interfaces.VarsSql = { sql };
 
-  return item;
+  varsSqlSteps.push({ func, varsInput, varsOutput });
+
+  return varsOutput;
 }

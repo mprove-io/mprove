@@ -3,7 +3,6 @@ import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { barMeasure } from '../../barrels/bar-measure';
 import { helper } from '../../barrels/helper';
-import { BmError } from '../bm-error';
 import { enums } from '../../barrels/enums';
 
 let func = enums.FuncEnum.SubMakeMainFields;
@@ -12,12 +11,12 @@ export function subMakeMainFields(item: {
   select: interfaces.VarsSub['select'];
   depMeasures: interfaces.VarsSub['depMeasures'];
   depDimensions: interfaces.VarsSub['depDimensions'];
-  varsSubElements: interfaces.ViewPart['varsSubElements'];
+  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
   view: interfaces.View;
 }) {
-  let { select, depMeasures, depDimensions, view } = item;
+  let { select, depMeasures, depDimensions, varsSubSteps, view } = item;
 
-  let varsSubInput: interfaces.VarsSub = helper.makeCopy({
+  let varsInput: interfaces.VarsSub = helper.makeCopy({
     select,
     depMeasures,
     depDimensions
@@ -202,20 +201,16 @@ export function subMakeMainFields(item: {
     processedFields[fieldName] = sqlSelect;
   });
 
-  let output: interfaces.VarsSub = {
+  let varsOutput: interfaces.VarsSub = {
     mainText,
     groupMainBy,
-    mainFields, // only for logs
+    mainFields, // for logs
     selected,
     processedFields,
     extraUdfs
   };
 
-  item.varsSubElements.push({
-    func: func,
-    varsSubInput: varsSubInput,
-    varsSubOutput: output
-  });
+  varsSubSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

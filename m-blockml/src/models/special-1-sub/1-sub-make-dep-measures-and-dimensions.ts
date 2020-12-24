@@ -7,12 +7,12 @@ let func = enums.FuncEnum.SubMakeDepMeasuresAndDimensions;
 
 export function subMakeDepMeasuresAndDimensions(item: {
   select: interfaces.VarsSub['select'];
-  varsSubElements: interfaces.ViewPart['varsSubElements'];
+  varsSubSteps: interfaces.ViewPart['varsSubSteps'];
   view: interfaces.View;
 }) {
-  let { select, view } = item;
+  let { select, varsSubSteps, view } = item;
 
-  let varsSubInput: interfaces.VarsSub = helper.makeCopy({ select });
+  let varsInput: interfaces.VarsSub = helper.makeCopy({ select });
 
   let depMeasures: interfaces.VarsSub['depMeasures'] = {};
   let depDimensions: interfaces.VarsSub['depDimensions'] = {};
@@ -39,13 +39,9 @@ export function subMakeDepMeasuresAndDimensions(item: {
     }
   });
 
-  let output: interfaces.VarsSub = { depMeasures, depDimensions };
+  let varsOutput: interfaces.VarsSub = { depMeasures, depDimensions };
 
-  item.varsSubElements.push({
-    func: func,
-    varsSubInput: varsSubInput,
-    varsSubOutput: output
-  });
+  varsSubSteps.push({ func, varsInput, varsOutput });
 
-  return output;
+  return varsOutput;
 }

@@ -4,38 +4,38 @@ import { interfaces } from '../../barrels/interfaces';
 export function genSub(item: { select: string[]; view: interfaces.View }) {
   let { select, view } = item;
 
-  let varsSubElements: interfaces.ViewPart['varsSubElements'] = [];
+  let varsSubSteps: interfaces.ViewPart['varsSubSteps'] = [];
 
   let { depMeasures, depDimensions } = barSub.subMakeDepMeasuresAndDimensions({
     select: select,
-    varsSubElements: varsSubElements,
+    varsSubSteps: varsSubSteps,
     view: view
   });
 
   let {
     mainText,
     groupMainBy,
-    mainFields,
     selected,
     processedFields,
-    extraUdfs
+    extraUdfs,
+    mainFields
   } = barSub.subMakeMainFields({
     select: select,
     depMeasures: depMeasures,
     depDimensions: depDimensions,
-    varsSubElements: varsSubElements,
+    varsSubSteps: varsSubSteps,
     view: view
   });
 
   let { needsAll } = barSub.subMakeNeedsAll({
     selected: selected,
-    varsSubElements: varsSubElements,
+    varsSubSteps: varsSubSteps,
     view: view
   });
 
   let { contents, myWith } = barSub.subMakeContents({
     needsAll: needsAll,
-    varsSubElements: varsSubElements,
+    varsSubSteps: varsSubSteps,
     view: view
   });
 
@@ -44,16 +44,16 @@ export function genSub(item: { select: string[]; view: interfaces.View }) {
     contents: contents,
     groupMainBy: groupMainBy,
     myWith: myWith,
-    varsSubElements: varsSubElements
+    varsSubSteps: varsSubSteps
   });
 
-  let { calcQuery } = barSub.subComposeCalc({
+  let { sub } = barSub.subComposeCalc({
     select: select,
     processedFields: processedFields,
     mainQuery: mainQuery,
-    varsSubElements: varsSubElements,
+    varsSubSteps: varsSubSteps,
     view: view
   });
 
-  return { calcQuery, extraUdfs, varsSubElements };
+  return { sub, extraUdfs, varsSubSteps };
 }

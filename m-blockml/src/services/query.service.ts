@@ -12,7 +12,6 @@ export class QueryService {
 
   async processQuery(item: {
     traceId: string;
-    structId: string;
     organizationId: string;
     projectId: string;
     weekStart: api.ProjectWeekStartEnum;
@@ -22,7 +21,6 @@ export class QueryService {
   }) {
     let {
       traceId,
-      structId,
       organizationId,
       projectId,
       weekStart,
@@ -41,19 +39,18 @@ export class QueryService {
       newFilters[fieldId] = bricks;
     });
 
-    let { sql, filtersFractions, varsSqlElements } = await barSpecial.genSql(
+    let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
       this.rabbitService,
       traceId,
       {
-        model: model,
+        weekStart: weekStart,
+        timezone: timezone,
         select: select,
         sorts: sorts,
-        timezone: timezone,
         limit: limit.toString(),
         filters: newFilters,
-        weekStart: weekStart,
-        udfsDict: udfsDict,
-        structId: structId
+        model: model,
+        udfsDict: udfsDict
       }
     );
 

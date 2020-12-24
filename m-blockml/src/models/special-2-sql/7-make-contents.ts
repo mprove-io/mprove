@@ -1,14 +1,32 @@
-import { enums } from '../../barrels/enums';
-import { interfaces } from '../../barrels/interfaces';
-import { api } from '../../barrels/api';
-import { constants } from '../../barrels/constants';
-import { helper } from '../../barrels/helper';
 import { applyFilter } from './apply-filter';
+import { interfaces } from '../../barrels/interfaces';
+import { enums } from '../../barrels/enums';
+import { constants } from '../../barrels/constants';
+import { api } from '../../barrels/api';
+import { helper } from '../../barrels/helper';
 
-export function makeContents(item: interfaces.VarsSql) {
-  let contents: string[] = [];
+let func = enums.FuncEnum.MakeContents;
 
-  let myWith: string[] = [];
+export function makeContents(item: {
+  joins: interfaces.VarsSql['joins'];
+  filters: interfaces.VarsSql['filters'];
+  needsAll: interfaces.VarsSql['needsAll'];
+  mainUdfs: interfaces.VarsSql['mainUdfs'];
+  varsSqlSteps: interfaces.Report['varsSqlSteps'];
+  model: interfaces.Model;
+}) {
+  let { joins, filters, needsAll, mainUdfs, varsSqlSteps, model } = item;
+
+  let varsInput: interfaces.VarsSql = helper.makeCopy({
+    joins,
+    filters,
+    needsAll,
+    mainUdfs
+  });
+
+  let withParts: interfaces.VarsSql['withParts'] = {};
+  let contents: interfaces.VarsSql['contents'] = [];
+  let myWith: interfaces.VarsSql['myWith'] = [];
 
   // prepare filters for ___timestamp
   let filt: {
@@ -17,7 +35,7 @@ export function makeContents(item: interfaces.VarsSql) {
     };
   } = {};
 
-  Object.keys(item.filters).forEach(element => {
+  Object.keys(filters).forEach(element => {
     let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
     let asName = r[1];
     let fieldName = r[2];
@@ -29,16 +47,16 @@ export function makeContents(item: interfaces.VarsSql) {
   });
   // end of prepare
 
-  item.model.joinsSorted.forEach(asName => {
+  model.joinsSorted.forEach(asName => {
     let flats: {
       [s: string]: number;
     } = {};
 
-    let join = item.model.joins.find(j => j.as === asName);
+    let join = model.joins.find(j => j.as === asName);
 
-    if (asName === item.model.fromAs) {
+    if (asName === model.fromAs) {
       contents.push(`${constants.FROM} (`);
-    } else if (item.joins[asName]) {
+    } else if (joins[asName]) {
       let joinTypeString =
         join.type === enums.JoinTypeEnum.Inner
           ? 'INNER JOIN ('
@@ -97,10 +115,10 @@ export function makeContents(item: interfaces.VarsSql) {
     }
     // end of check
 
-    if (item.needsAll[asName]) {
+    if (needsAll[asName]) {
       // $as ne 'mf' (by design)
 
-      Object.keys(item.needsAll[asName]).forEach(fieldName => {
+      Object.keys(needsAll[asName]).forEach(fieldName => {
         let field = join.view.fields.find(
           viewField => viewField.name === fieldName
         );
@@ -130,11 +148,9 @@ export function makeContents(item: interfaces.VarsSql) {
     let table;
 
     if (helper.isDefined(join.view.table)) {
-      if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+      if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
         table = '`' + join.view.table + '`';
-      } else if (
-        item.model.connection.type === api.ConnectionTypeEnum.PostgreSQL
-      ) {
+      } else if (model.connection.type === api.ConnectionTypeEnum.PostgreSQL) {
         table = join.view.table;
       }
     } else {
@@ -148,11 +164,11 @@ export function makeContents(item: interfaces.VarsSql) {
       myWith.push('  ),');
       // myWith.push('');
 
-      item.withParts = Object.assign(item.withParts, join.view.parts);
+      withParts = Object.assign(withParts, join.view.parts);
 
       if (helper.isDefined(join.view.udfs)) {
         join.view.udfs.forEach(udf => {
-          item.mainUdfs[udf] = 1;
+          mainUdfs[udf] = 1;
         });
       }
 
@@ -167,7 +183,7 @@ export function makeContents(item: interfaces.VarsSql) {
 
     contents.push(`  ) as ${asName}`);
 
-    if (asName !== item.model.fromAs) {
+    if (asName !== model.fromAs) {
       let sqlOnFinal = api.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
 
       contents.push(`${constants.ON} ${sqlOnFinal}`);
@@ -176,8 +192,9 @@ export function makeContents(item: interfaces.VarsSql) {
     contents.push('');
   });
 
-  item.contents = contents;
-  item.with = myWith;
+  let varsOutput: interfaces.VarsSql = { contents, myWith, withParts };
 
-  return item;
+  varsSqlSteps.push({ func, varsInput, varsOutput });
+
+  return varsOutput;
 }

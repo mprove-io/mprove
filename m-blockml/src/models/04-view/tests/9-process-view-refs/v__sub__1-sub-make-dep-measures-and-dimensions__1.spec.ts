@@ -47,10 +47,10 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(views.length).toBe(2);
 
-  let varsSubElement = views[1].parts['v2__v1__a'].varsSubElements.find(
+  let varsSubElement = views[1].parts['v2__v1__a'].varsSubSteps.find(
     x => x.func === enums.FuncEnum.SubMakeDepMeasuresAndDimensions
   );
 
-  expect(varsSubElement.varsSubOutput.depMeasures).toEqual({ mea1: 1 });
-  expect(varsSubElement.varsSubOutput.depDimensions).toEqual({ dim1: 1 });
+  expect(varsSubElement.varsOutput.depMeasures).toEqual({ mea1: 1 });
+  expect(varsSubElement.varsOutput.depDimensions).toEqual({ dim1: 1 });
 });

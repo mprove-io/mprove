@@ -46,103 +46,59 @@ export function genSqlPro(
   item: interfaces.GenSqlItem
 ): interfaces.GenSqlProOutcome {
   let {
-    model,
+    weekStart,
+    timezone,
     select,
     sorts,
-    timezone,
     limit,
     filters,
-    udfsDict,
-    weekStart,
-    structId
+    model,
+    udfsDict
   } = item;
 
-  let varsSqlElements: interfaces.VarsSqlElement[] = [];
-
-  let vars: interfaces.VarsSql = {
-    model: model,
-    select: select,
-    sorts: sorts,
-    timezone: timezone,
-    limit: limit,
-    filters: filters,
-    filtersFractions: {},
-    weekStart: weekStart,
-    structId: structId,
-    udfsDict: udfsDict,
-    depMeasures: undefined,
-    mainText: undefined,
-    groupMainBy: undefined,
-    mainFields: undefined,
-    selected: undefined,
-    processedFields: undefined,
-    mainUdfs: {},
-    needsDoubles: undefined,
-    joins: undefined,
-    needsAll: undefined,
-    whereMain: {},
-    havingMain: {},
-    whereCalc: {},
-    filtersConditions: {},
-    untouchedFiltersConditions: {},
-    contents: undefined,
-    withParts: {},
-    with: undefined,
-    joinsWhere: undefined,
-    query: []
-  };
+  let varsSqlSteps: interfaces.VarsSqlStep[] = [];
 
   let { depMeasures } = barSql.makeDepMeasures({
     select: select,
     filters: filters,
     model: model,
-    varsSqlElements: varsSqlElements
+    varsSqlSteps: varsSqlSteps
   });
-  vars.depMeasures = depMeasures;
 
   let {
     mainUdfs,
     mainText,
     groupMainBy,
-    mainFields,
     selected,
-    processedFields
+    processedFields,
+    mainFields
   } = barSql.makeMainFields({
     select: select,
     filters: filters,
     depMeasures: depMeasures,
-    varsSqlElements: varsSqlElements,
+    varsSqlSteps: varsSqlSteps,
     model: model
   });
-  vars.mainUdfs = mainUdfs;
-  vars.mainText = mainText;
-  vars.groupMainBy = groupMainBy;
-  vars.mainFields = mainFields;
-  vars.selected = selected;
-  vars.processedFields = processedFields;
 
   let { needsDoubles } = barSql.makeNeedsDoubles({
     selected: selected,
     filters: filters,
-    varsSqlElements: varsSqlElements,
+    varsSqlSteps: varsSqlSteps,
     model: model
   });
-  vars.needsDoubles = needsDoubles;
 
   let { joins } = barSql.findJoinsUsingJoinsDeps({
     needsDoubles: needsDoubles,
-    varsSqlElements: varsSqlElements,
+    varsSqlSteps: varsSqlSteps,
     model: model
   });
-  vars.joins = joins;
 
   let { needsAll } = barSql.makeNeedsAll({
     needsDoubles: needsDoubles,
     joins: joins,
-    varsSqlElements: varsSqlElements,
+    varsSqlSteps: varsSqlSteps,
     model: model
   });
-  vars.needsAll = needsAll;
 
   let {
     filtersFractions,
@@ -157,66 +113,57 @@ export function genSqlPro(
     processedFields: processedFields,
     weekStart: weekStart,
     timezone: timezone,
-    varsSqlElements: varsSqlElements,
+    varsSqlSteps: varsSqlSteps,
     model: model
   });
-  vars.filtersFractions = filtersFractions;
-  vars.whereCalc = whereCalc;
-  vars.havingMain = havingMain;
-  vars.whereMain = whereMain;
-  vars.filtersConditions = filtersConditions;
-  vars.untouchedFiltersConditions = untouchedFiltersConditions;
 
-  // model
-  // needs_all
-  // joins
-  // bqProject
-  // projectId
-  // structId
-  // filters
-  // udfs
-  //    contents
-  //    bq_views
-  //    with
-  //    main_udfs
-  vars = barSql.makeContents(vars);
+  let { contents, myWith, withParts } = barSql.makeContents({
+    joins: joins,
+    filters: filters,
+    needsAll: needsAll,
+    mainUdfs: mainUdfs,
+    varsSqlSteps: varsSqlSteps,
+    model: model
+  });
 
-  // model
-  // joins
-  //    joins_where
-  vars = barSql.makeJoinsWhere(vars);
+  let { joinsWhere } = barSql.makeJoinsWhere({
+    joins: joins,
+    varsSqlSteps: varsSqlSteps,
+    model: model
+  });
 
-  // connection
-  // model
-  // main_text
-  // contents
-  // joins_where
-  // where_main
-  // having_main
-  // group_main_by
-  // main_udfs
-  // udfs_dict
-  // with
-  //    query
-  vars = barSql.composeMain(vars);
+  let { mainQuery } = barSql.composeMain({
+    mainText: mainText,
+    contents: contents,
+    joinsWhere: joinsWhere,
+    whereMain: whereMain,
+    havingMain: havingMain,
+    groupMainBy: groupMainBy,
+    mainUdfs: mainUdfs,
+    udfsDict: udfsDict,
+    myWith: myWith,
+    withParts: withParts,
+    varsSqlSteps: varsSqlSteps,
+    model: model
+  });
 
-  // query
-  // timezone
-  //    query
-  vars = barSql.processTimezone(vars);
+  let { mainQueryProcessed } = barSql.processTimezone({
+    mainQuery: mainQuery,
+    timezone: timezone,
+    varsSqlSteps: varsSqlSteps,
+    model: model
+  });
 
-  // model
-  // select
-  // where_calc
-  // bq_views
-  // processed_fields
-  // query
-  //    bq_views
-  vars = barSql.composeCalc(vars);
+  let { sql } = barSql.composeCalc({
+    mainQueryProcessed: mainQueryProcessed,
+    processedFields: processedFields,
+    select: select,
+    sorts: sorts,
+    limit: limit,
+    whereCalc: whereCalc,
+    varsSqlSteps: varsSqlSteps,
+    model: model
+  });
 
-  return {
-    sql: vars.query,
-    filtersFractions: vars.filtersFractions,
-    varsSqlElements: varsSqlElements
-  };
+  return { sql, filtersFractions, varsSqlSteps };
 }

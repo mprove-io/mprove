@@ -1,8 +1,8 @@
-import { VarsSubElement } from './vars-sub-element';
+import { VarsSubStep } from './vars-sub-step';
 
 export interface ViewPart {
   sql: string[];
   viewName: string;
   deps: { [depName: string]: number };
-  varsSubElements: VarsSubElement[];
+  varsSubSteps: VarsSubStep[];
 }

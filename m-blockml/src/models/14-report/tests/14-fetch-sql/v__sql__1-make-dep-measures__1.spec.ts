@@ -47,9 +47,9 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(entDashboards.length).toBe(1);
 
-  let varsSqlElement = entDashboards[0].reports[0].varsSqlElements.find(
+  let varsSqlElement = entDashboards[0].reports[0].varsSqlSteps.find(
     x => x.func === enums.FuncEnum.MakeDepMeasures
   );
 
-  expect(varsSqlElement.varsSqlOutput.depMeasures).toEqual({});
+  expect(varsSqlElement.varsOutput.depMeasures).toEqual({});
 });

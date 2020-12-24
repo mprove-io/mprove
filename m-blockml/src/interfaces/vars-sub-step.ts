@@ -1,8 +1,8 @@
 import { enums } from '../barrels/enums';
 import { VarsSub } from './vars-sub';
 
-export interface VarsSubElement {
+export interface VarsSubStep {
   func: enums.FuncEnum;
-  varsSubInput: VarsSub;
-  varsSubOutput: VarsSub;
+  varsInput: VarsSub;
+  varsOutput: VarsSub;
 }
