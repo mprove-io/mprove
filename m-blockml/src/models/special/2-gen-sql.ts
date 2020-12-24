@@ -42,7 +42,9 @@ export async function genSql(
   return outcome;
 }
 
-export function genSqlPro(item: interfaces.GenSqlItem) {
+export function genSqlPro(
+  item: interfaces.GenSqlItem
+): interfaces.GenSqlProOutcome {
   let {
     model,
     select,
@@ -52,9 +54,10 @@ export function genSqlPro(item: interfaces.GenSqlItem) {
     filters,
     udfsDict,
     weekStart,
-    varsSqlElements,
     structId
   } = item;
+
+  let varsSqlElements: interfaces.VarsSqlElement[] = [];
 
   let vars: interfaces.VarsSql = {
     model: model,
@@ -186,6 +189,7 @@ export function genSqlPro(item: interfaces.GenSqlItem) {
 
   return {
     sql: vars.query,
-    filtersFractions: vars.filtersFractions
+    filtersFractions: vars.filtersFractions,
+    varsSqlElements: varsSqlElements
   };
 }

@@ -9,8 +9,8 @@ let func = enums.FuncEnum.MakeDepMeasures;
 export function makeDepMeasures(item: {
   select: interfaces.VarsSql['select'];
   filters: interfaces.VarsSql['filters'];
-  model: interfaces.Model;
   varsSqlElements: interfaces.Report['varsSqlElements'];
+  model: interfaces.Model;
 }) {
   let { select, filters, model, varsSqlElements } = item;
 
@@ -136,12 +136,11 @@ export function makeDepMeasures(item: {
 
   let output: interfaces.VarsSql = { depMeasures };
 
-  let varsSqlElement: interfaces.VarsSqlElement = {
+  varsSqlElements.push({
     func: func,
     varsSqlInput: varsSqlInput,
     varsSqlOutput: output
-  };
-  varsSqlElements.push(varsSqlElement);
+  });
 
   return output;
 }

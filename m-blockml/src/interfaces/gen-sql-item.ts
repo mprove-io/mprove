@@ -12,6 +12,5 @@ export interface GenSqlItem {
   filters: FilterBricksDictionary;
   udfsDict: api.UdfsDict;
   weekStart: api.ProjectWeekStartEnum;
-  varsSqlElements: VarsSqlElement[];
   structId: string;
 }

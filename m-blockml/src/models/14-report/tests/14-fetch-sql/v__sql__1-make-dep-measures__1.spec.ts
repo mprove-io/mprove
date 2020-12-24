@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'v__1-make-dep-measures';
+let testId = 'v__sql__1-make-dep-measures__1';
 
 test(testId, async () => {
   let errors: BmError[];

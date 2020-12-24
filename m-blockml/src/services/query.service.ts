@@ -41,7 +41,7 @@ export class QueryService {
       newFilters[fieldId] = bricks;
     });
 
-    let { sql, filtersFractions } = await barSpecial.genSql(
+    let { sql, filtersFractions, varsSqlElements } = await barSpecial.genSql(
       this.rabbitService,
       traceId,
       {
@@ -52,7 +52,6 @@ export class QueryService {
         limit: limit.toString(),
         filters: newFilters,
         weekStart: weekStart,
-        varsSqlElements: [],
         udfsDict: udfsDict,
         structId: structId
       }
