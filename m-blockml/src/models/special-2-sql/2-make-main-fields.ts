@@ -1,19 +1,37 @@
 import { interfaces } from '../../barrels/interfaces';
+import { helper } from '../../barrels/helper';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { barMeasure } from '../../barrels/bar-measure';
 
-export function makeMainFields(item: interfaces.VarsSql) {
-  let mainText: string[] = [];
-  let groupMainBy: string[] = [];
-  let mainFields: interfaces.VarsSql['mainFields'] = [];
+let func = enums.FuncEnum.MakeMainFields;
 
-  let selected: { [s: string]: number } = {};
-  let processedFields: { [s: string]: string } = {};
+export function makeMainFields(item: {
+  select: interfaces.VarsSql['select'];
+  depMeasures: interfaces.VarsSql['depMeasures'];
+  filters: interfaces.VarsSql['filters'];
+  varsSqlElements: interfaces.Report['varsSqlElements'];
+  model: interfaces.Model;
+}) {
+  let { select, filters, depMeasures, varsSqlElements, model } = item;
+
+  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
+    select,
+    filters,
+    depMeasures
+  });
+
+  let mainUdfs: interfaces.VarsSql['mainUdfs'] = {};
+  let mainText: interfaces.VarsSql['mainText'] = [];
+  let groupMainBy: interfaces.VarsSql['groupMainBy'] = [];
+  let mainFields: interfaces.VarsSql['mainFields'] = [];
+  let selected: interfaces.VarsSql['selected'] = {};
+  let processedFields: interfaces.VarsSql['processedFields'] = {};
 
   let i = 0;
 
-  item.select.forEach(element => {
+  select.forEach(element => {
     let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 
@@ -29,8 +47,8 @@ export function makeMainFields(item: interfaces.VarsSql) {
     selected[element] = 1;
   });
 
-  Object.keys(item.depMeasures).forEach(asName => {
-    Object.keys(item.depMeasures[asName]).forEach(fieldName => {
+  Object.keys(depMeasures).forEach(asName => {
+    Object.keys(depMeasures[asName]).forEach(fieldName => {
       let element = `${asName}.${fieldName}`;
 
       if (!selected[element]) {
@@ -45,7 +63,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
     });
   });
 
-  Object.keys(item.filters).forEach(element => {
+  Object.keys(filters).forEach(element => {
     let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 
@@ -62,8 +80,8 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
     let fieldClass: api.FieldClassEnum =
       asName === constants.MF
-        ? item.model.fields.find(mField => mField.name === fieldName).fieldClass
-        : item.model.joins
+        ? model.fields.find(mField => mField.name === fieldName).fieldClass
+        : model.joins
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName).fieldClass;
 
@@ -79,8 +97,8 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
     let field =
       asName === constants.MF
-        ? item.model.fields.find(mField => mField.name === fieldName)
-        : item.model.joins
+        ? model.fields.find(mField => mField.name === fieldName)
+        : model.joins
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName);
 
@@ -144,57 +162,53 @@ export function makeMainFields(item: interfaces.VarsSql) {
 
       switch (true) {
         case field.type === api.FieldTypeEnum.SumByKey: {
-          if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
-            item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
+          if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+            mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
           sqlSelect = barMeasure.makeMeasureSumByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
         }
 
         case field.type === api.FieldTypeEnum.AverageByKey: {
-          if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
-            item.mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
+          if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+            mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
           sqlSelect = barMeasure.makeMeasureAverageByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
         }
 
         case field.type === api.FieldTypeEnum.MedianByKey: {
-          item.mainUdfs[
-            constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
-          ] = 1;
+          mainUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasureMedianByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
         }
 
         case field.type === api.FieldTypeEnum.PercentileByKey: {
-          item.mainUdfs[
-            constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC
-          ] = 1;
+          mainUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasurePercentileByKey({
             sqlKeyFinal: sqlKeyFinal,
             sqlFinal: sqlFinal,
             percentile: field.percentile,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
@@ -203,7 +217,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
         case field.type === api.FieldTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
@@ -212,7 +226,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
         case field.type === api.FieldTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
@@ -221,7 +235,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
         case field.type === api.FieldTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
@@ -230,7 +244,7 @@ export function makeMainFields(item: interfaces.VarsSql) {
         case field.type === api.FieldTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
-            connection: item.model.connection
+            connection: model.connection
           });
 
           break;
@@ -270,11 +284,20 @@ export function makeMainFields(item: interfaces.VarsSql) {
     processedFields[element] = sqlSelect;
   });
 
-  item.mainText = mainText;
-  item.groupMainBy = groupMainBy;
-  item.mainFields = mainFields;
-  item.selected = selected;
-  item.processedFields = processedFields;
+  let output: interfaces.VarsSql = {
+    mainUdfs,
+    mainText,
+    groupMainBy,
+    mainFields,
+    selected,
+    processedFields
+  };
 
-  return item;
+  varsSqlElements.push({
+    func: func,
+    varsSqlInput: varsSqlInput,
+    varsSqlOutput: output
+  });
+
+  return output;
 }

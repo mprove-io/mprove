@@ -100,17 +100,26 @@ export function genSqlPro(
   });
   vars.depMeasures = depMeasures;
 
-  // model
-  // dep_measures
-  // select
-  // filters
-  //    main_text
-  //    group_main_by
-  //    main_fields
-  //    selected
-  //    processed_fields
-  //    main_udfs_ref
-  vars = barSql.makeMainFields(vars);
+  let {
+    mainUdfs,
+    mainText,
+    groupMainBy,
+    mainFields,
+    selected,
+    processedFields
+  } = barSql.makeMainFields({
+    select: select,
+    filters: filters,
+    depMeasures: depMeasures,
+    varsSqlElements: varsSqlElements,
+    model: model
+  });
+  vars.mainUdfs = mainUdfs;
+  vars.mainText = mainText;
+  vars.groupMainBy = groupMainBy;
+  vars.mainFields = mainFields;
+  vars.selected = selected;
+  vars.processedFields = processedFields;
 
   // selected
   // filters
