@@ -144,16 +144,28 @@ export function genSqlPro(
   });
   vars.needsAll = needsAll;
 
-  // joins
-  // model
-  // filters
-  // weekStart
-  //    where_main
-  //    having_main
-  //    where_calc
-  //    filters_conditions
-  //    untouched_filters_conditions
-  vars = barSql.makeFilters(vars);
+  let {
+    filtersFractions,
+    whereCalc,
+    havingMain,
+    whereMain,
+    filtersConditions,
+    untouchedFiltersConditions
+  } = barSql.makeFilters({
+    joins: joins,
+    filters: filters,
+    processedFields: processedFields,
+    weekStart: weekStart,
+    timezone: timezone,
+    varsSqlElements: varsSqlElements,
+    model: model
+  });
+  vars.filtersFractions = filtersFractions;
+  vars.whereCalc = whereCalc;
+  vars.havingMain = havingMain;
+  vars.whereMain = whereMain;
+  vars.filtersConditions = filtersConditions;
+  vars.untouchedFiltersConditions = untouchedFiltersConditions;
 
   // model
   // needs_all

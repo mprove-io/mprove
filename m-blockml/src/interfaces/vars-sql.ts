@@ -50,21 +50,11 @@ export interface VarsSql {
       [f: string]: number;
     };
   };
-  whereMain?: {
-    [s: string]: string[];
-  };
-  havingMain?: {
-    [s: string]: string[];
-  };
-  whereCalc?: {
-    [s: string]: string[];
-  };
-  filtersConditions?: {
-    [s: string]: string[];
-  };
-  untouchedFiltersConditions?: {
-    [s: string]: string[];
-  };
+  whereMain?: FilterBricksDictionary;
+  havingMain?: FilterBricksDictionary;
+  whereCalc?: FilterBricksDictionary;
+  filtersConditions?: FilterBricksDictionary;
+  untouchedFiltersConditions?: FilterBricksDictionary;
   contents?: string[];
   with?: string[];
   withParts?: {

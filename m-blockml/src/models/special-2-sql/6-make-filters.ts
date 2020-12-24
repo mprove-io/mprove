@@ -1,38 +1,74 @@
 import { interfaces } from '../../barrels/interfaces';
+import { enums } from '../../barrels/enums';
 import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { processFilter } from '../special/process-filter';
 
-export function makeFilters(item: interfaces.VarsSql) {
+let func = enums.FuncEnum.MakeFilters;
+
+export function makeFilters(item: {
+  joins: interfaces.VarsSql['joins'];
+  filters: interfaces.VarsSql['filters'];
+  weekStart: interfaces.VarsSql['weekStart'];
+  processedFields: interfaces.VarsSql['processedFields'];
+  timezone: interfaces.VarsSql['timezone'];
+  varsSqlElements: interfaces.Report['varsSqlElements'];
+  model: interfaces.Model;
+}) {
+  let {
+    joins,
+    filters,
+    weekStart,
+    processedFields,
+    timezone,
+    varsSqlElements,
+    model
+  } = item;
+
+  let varsSqlInput: interfaces.VarsSql = helper.makeCopy({
+    joins,
+    filters,
+    weekStart,
+    processedFields,
+    timezone
+  });
+
+  let filtersFractions: interfaces.VarsSql['filtersFractions'] = {};
+  let whereCalc: interfaces.VarsSql['whereCalc'] = {};
+  let havingMain: interfaces.VarsSql['havingMain'] = {};
+  let whereMain: interfaces.VarsSql['whereMain'] = {};
+  let filtersConditions: interfaces.VarsSql['filtersConditions'] = {};
+  let untouchedFiltersConditions: interfaces.VarsSql['untouchedFiltersConditions'] = {};
+
   // prepare model and view filters defaults that is not in report default
   let untouchedFilters: interfaces.FilterBricksDictionary = {};
 
-  Object.keys(item.model.filters).forEach(modelFilter => {
+  Object.keys(model.filters).forEach(modelFilter => {
     let modelFilterName = `${constants.MF}.${modelFilter}`;
 
-    if (helper.isUndefined(item.filters[modelFilterName])) {
-      untouchedFilters[modelFilterName] = item.model.filters[modelFilter];
+    if (helper.isUndefined(filters[modelFilterName])) {
+      untouchedFilters[modelFilterName] = model.filters[modelFilter];
     }
   });
 
-  item.model.joinsSorted.forEach(asName => {
-    if (!item.joins[asName]) {
+  model.joinsSorted.forEach(asName => {
+    if (!joins[asName]) {
       return;
     }
 
-    let join = item.model.joins.find(j => j.as === asName);
+    let join = model.joins.find(j => j.as === asName);
 
     Object.keys(join.view.filters).forEach(viewFilter => {
       let viewFilterName = `${asName}.${viewFilter}`;
 
-      if (helper.isUndefined(item.filters[viewFilterName])) {
+      if (helper.isUndefined(filters[viewFilterName])) {
         untouchedFilters[viewFilterName] = join.view.filters[viewFilter];
       }
     });
   });
 
-  [...Object.keys(item.filters), ...Object.keys(untouchedFilters)].forEach(
+  [...Object.keys(filters), ...Object.keys(untouchedFilters)].forEach(
     element => {
       let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
       let asName = r[1];
@@ -42,8 +78,8 @@ export function makeFilters(item: interfaces.VarsSql) {
 
       let field =
         asName === constants.MF
-          ? item.model.fields.find(mField => mField.name === fieldName)
-          : item.model.joins
+          ? model.fields.find(mField => mField.name === fieldName)
+          : model.joins
               .find(j => j.as === asName)
               .view.fields.find(vField => vField.name === fieldName);
 
@@ -66,43 +102,41 @@ export function makeFilters(item: interfaces.VarsSql) {
       let myINs: string[] = [];
       let myNOTINs: string[] = [];
 
-      let proc;
+      let proc: string;
 
       if (field.fieldClass === api.FieldClassEnum.Measure) {
-        if (item.model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+        if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
           proc = `${asName}_${fieldName}`;
         } else if (
-          item.model.connection.type === api.ConnectionTypeEnum.PostgreSQL
+          model.connection.type === api.ConnectionTypeEnum.PostgreSQL
         ) {
-          proc = item.processedFields[element];
+          proc = processedFields[element];
         }
       } else if (field.fieldClass === api.FieldClassEnum.Filter) {
         proc = constants.MPROVE_FILTER;
       } else {
-        proc = item.processedFields[element];
+        proc = processedFields[element];
       }
 
-      let filterBricks = item.filters[element]
-        ? item.filters[element]
+      let filterBricks = filters[element]
+        ? filters[element]
         : untouchedFilters[element];
 
-      item.filtersFractions[element] = [];
-
-      let fractions = item.filtersFractions[element];
+      filtersFractions[element] = [];
 
       let p = processFilter({
         result: field.result,
         filterBricks: filterBricks,
         proc: proc,
-        weekStart: item.weekStart,
-        connection: item.model.connection,
-        timezone: item.timezone,
+        weekStart: weekStart,
+        connection: model.connection,
+        timezone: timezone,
         sqlTsSelect: sqlTimestampSelect,
         ORs: myORs,
         NOTs: myNOTs,
         INs: myINs,
         NOTINs: myNOTINs,
-        fractions: fractions
+        fractions: filtersFractions[element]
       });
 
       // unique
@@ -222,20 +256,35 @@ export function makeFilters(item: interfaces.VarsSql) {
       }
 
       if (field.fieldClass === api.FieldClassEnum.Calculation) {
-        item.whereCalc[element] = conds;
+        whereCalc[element] = conds;
       } else if (field.fieldClass === api.FieldClassEnum.Measure) {
-        item.havingMain[element] = conds;
+        havingMain[element] = conds;
       } else if (field.fieldClass === api.FieldClassEnum.Dimension) {
-        item.whereMain[element] = conds;
+        whereMain[element] = conds;
       } else if (field.fieldClass === api.FieldClassEnum.Filter) {
-        if (item.filters[element]) {
-          item.filtersConditions[element] = conds;
+        if (filters[element]) {
+          filtersConditions[element] = conds;
         } else {
-          item.untouchedFiltersConditions[element] = conds;
+          untouchedFiltersConditions[element] = conds;
         }
       }
     }
   );
 
-  return item;
+  let output: interfaces.VarsSql = {
+    filtersFractions,
+    whereCalc,
+    havingMain,
+    whereMain,
+    filtersConditions,
+    untouchedFiltersConditions
+  };
+
+  varsSqlElements.push({
+    func: func,
+    varsSqlInput: varsSqlInput,
+    varsSqlOutput: output
+  });
+
+  return output;
 }
