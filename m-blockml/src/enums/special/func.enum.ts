@@ -126,6 +126,7 @@ export enum FuncEnum {
 
   CheckMdzAccess = 'special/check-mdz-access',
   CheckVmdFilterDefaults = 'special/check-vmd-filter-defaults',
+  LogStruct = 'special/log-struct',
 
   SubMakeDepMeasuresAndDimensions = 'special-1-sub/1-sub-make-dep-measures-and-dimensions',
   SubMakeMainFields = 'special-1-sub/2-sub-make-main-fields',
@@ -144,7 +145,5 @@ export enum FuncEnum {
   MakeJoinsWhere = 'special-2-sql/8-make-joins-where',
   ComposeMain = 'special-2-sql/9-compose-main',
   ProcessTimezone = 'special-2-sql/10-process-timezone',
-  ComposeCalc = 'special-2-sql/11-compose-calc',
-
-  LogStruct = 'builder/log-struct'
+  ComposeCalc = 'special-2-sql/11-compose-calc'
 }

@@ -13,5 +13,3 @@ export * from './12-build-dashboard';
 export * from './13-build-viz';
 export * from './14-build-report';
 export * from './15-build-chart';
-
-export * from './log-struct';

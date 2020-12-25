@@ -6,6 +6,7 @@ import { BmError } from '../models/bm-error';
 import { barYaml } from '../barrels/bar-yaml';
 import { barBuilder } from '../barrels/bar-builder';
 import { barWrapper } from '../barrels/bar-wrapper';
+import { barSpecial } from '../barrels/bar-special';
 import { RabbitService } from './rabbit.service';
 
 @Injectable()
@@ -287,7 +288,7 @@ export class StructService {
       caller: enums.CallerEnum.BuildVizChart
     });
 
-    barBuilder.logStruct({
+    barSpecial.logStruct({
       errors: errors,
       udfsDict: udfsDict,
       views: views,
