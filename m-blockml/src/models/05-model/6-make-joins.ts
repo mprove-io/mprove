@@ -26,6 +26,9 @@ export function makeJoins(item: {
 
       let view = item.views.find(v => v.name === viewName);
 
+      let errorLine =
+        j.as === x.fromAs ? j.from_view_line_num : j.join_view_line_num;
+
       if (helper.isUndefined(view)) {
         item.errors.push(
           new BmError({
@@ -33,10 +36,29 @@ export function makeJoins(item: {
             message: `${api.FileExtensionEnum.View} "${viewName}" is missing or not valid`,
             lines: [
               {
-                line:
-                  j.as === x.fromAs
-                    ? j.from_view_line_num
-                    : j.join_view_line_num,
+                line: errorLine,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (view.connection.name !== x.connection.name) {
+        item.errors.push(
+          new BmError({
+            title:
+              enums.ErTitleEnum.JOIN_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION,
+            message:
+              `The ${api.FileExtensionEnum.Model} can refer to views ` +
+              `with the same connection name. Model "${x.name}" with connection ` +
+              `"${x.connection.name}" references view "${view.name}" ` +
+              `with connection "${view.connection.name}"`,
+            lines: [
+              {
+                line: errorLine,
                 name: x.fileName,
                 path: x.filePath
               }

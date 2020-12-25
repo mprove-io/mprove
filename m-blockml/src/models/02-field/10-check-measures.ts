@@ -106,7 +106,9 @@ export function checkMeasures<T extends types.vmType>(item: {
             new BmError({
               title:
                 enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `consider using a "${api.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
+              message:
+                `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
+                `"${x.connection.type}". Consider using a "${api.FieldTypeEnum.Custom}" type.`,
               lines: [
                 {
                   line: field.type_line_num,

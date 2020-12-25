@@ -48,6 +48,29 @@ export function checkViewAsDeps(item: {
           return;
         }
 
+        if (referencedView.connection.name !== x.connection.name) {
+          item.errors.push(
+            new BmError({
+              title:
+                enums.ErTitleEnum
+                  .DERIVED_TABLE_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION,
+              message:
+                `The ${api.FileExtensionEnum.View} can refer to other views ` +
+                `with the same connection name. View "${x.name}" with connection ` +
+                `"${x.connection.name}" references view "${referencedViewName}" ` +
+                `with connection "${referencedView.connection.name}"`,
+              lines: [
+                {
+                  line: x.derived_table_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
         if (helper.isDefined(referencedView.derived_table)) {
           let input = referencedView.derived_table;
 
