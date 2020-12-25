@@ -5,7 +5,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.RebuildStruct;
 let func = enums.FuncEnum.LogStruct;
-let testId = 'manual-1';
+let testId = 'manual-3';
 
 async function run() {
   let {
