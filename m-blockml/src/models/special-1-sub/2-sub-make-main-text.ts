@@ -5,9 +5,9 @@ import { barMeasure } from '../../barrels/bar-measure';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 
-let func = enums.FuncEnum.SubMakeMainFields;
+let func = enums.FuncEnum.SubMakeMainText;
 
-export function subMakeMainFields(item: {
+export function subMakeMainText(item: {
   select: interfaces.VarsSub['select'];
   depMeasures: interfaces.VarsSub['depMeasures'];
   depDimensions: interfaces.VarsSub['depDimensions'];
@@ -24,44 +24,28 @@ export function subMakeMainFields(item: {
 
   let connection = view.connection;
 
+  let selected: interfaces.VarsSub['selected'] = {};
   let extraUdfs: interfaces.VarsSub['extraUdfs'] = {};
+  let processedFields: interfaces.VarsSub['processedFields'] = {};
+  let mainText: interfaces.VarsSub['mainText'] = [];
+  let groupMainBy: interfaces.VarsSub['groupMainBy'] = [];
 
-  let mainText: string[] = [];
-  let groupMainBy: string[] = [];
-  let mainFields: string[] = [];
-
-  let selected: { [s: string]: number } = {};
-  let processedFields: { [s: string]: string } = {};
+  [
+    ...select,
+    ...Object.keys(depMeasures),
+    ...Object.keys(depDimensions)
+  ].forEach(fieldName => {
+    selected[fieldName] = 1;
+  });
 
   let i = 0;
 
-  select.forEach(fieldName => {
-    mainFields.push(fieldName);
-
-    selected[fieldName] = 1;
-  });
-
-  Object.keys(depMeasures).forEach(fieldName => {
-    if (helper.isUndefined(selected[fieldName])) {
-      mainFields.push(fieldName);
-    }
-
-    selected[fieldName] = 1;
-  });
-
-  Object.keys(depDimensions).forEach(fieldName => {
-    if (helper.isUndefined(selected[fieldName])) {
-      mainFields.push(fieldName);
-    }
-
-    selected[fieldName] = 1;
-  });
-
-  mainFields.forEach(fieldName => {
+  Object.keys(selected).forEach(fieldName => {
     let field = view.fields.find(vField => vField.name === fieldName);
 
     let sqlFinal;
     let sqlKeyFinal;
+
     let sqlSelect;
 
     if (field.fieldClass === api.FieldClassEnum.Dimension) {
@@ -69,9 +53,7 @@ export function subMakeMainFields(item: {
 
       sqlSelect = fieldName;
 
-      if (selected[fieldName]) {
-        groupMainBy.push(`${i}`); // toString
-      }
+      groupMainBy.push(`${i}`); // toString
     } else if (field.fieldClass === api.FieldClassEnum.Measure) {
       i++;
 
@@ -120,7 +102,9 @@ export function subMakeMainFields(item: {
         }
 
         case field.type === api.FieldTypeEnum.MedianByKey: {
-          extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
+          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+            extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
+          }
 
           sqlSelect = barMeasure.makeMeasureMedianByKey({
             sqlKeyFinal: sqlKeyFinal,
@@ -132,7 +116,9 @@ export function subMakeMainFields(item: {
         }
 
         case field.type === api.FieldTypeEnum.PercentileByKey: {
-          extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
+          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+            extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
+          }
 
           sqlSelect = barMeasure.makeMeasurePercentileByKey({
             sqlKeyFinal: sqlKeyFinal,
@@ -191,10 +177,7 @@ export function subMakeMainFields(item: {
       sqlSelect = sqlFinal;
     }
 
-    if (
-      selected[fieldName] &&
-      field.fieldClass !== api.FieldClassEnum.Calculation
-    ) {
+    if (field.fieldClass !== api.FieldClassEnum.Calculation) {
       mainText.push(`  ${sqlSelect} as ${fieldName},`);
     }
 
@@ -204,7 +187,6 @@ export function subMakeMainFields(item: {
   let varsOutput: interfaces.VarsSub = {
     mainText,
     groupMainBy,
-    mainFields, // for logs
     selected,
     processedFields,
     extraUdfs

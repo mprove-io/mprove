@@ -6,13 +6,14 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildView;
-let func = enums.FuncEnum.ProcessViewRefs;
-let testId = 'v__sub__1-sub-make-dep-measures-and-dimensions__1';
+let caller = enums.CallerEnum.BuildDashboardReport;
+let func = enums.FuncEnum.FetchSql;
+let dataDirPart = 'v__sql-1';
+let testId = 'v__sql-1__1-make-dep-measures';
 
 test(testId, async () => {
   let errors: BmError[];
-  let views: interfaces.View[];
+  let entDashboards: interfaces.Dashboard[];
 
   try {
     let {
@@ -29,28 +30,40 @@ test(testId, async () => {
       type: api.ConnectionTypeEnum.BigQuery
     };
 
+    let dataDirArray = dataDir.split('/');
+    dataDirArray[dataDirArray.length - 1] = dataDirPart;
+    let newDataDir = dataDirArray.join('/');
+
     await structService.rebuildStruct({
       traceId: traceId,
-      dir: dataDir,
+      dir: newDataDir,
       structId: structId,
       connections: [connection],
       weekStart: api.ProjectWeekStartEnum.Monday
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(0);
-  expect(views.length).toBe(2);
+  expect(entDashboards.length).toBe(1);
 
-  let varsSubElement = views[1].parts['v2__v1__a'].varsSubSteps.find(
-    x => x.func === enums.FuncEnum.SubMakeDepMeasuresAndDimensions
-  );
-
-  expect(varsSubElement.varsOutput.depMeasures).toEqual({ mea1: 1 });
-  expect(varsSubElement.varsOutput.depDimensions).toEqual({ dim1: 1 });
+  expect(
+    entDashboards[0].reports[0].varsSqlSteps.find(
+      x => x.func === enums.FuncEnum.MakeDepMeasures
+    )
+  ).toEqual({
+    func: enums.FuncEnum.MakeDepMeasures,
+    varsInput: {
+      select: ['a.dim1'],
+      filters: {}
+    },
+    varsOutput: {
+      depMeasures: {}
+    }
+  });
 });

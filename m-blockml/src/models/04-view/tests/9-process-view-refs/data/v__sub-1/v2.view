@@ -5,7 +5,7 @@ derived_table: |
   FROM 
     ${v1 AS a}
 fields:
-- dimension: ac1
+- dimension: dim1
   sql: ac1
 
 

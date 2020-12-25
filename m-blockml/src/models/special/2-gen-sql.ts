@@ -59,10 +59,10 @@ export function genSqlPro(
   let varsSqlSteps: interfaces.VarsSqlStep[] = [];
 
   let { depMeasures } = barSql.makeDepMeasures({
-    select: select,
-    filters: filters,
-    model: model,
-    varsSqlSteps: varsSqlSteps
+    select,
+    filters,
+    model,
+    varsSqlSteps
   });
 
   let {
@@ -73,31 +73,31 @@ export function genSqlPro(
     processedFields,
     mainFields
   } = barSql.makeMainFields({
-    select: select,
-    filters: filters,
-    depMeasures: depMeasures,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    select,
+    filters,
+    depMeasures,
+    varsSqlSteps,
+    model
   });
 
   let { needsDoubles } = barSql.makeNeedsDoubles({
-    selected: selected,
-    filters: filters,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    selected,
+    filters,
+    varsSqlSteps,
+    model
   });
 
   let { joins } = barSql.findJoinsUsingJoinsDeps({
-    needsDoubles: needsDoubles,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    needsDoubles,
+    varsSqlSteps,
+    model
   });
 
   let { needsAll } = barSql.makeNeedsAll({
-    needsDoubles: needsDoubles,
-    joins: joins,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    needsDoubles,
+    joins,
+    varsSqlSteps,
+    model
   });
 
   let {
@@ -108,61 +108,61 @@ export function genSqlPro(
     filtersConditions,
     untouchedFiltersConditions
   } = barSql.makeFilters({
-    joins: joins,
-    filters: filters,
-    processedFields: processedFields,
-    weekStart: weekStart,
-    timezone: timezone,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    joins,
+    filters,
+    processedFields,
+    weekStart,
+    timezone,
+    varsSqlSteps,
+    model
   });
 
   let { contents, myWith, withParts } = barSql.makeContents({
-    joins: joins,
-    filters: filters,
-    needsAll: needsAll,
-    mainUdfs: mainUdfs,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    joins,
+    filters,
+    needsAll,
+    mainUdfs,
+    varsSqlSteps,
+    model
   });
 
   let { joinsWhere } = barSql.makeJoinsWhere({
-    joins: joins,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    joins,
+    varsSqlSteps,
+    model
   });
 
   let { mainQuery } = barSql.composeMain({
-    mainText: mainText,
-    contents: contents,
-    joinsWhere: joinsWhere,
-    whereMain: whereMain,
-    havingMain: havingMain,
-    groupMainBy: groupMainBy,
-    mainUdfs: mainUdfs,
-    udfsDict: udfsDict,
-    myWith: myWith,
-    withParts: withParts,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    mainText,
+    contents,
+    joinsWhere,
+    whereMain,
+    havingMain,
+    groupMainBy,
+    mainUdfs,
+    udfsDict,
+    myWith,
+    withParts,
+    varsSqlSteps,
+    model
   });
 
   let { mainQueryProcessed } = barSql.processTimezone({
-    mainQuery: mainQuery,
-    timezone: timezone,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    mainQuery,
+    timezone,
+    varsSqlSteps,
+    model
   });
 
   let { sql } = barSql.composeCalc({
-    mainQueryProcessed: mainQueryProcessed,
-    processedFields: processedFields,
-    select: select,
-    sorts: sorts,
-    limit: limit,
-    whereCalc: whereCalc,
-    varsSqlSteps: varsSqlSteps,
-    model: model
+    mainQueryProcessed,
+    processedFields,
+    select,
+    sorts,
+    limit,
+    whereCalc,
+    varsSqlSteps,
+    model
   });
 
   return { sql, filtersFractions, varsSqlSteps };

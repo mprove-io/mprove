@@ -7,9 +7,9 @@ export function genSub(item: { select: string[]; view: interfaces.View }) {
   let varsSubSteps: interfaces.ViewPart['varsSubSteps'] = [];
 
   let { depMeasures, depDimensions } = barSub.subMakeDepMeasuresAndDimensions({
-    select: select,
-    varsSubSteps: varsSubSteps,
-    view: view
+    select,
+    varsSubSteps,
+    view
   });
 
   let {
@@ -17,42 +17,41 @@ export function genSub(item: { select: string[]; view: interfaces.View }) {
     groupMainBy,
     selected,
     processedFields,
-    extraUdfs,
-    mainFields
-  } = barSub.subMakeMainFields({
-    select: select,
-    depMeasures: depMeasures,
-    depDimensions: depDimensions,
-    varsSubSteps: varsSubSteps,
-    view: view
+    extraUdfs
+  } = barSub.subMakeMainText({
+    select,
+    depMeasures,
+    depDimensions,
+    varsSubSteps,
+    view
   });
 
   let { needsAll } = barSub.subMakeNeedsAll({
-    selected: selected,
-    varsSubSteps: varsSubSteps,
-    view: view
+    selected,
+    varsSubSteps,
+    view
   });
 
   let { contents, myWith } = barSub.subMakeContents({
-    needsAll: needsAll,
-    varsSubSteps: varsSubSteps,
-    view: view
+    needsAll,
+    varsSubSteps,
+    view
   });
 
   let { mainQuery } = barSub.subComposeMain({
-    mainText: mainText,
-    contents: contents,
-    groupMainBy: groupMainBy,
-    myWith: myWith,
-    varsSubSteps: varsSubSteps
+    mainText,
+    contents,
+    groupMainBy,
+    myWith,
+    varsSubSteps
   });
 
   let { sub } = barSub.subComposeCalc({
-    select: select,
-    processedFields: processedFields,
-    mainQuery: mainQuery,
-    varsSubSteps: varsSubSteps,
-    view: view
+    select,
+    processedFields,
+    mainQuery,
+    varsSubSteps,
+    view
   });
 
   return { sub, extraUdfs, varsSubSteps };

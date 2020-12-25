@@ -9,8 +9,6 @@ export interface VarsSub {
 
   groupMainBy?: string[];
 
-  mainFields?: string[];
-
   selected?: { [s: string]: number };
 
   processedFields?: { [s: string]: string };
