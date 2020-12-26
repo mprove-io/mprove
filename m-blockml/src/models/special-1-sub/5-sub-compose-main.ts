@@ -11,8 +11,9 @@ export function subComposeMain(item: {
   contents: interfaces.VarsSub['contents'];
   groupMainBy: interfaces.VarsSub['groupMainBy'];
   varsSubSteps: interfaces.ViewPart['varsSubSteps'];
+  view: interfaces.View;
 }) {
-  let { myWith, mainText, contents, groupMainBy, varsSubSteps } = item;
+  let { myWith, mainText, contents, groupMainBy, varsSubSteps, view } = item;
 
   let varsInput: interfaces.VarsSub = helper.makeCopy({
     myWith,
@@ -25,7 +26,8 @@ export function subComposeMain(item: {
 
   mainQuery.push(`${constants.WITH}`);
   mainQuery = mainQuery.concat(myWith);
-  mainQuery.push(`  ${constants.VIEW_MAIN} AS (`);
+  mainQuery = mainQuery.concat(contents);
+  mainQuery.push(`  ${view.name}${constants.VIEW_MAIN_SUFFIX} AS (`);
   mainQuery.push(`    ${constants.SELECT}`);
 
   if (mainText.length === 0) {
@@ -38,7 +40,10 @@ export function subComposeMain(item: {
   let lastIndex = mainQuery.length - 1;
   mainQuery[lastIndex] = mainQuery[lastIndex].slice(0, -1);
 
-  mainQuery = mainQuery.concat(contents.map(s => `    ${s}`));
+  // mainQuery = mainQuery.concat(contents.map(s => `    ${s}`));
+  mainQuery.push(
+    `    ${constants.FROM} ${view.name}${constants.VIEW_START_SUFFIX}`
+  );
 
   if (groupMainBy.length > 0) {
     let groupMainByString = groupMainBy.join(', ');

@@ -25,9 +25,9 @@ export function subMakeContents(item: {
     [s: string]: number;
   } = {};
 
-  contents.push(`${constants.FROM} (`);
+  contents.push(`  ${view.name}${constants.VIEW_START_SUFFIX} AS (`);
 
-  contents.push(`  ${constants.SELECT}`);
+  contents.push(`    ${constants.SELECT}`);
 
   let i = 0;
 
@@ -42,18 +42,19 @@ export function subMakeContents(item: {
       // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
       let sqlSelect = field.sqlReal;
 
-      contents.push(`    ${sqlSelect} as ${fieldName},`);
+      contents.push(`      ${sqlSelect} as ${fieldName},`);
 
       i++;
     }
   });
 
   if (i === 0) {
-    contents.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+    contents.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
   // chop
-  contents[contents.length - 1] = contents[contents.length - 1].slice(0, -1);
+  let lastIndex = contents.length - 1;
+  contents[lastIndex] = contents[lastIndex].slice(0, -1);
 
   let table: string;
 
@@ -71,16 +72,15 @@ export function subMakeContents(item: {
     myWith.push(`  ${table} AS (`);
     myWith = myWith.concat(derivedSqlArray.map(s => `    ${s}`));
     myWith.push('  ),');
-    myWith.push('');
   }
 
-  contents.push(`  ${constants.FROM} ${table}`);
+  contents.push(`    ${constants.FROM} ${table}`);
 
   Object.keys(flats).forEach(flat => {
-    contents.push(`    ${flat}`);
+    contents.push(`      ${flat}`);
   });
 
-  contents.push(`  ) as ${constants.VIEW_MAIN_SUB}`);
+  contents.push('  ),');
 
   let varsOutput: interfaces.VarsSub = { contents, myWith };
 

@@ -25,7 +25,6 @@ export function subComposeCalc(item: {
 
   sub = sub.concat(mainQuery);
 
-  sub.push('');
   sub.push(`${constants.SELECT}`);
 
   if (select.length === 0) {
@@ -51,7 +50,7 @@ export function subComposeCalc(item: {
   let lastIndex = sub.length - 1;
   sub[lastIndex] = sub[lastIndex].slice(0, -1);
 
-  sub.push(`${constants.FROM} ${constants.VIEW_MAIN}`);
+  sub.push(`${constants.FROM} ${view.name}${constants.VIEW_MAIN_SUFFIX}`);
 
   let varsOutput: interfaces.VarsSub = { sub };
 

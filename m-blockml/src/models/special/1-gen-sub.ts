@@ -43,7 +43,8 @@ export function genSub(item: { select: string[]; view: interfaces.View }) {
     contents,
     groupMainBy,
     myWith,
-    varsSubSteps
+    varsSubSteps,
+    view
   });
 
   let { sub } = barSub.subComposeCalc({

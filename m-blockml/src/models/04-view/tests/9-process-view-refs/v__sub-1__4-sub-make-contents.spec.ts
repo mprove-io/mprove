@@ -69,21 +69,20 @@ test(testId, async () => {
     },
     varsOutput: {
       contents: [
-        'FROM (',
-        '  SELECT',
-        '    (d5) + 6 as dim6,',
-        '    (d1) + 2 as dim2,',
-        '    (d3) + 4 as dim4',
-        '  FROM v1__derived_table',
-        '  ) as view_main_sub'
+        '  v1__start AS (',
+        '    SELECT',
+        '      (d5) + 6 as dim6,',
+        '      (d1) + 2 as dim2,',
+        '      (d3) + 4 as dim4',
+        '    FROM v1__derived_table',
+        '  ),'
       ],
       myWith: [
         '  v1__derived_table AS (',
         '    SELECT d1, d3, d5',
         '    FROM ',
         '      tab1',
-        '  ),',
-        ''
+        '  ),'
       ]
     }
   });

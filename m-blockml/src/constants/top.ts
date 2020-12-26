@@ -39,10 +39,11 @@ export const LIMIT = 'LIMIT';
 export const AND = 'AND';
 export const EMPTY_STRING = '';
 
-export const VIEW_MAIN = 'view_main';
-export const VIEW_MAIN_SUB = 'view_main_sub';
-export const NO_FIELDS_SELECTED = 'no_fields_selected';
 export const DERIVED_TABLE_SUFFIX = '__derived_table';
+export const VIEW_START_SUFFIX = '__start';
+export const VIEW_MAIN_SUFFIX = '__main';
+
+export const NO_FIELDS_SELECTED = 'no_fields_selected';
 
 export const MODEL_MAIN = 'model_main';
 

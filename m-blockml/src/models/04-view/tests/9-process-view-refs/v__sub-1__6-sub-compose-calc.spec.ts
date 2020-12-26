@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/quotes */
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
@@ -66,18 +67,18 @@ test(testId, async () => {
         '    FROM ',
         '      tab1',
         '  ),',
-        '',
-        '  view_main AS (',
+        '  v1__start AS (',
+        '    SELECT',
+        '      (d5) + 6 as dim6,',
+        '      (d1) + 2 as dim2,',
+        '      (d3) + 4 as dim4',
+        '    FROM v1__derived_table',
+        '  ),',
+        '  v1__main AS (',
         '    SELECT',
         "      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0) as mea1,",
         '      dim6 as dim6',
-        '    FROM (',
-        '      SELECT',
-        '        (d5) + 6 as dim6,',
-        '        (d1) + 2 as dim2,',
-        '        (d3) + 4 as dim4',
-        '      FROM v1__derived_table',
-        '      ) as view_main_sub',
+        '    FROM v1__start',
         '    GROUP BY 2',
         '  )'
       ],
@@ -97,24 +98,23 @@ test(testId, async () => {
         '    FROM ',
         '      tab1',
         '  ),',
-        '',
-        '  view_main AS (',
+        '  v1__start AS (',
+        '    SELECT',
+        '      (d5) + 6 as dim6,',
+        '      (d1) + 2 as dim2,',
+        '      (d3) + 4 as dim4',
+        '    FROM v1__derived_table',
+        '  ),',
+        '  v1__main AS (',
         '    SELECT',
         "      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0) as mea1,",
         '      dim6 as dim6',
-        '    FROM (',
-        '      SELECT',
-        '        (d5) + 6 as dim6,',
-        '        (d1) + 2 as dim2,',
-        '        (d3) + 4 as dim4',
-        '      FROM v1__derived_table',
-        '      ) as view_main_sub',
+        '    FROM v1__start',
         '    GROUP BY 2',
         '  )',
-        '',
         'SELECT',
         '  mea1 + dim6 + 1 as calc1',
-        'FROM view_main'
+        'FROM v1__main'
       ]
     }
   });
