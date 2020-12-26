@@ -15,8 +15,6 @@ export interface VarsSub {
 
   needsAll?: { [a: string]: number };
 
-  contents?: string[];
-
   myWith?: string[];
 
   mainQuery?: string[];

@@ -32,17 +32,16 @@ export function genSub(item: { select: string[]; view: interfaces.View }) {
     view
   });
 
-  let { contents, myWith } = barSub.subMakeContents({
+  let { myWith } = barSub.subMakeWith({
     needsAll,
     varsSubSteps,
     view
   });
 
   let { mainQuery } = barSub.subComposeMain({
-    mainText,
-    contents,
-    groupMainBy,
     myWith,
+    mainText,
+    groupMainBy,
     varsSubSteps,
     view
   });

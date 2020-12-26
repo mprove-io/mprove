@@ -65,13 +65,7 @@ test(testId, async () => {
         '    SELECT d1, d3, d5',
         '    FROM ',
         '      tab1',
-        '  ),'
-      ],
-      mainText: [
-        "  COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0) as mea1,",
-        '  dim6 as dim6,'
-      ],
-      contents: [
+        '  ),',
         '  v1__start AS (',
         '    SELECT',
         '      (d5) + 6 as dim6,',
@@ -79,6 +73,10 @@ test(testId, async () => {
         '      (d3) + 4 as dim4',
         '    FROM v1__derived_table',
         '  ),'
+      ],
+      mainText: [
+        "  COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0) as mea1,",
+        '  dim6 as dim6,'
       ],
       groupMainBy: ['2']
     },

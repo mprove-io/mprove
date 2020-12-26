@@ -8,17 +8,15 @@ let func = enums.FuncEnum.SubComposeMain;
 export function subComposeMain(item: {
   myWith: interfaces.VarsSub['myWith'];
   mainText: interfaces.VarsSub['mainText'];
-  contents: interfaces.VarsSub['contents'];
   groupMainBy: interfaces.VarsSub['groupMainBy'];
   varsSubSteps: interfaces.ViewPart['varsSubSteps'];
   view: interfaces.View;
 }) {
-  let { myWith, mainText, contents, groupMainBy, varsSubSteps, view } = item;
+  let { myWith, mainText, groupMainBy, varsSubSteps, view } = item;
 
   let varsInput: interfaces.VarsSub = helper.makeCopy({
     myWith,
     mainText,
-    contents,
     groupMainBy
   });
 
@@ -26,7 +24,6 @@ export function subComposeMain(item: {
 
   mainQuery.push(`${constants.WITH}`);
   mainQuery = mainQuery.concat(myWith);
-  mainQuery = mainQuery.concat(contents);
   mainQuery.push(`  ${view.name}${constants.VIEW_MAIN_SUFFIX} AS (`);
   mainQuery.push(`    ${constants.SELECT}`);
 

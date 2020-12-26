@@ -9,7 +9,7 @@ import * as fse from 'fs-extra';
 let caller = enums.CallerEnum.BuildView;
 let func = enums.FuncEnum.ProcessViewRefs;
 let dataDirPart = 'v__sub-1';
-let testId = 'v__sub-1__4-sub-make-contents';
+let testId = 'v__sub-1__4-sub-make-with';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -54,10 +54,10 @@ test(testId, async () => {
 
   expect(
     views[1].parts['v2__v1__a'].varsSubSteps.find(
-      x => x.func === enums.FuncEnum.SubMakeContents
+      x => x.func === enums.FuncEnum.SubMakeWith
     )
   ).toEqual({
-    func: enums.FuncEnum.SubMakeContents,
+    func: enums.FuncEnum.SubMakeWith,
     varsInput: {
       needsAll: {
         calc1: 1,
@@ -68,20 +68,18 @@ test(testId, async () => {
       }
     },
     varsOutput: {
-      contents: [
+      myWith: [
+        '  v1__derived_table AS (',
+        '    SELECT d1, d3, d5',
+        '    FROM ',
+        '      tab1',
+        '  ),',
         '  v1__start AS (',
         '    SELECT',
         '      (d5) + 6 as dim6,',
         '      (d1) + 2 as dim2,',
         '      (d3) + 4 as dim4',
         '    FROM v1__derived_table',
-        '  ),'
-      ],
-      myWith: [
-        '  v1__derived_table AS (',
-        '    SELECT d1, d3, d5',
-        '    FROM ',
-        '      tab1',
         '  ),'
       ]
     }

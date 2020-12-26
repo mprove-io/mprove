@@ -131,7 +131,7 @@ export enum FuncEnum {
   SubMakeDepMeasuresAndDimensions = 'special-1-sub/1-sub-make-dep-measures-and-dimensions',
   SubMakeMainText = 'special-1-sub/2-sub-make-main-text',
   SubMakeNeedsAll = 'special-1-sub/3-sub-make-needs-all',
-  SubMakeContents = 'special-1-sub/4-sub-make-contents',
+  SubMakeWith = 'special-1-sub/4-sub-make-with',
   SubComposeMain = 'special-1-sub/5-sub-compose-main',
   SubComposeCalc = 'special-1-sub/6-sub-compose-calc',
 
