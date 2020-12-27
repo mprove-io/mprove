@@ -1,8 +1,8 @@
 import { VarsSubStep } from './vars-sub-step';
 
 export interface ViewPart {
-  sql: string[];
   viewName: string;
-  deps: { [depName: string]: number };
+  deps: { [depPartName: string]: number };
+  sub: string[];
   varsSubSteps: VarsSubStep[];
 }

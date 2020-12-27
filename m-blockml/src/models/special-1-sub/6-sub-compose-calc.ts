@@ -12,8 +12,16 @@ export function subComposeCalc(item: {
   processedFields: interfaces.VarsSub['processedFields'];
   varsSubSteps: interfaces.ViewPart['varsSubSteps'];
   view: interfaces.View;
+  viewPartName: string;
 }) {
-  let { mainQuery, select, processedFields, varsSubSteps, view } = item;
+  let {
+    mainQuery,
+    select,
+    processedFields,
+    varsSubSteps,
+    view,
+    viewPartName
+  } = item;
 
   let varsInput: interfaces.VarsSub = helper.makeCopy({
     mainQuery,
@@ -23,12 +31,12 @@ export function subComposeCalc(item: {
 
   let sub: interfaces.VarsSub['sub'] = [];
 
-  sub = sub.concat(mainQuery);
-
-  sub.push(`${constants.SELECT}`);
+  sub.push(`${viewPartName} AS (`);
+  sub = sub.concat(mainQuery.map((s: string) => `  ${s}`));
+  sub.push(`  ${constants.SELECT}`);
 
   if (select.length === 0) {
-    sub.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+    sub.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
   select.forEach(fieldName => {
@@ -36,21 +44,24 @@ export function subComposeCalc(item: {
 
     let selectString =
       field.fieldClass === api.FieldClassEnum.Dimension
-        ? `  ${fieldName},`
+        ? `${fieldName},`
         : field.fieldClass === api.FieldClassEnum.Measure
-        ? `  ${fieldName},`
+        ? `${fieldName},`
         : field.fieldClass === api.FieldClassEnum.Calculation
-        ? `  ${processedFields[fieldName]} as ${fieldName},`
+        ? `${processedFields[fieldName]} as ${fieldName},`
         : '';
 
-    sub.push(selectString);
+    sub.push(`    ${selectString}`);
   });
 
   // chop
   let lastIndex = sub.length - 1;
   sub[lastIndex] = sub[lastIndex].slice(0, -1);
 
-  sub.push(`${constants.FROM} ${view.name}${constants.VIEW_MAIN_SUFFIX}`);
+  sub.push(`  ${constants.FROM} ${view.name}${constants.VIEW_MAIN_SUFFIX}`);
+  sub.push('),');
+
+  sub = sub.map((s: string) => `  ${s}`);
 
   let varsOutput: interfaces.VarsSub = { sub };
 

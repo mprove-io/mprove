@@ -26,12 +26,10 @@ export function subMakeWith(item: {
       table = view.table;
     }
   } else {
-    let derivedSqlArray = view.derived_table.split('\n');
-
     table = view.name + constants.DERIVED_TABLE_SUFFIX;
 
     myWith.push(`  ${table} AS (`);
-    myWith = myWith.concat(derivedSqlArray.map(s => `    ${s}`));
+    myWith = myWith.concat(view.derivedTableStart.map(s => `    ${s}`));
     myWith.push('  ),');
   }
 

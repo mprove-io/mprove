@@ -18,29 +18,30 @@ export function processViewRefs(item: {
   let { caller, structId } = item;
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  item.views.forEach(x => {
-    if (helper.isUndefined(x.derived_table)) {
-      return;
-    }
-
-    x.parts = {};
-
-    let input = x.derived_table;
-
-    if (Object.keys(x.asDeps).length > 0) {
+  item.views
+    .filter(x => helper.isDefined(x.derived_table))
+    .forEach(x => {
+      let input = x.derived_table;
       input = api.MyRegex.replaceViewRefs(input, x.name);
       input = api.MyRegex.removeBracketsOnViewFieldRefs(input);
 
-      substituteViewRefsRecursive({
-        topView: x,
-        view: x,
-        partDeps: {},
-        views: item.views
-      });
-    }
+      x.derivedTableStart = input.split('\n');
+    });
 
-    x.derivedTableStart = input.split('\n');
-  });
+  item.views
+    .filter(x => helper.isDefined(x.derived_table))
+    .forEach(x => {
+      x.parts = {};
+
+      if (Object.keys(x.asDeps).length > 0) {
+        substituteViewRefsRecursive({
+          topView: x,
+          view: x,
+          partDeps: {},
+          views: item.views
+        });
+      }
+    });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
@@ -64,7 +65,8 @@ function substituteViewRefsRecursive(item: {
 
     let { sub, extraUdfs, varsSubSteps } = barSpecial.genSub({
       select: Object.keys(item.view.asDeps[as].fieldNames),
-      view: depView
+      view: depView,
+      viewPartName: viewPartName
     });
 
     Object.keys(extraUdfs).forEach(udfName => {
@@ -73,19 +75,10 @@ function substituteViewRefsRecursive(item: {
       }
     });
 
-    let content: string[] = [];
-    content.push(`  ${viewPartName} AS (`);
-    content = content.concat(sub.map((s: string) => `    ${s}`));
-    content.push('  ),');
-
-    let text = content.join('\n');
-    text = api.MyRegex.replaceViewRefs(text, depView.name);
-    text = api.MyRegex.removeBracketsOnViewFieldRefs(text);
-
     let viewPart: interfaces.ViewPart = {
       viewName: depView.name,
-      sql: text.split('\n'),
       deps: {},
+      sub: sub,
       varsSubSteps: varsSubSteps
     };
 

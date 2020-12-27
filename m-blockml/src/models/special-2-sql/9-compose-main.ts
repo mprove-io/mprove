@@ -96,7 +96,7 @@ export function composeMain(item: {
     let text: string[] = [];
 
     partNamesSorted.forEach(viewPartName => {
-      text = text.concat(withParts[viewPartName].sql);
+      text = text.concat(withParts[viewPartName].sub);
     });
 
     // text = text.slice(0, -1);

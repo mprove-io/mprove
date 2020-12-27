@@ -1,8 +1,12 @@
 import { barSub } from '../../barrels/bar-sub';
 import { interfaces } from '../../barrels/interfaces';
 
-export function genSub(item: { select: string[]; view: interfaces.View }) {
-  let { select, view } = item;
+export function genSub(item: {
+  select: string[];
+  view: interfaces.View;
+  viewPartName: string;
+}) {
+  let { select, view, viewPartName } = item;
 
   let varsSubSteps: interfaces.ViewPart['varsSubSteps'] = [];
 
@@ -51,7 +55,8 @@ export function genSub(item: { select: string[]; view: interfaces.View }) {
     processedFields,
     mainQuery,
     varsSubSteps,
-    view
+    view,
+    viewPartName
   });
 
   return { sub, extraUdfs, varsSubSteps };
