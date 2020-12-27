@@ -69,7 +69,7 @@ test(testId, async () => {
         '  v1__start AS (',
         '    SELECT',
         '      (d5) + 6 as dim6,',
-        '      (d1) + 2 as dim2,',
+        "      (FORMAT_TIMESTAMP('%F %H', mprovetimestampstart(d1) + 1mprovetimestampend)) + 2 as dim2,",
         '      (d3) + 4 as dim4',
         '    FROM v1__derived_table',
         '  ),'
@@ -91,7 +91,7 @@ test(testId, async () => {
         '  v1__start AS (',
         '    SELECT',
         '      (d5) + 6 as dim6,',
-        '      (d1) + 2 as dim2,',
+        "      (FORMAT_TIMESTAMP('%F %H', mprovetimestampstart(d1) + 1mprovetimestampend)) + 2 as dim2,",
         '      (d3) + 4 as dim4',
         '    FROM v1__derived_table',
         '  ),',

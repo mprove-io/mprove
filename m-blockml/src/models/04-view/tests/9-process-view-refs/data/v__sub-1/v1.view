@@ -8,8 +8,13 @@ fields:
 - dimension: dim1
   sql: d1
 
+- time: time1
+  sql: ${dim1} + 1  
+  timeframes:
+  - hour 
+
 - dimension: dim2
-  sql: ${dim1} + 2
+  sql: ${time1___hour} + 2
 
 - dimension: dim3
   sql: d3
