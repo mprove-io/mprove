@@ -25,7 +25,7 @@ export function makeNeedsAll(item: {
       Object.keys(model.joinsDoubleDepsAfterSingles[alias]).forEach(asName => {
         Object.keys(model.joinsDoubleDepsAfterSingles[alias][asName]).forEach(
           dep => {
-            if (!needsAll[asName]) {
+            if (helper.isUndefined(needsAll[asName])) {
               needsAll[asName] = {};
             }
             needsAll[asName][dep] = 1;

@@ -43,14 +43,14 @@ export function makeDepMeasuresAndDimensions(item: {
         );
 
         if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
-          if (!depMeasures[asName]) {
+          if (helper.isUndefined(depMeasures[asName])) {
             depMeasures[asName] = {};
           }
           depMeasures[asName][depName] = 1;
         }
 
         if (depModelField.fieldClass === api.FieldClassEnum.Dimension) {
-          if (!depDimensions[asName]) {
+          if (helper.isUndefined(depDimensions[asName])) {
             depDimensions[asName] = {};
           }
           depDimensions[asName][depName] = 1;
@@ -69,14 +69,14 @@ export function makeDepMeasuresAndDimensions(item: {
             );
 
             if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
-              if (!depMeasures[alias]) {
+              if (helper.isUndefined(depMeasures[alias])) {
                 depMeasures[alias] = {};
               }
               depMeasures[alias][depName] = 1;
             }
 
             if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
-              if (!depDimensions[alias]) {
+              if (helper.isUndefined(depDimensions[alias])) {
                 depDimensions[alias] = {};
               }
               depDimensions[alias][depName] = 1;
@@ -101,14 +101,14 @@ export function makeDepMeasuresAndDimensions(item: {
           );
 
           if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
-            if (!depMeasures[asName]) {
+            if (helper.isUndefined(depMeasures[asName])) {
               depMeasures[asName] = {};
             }
             depMeasures[asName][depName] = 1;
           }
 
           if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
-            if (!depDimensions[asName]) {
+            if (helper.isUndefined(depDimensions[asName])) {
               depDimensions[asName] = {};
             }
             depDimensions[asName][depName] = 1;
@@ -125,14 +125,14 @@ export function makeDepMeasuresAndDimensions(item: {
         );
 
         if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
-          if (!depMeasures[constants.MF]) {
+          if (helper.isUndefined(depMeasures[constants.MF])) {
             depMeasures[constants.MF] = {};
           }
           depMeasures[constants.MF][depName] = 1;
         }
 
         if (depModelField.fieldClass === api.FieldClassEnum.Dimension) {
-          if (!depDimensions[constants.MF]) {
+          if (helper.isUndefined(depDimensions[constants.MF])) {
             depDimensions[constants.MF] = {};
           }
           depDimensions[constants.MF][depName] = 1;
@@ -154,14 +154,14 @@ export function makeDepMeasuresAndDimensions(item: {
             );
 
             if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
-              if (!depMeasures[asName]) {
+              if (helper.isUndefined(depMeasures[asName])) {
                 depMeasures[asName] = {};
               }
               depMeasures[asName][depName] = 1;
             }
 
             if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
-              if (!depDimensions[asName]) {
+              if (helper.isUndefined(depDimensions[asName])) {
                 depDimensions[asName] = {};
               }
               depDimensions[asName][depName] = 1;

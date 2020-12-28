@@ -28,8 +28,8 @@ export function makeNeedsDoubles(item: {
   // pick double deps from sqlAlwaysWhere
   Object.keys(model.sqlAlwaysWhereDoubleDepsAfterSingles).forEach(as => {
     Object.keys(model.sqlAlwaysWhereDoubleDepsAfterSingles[as]).forEach(dep => {
-      let f = `${as}.${dep}`;
-      whereDoubleDeps[f] = 1;
+      let element = `${as}.${dep}`;
+      whereDoubleDeps[element] = 1;
     });
   });
 
@@ -37,16 +37,16 @@ export function makeNeedsDoubles(item: {
   Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(as => {
     Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles[as]).forEach(
       dep => {
-        let f = `${as}.${dep}`;
-        whereCalcDoubleDeps[f] = 1;
+        let element = `${as}.${dep}`;
+        whereCalcDoubleDeps[element] = 1;
       }
     );
   });
 
   // pick deps from sqlAlwaysWhereCalc
   Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(dep => {
-    let f = `${constants.MF}.${dep}`;
-    whereCalcDeps[f] = 1;
+    let element = `${constants.MF}.${dep}`;
+    whereCalcDeps[element] = 1;
   });
 
   // unique
@@ -67,7 +67,7 @@ export function makeNeedsDoubles(item: {
     let aName = r[1];
     let fName = r[2];
 
-    if (!needsDoubles[aName]) {
+    if (helper.isUndefined(needsDoubles[aName])) {
       needsDoubles[aName] = {};
     }
     needsDoubles[aName][fName] = 1;
@@ -88,7 +88,7 @@ export function makeNeedsDoubles(item: {
           Object.keys(
             model.fieldsDoubleDepsAfterSingles[fieldName][alias]
           ).forEach(dep => {
-            if (!needsDoubles[alias]) {
+            if (helper.isUndefined(needsDoubles[alias])) {
               needsDoubles[alias] = {};
             }
             needsDoubles[alias][dep] = 1;

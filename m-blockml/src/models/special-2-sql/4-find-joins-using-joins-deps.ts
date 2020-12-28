@@ -31,7 +31,7 @@ export function findJoinsUsingJoinsDeps(item: {
       Object.keys(model.joinsDoubleDepsAfterSingles[asName])
         .filter(depAs => depAs !== model.fromAs && depAs !== constants.MF)
         .forEach(depAs => {
-          if (!joins[depAs]) {
+          if (helper.isUndefined(joins[depAs])) {
             joins[depAs] = 1;
             restart = true;
           }
