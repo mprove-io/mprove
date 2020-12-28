@@ -9,7 +9,7 @@ import * as fse from 'fs-extra';
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
 let dataDirPart = 'v__sql-1';
-let testId = 'v__sql-1__1-make-dep-measures';
+let testId = 'v__sql-1__1-make-dep-measures-and-dimensions';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -54,10 +54,10 @@ test(testId, async () => {
 
   expect(
     entDashboards[0].reports[0].varsSqlSteps.find(
-      x => x.func === enums.FuncEnum.MakeDepMeasures
+      x => x.func === enums.FuncEnum.MakeDepMeasuresAndDimensions
     )
   ).toEqual({
-    func: enums.FuncEnum.MakeDepMeasures,
+    func: enums.FuncEnum.MakeDepMeasuresAndDimensions,
     varsInput: {
       select: ['mf.calc3'],
       filters: {}
@@ -69,6 +69,16 @@ test(testId, async () => {
         },
         b: {
           mea1: 1
+        }
+      },
+      depDimensions: {
+        mf: {
+          dim6: 1,
+          dim8: 1
+        },
+        b: {
+          dim6: 1,
+          dim8: 1
         }
       }
     }

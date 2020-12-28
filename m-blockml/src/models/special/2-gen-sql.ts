@@ -58,7 +58,7 @@ export function genSqlPro(
 
   let varsSqlSteps: interfaces.VarsSqlStep[] = [];
 
-  let { depMeasures } = barSql.makeDepMeasures({
+  let { depMeasures, depDimensions } = barSql.makeDepMeasuresAndDimensions({
     select,
     filters,
     model,
@@ -70,12 +70,12 @@ export function genSqlPro(
     mainText,
     groupMainBy,
     selected,
-    processedFields,
-    mainFields
-  } = barSql.makeMainFields({
+    processedFields
+  } = barSql.makeMainText({
     select,
     filters,
     depMeasures,
+    depDimensions,
     varsSqlSteps,
     model
   });

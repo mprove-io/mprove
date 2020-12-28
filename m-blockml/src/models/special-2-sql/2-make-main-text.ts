@@ -5,16 +5,24 @@ import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { barMeasure } from '../../barrels/bar-measure';
 
-let func = enums.FuncEnum.MakeMainFields;
+let func = enums.FuncEnum.MakeMainText;
 
-export function makeMainFields(item: {
+export function makeMainText(item: {
   select: interfaces.VarsSql['select'];
   depMeasures: interfaces.VarsSql['depMeasures'];
+  depDimensions: interfaces.VarsSql['depDimensions'];
   filters: interfaces.VarsSql['filters'];
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { select, filters, depMeasures, model, varsSqlSteps } = item;
+  let {
+    select,
+    filters,
+    depMeasures,
+    depDimensions,
+    model,
+    varsSqlSteps
+  } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
     select,
@@ -25,7 +33,6 @@ export function makeMainFields(item: {
   let mainUdfs: interfaces.VarsSql['mainUdfs'] = {};
   let mainText: interfaces.VarsSql['mainText'] = [];
   let groupMainBy: interfaces.VarsSql['groupMainBy'] = [];
-  let mainFields: interfaces.VarsSql['mainFields'] = [];
   let selected: interfaces.VarsSql['selected'] = {};
   let processedFields: interfaces.VarsSql['processedFields'] = {};
 
@@ -38,28 +45,20 @@ export function makeMainFields(item: {
     let asName = r[1];
     let fieldName = r[2];
 
-    mainFields.push({
-      asName: asName,
-      fieldName: fieldName,
-      elementName: `${asName}.${fieldName}`
-    });
-
-    selected[element] = 1;
+    selected[element] = { asName: asName, fieldName: fieldName };
   });
 
   Object.keys(depMeasures).forEach(asName => {
     Object.keys(depMeasures[asName]).forEach(fieldName => {
       let element = `${asName}.${fieldName}`;
+      selected[element] = { asName: asName, fieldName: fieldName };
+    });
+  });
 
-      if (!selected[element]) {
-        mainFields.push({
-          asName: asName,
-          fieldName: fieldName,
-          elementName: `${asName}.${fieldName}`
-        });
-      }
-
-      selected[element] = 1;
+  Object.keys(depDimensions).forEach(asName => {
+    Object.keys(depDimensions[asName]).forEach(fieldName => {
+      let element = `${asName}.${fieldName}`;
+      selected[element] = { asName: asName, fieldName: fieldName };
     });
   });
 
@@ -70,14 +69,6 @@ export function makeMainFields(item: {
     let asName = r[1];
     let fieldName = r[2];
 
-    if (!selected[element]) {
-      mainFields.push({
-        asName: asName,
-        fieldName: fieldName,
-        elementName: `${asName}.${fieldName}`
-      });
-    }
-
     let fieldClass: api.FieldClassEnum =
       asName === constants.MF
         ? model.fields.find(mField => mField.name === fieldName).fieldClass
@@ -86,14 +77,12 @@ export function makeMainFields(item: {
             .view.fields.find(vField => vField.name === fieldName).fieldClass;
 
     if (fieldClass === api.FieldClassEnum.Measure) {
-      selected[element] = 1;
+      selected[element] = { asName: asName, fieldName: fieldName };
     }
   });
 
-  mainFields.forEach(mainField => {
-    let asName = mainField.asName;
-    let fieldName = mainField.fieldName;
-    let element = mainField.elementName;
+  Object.keys(selected).forEach(element => {
+    let { asName, fieldName } = selected[element];
 
     let field =
       asName === constants.MF
@@ -104,6 +93,7 @@ export function makeMainFields(item: {
 
     let sqlFinal;
     let sqlKeyFinal;
+
     let sqlSelect;
 
     if (field.fieldClass === api.FieldClassEnum.Dimension) {
@@ -274,10 +264,7 @@ export function makeMainFields(item: {
       }
     }
 
-    if (
-      selected[element] &&
-      field.fieldClass !== api.FieldClassEnum.Calculation
-    ) {
+    if (field.fieldClass !== api.FieldClassEnum.Calculation) {
       mainText.push(`  ${sqlSelect} as ${asName}_${fieldName},`);
     }
 
@@ -288,7 +275,6 @@ export function makeMainFields(item: {
     mainUdfs,
     mainText,
     groupMainBy,
-    mainFields, // for logs
     selected,
     processedFields
   };

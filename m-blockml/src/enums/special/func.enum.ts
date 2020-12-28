@@ -135,8 +135,8 @@ export enum FuncEnum {
   SubComposeMain = 'special-1-sub/5-sub-compose-main',
   SubComposeCalc = 'special-1-sub/6-sub-compose-calc',
 
-  MakeDepMeasures = 'special-2-sql/1-make-dep-measures',
-  MakeMainFields = 'special-2-sql/2-make-main-fields',
+  MakeDepMeasuresAndDimensions = 'special-2-sql/1-make-dep-measures-and-dimensions',
+  MakeMainText = 'special-2-sql/2-make-main-text',
   MakeNeedsDoubles = 'special-2-sql/3-make-needs-doubles',
   FindJoinsUsingJoinsDeps = 'special-2-sql/4-find-joins-using-joins-deps',
   MakeNeedsAll = 'special-2-sql/5-make-needs-all',

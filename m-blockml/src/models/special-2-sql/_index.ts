@@ -1,5 +1,5 @@
-export * from './1-make-dep-measures';
-export * from './2-make-main-fields';
+export * from './1-make-dep-measures-and-dimensions';
+export * from './2-make-main-text';
 export * from './3-make-needs-doubles';
 export * from './4-find-joins-using-joins-deps';
 export * from './5-make-needs-all';

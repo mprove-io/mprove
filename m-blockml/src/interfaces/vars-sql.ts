@@ -11,10 +11,10 @@ export interface VarsSql {
   filters?: FilterBricksDictionary;
   filtersFractions?: { [s: string]: api.Fraction[] };
   depMeasures?: { [as: string]: { [dep: string]: number } };
+  depDimensions?: { [as: string]: { [dep: string]: number } };
   mainText?: string[];
   groupMainBy?: string[];
-  mainFields?: { asName: string; fieldName: string; elementName: string }[];
-  selected?: { [s: string]: number };
+  selected?: { [s: string]: { asName: string; fieldName: string } };
   processedFields?: { [s: string]: string };
   needsDoubles?: { [a: string]: { [f: string]: number } };
   joins?: { [s: string]: number };
