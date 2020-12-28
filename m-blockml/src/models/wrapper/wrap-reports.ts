@@ -193,7 +193,7 @@ export function wrapReports(item: {
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: report.model,
-      select: report.select,
+      selectWithForceDims: report.selectWithForceDims,
       sortings: report.sortingsAry.map(s => ({
         fieldId: s.fieldId,
         desc: s.desc

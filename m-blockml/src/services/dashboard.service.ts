@@ -81,7 +81,7 @@ export class DashboardService {
           {
             weekStart: weekStart,
             timezone: report.timezone,
-            select: report.select,
+            selectWithForceDims: report.selectWithForceDims,
             sorts: report.sorts,
             limit: report.limit,
             filters: report.combinedFilters,

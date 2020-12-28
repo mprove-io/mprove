@@ -11,7 +11,7 @@ export function subMakeNeedsAll(item: {
 }) {
   let { selected, varsSubSteps, view } = item;
 
-  let varsInput: interfaces.VarsSub = helper.makeCopy({ selected });
+  let varsInput = helper.makeCopy<interfaces.VarsSub>({ selected });
 
   let needsAll: interfaces.VarsSub['needsAll'] = {};
 

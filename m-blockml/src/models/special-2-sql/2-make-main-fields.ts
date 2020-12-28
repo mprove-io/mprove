@@ -8,16 +8,16 @@ import { barMeasure } from '../../barrels/bar-measure';
 let func = enums.FuncEnum.MakeMainFields;
 
 export function makeMainFields(item: {
-  select: interfaces.VarsSql['select'];
+  selectWithForceDims: interfaces.VarsSql['selectWithForceDims'];
   depMeasures: interfaces.VarsSql['depMeasures'];
   filters: interfaces.VarsSql['filters'];
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { select, filters, depMeasures, model, varsSqlSteps } = item;
+  let { selectWithForceDims, filters, depMeasures, model, varsSqlSteps } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({
-    select,
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+    selectWithForceDims,
     filters,
     depMeasures
   });
@@ -31,7 +31,7 @@ export function makeMainFields(item: {
 
   let i = 0;
 
-  select.forEach(element => {
+  selectWithForceDims.forEach(element => {
     let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 

@@ -13,7 +13,7 @@ export function makeJoinsWhere(item: {
 }) {
   let { joins, varsSqlSteps, model } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({ joins });
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({ joins });
 
   let joinsWhere: interfaces.VarsSql['joinsWhere'] = [];
 

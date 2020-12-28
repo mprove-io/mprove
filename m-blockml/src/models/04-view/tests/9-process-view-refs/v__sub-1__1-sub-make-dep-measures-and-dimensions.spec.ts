@@ -59,14 +59,15 @@ test(testId, async () => {
   ).toEqual({
     func: enums.FuncEnum.SubMakeDepMeasuresAndDimensions,
     varsInput: {
-      select: ['calc1']
+      select: ['calc2']
     },
     varsOutput: {
       depMeasures: {
         mea1: 1
       },
       depDimensions: {
-        dim6: 1
+        dim6: 1,
+        dim8: 1
       }
     }
   });

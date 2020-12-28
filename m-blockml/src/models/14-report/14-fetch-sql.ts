@@ -56,7 +56,7 @@ export async function fetchSql<T extends types.dzType>(item: {
         {
           weekStart: item.weekStart,
           timezone: report.timezone,
-          select: report.select,
+          selectWithForceDims: report.selectWithForceDims,
           sorts: report.sorts,
           limit: report.limit,
           filters: report.combinedFilters,

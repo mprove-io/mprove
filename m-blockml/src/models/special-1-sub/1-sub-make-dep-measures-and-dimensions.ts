@@ -12,7 +12,7 @@ export function subMakeDepMeasuresAndDimensions(item: {
 }) {
   let { select, varsSubSteps, view } = item;
 
-  let varsInput: interfaces.VarsSub = helper.makeCopy({ select });
+  let varsInput = helper.makeCopy<interfaces.VarsSub>({ select });
 
   let depMeasures: interfaces.VarsSub['depMeasures'] = {};
   let depDimensions: interfaces.VarsSub['depDimensions'] = {};
@@ -21,7 +21,6 @@ export function subMakeDepMeasuresAndDimensions(item: {
     // in view fields - calculations and measures can have fieldsDepsAfterSingles
     // we interested in calculation class now
 
-    // TODO: check that we don't need dep dimensions of found measures (test v__1)
     let field = view.fields.find(vField => vField.name === fieldName);
 
     if (field.fieldClass === api.FieldClassEnum.Calculation) {

@@ -5,7 +5,7 @@ import { api } from '../barrels/api';
 export interface GenSqlItem {
   weekStart: api.ProjectWeekStartEnum;
   timezone: string;
-  select: string[];
+  selectWithForceDims: string[];
   sorts: string;
   limit: string;
   filters: FilterBricksDictionary;

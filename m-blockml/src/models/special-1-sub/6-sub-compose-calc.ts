@@ -23,7 +23,7 @@ export function subComposeCalc(item: {
     viewPartName
   } = item;
 
-  let varsInput: interfaces.VarsSub = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSub>({
     mainQuery,
     select,
     processedFields

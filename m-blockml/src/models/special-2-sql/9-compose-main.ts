@@ -38,9 +38,8 @@ export function composeMain(item: {
     model
   } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({
     mainUdfs,
-    udfsDict,
     withParts,
     myWith,
     mainText,

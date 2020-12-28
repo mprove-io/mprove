@@ -14,7 +14,7 @@ export function subComposeMain(item: {
 }) {
   let { myWith, mainText, groupMainBy, varsSubSteps, view } = item;
 
-  let varsInput: interfaces.VarsSub = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSub>({
     myWith,
     mainText,
     groupMainBy

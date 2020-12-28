@@ -13,7 +13,7 @@ export function subMakeWith(item: {
 }) {
   let { needsAll, varsSubSteps, view } = item;
 
-  let varsInput: interfaces.VarsSub = helper.makeCopy({ needsAll });
+  let varsInput = helper.makeCopy<interfaces.VarsSub>({ needsAll });
 
   let connection = view.connection;
   let myWith: interfaces.VarsSub['myWith'] = [];

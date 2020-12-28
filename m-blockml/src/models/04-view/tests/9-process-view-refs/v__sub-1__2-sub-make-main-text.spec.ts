@@ -60,30 +60,34 @@ test(testId, async () => {
   ).toEqual({
     func: enums.FuncEnum.SubMakeMainText,
     varsInput: {
-      select: ['calc1'],
+      select: ['calc2'],
       depMeasures: {
         mea1: 1
       },
       depDimensions: {
-        dim6: 1
+        dim6: 1,
+        dim8: 1
       }
     },
     varsOutput: {
       mainText: [
         "  COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0) as mea1,",
-        '  dim6 as dim6,'
+        '  dim6 as dim6,',
+        '  dim8 as dim8,'
       ],
-      groupMainBy: ['2'],
+      groupMainBy: ['2', '3'],
       selected: {
-        calc1: 1,
+        calc2: 1,
         mea1: 1,
-        dim6: 1
+        dim6: 1,
+        dim8: 1
       },
       processedFields: {
-        calc1: 'mea1 + dim6 + 1',
+        calc2: '(mea1 + dim6 + 1) + dim8 + 2',
         mea1:
           "COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0)",
-        dim6: 'dim6'
+        dim6: 'dim6',
+        dim8: 'dim8'
       },
       extraUdfs: {
         mprove_array_sum: 1

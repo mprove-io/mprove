@@ -3,4 +3,4 @@ reports:
 - title: t1
   model: m1
   select: 
-  - a.dim1
+  - mf.calc3

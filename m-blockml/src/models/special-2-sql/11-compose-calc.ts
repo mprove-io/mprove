@@ -9,7 +9,7 @@ let func = enums.FuncEnum.ComposeCalc;
 
 export function composeCalc(item: {
   mainQueryProcessed: interfaces.VarsSql['mainQueryProcessed'];
-  select: interfaces.VarsSql['select'];
+  selectWithForceDims: interfaces.VarsSql['selectWithForceDims'];
   processedFields: interfaces.VarsSql['processedFields'];
   whereCalc: interfaces.VarsSql['whereCalc'];
   sorts: interfaces.VarsSql['sorts'];
@@ -19,7 +19,7 @@ export function composeCalc(item: {
 }) {
   let {
     mainQueryProcessed,
-    select,
+    selectWithForceDims,
     processedFields,
     whereCalc,
     sorts,
@@ -28,9 +28,9 @@ export function composeCalc(item: {
     model
   } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({
     mainQueryProcessed,
-    select,
+    selectWithForceDims,
     processedFields,
     whereCalc,
     sorts,
@@ -44,11 +44,11 @@ export function composeCalc(item: {
   sql.push(constants.EMPTY_STRING);
   sql.push(`${constants.SELECT}`);
 
-  if (select.length === 0) {
+  if (selectWithForceDims.length === 0) {
     sql.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
-  select.forEach(element => {
+  selectWithForceDims.forEach(element => {
     let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
 
     let asName = r[1];
@@ -128,7 +128,7 @@ export function composeCalc(item: {
         let sorter = r[1];
         let desc = r[2];
 
-        let index = select.findIndex(e => e === sorter);
+        let index = selectWithForceDims.findIndex(e => e === sorter);
         let n = index + 1;
 
         let eString = desc ? `${n} ${constants.DESC}` : `${n}`;

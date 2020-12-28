@@ -59,11 +59,24 @@ test(testId, async () => {
   ).toEqual({
     func: enums.FuncEnum.MakeDepMeasures,
     varsInput: {
-      select: ['a.dim1'],
+      selectWithForceDims: [
+        'mf.calc3',
+        'mf.dim6',
+        'mf.dim8',
+        'b.dim6',
+        'b.dim8'
+      ],
       filters: {}
     },
     varsOutput: {
-      depMeasures: {}
+      depMeasures: {
+        mf: {
+          mea1: 1
+        },
+        b: {
+          mea1: 1
+        }
+      }
     }
   });
 });

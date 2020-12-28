@@ -17,7 +17,7 @@ export function makeContents(item: {
 }) {
   let { joins, filters, needsAll, mainUdfs, varsSqlSteps, model } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({
     joins,
     filters,
     needsAll,

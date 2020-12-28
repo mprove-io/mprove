@@ -63,13 +63,14 @@ test(testId, async () => {
       mainQuery: [
         'WITH',
         '  v1__derived_table AS (',
-        '    SELECT d1, d3, d5',
+        '    SELECT d1, d3, d5, d7',
         '    FROM ',
         '      tab1',
         '  ),',
         '  v1__start AS (',
         '    SELECT',
         '      (d5) + 6 as dim6,',
+        '      (d7) + 8 as dim8,',
         "      (FORMAT_TIMESTAMP('%F %H', mprovetimestampstart(d1) + 1mprovetimestampend)) + 2 as dim2,",
         '      (d3) + 4 as dim4',
         '    FROM v1__derived_table',
@@ -77,17 +78,19 @@ test(testId, async () => {
         '  v1__main AS (',
         '    SELECT',
         "      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0) as mea1,",
-        '      dim6 as dim6',
+        '      dim6 as dim6,',
+        '      dim8 as dim8',
         '    FROM v1__start',
-        '    GROUP BY 2',
+        '    GROUP BY 2, 3',
         '  )'
       ],
-      select: ['calc1'],
+      select: ['calc2'],
       processedFields: {
-        calc1: 'mea1 + dim6 + 1',
+        calc2: '(mea1 + dim6 + 1) + dim8 + 2',
         mea1:
           "COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0)",
-        dim6: 'dim6'
+        dim6: 'dim6',
+        dim8: 'dim8'
       }
     },
     varsOutput: {
@@ -95,13 +98,14 @@ test(testId, async () => {
         '  v2__v1__a AS (',
         '    WITH',
         '      v1__derived_table AS (',
-        '        SELECT d1, d3, d5',
+        '        SELECT d1, d3, d5, d7',
         '        FROM ',
         '          tab1',
         '      ),',
         '      v1__start AS (',
         '        SELECT',
         '          (d5) + 6 as dim6,',
+        '          (d7) + 8 as dim8,',
         "          (FORMAT_TIMESTAMP('%F %H', mprovetimestampstart(d1) + 1mprovetimestampend)) + 2 as dim2,",
         '          (d3) + 4 as dim4',
         '        FROM v1__derived_table',
@@ -109,12 +113,13 @@ test(testId, async () => {
         '      v1__main AS (',
         '        SELECT',
         "          COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(dim4 + mk1 AS STRING), '||'), CAST(dim2 + ms1 AS STRING)))), 0) as mea1,",
-        '          dim6 as dim6',
+        '          dim6 as dim6,',
+        '          dim8 as dim8',
         '        FROM v1__start',
-        '        GROUP BY 2',
+        '        GROUP BY 2, 3',
         '      )',
         '    SELECT',
-        '      mea1 + dim6 + 1 as calc1',
+        '      (mea1 + dim6 + 1) + dim8 + 2 as calc2',
         '    FROM v1__main',
         '  ),'
       ]

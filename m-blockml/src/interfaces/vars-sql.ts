@@ -5,7 +5,7 @@ import { ViewPart } from './view-part';
 export interface VarsSql {
   weekStart?: api.ProjectWeekStartEnum;
   timezone?: string;
-  select?: string[];
+  selectWithForceDims?: string[];
   sorts?: string;
   limit?: string;
   filters?: FilterBricksDictionary;

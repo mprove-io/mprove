@@ -12,7 +12,7 @@ export function findJoinsUsingJoinsDeps(item: {
 }) {
   let { needsDoubles, varsSqlSteps, model } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({ needsDoubles });
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({ needsDoubles });
 
   let joins: interfaces.VarsSql['joins'] = {};
 

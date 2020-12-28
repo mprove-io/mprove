@@ -48,7 +48,7 @@ export function genSqlPro(
   let {
     weekStart,
     timezone,
-    select,
+    selectWithForceDims,
     sorts,
     limit,
     filters,
@@ -59,7 +59,7 @@ export function genSqlPro(
   let varsSqlSteps: interfaces.VarsSqlStep[] = [];
 
   let { depMeasures } = barSql.makeDepMeasures({
-    select,
+    selectWithForceDims,
     filters,
     model,
     varsSqlSteps
@@ -73,7 +73,7 @@ export function genSqlPro(
     processedFields,
     mainFields
   } = barSql.makeMainFields({
-    select,
+    selectWithForceDims,
     filters,
     depMeasures,
     varsSqlSteps,
@@ -157,7 +157,7 @@ export function genSqlPro(
   let { sql } = barSql.composeCalc({
     mainQueryProcessed,
     processedFields,
-    select,
+    selectWithForceDims,
     sorts,
     limit,
     whereCalc,

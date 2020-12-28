@@ -12,7 +12,7 @@ export function makeNeedsAll(item: {
 }) {
   let { needsDoubles, joins, varsSqlSteps, model } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({
     needsDoubles,
     joins
   });

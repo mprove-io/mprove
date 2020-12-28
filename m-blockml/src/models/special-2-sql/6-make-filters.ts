@@ -26,7 +26,7 @@ export function makeFilters(item: {
     model
   } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({
     joins,
     filters,
     weekStart,

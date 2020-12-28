@@ -60,16 +60,18 @@ test(testId, async () => {
     func: enums.FuncEnum.SubMakeNeedsAll,
     varsInput: {
       selected: {
-        calc1: 1,
+        calc2: 1,
         mea1: 1,
-        dim6: 1
+        dim6: 1,
+        dim8: 1
       }
     },
     varsOutput: {
       needsAll: {
-        calc1: 1,
+        calc2: 1,
         mea1: 1,
         dim6: 1,
+        dim8: 1,
         dim2: 1,
         dim4: 1
       }

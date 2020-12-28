@@ -1,7 +1,7 @@
 view: v1
 connection: c1
 derived_table: |
-  SELECT d1, d3, d5
+  SELECT d1, d3, d5, d7
   FROM 
     tab1
 fields:
@@ -28,6 +28,12 @@ fields:
 - dimension: dim6
   sql: ${dim5} + 6  
 
+- dimension: dim7
+  sql: d7
+
+- dimension: dim8
+  sql: ${dim7} + 8 
+
 - measure: mea1
   type: sum_by_key
   sql: ${dim2} + ms1
@@ -35,3 +41,6 @@ fields:
 
 - calculation: calc1
   sql: ${mea1} + ${dim6} + 1 
+
+- calculation: calc2
+  sql: ${calc1} + ${dim8} + 2  

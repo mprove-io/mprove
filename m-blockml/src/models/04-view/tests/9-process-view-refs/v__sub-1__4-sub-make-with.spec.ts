@@ -61,9 +61,10 @@ test(testId, async () => {
     func: enums.FuncEnum.SubMakeWith,
     varsInput: {
       needsAll: {
-        calc1: 1,
+        calc2: 1,
         mea1: 1,
         dim6: 1,
+        dim8: 1,
         dim2: 1,
         dim4: 1
       }
@@ -71,13 +72,14 @@ test(testId, async () => {
     varsOutput: {
       myWith: [
         '  v1__derived_table AS (',
-        '    SELECT d1, d3, d5',
+        '    SELECT d1, d3, d5, d7',
         '    FROM ',
         '      tab1',
         '  ),',
         '  v1__start AS (',
         '    SELECT',
         '      (d5) + 6 as dim6,',
+        '      (d7) + 8 as dim8,',
         "      (FORMAT_TIMESTAMP('%F %H', mprovetimestampstart(d1) + 1mprovetimestampend)) + 2 as dim2,",
         '      (d3) + 4 as dim4',
         '    FROM v1__derived_table',

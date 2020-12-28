@@ -16,7 +16,7 @@ export function subMakeMainText(item: {
 }) {
   let { select, depMeasures, depDimensions, varsSubSteps, view } = item;
 
-  let varsInput: interfaces.VarsSub = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSub>({
     select,
     depMeasures,
     depDimensions

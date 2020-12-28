@@ -14,7 +14,7 @@ export function makeNeedsDoubles(item: {
 }) {
   let { selected, filters, varsSqlSteps, model } = item;
 
-  let varsInput: interfaces.VarsSql = helper.makeCopy({
+  let varsInput = helper.makeCopy<interfaces.VarsSql>({
     selected,
     filters
   });
