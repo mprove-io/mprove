@@ -7,21 +7,21 @@ import { helper } from '../../barrels/helper';
 let func = enums.FuncEnum.MakeDepMeasures;
 
 export function makeDepMeasures(item: {
-  selectWithForceDims: interfaces.VarsSql['selectWithForceDims'];
+  select: interfaces.VarsSql['select'];
   filters: interfaces.VarsSql['filters'];
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { selectWithForceDims, filters, varsSqlSteps, model } = item;
+  let { select, filters, varsSqlSteps, model } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
-    selectWithForceDims,
+    select,
     filters
   });
 
   let depMeasures: interfaces.VarsSql['depMeasures'] = {};
 
-  [...selectWithForceDims, ...Object.keys(filters)].forEach(element => {
+  [...select, ...Object.keys(filters)].forEach(element => {
     let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 

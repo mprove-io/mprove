@@ -29,7 +29,7 @@ export class QueryService {
       model
     } = item;
 
-    let { selectWithForceDims, sorts, timezone, limit, filters } = mconfig;
+    let { select, sorts, timezone, limit, filters } = mconfig;
 
     let newFilters: interfaces.FilterBricksDictionary = {};
 
@@ -45,7 +45,7 @@ export class QueryService {
       {
         weekStart: weekStart,
         timezone: timezone,
-        selectWithForceDims: selectWithForceDims,
+        select: select,
         sorts: sorts,
         limit: limit.toString(),
         filters: newFilters,

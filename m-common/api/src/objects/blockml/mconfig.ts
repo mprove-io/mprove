@@ -24,7 +24,7 @@ export class Mconfig {
   modelId: string;
 
   @IsString({ each: true })
-  selectWithForceDims: string[];
+  select: string[];
 
   @ValidateNested()
   @Type(() => Sorting)
