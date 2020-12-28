@@ -21,16 +21,6 @@ export function processViewRefs(item: {
   item.views
     .filter(x => helper.isDefined(x.derived_table))
     .forEach(x => {
-      let input = x.derived_table;
-      input = api.MyRegex.replaceViewRefs(input, x.name);
-      input = api.MyRegex.removeBracketsOnViewFieldRefs(input);
-
-      x.derivedTableStart = input.split('\n');
-    });
-
-  item.views
-    .filter(x => helper.isDefined(x.derived_table))
-    .forEach(x => {
       x.parts = {};
 
       if (Object.keys(x.asDeps).length > 0) {

@@ -139,6 +139,14 @@ export function checkViewAsDeps(item: {
       });
     }
 
+    if (helper.isDefined(x.derived_table)) {
+      let input = x.derived_table;
+      input = api.MyRegex.replaceViewRefs(input, x.name);
+      input = api.MyRegex.removeBracketsOnViewFieldRefs(input);
+
+      x.derivedTableStart = input.split('\n');
+    }
+
     if (errorsOnStart === item.errors.length) {
       newViews.push(x);
     }
