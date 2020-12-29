@@ -27,7 +27,8 @@ export function makeMainText(item: {
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
     select,
     filters,
-    depMeasures
+    depMeasures,
+    depDimensions
   });
 
   let mainUdfs: interfaces.VarsSql['mainUdfs'] = {};

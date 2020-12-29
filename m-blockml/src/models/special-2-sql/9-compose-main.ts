@@ -20,14 +20,13 @@ export function composeMain(item: {
   joinsWhere: interfaces.VarsSql['joinsWhere'];
   groupMainBy: interfaces.VarsSql['groupMainBy'];
   havingMain: interfaces.VarsSql['havingMain'];
-  udfsDict: api.UdfsDict;
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
+  udfsDict: api.UdfsDict;
 }) {
   let {
     filterFieldsConditions,
     mainUdfs,
-    udfsDict,
     withParts,
     myWith,
     mainText,
@@ -37,10 +36,12 @@ export function composeMain(item: {
     groupMainBy,
     havingMain,
     varsSqlSteps,
-    model
+    model,
+    udfsDict
   } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
+    filterFieldsConditions,
     mainUdfs,
     withParts,
     myWith,

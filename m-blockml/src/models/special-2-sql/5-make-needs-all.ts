@@ -17,7 +17,7 @@ export function makeNeedsAll(item: {
     joins
   });
 
-  let needsAll = helper.makeCopy(item.needsDoubles);
+  let needsAll = helper.makeCopy(needsDoubles);
 
   Object.keys(joins)
     .filter(alias => alias !== model.fromAs)

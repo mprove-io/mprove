@@ -17,14 +17,14 @@ export function makeJoinsWhere(item: {
 
   let joinsWhere: interfaces.VarsSql['joinsWhere'] = [];
 
-  item.model.joinsSorted
-    .filter(asName => asName !== item.model.fromAs)
+  model.joinsSorted
+    .filter(asName => asName !== model.fromAs)
     .forEach(asName => {
-      if (helper.isUndefined(item.joins[asName])) {
+      if (helper.isUndefined(joins[asName])) {
         return;
       }
 
-      let join = item.model.joins.find(j => j.as === asName);
+      let join = model.joins.find(j => j.as === asName);
 
       if (helper.isDefined(join.sqlWhereReal)) {
         // remove ${ } on doubles (no singles exists in _real of sql_where)

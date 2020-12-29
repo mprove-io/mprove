@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 
-let func = enums.FuncEnum.MakeContents;
+let func = enums.FuncEnum.MakeWith;
 
-export function makeContents(item: {
+export function makeWith(item: {
   filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
   joins: interfaces.VarsSql['joins'];
   filters: interfaces.VarsSql['filters'];
@@ -27,6 +27,7 @@ export function makeContents(item: {
   } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
+    filterFieldsConditions,
     joins,
     filters,
     needsAll,

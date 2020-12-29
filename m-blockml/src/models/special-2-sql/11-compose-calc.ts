@@ -31,6 +31,7 @@ export function composeCalc(item: {
   } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
+    filterFieldsConditions,
     mainQueryProcessed,
     select,
     processedFields,

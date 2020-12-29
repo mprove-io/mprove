@@ -116,7 +116,7 @@ export function genSqlPro(
     model
   });
 
-  let { contents, myWith, withParts } = barSql.makeContents({
+  let { contents, myWith, withParts } = barSql.makeWith({
     filterFieldsConditions,
     joins,
     filters,
