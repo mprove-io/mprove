@@ -10,6 +10,7 @@ let toposort = require('toposort');
 let func = enums.FuncEnum.ComposeMain;
 
 export function composeMain(item: {
+  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
   mainUdfs: interfaces.VarsSql['mainUdfs'];
   withParts: interfaces.VarsSql['withParts'];
   myWith: interfaces.VarsSql['myWith'];
@@ -24,6 +25,7 @@ export function composeMain(item: {
   model: interfaces.Model;
 }) {
   let {
+    filterFieldsConditions,
     mainUdfs,
     udfsDict,
     withParts,
@@ -137,7 +139,11 @@ export function composeMain(item: {
 
     if (joinsWhere.length > 0) {
       joinsWhere.forEach(element => {
-        element = applyFilter(item, constants.MF, element);
+        element = applyFilter({
+          filterFieldsConditions: filterFieldsConditions,
+          as: constants.MF,
+          input: element
+        });
 
         mainQuery.push(`    ${element}`);
       });
@@ -151,11 +157,11 @@ export function composeMain(item: {
         model.sqlAlwaysWhereReal
       );
 
-      sqlAlwaysWhereFinal = applyFilter(
-        item,
-        constants.MF,
-        sqlAlwaysWhereFinal
-      );
+      sqlAlwaysWhereFinal = applyFilter({
+        filterFieldsConditions: filterFieldsConditions,
+        as: constants.MF,
+        input: sqlAlwaysWhereFinal
+      });
 
       mainQuery.push(`      (${sqlAlwaysWhereFinal})`);
       mainQuery.push(`     ${constants.AND}`);

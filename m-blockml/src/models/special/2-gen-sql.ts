@@ -105,8 +105,7 @@ export function genSqlPro(
     whereCalc,
     havingMain,
     whereMain,
-    filtersConditions,
-    untouchedFiltersConditions
+    filterFieldsConditions
   } = barSql.makeFilters({
     joins,
     filters,
@@ -118,6 +117,7 @@ export function genSqlPro(
   });
 
   let { contents, myWith, withParts } = barSql.makeContents({
+    filterFieldsConditions,
     joins,
     filters,
     needsAll,
@@ -133,6 +133,7 @@ export function genSqlPro(
   });
 
   let { mainQuery } = barSql.composeMain({
+    filterFieldsConditions,
     mainText,
     contents,
     joinsWhere,
@@ -155,6 +156,7 @@ export function genSqlPro(
   });
 
   let { sql } = barSql.composeCalc({
+    filterFieldsConditions,
     mainQueryProcessed,
     processedFields,
     select,

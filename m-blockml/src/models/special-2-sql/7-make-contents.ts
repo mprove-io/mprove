@@ -8,6 +8,7 @@ import { helper } from '../../barrels/helper';
 let func = enums.FuncEnum.MakeContents;
 
 export function makeContents(item: {
+  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
   joins: interfaces.VarsSql['joins'];
   filters: interfaces.VarsSql['filters'];
   needsAll: interfaces.VarsSql['needsAll'];
@@ -15,7 +16,15 @@ export function makeContents(item: {
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
 }) {
-  let { joins, filters, needsAll, mainUdfs, varsSqlSteps, model } = item;
+  let {
+    filterFieldsConditions,
+    joins,
+    filters,
+    needsAll,
+    mainUdfs,
+    varsSqlSteps,
+    model
+  } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
     joins,
@@ -155,7 +164,12 @@ export function makeContents(item: {
       }
     } else {
       let derivedSqlStartText = join.view.derivedTableStart.join('\n');
-      derivedSqlStartText = applyFilter(item, asName, derivedSqlStartText);
+
+      derivedSqlStartText = applyFilter({
+        filterFieldsConditions: filterFieldsConditions,
+        as: asName,
+        input: derivedSqlStartText
+      });
 
       let derivedSqlStartTextArray = derivedSqlStartText.split('\n');
 

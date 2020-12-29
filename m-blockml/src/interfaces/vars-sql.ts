@@ -22,8 +22,7 @@ export interface VarsSql {
   whereMain?: FilterBricksDictionary;
   havingMain?: FilterBricksDictionary;
   whereCalc?: FilterBricksDictionary;
-  filtersConditions?: FilterBricksDictionary;
-  untouchedFiltersConditions?: FilterBricksDictionary;
+  filterFieldsConditions?: FilterBricksDictionary;
   contents?: string[];
   myWith?: string[];
   withParts?: { [viewPartName: string]: ViewPart };

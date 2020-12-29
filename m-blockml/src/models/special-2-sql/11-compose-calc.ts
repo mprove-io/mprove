@@ -8,6 +8,7 @@ import { helper } from '../../barrels/helper';
 let func = enums.FuncEnum.ComposeCalc;
 
 export function composeCalc(item: {
+  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
   mainQueryProcessed: interfaces.VarsSql['mainQueryProcessed'];
   select: interfaces.VarsSql['select'];
   processedFields: interfaces.VarsSql['processedFields'];
@@ -18,6 +19,7 @@ export function composeCalc(item: {
   model: interfaces.Model;
 }) {
   let {
+    filterFieldsConditions,
     mainQueryProcessed,
     select,
     processedFields,
@@ -95,11 +97,11 @@ export function composeCalc(item: {
         sqlAlwaysWhereCalcFinal
       );
 
-      sqlAlwaysWhereCalcFinal = applyFilter(
-        item,
-        constants.MF,
-        sqlAlwaysWhereCalcFinal
-      );
+      sqlAlwaysWhereCalcFinal = applyFilter({
+        filterFieldsConditions: filterFieldsConditions,
+        as: constants.MF,
+        input: sqlAlwaysWhereCalcFinal
+      });
 
       sql.push(`  (${sqlAlwaysWhereCalcFinal})`);
       sql.push(` ${constants.AND}`);

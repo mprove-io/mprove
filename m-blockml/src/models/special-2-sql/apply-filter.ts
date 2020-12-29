@@ -1,11 +1,14 @@
 import { interfaces } from '../../barrels/interfaces';
 import { api } from '../../barrels/api';
+import { helper } from '../../barrels/helper';
 
-export function applyFilter(
-  item: interfaces.VarsSql,
-  as: string,
-  input: string
-) {
+export function applyFilter(item: {
+  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
+  as: string;
+  input: string;
+}) {
+  let { filterFieldsConditions, as, input } = item;
+
   let reg = api.MyRegex.APPLY_FILTER();
   let r;
 
@@ -17,10 +20,8 @@ export function applyFilter(
 
     let filterName = `${as}.${f}`;
 
-    let conditions = item.filtersConditions[filterName]
-      ? item.filtersConditions[filterName]
-      : item.untouchedFiltersConditions[filterName]
-      ? item.untouchedFiltersConditions[filterName]
+    let conditions = helper.isDefined(filterFieldsConditions[filterName])
+      ? filterFieldsConditions[filterName]
       : [];
 
     let conditionsString =
