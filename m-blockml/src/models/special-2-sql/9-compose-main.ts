@@ -118,10 +118,8 @@ export function composeMain(item: {
   mainQuery = mainQuery.concat(mainText.map(s => `    ${s}`));
 
   // chop
-  mainQuery[mainQuery.length - 1] = mainQuery[mainQuery.length - 1].slice(
-    0,
-    -1
-  );
+  let lastIndex = mainQuery.length - 1;
+  mainQuery[lastIndex] = mainQuery[lastIndex].slice(0, -1);
 
   mainQuery = mainQuery.concat(contents.map(s => `    ${s}`));
 

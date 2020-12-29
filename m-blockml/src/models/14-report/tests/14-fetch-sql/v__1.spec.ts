@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/quotes */
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
@@ -74,7 +75,6 @@ test(testId, async () => {
     '        (d7) + 8 as dim8',
     '      FROM v1__a',
     '      ) as a',
-    '    ',
     '    LEFT OUTER JOIN (',
     '      SELECT',
     '        (d5) + 6 as dim6,',
@@ -84,7 +84,6 @@ test(testId, async () => {
     '      FROM v1__b',
     '      ) as b',
     '    ON a.dim8 = b.dim8',
-    '    ',
     '    GROUP BY 3, 4, 5, 6',
     '  )',
     '',

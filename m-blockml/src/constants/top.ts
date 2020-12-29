@@ -44,6 +44,7 @@ export const VIEW_START_SUFFIX = '__start';
 export const VIEW_MAIN_SUFFIX = '__main';
 
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
+export const UNKNOWN_JOIN_TYPE = 'unknown_join_type';
 
 export const MODEL_MAIN = 'model_main';
 
