@@ -54,9 +54,7 @@ export function subComposeCalc(item: {
     sub.push(`    ${selectString}`);
   });
 
-  // chop
-  let lastIndex = sub.length - 1;
-  sub[lastIndex] = sub[lastIndex].slice(0, -1);
+  helper.chopLastElement(sub);
 
   sub.push(`  ${constants.FROM} ${view.name}${constants.VIEW_MAIN_SUFFIX}`);
   sub.push('),');

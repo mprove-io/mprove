@@ -33,11 +33,8 @@ export function subComposeMain(item: {
 
   mainQuery = mainQuery.concat(mainText.map(s => `    ${s}`));
 
-  // chop
-  let lastIndex = mainQuery.length - 1;
-  mainQuery[lastIndex] = mainQuery[lastIndex].slice(0, -1);
+  helper.chopLastElement(mainQuery);
 
-  // mainQuery = mainQuery.concat(contents.map(s => `    ${s}`));
   mainQuery.push(
     `    ${constants.FROM} ${view.name}${constants.VIEW_START_SUFFIX}`
   );

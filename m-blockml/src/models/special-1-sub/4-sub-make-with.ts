@@ -59,9 +59,7 @@ export function subMakeWith(item: {
     myWith.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
-  // chop
-  let lastIndex = myWith.length - 1;
-  myWith[lastIndex] = myWith[lastIndex].slice(0, -1);
+  helper.chopLastElement(myWith);
 
   myWith.push(`    ${constants.FROM} ${table}`);
 

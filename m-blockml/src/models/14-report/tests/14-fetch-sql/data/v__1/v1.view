@@ -2,8 +2,7 @@ view: v1
 connection: c1
 derived_table: |
   SELECT d1, d3, d5, d7
-  FROM 
-    tab1
+  FROM tab1
 fields:
 - dimension: dim1
   sql: d1

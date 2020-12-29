@@ -1,3 +1,4 @@
+export * from './chop-last-element';
 export * from './is-defined';
 export * from './is-undefined';
 export * from './log';

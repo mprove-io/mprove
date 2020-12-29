@@ -76,9 +76,7 @@ export function composeCalc(item: {
     sql.push(selectString);
   });
 
-  // chop
-  let lastIndex = sql.length - 1;
-  sql[lastIndex] = sql[lastIndex].slice(0, -1);
+  helper.chopLastElement(sql);
 
   sql.push(`${constants.FROM} ${constants.MODEL_MAIN}`);
   sql.push(constants.EMPTY_STRING);

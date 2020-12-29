@@ -116,12 +116,13 @@ export function genSqlPro(
     model
   });
 
-  let { contents, myWith, withParts } = barSql.makeWith({
-    filterFieldsConditions,
+  let { myWith, withParts } = barSql.makeWith({
+    mainUdfs,
+    mainText,
     joins,
     filters,
     needsAll,
-    mainUdfs,
+    filterFieldsConditions,
     varsSqlSteps,
     model
   });
@@ -133,17 +134,15 @@ export function genSqlPro(
   });
 
   let { mainQuery } = barSql.composeMain({
-    filterFieldsConditions,
-    mainText,
-    contents,
+    mainUdfs,
+    udfsDict,
+    myWith,
     joinsWhere,
     whereMain,
     havingMain,
     groupMainBy,
-    mainUdfs,
-    udfsDict,
-    myWith,
     withParts,
+    filterFieldsConditions,
     varsSqlSteps,
     model
   });
@@ -156,13 +155,13 @@ export function genSqlPro(
   });
 
   let { sql } = barSql.composeCalc({
-    filterFieldsConditions,
     mainQueryProcessed,
     processedFields,
     select,
     sorts,
     limit,
     whereCalc,
+    filterFieldsConditions,
     varsSqlSteps,
     model
   });

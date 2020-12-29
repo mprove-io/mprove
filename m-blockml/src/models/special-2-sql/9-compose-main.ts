@@ -14,8 +14,6 @@ export function composeMain(item: {
   mainUdfs: interfaces.VarsSql['mainUdfs'];
   withParts: interfaces.VarsSql['withParts'];
   myWith: interfaces.VarsSql['myWith'];
-  mainText: interfaces.VarsSql['mainText'];
-  contents: interfaces.VarsSql['contents'];
   whereMain: interfaces.VarsSql['whereMain'];
   joinsWhere: interfaces.VarsSql['joinsWhere'];
   groupMainBy: interfaces.VarsSql['groupMainBy'];
@@ -29,8 +27,6 @@ export function composeMain(item: {
     mainUdfs,
     withParts,
     myWith,
-    mainText,
-    contents,
     whereMain,
     joinsWhere,
     groupMainBy,
@@ -45,8 +41,6 @@ export function composeMain(item: {
     mainUdfs,
     withParts,
     myWith,
-    mainText,
-    contents,
     whereMain,
     joinsWhere,
     groupMainBy,
@@ -101,27 +95,10 @@ export function composeMain(item: {
       text = text.concat(withParts[viewPartName].sub);
     });
 
-    // text = text.slice(0, -1);
-
     mainQuery = mainQuery.concat(text);
   }
 
   mainQuery = mainQuery.concat(myWith);
-
-  mainQuery.push(`  ${constants.MODEL_MAIN} AS (`);
-  mainQuery.push(`    ${constants.SELECT}`);
-
-  if (mainText.length === 0) {
-    mainQuery.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
-  }
-
-  mainQuery = mainQuery.concat(mainText.map(s => `    ${s}`));
-
-  // chop
-  let lastIndex = mainQuery.length - 1;
-  mainQuery[lastIndex] = mainQuery[lastIndex].slice(0, -1);
-
-  mainQuery = mainQuery.concat(contents.map(s => `    ${s}`));
 
   let whereMainLength = 0;
 
@@ -202,9 +179,9 @@ export function composeMain(item: {
   mainQuery.push('  )');
 
   // TODO: check apply_filter 'undefined as undefined'
-  mainQuery = mainQuery.map(x =>
-    x.includes('undefined as undefined') ? '--' + x : x
-  );
+  // mainQuery = mainQuery.map(x =>
+  //   x.includes('undefined as undefined') ? '--' + x : x
+  // );
 
   let varsOutput: interfaces.VarsSql = { mainQuery };
 

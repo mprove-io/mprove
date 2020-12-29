@@ -9,6 +9,7 @@ let func = enums.FuncEnum.MakeWith;
 
 export function makeWith(item: {
   filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
+  mainText: interfaces.VarsSql['mainText'];
   joins: interfaces.VarsSql['joins'];
   filters: interfaces.VarsSql['filters'];
   needsAll: interfaces.VarsSql['needsAll'];
@@ -18,6 +19,7 @@ export function makeWith(item: {
 }) {
   let {
     filterFieldsConditions,
+    mainText,
     joins,
     filters,
     needsAll,
@@ -28,6 +30,7 @@ export function makeWith(item: {
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
     filterFieldsConditions,
+    mainText,
     joins,
     filters,
     needsAll,
@@ -35,8 +38,9 @@ export function makeWith(item: {
   });
 
   let withParts: interfaces.VarsSql['withParts'] = {};
-  let contents: interfaces.VarsSql['contents'] = [];
   let myWith: interfaces.VarsSql['myWith'] = [];
+
+  let contents: string[] = [];
 
   // prepare filters for ___timestamp
   let filt: { [s: string]: { [f: string]: number } } = {};
@@ -81,7 +85,7 @@ export function makeWith(item: {
 
         let derivedSqlStartTextArray = derivedSqlStartText.split('\n');
 
-        myWith.push(`  ${table} AS (`);
+        myWith.push(`  ${table}${constants.DERIVED_TABLE_SUFFIX} AS (`);
         myWith = myWith.concat(derivedSqlStartTextArray.map(s => `    ${s}`));
         myWith.push('  ),');
 
@@ -97,31 +101,36 @@ export function makeWith(item: {
       let flats: { [s: string]: number } = {};
 
       if (asName === model.fromAs) {
-        contents.push(`${constants.FROM} (`);
+        contents.push(`${constants.FROM} ${table} as ${asName}`);
       } else {
         let joinTypeString =
           join.type === enums.JoinTypeEnum.Inner
-            ? 'INNER JOIN ('
+            ? 'INNER JOIN'
             : join.type === enums.JoinTypeEnum.Cross
-            ? 'CROSS JOIN ('
+            ? 'CROSS JOIN'
             : join.type === enums.JoinTypeEnum.Full
-            ? 'FULL JOIN ('
+            ? 'FULL JOIN'
             : join.type === enums.JoinTypeEnum.FullOuter
-            ? 'FULL OUTER JOIN ('
+            ? 'FULL OUTER JOIN'
             : join.type === enums.JoinTypeEnum.Left
-            ? 'LEFT JOIN ('
+            ? 'LEFT JOIN'
             : join.type === enums.JoinTypeEnum.LeftOuter
-            ? 'LEFT OUTER JOIN ('
+            ? 'LEFT OUTER JOIN'
             : join.type === enums.JoinTypeEnum.Right
-            ? 'RIGHT JOIN ('
+            ? 'RIGHT JOIN'
             : join.type === enums.JoinTypeEnum.RightOuter
-            ? 'RIGHT OUTER JOIN ('
+            ? 'RIGHT OUTER JOIN'
             : constants.UNKNOWN_JOIN_TYPE;
 
-        contents.push(joinTypeString);
+        let sqlOnFinal = api.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
+
+        contents.push(
+          `${joinTypeString} ${table} as ${asName} ${constants.ON} ${sqlOnFinal}`
+        );
       }
 
-      contents.push(`  ${constants.SELECT}`);
+      myWith.push(`  ${table} AS (`);
+      myWith.push(`    ${constants.SELECT}`);
 
       let i = 0;
 
@@ -142,16 +151,14 @@ export function makeWith(item: {
               return;
             }
             once[sqlTimestampName] = 1;
-            contents.push(`    ${sqlTimestampSelect} as ${sqlTimestampName},`);
+            myWith.push(`      ${sqlTimestampSelect} as ${sqlTimestampName},`);
             i++;
           }
         });
       }
-      // end of check
 
       if (needsAll[asName]) {
         // $as ne 'mf' (by design)
-
         Object.keys(needsAll[asName]).forEach(fieldName => {
           let field = join.view.fields.find(f => f.name === fieldName);
 
@@ -161,36 +168,41 @@ export function makeWith(item: {
             }
             // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
             let sqlSelect = field.sqlReal;
-            contents.push(`    ${sqlSelect} as ${fieldName},`);
+            myWith.push(`      ${sqlSelect} as ${fieldName},`);
             i++;
           }
         });
       }
 
       if (i === 0) {
-        contents.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+        myWith.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
       }
 
-      // chop
-      let lastIndex = contents.length - 1;
-      contents[lastIndex] = contents[lastIndex].slice(0, -1);
+      helper.chopLastElement(myWith);
 
-      contents.push(`  ${constants.FROM} ${table}`);
+      myWith.push(
+        `    ${constants.FROM} ${table}${constants.DERIVED_TABLE_SUFFIX}`
+      );
 
-      Object.keys(flats).forEach(flat => {
-        contents.push(`    ${flat}`);
-      });
+      Object.keys(flats).forEach(flat => myWith.push(`    ${flat}`));
 
-      contents.push(`  ) as ${asName}`);
-
-      if (asName !== model.fromAs) {
-        let sqlOnFinal = api.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
-
-        contents.push(`${constants.ON} ${sqlOnFinal}`);
-      }
+      myWith.push('  ),');
     });
 
-  let varsOutput: interfaces.VarsSql = { contents, myWith, withParts };
+  myWith.push(`  ${constants.MODEL_MAIN} AS (`);
+  myWith.push(`    ${constants.SELECT}`);
+
+  if (mainText.length === 0) {
+    myWith.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+  }
+
+  myWith = myWith.concat(mainText.map(s => `    ${s}`));
+
+  helper.chopLastElement(myWith);
+
+  myWith = myWith.concat(contents.map(s => `    ${s}`));
+
+  let varsOutput: interfaces.VarsSql = { myWith, withParts };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 
