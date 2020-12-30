@@ -26,7 +26,7 @@ export function subMakeWith(item: {
       table = view.table;
     }
   } else {
-    table = view.name + constants.DERIVED_TABLE_SUFFIX;
+    table = `${constants.DERIVED}__${view.name}`;
 
     myWith.push(`  ${table} AS (`);
     myWith = myWith.concat(view.derivedTableStart.map(s => `    ${s}`));
@@ -35,7 +35,7 @@ export function subMakeWith(item: {
 
   let flats: { [s: string]: number } = {};
 
-  myWith.push(`  ${view.name}${constants.START_SUFFIX} AS (`);
+  myWith.push(`  ${constants.VIEW}__${view.name} AS (`);
   myWith.push(`    ${constants.SELECT}`);
 
   let i = 0;

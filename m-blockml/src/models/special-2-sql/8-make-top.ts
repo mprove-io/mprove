@@ -11,17 +11,27 @@ let func = enums.FuncEnum.MakeTop;
 export function makeTop(item: {
   mainUdfs: interfaces.VarsSql['mainUdfs'];
   withParts: interfaces.VarsSql['withParts'];
-  myWith: interfaces.VarsSql['myWith'];
+  withDerivedTables: interfaces.VarsSql['withDerivedTables'];
+  withViews: interfaces.VarsSql['withViews'];
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
   udfsDict: api.UdfsDict;
 }) {
-  let { mainUdfs, withParts, myWith, varsSqlSteps, model, udfsDict } = item;
+  let {
+    mainUdfs,
+    withParts,
+    withDerivedTables,
+    withViews,
+    varsSqlSteps,
+    model,
+    udfsDict
+  } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
     mainUdfs,
     withParts,
-    myWith
+    withDerivedTables,
+    withViews
   });
 
   let top: interfaces.VarsSql['top'] = [];
@@ -75,7 +85,8 @@ export function makeTop(item: {
     top = top.concat(text);
   }
 
-  top = top.concat(myWith);
+  top = top.concat(withDerivedTables);
+  top = top.concat(withViews);
 
   let varsOutput: interfaces.VarsSql = { top };
 

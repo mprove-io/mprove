@@ -116,7 +116,7 @@ export function genSqlPro(
     model
   });
 
-  let { myWith, withParts } = barSql.makeWith({
+  let { withParts, withDerivedTables, withViews } = barSql.makeWith({
     mainUdfs,
     mainText,
     joins,
@@ -130,7 +130,8 @@ export function genSqlPro(
   let { top } = barSql.makeTop({
     mainUdfs,
     withParts,
-    myWith,
+    withDerivedTables,
+    withViews,
     varsSqlSteps,
     model,
     udfsDict

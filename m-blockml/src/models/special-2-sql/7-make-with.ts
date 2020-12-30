@@ -38,7 +38,8 @@ export function makeWith(item: {
   });
 
   let withParts: interfaces.VarsSql['withParts'] = {};
-  let myWith: interfaces.VarsSql['myWith'] = [];
+  let withDerivedTables: interfaces.VarsSql['withDerivedTables'] = [];
+  let withViews: interfaces.VarsSql['withViews'] = [];
 
   let contents: string[] = [];
 
@@ -62,7 +63,7 @@ export function makeWith(item: {
     .forEach(asName => {
       let join = model.joins.find(j => j.as === asName);
 
-      let viewStart = `${join.view.name}__${asName}${constants.START_SUFFIX}`;
+      let viewTable = `${constants.VIEW}__${join.view.name}__${asName}`;
 
       let sourceTable;
 
@@ -75,35 +76,33 @@ export function makeWith(item: {
           sourceTable = join.view.table;
         }
       } else {
-        sourceTable = `${join.view.name}__${asName}${constants.DERIVED_TABLE_SUFFIX}`;
-
-        let derivedSqlStartText = join.view.derivedTableStart.join('\n');
-
-        derivedSqlStartText = applyFilter({
-          filterFieldsConditions: filterFieldsConditions,
-          as: asName,
-          input: derivedSqlStartText
-        });
-
-        let derivedSqlStartTextArray = derivedSqlStartText.split('\n');
-
-        myWith.push(`  ${sourceTable} AS (`);
-        myWith = myWith.concat(derivedSqlStartTextArray.map(s => `    ${s}`));
-        myWith.push('  ),');
-
-        withParts = Object.assign(withParts, join.view.parts);
+        sourceTable = `${constants.DERIVED}__${join.view.name}__${asName}`;
 
         if (helper.isDefined(join.view.udfs)) {
           join.view.udfs.forEach(udf => {
             mainUdfs[udf] = 1;
           });
         }
+
+        withParts = Object.assign(withParts, join.view.parts);
+
+        let derivedSqlStartText = applyFilter({
+          filterFieldsConditions: filterFieldsConditions,
+          as: asName,
+          input: join.view.derivedTableStart.join('\n')
+        });
+
+        withDerivedTables.push(`  ${sourceTable} AS (`);
+        withDerivedTables = withDerivedTables.concat(
+          derivedSqlStartText.split('\n').map(s => `    ${s}`)
+        );
+        withDerivedTables.push('  ),');
       }
 
       let flats: { [s: string]: number } = {};
 
       if (asName === model.fromAs) {
-        contents.push(`${constants.FROM} ${viewStart} as ${asName}`);
+        contents.push(`${constants.FROM} ${viewTable} as ${asName}`);
       } else {
         let joinTypeString =
           join.type === enums.JoinTypeEnum.Inner
@@ -127,12 +126,12 @@ export function makeWith(item: {
         let sqlOnFinal = api.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
 
         contents.push(
-          `${joinTypeString} ${viewStart} as ${asName} ${constants.ON} ${sqlOnFinal}`
+          `${joinTypeString} ${viewTable} as ${asName} ${constants.ON} ${sqlOnFinal}`
         );
       }
 
-      myWith.push(`  ${viewStart} AS (`);
-      myWith.push(`    ${constants.SELECT}`);
+      withViews.push(`  ${viewTable} AS (`);
+      withViews.push(`    ${constants.SELECT}`);
 
       let i = 0;
 
@@ -153,7 +152,9 @@ export function makeWith(item: {
               return;
             }
             once[sqlTimestampName] = 1;
-            myWith.push(`      ${sqlTimestampSelect} as ${sqlTimestampName},`);
+            withViews.push(
+              `      ${sqlTimestampSelect} as ${sqlTimestampName},`
+            );
             i++;
           }
         });
@@ -170,39 +171,43 @@ export function makeWith(item: {
             }
             // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
             let sqlSelect = field.sqlReal;
-            myWith.push(`      ${sqlSelect} as ${fieldName},`);
+            withViews.push(`      ${sqlSelect} as ${fieldName},`);
             i++;
           }
         });
       }
 
       if (i === 0) {
-        myWith.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
+        withViews.push(`      1 as ${constants.NO_FIELDS_SELECTED},`);
       }
 
-      helper.chopLastElement(myWith);
+      helper.chopLastElement(withViews);
 
-      myWith.push(`    ${constants.FROM} ${sourceTable}`);
+      withViews.push(`    ${constants.FROM} ${sourceTable}`);
 
-      Object.keys(flats).forEach(flat => myWith.push(`    ${flat}`));
+      Object.keys(flats).forEach(flat => withViews.push(`    ${flat}`));
 
-      myWith.push('  ),');
+      withViews.push('  ),');
     });
 
-  myWith.push(`  ${constants.MAIN} AS (`);
-  myWith.push(`    ${constants.SELECT}`);
+  withViews.push(`  ${constants.MAIN} AS (`);
+  withViews.push(`    ${constants.SELECT}`);
 
   if (mainText.length === 0) {
-    myWith.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
+    withViews.push(`    1 as ${constants.NO_FIELDS_SELECTED},`);
   }
 
-  myWith = myWith.concat(mainText.map(s => `    ${s}`));
+  withViews = withViews.concat(mainText.map(s => `    ${s}`));
 
-  helper.chopLastElement(myWith);
+  helper.chopLastElement(withViews);
 
-  myWith = myWith.concat(contents.map(s => `    ${s}`));
+  withViews = withViews.concat(contents.map(s => `    ${s}`));
 
-  let varsOutput: interfaces.VarsSql = { myWith, withParts };
+  let varsOutput: interfaces.VarsSql = {
+    withParts,
+    withDerivedTables,
+    withViews
+  };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });
 

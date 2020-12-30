@@ -10,6 +10,7 @@ export interface VarsSql {
   limit?: string;
   filters?: FilterBricksDictionary;
   filtersFractions?: { [s: string]: api.Fraction[] };
+
   depMeasures?: { [as: string]: { [fieldName: string]: number } };
   depDimensions?: { [as: string]: { [fieldName: string]: number } };
   mainText?: string[];
@@ -19,12 +20,15 @@ export interface VarsSql {
   needsDoubles?: { [as: string]: { [fieldName: string]: number } };
   joins?: { [as: string]: number };
   needsAll?: { [as: string]: { [fieldName: string]: number } };
+
   whereMain?: FilterBricksDictionary;
   havingMain?: FilterBricksDictionary;
   whereCalc?: FilterBricksDictionary;
   filterFieldsConditions?: FilterBricksDictionary;
-  myWith?: string[];
+
   withParts?: { [viewPartName: string]: ViewPart };
+  withDerivedTables?: string[];
+  withViews?: string[];
   top?: string[];
   mainQuery?: string[];
   mainQueryProcessed?: string[];

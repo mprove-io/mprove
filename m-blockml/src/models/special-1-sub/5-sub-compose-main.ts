@@ -24,7 +24,7 @@ export function subComposeMain(item: {
 
   mainQuery.push(`${constants.WITH}`);
   mainQuery = mainQuery.concat(myWith);
-  mainQuery.push(`  ${view.name}${constants.VIEW_MAIN_SUFFIX} AS (`);
+  mainQuery.push(`  ${constants.MAIN}__${view.name} AS (`);
   mainQuery.push(`    ${constants.SELECT}`);
 
   if (mainText.length === 0) {
@@ -35,7 +35,7 @@ export function subComposeMain(item: {
 
   helper.chopLastElement(mainQuery);
 
-  mainQuery.push(`    ${constants.FROM} ${view.name}${constants.START_SUFFIX}`);
+  mainQuery.push(`    ${constants.FROM} ${constants.VIEW}__${view.name}`);
 
   if (groupMainBy.length > 0) {
     let groupMainByString = groupMainBy.join(', ');

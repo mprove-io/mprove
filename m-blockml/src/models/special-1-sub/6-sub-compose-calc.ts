@@ -56,7 +56,7 @@ export function subComposeCalc(item: {
 
   helper.chopLastElement(sub);
 
-  sub.push(`  ${constants.FROM} ${view.name}${constants.VIEW_MAIN_SUFFIX}`);
+  sub.push(`  ${constants.FROM} ${constants.MAIN}__${view.name}`);
   sub.push('),');
 
   sub = sub.map((s: string) => `  ${s}`);
