@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/quotes */
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';

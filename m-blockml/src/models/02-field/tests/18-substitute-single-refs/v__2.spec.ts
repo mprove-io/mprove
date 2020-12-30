@@ -52,11 +52,9 @@ test(testId, async () => {
   expect(entViews[0].fields[0].sqlReal).toBe('d1');
 
   expect(entViews[0].fields[1].sqlReal).toBe(
-    // eslint-disable-next-line @typescript-eslint/quotes
     "TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')"
   );
   expect(entViews[0].fields[2].sqlReal).toBe(
-    // eslint-disable-next-line @typescript-eslint/quotes
     "(TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')) + d2"
   );
 

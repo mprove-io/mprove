@@ -50,7 +50,7 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/prefer-function-type': 'error',
     '@typescript-eslint/prefer-namespace-keyword': 'error',
-    '@typescript-eslint/quotes': ['error', 'single'],
+    // '@typescript-eslint/quotes': ['error', 'single'],
     '@typescript-eslint/unified-signatures': 'error',
     'arrow-body-style': 'error',
     'comma-dangle': 'error',
