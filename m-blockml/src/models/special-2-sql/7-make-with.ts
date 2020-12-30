@@ -62,18 +62,20 @@ export function makeWith(item: {
     .forEach(asName => {
       let join = model.joins.find(j => j.as === asName);
 
-      let table;
+      let viewStart = `${join.view.name}__${asName}${constants.START_SUFFIX}`;
+
+      let sourceTable;
 
       if (helper.isDefined(join.view.table)) {
         if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
-          table = '`' + join.view.table + '`';
+          sourceTable = '`' + join.view.table + '`';
         } else if (
           model.connection.type === api.ConnectionTypeEnum.PostgreSQL
         ) {
-          table = join.view.table;
+          sourceTable = join.view.table;
         }
       } else {
-        table = `${join.view.name}__${asName}`;
+        sourceTable = `${join.view.name}__${asName}${constants.DERIVED_TABLE_SUFFIX}`;
 
         let derivedSqlStartText = join.view.derivedTableStart.join('\n');
 
@@ -85,7 +87,7 @@ export function makeWith(item: {
 
         let derivedSqlStartTextArray = derivedSqlStartText.split('\n');
 
-        myWith.push(`  ${table}${constants.DERIVED_TABLE_SUFFIX} AS (`);
+        myWith.push(`  ${sourceTable} AS (`);
         myWith = myWith.concat(derivedSqlStartTextArray.map(s => `    ${s}`));
         myWith.push('  ),');
 
@@ -101,7 +103,7 @@ export function makeWith(item: {
       let flats: { [s: string]: number } = {};
 
       if (asName === model.fromAs) {
-        contents.push(`${constants.FROM} ${table} as ${asName}`);
+        contents.push(`${constants.FROM} ${viewStart} as ${asName}`);
       } else {
         let joinTypeString =
           join.type === enums.JoinTypeEnum.Inner
@@ -125,11 +127,11 @@ export function makeWith(item: {
         let sqlOnFinal = api.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
 
         contents.push(
-          `${joinTypeString} ${table} as ${asName} ${constants.ON} ${sqlOnFinal}`
+          `${joinTypeString} ${viewStart} as ${asName} ${constants.ON} ${sqlOnFinal}`
         );
       }
 
-      myWith.push(`  ${table} AS (`);
+      myWith.push(`  ${viewStart} AS (`);
       myWith.push(`    ${constants.SELECT}`);
 
       let i = 0;
@@ -180,16 +182,14 @@ export function makeWith(item: {
 
       helper.chopLastElement(myWith);
 
-      myWith.push(
-        `    ${constants.FROM} ${table}${constants.DERIVED_TABLE_SUFFIX}`
-      );
+      myWith.push(`    ${constants.FROM} ${sourceTable}`);
 
       Object.keys(flats).forEach(flat => myWith.push(`    ${flat}`));
 
       myWith.push('  ),');
     });
 
-  myWith.push(`  ${constants.MODEL_MAIN} AS (`);
+  myWith.push(`  ${constants.MAIN} AS (`);
   myWith.push(`    ${constants.SELECT}`);
 
   if (mainText.length === 0) {

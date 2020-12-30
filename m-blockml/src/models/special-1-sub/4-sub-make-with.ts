@@ -35,7 +35,7 @@ export function subMakeWith(item: {
 
   let flats: { [s: string]: number } = {};
 
-  myWith.push(`  ${view.name}${constants.VIEW_START_SUFFIX} AS (`);
+  myWith.push(`  ${view.name}${constants.START_SUFFIX} AS (`);
   myWith.push(`    ${constants.SELECT}`);
 
   let i = 0;

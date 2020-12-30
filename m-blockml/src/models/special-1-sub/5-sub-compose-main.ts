@@ -35,9 +35,7 @@ export function subComposeMain(item: {
 
   helper.chopLastElement(mainQuery);
 
-  mainQuery.push(
-    `    ${constants.FROM} ${view.name}${constants.VIEW_START_SUFFIX}`
-  );
+  mainQuery.push(`    ${constants.FROM} ${view.name}${constants.START_SUFFIX}`);
 
   if (groupMainBy.length > 0) {
     let groupMainByString = groupMainBy.join(', ');

@@ -4,3 +4,4 @@ reports:
   model: m1
   select: 
   - mf.calc3
+  - c.dim1

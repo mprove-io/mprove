@@ -9,6 +9,10 @@ joins:
   as: b
   sql_on: ${a.dim8} = ${b.dim8}
 
+- join_view: v2
+  as: c
+  sql_on: ${a.dim8} = ${c.dim1}
+
 fields:
 - dimension: dim1
   sql: d1

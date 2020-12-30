@@ -44,7 +44,6 @@ export function composeCalc(item: {
 
   sql = sql.concat(mainQueryProcessed);
 
-  sql.push(constants.EMPTY_STRING);
   sql.push(`${constants.SELECT}`);
 
   if (select.length === 0) {
@@ -71,15 +70,14 @@ export function composeCalc(item: {
         ? `  ${asName}_${fieldName},`
         : field.fieldClass === api.FieldClassEnum.Calculation
         ? `  ${processedFields[element]} as ${asName}_${fieldName},`
-        : constants.EMPTY_STRING;
+        : constants.UNKNOWN_FIELD_CLASS;
 
     sql.push(selectString);
   });
 
   helper.chopLastElement(sql);
 
-  sql.push(`${constants.FROM} ${constants.MODEL_MAIN}`);
-  sql.push(constants.EMPTY_STRING);
+  sql.push(`${constants.FROM} ${constants.MAIN}`);
 
   if (
     Object.keys(whereCalc).length > 0 ||
@@ -114,7 +112,6 @@ export function composeCalc(item: {
     });
 
     sql.pop();
-    sql.push(constants.EMPTY_STRING);
   }
 
   if (sorts) {

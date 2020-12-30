@@ -38,15 +38,16 @@ export const LIMIT = 'LIMIT';
 
 export const AND = 'AND';
 export const EMPTY_STRING = '';
+export const UNKNOWN_FIELD_CLASS = 'unknown_field_class';
 
 export const DERIVED_TABLE_SUFFIX = '__derived_table';
-export const VIEW_START_SUFFIX = '__start';
+export const START_SUFFIX = '__start';
+
 export const VIEW_MAIN_SUFFIX = '__main';
+export const MAIN = 'main';
 
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 export const UNKNOWN_JOIN_TYPE = 'unknown_join_type';
-
-export const MODEL_MAIN = 'model_main';
 
 export const MF = 'mf';
 

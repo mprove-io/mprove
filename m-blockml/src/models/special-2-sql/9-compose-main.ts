@@ -44,12 +44,10 @@ export function composeMain(item: {
   let joinsWhere: string[] = [];
 
   model.joinsSorted
-    .filter(asName => asName !== model.fromAs)
+    .filter(
+      asName => asName !== model.fromAs && helper.isDefined(joins[asName])
+    )
     .forEach(asName => {
-      if (helper.isUndefined(joins[asName])) {
-        return;
-      }
-
       let join = model.joins.find(j => j.as === asName);
 
       if (helper.isDefined(join.sqlWhereReal)) {
@@ -59,8 +57,7 @@ export function composeMain(item: {
           join.sqlWhereReal
         );
 
-        joinsWhere.push(`  (${sqlWhereFinal})`);
-        joinsWhere.push(` ${constants.AND}`);
+        joinsWhere.push(`${sqlWhereFinal}`);
       }
     });
 
@@ -77,17 +74,16 @@ export function composeMain(item: {
   ) {
     mainQuery.push(`    ${constants.WHERE}`);
 
-    if (joinsWhere.length > 0) {
-      joinsWhere.forEach(element => {
-        element = applyFilter({
-          filterFieldsConditions: filterFieldsConditions,
-          as: constants.MF,
-          input: element
-        });
-
-        mainQuery.push(`    ${element}`);
+    joinsWhere.forEach(element => {
+      element = applyFilter({
+        filterFieldsConditions: filterFieldsConditions,
+        as: constants.MF,
+        input: element
       });
-    }
+
+      mainQuery.push(`      (${element})`);
+      mainQuery.push(`     ${constants.AND}`);
+    });
 
     if (helper.isDefined(model.sqlAlwaysWhereReal)) {
       // remove ${ } on doubles (no singles exists in _real of sql_always_where)
@@ -115,14 +111,11 @@ export function composeMain(item: {
     });
 
     mainQuery.pop();
-    mainQuery.push(constants.EMPTY_STRING);
   }
 
   if (groupMainBy.length > 0) {
     let groupMainByString = groupMainBy.join(', ');
-
     mainQuery.push(`    ${constants.GROUP_BY} ${groupMainByString}`);
-    mainQuery.push(constants.EMPTY_STRING);
   }
 
   if (Object.keys(havingMain).length > 0) {
@@ -134,12 +127,9 @@ export function composeMain(item: {
         mainQuery.push(`     ${constants.AND}`);
       }
     });
-
     mainQuery.pop();
-    mainQuery.push(constants.EMPTY_STRING);
   }
 
-  mainQuery.pop();
   mainQuery.push('  )');
 
   // TODO: check apply_filter 'undefined as undefined'
