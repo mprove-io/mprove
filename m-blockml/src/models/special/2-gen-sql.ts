@@ -127,21 +127,21 @@ export function genSqlPro(
     model
   });
 
-  let { joinsWhere } = barSql.makeJoinsWhere({
-    joins,
+  let { top } = barSql.makeTop({
+    mainUdfs,
+    withParts,
+    myWith,
     varsSqlSteps,
-    model
+    model,
+    udfsDict
   });
 
   let { mainQuery } = barSql.composeMain({
-    mainUdfs,
-    udfsDict,
-    myWith,
-    joinsWhere,
+    top,
+    joins,
     whereMain,
     havingMain,
     groupMainBy,
-    withParts,
     filterFieldsConditions,
     varsSqlSteps,
     model

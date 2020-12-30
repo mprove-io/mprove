@@ -5,100 +5,64 @@ import { applyFilter } from './apply-filter';
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 
-let toposort = require('toposort');
-
 let func = enums.FuncEnum.ComposeMain;
 
 export function composeMain(item: {
-  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
-  mainUdfs: interfaces.VarsSql['mainUdfs'];
-  withParts: interfaces.VarsSql['withParts'];
-  myWith: interfaces.VarsSql['myWith'];
+  top: interfaces.VarsSql['top'];
+  joins: interfaces.VarsSql['joins'];
   whereMain: interfaces.VarsSql['whereMain'];
-  joinsWhere: interfaces.VarsSql['joinsWhere'];
   groupMainBy: interfaces.VarsSql['groupMainBy'];
   havingMain: interfaces.VarsSql['havingMain'];
+  filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];
   varsSqlSteps: interfaces.Report['varsSqlSteps'];
   model: interfaces.Model;
-  udfsDict: api.UdfsDict;
 }) {
   let {
-    filterFieldsConditions,
-    mainUdfs,
-    withParts,
-    myWith,
+    top,
+    joins,
     whereMain,
-    joinsWhere,
     groupMainBy,
     havingMain,
+    filterFieldsConditions,
     varsSqlSteps,
-    model,
-    udfsDict
+    model
   } = item;
 
   let varsInput = helper.makeCopy<interfaces.VarsSql>({
-    filterFieldsConditions,
-    mainUdfs,
-    withParts,
-    myWith,
+    top,
+    joins,
     whereMain,
-    joinsWhere,
     groupMainBy,
-    havingMain
+    havingMain,
+    filterFieldsConditions
   });
 
   let mainQuery: interfaces.VarsSql['mainQuery'] = [];
 
-  if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
-    mainQuery.push(`${constants.STANDARD_SQL}`);
-  }
+  mainQuery = mainQuery.concat(top);
 
-  // adding model level udfs to main udfs
-  if (helper.isDefined(model.udfs)) {
-    model.udfs.forEach(udf => {
-      mainUdfs[udf] = 1;
-    });
-  }
+  let joinsWhere: string[] = [];
 
-  // extracting main udfs
-  Object.keys(mainUdfs).forEach(udf => {
-    mainQuery.push(udfsDict[udf]);
-  });
+  model.joinsSorted
+    .filter(asName => asName !== model.fromAs)
+    .forEach(asName => {
+      if (helper.isUndefined(joins[asName])) {
+        return;
+      }
 
-  mainQuery.push(`${constants.WITH}`);
+      let join = model.joins.find(j => j.as === asName);
 
-  if (Object.keys(withParts).length > 0) {
-    let partNamesSorted: string[] = [];
+      if (helper.isDefined(join.sqlWhereReal)) {
+        // remove ${ } on doubles (no singles exists in _real of sql_where)
+        // ${a.city} + ${b.country}   >>>   a.city + b.country
+        let sqlWhereFinal = api.MyRegex.removeBracketsOnDoubles(
+          join.sqlWhereReal
+        );
 
-    let graph = [];
-    let zeroDepsViewPartNames = [];
-
-    Object.keys(withParts).forEach(viewPartName => {
-      Object.keys(withParts[viewPartName].deps).forEach(dep => {
-        graph.push([viewPartName, dep]);
-      });
-    });
-
-    partNamesSorted = toposort(graph).reverse();
-
-    Object.keys(withParts).forEach(viewPartName => {
-      if (partNamesSorted.indexOf(viewPartName) < 0) {
-        zeroDepsViewPartNames.push(viewPartName);
+        joinsWhere.push(`  (${sqlWhereFinal})`);
+        joinsWhere.push(` ${constants.AND}`);
       }
     });
-
-    partNamesSorted = [...zeroDepsViewPartNames, ...partNamesSorted];
-
-    let text: string[] = [];
-
-    partNamesSorted.forEach(viewPartName => {
-      text = text.concat(withParts[viewPartName].sub);
-    });
-
-    mainQuery = mainQuery.concat(text);
-  }
-
-  mainQuery = mainQuery.concat(myWith);
 
   let whereMainLength = 0;
 

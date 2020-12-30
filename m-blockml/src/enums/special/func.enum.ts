@@ -142,7 +142,7 @@ export enum FuncEnum {
   MakeNeedsAll = 'special-2-sql/5-make-needs-all',
   MakeFilters = 'special-2-sql/6-make-filters',
   MakeWith = 'special-2-sql/7-make-with',
-  MakeJoinsWhere = 'special-2-sql/8-make-joins-where',
+  MakeTop = 'special-2-sql/8-make-top',
   ComposeMain = 'special-2-sql/9-compose-main',
   ProcessTimezone = 'special-2-sql/10-process-timezone',
   ComposeCalc = 'special-2-sql/11-compose-calc'

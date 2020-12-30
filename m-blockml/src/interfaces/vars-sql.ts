@@ -25,7 +25,7 @@ export interface VarsSql {
   filterFieldsConditions?: FilterBricksDictionary;
   myWith?: string[];
   withParts?: { [viewPartName: string]: ViewPart };
-  joinsWhere?: string[];
+  top?: string[];
   mainQuery?: string[];
   mainQueryProcessed?: string[];
   sql?: string[];
