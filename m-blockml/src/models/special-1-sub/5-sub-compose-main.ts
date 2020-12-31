@@ -41,10 +41,8 @@ export function subComposeMain(item: {
     let groupMainByString = groupMainBy.join(', ');
 
     mainQuery.push(`    ${constants.GROUP_BY} ${groupMainByString}`);
-    mainQuery.push('');
   }
 
-  mainQuery.pop();
   mainQuery.push('  )');
 
   let varsOutput: interfaces.VarsSub = { mainQuery };

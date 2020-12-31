@@ -4,12 +4,8 @@ derived_table: |
   SELECT 
     ${e.dim4}, 
     ${f.dim4}
-  FROM 
-    ${v4 AS e}
-  LEFT JOIN
-    ${v4 AS f}
-  ON
-    ${e.dim4} = ${f.dim4}    
+  FROM ${v4 AS e}
+  LEFT JOIN ${v4 AS f} ON ${e.dim4} = ${f.dim4}    
 fields:
 - dimension: dim5
   sql: d5

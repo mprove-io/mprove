@@ -1,12 +1,11 @@
 view: v2
 connection: c1
 derived_table: |
-  SELECT ${a.calc2} as ac2
-  FROM 
-    ${v1 AS a}
+  SELECT ${a.dim2} as d1
+  FROM ${v1 AS a}
 fields:
 - dimension: dim1
-  sql: ac2
+  sql: d1
 
 
 
