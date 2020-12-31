@@ -1,14 +1,14 @@
-import { api } from '../../../../barrels/api';
-import { enums } from '../../../../barrels/enums';
-import { interfaces } from '../../../../barrels/interfaces';
-import { helper } from '../../../../barrels/helper';
-import { prepareTest } from '../../../../functions/prepare-test';
-import { BmError } from '../../../../models/bm-error';
+import { api } from '../../../../../../barrels/api';
+import { enums } from '../../../../../../barrels/enums';
+import { interfaces } from '../../../../../../barrels/interfaces';
+import { helper } from '../../../../../../barrels/helper';
+import { prepareTest } from '../../../../../../functions/prepare-test';
+import { BmError } from '../../../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'v__no-fields-selected';
+let testId = 'groups/all/v__no-fields-selected';
 
 test(testId, async () => {
   let errors: BmError[];

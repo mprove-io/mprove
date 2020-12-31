@@ -18,24 +18,23 @@ export function subMakeDepMeasuresAndDimensions(item: {
   let depDimensions: interfaces.VarsSub['depDimensions'] = {};
 
   select.forEach(fieldName => {
-    // in view fields - calculations and measures can have fieldsDepsAfterSingles
-    // we interested in calculation class now
-
     let field = view.fields.find(vField => vField.name === fieldName);
 
-    if (field.fieldClass === api.FieldClassEnum.Calculation) {
-      Object.keys(view.fieldsDepsAfterSingles[fieldName]).forEach(depName => {
-        let depViewField = view.fields.find(vField => vField.name === depName);
-
-        if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
-          depMeasures[depName] = 1;
-        }
-
-        if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
-          depDimensions[depName] = 1;
-        }
-      });
+    if (field.fieldClass !== api.FieldClassEnum.Calculation) {
+      return;
     }
+
+    Object.keys(view.fieldsDepsAfterSingles[fieldName]).forEach(depName => {
+      let depViewField = view.fields.find(vField => vField.name === depName);
+
+      if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
+        depMeasures[depName] = 1;
+      }
+
+      if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
+        depDimensions[depName] = 1;
+      }
+    });
   });
 
   let varsOutput: interfaces.VarsSub = { depMeasures, depDimensions };
