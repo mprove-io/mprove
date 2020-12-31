@@ -1,0 +1,6 @@
+dashboard: d1
+reports:  
+- title: t1
+  model: m1
+  select: 
+  - a.calc1
