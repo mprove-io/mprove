@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/view_refs_view/v__view_dim_refs_view_dim';
+let testId = 'groups/view-refs-view/v__view-calc-refs-view-dim';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -66,7 +66,7 @@ test(testId, async () => {
     '    GROUP BY 1',
     '  )',
     'SELECT',
-    '  a_dim2',
+    '  a_dim2 + 1 as a_calc1',
     'FROM main',
     'LIMIT 500'
   ]);
