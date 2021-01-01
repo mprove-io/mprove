@@ -49,7 +49,7 @@ export function makeTop(item: {
 
   // extracting main udfs
   Object.keys(mainUdfs).forEach(udf => {
-    top.push(udfsDict[udf]);
+    top = top.concat(udfsDict[udf].split('\n'));
   });
 
   top.push(`${constants.WITH}`);

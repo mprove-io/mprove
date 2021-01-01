@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/view-refs-view/v__view-calc-refs-view-calc';
+let testId = 'groups/model-refs-model/v__model-dim-refs-model-dim';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -49,8 +49,6 @@ test(testId, async () => {
 
   expect(entDashboards[0].reports[0].sql).toEqual([
     '#standardSQL',
-    'CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS',
-    "  ((SELECT SUM(CAST(REGEXP_EXTRACT(val, '\\\\|\\\\|(\\\\-?\\\\d+(?:.\\\\d+)?)$') AS FLOAT64)) FROM UNNEST(ar) as val));",
     'WITH',
     '  derived__v1__a AS (',
     '    SELECT d1',
@@ -58,17 +56,17 @@ test(testId, async () => {
     '  ),',
     '  view__v1__a AS (',
     '    SELECT',
-    "      (FORMAT_TIMESTAMP('%F %H', (d1) + 1)) + 2 as dim2,",
-    '      (d3) + 4 as dim4',
+    '      1 as no_fields_selected',
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',
     '    SELECT',
-    "      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(a.dim4 + mk1 AS STRING), '||'), CAST(a.dim2 + ms1 AS STRING)))), 0) as a_mea1",
+    "      (FORMAT_TIMESTAMP('%F %H', (d1) + 1)) + 2 as mf_dim2",
     '    FROM view__v1__a as a',
+    '    GROUP BY 1',
     '  )',
     'SELECT',
-    '  (a_mea1 + 1) + 2 as a_calc2',
+    '  mf_dim2',
     'FROM main',
     'LIMIT 500'
   ]);

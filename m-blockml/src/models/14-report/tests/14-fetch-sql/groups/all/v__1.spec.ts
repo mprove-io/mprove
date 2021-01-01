@@ -49,7 +49,8 @@ test(testId, async () => {
 
   expect(entDashboards[0].reports[0].sql).toEqual([
     '#standardSQL',
-    "CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS\n  ((SELECT SUM(CAST(REGEXP_EXTRACT(val, '\\\\|\\\\|(\\\\-?\\\\d+(?:.\\\\d+)?)$') AS FLOAT64)) FROM UNNEST(ar) as val));",
+    'CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS',
+    "  ((SELECT SUM(CAST(REGEXP_EXTRACT(val, '\\\\|\\\\|(\\\\-?\\\\d+(?:.\\\\d+)?)$') AS FLOAT64)) FROM UNNEST(ar) as val));",
     'WITH',
     '  derived__v1__a AS (',
     '    SELECT d1, d3, d5, d7',

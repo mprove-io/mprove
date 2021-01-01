@@ -12,6 +12,7 @@ export const MPROVE_TIMESTAMP_START = 'mprovetimestampstart';
 export const MPROVE_TIMESTAMP_END = 'mprovetimestampend';
 export const TIMESTAMP = 'timestamp';
 
+export const CREATE_TEMPORARY_FUNCTION = 'CREATE TEMPORARY FUNCTION';
 export const UDF_MPROVE_ARRAY_SUM = 'mprove_array_sum';
 export const UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC =
   'mprove_approx_percentile_distinct_disc';
