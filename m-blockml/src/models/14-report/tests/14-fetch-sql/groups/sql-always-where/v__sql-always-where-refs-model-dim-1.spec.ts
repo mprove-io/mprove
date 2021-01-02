@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/sql-where/v__sql-where-refs-model-dim';
+let testId = 'groups/sql-always-where/v__sql-always-where-refs-model-dim-1';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -54,31 +54,21 @@ test(testId, async () => {
     '    SELECT d1, d3, d5',
     '    FROM tab1',
     '  ),',
-    '  derived__v1__b AS (',
-    '    SELECT d1, d3, d5',
-    '    FROM tab1',
-    '  ),',
     '  view__v1__a AS (',
     '    SELECT',
     '      1 as no_fields_selected',
     '    FROM derived__v1__a',
     '  ),',
-    '  view__v1__b AS (',
-    '    SELECT',
-    '      d5 as dim5',
-    '    FROM derived__v1__b',
-    '  ),',
     '  main AS (',
     '    SELECT',
-    '      b.dim5 as b_dim5',
+    '      d5 as mf_dim5',
     '    FROM view__v1__a as a',
-    '    LEFT OUTER JOIN view__v1__b as b ON 1 = 1',
     '    WHERE',
     "      (((FORMAT_TIMESTAMP('%F %H', (d1) + 1)) + 2) + ((d3) + 4) > 100)",
     '    GROUP BY 1',
     '  )',
     'SELECT',
-    '  b_dim5',
+    '  mf_dim5',
     'FROM main',
     'LIMIT 500'
   ]);
