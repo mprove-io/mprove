@@ -5,7 +5,7 @@ reports:
   select: 
   - a.dim1
   default_filters:
-    a.dim2:
+    a.dim3:
     - '-foo-'
     - '%foo%'
     - 'foo%'

@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/filter-expressions/v__filter-expressions-string';
+let testId = 'groups/filter-expressions/v__filter-expressions-number';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -65,19 +65,23 @@ test(testId, async () => {
     '      a.dim1 as a_dim1',
     '    FROM view__v1__a as a',
     '    WHERE',
-    "      ((a.dim3 = 'foo'",
-    "      OR a.dim3 LIKE '%foo%'",
-    "      OR a.dim3 LIKE 'foo%'",
-    "      OR a.dim3 LIKE '%foo'",
+    '      ((a.dim3 > 100',
+    '      OR a.dim3 >= 100',
+    '      OR a.dim3 < 100',
+    '      OR a.dim3 <= 100',
+    '      OR ((a.dim3 >= 100) AND (a.dim3 <= 200))',
+    '      OR ((a.dim3 >= 100) AND (a.dim3 < 200))',
+    '      OR ((a.dim3 > 100) AND (a.dim3 <= 200))',
+    '      OR ((a.dim3 > 100) AND (a.dim3 < 200))',
     '      OR (a.dim3 IS NULL)',
-    '      OR (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
-    "      OR 'any' = 'any')",
-    "      AND NOT a.dim3 = 'foo'",
-    "      AND NOT a.dim3 LIKE '%foo%'",
-    "      AND NOT a.dim3 LIKE 'foo%'",
-    "      AND NOT a.dim3 LIKE '%foo'",
-    '      AND NOT (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
-    '      AND NOT (a.dim3 IS NULL))',
+    "      OR 'any' = 'any'",
+    '      OR a.dim3 IN (105,110,115,120))',
+    '      AND NOT ((a.dim3 >= 100) AND (a.dim3 <= 200))',
+    '      AND NOT ((a.dim3 >= 100) AND (a.dim3 < 200))',
+    '      AND NOT ((a.dim3 > 100) AND (a.dim3 <= 200))',
+    '      AND NOT ((a.dim3 > 100) AND (a.dim3 < 200))',
+    '      AND NOT (a.dim3 IS NULL)',
+    '      AND NOT (a.dim3 IN (105,110,115,120)))',
     '    GROUP BY 1',
     '  )',
     'SELECT',

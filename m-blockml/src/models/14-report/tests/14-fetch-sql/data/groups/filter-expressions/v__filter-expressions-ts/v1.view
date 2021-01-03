@@ -10,9 +10,10 @@ fields:
 - dimension: dim2
   sql: d2 
 
-- dimension: dim3
-  result: string
-  sql: ${dim2} + 3  
+- time: time1
+  sql: ${dim2} + 1  
+  timeframes:
+  - time  
 
 
 

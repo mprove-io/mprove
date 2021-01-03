@@ -8,11 +8,11 @@ fields:
   sql: d1
 
 - dimension: dim2
-  sql: d2 
+  sql: d2
 
 - dimension: dim3
-  result: string
-  sql: ${dim2} + 3  
+  result: number
+  sql: ${dim2} + 3 
 
 
 

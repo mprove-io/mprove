@@ -8,7 +8,8 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/filter-expressions/v__filter-expressions-string';
+let testId =
+  'groups/filter-expressions/v__filter-expressions-day-of-week-index';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -57,7 +58,10 @@ test(testId, async () => {
     '  view__v1__a AS (',
     '    SELECT',
     '      d1 as dim1,',
-    '      (d2) + 3 as dim3',
+    `      CASE
+      WHEN EXTRACT(DAYOFWEEK FROM (d2) + 1) = 1 THEN 7
+      ELSE EXTRACT(DAYOFWEEK FROM (d2) + 1) - 1
+    END as time1___day_of_week_index`,
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',
@@ -65,19 +69,9 @@ test(testId, async () => {
     '      a.dim1 as a_dim1',
     '    FROM view__v1__a as a',
     '    WHERE',
-    "      ((a.dim3 = 'foo'",
-    "      OR a.dim3 LIKE '%foo%'",
-    "      OR a.dim3 LIKE 'foo%'",
-    "      OR a.dim3 LIKE '%foo'",
-    '      OR (a.dim3 IS NULL)',
-    '      OR (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
-    "      OR 'any' = 'any')",
-    "      AND NOT a.dim3 = 'foo'",
-    "      AND NOT a.dim3 LIKE '%foo%'",
-    "      AND NOT a.dim3 LIKE 'foo%'",
-    "      AND NOT a.dim3 LIKE '%foo'",
-    '      AND NOT (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
-    '      AND NOT (a.dim3 IS NULL))',
+    "      (('any' = 'any'",
+    '      OR a.time1___day_of_week_index IN (1,2,3))',
+    '      AND NOT (a.time1___day_of_week_index IN (4,5,6,7)))',
     '    GROUP BY 1',
     '  )',
     'SELECT',

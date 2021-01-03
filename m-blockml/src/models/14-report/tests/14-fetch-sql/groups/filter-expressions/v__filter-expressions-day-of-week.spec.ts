@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/filter-expressions/v__filter-expressions-string';
+let testId = 'groups/filter-expressions/v__filter-expressions-day-of-week';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -57,7 +57,7 @@ test(testId, async () => {
     '  view__v1__a AS (',
     '    SELECT',
     '      d1 as dim1,',
-    '      (d2) + 3 as dim3',
+    "      FORMAT_TIMESTAMP('%A', (d2) + 1) as time1___day_of_week",
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',
@@ -65,19 +65,21 @@ test(testId, async () => {
     '      a.dim1 as a_dim1',
     '    FROM view__v1__a as a',
     '    WHERE',
-    "      ((a.dim3 = 'foo'",
-    "      OR a.dim3 LIKE '%foo%'",
-    "      OR a.dim3 LIKE 'foo%'",
-    "      OR a.dim3 LIKE '%foo'",
-    '      OR (a.dim3 IS NULL)',
-    '      OR (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
+    "      ((UPPER(a.time1___day_of_week) = UPPER('Monday')",
+    "      OR UPPER(a.time1___day_of_week) = UPPER('Tuesday')",
+    "      OR UPPER(a.time1___day_of_week) = UPPER('Wednesday')",
+    "      OR UPPER(a.time1___day_of_week) = UPPER('Thursday')",
+    "      OR UPPER(a.time1___day_of_week) = UPPER('Friday')",
+    "      OR UPPER(a.time1___day_of_week) = UPPER('Saturday')",
+    "      OR UPPER(a.time1___day_of_week) = UPPER('Sunday')",
     "      OR 'any' = 'any')",
-    "      AND NOT a.dim3 = 'foo'",
-    "      AND NOT a.dim3 LIKE '%foo%'",
-    "      AND NOT a.dim3 LIKE 'foo%'",
-    "      AND NOT a.dim3 LIKE '%foo'",
-    '      AND NOT (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
-    '      AND NOT (a.dim3 IS NULL))',
+    "      AND NOT UPPER(a.time1___day_of_week) = UPPER('Monday')",
+    "      AND NOT UPPER(a.time1___day_of_week) = UPPER('Tuesday')",
+    "      AND NOT UPPER(a.time1___day_of_week) = UPPER('Wednesday')",
+    "      AND NOT UPPER(a.time1___day_of_week) = UPPER('Thursday')",
+    "      AND NOT UPPER(a.time1___day_of_week) = UPPER('Friday')",
+    "      AND NOT UPPER(a.time1___day_of_week) = UPPER('Saturday')",
+    "      AND NOT UPPER(a.time1___day_of_week) = UPPER('Sunday'))",
     '    GROUP BY 1',
     '  )',
     'SELECT',

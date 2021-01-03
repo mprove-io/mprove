@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/filter-expressions/v__filter-expressions-string';
+let testId = 'groups/filter-expressions/v__filter-expressions-yesno';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -51,13 +51,20 @@ test(testId, async () => {
     '#standardSQL',
     'WITH',
     '  derived__v1__a AS (',
-    '    SELECT d1, d2',
+    '    SELECT d1, d2, d3',
     '    FROM tab1',
     '  ),',
     '  view__v1__a AS (',
     '    SELECT',
     '      d1 as dim1,',
-    '      (d2) + 3 as dim3',
+    `      CASE
+      WHEN ((d2) + 1) IS NOT NULL THEN 'Yes'
+      ELSE 'No'
+    END as time1___yesno_has_value,`,
+    `      CASE
+      WHEN ((d3) + 4) IS TRUE THEN 'Yes'
+      ELSE 'No'
+    END as dim4`,
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',
@@ -65,19 +72,13 @@ test(testId, async () => {
     '      a.dim1 as a_dim1',
     '    FROM view__v1__a as a',
     '    WHERE',
-    "      ((a.dim3 = 'foo'",
-    "      OR a.dim3 LIKE '%foo%'",
-    "      OR a.dim3 LIKE 'foo%'",
-    "      OR a.dim3 LIKE '%foo'",
-    '      OR (a.dim3 IS NULL)',
-    '      OR (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
+    "      (a.time1___yesno_has_value = 'Yes'",
+    "      OR a.time1___yesno_has_value = 'No'",
     "      OR 'any' = 'any')",
-    "      AND NOT a.dim3 = 'foo'",
-    "      AND NOT a.dim3 LIKE '%foo%'",
-    "      AND NOT a.dim3 LIKE 'foo%'",
-    "      AND NOT a.dim3 LIKE '%foo'",
-    '      AND NOT (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
-    '      AND NOT (a.dim3 IS NULL))',
+    '     AND',
+    "      (a.dim4 = 'Yes'",
+    "      OR a.dim4 = 'No'",
+    "      OR 'any' = 'any')",
     '    GROUP BY 1',
     '  )',
     'SELECT',

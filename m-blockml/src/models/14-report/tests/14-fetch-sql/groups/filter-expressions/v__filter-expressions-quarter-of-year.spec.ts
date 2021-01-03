@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/filter-expressions/v__filter-expressions-string';
+let testId = 'groups/filter-expressions/v__filter-expressions-quarter-of-year';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -57,7 +57,7 @@ test(testId, async () => {
     '  view__v1__a AS (',
     '    SELECT',
     '      d1 as dim1,',
-    '      (d2) + 3 as dim3',
+    "      CONCAT(CAST('Q' AS STRING), CAST(EXTRACT(QUARTER FROM (d2) + 1) AS STRING)) as time1___quarter_of_year",
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',
@@ -65,19 +65,15 @@ test(testId, async () => {
     '      a.dim1 as a_dim1',
     '    FROM view__v1__a as a',
     '    WHERE',
-    "      ((a.dim3 = 'foo'",
-    "      OR a.dim3 LIKE '%foo%'",
-    "      OR a.dim3 LIKE 'foo%'",
-    "      OR a.dim3 LIKE '%foo'",
-    '      OR (a.dim3 IS NULL)',
-    '      OR (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
+    "      ((UPPER(a.time1___quarter_of_year) = UPPER('q1')",
+    "      OR UPPER(a.time1___quarter_of_year) = UPPER('q2')",
+    "      OR UPPER(a.time1___quarter_of_year) = UPPER('q3')",
+    "      OR UPPER(a.time1___quarter_of_year) = UPPER('q4')",
     "      OR 'any' = 'any')",
-    "      AND NOT a.dim3 = 'foo'",
-    "      AND NOT a.dim3 LIKE '%foo%'",
-    "      AND NOT a.dim3 LIKE 'foo%'",
-    "      AND NOT a.dim3 LIKE '%foo'",
-    '      AND NOT (a.dim3 IS NULL OR LENGTH(CAST(a.dim3 AS STRING)) = 0)',
-    '      AND NOT (a.dim3 IS NULL))',
+    "      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q1')",
+    "      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q2')",
+    "      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q3')",
+    "      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q4'))",
     '    GROUP BY 1',
     '  )',
     'SELECT',
