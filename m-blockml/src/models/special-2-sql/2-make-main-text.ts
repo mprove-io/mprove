@@ -35,6 +35,7 @@ export function makeMainText(item: {
   let mainText: interfaces.VarsSql['mainText'] = [];
   let groupMainBy: interfaces.VarsSql['groupMainBy'] = [];
   let selected: interfaces.VarsSql['selected'] = {};
+  let filtered: interfaces.VarsSql['filtered'] = {};
   let processedFields: interfaces.VarsSql['processedFields'] = {};
 
   let i = 0;
@@ -77,13 +78,17 @@ export function makeMainText(item: {
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName).fieldClass;
 
+    filtered[element] = { asName: asName, fieldName: fieldName };
+
     if (fieldClass === api.FieldClassEnum.Measure) {
       selected[element] = { asName: asName, fieldName: fieldName };
     }
   });
 
-  Object.keys(selected).forEach(element => {
-    let { asName, fieldName } = selected[element];
+  let els = Object.assign({}, selected, filtered);
+
+  Object.keys(els).forEach(element => {
+    let { asName, fieldName } = els[element];
 
     let field =
       asName === constants.MF
@@ -265,7 +270,10 @@ export function makeMainText(item: {
       }
     }
 
-    if (field.fieldClass !== api.FieldClassEnum.Calculation) {
+    if (
+      helper.isDefined(selected[element]) &&
+      field.fieldClass !== api.FieldClassEnum.Calculation
+    ) {
       mainText.push(`  ${sqlSelect} as ${asName}_${fieldName},`);
     }
 

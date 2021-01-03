@@ -16,6 +16,7 @@ export interface VarsSql {
   mainText?: string[];
   groupMainBy?: string[];
   selected?: { [element: string]: { asName: string; fieldName: string } };
+  filtered?: { [element: string]: { asName: string; fieldName: string } };
   processedFields?: { [element: string]: string };
   needsDoubles?: { [as: string]: { [fieldName: string]: number } };
   joins?: { [as: string]: number };
