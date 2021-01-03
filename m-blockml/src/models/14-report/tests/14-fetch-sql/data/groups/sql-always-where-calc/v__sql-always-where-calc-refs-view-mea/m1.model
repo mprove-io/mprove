@@ -1,0 +1,10 @@
+model: m1
+connection: c1
+sql_always_where_calc: ${a.mea1} > 100
+joins:
+- from_view: v1
+  as: a
+ 
+
+
+
