@@ -56,7 +56,6 @@ export function yamlToObjects(item: {
       // remove comments
 
       let sReg = api.MyRegex.COMMENTS_G();
-      // TODO: check replace comments with tabs
       s = s.replace(sReg, '\t');
       // s = s.replace(sReg, '');
 

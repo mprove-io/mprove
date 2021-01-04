@@ -132,11 +132,6 @@ export function composeMain(item: {
 
   mainQuery.push('  )');
 
-  // TODO: check apply_filter 'undefined as undefined'
-  // mainQuery = mainQuery.map(x =>
-  //   x.includes('undefined as undefined') ? '--' + x : x
-  // );
-
   let varsOutput: interfaces.VarsSql = { mainQuery };
 
   varsSqlSteps.push({ func, varsInput, varsOutput });

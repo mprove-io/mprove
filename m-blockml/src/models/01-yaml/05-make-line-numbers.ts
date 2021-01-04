@@ -73,7 +73,6 @@ export function processLineNumbersRecursive(item: {
       return;
     }
 
-    // TODO: check logic LINE_NUMBERS
     if (oldPar !== newPar) {
       item.hash[newPar] = item.hash[oldPar];
 

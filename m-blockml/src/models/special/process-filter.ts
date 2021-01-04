@@ -714,7 +714,6 @@ export function processFilter(item: {
           if (way.match(/^last$/) && complete && plusCurrent) {
             close = barTimestamp.makeTimestampCloseLastCompletePlusCurrent({
               unit: unit,
-              integer: Number(integerStr),
               currentYearTs: currentYearTs,
               currentQuarterTs: currentQuarterTs,
               currentMonthTs: currentMonthTs,

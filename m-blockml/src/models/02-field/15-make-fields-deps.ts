@@ -158,7 +158,6 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
 
       if (modelWrongChars.length > 0) {
         modelWrongCharsString = [...new Set(modelWrongChars)].join(', '); // unique
-        // TODO: test for WRONG_CHARS_IN_MODEL_FIELDS_REFS - caller
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_CHARS_IN_MODEL_FIELDS_REFS,

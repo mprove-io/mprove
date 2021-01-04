@@ -4,8 +4,6 @@ import { enums } from '../../barrels/enums';
 export function makeTimestampCloseLastCompletePlusCurrent(item: {
   connection: api.ProjectConnection;
   unit: string;
-  // TODO: check integer is not used
-  integer: number;
   currentYearTs: string;
   currentQuarterTs: string;
   currentMonthTs: string;
