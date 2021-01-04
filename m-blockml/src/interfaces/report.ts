@@ -4,7 +4,7 @@ import { ChartAxis } from './chart/chart-axis';
 import { ChartOptions } from './chart/chart-options';
 import { ChartTile } from './chart/chart-tile';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
-import { VarsSqlStep } from './vars-sql-element';
+import { VarsSqlStep } from './vars-sql-step';
 
 export interface Report {
   title: string;
@@ -52,14 +52,6 @@ export interface Report {
   default_filters_line_num: number;
 
   //
-
-  selectHash: {
-    [element: string]: {
-      [forceDim: string]: number;
-    };
-  };
-
-  selectWithForceDims: string[];
 
   sortingsAry: {
     fieldId: string;

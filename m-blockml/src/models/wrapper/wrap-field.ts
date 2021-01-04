@@ -14,16 +14,6 @@ export function wrapField(item: {
 
   let fieldHidden = helper.toBoolean(field.hidden);
 
-  let forceDims: string[] = [];
-
-  if (helper.isDefined(field.forceDims)) {
-    Object.keys(field.forceDims).forEach(asName => {
-      Object.keys(field.forceDims[asName]).forEach(dim => {
-        forceDims.push(`${asName}.${dim}`);
-      });
-    });
-  }
-
   let modelField: api.ModelField = {
     id: `${alias}.${field.name}`,
     hidden: fieldHidden,
@@ -36,7 +26,6 @@ export function wrapField(item: {
     sqlName: `${alias}_${field.name}`,
     topId: node.id,
     topLabel: node.label,
-    forceDims: forceDims,
     description: field.description,
     type: field.type,
     groupId: field.groupId,

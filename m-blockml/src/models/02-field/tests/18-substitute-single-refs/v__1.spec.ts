@@ -60,15 +60,6 @@ test(testId, async () => {
     '(${mea1} + ${dim3} + c1) + ${dim4} + c2'
   );
 
-  expect(entViews[0].fields[5].prepForceDims).toStrictEqual({
-    dim3: 21
-  });
-
-  expect(entViews[0].fields[6].prepForceDims).toStrictEqual({
-    dim3: 24,
-    dim4: 24
-  });
-
   expect(entViews[0].fieldsDeps).toStrictEqual({
     dim1: {},
     dim2: {

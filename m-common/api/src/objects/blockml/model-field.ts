@@ -26,9 +26,6 @@ export class ModelField {
   @IsString()
   topLabel: string;
 
-  @IsString({ each: true })
-  forceDims: string[];
-
   @IsOptional()
   @IsString()
   description?: string;

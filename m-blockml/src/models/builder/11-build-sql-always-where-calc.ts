@@ -46,7 +46,7 @@ export function buildSqlAlwaysWhereCalc(item: {
     caller: item.caller
   });
 
-  models = barSqlAlwaysWhereCalc.awcMakeDoubleDepsAfterSingles({
+  models = barSqlAlwaysWhereCalc.awcMakeDoubleDepsAfterSubstitutions({
     models: models,
     structId: item.structId,
     errors: item.errors,

@@ -4,9 +4,9 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 
-let func = enums.FuncEnum.AwcMakeDoubleDepsAfterSingles;
+let func = enums.FuncEnum.AwcMakeDoubleDepsAfterSubstitutions;
 
-export function awcMakeDoubleDepsAfterSingles(item: {
+export function awcMakeDoubleDepsAfterSubstitutions(item: {
   models: interfaces.Model[];
   errors: BmError[];
   structId: string;
@@ -16,7 +16,7 @@ export function awcMakeDoubleDepsAfterSingles(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
-    x.sqlAlwaysWhereCalcDoubleDepsAfterSingles = {};
+    x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions = {};
 
     if (helper.isUndefined(x.sql_always_where_calc)) {
       return;
@@ -57,32 +57,25 @@ export function awcMakeDoubleDepsAfterSingles(item: {
           case depField.fieldClass === api.FieldClassEnum.Dimension: {
             if (
               helper.isUndefined(
-                x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName]
+                x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
               )
             ) {
-              x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName] = {};
+              x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName] = {};
             }
-            x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName][depName] =
+            x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName][depName] =
               x.sql_always_where_calc_line_num;
-
-            if (helper.isUndefined(x.sqlAlwaysWhereCalcForceDims[asName])) {
-              x.sqlAlwaysWhereCalcForceDims[asName] = {};
-            }
-            x.sqlAlwaysWhereCalcForceDims[asName][depName] =
-              x.sql_always_where_calc_line_num;
-
             break;
           }
 
           case depField.fieldClass === api.FieldClassEnum.Measure: {
             if (
               helper.isUndefined(
-                x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName]
+                x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
               )
             ) {
-              x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName] = {};
+              x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName] = {};
             }
-            x.sqlAlwaysWhereCalcDoubleDepsAfterSingles[asName][depName] =
+            x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName][depName] =
               x.sql_always_where_calc_line_num;
             break;
           }

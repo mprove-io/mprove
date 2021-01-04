@@ -6,9 +6,9 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildJoin;
-let func = enums.FuncEnum.UpgradeJoinCalculationsForceDims;
-let testId = 'v__1';
+let caller = enums.CallerEnum.BuildSqlAlwaysWhereCalc;
+let func = enums.FuncEnum.AwcMakeDoubleDepsAfterSubstitutions;
+let testId = 'v__3';
 
 test(testId, async () => {
   let errors: BmError[];
@@ -47,10 +47,12 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(models.length).toBe(1);
 
-  expect(models[0].joins[0].view.fields[2].sqlReal).toBe('${dim2} + c1');
-  expect(models[0].joins[0].view.fields[2].forceDims).toStrictEqual({
-    a: {
-      dim2: 12
+  expect(models[0].sqlAlwaysWhereCalcReal).toBe('(${b.dim2} + c1) > 5');
+  expect(
+    models[0].sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions
+  ).toStrictEqual({
+    b: {
+      dim2: 3
     }
   });
 });

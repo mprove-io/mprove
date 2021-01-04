@@ -34,14 +34,16 @@ export function makeNeedsDoubles(item: {
   });
 
   // pick double deps from sqlAlwaysWhereCalc
-  Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(as => {
-    Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles[as]).forEach(
-      dep => {
+  Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions).forEach(
+    as => {
+      Object.keys(
+        model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[as]
+      ).forEach(dep => {
         let element = `${as}.${dep}`;
         whereCalcDoubleDeps[element] = 1;
-      }
-    );
-  });
+      });
+    }
+  );
 
   // pick deps from sqlAlwaysWhereCalc
   Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(dep => {

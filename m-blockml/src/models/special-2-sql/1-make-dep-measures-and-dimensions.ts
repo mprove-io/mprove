@@ -42,11 +42,11 @@ export function makeDepMeasuresAndDimensions(item: {
     });
   }
 
-  if (helper.isDefined(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles)) {
-    Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(
+  if (helper.isDefined(model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions)) {
+    Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions).forEach(
       alias => {
         Object.keys(
-          model.sqlAlwaysWhereCalcDoubleDepsAfterSingles[alias]
+          model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[alias]
         ).forEach(depName => {
           let join = model.joins.find(j => j.as === alias);
 

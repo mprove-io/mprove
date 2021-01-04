@@ -7,7 +7,7 @@ import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildSqlAlwaysWhereCalc;
-let func = enums.FuncEnum.AwcMakeDoubleDepsAfterSingles;
+let func = enums.FuncEnum.AwcMakeDoubleDepsAfterSubstitutions;
 let testId = 'v__2';
 
 test(testId, async () => {
@@ -47,7 +47,9 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(models.length).toBe(1);
 
-  expect(models[0].sqlAlwaysWhereCalcDoubleDepsAfterSingles).toStrictEqual({
+  expect(
+    models[0].sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions
+  ).toStrictEqual({
     b: {
       dim1: 3
     },

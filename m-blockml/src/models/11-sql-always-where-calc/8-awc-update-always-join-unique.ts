@@ -20,9 +20,11 @@ export function awcUpdateAlwaysJoinUnique(item: {
       return;
     }
 
-    Object.keys(x.sqlAlwaysWhereCalcDoubleDepsAfterSingles).forEach(as => {
-      x.alwaysJoinUnique[as] = 1;
-    });
+    Object.keys(x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions).forEach(
+      as => {
+        x.alwaysJoinUnique[as] = 1;
+      }
+    );
   });
 
   helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);

@@ -17,7 +17,6 @@ export function awcSubstituteSingleRefs(item: {
   helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
-    x.sqlAlwaysWhereCalcForceDims = {};
     x.sqlAlwaysWhereCalcDepsAfterSingles = {};
 
     if (helper.isUndefined(x.sql_always_where_calc)) {
@@ -56,16 +55,6 @@ export function awcSubstituteSingleRefs(item: {
           case referenceField.fieldClass === api.FieldClassEnum.Dimension: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
               x.sql_always_where_calc_line_num;
-
-            if (
-              helper.isUndefined(x.sqlAlwaysWhereCalcForceDims[constants.MF])
-            ) {
-              x.sqlAlwaysWhereCalcForceDims[constants.MF] = {};
-            }
-
-            x.sqlAlwaysWhereCalcForceDims[constants.MF][fieldName] =
-              x.sql_always_where_calc_line_num;
-
             break;
           }
 

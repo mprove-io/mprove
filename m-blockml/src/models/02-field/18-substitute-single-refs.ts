@@ -179,8 +179,6 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
         case field.fieldClass === api.FieldClassEnum.Calculation: {
           let calculation: interfaces.Calculation = field;
 
-          // calculation.prepForceDims initialized inside while
-
           // sqlReal
           let sqlReal = field.sql; // init
 
@@ -195,7 +193,6 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           while (restart) {
             restart = false;
 
-            calculation.prepForceDims = {}; // needs to be reinitialized after each restart
             deps = []; // needs to be reinitialized after each restart
 
             let reg = api.MyRegex.CAPTURE_SINGLE_REF_G(); // g works because of restart
@@ -225,9 +222,6 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
                     depName: reference,
                     depLineNum: calculation.sql_line_num
                   });
-
-                  calculation.prepForceDims[reference] =
-                    calculation.sql_line_num;
                   break;
                 }
 
@@ -236,7 +230,6 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
                     depName: reference,
                     depLineNum: calculation.sql_line_num
                   });
-
                   break;
                 }
               }
@@ -251,16 +244,6 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
           calculation.sqlReal = sqlReal;
           break;
         }
-
-        // process filters
-        // case field.fieldClass === api.FieldClassEnum.Filter: {
-        //   let filter: interfaces.Filter = field;
-        //   // sqlReal
-        //   let sqlReal = field.sql; // init
-        //   filterField.prepForceDims = {};
-        //   filterField.sqlReal = sqlReal;
-        //   break;
-        // }
       }
     });
   });

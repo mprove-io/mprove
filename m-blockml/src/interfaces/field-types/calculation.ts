@@ -34,14 +34,4 @@ export interface Calculation {
   fieldClass?: api.FieldClassEnum;
 
   sqlReal?: string;
-
-  prepForceDims?: {
-    [dim: string]: number;
-  };
-
-  forceDims?: {
-    [as: string]: {
-      [dim: string]: number;
-    };
-  };
 }

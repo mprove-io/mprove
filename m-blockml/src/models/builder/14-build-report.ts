@@ -49,13 +49,6 @@ export async function buildReport<T extends types.dzType>(item: {
     caller: item.caller
   });
 
-  entities = barReport.checkSelectForceDims({
-    entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
   entities = barReport.checkSorts({
     entities: entities,
     structId: item.structId,
@@ -95,22 +88,6 @@ export async function buildReport<T extends types.dzType>(item: {
 
   entities = barReport.combineReportFilters({
     entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
-  entities = barReport.checkFiltersForceDims({
-    entities: entities,
-    models: item.models,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
-  entities = barReport.checkSqlAlwaysWhereCalcForceDims({
-    entities: entities,
-    models: item.models,
     structId: item.structId,
     errors: item.errors,
     caller: item.caller

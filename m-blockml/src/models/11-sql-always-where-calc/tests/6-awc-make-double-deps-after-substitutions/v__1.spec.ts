@@ -6,13 +6,13 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
-let caller = enums.CallerEnum.BuildDashboardReport;
-let func = enums.FuncEnum.CheckSelectForceDims;
+let caller = enums.CallerEnum.BuildSqlAlwaysWhereCalc;
+let func = enums.FuncEnum.AwcMakeDoubleDepsAfterSubstitutions;
 let testId = 'v__1';
 
 test(testId, async () => {
   let errors: BmError[];
-  let entDashboards: interfaces.Dashboard[];
+  let models: interfaces.Model[];
 
   try {
     let {
@@ -38,19 +38,16 @@ test(testId, async () => {
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
     fse.copySync(fromDir, toDir);
   } catch (e) {
     api.logToConsole(e);
   }
 
   expect(errors.length).toBe(0);
-  expect(entDashboards.length).toBe(1);
+  expect(models.length).toBe(1);
 
-  expect(entDashboards[0].reports[0].selectWithForceDims).toStrictEqual([
-    'a.calc1',
-    'mf.calc10',
-    'a.dim1',
-    'mf.dim10'
-  ]);
+  expect(
+    models[0].sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions
+  ).toStrictEqual({});
 });

@@ -47,11 +47,6 @@ test(testId, async () => {
   expect(errors.length).toBe(0);
   expect(models.length).toBe(1);
   expect(models[0].fields[0].sqlReal).toBe('(${a.dim1} + c1) + c10');
-  expect(models[0].fields[0].forceDims).toStrictEqual({
-    a: {
-      dim1: 8
-    }
-  });
   expect(models[0].fieldsDoubleDepsAfterSingles).toStrictEqual({
     calc10: {
       a: {

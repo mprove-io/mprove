@@ -59,17 +59,6 @@ export function makeFieldsDoubleDepsAfterSingles(item: {
 
             x.fieldsDoubleDepsAfterSingles[f.name][asName][depName] =
               f.sql_line_num;
-
-            if (
-              f.fieldClass === api.FieldClassEnum.Calculation &&
-              depField.fieldClass === api.FieldClassEnum.Dimension
-            ) {
-              if (helper.isUndefined(f.forceDims[asName])) {
-                f.forceDims[asName] = {};
-              }
-
-              f.forceDims[asName][depName] = f.sql_line_num;
-            }
           }
         }
       }

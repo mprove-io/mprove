@@ -24,8 +24,6 @@ export function checkSelectElements<T extends types.dzType>(item: {
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      report.selectHash = {};
-
       report.select.forEach(element => {
         let model = item.models.find(m => m.name === report.model);
 
@@ -75,19 +73,6 @@ export function checkSelectElements<T extends types.dzType>(item: {
             );
             return;
           }
-
-          if (helper.isUndefined(report.selectHash[element])) {
-            report.selectHash[element] = {};
-          }
-
-          if (modelField.fieldClass === api.FieldClassEnum.Calculation) {
-            Object.keys(modelField.forceDims).forEach(alias => {
-              Object.keys(modelField.forceDims[alias]).forEach(dim => {
-                let forceDim = `${alias}.${dim}`;
-                report.selectHash[element][forceDim] = 1;
-              });
-            });
-          }
         } else {
           let join = model.joins.find(j => j.as === asName);
 
@@ -130,19 +115,6 @@ export function checkSelectElements<T extends types.dzType>(item: {
               })
             );
             return;
-          }
-
-          if (helper.isUndefined(report.selectHash[element])) {
-            report.selectHash[element] = {};
-          }
-
-          if (viewField.fieldClass === api.FieldClassEnum.Calculation) {
-            Object.keys(viewField.forceDims).forEach(alias => {
-              Object.keys(viewField.forceDims[alias]).forEach(dim => {
-                let forceDim = `${alias}.${dim}`;
-                report.selectHash[element][forceDim] = 1;
-              });
-            });
           }
         }
       });

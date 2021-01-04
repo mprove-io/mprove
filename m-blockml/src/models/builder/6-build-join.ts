@@ -25,13 +25,6 @@ export function buildJoin(item: {
     caller: item.caller
   });
 
-  models = barJoin.upgradeJoinCalculationsForceDims({
-    models: models,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
   models = barJoin.checkSqlOnExist({
     models: models,
     structId: item.structId,

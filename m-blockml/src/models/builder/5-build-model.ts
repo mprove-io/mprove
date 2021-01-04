@@ -58,13 +58,6 @@ export function buildModel(item: {
     caller: item.caller
   });
 
-  models = barModel.upgradeModelCalculationsForceDims({
-    models: models,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller
-  });
-
   models = barModel.makeFieldsDoubleDeps({
     models: models,
     structId: item.structId,
@@ -80,7 +73,6 @@ export function buildModel(item: {
   });
 
   // substitute double calculations with restart
-  // add doubles to forceDims
   models = barModel.makeFieldsDoubleDepsAfterSingles({
     models: models,
     structId: item.structId,

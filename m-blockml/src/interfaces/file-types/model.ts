@@ -130,17 +130,11 @@ export interface Model extends FileBasic {
     };
   };
 
-  sqlAlwaysWhereCalcForceDims?: {
-    [as: string]: {
-      [dep: string]: number;
-    };
-  };
-
   sqlAlwaysWhereCalcDepsAfterSingles?: {
     [dep: string]: number;
   };
 
-  sqlAlwaysWhereCalcDoubleDepsAfterSingles?: {
+  sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions?: {
     [as: string]: {
       [dep: string]: number;
     };
