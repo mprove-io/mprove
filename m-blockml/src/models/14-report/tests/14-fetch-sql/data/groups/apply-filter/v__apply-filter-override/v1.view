@@ -1,0 +1,18 @@
+view: v1
+connection: c1
+derived_table: |
+  SELECT d1
+  FROM tab1
+  WHERE {% apply_filter f1 %} target {% end_apply_filter %}
+fields:
+- dimension: dim1
+  sql: d1
+
+- filter: f1
+  result: number  
+  default:
+  - '>50'  
+
+
+
+
