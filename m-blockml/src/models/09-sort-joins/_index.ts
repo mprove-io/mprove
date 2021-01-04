@@ -1,2 +1,2 @@
-export * from './1-check-joins-cycles-and-toposort';
-export * from './2-check-always-join';
+export * from './01-check-joins-cycles-and-toposort';
+export * from './02-check-always-join';
