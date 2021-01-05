@@ -8,7 +8,8 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/apply-filter/v__apply-filter-to-sql-always-where';
+let testId =
+  'groups/filter-expressions/s__filter-expressions-day-of-week-index';
 
 test('1', async () => {
   let errors: BmError[];
@@ -46,17 +47,28 @@ test('1', async () => {
 
   let sql = `#standardSQL
 WITH
+  derived__v1__a AS (
+    SELECT
+      1 as d1,
+      CURRENT_TIMESTAMP() as d2
+  ),
   view__v1__a AS (
     SELECT
-      d1 as dim1
-    FROM \`tab1\`
+      d1 as dim1,
+      CASE
+      WHEN EXTRACT(DAYOFWEEK FROM (d2)) = 1 THEN 7
+      ELSE EXTRACT(DAYOFWEEK FROM (d2)) - 1
+      END as time1___day_of_week_index
+    FROM derived__v1__a
   ),
   main AS (
     SELECT
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      ((target > 100))
+      (('any' = 'any'
+      OR a.time1___day_of_week_index IN (1,2,3))
+      AND NOT (a.time1___day_of_week_index IN (4,5,6,7)))
     GROUP BY 1
   )
 SELECT
@@ -104,17 +116,28 @@ test('2', async () => {
   }
 
   let sql = `WITH
+  derived__v1__a AS (
+    SELECT
+      1 as d1,
+      CURRENT_TIMESTAMP() as d2
+  ),
   view__v1__a AS (
     SELECT
-      d1 as dim1
-    FROM tab1
+      d1 as dim1,
+      CASE
+      WHEN EXTRACT(DOW FROM (d2)) + 1 = 1 THEN 7
+      ELSE EXTRACT(DOW FROM (d2)) + 1 - 1
+      END as time1___day_of_week_index
+    FROM derived__v1__a
   ),
   main AS (
     SELECT
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      ((target > 100))
+      (('any' = 'any'
+      OR a.time1___day_of_week_index IN (1,2,3))
+      AND NOT (a.time1___day_of_week_index IN (4,5,6,7)))
     GROUP BY 1
   )
 SELECT

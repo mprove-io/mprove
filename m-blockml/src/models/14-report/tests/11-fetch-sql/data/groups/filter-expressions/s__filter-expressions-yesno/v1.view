@@ -1,17 +1,19 @@
 view: v1
 connection: c1
 derived_table: |
-  SELECT d1, d2, d3
-  FROM tab1
+  SELECT 
+    1 as d1, 
+    CURRENT_TIMESTAMP() as d2,
+    TRUE as d3
 fields:
 - dimension: dim1
   sql: d1
 
 - dimension: dim2
-  sql: d2 
+  sql: d2
 
 - time: time1
-  sql: ${dim2} + 1  
+  sql: ${dim2}  
   timeframes:
   - yesno_has_value 
 
@@ -20,7 +22,7 @@ fields:
  
 - dimension: dim4
   type: yesno_is_true
-  sql: ${dim3} + 4  
+  sql: ${dim3}
 
 
 

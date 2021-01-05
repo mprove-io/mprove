@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/apply-filter/v__apply-filter-to-sql-always-where';
+let testId = 'groups/filter-expressions/s__filter-expressions-day-of-week';
 
 test('1', async () => {
   let errors: BmError[];
@@ -46,17 +46,37 @@ test('1', async () => {
 
   let sql = `#standardSQL
 WITH
+  derived__v1__a AS (
+    SELECT
+      1 as d1,
+      CURRENT_TIMESTAMP() as d2
+  ),
   view__v1__a AS (
     SELECT
-      d1 as dim1
-    FROM \`tab1\`
+      d1 as dim1,
+      FORMAT_TIMESTAMP('%A', (d2)) as time1___day_of_week
+    FROM derived__v1__a
   ),
   main AS (
     SELECT
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      ((target > 100))
+      ((UPPER(a.time1___day_of_week) = UPPER('Monday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Tuesday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Wednesday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Thursday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Friday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Saturday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Sunday')
+      OR 'any' = 'any')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Monday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Tuesday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Wednesday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Thursday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Friday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Saturday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Sunday'))
     GROUP BY 1
   )
 SELECT
@@ -104,17 +124,37 @@ test('2', async () => {
   }
 
   let sql = `WITH
+  derived__v1__a AS (
+    SELECT
+      1 as d1,
+      CURRENT_TIMESTAMP() as d2
+  ),
   view__v1__a AS (
     SELECT
-      d1 as dim1
-    FROM tab1
+      d1 as dim1,
+      TO_CHAR((d2), 'Day') as time1___day_of_week
+    FROM derived__v1__a
   ),
   main AS (
     SELECT
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      ((target > 100))
+      ((UPPER(a.time1___day_of_week) = UPPER('Monday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Tuesday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Wednesday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Thursday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Friday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Saturday')
+      OR UPPER(a.time1___day_of_week) = UPPER('Sunday')
+      OR 'any' = 'any')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Monday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Tuesday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Wednesday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Thursday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Friday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Saturday')
+      AND NOT UPPER(a.time1___day_of_week) = UPPER('Sunday'))
     GROUP BY 1
   )
 SELECT

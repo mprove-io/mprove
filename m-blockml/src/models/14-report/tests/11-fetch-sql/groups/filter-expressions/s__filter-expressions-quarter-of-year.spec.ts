@@ -8,7 +8,7 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/apply-filter/v__apply-filter-to-sql-always-where';
+let testId = 'groups/filter-expressions/s__filter-expressions-quarter-of-year';
 
 test('1', async () => {
   let errors: BmError[];
@@ -46,17 +46,31 @@ test('1', async () => {
 
   let sql = `#standardSQL
 WITH
+  derived__v1__a AS (
+    SELECT
+      1 as d1,
+      CURRENT_TIMESTAMP() as d2
+  ),
   view__v1__a AS (
     SELECT
-      d1 as dim1
-    FROM \`tab1\`
+      d1 as dim1,
+      CONCAT(CAST('Q' AS STRING), CAST(EXTRACT(QUARTER FROM (d2)) AS STRING)) as time1___quarter_of_year
+    FROM derived__v1__a
   ),
   main AS (
     SELECT
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      ((target > 100))
+      ((UPPER(a.time1___quarter_of_year) = UPPER('q1')
+      OR UPPER(a.time1___quarter_of_year) = UPPER('q2')
+      OR UPPER(a.time1___quarter_of_year) = UPPER('q3')
+      OR UPPER(a.time1___quarter_of_year) = UPPER('q4')
+      OR 'any' = 'any')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q1')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q2')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q3')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q4'))
     GROUP BY 1
   )
 SELECT
@@ -104,17 +118,31 @@ test('2', async () => {
   }
 
   let sql = `WITH
+  derived__v1__a AS (
+    SELECT
+      1 as d1,
+      CURRENT_TIMESTAMP() as d2
+  ),
   view__v1__a AS (
     SELECT
-      d1 as dim1
-    FROM tab1
+      d1 as dim1,
+      CAST('Q' AS VARCHAR) || CAST(EXTRACT(QUARTER FROM (d2))::integer AS VARCHAR) as time1___quarter_of_year
+    FROM derived__v1__a
   ),
   main AS (
     SELECT
       a.dim1 as a_dim1
     FROM view__v1__a as a
     WHERE
-      ((target > 100))
+      ((UPPER(a.time1___quarter_of_year) = UPPER('q1')
+      OR UPPER(a.time1___quarter_of_year) = UPPER('q2')
+      OR UPPER(a.time1___quarter_of_year) = UPPER('q3')
+      OR UPPER(a.time1___quarter_of_year) = UPPER('q4')
+      OR 'any' = 'any')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q1')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q2')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q3')
+      AND NOT UPPER(a.time1___quarter_of_year) = UPPER('q4'))
     GROUP BY 1
   )
 SELECT

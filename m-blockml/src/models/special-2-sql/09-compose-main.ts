@@ -82,7 +82,7 @@ export function composeMain(item: {
       });
 
       mainQuery.push(`      (${element})`);
-      mainQuery.push(`     ${constants.AND}`);
+      mainQuery.push(`      ${constants.AND}`);
     });
 
     if (helper.isDefined(model.sqlAlwaysWhereReal)) {
@@ -100,13 +100,13 @@ export function composeMain(item: {
       });
 
       mainQuery.push(`      (${sqlAlwaysWhereFinal})`);
-      mainQuery.push(`     ${constants.AND}`);
+      mainQuery.push(`      ${constants.AND}`);
     }
 
     Object.keys(whereMain).forEach(element => {
       if (whereMain[element].length > 0) {
         mainQuery = mainQuery.concat(whereMain[element].map(s => `    ${s}`));
-        mainQuery.push(`     ${constants.AND}`);
+        mainQuery.push(`      ${constants.AND}`);
       }
     });
 
@@ -124,7 +124,7 @@ export function composeMain(item: {
     Object.keys(havingMain).forEach(element => {
       if (havingMain[element].length > 0) {
         mainQuery = mainQuery.concat(havingMain[element]);
-        mainQuery.push(`     ${constants.AND}`);
+        mainQuery.push(`      ${constants.AND}`);
       }
     });
     mainQuery.pop();

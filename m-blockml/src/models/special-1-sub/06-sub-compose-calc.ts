@@ -59,7 +59,8 @@ export function subComposeCalc(item: {
   sub.push(`  ${constants.FROM} ${constants.MAIN}__${view.name}`);
   sub.push('),');
 
-  sub = sub.map((s: string) => `  ${s}`);
+  sub = sub.map(s => `  ${s}`);
+  sub = sub.map(x => x.trimRight());
 
   let varsOutput: interfaces.VarsSub = { sub };
 

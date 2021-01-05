@@ -101,13 +101,13 @@ export function composeCalc(item: {
       });
 
       sql.push(`  (${sqlAlwaysWhereCalcFinal})`);
-      sql.push(` ${constants.AND}`);
+      sql.push(`  ${constants.AND}`);
     }
 
     Object.keys(whereCalc).forEach(element => {
       if (whereCalc[element].length > 0) {
         sql = sql.concat(whereCalc[element]);
-        sql.push(` ${constants.AND}`);
+        sql.push(`  ${constants.AND}`);
       }
     });
 
@@ -143,6 +143,8 @@ export function composeCalc(item: {
   }
 
   sql.push(`${constants.LIMIT} ${limit}`);
+
+  sql = sql.map(x => x.trimRight());
 
   let varsOutput: interfaces.VarsSql = { sql };
 

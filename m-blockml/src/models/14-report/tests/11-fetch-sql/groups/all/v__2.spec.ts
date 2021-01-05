@@ -10,7 +10,41 @@ let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
 let testId = 'groups/all/v__2';
 
-let bigquerySql = `#standardSQL
+test('1', async () => {
+  let errors: BmError[];
+  let entDashboards: interfaces.Dashboard[];
+
+  try {
+    let connection: api.ProjectConnection = {
+      name: 'c1',
+      type: api.ConnectionTypeEnum.BigQuery
+    };
+
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir
+    } = await prepareTest(caller, func, testId, connection);
+
+    await structService.rebuildStruct({
+      traceId: traceId,
+      dir: dataDir,
+      structId: structId,
+      connections: [connection],
+      weekStart: api.ProjectWeekStartEnum.Monday
+    });
+
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    fse.copySync(fromDir, toDir);
+  } catch (e) {
+    api.logToConsole(e);
+  }
+
+  let sql = `#standardSQL
 CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS
   ((SELECT SUM(CAST(REGEXP_EXTRACT(val, '\\\\|\\\\|(\\\\-?\\\\d+(?:.\\\\d+)?)$') AS FLOAT64)) FROM UNNEST(ar) as val));
 WITH
@@ -60,7 +94,46 @@ SELECT
 FROM main
 LIMIT 500`;
 
-let postgreSql = `WITH
+  expect(errors.length).toBe(0);
+  expect(entDashboards.length).toBe(1);
+  expect(entDashboards[0].reports[0].sql.join('\n')).toEqual(sql);
+});
+
+test('2', async () => {
+  let errors: BmError[];
+  let entDashboards: interfaces.Dashboard[];
+
+  try {
+    let connection: api.ProjectConnection = {
+      name: 'c1',
+      type: api.ConnectionTypeEnum.PostgreSQL
+    };
+
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir
+    } = await prepareTest(caller, func, testId, connection);
+
+    await structService.rebuildStruct({
+      traceId: traceId,
+      dir: dataDir,
+      structId: structId,
+      connections: [connection],
+      weekStart: api.ProjectWeekStartEnum.Monday
+    });
+
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
+    fse.copySync(fromDir, toDir);
+  } catch (e) {
+    api.logToConsole(e);
+  }
+
+  let sql = `WITH
   derived__v1__a AS (
     SELECT d1, d3, d5, d7
     FROM tab1
@@ -107,80 +180,7 @@ SELECT
 FROM main
 LIMIT 500`;
 
-test('1', async () => {
-  let errors: BmError[];
-  let entDashboards: interfaces.Dashboard[];
-
-  try {
-    let connection: api.ProjectConnection = {
-      name: 'c1',
-      type: api.ConnectionTypeEnum.BigQuery
-    };
-
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir
-    } = await prepareTest(caller, func, testId, connection);
-
-    await structService.rebuildStruct({
-      traceId: traceId,
-      dir: dataDir,
-      structId: structId,
-      connections: [connection],
-      weekStart: api.ProjectWeekStartEnum.Monday
-    });
-
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
-    fse.copySync(fromDir, toDir);
-  } catch (e) {
-    api.logToConsole(e);
-  }
-
   expect(errors.length).toBe(0);
   expect(entDashboards.length).toBe(1);
-  expect(entDashboards[0].reports[0].sql.join('\n')).toEqual(bigquerySql);
-});
-
-test('2', async () => {
-  let errors: BmError[];
-  let entDashboards: interfaces.Dashboard[];
-
-  try {
-    let connection: api.ProjectConnection = {
-      name: 'c1',
-      type: api.ConnectionTypeEnum.PostgreSQL
-    };
-
-    let {
-      structService,
-      traceId,
-      structId,
-      dataDir,
-      fromDir,
-      toDir
-    } = await prepareTest(caller, func, testId, connection);
-
-    await structService.rebuildStruct({
-      traceId: traceId,
-      dir: dataDir,
-      structId: structId,
-      connections: [connection],
-      weekStart: api.ProjectWeekStartEnum.Monday
-    });
-
-    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
-    fse.copySync(fromDir, toDir);
-  } catch (e) {
-    api.logToConsole(e);
-  }
-
-  expect(errors.length).toBe(0);
-  expect(entDashboards.length).toBe(1);
-  expect(entDashboards[0].reports[0].sql.join('\n')).toEqual(postgreSql);
+  expect(entDashboards[0].reports[0].sql.join('\n')).toEqual(sql);
 });
