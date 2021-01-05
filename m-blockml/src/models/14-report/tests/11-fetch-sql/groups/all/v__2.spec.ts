@@ -8,20 +8,19 @@ import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
-let testId = 'groups/all/v__1';
+let testId = 'groups/all/v__2';
 
 let bigquerySql = `#standardSQL
 CREATE TEMPORARY FUNCTION mprove_array_sum(ar ARRAY<STRING>) AS
   ((SELECT SUM(CAST(REGEXP_EXTRACT(val, '\\\\|\\\\|(\\\\-?\\\\d+(?:.\\\\d+)?)$') AS FLOAT64)) FROM UNNEST(ar) as val));
 WITH
   derived__v1__a AS (
-    SELECT 1 as d1, 3 as d3, 5 as d5, 7 as d7
-  ),
-  derived__v2__c AS (
-    SELECT 1 as d1
+    SELECT d1, d3, d5, d7
+    FROM tab1
   ),
   derived__v1__b AS (
-    SELECT 1 as d1, 3 as d3, 5 as d5, 7 as d7
+    SELECT d1, d3, d5, d7
+    FROM tab1
   ),
   view__v1__a AS (
     SELECT
@@ -31,23 +30,23 @@ WITH
   view__v2__c AS (
     SELECT
       d1 as dim1
-    FROM derived__v2__c
+    FROM \`tab2\`
   ),
   view__v1__b AS (
     SELECT
       (d5) + 6 as dim6,
       (d7) + 8 as dim8,
-      (d1) + 2 as dim2,
+      (FORMAT_TIMESTAMP('%F %H', (d1) + 1)) + 2 as dim2,
       (d3) + 4 as dim4
     FROM derived__v1__b
   ),
   main AS (
     SELECT
       c.dim1 as c_dim1,
-      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(((3) + 4) + 222 AS STRING), '||'), CAST(((1) + 2) + 111 AS STRING)))), 0) as mf_mea1,
-      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(b.dim4 + 222 AS STRING), '||'), CAST(b.dim2 + 111 AS STRING)))), 0) as b_mea1,
-      (5) + 6 as mf_dim6,
-      (7) + 8 as mf_dim8,
+      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(((d3) + 4) + mk1 AS STRING), '||'), CAST(((FORMAT_TIMESTAMP('%F %H', (d1) + 1)) + 2) + ms1 AS STRING)))), 0) as mf_mea1,
+      COALESCE(mprove_array_sum(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(b.dim4 + mk1 AS STRING), '||'), CAST(b.dim2 + ms1 AS STRING)))), 0) as b_mea1,
+      (d5) + 6 as mf_dim6,
+      (d7) + 8 as mf_dim8,
       b.dim6 as b_dim6,
       b.dim8 as b_dim8
     FROM view__v1__a as a
@@ -63,13 +62,12 @@ LIMIT 500`;
 
 let postgreSql = `WITH
   derived__v1__a AS (
-    SELECT 1 as d1, 3 as d3, 5 as d5, 7 as d7
-  ),
-  derived__v2__c AS (
-    SELECT 1 as d1
+    SELECT d1, d3, d5, d7
+    FROM tab1
   ),
   derived__v1__b AS (
-    SELECT 1 as d1, 3 as d3, 5 as d5, 7 as d7
+    SELECT d1, d3, d5, d7
+    FROM tab1
   ),
   view__v1__a AS (
     SELECT
@@ -79,23 +77,23 @@ let postgreSql = `WITH
   view__v2__c AS (
     SELECT
       d1 as dim1
-    FROM derived__v2__c
+    FROM tab2
   ),
   view__v1__b AS (
     SELECT
       (d5) + 6 as dim6,
       (d7) + 8 as dim8,
-      (d1) + 2 as dim2,
+      (TO_CHAR(DATE_TRUNC('hour', (d1) + 1), 'YYYY-MM-DD HH24')) + 2 as dim2,
       (d3) + 4 as dim4
     FROM derived__v1__b
   ),
   main AS (
     SELECT
       c.dim1 as c_dim1,
-      COALESCE(COALESCE(CAST((SUM(DISTINCT CAST(FLOOR(COALESCE(((1) + 2) + 111, 0)*(1000000*1.0)) AS DECIMAL(38,0)) + CAST(('x' || lpad(LEFT(MD5(CAST(((3) + 4) + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(((3) + 4) + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))) - SUM(DISTINCT CAST(('x' || lpad(LEFT(MD5(CAST(((3) + 4) + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(((3) + 4) + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0)))) AS DOUBLE PRECISION) / CAST((1000000*1.0) AS DOUBLE PRECISION), 0), 0) as mf_mea1,
-      COALESCE(COALESCE(CAST((SUM(DISTINCT CAST(FLOOR(COALESCE(b.dim2 + 111, 0)*(1000000*1.0)) AS DECIMAL(38,0)) + CAST(('x' || lpad(LEFT(MD5(CAST(b.dim4 + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(b.dim4 + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))) - SUM(DISTINCT CAST(('x' || lpad(LEFT(MD5(CAST(b.dim4 + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(b.dim4 + 222 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0)))) AS DOUBLE PRECISION) / CAST((1000000*1.0) AS DOUBLE PRECISION), 0), 0) as b_mea1,
-      (5) + 6 as mf_dim6,
-      (7) + 8 as mf_dim8,
+      COALESCE(COALESCE(CAST((SUM(DISTINCT CAST(FLOOR(COALESCE(((TO_CHAR(DATE_TRUNC('hour', (d1) + 1), 'YYYY-MM-DD HH24')) + 2) + ms1, 0)*(1000000*1.0)) AS DECIMAL(38,0)) + CAST(('x' || lpad(LEFT(MD5(CAST(((d3) + 4) + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(((d3) + 4) + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))) - SUM(DISTINCT CAST(('x' || lpad(LEFT(MD5(CAST(((d3) + 4) + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(((d3) + 4) + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0)))) AS DOUBLE PRECISION) / CAST((1000000*1.0) AS DOUBLE PRECISION), 0), 0) as mf_mea1,
+      COALESCE(COALESCE(CAST((SUM(DISTINCT CAST(FLOOR(COALESCE(b.dim2 + ms1, 0)*(1000000*1.0)) AS DECIMAL(38,0)) + CAST(('x' || lpad(LEFT(MD5(CAST(b.dim4 + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(b.dim4 + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))) - SUM(DISTINCT CAST(('x' || lpad(LEFT(MD5(CAST(b.dim4 + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0))* 1.0e8 + CAST(('x' || lpad(RIGHT(MD5(CAST(b.dim4 + mk1 AS VARCHAR)),15), 16, '0'))::bit(64)::bigint AS DECIMAL(38,0)))) AS DOUBLE PRECISION) / CAST((1000000*1.0) AS DOUBLE PRECISION), 0), 0) as b_mea1,
+      (d5) + 6 as mf_dim6,
+      (d7) + 8 as mf_dim8,
       b.dim6 as b_dim6,
       b.dim8 as b_dim8
     FROM view__v1__a as a

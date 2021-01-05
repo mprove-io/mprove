@@ -1,13 +1,19 @@
 view: v1
 connection: c1
 derived_table: |
-  SELECT 1 as d1, 3 as d3, 5 as d5, 7 as d7
+  SELECT d1, d3, d5, d7
+  FROM tab1
 fields:
 - dimension: dim1
   sql: d1
 
+- time: time1
+  sql: ${dim1} + 1  
+  timeframes:
+  - hour 
+
 - dimension: dim2
-  sql: ${dim1} + 2
+  sql: ${time1___hour} + 2
 
 - dimension: dim3
   sql: d3
@@ -35,8 +41,8 @@ fields:
 
 - measure: mea1
   type: sum_by_key
-  sql: ${dim2} + 111
-  sql_key: ${dim4} + 222
+  sql: ${dim2} + ms1
+  sql_key: ${dim4} + mk1
 
 - calculation: calc1
   sql: ${mea1} + ${dim6} + 1 

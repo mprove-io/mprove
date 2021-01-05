@@ -1,6 +1,5 @@
 model: m1
 connection: c1
-# sql_always_where_calc: ${a.dim2} > 5
 joins:
 - from_view: v1
   as: a
@@ -15,44 +14,39 @@ joins:
 
 fields:
 - dimension: dim1
-  sql: d1
-
-- time: time1
-  sql: ${dim1} + 1  
-  timeframes:
-  - hour 
+  sql: 1
 
 - dimension: dim2
-  sql: ${time1___hour} + 2
+  sql: ${dim1} + 2
 
 - dimension: dim3
-  sql: d3
+  sql: 3
 
 - dimension: dim4
   sql: ${dim3} + 4  
 
 - dimension: dim5
-  sql: d5
+  sql: 5
 
 - dimension: dim6
   sql: ${dim5} + 6  
 
 - dimension: dim7
-  sql: d7
+  sql: 7
 
 - dimension: dim8
   sql: ${dim7} + 8  
 
 - dimension: dim9
-  sql: d9
+  sql: 9
 
 - dimension: dim10
   sql: ${dim9} + 10   
 
 - measure: mea1
   type: sum_by_key
-  sql: ${dim2} + ms1
-  sql_key: ${dim4} + mk1
+  sql: ${dim2} + 111
+  sql_key: ${dim4} + 222
 
 - calculation: calc1
   sql: ${mea1} + ${dim6} + 1 

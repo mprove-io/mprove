@@ -1,7 +1,6 @@
 view: v2
 connection: c1
-derived_table: |
-  SELECT 1 as d1
+table: tab2
 fields:
 - dimension: dim1
   sql: d1
