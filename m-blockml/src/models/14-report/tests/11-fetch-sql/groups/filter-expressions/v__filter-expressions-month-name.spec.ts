@@ -57,20 +57,20 @@ test(testId, async () => {
     '  view__v1__a AS (',
     '    SELECT',
     '      d1 as dim1,',
-    `      CASE
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 1 THEN 'January'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 2 THEN 'February'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 3 THEN 'March'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 4 THEN 'April'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 5 THEN 'May'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 6 THEN 'June'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 7 THEN 'July'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 8 THEN 'August'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 9 THEN 'September'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 10 THEN 'October'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 11 THEN 'November'
-      WHEN EXTRACT(MONTH FROM (d2) + 1) = 12 THEN 'December'
-    END as time1___month_name`,
+    '      CASE',
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 1 THEN 'January'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 2 THEN 'February'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 3 THEN 'March'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 4 THEN 'April'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 5 THEN 'May'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 6 THEN 'June'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 7 THEN 'July'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 8 THEN 'August'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 9 THEN 'September'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 10 THEN 'October'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 11 THEN 'November'",
+    "      WHEN EXTRACT(MONTH FROM (d2) + 1) = 12 THEN 'December'",
+    '      END as time1___month_name',
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',

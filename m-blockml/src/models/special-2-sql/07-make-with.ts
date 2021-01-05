@@ -152,9 +152,8 @@ export function makeWith(item: {
               return;
             }
             once[sqlTimestampName] = 1;
-            withViews.push(
-              `      ${sqlTimestampSelect} as ${sqlTimestampName},`
-            );
+            let selTs = `      ${sqlTimestampSelect} as ${sqlTimestampName},`;
+            withViews = withViews.concat(selTs.split('\n'));
             i++;
           }
         });
@@ -171,7 +170,8 @@ export function makeWith(item: {
             }
             // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
             let sqlSelect = field.sqlReal;
-            withViews.push(`      ${sqlSelect} as ${fieldName},`);
+            let sel = `      ${sqlSelect} as ${fieldName},`;
+            withViews = withViews.concat(sel.split('\n'));
             i++;
           }
         });

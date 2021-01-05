@@ -58,10 +58,10 @@ test(testId, async () => {
     '  view__v1__a AS (',
     '    SELECT',
     '      d1 as dim1,',
-    `      CASE
-      WHEN EXTRACT(DAYOFWEEK FROM (d2) + 1) = 1 THEN 7
-      ELSE EXTRACT(DAYOFWEEK FROM (d2) + 1) - 1
-    END as time1___day_of_week_index`,
+    '      CASE',
+    '      WHEN EXTRACT(DAYOFWEEK FROM (d2) + 1) = 1 THEN 7',
+    '      ELSE EXTRACT(DAYOFWEEK FROM (d2) + 1) - 1',
+    '      END as time1___day_of_week_index',
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',

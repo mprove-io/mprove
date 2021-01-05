@@ -57,14 +57,8 @@ test(testId, async () => {
     '  view__v1__a AS (',
     '    SELECT',
     '      d1 as dim1,',
-    `      CASE
-      WHEN ((d2) + 1) IS NOT NULL THEN 'Yes'
-      ELSE 'No'
-    END as time1___yesno_has_value,`,
-    `      CASE
-      WHEN ((d3) + 4) IS TRUE THEN 'Yes'
-      ELSE 'No'
-    END as dim4`,
+    "      CASE WHEN ((d2) + 1) IS NOT NULL THEN 'Yes' ELSE 'No' END as time1___yesno_has_value,",
+    "      CASE WHEN ((d3) + 4) IS TRUE THEN 'Yes' ELSE 'No' END as dim4",
     '    FROM derived__v1__a',
     '  ),',
     '  main AS (',

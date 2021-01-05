@@ -25,10 +25,7 @@ export function transformYesNoDimensions<T extends types.vmType>(item: {
         field.fieldClass === api.FieldClassEnum.Dimension &&
         field.type === api.FieldTypeEnum.YesnoIsTrue
       ) {
-        field.sql = `CASE
-      WHEN (${field.sql}) IS TRUE THEN 'Yes'
-      ELSE 'No'
-    END`;
+        field.sql = `CASE WHEN (${field.sql}) IS TRUE THEN 'Yes' ELSE 'No' END`;
       }
     });
   });

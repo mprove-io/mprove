@@ -10,18 +10,12 @@ export function makeTimeframeYesNoHasValue(item: {
 
   switch (connection.type) {
     case api.ConnectionTypeEnum.BigQuery: {
-      sql = `CASE
-      WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes'
-      ELSE 'No'
-    END`;
+      sql = `CASE WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes' ELSE 'No' END`;
       break;
     }
 
     case api.ConnectionTypeEnum.PostgreSQL: {
-      sql = `CASE
-      WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes'
-      ELSE 'No'
-    END`;
+      sql = `CASE WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes' ELSE 'No' END`;
       break;
     }
   }

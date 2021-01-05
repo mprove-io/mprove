@@ -17,7 +17,7 @@ export function makeTimeframeDayOfWeekIndex(item: {
           : `CASE
       WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7
       ELSE EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) - 1
-    END`;
+      END`;
       break;
     }
 
@@ -28,7 +28,7 @@ export function makeTimeframeDayOfWeekIndex(item: {
           : `CASE
       WHEN EXTRACT(DOW FROM ${sqlTimestamp}) + 1 = 1 THEN 7
       ELSE EXTRACT(DOW FROM ${sqlTimestamp}) + 1 - 1
-    END`;
+      END`;
       break;
     }
   }

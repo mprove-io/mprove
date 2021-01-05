@@ -274,7 +274,8 @@ export function makeMainText(item: {
       helper.isDefined(selected[element]) &&
       field.fieldClass !== api.FieldClassEnum.Calculation
     ) {
-      mainText.push(`  ${sqlSelect} as ${asName}_${fieldName},`);
+      let sel = `  ${sqlSelect} as ${asName}_${fieldName},`;
+      mainText = mainText.concat(sel.split('\n'));
     }
 
     processedFields[element] = sqlSelect;

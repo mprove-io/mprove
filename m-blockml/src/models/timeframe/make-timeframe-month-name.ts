@@ -23,7 +23,7 @@ export function makeTimeframeMonthName(item: {
       WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 10 THEN 'October'
       WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 11 THEN 'November'
       WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 12 THEN 'December'
-    END`;
+      END`;
       break;
     }
 
