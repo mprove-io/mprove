@@ -94,7 +94,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(item: {
                   enums.ParameterEnum.Hidden.toString(),
                   enums.ParameterEnum.GroupLabel.toString(),
                   enums.ParameterEnum.GroupDescription.toString(),
-                  enums.ParameterEnum.UnnestOn.toString(),
+                  enums.ParameterEnum.Unnest.toString(),
                   enums.ParameterEnum.Source.toString(),
                   enums.ParameterEnum.Sql.toString(),
                   enums.ParameterEnum.Timeframes.toString()

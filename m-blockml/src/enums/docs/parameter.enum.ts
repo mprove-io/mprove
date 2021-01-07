@@ -57,7 +57,6 @@ export enum ParameterEnum {
   Udf = 'udf',
   Udfs = 'udfs',
   Unnest = 'unnest',
-  UnnestOn = 'unnest_on',
   View = 'view',
   Viz = 'viz',
   // chart axis

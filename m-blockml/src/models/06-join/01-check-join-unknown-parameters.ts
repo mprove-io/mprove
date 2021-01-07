@@ -57,7 +57,6 @@ export function checkJoinUnknownParameters(item: {
               enums.ParameterEnum.Label.toString(),
               enums.ParameterEnum.Description.toString(),
               enums.ParameterEnum.As.toString(),
-              enums.ParameterEnum.SqlWhere.toString(),
               enums.ParameterEnum.HideFields.toString(),
               enums.ParameterEnum.ShowFields.toString()
             ].indexOf(parameter) < 0
