@@ -1,6 +1,6 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
-import { genSqlPro } from '../models/special/gen-sql';
+import { barSpecial } from '../barrels/bar-special';
 import { api } from '../barrels/api';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class ConsumerWorkerService {
 
       let { traceId } = requestValid.info;
 
-      let outcome = genSqlPro(request.payload);
+      let outcome = barSpecial.genSqlPro(request.payload);
 
       let response: api.ToBlockmlWorkerGenSqlResponse = {
         info: {

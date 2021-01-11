@@ -1,5 +1,5 @@
 import { api } from '../barrels/api';
-import { VarsSqlStep } from './vars-sql-element';
+import { VarsSqlStep } from './vars-sql-step';
 
 export interface GenSqlProOutcome {
   sql: string[];
