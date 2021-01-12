@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { RabbitService } from './services/rabbit.service';
+import { UserEntity } from 'src/store-entities/user.entity';
 import { api } from './barrels/api';
 import { ToDiskCreateOrganizationController } from './controllers/to-disk/1_organizations/to-disk-create-organization.controller';
 import { ToDiskCreateProjectController } from './controllers/to-disk/2_projects/to-disk-create-project.controller';
@@ -34,6 +35,7 @@ import { ToBlockmlRebuildStructController } from './controllers/to-blockml/to-bl
 import { ToBlockmlProcessDashboardController } from './controllers/to-blockml/to-blockml-process-dashboard.controller';
 import { ToBlockmlProcessQueryController } from './controllers/to-blockml/to-blockml-process-query.controller';
 import { SpecialRebuildStructController } from './controllers/special/special-rebuild-struct.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -52,6 +54,16 @@ import { SpecialRebuildStructController } from './controllers/special/special-re
         `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${process.env.RABBITMQ_DEFAULT_PASS}@rabbit:5672`
       ],
       connectionInitOptions: { wait: false }
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'db',
+      port: 3306,
+      username: 'root',
+      password: process.env.MYSQL_ROOT_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+      entities: [UserEntity]
+      // synchronize: true
     })
   ],
   controllers: [
