@@ -33,12 +33,12 @@ services:
         target: /var/lib/mysql      
     ports:
       - 3306:3306         
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 0.0.0.0:24224
-        fluentd-async-connect: "true"
-        tag: db   
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: 0.0.0.0:24224
+    #     fluentd-async-connect: "true"
+    #     tag: db   
 
   rabbit:
     container_name: rabbit
@@ -60,12 +60,12 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 0.0.0.0:24224
-        fluentd-async-connect: "true"
-        tag: rabbit
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: 0.0.0.0:24224
+    #     fluentd-async-connect: "true"
+    #     tag: rabbit
 
   m-backend:
     container_name: m-backend
@@ -73,14 +73,17 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS     
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD     
+      MYSQL_DATABASE: $MYSQL_DATABASE     
+      BACKEND_DROP_DATABASE_ON_START: $BACKEND_DROP_DATABASE_ON_START     
     ports:
       - 3000:3000
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 0.0.0.0:24224
-        fluentd-async-connect: "true"
-        tag: m-backend    
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: 0.0.0.0:24224
+    #     fluentd-async-connect: "true"
+    #     tag: m-backend    
 
   m-blockml:
     container_name: m-blockml
@@ -92,12 +95,12 @@ services:
       MPROVE_BLOCKML_IS_MAIN: "TRUE"  
       MPROVE_BLOCKML_IS_WORKER: "FALSE" 
       MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"        
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 0.0.0.0:24224
-        fluentd-async-connect: "true"
-        tag: m-blockml
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: 0.0.0.0:24224
+    #     fluentd-async-connect: "true"
+    #     tag: m-blockml
 
   m-blockml-worker:
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
@@ -108,12 +111,12 @@ services:
       MPROVE_BLOCKML_IS_MAIN: "FALSE"  
       MPROVE_BLOCKML_IS_WORKER: "TRUE"
       MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"        
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 0.0.0.0:24224
-        fluentd-async-connect: "true"
-        tag: m-blockml-worker
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: 0.0.0.0:24224
+    #     fluentd-async-connect: "true"
+    #     tag: m-blockml-worker
 
   m-disk:
     container_name: m-disk
@@ -126,12 +129,12 @@ services:
       - type: bind
         source: $MPROVE_M_DATA_ORGANIZATIONS_PATH
         target: $MPROVE_M_DATA_ORGANIZATIONS_PATH
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 0.0.0.0:24224
-        fluentd-async-connect: "true"
-        tag: m-disk      
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: 0.0.0.0:24224
+    #     fluentd-async-connect: "true"
+    #     tag: m-disk      
 
 
     
