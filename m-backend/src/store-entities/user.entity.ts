@@ -53,6 +53,6 @@ export class UserEntity {
   @Column({ type: constants.VARCHAR })
   deleted: enums.bEnum;
 
-  // @Column({ type: constants.TS_TO_BIGINT_DATATYPE })
-  // server_ts: string;
+  @Column({ type: constants.BIGINT })
+  server_ts: string;
 }

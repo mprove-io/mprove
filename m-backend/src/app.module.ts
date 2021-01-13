@@ -1,12 +1,15 @@
 import { api } from './barrels/api';
-import { RabbitService } from './services/rabbit.service';
-import { UserEntity } from './store-entities/user.entity';
 import { appControllers } from './app-controllers';
+import { helper } from './barrels/helper';
+import { UsersService } from './services/users.service';
 
 import { Module, OnModuleInit } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
+import { appServices } from './app-services';
+import { appEntities } from './app-entities';
+import { UserEntity } from './store-entities/_index';
 
 @Module({
   imports: [
@@ -33,15 +36,19 @@ import { Connection } from 'typeorm';
       username: 'root',
       password: process.env.MYSQL_ROOT_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [UserEntity],
+      entities: appEntities,
       migrations: [__dirname + '/migration/*.js']
-    })
+    }),
+    TypeOrmModule.forFeature([...appEntities])
   ],
   controllers: appControllers,
-  providers: [RabbitService]
+  providers: appServices
 })
 export class AppModule implements OnModuleInit {
-  constructor(private connection: Connection) {}
+  constructor(
+    private connection: Connection,
+    private usersService: UsersService
+  ) {}
 
   async onModuleInit() {
     if (process.env.BACKEND_DROP_DATABASE_ON_START === 'TRUE') {
@@ -49,6 +56,20 @@ export class AppModule implements OnModuleInit {
       await this.connection.synchronize();
     } else {
       await this.connection.runMigrations();
+    }
+
+    let firstUserId = process.env.BACKEND_FIRST_USER_EMAIL;
+    let firstUserPassword = process.env.BACKEND_FIRST_USER_PASSWORD;
+
+    if (helper.isDefined(firstUserId) && helper.isDefined(firstUserPassword)) {
+      let firstUser = await this.usersService.findOneById({ id: firstUserId });
+
+      if (helper.isUndefined(firstUser)) {
+        await this.usersService.addFirstUser({
+          userId: firstUserId,
+          password: firstUserPassword
+        });
+      }
     }
   }
 }
