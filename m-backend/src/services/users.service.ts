@@ -6,9 +6,9 @@ import { UserEntity } from '../store-entities/user.entity';
 import { db } from '../barrels/db';
 
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Connection } from 'typeorm';
 import * as crypto from 'crypto';
+import { UserRepository } from 'src/store-repositories/_index';
 
 // import { CreateUserDto } from './dto/create-user.dto';
 // import { User } from './user.entity';
@@ -16,8 +16,7 @@ import * as crypto from 'crypto';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserEntity)
-    private usersRepository: Repository<UserEntity>,
+    private userRepository: UserRepository,
     private connection: Connection
   ) {}
 
@@ -38,7 +37,7 @@ export class UsersService {
   // }
 
   async findOneById(item: { id: string }): Promise<UserEntity> {
-    return await this.usersRepository.findOne(item.id);
+    return await this.userRepository.findOne(item.id);
   }
 
   async addFirstUser(item: { userId: string; password: string }) {
@@ -98,7 +97,7 @@ export class UsersService {
     let restart = true;
 
     while (restart) {
-      let aliasUser = await this.usersRepository.findOne({ alias: alias });
+      let aliasUser = await this.userRepository.findOne({ alias: alias });
 
       if (helper.isDefined(aliasUser)) {
         alias = `${alias}${count}`;

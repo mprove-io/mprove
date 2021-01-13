@@ -9,7 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { appServices } from './app-services';
 import { appEntities } from './app-entities';
-import { UserEntity } from './store-entities/_index';
+import { appRepositories } from './app-repositories';
 
 @Module({
   imports: [
@@ -39,7 +39,7 @@ import { UserEntity } from './store-entities/_index';
       entities: appEntities,
       migrations: [__dirname + '/migration/*.js']
     }),
-    TypeOrmModule.forFeature([...appEntities])
+    TypeOrmModule.forFeature([...appRepositories])
   ],
   controllers: appControllers,
   providers: appServices
