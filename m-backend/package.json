@@ -19,7 +19,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
-    "test": "npm-run-all lint && npm run circular && jest"
+    "test": "npm-run-all lint && npm run circular && jest",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^1.15.2",

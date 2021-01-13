@@ -33,8 +33,8 @@ import { Connection } from 'typeorm';
       username: 'root',
       password: process.env.MYSQL_ROOT_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [UserEntity]
-      // synchronize: true
+      entities: [UserEntity],
+      migrations: [__dirname + '/migration/*.js']
     })
   ],
   controllers: appControllers,

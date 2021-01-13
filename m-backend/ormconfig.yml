@@ -1,0 +1,15 @@
+default: # default connection
+  type: mysql
+  host: db
+  port: 3306
+  username: root
+  password: root
+  database: my_db
+  entities: 
+  - src/store-entities/*.ts # CLI loads from ts files when use ts-node
+  migrations: 
+  - src/migration/*.ts # CLI loads from ts files when use ts-node
+  cli: 
+    entitiesDir: src/store-entities # CLI created entities to folder
+    migrationsDir: src/migration # CLI created migrations to folder
+

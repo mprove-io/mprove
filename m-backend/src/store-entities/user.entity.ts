@@ -39,10 +39,10 @@ export class UserEntity {
   last_name: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  avatar_small_url: string;
+  small_avatar_url: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  avatar_big_url: string;
+  big_avatar_url: string;
 
   // @Column({ type: constants.USER_TIMEZONE_DATATYPE, nullable: true })
   // timezone: string;
