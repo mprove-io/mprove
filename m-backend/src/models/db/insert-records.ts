@@ -1,10 +1,10 @@
 import { api } from '../../barrels/api';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
-import { generator } from '../../barrels/generator';
-import { UserEntity } from '../../store-entities/user.entity';
+import { gen } from '../../barrels/gen';
 import { EntityManager } from 'typeorm';
 import { repositories } from '../../barrels/repositories';
+import { entities } from '../../barrels/entities';
 
 export async function insertRecords(item: {
   manager: EntityManager;
@@ -12,7 +12,7 @@ export async function insertRecords(item: {
   // serverTs: string;
   // skipChunk?: boolean;
   records: {
-    users?: UserEntity[];
+    users?: entities.UserEntity[];
     // projects?: entities.ProjectEntity[];
     // repos?: entities.RepoEntity[];
     // files?: entities.FileEntity[];
@@ -30,7 +30,7 @@ export async function insertRecords(item: {
   // if (!item.skip_chunk) {
   //   let chunkId = helper.makeId();
 
-  //   let chunk = generator.makeChunk({
+  //   let chunk = gen.makeChunk({
   //     chunk_id: chunkId,
   //     records: item.records,
   //     source_session_id: item.source_init_id,

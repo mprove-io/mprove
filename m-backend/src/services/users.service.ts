@@ -1,23 +1,23 @@
 import { api } from '../barrels/api';
 import { helper } from '../barrels/helper';
 import { enums } from '../barrels/enums';
-import { generator } from '../barrels/generator';
-import { UserEntity } from '../store-entities/user.entity';
+import { gen } from '../barrels/gen';
 import { db } from '../barrels/db';
 
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import * as crypto from 'crypto';
-import { UserRepository } from 'src/store-repositories/_index';
+import { repositories } from 'src/barrels/repositories';
+import { entities } from 'src/barrels/entities';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private userRepository: UserRepository,
+    private userRepository: repositories.UserRepository,
     private connection: Connection
   ) {}
 
-  async findOneById(item: { id: string }): Promise<UserEntity> {
+  async findOneById(item: { id: string }): Promise<entities.UserEntity> {
     return await this.userRepository.findOne(item.id);
   }
 
@@ -31,7 +31,7 @@ export class UsersService {
 
     let alias = await this.findAlias({ userId: userId });
 
-    let user = generator.makeUser({
+    let user = gen.makeUser({
       user_id: userId,
       email_verified: enums.bEnum.TRUE,
       salt: salt,
