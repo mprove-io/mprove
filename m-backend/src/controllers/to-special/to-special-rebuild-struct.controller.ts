@@ -4,12 +4,12 @@ import { makeRoutingKeyToDisk } from '../../helper/make-routing-key-to-disk';
 import { api } from '../../barrels/api';
 
 @Controller()
-export class SpecialRebuildStructController {
+export class ToSpecialRebuildStructController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('specialRebuildStruct')
-  async specialRebuildStruct(
-    @Body() body: api.SpecialRebuildStructRequest
+  @Post('toSpecialRebuildStruct')
+  async toSpecialRebuildStruct(
+    @Body() body: api.ToSpecialRebuildStructRequest
   ): Promise<api.ToBlockmlRebuildStructResponse | api.ErrorResponse> {
     try {
       let { traceId } = body.info;

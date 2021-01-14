@@ -3,7 +3,7 @@ import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../objects/_index';
 import * as apiEnums from '../enums/_index';
 
-export class SpecialRebuildStructRequestPayload {
+export class ToSpecialRebuildStructRequestPayload {
   @IsString()
   readonly organizationId: string;
 
@@ -31,12 +31,12 @@ export class SpecialRebuildStructRequestPayload {
   readonly connections: apiObjects.ProjectConnection[];
 }
 
-export class SpecialRebuildStructRequest {
+export class ToSpecialRebuildStructRequest {
   @ValidateNested()
   @Type(() => apiObjects.SpecialRequestInfo)
   readonly info: apiObjects.SpecialRequestInfo;
 
   @ValidateNested()
-  @Type(() => SpecialRebuildStructRequestPayload)
-  readonly payload: SpecialRebuildStructRequestPayload;
+  @Type(() => ToSpecialRebuildStructRequestPayload)
+  readonly payload: ToSpecialRebuildStructRequestPayload;
 }

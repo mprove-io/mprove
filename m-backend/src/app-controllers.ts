@@ -29,17 +29,18 @@ import { ToDiskSeedProjectController } from './controllers/to-disk/8_seed/to-dis
 import { ToBlockmlRebuildStructController } from './controllers/to-blockml/to-blockml-rebuild-struct.controller';
 import { ToBlockmlProcessDashboardController } from './controllers/to-blockml/to-blockml-process-dashboard.controller';
 import { ToBlockmlProcessQueryController } from './controllers/to-blockml/to-blockml-process-query.controller';
-import { SpecialRebuildStructController } from './controllers/special/special-rebuild-struct.controller';
+import { ToSpecialRebuildStructController } from './controllers/to-special/to-special-rebuild-struct.controller';
 
 export const appControllers = [
+  // ToDisk Organization
   ToDiskCreateOrganizationController,
   ToDiskDeleteOrganizationController,
   ToDiskIsOrganizationExistController,
-
+  // ToDisk Project
   ToDiskCreateProjectController,
   ToDiskDeleteProjectController,
   ToDiskIsProjectExistController,
-
+  // ToDisk Repo
   ToDiskCommitRepoController,
   ToDiskCreateDevRepoController,
   ToDiskDeleteDevRepoController,
@@ -48,29 +49,29 @@ export const appControllers = [
   ToDiskPushRepoController,
   ToDiskRevertRepoToLastCommitController,
   ToDiskRevertRepoToProductionController,
-
+  // ToDisk Catalog
   ToDiskGetCatalogFilesController,
   ToDiskGetCatalogNodesController,
   ToDiskMoveCatalogNodeController,
   ToDiskRenameCatalogNodeController,
-
+  // ToDisk Branch
   ToDiskCreateBranchController,
   ToDiskDeleteBranchController,
   ToDiskIsBranchExistController,
-
+  // ToDisk Folder
   ToDiskCreateFolderController,
   ToDiskDeleteFolderController,
-
+  // ToDisk File
   ToDiskCreateFileController,
   ToDiskDeleteFileController,
   ToDiskGetFileController,
   ToDiskSaveFileController,
-
+  // ToDisk Project
   ToDiskSeedProjectController,
-  //
+  // ToBlockml
   ToBlockmlProcessDashboardController,
   ToBlockmlProcessQueryController,
   ToBlockmlRebuildStructController,
-  //
-  SpecialRebuildStructController
+  // ToSpecial
+  ToSpecialRebuildStructController
 ];
