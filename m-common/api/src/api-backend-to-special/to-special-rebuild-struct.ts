@@ -33,8 +33,8 @@ export class ToSpecialRebuildStructRequestPayload {
 
 export class ToSpecialRebuildStructRequest {
   @ValidateNested()
-  @Type(() => apiObjects.SpecialRequestInfo)
-  readonly info: apiObjects.SpecialRequestInfo;
+  @Type(() => apiObjects.ToSpecialRequestInfo)
+  readonly info: apiObjects.ToSpecialRequestInfo;
 
   @ValidateNested()
   @Type(() => ToSpecialRebuildStructRequestPayload)

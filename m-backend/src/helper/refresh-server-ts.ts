@@ -1,3 +1,6 @@
-export function refreshServerTs(arr: any[], newServerTs: string) {
-  return arr.map(element => Object.assign(element, { server_ts: newServerTs }));
+export function refreshServerTs<T extends { server_ts: string }>(
+  arr: T[],
+  newServerTs: string
+) {
+  arr.forEach(element => (element.server_ts = newServerTs));
 }

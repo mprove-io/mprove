@@ -59,21 +59,16 @@ export class AppModule implements OnModuleInit {
         await this.connection.runMigrations();
       }
 
-      let firstUserId = process.env.BACKEND_FIRST_USER_EMAIL;
-      let firstUserPassword = process.env.BACKEND_FIRST_USER_PASSWORD;
+      let userId = process.env.BACKEND_FIRST_USER_EMAIL;
+      let password = process.env.BACKEND_FIRST_USER_PASSWORD;
 
-      if (
-        helper.isDefined(firstUserId) &&
-        helper.isDefined(firstUserPassword)
-      ) {
-        let firstUser = await this.usersService.findOneById({
-          id: firstUserId
-        });
+      if (helper.isDefined(userId) && helper.isDefined(password)) {
+        let firstUser = await this.usersService.findOneById(userId);
 
         if (helper.isUndefined(firstUser)) {
           await this.usersService.addFirstUser({
-            userId: firstUserId,
-            password: firstUserPassword
+            userId: userId,
+            password: password
           });
         }
       }

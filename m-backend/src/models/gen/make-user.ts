@@ -4,22 +4,22 @@ import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 
 export function makeUser(item: {
-  user_id: string;
+  userId: string;
   hash?: string;
   salt?: string;
   alias: string;
-  email_verified: enums.bEnum;
-  email_verification_token?: string;
-  password_reset_token?: string;
-  password_reset_expires_ts?: string;
+  emailVerified: enums.bEnum;
+  emailVerificationToken?: string;
+  passwordResetToken?: string;
+  passwordResetExpiresTs?: string;
   deleted?: enums.bEnum;
 }): entities.UserEntity {
   return {
-    user_id: item.user_id,
-    password_reset_token: item.password_reset_token,
-    password_reset_expires_ts: item.password_reset_expires_ts,
-    email_verified: item.email_verified,
-    email_verification_token: item.email_verification_token || helper.makeId(),
+    user_id: item.userId,
+    password_reset_token: item.passwordResetToken,
+    password_reset_expires_ts: item.passwordResetExpiresTs,
+    email_verified: item.emailVerified,
+    email_verification_token: item.emailVerificationToken || helper.makeId(),
     hash: item.hash,
     salt: item.salt,
     alias: item.alias,

@@ -71,14 +71,15 @@ services:
     container_name: m-backend
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
     environment:
+      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS     
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD     
       MYSQL_DATABASE: $MYSQL_DATABASE     
       BACKEND_DROP_DATABASE_ON_START: $BACKEND_DROP_DATABASE_ON_START     
       BACKEND_FIRST_USER_EMAIL: $BACKEND_FIRST_USER_EMAIL     
-      BACKEND_FIRST_USER_PASSWORD: $BACKEND_FIRST_USER_PASSWORD     
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
+      BACKEND_FIRST_USER_PASSWORD: $BACKEND_FIRST_USER_PASSWORD   
+      BACKEND_REGISTER_ONLY_INVITED_USERS: $BACKEND_REGISTER_ONLY_INVITED_USERS  
     ports:
       - 3000:3000
     # logging:
@@ -92,13 +93,13 @@ services:
     container_name: m-blockml
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     environment:
+      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS   
       MPROVE_BLOCKML_IS_SINGLE: "FALSE"
       MPROVE_BLOCKML_IS_MAIN: "TRUE"  
       MPROVE_BLOCKML_IS_WORKER: "FALSE" 
       MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"    
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
     # logging:
     #   driver: fluentd
     #   options:
@@ -109,13 +110,13 @@ services:
   m-blockml-worker:
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     environment:
+      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS   
       MPROVE_BLOCKML_IS_SINGLE: "FALSE"
       MPROVE_BLOCKML_IS_MAIN: "FALSE"  
       MPROVE_BLOCKML_IS_WORKER: "TRUE"
       MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"      
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
     # logging:
     #   driver: fluentd
     #   options:
@@ -127,10 +128,10 @@ services:
     container_name: m-disk
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     environment:
+      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
       RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
       RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS
       MPROVE_M_DATA_ORGANIZATIONS_PATH: $MPROVE_M_DATA_ORGANIZATIONS_PATH 
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
     volumes:
       - type: bind
         source: $MPROVE_M_DATA_ORGANIZATIONS_PATH
