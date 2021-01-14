@@ -51,25 +51,35 @@ export class AppModule implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    if (process.env.BACKEND_DROP_DATABASE_ON_START === 'TRUE') {
-      await this.connection.dropDatabase();
-      await this.connection.synchronize();
-    } else {
-      await this.connection.runMigrations();
-    }
-
-    let firstUserId = process.env.BACKEND_FIRST_USER_EMAIL;
-    let firstUserPassword = process.env.BACKEND_FIRST_USER_PASSWORD;
-
-    if (helper.isDefined(firstUserId) && helper.isDefined(firstUserPassword)) {
-      let firstUser = await this.usersService.findOneById({ id: firstUserId });
-
-      if (helper.isUndefined(firstUser)) {
-        await this.usersService.addFirstUser({
-          userId: firstUserId,
-          password: firstUserPassword
-        });
+    try {
+      if (process.env.BACKEND_DROP_DATABASE_ON_START === 'TRUE') {
+        await this.connection.dropDatabase();
+        await this.connection.synchronize();
+      } else {
+        await this.connection.runMigrations();
       }
+
+      let firstUserId = process.env.BACKEND_FIRST_USER_EMAIL;
+      let firstUserPassword = process.env.BACKEND_FIRST_USER_PASSWORD;
+
+      if (
+        helper.isDefined(firstUserId) &&
+        helper.isDefined(firstUserPassword)
+      ) {
+        let firstUser = await this.usersService.findOneById({
+          id: firstUserId
+        });
+
+        if (helper.isUndefined(firstUser)) {
+          await this.usersService.addFirstUser({
+            userId: firstUserId,
+            password: firstUserPassword
+          });
+        }
+      }
+    } catch (e) {
+      api.handleError(e);
+      process.exit(1);
     }
   }
 }

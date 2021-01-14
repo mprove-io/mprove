@@ -1,4 +1,5 @@
 export * from './er.enum';
+export * from './error-story.enum';
 
 export * from './rabbit-blockml-routing-keys.enum';
 export * from './rabbit-blockml-worker-routing-keys.enum';

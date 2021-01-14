@@ -10,31 +10,12 @@ import { Connection } from 'typeorm';
 import * as crypto from 'crypto';
 import { UserRepository } from 'src/store-repositories/_index';
 
-// import { CreateUserDto } from './dto/create-user.dto';
-// import { User } from './user.entity';
-
 @Injectable()
 export class UsersService {
   constructor(
     private userRepository: UserRepository,
     private connection: Connection
   ) {}
-
-  // create(createUserDto: CreateUserDto): Promise<User> {
-  //   const user = new User();
-  //   user.firstName = createUserDto.firstName;
-  //   user.lastName = createUserDto.lastName;
-
-  //   return this.usersRepository.save(user);
-  // }
-
-  // async findAll(): Promise<User[]> {
-  //   return this.usersRepository.find();
-  // }
-
-  // async remove(id: string): Promise<void> {
-  //   await this.usersRepository.delete(id);
-  // }
 
   async findOneById(item: { id: string }): Promise<UserEntity> {
     return await this.userRepository.findOne(item.id);
@@ -88,9 +69,11 @@ export class UsersService {
 
     let alias = r ? r[1] : undefined;
 
-    // if (!alias) {
-    //   throw new ServerError({ name: enums.otherErrorsEnum.EMAIL_ALIAS });
-    // }
+    if (helper.isUndefined(alias)) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BACKEND_USER_ALIAS_IS_UNDEFINED
+      });
+    }
 
     let count = 2;
 
