@@ -13,5 +13,5 @@ export async function prepareTest() {
   await app.init();
   let httpServer = app.getHttpServer();
 
-  return { app, httpServer };
+  return { app, httpServer, moduleFixture };
 }
