@@ -133,7 +133,7 @@ test(testId, async () => {
     await messageService.processRequest(createOrganizationRequest);
     await messageService.processRequest(createProjectRequest);
 
-    await helper.delay(1000);
+    // await helper.delay(1000);
 
     await messageService.processRequest(createBranchRequest);
 

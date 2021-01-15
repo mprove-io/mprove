@@ -143,7 +143,7 @@ test(testId, async () => {
     await messageService.processRequest(createProjectRequest);
     await messageService.processRequest(createDevRepoRequest);
 
-    await helper.delay(1000);
+    // await helper.delay(1000);
 
     await messageService.processRequest(r1_master_saveFileRequest_1);
     await messageService.processRequest(r1_master_commitRepoRequest_1);
