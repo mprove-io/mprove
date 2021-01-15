@@ -15,7 +15,7 @@ export class ToBackendRegisterUserController {
     private connection: Connection
   ) {}
 
-  @Post('toBackendRegisterUser')
+  @Post(api.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
   async toBackendRegisterUser(
     @Body() body: api.ToBackendRegisterUserRequest
   ): Promise<api.ToBackendRegisterUserResponse | api.ErrorResponse> {
