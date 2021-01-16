@@ -31,6 +31,7 @@ import { ToBlockmlProcessDashboardController } from './controllers/to-blockml/to
 import { ToBlockmlProcessQueryController } from './controllers/to-blockml/to-blockml-process-query.controller';
 import { ToSpecialRebuildStructController } from './controllers/to-special/to-special-rebuild-struct.controller';
 import { ToBackendRegisterUserController } from './controllers/users/register-user.controller';
+import { ToBackendDeleteRecordsController } from './controllers/records/delete-records.controller';
 
 export const appControllers = [
   // ToDisk Organization
@@ -76,5 +77,6 @@ export const appControllers = [
   // ToSpecial
   ToSpecialRebuildStructController,
   // ToBackend
-  ToBackendRegisterUserController
+  ToBackendRegisterUserController,
+  ToBackendDeleteRecordsController
 ];

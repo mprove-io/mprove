@@ -4,12 +4,15 @@ import { interfaces } from '../../../barrels/interfaces';
 import * as request from 'supertest';
 import test from 'ava';
 
+let testId = 'register-user__success';
+
 let traceId = '123';
-let userId = 'john@example.com';
+let userId = `${testId}@example.com`;
 let password = '456';
 
-test('register-user__success', async t => {
-  let prep: interfaces.Prep;
+let prep: interfaces.Prep;
+
+test('1', async t => {
   let response: request.Response;
 
   let target: api.ToBackendRegisterUserResponse = {
@@ -23,7 +26,10 @@ test('register-user__success', async t => {
   };
 
   try {
-    prep = await prepareTest();
+    prep = await prepareTest({
+      traceId: traceId,
+      deleteRecordsPayload: { userIds: [userId] }
+    });
 
     let registerUserRequest: api.ToBackendRegisterUserRequest = {
       info: {
