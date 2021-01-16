@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../app.module';
+import { interfaces } from '../barrels/interfaces';
 
 export async function prepareTest() {
   let app: INestApplication;
@@ -13,5 +14,7 @@ export async function prepareTest() {
   await app.init();
   let httpServer = app.getHttpServer();
 
-  return { app, httpServer, moduleFixture };
+  let prep: interfaces.Prep = { app, httpServer, moduleFixture };
+
+  return prep;
 }
