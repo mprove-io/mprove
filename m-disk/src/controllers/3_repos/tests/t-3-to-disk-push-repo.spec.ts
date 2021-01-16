@@ -1,15 +1,16 @@
 import { api } from '../../../barrels/api';
+import { helper } from '../../../barrels/helper';
 import { prepareTest } from '../../../functions/prepare-test';
 import test from 'ava';
 
-let testId = 't-4-to-disk-move-catalog-node-1';
+let testId = 't-3-to-disk-push-repo';
 
 let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskMoveCatalogNodeResponse;
+  let resp: api.ToDiskPushRepoResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let createFolderRequest: api.ToDiskCreateFolderRequest = {
+    let saveFileRequest: api.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -47,14 +48,15 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
-        parentNodeId: `${projectId}/`,
-        folderName: 'fo1'
+        fileNodeId: `${projectId}/readme.md`,
+        content: '1',
+        userAlias: 'r1'
       }
     };
 
-    let moveCatalogNodeRequest: api.ToDiskMoveCatalogNodeRequest = {
+    let commitRepoRequest: api.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -62,20 +64,37 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
-        fromNodeId: 'p1/readme.md',
-        toNodeId: 'p1/fo1/readme.md'
+        userAlias: 'r1',
+        commitMessage: 'r1-commitMessage'
+      }
+    };
+
+    let pushRepoRequest: api.ToDiskPushRepoRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r1',
+        branch: 'master',
+        userAlias: 'r1'
       }
     };
 
     await messageService.processRequest(createOrganizationRequest);
     await messageService.processRequest(createProjectRequest);
 
-    await messageService.processRequest(createFolderRequest);
+    // await helper.delay(1000);
 
-    resp = await messageService.processRequest(moveCatalogNodeRequest);
+    await messageService.processRequest(saveFileRequest);
+    await messageService.processRequest(commitRepoRequest);
+
+    resp = await messageService.processRequest(pushRepoRequest);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  t.is(resp.payload.nodes[0].children[0].children[0].id, 'p1/fo1/readme.md');
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
 });

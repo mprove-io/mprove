@@ -9,7 +9,7 @@ import * as fse from 'fs-extra';
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
 let testId =
-  'groups/sql-always-where-calc/v__sql-always-where-calc-refs-model-calc-2';
+  'groups/sql-always-where-calc/v__sql-always-where-calc-refs-model-calc-3';
 
 test('1', async () => {
   let errors: BmError[];

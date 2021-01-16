@@ -1,15 +1,16 @@
 import { api } from '../../../barrels/api';
 import { helper } from '../../../barrels/helper';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
-let testId = 't-3-to-disk-push-repo';
+let testId = 't-3-to-disk-revert-repo-to-last-commit-1';
 
 let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
-  let resp: api.ToDiskPushRepoResponse;
+test('1', async t => {
+  let resp: api.ToDiskRevertRepoToLastCommitResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
@@ -53,32 +54,16 @@ test(testId, async () => {
       }
     };
 
-    let commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    let revertRepoToLastCommitRequest: api.ToDiskRevertRepoToLastCommitRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
         traceId: traceId
       },
       payload: {
         organizationId: organizationId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'master',
-        userAlias: 'r1',
-        commitMessage: 'r1-commitMessage'
-      }
-    };
-
-    let pushRepoRequest: api.ToDiskPushRepoRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r1',
-        branch: 'master',
-        userAlias: 'r1'
+        branch: 'master'
       }
     };
 
@@ -88,12 +73,11 @@ test(testId, async () => {
     // await helper.delay(1000);
 
     await messageService.processRequest(saveFileRequest);
-    await messageService.processRequest(commitRepoRequest);
 
-    resp = await messageService.processRequest(pushRepoRequest);
+    resp = await messageService.processRequest(revertRepoToLastCommitRequest);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
 });

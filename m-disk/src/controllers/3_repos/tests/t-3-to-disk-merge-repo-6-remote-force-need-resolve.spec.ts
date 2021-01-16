@@ -1,6 +1,7 @@
 import { api } from '../../../barrels/api';
 import { helper } from '../../../barrels/helper';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
 let testId = 't-3-to-disk-merge-repo-6';
 
@@ -8,7 +9,7 @@ let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
+test('1', async t => {
   let resp: api.ToDiskMergeRepoResponse;
 
   try {
@@ -163,5 +164,5 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedResolve);
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.NeedResolve);
 });

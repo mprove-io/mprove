@@ -1,5 +1,6 @@
 import { api } from '../../../barrels/api';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
 let testId = 't-5-to-disk-is-branch-exist';
 
@@ -7,7 +8,7 @@ let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
+test('1', async t => {
   let resp1: api.ToDiskIsBranchExistResponse;
   let resp2: api.ToDiskIsBranchExistResponse;
   let resp3: api.ToDiskIsBranchExistResponse;
@@ -106,8 +107,8 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(resp1.payload.isBranchExist).toBe(true);
-  expect(resp2.payload.isBranchExist).toBe(true);
-  expect(resp3.payload.isBranchExist).toBe(false);
-  expect(resp4.payload.isBranchExist).toBe(false);
+  t.is(resp1.payload.isBranchExist, true);
+  t.is(resp2.payload.isBranchExist, true);
+  t.is(resp3.payload.isBranchExist, false);
+  t.is(resp4.payload.isBranchExist, false);
 });

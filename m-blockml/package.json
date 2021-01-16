@@ -1,12 +1,9 @@
 {
-  "name": "m-blockml",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "mprove-blockml",
+  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
+  "license": "Apache-2.0",
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

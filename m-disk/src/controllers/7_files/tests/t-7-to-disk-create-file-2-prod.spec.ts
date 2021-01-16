@@ -1,5 +1,6 @@
 import { api } from '../../../barrels/api';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
 let testId = 't-7-to-disk-create-file-2';
 
@@ -7,7 +8,7 @@ let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
+test('1', async t => {
   let resp: api.ToDiskCreateFileResponse;
 
   try {
@@ -60,5 +61,5 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
 });

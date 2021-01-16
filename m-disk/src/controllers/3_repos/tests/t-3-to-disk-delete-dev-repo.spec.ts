@@ -1,15 +1,15 @@
 import { api } from '../../../barrels/api';
-import { helper } from '../../../barrels/helper';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
-let testId = 't-3-to-disk-commit-repo-1';
+let testId = 't-3-to-disk-delete-dev-repo';
 
 let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
-  let resp: api.ToDiskCommitRepoResponse;
+test('1', async t => {
+  let resp: api.ToDiskDeleteDevRepoResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
@@ -37,48 +37,25 @@ test(testId, async () => {
       }
     };
 
-    let saveFileRequest: api.ToDiskSaveFileRequest = {
+    let deleteDevRepoRequest: api.ToDiskDeleteDevRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
         traceId: traceId
       },
       payload: {
         organizationId: organizationId,
         projectId: projectId,
-        repoId: 'r1',
-        branch: 'master',
-        fileNodeId: `${projectId}/readme.md`,
-        content: '1',
-        userAlias: 'r1'
-      }
-    };
-
-    let commitRepoRequest: api.ToDiskCommitRepoRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r1',
-        branch: 'master',
-        userAlias: 'r1',
-        commitMessage: 'commitMessage-1'
+        devRepoId: 'r1'
       }
     };
 
     await messageService.processRequest(createOrganizationRequest);
     await messageService.processRequest(createProjectRequest);
 
-    // await helper.delay(1000);
-
-    await messageService.processRequest(saveFileRequest);
-
-    resp = await messageService.processRequest(commitRepoRequest);
+    resp = await messageService.processRequest(deleteDevRepoRequest);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
+  t.is(resp.payload.deletedRepoId, 'r1');
 });

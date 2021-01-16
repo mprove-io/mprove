@@ -1,5 +1,5 @@
 export default {
-  files: ['!dist', '*/**/*.e2e-spec.ts'],
+  files: ['!dist', '*/**/*.spec.ts'],
   extensions: ['ts'],
   verbose: true,
   concurrency: 7,

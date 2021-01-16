@@ -1,15 +1,16 @@
 import { api } from '../../../barrels/api';
 import { helper } from '../../../barrels/helper';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
-let testId = 't-3-to-disk-merge-repo-1';
+let testId = 't-3-to-disk-pull-repo-3';
 
 let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
-  let resp: api.ToDiskMergeRepoResponse;
+test('1', async t => {
+  let resp: api.ToDiskPullRepoResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
@@ -37,18 +38,15 @@ test(testId, async () => {
       }
     };
 
-    let r1_createBranchRequest: api.ToDiskCreateBranchRequest = {
+    let createDevRepoRequest: api.ToDiskCreateDevRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
         traceId: traceId
       },
       payload: {
         organizationId: organizationId,
         projectId: projectId,
-        repoId: 'r1',
-        fromBranch: 'master',
-        newBranch: 'b2',
-        isFromRemote: false
+        devRepoId: 'r2'
       }
     };
 
@@ -114,39 +112,84 @@ test(testId, async () => {
       }
     };
 
-    let b2_mergeRepoRequest: api.ToDiskMergeRepoRequest = {
+    let r1_master_pushRepoRequest: api.ToDiskPushRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
+        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
         traceId: traceId
       },
       payload: {
         organizationId: organizationId,
         projectId: projectId,
         repoId: 'r1',
-        branch: 'b2',
-        userAlias: 'r1',
-        theirBranch: 'master',
-        isTheirBranchRemote: false
+        branch: 'master',
+        userAlias: 'r1'
+      }
+    };
+
+    let r2_master_saveFileRequest: api.ToDiskSaveFileRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r2',
+        branch: 'master',
+        fileNodeId: `${projectId}/readme.md`,
+        content: '3',
+        userAlias: 'r2'
+      }
+    };
+
+    let r2_master_commitRepoRequest: api.ToDiskCommitRepoRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r2',
+        branch: 'master',
+        userAlias: 'r2',
+        commitMessage: 'r2-commitMessage-3'
+      }
+    };
+
+    let r2_master_pullRepoRequest: api.ToDiskPullRepoRequest = {
+      info: {
+        name: api.ToDiskRequestInfoNameEnum.ToDiskPullRepo,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: 'r2',
+        branch: 'master',
+        userAlias: 'r2'
       }
     };
 
     await messageService.processRequest(createOrganizationRequest);
     await messageService.processRequest(createProjectRequest);
+    await messageService.processRequest(createDevRepoRequest);
 
     // await helper.delay(1000);
 
     await messageService.processRequest(r1_master_saveFileRequest_1);
     await messageService.processRequest(r1_master_commitRepoRequest_1);
-
-    await messageService.processRequest(r1_createBranchRequest);
-
     await messageService.processRequest(r1_master_saveFileRequest_2);
     await messageService.processRequest(r1_master_commitRepoRequest_2);
+    await messageService.processRequest(r1_master_pushRepoRequest);
 
-    resp = await messageService.processRequest(b2_mergeRepoRequest);
+    await messageService.processRequest(r2_master_saveFileRequest);
+    await messageService.processRequest(r2_master_commitRepoRequest);
+
+    resp = await messageService.processRequest(r2_master_pullRepoRequest);
   } catch (e) {
     api.logToConsole(e);
   }
-  // NeedPush because we merge with different branch
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
+
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.NeedResolve);
 });

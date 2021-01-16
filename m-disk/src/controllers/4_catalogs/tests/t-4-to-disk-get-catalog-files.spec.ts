@@ -1,5 +1,6 @@
 import { api } from '../../../barrels/api';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
 let testId = 't-4-to-disk-get-catalog-files';
 
@@ -7,7 +8,7 @@ let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
+test('1', async t => {
   let resp: api.ToDiskGetCatalogFilesResponse;
 
   try {
@@ -57,6 +58,6 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.files[0].fileNodeId).toBe('p1/readme.md');
-  expect(resp.payload.files[0].content).toBe('# P1');
+  t.is(resp.payload.files[0].fileNodeId, 'p1/readme.md');
+  t.is(resp.payload.files[0].content, '# P1');
 });

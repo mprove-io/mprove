@@ -1,5 +1,6 @@
 import { api } from '../../../barrels/api';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
 let testId = 't-8-to-disk-seed-project-1';
 
@@ -7,7 +8,7 @@ let traceId = '123';
 let organizationId = testId;
 let projectId = 'project_1';
 
-test(testId, async () => {
+test('1', async t => {
   let resp: api.ToDiskSeedProjectResponse;
 
   try {
@@ -31,6 +32,6 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.Ok);
-  expect(resp.payload.files[0].content).toBe('# text');
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
+  t.is(resp.payload.files[0].content, '# text');
 });

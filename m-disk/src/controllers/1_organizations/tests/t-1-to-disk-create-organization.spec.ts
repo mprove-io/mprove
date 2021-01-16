@@ -1,12 +1,13 @@
 import { prepareTest } from '../../../functions/prepare-test';
 import { api } from '../../../barrels/api';
+import test from 'ava';
 
 let testId = 't-1-to-disk-create-organization';
 
 let traceId = '123';
 let organizationId = testId;
 
-test(testId, async () => {
+test('1', async t => {
   let resp: api.ToDiskIsOrganizationExistResponse;
 
   try {
@@ -35,12 +36,9 @@ test(testId, async () => {
     await messageService.processRequest(createOrganizationRequest);
 
     resp = await messageService.processRequest(isOrganizationExistRequest);
-
-    // eslint-disable-next-line no-throw-literal
-    // throw { a: { b: 123 } };
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.isOrganizationExist).toBe(true);
+  t.is(resp.payload.isOrganizationExist, true);
 });

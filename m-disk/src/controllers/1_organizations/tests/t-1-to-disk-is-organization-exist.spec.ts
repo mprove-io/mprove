@@ -1,12 +1,13 @@
 import { api } from '../../../barrels/api';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
 let testId = 't-1-to-disk-is-organization-exist';
 
 let traceId = '123';
 let organizationId = testId;
 
-test(testId, async () => {
+test('1', async t => {
   let resp1: api.ToDiskIsOrganizationExistResponse;
   let resp2: api.ToDiskIsOrganizationExistResponse;
 
@@ -50,6 +51,7 @@ test(testId, async () => {
   } catch (e) {
     api.logToConsole(e);
   }
-  expect(resp1.payload.isOrganizationExist).toBe(true);
-  expect(resp2.payload.isOrganizationExist).toBe(false);
+
+  t.is(resp1.payload.isOrganizationExist, true);
+  t.is(resp2.payload.isOrganizationExist, false);
 });

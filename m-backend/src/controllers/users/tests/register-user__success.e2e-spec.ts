@@ -44,5 +44,6 @@ test('register-user__success', async t => {
   } catch (e) {
     api.logToConsole(e);
   }
+
   t.deepEqual(response.body, target);
 });

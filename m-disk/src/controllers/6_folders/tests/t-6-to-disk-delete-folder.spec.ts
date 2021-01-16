@@ -1,5 +1,6 @@
 import { api } from '../../../barrels/api';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
 let testId = 't-6-to-disk-delete-folder';
 
@@ -7,7 +8,7 @@ let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
+test('1', async t => {
   let resp: api.ToDiskDeleteFolderResponse;
 
   try {
@@ -91,5 +92,5 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedCommit);
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.NeedCommit);
 });

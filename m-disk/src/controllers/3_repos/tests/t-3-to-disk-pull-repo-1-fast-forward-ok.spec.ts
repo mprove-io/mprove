@@ -1,14 +1,15 @@
 import { api } from '../../../barrels/api';
 import { helper } from '../../../barrels/helper';
 import { prepareTest } from '../../../functions/prepare-test';
+import test from 'ava';
 
-let testId = 't-3-to-disk-pull-repo-2';
+let testId = 't-3-to-disk-pull-repo-1';
 
 let traceId = '123';
 let organizationId = testId;
 let projectId = 'p1';
 
-test(testId, async () => {
+test('1', async t => {
   let resp: api.ToDiskPullRepoResponse;
 
   try {
@@ -125,38 +126,7 @@ test(testId, async () => {
       }
     };
 
-    let r2_master_createFileRequest: api.ToDiskCreateFileRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: 'master',
-        fileName: 's.view',
-        parentNodeId: `${projectId}/`,
-        userAlias: 'r2'
-      }
-    };
-
-    let r2_master_commitRepoRequest: api.ToDiskCommitRepoRequest = {
-      info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        organizationId: organizationId,
-        projectId: projectId,
-        repoId: 'r2',
-        branch: 'master',
-        userAlias: 'r2',
-        commitMessage: 'r2-commitMessage-3'
-      }
-    };
-
-    let r2_master_pullRepoRequest: api.ToDiskPullRepoRequest = {
+    let r2_pullRepoRequest: api.ToDiskPullRepoRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskPullRepo,
         traceId: traceId
@@ -182,13 +152,10 @@ test(testId, async () => {
     await messageService.processRequest(r1_master_commitRepoRequest_2);
     await messageService.processRequest(r1_master_pushRepoRequest);
 
-    await messageService.processRequest(r2_master_createFileRequest);
-    await messageService.processRequest(r2_master_commitRepoRequest);
-
-    resp = await messageService.processRequest(r2_master_pullRepoRequest);
+    resp = await messageService.processRequest(r2_pullRepoRequest);
   } catch (e) {
     api.logToConsole(e);
   }
 
-  expect(resp.payload.repoStatus).toBe(api.RepoStatusEnum.NeedPush);
+  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
 });
