@@ -73,7 +73,7 @@ export class UsersService {
 
     let user = gen.makeUser({
       userId: userId,
-      emailVerified: enums.bEnum.TRUE,
+      emailVerified: api.BoolEnum.TRUE,
       salt: salt,
       hash: hash,
       alias: alias

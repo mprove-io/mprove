@@ -9,7 +9,7 @@ export class UserEntity {
   user_id: string;
 
   @Column({ type: constants.VARCHAR })
-  email_verified: enums.bEnum;
+  email_verified: api.BoolEnum;
 
   @Column({ unique: true, type: constants.VARCHAR })
   email_verification_token: string;
@@ -51,7 +51,7 @@ export class UserEntity {
   status: api.UserStatusEnum;
 
   @Column({ type: constants.VARCHAR })
-  deleted: enums.bEnum;
+  deleted: api.BoolEnum;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

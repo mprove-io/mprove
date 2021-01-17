@@ -8,11 +8,11 @@ export function makeUser(item: {
   hash?: string;
   salt?: string;
   alias: string;
-  emailVerified: enums.bEnum;
+  emailVerified: api.BoolEnum;
   emailVerificationToken?: string;
   passwordResetToken?: string;
   passwordResetExpiresTs?: string;
-  deleted?: enums.bEnum;
+  deleted?: api.BoolEnum;
 }): entities.UserEntity {
   return {
     user_id: item.userId,
@@ -30,7 +30,7 @@ export function makeUser(item: {
     big_avatar_url: undefined,
     // timezone: constants.USE_PROJECT_DEFAULT_TIMEZONE,
     status: api.UserStatusEnum.Pending,
-    deleted: item.deleted || enums.bEnum.FALSE,
+    deleted: item.deleted || api.BoolEnum.FALSE,
     server_ts: undefined
   };
 }

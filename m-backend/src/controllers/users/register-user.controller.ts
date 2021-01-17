@@ -6,13 +6,15 @@ import { db } from '../../barrels/db';
 import { Body, Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { gen } from '../../barrels/gen';
-import { enums } from '../../barrels/enums';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from 'src/barrels/interfaces';
 
 @Controller()
 export class ToBackendRegisterUserController {
   constructor(
     private usersService: UsersService,
-    private connection: Connection
+    private connection: Connection,
+    private configService: ConfigService<interfaces.Config>
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
@@ -55,7 +57,9 @@ export class ToBackendRegisterUserController {
       }
 
       if (helper.isUndefined(user)) {
-        if (process.env.BACKEND_REGISTER_ONLY_INVITED_USERS === 'TRUE') {
+        let onlyInv = this.configService.get('backendRegisterOnlyInvitedUsers');
+
+        if (onlyInv === api.BoolEnum.TRUE) {
           throw new api.ServerError({
             message: api.ErEnum.M_BACKEND_USER_IS_NOT_INVITED
           });
@@ -65,7 +69,7 @@ export class ToBackendRegisterUserController {
 
         let newUser = gen.makeUser({
           userId: userId,
-          emailVerified: enums.bEnum.FALSE,
+          emailVerified: api.BoolEnum.FALSE,
           hash: hash,
           salt: salt,
           alias: alias
