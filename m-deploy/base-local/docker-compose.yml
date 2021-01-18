@@ -8,10 +8,8 @@ services:
   fluent:
     container_name: fluent
     image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/fluent_key
-      - STACKDRIVER_VM_ID=local
-      - STACKDRIVER_ZONE_ID=local
+    env_file:
+      - $ENV_FILE_PATH    
     secrets:
       - fluent_key
     volumes:
@@ -23,10 +21,9 @@ services:
 
   db:
     image: mysql:8
+    env_file:
+      - $ENV_FILE_PATH    
     command: ['--default-authentication-plugin=mysql_native_password', '--max_allowed_packet=128M']
-    environment:
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-      MYSQL_DATABASE: $MYSQL_DATABASE
     volumes:
       - type: bind
         source: $MPROVE_M_DATA_MYSQL_PATH
@@ -43,6 +40,8 @@ services:
   rabbit:
     container_name: rabbit
     image: rabbitmq:3-management
+    env_file:
+      - $ENV_FILE_PATH    
     volumes:
     #   - type: bind
     #     source: ./.docker/rabbitmq/etc/
@@ -53,10 +52,6 @@ services:
       - type: bind
         source: $MPROVE_M_DATA_RABBIT_LOG_PATH
         target: /var/log/rabbitmq/     
-    environment:
-      RABBITMQ_ERLANG_COOKIE: $RABBITMQ_ERLANG_COOKIE
-      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
-      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS
     ports:
       - 5672:5672
       - 15672:15672
@@ -70,19 +65,14 @@ services:
   m-backend:
     container_name: m-backend
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
-    environment:
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
-      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
-      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS     
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD     
-      MYSQL_DATABASE: $MYSQL_DATABASE     
-      BACKEND_ENV: $BACKEND_ENV    
-      BACKEND_DROP_DATABASE_ON_START: $BACKEND_DROP_DATABASE_ON_START  
-      BACKEND_REGISTER_ONLY_INVITED_USERS: $BACKEND_REGISTER_ONLY_INVITED_USERS  
-      BACKEND_FIRST_USER_EMAIL: $BACKEND_FIRST_USER_EMAIL     
-      BACKEND_FIRST_USER_PASSWORD: $BACKEND_FIRST_USER_PASSWORD   
+    env_file:
+      - $ENV_FILE_PATH    
     ports:
       - 3000:3000
+    volumes:
+      - type: bind
+        source: $ENV_FILE_PATH
+        target: $ENV_FILE_PATH      
     # logging:
     #   driver: fluentd
     #   options:
@@ -93,14 +83,8 @@ services:
   m-blockml:
     container_name: m-blockml
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
-    environment:
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
-      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
-      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS   
-      MPROVE_BLOCKML_IS_SINGLE: "FALSE"
-      MPROVE_BLOCKML_IS_MAIN: "TRUE"  
-      MPROVE_BLOCKML_IS_WORKER: "FALSE" 
-      MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"    
+    env_file:
+      - $ENV_FILE_PATH    
     # logging:
     #   driver: fluentd
     #   options:
@@ -110,14 +94,8 @@ services:
 
   m-blockml-worker:
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
-    environment:
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
-      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
-      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS   
-      MPROVE_BLOCKML_IS_SINGLE: "FALSE"
-      MPROVE_BLOCKML_IS_MAIN: "FALSE"  
-      MPROVE_BLOCKML_IS_WORKER: "TRUE"
-      MPROVE_BLOCKML_CONCURRENCY_LIMIT: "8"      
+    env_file:
+      - $ENV_FILE_PATH    
     # logging:
     #   driver: fluentd
     #   options:
@@ -128,11 +106,8 @@ services:
   m-disk:
     container_name: m-disk
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
-    environment:
-      MPROVE_LOG_TYPE: $MPROVE_LOG_TYPE     
-      RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
-      RABBITMQ_DEFAULT_PASS: $RABBITMQ_DEFAULT_PASS
-      MPROVE_M_DATA_ORGANIZATIONS_PATH: $MPROVE_M_DATA_ORGANIZATIONS_PATH 
+    env_file:
+      - $ENV_FILE_PATH    
     volumes:
       - type: bind
         source: $MPROVE_M_DATA_ORGANIZATIONS_PATH

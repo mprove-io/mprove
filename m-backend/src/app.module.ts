@@ -11,31 +11,35 @@ import { appServices } from './app-services';
 import { appEntities } from './app-entities';
 import { appRepositories } from './app-repositories';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import devConfig from './config/dev.config';
-import prodConfig from './config/prod.config';
-import testConfig from './config/test.config';
 import { interfaces } from './barrels/interfaces';
+import { enums } from './barrels/enums';
+import { getBaseConfig } from './config/get-base.config';
+import { getProdConfig } from './config/get-prod.config';
+import { getTestConfig } from './config/get-test.config';
 
-let backendEnv = process.env.BACKEND_ENV;
+function getConfig() {
+  let baseConfig = getBaseConfig();
+  let backendEnv = baseConfig.backendEnv;
 
-let getEnvConfig =
-  backendEnv === 'TEST'
-    ? testConfig
-    : backendEnv === 'PROD'
-    ? prodConfig
-    : backendEnv === 'DEV'
-    ? devConfig
-    : devConfig;
+  let config =
+    backendEnv === enums.BackendEnvEnum.PROD
+      ? getProdConfig(baseConfig)
+      : backendEnv === enums.BackendEnvEnum.TEST
+      ? getTestConfig(baseConfig)
+      : baseConfig;
+
+  return config;
+}
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [getEnvConfig],
+      load: [getConfig],
       isGlobal: true,
       validate: config => {
         api.transformValidSync({
           classType: interfaces.Config,
-          object: getEnvConfig(),
+          object: getConfig(),
           errorMessage: api.ErEnum.M_BACKEND_WRONG_ENV_VALUES
         });
         return config;
@@ -74,7 +78,7 @@ let getEnvConfig =
         password: configService.get('mysqlRootPassword'),
         database: configService.get('mysqlDatabase'),
         entities: appEntities,
-        migrations: [__dirname + '/migration/*.js']
+        migrations: [__dirname + '/migrations/**/*{.ts,.js}']
       }),
       inject: [ConfigService]
     }),
@@ -93,10 +97,17 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      let drop = this.configService.get('backendDropDatabaseOnStart');
-
-      if (drop === api.BoolEnum.TRUE) {
+      if (
+        this.configService.get('backendDropDatabaseOnStart') ===
+        api.BoolEnum.TRUE
+      ) {
         await this.connection.dropDatabase();
+      }
+
+      if (
+        this.configService.get('backendSyncDatabaseOnStart') ===
+        api.BoolEnum.TRUE
+      ) {
         await this.connection.synchronize();
       } else {
         await this.connection.runMigrations();

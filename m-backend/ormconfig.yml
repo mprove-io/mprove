@@ -8,8 +8,8 @@ default: # default connection
   entities: 
   - src/store-entities/*.ts # CLI loads from ts files when use ts-node
   migrations: 
-  - src/migration/*.ts # CLI loads from ts files when use ts-node
+  - src/migrations/*.ts # CLI loads from ts files when use ts-node
   cli: 
     entitiesDir: src/store-entities # CLI created entities to folder
-    migrationsDir: src/migration # CLI created migrations to folder
+    migrationsDir: src/migrations # CLI created migrations to folder
 

@@ -24,6 +24,9 @@ export class Config {
   @IsEnum(api.BoolEnum)
   backendDropDatabaseOnStart: api.BoolEnum;
 
+  @IsEnum(api.BoolEnum)
+  backendSyncDatabaseOnStart: api.BoolEnum;
+
   @IsString()
   backendFirstUserEmail: string;
 
