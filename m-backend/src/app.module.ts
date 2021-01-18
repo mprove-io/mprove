@@ -16,22 +16,30 @@ import prodConfig from './config/prod.config';
 import testConfig from './config/test.config';
 import { interfaces } from './barrels/interfaces';
 
-let envConfig = process.env.BACKEND_ENV_CONFIG;
+let backendEnv = process.env.BACKEND_ENV;
 
-let configFile =
-  envConfig === 'TEST'
+let getEnvConfig =
+  backendEnv === 'TEST'
     ? testConfig
-    : envConfig === 'PROD'
+    : backendEnv === 'PROD'
     ? prodConfig
-    : envConfig === 'DEV'
+    : backendEnv === 'DEV'
     ? devConfig
     : devConfig;
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [configFile],
-      isGlobal: true
+      load: [getEnvConfig],
+      isGlobal: true,
+      validate: config => {
+        api.transformValidSync({
+          classType: interfaces.Config,
+          object: getEnvConfig(),
+          errorMessage: api.ErEnum.M_BACKEND_WRONG_ENV_VALUES
+        });
+        return config;
+      }
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
@@ -70,6 +78,7 @@ let configFile =
       }),
       inject: [ConfigService]
     }),
+
     TypeOrmModule.forFeature([...appRepositories])
   ],
   controllers: appControllers,
