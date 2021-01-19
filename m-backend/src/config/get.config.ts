@@ -1,3 +1,5 @@
+import { api } from '../barrels/api';
+import { interfaces } from '../barrels/interfaces';
 import { enums } from '../barrels/enums';
 import { getBaseConfig } from './get-base.config';
 import { getProdConfig } from './get-prod.config';
@@ -14,5 +16,11 @@ export function getConfig() {
       ? getTestConfig(baseConfig)
       : baseConfig;
 
-  return config;
+  let validatedConfig = api.transformValidSync({
+    classType: interfaces.Config,
+    object: config,
+    errorMessage: api.ErEnum.M_BACKEND_WRONG_ENV_VALUES
+  });
+
+  return validatedConfig;
 }

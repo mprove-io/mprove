@@ -3,6 +3,6 @@ import { TestingModule } from '@nestjs/testing';
 
 export interface Prep {
   app: INestApplication;
-  moduleFixture: TestingModule;
+  moduleRef: TestingModule;
   httpServer: any;
 }

@@ -13,11 +13,11 @@ export async function prepareTest(item: {
 }) {
   let app: INestApplication;
 
-  const moduleFixture: TestingModule = await Test.createTestingModule({
+  const moduleRef: TestingModule = await Test.createTestingModule({
     imports: [AppModule]
   }).compile();
 
-  app = moduleFixture.createNestApplication();
+  app = moduleRef.createNestApplication();
 
   await app.init();
 
@@ -35,7 +35,7 @@ export async function prepareTest(item: {
     .post('/' + deleteRecordsRequest.info.name)
     .send(deleteRecordsRequest);
 
-  let prep: interfaces.Prep = { app, httpServer, moduleFixture };
+  let prep: interfaces.Prep = { app, httpServer, moduleRef };
 
   return prep;
 }

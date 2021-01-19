@@ -44,7 +44,9 @@ export class MessageService {
   }
 
   async processRequest(request: any): Promise<any> {
-    let orgPath = this.configService.get('mproveMDataOrganizationsPath');
+    let orgPath = this.configService.get<
+      interfaces.Config['mDataOrganizationsPath']
+    >('mDataOrganizationsPath');
 
     switch (request.info.name) {
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization:

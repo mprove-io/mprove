@@ -11,21 +11,18 @@ import { getConfig } from './config/get.config';
   imports: [
     ConfigModule.forRoot({
       load: [getConfig],
-      isGlobal: true,
-      validate: config => {
-        api.transformValidSync({
-          classType: interfaces.Config,
-          object: getConfig(),
-          errorMessage: api.ErEnum.M_DISK_WRONG_ENV_VALUES
-        });
-        return config;
-      }
+      isGlobal: true
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: (configService: ConfigService<interfaces.Config>) => {
-        let rabbitUser = configService.get('rabbitmqDefaultUser');
-        let rabbitPass = configService.get('rabbitmqDefaultPass');
+        let rabbitUser = configService.get<
+          interfaces.Config['rabbitmqDefaultUser']
+        >('rabbitmqDefaultUser');
+
+        let rabbitPass = configService.get<
+          interfaces.Config['rabbitmqDefaultPass']
+        >('rabbitmqDefaultPass');
 
         return {
           exchanges: [

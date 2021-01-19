@@ -15,15 +15,7 @@ export async function prepareTest(organizationId: string) {
     imports: [
       ConfigModule.forRoot({
         load: [getConfig],
-        isGlobal: true,
-        validate: config => {
-          api.transformValidSync({
-            classType: interfaces.Config,
-            object: getConfig(),
-            errorMessage: api.ErEnum.M_DISK_WRONG_ENV_VALUES
-          });
-          return config;
-        }
+        isGlobal: true
       })
     ],
     providers: [MessageService]
@@ -35,7 +27,11 @@ export async function prepareTest(organizationId: string) {
   let configService = moduleRef.get<ConfigService<interfaces.Config>>(
     ConfigService
   );
-  let orgPath = configService.get('mproveMDataOrganizationsPath');
+
+  let orgPath = configService.get<interfaces.Config['mDataOrganizationsPath']>(
+    'mDataOrganizationsPath'
+  );
+
   let orgDir = `${orgPath}/${organizationId}`;
 
   let isOrgExist = fse.pathExistsSync(orgDir);

@@ -13,7 +13,7 @@ export function getBaseConfig(envFilePath) {
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
 
-    mproveMDataOrganizationsPath: envFile.MPROVE_M_DATA_ORGANIZATIONS_PATH,
+    mDataOrganizationsPath: envFile.M_DATA_ORGANIZATIONS_PATH,
 
     mproveLogType: <api.LogTypeEnum>envFile.MPROVE_LOG_TYPE
   };

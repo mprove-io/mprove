@@ -41,15 +41,6 @@ export async function prepareTest(
       ConfigModule.forRoot({
         load: [getConfig],
         isGlobal: true
-        // ,
-        // validate: config => {
-        //   api.transformValidSync({
-        //     classType: interfaces.Config,
-        //     object: getConfig(),
-        //     errorMessage: api.ErEnum.M_DISK_WRONG_ENV_VALUES
-        //   });
-        //   return config;
-        // }
       })
     ],
     controllers: [],

@@ -2,7 +2,7 @@ version: '3.7'
 
 secrets:
   fluent_key:
-    file: $MPROVE_M_DATA_FLUENT_KEY_PATH
+    file: $M_DATA_FLUENT_KEY_PATH
 
 services:
   fluent:
@@ -16,7 +16,7 @@ services:
       - 24224:24224
     volumes:
       - type: bind
-        source: $MPROVE_M_DATA_FLUENT_LOG_PATH
+        source: $M_DATA_FLUENT_LOG_PATH
         target: /fluentd/log      
 
   db:
@@ -28,7 +28,7 @@ services:
       - 3306:3306         
     volumes:
       - type: bind
-        source: $MPROVE_M_DATA_MYSQL_PATH
+        source: $M_DATA_MYSQL_PATH
         target: /var/lib/mysql      
     # logging:
     #   driver: fluentd
@@ -50,10 +50,10 @@ services:
     #     source: ./.docker/rabbitmq/etc/
     #     target: /etc/rabbitmq/      
       - type: bind
-        source: $MPROVE_M_DATA_RABBIT_DATA_PATH
+        source: $M_DATA_RABBIT_DATA_PATH
         target:  /var/lib/rabbitmq/  
       - type: bind
-        source: $MPROVE_M_DATA_RABBIT_LOG_PATH
+        source: $M_DATA_RABBIT_LOG_PATH
         target: /var/log/rabbitmq/     
     # logging:
     #   driver: fluentd
@@ -118,8 +118,8 @@ services:
       - $ENV_FILE_PATH    
     volumes:
       - type: bind
-        source: $MPROVE_M_DATA_ORGANIZATIONS_PATH
-        target: $MPROVE_M_DATA_ORGANIZATIONS_PATH
+        source: $M_DATA_ORGANIZATIONS_PATH
+        target: $M_DATA_ORGANIZATIONS_PATH
       - type: bind
         source: $ENV_FILE_PATH
         target: $ENV_FILE_PATH        

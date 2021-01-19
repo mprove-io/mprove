@@ -18,21 +18,18 @@ import { getConfig } from './config/get.config';
   imports: [
     ConfigModule.forRoot({
       load: [getConfig],
-      isGlobal: true,
-      validate: config => {
-        api.transformValidSync({
-          classType: interfaces.Config,
-          object: getConfig(),
-          errorMessage: api.ErEnum.M_BACKEND_WRONG_ENV_VALUES
-        });
-        return config;
-      }
+      isGlobal: true
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
       useFactory: (configService: ConfigService<interfaces.Config>) => {
-        let rabbitUser = configService.get('rabbitmqDefaultUser');
-        let rabbitPass = configService.get('rabbitmqDefaultPass');
+        let rabbitUser = configService.get<
+          interfaces.Config['rabbitmqDefaultUser']
+        >('rabbitmqDefaultUser');
+
+        let rabbitPass = configService.get<
+          interfaces.Config['rabbitmqDefaultPass']
+        >('rabbitmqDefaultPass');
 
         return {
           exchanges: [
@@ -58,8 +55,12 @@ import { getConfig } from './config/get.config';
         host: 'db',
         port: 3306,
         username: 'root',
-        password: configService.get('mysqlRootPassword'),
-        database: configService.get('mysqlDatabase'),
+        password: configService.get<interfaces.Config['mysqlRootPassword']>(
+          'mysqlRootPassword'
+        ),
+        database: configService.get<interfaces.Config['mysqlDatabase']>(
+          'mysqlDatabase'
+        ),
         entities: appEntities,
         migrations: [__dirname + '/migrations/**/*{.ts,.js}']
       }),
@@ -81,23 +82,30 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     try {
       if (
-        this.configService.get('backendDropDatabaseOnStart') ===
-        api.BoolEnum.TRUE
+        this.configService.get<interfaces.Config['backendDropDatabaseOnStart']>(
+          'backendDropDatabaseOnStart'
+        ) === api.BoolEnum.TRUE
       ) {
         await this.connection.dropDatabase();
       }
 
       if (
-        this.configService.get('backendSyncDatabaseOnStart') ===
-        api.BoolEnum.TRUE
+        this.configService.get<interfaces.Config['backendSyncDatabaseOnStart']>(
+          'backendSyncDatabaseOnStart'
+        ) === api.BoolEnum.TRUE
       ) {
         await this.connection.synchronize();
       } else {
         await this.connection.runMigrations();
       }
 
-      let userId = this.configService.get('backendFirstUserEmail');
-      let password = this.configService.get('backendFirstUserPassword');
+      let userId = this.configService.get<
+        interfaces.Config['backendFirstUserEmail']
+      >('backendFirstUserEmail');
+
+      let password = this.configService.get<
+        interfaces.Config['backendFirstUserPassword']
+      >('backendFirstUserPassword');
 
       if (helper.isDefined(userId) && helper.isDefined(password)) {
         let firstUser = await this.usersService.findOneById(userId);

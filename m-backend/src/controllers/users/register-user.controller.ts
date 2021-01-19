@@ -57,7 +57,9 @@ export class ToBackendRegisterUserController {
       }
 
       if (helper.isUndefined(user)) {
-        let onlyInv = this.configService.get('backendRegisterOnlyInvitedUsers');
+        let onlyInv = this.configService.get<
+          interfaces.Config['backendRegisterOnlyInvitedUsers']
+        >('backendRegisterOnlyInvitedUsers');
 
         if (onlyInv === api.BoolEnum.TRUE) {
           throw new api.ServerError({
