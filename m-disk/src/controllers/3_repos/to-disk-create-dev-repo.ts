@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskCreateDevRepo(
-  request: api.ToDiskCreateDevRepoRequest
-): Promise<api.ToDiskCreateDevRepoResponse> {
+export async function ToDiskCreateDevRepo(item: {
+  request: api.ToDiskCreateDevRepoRequest;
+  orgPath: string;
+}): Promise<api.ToDiskCreateDevRepoResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskCreateDevRepoRequest,
     object: request,
@@ -16,7 +19,7 @@ export async function ToDiskCreateDevRepo(
   let { traceId } = requestValid.info;
   let { organizationId, projectId, devRepoId } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let devRepoDir = `${projectDir}/${devRepoId}`;
 
@@ -48,7 +51,8 @@ export async function ToDiskCreateDevRepo(
   await git.cloneCentralToDev({
     organizationId: organizationId,
     projectId: projectId,
-    devRepoId: devRepoId
+    devRepoId: devRepoId,
+    orgPath: orgPath
   });
 
   let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(

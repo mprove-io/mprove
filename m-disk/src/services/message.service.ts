@@ -28,9 +28,13 @@ import { ToDiskMergeRepo } from '../controllers/3_repos/to-disk-merge-repo';
 import { ToDiskRevertRepoToLastCommit } from '../controllers/3_repos/to-disk-revert-repo-to-last-commit';
 import { ToDiskRevertRepoToProduction } from '../controllers/3_repos/to-disk-revert-repo-to-production';
 import { ToDiskSeedProject } from '../controllers/8_seed/to-disk-seed-project';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from '../barrels/interfaces';
 
 @Injectable()
 export class MessageService {
+  constructor(private configService: ConfigService<interfaces.Config>) {}
+
   async processRequestAndCatch(request: any): Promise<any> {
     try {
       return await this.processRequest(request);
@@ -40,70 +44,72 @@ export class MessageService {
   }
 
   async processRequest(request: any): Promise<any> {
+    let orgPath = this.configService.get('mproveMDataOrganizationsPath');
+
     switch (request.info.name) {
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization:
-        return await ToDiskCreateOrganization(request);
+        return await ToDiskCreateOrganization({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization:
-        return await ToDiskDeleteOrganization(request);
+        return await ToDiskDeleteOrganization({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist:
-        return await ToDiskIsOrganizationExist(request);
+        return await ToDiskIsOrganizationExist({ request, orgPath });
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateProject:
-        return await ToDiskCreateProject(request);
+        return await ToDiskCreateProject({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteProject:
-        return await ToDiskDeleteProject(request);
+        return await ToDiskDeleteProject({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist:
-        return await ToDiskIsProjectExist(request);
+        return await ToDiskIsProjectExist({ request, orgPath });
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo:
-        return await ToDiskCommitRepo(request);
+        return await ToDiskCommitRepo({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
-        return await ToDiskCreateDevRepo(request);
+        return await ToDiskCreateDevRepo({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:
-        return await ToDiskDeleteDevRepo(request);
+        return await ToDiskDeleteDevRepo({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo:
-        return await ToDiskMergeRepo(request);
+        return await ToDiskMergeRepo({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskPullRepo:
-        return await ToDiskPullRepo(request);
+        return await ToDiskPullRepo({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskPushRepo:
-        return await ToDiskPushRepo(request);
+        return await ToDiskPushRepo({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit:
-        return await ToDiskRevertRepoToLastCommit(request);
+        return await ToDiskRevertRepoToLastCommit({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction:
-        return await ToDiskRevertRepoToProduction(request);
+        return await ToDiskRevertRepoToProduction({ request, orgPath });
 
       case api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
-        return await ToDiskGetCatalogFiles(request);
+        return await ToDiskGetCatalogFiles({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes:
-        return await ToDiskGetCatalogNodes(request);
+        return await ToDiskGetCatalogNodes({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode:
-        return await ToDiskMoveCatalogNode(request);
+        return await ToDiskMoveCatalogNode({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode:
-        return await ToDiskRenameCatalogNode(request);
+        return await ToDiskRenameCatalogNode({ request, orgPath });
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
-        return await ToDiskCreateBranch(request);
+        return await ToDiskCreateBranch({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch:
-        return await ToDiskDeleteBranch(request);
+        return await ToDiskDeleteBranch({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist:
-        return await ToDiskIsBranchExist(request);
+        return await ToDiskIsBranchExist({ request, orgPath });
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder:
-        return await ToDiskCreateFolder(request);
+        return await ToDiskCreateFolder({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteFolder:
-        return await ToDiskDeleteFolder(request);
+        return await ToDiskDeleteFolder({ request, orgPath });
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateFile:
-        return await ToDiskCreateFile(request);
+        return await ToDiskCreateFile({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteFile:
-        return await ToDiskDeleteFile(request);
+        return await ToDiskDeleteFile({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskGetFile:
-        return await ToDiskGetFile(request);
+        return await ToDiskGetFile({ request, orgPath });
       case api.ToDiskRequestInfoNameEnum.ToDiskSaveFile:
-        return await ToDiskSaveFile(request);
+        return await ToDiskSaveFile({ request, orgPath });
 
       case api.ToDiskRequestInfoNameEnum.ToDiskSeedProject:
-        return await ToDiskSeedProject(request);
+        return await ToDiskSeedProject({ request, orgPath });
 
       default:
         throw new api.ServerError({

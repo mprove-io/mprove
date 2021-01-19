@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskRenameCatalogNode(
-  request: api.ToDiskRenameCatalogNodeRequest
-): Promise<api.ToDiskRenameCatalogNodeResponse> {
+export async function ToDiskRenameCatalogNode(item: {
+  request: api.ToDiskRenameCatalogNodeRequest;
+  orgPath: string;
+}): Promise<api.ToDiskRenameCatalogNodeResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskRenameCatalogNodeRequest,
     object: request,
@@ -23,7 +26,7 @@ export async function ToDiskRenameCatalogNode(
     newName
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 

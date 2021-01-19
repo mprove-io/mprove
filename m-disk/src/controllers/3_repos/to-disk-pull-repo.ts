@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskPullRepo(
-  request: api.ToDiskPullRepoRequest
-): Promise<api.ToDiskPullRepoResponse> {
+export async function ToDiskPullRepo(item: {
+  request: api.ToDiskPullRepoRequest;
+  orgPath: string;
+}): Promise<api.ToDiskPullRepoResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskPullRepoRequest,
     object: request,
@@ -22,7 +25,7 @@ export async function ToDiskPullRepo(
     userAlias
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 

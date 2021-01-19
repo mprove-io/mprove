@@ -1,10 +1,12 @@
 import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
-import { constants } from '../../barrels/constants';
 
-export async function ToDiskDeleteOrganization(
-  request: api.ToDiskDeleteOrganizationRequest
-): Promise<api.ToDiskDeleteOrganizationResponse> {
+export async function ToDiskDeleteOrganization(item: {
+  request: api.ToDiskDeleteOrganizationRequest;
+  orgPath: string;
+}): Promise<api.ToDiskDeleteOrganizationResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskDeleteOrganizationRequest,
     object: request,
@@ -14,7 +16,7 @@ export async function ToDiskDeleteOrganization(
   let { traceId } = requestValid.info;
   let { organizationId } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
   if (isOrgExist === false) {

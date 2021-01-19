@@ -12,24 +12,7 @@ import { appEntities } from './app-entities';
 import { appRepositories } from './app-repositories';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { interfaces } from './barrels/interfaces';
-import { enums } from './barrels/enums';
-import { getBaseConfig } from './config/get-base.config';
-import { getProdConfig } from './config/get-prod.config';
-import { getTestConfig } from './config/get-test.config';
-
-function getConfig() {
-  let baseConfig = getBaseConfig();
-  let backendEnv = baseConfig.backendEnv;
-
-  let config =
-    backendEnv === enums.BackendEnvEnum.PROD
-      ? getProdConfig(baseConfig)
-      : backendEnv === enums.BackendEnvEnum.TEST
-      ? getTestConfig(baseConfig)
-      : baseConfig;
-
-  return config;
-}
+import { getConfig } from './config/get.config';
 
 @Module({
   imports: [

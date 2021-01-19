@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskSeedProject(
-  request: api.ToDiskSeedProjectRequest
-): Promise<api.ToDiskSeedProjectResponse> {
+export async function ToDiskSeedProject(item: {
+  request: api.ToDiskSeedProjectRequest;
+  orgPath: string;
+}): Promise<api.ToDiskSeedProjectResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskSeedProjectRequest,
     object: request,
@@ -21,7 +24,7 @@ export async function ToDiskSeedProject(
     userAlias
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let devRepoDir = `${projectDir}/${devRepoId}`;
 
@@ -42,7 +45,8 @@ export async function ToDiskSeedProject(
   await git.cloneCentralToDev({
     organizationId: organizationId,
     projectId: projectId,
-    devRepoId: devRepoId
+    devRepoId: devRepoId,
+    orgPath: orgPath
   });
 
   let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({

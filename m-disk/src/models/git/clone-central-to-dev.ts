@@ -6,11 +6,14 @@ export async function cloneCentralToDev(item: {
   organizationId: string;
   projectId: string;
   devRepoId: string;
+  orgPath: string;
 }) {
-  let projectDir = `${constants.ORGANIZATIONS_PATH}/${item.organizationId}/${item.projectId}`;
+  let { organizationId, projectId, devRepoId, orgPath } = item;
+
+  let projectDir = `${orgPath}/${organizationId}/${projectId}`;
 
   let dirCentral = `${projectDir}/${constants.CENTRAL_REPO_ID}`;
-  let dirDev = `${projectDir}/${item.devRepoId}`;
+  let dirDev = `${projectDir}/${devRepoId}`;
 
   let cloneOptions = { fetchOpts: constantFetchOptions };
 

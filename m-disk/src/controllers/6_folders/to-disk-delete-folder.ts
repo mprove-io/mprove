@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskDeleteFolder(
-  request: api.ToDiskDeleteFolderRequest
-): Promise<api.ToDiskDeleteFolderResponse> {
+export async function ToDiskDeleteFolder(item: {
+  request: api.ToDiskDeleteFolderRequest;
+  orgPath: string;
+}): Promise<api.ToDiskDeleteFolderResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskDeleteFolderRequest,
     object: request,
@@ -22,7 +25,7 @@ export async function ToDiskDeleteFolder(
     folderNodeId
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 

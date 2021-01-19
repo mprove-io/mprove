@@ -4,8 +4,7 @@ import { api } from '../barrels/api';
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
 
-export function getBaseConfig() {
-  let envFilePath = process.env.ENV_FILE_PATH;
+export function getBaseConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
   let config: interfaces.Config = {

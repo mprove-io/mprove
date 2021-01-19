@@ -2,9 +2,12 @@ import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
 import { constants } from '../../barrels/constants';
 
-export async function ToDiskIsProjectExist(
-  request: api.ToDiskIsProjectExistRequest
-): Promise<api.ToDiskIsProjectExistResponse> {
+export async function ToDiskIsProjectExist(item: {
+  request: api.ToDiskIsProjectExistRequest;
+  orgPath: string;
+}): Promise<api.ToDiskIsProjectExistResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskIsProjectExistRequest,
     object: request,
@@ -14,7 +17,7 @@ export async function ToDiskIsProjectExist(
   let { traceId } = requestValid.info;
   let { organizationId, projectId } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
 
   //

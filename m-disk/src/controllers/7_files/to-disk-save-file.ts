@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskSaveFile(
-  request: api.ToDiskSaveFileRequest
-): Promise<api.ToDiskSaveFileResponse> {
+export async function ToDiskSaveFile(item: {
+  request: api.ToDiskSaveFileRequest;
+  orgPath: string;
+}): Promise<api.ToDiskSaveFileResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskSaveFileRequest,
     object: request,
@@ -24,7 +27,7 @@ export async function ToDiskSaveFile(
     userAlias
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 

@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskMergeRepo(
-  request: api.ToDiskMergeRepoRequest
-): Promise<api.ToDiskMergeRepoResponse> {
+export async function ToDiskMergeRepo(item: {
+  request: api.ToDiskMergeRepoRequest;
+  orgPath: string;
+}): Promise<api.ToDiskMergeRepoResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskMergeRepoRequest,
     object: request,
@@ -24,7 +27,7 @@ export async function ToDiskMergeRepo(
     userAlias
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 

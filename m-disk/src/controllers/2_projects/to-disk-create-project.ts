@@ -3,9 +3,12 @@ import { disk } from '../../barrels/disk';
 import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 
-export async function ToDiskCreateProject(
-  request: api.ToDiskCreateProjectRequest
-): Promise<api.ToDiskCreateProjectResponse> {
+export async function ToDiskCreateProject(item: {
+  request: api.ToDiskCreateProjectRequest;
+  orgPath: string;
+}): Promise<api.ToDiskCreateProjectResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskCreateProjectRequest,
     object: request,
@@ -20,7 +23,7 @@ export async function ToDiskCreateProject(
     userAlias
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
 
   //
@@ -53,7 +56,8 @@ export async function ToDiskCreateProject(
   await git.cloneCentralToDev({
     organizationId: organizationId,
     projectId: projectId,
-    devRepoId: devRepoId
+    devRepoId: devRepoId,
+    orgPath: orgPath
   });
 
   let response: api.ToDiskCreateProjectResponse = {

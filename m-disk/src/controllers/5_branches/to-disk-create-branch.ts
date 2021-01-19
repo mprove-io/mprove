@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskCreateBranch(
-  request: api.ToDiskCreateBranchRequest
-): Promise<api.ToDiskCreateBranchResponse> {
+export async function ToDiskCreateBranch(item: {
+  request: api.ToDiskCreateBranchRequest;
+  orgPath: string;
+}): Promise<api.ToDiskCreateBranchResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskCreateBranchRequest,
     object: request,
@@ -23,7 +26,7 @@ export async function ToDiskCreateBranch(
     isFromRemote
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 

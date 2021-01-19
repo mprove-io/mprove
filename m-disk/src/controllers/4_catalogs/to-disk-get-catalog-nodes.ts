@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskGetCatalogNodes(
-  request: api.ToDiskGetCatalogNodesRequest
-): Promise<api.ToDiskGetCatalogNodesResponse> {
+export async function ToDiskGetCatalogNodes(item: {
+  request: api.ToDiskGetCatalogNodesRequest;
+  orgPath: string;
+}): Promise<api.ToDiskGetCatalogNodesResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskGetCatalogNodesRequest,
     object: request,
@@ -16,7 +19,7 @@ export async function ToDiskGetCatalogNodes(
   let { traceId } = requestValid.info;
   let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 

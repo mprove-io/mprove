@@ -1,10 +1,12 @@
 import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
-import { constants } from '../../barrels/constants';
 
-export async function ToDiskIsOrganizationExist(
-  request: api.ToDiskIsOrganizationExistRequest
-): Promise<api.ToDiskIsOrganizationExistResponse> {
+export async function ToDiskIsOrganizationExist(item: {
+  request: api.ToDiskIsOrganizationExistRequest;
+  orgPath: string;
+}): Promise<api.ToDiskIsOrganizationExistResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskIsOrganizationExistRequest,
     object: request,
@@ -14,7 +16,7 @@ export async function ToDiskIsOrganizationExist(
   let { traceId } = requestValid.info;
   let { organizationId } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
 
   //
 

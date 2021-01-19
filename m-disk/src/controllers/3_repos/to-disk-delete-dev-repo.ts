@@ -4,9 +4,12 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskDeleteDevRepo(
-  request: api.ToDiskDeleteDevRepoRequest
-): Promise<api.ToDiskDeleteDevRepoResponse> {
+export async function ToDiskDeleteDevRepo(item: {
+  request: api.ToDiskDeleteDevRepoRequest;
+  orgPath: string;
+}): Promise<api.ToDiskDeleteDevRepoResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskDeleteDevRepoRequest,
     object: request,
@@ -16,7 +19,7 @@ export async function ToDiskDeleteDevRepo(
   let { traceId } = requestValid.info;
   let { organizationId, projectId, devRepoId } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let devRepoDir = `${projectDir}/${devRepoId}`;
 

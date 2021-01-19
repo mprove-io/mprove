@@ -3,9 +3,12 @@ import { disk } from '../../barrels/disk';
 import { constants } from '../../barrels/constants';
 import { git } from '../../barrels/git';
 
-export async function ToDiskIsBranchExist(
-  request: api.ToDiskIsBranchExistRequest
-): Promise<api.ToDiskIsBranchExistResponse> {
+export async function ToDiskIsBranchExist(item: {
+  request: api.ToDiskIsBranchExistRequest;
+  orgPath: string;
+}): Promise<api.ToDiskIsBranchExistResponse> {
+  let { request, orgPath } = item;
+
   let requestValid = await api.transformValid({
     classType: api.ToDiskIsBranchExistRequest,
     object: request,
@@ -21,7 +24,7 @@ export async function ToDiskIsBranchExist(
     isRemote
   } = requestValid.payload;
 
-  let orgDir = `${constants.ORGANIZATIONS_PATH}/${organizationId}`;
+  let orgDir = `${orgPath}/${organizationId}`;
   let projectDir = `${orgDir}/${projectId}`;
   let repoDir = `${projectDir}/${repoId}`;
 
