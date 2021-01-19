@@ -8,6 +8,7 @@ import { barSpecial } from '../../barrels/bar-special';
 import { types } from '../../barrels/types';
 import { RabbitService } from '../../services/rabbit.service';
 import asyncPool from 'tiny-async-pool';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.FetchSql;
 
@@ -21,9 +22,10 @@ export async function fetchSql<T extends types.dzType>(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService<interfaces.Config>;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let reports: interfaces.Report[] = [];
 
@@ -31,8 +33,12 @@ export async function fetchSql<T extends types.dzType>(item: {
     reports = [...reports, ...z.reports];
   });
 
+  let concurrencyLimit = item.cs.get<
+    interfaces.Config['blockmlConcurrencyLimit']
+  >('blockmlConcurrencyLimit');
+
   await asyncPool(
-    constants.CONCURRENCY_LIMIT,
+    concurrencyLimit,
     reports,
     async (report: interfaces.Report) => {
       let model = item.models.find(m => m.name === report.model);
@@ -52,6 +58,7 @@ export async function fetchSql<T extends types.dzType>(item: {
 
       let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
         item.rabbitService,
+        item.cs,
         item.traceId,
         {
           weekStart: item.weekStart,
@@ -71,9 +78,16 @@ export async function fetchSql<T extends types.dzType>(item: {
     }
   );
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, item.entities);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Models, item.models);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    enums.LogTypeEnum.Entities,
+    item.entities
+  );
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, item.models);
 
   return item.entities;
 }

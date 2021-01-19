@@ -7,13 +7,13 @@ export class Config {
   diskEnv: enums.DiskEnvEnum;
 
   @IsString()
-  mproveMDataOrganizationsPath: string;
-
-  @IsString()
   rabbitmqDefaultUser: string;
 
   @IsString()
   rabbitmqDefaultPass: string;
+
+  @IsString()
+  mproveMDataOrganizationsPath: string;
 
   @IsEnum(api.LogTypeEnum)
   mproveLogType: api.LogTypeEnum;

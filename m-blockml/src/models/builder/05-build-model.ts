@@ -3,6 +3,7 @@ import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barModel } from '../../barrels/bar-model';
+import { ConfigService } from '@nestjs/config';
 
 export function buildModel(item: {
   models: interfaces.Model[];
@@ -11,6 +12,7 @@ export function buildModel(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
   let models = item.models;
 
@@ -18,7 +20,8 @@ export function buildModel(item: {
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.checkModelUdfs({
@@ -26,28 +29,32 @@ export function buildModel(item: {
     udfs: item.udfs,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.checkJoinsExist({
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.checkJoinsFromView({
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.checkAliases({
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.makeJoins({
@@ -55,21 +62,24 @@ export function buildModel(item: {
     views: item.views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.makeFieldsDoubleDeps({
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.checkFieldsDoubleDeps({
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   // substitute double calculations with restart
@@ -77,14 +87,16 @@ export function buildModel(item: {
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barModel.checkModelFilterDefaults({
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   return models;

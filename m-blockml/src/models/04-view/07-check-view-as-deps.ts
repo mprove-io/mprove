@@ -4,6 +4,7 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckViewAsDeps;
 
@@ -12,9 +13,10 @@ export function checkViewAsDeps(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newViews: interfaces.View[] = [];
 
@@ -155,8 +157,8 @@ export function checkViewAsDeps(item: {
   // return zero views if at least 1 error found (no restart needed)
   newViews = item.views.length === newViews.length ? newViews : [];
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, newViews);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, newViews);
 
   return newViews;
 }

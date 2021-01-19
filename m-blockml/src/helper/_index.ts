@@ -1,5 +1,6 @@
 export * from './chop-last-element';
 export * from './is-defined';
+export * from './is-single-or-main';
 export * from './is-undefined';
 export * from './log';
 export * from './make-copy';

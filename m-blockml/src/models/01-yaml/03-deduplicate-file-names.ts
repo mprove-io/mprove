@@ -2,6 +2,7 @@ import { interfaces } from '../../barrels/interfaces';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
 import { BmError } from '../bm-error';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.DeduplicateFileNames;
 
@@ -10,9 +11,10 @@ export function deduplicateFileNames(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }): interfaces.File3[] {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let file3s: interfaces.File3[] = [];
 
@@ -43,8 +45,8 @@ export function deduplicateFileNames(item: {
     }
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.File3s, file3s);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.File3s, file3s);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return file3s;
 }

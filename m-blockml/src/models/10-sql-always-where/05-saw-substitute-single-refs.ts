@@ -3,6 +3,7 @@ import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.SawSubstituteSingleRefs;
 
@@ -11,9 +12,10 @@ export function sawSubstituteSingleRefs(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
     if (helper.isUndefined(x.sql_always_where)) {
@@ -39,8 +41,8 @@ export function sawSubstituteSingleRefs(item: {
     x.sqlAlwaysWhereReal = sqlAlwaysWhereReal;
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Models, item.models);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, item.models);
 
   return item.models;
 }

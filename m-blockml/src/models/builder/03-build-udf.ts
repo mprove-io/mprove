@@ -3,18 +3,21 @@ import { interfaces } from '../../barrels/interfaces';
 import { barUdf } from '../../barrels/bar-udf';
 import { BmError } from '../bm-error';
 import { api } from '../../barrels/api';
+import { ConfigService } from '@nestjs/config';
 
 export function buildUdf(item: {
   udfs: interfaces.Udf[];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
   let udfsDict: api.UdfsDict = barUdf.makeUdfsDict({
     udfsUser: item.udfs,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   return udfsDict;

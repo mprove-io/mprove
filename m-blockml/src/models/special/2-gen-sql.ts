@@ -2,15 +2,21 @@ import { interfaces } from '../../barrels/interfaces';
 import { api } from '../../barrels/api';
 import { barSql } from '../../barrels/bar-sql';
 import { RabbitService } from '../../services/rabbit.service';
+import { ConfigService } from '@nestjs/config';
 
 export async function genSql(
   rabbitService: RabbitService,
+  cs: ConfigService<interfaces.Config>,
   traceId: string,
   genSqlItem: interfaces.GenSqlItem
 ) {
   let outcome: interfaces.GenSqlProOutcome;
 
-  if (process.env.MPROVE_BLOCKML_IS_SINGLE === 'TRUE') {
+  let blockmlIsSingle = cs.get<interfaces.Config['blockmlIsSingle']>(
+    'blockmlIsSingle'
+  );
+
+  if (blockmlIsSingle === api.BoolEnum.TRUE) {
     outcome = genSqlPro(genSqlItem);
   } else {
     let genSqlRequest: api.ToBlockmlWorkerGenSqlRequest = {

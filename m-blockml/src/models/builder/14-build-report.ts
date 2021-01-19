@@ -5,6 +5,7 @@ import { interfaces } from '../../barrels/interfaces';
 import { barReport } from '../../barrels/bar-report';
 import { types } from '../../barrels/types';
 import { RabbitService } from '../../services/rabbit.service';
+import { ConfigService } from '@nestjs/config';
 
 export async function buildReport<T extends types.dzType>(item: {
   traceId: string;
@@ -16,6 +17,7 @@ export async function buildReport<T extends types.dzType>(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService<interfaces.Config>;
 }) {
   let entities = item.entities;
 
@@ -23,14 +25,16 @@ export async function buildReport<T extends types.dzType>(item: {
     entities: entities,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkReportUnknownParameters({
     entities: entities,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkReportTitleModelSelect({
@@ -38,7 +42,8 @@ export async function buildReport<T extends types.dzType>(item: {
     models: item.models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkSelectElements({
@@ -46,28 +51,32 @@ export async function buildReport<T extends types.dzType>(item: {
     models: item.models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkSorts({
     entities: entities,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkTimezone({
     entities: entities,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkLimit({
     entities: entities,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkListenFilters({
@@ -75,7 +84,8 @@ export async function buildReport<T extends types.dzType>(item: {
     models: item.models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.checkDefaultFilters({
@@ -83,14 +93,16 @@ export async function buildReport<T extends types.dzType>(item: {
     models: item.models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = barReport.combineReportFilters({
     entities: entities,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   entities = await barReport.fetchSql({
@@ -102,7 +114,8 @@ export async function buildReport<T extends types.dzType>(item: {
     weekStart: item.weekStart,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   return entities;

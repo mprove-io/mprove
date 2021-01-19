@@ -3,6 +3,7 @@ import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
 import { api } from '../../barrels/api';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.SplitFiles;
 
@@ -11,9 +12,10 @@ export function splitFiles(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let udfs: interfaces.Udf[] = [];
   let views: interfaces.View[] = [];
@@ -203,12 +205,12 @@ export function splitFiles(item: {
     }
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, views);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Models, models);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Udfs, udfs);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, views);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return {
     udfs: udfs,

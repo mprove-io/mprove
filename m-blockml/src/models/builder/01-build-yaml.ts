@@ -3,6 +3,7 @@ import { enums } from '../../barrels/enums';
 import { barYaml } from '../../barrels/bar-yaml';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../../models/bm-error';
+import { ConfigService } from '@nestjs/config';
 
 export function buildYaml(item: {
   errors: BmError[];
@@ -11,6 +12,7 @@ export function buildYaml(item: {
   weekStart: api.ProjectWeekStartEnum;
   connections: api.ProjectConnection[];
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
   let udfs: interfaces.Udf[];
   let views: interfaces.View[];
@@ -22,42 +24,48 @@ export function buildYaml(item: {
     files: item.files,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   let file3s: interfaces.File3[] = barYaml.deduplicateFileNames({
     file2s: file2s,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   let filesAny: any[] = barYaml.yamlToObjects({
     file3s: file3s,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   filesAny = barYaml.makeLineNumbers({
     filesAny: filesAny,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   filesAny = barYaml.checkTopUnknownParameters({
     filesAny: filesAny,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   filesAny = barYaml.checkTopValues({
     filesAny: filesAny,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   filesAny = barYaml.checkConnections({
@@ -65,21 +73,24 @@ export function buildYaml(item: {
     connections: item.connections,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   filesAny = barYaml.checkSupportUdfs({
     filesAny: filesAny,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   let splitFilesResult = barYaml.splitFiles({
     filesAny: filesAny,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   udfs = splitFilesResult.udfs;

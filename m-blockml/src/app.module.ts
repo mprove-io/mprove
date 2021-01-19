@@ -7,47 +7,86 @@ import { QueryService } from './services/query.service';
 import { DashboardService } from './services/dashboard.service';
 import { ConsumerWorkerService } from './services/consumer-worker.service';
 import { RabbitService } from './services/rabbit.service';
-
-let providers: any[] = [];
-
-if (
-  process.env.MPROVE_BLOCKML_IS_SINGLE === 'TRUE' ||
-  process.env.MPROVE_BLOCKML_IS_MAIN === 'TRUE'
-) {
-  providers = [
-    ...providers,
-    RabbitService,
-    ConsumerMainService,
-    DashboardService,
-    QueryService,
-    StructService
-  ];
-}
-
-if (process.env.MPROVE_BLOCKML_IS_WORKER === 'TRUE') {
-  providers = [...providers, ConsumerWorkerService];
-}
+import { getConfig } from './config/get.config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { interfaces } from './barrels/interfaces';
+import { helper } from './barrels/helper';
 
 @Module({
   imports: [
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: api.RabbitExchangesEnum.MBlockml.toString(),
-          type: 'direct'
-        },
-        {
-          name: api.RabbitExchangesEnum.MBlockmlWorker.toString(),
-          type: 'direct'
-        }
-      ],
-      uri: [
-        `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${process.env.RABBITMQ_DEFAULT_PASS}@rabbit:5672`
-      ],
-      connectionInitOptions: { wait: false }
+    ConfigModule.forRoot({
+      load: [getConfig],
+      isGlobal: true
+    }),
+
+    RabbitMQModule.forRootAsync(RabbitMQModule, {
+      useFactory: (configService: ConfigService<interfaces.Config>) => {
+        let rabbitUser = configService.get<
+          interfaces.Config['rabbitmqDefaultUser']
+        >('rabbitmqDefaultUser');
+
+        let rabbitPass = configService.get<
+          interfaces.Config['rabbitmqDefaultPass']
+        >('rabbitmqDefaultPass');
+
+        return {
+          exchanges: [
+            {
+              name: api.RabbitExchangesEnum.MBlockml.toString(),
+              type: 'direct'
+            },
+            {
+              name: api.RabbitExchangesEnum.MBlockmlWorker.toString(),
+              type: 'direct'
+            }
+          ],
+          uri: [`amqp://${rabbitUser}:${rabbitPass}@rabbit:5672`],
+          connectionInitOptions: { wait: false }
+        };
+      },
+      inject: [ConfigService]
     })
   ],
   controllers: [],
-  providers: providers
+  providers: [
+    RabbitService,
+    {
+      provide: ConsumerMainService,
+      useFactory: (configService: ConfigService) =>
+        helper.isSingleOrMain(configService) ? ConsumerMainService : {},
+      inject: [ConfigService]
+    },
+    {
+      provide: DashboardService,
+      useFactory: (configService: ConfigService) =>
+        helper.isSingleOrMain(configService) ? DashboardService : {},
+      inject: [ConfigService]
+    },
+    {
+      provide: QueryService,
+      useFactory: (configService: ConfigService) =>
+        helper.isSingleOrMain(configService) ? QueryService : {},
+      inject: [ConfigService]
+    },
+    {
+      provide: StructService,
+      useFactory: (configService: ConfigService) =>
+        helper.isSingleOrMain(configService) ? StructService : {},
+      inject: [ConfigService]
+    },
+    {
+      provide: ConsumerWorkerService,
+      useFactory: (configService: ConfigService<interfaces.Config>) => {
+        let blockmlIsWorker = configService.get<
+          interfaces.Config['blockmlIsWorker']
+        >('blockmlIsWorker');
+
+        return blockmlIsWorker === api.BoolEnum.TRUE
+          ? ConsumerWorkerService
+          : {};
+      },
+      inject: [ConfigService]
+    }
+  ]
 })
 export class AppModule {}

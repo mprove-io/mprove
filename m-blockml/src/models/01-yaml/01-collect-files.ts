@@ -3,6 +3,7 @@ import * as fse from 'fs-extra';
 import { api } from '../../barrels/api';
 import { enums } from '../../barrels/enums';
 import { helper } from '../../barrels/helper';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CollectFiles;
 
@@ -10,9 +11,10 @@ export async function collectFiles(item: {
   dir: string;
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }): Promise<api.File[]> {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   return new Promise((resolve, reject) => {
     let files: api.File[] = [];
@@ -52,8 +54,8 @@ export async function collectFiles(item: {
     });
 
     walker.on('end', () => {
-      helper.log(caller, func, structId, enums.LogTypeEnum.Errors, []);
-      helper.log(caller, func, structId, enums.LogTypeEnum.Files, files);
+      helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, []);
+      helper.log(cs, caller, func, structId, enums.LogTypeEnum.Files, files);
       resolve(files);
     });
   });

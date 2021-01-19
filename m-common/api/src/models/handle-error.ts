@@ -1,9 +1,9 @@
-import * as apiEnums from '../enums/_index';
 import { logToConsole } from './log-to-console';
 import { wrapError } from './wrap-error';
+import { ConfigService } from '@nestjs/config';
 
-export function handleError(e: any) {
+export function handleError(e: any, configService?: ConfigService) {
   let wrappedError = wrapError(e);
-  logToConsole(wrappedError);
+  logToConsole(wrappedError, configService);
   return;
 }

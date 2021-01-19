@@ -4,6 +4,7 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barSpecial } from '../../barrels/bar-special';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckDashboardAccess;
 
@@ -12,19 +13,21 @@ export function checkDashboardAccess(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newDashboards = barSpecial.checkMdzAccess({
     entities: item.dashboards,
     errors: item.errors,
     structId: item.structId,
-    caller: item.caller
+    caller: item.caller,
+    cs: cs
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Ds, newDashboards);
 
   return newDashboards;
 }

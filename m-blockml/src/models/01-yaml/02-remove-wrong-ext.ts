@@ -3,6 +3,7 @@ import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { helper } from '../../barrels/helper';
 import { enums } from '../../barrels/enums';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.RemoveWrongExt;
 
@@ -11,9 +12,10 @@ export function removeWrongExt(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }): interfaces.File2[] {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let file2s: interfaces.File2[] = [];
 
@@ -66,8 +68,8 @@ export function removeWrongExt(item: {
     }
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.File2s, file2s);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.File2s, file2s);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return file2s;
 }

@@ -5,10 +5,14 @@ import { interfaces } from '../barrels/interfaces';
 import { barSpecial } from '../barrels/bar-special';
 import { helper } from '../barrels/helper';
 import { RabbitService } from './rabbit.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class QueryService {
-  constructor(private readonly rabbitService: RabbitService) {}
+  constructor(
+    private rabbitService: RabbitService,
+    private configService: ConfigService<interfaces.Config>
+  ) {}
 
   async processQuery(item: {
     traceId: string;
@@ -41,6 +45,7 @@ export class QueryService {
 
     let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
       this.rabbitService,
+      this.configService,
       traceId,
       {
         weekStart: weekStart,

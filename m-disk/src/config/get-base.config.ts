@@ -10,10 +10,10 @@ export function getBaseConfig(envFilePath) {
   let config: interfaces.Config = {
     diskEnv: <enums.DiskEnvEnum>envFile.DISK_ENV,
 
-    mproveMDataOrganizationsPath: envFile.MPROVE_M_DATA_ORGANIZATIONS_PATH,
-
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
+
+    mproveMDataOrganizationsPath: envFile.MPROVE_M_DATA_ORGANIZATIONS_PATH,
 
     mproveLogType: <api.LogTypeEnum>envFile.MPROVE_LOG_TYPE
   };

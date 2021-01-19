@@ -3,6 +3,7 @@ import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barView } from '../../barrels/bar-view';
+import { ConfigService } from '@nestjs/config';
 
 export function buildView(item: {
   views: interfaces.View[];
@@ -12,6 +13,7 @@ export function buildView(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
   let views = item.views;
 
@@ -19,7 +21,8 @@ export function buildView(item: {
     views: views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.checkViewUdfs({
@@ -27,49 +30,56 @@ export function buildView(item: {
     udfs: item.udfs,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.checkViewFilterDefaults({
     views: views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.checkDerivedTableApplyFilter({
     views: views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.makeViewAsDeps({
     views: views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.checkViewCycles({
     views: views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.checkViewAsDeps({
     views: views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.pickUdfsFromAsDeps({
     views: views,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   views = barView.processViewRefs({
@@ -78,7 +88,8 @@ export function buildView(item: {
     weekStart: item.weekStart,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   return views;

@@ -9,21 +9,17 @@ export function getBaseConfig(envFilePath) {
 
   let config: interfaces.Config = {
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
-
-    backendFirstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
-    backendFirstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
-
     backendDropDatabaseOnStart: <api.BoolEnum>(
       envFile.BACKEND_DROP_DATABASE_ON_START
     ),
-
     backendSyncDatabaseOnStart: <api.BoolEnum>(
       envFile.BACKEND_SYNC_DATABASE_ON_START
     ),
-
     backendRegisterOnlyInvitedUsers: <api.BoolEnum>(
       envFile.BACKEND_REGISTER_ONLY_INVITED_USERS
     ),
+    backendFirstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
+    backendFirstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
 
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,

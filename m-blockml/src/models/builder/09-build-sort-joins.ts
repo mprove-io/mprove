@@ -2,12 +2,14 @@ import { enums } from '../../barrels/enums';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barSortJoins } from '../../barrels/bar-sort-joins';
+import { ConfigService } from '@nestjs/config';
 
 export function buildSortJoins(item: {
   models: interfaces.Model[];
   structId: string;
   errors: BmError[];
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
   let models = item.models;
 
@@ -15,14 +17,16 @@ export function buildSortJoins(item: {
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   models = barSortJoins.checkAlwaysJoin({
     models: models,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   return models;

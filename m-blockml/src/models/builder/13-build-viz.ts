@@ -3,12 +3,14 @@ import { api } from '../../barrels/api';
 import { BmError } from '../../models/bm-error';
 import { interfaces } from '../../barrels/interfaces';
 import { barViz } from '../../barrels/bar-viz';
+import { ConfigService } from '@nestjs/config';
 
 export function buildViz(item: {
   vizs: interfaces.Viz[];
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
   let vizs = item.vizs;
 
@@ -16,14 +18,16 @@ export function buildViz(item: {
     vizs: vizs,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   vizs = barViz.checkVizReportsExist({
     vizs: vizs,
     structId: item.structId,
     errors: item.errors,
-    caller: item.caller
+    caller: item.caller,
+    cs: item.cs
   });
 
   return vizs;

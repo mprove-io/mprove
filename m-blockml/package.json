@@ -24,6 +24,7 @@
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^1.15.2",
     "@nestjs/common": "^7.0.0",
+    "@nestjs/config": "^0.6.1",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "class-transformer": "0.3.1",
@@ -31,6 +32,7 @@
     "class-validator": "0.12.2",
     "clone-regexp": "^2.2.0",
     "d3-format": "^1.4.5",
+    "dotenv": "^8.2.0",
     "fs-extra": "^9.0.1",
     "p-iteration": "^1.1.8",
     "reflect-metadata": "^0.1.13",

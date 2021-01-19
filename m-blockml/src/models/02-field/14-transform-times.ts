@@ -6,6 +6,7 @@ import { api } from '../../barrels/api';
 import { barTimeframe } from '../../barrels/bar-timeframe';
 import { interfaces } from '../../barrels/interfaces';
 import { constants } from '../../barrels/constants';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.TransformTimes;
 
@@ -15,9 +16,10 @@ export function transformTimes<T extends types.vmType>(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }): Array<T> {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -485,8 +487,15 @@ export function transformTimes<T extends types.vmType>(item: {
     }
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    enums.LogTypeEnum.Entities,
+    newEntities
+  );
 
   return newEntities;
 }

@@ -9,4 +9,5 @@ export * from './special/er-title.enum';
 export * from './special/func.enum';
 export * from './special/log-type.enum';
 
+export * from './blockml-env.enum';
 export * from './time-label.enum';

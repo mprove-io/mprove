@@ -4,6 +4,7 @@ import { enums } from '../../barrels/enums';
 import { barSpecial } from '../../barrels/bar-special';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../bm-error';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.ProcessViewRefs;
 
@@ -14,9 +15,10 @@ export function processViewRefs(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.views
     .filter(x => helper.isDefined(x.derived_table))
@@ -33,9 +35,16 @@ export function processViewRefs(item: {
       }
     });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Views, item.views);
-  helper.log(caller, func, structId, enums.LogTypeEnum.UdfsDict, item.udfsDict);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Views, item.views);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    enums.LogTypeEnum.UdfsDict,
+    item.udfsDict
+  );
 
   return item.views;
 }

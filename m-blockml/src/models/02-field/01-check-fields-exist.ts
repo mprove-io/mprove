@@ -3,6 +3,7 @@ import { enums } from '../../barrels/enums';
 import { BmError } from '../bm-error';
 import { types } from '../../barrels/types';
 import { api } from '../../barrels/api';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckFieldsExist;
 
@@ -11,9 +12,10 @@ export function checkFieldsExist<T extends types.vmdType>(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
 
@@ -49,8 +51,15 @@ export function checkFieldsExist<T extends types.vmdType>(item: {
     }
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, newEntities);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    enums.LogTypeEnum.Entities,
+    newEntities
+  );
 
   return newEntities;
 }

@@ -3,6 +3,7 @@ import { enums } from '../../barrels/enums';
 import { api } from '../../barrels/api';
 import { BmError } from '../bm-error';
 import { interfaces } from '../../barrels/interfaces';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.MakeJoins;
 
@@ -12,9 +13,10 @@ export function makeJoins(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }) {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newModels: interfaces.Model[] = [];
 
@@ -93,8 +95,8 @@ export function makeJoins(item: {
     }
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Models, newModels);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, newModels);
 
   return newModels;
 }

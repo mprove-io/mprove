@@ -6,6 +6,7 @@ import { api } from '../../barrels/api';
 import { constants } from '../../barrels/constants';
 
 import { BmError } from '../bm-error';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.YamlToObjects;
 
@@ -14,9 +15,10 @@ export function yamlToObjects(item: {
   errors: BmError[];
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }): any[] {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let filesAny: any[] = [];
 
@@ -132,8 +134,8 @@ export function yamlToObjects(item: {
     filesAny.push(parsedYaml);
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.FilesAny, filesAny);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.FilesAny, filesAny);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return filesAny;
 }

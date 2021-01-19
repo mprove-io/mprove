@@ -4,6 +4,7 @@ import { helper } from '../../barrels/helper';
 import { types } from '../../barrels/types';
 import { interfaces } from '../../barrels/interfaces';
 import { BmError } from '../bm-error';
+import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.SubstituteSingleRefs;
 
@@ -12,9 +13,10 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
   entities: Array<T>;
   structId: string;
   caller: enums.CallerEnum;
+  cs: ConfigService;
 }): Array<T> {
-  let { caller, structId } = item;
-  helper.log(caller, func, structId, enums.LogTypeEnum.Input, item);
+  let { caller, structId, cs } = item;
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.entities.forEach(x => {
     if (x.fileExt === api.FileExtensionEnum.Dashboard) {
@@ -248,8 +250,15 @@ export function substituteSingleRefs<T extends types.vmType>(item: {
     });
   });
 
-  helper.log(caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
-  helper.log(caller, func, structId, enums.LogTypeEnum.Entities, item.entities);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
+  helper.log(
+    cs,
+    caller,
+    func,
+    structId,
+    enums.LogTypeEnum.Entities,
+    item.entities
+  );
 
   return item.entities;
 }

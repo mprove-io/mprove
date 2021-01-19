@@ -1,7 +1,3 @@
-export const CONCURRENCY_LIMIT = Number(
-  process.env.MPROVE_BLOCKML_CONCURRENCY_LIMIT
-);
-
 export const LINE_NUM_START = '_line_num___';
 export const LINE_NUM_END = '___line_num_';
 export const LINE_NUMBERS = 'LineNumbers';
