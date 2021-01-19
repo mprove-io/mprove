@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskPullRepoController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskPullRepo')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskPullRepo)
   async toDiskPullRepo(
     @Body() body: api.ToDiskPullRepoRequest
   ): Promise<api.ToDiskPullRepoResponse | api.ErrorResponse> {

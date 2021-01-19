@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskSeedProjectController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskSeedProject')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskSeedProject)
   async toDiskSeedProject(
     @Body() body: api.ToDiskSeedProjectRequest
   ): Promise<api.ToDiskSeedProjectResponse | api.ErrorResponse> {

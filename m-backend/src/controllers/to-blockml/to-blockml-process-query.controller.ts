@@ -6,7 +6,7 @@ import { api } from '../../barrels/api';
 export class ToBlockmlProcessQueryController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toBlockmlProcessQuery')
+  @Post(api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery)
   async toBlockmlProcessQuery(
     @Body() body: api.ToBlockmlProcessQueryRequest
   ): Promise<api.ToBlockmlProcessQueryResponse | api.ErrorResponse> {

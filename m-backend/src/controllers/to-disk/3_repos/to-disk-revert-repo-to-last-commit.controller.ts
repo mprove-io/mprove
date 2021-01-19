@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskRevertRepoToLastCommitController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskRevertRepoToLastCommit')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit)
   async toDiskRevertRepoToLastCommit(
     @Body() body: api.ToDiskRevertRepoToLastCommitRequest
   ): Promise<api.ToDiskRevertRepoToLastCommitResponse | api.ErrorResponse> {

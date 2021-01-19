@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskCreateFolderController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskCreateFolder')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder)
   async toDiskCreateFolder(
     @Body() body: api.ToDiskCreateFolderRequest
   ): Promise<api.ToDiskCreateFolderResponse | api.ErrorResponse> {

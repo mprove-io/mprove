@@ -6,7 +6,7 @@ import { api } from '../../barrels/api';
 export class ToBlockmlProcessDashboardController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toBlockmlProcessDashboard')
+  @Post(api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessDashboard)
   async toBlockmlProcessDashboard(
     @Body() body: api.ToBlockmlProcessDashboardRequest
   ): Promise<api.ToBlockmlProcessDashboardResponse | api.ErrorResponse> {

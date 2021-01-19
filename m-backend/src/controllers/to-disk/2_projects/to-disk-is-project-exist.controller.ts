@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskIsProjectExistController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskIsProjectExist')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist)
   async toDiskIsProjectExist(
     @Body() body: api.ToDiskIsProjectExistRequest
   ): Promise<api.ToDiskIsProjectExistResponse | api.ErrorResponse> {

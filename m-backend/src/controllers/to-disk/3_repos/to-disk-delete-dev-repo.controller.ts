@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskDeleteDevRepoController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskDeleteDevRepo')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo)
   async toDiskDeleteDevRepo(
     @Body() body: api.ToDiskDeleteDevRepoRequest
   ): Promise<api.ToDiskDeleteDevRepoResponse | api.ErrorResponse> {

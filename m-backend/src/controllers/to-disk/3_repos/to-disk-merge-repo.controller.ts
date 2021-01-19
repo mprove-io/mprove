@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskMergeRepoController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskMergeRepo')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo)
   async toDiskMergeRepo(
     @Body() body: api.ToDiskMergeRepoRequest
   ): Promise<api.ToDiskMergeRepoResponse | api.ErrorResponse> {

@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskSaveFileController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskSaveFile')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskSaveFile)
   async toDiskSaveFile(
     @Body() body: api.ToDiskSaveFileRequest
   ): Promise<api.ToDiskSaveFileResponse | api.ErrorResponse> {

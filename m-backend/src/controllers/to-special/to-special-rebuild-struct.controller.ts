@@ -7,7 +7,7 @@ import { api } from '../../barrels/api';
 export class ToSpecialRebuildStructController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toSpecialRebuildStruct')
+  @Post(api.ToSpecialRequestInfoNameEnum.ToSpecialRebuildStruct)
   async toSpecialRebuildStruct(
     @Body() body: api.ToSpecialRebuildStructRequest
   ): Promise<api.ToBlockmlRebuildStructResponse | api.ErrorResponse> {

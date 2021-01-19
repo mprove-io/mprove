@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskGetCatalogFilesController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskGetCatalogFiles')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles)
   async toDiskGetCatalogFiles(
     @Body() body: api.ToDiskGetCatalogFilesRequest
   ): Promise<api.ToDiskGetCatalogFilesResponse | api.ErrorResponse> {

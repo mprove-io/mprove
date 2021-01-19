@@ -7,7 +7,7 @@ import { api } from '../../../barrels/api';
 export class ToDiskRenameCatalogNodeController {
   constructor(private readonly rabbitService: RabbitService) {}
 
-  @Post('toDiskRenameCatalogNode')
+  @Post(api.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode)
   async toDiskRenameCatalogNode(
     @Body() body: api.ToDiskRenameCatalogNodeRequest
   ): Promise<api.ToDiskRenameCatalogNodeResponse | api.ErrorResponse> {
