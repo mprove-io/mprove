@@ -9,7 +9,7 @@ services:
     container_name: fluent
     image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $ENV_FILE_PATH    
+      - $FLUENT_ENV_FILE_PATH    
     secrets:
       - fluent_key
     ports:
@@ -22,7 +22,7 @@ services:
   db:
     image: mysql:8
     env_file:
-      - $ENV_FILE_PATH    
+      - $DB_ENV_FILE_PATH    
     command: ['--default-authentication-plugin=mysql_native_password', '--max_allowed_packet=128M']
     ports:
       - 3306:3306         
@@ -41,7 +41,7 @@ services:
     container_name: rabbit
     image: rabbitmq:3-management
     env_file:
-      - $ENV_FILE_PATH    
+      - $RABBIT_ENV_FILE_PATH    
     ports:
       - 5672:5672
       - 15672:15672
@@ -66,13 +66,13 @@ services:
     container_name: m-backend
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
     env_file:
-      - $ENV_FILE_PATH    
+      - $BACKEND_ENV_FILE_PATH    
     ports:
       - 3000:3000
     volumes:
       - type: bind
-        source: $ENV_FILE_PATH
-        target: $ENV_FILE_PATH      
+        source: $BACKEND_ENV_FILE_PATH
+        target: $BACKEND_ENV_FILE_PATH      
     # logging:
     #   driver: fluentd
     #   options:
@@ -84,11 +84,11 @@ services:
     container_name: m-blockml-main
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
-      - $BLOCKML_MAIN_FILE_PATH  
+      - $BLOCKML_MAIN_ENV_FILE_PATH  
     volumes:
       - type: bind
-        source: $BLOCKML_MAIN_FILE_PATH
-        target: $BLOCKML_MAIN_FILE_PATH        
+        source: $BLOCKML_MAIN_ENV_FILE_PATH
+        target: $BLOCKML_MAIN_ENV_FILE_PATH        
     # logging:
     #   driver: fluentd
     #   options:
@@ -99,11 +99,11 @@ services:
   m-blockml-worker:
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
-      - $BLOCKML_WORKER_FILE_PATH    
+      - $BLOCKML_WORKER_ENV_FILE_PATH    
     volumes:
       - type: bind
-        source: $BLOCKML_WORKER_FILE_PATH
-        target: $BLOCKML_WORKER_FILE_PATH      
+        source: $BLOCKML_WORKER_ENV_FILE_PATH
+        target: $BLOCKML_WORKER_ENV_FILE_PATH      
     # logging:
     #   driver: fluentd
     #   options:
@@ -115,14 +115,14 @@ services:
     container_name: m-disk
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $ENV_FILE_PATH    
+      - $DISK_ENV_FILE_PATH    
     volumes:
+      - type: bind
+        source: $DISK_ENV_FILE_PATH
+        target: $DISK_ENV_FILE_PATH        
       - type: bind
         source: $M_DATA_ORG_PATH
         target: $M_DATA_ORG_PATH
-      - type: bind
-        source: $ENV_FILE_PATH
-        target: $ENV_FILE_PATH        
     # logging:
     #   driver: fluentd
     #   options:
