@@ -18,7 +18,7 @@ export function getBaseConfig(envFilePath) {
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
 
-    mproveLogType: <api.LogTypeEnum>envFile.MPROVE_LOG_TYPE
+    mproveLogIsColor: <api.BoolEnum>envFile.MPROVE_LOG_IS_COLOR
   };
   return config;
 }

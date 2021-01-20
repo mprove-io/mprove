@@ -27,6 +27,6 @@ export class Config {
   @IsString()
   rabbitmqDefaultPass: string;
 
-  @IsEnum(api.LogTypeEnum)
-  mproveLogType: api.LogTypeEnum;
+  @IsEnum(api.BoolEnum)
+  mproveLogIsColor: api.BoolEnum;
 }

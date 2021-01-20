@@ -28,8 +28,8 @@ export async function prepareTest(organizationId: string) {
     ConfigService
   );
 
-  let orgPath = configService.get<interfaces.Config['mDataOrganizationsPath']>(
-    'mDataOrganizationsPath'
+  let orgPath = configService.get<interfaces.Config['mDataOrgPath']>(
+    'mDataOrgPath'
   );
 
   let orgDir = `${orgPath}/${organizationId}`;

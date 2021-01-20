@@ -27,7 +27,7 @@ export function getBaseConfig(envFilePath) {
     mysqlRootPassword: envFile.MYSQL_ROOT_PASSWORD,
     mysqlDatabase: envFile.MYSQL_DATABASE,
 
-    mproveLogType: <api.LogTypeEnum>envFile.MPROVE_LOG_TYPE
+    mproveLogIsColor: <api.BoolEnum>envFile.MPROVE_LOG_IS_COLOR
   };
   return config;
 }

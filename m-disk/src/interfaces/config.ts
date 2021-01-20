@@ -13,8 +13,8 @@ export class Config {
   rabbitmqDefaultPass: string;
 
   @IsString()
-  mDataOrganizationsPath: string;
+  mDataOrgPath: string;
 
-  @IsEnum(api.LogTypeEnum)
-  mproveLogType: api.LogTypeEnum;
+  @IsEnum(api.BoolEnum)
+  mproveLogIsColor: api.BoolEnum;
 }

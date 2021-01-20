@@ -1,7 +1,6 @@
 export * from './bool.enum';
 export * from './er.enum';
 export * from './error-story.enum';
-export * from './log-type.enum';
 
 export * from './rabbit-blockml-routing-keys.enum';
 export * from './rabbit-blockml-worker-routing-keys.enum';

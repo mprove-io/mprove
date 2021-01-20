@@ -33,6 +33,6 @@ export class Config {
   @IsString()
   mysqlDatabase: string;
 
-  @IsEnum(api.LogTypeEnum)
-  mproveLogType: api.LogTypeEnum;
+  @IsEnum(api.BoolEnum)
+  mproveLogIsColor: api.BoolEnum;
 }

@@ -3,10 +3,10 @@ import * as util from 'util';
 import { ConfigService } from '@nestjs/config';
 
 export function logToConsole(object: any, configService?: ConfigService) {
-  let mproveLogType =
-    configService?.get('mproveLogType') || apiEnums.LogTypeEnum.PROD;
+  let mproveLogIsColor =
+    configService?.get('mproveLogIsColor') || apiEnums.BoolEnum.FALSE;
 
-  if (mproveLogType === apiEnums.LogTypeEnum.DEV) {
+  if (mproveLogIsColor === apiEnums.BoolEnum.TRUE) {
     console.log(util.inspect(object, false, null, true));
   } else {
     console.log(JSON.stringify(util.inspect(object, false, null, false)));

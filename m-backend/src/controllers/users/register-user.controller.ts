@@ -7,7 +7,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { gen } from '../../barrels/gen';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from 'src/barrels/interfaces';
+import { interfaces } from '../../barrels/interfaces';
 
 @Controller()
 export class ToBackendRegisterUserController {

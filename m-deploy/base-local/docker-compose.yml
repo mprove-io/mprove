@@ -99,11 +99,11 @@ services:
   m-blockml-worker:
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
-      - $ENV_FILE_PATH    
+      - $BLOCKML_WORKER_FILE_PATH    
     volumes:
       - type: bind
-        source: $ENV_FILE_PATH
-        target: $ENV_FILE_PATH      
+        source: $BLOCKML_WORKER_FILE_PATH
+        target: $BLOCKML_WORKER_FILE_PATH      
     # logging:
     #   driver: fluentd
     #   options:
@@ -118,8 +118,8 @@ services:
       - $ENV_FILE_PATH    
     volumes:
       - type: bind
-        source: $M_DATA_ORGANIZATIONS_PATH
-        target: $M_DATA_ORGANIZATIONS_PATH
+        source: $M_DATA_ORG_PATH
+        target: $M_DATA_ORG_PATH
       - type: bind
         source: $ENV_FILE_PATH
         target: $ENV_FILE_PATH        
