@@ -12,10 +12,14 @@ export function log(
   logType: enums.LogTypeEnum,
   content: any
 ) {
+  let blockmlLogsPath = cs.get<interfaces.Config['blockmlLogsPath']>(
+    'blockmlLogsPath'
+  );
   let blockmlLogIO = cs.get<interfaces.Config['blockmlLogIO']>('blockmlLogIO');
   if (blockmlLogIO === api.BoolEnum.FALSE) {
     return;
   }
+
   let funcArray = func.toString().split('/');
   let f = funcArray[1];
 
@@ -23,7 +27,7 @@ export function log(
 
   let logTypeString = logType.toString();
 
-  let dir = `src/logs/${caller}/${f}/${structId}`;
+  let dir = `${blockmlLogsPath}/${caller}/${f}/${structId}`;
   let path = `${dir}/${logTypeString}`;
 
   fse.ensureDirSync(dir);

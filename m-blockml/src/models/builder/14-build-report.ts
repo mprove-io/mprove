@@ -105,18 +105,21 @@ export async function buildReport<T extends types.dzType>(item: {
     cs: item.cs
   });
 
-  entities = await barReport.fetchSql({
-    traceId: item.traceId,
-    rabbitService: item.rabbitService,
-    entities: entities,
-    models: item.models,
-    udfsDict: item.udfsDict,
-    weekStart: item.weekStart,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller,
-    cs: item.cs
-  });
+  entities = await barReport.fetchSql(
+    {
+      traceId: item.traceId,
+      entities: entities,
+      models: item.models,
+      udfsDict: item.udfsDict,
+      weekStart: item.weekStart,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    item.rabbitService,
+
+    item.cs
+  );
 
   return entities;
 }

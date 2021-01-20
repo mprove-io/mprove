@@ -34,7 +34,9 @@ test(testId, async () => {
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     filesAny = await helper.readLog(fromDir, enums.LogTypeEnum.FilesAny);
-    fse.copySync(fromDir, toDir);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
   } catch (e) {
     api.logToConsole(e);
   }

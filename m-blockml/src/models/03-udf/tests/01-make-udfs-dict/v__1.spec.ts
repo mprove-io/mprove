@@ -39,7 +39,9 @@ test(testId, async () => {
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     udfsDict = await helper.readLog(fromDir, enums.LogTypeEnum.UdfsDict);
-    fse.copySync(fromDir, toDir);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
   } catch (e) {
     api.logToConsole(e);
   }

@@ -42,7 +42,9 @@ test(testId, async () => {
       fromDir,
       enums.LogTypeEnum.Entities
     );
-    fse.copySync(fromDir, toDir);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
   } catch (e) {
     api.logToConsole(e);
   }

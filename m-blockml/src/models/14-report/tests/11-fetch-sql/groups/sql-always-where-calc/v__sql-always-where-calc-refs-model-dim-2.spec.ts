@@ -40,7 +40,9 @@ test('1', async () => {
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
-    fse.copySync(fromDir, toDir);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
   } catch (e) {
     api.logToConsole(e);
   }
@@ -106,7 +108,9 @@ test('2', async () => {
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     entDashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Entities);
-    fse.copySync(fromDir, toDir);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
   } catch (e) {
     api.logToConsole(e);
   }

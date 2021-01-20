@@ -2,6 +2,7 @@ import { prepareTest } from '../../../../functions/prepare-test';
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import * as fse from 'fs-extra';
+import { helper } from '../../../../barrels/helper';
 
 let caller = enums.CallerEnum.RebuildStruct;
 let func = enums.FuncEnum.LogStruct;
@@ -30,7 +31,9 @@ async function run() {
     weekStart: api.ProjectWeekStartEnum.Monday
   });
 
-  fse.copySync(fromDir, toDir);
+  if (helper.isDefined(toDir)) {
+    fse.copySync(fromDir, toDir);
+  }
 }
 
 run();

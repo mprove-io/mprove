@@ -12,19 +12,21 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.FetchSql;
 
-export async function fetchSql<T extends types.dzType>(item: {
-  traceId: string;
-  rabbitService: RabbitService;
-  entities: Array<T>;
-  models: interfaces.Model[];
-  udfsDict: api.UdfsDict;
-  weekStart: api.ProjectWeekStartEnum;
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService<interfaces.Config>;
-}) {
-  let { caller, structId, cs } = item;
+export async function fetchSql<T extends types.dzType>(
+  item: {
+    traceId: string;
+    entities: Array<T>;
+    models: interfaces.Model[];
+    udfsDict: api.UdfsDict;
+    weekStart: api.ProjectWeekStartEnum;
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  rabbitService: RabbitService,
+  cs: ConfigService<interfaces.Config>
+) {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let reports: interfaces.Report[] = [];
@@ -33,9 +35,9 @@ export async function fetchSql<T extends types.dzType>(item: {
     reports = [...reports, ...z.reports];
   });
 
-  let concurrencyLimit = item.cs.get<
-    interfaces.Config['blockmlConcurrencyLimit']
-  >('blockmlConcurrencyLimit');
+  let concurrencyLimit = cs.get<interfaces.Config['blockmlConcurrencyLimit']>(
+    'blockmlConcurrencyLimit'
+  );
 
   await asyncPool(
     concurrencyLimit,
@@ -57,8 +59,8 @@ export async function fetchSql<T extends types.dzType>(item: {
       report.combinedFilters = filters;
 
       let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
-        item.rabbitService,
-        item.cs,
+        rabbitService,
+        cs,
         item.traceId,
         {
           weekStart: item.weekStart,

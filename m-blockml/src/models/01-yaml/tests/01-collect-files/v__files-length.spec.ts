@@ -30,7 +30,9 @@ test(testId, async () => {
     });
 
     files = await helper.readLog(fromDir, enums.LogTypeEnum.Files);
-    fse.copySync(fromDir, toDir);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
   } catch (e) {
     api.logToConsole(e);
   }

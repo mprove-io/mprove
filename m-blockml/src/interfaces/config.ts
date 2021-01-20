@@ -10,6 +10,12 @@ export class Config {
   blockmlLogIO: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
+  blockmlCopyLogsToModels: api.BoolEnum;
+
+  @IsString()
+  blockmlLogsPath: string;
+
+  @IsEnum(api.BoolEnum)
   blockmlIsSingle: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)

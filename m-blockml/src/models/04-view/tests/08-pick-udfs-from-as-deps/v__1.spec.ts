@@ -39,7 +39,9 @@ test(testId, async () => {
 
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    fse.copySync(fromDir, toDir);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
   } catch (e) {
     api.logToConsole(e);
   }
