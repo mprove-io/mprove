@@ -80,15 +80,15 @@ services:
     #     fluentd-async-connect: "true"
     #     tag: m-backend    
 
-  m-blockml:
-    container_name: m-blockml
+  m-blockml-main:
+    container_name: m-blockml-main
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
-      - $ENV_FILE_PATH  
+      - $BLOCKML_MAIN_FILE_PATH  
     volumes:
       - type: bind
-        source: $ENV_FILE_PATH
-        target: $ENV_FILE_PATH        
+        source: $BLOCKML_MAIN_FILE_PATH
+        target: $BLOCKML_MAIN_FILE_PATH        
     # logging:
     #   driver: fluentd
     #   options:

@@ -51,28 +51,56 @@ import { helper } from './barrels/helper';
   providers: [
     RabbitService,
     {
-      provide: ConsumerMainService,
-      useFactory: (configService: ConfigService) =>
-        helper.isSingleOrMain(configService) ? ConsumerMainService : {},
-      inject: [ConfigService]
-    },
-    {
-      provide: DashboardService,
-      useFactory: (configService: ConfigService) =>
-        helper.isSingleOrMain(configService) ? DashboardService : {},
-      inject: [ConfigService]
+      provide: StructService,
+      useFactory: (
+        configService: ConfigService,
+        rabbitService: RabbitService
+      ) =>
+        helper.isSingleOrMain(configService)
+          ? new StructService(rabbitService, configService)
+          : {},
+      inject: [ConfigService, RabbitService]
     },
     {
       provide: QueryService,
-      useFactory: (configService: ConfigService) =>
-        helper.isSingleOrMain(configService) ? QueryService : {},
-      inject: [ConfigService]
+      useFactory: (
+        configService: ConfigService,
+        rabbitService: RabbitService
+      ) =>
+        helper.isSingleOrMain(configService)
+          ? new QueryService(rabbitService, configService)
+          : {},
+      inject: [ConfigService, RabbitService]
     },
     {
-      provide: StructService,
-      useFactory: (configService: ConfigService) =>
-        helper.isSingleOrMain(configService) ? StructService : {},
-      inject: [ConfigService]
+      provide: DashboardService,
+      useFactory: (
+        configService: ConfigService,
+        rabbitService: RabbitService
+      ) =>
+        helper.isSingleOrMain(configService)
+          ? new DashboardService(rabbitService, configService)
+          : {},
+      inject: [ConfigService, RabbitService]
+    },
+    {
+      provide: ConsumerMainService,
+      useFactory: (
+        configService: ConfigService,
+        structService: StructService,
+        queryService: QueryService,
+        dashboardService: DashboardService
+      ) => {
+        let result = helper.isSingleOrMain(configService)
+          ? new ConsumerMainService(
+              structService,
+              queryService,
+              dashboardService
+            )
+          : {};
+        return result;
+      },
+      inject: [ConfigService, StructService, QueryService, DashboardService]
     },
     {
       provide: ConsumerWorkerService,
@@ -82,7 +110,7 @@ import { helper } from './barrels/helper';
         >('blockmlIsWorker');
 
         return blockmlIsWorker === api.BoolEnum.TRUE
-          ? ConsumerWorkerService
+          ? new ConsumerWorkerService()
           : {};
       },
       inject: [ConfigService]
