@@ -8,14 +8,16 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.MakeUdfsDict;
 
-export function makeUdfsDict(item: {
-  udfsUser: interfaces.Udf[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}) {
-  let { caller, structId, cs } = item;
+export function makeUdfsDict(
+  item: {
+    udfsUser: interfaces.Udf[];
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+) {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let udfsDict: api.UdfsDict = {};

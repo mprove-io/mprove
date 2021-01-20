@@ -4,62 +4,76 @@ import { barChart } from '../../barrels/bar-chart';
 import { types } from '../../barrels/types';
 import { ConfigService } from '@nestjs/config';
 
-export function buildChart<T extends types.dzType>(item: {
-  entities: Array<T>;
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}) {
+export function buildChart<T extends types.dzType>(
+  item: {
+    entities: Array<T>;
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+) {
   let entities = item.entities;
 
-  entities = barChart.checkChartType({
-    entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller,
-    cs: item.cs
-  });
+  entities = barChart.checkChartType(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
-  entities = barChart.checkChartData({
-    entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller,
-    cs: item.cs
-  });
+  entities = barChart.checkChartData(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
-  entities = barChart.checkChartDataParameters({
-    entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller,
-    cs: item.cs
-  });
+  entities = barChart.checkChartDataParameters(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
-  entities = barChart.checkChartAxisParameters({
-    entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller,
-    cs: item.cs
-  });
+  entities = barChart.checkChartAxisParameters(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
-  entities = barChart.checkChartOptionsParameters({
-    entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller,
-    cs: item.cs
-  });
+  entities = barChart.checkChartOptionsParameters(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
-  entities = barChart.checkChartTileParameters({
-    entities: entities,
-    structId: item.structId,
-    errors: item.errors,
-    caller: item.caller,
-    cs: item.cs
-  });
+  entities = barChart.checkChartTileParameters(
+    {
+      entities: entities,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
   return entities;
 }

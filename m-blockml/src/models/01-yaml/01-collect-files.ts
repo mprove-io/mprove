@@ -7,13 +7,15 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CollectFiles;
 
-export async function collectFiles(item: {
-  dir: string;
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}): Promise<api.File[]> {
-  let { caller, structId, cs } = item;
+export async function collectFiles(
+  item: {
+    dir: string;
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+): Promise<api.File[]> {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   return new Promise((resolve, reject) => {

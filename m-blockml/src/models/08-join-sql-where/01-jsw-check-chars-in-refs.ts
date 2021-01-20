@@ -7,14 +7,16 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.JswCheckCharsInRefs;
 
-export function jswCheckCharsInRefs(item: {
-  models: interfaces.Model[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}) {
-  let { caller, structId, cs } = item;
+export function jswCheckCharsInRefs(
+  item: {
+    models: interfaces.Model[];
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+) {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newModels: interfaces.Model[] = [];

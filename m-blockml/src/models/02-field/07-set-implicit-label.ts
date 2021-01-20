@@ -7,14 +7,16 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.SetImplicitLabel;
 
-export function setImplicitLabel<T extends types.vmdType>(item: {
-  entities: Array<T>;
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}) {
-  let { caller, structId, cs } = item;
+export function setImplicitLabel<T extends types.vmdType>(
+  item: {
+    entities: Array<T>;
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+) {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.entities.forEach((x: T) => {

@@ -7,15 +7,17 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckConnections;
 
-export function checkConnections(item: {
-  filesAny: any[];
-  connections: api.ProjectConnection[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}): any[] {
-  let { caller, structId, cs } = item;
+export function checkConnections(
+  item: {
+    filesAny: any[];
+    connections: api.ProjectConnection[];
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+): any[] {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];

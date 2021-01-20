@@ -7,27 +7,20 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.LogStruct;
 
-export async function logStruct(item: {
-  udfsDict: api.UdfsDict;
-  views: interfaces.View[];
-  models: interfaces.Model[];
-  dashboards: interfaces.Dashboard[];
-  vizs: interfaces.Viz[];
-  structId: string;
-  errors: BmError[];
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}) {
-  let {
-    udfsDict,
-    views,
-    models,
-    dashboards,
-    vizs,
-    structId,
-    caller,
-    cs
-  } = item;
+export async function logStruct(
+  item: {
+    udfsDict: api.UdfsDict;
+    views: interfaces.View[];
+    models: interfaces.Model[];
+    dashboards: interfaces.Dashboard[];
+    vizs: interfaces.Viz[];
+    structId: string;
+    errors: BmError[];
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+) {
+  let { udfsDict, views, models, dashboards, vizs, structId, caller } = item;
 
   log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, enums.LogTypeEnum.UdfsDict, udfsDict);

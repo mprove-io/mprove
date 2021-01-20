@@ -7,14 +7,16 @@ import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.RemoveWrongExt;
 
-export function removeWrongExt(item: {
-  files: api.File[];
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}): interfaces.File2[] {
-  let { caller, structId, cs } = item;
+export function removeWrongExt(
+  item: {
+    files: api.File[];
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+): interfaces.File2[] {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let file2s: interfaces.File2[] = [];

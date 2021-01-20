@@ -9,14 +9,16 @@ let Graph = require('tarjan-graph');
 
 let func = enums.FuncEnum.CheckCycles;
 
-export function checkCycles<T extends types.vmType>(item: {
-  entities: Array<T>;
-  errors: BmError[];
-  structId: string;
-  caller: enums.CallerEnum;
-  cs: ConfigService;
-}): Array<T> {
-  let { caller, structId, cs } = item;
+export function checkCycles<T extends types.vmType>(
+  item: {
+    entities: Array<T>;
+    errors: BmError[];
+    structId: string;
+    caller: enums.CallerEnum;
+  },
+  cs: ConfigService
+): Array<T> {
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
