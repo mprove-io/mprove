@@ -7,7 +7,7 @@ Thumbs.db
 .idea/
 
 # env
-.env
+*.env
 .envrc
 
 # cypress
