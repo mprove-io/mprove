@@ -1,5 +1,5 @@
 export default {
-  files: ['dist/**/*.spec.js'],
+  files: ['dist/**/*.e2e-spec.js'],
   extensions: ['js'],
   verbose: true,
   timeout: '1m',

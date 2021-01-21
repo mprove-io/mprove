@@ -10,11 +10,12 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "clean-dist": "rimraf \"./dist\"",
+    "clean-logs": "rimraf \"./src/models/**/logs\"",
+    "t": "npm run clean-dist && npm run clean-logs && tsc && ava --config=ava-test.config.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
-    "test": "npm-run-all clean-models-logs && npm run lint && npm run circular && t",
-    "t": "tsc && ava --config=ava-test.config.js",
-    "clean-models-logs": "rimraf \"./src/models/**/logs\""
+    "test": "npm run lint && npm run circular && npm run t"
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^1.15.2",
@@ -54,7 +55,6 @@
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
     "madge": "3.11.0",
-    "npm-run-all": "^4.1.5",
     "prettier": "1.19.1",
     "supertest": "^4.0.2",
     "ts-loader": "^6.2.1",
