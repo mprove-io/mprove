@@ -1,6 +1,7 @@
 import { api } from '../../../../barrels/api';
 import { enums } from '../../../../barrels/enums';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { helper } from '../../../../barrels/helper';
 import * as fse from 'fs-extra';
 
@@ -8,7 +9,7 @@ let caller = enums.CallerEnum.RebuildStruct;
 let func = enums.FuncEnum.CollectFiles;
 let testId = 'v__files-length';
 
-test(testId, async () => {
+test('1', async t => {
   let files: api.File[];
 
   try {
@@ -37,5 +38,5 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(files.length).toBe(5);
+  t.is(files.length, 5);
 });

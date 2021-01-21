@@ -3,6 +3,7 @@ import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.CheckTopUnknownParameters;
 let testId = 'e__unexpected-list';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let filesAny: any[];
 
@@ -41,9 +42,9 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(filesAny.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(filesAny.length, 0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.UNEXPECTED_LIST);
-  expect(errors[0].lines[0].line).toBe(2);
+  t.is(errors[0].title, enums.ErTitleEnum.UNEXPECTED_LIST);
+  t.is(errors[0].lines[0].line, 2);
 });

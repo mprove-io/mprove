@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildDashboard;
 let func = enums.FuncEnum.CheckMdzAccess;
 let testId = 'e__wrong-access-users-element-2';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let entDashboards: interfaces.Dashboard[];
 
@@ -46,9 +47,9 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(entDashboards.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(entDashboards.length, 0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
-  expect(errors[0].lines[0].line).toBe(2);
+  t.is(errors[0].title, enums.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT);
+  t.is(errors[0].lines[0].line, 2);
 });

@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildView;
 let func = enums.FuncEnum.CheckViewAsDeps;
 let testId = 'e__derived-table-referenced-view-has-different-connection';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let views: interfaces.View[];
 
@@ -51,11 +52,12 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(views.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(views.length, 0);
 
-  expect(errors[0].title).toBe(
+  t.is(
+    errors[0].title,
     enums.ErTitleEnum.DERIVED_TABLE_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION
   );
-  expect(errors[0].lines[0].line).toBe(3);
+  t.is(errors[0].lines[0].line, 3);
 });

@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildModel;
 let func = enums.FuncEnum.MakeFieldsDoubleDepsAfterSingles;
 let testId = 'v__1';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let models: interfaces.Model[];
 
@@ -46,10 +47,10 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(0);
-  expect(models.length).toBe(1);
-  expect(models[0].fields[0].sqlReal).toBe('(${a.dim1} + c1) + c10');
-  expect(models[0].fieldsDoubleDepsAfterSingles).toStrictEqual({
+  t.is(errors.length, 0);
+  t.is(models.length, 1);
+  t.is(models[0].fields[0].sqlReal, '(${a.dim1} + c1) + c10');
+  t.deepEqual(models[0].fieldsDoubleDepsAfterSingles, {
     calc10: {
       a: {
         dim1: 8

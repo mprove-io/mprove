@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildViewField;
 let func = enums.FuncEnum.SubstituteSingleRefs;
 let testId = 'v__2';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let entViews: interfaces.View[];
 
@@ -46,21 +47,23 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(0);
-  expect(entViews.length).toBe(1);
+  t.is(errors.length, 0);
+  t.is(entViews.length, 1);
 
-  expect(entViews[0].fields.length).toBe(3);
+  t.is(entViews[0].fields.length, 3);
 
-  expect(entViews[0].fields[0].sqlReal).toBe('d1');
+  t.is(entViews[0].fields[0].sqlReal, 'd1');
 
-  expect(entViews[0].fields[1].sqlReal).toBe(
+  t.is(
+    entViews[0].fields[1].sqlReal,
     "TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')"
   );
-  expect(entViews[0].fields[2].sqlReal).toBe(
+  t.is(
+    entViews[0].fields[2].sqlReal,
     "(TO_CHAR(DATE_TRUNC('month', mprovetimestampstart(d1) + t1mprovetimestampend), 'YYYY-MM')) + d2"
   );
 
-  expect(entViews[0].fieldsDeps).toStrictEqual({
+  t.deepEqual(entViews[0].fieldsDeps, {
     dim1: {},
     time1___month: {
       dim1: 8
@@ -70,7 +73,7 @@ test(testId, async () => {
     }
   });
 
-  expect(entViews[0].fieldsDepsAfterSingles).toStrictEqual({
+  t.deepEqual(entViews[0].fieldsDepsAfterSingles, {
     dim1: {},
     time1___month: {},
     dim2: {}

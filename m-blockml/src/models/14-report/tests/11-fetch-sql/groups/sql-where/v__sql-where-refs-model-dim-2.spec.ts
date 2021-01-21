@@ -3,6 +3,7 @@ import { enums } from '../../../../../../barrels/enums';
 import { interfaces } from '../../../../../../barrels/interfaces';
 import { helper } from '../../../../../../barrels/helper';
 import { prepareTest } from '../../../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.FetchSql;
 let testId = 'groups/sql-where/v__sql-where-refs-model-dim-2';
 
-test('1', async () => {
+test('1', async t => {
   let errors: BmError[];
   let entDashboards: interfaces.Dashboard[];
 
@@ -81,12 +82,12 @@ SELECT
 FROM main
 LIMIT 500`;
 
-  expect(errors.length).toBe(0);
-  expect(entDashboards.length).toBe(1);
-  expect(entDashboards[0].reports[0].sql.join('\n')).toEqual(sql);
+  t.is(errors.length, 0);
+  t.is(entDashboards.length, 1);
+  t.is(entDashboards[0].reports[0].sql.join('\n'), sql);
 });
 
-test('2', async () => {
+test('2', async t => {
   let errors: BmError[];
   let entDashboards: interfaces.Dashboard[];
 
@@ -156,7 +157,7 @@ SELECT
 FROM main
 LIMIT 500`;
 
-  expect(errors.length).toBe(0);
-  expect(entDashboards.length).toBe(1);
-  expect(entDashboards[0].reports[0].sql.join('\n')).toEqual(sql);
+  t.is(errors.length, 0);
+  t.is(entDashboards.length, 1);
+  t.is(entDashboards[0].reports[0].sql.join('\n'), sql);
 });

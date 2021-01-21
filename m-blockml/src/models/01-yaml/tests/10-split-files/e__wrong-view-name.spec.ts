@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { helper } from '../../../../barrels/helper';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.SplitFiles;
 let testId = 'e__wrong-view-name';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let udfs: interfaces.Udf[];
   let views: interfaces.View[];
@@ -54,13 +55,13 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(udfs.length).toBe(0);
-  expect(views.length).toBe(0);
-  expect(models.length).toBe(0);
-  expect(dashboards.length).toBe(0);
-  expect(vizs.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(udfs.length, 0);
+  t.is(views.length, 0);
+  t.is(models.length, 0);
+  t.is(dashboards.length, 0);
+  t.is(vizs.length, 0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.WRONG_VIEW_NAME);
-  expect(errors[0].lines[0].line).toBe(1);
+  t.is(errors[0].title, enums.ErTitleEnum.WRONG_VIEW_NAME);
+  t.is(errors[0].lines[0].line, 1);
 });

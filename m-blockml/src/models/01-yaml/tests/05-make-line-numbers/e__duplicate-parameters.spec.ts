@@ -3,6 +3,7 @@ import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.MakeLineNumbers;
 let testId = 'e__duplicate-parameters';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let filesAny: any[];
 
@@ -42,8 +43,8 @@ test(testId, async () => {
   }
 
   // FILE_CONTENT_IS_NOT_YAML caught before DUPLICATE_PARAMETERS
-  expect(errors.length).toBe(1);
-  expect(filesAny.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(filesAny.length, 0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML);
+  t.is(errors[0].title, enums.ErTitleEnum.FILE_CONTENT_IS_NOT_YAML);
 });

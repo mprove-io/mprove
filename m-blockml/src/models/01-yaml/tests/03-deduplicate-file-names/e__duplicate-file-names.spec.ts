@@ -3,6 +3,7 @@ import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.DeduplicateFileNames;
 let testId = 'e__duplicate-file-names';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let file3s: interfaces.File3[];
 
@@ -41,10 +42,10 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(file3s.length).toBe(1);
+  t.is(errors.length, 1);
+  t.is(file3s.length, 1);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.DUPLICATE_FILE_NAMES);
-  expect(errors[0].lines.length).toBe(3);
-  expect(errors[0].lines[0].line).toBe(0);
+  t.is(errors[0].title, enums.ErTitleEnum.DUPLICATE_FILE_NAMES);
+  t.is(errors[0].lines.length, 3);
+  t.is(errors[0].lines[0].line, 0);
 });

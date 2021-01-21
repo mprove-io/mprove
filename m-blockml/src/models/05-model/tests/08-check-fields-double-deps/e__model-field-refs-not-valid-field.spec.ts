@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildModel;
 let func = enums.FuncEnum.CheckFieldsDoubleDeps;
 let testId = 'e__model-field-refs-not-valid-field';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let models: interfaces.Model[];
 
@@ -46,11 +47,9 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(models.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(models.length, 0);
 
-  expect(errors[0].title).toBe(
-    enums.ErTitleEnum.MODEL_FIELD_REFS_NOT_VALID_FIELD
-  );
-  expect(errors[0].lines[0].line).toBe(9);
+  t.is(errors[0].title, enums.ErTitleEnum.MODEL_FIELD_REFS_NOT_VALID_FIELD);
+  t.is(errors[0].lines[0].line, 9);
 });

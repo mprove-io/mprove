@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildModel;
 let func = enums.FuncEnum.MakeJoins;
 let testId = 'e__join-calls-missing-view';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let models: interfaces.Model[];
 
@@ -46,11 +47,11 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(2);
-  expect(models.length).toBe(0);
+  t.is(errors.length, 2);
+  t.is(models.length, 0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW);
-  expect(errors[0].lines[0].line).toBe(4);
-  expect(errors[1].title).toBe(enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW);
-  expect(errors[1].lines[0].line).toBe(7);
+  t.is(errors[0].title, enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW);
+  t.is(errors[0].lines[0].line, 4);
+  t.is(errors[1].title, enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW);
+  t.is(errors[1].lines[0].line, 7);
 });

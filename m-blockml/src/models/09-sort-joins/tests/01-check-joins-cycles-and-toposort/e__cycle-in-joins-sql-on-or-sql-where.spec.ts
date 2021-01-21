@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildSortJoins;
 let func = enums.FuncEnum.CheckJoinsCyclesAndToposort;
 let testId = 'e__cycle-in-joins-sql-on-or-sql-where';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let models;
 
@@ -46,11 +47,9 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(models.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(models.length, 0);
 
-  expect(errors[0].title).toBe(
-    enums.ErTitleEnum.CYCLE_IN_JOINS_SQL_ON_OR_SQL_WHERE
-  );
-  expect(errors[0].lines.length).toBe(3);
+  t.is(errors[0].title, enums.ErTitleEnum.CYCLE_IN_JOINS_SQL_ON_OR_SQL_WHERE);
+  t.is(errors[0].lines.length, 3);
 });

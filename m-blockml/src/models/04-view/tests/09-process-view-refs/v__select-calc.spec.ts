@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildView;
 let func = enums.FuncEnum.ProcessViewRefs;
 let testId = 'v__select-calc';
 
-test('1', async () => {
+test('1', async t => {
   let errors: BmError[];
   let views: interfaces.View[];
 
@@ -73,12 +74,12 @@ test('1', async () => {
     FROM main__v1
   ),`;
 
-  expect(errors.length).toBe(0);
-  expect(views.length).toBe(2);
-  expect(views[1].parts['v2__v1__a'].sub.join('\n')).toEqual(sub);
+  t.is(errors.length, 0);
+  t.is(views.length, 2);
+  t.is(views[1].parts['v2__v1__a'].sub.join('\n'), sub);
 });
 
-test('2', async () => {
+test('2', async t => {
   let errors: BmError[];
   let views: interfaces.View[];
 
@@ -141,7 +142,7 @@ test('2', async () => {
     FROM main__v1
   ),`;
 
-  expect(errors.length).toBe(0);
-  expect(views.length).toBe(2);
-  expect(views[1].parts['v2__v1__a'].sub.join('\n')).toEqual(sub);
+  t.is(errors.length, 0);
+  t.is(views.length, 2);
+  t.is(views[1].parts['v2__v1__a'].sub.join('\n'), sub);
 });

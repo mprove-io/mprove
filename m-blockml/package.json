@@ -16,8 +16,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
-    "test": "npm-run-all clean-models-logs && npm run lint && npm run circular && jest",
-    "t": "jest",
+    "test": "npm-run-all clean-models-logs && npm run lint && npm run circular && ava",
+    "t": "ava",
     "clean-models-logs": "rimraf \"./src/models/**/logs\""
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "@nestjs/config": "^0.6.1",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
+    "ava": "^3.15.0",
     "class-transformer": "0.3.1",
     "class-transformer-validator": "0.9.1",
     "class-validator": "0.12.2",

@@ -3,6 +3,7 @@ import { helper } from '../../../../barrels/helper';
 import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.CheckSupportUdfs;
 let testId = 'e__udfs-are-not-supported-for-connection';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let filesAny: any[];
 
@@ -50,15 +51,17 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(2);
-  expect(filesAny.length).toBe(2);
+  t.is(errors.length, 2);
+  t.is(filesAny.length, 2);
 
-  expect(errors[0].title).toBe(
+  t.is(
+    errors[0].title,
     enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION
   );
-  expect(errors[0].lines[0].line).toBe(3);
-  expect(errors[1].title).toBe(
+  t.is(errors[0].lines[0].line, 3);
+  t.is(
+    errors[1].title,
     enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION
   );
-  expect(errors[1].lines[0].line).toBe(3);
+  t.is(errors[1].lines[0].line, 3);
 });

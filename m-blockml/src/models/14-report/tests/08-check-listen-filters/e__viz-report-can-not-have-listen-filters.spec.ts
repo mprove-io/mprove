@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildVizReport;
 let func = enums.FuncEnum.CheckListenFilters;
 let testId = 'e__viz-report-can-not-have-listen-filters';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let entVizs: interfaces.Viz[];
 
@@ -46,11 +47,12 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(entVizs.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(entVizs.length, 0);
 
-  expect(errors[0].title).toBe(
+  t.is(
+    errors[0].title,
     enums.ErTitleEnum.VIZ_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS
   );
-  expect(errors[0].lines[0].line).toBe(7);
+  t.is(errors[0].lines[0].line, 7);
 });

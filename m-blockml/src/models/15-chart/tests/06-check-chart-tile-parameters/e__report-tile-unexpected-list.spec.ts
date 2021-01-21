@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildDashboardChart;
 let func = enums.FuncEnum.CheckChartTileParameters;
 let testId = 'e__report-tile-unexpected-list';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let entDashboards: interfaces.Dashboard[];
 
@@ -46,9 +47,9 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(entDashboards.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(entDashboards.length, 0);
 
-  expect(errors[0].title).toBe(enums.ErTitleEnum.REPORT_TILE_UNEXPECTED_LIST);
-  expect(errors[0].lines[0].line).toBe(11);
+  t.is(errors[0].title, enums.ErTitleEnum.REPORT_TILE_UNEXPECTED_LIST);
+  t.is(errors[0].lines[0].line, 11);
 });

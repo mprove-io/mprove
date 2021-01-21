@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildViewField;
 let func = enums.FuncEnum.CheckCalculations;
 let testId = 'e__calculation-sql-missing-blockml-reference';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let entViews: interfaces.View[];
 
@@ -46,11 +47,12 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(1);
-  expect(entViews.length).toBe(0);
+  t.is(errors.length, 1);
+  t.is(entViews.length, 0);
 
-  expect(errors[0].title).toBe(
+  t.is(
+    errors[0].title,
     enums.ErTitleEnum.CALCULATION_SQL_MISSING_BLOCKML_REFERENCE
   );
-  expect(errors[0].lines[0].line).toBe(5);
+  t.is(errors[0].lines[0].line, 5);
 });

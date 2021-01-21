@@ -3,6 +3,7 @@ import { enums } from '../../../../barrels/enums';
 import { interfaces } from '../../../../barrels/interfaces';
 import { helper } from '../../../../barrels/helper';
 import { prepareTest } from '../../../../functions/prepare-test';
+import test from 'ava';
 import { BmError } from '../../../../models/bm-error';
 import * as fse from 'fs-extra';
 
@@ -10,7 +11,7 @@ let caller = enums.CallerEnum.BuildViewField;
 let func = enums.FuncEnum.SubstituteSingleRefs;
 let testId = 'v__1';
 
-test(testId, async () => {
+test('1', async t => {
   let errors: BmError[];
   let entViews: interfaces.View[];
 
@@ -46,23 +47,24 @@ test(testId, async () => {
     api.logToConsole(e);
   }
 
-  expect(errors.length).toBe(0);
-  expect(entViews.length).toBe(1);
+  t.is(errors.length, 0);
+  t.is(entViews.length, 1);
 
-  expect(entViews[0].fields.length).toBe(7);
-  expect(entViews[0].fields[0].sqlReal).toBe('d1');
-  expect(entViews[0].fields[1].sqlReal).toBe('(d1) + d2');
-  expect(entViews[0].fields[2].sqlReal).toBe('((d1) + d2) + d3');
-  expect(entViews[0].fields[3].sqlReal).toBe('d4');
+  t.is(entViews[0].fields.length, 7);
+  t.is(entViews[0].fields[0].sqlReal, 'd1');
+  t.is(entViews[0].fields[1].sqlReal, '(d1) + d2');
+  t.is(entViews[0].fields[2].sqlReal, '((d1) + d2) + d3');
+  t.is(entViews[0].fields[3].sqlReal, 'd4');
 
-  expect(entViews[0].fields[4].sqlReal).toBe('${dim3} + m1');
+  t.is(entViews[0].fields[4].sqlReal, '${dim3} + m1');
 
-  expect(entViews[0].fields[5].sqlReal).toBe('${mea1} + ${dim3} + c1');
-  expect(entViews[0].fields[6].sqlReal).toBe(
+  t.is(entViews[0].fields[5].sqlReal, '${mea1} + ${dim3} + c1');
+  t.is(
+    entViews[0].fields[6].sqlReal,
     '(${mea1} + ${dim3} + c1) + ${dim4} + c2'
   );
 
-  expect(entViews[0].fieldsDeps).toStrictEqual({
+  t.deepEqual(entViews[0].fieldsDeps, {
     dim1: {},
     dim2: {
       dim1: 8
@@ -84,7 +86,7 @@ test(testId, async () => {
     }
   });
 
-  expect(entViews[0].fieldsDepsAfterSingles).toStrictEqual({
+  t.deepEqual(entViews[0].fieldsDepsAfterSingles, {
     dim1: {},
     dim2: {},
     dim3: {},
