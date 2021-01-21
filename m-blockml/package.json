@@ -10,14 +10,10 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
-    "test": "npm-run-all clean-models-logs && npm run lint && npm run circular && ava",
-    "t": "ava",
+    "test": "npm-run-all clean-models-logs && npm run lint && npm run circular && t",
+    "t": "tsc && ava --config=ava-test.config.js",
     "clean-models-logs": "rimraf \"./src/models/**/logs\""
   },
   "dependencies": {
@@ -50,7 +46,6 @@
     "@nestjs/testing": "^7.0.0",
     "@types/express": "^4.17.3",
     "@types/fs-extra": "^9.0.1",
-    "@types/jest": "^26.0.10",
     "@types/node": "^13.9.1",
     "@types/supertest": "^2.0.8",
     "@typescript-eslint/eslint-plugin": "3.9.1",
@@ -58,32 +53,12 @@
     "eslint": "7.7.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
-    "jest": "26.6.3",
     "madge": "3.11.0",
     "npm-run-all": "^4.1.5",
     "prettier": "1.19.1",
     "supertest": "^4.0.2",
-    "ts-jest": "26.4.4",
     "ts-loader": "^6.2.1",
     "ts-node": "9.1.1",
     "tsconfig-paths": "^3.9.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".spec.ts$",
-    "testTimeout": 60000,
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "setupFiles": [
-      "./jest-setup-file.ts"
-    ]
   }
 }
