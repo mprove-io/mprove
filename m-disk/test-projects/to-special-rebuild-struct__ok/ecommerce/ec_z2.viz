@@ -1,0 +1,13 @@
+viz: ec_z2
+group: Ecommerce
+reports:
+- title: Average sale price by category
+  model: ec_m1
+  select:
+  - f.category
+  - a.average_sale_price_int
+  sorts: a.average_sale_price_int desc  
+  type: table
+  tile:
+    tile_width: '4'
+    tile_height: '500'

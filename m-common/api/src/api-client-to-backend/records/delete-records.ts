@@ -1,10 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import * as apiObjects from '../../objects/_index';
 
 export class ToBackendDeleteRecordsRequestPayload {
+  @IsOptional()
   @IsString({ each: true })
-  readonly userIds: string[];
+  readonly userIds?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  readonly organizationIds?: string[];
 }
 
 export class ToBackendDeleteRecordsRequest {

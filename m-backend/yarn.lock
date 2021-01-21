@@ -6383,6 +6383,14 @@ timers-ext@^0.1.5, timers-ext@^0.1.7:
     es5-ext "~0.10.46"
     next-tick "1"
 
+tiny-async-pool@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/tiny-async-pool/-/tiny-async-pool-1.2.0.tgz#22132957e18f8b6020a94b390d07718fd519cc71"
+  integrity sha512-PY/OiSenYGBU3c1nTuP1HLKRkhKFDXsAibYI5GeHbHw2WVpt6OFzAPIRP94dGnS66Jhrkheim2CHAXUNI4XwMg==
+  dependencies:
+    semver "^5.5.0"
+    yaassertion "^1.0.0"
+
 tmp@^0.0.33:
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -6993,6 +7001,11 @@ y18n@^5.0.5:
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/y18n/-/y18n-5.0.5.tgz#8769ec08d03b1ea2df2500acef561743bbb9ab18"
   integrity sha512-hsRUr4FFrvhhRH12wOdfs38Gy7k2FFzB9qgN9v3aLykRq0dRcdcpz5C9FxdS2NuhOrI/628b/KSTJ3rwHysYSg==
+
+yaassertion@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/yaassertion/-/yaassertion-1.0.2.tgz#f1a90166e1cc4ad44dbb71487009ebca017e9874"
+  integrity sha512-sBoJBg5vTr3lOpRX0yFD+tz7wv/l2UPMFthag4HGTMPrypBRKerjjS8jiEnNMjcAEtPXjbHiKE0UwRR1W1GXBg==
 
 yallist@^3.0.2:
   version "3.1.1"

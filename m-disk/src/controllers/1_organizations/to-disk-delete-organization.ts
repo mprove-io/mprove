@@ -19,13 +19,10 @@ export async function ToDiskDeleteOrganization(item: {
   let orgDir = `${orgPath}/${organizationId}`;
 
   let isOrgExist = await disk.isPathExist(orgDir);
-  if (isOrgExist === false) {
-    throw new api.ServerError({
-      message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
-    });
-  }
 
-  await disk.removePath(orgDir);
+  if (isOrgExist === true) {
+    await disk.removePath(orgDir);
+  }
 
   let response: api.ToDiskDeleteOrganizationResponse = {
     info: {
