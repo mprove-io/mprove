@@ -1,13 +1,13 @@
-import { helper } from '../../barrels/helper';
-import { api } from '../../barrels/api';
-import { UsersService } from '../../services/users.service';
-import { db } from '../../barrels/db';
+import { helper } from '../../../barrels/helper';
+import { api } from '../../../barrels/api';
+import { UsersService } from '../../../services/users.service';
+import { db } from '../../../barrels/db';
 
 import { Body, Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { gen } from '../../barrels/gen';
+import { gen } from '../../../barrels/gen';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
+import { interfaces } from '../../../barrels/interfaces';
 
 @Controller()
 export class ToBackendRegisterUserController {
