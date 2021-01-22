@@ -13,6 +13,7 @@ import { appRepositories } from './app-repositories';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
+import { enums } from './barrels/enums';
 
 @Module({
   imports: [
@@ -31,6 +32,10 @@ import { getConfig } from './config/get.config';
           interfaces.Config['rabbitmqDefaultPass']
         >('rabbitmqDefaultPass');
 
+        let backendEnv = configService.get<interfaces.Config['backendEnv']>(
+          'backendEnv'
+        );
+
         return {
           exchanges: [
             {
@@ -43,7 +48,12 @@ import { getConfig } from './config/get.config';
             }
           ],
           uri: [`amqp://${rabbitUser}:${rabbitPass}@rabbit:5672`],
-          connectionInitOptions: { wait: false }
+          connectionInitOptions: {
+            // wait for connection on startup, but do not recover when connection lost
+            wait: backendEnv !== enums.BackendEnvEnum.PROD,
+            timeout:
+              backendEnv !== enums.BackendEnvEnum.PROD ? 75000 : undefined
+          }
         };
       },
       inject: [ConfigService]

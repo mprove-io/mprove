@@ -9,7 +9,7 @@ export class UserEntity {
   user_id: string;
 
   @Column({ type: constants.VARCHAR })
-  email_verified: api.BoolEnum;
+  is_email_verified: api.BoolEnum;
 
   @Column({ unique: true, type: constants.VARCHAR })
   email_verification_token: string;
@@ -39,19 +39,16 @@ export class UserEntity {
   last_name: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  small_avatar_url: string;
+  avatar_url_small: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
-  big_avatar_url: string;
+  avatar_url_big: string;
 
   // @Column({ type: constants.USER_TIMEZONE_DATATYPE, nullable: true })
   // timezone: string;
 
   @Column({ type: constants.VARCHAR })
   status: api.UserStatusEnum;
-
-  @Column({ type: constants.VARCHAR })
-  deleted: api.BoolEnum;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

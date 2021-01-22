@@ -1,8 +1,15 @@
+import { IsEnum, IsOptional } from 'class-validator';
 import * as apiEnums from '../enums/_index';
 
 export class ServerError extends Error {
-  originalError: any;
-  data: any;
+  @IsEnum(apiEnums.ErEnum)
+  message: apiEnums.ErEnum;
+
+  @IsOptional()
+  data?: any;
+
+  @IsOptional()
+  originalError?: any;
 
   constructor(item: {
     message: apiEnums.ErEnum;

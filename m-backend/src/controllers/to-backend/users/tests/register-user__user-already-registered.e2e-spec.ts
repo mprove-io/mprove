@@ -1,10 +1,11 @@
 import { api } from '../../../../barrels/api';
 import { prepareTest } from '../../../../functions/prepare-test';
 import { interfaces } from '../../../../barrels/interfaces';
+import * as request from 'supertest';
 import test from 'ava';
 import { helper } from '../../../../barrels/helper';
 
-let testId = 'register-user__success';
+let testId = 'register-user__user-already-registered';
 
 let traceId = '123';
 let userId = `${testId}@example.com`;
@@ -18,7 +19,18 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { userIds: [userId] }
+      deleteRecordsPayload: { userIds: [userId] },
+      seedRecordsPayload: {
+        users: [
+          {
+            userId: userId,
+            password: password,
+            isEmailVerified: api.BoolEnum.FALSE,
+            passwordResetToken: helper.makeId(),
+            emailVerificationToken: helper.makeId()
+          }
+        ]
+      }
     });
 
     resp = await helper.sendToBackend<api.ToBackendRegisterUserResponse>({
@@ -40,13 +52,5 @@ test('1', async t => {
     api.logToConsole(e);
   }
 
-  t.deepEqual(resp, <api.ToBackendRegisterUserResponse>{
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      userId: userId
-    }
-  });
+  t.is(resp.info.error.message, api.ErEnum.M_BACKEND_USER_ALREADY_REGISTERED);
 });

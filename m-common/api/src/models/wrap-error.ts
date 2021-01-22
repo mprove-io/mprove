@@ -7,6 +7,7 @@ export function wrapError(e: any) {
       e instanceof ServerError
         ? apiEnums.ErrorStoryEnum.DefinedError
         : apiEnums.ErrorStoryEnum.UnknownError,
+    name: e.name || null,
     message: e.message || null,
     at: e.stack?.split('\n')[1] || null,
     data: e.data || null,

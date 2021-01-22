@@ -11,6 +11,7 @@ import { getConfig } from './config/get.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { interfaces } from './barrels/interfaces';
 import { helper } from './barrels/helper';
+import { enums } from './barrels/enums';
 
 @Module({
   imports: [
@@ -29,6 +30,10 @@ import { helper } from './barrels/helper';
           interfaces.Config['rabbitmqDefaultPass']
         >('rabbitmqDefaultPass');
 
+        let blockmlEnv = configService.get<interfaces.Config['blockmlEnv']>(
+          'blockmlEnv'
+        );
+
         return {
           exchanges: [
             {
@@ -41,7 +46,12 @@ import { helper } from './barrels/helper';
             }
           ],
           uri: [`amqp://${rabbitUser}:${rabbitPass}@rabbit:5672`],
-          connectionInitOptions: { wait: false }
+          connectionInitOptions: {
+            // wait for connection on startup, but do not recover when connection lost
+            wait: blockmlEnv !== enums.BlockmlEnvEnum.PROD,
+            timeout:
+              blockmlEnv !== enums.BlockmlEnvEnum.PROD ? 75000 : undefined
+          }
         };
       },
       inject: [ConfigService]

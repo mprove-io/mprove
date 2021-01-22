@@ -1,4 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { ServerError } from '../../models/server-error';
 import * as apiEnums from '../../enums/_index';
 
 export class ResponseInfo {
@@ -9,5 +10,5 @@ export class ResponseInfo {
   traceId: string;
 
   @IsOptional()
-  error?: any;
+  error?: ServerError;
 }

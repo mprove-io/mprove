@@ -71,7 +71,7 @@ export class ToBackendRegisterUserController {
 
         let newUser = gen.makeUser({
           userId: userId,
-          emailVerified: api.BoolEnum.FALSE,
+          isEmailVerified: api.BoolEnum.FALSE,
           hash: hash,
           salt: salt,
           alias: alias

@@ -6,10 +6,10 @@ default: # default connection
   password: root
   database: my_db
   entities: 
-  - src/store-entities/*.ts # CLI loads from ts files when use ts-node
+  - src/models/store-entities/*.ts # CLI loads from ts files when use ts-node
   migrations: 
   - src/migrations/*.ts # CLI loads from ts files when use ts-node
   cli: 
-    entitiesDir: src/store-entities # CLI created entities to folder
+    entitiesDir: src/models/store-entities # CLI created entities to folder
     migrationsDir: src/migrations # CLI created migrations to folder
 
