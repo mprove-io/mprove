@@ -7,7 +7,9 @@ import * as fse from 'fs-extra';
 export function getBaseConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
-  let config: interfaces.Config = {
+  let commonConfig: api.Config = api.getCommonConfig(envFile);
+
+  let baseConfig: interfaces.Config = Object.assign({}, commonConfig, {
     blockmlEnv: <enums.BlockmlEnvEnum>envFile.BLOCKML_ENV,
     blockmlLogIO: <api.BoolEnum>envFile.BLOCKML_LOG_IO,
     blockmlCopyLogsToModels: <api.BoolEnum>envFile.BLOCKML_COPY_LOGS_TO_MODELS,
@@ -18,9 +20,7 @@ export function getBaseConfig(envFilePath) {
     blockmlConcurrencyLimit: Number(envFile.BLOCKML_CONCURRENCY_LIMIT),
 
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
-    rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
-
-    mproveLogIsColor: <api.BoolEnum>envFile.MPROVE_LOG_IS_COLOR
-  };
-  return config;
+    rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS
+  });
+  return baseConfig;
 }

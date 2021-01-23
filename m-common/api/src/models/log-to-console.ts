@@ -1,10 +1,15 @@
 import * as apiEnums from '../enums/_index';
+import * as apiObjects from '../objects/_index';
 import * as util from 'util';
 import { ConfigService } from '@nestjs/config';
 
-export function logToConsole(object: any, configService?: ConfigService) {
+export function logToConsole(
+  object: any,
+  cs?: ConfigService<apiObjects.Config>
+) {
   let mproveLogIsColor =
-    configService?.get('mproveLogIsColor') || apiEnums.BoolEnum.FALSE;
+    cs?.get<apiObjects.Config['mproveLogIsColor']>('mproveLogIsColor') ||
+    apiEnums.BoolEnum.FALSE;
 
   if (mproveLogIsColor === apiEnums.BoolEnum.TRUE) {
     console.log(util.inspect(object, false, null, true));

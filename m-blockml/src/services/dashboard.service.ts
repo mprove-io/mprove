@@ -14,7 +14,7 @@ import { ConfigService } from '@nestjs/config';
 export class DashboardService {
   constructor(
     private rabbitService: RabbitService,
-    private configService: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   async processDashboard(item: {
@@ -52,7 +52,7 @@ export class DashboardService {
 
     dashboard.filters = dashboardFilters;
 
-    let concurrencyLimit = this.configService.get<
+    let concurrencyLimit = this.cs.get<
       interfaces.Config['blockmlConcurrencyLimit']
     >('blockmlConcurrencyLimit');
 
@@ -82,7 +82,7 @@ export class DashboardService {
 
       let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
         this.rabbitService,
-        this.configService,
+        this.cs,
         traceId,
         {
           weekStart: weekStart,

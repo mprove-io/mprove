@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskDeleteFile(item: {
-  request: api.ToDiskDeleteFileRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskDeleteFileResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -16,7 +16,6 @@ export async function ToDiskDeleteFile(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let {
     organizationId,
     projectId,
@@ -119,22 +118,16 @@ export async function ToDiskDeleteFile(item: {
     readFiles: false
   });
 
-  let response: api.ToDiskDeleteFileResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      deletedFileNodeId: fileNodeId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes
-    }
+  let payload: api.ToDiskDeleteFileResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    deletedFileNodeId: fileNodeId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts,
+    nodes: itemCatalog.nodes
   };
 
-  return response;
+  return payload;
 }

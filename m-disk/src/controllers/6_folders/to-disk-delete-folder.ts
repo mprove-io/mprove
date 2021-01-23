@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskDeleteFolder(item: {
-  request: api.ToDiskDeleteFolderRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskDeleteFolderResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -102,22 +102,16 @@ export async function ToDiskDeleteFolder(item: {
     readFiles: false
   });
 
-  let response: api.ToDiskDeleteFolderResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      deletedFolderNodeId: folderNodeId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes
-    }
+  let payload: api.ToDiskDeleteFolderResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    deletedFolderNodeId: folderNodeId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts,
+    nodes: itemCatalog.nodes
   };
 
-  return response;
+  return payload;
 }

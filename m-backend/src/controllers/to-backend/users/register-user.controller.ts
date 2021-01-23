@@ -14,22 +14,19 @@ export class ToBackendRegisterUserController {
   constructor(
     private usersService: UsersService,
     private connection: Connection,
-    private configService: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
-  async toBackendRegisterUser(
-    @Body() body: api.ToBackendRegisterUserRequest
-  ): Promise<api.ToBackendRegisterUserResponse | api.ErrorResponse> {
+  async toBackendRegisterUser(@Body() body) {
     try {
-      let requestValid = await api.transformValid({
+      let reqValid = await api.transformValid({
         classType: api.ToBackendRegisterUserRequest,
         object: body,
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let { traceId } = requestValid.info;
-      let { userId, password } = requestValid.payload;
+      let { userId, password } = reqValid.payload;
 
       let { salt, hash } = this.usersService.makeSaltAndHash(password);
 
@@ -57,7 +54,7 @@ export class ToBackendRegisterUserController {
       }
 
       if (helper.isUndefined(user)) {
-        let onlyInv = this.configService.get<
+        let onlyInv = this.cs.get<
           interfaces.Config['backendRegisterOnlyInvitedUsers']
         >('backendRegisterOnlyInvitedUsers');
 
@@ -88,20 +85,13 @@ export class ToBackendRegisterUserController {
         });
       }
 
-      let response: api.ToBackendRegisterUserResponse = {
-        info: {
-          status: api.ResponseInfoStatusEnum.Ok,
-          traceId: traceId
-        },
-        payload: {
-          userId: userId
-        }
+      let payload: api.ToBackendRegisterUserResponsePayload = {
+        userId: userId
       };
 
-      return response;
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      api.handleError(e);
-      return api.makeErrorResponse({ request: body, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

@@ -2,7 +2,7 @@ import { enums } from '../barrels/enums';
 import { api } from '../barrels/api';
 import { IsEnum, IsString } from 'class-validator';
 
-export class Config {
+export class Config extends api.Config {
   @IsEnum(enums.DiskEnvEnum)
   diskEnv: enums.DiskEnvEnum;
 
@@ -14,7 +14,4 @@ export class Config {
 
   @IsString()
   mDataOrgPath: string;
-
-  @IsEnum(api.BoolEnum)
-  mproveLogIsColor: api.BoolEnum;
 }

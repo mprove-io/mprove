@@ -28,9 +28,7 @@ export async function genSql(
     };
 
     // is main
-    let resp = await rabbitService.sendToBlockmlWorker<
-      api.ToBlockmlWorkerGenSqlResponse | api.ErrorResponse
-    >({
+    let resp = await rabbitService.sendToBlockmlWorker<api.Response>({
       routingKey: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
       message: genSqlRequest
     });

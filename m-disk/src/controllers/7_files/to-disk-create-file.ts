@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskCreateFile(item: {
-  request: api.ToDiskCreateFileRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskCreateFileResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -16,7 +16,6 @@ export async function ToDiskCreateFile(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let {
     organizationId,
     projectId,
@@ -135,23 +134,17 @@ export async function ToDiskCreateFile(item: {
     readFiles: false
   });
 
-  let response: api.ToDiskCreateFileResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes
-    }
+  let payload: api.ToDiskCreateFileResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts,
+    nodes: itemCatalog.nodes
   };
 
-  return response;
+  return payload;
 }
 
 function getContentFromFileName(item: { fileName: string }) {

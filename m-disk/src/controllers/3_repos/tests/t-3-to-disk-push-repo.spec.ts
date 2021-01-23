@@ -83,15 +83,15 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
 
     // await helper.delay(1000);
 
-    await messageService.processRequest(saveFileRequest);
-    await messageService.processRequest(commitRepoRequest);
+    await messageService.makeResponse(saveFileRequest);
+    await messageService.makeResponse(commitRepoRequest);
 
-    resp = await messageService.processRequest(pushRepoRequest);
+    resp = await messageService.makeResponse(pushRepoRequest);
   } catch (e) {
     api.logToConsole(e);
   }

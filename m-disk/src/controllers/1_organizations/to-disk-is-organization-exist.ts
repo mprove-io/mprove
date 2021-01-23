@@ -2,9 +2,9 @@ import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
 
 export async function ToDiskIsOrganizationExist(item: {
-  request: api.ToDiskIsOrganizationExistRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskIsOrganizationExistResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -13,7 +13,6 @@ export async function ToDiskIsOrganizationExist(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let { organizationId } = requestValid.payload;
 
   let orgDir = `${orgPath}/${organizationId}`;
@@ -22,16 +21,10 @@ export async function ToDiskIsOrganizationExist(item: {
 
   let isOrgExist = await disk.isPathExist(orgDir);
 
-  let response: api.ToDiskIsOrganizationExistResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      isOrganizationExist: isOrgExist
-    }
+  let payload: api.ToDiskIsOrganizationExistResponsePayload = {
+    organizationId: organizationId,
+    isOrganizationExist: isOrgExist
   };
 
-  return response;
+  return payload;
 }

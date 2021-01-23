@@ -1,12 +1,10 @@
 import { api } from '../../barrels/api';
 import { disk } from '../../barrels/disk';
-import { git } from '../../barrels/git';
-import { constants } from '../../barrels/constants';
 
 export async function ToDiskDeleteProject(item: {
-  request: api.ToDiskDeleteProjectRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskDeleteProjectResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -15,7 +13,6 @@ export async function ToDiskDeleteProject(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let { organizationId, projectId } = requestValid.payload;
 
   let orgDir = `${orgPath}/${organizationId}`;
@@ -41,16 +38,10 @@ export async function ToDiskDeleteProject(item: {
 
   await disk.removePath(projectDir);
 
-  let response: api.ToDiskDeleteProjectResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      deletedProjectId: projectId
-    }
+  let payload: api.ToDiskDeleteProjectResponsePayload = {
+    organizationId: organizationId,
+    deletedProjectId: projectId
   };
 
-  return response;
+  return payload;
 }

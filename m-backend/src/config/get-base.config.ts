@@ -7,7 +7,9 @@ import * as fse from 'fs-extra';
 export function getBaseConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
-  let config: interfaces.Config = {
+  let commonConfig: api.Config = api.getCommonConfig(envFile);
+
+  let baseConfig: interfaces.Config = Object.assign({}, commonConfig, {
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
     backendDropDatabaseOnStart: <api.BoolEnum>(
       envFile.BACKEND_DROP_DATABASE_ON_START
@@ -25,9 +27,7 @@ export function getBaseConfig(envFilePath) {
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
 
     mysqlRootPassword: envFile.MYSQL_ROOT_PASSWORD,
-    mysqlDatabase: envFile.MYSQL_DATABASE,
-
-    mproveLogIsColor: <api.BoolEnum>envFile.MPROVE_LOG_IS_COLOR
-  };
-  return config;
+    mysqlDatabase: envFile.MYSQL_DATABASE
+  });
+  return baseConfig;
 }

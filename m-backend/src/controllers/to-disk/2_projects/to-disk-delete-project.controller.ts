@@ -2,17 +2,26 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { makeRoutingKeyToDisk } from '../../../helper/make-routing-key-to-disk';
 import { RabbitService } from '../../../services/rabbit.service';
 import { api } from '../../../barrels/api';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from '../../../barrels/interfaces';
 
 @Controller()
 export class ToDiskDeleteProjectController {
-  constructor(private readonly rabbitService: RabbitService) {}
+  constructor(
+    private rabbitService: RabbitService,
+    private cs: ConfigService<interfaces.Config>
+  ) {}
 
   @Post(api.ToDiskRequestInfoNameEnum.ToDiskDeleteProject)
-  async toDiskDeleteProject(
-    @Body() body: api.ToDiskDeleteProjectRequest
-  ): Promise<api.ToDiskDeleteProjectResponse | api.ErrorResponse> {
+  async toDiskDeleteProject(@Body() body) {
     try {
-      let { organizationId, projectId } = body.payload;
+      let reqValid = await api.transformValid({
+        classType: api.ToDiskDeleteProjectRequest,
+        object: body,
+        errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
+      });
+
+      let { organizationId, projectId } = reqValid.payload;
 
       let routingKey = makeRoutingKeyToDisk({
         organizationId: organizationId,
@@ -23,12 +32,14 @@ export class ToDiskDeleteProjectController {
         api.ToDiskDeleteProjectResponse
       >({
         routingKey: routingKey,
-        message: body
+        message: reqValid
       });
 
-      return resp;
+      let payload = resp.payload;
+
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ request: body, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

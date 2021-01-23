@@ -44,10 +44,10 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
+    await messageService.makeResponse(createOrganizationRequest);
 
-    resp1 = await messageService.processRequest(isOrganizationExistRequest_1);
-    resp2 = await messageService.processRequest(isOrganizationExistRequest_2);
+    resp1 = await messageService.makeResponse(isOrganizationExistRequest_1);
+    resp2 = await messageService.makeResponse(isOrganizationExistRequest_2);
   } catch (e) {
     api.logToConsole(e);
   }

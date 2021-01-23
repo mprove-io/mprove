@@ -2,7 +2,7 @@ import { enums } from '../barrels/enums';
 import { api } from '../barrels/api';
 import { IsEnum, IsString } from 'class-validator';
 
-export class Config {
+export class Config extends api.Config {
   @IsEnum(enums.BackendEnvEnum)
   backendEnv: enums.BackendEnvEnum;
 
@@ -32,7 +32,4 @@ export class Config {
 
   @IsString()
   mysqlDatabase: string;
-
-  @IsEnum(api.BoolEnum)
-  mproveLogIsColor: api.BoolEnum;
 }

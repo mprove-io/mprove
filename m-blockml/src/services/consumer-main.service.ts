@@ -1,5 +1,7 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from '../barrels/interfaces';
 import { api } from '../barrels/api';
 import { DashboardService } from './dashboard.service';
 import { QueryService } from './query.service';
@@ -8,9 +10,10 @@ import { StructService } from './struct.service';
 @Injectable()
 export class ConsumerMainService {
   constructor(
-    private readonly structService: StructService,
-    private readonly queryService: QueryService,
-    private readonly dashboardService: DashboardService
+    private cs: ConfigService<interfaces.Config>,
+    private structService: StructService,
+    private queryService: QueryService,
+    private dashboardService: DashboardService
   ) {}
 
   @RabbitRPC({
@@ -32,13 +35,12 @@ export class ConsumerMainService {
         });
       }
 
-      let requestValid = await api.transformValid({
+      let reqValid = await api.transformValid({
         classType: api.ToBlockmlProcessDashboardRequest,
         object: request,
         errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
       });
 
-      let { traceId } = requestValid.info;
       let {
         structId,
         organizationId,
@@ -49,10 +51,10 @@ export class ConsumerMainService {
         dashboardContent,
         newDashboardId,
         newDashboardFields
-      } = requestValid.payload;
+      } = reqValid.payload;
 
       let payload = await this.dashboardService.processDashboard({
-        traceId: traceId,
+        traceId: reqValid.info.traceId,
         structId: structId,
         organizationId: organizationId,
         projectId: projectId,
@@ -64,17 +66,9 @@ export class ConsumerMainService {
         newDashboardFields: newDashboardFields
       });
 
-      let response: api.ToBlockmlProcessDashboardResponse = {
-        info: {
-          status: api.ResponseInfoStatusEnum.Ok,
-          traceId: traceId
-        },
-        payload: payload
-      };
-
-      return response;
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ request: request, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 
@@ -94,13 +88,12 @@ export class ConsumerMainService {
         });
       }
 
-      let requestValid = await api.transformValid({
+      let reqValid = await api.transformValid({
         classType: api.ToBlockmlProcessQueryRequest,
         object: request,
         errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
       });
 
-      let { traceId } = requestValid.info;
       let {
         organizationId,
         projectId,
@@ -108,10 +101,10 @@ export class ConsumerMainService {
         udfsDict,
         mconfig,
         modelContent
-      } = requestValid.payload;
+      } = reqValid.payload;
 
       let payload = await this.queryService.processQuery({
-        traceId: traceId,
+        traceId: reqValid.info.traceId,
         organizationId: organizationId,
         projectId: projectId,
         weekStart: weekStart,
@@ -120,17 +113,9 @@ export class ConsumerMainService {
         model: modelContent
       });
 
-      let response: api.ToBlockmlProcessQueryResponse = {
-        info: {
-          status: api.ResponseInfoStatusEnum.Ok,
-          traceId: traceId
-        },
-        payload: payload
-      };
-
-      return response;
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ request: request, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 
@@ -153,13 +138,12 @@ export class ConsumerMainService {
         });
       }
 
-      let requestValid = await api.transformValid({
+      let reqValid = await api.transformValid({
         classType: api.ToBlockmlRebuildStructRequest,
         object: request,
         errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
       });
 
-      let { traceId } = requestValid.info;
       let {
         structId,
         organizationId,
@@ -167,10 +151,10 @@ export class ConsumerMainService {
         weekStart,
         files,
         connections
-      } = requestValid.payload;
+      } = reqValid.payload;
 
       let payload = await this.structService.wrapStruct({
-        traceId: traceId,
+        traceId: reqValid.info.traceId,
         structId: structId,
         organizationId: organizationId,
         projectId: projectId,
@@ -179,17 +163,9 @@ export class ConsumerMainService {
         connections: connections
       });
 
-      let response: api.ToBlockmlRebuildStructResponse = {
-        info: {
-          status: api.ResponseInfoStatusEnum.Ok,
-          traceId: traceId
-        },
-        payload: payload
-      };
-
-      return response;
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ request: request, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 }

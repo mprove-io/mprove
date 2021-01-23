@@ -60,11 +60,11 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
 
-    resp1 = await messageService.processRequest(isProjectExistRequest_1);
-    resp2 = await messageService.processRequest(isProjectExistRequest_2);
+    resp1 = await messageService.makeResponse(isProjectExistRequest_1);
+    resp2 = await messageService.makeResponse(isProjectExistRequest_2);
   } catch (e) {
     api.logToConsole(e);
   }

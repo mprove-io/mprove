@@ -96,13 +96,13 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
 
-    resp1 = await messageService.processRequest(isBranchExistRequest_1);
-    resp2 = await messageService.processRequest(isBranchExistRequest_2);
-    resp3 = await messageService.processRequest(isBranchExistRequest_3);
-    resp4 = await messageService.processRequest(isBranchExistRequest_4);
+    resp1 = await messageService.makeResponse(isBranchExistRequest_1);
+    resp2 = await messageService.makeResponse(isBranchExistRequest_2);
+    resp3 = await messageService.makeResponse(isBranchExistRequest_3);
+    resp4 = await messageService.makeResponse(isBranchExistRequest_4);
   } catch (e) {
     api.logToConsole(e);
   }

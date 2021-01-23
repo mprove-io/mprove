@@ -42,10 +42,10 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(deleteOrganizationRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(deleteOrganizationRequest);
 
-    resp = await messageService.processRequest(isOrganizationExistRequest);
+    resp = await messageService.makeResponse(isOrganizationExistRequest);
   } catch (e) {
     api.logToConsole(e);
   }

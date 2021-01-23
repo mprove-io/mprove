@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskMoveCatalogNode(item: {
-  request: api.ToDiskMoveCatalogNodeRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskMoveCatalogNodeResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -111,21 +111,15 @@ export async function ToDiskMoveCatalogNode(item: {
     readFiles: false
   });
 
-  let response: api.ToDiskMoveCatalogNodeResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes
-    }
+  let payload: api.ToDiskMoveCatalogNodeResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts,
+    nodes: itemCatalog.nodes
   };
 
-  return response;
+  return payload;
 }

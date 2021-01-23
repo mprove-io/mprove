@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskCreateBranch(item: {
-  request: api.ToDiskCreateBranchRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskCreateBranchResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -96,20 +96,14 @@ export async function ToDiskCreateBranch(item: {
     })
   );
 
-  let response: api.ToDiskCreateBranchResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts
-    }
+  let payload: api.ToDiskCreateBranchResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts
   };
 
-  return response;
+  return payload;
 }

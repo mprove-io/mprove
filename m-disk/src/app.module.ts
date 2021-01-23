@@ -16,18 +16,16 @@ import { enums } from './barrels/enums';
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (configService: ConfigService<interfaces.Config>) => {
-        let rabbitUser = configService.get<
-          interfaces.Config['rabbitmqDefaultUser']
-        >('rabbitmqDefaultUser');
-
-        let rabbitPass = configService.get<
-          interfaces.Config['rabbitmqDefaultPass']
-        >('rabbitmqDefaultPass');
-
-        let diskEnv = configService.get<interfaces.Config['diskEnv']>(
-          'diskEnv'
+      useFactory: (cs: ConfigService<interfaces.Config>) => {
+        let rabbitUser = cs.get<interfaces.Config['rabbitmqDefaultUser']>(
+          'rabbitmqDefaultUser'
         );
+
+        let rabbitPass = cs.get<interfaces.Config['rabbitmqDefaultPass']>(
+          'rabbitmqDefaultPass'
+        );
+
+        let diskEnv = cs.get<interfaces.Config['diskEnv']>('diskEnv');
 
         return {
           exchanges: [

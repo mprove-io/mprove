@@ -7,15 +7,15 @@ import * as fse from 'fs-extra';
 export function getBaseConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
-  let config: interfaces.Config = {
+  let commonConfig: api.Config = api.getCommonConfig(envFile);
+
+  let baseConfig: interfaces.Config = Object.assign({}, commonConfig, {
     diskEnv: <enums.DiskEnvEnum>envFile.DISK_ENV,
 
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
 
-    mDataOrgPath: envFile.M_DATA_ORG_PATH,
-
-    mproveLogIsColor: <api.BoolEnum>envFile.MPROVE_LOG_IS_COLOR
-  };
-  return config;
+    mDataOrgPath: envFile.M_DATA_ORG_PATH
+  });
+  return baseConfig;
 }

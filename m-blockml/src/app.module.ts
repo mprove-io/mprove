@@ -21,18 +21,16 @@ import { enums } from './barrels/enums';
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (configService: ConfigService<interfaces.Config>) => {
-        let rabbitUser = configService.get<
-          interfaces.Config['rabbitmqDefaultUser']
-        >('rabbitmqDefaultUser');
-
-        let rabbitPass = configService.get<
-          interfaces.Config['rabbitmqDefaultPass']
-        >('rabbitmqDefaultPass');
-
-        let blockmlEnv = configService.get<interfaces.Config['blockmlEnv']>(
-          'blockmlEnv'
+      useFactory: (cs: ConfigService<interfaces.Config>) => {
+        let rabbitUser = cs.get<interfaces.Config['rabbitmqDefaultUser']>(
+          'rabbitmqDefaultUser'
         );
+
+        let rabbitPass = cs.get<interfaces.Config['rabbitmqDefaultPass']>(
+          'rabbitmqDefaultPass'
+        );
+
+        let blockmlEnv = cs.get<interfaces.Config['blockmlEnv']>('blockmlEnv');
 
         return {
           exchanges: [
@@ -62,47 +60,35 @@ import { enums } from './barrels/enums';
     RabbitService,
     {
       provide: StructService,
-      useFactory: (
-        configService: ConfigService,
-        rabbitService: RabbitService
-      ) =>
-        helper.isSingleOrMain(configService)
-          ? new StructService(rabbitService, configService)
-          : {},
+      useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
+        helper.isSingleOrMain(cs) ? new StructService(rabbitService, cs) : {},
       inject: [ConfigService, RabbitService]
     },
     {
       provide: QueryService,
-      useFactory: (
-        configService: ConfigService,
-        rabbitService: RabbitService
-      ) =>
-        helper.isSingleOrMain(configService)
-          ? new QueryService(rabbitService, configService)
-          : {},
+      useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
+        helper.isSingleOrMain(cs) ? new QueryService(rabbitService, cs) : {},
       inject: [ConfigService, RabbitService]
     },
     {
       provide: DashboardService,
-      useFactory: (
-        configService: ConfigService,
-        rabbitService: RabbitService
-      ) =>
-        helper.isSingleOrMain(configService)
-          ? new DashboardService(rabbitService, configService)
+      useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
+        helper.isSingleOrMain(cs)
+          ? new DashboardService(rabbitService, cs)
           : {},
       inject: [ConfigService, RabbitService]
     },
     {
       provide: ConsumerMainService,
       useFactory: (
-        configService: ConfigService,
+        cs: ConfigService,
         structService: StructService,
         queryService: QueryService,
         dashboardService: DashboardService
       ) => {
-        let result = helper.isSingleOrMain(configService)
+        let result = helper.isSingleOrMain(cs)
           ? new ConsumerMainService(
+              cs,
               structService,
               queryService,
               dashboardService
@@ -114,13 +100,13 @@ import { enums } from './barrels/enums';
     },
     {
       provide: ConsumerWorkerService,
-      useFactory: (configService: ConfigService<interfaces.Config>) => {
-        let blockmlIsWorker = configService.get<
-          interfaces.Config['blockmlIsWorker']
-        >('blockmlIsWorker');
+      useFactory: (cs: ConfigService<interfaces.Config>) => {
+        let blockmlIsWorker = cs.get<interfaces.Config['blockmlIsWorker']>(
+          'blockmlIsWorker'
+        );
 
         return blockmlIsWorker === api.BoolEnum.TRUE
-          ? new ConsumerWorkerService()
+          ? new ConsumerWorkerService(cs)
           : {};
       },
       inject: [ConfigService]

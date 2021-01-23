@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskGetCatalogFiles(item: {
-  request: api.ToDiskGetCatalogFilesRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskGetCatalogFilesResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -16,7 +16,6 @@ export async function ToDiskGetCatalogFiles(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
   let orgDir = `${orgPath}/${organizationId}`;
@@ -82,21 +81,15 @@ export async function ToDiskGetCatalogFiles(item: {
     })
   );
 
-  let response: api.ToDiskGetCatalogFilesResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      files: itemCatalog.files
-    }
+  let payload: api.ToDiskGetCatalogFilesResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts,
+    files: itemCatalog.files
   };
 
-  return response;
+  return payload;
 }

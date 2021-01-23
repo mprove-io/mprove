@@ -6,9 +6,9 @@ import { git } from '../../barrels/git';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskDeleteBranch(item: {
-  request: api.ToDiskDeleteBranchRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskDeleteBranchResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -17,7 +17,6 @@ export async function ToDiskDeleteBranch(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
   let orgDir = `${orgPath}/${organizationId}`;
@@ -103,21 +102,15 @@ export async function ToDiskDeleteBranch(item: {
     })
   );
 
-  let response: api.ToDiskDeleteBranchResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      deletedBranch: branch,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts
-    }
+  let payload: api.ToDiskDeleteBranchResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    deletedBranch: branch,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts
   };
 
-  return response;
+  return payload;
 }

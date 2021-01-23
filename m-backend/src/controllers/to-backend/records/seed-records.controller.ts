@@ -10,27 +10,27 @@ import { gen } from '../../../barrels/gen';
 import { constants } from '../../../barrels/constants';
 import { Connection } from 'typeorm';
 import { db } from '../../../barrels/db';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from '../../../barrels/interfaces';
 
 @Controller()
 export class ToBackendSeedRecordsController {
   constructor(
     private usersService: UsersService,
-    private connection: Connection
+    private connection: Connection,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
-  async toBackendSeedRecords(
-    @Body() body: api.ToBackendSeedRecordsRequest
-  ): Promise<api.ToBackendSeedRecordsResponse | api.ErrorResponse> {
+  async toBackendSeedRecords(@Body() body) {
     try {
-      let requestValid = await api.transformValid({
+      let reqValid = await api.transformValid({
         classType: api.ToBackendSeedRecordsRequest,
         object: body,
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let { traceId } = requestValid.info;
-      let payloadUsers = requestValid.payload.users;
+      let payloadUsers = reqValid.payload.users;
 
       //
 
@@ -73,18 +73,11 @@ export class ToBackendSeedRecordsController {
         });
       });
 
-      let response: api.ToBackendSeedRecordsResponse = {
-        info: {
-          status: api.ResponseInfoStatusEnum.Ok,
-          traceId: traceId
-        },
-        payload: {}
-      };
+      let payload: api.ToBackendSeedRecordsResponse['payload'] = {};
 
-      return response;
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      api.handleError(e);
-      return api.makeErrorResponse({ request: body, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

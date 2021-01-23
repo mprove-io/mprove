@@ -2,7 +2,7 @@ import { enums } from '../barrels/enums';
 import { api } from '../barrels/api';
 import { IsEnum, IsInt, IsString } from 'class-validator';
 
-export class Config {
+export class Config extends api.Config {
   @IsEnum(enums.BlockmlEnvEnum)
   blockmlEnv: enums.BlockmlEnvEnum;
 
@@ -32,7 +32,4 @@ export class Config {
 
   @IsString()
   rabbitmqDefaultPass: string;
-
-  @IsEnum(api.BoolEnum)
-  mproveLogIsColor: api.BoolEnum;
 }

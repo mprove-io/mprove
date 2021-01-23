@@ -5,27 +5,27 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { helper } from '../../../barrels/helper';
 import asyncPool from 'tiny-async-pool';
 import { RabbitService } from '../../../services/rabbit.service';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from '../../../barrels/interfaces';
 
 @Controller()
 export class ToBackendDeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
-  async toBackendDeleteRecords(
-    @Body() body: api.ToBackendDeleteRecordsRequest
-  ): Promise<api.ToBackendDeleteRecordsResponse | api.ErrorResponse> {
+  async toBackendDeleteRecords(@Body() body) {
     try {
-      let requestValid = await api.transformValid({
+      let reqValid = await api.transformValid({
         classType: api.ToBackendDeleteRecordsRequest,
         object: body,
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let { traceId } = requestValid.info;
-      let { organizationIds, userIds } = requestValid.payload;
+      let { organizationIds, userIds } = reqValid.payload;
 
       // toDisk
 
@@ -34,7 +34,7 @@ export class ToBackendDeleteRecordsController {
           let deleteOrganizationRequest: api.ToDiskDeleteOrganizationRequest = {
             info: {
               name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
-              traceId: traceId
+              traceId: reqValid.info.traceId
             },
             payload: {
               organizationId: x
@@ -70,18 +70,11 @@ export class ToBackendDeleteRecordsController {
         await this.usersService.deleteUsers(userIds);
       }
 
-      let response: api.ToBackendDeleteRecordsResponse = {
-        info: {
-          status: api.ResponseInfoStatusEnum.Ok,
-          traceId: traceId
-        },
-        payload: {}
-      };
+      let payload: api.ToBackendDeleteRecordsResponse['payload'] = {};
 
-      return response;
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      api.handleError(e);
-      return api.makeErrorResponse({ request: body, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

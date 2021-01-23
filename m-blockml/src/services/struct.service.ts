@@ -14,7 +14,7 @@ import { ConfigService } from '@nestjs/config';
 export class StructService {
   constructor(
     private rabbitService: RabbitService,
-    private configService: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   async wrapStruct(item: {
@@ -110,7 +110,7 @@ export class StructService {
         structId: item.structId,
         caller: enums.CallerEnum.RebuildStruct
       },
-      this.configService
+      this.cs
     );
 
     return await this.rebuildStructStateless({
@@ -146,7 +146,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildYaml
       },
-      this.configService
+      this.cs
     );
     udfs = yamlBuildItem.udfs;
     views = yamlBuildItem.views;
@@ -162,7 +162,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildViewField
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildField(
@@ -173,7 +173,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildModelField
       },
-      this.configService
+      this.cs
     );
 
     dashboards = barBuilder.buildField(
@@ -184,7 +184,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildDashboardField
       },
-      this.configService
+      this.cs
     );
 
     let udfsDict: api.UdfsDict = barBuilder.buildUdf(
@@ -194,7 +194,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildUdf
       },
-      this.configService
+      this.cs
     );
 
     views = barBuilder.buildView(
@@ -207,7 +207,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildView
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildModel(
@@ -219,7 +219,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildModel
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildJoin(
@@ -229,7 +229,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildJoin
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildJoinSqlOn(
@@ -239,7 +239,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildJoinSqlOn
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildJoinSqlWhere(
@@ -249,7 +249,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildJoinSqlWhere
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildSortJoins(
@@ -259,7 +259,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildSortJoins
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildSqlAlwaysWhere(
@@ -269,7 +269,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildSqlAlwaysWhere
       },
-      this.configService
+      this.cs
     );
 
     models = barBuilder.buildSqlAlwaysWhereCalc(
@@ -279,7 +279,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildSqlAlwaysWhereCalc
       },
-      this.configService
+      this.cs
     );
 
     dashboards = barBuilder.buildDashboard(
@@ -289,7 +289,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildDashboard
       },
-      this.configService
+      this.cs
     );
 
     vizs = barBuilder.buildViz(
@@ -299,7 +299,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildViz
       },
-      this.configService
+      this.cs
     );
 
     dashboards = await barBuilder.buildReport(
@@ -314,7 +314,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildDashboardReport
       },
-      this.configService,
+      this.cs,
       this.rabbitService
     );
 
@@ -329,7 +329,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildVizReport
       },
-      this.configService,
+      this.cs,
       this.rabbitService
     );
 
@@ -340,7 +340,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildDashboardChart
       },
-      this.configService
+      this.cs
     );
 
     vizs = barBuilder.buildChart(
@@ -350,7 +350,7 @@ export class StructService {
         errors: errors,
         caller: enums.CallerEnum.BuildVizChart
       },
-      this.configService
+      this.cs
     );
 
     barSpecial.logStruct(
@@ -364,7 +364,7 @@ export class StructService {
         structId: item.structId,
         caller: enums.CallerEnum.RebuildStruct
       },
-      this.configService
+      this.cs
     );
 
     return {

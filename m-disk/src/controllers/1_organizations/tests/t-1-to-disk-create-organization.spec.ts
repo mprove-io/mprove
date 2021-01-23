@@ -33,9 +33,9 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
+    await messageService.makeResponse(createOrganizationRequest);
 
-    resp = await messageService.processRequest(isOrganizationExistRequest);
+    resp = await messageService.makeResponse(isOrganizationExistRequest);
   } catch (e) {
     api.logToConsole(e);
   }

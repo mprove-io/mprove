@@ -79,13 +79,13 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
 
-    await messageService.processRequest(createBranchRequest);
-    await messageService.processRequest(pushRepoRequest);
+    await messageService.makeResponse(createBranchRequest);
+    await messageService.makeResponse(pushRepoRequest);
 
-    resp = await messageService.processRequest(deleteBranchRequest);
+    resp = await messageService.makeResponse(deleteBranchRequest);
   } catch (e) {
     api.logToConsole(e);
   }

@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskRevertRepoToProduction(item: {
-  request: api.ToDiskRevertRepoToProductionRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskRevertRepoToProductionResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -16,7 +16,6 @@ export async function ToDiskRevertRepoToProduction(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let { organizationId, projectId, repoId, branch } = requestValid.payload;
 
   let orgDir = `${orgPath}/${organizationId}`;
@@ -78,20 +77,14 @@ export async function ToDiskRevertRepoToProduction(item: {
     })
   );
 
-  let response: api.ToDiskRevertRepoToProductionResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts
-    }
+  let payload: api.ToDiskRevertRepoToProductionResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts
   };
 
-  return response;
+  return payload;
 }

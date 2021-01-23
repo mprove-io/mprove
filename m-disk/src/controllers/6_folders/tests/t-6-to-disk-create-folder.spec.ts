@@ -52,10 +52,10 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
 
-    resp = await messageService.processRequest(createFolderRequest);
+    resp = await messageService.makeResponse(createFolderRequest);
   } catch (e) {
     api.logToConsole(e);
   }

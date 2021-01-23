@@ -4,9 +4,9 @@ import { constants } from '../../barrels/constants';
 import { git } from '../../barrels/git';
 
 export async function ToDiskIsBranchExist(item: {
-  request: api.ToDiskIsBranchExistRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskIsBranchExistResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -15,7 +15,6 @@ export async function ToDiskIsBranchExist(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let {
     organizationId,
     projectId,
@@ -62,20 +61,14 @@ export async function ToDiskIsBranchExist(item: {
           localBranch: branch
         });
 
-  let response: api.ToDiskIsBranchExistResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      branch: branch,
-      isRemote: isRemote,
-      isBranchExist: isBranchExist
-    }
+  let payload: api.ToDiskIsBranchExistResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    branch: branch,
+    isRemote: isRemote,
+    isBranchExist: isBranchExist
   };
 
-  return response;
+  return payload;
 }

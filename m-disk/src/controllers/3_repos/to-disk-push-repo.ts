@@ -4,10 +4,7 @@ import { git } from '../../barrels/git';
 import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
-export async function ToDiskPushRepo(item: {
-  request: api.ToDiskPushRepoRequest;
-  orgPath: string;
-}): Promise<api.ToDiskPushRepoResponse> {
+export async function ToDiskPushRepo(item: { request: any; orgPath: string }) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -16,7 +13,6 @@ export async function ToDiskPushRepo(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let {
     organizationId,
     projectId,
@@ -114,20 +110,14 @@ export async function ToDiskPushRepo(item: {
     })
   );
 
-  let response: api.ToDiskPushRepoResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts
-    }
+  let payload: api.ToDiskPushRepoResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: repoId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts
   };
 
-  return response;
+  return payload;
 }

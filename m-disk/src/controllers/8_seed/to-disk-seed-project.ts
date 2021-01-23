@@ -5,9 +5,9 @@ import { constants } from '../../barrels/constants';
 import { interfaces } from '../../barrels/interfaces';
 
 export async function ToDiskSeedProject(item: {
-  request: api.ToDiskSeedProjectRequest;
+  request: any;
   orgPath: string;
-}): Promise<api.ToDiskSeedProjectResponse> {
+}) {
   let { request, orgPath } = item;
 
   let requestValid = await api.transformValid({
@@ -16,7 +16,6 @@ export async function ToDiskSeedProject(item: {
     errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
   });
 
-  let { traceId } = requestValid.info;
   let {
     organizationId,
     projectId,
@@ -65,22 +64,16 @@ export async function ToDiskSeedProject(item: {
     })
   );
 
-  let response: api.ToDiskSeedProjectResponse = {
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      organizationId: organizationId,
-      projectId: projectId,
-      repoId: devRepoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes,
-      files: itemCatalog.files
-    }
+  let payload: api.ToDiskSeedProjectResponsePayload = {
+    organizationId: organizationId,
+    projectId: projectId,
+    repoId: devRepoId,
+    repoStatus: repoStatus,
+    currentBranch: currentBranch,
+    conflicts: conflicts,
+    nodes: itemCatalog.nodes,
+    files: itemCatalog.files
   };
 
-  return response;
+  return payload;
 }

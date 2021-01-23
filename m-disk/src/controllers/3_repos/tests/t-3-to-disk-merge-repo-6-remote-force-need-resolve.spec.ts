@@ -145,21 +145,21 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
 
     // await helper.delay(1000);
 
-    await messageService.processRequest(createBranchRequest);
+    await messageService.makeResponse(createBranchRequest);
 
-    await messageService.processRequest(r1_master_saveFileRequest);
-    await messageService.processRequest(r1_master_commitRepoRequest);
-    await messageService.processRequest(r1_master_pushRepoRequest);
+    await messageService.makeResponse(r1_master_saveFileRequest);
+    await messageService.makeResponse(r1_master_commitRepoRequest);
+    await messageService.makeResponse(r1_master_pushRepoRequest);
 
-    await messageService.processRequest(r1_b2_saveFileRequest);
-    await messageService.processRequest(r1_b2_commitRepoRequest);
+    await messageService.makeResponse(r1_b2_saveFileRequest);
+    await messageService.makeResponse(r1_b2_commitRepoRequest);
 
-    resp = await messageService.processRequest(r1_b2_mergeRepoRequest);
+    resp = await messageService.makeResponse(r1_b2_mergeRepoRequest);
   } catch (e) {
     api.logToConsole(e);
   }

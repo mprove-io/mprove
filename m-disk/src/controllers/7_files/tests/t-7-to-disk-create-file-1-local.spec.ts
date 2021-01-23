@@ -53,10 +53,10 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
 
-    resp = await messageService.processRequest(createFileRequest);
+    resp = await messageService.makeResponse(createFileRequest);
   } catch (e) {
     api.logToConsole(e);
   }

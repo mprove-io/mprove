@@ -1,4 +1,5 @@
 import { api } from '../../../barrels/api';
+import { ConfigService } from '@nestjs/config';
 import { prepareTest } from '../../../functions/prepare-test';
 import { interfaces } from '../../../barrels/interfaces';
 import test from 'ava';

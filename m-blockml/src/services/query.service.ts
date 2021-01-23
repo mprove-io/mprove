@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 export class QueryService {
   constructor(
     private rabbitService: RabbitService,
-    private configService: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   async processQuery(item: {
@@ -45,7 +45,7 @@ export class QueryService {
 
     let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
       this.rabbitService,
-      this.configService,
+      this.cs,
       traceId,
       {
         weekStart: weekStart,

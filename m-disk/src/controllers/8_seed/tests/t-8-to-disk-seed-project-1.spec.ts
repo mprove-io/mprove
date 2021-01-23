@@ -27,7 +27,7 @@ test('1', async t => {
       }
     };
 
-    resp = await messageService.processRequest(seedProjectRequest);
+    resp = await messageService.makeResponse(seedProjectRequest);
   } catch (e) {
     api.logToConsole(e);
   }

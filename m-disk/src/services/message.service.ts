@@ -33,18 +33,20 @@ import { interfaces } from '../barrels/interfaces';
 
 @Injectable()
 export class MessageService {
-  constructor(private configService: ConfigService<interfaces.Config>) {}
+  constructor(private cs: ConfigService<interfaces.Config>) {}
 
-  async processRequestAndCatch(request: any): Promise<any> {
+  async makeResponse(request: any) {
     try {
-      return await this.processRequest(request);
+      let payload = await this.makeResponsePayload(request);
+
+      return api.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
-      return api.makeErrorResponse({ request: request, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 
-  async processRequest(request: any): Promise<any> {
-    let orgPath = this.configService.get<interfaces.Config['mDataOrgPath']>(
+  async makeResponsePayload(request: any): Promise<any> {
+    let orgPath = this.cs.get<interfaces.Config['mDataOrgPath']>(
       'mDataOrgPath'
     );
 

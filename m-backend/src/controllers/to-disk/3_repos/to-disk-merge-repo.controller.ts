@@ -2,17 +2,26 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { makeRoutingKeyToDisk } from '../../../helper/make-routing-key-to-disk';
 import { RabbitService } from '../../../services/rabbit.service';
 import { api } from '../../../barrels/api';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from '../../../barrels/interfaces';
 
 @Controller()
 export class ToDiskMergeRepoController {
-  constructor(private readonly rabbitService: RabbitService) {}
+  constructor(
+    private rabbitService: RabbitService,
+    private cs: ConfigService<interfaces.Config>
+  ) {}
 
   @Post(api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo)
-  async toDiskMergeRepo(
-    @Body() body: api.ToDiskMergeRepoRequest
-  ): Promise<api.ToDiskMergeRepoResponse | api.ErrorResponse> {
+  async toDiskMergeRepo(@Body() body) {
     try {
-      let { organizationId, projectId } = body.payload;
+      let reqValid = await api.transformValid({
+        classType: api.ToDiskMergeRepoRequest,
+        object: body,
+        errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
+      });
+
+      let { organizationId, projectId } = reqValid.payload;
 
       let routingKey = makeRoutingKeyToDisk({
         organizationId: organizationId,
@@ -23,12 +32,14 @@ export class ToDiskMergeRepoController {
         api.ToDiskMergeRepoResponse
       >({
         routingKey: routingKey,
-        message: body
+        message: reqValid
       });
 
-      return resp;
+      let payload = resp.payload;
+
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ request: body, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

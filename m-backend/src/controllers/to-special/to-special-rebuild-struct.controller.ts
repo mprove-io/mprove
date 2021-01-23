@@ -3,23 +3,25 @@ import { RabbitService } from '../../services/rabbit.service';
 import { makeRoutingKeyToDisk } from '../../helper/make-routing-key-to-disk';
 import { api } from '../../barrels/api';
 import { ServerError } from '../../api/_index';
+import { ConfigService } from '@nestjs/config';
+import { interfaces } from '../../barrels/interfaces';
 
 @Controller()
 export class ToSpecialRebuildStructController {
-  constructor(private readonly rabbitService: RabbitService) {}
+  constructor(
+    private rabbitService: RabbitService,
+    private cs: ConfigService<interfaces.Config>
+  ) {}
 
   @Post(api.ToSpecialRequestInfoNameEnum.ToSpecialRebuildStruct)
-  async toSpecialRebuildStruct(
-    @Body() body: api.ToSpecialRebuildStructRequest
-  ): Promise<api.ToBlockmlRebuildStructResponse | api.ErrorResponse> {
+  async toSpecialRebuildStruct(@Body() body) {
     try {
-      let requestValid = await api.transformValid({
+      let reqValid = await api.transformValid({
         classType: api.ToSpecialRebuildStructRequest,
         object: body,
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let { traceId } = requestValid.info;
       let {
         organizationId,
         projectId,
@@ -28,7 +30,7 @@ export class ToSpecialRebuildStructController {
         structId,
         weekStart,
         connections
-      } = requestValid.payload;
+      } = reqValid.payload;
 
       // to disk
 
@@ -40,7 +42,7 @@ export class ToSpecialRebuildStructController {
       let getCatalogFilesRequest: api.ToDiskGetCatalogFilesRequest = {
         info: {
           name: api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-          traceId: traceId
+          traceId: reqValid.info.traceId
         },
         payload: {
           organizationId: organizationId,
@@ -71,7 +73,7 @@ export class ToSpecialRebuildStructController {
       let rebuildStructRequest: api.ToBlockmlRebuildStructRequest = {
         info: {
           name: api.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
-          traceId: traceId
+          traceId: reqValid.info.traceId
         },
         payload: {
           structId: structId,
@@ -106,9 +108,11 @@ export class ToSpecialRebuildStructController {
         });
       }
 
-      return rebuildStructResponse;
+      let payload = rebuildStructResponse.payload;
+
+      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ request: body, e: e });
+      return api.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

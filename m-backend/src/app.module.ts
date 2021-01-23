@@ -23,18 +23,16 @@ import { enums } from './barrels/enums';
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (configService: ConfigService<interfaces.Config>) => {
-        let rabbitUser = configService.get<
-          interfaces.Config['rabbitmqDefaultUser']
-        >('rabbitmqDefaultUser');
-
-        let rabbitPass = configService.get<
-          interfaces.Config['rabbitmqDefaultPass']
-        >('rabbitmqDefaultPass');
-
-        let backendEnv = configService.get<interfaces.Config['backendEnv']>(
-          'backendEnv'
+      useFactory: (cs: ConfigService<interfaces.Config>) => {
+        let rabbitUser = cs.get<interfaces.Config['rabbitmqDefaultUser']>(
+          'rabbitmqDefaultUser'
         );
+
+        let rabbitPass = cs.get<interfaces.Config['rabbitmqDefaultPass']>(
+          'rabbitmqDefaultPass'
+        );
+
+        let backendEnv = cs.get<interfaces.Config['backendEnv']>('backendEnv');
 
         return {
           exchanges: [
@@ -60,17 +58,15 @@ import { enums } from './barrels/enums';
     }),
 
     TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService<interfaces.Config>) => ({
+      useFactory: (cs: ConfigService<interfaces.Config>) => ({
         type: 'mysql',
         host: 'db',
         port: 3306,
         username: 'root',
-        password: configService.get<interfaces.Config['mysqlRootPassword']>(
+        password: cs.get<interfaces.Config['mysqlRootPassword']>(
           'mysqlRootPassword'
         ),
-        database: configService.get<interfaces.Config['mysqlDatabase']>(
-          'mysqlDatabase'
-        ),
+        database: cs.get<interfaces.Config['mysqlDatabase']>('mysqlDatabase'),
         entities: appEntities,
         migrations: [__dirname + '/migrations/**/*{.ts,.js}']
       }),
@@ -86,13 +82,13 @@ export class AppModule implements OnModuleInit {
   constructor(
     private connection: Connection,
     private usersService: UsersService,
-    private configService: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   async onModuleInit() {
     try {
       if (
-        this.configService.get<interfaces.Config['backendDropDatabaseOnStart']>(
+        this.cs.get<interfaces.Config['backendDropDatabaseOnStart']>(
           'backendDropDatabaseOnStart'
         ) === api.BoolEnum.TRUE
       ) {
@@ -100,7 +96,7 @@ export class AppModule implements OnModuleInit {
       }
 
       if (
-        this.configService.get<interfaces.Config['backendSyncDatabaseOnStart']>(
+        this.cs.get<interfaces.Config['backendSyncDatabaseOnStart']>(
           'backendSyncDatabaseOnStart'
         ) === api.BoolEnum.TRUE
       ) {
@@ -109,13 +105,13 @@ export class AppModule implements OnModuleInit {
         await this.connection.runMigrations();
       }
 
-      let userId = this.configService.get<
-        interfaces.Config['backendFirstUserEmail']
-      >('backendFirstUserEmail');
+      let userId = this.cs.get<interfaces.Config['backendFirstUserEmail']>(
+        'backendFirstUserEmail'
+      );
 
-      let password = this.configService.get<
-        interfaces.Config['backendFirstUserPassword']
-      >('backendFirstUserPassword');
+      let password = this.cs.get<interfaces.Config['backendFirstUserPassword']>(
+        'backendFirstUserPassword'
+      );
 
       if (helper.isDefined(userId) && helper.isDefined(password)) {
         let firstUser = await this.usersService.findOneById(userId);

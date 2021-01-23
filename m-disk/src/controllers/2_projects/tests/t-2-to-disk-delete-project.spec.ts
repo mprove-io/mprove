@@ -59,11 +59,11 @@ test('1', async t => {
       }
     };
 
-    await messageService.processRequest(createOrganizationRequest);
-    await messageService.processRequest(createProjectRequest);
-    await messageService.processRequest(deleteProjectRequest);
+    await messageService.makeResponse(createOrganizationRequest);
+    await messageService.makeResponse(createProjectRequest);
+    await messageService.makeResponse(deleteProjectRequest);
 
-    resp = await messageService.processRequest(isProjectExistRequest);
+    resp = await messageService.makeResponse(isProjectExistRequest);
   } catch (e) {
     api.logToConsole(e);
   }
