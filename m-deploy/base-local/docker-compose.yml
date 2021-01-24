@@ -115,7 +115,9 @@ services:
     container_name: m-disk
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG
     env_file:
-      - $DISK_ENV_FILE_PATH    
+      - $DISK_ENV_FILE_PATH
+    ports:
+      - 3002:3002          
     volumes:
       - type: bind
         source: $DISK_ENV_FILE_PATH

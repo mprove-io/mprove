@@ -1,43 +1,82 @@
 import { Injectable } from '@nestjs/common';
 import { api } from '../barrels/api';
-import { ToDiskCreateOrganization } from '../controllers/1_organizations/to-disk-create-organization';
-import { ToDiskIsOrganizationExist } from '../controllers/1_organizations/to-disk-is-organization-exist';
-import { ToDiskCreateProject } from '../controllers/2_projects/to-disk-create-project';
-import { ToDiskIsProjectExist } from '../controllers/2_projects/to-disk-is-project-exist';
-import { ToDiskCreateDevRepo } from '../controllers/3_repos/to-disk-create-dev-repo';
-import { ToDiskCreateBranch } from '../controllers/5_branches/to-disk-create-branch';
-import { ToDiskIsBranchExist } from '../controllers/5_branches/to-disk-is-branch-exist';
-import { ToDiskCreateFolder } from '../controllers/6_folders/to-disk-create-folder';
-import { ToDiskCreateFile } from '../controllers/7_files/to-disk-create-file';
-import { ToDiskGetFile } from '../controllers/7_files/to-disk-get-file';
-import { ToDiskSaveFile } from '../controllers/7_files/to-disk-save-file';
-import { ToDiskDeleteOrganization } from '../controllers/1_organizations/to-disk-delete-organization';
-import { ToDiskDeleteProject } from '../controllers/2_projects/to-disk-delete-project';
-import { ToDiskDeleteDevRepo } from '../controllers/3_repos/to-disk-delete-dev-repo';
-import { ToDiskDeleteBranch } from '../controllers/5_branches/to-disk-delete-branch';
-import { ToDiskDeleteFolder } from '../controllers/6_folders/to-disk-delete-folder';
-import { ToDiskDeleteFile } from '../controllers/7_files/to-disk-delete-file';
-import { ToDiskCommitRepo } from '../controllers/3_repos/to-disk-commit-repo';
-import { ToDiskPushRepo } from '../controllers/3_repos/to-disk-push-repo';
-import { ToDiskGetCatalogFiles } from '../controllers/4_catalogs/to-disk-get-catalog-files';
-import { ToDiskGetCatalogNodes } from '../controllers/4_catalogs/to-disk-get-catalog-nodes';
-import { ToDiskMoveCatalogNode } from '../controllers/4_catalogs/to-disk-move-catalog-node';
-import { ToDiskRenameCatalogNode } from '../controllers/4_catalogs/to-disk-rename-catalog-node';
-import { ToDiskPullRepo } from '../controllers/3_repos/to-disk-pull-repo';
-import { ToDiskMergeRepo } from '../controllers/3_repos/to-disk-merge-repo';
-import { ToDiskRevertRepoToLastCommit } from '../controllers/3_repos/to-disk-revert-repo-to-last-commit';
-import { ToDiskRevertRepoToProduction } from '../controllers/3_repos/to-disk-revert-repo-to-production';
-import { ToDiskSeedProject } from '../controllers/8_seed/to-disk-seed-project';
 import { ConfigService } from '@nestjs/config';
 import { interfaces } from '../barrels/interfaces';
 
+import { CreateOrganizationService } from './01-organizations/create-organization.service';
+import { DeleteOrganizationService } from './01-organizations/delete-organization.service';
+import { IsOrganizationExistService } from './01-organizations/is-organization-exist.service';
+import { CreateProjectService } from './02-projects/create-project.service';
+import { DeleteProjectService } from './02-projects/delete-project.service';
+import { IsProjectExistService } from './02-projects/is-project-exist.service';
+import { CommitRepoService } from './03-repos/commit-repo.service';
+import { CreateDevRepoService } from './03-repos/create-dev-repo.service';
+import { DeleteDevRepoService } from './03-repos/delete-dev-repo.service';
+import { MergeRepoService } from './03-repos/merge-repo.service';
+import { PullRepoService } from './03-repos/pull-repo.service';
+import { PushRepoService } from './03-repos/push-repo.service';
+import { RevertRepoToLastCommitService } from './03-repos/revert-repo-to-last-commit.service';
+import { RevertRepoToProductionService } from './03-repos/revert-repo-to-production.service';
+import { GetCatalogFilesService } from './04-catalogs/get-catalog-files.service';
+import { GetCatalogNodesService } from './04-catalogs/get-catalog-nodes.service';
+import { MoveCatalogNodeService } from './04-catalogs/move-catalog-node.service';
+import { RenameCatalogNodeService } from './04-catalogs/rename-catalog-node.service';
+import { CreateBranchService } from './05-branches/create-branch.service';
+import { DeleteBranchService } from './05-branches/delete-branch.service';
+import { IsBranchExistService } from './05-branches/is-branch-exist.service';
+import { CreateFolderService } from './06-folders/create-folder.service';
+import { DeleteFolderService } from './06-folders/delete-folder.service';
+import { CreateFileService } from './07-files/create-file.service';
+import { DeleteFileService } from './07-files/delete-file.service';
+import { GetFileService } from './07-files/get-file.service';
+import { SaveFileService } from './07-files/save-file.service';
+import { SeedProjectService } from './08-seed/seed-project.service';
+
 @Injectable()
 export class MessageService {
-  constructor(private cs: ConfigService<interfaces.Config>) {}
+  constructor(
+    private cs: ConfigService<interfaces.Config>,
 
-  async makeResponse(request: any) {
+    private createOrganizationService: CreateOrganizationService,
+    private deleteOrganizationService: DeleteOrganizationService,
+    private isOrganizationExistService: IsOrganizationExistService,
+
+    private createProjectService: CreateProjectService,
+    private deleteProjectService: DeleteProjectService,
+    private isProjectExistService: IsProjectExistService,
+
+    private commitRepoService: CommitRepoService,
+    private createDevRepoService: CreateDevRepoService,
+    private deleteDevRepoService: DeleteDevRepoService,
+    private mergeRepoService: MergeRepoService,
+    private pullRepoService: PullRepoService,
+    private pushRepoService: PushRepoService,
+    private revertRepoToLastCommitService: RevertRepoToLastCommitService,
+    private revertRepoToProductionService: RevertRepoToProductionService,
+
+    private getCatalogFilesService: GetCatalogFilesService,
+    private getCatalogNodesService: GetCatalogNodesService,
+    private moveCatalogNodeService: MoveCatalogNodeService,
+    private renameCatalogNodeService: RenameCatalogNodeService,
+
+    private createBranchService: CreateBranchService,
+    private deleteBranchService: DeleteBranchService,
+    private isBranchExistService: IsBranchExistService,
+
+    private createFolderService: CreateFolderService,
+    private deleteFolderService: DeleteFolderService,
+
+    private createFileService: CreateFileService,
+    private deleteFileService: DeleteFileService,
+    private getFileService: GetFileService,
+    private saveFileService: SaveFileService,
+
+    private seedProjectService: SeedProjectService
+  ) {}
+
+  async processMessage(request: any) {
     try {
-      let payload = await this.makeResponsePayload(request);
+      let payload = await this.processSwitch(request);
 
       return api.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
@@ -45,75 +84,75 @@ export class MessageService {
     }
   }
 
-  async makeResponsePayload(request: any): Promise<any> {
+  async processSwitch(request: any): Promise<any> {
     let orgPath = this.cs.get<interfaces.Config['mDataOrgPath']>(
       'mDataOrgPath'
     );
 
     switch (request.info.name) {
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization:
-        return await ToDiskCreateOrganization({ request, orgPath });
+        return await this.createOrganizationService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization:
-        return await ToDiskDeleteOrganization({ request, orgPath });
+        return await this.deleteOrganizationService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist:
-        return await ToDiskIsOrganizationExist({ request, orgPath });
+        return await this.isOrganizationExistService.process(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateProject:
-        return await ToDiskCreateProject({ request, orgPath });
+        return await this.createProjectService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteProject:
-        return await ToDiskDeleteProject({ request, orgPath });
+        return await this.deleteProjectService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist:
-        return await ToDiskIsProjectExist({ request, orgPath });
+        return await this.isProjectExistService.process(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo:
-        return await ToDiskCommitRepo({ request, orgPath });
+        return await this.commitRepoService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
-        return await ToDiskCreateDevRepo({ request, orgPath });
+        return await this.createDevRepoService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:
-        return await ToDiskDeleteDevRepo({ request, orgPath });
+        return await this.deleteDevRepoService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo:
-        return await ToDiskMergeRepo({ request, orgPath });
+        return await this.mergeRepoService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskPullRepo:
-        return await ToDiskPullRepo({ request, orgPath });
+        return await this.pullRepoService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskPushRepo:
-        return await ToDiskPushRepo({ request, orgPath });
+        return await this.pushRepoService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit:
-        return await ToDiskRevertRepoToLastCommit({ request, orgPath });
+        return await this.revertRepoToLastCommitService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction:
-        return await ToDiskRevertRepoToProduction({ request, orgPath });
+        return await this.revertRepoToProductionService.process(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
-        return await ToDiskGetCatalogFiles({ request, orgPath });
+        return await this.getCatalogFilesService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes:
-        return await ToDiskGetCatalogNodes({ request, orgPath });
+        return await this.getCatalogNodesService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode:
-        return await ToDiskMoveCatalogNode({ request, orgPath });
+        return await this.moveCatalogNodeService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode:
-        return await ToDiskRenameCatalogNode({ request, orgPath });
+        return await this.renameCatalogNodeService.process(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
-        return await ToDiskCreateBranch({ request, orgPath });
+        return await this.createBranchService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch:
-        return await ToDiskDeleteBranch({ request, orgPath });
+        return await this.deleteBranchService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist:
-        return await ToDiskIsBranchExist({ request, orgPath });
+        return await this.isBranchExistService.process(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder:
-        return await ToDiskCreateFolder({ request, orgPath });
+        return await this.createFolderService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteFolder:
-        return await ToDiskDeleteFolder({ request, orgPath });
+        return await this.deleteFolderService.process(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateFile:
-        return await ToDiskCreateFile({ request, orgPath });
+        return await this.createFileService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskDeleteFile:
-        return await ToDiskDeleteFile({ request, orgPath });
+        return await this.deleteFileService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskGetFile:
-        return await ToDiskGetFile({ request, orgPath });
+        return await this.getFileService.process(request);
       case api.ToDiskRequestInfoNameEnum.ToDiskSaveFile:
-        return await ToDiskSaveFile({ request, orgPath });
+        return await this.saveFileService.process(request);
 
       case api.ToDiskRequestInfoNameEnum.ToDiskSeedProject:
-        return await ToDiskSeedProject({ request, orgPath });
+        return await this.seedProjectService.process(request);
 
       default:
         throw new api.ServerError({

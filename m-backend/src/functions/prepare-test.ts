@@ -4,6 +4,7 @@ import { interfaces } from '../barrels/interfaces';
 import { api } from '../barrels/api';
 
 import { helper } from '../barrels/helper';
+import { RabbitService } from '../services/rabbit.service';
 
 export async function prepareTest(item: {
   traceId: string;
@@ -48,7 +49,9 @@ export async function prepareTest(item: {
     });
   }
 
-  let prep: interfaces.Prep = { app, httpServer, moduleRef };
+  let rabbitService = moduleRef.get<RabbitService>(RabbitService);
+
+  let prep: interfaces.Prep = { app, httpServer, moduleRef, rabbitService };
 
   return prep;
 }

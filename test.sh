@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "backend start..."
+echo "Testing Backend..."
 backendOutput="$(cd "m-backend" && yarn test)"
 if [[ $? != 0 ]]
 then
@@ -8,10 +8,10 @@ then
   echo "backend Fail!"
   exit 1
 else 
-  echo "backend Success!"
+  echo "Backend Success!"
 fi
 
-echo "disk start..."
+echo "Testing Disk..."
 diskOutput="$(cd "m-disk" && yarn test)"
 if [[ $? != 0 ]]
 then
@@ -19,10 +19,10 @@ then
   echo "disk Fail!"
   exit 1
 else 
-  echo "disk Success!"
+  echo "Disk Success!"
 fi
 
-echo "blockml start..."
+echo "Testing Blockml..."
 blockmlOutput="$(cd "m-blockml" && yarn test)"
 if [[ $? != 0 ]]
 then
@@ -30,5 +30,7 @@ then
   echo "blockml Fail!"
   exit 1
 else 
-  echo "blockml Success!"
+  echo "Blockml Success!"
 fi
+
+echo "Ok!"

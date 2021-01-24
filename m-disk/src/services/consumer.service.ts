@@ -13,7 +13,7 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___'
   })
   async consumer1(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 
   @RabbitRPC({
@@ -22,7 +22,7 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___abcd'
   })
   async consumer2(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 
   @RabbitRPC({
@@ -31,7 +31,7 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___efgh'
   })
   async consumer3(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 
   @RabbitRPC({
@@ -40,7 +40,7 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___ijkl'
   })
   async consumer4(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 
   @RabbitRPC({
@@ -49,7 +49,7 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___mnop'
   })
   async consumer5(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 
   @RabbitRPC({
@@ -58,7 +58,7 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___qrst'
   })
   async consumer6(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 
   @RabbitRPC({
@@ -67,7 +67,7 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___uvwx'
   })
   async consumer7(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 
   @RabbitRPC({
@@ -76,6 +76,6 @@ export class ConsumerService {
     queue: 'abcdefghijklmnopqrstuvwxyz___yz'
   })
   async consumer8(request: any, context: any) {
-    return this.messageService.makeResponse(request);
+    return this.messageService.processMessage(request);
   }
 }

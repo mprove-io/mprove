@@ -7,6 +7,7 @@ import { AppModule } from '../app.module';
 import { MessageService } from '../services/message.service';
 import { getConfig } from '../config/get.config';
 import { api } from '../barrels/api';
+import { coreServices } from '../core-services';
 
 export async function prepareTest(organizationId: string) {
   let app: INestApplication;
@@ -18,7 +19,7 @@ export async function prepareTest(organizationId: string) {
         isGlobal: true
       })
     ],
-    providers: [MessageService]
+    providers: [...coreServices]
   }).compile();
 
   app = moduleRef.createNestApplication();

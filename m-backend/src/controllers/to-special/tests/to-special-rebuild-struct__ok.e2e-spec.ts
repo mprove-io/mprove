@@ -1,5 +1,4 @@
 import { api } from '../../../barrels/api';
-import { ConfigService } from '@nestjs/config';
 import { prepareTest } from '../../../functions/prepare-test';
 import { interfaces } from '../../../barrels/interfaces';
 import test from 'ava';
@@ -26,10 +25,15 @@ test('1', async t => {
       }
     });
 
-    await helper.sendToBackend<api.ToDiskSeedProjectResponse>({
+    let routingKey = helper.makeRoutingKeyToDisk({
+      organizationId: organizationId,
+      projectId: null
+    });
+
+    await prep.rabbitService.sendToDisk<api.ToDiskSeedProjectResponse>({
       checkIsOk: true,
-      httpServer: prep.httpServer,
-      req: <api.ToDiskSeedProjectRequest>{
+      routingKey: routingKey,
+      message: <api.ToDiskSeedProjectRequest>{
         info: {
           name: api.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
           traceId: traceId
