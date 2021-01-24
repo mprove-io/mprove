@@ -1,10 +1,10 @@
-import { api } from '../../../../barrels/api';
-import { prepareTest } from '../../../../functions/prepare-test';
-import { interfaces } from '../../../../barrels/interfaces';
+import { api } from '../../../barrels/api';
+import { prepareTest } from '../../../functions/prepare-test';
+import { interfaces } from '../../../barrels/interfaces';
 import test from 'ava';
-import { helper } from '../../../../barrels/helper';
+import { helper } from '../../../barrels/helper';
 
-let testId = 'register-user__success';
+let testId = 'register-user__ok';
 
 let traceId = '123';
 let userId = `${testId}@example.com`;

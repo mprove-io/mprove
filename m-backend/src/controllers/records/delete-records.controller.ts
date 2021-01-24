@@ -1,15 +1,15 @@
-import { api } from '../../../barrels/api';
-import { UsersService } from '../../../services/users.service';
+import { api } from '../../barrels/api';
+import { UsersService } from '../../services/users.service';
 
 import { Body, Controller, Post } from '@nestjs/common';
-import { helper } from '../../../barrels/helper';
+import { helper } from '../../barrels/helper';
 import asyncPool from 'tiny-async-pool';
-import { RabbitService } from '../../../services/rabbit.service';
+import { RabbitService } from '../../services/rabbit.service';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../../barrels/interfaces';
+import { interfaces } from '../../barrels/interfaces';
 
 @Controller()
-export class ToBackendDeleteRecordsController {
+export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
     private usersService: UsersService,
@@ -17,7 +17,7 @@ export class ToBackendDeleteRecordsController {
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
-  async toBackendDeleteRecords(@Body() body) {
+  async deleteRecords(@Body() body) {
     try {
       let reqValid = await api.transformValid({
         classType: api.ToBackendDeleteRecordsRequest,

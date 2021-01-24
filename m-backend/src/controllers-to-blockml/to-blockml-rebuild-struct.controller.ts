@@ -1,29 +1,29 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { RabbitService } from '../../services/rabbit.service';
-import { api } from '../../barrels/api';
+import { RabbitService } from '../services/rabbit.service';
+import { api } from '../barrels/api';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
+import { interfaces } from '../barrels/interfaces';
 
 @Controller()
-export class ToBlockmlProcessQueryController {
+export class ToBlockmlRebuildStructController {
   constructor(
     private rabbitService: RabbitService,
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  @Post(api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery)
-  async toBlockmlProcessQuery(@Body() body) {
+  @Post(api.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct)
+  async toBlockmlRebuildStruct(@Body() body) {
     try {
       let reqValid = await api.transformValid({
-        classType: api.ToBlockmlProcessQueryRequest,
+        classType: api.ToBlockmlRebuildStructRequest,
         object: body,
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let resp = await this.rabbitService.sendToBlockml<
-        api.ToBlockmlProcessQueryResponse
+        api.ToBlockmlRebuildStructResponse
       >({
-        routingKey: api.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+        routingKey: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
         message: reqValid
       });
 

@@ -7,17 +7,17 @@ import { ConfigService } from '@nestjs/config';
 import { interfaces } from '../../barrels/interfaces';
 
 @Controller()
-export class ToSpecialRebuildStructController {
+export class RebuildStructSpecialController {
   constructor(
     private rabbitService: RabbitService,
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  @Post(api.ToSpecialRequestInfoNameEnum.ToSpecialRebuildStruct)
-  async toSpecialRebuildStruct(@Body() body) {
+  @Post(api.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial)
+  async rebuildStructSpecial(@Body() body) {
     try {
       let reqValid = await api.transformValid({
-        classType: api.ToSpecialRebuildStructRequest,
+        classType: api.ToBackendRebuildStructSpecialRequest,
         object: body,
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });

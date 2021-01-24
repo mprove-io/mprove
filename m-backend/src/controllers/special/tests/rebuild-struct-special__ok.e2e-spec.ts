@@ -4,7 +4,7 @@ import { interfaces } from '../../../barrels/interfaces';
 import test from 'ava';
 import { helper } from '../../../barrels/helper';
 
-let testId = 'to-special-rebuild-struct__ok';
+let testId = 'rebuild-struct-special__ok';
 
 let traceId = '123';
 let organizationId = testId;
@@ -49,9 +49,9 @@ test('1', async t => {
 
     resp = await helper.sendToBackend<api.ToBlockmlRebuildStructResponse>({
       httpServer: prep.httpServer,
-      req: <api.ToSpecialRebuildStructRequest>{
+      req: <api.ToBackendRebuildStructSpecialRequest>{
         info: {
-          name: api.ToSpecialRequestInfoNameEnum.ToSpecialRebuildStruct,
+          name: api.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial,
           traceId: traceId
         },
         payload: {

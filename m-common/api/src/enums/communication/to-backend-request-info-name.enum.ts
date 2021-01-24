@@ -1,5 +1,9 @@
 export enum ToBackendRequestInfoNameEnum {
-  ToBackendRegisterUser = 'ToBackendRegisterUser',
+  //
+  ToBackendRebuildStructSpecial = 'ToBackendRebuildStructSpecial',
+  //
+  ToBackendSeedRecords = 'ToBackendSeedRecords',
   ToBackendDeleteRecords = 'ToBackendDeleteRecords',
-  ToBackendSeedRecords = 'ToBackendSeedRecords'
+  //
+  ToBackendRegisterUser = 'ToBackendRegisterUser'
 }

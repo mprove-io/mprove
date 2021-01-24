@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '../objects/_index';
-import * as apiEnums from '../enums/_index';
+import * as apiObjects from '../../objects/_index';
+import * as apiEnums from '../../enums/_index';
 
-export class ToSpecialRebuildStructRequestPayload {
+export class ToBackendRebuildStructSpecialRequestPayload {
   @IsString()
   readonly organizationId: string;
 
@@ -31,12 +31,12 @@ export class ToSpecialRebuildStructRequestPayload {
   readonly connections: apiObjects.ProjectConnection[];
 }
 
-export class ToSpecialRebuildStructRequest {
+export class ToBackendRebuildStructSpecialRequest {
   @ValidateNested()
-  @Type(() => apiObjects.ToSpecialRequestInfo)
-  readonly info: apiObjects.ToSpecialRequestInfo;
+  @Type(() => apiObjects.ToBackendRequestInfo)
+  readonly info: apiObjects.ToBackendRequestInfo;
 
   @ValidateNested()
-  @Type(() => ToSpecialRebuildStructRequestPayload)
-  readonly payload: ToSpecialRebuildStructRequestPayload;
+  @Type(() => ToBackendRebuildStructSpecialRequestPayload)
+  readonly payload: ToBackendRebuildStructSpecialRequestPayload;
 }

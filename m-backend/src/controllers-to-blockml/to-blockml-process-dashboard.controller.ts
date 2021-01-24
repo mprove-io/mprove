@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { RabbitService } from '../../services/rabbit.service';
-import { api } from '../../barrels/api';
+import { RabbitService } from '../services/rabbit.service';
+import { api } from '../barrels/api';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
+import { interfaces } from '../barrels/interfaces';
 
 @Controller()
 export class ToBlockmlProcessDashboardController {

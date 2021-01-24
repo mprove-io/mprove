@@ -1,9 +1,13 @@
-import { toBlockmlControllers } from './controllers/to-blockml-controllers';
-import { toSpecialControllers } from './controllers/to-special-controllers';
-import { toBackendControllers } from './controllers/to-backend-controllers';
+import { controllersToBlockml } from './controllers-to-blockml/controllers-to-blockml';
+import { controllers } from './barrels/controllers';
 
 export const appControllers = [
-  ...toBlockmlControllers,
-  ...toSpecialControllers,
-  ...toBackendControllers
+  ...controllersToBlockml,
+  //
+  controllers.DeleteRecordsController,
+  controllers.SeedRecordsController,
+  //
+  controllers.RebuildStructSpecialController,
+  //
+  controllers.RegisterUserController
 ];
