@@ -12,7 +12,9 @@
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
-      "@barrels/*": ["barrels/*"]
+      // "@src/*": ["src/*"]
+      // "@src": "./dist"
+      "~/*": ["./*"]
     }
   }
 }
