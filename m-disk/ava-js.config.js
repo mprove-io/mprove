@@ -3,5 +3,5 @@ export default {
   extensions: ['js'],
   verbose: true,
   timeout: '1m',
-  require: ['reflect-metadata']
+  require: ['module-alias/register', 'reflect-metadata']
 };

@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '../../barrels/api';
+import { api } from '@barrels/api';
 import { ConfigService } from '@nestjs/config';
 import { interfaces } from '../../barrels/interfaces';
 import { CreateOrganizationService } from '../../services/01-organizations/create-organization.service';

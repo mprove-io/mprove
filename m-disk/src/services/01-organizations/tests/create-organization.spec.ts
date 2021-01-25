@@ -1,6 +1,6 @@
 import { prepareTest } from '../../../functions/prepare-test';
-import { api } from '../../../barrels/api';
 import test from 'ava';
+import { api } from '@barrels/api';
 
 let testId = 'create-organization';
 
