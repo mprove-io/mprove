@@ -1,6 +1,6 @@
-import { interfaces } from '../barrels/interfaces';
-import { enums } from '../barrels/enums';
-import { api } from '../barrels/api';
+import { interfaces } from '~/barrels/interfaces';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
 

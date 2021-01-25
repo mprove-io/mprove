@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import * as apiEnums from '../../enums/_index';
+import * as apiEnums from '~/api/enums/_index';
 
 export class ProjectConnection {
   @IsString()

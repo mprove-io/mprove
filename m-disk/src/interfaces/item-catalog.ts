@@ -1,4 +1,4 @@
-import * as apiObjects from '../api/objects/_index';
+import * as apiObjects from '~/api/objects/_index';
 
 export interface ItemCatalog {
   files: apiObjects.DiskCatalogFile[];

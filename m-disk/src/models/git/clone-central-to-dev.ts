@@ -1,5 +1,5 @@
 import * as nodegit from 'nodegit';
-import { constants } from '../../barrels/constants';
+import { constants } from '~/barrels/constants';
 import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function cloneCentralToDev(item: {

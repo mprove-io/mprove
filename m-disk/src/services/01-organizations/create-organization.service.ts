@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
+import { interfaces } from '~/barrels/interfaces';
 // import { api } from '@src/barrels/api';
 import { api } from '~/barrels/api';
-import { disk } from '../../barrels/disk';
+import { disk } from '~/barrels/disk';
 
 @Injectable()
 export class CreateOrganizationService {

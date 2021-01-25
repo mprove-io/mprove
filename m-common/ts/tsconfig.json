@@ -9,7 +9,12 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
+    "baseUrl": "./src",
+    "incremental": true,
+    "paths": {
+      // "@src/*": ["src/*"]
+      // "@src": "./dist"
+      "~/*": ["./*"]
+    }
   }
 }

@@ -1,6 +1,6 @@
-import { api } from '../../../barrels/api';
-import { helper } from '../../../barrels/helper';
-import { prepareTest } from '../../../functions/prepare-test';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
+import { prepareTest } from '~/functions/prepare-test';
 import test from 'ava';
 
 let testId = 'create-branch__from-remote';

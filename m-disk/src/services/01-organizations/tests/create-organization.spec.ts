@@ -1,4 +1,4 @@
-import { prepareTest } from '../../../functions/prepare-test';
+import { prepareTest } from '~/functions/prepare-test';
 import test from 'ava';
 // import { api } from '@src/barrels/api';
 import { api } from '~/barrels/api';

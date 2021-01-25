@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
-import { CreateDevRepoService } from '../../services/03-repos/create-dev-repo.service';
+import { interfaces } from '~/barrels/interfaces';
+import { CreateDevRepoService } from '~/services/03-repos/create-dev-repo.service';
 
 @Controller()
 export class CreateDevRepoController {

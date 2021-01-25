@@ -1,6 +1,6 @@
-import { constants } from '../../barrels/constants';
-import { disk } from '../../barrels/disk';
-import { api } from '../../barrels/api';
+import { constants } from '~/barrels/constants';
+import { disk } from '~/barrels/disk';
+import { api } from '~/barrels/api';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
 import { pushToCentral } from './push-to-central';
 import * as nodegit from 'nodegit';

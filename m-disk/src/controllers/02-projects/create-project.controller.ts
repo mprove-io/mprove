@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
-import { CreateProjectService } from '../../services/02-projects/create-project.service';
+import { interfaces } from '~/barrels/interfaces';
+import { CreateProjectService } from '~/services/02-projects/create-project.service';
 
 @Controller()
 export class CreateProjectController {

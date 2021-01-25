@@ -1,5 +1,5 @@
-import { api } from '../../../barrels/api';
-import { prepareTest } from '../../../functions/prepare-test';
+import { api } from '~/barrels/api';
+import { prepareTest } from '~/functions/prepare-test';
 import test from 'ava';
 
 let testId = 'get-catalog-nodes';

@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
-import { RenameCatalogNodeService } from '../../services/04-catalogs/rename-catalog-node.service';
+import { interfaces } from '~/barrels/interfaces';
+import { RenameCatalogNodeService } from '~/services/04-catalogs/rename-catalog-node.service';
 
 @Controller()
 export class RenameCatalogNodeController {

@@ -1,4 +1,4 @@
-import * as apiObjects from '../objects/_index';
+import * as apiObjects from '~/api/objects/_index';
 export const timezones: apiObjects.TimezoneGroup[] = [
   {
     group: 'America',

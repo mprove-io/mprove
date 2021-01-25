@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
-import { PullRepoService } from '../../services/03-repos/pull-repo.service';
+import { interfaces } from '~/barrels/interfaces';
+import { PullRepoService } from '~/services/03-repos/pull-repo.service';
 
 @Controller()
 export class PullRepoController {

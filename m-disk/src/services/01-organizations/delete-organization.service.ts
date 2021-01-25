@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
-import { api } from '../../barrels/api';
-import { disk } from '../../barrels/disk';
+import { interfaces } from '~/barrels/interfaces';
+import { api } from '~/barrels/api';
+import { disk } from '~/barrels/disk';
 
 @Injectable()
 export class DeleteOrganizationService {

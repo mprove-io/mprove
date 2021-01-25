@@ -4,7 +4,7 @@ import {
   transformAndValidateSync,
   TransformValidationOptions
 } from 'class-transformer-validator';
-import * as apiEnums from '../enums/_index';
+import * as apiEnums from '~/api/enums/_index';
 import { ServerError } from './server-error';
 
 export function transformValidSync<T extends object>(item: {

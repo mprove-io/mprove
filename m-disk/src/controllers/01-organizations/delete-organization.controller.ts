@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
-import { DeleteOrganizationService } from '../../services/01-organizations/delete-organization.service';
+import { interfaces } from '~/barrels/interfaces';
+import { DeleteOrganizationService } from '~/services/01-organizations/delete-organization.service';
 
 @Controller()
 export class DeleteOrganizationController {

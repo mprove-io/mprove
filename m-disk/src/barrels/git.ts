@@ -1,2 +1,2 @@
-import * as git from '../models/git/_index';
+import * as git from '~/models/git/_index';
 export { git };

@@ -1,4 +1,4 @@
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 import * as nodegit from 'nodegit';
 import { constantFetchOptions } from './_constant-fetch-options';
 
