@@ -17,30 +17,33 @@ export class DashboardService {
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  async processDashboard(item: {
-    traceId: string;
-    structId: string;
-    organizationId: string;
-    projectId: string;
-    weekStart: api.ProjectWeekStartEnum;
-    udfsDict: api.UdfsDict;
-    models: interfaces.Model[];
-    dashboard: interfaces.Dashboard;
-    newDashboardId: string;
-    newDashboardFields: api.DashboardField[];
-  }) {
+  async processDashboard(request: any) {
+    if (
+      request.info?.name !==
+      api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessDashboard
+    ) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BLOCKML_WRONG_REQUEST_INFO_NAME
+      });
+    }
+
+    let reqValid = await api.transformValid({
+      classType: api.ToBlockmlProcessDashboardRequest,
+      object: request,
+      errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
+    });
+
     let {
-      traceId,
       structId,
       organizationId,
       projectId,
       weekStart,
       udfsDict,
-      models,
-      dashboard,
+      modelContents: models,
+      dashboardContent: dashboard,
       newDashboardId,
       newDashboardFields
-    } = item;
+    } = reqValid.payload;
 
     let dashboardFilters: interfaces.FilterBricksDictionary = {};
 
@@ -83,7 +86,7 @@ export class DashboardService {
       let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
         this.rabbitService,
         this.cs,
-        traceId,
+        reqValid.info.traceId,
         {
           weekStart: weekStart,
           timezone: report.timezone,

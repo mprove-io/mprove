@@ -17,24 +17,30 @@ export class StructService {
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  async wrapStruct(item: {
-    traceId: string;
-    structId: string;
-    organizationId: string;
-    projectId: string;
-    files: api.File[];
-    weekStart: api.ProjectWeekStartEnum;
-    connections: api.ProjectConnection[];
-  }) {
+  async process(request: any) {
+    if (
+      request.info?.name !==
+      api.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
+    ) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BLOCKML_WRONG_REQUEST_INFO_NAME
+      });
+    }
+
+    let reqValid = await api.transformValid({
+      classType: api.ToBlockmlRebuildStructRequest,
+      object: request,
+      errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
+    });
+
     let {
-      traceId,
       structId,
       organizationId,
       projectId,
-      files,
       weekStart,
+      files,
       connections
-    } = item;
+    } = reqValid.payload;
 
     let {
       errors,
@@ -44,7 +50,7 @@ export class StructService {
       dashboards,
       vizs
     } = await this.rebuildStructStateless({
-      traceId: traceId,
+      traceId: reqValid.info.traceId,
       files: files,
       weekStart: weekStart,
       structId: structId,

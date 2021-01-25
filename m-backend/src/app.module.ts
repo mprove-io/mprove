@@ -7,7 +7,7 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { appServices } from './app-services';
+import { appProviders } from './app-providers';
 import { appEntities } from './app-entities';
 import { appRepositories } from './app-repositories';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -76,7 +76,7 @@ import { enums } from './barrels/enums';
     TypeOrmModule.forFeature([...appRepositories])
   ],
   controllers: appControllers,
-  providers: appServices
+  providers: appProviders
 })
 export class AppModule implements OnModuleInit {
   constructor(

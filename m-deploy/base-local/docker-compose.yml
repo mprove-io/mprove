@@ -85,10 +85,12 @@ services:
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
       - $BLOCKML_MAIN_ENV_FILE_PATH  
+    ports:
+      - 3001:3001       
     volumes:
       - type: bind
         source: $BLOCKML_MAIN_ENV_FILE_PATH
-        target: $BLOCKML_MAIN_ENV_FILE_PATH        
+        target: $BLOCKML_MAIN_ENV_FILE_PATH  
     # logging:
     #   driver: fluentd
     #   options:

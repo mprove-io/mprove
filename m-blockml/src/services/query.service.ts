@@ -14,24 +14,30 @@ export class QueryService {
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  async processQuery(item: {
-    traceId: string;
-    organizationId: string;
-    projectId: string;
-    weekStart: api.ProjectWeekStartEnum;
-    udfsDict: api.UdfsDict;
-    mconfig: api.Mconfig;
-    model: interfaces.Model;
-  }) {
+  async processQuery(request: any) {
+    if (
+      request.info?.name !==
+      api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery
+    ) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BLOCKML_WRONG_REQUEST_INFO_NAME
+      });
+    }
+
+    let reqValid = await api.transformValid({
+      classType: api.ToBlockmlProcessQueryRequest,
+      object: request,
+      errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
+    });
+
     let {
-      traceId,
       organizationId,
       projectId,
       weekStart,
       udfsDict,
       mconfig,
-      model
-    } = item;
+      modelContent: model
+    } = reqValid.payload;
 
     let { select, sorts, timezone, limit, filters } = mconfig;
 
@@ -46,7 +52,7 @@ export class QueryService {
     let { sql, filtersFractions, varsSqlSteps } = await barSpecial.genSql(
       this.rabbitService,
       this.cs,
-      traceId,
+      reqValid.info.traceId,
       {
         weekStart: weekStart,
         timezone: timezone,

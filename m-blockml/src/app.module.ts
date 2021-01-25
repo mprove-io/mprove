@@ -12,6 +12,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { interfaces } from './barrels/interfaces';
 import { helper } from './barrels/helper';
 import { enums } from './barrels/enums';
+import { appControllers } from './app-controllers';
+import { GenSqlService } from './services/gen-sql.service';
 
 @Module({
   imports: [
@@ -55,9 +57,10 @@ import { enums } from './barrels/enums';
       inject: [ConfigService]
     })
   ],
-  controllers: [],
+  controllers: appControllers,
   providers: [
     RabbitService,
+    GenSqlService,
     {
       provide: StructService,
       useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
@@ -100,16 +103,19 @@ import { enums } from './barrels/enums';
     },
     {
       provide: ConsumerWorkerService,
-      useFactory: (cs: ConfigService<interfaces.Config>) => {
+      useFactory: (
+        cs: ConfigService<interfaces.Config>,
+        genSqlService: GenSqlService
+      ) => {
         let blockmlIsWorker = cs.get<interfaces.Config['blockmlIsWorker']>(
           'blockmlIsWorker'
         );
 
         return blockmlIsWorker === api.BoolEnum.TRUE
-          ? new ConsumerWorkerService(cs)
+          ? new ConsumerWorkerService(cs, genSqlService)
           : {};
       },
-      inject: [ConfigService]
+      inject: [ConfigService, GenSqlService]
     }
   ]
 })
