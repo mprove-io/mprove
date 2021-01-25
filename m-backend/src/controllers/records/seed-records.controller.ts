@@ -1,16 +1,16 @@
-import { api } from '../../barrels/api';
-import { UsersService } from '../../services/users.service';
+import { api } from '~/barrels/api';
+import { UsersService } from '~/services/users.service';
 
 import { Body, Controller, Post } from '@nestjs/common';
-import { helper } from '../../barrels/helper';
+import { helper } from '~/barrels/helper';
 import asyncPool from 'tiny-async-pool';
-import { entities } from '../../barrels/entities';
-import { gen } from '../../barrels/gen';
-import { constants } from '../../barrels/constants';
+import { entities } from '~/barrels/entities';
+import { gen } from '~/barrels/gen';
+import { constants } from '~/barrels/constants';
 import { Connection } from 'typeorm';
-import { db } from '../../barrels/db';
+import { db } from '~/barrels/db';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../../barrels/interfaces';
+import { interfaces } from '~/barrels/interfaces';
 
 @Controller()
 export class SeedRecordsController {

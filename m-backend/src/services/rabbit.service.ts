@@ -1,4 +1,4 @@
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 import { Injectable } from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 

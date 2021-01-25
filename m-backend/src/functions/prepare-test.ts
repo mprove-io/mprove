@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../app.module';
-import { interfaces } from '../barrels/interfaces';
-import { api } from '../barrels/api';
+import { AppModule } from '~/app.module';
+import { interfaces } from '~/barrels/interfaces';
+import { api } from '~/barrels/api';
 
-import { helper } from '../barrels/helper';
-import { RabbitService } from '../services/rabbit.service';
+import { helper } from '~/barrels/helper';
+import { RabbitService } from '~/services/rabbit.service';
 
 export async function prepareTest(item: {
   traceId: string;

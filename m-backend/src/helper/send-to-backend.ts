@@ -1,4 +1,4 @@
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 import * as request from 'supertest';
 
 export async function sendToBackend<T>(item: {

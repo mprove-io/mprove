@@ -1,6 +1,6 @@
-import { api } from '../../barrels/api';
-import { entities } from '../../barrels/entities';
-import { helper } from '../../barrels/helper';
+import { api } from '~/barrels/api';
+import { entities } from '~/barrels/entities';
+import { helper } from '~/barrels/helper';
 
 export function makeUser(item: {
   userId: string;

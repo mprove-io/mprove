@@ -5,19 +5,19 @@ secrets:
     file: $M_DATA_FLUENT_KEY_PATH
 
 services:
-  fluent:
-    container_name: fluent
-    image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
-    env_file:
-      - $FLUENT_ENV_FILE_PATH    
-    secrets:
-      - fluent_key
-    ports:
-      - 24224:24224
-    volumes:
-      - type: bind
-        source: $M_DATA_FLUENT_LOG_PATH
-        target: /fluentd/log      
+  # fluent:
+  #   container_name: fluent
+  #   image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
+  #   env_file:
+  #     - $FLUENT_ENV_FILE_PATH    
+  #   secrets:
+  #     - fluent_key
+  #   ports:
+  #     - 24224:24224
+  #   volumes:
+  #     - type: bind
+  #       source: $M_DATA_FLUENT_LOG_PATH
+  #       target: /fluentd/log      
 
   db:
     image: mysql:8

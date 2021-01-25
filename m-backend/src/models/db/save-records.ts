@@ -1,8 +1,8 @@
-import { helper } from '../../barrels/helper';
+import { helper } from '~/barrels/helper';
 import { EntityManager } from 'typeorm';
-import { entities } from '../../barrels/entities';
+import { entities } from '~/barrels/entities';
 
-import { repositories } from '../../barrels/repositories';
+import { repositories } from '~/barrels/repositories';
 
 export async function saveRecords(item: {
   manager: EntityManager;

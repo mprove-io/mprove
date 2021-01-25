@@ -1,4 +1,4 @@
-import { entities } from '../../barrels/entities';
+import { entities } from '~/barrels/entities';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(entities.UserEntity)

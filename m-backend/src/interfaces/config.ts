@@ -1,5 +1,5 @@
-import { enums } from '../barrels/enums';
-import { api } from '../barrels/api';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
 import { IsEnum, IsString } from 'class-validator';
 
 export class Config extends api.Config {

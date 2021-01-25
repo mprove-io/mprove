@@ -3,5 +3,5 @@ export default {
   extensions: ['ts'],
   verbose: true,
   timeout: '1m',
-  require: ['ts-node/register', 'reflect-metadata']
+  require: ['ts-node/register', 'tsconfig-paths/register', 'reflect-metadata']
 };

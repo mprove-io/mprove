@@ -1,10 +1,10 @@
-import { api } from '../barrels/api';
-import { helper } from '../barrels/helper';
-import { enums } from '../barrels/enums';
-import { gen } from '../barrels/gen';
-import { db } from '../barrels/db';
-import { repositories } from '../barrels/repositories';
-import { entities } from '../barrels/entities';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { gen } from '~/barrels/gen';
+import { db } from '~/barrels/db';
+import { repositories } from '~/barrels/repositories';
+import { entities } from '~/barrels/entities';
 
 import { Injectable } from '@nestjs/common';
 import { Connection, In } from 'typeorm';
