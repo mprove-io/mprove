@@ -1,5 +1,5 @@
-import { FileBasic } from '../file/file-basic';
-import { Report } from '../report';
+import { FileBasic } from '~/interfaces/file/file-basic';
+import { Report } from '~/interfaces/report';
 
 export interface Viz extends FileBasic {
   viz?: string;

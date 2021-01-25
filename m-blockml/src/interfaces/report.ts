@@ -1,4 +1,4 @@
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 import { ChartData } from './chart/chart-data';
 import { ChartAxis } from './chart/chart-axis';
 import { ChartOptions } from './chart/chart-options';

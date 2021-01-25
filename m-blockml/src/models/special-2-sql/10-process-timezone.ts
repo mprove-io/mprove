@@ -1,8 +1,8 @@
-import { interfaces } from '../../barrels/interfaces';
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
-import { constants } from '../../barrels/constants';
-import { api } from '../../barrels/api';
+import { interfaces } from '~/barrels/interfaces';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { constants } from '~/barrels/constants';
+import { api } from '~/barrels/api';
 
 let func = enums.FuncEnum.ProcessTimezone;
 

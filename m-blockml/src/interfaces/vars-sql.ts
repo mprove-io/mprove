@@ -1,4 +1,4 @@
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
 import { ViewPart } from './view-part';
 

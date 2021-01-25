@@ -1,8 +1,8 @@
-import { enums } from '../../barrels/enums';
-import { interfaces } from '../../barrels/interfaces';
-import { barUdf } from '../../barrels/bar-udf';
-import { BmError } from '../bm-error';
-import { api } from '../../barrels/api';
+import { enums } from '~/barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { barUdf } from '~/barrels/bar-udf';
+import { BmError } from '~/models/bm-error';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
 
 export function buildUdf(

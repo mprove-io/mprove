@@ -1,9 +1,9 @@
-import { interfaces } from '../../barrels/interfaces';
-import { api } from '../../barrels/api';
-import { constants } from '../../barrels/constants';
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
-import { BmError } from '../bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { api } from '~/barrels/api';
+import { constants } from '~/barrels/constants';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { BmError } from '~/models/bm-error';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.MakeLineNumbers;

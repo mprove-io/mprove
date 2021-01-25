@@ -1,8 +1,8 @@
-import { Calculation } from '../field-types/calculation';
-import { Dimension } from '../field-types/dimension';
-import { Filter } from '../field-types/filter';
-import { Measure } from '../field-types/measure';
-import { Time } from '../field-types/time';
+import { Calculation } from '~/interfaces/field-types/calculation';
+import { Dimension } from '~/interfaces/field-types/dimension';
+import { Filter } from '~/interfaces/field-types/filter';
+import { Measure } from '~/interfaces/field-types/measure';
+import { Time } from '~/interfaces/field-types/time';
 
 export interface FieldAny
   extends Dimension,

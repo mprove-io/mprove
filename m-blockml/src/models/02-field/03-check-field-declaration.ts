@@ -1,10 +1,10 @@
-import { interfaces } from '../../barrels/interfaces';
-import { enums } from '../../barrels/enums';
-import { helper } from '../../barrels/helper';
-import { api } from '../../barrels/api';
-import { BmError } from '../bm-error';
-import { constants } from '../../barrels/constants';
-import { types } from '../../barrels/types';
+import { interfaces } from '~/barrels/interfaces';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { api } from '~/barrels/api';
+import { BmError } from '~/models/bm-error';
+import { constants } from '~/barrels/constants';
+import { types } from '~/barrels/types';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckFieldDeclaration;

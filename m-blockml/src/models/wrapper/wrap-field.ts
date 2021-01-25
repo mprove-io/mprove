@@ -1,6 +1,6 @@
-import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
-import { helper } from '../../barrels/helper';
+import { api } from '~/barrels/api';
+import { interfaces } from '~/barrels/interfaces';
+import { helper } from '~/barrels/helper';
 
 export function wrapField(item: {
   wrappedFields: api.ModelField[];

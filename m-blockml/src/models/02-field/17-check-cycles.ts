@@ -1,9 +1,9 @@
-import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
-import { helper } from '../../barrels/helper';
-import { interfaces } from '../../barrels/interfaces';
-import { BmError } from '../bm-error';
-import { types } from '../../barrels/types';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
+import { BmError } from '~/models/bm-error';
+import { types } from '~/barrels/types';
 import { ConfigService } from '@nestjs/config';
 let Graph = require('tarjan-graph');
 

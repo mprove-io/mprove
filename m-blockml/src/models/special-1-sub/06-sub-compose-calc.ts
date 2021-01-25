@@ -1,8 +1,8 @@
-import { interfaces } from '../../barrels/interfaces';
-import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
-import { constants } from '../../barrels/constants';
-import { helper } from '../../barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
+import { constants } from '~/barrels/constants';
+import { helper } from '~/barrels/helper';
 
 let func = enums.FuncEnum.SubComposeCalc;
 

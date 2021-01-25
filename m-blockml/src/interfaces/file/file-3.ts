@@ -1,5 +1,5 @@
 import { IsEnum, IsString } from 'class-validator';
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 
 export interface File3 {
   ext: api.FileExtensionEnum;

@@ -1,4 +1,4 @@
-import { FileBasic } from '../file/file-basic';
+import { FileBasic } from '~/interfaces/file/file-basic';
 
 export interface Udf extends FileBasic {
   sql?: string;

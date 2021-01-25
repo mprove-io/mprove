@@ -1,10 +1,10 @@
-import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
-import { BmError } from '../../models/bm-error';
-import { interfaces } from '../../barrels/interfaces';
-import { barReport } from '../../barrels/bar-report';
-import { types } from '../../barrels/types';
-import { RabbitService } from '../../services/rabbit.service';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
+import { BmError } from '~/models/bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { barReport } from '~/barrels/bar-report';
+import { types } from '~/barrels/types';
+import { RabbitService } from '~/services/rabbit.service';
 import { ConfigService } from '@nestjs/config';
 
 export async function buildReport<T extends types.dzType>(

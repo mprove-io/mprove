@@ -1,9 +1,9 @@
-import { interfaces } from '../../barrels/interfaces';
-import { constants } from '../../barrels/constants';
-import { api } from '../../barrels/api';
-import { barMeasure } from '../../barrels/bar-measure';
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { constants } from '~/barrels/constants';
+import { api } from '~/barrels/api';
+import { barMeasure } from '~/barrels/bar-measure';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
 
 let func = enums.FuncEnum.SubMakeMainText;
 

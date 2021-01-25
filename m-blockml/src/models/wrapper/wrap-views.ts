@@ -1,5 +1,5 @@
-import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
+import { api } from '~/barrels/api';
+import { interfaces } from '~/barrels/interfaces';
 
 export function wrapViews(item: { views: interfaces.View[] }) {
   let { views } = item;

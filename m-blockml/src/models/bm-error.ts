@@ -1,5 +1,5 @@
-import { enums } from '../barrels/enums';
-import { BmErrorLine } from '../interfaces/bm-error-line';
+import { enums } from '~/barrels/enums';
+import { BmErrorLine } from '~/interfaces/bm-error-line';
 
 export class BmError {
   title: enums.ErTitleEnum;

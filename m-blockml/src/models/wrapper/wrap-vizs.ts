@@ -1,6 +1,6 @@
-import { api } from '../../barrels/api';
-import { helper } from '../../barrels/helper';
-import { interfaces } from '../../barrels/interfaces';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
 import { wrapReports } from './wrap-reports';
 
 export function wrapVizs(item: {

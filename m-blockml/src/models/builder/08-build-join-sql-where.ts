@@ -1,7 +1,7 @@
-import { enums } from '../../barrels/enums';
-import { BmError } from '../../models/bm-error';
-import { interfaces } from '../../barrels/interfaces';
-import { barJoinSqlWhere } from '../../barrels/bar-join-sql-where';
+import { enums } from '~/barrels/enums';
+import { BmError } from '~/models/bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { barJoinSqlWhere } from '~/barrels/bar-join-sql-where';
 import { ConfigService } from '@nestjs/config';
 
 export function buildJoinSqlWhere(

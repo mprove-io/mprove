@@ -1,4 +1,4 @@
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 
 export function makeMeasureMin(item: {
   sqlFinal: string;

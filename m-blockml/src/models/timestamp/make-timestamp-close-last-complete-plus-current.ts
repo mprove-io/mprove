@@ -1,5 +1,5 @@
-import { api } from '../../barrels/api';
-import { enums } from '../../barrels/enums';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
 
 export function makeTimestampCloseLastCompletePlusCurrent(item: {
   connection: api.ProjectConnection;

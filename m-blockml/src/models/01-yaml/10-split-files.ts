@@ -1,8 +1,8 @@
-import { interfaces } from '../../barrels/interfaces';
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
-import { BmError } from '../bm-error';
-import { api } from '../../barrels/api';
+import { interfaces } from '~/barrels/interfaces';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { BmError } from '~/models/bm-error';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.SplitFiles;

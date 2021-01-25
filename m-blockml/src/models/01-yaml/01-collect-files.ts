@@ -1,8 +1,8 @@
 import * as walk from 'walk';
 import * as fse from 'fs-extra';
-import { api } from '../../barrels/api';
-import { enums } from '../../barrels/enums';
-import { helper } from '../../barrels/helper';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CollectFiles;

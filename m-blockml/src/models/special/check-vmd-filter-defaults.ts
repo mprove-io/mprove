@@ -1,8 +1,8 @@
-import { helper } from '../../barrels/helper';
-import { api } from '../../barrels/api';
-import { enums } from '../../barrels/enums';
-import { types } from '../../barrels/types';
-import { BmError } from '../bm-error';
+import { helper } from '~/barrels/helper';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
 import { processFilter } from './process-filter';
 import { ConfigService } from '@nestjs/config';
 

@@ -1,5 +1,5 @@
-import { barSub } from '../../barrels/bar-sub';
-import { interfaces } from '../../barrels/interfaces';
+import { barSub } from '~/barrels/bar-sub';
+import { interfaces } from '~/barrels/interfaces';
 
 export function genSub(item: {
   select: string[];

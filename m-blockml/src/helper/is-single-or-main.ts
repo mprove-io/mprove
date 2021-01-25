@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '../barrels/api';
-import { interfaces } from '../barrels/interfaces';
+import { api } from '~/barrels/api';
+import { interfaces } from '~/barrels/interfaces';
 
 export function isSingleOrMain(cs: ConfigService<interfaces.Config>): boolean {
   let blockmlIsSingle = cs.get<interfaces.Config['blockmlIsSingle']>(

@@ -1,8 +1,8 @@
-import { FileBasic } from '../file/file-basic';
-import { Join } from '../join';
-import { FieldAny } from '../field/field-any';
-import { api } from '../../barrels/api';
-import { FilterBricksDictionary } from '../filter-bricks-dictionary';
+import { FileBasic } from '~/interfaces/file/file-basic';
+import { Join } from '~/interfaces/join';
+import { FieldAny } from '~/interfaces/field/field-any';
+import { api } from '~/barrels/api';
+import { FilterBricksDictionary } from '~/interfaces/filter-bricks-dictionary';
 
 export interface Model extends FileBasic {
   model?: string;

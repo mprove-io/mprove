@@ -1,13 +1,13 @@
 import * as fse from 'fs-extra';
 import { Test, TestingModule } from '@nestjs/testing';
-import { StructService } from '../services/struct.service';
-import { enums } from '../barrels/enums';
-import { helper } from '../barrels/helper';
-import { RabbitService } from '../services/rabbit.service';
-import { api } from '../barrels/api';
+import { StructService } from '~/services/struct.service';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { RabbitService } from '~/services/rabbit.service';
+import { api } from '~/barrels/api';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getConfig } from '../config/get.config';
-import { interfaces } from '../barrels/interfaces';
+import { getConfig } from '~/config/get.config';
+import { interfaces } from '~/barrels/interfaces';
 
 export async function prepareTest(
   caller: enums.CallerEnum,

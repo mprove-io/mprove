@@ -1,8 +1,8 @@
-import { api } from '../../barrels/api';
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
-import { constants } from '../../barrels/constants';
-import { BmError } from '../bm-error';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { constants } from '~/barrels/constants';
+import { BmError } from '~/models/bm-error';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckTopValues;

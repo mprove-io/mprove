@@ -1,8 +1,8 @@
-import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
-import { BmError } from '../../models/bm-error';
-import { interfaces } from '../../barrels/interfaces';
-import { barModel } from '../../barrels/bar-model';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
+import { BmError } from '~/models/bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { barModel } from '~/barrels/bar-model';
 import { ConfigService } from '@nestjs/config';
 
 export function buildModel(

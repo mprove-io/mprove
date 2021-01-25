@@ -1,9 +1,9 @@
-import { api } from '../barrels/api';
-import { enums } from '../barrels/enums';
-import { interfaces } from '../barrels/interfaces';
-import { constants } from '../barrels/constants';
-import { barSpecial } from '../barrels/bar-special';
-import { barWrapper } from '../barrels/bar-wrapper';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { constants } from '~/barrels/constants';
+import { barSpecial } from '~/barrels/bar-special';
+import { barWrapper } from '~/barrels/bar-wrapper';
 import { RabbitService } from './rabbit.service';
 
 import { Injectable } from '@nestjs/common';

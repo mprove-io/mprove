@@ -1,4 +1,4 @@
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 import { VarsSqlStep } from './vars-sql-step';
 
 export interface GenSqlProOutcome {

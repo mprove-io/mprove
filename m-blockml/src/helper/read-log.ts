@@ -1,5 +1,5 @@
 import * as fse from 'fs-extra';
-import { enums } from '../barrels/enums';
+import { enums } from '~/barrels/enums';
 
 export async function readLog(dir: string, log: enums.LogTypeEnum) {
   let path = dir + '/' + log;

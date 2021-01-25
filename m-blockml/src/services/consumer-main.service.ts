@@ -1,8 +1,8 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { interfaces } from '../barrels/interfaces';
-import { api } from '../barrels/api';
+import { interfaces } from '~/barrels/interfaces';
+import { api } from '~/barrels/api';
 import { DashboardService } from './dashboard.service';
 import { QueryService } from './query.service';
 import { StructService } from './struct.service';

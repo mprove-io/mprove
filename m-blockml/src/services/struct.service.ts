@@ -1,12 +1,12 @@
-import { api } from '../barrels/api';
-import { enums } from '../barrels/enums';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
 import { Injectable } from '@nestjs/common';
-import { interfaces } from '../barrels/interfaces';
-import { BmError } from '../models/bm-error';
-import { barYaml } from '../barrels/bar-yaml';
-import { barBuilder } from '../barrels/bar-builder';
-import { barWrapper } from '../barrels/bar-wrapper';
-import { barSpecial } from '../barrels/bar-special';
+import { interfaces } from '~/barrels/interfaces';
+import { BmError } from '~/models/bm-error';
+import { barYaml } from '~/barrels/bar-yaml';
+import { barBuilder } from '~/barrels/bar-builder';
+import { barWrapper } from '~/barrels/bar-wrapper';
+import { barSpecial } from '~/barrels/bar-special';
 import { RabbitService } from './rabbit.service';
 import { ConfigService } from '@nestjs/config';
 

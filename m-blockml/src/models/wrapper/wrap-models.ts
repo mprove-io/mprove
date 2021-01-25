@@ -1,8 +1,8 @@
-import { api } from '../../barrels/api';
-import { interfaces } from '../../barrels/interfaces';
-import { constants } from '../../barrels/constants';
+import { api } from '~/barrels/api';
+import { interfaces } from '~/barrels/interfaces';
+import { constants } from '~/barrels/constants';
 import { wrapField } from './wrap-field';
-import { helper } from '../../barrels/helper';
+import { helper } from '~/barrels/helper';
 
 export function wrapModels(item: {
   structId: string;

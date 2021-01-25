@@ -1,8 +1,8 @@
-import { api } from '../../../../barrels/api';
-import { enums } from '../../../../barrels/enums';
-import { prepareTest } from '../../../../functions/prepare-test';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
+import { prepareTest } from '~/functions/prepare-test';
 import test from 'ava';
-import { helper } from '../../../../barrels/helper';
+import { helper } from '~/barrels/helper';
 import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.RebuildStruct;

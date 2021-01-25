@@ -1,2 +1,2 @@
-import * as barWrapper from '../models/wrapper/_index';
+import * as barWrapper from '~/models/wrapper/_index';
 export { barWrapper };

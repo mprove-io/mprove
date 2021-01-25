@@ -1,8 +1,8 @@
-import { interfaces } from '../../barrels/interfaces';
-import { api } from '../../barrels/api';
-import { BmError } from '../bm-error';
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { api } from '~/barrels/api';
+import { BmError } from '~/models/bm-error';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.RemoveWrongExt;

@@ -1,7 +1,7 @@
-import { interfaces } from '../../barrels/interfaces';
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
-import { constants } from '../../barrels/constants';
+import { interfaces } from '~/barrels/interfaces';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { constants } from '~/barrels/constants';
 
 let func = enums.FuncEnum.FindJoinsUsingJoinsDeps;
 

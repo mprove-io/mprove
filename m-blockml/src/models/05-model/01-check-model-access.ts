@@ -1,8 +1,8 @@
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
-import { BmError } from '../bm-error';
-import { interfaces } from '../../barrels/interfaces';
-import { barSpecial } from '../../barrels/bar-special';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { BmError } from '~/models/bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { barSpecial } from '~/barrels/bar-special';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckModelAccess;

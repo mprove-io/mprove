@@ -1,8 +1,8 @@
-import { log } from '../../helper/_index';
-import { enums } from '../../barrels/enums';
-import { interfaces } from '../../barrels/interfaces';
-import { BmError } from '../bm-error';
-import { api } from '../../barrels/api';
+import { log } from '~/helper/_index';
+import { enums } from '~/barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { BmError } from '~/models/bm-error';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.LogStruct;

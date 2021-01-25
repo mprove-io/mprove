@@ -1,7 +1,7 @@
-import { interfaces } from '../../barrels/interfaces';
-import { enums } from '../../barrels/enums';
-import { helper } from '../../barrels/helper';
-import { BmError } from '../bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { BmError } from '~/models/bm-error';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.DeduplicateFileNames;

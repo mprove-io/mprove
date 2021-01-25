@@ -1,8 +1,8 @@
-import { barField } from '../../barrels/bar-field';
-import { enums } from '../../barrels/enums';
-import { types } from '../../barrels/types';
-import { BmError } from '../../models/bm-error';
-import { api } from '../../barrels/api';
+import { barField } from '~/barrels/bar-field';
+import { enums } from '~/barrels/enums';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
+import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
 
 export function buildField<T extends types.vmdType>(

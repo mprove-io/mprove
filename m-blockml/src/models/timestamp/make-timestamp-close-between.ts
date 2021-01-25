@@ -1,4 +1,4 @@
-import { api } from '../../barrels/api';
+import { api } from '~/barrels/api';
 
 export function makeTimestampCloseBetween(item: {
   connection: api.ProjectConnection;

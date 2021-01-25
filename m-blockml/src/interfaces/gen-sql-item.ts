@@ -1,6 +1,6 @@
 import { Model } from './file-types/model';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 
 export interface GenSqlItem {
   weekStart: api.ProjectWeekStartEnum;

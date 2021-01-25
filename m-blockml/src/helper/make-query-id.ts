@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 
 export function makeQueryId(item: {
   sql: string[];

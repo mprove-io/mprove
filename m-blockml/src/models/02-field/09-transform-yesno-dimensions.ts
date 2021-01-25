@@ -1,8 +1,8 @@
-import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
-import { helper } from '../../barrels/helper';
-import { types } from '../../barrels/types';
-import { BmError } from '../bm-error';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.TransformYesNoDimensions;

@@ -1,9 +1,9 @@
-import { prepareTest } from '../../../../functions/prepare-test';
+import { prepareTest } from '~/functions/prepare-test';
 import test from 'ava';
-import { api } from '../../../../barrels/api';
-import { enums } from '../../../../barrels/enums';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
 import * as fse from 'fs-extra';
-import { helper } from '../../../../barrels/helper';
+import { helper } from '~/barrels/helper';
 
 let caller = enums.CallerEnum.RebuildStruct;
 let func = enums.FuncEnum.LogStruct;

@@ -1,4 +1,4 @@
-import { api } from '../barrels/api';
+import { api } from '~/barrels/api';
 import { isDefined } from './is-defined';
 
 export function toBoolean(x: string) {

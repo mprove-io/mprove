@@ -1,6 +1,6 @@
-import { interfaces } from '../../barrels/interfaces';
-import { api } from '../../barrels/api';
-import { helper } from '../../barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
 
 export function applyFilter(item: {
   filterFieldsConditions: interfaces.VarsSql['filterFieldsConditions'];

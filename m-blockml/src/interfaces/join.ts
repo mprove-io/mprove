@@ -1,4 +1,4 @@
-import { enums } from '../barrels/enums';
+import { enums } from '~/barrels/enums';
 import { View } from './file-types/view';
 
 export interface Join {

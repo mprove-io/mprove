@@ -1,9 +1,9 @@
-import { interfaces } from '../../barrels/interfaces';
-import { constants } from '../../barrels/constants';
-import { enums } from '../../barrels/enums';
-import { api } from '../../barrels/api';
-import { helper } from '../../barrels/helper';
-import { BmError } from '../bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { constants } from '~/barrels/constants';
+import { enums } from '~/barrels/enums';
+import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
+import { BmError } from '~/models/bm-error';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.MakeUdfsDict;

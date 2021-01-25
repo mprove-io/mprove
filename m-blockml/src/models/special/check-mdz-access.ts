@@ -1,7 +1,7 @@
-import { helper } from '../../barrels/helper';
-import { enums } from '../../barrels/enums';
-import { types } from '../../barrels/types';
-import { BmError } from '../bm-error';
+import { helper } from '~/barrels/helper';
+import { enums } from '~/barrels/enums';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
 import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckMdzAccess;

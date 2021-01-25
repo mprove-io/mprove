@@ -1,7 +1,7 @@
-import { enums } from '../../barrels/enums';
-import { BmError } from '../../models/bm-error';
-import { interfaces } from '../../barrels/interfaces';
-import { barJoin } from '../../barrels/bar-join';
+import { enums } from '~/barrels/enums';
+import { BmError } from '~/models/bm-error';
+import { interfaces } from '~/barrels/interfaces';
+import { barJoin } from '~/barrels/bar-join';
 import { ConfigService } from '@nestjs/config';
 
 export function buildJoin(

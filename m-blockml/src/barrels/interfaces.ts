@@ -1,2 +1,2 @@
-import * as interfaces from '../interfaces/_index';
+import * as interfaces from '~/interfaces/_index';
 export { interfaces };

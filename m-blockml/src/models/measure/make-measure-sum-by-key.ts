@@ -1,5 +1,5 @@
-import { api } from '../../barrels/api';
-import { constants } from '../../barrels/constants';
+import { api } from '~/barrels/api';
+import { constants } from '~/barrels/constants';
 
 export function makeMeasureSumByKey(item: {
   sqlKeyFinal: string;

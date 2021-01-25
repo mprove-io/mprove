@@ -1,4 +1,4 @@
-import { enums } from '../barrels/enums';
+import { enums } from '~/barrels/enums';
 import { VarsSql } from './vars-sql';
 
 export interface VarsSqlStep {
