@@ -12,8 +12,6 @@
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
-      // "@src/*": ["src/*"]
-      // "@src": "./dist"
       "~/*": ["./*"]
     }
   }

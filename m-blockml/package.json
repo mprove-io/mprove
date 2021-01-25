@@ -12,7 +12,7 @@
     "start:prod": "node dist/main",
     "clean-dist": "rimraf \"./dist\"",
     "clean-logs": "rimraf \"./src/models/**/logs\"",
-    "t": "npm run clean-dist && npm run clean-logs && tsc && ava --config=ava-test.config.js",
+    "t": "npm run clean-dist && npm run clean-logs && tsc && ava --config=ava-js.config.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
     "test": "npm run lint && npm run circular && npm run t"
@@ -31,6 +31,7 @@
     "d3-format": "^1.4.5",
     "dotenv": "^8.2.0",
     "fs-extra": "^9.0.1",
+    "module-alias": "^2.2.2",
     "p-iteration": "^1.1.8",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -45,6 +46,7 @@
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
+    "@philidem/rewrite-relative-paths": "^1.1.1",
     "@types/express": "^4.17.3",
     "@types/fs-extra": "^9.0.1",
     "@types/node": "^13.9.1",
@@ -60,5 +62,8 @@
     "ts-loader": "^6.2.1",
     "ts-node": "9.1.1",
     "tsconfig-paths": "^3.9.0"
+  },
+  "_moduleAliases": {
+    "~": "dist"
   }
 }

@@ -29,7 +29,7 @@ cp -rf m-common/prettier/.prettierrc.yaml m-blockml/.prettierrc.yaml
 
 rm -rf m-backend/src/api
 mkdir m-backend/src/api
-cp -rf m-common/ts/src/ m-backend/src/api
+cp -rf m-common/ts/src/api/ m-backend/src/api
 
 rm -rf m-disk/src/api
 mkdir m-disk/src/api
@@ -37,7 +37,7 @@ cp -rf m-common/ts/src/api/ m-disk/src/api
 
 rm -rf m-blockml/src/api
 mkdir m-blockml/src/api
-cp -rf m-common/ts/src/ m-blockml/src/api
+cp -rf m-common/ts/src/api/ m-blockml/src/api
 
 ############################## OLD ##############################
 
