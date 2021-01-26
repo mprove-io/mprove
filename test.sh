@@ -7,8 +7,6 @@ then
   echo "$backendOutput"
   echo "backend Fail!"
   exit 1
-else 
-  echo "Backend Success!"
 fi
 
 echo "Testing Disk..."
@@ -18,8 +16,6 @@ then
   echo "$diskOutput"
   echo "disk Fail!"
   exit 1
-else 
-  echo "Disk Success!"
 fi
 
 echo "Testing Blockml..."
@@ -29,8 +25,6 @@ then
   echo "$blockmlOutput"
   echo "blockml Fail!"
   exit 1
-else 
-  echo "Blockml Success!"
 fi
 
 echo "Ok!"
