@@ -1,9 +1,9 @@
+import test from 'ava';
+import * as fse from 'fs-extra';
 import { api } from '~/barrels/api';
 import { enums } from '~/barrels/enums';
-import { prepareTest } from '~/functions/prepare-test';
-import test from 'ava';
 import { helper } from '~/barrels/helper';
-import * as fse from 'fs-extra';
+import { prepareTest } from '~/functions/prepare-test';
 
 let caller = enums.CallerEnum.RebuildStruct;
 let func = enums.FuncEnum.CollectFiles;

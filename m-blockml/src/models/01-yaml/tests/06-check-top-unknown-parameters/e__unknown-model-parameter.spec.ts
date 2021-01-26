@@ -1,11 +1,10 @@
-import { api } from '~/barrels/api';
-import { helper } from '~/barrels/helper';
-import { enums } from '~/barrels/enums';
-import { interfaces } from '~/barrels/interfaces';
-import { prepareTest } from '~/functions/prepare-test';
 import test from 'ava';
-import { BmError } from '~/models/bm-error';
 import * as fse from 'fs-extra';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { prepareTest } from '~/functions/prepare-test';
+import { BmError } from '~/models/bm-error';
 
 let caller = enums.CallerEnum.BuildYaml;
 let func = enums.FuncEnum.CheckTopUnknownParameters;

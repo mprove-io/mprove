@@ -1,4 +1,3 @@
-import { MessageService } from './services/message.service';
 import { CreateOrganizationService } from './services/01-organizations/create-organization.service';
 import { DeleteOrganizationService } from './services/01-organizations/delete-organization.service';
 import { IsOrganizationExistService } from './services/01-organizations/is-organization-exist.service';
@@ -27,6 +26,7 @@ import { DeleteFileService } from './services/07-files/delete-file.service';
 import { GetFileService } from './services/07-files/get-file.service';
 import { SaveFileService } from './services/07-files/save-file.service';
 import { SeedProjectService } from './services/08-seed/seed-project.service';
+import { MessageService } from './services/message.service';
 
 export const coreServices = [
   MessageService,

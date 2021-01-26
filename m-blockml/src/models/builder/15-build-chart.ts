@@ -1,8 +1,8 @@
-import { enums } from '~/barrels/enums';
-import { BmError } from '~/models/bm-error';
-import { barChart } from '~/barrels/bar-chart';
-import { types } from '~/barrels/types';
 import { ConfigService } from '@nestjs/config';
+import { barChart } from '~/barrels/bar-chart';
+import { enums } from '~/barrels/enums';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
 
 export function buildChart<T extends types.dzType>(
   item: {

@@ -1,7 +1,7 @@
+import { ConfigService } from '@nestjs/config';
+import * as util from 'util';
 import * as apiEnums from '~/api/enums/_index';
 import * as apiObjects from '~/api/objects/_index';
-import * as util from 'util';
-import { ConfigService } from '@nestjs/config';
 
 export function logToConsole(
   object: any,

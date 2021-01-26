@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
 import { interfaces } from '~/barrels/interfaces';
 import { SeedProjectService } from '~/services/08-seed/seed-project.service';
 

@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { api } from './barrels/api';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { interfaces } from './barrels/interfaces';
-import { getConfig } from './config/get.config';
-import { enums } from './barrels/enums';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
+import { api } from './barrels/api';
+import { enums } from './barrels/enums';
+import { interfaces } from './barrels/interfaces';
+import { getConfig } from './config/get.config';
 
 @Module({
   imports: [

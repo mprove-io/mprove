@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
 import { interfaces } from '~/barrels/interfaces';
 import { RevertRepoToLastCommitService } from '~/services/03-repos/revert-repo-to-last-commit.service';
 

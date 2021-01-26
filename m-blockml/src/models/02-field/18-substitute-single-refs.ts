@@ -1,10 +1,10 @@
-import { enums } from '~/barrels/enums';
-import { api } from '~/barrels/api';
-import { helper } from '~/barrels/helper';
-import { types } from '~/barrels/types';
-import { interfaces } from '~/barrels/interfaces';
-import { BmError } from '~/models/bm-error';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
 
 let func = enums.FuncEnum.SubstituteSingleRefs;
 

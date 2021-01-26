@@ -1,8 +1,8 @@
 import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { enums } from '~/barrels/enums';
 import { constants } from '~/barrels/constants';
+import { enums } from '~/barrels/enums';
 import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
 
 let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
 

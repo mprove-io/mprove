@@ -1,8 +1,8 @@
 import { api } from '~/barrels/api';
-import { enums } from '~/barrels/enums';
-import { constants } from '~/barrels/constants';
-import { helper } from '~/barrels/helper';
 import { barTimestamp } from '~/barrels/bar-timestamp';
+import { constants } from '~/barrels/constants';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
 
 export function processFilter(item: {
   filterBricks: string[];

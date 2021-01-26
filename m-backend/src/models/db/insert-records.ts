@@ -1,10 +1,7 @@
-import { api } from '~/barrels/api';
-import { helper } from '~/barrels/helper';
-import { enums } from '~/barrels/enums';
-import { gen } from '~/barrels/gen';
 import { EntityManager } from 'typeorm';
-import { repositories } from '~/barrels/repositories';
 import { entities } from '~/barrels/entities';
+import { helper } from '~/barrels/helper';
+import { repositories } from '~/barrels/repositories';
 
 export async function insertRecords(item: {
   manager: EntityManager;

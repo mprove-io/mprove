@@ -1,11 +1,10 @@
-import { enums } from '~/barrels/enums';
-import { api } from '~/barrels/api';
-import { helper } from '~/barrels/helper';
-import { BmError } from '~/models/bm-error';
-import { interfaces } from '~/barrels/interfaces';
-import { constants } from '~/barrels/constants';
-import { types } from '~/barrels/types';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
+import { constants } from '~/barrels/constants';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
 
 let func = enums.FuncEnum.CheckChartData;
 

@@ -1,10 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { RabbitService } from '~/services/rabbit.service';
-import { makeRoutingKeyToDisk } from '~/helper/make-routing-key-to-disk';
-import { api } from '~/barrels/api';
-import { ServerError } from '~/api/_index';
 import { ConfigService } from '@nestjs/config';
+import { ServerError } from '~/api/_index';
+import { api } from '~/barrels/api';
 import { interfaces } from '~/barrels/interfaces';
+import { makeRoutingKeyToDisk } from '~/helper/make-routing-key-to-disk';
+import { RabbitService } from '~/services/rabbit.service';
 
 @Controller()
 export class RebuildStructSpecialController {

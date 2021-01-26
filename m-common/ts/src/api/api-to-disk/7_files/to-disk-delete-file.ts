@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '~/api/objects/_index';
 import * as apiEnums from '~/api/enums/_index';
+import * as apiObjects from '~/api/objects/_index';
 
 export class ToDiskDeleteFileRequestPayload {
   @IsString()

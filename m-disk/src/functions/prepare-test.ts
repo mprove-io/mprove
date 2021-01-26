@@ -3,11 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
 import { interfaces } from '~/barrels/interfaces';
-import { AppModule } from '~/app.module';
-import { MessageService } from '~/services/message.service';
 import { getConfig } from '~/config/get.config';
-import { api } from '~/barrels/api';
 import { coreServices } from '~/core-services';
+import { MessageService } from '~/services/message.service';
 
 export async function prepareTest(organizationId: string) {
   let app: INestApplication;

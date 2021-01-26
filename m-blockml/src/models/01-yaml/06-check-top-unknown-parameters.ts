@@ -1,9 +1,9 @@
-import { constants } from '~/barrels/constants';
+import { ConfigService } from '@nestjs/config';
 import { api } from '~/barrels/api';
+import { constants } from '~/barrels/constants';
 import { enums } from '~/barrels/enums';
 import { helper } from '~/barrels/helper';
 import { BmError } from '~/models/bm-error';
-import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckTopUnknownParameters;
 

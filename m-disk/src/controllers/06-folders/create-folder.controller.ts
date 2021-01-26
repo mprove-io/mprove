@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
 import { interfaces } from '~/barrels/interfaces';
 import { CreateFolderService } from '~/services/06-folders/create-folder.service';
 

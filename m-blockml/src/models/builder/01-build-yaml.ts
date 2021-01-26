@@ -1,9 +1,9 @@
+import { ConfigService } from '@nestjs/config';
 import { api } from '~/barrels/api';
-import { enums } from '~/barrels/enums';
 import { barYaml } from '~/barrels/bar-yaml';
+import { enums } from '~/barrels/enums';
 import { interfaces } from '~/barrels/interfaces';
 import { BmError } from '~/models/bm-error';
-import { ConfigService } from '@nestjs/config';
 
 export function buildYaml(
   item: {

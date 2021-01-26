@@ -1,12 +1,11 @@
+import { ConfigService } from '@nestjs/config';
 import * as y from 'js-yaml';
-import { interfaces } from '~/barrels/interfaces';
-import { enums } from '~/barrels/enums';
-import { helper } from '~/barrels/helper';
 import { api } from '~/barrels/api';
 import { constants } from '~/barrels/constants';
-
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
 import { BmError } from '~/models/bm-error';
-import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.YamlToObjects;
 

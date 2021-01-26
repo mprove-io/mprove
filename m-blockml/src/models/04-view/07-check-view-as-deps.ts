@@ -1,10 +1,10 @@
-import { helper } from '~/barrels/helper';
-import { enums } from '~/barrels/enums';
-import { api } from '~/barrels/api';
-import { BmError } from '~/models/bm-error';
-import { interfaces } from '~/barrels/interfaces';
-import { constants } from '~/barrels/constants';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
+import { constants } from '~/barrels/constants';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
+import { BmError } from '~/models/bm-error';
 
 let func = enums.FuncEnum.CheckViewAsDeps;
 

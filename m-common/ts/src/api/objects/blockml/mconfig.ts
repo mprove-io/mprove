@@ -1,6 +1,4 @@
-import { Sorting } from './sorting';
-import { Filter } from './filter';
-import { Chart } from './chart';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
@@ -8,7 +6,9 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Chart } from './chart';
+import { Filter } from './filter';
+import { Sorting } from './sorting';
 
 export class Mconfig {
   @IsString()

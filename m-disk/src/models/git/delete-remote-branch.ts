@@ -1,5 +1,5 @@
-import { api } from '~/barrels/api';
 import * as nodegit from 'nodegit';
+import { api } from '~/barrels/api';
 import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function deleteRemoteBranch(item: {

@@ -1,8 +1,8 @@
-import { enums } from '~/barrels/enums';
-import { BmError } from '~/models/bm-error';
-import { interfaces } from '~/barrels/interfaces';
-import { barSortJoins } from '~/barrels/bar-sort-joins';
 import { ConfigService } from '@nestjs/config';
+import { barSortJoins } from '~/barrels/bar-sort-joins';
+import { enums } from '~/barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { BmError } from '~/models/bm-error';
 
 export function buildSortJoins(
   item: {

@@ -1,11 +1,11 @@
+import test from 'ava';
+import * as fse from 'fs-extra';
 import { api } from '~/barrels/api';
 import { enums } from '~/barrels/enums';
-import { interfaces } from '~/barrels/interfaces';
 import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
 import { prepareTest } from '~/functions/prepare-test';
-import test from 'ava';
 import { BmError } from '~/models/bm-error';
-import * as fse from 'fs-extra';
 
 let caller = enums.CallerEnum.BuildDashboardReport;
 let func = enums.FuncEnum.CheckTimezone;

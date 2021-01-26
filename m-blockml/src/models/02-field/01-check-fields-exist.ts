@@ -1,9 +1,9 @@
-import { helper } from '~/barrels/helper';
-import { enums } from '~/barrels/enums';
-import { BmError } from '~/models/bm-error';
-import { types } from '~/barrels/types';
-import { api } from '~/barrels/api';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { types } from '~/barrels/types';
+import { BmError } from '~/models/bm-error';
 
 let func = enums.FuncEnum.CheckFieldsExist;
 

@@ -1,9 +1,9 @@
-import { enums } from '~/barrels/enums';
+import { ConfigService } from '@nestjs/config';
 import { api } from '~/barrels/api';
+import { enums } from '~/barrels/enums';
 import { helper } from '~/barrels/helper';
 import { types } from '~/barrels/types';
 import { BmError } from '~/models/bm-error';
-import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.SetImplicitLabel;
 

@@ -1,6 +1,6 @@
 import { api } from '~/barrels/api';
-import { ChartData } from './chart/chart-data';
 import { ChartAxis } from './chart/chart-axis';
+import { ChartData } from './chart/chart-data';
 import { ChartOptions } from './chart/chart-options';
 import { ChartTile } from './chart/chart-tile';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';

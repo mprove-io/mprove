@@ -1,7 +1,7 @@
 import { api } from '~/barrels/api';
+import { constants } from '~/barrels/constants';
 import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
-import { constants } from '~/barrels/constants';
 
 export function wrapReports(item: {
   structId: string;

@@ -1,8 +1,8 @@
-import { enums } from '~/barrels/enums';
-import { BmError } from '~/models/bm-error';
-import { interfaces } from '~/barrels/interfaces';
-import { barJoinSqlOn } from '~/barrels/bar-join-sql-on';
 import { ConfigService } from '@nestjs/config';
+import { barJoinSqlOn } from '~/barrels/bar-join-sql-on';
+import { enums } from '~/barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { BmError } from '~/models/bm-error';
 
 export function buildJoinSqlOn(
   item: {

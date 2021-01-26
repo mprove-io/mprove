@@ -1,8 +1,7 @@
-import { FileBasic } from '~/interfaces/file/file-basic';
 import { FieldAny } from '~/interfaces/field/field-any';
-import { Report } from '~/interfaces/report';
-import { api } from '~/barrels/api';
+import { FileBasic } from '~/interfaces/file/file-basic';
 import { FilterBricksDictionary } from '~/interfaces/filter-bricks-dictionary';
+import { Report } from '~/interfaces/report';
 
 export interface Dashboard extends FileBasic {
   dashboard?: string;

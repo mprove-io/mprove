@@ -1,13 +1,12 @@
-import { helper } from '~/barrels/helper';
-import { api } from '~/barrels/api';
-import { UsersService } from '~/services/users.service';
-import { db } from '~/barrels/db';
-
 import { Body, Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { gen } from '~/barrels/gen';
 import { ConfigService } from '@nestjs/config';
+import { Connection } from 'typeorm';
+import { api } from '~/barrels/api';
+import { db } from '~/barrels/db';
+import { gen } from '~/barrels/gen';
+import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
+import { UsersService } from '~/services/users.service';
 
 @Controller()
 export class RegisterUserController {

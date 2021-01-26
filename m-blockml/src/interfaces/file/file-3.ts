@@ -1,4 +1,3 @@
-import { IsEnum, IsString } from 'class-validator';
 import { api } from '~/barrels/api';
 
 export interface File3 {

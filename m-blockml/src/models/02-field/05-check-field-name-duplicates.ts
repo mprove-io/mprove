@@ -1,9 +1,9 @@
+import { ConfigService } from '@nestjs/config';
 import { enums } from '~/barrels/enums';
-import { interfaces } from '~/barrels/interfaces';
 import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
 import { types } from '~/barrels/types';
 import { BmError } from '~/models/bm-error';
-import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.CheckFieldNameDuplicates;
 

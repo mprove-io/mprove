@@ -1,7 +1,7 @@
-import { api } from '~/barrels/api';
-import { disk } from '~/barrels/disk';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { api } from '~/barrels/api';
+import { disk } from '~/barrels/disk';
 import { interfaces } from '~/barrels/interfaces';
 
 @Injectable()

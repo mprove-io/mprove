@@ -1,9 +1,8 @@
-import { FileBasic } from '~/interfaces/file/file-basic';
-import { FieldAny } from '~/interfaces/field/field-any';
 import { api } from '~/barrels/api';
+import { FieldAny } from '~/interfaces/field/field-any';
+import { FileBasic } from '~/interfaces/file/file-basic';
 import { FilterBricksDictionary } from '~/interfaces/filter-bricks-dictionary';
 import { ViewPart } from '~/interfaces/view-part';
-import { VarsSub } from '~/interfaces/vars-sub';
 
 export interface View extends FileBasic {
   view?: string;

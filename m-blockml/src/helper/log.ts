@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
 import { enums } from '~/barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
 
 export function log(
   cs: ConfigService<interfaces.Config>,

@@ -1,14 +1,11 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import asyncPool from 'tiny-async-pool';
 import { api } from '~/barrels/api';
-import { enums } from '~/barrels/enums';
-import { interfaces } from '~/barrels/interfaces';
-import { constants } from '~/barrels/constants';
 import { barSpecial } from '~/barrels/bar-special';
 import { barWrapper } from '~/barrels/bar-wrapper';
+import { interfaces } from '~/barrels/interfaces';
 import { RabbitService } from './rabbit.service';
-
-import { Injectable } from '@nestjs/common';
-import asyncPool from 'tiny-async-pool';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DashboardService {

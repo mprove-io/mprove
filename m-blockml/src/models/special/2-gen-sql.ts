@@ -1,8 +1,8 @@
-import { interfaces } from '~/barrels/interfaces';
+import { ConfigService } from '@nestjs/config';
 import { api } from '~/barrels/api';
 import { barSql } from '~/barrels/bar-sql';
+import { interfaces } from '~/barrels/interfaces';
 import { RabbitService } from '~/services/rabbit.service';
-import { ConfigService } from '@nestjs/config';
 
 export async function genSql(
   rabbitService: RabbitService,

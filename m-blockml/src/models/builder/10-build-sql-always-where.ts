@@ -1,8 +1,8 @@
-import { enums } from '~/barrels/enums';
-import { BmError } from '~/models/bm-error';
-import { interfaces } from '~/barrels/interfaces';
-import { barSqlAlwaysWhere } from '~/barrels/bar-sql-always-where';
 import { ConfigService } from '@nestjs/config';
+import { barSqlAlwaysWhere } from '~/barrels/bar-sql-always-where';
+import { enums } from '~/barrels/enums';
+import { interfaces } from '~/barrels/interfaces';
+import { BmError } from '~/models/bm-error';
 
 export function buildSqlAlwaysWhere(
   item: {

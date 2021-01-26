@@ -1,6 +1,6 @@
-import { interfaces } from '~/barrels/interfaces';
-import { helper } from '~/barrels/helper';
 import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
 
 let func = enums.FuncEnum.MakeNeedsAll;
 

@@ -1,14 +1,12 @@
-import { api } from '~/barrels/api';
-import { helper } from '~/barrels/helper';
-import { enums } from '~/barrels/enums';
-import { gen } from '~/barrels/gen';
-import { db } from '~/barrels/db';
-import { repositories } from '~/barrels/repositories';
-import { entities } from '~/barrels/entities';
-
 import { Injectable } from '@nestjs/common';
-import { Connection, In } from 'typeorm';
 import * as crypto from 'crypto';
+import { Connection, In } from 'typeorm';
+import { api } from '~/barrels/api';
+import { db } from '~/barrels/db';
+import { entities } from '~/barrels/entities';
+import { gen } from '~/barrels/gen';
+import { helper } from '~/barrels/helper';
+import { repositories } from '~/barrels/repositories';
 
 @Injectable()
 export class UsersService {

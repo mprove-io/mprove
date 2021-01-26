@@ -1,19 +1,18 @@
-import { api } from './barrels/api';
-import { appControllers } from './app-controllers';
-import { helper } from './barrels/helper';
-import { UsersService } from './services/users.service';
-
-import { Module, OnModuleInit } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { Module, OnModuleInit } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { appProviders } from './app-providers';
+import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
+import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { api } from './barrels/api';
+import { enums } from './barrels/enums';
+import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
-import { enums } from './barrels/enums';
+import { UsersService } from './services/users.service';
 
 @Module({
   imports: [

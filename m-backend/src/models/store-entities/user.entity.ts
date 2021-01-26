@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { api } from '~/barrels/api';
 import { constants } from '~/barrels/constants';
-import { enums } from '~/barrels/enums';
 
 @Entity('user')
 export class UserEntity {

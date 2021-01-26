@@ -1,8 +1,8 @@
-import { helper } from '~/barrels/helper';
+import { ConfigService } from '@nestjs/config';
 import { enums } from '~/barrels/enums';
+import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
 import { BmError } from '~/models/bm-error';
-import { ConfigService } from '@nestjs/config';
 
 let func = enums.FuncEnum.PickUdfsFromAsDeps;
 

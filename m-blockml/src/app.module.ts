@@ -1,19 +1,19 @@
-import { Module } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { ConsumerMainService } from './services/consumer-main.service';
-import { api } from './barrels/api';
-import { StructService } from './services/struct.service';
-import { QueryService } from './services/query.service';
-import { DashboardService } from './services/dashboard.service';
-import { ConsumerWorkerService } from './services/consumer-worker.service';
-import { RabbitService } from './services/rabbit.service';
-import { getConfig } from './config/get.config';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { interfaces } from './barrels/interfaces';
-import { helper } from './barrels/helper';
-import { enums } from './barrels/enums';
 import { appControllers } from './app-controllers';
+import { api } from './barrels/api';
+import { enums } from './barrels/enums';
+import { helper } from './barrels/helper';
+import { interfaces } from './barrels/interfaces';
+import { getConfig } from './config/get.config';
+import { ConsumerMainService } from './services/consumer-main.service';
+import { ConsumerWorkerService } from './services/consumer-worker.service';
+import { DashboardService } from './services/dashboard.service';
 import { GenSqlService } from './services/gen-sql.service';
+import { QueryService } from './services/query.service';
+import { RabbitService } from './services/rabbit.service';
+import { StructService } from './services/struct.service';
 
 @Module({
   imports: [

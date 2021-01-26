@@ -1,6 +1,6 @@
+import test from 'ava';
 import { api } from '~/barrels/api';
 import { prepareTest } from '~/functions/prepare-test';
-import test from 'ava';
 
 let testId = 'save-file__local';
 

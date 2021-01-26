@@ -1,11 +1,10 @@
+import { ConfigService } from '@nestjs/config';
+import { formatSpecifier } from 'd3-format';
+import { api } from '~/barrels/api';
 import { enums } from '~/barrels/enums';
 import { helper } from '~/barrels/helper';
-import { BmError } from '~/models/bm-error';
 import { types } from '~/barrels/types';
-import { api } from '~/barrels/api';
-
-import { formatSpecifier } from 'd3-format';
-import { ConfigService } from '@nestjs/config';
+import { BmError } from '~/models/bm-error';
 
 let func = enums.FuncEnum.CheckAndSetImplicitFormatNumber;
 

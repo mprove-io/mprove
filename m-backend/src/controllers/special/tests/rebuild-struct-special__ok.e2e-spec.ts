@@ -1,8 +1,8 @@
-import { api } from '~/barrels/api';
-import { prepareTest } from '~/functions/prepare-test';
-import { interfaces } from '~/barrels/interfaces';
 import test from 'ava';
+import { api } from '~/barrels/api';
 import { helper } from '~/barrels/helper';
+import { interfaces } from '~/barrels/interfaces';
+import { prepareTest } from '~/functions/prepare-test';
 
 let testId = 'rebuild-struct-special__ok';
 
