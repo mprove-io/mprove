@@ -4,32 +4,32 @@ import { enums } from '~/barrels/enums';
 
 export class Config extends api.Config {
   @IsEnum(enums.BackendEnvEnum)
-  backendEnv: enums.BackendEnvEnum;
+  backendEnv?: enums.BackendEnvEnum;
 
   @IsEnum(api.BoolEnum)
-  backendDropDatabaseOnStart: api.BoolEnum;
+  backendDropDatabaseOnStart?: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
-  backendSyncDatabaseOnStart: api.BoolEnum;
+  backendSyncDatabaseOnStart?: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
-  backendRegisterOnlyInvitedUsers: api.BoolEnum;
+  backendRegisterOnlyInvitedUsers?: api.BoolEnum;
 
   @IsString()
-  backendFirstUserEmail: string;
+  backendFirstUserEmail?: string;
 
   @IsString()
-  backendFirstUserPassword: string;
+  backendFirstUserPassword?: string;
 
   @IsString()
-  rabbitmqDefaultUser: string;
+  rabbitmqDefaultUser?: string;
 
   @IsString()
-  rabbitmqDefaultPass: string;
+  rabbitmqDefaultPass?: string;
 
   @IsString()
-  mysqlRootPassword: string;
+  mysqlRootPassword?: string;
 
   @IsString()
-  mysqlDatabase: string;
+  mysqlDatabase?: string;
 }

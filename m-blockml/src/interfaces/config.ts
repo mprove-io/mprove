@@ -4,32 +4,32 @@ import { enums } from '~/barrels/enums';
 
 export class Config extends api.Config {
   @IsEnum(enums.BlockmlEnvEnum)
-  blockmlEnv: enums.BlockmlEnvEnum;
+  blockmlEnv?: enums.BlockmlEnvEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlLogIO: api.BoolEnum;
+  blockmlLogIO?: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlCopyLogsToModels: api.BoolEnum;
+  blockmlCopyLogsToModels?: api.BoolEnum;
 
   @IsString()
-  blockmlLogsPath: string;
+  blockmlLogsPath?: string;
 
   @IsEnum(api.BoolEnum)
-  blockmlIsSingle: api.BoolEnum;
+  blockmlIsSingle?: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlIsMain: api.BoolEnum;
+  blockmlIsMain?: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlIsWorker: api.BoolEnum;
+  blockmlIsWorker?: api.BoolEnum;
 
   @IsInt()
-  blockmlConcurrencyLimit: number;
+  blockmlConcurrencyLimit?: number;
 
   @IsString()
-  rabbitmqDefaultUser: string;
+  rabbitmqDefaultUser?: string;
 
   @IsString()
-  rabbitmqDefaultPass: string;
+  rabbitmqDefaultPass?: string;
 }

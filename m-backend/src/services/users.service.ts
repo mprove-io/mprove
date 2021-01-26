@@ -78,7 +78,7 @@ export class UsersService {
     });
 
     await this.connection.transaction(async manager => {
-      await db.insertRecords({
+      await db.addRecords({
         manager: manager,
         records: {
           users: [user]

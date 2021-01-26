@@ -1,20 +1,34 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '~/app.module';
 import { api } from '~/barrels/api';
 import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
+import { getConfig } from '~/config/get.config';
 import { RabbitService } from '~/services/rabbit.service';
 
 export async function prepareTest(item: {
   traceId: string;
   seedRecordsPayload?: api.ToBackendSeedRecordsRequestPayload;
   deleteRecordsPayload?: api.ToBackendDeleteRecordsRequestPayload;
+  overrideConfigOptions?: interfaces.Config;
 }) {
-  let { traceId, seedRecordsPayload, deleteRecordsPayload } = item;
+  let {
+    traceId,
+    seedRecordsPayload,
+    deleteRecordsPayload,
+    overrideConfigOptions
+  } = item;
+
+  let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
+  const mockConfigService = { get: key => mockConfig[key] };
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [AppModule]
-  }).compile();
+  })
+    .overrideProvider(ConfigService)
+    .useValue(mockConfigService)
+    .compile();
 
   let app = moduleRef.createNestApplication();
   await app.init();

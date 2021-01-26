@@ -63,7 +63,7 @@ export class SeedRecordsController {
       }
 
       await this.connection.transaction(async manager => {
-        await db.insertRecords({
+        await db.addRecords({
           manager: manager,
           records: {
             users: users

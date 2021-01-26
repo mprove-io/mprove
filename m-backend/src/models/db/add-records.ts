@@ -3,7 +3,7 @@ import { entities } from '~/barrels/entities';
 import { helper } from '~/barrels/helper';
 import { repositories } from '~/barrels/repositories';
 
-export async function saveRecords(item: {
+export async function addRecords(item: {
   manager: EntityManager;
   // sourceInitId: string;
   // skipChunk?: boolean;
@@ -29,14 +29,14 @@ export async function saveRecords(item: {
     helper.refreshServerTs(records[key], newServerTs);
   });
 
-  // if (!item.skipChunk) {
+  // if (!item.skip_chunk) {
   //   let chunkId = helper.makeId();
 
-  //   let chunk = generator.makeChunk({
+  //   let chunk = gen.makeChunk({
   //     chunk_id: chunkId,
   //     records: item.records,
-  //     source_session_id: item.sourceInitId,
-  //     server_ts: item.serverTs
+  //     source_session_id: item.source_init_id,
+  //     server_ts: item.server_ts
   //   });
 
   //   let storeChunks = getChunksRepo(manager);
@@ -61,72 +61,81 @@ export async function saveRecords(item: {
   if (helper.isDefined(users) && users.length > 0) {
     let storeUsers = manager.getCustomRepository(repositories.UserRepository);
 
-    await storeUsers.save(users);
+    await storeUsers.insert(users);
+    // .catch(e =>
+    //   helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_INSERT)
+    // )
   }
 
   // if (projects && projects.length > 0) {
   //   let storeProjects = getProjectsRepo(manager);
 
   //   await storeProjects
-  //     .save(projects)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_SAVE));
+  //     .insert(projects)
+  //     .catch(e =>
+  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_INSERT)
+  //     );
   // }
 
   // if (repos && repos.length > 0) {
   //   let storeRepos = getReposRepo(manager);
 
   //   await storeRepos
-  //     .save(repos)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_SAVE));
+  //     .insert(repos)
+  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_INSERT));
   // }
 
   // if (files && files.length > 0) {
   //   let storeFiles = getFilesRepo(manager);
 
   //   await storeFiles
-  //     .save(files)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_SAVE));
+  //     .insert(files)
+  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_INSERT));
   // }
 
   // if (queries && queries.length > 0) {
   //   let storeQueries = getQueriesRepo(manager);
 
   //   await storeQueries
-  //     .save(queries)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_SAVE));
+  //     .insert(queries)
+  //     .catch(e =>
+  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_INSERT)
+  //     );
   // }
 
   // if (models && models.length > 0) {
   //   let storeModels = getModelsRepo(manager);
 
   //   await storeModels
-  //     .save(models)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_SAVE));
+  //     .insert(models)
+  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_INSERT));
   // }
 
   // if (views && views.length > 0) {
   //   let storeViews = getViewsRepo(manager);
 
   //   await storeViews
-  //     .save(views)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_SAVE));
+  //     .insert(views)
+  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_INSERT));
   // }
 
   // if (mconfigs && mconfigs.length > 0) {
   //   let storeMconfigs = getMconfigsRepo(manager);
 
   //   await storeMconfigs
-  //     .save(mconfigs)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_SAVE));
+  //     .insert(mconfigs)
+  //     .catch(e =>
+  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_INSERT)
+  //     );
   // }
 
   // if (dashboards && dashboards.length > 0) {
   //   let storeDashboards = getDashboardsRepo(manager);
 
   //   await storeDashboards
-  //     .save(dashboards)
+  //     .insert(dashboards)
   //     .catch(e =>
-  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_SAVE)
+  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_INSERT)
   //     );
   // }
 
@@ -134,15 +143,17 @@ export async function saveRecords(item: {
   //   let storeErrors = getErrorsRepo(manager);
 
   //   await storeErrors
-  //     .save(errors)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_SAVE));
+  //     .insert(errors)
+  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_INSERT));
   // }
 
   // if (members && members.length > 0) {
   //   let storeMembers = getMembersRepo(manager);
 
   //   await storeMembers
-  //     .save(members)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_SAVE));
+  //     .insert(members)
+  //     .catch(e =>
+  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_INSERT)
+  //     );
   // }
 }

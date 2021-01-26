@@ -4,14 +4,14 @@ import { enums } from '~/barrels/enums';
 
 export class Config extends api.Config {
   @IsEnum(enums.DiskEnvEnum)
-  diskEnv: enums.DiskEnvEnum;
+  diskEnv?: enums.DiskEnvEnum;
 
   @IsString()
-  rabbitmqDefaultUser: string;
+  rabbitmqDefaultUser?: string;
 
   @IsString()
-  rabbitmqDefaultPass: string;
+  rabbitmqDefaultPass?: string;
 
   @IsString()
-  mDataOrgPath: string;
+  mDataOrgPath?: string;
 }

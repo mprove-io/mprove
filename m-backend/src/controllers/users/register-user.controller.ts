@@ -29,7 +29,6 @@ export class RegisterUserController {
 
       let { salt, hash } = this.usersService.makeSaltAndHash(password);
 
-      // including deleted
       let user = await this.usersService.findOneById(userId);
 
       if (helper.isDefined(user)) {
@@ -38,11 +37,10 @@ export class RegisterUserController {
             message: api.ErEnum.M_BACKEND_USER_ALREADY_REGISTERED
           });
         } else {
-          // update user
           user.hash = hash;
           user.salt = salt;
           await this.connection.transaction(async manager => {
-            await db.saveRecords({
+            await db.modifyRecords({
               manager: manager,
               records: {
                 users: [user]
@@ -61,27 +59,26 @@ export class RegisterUserController {
           throw new api.ServerError({
             message: api.ErEnum.M_BACKEND_USER_IS_NOT_INVITED
           });
-        }
+        } else {
+          let alias = await this.usersService.makeAlias(userId);
 
-        let alias = await this.usersService.makeAlias(userId);
-
-        let newUser = gen.makeUser({
-          userId: userId,
-          isEmailVerified: api.BoolEnum.FALSE,
-          hash: hash,
-          salt: salt,
-          alias: alias
-        });
-
-        // create user
-        await this.connection.transaction(async manager => {
-          await db.insertRecords({
-            manager: manager,
-            records: {
-              users: [newUser]
-            }
+          let newUser = gen.makeUser({
+            userId: userId,
+            isEmailVerified: api.BoolEnum.FALSE,
+            hash: hash,
+            salt: salt,
+            alias: alias
           });
-        });
+
+          await this.connection.transaction(async manager => {
+            await db.addRecords({
+              manager: manager,
+              records: {
+                users: [newUser]
+              }
+            });
+          });
+        }
       }
 
       let payload: api.ToBackendRegisterUserResponsePayload = {
