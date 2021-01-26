@@ -33,7 +33,6 @@
     "fs-extra": "^9.0.1",
     "module-alias": "^2.2.2",
     "p-iteration": "^1.1.8",
-    "prettier-plugin-organize-imports": "^1.1.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
@@ -44,6 +43,7 @@
     "walk": "^2.3.9"
   },
   "devDependencies": {
+    "prettier-plugin-organize-imports": "^1.1.1",
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
