@@ -15,7 +15,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "circular": "madge --circular --extensions ts src",
     "test": "npm run lint && npm run circular && npm run t",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
+    "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^1.15.2",
