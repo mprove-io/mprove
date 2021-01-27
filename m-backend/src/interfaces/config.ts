@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsString } from 'class-validator';
 import { api } from '~/barrels/api';
 import { enums } from '~/barrels/enums';
 
@@ -6,21 +6,51 @@ export class Config extends api.Config {
   @IsEnum(enums.BackendEnvEnum)
   backendEnv?: enums.BackendEnvEnum;
 
-  @IsEnum(api.BoolEnum)
-  backendDropDatabaseOnStart?: api.BoolEnum;
-
-  @IsEnum(api.BoolEnum)
-  backendSyncDatabaseOnStart?: api.BoolEnum;
-
-  @IsEnum(api.BoolEnum)
-  backendRegisterOnlyInvitedUsers?: api.BoolEnum;
-
   @IsString()
   backendFirstUserEmail?: string;
 
   @IsString()
   backendFirstUserPassword?: string;
 
+  @IsEnum(api.BoolEnum)
+  backendRegisterOnlyInvitedUsers?: api.BoolEnum;
+
+  //
+  @IsEnum(api.BoolEnum)
+  backendSendEmail?: api.BoolEnum;
+
+  @IsString()
+  backendVerifyEmailUrl?: string;
+
+  @IsString()
+  backendSendEmailFrom?: string;
+
+  @IsEnum(enums.EmailTransportEnum)
+  backendEmailTransport?: enums.EmailTransportEnum;
+
+  @IsString()
+  backendMailgunActiveApiKey?: string;
+
+  @IsString()
+  backendMailgunDomain?: string;
+
+  //
+  @IsString()
+  backendSmtpHost?: string;
+
+  @IsInt()
+  backendSmtpPort?: number;
+
+  @IsEnum(api.BoolEnum)
+  backendSmtpSecure?: api.BoolEnum;
+
+  @IsString()
+  backendSmtpAuthUser?: string;
+
+  @IsString()
+  backendSmtpAuthPassword?: string;
+
+  //
   @IsString()
   rabbitmqDefaultUser?: string;
 

@@ -11,18 +11,27 @@ export function getBaseConfig(envFilePath) {
 
   let baseConfig: interfaces.Config = Object.assign({}, commonConfig, {
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
-    backendDropDatabaseOnStart: <api.BoolEnum>(
-      envFile.BACKEND_DROP_DATABASE_ON_START
-    ),
-    backendSyncDatabaseOnStart: <api.BoolEnum>(
-      envFile.BACKEND_SYNC_DATABASE_ON_START
-    ),
+    backendFirstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
+    backendFirstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
     backendRegisterOnlyInvitedUsers: <api.BoolEnum>(
       envFile.BACKEND_REGISTER_ONLY_INVITED_USERS
     ),
-    backendFirstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
-    backendFirstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
-
+    //
+    backendSendEmail: <api.BoolEnum>envFile.BACKEND_SEND_EMAIL,
+    backendVerifyEmailUrl: envFile.BACKEND_VERIFY_EMAIL_URL,
+    backendSendEmailFrom: envFile.BACKEND_SEND_EMAIL_FROM,
+    backendEmailTransport: <enums.EmailTransportEnum>(
+      envFile.BACKEND_EMAIL_TRANSPORT
+    ),
+    backendMailgunActiveApiKey: envFile.BACKEND_MAILGUN_ACTIVE_API_KEY,
+    backendMailgunDomain: envFile.BACKEND_MAILGUN_DOMAIN,
+    //
+    backendSmtpHost: envFile.BACKEND_SMTP_HOST,
+    backendSmtpPort: Number(envFile.BACKEND_SMTP_PORT),
+    backendSmtpSecure: <api.BoolEnum>envFile.BACKEND_SMTP_SECURE,
+    backendSmtpAuthUser: envFile.BACKEND_SMTP_AUTH_USER,
+    backendSmtpAuthPassword: envFile.BACKEND_SMTP_AUTH_PASSWORD,
+    //
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
 

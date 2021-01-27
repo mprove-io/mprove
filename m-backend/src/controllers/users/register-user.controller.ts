@@ -1,3 +1,4 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
@@ -13,7 +14,8 @@ export class RegisterUserController {
   constructor(
     private usersService: UsersService,
     private connection: Connection,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private mailerService: MailerService
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
@@ -77,6 +79,18 @@ export class RegisterUserController {
                 users: [newUser]
               }
             });
+          });
+
+          let url = this.cs.get<interfaces.Config['backendVerifyEmailUrl']>(
+            'backendVerifyEmailUrl'
+          );
+
+          let link = `${url}/confirm-email?token=${newUser.email_verification_token}`;
+
+          await this.mailerService.sendMail({
+            to: userId,
+            subject: '[Mprove] Verify your email',
+            text: `Click the link to complete email verification: ${link}`
           });
         }
       }

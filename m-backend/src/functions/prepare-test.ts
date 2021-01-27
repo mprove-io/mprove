@@ -1,3 +1,4 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '~/app.module';
@@ -23,11 +24,15 @@ export async function prepareTest(item: {
   let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
   const mockConfigService = { get: key => mockConfig[key] };
 
+  const mockMailService = { sendMail: async () => {} };
+
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [AppModule]
   })
     .overrideProvider(ConfigService)
     .useValue(mockConfigService)
+    .overrideProvider(MailerService)
+    .useValue(mockMailService)
     .compile();
 
   let app = moduleRef.createNestApplication();
