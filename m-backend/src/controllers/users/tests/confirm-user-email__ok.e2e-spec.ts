@@ -6,11 +6,9 @@ import { prepareTest } from '~/functions/prepare-test';
 
 let testId = 'confirm-user-email__ok';
 
-let traceId = '123';
+let traceId = testId;
 let userId = `${testId}@example.com`;
-
-let token = 'SJ8JVTJWN2TWOY2T6ZJH';
-
+let token = helper.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {

@@ -6,7 +6,7 @@ import { prepareTest } from '~/functions/prepare-test';
 
 let testId = 'rebuild-struct-special__ok';
 
-let traceId = '123';
+let traceId = testId;
 let organizationId = testId;
 let projectId = testId;
 let devRepoId = 'rbobert@example.com';

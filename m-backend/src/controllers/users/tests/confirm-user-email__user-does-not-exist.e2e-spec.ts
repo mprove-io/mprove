@@ -4,35 +4,31 @@ import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
 import { prepareTest } from '~/functions/prepare-test';
 
-let testId = 'register-user__user-is-not-invited';
+let testId = 'confirm-user-email__user-does-not-exist';
 
 let traceId = testId;
 let userId = `${testId}@example.com`;
-let password = '123';
+let token = helper.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: api.ToBackendRegisterUserResponse;
+  let resp: api.ToBackendConfirmUserEmailResponse;
 
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { userIds: [userId] },
-      overrideConfigOptions: {
-        backendRegisterOnlyInvitedUsers: api.BoolEnum.TRUE
-      }
+      deleteRecordsPayload: { userIds: [userId] }
     });
 
-    resp = await helper.sendToBackend<api.ToBackendRegisterUserResponse>({
+    resp = await helper.sendToBackend<api.ToBackendConfirmUserEmailResponse>({
       httpServer: prep.httpServer,
-      req: <api.ToBackendRegisterUserRequest>{
+      req: <api.ToBackendConfirmUserEmailRequest>{
         info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+          name: api.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
           traceId: traceId
         },
         payload: {
-          userId: userId,
-          password: password
+          token: token
         }
       }
     });
@@ -42,5 +38,5 @@ test('1', async t => {
     api.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, api.ErEnum.M_BACKEND_USER_IS_NOT_INVITED);
+  t.is(resp.info.error.message, api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST);
 });

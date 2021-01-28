@@ -6,10 +6,9 @@ import { prepareTest } from '~/functions/prepare-test';
 
 let testId = 'register-user__ok';
 
-let traceId = '123';
+let traceId = testId;
 let userId = `${testId}@example.com`;
-let password = '456';
-
+let password = '123';
 let prep: interfaces.Prep;
 
 test('1', async t => {
