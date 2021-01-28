@@ -23,7 +23,10 @@ export class Config extends api.Config {
   backendVerifyEmailUrl?: string;
 
   @IsString()
-  backendSendEmailFrom?: string;
+  backendSendEmailFromName?: string;
+
+  @IsString()
+  backendSendEmailFromAddress?: string;
 
   @IsEnum(enums.EmailTransportEnum)
   backendEmailTransport?: enums.EmailTransportEnum;

@@ -1,18 +1,19 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
+import { In } from 'typeorm';
 import { api } from '~/barrels/api';
 import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
+import { repositories } from '~/barrels/repositories';
 import { RabbitService } from '~/services/rabbit.service';
-import { UsersService } from '~/services/users.service';
 
 @Controller()
 export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
-    private usersService: UsersService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private userRepository: repositories.UserRepository
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
@@ -66,7 +67,7 @@ export class DeleteRecordsController {
       // db
 
       if (helper.isDefined(userIds) && userIds.length > 0) {
-        await this.usersService.deleteUsers(userIds);
+        await this.userRepository.delete({ user_id: In(userIds) });
       }
 
       let payload: api.ToBackendDeleteRecordsResponse['payload'] = {};

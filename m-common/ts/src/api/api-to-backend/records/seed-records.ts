@@ -7,17 +7,21 @@ export class ToBackendSeedRecordsRequestPayloadUsers {
   @IsString()
   userId: string;
 
+  @IsOptional()
   @IsString()
-  password: string;
+  password?: string;
 
+  @IsOptional()
   @IsEnum(apiEnums.BoolEnum)
-  isEmailVerified: apiEnums.BoolEnum;
+  isEmailVerified?: apiEnums.BoolEnum;
 
+  @IsOptional()
   @IsString()
-  emailVerificationToken: string;
+  emailVerificationToken?: string;
 
+  @IsOptional()
   @IsString()
-  passwordResetToken: string;
+  passwordResetToken?: string;
 }
 
 export class ToBackendSeedRecordsRequestPayload {
@@ -42,7 +46,5 @@ export class ToBackendSeedRecordsResponse {
   @Type(() => apiObjects.ResponseInfo)
   readonly info: apiObjects.ResponseInfo;
 
-  readonly payload: {
-    [K in any]: never;
-  };
+  readonly payload: { [K in any]: never };
 }

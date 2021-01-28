@@ -7,6 +7,7 @@ import { db } from '~/barrels/db';
 import { gen } from '~/barrels/gen';
 import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
+import { repositories } from '~/barrels/repositories';
 import { UsersService } from '~/services/users.service';
 
 @Controller()
@@ -15,7 +16,8 @@ export class RegisterUserController {
     private usersService: UsersService,
     private connection: Connection,
     private cs: ConfigService<interfaces.Config>,
-    private mailerService: MailerService
+    private mailerService: MailerService,
+    private userRepository: repositories.UserRepository
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
@@ -31,7 +33,7 @@ export class RegisterUserController {
 
       let { salt, hash } = this.usersService.makeSaltAndHash(password);
 
-      let user = await this.usersService.findOneById(userId);
+      let user = await this.userRepository.findOne(userId);
 
       if (helper.isDefined(user)) {
         if (helper.isDefined(user.hash)) {

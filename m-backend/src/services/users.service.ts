@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
-import { Connection, In } from 'typeorm';
+import { Connection } from 'typeorm';
 import { api } from '~/barrels/api';
 import { db } from '~/barrels/db';
-import { entities } from '~/barrels/entities';
 import { gen } from '~/barrels/gen';
 import { helper } from '~/barrels/helper';
 import { repositories } from '~/barrels/repositories';
@@ -14,14 +13,6 @@ export class UsersService {
     private userRepository: repositories.UserRepository,
     private connection: Connection
   ) {}
-
-  async findOneById(userId: string): Promise<entities.UserEntity> {
-    return await this.userRepository.findOne(userId);
-  }
-
-  async deleteUsers(userIds) {
-    await this.userRepository.delete({ user_id: In(userIds) });
-  }
 
   makeSaltAndHash(password: string) {
     let salt = crypto.randomBytes(16).toString('hex');

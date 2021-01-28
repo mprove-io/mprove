@@ -27,7 +27,5 @@ export class ToBackendDeleteRecordsResponse {
   @Type(() => apiObjects.ResponseInfo)
   readonly info: apiObjects.ResponseInfo;
 
-  readonly payload: {
-    [K in any]: never;
-  };
+  readonly payload: { [K in any]: never };
 }

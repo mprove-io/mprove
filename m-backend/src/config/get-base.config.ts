@@ -19,7 +19,8 @@ export function getBaseConfig(envFilePath) {
     //
     backendSendEmail: <api.BoolEnum>envFile.BACKEND_SEND_EMAIL,
     backendVerifyEmailUrl: envFile.BACKEND_VERIFY_EMAIL_URL,
-    backendSendEmailFrom: envFile.BACKEND_SEND_EMAIL_FROM,
+    backendSendEmailFromName: envFile.BACKEND_SEND_EMAIL_FROM_NAME,
+    backendSendEmailFromAddress: envFile.BACKEND_SEND_EMAIL_FROM_ADDRESS,
     backendEmailTransport: <enums.EmailTransportEnum>(
       envFile.BACKEND_EMAIL_TRANSPORT
     ),

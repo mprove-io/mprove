@@ -9,7 +9,7 @@ export function logToConsole(
 ) {
   let mproveLogIsColor =
     cs?.get<apiObjects.Config['mproveLogIsColor']>('mproveLogIsColor') ||
-    apiEnums.BoolEnum.FALSE;
+    apiEnums.BoolEnum.TRUE;
 
   if (mproveLogIsColor === apiEnums.BoolEnum.TRUE) {
     console.log(util.inspect(object, false, null, true));

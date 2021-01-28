@@ -13,6 +13,7 @@ import { api } from './barrels/api';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
+import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
 import { UsersService } from './services/users.service';
 
@@ -111,12 +112,18 @@ let mailerModule = MailerModule.forRootAsync({
         ? mgTransport
         : smtpConfig;
 
+    let fromName = cs.get<interfaces.Config['backendSendEmailFromName']>(
+      'backendSendEmailFromName'
+    );
+
+    let fromAddress = cs.get<interfaces.Config['backendSendEmailFromAddress']>(
+      'backendSendEmailFromAddress'
+    );
+
     return {
       transport: transport,
       defaults: {
-        from: cs.get<interfaces.Config['backendSendEmailFrom']>(
-          'backendSendEmailFrom'
-        )
+        from: `"${fromName}" <${fromAddress}>`
       }
       // template: {
       //   dir: __dirname + '/templates',
@@ -145,7 +152,8 @@ export class AppModule implements OnModuleInit {
   constructor(
     private connection: Connection,
     private usersService: UsersService,
-    private cs: ConfigService<interfaces.Config>
+    private cs: ConfigService<interfaces.Config>,
+    private userRepository: repositories.UserRepository
   ) {}
 
   async onModuleInit() {
@@ -161,7 +169,7 @@ export class AppModule implements OnModuleInit {
       );
 
       if (helper.isDefined(userId) && helper.isDefined(password)) {
-        let firstUser = await this.usersService.findOneById(userId);
+        let firstUser = await this.userRepository.findOne(userId);
 
         if (helper.isUndefined(firstUser)) {
           await this.usersService.addFirstUser({
