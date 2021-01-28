@@ -41,7 +41,7 @@ export class SeedRecordsController {
           async (x: api.ToBackendSeedRecordsRequestPayloadUsers) => {
             let alias = await this.usersService.makeAlias(x.userId);
             let { salt, hash } = helper.isDefined(x.password)
-              ? this.usersService.makeSaltAndHash(x.password)
+              ? await this.usersService.makeSaltAndHash(x.password)
               : { salt: undefined, hash: undefined };
 
             let newUser = gen.makeUser({

@@ -11,6 +11,7 @@ export function getBaseConfig(envFilePath) {
 
   let baseConfig: interfaces.Config = Object.assign({}, commonConfig, {
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
+    backendJwtSecret: envFile.BACKEND_JWT_SECRET,
     backendFirstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
     backendFirstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
     backendRegisterOnlyInvitedUsers: <api.BoolEnum>(

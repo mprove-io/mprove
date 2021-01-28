@@ -31,7 +31,7 @@ export class RegisterUserController {
 
       let { userId, password } = reqValid.payload;
 
-      let { salt, hash } = this.usersService.makeSaltAndHash(password);
+      let { salt, hash } = await this.usersService.makeSaltAndHash(password);
 
       let user = await this.userRepository.findOne(userId);
 

@@ -6,5 +6,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendDeleteRecords = 'ToBackendDeleteRecords',
   //
   ToBackendRegisterUser = 'ToBackendRegisterUser',
-  ToBackendConfirmUserEmail = 'ToBackendConfirmUserEmail'
+  ToBackendConfirmUserEmail = 'ToBackendConfirmUserEmail',
+  ToBackendLoginUser = 'ToBackendLoginUser'
 }

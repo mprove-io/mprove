@@ -7,6 +7,9 @@ export class Config extends api.Config {
   backendEnv?: enums.BackendEnvEnum;
 
   @IsString()
+  backendJwtSecret?: string;
+
+  @IsString()
   backendFirstUserEmail?: string;
 
   @IsString()

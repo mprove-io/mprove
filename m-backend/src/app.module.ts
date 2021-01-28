@@ -2,6 +2,8 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as mg from 'nodemailer-mailgun-transport';
 import { Connection } from 'typeorm';
@@ -20,6 +22,14 @@ import { UsersService } from './services/users.service';
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
   isGlobal: true
+});
+
+let jwtModule = JwtModule.registerAsync({
+  useFactory: async (configService: ConfigService<interfaces.Config>) => ({
+    secret: configService.get<'backendJwtSecret'>('backendJwtSecret'),
+    signOptions: { expiresIn: '30d' }
+  }),
+  inject: [ConfigService]
 });
 
 let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
@@ -140,6 +150,8 @@ let mailerModule = MailerModule.forRootAsync({
 @Module({
   imports: [
     configModule,
+    jwtModule,
+    PassportModule,
     rabbitModule,
     mailerModule,
     typeormRootModule,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { Connection } from 'typeorm';
 import { api } from '~/barrels/api';
 import { db } from '~/barrels/db';
@@ -14,11 +14,40 @@ export class UsersService {
     private connection: Connection
   ) {}
 
-  makeSaltAndHash(password: string) {
-    let salt = crypto.randomBytes(16).toString('hex');
-    let hash = crypto
-      .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
-      .toString('hex');
+  async validateUser(userId: string, password: string) {
+    let user = await this.userRepository.findOne(userId);
+
+    if (helper.isUndefined(user)) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST
+      });
+    }
+
+    if (helper.isUndefined(user.hash)) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BACKEND_REGISTER_TO_SET_PASSWORD
+      });
+    }
+
+    let hash = await bcrypt.hash(password, user.salt);
+
+    if (hash !== user.hash) {
+      throw new api.ServerError({
+        message: api.ErEnum.M_BACKEND_WRONG_PASSWORD
+      });
+    }
+
+    return user;
+  }
+
+  async makeSaltAndHash(password: string) {
+    // let salt = crypto.randomBytes(16).toString('hex');
+    // let hash = crypto
+    //   .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
+    //   .toString('hex');
+
+    let salt = await bcrypt.genSalt();
+    let hash = await bcrypt.hash(password, salt);
 
     return { salt, hash };
   }
@@ -56,7 +85,7 @@ export class UsersService {
   async addFirstUser(item: { userId: string; password: string }) {
     let { userId, password } = item;
 
-    let { salt, hash } = this.makeSaltAndHash(password);
+    let { salt, hash } = await this.makeSaltAndHash(password);
 
     let alias = await this.makeAlias(userId);
 
