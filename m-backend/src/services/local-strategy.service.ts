@@ -4,13 +4,16 @@ import { Strategy } from 'passport-local';
 import { UsersService } from './users.service';
 
 @Injectable()
-export class LocalStrategyService extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private usersService: UsersService) {
-    super();
+    super({
+      usernameField: 'payload[]email',
+      passwordField: 'payload[]password'
+    });
   }
 
-  async validate(userId: string, password: string) {
-    let user = await this.usersService.validateUser(userId, password);
+  async validate(email: string, password: string) {
+    let user = await this.usersService.validateUser(email, password);
     return user;
   }
 }

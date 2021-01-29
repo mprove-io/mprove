@@ -1,22 +1,23 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Connection } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { api } from '~/barrels/api';
-import { db } from '~/barrels/db';
-import { helper } from '~/barrels/helper';
+import { entities } from '~/barrels/entities';
 import { interfaces } from '~/barrels/interfaces';
-import { repositories } from '~/barrels/repositories';
+import { wrapper } from '~/barrels/wrapper';
+import { User } from '~/decorators/user.decorator';
+import { LocalAuthGuard } from '~/guards/local-auth.guard';
 
+@UseGuards(LocalAuthGuard)
 @Controller()
 export class LoginUserController {
   constructor(
-    private userRepository: repositories.UserRepository,
-    private connection: Connection,
+    private jwtService: JwtService,
     private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(api.ToBackendRequestInfoNameEnum.ToBackendLoginUser)
-  async loginUser(@Body() body) {
+  async loginUser(@Body() body, @User() user: entities.UserEntity) {
     try {
       let reqValid = await api.transformValid({
         classType: api.ToBackendLoginUserRequest,
@@ -24,32 +25,10 @@ export class LoginUserController {
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let { token } = reqValid.payload;
-
-      let user = await this.userRepository.findOne({
-        email_verification_token: token
-      });
-
-      if (helper.isUndefined(user)) {
-        throw new api.ServerError({
-          message: api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST
-        });
-      }
-
-      if (user.is_email_verified === api.BoolEnum.FALSE) {
-        user.is_email_verified = api.BoolEnum.TRUE;
-
-        await this.connection.transaction(async manager => {
-          await db.modifyRecords({
-            manager: manager,
-            records: {
-              users: [user]
-            }
-          });
-        });
-      }
-
-      let payload = {};
+      let payload: api.ToBackendLoginUserResponsePayload = {
+        token: this.jwtService.sign({ userId: user.user_id }),
+        user: wrapper.wrapToApiUser(user)
+      };
 
       return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {

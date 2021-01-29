@@ -4,8 +4,12 @@ import * as apiEnums from '~/api/enums/_index';
 import * as apiObjects from '~/api/objects/_index';
 
 export class ToBackendSeedRecordsRequestPayloadUsers {
+  @IsOptional()
   @IsString()
-  userId: string;
+  userId?: string;
+
+  @IsString()
+  email: string;
 
   @IsOptional()
   @IsString()

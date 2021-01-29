@@ -25,7 +25,7 @@ export class DeleteRecordsController {
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let { organizationIds, userIds } = reqValid.payload;
+      let { organizationIds, emails } = reqValid.payload;
 
       // toDisk
 
@@ -66,8 +66,8 @@ export class DeleteRecordsController {
 
       // db
 
-      if (helper.isDefined(userIds) && userIds.length > 0) {
-        await this.userRepository.delete({ user_id: In(userIds) });
+      if (helper.isDefined(emails) && emails.length > 0) {
+        await this.userRepository.delete({ email: In(emails) });
       }
 
       let payload: api.ToBackendDeleteRecordsResponse['payload'] = {};

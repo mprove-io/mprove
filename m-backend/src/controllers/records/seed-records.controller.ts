@@ -39,13 +39,14 @@ export class SeedRecordsController {
           1,
           payloadUsers,
           async (x: api.ToBackendSeedRecordsRequestPayloadUsers) => {
-            let alias = await this.usersService.makeAlias(x.userId);
+            let alias = await this.usersService.makeAlias(x.email);
             let { salt, hash } = helper.isDefined(x.password)
               ? await this.usersService.makeSaltAndHash(x.password)
               : { salt: undefined, hash: undefined };
 
             let newUser = gen.makeUser({
               userId: x.userId,
+              email: x.email,
               isEmailVerified: x.isEmailVerified,
               emailVerificationToken: x.emailVerificationToken,
               passwordResetToken: x.passwordResetToken,

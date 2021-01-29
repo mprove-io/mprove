@@ -7,6 +7,12 @@ export class UserEntity {
   @PrimaryColumn({ type: constants.VARCHAR })
   user_id: string;
 
+  @Column({ unique: true, type: constants.VARCHAR })
+  email: string;
+
+  @Column({ unique: true, type: constants.VARCHAR, nullable: true })
+  alias: string;
+
   @Column({ type: constants.VARCHAR })
   is_email_verified: api.BoolEnum;
 
@@ -25,12 +31,6 @@ export class UserEntity {
   @Column({ type: constants.VARCHAR, nullable: true })
   salt: string;
 
-  @Column({ unique: true, type: constants.VARCHAR })
-  user_track_id: string;
-
-  @Column({ unique: true, type: constants.VARCHAR, nullable: true })
-  alias: string;
-
   @Column({ type: constants.VARCHAR, nullable: true })
   first_name: string;
 
@@ -43,8 +43,8 @@ export class UserEntity {
   @Column({ type: constants.VARCHAR, nullable: true })
   avatar_url_big: string;
 
-  // @Column({ type: constants.USER_TIMEZONE_DATATYPE, nullable: true })
-  // timezone: string;
+  @Column({ type: constants.VARCHAR })
+  timezone: string;
 
   @Column({ type: constants.VARCHAR })
   status: api.UserStatusEnum;

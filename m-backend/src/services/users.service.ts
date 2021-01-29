@@ -14,8 +14,8 @@ export class UsersService {
     private connection: Connection
   ) {}
 
-  async validateUser(userId: string, password: string) {
-    let user = await this.userRepository.findOne(userId);
+  async validateUser(email: string, password: string) {
+    let user = await this.userRepository.findOne({ email: email });
 
     if (helper.isUndefined(user)) {
       throw new api.ServerError({
@@ -52,9 +52,9 @@ export class UsersService {
     return { salt, hash };
   }
 
-  async makeAlias(userId: string) {
+  async makeAlias(email: string) {
     let reg = api.MyRegex.CAPTURE_ALIAS();
-    let r = reg.exec(userId);
+    let r = reg.exec(email);
 
     let alias = r ? r[1] : undefined;
 
@@ -82,15 +82,15 @@ export class UsersService {
     return alias;
   }
 
-  async addFirstUser(item: { userId: string; password: string }) {
-    let { userId, password } = item;
+  async addFirstUser(item: { email: string; password: string }) {
+    let { email, password } = item;
 
     let { salt, hash } = await this.makeSaltAndHash(password);
 
-    let alias = await this.makeAlias(userId);
+    let alias = await this.makeAlias(email);
 
     let user = gen.makeUser({
-      userId: userId,
+      email: email,
       isEmailVerified: api.BoolEnum.TRUE,
       salt: salt,
       hash: hash,

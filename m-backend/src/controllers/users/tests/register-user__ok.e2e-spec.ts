@@ -7,7 +7,7 @@ import { prepareTest } from '~/functions/prepare-test';
 let testId = 'register-user__ok';
 
 let traceId = testId;
-let userId = `${testId}@example.com`;
+let email = `${testId}@example.com`;
 let password = '123';
 let prep: interfaces.Prep;
 
@@ -17,7 +17,7 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { userIds: [userId] }
+      deleteRecordsPayload: { emails: [email] }
     });
 
     resp = await helper.sendToBackend<api.ToBackendRegisterUserResponse>({
@@ -28,7 +28,7 @@ test('1', async t => {
           traceId: traceId
         },
         payload: {
-          userId: userId,
+          email: email,
           password: password
         }
       }
@@ -39,13 +39,5 @@ test('1', async t => {
     api.logToConsole(e);
   }
 
-  t.deepEqual(resp, <api.ToBackendRegisterUserResponse>{
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {
-      userId: userId
-    }
-  });
+  t.is(resp.info.status, api.ResponseInfoStatusEnum.Ok);
 });

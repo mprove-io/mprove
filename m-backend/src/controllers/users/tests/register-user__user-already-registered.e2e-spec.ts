@@ -7,7 +7,7 @@ import { prepareTest } from '~/functions/prepare-test';
 let testId = 'register-user__user-already-registered';
 
 let traceId = testId;
-let userId = `${testId}@example.com`;
+let email = `${testId}@example.com`;
 let password = '123';
 let prep: interfaces.Prep;
 
@@ -17,11 +17,11 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { userIds: [userId] },
+      deleteRecordsPayload: { emails: [email] },
       seedRecordsPayload: {
         users: [
           {
-            userId: userId,
+            email: email,
             password: password,
             isEmailVerified: api.BoolEnum.FALSE,
             passwordResetToken: helper.makeId(),
@@ -39,7 +39,7 @@ test('1', async t => {
           traceId: traceId
         },
         payload: {
-          userId: userId,
+          email: email,
           password: password
         }
       }

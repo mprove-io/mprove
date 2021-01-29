@@ -4,15 +4,15 @@ import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
 import { prepareTest } from '~/functions/prepare-test';
 
-let testId = 'confirm-user-email__ok';
+let testId = 'login-user__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
-let emailToken = helper.makeId();
+let password = '123';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: api.ToBackendConfirmUserEmailResponse;
+  let resp: api.ToBackendLoginUserResponse;
 
   try {
     prep = await prepareTest({
@@ -22,22 +22,23 @@ test('1', async t => {
         users: [
           {
             email: email,
-            isEmailVerified: api.BoolEnum.FALSE,
-            emailVerificationToken: emailToken
+            password: password,
+            isEmailVerified: api.BoolEnum.TRUE
           }
         ]
       }
     });
 
-    resp = await helper.sendToBackend<api.ToBackendConfirmUserEmailResponse>({
+    resp = await helper.sendToBackend<api.ToBackendLoginUserResponse>({
       httpServer: prep.httpServer,
-      req: <api.ToBackendConfirmUserEmailRequest>{
+      req: <api.ToBackendLoginUserRequest>{
         info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+          name: api.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
           traceId: traceId
         },
         payload: {
-          token: emailToken
+          email: email,
+          password: password
         }
       }
     });
@@ -47,11 +48,5 @@ test('1', async t => {
     api.logToConsole(e);
   }
 
-  t.deepEqual(resp, <api.ToBackendConfirmUserEmailResponse>{
-    info: {
-      status: api.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {}
-  });
+  t.is(resp.info.status, api.ResponseInfoStatusEnum.Ok);
 });

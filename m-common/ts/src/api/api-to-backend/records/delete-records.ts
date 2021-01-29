@@ -5,7 +5,7 @@ import * as apiObjects from '~/api/objects/_index';
 export class ToBackendDeleteRecordsRequestPayload {
   @IsOptional()
   @IsString({ each: true })
-  readonly userIds?: string[];
+  readonly emails?: string[];
 
   @IsOptional()
   @IsString({ each: true })

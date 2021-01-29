@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
 import { api } from '~/barrels/api';
 import { db } from '~/barrels/db';
+import { entities } from '~/barrels/entities';
 import { gen } from '~/barrels/gen';
 import { helper } from '~/barrels/helper';
 import { interfaces } from '~/barrels/interfaces';
@@ -29,11 +30,13 @@ export class RegisterUserController {
         errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let { userId, password } = reqValid.payload;
+      let { email, password } = reqValid.payload;
+
+      let newUser: entities.UserEntity;
 
       let { salt, hash } = await this.usersService.makeSaltAndHash(password);
 
-      let user = await this.userRepository.findOne(userId);
+      let user = await this.userRepository.findOne({ email: email });
 
       if (helper.isDefined(user)) {
         if (helper.isDefined(user.hash)) {
@@ -64,10 +67,10 @@ export class RegisterUserController {
             message: api.ErEnum.M_BACKEND_USER_IS_NOT_INVITED
           });
         } else {
-          let alias = await this.usersService.makeAlias(userId);
+          let alias = await this.usersService.makeAlias(email);
 
-          let newUser = gen.makeUser({
-            userId: userId,
+          newUser = gen.makeUser({
+            email: email,
             isEmailVerified: api.BoolEnum.FALSE,
             hash: hash,
             salt: salt,
@@ -90,7 +93,7 @@ export class RegisterUserController {
           let link = `${url}/confirm-email?token=${newUser.email_verification_token}`;
 
           await this.mailerService.sendMail({
-            to: userId,
+            to: email,
             subject: '[Mprove] Verify your email',
             text: `Click the link to complete email verification: ${link}`
           });
@@ -98,7 +101,7 @@ export class RegisterUserController {
       }
 
       let payload: api.ToBackendRegisterUserResponsePayload = {
-        userId: userId
+        userId: newUser.user_id
       };
 
       return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });

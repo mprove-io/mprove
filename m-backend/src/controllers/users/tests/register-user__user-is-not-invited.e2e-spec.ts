@@ -7,7 +7,7 @@ import { prepareTest } from '~/functions/prepare-test';
 let testId = 'register-user__user-is-not-invited';
 
 let traceId = testId;
-let userId = `${testId}@example.com`;
+let email = `${testId}@example.com`;
 let password = '123';
 let prep: interfaces.Prep;
 
@@ -17,7 +17,7 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { userIds: [userId] },
+      deleteRecordsPayload: { emails: [email] },
       overrideConfigOptions: {
         backendRegisterOnlyInvitedUsers: api.BoolEnum.TRUE
       }
@@ -31,7 +31,7 @@ test('1', async t => {
           traceId: traceId
         },
         payload: {
-          userId: userId,
+          email: email,
           password: password
         }
       }

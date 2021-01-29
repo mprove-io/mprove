@@ -172,7 +172,7 @@ export class AppModule implements OnModuleInit {
     try {
       await this.connection.runMigrations();
 
-      let userId = this.cs.get<interfaces.Config['backendFirstUserEmail']>(
+      let email = this.cs.get<interfaces.Config['backendFirstUserEmail']>(
         'backendFirstUserEmail'
       );
 
@@ -180,12 +180,12 @@ export class AppModule implements OnModuleInit {
         'backendFirstUserPassword'
       );
 
-      if (helper.isDefined(userId) && helper.isDefined(password)) {
-        let firstUser = await this.userRepository.findOne(userId);
+      if (helper.isDefined(email) && helper.isDefined(password)) {
+        let firstUser = await this.userRepository.findOne({ email: email });
 
         if (helper.isUndefined(firstUser)) {
           await this.usersService.addFirstUser({
-            userId: userId,
+            email: email,
             password: password
           });
         }

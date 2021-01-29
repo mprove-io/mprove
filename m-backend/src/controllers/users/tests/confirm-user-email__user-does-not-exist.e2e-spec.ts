@@ -7,8 +7,7 @@ import { prepareTest } from '~/functions/prepare-test';
 let testId = 'confirm-user-email__user-does-not-exist';
 
 let traceId = testId;
-let userId = `${testId}@example.com`;
-let token = helper.makeId();
+let emailToken = helper.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -16,8 +15,7 @@ test('1', async t => {
 
   try {
     prep = await prepareTest({
-      traceId: traceId,
-      deleteRecordsPayload: { userIds: [userId] }
+      traceId: traceId
     });
 
     resp = await helper.sendToBackend<api.ToBackendConfirmUserEmailResponse>({
@@ -28,7 +26,7 @@ test('1', async t => {
           traceId: traceId
         },
         payload: {
-          token: token
+          token: emailToken
         }
       }
     });

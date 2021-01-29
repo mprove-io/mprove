@@ -4,7 +4,7 @@ import * as apiObjects from '~/api/objects/_index';
 
 export class ToBackendRegisterUserRequestPayload {
   @IsString()
-  readonly userId: string;
+  readonly email: string;
 
   @IsString()
   readonly password: string;
