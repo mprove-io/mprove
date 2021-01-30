@@ -25,8 +25,8 @@ let configModule = ConfigModule.forRoot({
 });
 
 let jwtModule = JwtModule.registerAsync({
-  useFactory: async (configService: ConfigService<interfaces.Config>) => ({
-    secret: configService.get<'backendJwtSecret'>('backendJwtSecret'),
+  useFactory: async (cs: ConfigService<interfaces.Config>) => ({
+    secret: cs.get<interfaces.Config['backendJwtSecret']>('backendJwtSecret'),
     signOptions: { expiresIn: '30d' }
   }),
   inject: [ConfigService]

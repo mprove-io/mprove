@@ -1,16 +1,22 @@
 import * as request from 'supertest';
 import { api } from '~/barrels/api';
+import { helper } from '~/barrels/helper';
 
 export async function sendToBackend<T>(item: {
   httpServer: any;
   req: any;
   checkIsOk?: boolean;
+  loginToken?: string;
 }) {
-  let { httpServer, req, checkIsOk } = item;
+  let { httpServer, req, checkIsOk, loginToken } = item;
 
-  let response = await request(httpServer)
-    .post('/' + req.info.name)
-    .send(req);
+  let rq = request(httpServer).post('/' + req.info.name);
+
+  if (helper.isDefined(loginToken)) {
+    rq = rq.auth(loginToken, { type: 'bearer' });
+  }
+
+  let response = await rq.send(req);
 
   if (response.status !== 201) {
     throw new api.ServerError({

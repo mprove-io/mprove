@@ -14,32 +14,6 @@ export class UsersService {
     private connection: Connection
   ) {}
 
-  async validateUser(email: string, password: string) {
-    let user = await this.userRepository.findOne({ email: email });
-
-    if (helper.isUndefined(user)) {
-      throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST
-      });
-    }
-
-    if (helper.isUndefined(user.hash)) {
-      throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_REGISTER_TO_SET_PASSWORD
-      });
-    }
-
-    let hash = await bcrypt.hash(password, user.salt);
-
-    if (hash !== user.hash) {
-      throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_WRONG_PASSWORD
-      });
-    }
-
-    return user;
-  }
-
   async makeSaltAndHash(password: string) {
     // let salt = crypto.randomBytes(16).toString('hex');
     // let hash = crypto

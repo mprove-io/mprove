@@ -1,12 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { LocalAuthGuard } from '~/auth-guards/local-auth.guard';
 import { api } from '~/barrels/api';
 import { entities } from '~/barrels/entities';
 import { interfaces } from '~/barrels/interfaces';
 import { wrapper } from '~/barrels/wrapper';
 import { User } from '~/decorators/user.decorator';
-import { LocalAuthGuard } from '~/guards/local-auth.guard';
 
 @UseGuards(LocalAuthGuard)
 @Controller()

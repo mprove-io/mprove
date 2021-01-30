@@ -13,12 +13,14 @@ export async function prepareTest(item: {
   seedRecordsPayload?: api.ToBackendSeedRecordsRequestPayload;
   deleteRecordsPayload?: api.ToBackendDeleteRecordsRequestPayload;
   overrideConfigOptions?: interfaces.Config;
+  loginUserPayload?: api.ToBackendLoginUserRequestPayload;
 }) {
   let {
     traceId,
     seedRecordsPayload,
     deleteRecordsPayload,
-    overrideConfigOptions
+    overrideConfigOptions,
+    loginUserPayload
   } = item;
 
   let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
@@ -67,9 +69,31 @@ export async function prepareTest(item: {
     });
   }
 
+  let loginUserResp: api.ToBackendLoginUserResponse;
+
+  if (helper.isDefined(loginUserPayload)) {
+    loginUserResp = await helper.sendToBackend<api.ToBackendLoginUserResponse>({
+      checkIsOk: true,
+      httpServer: httpServer,
+      req: <api.ToBackendLoginUserRequest>{
+        info: {
+          name: api.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+          traceId: traceId
+        },
+        payload: loginUserPayload
+      }
+    });
+  }
+
   let rabbitService = moduleRef.get<RabbitService>(RabbitService);
 
-  let prep: interfaces.Prep = { app, httpServer, moduleRef, rabbitService };
+  let prep: interfaces.Prep = {
+    app,
+    httpServer,
+    moduleRef,
+    rabbitService,
+    loginToken: loginUserResp?.payload?.token
+  };
 
   return prep;
 }

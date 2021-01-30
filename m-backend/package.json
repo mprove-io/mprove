@@ -39,6 +39,7 @@
     "nodemailer": "^6.4.17",
     "nodemailer-mailgun-transport": "1.4.0",
     "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

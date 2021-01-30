@@ -7,4 +7,5 @@ export interface Prep {
   moduleRef: TestingModule;
   httpServer: any;
   rabbitService: RabbitService;
+  loginToken: string;
 }

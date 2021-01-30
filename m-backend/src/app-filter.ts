@@ -2,7 +2,6 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
-  HttpException,
   HttpStatus
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -17,13 +16,21 @@ export class AppFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request = ctx.getRequest();
 
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    // const status =
+    //   exception instanceof HttpException
+    //     ? exception.getStatus()
+    //     : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    let e =
+      (exception as any).message === 'Unauthorized'
+        ? new api.ServerError({
+            message: api.ErEnum.M_BACKEND_UNAUTHORIZED,
+            originalError: exception
+          })
+        : exception;
 
     response
-      .status(status)
-      .json(api.makeErrorResponse({ e: exception, cs: this.cs, req: request }));
+      .status(HttpStatus.CREATED)
+      .json(api.makeErrorResponse({ e: e, cs: this.cs, req: request }));
   }
 }
