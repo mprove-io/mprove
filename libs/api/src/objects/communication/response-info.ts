@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import * as apiEnums from '~/enums/_index';
-import { ServerError } from '~/models/server-error';
+import * as apiEnums from '~api/enums/_index';
+import { ServerError } from '~api/models/server-error';
 
 export class ResponseInfo {
   @IsEnum(apiEnums.ResponseInfoStatusEnum)

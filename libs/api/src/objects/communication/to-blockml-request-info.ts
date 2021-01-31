@@ -1,5 +1,5 @@
 import { IsEnum, IsString } from 'class-validator';
-import * as apiEnums from '~/enums/_index';
+import * as apiEnums from '~api/enums/_index';
 import { RequestInfo } from './request-info';
 
 export class ToBlockmlRequestInfo implements RequestInfo {

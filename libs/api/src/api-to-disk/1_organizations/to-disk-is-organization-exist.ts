@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '~/objects/_index';
+import * as apiObjects from '~api/objects/_index';
 
 export class ToDiskIsOrganizationExistRequestPayload {
   @IsString()

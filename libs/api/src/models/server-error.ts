@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional } from 'class-validator';
-import * as apiEnums from '~/enums/_index';
+import * as apiEnums from '~api/enums/_index';
 
 export class ServerError extends Error {
   @IsEnum(apiEnums.ErEnum)

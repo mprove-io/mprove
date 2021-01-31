@@ -1,4 +1,4 @@
-import * as apiEnums from '~/enums/_index';
+import * as apiEnums from '~api/enums/_index';
 import { ServerError } from './server-error';
 
 export function wrapError(e: any) {

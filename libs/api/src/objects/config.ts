@@ -1,5 +1,5 @@
 import { IsEnum } from 'class-validator';
-import * as apiEnums from '~/enums/_index';
+import * as apiEnums from '~api/enums/_index';
 
 export class Config {
   @IsEnum(apiEnums.BoolEnum)

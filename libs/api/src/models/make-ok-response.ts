@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import * as apiEnums from '~/enums/_index';
-import * as apiObjects from '~/objects/_index';
+import * as apiEnums from '~api/enums/_index';
+import * as apiObjects from '~api/objects/_index';
 import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {
