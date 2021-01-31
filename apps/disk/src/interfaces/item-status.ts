@@ -1,10 +1,9 @@
-import * as apiEnums from '~/api/enums/_index';
-import * as apiObjects from '~/api/objects/_index';
+import { api } from '~/barrels/api';
 
 export interface ItemStatus {
-  repoStatus: apiEnums.RepoStatusEnum;
+  repoStatus: api.RepoStatusEnum;
 
-  conflicts: apiObjects.DiskFileLine[];
+  conflicts: api.DiskFileLine[];
 
   currentBranch: string;
 }

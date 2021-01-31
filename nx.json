@@ -19,6 +19,7 @@
     "disk": { "tags": [] },
     "nest-app": { "tags": [] },
     "nest-app-2": { "tags": [] },
-    "api": { "tags": [] }
+    "api": { "tags": [] },
+    "nest-lib": { "tags": [] }
   }
 }

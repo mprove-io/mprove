@@ -32,11 +32,15 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": { "buildTarget": "disk:build" }
+          "options": {
+            "buildTarget": "disk:build"
+          }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["apps/disk/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["apps/disk/**/*.ts"]
+          }
         }
       }
     },
@@ -71,11 +75,15 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": { "buildTarget": "nest-app:build" }
+          "options": {
+            "buildTarget": "nest-app:build"
+          }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["apps/nest-app/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["apps/nest-app/**/*.ts"]
+          }
         }
       }
     },
@@ -110,11 +118,15 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": { "buildTarget": "nest-app-2:build" }
+          "options": {
+            "buildTarget": "nest-app-2:build"
+          }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["apps/nest-app-2/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["apps/nest-app-2/**/*.ts"]
+          }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
@@ -133,11 +145,50 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["libs/api/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["libs/api/**/*.ts"]
+          }
+        },
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/api",
+            "tsConfig": "libs/api/tsconfig.lib.json",
+            "packageJson": "libs/api/package.json",
+            "main": "libs/api/src/index.ts",
+            "assets": ["libs/api/*.md"]
+          }
+        }
+      }
+    },
+    "nest-lib": {
+      "root": "libs/nest-lib",
+      "sourceRoot": "libs/nest-lib/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest-lib/**/*.ts"]
+          }
+        },
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/nest-lib",
+            "tsConfig": "libs/nest-lib/tsconfig.lib.json",
+            "packageJson": "libs/nest-lib/package.json",
+            "main": "libs/nest-lib/src/index.ts",
+            "assets": ["libs/nest-lib/*.md"]
+          }
         }
       }
     }
   },
-  "cli": { "defaultCollection": "@nrwl/nest" },
+  "cli": {
+    "defaultCollection": "@nrwl/nest"
+  },
   "defaultProject": "disk"
 }

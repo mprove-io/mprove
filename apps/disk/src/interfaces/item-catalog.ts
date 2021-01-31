@@ -1,7 +1,7 @@
-import * as apiObjects from '~/api/objects/_index';
+import { api } from '~/barrels/api';
 
 export interface ItemCatalog {
-  files: apiObjects.DiskCatalogFile[];
+  files: api.DiskCatalogFile[];
 
-  nodes: apiObjects.DiskCatalogNode[];
+  nodes: api.DiskCatalogNode[];
 }
