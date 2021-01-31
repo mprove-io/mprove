@@ -1,3 +1,4 @@
 dist/
 node_modules/
-client/src/app/components/visual/_visual-page/visual.component.html
+
+coverage/
