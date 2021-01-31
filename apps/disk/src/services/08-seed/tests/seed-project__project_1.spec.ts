@@ -2,19 +2,19 @@ import test from 'ava';
 import { api } from '~disk/barrels/api';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'seed-project__project_1';
+const testId = 'seed-project__project_1';
 
-let traceId = '123';
-let organizationId = testId;
-let projectId = 'project_1';
+const traceId = '123';
+const organizationId = testId;
+const projectId = 'project_1';
 
 test('1', async t => {
   let resp: api.ToDiskSeedProjectResponse;
 
   try {
-    let { messageService } = await prepareTest(organizationId);
+    const { messageService } = await prepareTest(organizationId);
 
-    let seedProjectRequest: api.ToDiskSeedProjectRequest = {
+    const seedProjectRequest: api.ToDiskSeedProjectRequest = {
       info: {
         name: api.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
         traceId: traceId
@@ -33,5 +33,5 @@ test('1', async t => {
   }
 
   t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
-  t.is(resp.payload.files[0].content, '# text');
+  t.is(resp.payload.files[0].fileId, 'r.md');
 });
