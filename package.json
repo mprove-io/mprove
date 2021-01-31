@@ -1,7 +1,12 @@
 {
   "name": "mprove",
-  "version": "0.0.0",
-  "license": "MIT",
+  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
+  "license": "Apache-2.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mprove-io/mprove.git"
+  },
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
@@ -25,7 +30,6 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help"
   },
-  "private": true,
   "dependencies": {},
   "devDependencies": {
     "@nrwl/cli": "11.2.6",
@@ -36,6 +40,22 @@
     "dotenv": "6.2.0",
     "prettier": "2.2.1",
     "ts-node": "~9.1.1",
-    "typescript": "~4.0.3"
+    "typescript": "~4.0.3",
+    "husky": "1.3.1",
+    "lint-staged": "7.3.0",
+    "prettier-plugin-organize-imports": "^1.1.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "./**/*.{ts,js,json,scss,html,md}": [
+        "prettier --write --config .prettierrc.yaml",
+        "git add"
+      ]
+    }
   }
 }
