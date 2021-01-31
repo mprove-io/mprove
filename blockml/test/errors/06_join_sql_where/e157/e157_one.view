@@ -1,5 +1,0 @@
-view: e157_one
-table: 1
-fields:
-- dimension: dim5
-  sql: 555

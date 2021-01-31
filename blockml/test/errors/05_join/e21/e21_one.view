@@ -1,5 +1,0 @@
-view: e21_one
-table: 1
-fields:
-- dimension: d1
-  sql: d1

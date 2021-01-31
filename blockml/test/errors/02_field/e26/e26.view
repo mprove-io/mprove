@@ -1,8 +1,0 @@
-view: e26
-table: 1
-fields:
-- dimension: address      
-  sql: 1
-
-- measure: address       
-  sql: 1

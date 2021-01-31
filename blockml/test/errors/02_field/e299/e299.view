@@ -1,8 +1,0 @@
-view: e299
-table: 1
-fields:
-  - measure: m        
-    sql: 1
-    type: percentile_by_key
-    sql_key: 1
-

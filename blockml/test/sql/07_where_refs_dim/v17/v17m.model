@@ -1,9 +1,0 @@
-model: v17m
-sql_always_where: ${a.dim4} + ${a.dim5} > 100
-joins:
-
-- from_view: v17_one
-  as: a
-
-
-

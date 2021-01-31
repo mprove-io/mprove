@@ -1,7 +1,0 @@
-view: e281
-derived_table: |
-  SELECT ${a.dim1}
-  FROM abc
-fields:
-- dimension: dim10
-  sql: b.dim3

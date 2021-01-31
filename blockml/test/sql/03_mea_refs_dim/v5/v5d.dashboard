@@ -1,9 +1,0 @@
-dashboard: v5d
-title: 'sales'
-reports:
-- title: 'weekly'
-  model: v5m
-  select:
-  - mf.mea1
-  type: 'table'
-

@@ -1,5 +1,0 @@
-view: e20_two
-table: 1
-fields:
-- dimension: d1
-  sql: d1

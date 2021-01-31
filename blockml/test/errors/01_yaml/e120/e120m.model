@@ -1,6 +1,0 @@
-model: e120m
-description:      
-- 7
-joins:
-- from_view: e120_one
-  as: a

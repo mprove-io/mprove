@@ -1,9 +1,0 @@
-.envrc
-.git
-.vscode
-.idea
-
-cypress
-dist
-node_modules
-nogit

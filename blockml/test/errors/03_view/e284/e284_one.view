@@ -1,8 +1,0 @@
-view: e284_one
-derived_table: |
-  SELECT ${a.dim1}
-  FROM 
-    ${e284_two AS a}
-fields:
-- dimension: dim2
-  sql: a.dim1

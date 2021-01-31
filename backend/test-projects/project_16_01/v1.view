@@ -1,9 +1,0 @@
-view: v1
-derived_table: |
-  SELECT CURRENT_TIMESTAMP() as created
-
-fields:
-- time: created
-  timeframes:
-    - day_of_week_index
-  sql: created

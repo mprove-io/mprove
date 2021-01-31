@@ -1,5 +1,0 @@
-view: e39_two
-table: 2
-fields:
-- dimension: d1
-  sql: d1

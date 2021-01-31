@@ -1,9 +1,0 @@
-dashboard: v1d
-title: 'sales'
-reports:
-- title: 'weekly'
-  model: v1m
-  select:
-  - a.dim4
-  type: 'table'
-

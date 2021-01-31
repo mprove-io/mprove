@@ -1,8 +1,0 @@
-view: e49_one
-table: 1
-fields:
-- calculation: calc2
-  sql: ${dim1}
-
-- dimension: dim1
-  sql: 222

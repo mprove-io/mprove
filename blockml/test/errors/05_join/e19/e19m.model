@@ -1,7 +1,0 @@
-model: e19m
-joins:
-- from_view: e19_one
-  as: a
-
-- join_view: e19_two            
-  as: v

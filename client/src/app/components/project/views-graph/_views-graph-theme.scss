@@ -1,4 +1,0 @@
-@mixin views-graph-theme($theme) {
-  $warn: map-get($theme, warn);
-  $is-dark: map-get($theme, is-dark);
-}

@@ -1,6 +1,0 @@
-#fields is not a List of Objects
-view: e70
-table: 1
-fields:          #each element of fields must be an Object
-- 555
-- 777

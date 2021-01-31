@@ -1,8 +1,0 @@
-dashboard: v16d
-title: 'sales'
-reports:
-- title: 'weekly'
-  model: v16m
-  select:
-  - mf.calc2
-  type: 'table'

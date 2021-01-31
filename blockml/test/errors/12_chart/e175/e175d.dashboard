@@ -1,9 +1,0 @@
-dashboard: e175d
-title: 'sales'
-reports:
-- title: 'overview'  
-  select:
-  - a.dim1
-  model: e175m
-
-

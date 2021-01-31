@@ -1,8 +1,0 @@
-model: e94m
-joins:
-- from_view: e94_one
-  as: a
-
-fields:
-- dimension: dim1
-  sql: 111

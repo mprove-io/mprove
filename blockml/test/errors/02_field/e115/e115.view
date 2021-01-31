@@ -1,8 +1,0 @@
-view: e115
-table: 1
-fields:
-- dimension: dim1
-  sql: dim1
-  hidden: 5     
-
-

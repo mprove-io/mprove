@@ -1,7 +1,0 @@
-view: e300
-table: 1
-fields:
-  - measure: m
-    type: custom
-    sql: 1
-    percentile: 0.7

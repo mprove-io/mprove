@@ -1,8 +1,0 @@
-model: e44m
-joins:
-- from_view: e44_one
-  as: a
-fields:
-- measure: mea1
-  type: min
-  sql: ${b.two}    

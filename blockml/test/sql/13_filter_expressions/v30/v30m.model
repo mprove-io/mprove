@@ -1,6 +1,0 @@
-model: v30m
-joins:
-- from_view: v30_one
-  as: a
-
-

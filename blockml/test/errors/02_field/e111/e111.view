@@ -1,9 +1,0 @@
-view: e111
-table: 1
-fields:
-- measure: mea
-  sql: 1
-  type: min
-  unk: 5        
-
-

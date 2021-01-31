@@ -1,9 +1,0 @@
-model: e257m
-sql_always_where_calc: '{% apply_filter dim1 %} target {% end_apply_filter %}'
-joins:
-- from_view: e257_one
-  as: a
-
-fields:
-- dimension: dim1
-  sql: dim1

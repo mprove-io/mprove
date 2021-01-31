@@ -1,9 +1,0 @@
-model: e55m
-joins:
-
-- from_view: e55_one
-  as: a
-
-- join_view: e55_two
-  as: b
-  sql_on: ${a.calc1}        

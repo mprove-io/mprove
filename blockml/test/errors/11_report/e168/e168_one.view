@@ -1,8 +1,0 @@
-view: e168_one
-table: '[flow-1202:bqtest.orders]'
-fields:
-- dimension: dim1
-  sql: 111
-
-- dimension: dim2
-  sql: 111

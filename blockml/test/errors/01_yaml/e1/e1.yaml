@@ -1,5 +1,0 @@
-model: e1
-joins:
-
-- from_view: nw_orders
-  as: a

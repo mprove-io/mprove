@@ -1,3 +1,0 @@
-export enum copierErrorsEnum {
-  COPIER_COPY_STRUCT_FROM_DATABASE = 'COPIER_COPY_STRUCT_FROM_DATABASE'
-}

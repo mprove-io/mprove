@@ -1,6 +1,0 @@
-view: e298
-table: 1
-fields:
-- dimension: dim1
-  unnest: '...'      
-  sql: 3

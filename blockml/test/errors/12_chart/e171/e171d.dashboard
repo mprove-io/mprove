@@ -1,9 +1,0 @@
-dashboard: e171d
-title: 'sales'
-reports:
-- title: 'overview'
-  select:
-  - a.dim1
-  model: e171m
-  type: 'abc'    
-

@@ -1,4 +1,0 @@
-model: e265m
-joins:
-- from_view: e265_one
-  as: a

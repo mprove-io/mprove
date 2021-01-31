@@ -1,9 +1,0 @@
-view: e254_one
-table: 1
-fields:
-- measure: mea1
-  type: min
-  sql: ${dim1}
-
-- dimension: dim1
-  sql: 555

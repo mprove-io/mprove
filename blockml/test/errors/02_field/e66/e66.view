@@ -1,6 +1,0 @@
-view: e66
-table: 1
-fields:
-- dimension: dim1
-  type: unk       
-  sql: 1

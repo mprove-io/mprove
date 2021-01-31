@@ -1,6 +1,0 @@
-model: v34m
-joins:
-- from_view: v34_one
-  as: a
-
-

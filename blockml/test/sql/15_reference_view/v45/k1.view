@@ -1,5 +1,0 @@
-view: k1
-table: mprove-data.segment_javascript.tracks
-fields:
-- dimension: dim1
-  sql: 111

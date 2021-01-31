@@ -1,8 +1,0 @@
-model: e232m
-joins:
-- from_view: e232_one
-  as: a
-fields:
-- filter: f1
-  result: from_field
-  from_field: a.unk   

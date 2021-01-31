@@ -1,9 +1,0 @@
-dashboard: v3d
-title: 'sales'
-reports:
-- title: 'weekly'
-  model: v3m
-  select:
-  - mf.dim1
-  type: 'table'
-

@@ -1,4 +1,0 @@
-model: e185m
-joins:
-- from_view: e185_one
-  as: a

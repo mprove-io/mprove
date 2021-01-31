@@ -1,9 +1,0 @@
-model: e256m
-sql_always_where_calc: '{% apply_filter unk %} target {% end_apply_filter %}'
-joins:
-- from_view: e256_one
-  as: a
-
-fields:
-- filter: f1
-  result: number

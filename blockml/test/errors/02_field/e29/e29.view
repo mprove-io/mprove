@@ -1,8 +1,0 @@
-view: e29
-table: 1
-fields:
-
-- dimension: ship_country
-  sql: gdfgs ${unk}         
-
-

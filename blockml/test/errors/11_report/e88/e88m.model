@@ -1,4 +1,0 @@
-model: e88m
-joins:
-- from_view: e88_one
-  as: a

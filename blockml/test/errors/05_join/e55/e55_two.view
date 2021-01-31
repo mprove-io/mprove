@@ -1,5 +1,0 @@
-view: e55_two
-table: 2
-fields:
-- dimension: dim7
-  sql: 777

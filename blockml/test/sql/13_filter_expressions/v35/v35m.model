@@ -1,6 +1,0 @@
-model: v35m
-joins:
-- from_view: v35_one
-  as: a
-
-

@@ -1,4 +1,0 @@
-model: e168m
-joins:
-- from_view: e168_one
-  as: a

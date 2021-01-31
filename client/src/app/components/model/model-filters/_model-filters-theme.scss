@@ -1,9 +1,0 @@
-@mixin model-filters-theme($theme) {
-  $warn: map-get($theme, warn);
-
-  .model-filters {
-    &__error {
-      color: mat-color($warn);
-    }
-  }
-}

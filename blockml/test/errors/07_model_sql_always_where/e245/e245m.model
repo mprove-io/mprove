@@ -1,5 +1,0 @@
-model: e245m
-sql_always_where: ${a.f1}  
-joins:
-- from_view: e245_one
-  as: a

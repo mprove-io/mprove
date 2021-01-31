@@ -1,7 +1,0 @@
-model: e240m
-joins:
-- from_view: e240_one
-  as: a
-fields:
-- calculation: calc1
-  sql: ${a.f1}   

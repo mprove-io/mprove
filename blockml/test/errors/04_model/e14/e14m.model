@@ -1,6 +1,0 @@
-model: e14m
-joins:                       
-- join_view: nw_order_items
-  as: b
-  type: left_outer_each
-  sql_on: ${a.order_id} = ${b.order_id}

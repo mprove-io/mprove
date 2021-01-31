@@ -1,9 +1,0 @@
-dashboard: e75d
-title: 'sales'
-fields:
-- filter: category
-  result: from_field
-  from_field: aaa      
-
-
-

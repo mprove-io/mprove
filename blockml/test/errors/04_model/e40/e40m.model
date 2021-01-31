@@ -1,4 +1,0 @@
-model: e40m
-joins:
-- from_view: unk   
-  as: a

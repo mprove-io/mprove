@@ -1,5 +1,0 @@
-model: e153m
-sql_always_where_calc: ${b.dim}  
-joins:
-- from_view: e153_one
-  as: a

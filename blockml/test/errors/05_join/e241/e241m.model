@@ -1,9 +1,0 @@
-model: e241m
-joins:
-
-- from_view: e241_one
-  as: a
-
-- join_view: e241_two
-  as: b
-  sql_on: ${a.f1}        

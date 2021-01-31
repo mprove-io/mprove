@@ -1,8 +1,0 @@
-view: e112
-table: 1
-fields:
-- calculation: calc
-  sql: 1
-  unk: 5        
-
-

@@ -1,4 +1,0 @@
-model: e106m
-joins:
-- from_view: e106_one
-  as: a

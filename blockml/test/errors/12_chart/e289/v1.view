@@ -1,5 +1,0 @@
-view: v1
-table: 1
-fields:
-- dimension: dim1
-  sql: 111

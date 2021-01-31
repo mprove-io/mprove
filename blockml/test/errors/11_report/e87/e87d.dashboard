@@ -1,8 +1,0 @@
-dashboard: e87d
-title: 'sales'
-reports:
-- title: 'overview'
-  model: e87m
-  select:           
-  - mf.unk
-

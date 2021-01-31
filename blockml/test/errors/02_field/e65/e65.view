@@ -1,9 +1,0 @@
-view: e65
-table: 1
-fields:
-- calculation: created
-  sql: ${dim1}
-  result: unk  
-
-- dimension: dim1
-  sql: 1

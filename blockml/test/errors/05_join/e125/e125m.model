@@ -1,6 +1,0 @@
-model: e125m
-joins:
-- from_view: e125_one
-  description:       
-  - 5
-  as: a

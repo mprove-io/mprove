@@ -1,8 +1,0 @@
-dashboard: v26d
-title: 'sales'
-reports:
-- title: 'weekly'
-  model: v26m
-  select:
-  - a.dim6
-  type: 'table'

@@ -1,6 +1,0 @@
-view: e28
-table: 1
-fields:
-
-- dimension: ship_country
-  sql: gdfgs ${ship_country}         

@@ -1,8 +1,0 @@
-model: e233m
-joins:
-- from_view: e233_one
-  as: a
-fields:
-- filter: f1
-  result: from_field
-  from_field: a.f2   

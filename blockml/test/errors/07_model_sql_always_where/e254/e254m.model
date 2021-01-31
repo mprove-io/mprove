@@ -1,9 +1,0 @@
-model: e254m
-sql_always_where: '{% apply_filter unk %} target {% end_apply_filter %}'
-joins:
-- from_view: e254_one
-  as: a
-
-fields:
-- filter: f1
-  result: number

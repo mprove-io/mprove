@@ -1,9 +1,0 @@
-dashboard: e80d
-title: 'sales'
-fields:
-- filter: category
-  result: from_field
-  from_field: e80m.a.cat 
-
-
-

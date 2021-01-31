@@ -1,7 +1,0 @@
-model: e45m
-joins:
-- from_view: e45_one
-  as: a
-fields:
-- calculation: calc1
-  sql: ${a.unk}       

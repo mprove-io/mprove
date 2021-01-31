@@ -1,4 +1,0 @@
-model: m1
-joins:
-- from_view: v1
-  as: a

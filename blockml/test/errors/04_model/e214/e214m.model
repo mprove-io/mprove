@@ -1,7 +1,0 @@
-model: e214m
-udfs:  
-- unk
-joins:
-- from_view: e214_one
-  as: a
-

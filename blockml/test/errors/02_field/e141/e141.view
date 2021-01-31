@@ -1,7 +1,0 @@
-view: e141
-table: 1
-fields:
-- time: created
-  sql: created
-  timeframes:        
-  - unk

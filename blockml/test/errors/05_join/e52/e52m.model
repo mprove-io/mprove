@@ -1,9 +1,0 @@
-model: e52m
-joins:
-
-- from_view: e52_one
-  as: a
-
-- join_view: e52_two
-  as: b
-  sql_on: ${c.dim}          

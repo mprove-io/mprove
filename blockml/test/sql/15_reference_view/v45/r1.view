@@ -1,9 +1,0 @@
-view: r1
-derived_table: |
-  SELECT *
-  FROM abc
-fields:
-- dimension: dim2
-  sql: 222
-- dimension: dim3
-  sql: 333

@@ -1,5 +1,0 @@
-model: e117m
-unk: 5     
-joins:
-- from_view: e117_one
-  as: a

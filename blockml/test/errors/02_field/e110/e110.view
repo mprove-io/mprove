@@ -1,8 +1,0 @@
-view: e110
-table: 1
-fields:
-- time: created
-  sql: created
-  unk: 5         
-
-

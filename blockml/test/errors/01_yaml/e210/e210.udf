@@ -1,6 +1,0 @@
-udf: abc 
-sql: |
-  CREATE TEMPORARY FUNCTION ... ;
-
-
-

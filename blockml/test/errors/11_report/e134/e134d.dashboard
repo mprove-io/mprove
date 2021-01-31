@@ -1,9 +1,0 @@
-dashboard: e134d
-title: 'sales'
-reports:
-- title: 'overview'
-  description:      
-  - 5
-  model: e134m
-  select:
-  - a.dim1

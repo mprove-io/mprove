@@ -1,7 +1,0 @@
-model: e41m
-joins:
-- from_view: e41_one
-  as: a
-
-- join_view: unk     
-  as: b

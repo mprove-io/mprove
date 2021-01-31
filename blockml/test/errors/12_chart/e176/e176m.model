@@ -1,4 +1,0 @@
-model: e176m
-joins:
-- from_view: e176_one
-  as: a

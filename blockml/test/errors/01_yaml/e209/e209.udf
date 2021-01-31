@@ -1,7 +1,0 @@
-udf: e209
-sql: |
-  CREATE TEMPORARY FUNCTION ... ;
-unk: 7 
-
-
-

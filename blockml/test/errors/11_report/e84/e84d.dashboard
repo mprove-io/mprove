@@ -1,8 +1,0 @@
-dashboard: e84d
-title: 'sales'
-reports:
-- title: 'overview'
-  model: unk        
-
-
-

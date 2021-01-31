@@ -1,5 +1,0 @@
-view: e240_one
-table: 1
-fields:
-- filter: f1
-  result: number

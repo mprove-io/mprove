@@ -1,9 +1,0 @@
-model: v25m
-sql_always_where_calc: ${a.calc2} > 100
-joins:
-
-- from_view: v25_one
-  as: a
-
-
-

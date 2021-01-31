@@ -1,9 +1,0 @@
-model: v12m
-joins:
-- from_view: v12_one
-  as: a
-
-fields:
-- calculation: calc1
-  sql: ${a.mea2} + ${a.mea3}
-

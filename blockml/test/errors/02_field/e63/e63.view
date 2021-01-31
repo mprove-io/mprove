@@ -1,6 +1,0 @@
-view: e63
-table: 1
-fields:
-- dimension: created
-  sql: created
-  result: unk           

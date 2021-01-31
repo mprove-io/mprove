@@ -1,5 +1,0 @@
-view: e52_two
-table: 2
-fields:
-- dimension: dim5
-  sql: 555

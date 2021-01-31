@@ -1,8 +1,0 @@
-dashboard: e265d
-title: 'sales'
-reports:
-- title: 'overview'
-  model: e265m
-  select:    
-  - '...'
-

@@ -1,6 +1,0 @@
-model: e259m
-access_users:  
-- a: 'abc'
-joins:
-- from_view: e259_one
-  as: a
