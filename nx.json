@@ -25,6 +25,9 @@
   "projects": {
     "disk": {
       "tags": []
+    },
+    "nest-app": {
+      "tags": []
     }
   }
 }

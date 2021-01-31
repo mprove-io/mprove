@@ -43,6 +43,49 @@
           }
         }
       }
+    },
+    "nest-app": {
+      "root": "apps/nest-app",
+      "sourceRoot": "apps/nest-app/src",
+      "projectType": "application",
+      "prefix": "nest-app",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/nest-app",
+            "main": "apps/nest-app/src/main.ts",
+            "tsConfig": "apps/nest-app/tsconfig.app.json",
+            "assets": ["apps/nest-app/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/nest-app/src/environments/environment.ts",
+                  "with": "apps/nest-app/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "nest-app:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/nest-app/**/*.ts"]
+          }
+        }
+      }
     }
   },
   "cli": {
