@@ -1,10 +1,52 @@
 {
-  
-  
   "version": 2,
-  
-  "projects": {},
+  "projects": {
+    "disk": {
+      "root": "apps/disk",
+      "sourceRoot": "apps/disk/src",
+      "projectType": "application",
+      "prefix": "disk",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/disk",
+            "main": "apps/disk/src/main.ts",
+            "tsConfig": "apps/disk/tsconfig.app.json",
+            "assets": ["apps/disk/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/disk/src/environments/environment.ts",
+                  "with": "apps/disk/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "disk:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/disk/**/*.ts"]
+          }
+        }
+      }
+    }
+  },
   "cli": {
-    "defaultCollection": "@nrwl/workspace"
-  }
+    "defaultCollection": "@nrwl/nest"
+  },
+  "defaultProject": "disk"
 }
