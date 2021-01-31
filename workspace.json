@@ -32,15 +32,11 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "disk:build"
-          }
+          "options": { "buildTarget": "disk:build" }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/disk/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["apps/disk/**/*.ts"] }
         }
       }
     },
@@ -75,15 +71,11 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "nest-app:build"
-          }
+          "options": { "buildTarget": "nest-app:build" }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/nest-app/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["apps/nest-app/**/*.ts"] }
         }
       }
     },
@@ -118,15 +110,11 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "nest-app-2:build"
-          }
+          "options": { "buildTarget": "nest-app-2:build" }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/nest-app-2/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["apps/nest-app-2/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
@@ -137,10 +125,19 @@
           }
         }
       }
+    },
+    "api": {
+      "root": "libs/api",
+      "sourceRoot": "libs/api/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/api/**/*.ts"] }
+        }
+      }
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/nest"
-  },
+  "cli": { "defaultCollection": "@nrwl/nest" },
   "defaultProject": "disk"
 }

@@ -14,7 +14,10 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@mprove/api": ["libs/api/src/index.ts"],
+      "~/*": ["./src/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

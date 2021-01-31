@@ -4,7 +4,12 @@
     "outDir": "../../dist/out-tsc",
     "types": ["node"],
     "emitDecoratorMetadata": true,
-    "target": "es2015"
+    "target": "es2015",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"],
+      "@mprove/api": ["../../libs/api/src/index.ts"]
+    }
   },
   "exclude": ["**/*.spec.ts"],
   "include": ["**/*.ts"]

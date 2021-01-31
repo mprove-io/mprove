@@ -1,2 +1,2 @@
-import * as api from '~/api/_index';
+import * as api from '@mprove/api';
 export { api };

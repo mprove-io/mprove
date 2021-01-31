@@ -18,6 +18,7 @@
   "projects": {
     "disk": { "tags": [] },
     "nest-app": { "tags": [] },
-    "nest-app-2": { "tags": [] }
+    "nest-app-2": { "tags": [] },
+    "api": { "tags": [] }
   }
 }
