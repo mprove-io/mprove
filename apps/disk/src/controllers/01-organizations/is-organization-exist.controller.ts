@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { IsOrganizationExistService } from '~/services/01-organizations/is-organization-exist.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { IsOrganizationExistService } from '~disk/services/01-organizations/is-organization-exist.service';
 
 @Controller()
 export class IsOrganizationExistController {

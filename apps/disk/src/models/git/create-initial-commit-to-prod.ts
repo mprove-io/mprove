@@ -1,8 +1,8 @@
 import * as nodegit from 'nodegit';
-import { api } from '~/barrels/api';
-import { constants } from '~/barrels/constants';
-import { disk } from '~/barrels/disk';
-import { helper } from '~/barrels/helper';
+import { api } from '~disk/barrels/api';
+import { constants } from '~disk/barrels/constants';
+import { disk } from '~disk/barrels/disk';
+import { helper } from '~disk/barrels/helper';
 
 export async function createInitialCommitToProd(item: {
   prodDir: string;

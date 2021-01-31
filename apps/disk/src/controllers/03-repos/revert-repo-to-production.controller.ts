@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { RevertRepoToProductionService } from '~/services/03-repos/revert-repo-to-production.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { RevertRepoToProductionService } from '~disk/services/03-repos/revert-repo-to-production.service';
 
 @Controller()
 export class RevertRepoToProductionController {

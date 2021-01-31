@@ -1,6 +1,6 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
-import { api } from '~/barrels/api';
+import { api } from '~disk/barrels/api';
 import { MessageService } from './message.service';
 
 @Injectable()

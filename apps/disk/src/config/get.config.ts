@@ -1,6 +1,6 @@
-import { api } from '~/barrels/api';
-import { enums } from '~/barrels/enums';
-import { interfaces } from '~/barrels/interfaces';
+import { api } from '~disk/barrels/api';
+import { enums } from '~disk/barrels/enums';
+import { interfaces } from '~disk/barrels/interfaces';
 import { getBaseConfig } from './get-base.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';

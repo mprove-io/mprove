@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { DeleteDevRepoService } from '~/services/03-repos/delete-dev-repo.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { DeleteDevRepoService } from '~disk/services/03-repos/delete-dev-repo.service';
 
 @Controller()
 export class DeleteDevRepoController {

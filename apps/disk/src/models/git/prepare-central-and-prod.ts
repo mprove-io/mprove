@@ -1,7 +1,7 @@
 import * as nodegit from 'nodegit';
-import { api } from '~/barrels/api';
-import { constants } from '~/barrels/constants';
-import { disk } from '~/barrels/disk';
+import { api } from '~disk/barrels/api';
+import { constants } from '~disk/barrels/constants';
+import { disk } from '~disk/barrels/disk';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
 import { pushToCentral } from './push-to-central';
 import { constantFetchOptions } from './_constant-fetch-options';

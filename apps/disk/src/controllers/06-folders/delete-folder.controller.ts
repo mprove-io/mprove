@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { DeleteFolderService } from '~/services/06-folders/delete-folder.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { DeleteFolderService } from '~disk/services/06-folders/delete-folder.service';
 
 @Controller()
 export class DeleteFolderController {

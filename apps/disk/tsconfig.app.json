@@ -7,11 +7,11 @@
     "target": "es2015",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"],
+      "~disk/*": ["./src/*"],
       "~api/*": ["../../libs/api/src/*"],
       "@mprove/api": ["../../libs/api/src/_index.ts"]
     }
   },
-  "exclude": ["**/*.spec.ts"],
+  // "exclude": ["**/*.spec.ts"],
   "include": ["**/*.ts"]
 }

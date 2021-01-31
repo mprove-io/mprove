@@ -1,7 +1,7 @@
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
 
 export async function getNodesAndFiles(item: {
   projectId: string;

@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { CommitRepoService } from '~/services/03-repos/commit-repo.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { CommitRepoService } from '~disk/services/03-repos/commit-repo.service';
 
 @Controller()
 export class CommitRepoController {

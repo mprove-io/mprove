@@ -1,2 +1,2 @@
-import * as constants from '~/constants/_index';
+import * as constants from '~disk/constants/_index';
 export { constants };

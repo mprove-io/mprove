@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { SaveFileService } from '~/services/07-files/save-file.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { SaveFileService } from '~disk/services/07-files/save-file.service';
 
 @Controller()
 export class SaveFileController {

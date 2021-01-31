@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { disk } from '~/barrels/disk';
-import { interfaces } from '~/barrels/interfaces';
+import { api } from '~disk/barrels/api';
+import { disk } from '~disk/barrels/disk';
+import { interfaces } from '~disk/barrels/interfaces';
 
 @Injectable()
 export class IsProjectExistService {

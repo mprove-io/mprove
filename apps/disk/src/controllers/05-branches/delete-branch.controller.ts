@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { DeleteBranchService } from '~/services/05-branches/delete-branch.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { DeleteBranchService } from '~disk/services/05-branches/delete-branch.service';
 
 @Controller()
 export class DeleteBranchController {

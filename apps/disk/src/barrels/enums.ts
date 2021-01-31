@@ -1,2 +1,2 @@
-import * as enums from '~/enums/_index';
+import * as enums from '~disk/enums/_index';
 export { enums };

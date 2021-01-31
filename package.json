@@ -28,7 +28,11 @@
     "update": "nx migrate latest",
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "clean-dist-tests": "rimraf \"./dist/tests\"",
+    "tsc:disk": "npm run clean-dist-tests && tsc --project tests-disk-tsconfig.json",
+    "t:disk": "npm run tsc:disk && ava --config=ava-js.config.js",
+    "clean-blockml-logs": "rimraf \"./apps/blockml/src/models/**/logs\""
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -99,5 +103,11 @@
         "git add"
       ]
     }
+  },
+  "_moduleAliases": {
+    "~disk": "dist/tests/disk/apps/disk/src",
+    "@mprove/api": "dist/tests/disk/libs/api/src/_index",
+    "~api": "dist/tests/disk/libs/api/src",
+    "@mprove/nest-lib": "dist/tests/disk/libs/nest-lib/src"
   }
 }

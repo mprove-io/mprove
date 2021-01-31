@@ -1,7 +1,7 @@
 import * as nodegit from 'nodegit';
-import { api } from '~/barrels/api';
-import { disk } from '~/barrels/disk';
-import { interfaces } from '~/barrels/interfaces';
+import { api } from '~disk/barrels/api';
+import { disk } from '~disk/barrels/disk';
+import { interfaces } from '~disk/barrels/interfaces';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
 import { constantFetchOptions } from './_constant-fetch-options';
 

@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { RevertRepoToLastCommitService } from '~/services/03-repos/revert-repo-to-last-commit.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { RevertRepoToLastCommitService } from '~disk/services/03-repos/revert-repo-to-last-commit.service';
 
 @Controller()
 export class RevertRepoToLastCommitController {

@@ -1,6 +1,6 @@
 import test from 'ava';
-import { api } from '~/barrels/api';
-import { prepareTest } from '~/functions/prepare-test';
+import { api } from '~disk/barrels/api';
+import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'pull-repo__force-need-resolve';
 

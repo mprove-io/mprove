@@ -2,10 +2,10 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
-import { interfaces } from '~/barrels/interfaces';
-import { getConfig } from '~/config/get.config';
-import { coreServices } from '~/core-services';
-import { MessageService } from '~/services/message.service';
+import { interfaces } from '~disk/barrels/interfaces';
+import { getConfig } from '~disk/config/get.config';
+import { coreServices } from '~disk/core-services';
+import { MessageService } from '~disk/services/message.service';
 
 export async function prepareTest(organizationId: string) {
   let app: INestApplication;

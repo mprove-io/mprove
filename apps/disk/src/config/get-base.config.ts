@@ -1,8 +1,8 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { api } from '~/barrels/api';
-import { enums } from '~/barrels/enums';
-import { interfaces } from '~/barrels/interfaces';
+import { api } from '~disk/barrels/api';
+import { enums } from '~disk/barrels/enums';
+import { interfaces } from '~disk/barrels/interfaces';
 
 export function getBaseConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));

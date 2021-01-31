@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
-import { MoveCatalogNodeService } from '~/services/04-catalogs/move-catalog-node.service';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
+import { MoveCatalogNodeService } from '~disk/services/04-catalogs/move-catalog-node.service';
 
 @Controller()
 export class MoveCatalogNodeController {

@@ -1,6 +1,6 @@
 import * as nodegit from 'nodegit';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
 import { getRepoStatus } from './get-repo-status';
 
 export async function checkoutBranch(item: {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~/barrels/api';
-import { interfaces } from '~/barrels/interfaces';
+import { api } from '~disk/barrels/api';
+import { interfaces } from '~disk/barrels/interfaces';
 import { CreateOrganizationService } from './01-organizations/create-organization.service';
 import { DeleteOrganizationService } from './01-organizations/delete-organization.service';
 import { IsOrganizationExistService } from './01-organizations/is-organization-exist.service';

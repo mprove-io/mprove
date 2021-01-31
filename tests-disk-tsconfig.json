@@ -1,12 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    // "rootDir": ".",
-    // "declaration": false,
     "moduleResolution": "node",
     "importHelpers": true,
-    // "target": "es2015",
-    // "module": "esnext",
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
@@ -22,16 +18,10 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./dist/tests/disk",
     "incremental": true
-    // "baseUrl": "./src",
-    // "paths": {
-    //   "~/*": ["./*"]
-    // }
   },
-  // "exclude": ["node_modules", "tmp"],
   "include": ["apps/disk/**/*.ts"]
 }

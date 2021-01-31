@@ -1,4 +1,4 @@
-import { api } from '~/barrels/api';
+import { api } from '~disk/barrels/api';
 
 export interface ItemCatalog {
   files: api.DiskCatalogFile[];
