@@ -2,6 +2,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
 import { api } from '~blockml/barrels/api';
+import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -56,14 +57,14 @@ export async function prepareTest(
   let fromDir = `${blockmlLogsPath}/${caller}/${f}/${structId}`;
   fse.emptyDirSync(fromDir);
 
-  let dataDir = `src/models/${pack}/tests/${f}/data/${testId}`;
+  let dataDir = `${constants.SRC_PATH}/models/${pack}/tests/${f}/data/${testId}`;
 
   let toDir =
     blockmlCopyLogsToModels === api.BoolEnum.FALSE
       ? null
       : helper.isDefined(connection)
-      ? `src/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`
-      : `src/models/${pack}/tests/${f}/logs/${testId}`;
+      ? `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`
+      : `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}`;
 
   return {
     structService: structService,
