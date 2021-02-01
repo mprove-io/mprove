@@ -1,17 +1,5 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "lib": ["es2017", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "~backend/*": ["apps/backend/src/*"],
-      "~api/*": ["libs/api/src/*"],
-      "@mprove/api": ["libs/api/src/_index.ts"]
-    },
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -20,7 +8,13 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist/tests/backend",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "~backend/*": ["apps/backend/src/*"],
+      "~api/*": ["libs/api/src/*"],
+      "@mprove/api": ["libs/api/src/_index.ts"]
+    }
   },
   "include": ["apps/backend/**/*.ts"]
 }
