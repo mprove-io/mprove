@@ -29,15 +29,17 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
+    "clean-blockml-logs": "rimraf \"./apps/blockml/src/models/**/logs\"",
     "t:api": "rimraf \"./dist/tests/api\" && tsc --project tsconfig-api.test.json",
-    "t:blockml": "rimraf \"./dist/tests/blockml\" && tsc --project tsconfig-blockml.test.json",
+    "t:backend": "rimraf \"./dist/tests/backend\" && tsc --project tsconfig-backend.test.json",
+    "t:blockml": "rimraf \"./dist/tests/blockml\" && rimraf \"./apps/blockml/src/models/**/logs\" && tsc --project tsconfig-blockml.test.json",
     "t:disk": "rimraf \"./dist/tests/disk\" && tsc --project tsconfig-disk.test.json",
-    "lint:all": "eslint \"{apps,libs}/**/*.ts\"",
-    "lint:blockml": "eslint \"apps/blockml/**/*.ts\"",
-    "lint:disk": "eslint \"apps/disk/**/*.ts\"",
+    "test:backend": "npm run t:backend && ava --config=ava-js.config.js dist/tests/backend/apps/**/*.spec.js",
     "test:blockml": "npm run t:blockml && ava --config=ava-js.config.js dist/tests/blockml/apps/**/*.spec.js",
     "test:disk": "npm run t:disk && ava --config=ava-js.config.js dist/tests/disk/apps/**/*.spec.js",
-    "clean-blockml-logs": "rimraf \"./apps/blockml/src/models/**/logs\""
+    "circular": "madge --circular {apps,libs}",
+    "lint:all": "eslint \"{apps,libs}/**/*.ts\"",
+    "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -63,7 +65,19 @@
     "tarjan-graph": "^2.0.0",
     "tiny-async-pool": "^1.2.0",
     "toposort": "^2.0.2",
-    "walk": "^2.3.9"
+    "walk": "^2.3.9",
+    "@nestjs-modules/mailer": "^1.5.1",
+    "@nestjs/jwt": "^7.2.0",
+    "@nestjs/passport": "^7.1.5",
+    "@nestjs/typeorm": "^7.1.5",
+    "bcrypt": "^5.0.0",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.4.17",
+    "nodemailer-mailgun-transport": "1.4.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "typeorm": "^0.2.29"
   },
   "devDependencies": {
     "@nestjs/schematics": "^7.0.0",
@@ -96,10 +110,18 @@
     "@types/supertest": "^2.0.8",
     "ava": "^3.15.0",
     "eslint-plugin-import": "^2.20.1",
-    "madge": "3.11.0",
+    "madge": "4.0.0",
     "supertest": "^4.0.2",
     "ts-loader": "^6.2.1",
-    "tsconfig-paths": "^3.9.0"
+    "tsconfig-paths": "^3.9.0",
+    "@types/bcrypt": "^3.0.0"
+  },
+  "madge": {
+    "fileExtensions": [
+      "ts",
+      "tsx"
+    ],
+    "tsConfig": "./tsconfig.json"
   },
   "husky": {
     "hooks": {
@@ -115,6 +137,7 @@
     }
   },
   "_moduleAliases": {
+    "~backend": "dist/tests/backend/apps/backend/src",
     "~blockml": "dist/tests/blockml/apps/blockml/src",
     "~disk": "dist/tests/disk/apps/disk/src",
     "~api": "dist/tests/api",

@@ -9,8 +9,6 @@
     "baseUrl": ".",
     "paths": {
       "~backend/*": ["apps/backend/src/*"],
-      "~blockml/*": ["apps/blockml/src/*"],
-      "~disk/*": ["apps/disk/src/*"],
       "~api/*": ["libs/api/src/*"],
       "@mprove/api": ["libs/api/src/_index.ts"]
     },
@@ -19,16 +17,10 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./dist/tests/backend",
     "incremental": true
   },
-  "include": [
-    "apps/backend/**/*.ts",
-    "apps/blockml/**/*.ts",
-    "apps/disk/**/*.ts",
-    "libs/api/**/*.ts"
-  ]
+  "include": ["apps/backend/**/*.ts"]
 }
