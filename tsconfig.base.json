@@ -13,12 +13,6 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true
-    // "baseUrl": ".",
-    // "paths": {
-    //   "@mprove/api": ["libs/api/src/_index.ts"],
-    //   "~/*": ["./src/*"],
-    //   "@mprove/nest-lib": ["libs/nest-lib/src/index.ts"]
-    // }
   },
   "exclude": ["node_modules", "tmp"]
 }

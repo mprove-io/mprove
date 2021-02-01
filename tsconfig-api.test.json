@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist/tests/api",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "~api/*": ["libs/api/src/*"]
+    }
+  },
+  "include": ["libs/api/**/*.ts"]
+}

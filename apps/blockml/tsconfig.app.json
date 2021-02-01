@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": ["node"],
+    "emitDecoratorMetadata": true,
+    "target": "es2015",
+    "baseUrl": ".",
+    "paths": {
+      "~blockml/*": ["./src/*"],
+      "@mprove/api": ["../../libs/api/src/_index.ts"]
+    }
+  },
+  // "exclude": ["**/*.spec.ts"],
+  "include": ["**/*.ts"]
+}

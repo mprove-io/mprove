@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist/tests/blockml",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "~blockml/*": ["apps/blockml/src/*"],
+      "~api/*": ["libs/api/src/*"],
+      "@mprove/api": ["libs/api/src/_index.ts"]
+    }
+  },
+  "include": ["apps/blockml/**/*.ts"]
+}

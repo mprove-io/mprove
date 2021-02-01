@@ -1,0 +1,54 @@
+import test from 'ava';
+import * as fse from 'fs-extra';
+import { api } from '~blockml/barrels/api';
+import { enums } from '~blockml/barrels/enums';
+import { helper } from '~blockml/barrels/helper';
+import { prepareTest } from '~blockml/functions/prepare-test';
+import { BmError } from '~blockml/models/bm-error';
+
+let caller = enums.CallerEnum.BuildSortJoins;
+let func = enums.FuncEnum.CheckJoinsCyclesAndToposort;
+let testId = 'e__cycle-in-joins-sql-on-or-sql-where';
+
+test('1', async t => {
+  let errors: BmError[];
+  let models;
+
+  try {
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir
+    } = await prepareTest(caller, func, testId);
+
+    let connection: api.ProjectConnection = {
+      name: 'c1',
+      type: api.ConnectionTypeEnum.PostgreSQL
+    };
+
+    await structService.rebuildStruct({
+      traceId: traceId,
+      dir: dataDir,
+      structId: structId,
+      connections: [connection],
+      weekStart: api.ProjectWeekStartEnum.Monday
+    });
+
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    models = await helper.readLog(fromDir, enums.LogTypeEnum.Models);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
+  } catch (e) {
+    api.logToConsole(e);
+  }
+
+  t.is(errors.length, 1);
+  t.is(models.length, 0);
+
+  t.is(errors[0].title, enums.ErTitleEnum.CYCLE_IN_JOINS_SQL_ON_OR_SQL_WHERE);
+  t.is(errors[0].lines.length, 3);
+});

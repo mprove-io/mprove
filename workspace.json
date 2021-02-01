@@ -20,13 +20,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/disk/src/environments/environment.ts",
-                  "with": "apps/disk/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
@@ -162,26 +156,39 @@
         }
       }
     },
-    "nest-lib": {
-      "root": "libs/nest-lib",
-      "sourceRoot": "libs/nest-lib/src",
-      "projectType": "library",
+    "blockml": {
+      "root": "apps/blockml",
+      "sourceRoot": "apps/blockml/src",
+      "projectType": "application",
+      "prefix": "blockml",
       "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/blockml",
+            "main": "apps/blockml/src/main.ts",
+            "tsConfig": "apps/blockml/tsconfig.app.json",
+            "assets": ["apps/blockml/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "blockml:build"
+          }
+        },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/nest-lib/**/*.ts"]
-          }
-        },
-        "build": {
-          "executor": "@nrwl/node:package",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/libs/nest-lib",
-            "tsConfig": "libs/nest-lib/tsconfig.lib.json",
-            "packageJson": "libs/nest-lib/package.json",
-            "main": "libs/nest-lib/src/index.ts",
-            "assets": ["libs/nest-lib/*.md"]
+            "lintFilePatterns": ["apps/blockml/**/*.ts"]
           }
         }
       }

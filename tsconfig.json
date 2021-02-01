@@ -1,21 +1,17 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    // "rootDir": ".",
-    // "declaration": false,
     "moduleResolution": "node",
     "importHelpers": true,
-    // "target": "es2015",
-    // "module": "esnext",
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mprove/api": ["libs/api/src/_index.ts"],
+      "~blockml/*": ["apps/blockml/src/*"],
       "~disk/*": ["apps/disk/src/*"],
       "~api/*": ["libs/api/src/*"],
-      "@mprove/nest-lib": ["libs/nest-lib/src/index.ts"]
+      "@mprove/api": ["libs/api/src/_index.ts"]
     },
     "module": "commonjs",
     "declaration": true,
@@ -27,11 +23,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true
-    // "baseUrl": "./src",
-    // "paths": {
-    //   "~/*": ["./*"]
-    // }
   },
-  // "exclude": ["node_modules", "tmp"],
-  "include": ["apps/disk/**/*.ts"]
+  "include": ["apps/blockml/**/*.ts", "apps/disk/**/*.ts", "libs/api/**/*.ts"]
 }

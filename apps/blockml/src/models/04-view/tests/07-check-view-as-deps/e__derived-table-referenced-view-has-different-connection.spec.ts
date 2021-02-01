@@ -1,0 +1,63 @@
+import test from 'ava';
+import * as fse from 'fs-extra';
+import { api } from '~blockml/barrels/api';
+import { enums } from '~blockml/barrels/enums';
+import { helper } from '~blockml/barrels/helper';
+import { interfaces } from '~blockml/barrels/interfaces';
+import { prepareTest } from '~blockml/functions/prepare-test';
+import { BmError } from '~blockml/models/bm-error';
+
+let caller = enums.CallerEnum.BuildView;
+let func = enums.FuncEnum.CheckViewAsDeps;
+let testId = 'e__derived-table-referenced-view-has-different-connection';
+
+test('1', async t => {
+  let errors: BmError[];
+  let views: interfaces.View[];
+
+  try {
+    let {
+      structService,
+      traceId,
+      structId,
+      dataDir,
+      fromDir,
+      toDir
+    } = await prepareTest(caller, func, testId);
+
+    let c1: api.ProjectConnection = {
+      name: 'c1',
+      type: api.ConnectionTypeEnum.BigQuery
+    };
+
+    let c2: api.ProjectConnection = {
+      name: 'c2',
+      type: api.ConnectionTypeEnum.BigQuery
+    };
+
+    await structService.rebuildStruct({
+      traceId: traceId,
+      dir: dataDir,
+      structId: structId,
+      connections: [c1, c2],
+      weekStart: api.ProjectWeekStartEnum.Monday
+    });
+
+    errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
+    views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
+    if (helper.isDefined(toDir)) {
+      fse.copySync(fromDir, toDir);
+    }
+  } catch (e) {
+    api.logToConsole(e);
+  }
+
+  t.is(errors.length, 1);
+  t.is(views.length, 0);
+
+  t.is(
+    errors[0].title,
+    enums.ErTitleEnum.DERIVED_TABLE_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION
+  );
+  t.is(errors[0].lines[0].line, 3);
+});

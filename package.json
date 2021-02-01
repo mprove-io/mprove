@@ -29,9 +29,11 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "clean-dist-tests": "rimraf \"./dist/tests\"",
-    "tsc:disk": "npm run clean-dist-tests && tsc --project tests-disk-tsconfig.json",
-    "t:disk": "npm run tsc:disk && ava --config=ava-js.config.js",
+    "t:api": "rimraf \"./dist/tests/api\" && tsc --project tsconfig-api.test.json",
+    "t:blockml": "rimraf \"./dist/tests/blockml\" && tsc --project tsconfig-blockml.test.json",
+    "t:disk": "rimraf \"./dist/tests/disk\" && tsc --project tsconfig-disk.test.json",
+    "test:blockml": "npm run t:blockml && ava --config=ava-js.config.js dist/tests/blockml/apps/**/*.spec.js",
+    "test:disk": "npm run t:disk && ava --config=ava-js.config.js dist/tests/disk/apps/**/*.spec.js",
     "clean-blockml-logs": "rimraf \"./apps/blockml/src/models/**/logs\""
   },
   "dependencies": {
@@ -53,7 +55,12 @@
     "nodegit": "^0.27.0",
     "p-iteration": "^1.1.8",
     "rimraf": "^3.0.2",
-    "typescript": "~4.0.3"
+    "typescript": "~4.0.3",
+    "d3-format": "^1.4.5",
+    "tarjan-graph": "^2.0.0",
+    "tiny-async-pool": "^1.2.0",
+    "toposort": "^2.0.2",
+    "walk": "^2.3.9"
   },
   "devDependencies": {
     "@nestjs/schematics": "^7.0.0",
@@ -105,9 +112,9 @@
     }
   },
   "_moduleAliases": {
+    "~blockml": "dist/tests/blockml/apps/blockml/src",
     "~disk": "dist/tests/disk/apps/disk/src",
-    "@mprove/api": "dist/tests/disk/libs/api/src/_index",
-    "~api": "dist/tests/disk/libs/api/src",
-    "@mprove/nest-lib": "dist/tests/disk/libs/nest-lib/src"
+    "~api": "dist/tests/api",
+    "@mprove/api": "dist/tests/api/_index"
   }
 }
