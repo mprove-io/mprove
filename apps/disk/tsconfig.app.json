@@ -8,6 +8,7 @@
     "baseUrl": ".",
     "paths": {
       "~disk/*": ["./src/*"],
+      "~api/*": ["../../libs/api/src/*"],
       "@mprove/api": ["../../libs/api/src/_index.ts"]
     }
   },
