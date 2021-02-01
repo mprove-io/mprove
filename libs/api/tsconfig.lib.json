@@ -11,20 +11,6 @@
       "~api/*": ["./src/*"]
     }
   },
-  "exclude": ["**/*.spec.ts"],
+  // "exclude": ["**/*.spec.ts"],
   "include": ["**/*.ts"]
 }
-
-// {
-//   "extends": "./tsconfig.json",
-//   "compilerOptions": {
-//     "outDir": "../../dist/out-tsc",
-//     "types": [],
-//     "baseUrl": ".",
-//     "paths": {
-//       "~/*": ["./src/*"],
-//     }
-//   },
-//   "include": ["**/*.ts"],
-//   "exclude": ["**/*.spec.ts"]
-// }

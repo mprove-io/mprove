@@ -32,6 +32,9 @@
     "t:api": "rimraf \"./dist/tests/api\" && tsc --project tsconfig-api.test.json",
     "t:blockml": "rimraf \"./dist/tests/blockml\" && tsc --project tsconfig-blockml.test.json",
     "t:disk": "rimraf \"./dist/tests/disk\" && tsc --project tsconfig-disk.test.json",
+    "lint:all": "eslint \"{apps,libs}/**/*.ts\"",
+    "lint:blockml": "eslint \"apps/blockml/**/*.ts\"",
+    "lint:disk": "eslint \"apps/disk/**/*.ts\"",
     "test:blockml": "npm run t:blockml && ava --config=ava-js.config.js dist/tests/blockml/apps/**/*.spec.js",
     "test:disk": "npm run t:disk && ava --config=ava-js.config.js dist/tests/disk/apps/**/*.spec.js",
     "clean-blockml-logs": "rimraf \"./apps/blockml/src/models/**/logs\""
