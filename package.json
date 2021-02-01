@@ -39,7 +39,12 @@
     "test:disk": "npm run t:disk && ava --config=ava-js.config.js dist/tests/disk/apps/**/*.spec.js",
     "circular": "madge --circular {apps,libs}",
     "lint:all": "eslint \"{apps,libs}/**/*.ts\"",
-    "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
+    "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "p:api": "prettier \"libs/api/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml",
+    "p:backend": "prettier \"apps/backend/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml",
+    "p:blockml": "prettier \"apps/blockml/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml",
+    "p:disk": "prettier \"apps/disk/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml",
+    "p:all": "prettier \"**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
