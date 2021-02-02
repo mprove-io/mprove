@@ -1,8 +1,8 @@
 import { api } from '~backend/barrels/api';
 import { interfaces } from '~backend/barrels/interfaces';
 
-export function getProdConfig(baseConfig: interfaces.Config) {
-  let prodConfig = Object.assign({}, baseConfig);
+export function getProdConfig(devConfig: interfaces.Config) {
+  let prodConfig = Object.assign({}, devConfig);
 
   prodConfig.mproveLogIsColor = api.BoolEnum.FALSE;
 

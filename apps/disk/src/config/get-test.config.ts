@@ -1,7 +1,7 @@
 import { interfaces } from '~disk/barrels/interfaces';
 
-export function getTestConfig(baseConfig: interfaces.Config) {
-  let testConfig = Object.assign({}, baseConfig);
+export function getTestConfig(devConfig: interfaces.Config) {
+  let testConfig = Object.assign({}, devConfig);
 
   return testConfig;
 }

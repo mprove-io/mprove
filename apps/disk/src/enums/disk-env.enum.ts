@@ -1,5 +1,5 @@
 export enum DiskEnvEnum {
-  BASE = 'BASE',
+  DEV = 'DEV',
   PROD = 'PROD',
   TEST = 'TEST'
 }

@@ -4,12 +4,12 @@ import { api } from '~blockml/barrels/api';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 
-export function getBaseConfig(envFilePath) {
+export function getDevConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
   let commonConfig: api.Config = api.getCommonConfig(envFile);
 
-  let baseConfig: interfaces.Config = Object.assign({}, commonConfig, {
+  let devConfig: interfaces.Config = Object.assign({}, commonConfig, {
     blockmlEnv: <enums.BlockmlEnvEnum>envFile.BLOCKML_ENV,
     blockmlLogIO: <api.BoolEnum>envFile.BLOCKML_LOG_IO,
     blockmlCopyLogsToModels: <api.BoolEnum>envFile.BLOCKML_COPY_LOGS_TO_MODELS,
@@ -22,5 +22,5 @@ export function getBaseConfig(envFilePath) {
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS
   });
-  return baseConfig;
+  return devConfig;
 }

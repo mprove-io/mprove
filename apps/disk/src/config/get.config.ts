@@ -1,20 +1,20 @@
 import { api } from '~disk/barrels/api';
 import { enums } from '~disk/barrels/enums';
 import { interfaces } from '~disk/barrels/interfaces';
-import { getBaseConfig } from './get-base.config';
+import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';
 
 export function getConfig() {
   let envFilePath = process.env.ENV_FILE_PATH;
-  let baseConfig = getBaseConfig(envFilePath);
+  let devConfig = getDevConfig(envFilePath);
 
   let config =
-    baseConfig.diskEnv === enums.DiskEnvEnum.PROD
-      ? getProdConfig(baseConfig)
-      : baseConfig.diskEnv === enums.DiskEnvEnum.TEST
-      ? getTestConfig(baseConfig)
-      : baseConfig;
+    devConfig.diskEnv === enums.DiskEnvEnum.PROD
+      ? getProdConfig(devConfig)
+      : devConfig.diskEnv === enums.DiskEnvEnum.TEST
+      ? getTestConfig(devConfig)
+      : devConfig;
 
   let validatedConfig = api.transformValidSync({
     classType: interfaces.Config,

@@ -4,12 +4,12 @@ import { api } from '~backend/barrels/api';
 import { enums } from '~backend/barrels/enums';
 import { interfaces } from '~backend/barrels/interfaces';
 
-export function getBaseConfig(envFilePath) {
+export function getDevConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
   let commonConfig: api.Config = api.getCommonConfig(envFile);
 
-  let baseConfig: interfaces.Config = Object.assign({}, commonConfig, {
+  let devConfig: interfaces.Config = Object.assign({}, commonConfig, {
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
     backendJwtSecret: envFile.BACKEND_JWT_SECRET,
     backendFirstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
@@ -40,5 +40,5 @@ export function getBaseConfig(envFilePath) {
     mysqlRootPassword: envFile.MYSQL_ROOT_PASSWORD,
     mysqlDatabase: envFile.MYSQL_DATABASE
   });
-  return baseConfig;
+  return devConfig;
 }

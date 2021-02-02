@@ -1,5 +1,5 @@
 export enum BackendEnvEnum {
-  BASE = 'BASE',
+  DEV = 'DEV',
   PROD = 'PROD',
   TEST = 'TEST'
 }

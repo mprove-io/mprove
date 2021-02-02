@@ -1,20 +1,20 @@
 import { api } from '~blockml/barrels/api';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { getBaseConfig } from './get-base.config';
+import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';
 
 export function getConfig() {
   let envFilePath = process.env.ENV_FILE_PATH;
-  let baseConfig = getBaseConfig(envFilePath);
+  let devConfig = getDevConfig(envFilePath);
 
   let config =
-    baseConfig.blockmlEnv === enums.BlockmlEnvEnum.PROD
-      ? getProdConfig(baseConfig)
-      : baseConfig.blockmlEnv === enums.BlockmlEnvEnum.TEST
-      ? getTestConfig(baseConfig)
-      : baseConfig;
+    devConfig.blockmlEnv === enums.BlockmlEnvEnum.PROD
+      ? getProdConfig(devConfig)
+      : devConfig.blockmlEnv === enums.BlockmlEnvEnum.TEST
+      ? getTestConfig(devConfig)
+      : devConfig;
 
   let validatedConfig = api.transformValidSync({
     classType: interfaces.Config,

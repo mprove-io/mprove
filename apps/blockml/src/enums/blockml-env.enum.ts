@@ -1,5 +1,5 @@
 export enum BlockmlEnvEnum {
-  BASE = 'BASE',
+  DEV = 'DEV',
   PROD = 'PROD',
   TEST = 'TEST'
 }
