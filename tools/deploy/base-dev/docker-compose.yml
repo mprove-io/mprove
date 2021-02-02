@@ -7,9 +7,9 @@ secrets:
 services:
   # fluent:
   #   build:
-  #     context: ../../../apps/fluent/local/
-  #     dockerfile: fluent.local.Dockerfile  
-  #   container_name: fluent
+  #     context: ../../../
+  #     dockerfile: tools/docker/fluent.dev.Dockerfile  
+  #   # container_name: fluent
   #   image: mprove/mprove-base-m-fluent:$MPROVE_BASE_RELEASE_TAG
   #   env_file:
   #     - $FLUENT_ENV_FILE_PATH    
@@ -41,7 +41,7 @@ services:
     #     tag: db   
 
   rabbit:
-    container_name: rabbit
+    # container_name: rabbit
     image: rabbitmq:3-management
     env_file:
       - $RABBIT_ENV_FILE_PATH    
@@ -68,8 +68,8 @@ services:
   m-backend:
     build:
       context: ../../../
-      dockerfile: apps/backend/Dockerfile     
-    container_name: m-backend
+      dockerfile: tools/docker/backend.dev.Dockerfile     
+    # container_name: m-backend
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
     env_file:
       - $BACKEND_ENV_FILE_PATH    
@@ -89,8 +89,8 @@ services:
   m-blockml-main:
     build:
       context: ../../../
-      dockerfile: apps/blockml/Dockerfile     
-    container_name: m-blockml-main
+      dockerfile: tools/docker/blockml.dev.Dockerfile     
+    # container_name: m-blockml-main
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
       - $BLOCKML_MAIN_ENV_FILE_PATH  
@@ -110,7 +110,7 @@ services:
   m-blockml-worker:
     build:
       context: ../../../
-      dockerfile: apps/blockml/Dockerfile     
+      dockerfile: tools/docker/blockml.dev.Dockerfile     
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
       - $BLOCKML_WORKER_ENV_FILE_PATH    
@@ -128,9 +128,9 @@ services:
   m-disk:
     build:
       context: ../../../
-      dockerfile: apps/disk/Dockerfile    
+      dockerfile: tools/docker/disk.dev.Dockerfile     
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG  
-    container_name: m-disk
+    # container_name: m-disk
     env_file:
       - $DISK_ENV_FILE_PATH
     ports:
