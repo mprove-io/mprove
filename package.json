@@ -30,10 +30,10 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "clean-blockml-logs": "rimraf \"./apps/blockml/src/models/**/logs\"",
-    "t:api": "rimraf \"./dist/tests/api\" && tsc --project tsconfig-api.test.json",
-    "t:backend": "rimraf \"./dist/tests/backend\" && tsc --project tsconfig-backend.test.json",
-    "t:blockml": "rimraf \"./dist/tests/blockml\" && rimraf \"./apps/blockml/src/models/**/logs\" && tsc --project tsconfig-blockml.test.json",
-    "t:disk": "rimraf \"./dist/tests/disk\" && tsc --project tsconfig-disk.test.json",
+    "t:api": "rimraf \"./dist/tests/api\" && tsc --project libs/api/tsconfig.test.json",
+    "t:backend": "rimraf \"./dist/tests/backend\" && tsc --project apps/backend/tsconfig.test.json",
+    "t:blockml": "rimraf \"./dist/tests/blockml\" && rimraf \"./apps/blockml/src/models/**/logs\" && tsc --project apps/blockml/tsconfig.test.json",
+    "t:disk": "rimraf \"./dist/tests/disk\" && tsc --project apps/disk/tsconfig.test.json",
     "t:libs": "npm run t:api",
     "t:apps": "npm run t:backend && npm run t:blockml && npm run t:disk",
     "t:all": "npm run t:libs && npm run t:apps",
@@ -149,7 +149,7 @@
     "~backend": "dist/tests/backend/apps/backend/src",
     "~blockml": "dist/tests/blockml/apps/blockml/src",
     "~disk": "dist/tests/disk/apps/disk/src",
-    "~api": "dist/tests/api",
-    "@mprove/api": "dist/tests/api/_index"
+    "~api": "dist/tests/api/libs/api/src",
+    "@mprove/api": "dist/tests/api/libs/api/src/_index"
   }
 }
