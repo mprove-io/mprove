@@ -1,0 +1,7 @@
+.envrc
+.git
+.vscode
+.idea
+
+node_modules
+nogit

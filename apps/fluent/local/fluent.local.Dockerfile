@@ -17,7 +17,7 @@ RUN buildDeps="sudo make gcc g++ libc-dev ruby-dev" \
 && rm -rf /var/lib/apt/lists/* \
 && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
 
-COPY ./fluent.local.conf /fluentd/etc/fluent.conf
+COPY fluent.local.conf /fluentd/etc/fluent.conf
 
 USER fluent
 

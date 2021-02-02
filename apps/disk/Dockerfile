@@ -9,8 +9,8 @@ COPY yarn.lock .
 
 RUN yarn
 
-COPY dist/apps/backend .
+COPY dist/apps/disk .
 
-EXPOSE 3000
+EXPOSE 3002
 
 CMD [ "node", "main.js" ]
