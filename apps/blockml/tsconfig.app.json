@@ -1,17 +1,8 @@
 {
   "extends": "./tsconfig.json",
+  "module": "esnext",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "types": ["node"],
-    "emitDecoratorMetadata": true,
-    "target": "es2015",
-    "baseUrl": ".",
-    "paths": {
-      "~blockml/*": ["./src/*"],
-      "~api/*": ["../../libs/api/src/*"],
-      "@mprove/api": ["../../libs/api/src/_index.ts"]
-    }
+    "outDir": "../../dist/out-tsc"
   },
-  // "exclude": ["**/*.spec.ts"],
-  "include": ["**/*.ts"]
+  "exclude": ["**/*.spec.ts", "**/*.e2e-spec.ts"]
 }

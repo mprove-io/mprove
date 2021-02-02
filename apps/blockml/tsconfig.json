@@ -1,10 +1,13 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "~blockml/*": ["./src/*"],
+      "~api/*": ["../../libs/api/src/*"],
+      "@mprove/api": ["../../libs/api/src/_index.ts"]
     }
-  ]
+  },
+  "include": ["**/*.ts"]
 }

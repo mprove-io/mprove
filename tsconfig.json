@@ -1,11 +1,21 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "rootDir": ".",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "importHelpers": true,
     "lib": ["es2017", "dom"],
+    "importHelpers": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "declaration": false,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2015",
+    "sourceMap": true,
+    "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
       "~backend/*": ["apps/backend/src/*"],
@@ -13,22 +23,13 @@
       "~disk/*": ["apps/disk/src/*"],
       "~api/*": ["libs/api/src/*"],
       "@mprove/api": ["libs/api/src/_index.ts"]
-    },
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "incremental": true
+    }
   },
   "include": [
     "apps/backend/**/*.ts",
     "apps/blockml/**/*.ts",
     "apps/disk/**/*.ts",
     "libs/api/**/*.ts"
-  ]
+  ],
+  "exclude": ["node_modules", "tmp"]
 }
