@@ -12,13 +12,21 @@ export function log(
   logType: enums.LogTypeEnum,
   content: any
 ) {
-  let blockmlLogsPath = cs.get<interfaces.Config['blockmlLogsPath']>(
-    'blockmlLogsPath'
-  );
   let blockmlLogIO = cs.get<interfaces.Config['blockmlLogIO']>('blockmlLogIO');
   if (blockmlLogIO === api.BoolEnum.FALSE) {
     return;
   }
+
+  let blockmlLogFunc = cs.get<interfaces.Config['blockmlLogFunc']>(
+    'blockmlLogFunc'
+  );
+  if (blockmlLogFunc !== enums.FuncEnum.ALL && blockmlLogFunc !== func) {
+    return;
+  }
+
+  let blockmlLogsPath = cs.get<interfaces.Config['blockmlLogsPath']>(
+    'blockmlLogsPath'
+  );
 
   let funcArray = func.toString().split('/');
   let f = funcArray[1];

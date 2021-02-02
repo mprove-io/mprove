@@ -9,6 +9,9 @@ export class Config extends api.Config {
   @IsEnum(api.BoolEnum)
   blockmlLogIO?: api.BoolEnum;
 
+  @IsEnum(enums.FuncEnum)
+  blockmlLogFunc?: enums.FuncEnum;
+
   @IsEnum(api.BoolEnum)
   blockmlCopyLogsToModels?: api.BoolEnum;
 

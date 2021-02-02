@@ -14,8 +14,18 @@ export async function prepareTest(
   caller: enums.CallerEnum,
   func: enums.FuncEnum,
   testId: string,
-  connection?: api.ProjectConnection
+  connection?: api.ProjectConnection,
+  overrideConfigOptions?: interfaces.Config
 ) {
+  let overrideFunc: interfaces.Config = { blockmlLogFunc: func };
+
+  let mockConfig: interfaces.Config = Object.assign(
+    getConfig(),
+    overrideFunc,
+    overrideConfigOptions
+  );
+  const mockConfigService = { get: key => mockConfig[key] };
+
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
@@ -31,7 +41,10 @@ export async function prepareTest(
         useValue: {}
       }
     ]
-  }).compile();
+  })
+    .overrideProvider(ConfigService)
+    .useValue(mockConfigService)
+    .compile();
 
   let structService = moduleRef.get<StructService>(StructService);
 

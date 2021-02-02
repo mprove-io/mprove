@@ -1,4 +1,6 @@
 export enum FuncEnum {
+  ALL = 'ALL',
+
   CollectFiles = '01-yaml/01-collect-files',
   RemoveWrongExt = '01-yaml/02-remove-wrong-ext',
   DeduplicateFileNames = '01-yaml/03-deduplicate-file-names',

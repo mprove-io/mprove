@@ -12,6 +12,7 @@ export function getDevConfig(envFilePath) {
   let devConfig: interfaces.Config = Object.assign({}, commonConfig, {
     blockmlEnv: <enums.BlockmlEnvEnum>envFile.BLOCKML_ENV,
     blockmlLogIO: <api.BoolEnum>envFile.BLOCKML_LOG_IO,
+    blockmlLogFunc: <enums.FuncEnum>envFile.BLOCKML_LOG_FUNC,
     blockmlCopyLogsToModels: <api.BoolEnum>envFile.BLOCKML_COPY_LOGS_TO_MODELS,
     blockmlLogsPath: <api.BoolEnum>envFile.BLOCKML_LOGS_PATH,
     blockmlIsSingle: <api.BoolEnum>envFile.BLOCKML_IS_SINGLE,
