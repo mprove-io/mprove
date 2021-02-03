@@ -7,13 +7,13 @@ import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
+import { GenSqlService } from './controllers/gen-sql/gen-sql.service';
+import { ProcessDashboardService } from './controllers/process-dashboard/process-dashboard.service';
+import { ProcessQueryService } from './controllers/process-query/process-query.service';
+import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from './services/consumer-main.service';
 import { ConsumerWorkerService } from './services/consumer-worker.service';
-import { DashboardService } from './services/dashboard.service';
-import { GenSqlService } from './services/gen-sql.service';
-import { QueryService } from './services/query.service';
 import { RabbitService } from './services/rabbit.service';
-import { StructService } from './services/struct.service';
 
 @Module({
   imports: [
@@ -62,22 +62,26 @@ import { StructService } from './services/struct.service';
     RabbitService,
     GenSqlService,
     {
-      provide: StructService,
-      useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
-        helper.isSingleOrMain(cs) ? new StructService(rabbitService, cs) : {},
-      inject: [ConfigService, RabbitService]
-    },
-    {
-      provide: QueryService,
-      useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
-        helper.isSingleOrMain(cs) ? new QueryService(rabbitService, cs) : {},
-      inject: [ConfigService, RabbitService]
-    },
-    {
-      provide: DashboardService,
+      provide: RebuildStructService,
       useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
         helper.isSingleOrMain(cs)
-          ? new DashboardService(rabbitService, cs)
+          ? new RebuildStructService(rabbitService, cs)
+          : {},
+      inject: [ConfigService, RabbitService]
+    },
+    {
+      provide: ProcessQueryService,
+      useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
+        helper.isSingleOrMain(cs)
+          ? new ProcessQueryService(rabbitService, cs)
+          : {},
+      inject: [ConfigService, RabbitService]
+    },
+    {
+      provide: ProcessDashboardService,
+      useFactory: (cs: ConfigService, rabbitService: RabbitService) =>
+        helper.isSingleOrMain(cs)
+          ? new ProcessDashboardService(rabbitService, cs)
           : {},
       inject: [ConfigService, RabbitService]
     },
@@ -85,9 +89,9 @@ import { StructService } from './services/struct.service';
       provide: ConsumerMainService,
       useFactory: (
         cs: ConfigService,
-        structService: StructService,
-        queryService: QueryService,
-        dashboardService: DashboardService
+        structService: RebuildStructService,
+        queryService: ProcessQueryService,
+        dashboardService: ProcessDashboardService
       ) => {
         let result = helper.isSingleOrMain(cs)
           ? new ConsumerMainService(
@@ -99,7 +103,12 @@ import { StructService } from './services/struct.service';
           : {};
         return result;
       },
-      inject: [ConfigService, StructService, QueryService, DashboardService]
+      inject: [
+        ConfigService,
+        RebuildStructService,
+        ProcessQueryService,
+        ProcessDashboardService
+      ]
     },
     {
       provide: ConsumerWorkerService,

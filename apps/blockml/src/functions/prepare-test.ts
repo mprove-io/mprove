@@ -1,14 +1,15 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
+import { AppModule } from '~blockml/app.module';
 import { api } from '~blockml/barrels/api';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { getConfig } from '~blockml/config/get.config';
+import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
-import { StructService } from '~blockml/services/struct.service';
 
 export async function prepareTest(
   caller: enums.CallerEnum,
@@ -17,36 +18,22 @@ export async function prepareTest(
   connection?: api.ProjectConnection,
   overrideConfigOptions?: interfaces.Config
 ) {
-  let overrideFunc: interfaces.Config = { blockmlLogFunc: func };
-
   let mockConfig: interfaces.Config = Object.assign(
     getConfig(),
-    overrideFunc,
+    <interfaces.Config>{ blockmlLogFunc: func },
     overrideConfigOptions
   );
-  const mockConfigService = { get: key => mockConfig[key] };
 
   let moduleRef: TestingModule = await Test.createTestingModule({
-    imports: [
-      ConfigModule.forRoot({
-        load: [getConfig],
-        isGlobal: true
-      })
-    ],
-    controllers: [],
-    providers: [
-      StructService,
-      {
-        provide: RabbitService,
-        useValue: {}
-      }
-    ]
+    imports: [AppModule]
   })
     .overrideProvider(ConfigService)
-    .useValue(mockConfigService)
+    .useValue({ get: key => mockConfig[key] })
+    .overrideProvider(RabbitService)
+    .useValue({})
     .compile();
 
-  let structService = moduleRef.get<StructService>(StructService);
+  let structService = moduleRef.get<RebuildStructService>(RebuildStructService);
 
   let configService = moduleRef.get<ConfigService>(ConfigService);
   let blockmlLogsPath = configService.get<interfaces.Config['blockmlLogsPath']>(

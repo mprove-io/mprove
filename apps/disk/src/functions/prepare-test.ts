@@ -1,24 +1,29 @@
 import { INestApplication } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
+import { AppModule } from '~disk/app.module';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getConfig } from '~disk/config/get.config';
-import { coreServices } from '~disk/core-services';
+import { ConsumerService } from '~disk/services/consumer.service';
 import { MessageService } from '~disk/services/message.service';
 
-export async function prepareTest(organizationId: string) {
+export async function prepareTest(
+  organizationId: string,
+  overrideConfigOptions?: interfaces.Config
+) {
   let app: INestApplication;
 
-  const moduleRef: TestingModule = await Test.createTestingModule({
-    imports: [
-      ConfigModule.forRoot({
-        load: [getConfig],
-        isGlobal: true
-      })
-    ],
-    providers: [...coreServices]
-  }).compile();
+  let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
+
+  let moduleRef: TestingModule = await Test.createTestingModule({
+    imports: [AppModule]
+  })
+    .overrideProvider(ConfigService)
+    .useValue({ get: key => mockConfig[key] })
+    .overrideProvider(ConsumerService)
+    .useValue({})
+    .compile();
 
   app = moduleRef.createNestApplication();
   await app.init();

@@ -2,34 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { api } from '~disk/barrels/api';
 import { interfaces } from '~disk/barrels/interfaces';
-import { CreateOrganizationService } from './01-organizations/create-organization.service';
-import { DeleteOrganizationService } from './01-organizations/delete-organization.service';
-import { IsOrganizationExistService } from './01-organizations/is-organization-exist.service';
-import { CreateProjectService } from './02-projects/create-project.service';
-import { DeleteProjectService } from './02-projects/delete-project.service';
-import { IsProjectExistService } from './02-projects/is-project-exist.service';
-import { CommitRepoService } from './03-repos/commit-repo.service';
-import { CreateDevRepoService } from './03-repos/create-dev-repo.service';
-import { DeleteDevRepoService } from './03-repos/delete-dev-repo.service';
-import { MergeRepoService } from './03-repos/merge-repo.service';
-import { PullRepoService } from './03-repos/pull-repo.service';
-import { PushRepoService } from './03-repos/push-repo.service';
-import { RevertRepoToLastCommitService } from './03-repos/revert-repo-to-last-commit.service';
-import { RevertRepoToProductionService } from './03-repos/revert-repo-to-production.service';
-import { GetCatalogFilesService } from './04-catalogs/get-catalog-files.service';
-import { GetCatalogNodesService } from './04-catalogs/get-catalog-nodes.service';
-import { MoveCatalogNodeService } from './04-catalogs/move-catalog-node.service';
-import { RenameCatalogNodeService } from './04-catalogs/rename-catalog-node.service';
-import { CreateBranchService } from './05-branches/create-branch.service';
-import { DeleteBranchService } from './05-branches/delete-branch.service';
-import { IsBranchExistService } from './05-branches/is-branch-exist.service';
-import { CreateFolderService } from './06-folders/create-folder.service';
-import { DeleteFolderService } from './06-folders/delete-folder.service';
-import { CreateFileService } from './07-files/create-file.service';
-import { DeleteFileService } from './07-files/delete-file.service';
-import { GetFileService } from './07-files/get-file.service';
-import { SaveFileService } from './07-files/save-file.service';
-import { SeedProjectService } from './08-seed/seed-project.service';
+import { CreateOrganizationService } from '~disk/controllers/01-organizations/create-organization/create-organization.service';
+import { DeleteOrganizationService } from '~disk/controllers/01-organizations/delete-organization/delete-organization.service';
+import { IsOrganizationExistService } from '~disk/controllers/01-organizations/is-organization-exist/is-organization-exist.service';
+import { CreateProjectService } from '~disk/controllers/02-projects/create-project/create-project.service';
+import { DeleteProjectService } from '~disk/controllers/02-projects/delete-project/delete-project.service';
+import { IsProjectExistService } from '~disk/controllers/02-projects/is-project-exist/is-project-exist.service';
+import { CommitRepoService } from '~disk/controllers/03-repos/commit-repo/commit-repo.service';
+import { CreateDevRepoService } from '~disk/controllers/03-repos/create-dev-repo/create-dev-repo.service';
+import { DeleteDevRepoService } from '~disk/controllers/03-repos/delete-dev-repo/delete-dev-repo.service';
+import { MergeRepoService } from '~disk/controllers/03-repos/merge-repo/merge-repo.service';
+import { PullRepoService } from '~disk/controllers/03-repos/pull-repo/pull-repo.service';
+import { PushRepoService } from '~disk/controllers/03-repos/push-repo/push-repo.service';
+import { RevertRepoToLastCommitService } from '~disk/controllers/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit.service';
+import { RevertRepoToProductionService } from '~disk/controllers/03-repos/revert-repo-to-production/revert-repo-to-production.service';
+import { GetCatalogFilesService } from '~disk/controllers/04-catalogs/get-catalog-files/get-catalog-files.service';
+import { GetCatalogNodesService } from '~disk/controllers/04-catalogs/get-catalog-nodes/get-catalog-nodes.service';
+import { MoveCatalogNodeService } from '~disk/controllers/04-catalogs/move-catalog-node/move-catalog-node.service';
+import { RenameCatalogNodeService } from '~disk/controllers/04-catalogs/rename-catalog-node/rename-catalog-node.service';
+import { CreateBranchService } from '~disk/controllers/05-branches/create-branch/create-branch.service';
+import { DeleteBranchService } from '~disk/controllers/05-branches/delete-branch/delete-branch.service';
+import { IsBranchExistService } from '~disk/controllers/05-branches/is-branch-exist/is-branch-exist.service';
+import { CreateFolderService } from '~disk/controllers/06-folders/create-folder/create-folder.service';
+import { DeleteFolderService } from '~disk/controllers/06-folders/delete-folder/delete-folder.service';
+import { CreateFileService } from '~disk/controllers/07-files/create-file/create-file.service';
+import { DeleteFileService } from '~disk/controllers/07-files/delete-file/delete-file.service';
+import { GetFileService } from '~disk/controllers/07-files/get-file/get-file.service';
+import { SaveFileService } from '~disk/controllers/07-files/save-file/save-file.service';
+import { SeedProjectService } from '~disk/controllers/08-seed/seed-project/seed-project.service';
 
 @Injectable()
 export class MessageService {
@@ -84,10 +84,6 @@ export class MessageService {
   }
 
   async processSwitch(request: any): Promise<any> {
-    let orgPath = this.cs.get<interfaces.Config['mDataOrgPath']>(
-      'mDataOrgPath'
-    );
-
     switch (request.info.name) {
       case api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization:
         return await this.createOrganizationService.process(request);

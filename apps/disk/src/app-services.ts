@@ -1,4 +1,71 @@
-import { coreServices } from './core-services';
+import { CreateOrganizationService } from './controllers/01-organizations/create-organization/create-organization.service';
+import { DeleteOrganizationService } from './controllers/01-organizations/delete-organization/delete-organization.service';
+import { IsOrganizationExistService } from './controllers/01-organizations/is-organization-exist/is-organization-exist.service';
+import { CreateProjectService } from './controllers/02-projects/create-project/create-project.service';
+import { DeleteProjectService } from './controllers/02-projects/delete-project/delete-project.service';
+import { IsProjectExistService } from './controllers/02-projects/is-project-exist/is-project-exist.service';
+import { CommitRepoService } from './controllers/03-repos/commit-repo/commit-repo.service';
+import { CreateDevRepoService } from './controllers/03-repos/create-dev-repo/create-dev-repo.service';
+import { DeleteDevRepoService } from './controllers/03-repos/delete-dev-repo/delete-dev-repo.service';
+import { MergeRepoService } from './controllers/03-repos/merge-repo/merge-repo.service';
+import { PullRepoService } from './controllers/03-repos/pull-repo/pull-repo.service';
+import { PushRepoService } from './controllers/03-repos/push-repo/push-repo.service';
+import { RevertRepoToLastCommitService } from './controllers/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit.service';
+import { RevertRepoToProductionService } from './controllers/03-repos/revert-repo-to-production/revert-repo-to-production.service';
+import { GetCatalogFilesService } from './controllers/04-catalogs/get-catalog-files/get-catalog-files.service';
+import { GetCatalogNodesService } from './controllers/04-catalogs/get-catalog-nodes/get-catalog-nodes.service';
+import { MoveCatalogNodeService } from './controllers/04-catalogs/move-catalog-node/move-catalog-node.service';
+import { RenameCatalogNodeService } from './controllers/04-catalogs/rename-catalog-node/rename-catalog-node.service';
+import { CreateBranchService } from './controllers/05-branches/create-branch/create-branch.service';
+import { DeleteBranchService } from './controllers/05-branches/delete-branch/delete-branch.service';
+import { IsBranchExistService } from './controllers/05-branches/is-branch-exist/is-branch-exist.service';
+import { CreateFolderService } from './controllers/06-folders/create-folder/create-folder.service';
+import { DeleteFolderService } from './controllers/06-folders/delete-folder/delete-folder.service';
+import { CreateFileService } from './controllers/07-files/create-file/create-file.service';
+import { DeleteFileService } from './controllers/07-files/delete-file/delete-file.service';
+import { GetFileService } from './controllers/07-files/get-file/get-file.service';
+import { SaveFileService } from './controllers/07-files/save-file/save-file.service';
+import { SeedProjectService } from './controllers/08-seed/seed-project/seed-project.service';
 import { ConsumerService } from './services/consumer.service';
+import { MessageService } from './services/message.service';
 
-export const appServices = [...coreServices, ConsumerService];
+export const appServices = [
+  ConsumerService,
+  MessageService,
+
+  CreateOrganizationService,
+  DeleteOrganizationService,
+  IsOrganizationExistService,
+
+  CreateProjectService,
+  DeleteProjectService,
+  IsProjectExistService,
+
+  CommitRepoService,
+  CreateDevRepoService,
+  DeleteDevRepoService,
+  MergeRepoService,
+  PullRepoService,
+  PushRepoService,
+  RevertRepoToLastCommitService,
+  RevertRepoToProductionService,
+
+  GetCatalogFilesService,
+  GetCatalogNodesService,
+  MoveCatalogNodeService,
+  RenameCatalogNodeService,
+
+  CreateBranchService,
+  DeleteBranchService,
+  IsBranchExistService,
+
+  CreateFolderService,
+  DeleteFolderService,
+
+  CreateFileService,
+  DeleteFileService,
+  GetFileService,
+  SaveFileService,
+
+  SeedProjectService
+];

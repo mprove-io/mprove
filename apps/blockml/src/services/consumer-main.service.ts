@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { api } from '~blockml/barrels/api';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { DashboardService } from './dashboard.service';
-import { QueryService } from './query.service';
-import { StructService } from './struct.service';
+import { ProcessDashboardService } from '~blockml/controllers/process-dashboard/process-dashboard.service';
+import { ProcessQueryService } from '~blockml/controllers/process-query/process-query.service';
+import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 
 @Injectable()
 export class ConsumerMainService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private structService: StructService,
-    private queryService: QueryService,
-    private dashboardService: DashboardService
+    private structService: RebuildStructService,
+    private queryService: ProcessQueryService,
+    private processDashboardService: ProcessDashboardService
   ) {}
 
   @RabbitRPC({
@@ -23,7 +23,7 @@ export class ConsumerMainService {
   })
   async processDashboard(request: any, context: any) {
     try {
-      let payload = await this.dashboardService.processDashboard(request);
+      let payload = await this.processDashboardService.process(request);
 
       return api.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
@@ -38,7 +38,7 @@ export class ConsumerMainService {
   })
   async processQuery(request: any, context: any) {
     try {
-      let payload = await this.queryService.processQuery(request);
+      let payload = await this.queryService.process(request);
 
       return api.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
@@ -53,7 +53,7 @@ export class ConsumerMainService {
   })
   async rebuildStruct(request: any, context: any) {
     try {
-      let payload = await this.structService.process(request);
+      let payload = await this.structService.rebuild(request);
 
       return api.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {

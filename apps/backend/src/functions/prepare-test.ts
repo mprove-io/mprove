@@ -24,17 +24,14 @@ export async function prepareTest(item: {
   } = item;
 
   let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
-  const mockConfigService = { get: key => mockConfig[key] };
-
-  const mockMailService = { sendMail: async () => {} };
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [AppModule]
   })
     .overrideProvider(ConfigService)
-    .useValue(mockConfigService)
+    .useValue({ get: key => mockConfig[key] })
     .overrideProvider(MailerService)
-    .useValue(mockMailService)
+    .useValue({ sendMail: async () => {} })
     .compile();
 
   let app = moduleRef.createNestApplication();

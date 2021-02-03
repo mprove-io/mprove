@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { api } from '~blockml/barrels/api';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { GenSqlService } from './gen-sql.service';
+import { GenSqlService } from '~blockml/controllers/gen-sql/gen-sql.service';
 
 @Injectable()
 export class ConsumerWorkerService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private genSqlProService: GenSqlService
+    private genSqlService: GenSqlService
   ) {}
 
   @RabbitRPC({
@@ -19,7 +19,7 @@ export class ConsumerWorkerService {
   })
   async genSql(request: any, context: any) {
     try {
-      let payload = await this.genSqlProService.process(request);
+      let payload = await this.genSqlService.gen(request);
 
       return api.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
