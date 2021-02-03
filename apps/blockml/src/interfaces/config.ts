@@ -7,28 +7,28 @@ export class Config extends api.Config {
   blockmlEnv?: enums.BlockmlEnvEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlLogIO?: api.BoolEnum;
+  logIO?: api.BoolEnum;
 
   @IsEnum(enums.FuncEnum)
-  blockmlLogFunc?: enums.FuncEnum;
+  logFunc?: enums.FuncEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlCopyLogsToModels?: api.BoolEnum;
+  copyLogsToModels?: api.BoolEnum;
 
   @IsString()
-  blockmlLogsPath?: string;
+  logsPath?: string;
 
   @IsEnum(api.BoolEnum)
-  blockmlIsSingle?: api.BoolEnum;
+  isSingle?: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlIsMain?: api.BoolEnum;
+  isMain?: api.BoolEnum;
 
   @IsEnum(api.BoolEnum)
-  blockmlIsWorker?: api.BoolEnum;
+  isWorker?: api.BoolEnum;
 
   @IsInt()
-  blockmlConcurrencyLimit?: number;
+  concurrencyLimit?: number;
 
   @IsString()
   rabbitmqDefaultUser?: string;

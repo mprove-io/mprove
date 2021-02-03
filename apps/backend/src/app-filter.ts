@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { api } from './barrels/api';
+import { interfaces } from './barrels/interfaces';
 
 @Catch()
 export class AppFilter implements ExceptionFilter {
-  constructor(private cs: ConfigService) {}
+  constructor(private cs: ConfigService<interfaces.Config>) {}
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

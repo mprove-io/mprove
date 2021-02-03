@@ -9,7 +9,9 @@ export function getDevConfig(envFilePath) {
 
   let commonConfig: api.Config = api.getCommonConfig(envFile);
 
-  let devConfig: interfaces.Config = Object.assign({}, commonConfig, {
+  let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
+    interfaces.Config
+  >{
     diskEnv: <enums.DiskEnvEnum>envFile.DISK_ENV,
 
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,

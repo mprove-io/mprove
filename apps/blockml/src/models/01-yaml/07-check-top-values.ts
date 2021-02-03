@@ -3,6 +3,7 @@ import { api } from '~blockml/barrels/api';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
+import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
 let func = enums.FuncEnum.CheckTopValues;
@@ -14,7 +15,7 @@ export function checkTopValues(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ): any[] {
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);

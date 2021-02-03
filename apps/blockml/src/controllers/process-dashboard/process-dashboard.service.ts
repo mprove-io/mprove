@@ -52,9 +52,9 @@ export class ProcessDashboardService {
 
     dashboard.filters = dashboardFilters;
 
-    let concurrencyLimit = this.cs.get<
-      interfaces.Config['blockmlConcurrencyLimit']
-    >('blockmlConcurrencyLimit');
+    let concurrencyLimit = this.cs.get<interfaces.Config['concurrencyLimit']>(
+      'concurrencyLimit'
+    );
 
     await asyncPool(concurrencyLimit, dashboard.reports, async report => {
       let filters: interfaces.FilterBricksDictionary = {};

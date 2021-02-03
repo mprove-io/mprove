@@ -4,6 +4,7 @@ import * as walk from 'walk';
 import { api } from '~blockml/barrels/api';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
+import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.CollectFiles;
 
@@ -13,7 +14,7 @@ export async function collectFiles(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ): Promise<api.File[]> {
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);

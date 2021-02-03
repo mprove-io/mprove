@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { api } from '~blockml/barrels/api';
 import { barField } from '~blockml/barrels/bar-field';
 import { enums } from '~blockml/barrels/enums';
+import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
@@ -13,7 +14,7 @@ export function buildField<T extends types.vmdType>(
     weekStart: api.ProjectWeekStartEnum;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let entities = item.entities;
 

@@ -12,11 +12,9 @@ export async function genSql(
 ) {
   let outcome: interfaces.GenSqlProOutcome;
 
-  let blockmlIsSingle = cs.get<interfaces.Config['blockmlIsSingle']>(
-    'blockmlIsSingle'
-  );
+  let isSingle = cs.get<interfaces.Config['isSingle']>('isSingle');
 
-  if (blockmlIsSingle === api.BoolEnum.TRUE) {
+  if (isSingle === api.BoolEnum.TRUE) {
     outcome = genSqlPro(genSqlItem);
   } else {
     let genSqlRequest: api.ToBlockmlWorkerGenSqlRequest = {

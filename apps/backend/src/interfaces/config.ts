@@ -7,54 +7,54 @@ export class Config extends api.Config {
   backendEnv?: enums.BackendEnvEnum;
 
   @IsString()
-  backendJwtSecret?: string;
+  jwtSecret?: string;
 
   @IsString()
-  backendFirstUserEmail?: string;
+  firstUserEmail?: string;
 
   @IsString()
-  backendFirstUserPassword?: string;
+  firstUserPassword?: string;
 
   @IsEnum(api.BoolEnum)
-  backendRegisterOnlyInvitedUsers?: api.BoolEnum;
+  registerOnlyInvitedUsers?: api.BoolEnum;
 
   //
   @IsEnum(api.BoolEnum)
-  backendSendEmail?: api.BoolEnum;
+  sendEmail?: api.BoolEnum;
 
   @IsString()
-  backendVerifyEmailUrl?: string;
+  verifyEmailUrl?: string;
 
   @IsString()
-  backendSendEmailFromName?: string;
+  sendEmailFromName?: string;
 
   @IsString()
-  backendSendEmailFromAddress?: string;
+  sendEmailFromAddress?: string;
 
   @IsEnum(enums.EmailTransportEnum)
-  backendEmailTransport?: enums.EmailTransportEnum;
+  emailTransport?: enums.EmailTransportEnum;
 
   @IsString()
-  backendMailgunActiveApiKey?: string;
+  mailgunActiveApiKey?: string;
 
   @IsString()
-  backendMailgunDomain?: string;
+  mailgunDomain?: string;
 
   //
   @IsString()
-  backendSmtpHost?: string;
+  smtpHost?: string;
 
   @IsInt()
-  backendSmtpPort?: number;
+  smtpPort?: number;
 
   @IsEnum(api.BoolEnum)
-  backendSmtpSecure?: api.BoolEnum;
+  smtpSecure?: api.BoolEnum;
 
   @IsString()
-  backendSmtpAuthUser?: string;
+  smtpAuthUser?: string;
 
   @IsString()
-  backendSmtpAuthPassword?: string;
+  smtpAuthPassword?: string;
 
   //
   @IsString()

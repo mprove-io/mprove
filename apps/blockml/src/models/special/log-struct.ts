@@ -18,7 +18,7 @@ export async function logStruct(
     errors: BmError[];
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let { udfsDict, views, models, dashboards, vizs, structId, caller } = item;
 

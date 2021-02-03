@@ -11,7 +11,7 @@ export function buildDashboard(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let dashboards = item.dashboards;
 

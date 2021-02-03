@@ -15,7 +15,7 @@ export function makeLineNumbers(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ): any[] {
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);

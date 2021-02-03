@@ -13,7 +13,7 @@ export function buildModel(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let models = item.models;
 

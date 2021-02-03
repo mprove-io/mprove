@@ -16,7 +16,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);

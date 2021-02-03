@@ -26,7 +26,7 @@ let configModule = ConfigModule.forRoot({
 
 let jwtModule = JwtModule.registerAsync({
   useFactory: async (cs: ConfigService<interfaces.Config>) => ({
-    secret: cs.get<interfaces.Config['backendJwtSecret']>('backendJwtSecret'),
+    secret: cs.get<interfaces.Config['jwtSecret']>('jwtSecret'),
     signOptions: { expiresIn: '30d' }
   }),
   inject: [ConfigService]
@@ -88,46 +88,39 @@ let mailerModule = MailerModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => {
     let mgTransport = mg({
       auth: {
-        api_key: cs.get<interfaces.Config['backendMailgunActiveApiKey']>(
-          'backendMailgunActiveApiKey'
+        api_key: cs.get<interfaces.Config['mailgunActiveApiKey']>(
+          'mailgunActiveApiKey'
         ),
-        domain: cs.get<interfaces.Config['backendMailgunDomain']>(
-          'backendMailgunDomain'
-        )
+        domain: cs.get<interfaces.Config['mailgunDomain']>('mailgunDomain')
       }
     });
 
     let smtpConfig = {
-      host: cs.get<interfaces.Config['backendSmtpHost']>('backendSmtpHost'),
-      port: cs.get<interfaces.Config['backendSmtpPort']>('backendSmtpPort'),
+      host: cs.get<interfaces.Config['smtpHost']>('smtpHost'),
+      port: cs.get<interfaces.Config['smtpPort']>('smtpPort'),
       secure:
-        cs.get<interfaces.Config['backendSmtpSecure']>('backendSmtpSecure') ===
+        cs.get<interfaces.Config['smtpSecure']>('smtpSecure') ===
         api.BoolEnum.TRUE
           ? true
           : false,
       auth: {
-        user: cs.get<interfaces.Config['backendSmtpAuthUser']>(
-          'backendSmtpAuthUser'
-        ),
-        pass: cs.get<interfaces.Config['backendSmtpAuthPassword']>(
-          'backendSmtpAuthPassword'
-        )
+        user: cs.get<interfaces.Config['smtpAuthUser']>('smtpAuthUser'),
+        pass: cs.get<interfaces.Config['smtpAuthPassword']>('smtpAuthPassword')
       }
     };
 
     let transport =
-      cs.get<interfaces.Config['backendEmailTransport']>(
-        'backendEmailTransport'
-      ) === enums.EmailTransportEnum.MAILGUN
+      cs.get<interfaces.Config['emailTransport']>('emailTransport') ===
+      enums.EmailTransportEnum.MAILGUN
         ? mgTransport
         : smtpConfig;
 
-    let fromName = cs.get<interfaces.Config['backendSendEmailFromName']>(
-      'backendSendEmailFromName'
+    let fromName = cs.get<interfaces.Config['sendEmailFromName']>(
+      'sendEmailFromName'
     );
 
-    let fromAddress = cs.get<interfaces.Config['backendSendEmailFromAddress']>(
-      'backendSendEmailFromAddress'
+    let fromAddress = cs.get<interfaces.Config['sendEmailFromAddress']>(
+      'sendEmailFromAddress'
     );
 
     return {
@@ -172,12 +165,12 @@ export class AppModule implements OnModuleInit {
     try {
       await this.connection.runMigrations();
 
-      let email = this.cs.get<interfaces.Config['backendFirstUserEmail']>(
-        'backendFirstUserEmail'
+      let email = this.cs.get<interfaces.Config['firstUserEmail']>(
+        'firstUserEmail'
       );
 
-      let password = this.cs.get<interfaces.Config['backendFirstUserPassword']>(
-        'backendFirstUserPassword'
+      let password = this.cs.get<interfaces.Config['firstUserPassword']>(
+        'firstUserPassword'
       );
 
       if (helper.isDefined(email) && helper.isDefined(password)) {

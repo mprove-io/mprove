@@ -34,8 +34,8 @@ export async function fetchSql<T extends types.dzType>(
     reports = [...reports, ...z.reports];
   });
 
-  let concurrencyLimit = cs.get<interfaces.Config['blockmlConcurrencyLimit']>(
-    'blockmlConcurrencyLimit'
+  let concurrencyLimit = cs.get<interfaces.Config['concurrencyLimit']>(
+    'concurrencyLimit'
   );
 
   await asyncPool(

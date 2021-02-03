@@ -14,7 +14,7 @@ export function buildYaml(
     connections: api.ProjectConnection[];
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let udfs: interfaces.Udf[];
   let views: interfaces.View[];

@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { api } from '~blockml/barrels/api';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
+import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
@@ -14,7 +15,7 @@ export function checkChartType<T extends types.dzType>(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);

@@ -59,8 +59,8 @@ export class RegisterUserController {
 
       if (helper.isUndefined(user)) {
         let onlyInv = this.cs.get<
-          interfaces.Config['backendRegisterOnlyInvitedUsers']
-        >('backendRegisterOnlyInvitedUsers');
+          interfaces.Config['registerOnlyInvitedUsers']
+        >('registerOnlyInvitedUsers');
 
         if (onlyInv === api.BoolEnum.TRUE) {
           throw new api.ServerError({
@@ -86,8 +86,8 @@ export class RegisterUserController {
             });
           });
 
-          let url = this.cs.get<interfaces.Config['backendVerifyEmailUrl']>(
-            'backendVerifyEmailUrl'
+          let url = this.cs.get<interfaces.Config['verifyEmailUrl']>(
+            'verifyEmailUrl'
           );
 
           let link = `${url}/confirm-email?token=${newUser.email_verification_token}`;

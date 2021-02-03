@@ -1,7 +1,7 @@
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
-import { AppModule } from '~blockml/app.module';
+import { appServices } from '~blockml/app-services';
 import { api } from '~blockml/barrels/api';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -9,6 +9,8 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { getConfig } from '~blockml/config/get.config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
+import { ConsumerMainService } from '~blockml/services/consumer-main.service';
+import { ConsumerWorkerService } from '~blockml/services/consumer-worker.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
 export async function prepareTest(
@@ -20,28 +22,36 @@ export async function prepareTest(
 ) {
   let mockConfig: interfaces.Config = Object.assign(
     getConfig(),
-    <interfaces.Config>{ blockmlLogFunc: func },
+    <interfaces.Config>{ logFunc: func },
     overrideConfigOptions
   );
 
   let moduleRef: TestingModule = await Test.createTestingModule({
-    imports: [AppModule]
+    imports: [
+      ConfigModule.forRoot({
+        load: [getConfig],
+        isGlobal: true
+      })
+    ],
+    providers: appServices
   })
     .overrideProvider(ConfigService)
     .useValue({ get: key => mockConfig[key] })
     .overrideProvider(RabbitService)
     .useValue({})
+    .overrideProvider(ConsumerMainService)
+    .useValue({})
+    .overrideProvider(ConsumerWorkerService)
+    .useValue({})
     .compile();
 
   let structService = moduleRef.get<RebuildStructService>(RebuildStructService);
 
-  let configService = moduleRef.get<ConfigService>(ConfigService);
-  let blockmlLogsPath = configService.get<interfaces.Config['blockmlLogsPath']>(
-    'blockmlLogsPath'
+  let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
+  let logsPath = cs.get<interfaces.Config['logsPath']>('logsPath');
+  let copyLogsToModels = cs.get<interfaces.Config['copyLogsToModels']>(
+    'copyLogsToModels'
   );
-  let blockmlCopyLogsToModels = configService.get<
-    interfaces.Config['blockmlCopyLogsToModels']
-  >('blockmlCopyLogsToModels');
 
   let funcArray = func.toString().split('/');
 
@@ -54,13 +64,13 @@ export async function prepareTest(
     ? `${caller}/${f}/${testId}/${connection.type}`
     : `${caller}/${f}/${testId}`;
 
-  let fromDir = `${blockmlLogsPath}/${caller}/${f}/${structId}`;
+  let fromDir = `${logsPath}/${caller}/${f}/${structId}`;
   fse.emptyDirSync(fromDir);
 
   let dataDir = `${constants.SRC_PATH}/models/${pack}/tests/${f}/data/${testId}`;
 
   let toDir =
-    blockmlCopyLogsToModels === api.BoolEnum.FALSE
+    copyLogsToModels === api.BoolEnum.FALSE
       ? null
       : helper.isDefined(connection)
       ? `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`

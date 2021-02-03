@@ -19,7 +19,7 @@ test('1', async t => {
       traceId: traceId,
       deleteRecordsPayload: { emails: [email] },
       overrideConfigOptions: {
-        backendRegisterOnlyInvitedUsers: api.BoolEnum.TRUE
+        registerOnlyInvitedUsers: api.BoolEnum.TRUE
       }
     });
 

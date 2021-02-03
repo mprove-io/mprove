@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
-import { AppModule } from '~disk/app.module';
+import { appServices } from '~disk/app-services';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getConfig } from '~disk/config/get.config';
 import { ConsumerService } from '~disk/services/consumer.service';
@@ -17,7 +17,13 @@ export async function prepareTest(
   let mockConfig = Object.assign(getConfig(), overrideConfigOptions);
 
   let moduleRef: TestingModule = await Test.createTestingModule({
-    imports: [AppModule]
+    imports: [
+      ConfigModule.forRoot({
+        load: [getConfig],
+        isGlobal: true
+      })
+    ],
+    providers: appServices
   })
     .overrideProvider(ConfigService)
     .useValue({ get: key => mockConfig[key] })
@@ -28,13 +34,9 @@ export async function prepareTest(
   app = moduleRef.createNestApplication();
   await app.init();
 
-  let configService = moduleRef.get<ConfigService<interfaces.Config>>(
-    ConfigService
-  );
+  let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
 
-  let orgPath = configService.get<interfaces.Config['mDataOrgPath']>(
-    'mDataOrgPath'
-  );
+  let orgPath = cs.get<interfaces.Config['mDataOrgPath']>('mDataOrgPath');
 
   let orgDir = `${orgPath}/${organizationId}`;
 

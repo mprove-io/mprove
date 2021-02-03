@@ -11,7 +11,7 @@ export function buildViz(
     structId: string;
     caller: enums.CallerEnum;
   },
-  cs: ConfigService
+  cs: ConfigService<interfaces.Config>
 ) {
   let vizs = item.vizs;
 
