@@ -1,7 +1,7 @@
 {
   "npmScope": "mprove",
   "affected": {
-    "defaultBase": "master"
+    "defaultBase": "ak"
   },
   "implicitDependencies": {
     "workspace.json": "*",
