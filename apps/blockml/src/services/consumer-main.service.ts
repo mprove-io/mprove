@@ -17,7 +17,7 @@ export class ConsumerMainService {
   ) {}
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.MBlockml.toString(),
+    exchange: api.RabbitExchangesEnum.Blockml.toString(),
     routingKey: api.RabbitBlockmlRoutingEnum.ProcessDashboard.toString(),
     queue: api.RabbitBlockmlRoutingEnum.ProcessDashboard.toString()
   })
@@ -32,7 +32,7 @@ export class ConsumerMainService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.MBlockml.toString(),
+    exchange: api.RabbitExchangesEnum.Blockml.toString(),
     routingKey: api.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
     queue: api.RabbitBlockmlRoutingEnum.ProcessQuery.toString()
   })
@@ -47,7 +47,7 @@ export class ConsumerMainService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.MBlockml.toString(),
+    exchange: api.RabbitExchangesEnum.Blockml.toString(),
     routingKey: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
     queue: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString()
   })

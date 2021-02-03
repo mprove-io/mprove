@@ -20,13 +20,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     if (helper.isUndefined(user)) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST
+        message: api.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
     if (helper.isUndefined(user.hash)) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_REGISTER_TO_SET_PASSWORD
+        message: api.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
       });
     }
 
@@ -34,7 +34,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     if (hash !== user.hash) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_WRONG_PASSWORD
+        message: api.ErEnum.BACKEND_WRONG_PASSWORD
       });
     }
 

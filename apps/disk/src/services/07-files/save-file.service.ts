@@ -17,7 +17,7 @@ export class SaveFileService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskSaveFileRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -40,21 +40,21 @@ export class SaveFileService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST
+        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_REPO_IS_NOT_EXIST
+        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -64,7 +64,7 @@ export class SaveFileService {
     });
     if (isBranchExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST
+        message: api.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -79,7 +79,7 @@ export class SaveFileService {
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_FILE_IS_NOT_EXIST
+        message: api.ErEnum.DISK_FILE_IS_NOT_EXIST
       });
     }
 

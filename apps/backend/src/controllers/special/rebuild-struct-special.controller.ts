@@ -18,7 +18,7 @@ export class RebuildStructSpecialController {
       let reqValid = await api.transformValid({
         classType: api.ToBackendRebuildStructSpecialRequest,
         object: body,
-        errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let {
@@ -62,7 +62,7 @@ export class RebuildStructSpecialController {
         getCatalogFilesResponse.info.status !== api.ResponseInfoStatusEnum.Ok
       ) {
         throw new api.ServerError({
-          message: api.ErEnum.M_BACKEND_ERROR_RESPONSE_FROM_DISK,
+          message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
           originalError: getCatalogFilesResponse.info.error
         });
       }
@@ -102,7 +102,7 @@ export class RebuildStructSpecialController {
 
       if (rebuildStructResponse.info.status !== api.ResponseInfoStatusEnum.Ok) {
         throw new api.ServerError({
-          message: api.ErEnum.M_BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+          message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
           originalError: rebuildStructResponse.info.error
         });
       }

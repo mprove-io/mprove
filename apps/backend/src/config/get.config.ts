@@ -19,7 +19,7 @@ export function getConfig() {
   let validatedConfig = api.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: api.ErEnum.M_BACKEND_WRONG_ENV_VALUES
+    errorMessage: api.ErEnum.BACKEND_WRONG_ENV_VALUES
   });
 
   return validatedConfig;

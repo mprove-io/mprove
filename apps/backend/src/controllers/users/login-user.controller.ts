@@ -22,7 +22,7 @@ export class LoginUserController {
       let reqValid = await api.transformValid({
         classType: api.ToBackendLoginUserRequest,
         object: body,
-        errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let payload: api.ToBackendLoginUserResponsePayload = {

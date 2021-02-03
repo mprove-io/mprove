@@ -24,7 +24,7 @@ export async function pushToCentral(item: {
 
   if (okStatuses.indexOf(repoStatus) < 0) {
     throw new api.ServerError({
-      message: api.ErEnum.M_DISK_REPO_STATUS_IS_NOT_NEED_PUSH
+      message: api.ErEnum.DISK_REPO_STATUS_IS_NOT_NEED_PUSH
     });
   }
 

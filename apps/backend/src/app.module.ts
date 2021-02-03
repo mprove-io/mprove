@@ -47,11 +47,11 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
     return {
       exchanges: [
         {
-          name: api.RabbitExchangesEnum.MBlockml.toString(),
+          name: api.RabbitExchangesEnum.Blockml.toString(),
           type: 'direct'
         },
         {
-          name: api.RabbitExchangesEnum.MDisk.toString(),
+          name: api.RabbitExchangesEnum.Disk.toString(),
           type: 'direct'
         }
       ],

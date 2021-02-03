@@ -22,7 +22,7 @@ export class DeleteRecordsController {
       let reqValid = await api.transformValid({
         classType: api.ToBackendDeleteRecordsRequest,
         object: body,
-        errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let { organizationIds, emails } = reqValid.payload;
@@ -57,7 +57,7 @@ export class DeleteRecordsController {
             deleteOrganizationResp.info.status !== api.ResponseInfoStatusEnum.Ok
           ) {
             throw new api.ServerError({
-              message: api.ErEnum.M_BACKEND_ERROR_RESPONSE_FROM_DISK,
+              message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
               originalError: deleteOrganizationResp.info.error
             });
           }

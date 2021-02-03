@@ -13,7 +13,7 @@ export class RabbitService {
     let { routingKey, message, checkIsOk } = item;
 
     let response = await this.amqpConnection.request<api.Response>({
-      exchange: api.RabbitExchangesEnum.MDisk.toString(),
+      exchange: api.RabbitExchangesEnum.Disk.toString(),
       routingKey: routingKey,
       payload: message
     });
@@ -23,7 +23,7 @@ export class RabbitService {
       response.info?.status !== api.ResponseInfoStatusEnum.Ok
     ) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_ERROR_RESPONSE_FROM_DISK,
+        message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
         originalError: response.info?.error
       });
     }
@@ -39,7 +39,7 @@ export class RabbitService {
     let { routingKey, message, checkIsOk } = item;
 
     let response = await this.amqpConnection.request<api.Response>({
-      exchange: api.RabbitExchangesEnum.MBlockml.toString(),
+      exchange: api.RabbitExchangesEnum.Blockml.toString(),
       routingKey: item.routingKey,
       payload: item.message
     });
@@ -49,7 +49,7 @@ export class RabbitService {
       response.info?.status !== api.ResponseInfoStatusEnum.Ok
     ) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+        message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
         originalError: response.info?.error
       });
     }

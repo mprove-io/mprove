@@ -23,8 +23,7 @@ export function makeRoutingKeyToDisk(item: {
   if (!orgGroup) {
     throw new api.ServerError({
       message:
-        api.ErEnum
-          .M_BACKEND_ORGANIZATION_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+        api.ErEnum.BACKEND_ORGANIZATION_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
     });
   }
 
@@ -40,7 +39,7 @@ export function makeRoutingKeyToDisk(item: {
     if (!projectGroup) {
       throw new api.ServerError({
         message:
-          api.ErEnum.M_BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+          api.ErEnum.BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
       });
     }
   }

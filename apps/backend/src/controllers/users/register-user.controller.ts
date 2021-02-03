@@ -27,7 +27,7 @@ export class RegisterUserController {
       let reqValid = await api.transformValid({
         classType: api.ToBackendRegisterUserRequest,
         object: body,
-        errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let { email, password } = reqValid.payload;
@@ -41,7 +41,7 @@ export class RegisterUserController {
       if (helper.isDefined(user)) {
         if (helper.isDefined(user.hash)) {
           throw new api.ServerError({
-            message: api.ErEnum.M_BACKEND_USER_ALREADY_REGISTERED
+            message: api.ErEnum.BACKEND_USER_ALREADY_REGISTERED
           });
         } else {
           user.hash = hash;
@@ -64,7 +64,7 @@ export class RegisterUserController {
 
         if (onlyInv === api.BoolEnum.TRUE) {
           throw new api.ServerError({
-            message: api.ErEnum.M_BACKEND_USER_IS_NOT_INVITED
+            message: api.ErEnum.BACKEND_USER_IS_NOT_INVITED
           });
         } else {
           let alias = await this.usersService.makeAlias(email);

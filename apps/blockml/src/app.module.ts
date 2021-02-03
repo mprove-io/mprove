@@ -37,11 +37,11 @@ import { StructService } from './services/struct.service';
         return {
           exchanges: [
             {
-              name: api.RabbitExchangesEnum.MBlockml.toString(),
+              name: api.RabbitExchangesEnum.Blockml.toString(),
               type: 'direct'
             },
             {
-              name: api.RabbitExchangesEnum.MBlockmlWorker.toString(),
+              name: api.RabbitExchangesEnum.BlockmlWorker.toString(),
               type: 'direct'
             }
           ],

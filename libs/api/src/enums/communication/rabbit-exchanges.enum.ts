@@ -1,5 +1,5 @@
 export enum RabbitExchangesEnum {
-  MDisk = 'MDisk',
-  MBlockml = 'MBlockml',
-  MBlockmlWorker = 'MBlockmlWorker'
+  Disk = 'Disk',
+  Blockml = 'Blockml',
+  BlockmlWorker = 'BlockmlWorker'
 }

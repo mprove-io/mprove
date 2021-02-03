@@ -55,15 +55,3 @@ lerna-debug.log*
 coverage/
 .nyc_output
 
-# cypress
-/client/cypress/screenshots/
-/client/cypress/videos/
-/client/cypress/cypress/
-
-client/cypress/integration/31-manual
-backend/test-projects/project_31_01
-
-# api
-m-backend/src/api
-m-disk/src/api
-m-blockml/src/api

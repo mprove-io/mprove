@@ -17,7 +17,7 @@ export class RevertRepoToProductionService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskRevertRepoToProductionRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId, projectId, repoId, branch } = requestValid.payload;
@@ -29,21 +29,21 @@ export class RevertRepoToProductionService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST
+        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_REPO_IS_NOT_EXIST
+        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -53,7 +53,7 @@ export class RevertRepoToProductionService {
     });
     if (isBranchExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST
+        message: api.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 

@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (helper.isUndefined(user)) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST
+        message: api.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 

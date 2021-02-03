@@ -16,7 +16,7 @@ export class CreateOrganizationService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskCreateOrganizationRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId } = requestValid.payload;
@@ -26,7 +26,7 @@ export class CreateOrganizationService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === true) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_ORGANIZATION_ALREADY_EXIST
+        message: api.ErEnum.DISK_ORGANIZATION_ALREADY_EXIST
       });
     }
 

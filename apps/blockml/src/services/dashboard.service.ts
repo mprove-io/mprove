@@ -20,14 +20,14 @@ export class DashboardService {
       api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessDashboard
     ) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BLOCKML_WRONG_REQUEST_INFO_NAME
+        message: api.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
       });
     }
 
     let reqValid = await api.transformValid({
       classType: api.ToBlockmlProcessDashboardRequest,
       object: request,
-      errorMessage: api.ErEnum.M_BLOCKML_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
     });
 
     let {

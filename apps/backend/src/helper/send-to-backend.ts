@@ -20,7 +20,7 @@ export async function sendToBackend<T>(item: {
 
   if (response.status !== 201) {
     throw new api.ServerError({
-      message: api.ErEnum.M_BACKEND_ERROR_CODE_FROM_BACKEND,
+      message: api.ErEnum.BACKEND_ERROR_CODE_FROM_BACKEND,
       originalError: response.text
     });
   }
@@ -30,7 +30,7 @@ export async function sendToBackend<T>(item: {
     response.body.info.status !== api.ResponseInfoStatusEnum.Ok
   ) {
     throw new api.ServerError({
-      message: api.ErEnum.M_BACKEND_ERROR_RESPONSE_FROM_BACKEND,
+      message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BACKEND,
       originalError: response.body.info.error
     });
   }

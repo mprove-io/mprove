@@ -17,7 +17,7 @@ export class SeedProjectService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskSeedProjectRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {

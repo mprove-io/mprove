@@ -16,7 +16,7 @@ export class IsOrganizationExistService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskIsOrganizationExistRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId } = requestValid.payload;

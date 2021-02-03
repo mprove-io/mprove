@@ -17,7 +17,7 @@ export class CreateFileService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskCreateFileRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -47,21 +47,21 @@ export class CreateFileService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST
+        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_REPO_IS_NOT_EXIST
+        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -71,7 +71,7 @@ export class CreateFileService {
     });
     if (isBranchExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_BRANCH_IS_NOT_EXIST
+        message: api.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -86,14 +86,14 @@ export class CreateFileService {
     let isParentPathExist = await disk.isPathExist(parentPath);
     if (isParentPathExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_PARENT_PATH_IS_NOT_EXIST
+        message: api.ErEnum.DISK_PARENT_PATH_IS_NOT_EXIST
       });
     }
 
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === true) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_FILE_ALREADY_EXIST
+        message: api.ErEnum.DISK_FILE_ALREADY_EXIST
       });
     }
 

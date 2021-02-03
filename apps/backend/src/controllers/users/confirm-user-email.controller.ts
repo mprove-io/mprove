@@ -21,7 +21,7 @@ export class ConfirmUserEmailController {
       let reqValid = await api.transformValid({
         classType: api.ToBackendConfirmUserEmailRequest,
         object: body,
-        errorMessage: api.ErEnum.M_BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let { token } = reqValid.payload;
@@ -32,7 +32,7 @@ export class ConfirmUserEmailController {
 
       if (helper.isUndefined(user)) {
         throw new api.ServerError({
-          message: api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST
+          message: api.ErEnum.BACKEND_USER_DOES_NOT_EXIST
         });
       }
 

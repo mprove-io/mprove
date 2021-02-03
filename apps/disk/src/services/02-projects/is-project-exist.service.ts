@@ -16,7 +16,7 @@ export class IsProjectExistService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskIsProjectExistRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId, projectId } = requestValid.payload;
@@ -29,7 +29,7 @@ export class IsProjectExistService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 

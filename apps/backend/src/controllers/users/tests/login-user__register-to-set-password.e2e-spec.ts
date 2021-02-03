@@ -47,5 +47,5 @@ test('1', async t => {
     api.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, api.ErEnum.M_BACKEND_REGISTER_TO_SET_PASSWORD);
+  t.is(resp.info.error.message, api.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD);
 });

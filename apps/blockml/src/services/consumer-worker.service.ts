@@ -13,7 +13,7 @@ export class ConsumerWorkerService {
   ) {}
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.MBlockmlWorker.toString(),
+    exchange: api.RabbitExchangesEnum.BlockmlWorker.toString(),
     routingKey: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
     queue: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString()
   })

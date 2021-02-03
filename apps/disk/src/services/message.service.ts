@@ -155,7 +155,7 @@ export class MessageService {
 
       default:
         throw new api.ServerError({
-          message: api.ErEnum.M_DISK_WRONG_REQUEST_INFO_NAME
+          message: api.ErEnum.DISK_WRONG_REQUEST_INFO_NAME
         });
     }
   }

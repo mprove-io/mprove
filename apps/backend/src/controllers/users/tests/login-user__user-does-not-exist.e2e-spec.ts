@@ -39,5 +39,5 @@ test('1', async t => {
     api.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, api.ErEnum.M_BACKEND_USER_DOES_NOT_EXIST);
+  t.is(resp.info.error.message, api.ErEnum.BACKEND_USER_DOES_NOT_EXIST);
 });

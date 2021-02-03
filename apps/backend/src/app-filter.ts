@@ -24,7 +24,7 @@ export class AppFilter implements ExceptionFilter {
     let e =
       (exception as any).message === 'Unauthorized'
         ? new api.ServerError({
-            message: api.ErEnum.M_BACKEND_UNAUTHORIZED,
+            message: api.ErEnum.BACKEND_UNAUTHORIZED,
             originalError: exception
           })
         : exception;

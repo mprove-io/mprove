@@ -65,11 +65,11 @@ services:
     #     fluentd-async-connect: "true"
     #     tag: rabbit
 
-  m-backend:
+  backend:
     build:
       context: ../../../
       dockerfile: tools/docker/backend.dev.Dockerfile     
-    # container_name: m-backend
+    # container_name: backend
     image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
     env_file:
       - $BACKEND_ENV_FILE_PATH    
@@ -84,13 +84,13 @@ services:
     #   options:
     #     fluentd-address: 0.0.0.0:24224
     #     fluentd-async-connect: "true"
-    #     tag: m-backend    
+    #     tag: backend    
 
-  m-blockml-main:
+  blockml-main:
     build:
       context: ../../../
       dockerfile: tools/docker/blockml.dev.Dockerfile     
-    # container_name: m-blockml-main
+    # container_name: blockml-main
     image: mprove/mprove-base-m-blockml:$MPROVE_BASE_RELEASE_TAG 
     env_file:
       - $BLOCKML_MAIN_ENV_FILE_PATH  
@@ -105,9 +105,9 @@ services:
     #   options:
     #     fluentd-address: 0.0.0.0:24224
     #     fluentd-async-connect: "true"
-    #     tag: m-blockml
+    #     tag: blockml
 
-  m-blockml-worker:
+  blockml-worker:
     build:
       context: ../../../
       dockerfile: tools/docker/blockml.dev.Dockerfile     
@@ -123,14 +123,14 @@ services:
     #   options:
     #     fluentd-address: 0.0.0.0:24224
     #     fluentd-async-connect: "true"
-    #     tag: m-blockml-worker
+    #     tag: blockml-worker
 
-  m-disk:
+  disk:
     build:
       context: ../../../
       dockerfile: tools/docker/disk.dev.Dockerfile     
     image: mprove/mprove-base-m-disk:$MPROVE_BASE_RELEASE_TAG  
-    # container_name: m-disk
+    # container_name: disk
     env_file:
       - $DISK_ENV_FILE_PATH
     ports:
@@ -147,7 +147,7 @@ services:
     #   options:
     #     fluentd-address: 0.0.0.0:24224
     #     fluentd-async-connect: "true"
-    #     tag: m-disk      
+    #     tag: disk      
 
 
     

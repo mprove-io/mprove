@@ -34,7 +34,7 @@ export class UsersService {
 
     if (helper.isUndefined(alias)) {
       throw new api.ServerError({
-        message: api.ErEnum.M_BACKEND_USER_ALIAS_IS_UNDEFINED
+        message: api.ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
       });
     }
 

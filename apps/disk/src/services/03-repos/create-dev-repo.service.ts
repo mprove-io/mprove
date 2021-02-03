@@ -17,7 +17,7 @@ export class CreateDevRepoService {
     let requestValid = await api.transformValid({
       classType: api.ToDiskCreateDevRepoRequest,
       object: request,
-      errorMessage: api.ErEnum.M_DISK_WRONG_REQUEST_PARAMS
+      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId, projectId, devRepoId } = requestValid.payload;
@@ -31,21 +31,21 @@ export class CreateDevRepoService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_ORGANIZATION_IS_NOT_EXIST
+        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_PROJECT_IS_NOT_EXIST
+        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isDevRepoExist = await disk.isPathExist(devRepoDir);
     if (isDevRepoExist === true) {
       throw new api.ServerError({
-        message: api.ErEnum.M_DISK_REPO_ALREADY_EXIST
+        message: api.ErEnum.DISK_REPO_ALREADY_EXIST
       });
     }
 

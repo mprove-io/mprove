@@ -30,7 +30,7 @@ import { getConfig } from './config/get.config';
         return {
           exchanges: [
             {
-              name: api.RabbitExchangesEnum.MDisk.toString(),
+              name: api.RabbitExchangesEnum.Disk.toString(),
               type: 'direct'
             }
           ],

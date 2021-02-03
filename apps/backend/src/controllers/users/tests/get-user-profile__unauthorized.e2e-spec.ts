@@ -45,5 +45,5 @@ test('1', async t => {
     api.logToConsole(e);
   }
 
-  t.is(resp?.info?.error?.message, api.ErEnum.M_BACKEND_UNAUTHORIZED);
+  t.is(resp?.info?.error?.message, api.ErEnum.BACKEND_UNAUTHORIZED);
 });
