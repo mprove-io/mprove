@@ -25,11 +25,6 @@
       "@mprove/api": ["libs/api/src/_index.ts"]
     }
   },
-  "include": [
-    "apps/backend/**/*.ts",
-    "apps/blockml/**/*.ts",
-    "apps/disk/**/*.ts",
-    "libs/api/**/*.ts"
-  ],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "tmp"]
 }
