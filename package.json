@@ -30,7 +30,7 @@
     "pj": "ts-node ./tools/utils/prepare-package-json-for-docker",
     "up": "cd ./tools/deploy/base-dev && docker-compose up --detach --build disk backend blockml-main blockml-worker",
     "test": "nx run-many --target=test --all",
-    "e2e": "nx run-many --target=e2e --all",
+    "e2e": "nx run-many --target=e2e --all --skip-nx-cache",
     "steps": "npm run circular && npm run lint && npm run build && npm run test && npm run pj && npm run up && npm run e2e"
   },
   "dependencies": {
