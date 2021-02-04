@@ -1,6 +1,38 @@
 {
   "version": 2,
   "projects": {
+    "api": {
+      "root": "libs/api",
+      "sourceRoot": "libs/api/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "rimraf \"./dist/tests/api\" && tsc --project libs/api/tsconfig.test.json",
+            "outputPath": "dist/tests/api"
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "prettier \"libs/api/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "madge --circular libs/api"
+          }
+        }
+      }
+    },
     "disk": {
       "root": "apps/disk",
       "sourceRoot": "apps/disk/src",
@@ -35,18 +67,34 @@
           "options": {
             "lintFilePatterns": ["apps/disk/**/*.ts"]
           }
-        }
-      }
-    },
-    "api": {
-      "root": "libs/api",
-      "sourceRoot": "libs/api/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
+        },
+        "build-tests": {
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "lintFilePatterns": ["libs/api/**/*.ts"]
+            "command": "rimraf \"./dist/tests/disk\" && tsc --project apps/disk/tsconfig.test.json",
+            "outputPath": "dist/tests/disk"
+          }
+        },
+        "test": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx build-tests disk --with-deps",
+              "ava --config=ava-js.config.js dist/tests/disk/apps/disk/**/*.spec.js"
+            ],
+            "parallel": false
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "prettier \"apps/disk/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "madge --circular apps/disk"
           }
         }
       }
@@ -85,6 +133,42 @@
           "options": {
             "lintFilePatterns": ["apps/blockml/**/*.ts"]
           }
+        },
+        "clean-logs": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "rimraf \"./apps/blockml/src/models/**/logs/*.log\""
+          }
+        },
+        "build-tests": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "rimraf \"./dist/tests/blockml\" && tsc --project apps/blockml/tsconfig.test.json",
+            "outputPath": "dist/tests/blockml"
+          }
+        },
+        "test": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx clean-logs blockml",
+              "nx build-tests blockml --with-deps",
+              "ava --config=ava-js.config.js dist/tests/blockml/apps/blockml/**/*.spec.js"
+            ],
+            "parallel": false
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "prettier \"apps/blockml/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "madge --circular apps/blockml"
+          }
         }
       }
     },
@@ -121,6 +205,35 @@
           "executor": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["apps/backend/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "rimraf \"./dist/tests/backend\" && tsc --project apps/backend/tsconfig.test.json",
+            "outputPath": "dist/tests/backend"
+          }
+        },
+        "e2e": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx build-tests backend --with-deps",
+              "ava --config=ava-js-e2e.config.js dist/tests/backend/apps/backend/**/*.e2e-spec.js"
+            ],
+            "parallel": false
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "prettier \"apps/backend/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "madge --circular apps/backend"
           }
         }
       }

@@ -4,29 +4,39 @@
     "defaultBase": "ak"
   },
   "implicitDependencies": {
-    "workspace.json": "*",
+    ".eslintignore": "*",
+    ".eslintrc.js": "*",
+    "ava-js.config.js": "*",
+    "ava.config.js": "*",
+    "nx.json": "*",
     "package.json": {
       "dependencies": "*",
       "devDependencies": "*"
     },
     "tsconfig.base.json": "*",
     "tsconfig.json": "*",
-    ".eslintrc.js": "*",
-    "nx.json": "*"
+    "workspace.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "build-tests",
+          "circular"
+        ]
       }
     }
   },
   "projects": {
-    "disk": {
+    "api": {
       "tags": []
     },
-    "api": {
+    "disk": {
       "tags": []
     },
     "blockml": {
