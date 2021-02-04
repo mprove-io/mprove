@@ -1,5 +1,5 @@
-import * as apiObjects from '~api/objects/_index';
-export const timezones: apiObjects.TimezoneGroup[] = [
+import { interfaces } from '~api/barrels/interfaces';
+export const timezones: interfaces.TimezoneGroup[] = [
   {
     group: 'America',
     zones: [

@@ -1,8 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import * as apiEnums from '~api/enums/_index';
-import * as apiObjects from '~api/objects/_index';
-import { BmlError, View } from '~api/objects/_index';
+import { enums } from '~api/barrels/enums';
+import { interfaces } from '~api/barrels/interfaces';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
@@ -14,23 +13,19 @@ export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
   readonly structId: string;
 
-  @IsEnum(apiEnums.ProjectWeekStartEnum)
-  readonly weekStart: apiEnums.ProjectWeekStartEnum;
+  @IsEnum(enums.ProjectWeekStartEnum)
+  readonly weekStart: enums.ProjectWeekStartEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.File)
-  readonly files: apiObjects.File[];
+  @Type(() => interfaces.File)
+  readonly files: interfaces.File[];
 
   @ValidateNested()
-  @Type(() => apiObjects.ProjectConnection)
-  readonly connections: apiObjects.ProjectConnection[];
+  @Type(() => interfaces.ProjectConnection)
+  readonly connections: interfaces.ProjectConnection[];
 }
 
-export class ToBlockmlRebuildStructRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBlockmlRequestInfo)
-  readonly info: apiObjects.ToBlockmlRequestInfo;
-
+export class ToBlockmlRebuildStructRequest extends interfaces.ToBlockmlRequest {
   @ValidateNested()
   @Type(() => ToBlockmlRebuildStructRequestPayload)
   readonly payload: ToBlockmlRebuildStructRequestPayload;
@@ -38,43 +33,39 @@ export class ToBlockmlRebuildStructRequest {
 
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
-  @Type(() => BmlError)
-  readonly errors: BmlError[];
+  @Type(() => interfaces.BmlError)
+  readonly errors: interfaces.BmlError[];
 
   @ValidateNested()
-  @Type(() => apiObjects.UdfsDict)
-  readonly udfsDict: apiObjects.UdfsDict;
+  @Type(() => interfaces.UdfsDict)
+  readonly udfsDict: interfaces.UdfsDict;
 
   @ValidateNested()
-  @Type(() => View)
-  readonly views: View[];
+  @Type(() => interfaces.View)
+  readonly views: interfaces.View[];
 
   @ValidateNested()
-  @Type(() => apiObjects.Model)
-  readonly models: apiObjects.Model[];
+  @Type(() => interfaces.Model)
+  readonly models: interfaces.Model[];
 
   @ValidateNested()
-  @Type(() => apiObjects.Dashboard)
-  readonly dashboards: apiObjects.Dashboard[];
+  @Type(() => interfaces.Dashboard)
+  readonly dashboards: interfaces.Dashboard[];
 
   @ValidateNested()
-  @Type(() => apiObjects.Viz)
-  readonly vizs: apiObjects.Viz[];
+  @Type(() => interfaces.Viz)
+  readonly vizs: interfaces.Viz[];
 
   @ValidateNested()
-  @Type(() => apiObjects.Mconfig)
-  readonly mconfigs: apiObjects.Mconfig[];
+  @Type(() => interfaces.Mconfig)
+  readonly mconfigs: interfaces.Mconfig[];
 
   @ValidateNested()
-  @Type(() => apiObjects.Query)
-  readonly queries: apiObjects.Query[];
+  @Type(() => interfaces.Query)
+  readonly queries: interfaces.Query[];
 }
 
-export class ToBlockmlRebuildStructResponse {
-  @ValidateNested()
-  @Type(() => apiObjects.ResponseInfo)
-  readonly info: apiObjects.ResponseInfo;
-
+export class ToBlockmlRebuildStructResponse extends interfaces.MyResponse {
   @ValidateNested()
   @Type(() => ToBlockmlRebuildStructResponsePayload)
   readonly payload: ToBlockmlRebuildStructResponsePayload;

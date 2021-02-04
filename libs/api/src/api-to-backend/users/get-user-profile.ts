@@ -1,19 +1,18 @@
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import * as apiObjects from '~api/objects/_index';
-import { Response, ToBackendRequest } from '~api/objects/_index';
+import { interfaces } from '~api/barrels/interfaces';
 
-export class ToBackendGetUserProfileRequest extends ToBackendRequest {
+export class ToBackendGetUserProfileRequest extends interfaces.ToBackendRequest {
   readonly payload: { [K in any]: never };
 }
 
 export class ToBackendGetUserProfileResponsePayload {
   @ValidateNested()
-  @Type(() => apiObjects.User)
-  readonly user: apiObjects.User;
+  @Type(() => interfaces.User)
+  readonly user: interfaces.User;
 }
 
-export class ToBackendGetUserProfileResponse extends Response {
+export class ToBackendGetUserProfileResponse extends interfaces.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendGetUserProfileResponsePayload)
   readonly payload: ToBackendGetUserProfileResponsePayload;

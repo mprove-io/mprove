@@ -1,9 +1,9 @@
 import { IsEnum, IsOptional } from 'class-validator';
-import * as apiEnums from '~api/enums/_index';
+import { enums } from '~api/barrels/enums';
 
 export class ServerError extends Error {
-  @IsEnum(apiEnums.ErEnum)
-  message: apiEnums.ErEnum;
+  @IsEnum(enums.ErEnum)
+  message: enums.ErEnum;
 
   @IsOptional()
   data?: any;
@@ -12,7 +12,7 @@ export class ServerError extends Error {
   originalError?: any;
 
   constructor(item: {
-    message: apiEnums.ErEnum;
+    message: enums.ErEnum;
     data?: any;
     originalError?: any;
   }) {

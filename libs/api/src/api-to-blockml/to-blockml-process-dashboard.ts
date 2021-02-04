@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import * as apiEnums from '~api/enums/_index';
-import * as apiObjects from '~api/objects/_index';
+import { enums } from '~api/barrels/enums';
+import { interfaces } from '~api/barrels/interfaces';
 
 export class ToBlockmlProcessDashboardRequestPayload {
   @IsString()
@@ -13,12 +13,12 @@ export class ToBlockmlProcessDashboardRequestPayload {
   @IsString()
   readonly structId: string;
 
-  @IsEnum(apiEnums.ProjectWeekStartEnum)
-  readonly weekStart: apiEnums.ProjectWeekStartEnum;
+  @IsEnum(enums.ProjectWeekStartEnum)
+  readonly weekStart: enums.ProjectWeekStartEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.UdfsDict)
-  readonly udfsDict: apiObjects.UdfsDict;
+  @Type(() => interfaces.UdfsDict)
+  readonly udfsDict: interfaces.UdfsDict;
 
   readonly modelContents: any[];
 
@@ -28,15 +28,11 @@ export class ToBlockmlProcessDashboardRequestPayload {
   readonly newDashboardId: string;
 
   @ValidateNested()
-  @Type(() => apiObjects.DashboardField)
-  readonly newDashboardFields: apiObjects.DashboardField[];
+  @Type(() => interfaces.DashboardField)
+  readonly newDashboardFields: interfaces.DashboardField[];
 }
 
-export class ToBlockmlProcessDashboardRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBlockmlRequestInfo)
-  readonly info: apiObjects.ToBlockmlRequestInfo;
-
+export class ToBlockmlProcessDashboardRequest extends interfaces.ToBlockmlRequest {
   @ValidateNested()
   @Type(() => ToBlockmlProcessDashboardRequestPayload)
   readonly payload: ToBlockmlProcessDashboardRequestPayload;
@@ -44,23 +40,19 @@ export class ToBlockmlProcessDashboardRequest {
 
 export class ToBlockmlProcessDashboardResponsePayload {
   @ValidateNested()
-  @Type(() => apiObjects.Dashboard)
-  readonly dashboard: apiObjects.Dashboard;
+  @Type(() => interfaces.Dashboard)
+  readonly dashboard: interfaces.Dashboard;
 
   @ValidateNested()
-  @Type(() => apiObjects.Mconfig)
-  readonly mconfigs: apiObjects.Mconfig[];
+  @Type(() => interfaces.Mconfig)
+  readonly mconfigs: interfaces.Mconfig[];
 
   @ValidateNested()
-  @Type(() => apiObjects.Query)
-  readonly queries: apiObjects.Query[];
+  @Type(() => interfaces.Query)
+  readonly queries: interfaces.Query[];
 }
 
-export class ToBlockmlProcessDashboardResponse {
-  @ValidateNested()
-  @Type(() => apiObjects.ResponseInfo)
-  readonly info: apiObjects.ResponseInfo;
-
+export class ToBlockmlProcessDashboardResponse extends interfaces.MyResponse {
   @ValidateNested()
   @Type(() => ToBlockmlProcessDashboardResponsePayload)
   readonly payload: ToBlockmlProcessDashboardResponsePayload;

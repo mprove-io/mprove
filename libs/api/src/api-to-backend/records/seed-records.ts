@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
-import * as apiEnums from '~api/enums/_index';
-import * as apiObjects from '~api/objects/_index';
+import { enums } from '~api/barrels/enums';
+import { interfaces } from '~api/barrels/interfaces';
 
 export class ToBackendSeedRecordsRequestPayloadUsers {
   @IsOptional()
@@ -16,8 +16,8 @@ export class ToBackendSeedRecordsRequestPayloadUsers {
   password?: string;
 
   @IsOptional()
-  @IsEnum(apiEnums.BoolEnum)
-  isEmailVerified?: apiEnums.BoolEnum;
+  @IsEnum(enums.BoolEnum)
+  isEmailVerified?: enums.BoolEnum;
 
   @IsOptional()
   @IsString()
@@ -35,20 +35,12 @@ export class ToBackendSeedRecordsRequestPayload {
   readonly users?: ToBackendSeedRecordsRequestPayloadUsers[];
 }
 
-export class ToBackendSeedRecordsRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBackendRequestInfo)
-  readonly info: apiObjects.ToBackendRequestInfo;
-
+export class ToBackendSeedRecordsRequest extends interfaces.ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayload)
   readonly payload: ToBackendSeedRecordsRequestPayload;
 }
 
-export class ToBackendSeedRecordsResponse {
-  @ValidateNested()
-  @Type(() => apiObjects.ResponseInfo)
-  readonly info: apiObjects.ResponseInfo;
-
+export class ToBackendSeedRecordsResponse extends interfaces.MyResponse {
   readonly payload: { [K in any]: never };
 }

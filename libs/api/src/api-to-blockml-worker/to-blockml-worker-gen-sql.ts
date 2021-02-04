@@ -1,19 +1,9 @@
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
-import * as apiObjects from '~api/objects/_index';
+import { interfaces } from '~api/barrels/interfaces';
 
-export class ToBlockmlWorkerGenSqlRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBlockmlWorkerRequestInfo)
-  readonly info: apiObjects.ToBlockmlWorkerRequestInfo;
-
+export class ToBlockmlWorkerGenSqlRequest extends interfaces.ToBlockmlWorkerRequest {
   readonly payload: any;
 }
 
-export class ToBlockmlWorkerGenSqlResponse {
-  @ValidateNested()
-  @Type(() => apiObjects.ResponseInfo)
-  readonly info: apiObjects.ResponseInfo;
-
+export class ToBlockmlWorkerGenSqlResponse extends interfaces.MyResponse {
   readonly payload: any;
 }

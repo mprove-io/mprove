@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '~api/objects/_index';
+import { interfaces } from '~api/barrels/interfaces';
 
 export class ToBackendRegisterUserRequestPayload {
   @IsString()
@@ -10,11 +10,7 @@ export class ToBackendRegisterUserRequestPayload {
   readonly password: string;
 }
 
-export class ToBackendRegisterUserRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBackendRequestInfo)
-  readonly info: apiObjects.ToBackendRequestInfo;
-
+export class ToBackendRegisterUserRequest extends interfaces.ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendRegisterUserRequestPayload)
   readonly payload: ToBackendRegisterUserRequestPayload;
@@ -25,11 +21,7 @@ export class ToBackendRegisterUserResponsePayload {
   readonly userId: string;
 }
 
-export class ToBackendRegisterUserResponse {
-  @ValidateNested()
-  @Type(() => apiObjects.ResponseInfo)
-  readonly info: apiObjects.ResponseInfo;
-
+export class ToBackendRegisterUserResponse extends interfaces.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendRegisterUserResponsePayload)
   readonly payload: ToBackendRegisterUserResponsePayload;

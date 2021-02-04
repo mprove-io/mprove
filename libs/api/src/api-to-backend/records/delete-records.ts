@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '~api/objects/_index';
+import { interfaces } from '~api/barrels/interfaces';
 
 export class ToBackendDeleteRecordsRequestPayload {
   @IsOptional()
@@ -12,20 +12,12 @@ export class ToBackendDeleteRecordsRequestPayload {
   readonly organizationIds?: string[];
 }
 
-export class ToBackendDeleteRecordsRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBackendRequestInfo)
-  readonly info: apiObjects.ToBackendRequestInfo;
-
+export class ToBackendDeleteRecordsRequest extends interfaces.ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendDeleteRecordsRequestPayload)
   readonly payload: ToBackendDeleteRecordsRequestPayload;
 }
 
-export class ToBackendDeleteRecordsResponse {
-  @ValidateNested()
-  @Type(() => apiObjects.ResponseInfo)
-  readonly info: apiObjects.ResponseInfo;
-
+export class ToBackendDeleteRecordsResponse extends interfaces.MyResponse {
   readonly payload: { [K in any]: never };
 }

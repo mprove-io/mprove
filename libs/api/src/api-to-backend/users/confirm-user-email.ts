@@ -1,26 +1,18 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import * as apiObjects from '~api/objects/_index';
+import { interfaces } from '~api/barrels/interfaces';
 
 export class ToBackendConfirmUserEmailRequestPayload {
   @IsString()
   readonly token: string;
 }
 
-export class ToBackendConfirmUserEmailRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBackendRequestInfo)
-  readonly info: apiObjects.ToBackendRequestInfo;
-
+export class ToBackendConfirmUserEmailRequest extends interfaces.ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendConfirmUserEmailRequestPayload)
   readonly payload: ToBackendConfirmUserEmailRequestPayload;
 }
 
-export class ToBackendConfirmUserEmailResponse {
-  @ValidateNested()
-  @Type(() => apiObjects.ResponseInfo)
-  readonly info: apiObjects.ResponseInfo;
-
+export class ToBackendConfirmUserEmailResponse extends interfaces.MyResponse {
   readonly payload: { [K in any]: never };
 }

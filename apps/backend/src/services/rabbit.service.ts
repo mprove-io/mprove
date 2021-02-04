@@ -12,7 +12,7 @@ export class RabbitService {
   }) {
     let { routingKey, message, checkIsOk } = item;
 
-    let response = await this.amqpConnection.request<api.Response>({
+    let response = await this.amqpConnection.request<api.MyResponse>({
       exchange: api.RabbitExchangesEnum.Disk.toString(),
       routingKey: routingKey,
       payload: message
@@ -38,7 +38,7 @@ export class RabbitService {
   }) {
     let { routingKey, message, checkIsOk } = item;
 
-    let response = await this.amqpConnection.request<api.Response>({
+    let response = await this.amqpConnection.request<api.MyResponse>({
       exchange: api.RabbitExchangesEnum.Blockml.toString(),
       routingKey: item.routingKey,
       payload: item.message

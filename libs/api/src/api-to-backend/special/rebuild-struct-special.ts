@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import * as apiEnums from '~api/enums/_index';
-import * as apiObjects from '~api/objects/_index';
+import { enums } from '~api/barrels/enums';
+import { interfaces } from '~api/barrels/interfaces';
 
 export class ToBackendRebuildStructSpecialRequestPayload {
   @IsString()
@@ -19,23 +19,15 @@ export class ToBackendRebuildStructSpecialRequestPayload {
   @IsString()
   readonly structId: string;
 
-  @IsEnum(apiEnums.ProjectWeekStartEnum)
-  readonly weekStart: apiEnums.ProjectWeekStartEnum;
-
-  // @ValidateNested()
-  // @Type(() => apiObjects.File)
-  // readonly files: apiObjects.File[];
+  @IsEnum(enums.ProjectWeekStartEnum)
+  readonly weekStart: enums.ProjectWeekStartEnum;
 
   @ValidateNested()
-  @Type(() => apiObjects.ProjectConnection)
-  readonly connections: apiObjects.ProjectConnection[];
+  @Type(() => interfaces.ProjectConnection)
+  readonly connections: interfaces.ProjectConnection[];
 }
 
-export class ToBackendRebuildStructSpecialRequest {
-  @ValidateNested()
-  @Type(() => apiObjects.ToBackendRequestInfo)
-  readonly info: apiObjects.ToBackendRequestInfo;
-
+export class ToBackendRebuildStructSpecialRequest extends interfaces.ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendRebuildStructSpecialRequestPayload)
   readonly payload: ToBackendRebuildStructSpecialRequestPayload;
