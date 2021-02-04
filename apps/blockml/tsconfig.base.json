@@ -1,10 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "~backend/*": ["./src/*"],
+      "~blockml/*": ["./src/*"],
       "~api/*": ["../../libs/api/src/*"],
       "@mprove/api": ["../../libs/api/src/_index.ts"]
     }
