@@ -40,8 +40,8 @@ export class RabbitService {
 
     let response = await this.amqpConnection.request<api.MyResponse>({
       exchange: api.RabbitExchangesEnum.Blockml.toString(),
-      routingKey: item.routingKey,
-      payload: item.message
+      routingKey: routingKey,
+      payload: message
     });
 
     if (
