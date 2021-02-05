@@ -1,6 +1,34 @@
 {
   "version": 2,
   "projects": {
+    "top": {
+      "root": ".",
+      "targets": {
+        "pj": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "ts-node ./tools/utils/prepare-package-json-for-docker"
+            ],
+            "parallel": false,
+            "outputPath": "package.docker.json"
+          }
+        },
+        "steps": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run-many --target=build --all",
+              "nx run-many --target=test --all",
+              "nx pj top",
+              "nx run-many --target=up --all",
+              "nx run-many --target=e2e --all"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
     "api": {
       "root": "libs/api",
       "sourceRoot": "libs/api/src",
@@ -13,22 +41,30 @@
           }
         },
         "build-tests": {
-          "builder": "@nrwl/workspace:run-commands",
+          "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "rimraf \"./dist/tests/api\" && tsc --project libs/api/tsconfig.test.json",
+            "commands": [
+              "rimraf \"./dist/tests/api\"",
+              "tsc --project libs/api/tsconfig.test.json"
+            ],
+            "parallel": false,
             "outputPath": "dist/tests/api"
           }
         },
         "format": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "prettier \"libs/api/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+            "commands": [
+              "prettier \"libs/api/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
           }
         },
         "circular": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "madge --circular libs/api"
+            "commands": ["madge --circular libs/api"],
+            "parallel": false
           }
         }
       }
@@ -69,9 +105,13 @@
           }
         },
         "build-tests": {
-          "builder": "@nrwl/workspace:run-commands",
+          "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "rimraf \"./dist/tests/disk\" && tsc --project apps/disk/tsconfig.test.json",
+            "commands": [
+              "rimraf \"./dist/tests/disk\"",
+              "tsc --project apps/disk/tsconfig.test.json"
+            ],
+            "parallel": false,
             "outputPath": "dist/tests/disk"
           }
         },
@@ -88,13 +128,32 @@
         "format": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "prettier \"apps/disk/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+            "commands": [
+              "prettier \"apps/disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
           }
         },
         "circular": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "madge --circular apps/disk"
+            "commands": ["madge --circular apps/disk"],
+            "parallel": false
+          }
+        },
+        "build-docker": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "tools/deploy/base-dev",
+            "commands": ["docker-compose up --detach --build disk"],
+            "parallel": false
+          }
+        },
+        "up": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["nx pj top", "nx build-docker disk"],
+            "parallel": false
           }
         }
       }
@@ -137,13 +196,18 @@
         "clean-logs": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "rimraf \"./apps/blockml/src/models/**/logs/*.log\""
+            "commands": ["rimraf \"./apps/blockml/src/models/**/logs/*.log\""],
+            "parallel": false
           }
         },
         "build-tests": {
-          "builder": "@nrwl/workspace:run-commands",
+          "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "rimraf \"./dist/tests/blockml\" && tsc --project apps/blockml/tsconfig.test.json",
+            "commands": [
+              "rimraf \"./dist/tests/blockml\"",
+              "tsc --project apps/blockml/tsconfig.test.json"
+            ],
+            "parallel": false,
             "outputPath": "dist/tests/blockml"
           }
         },
@@ -161,13 +225,35 @@
         "format": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "prettier \"apps/blockml/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+            "commands": [
+              "prettier \"apps/blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
           }
         },
         "circular": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "madge --circular apps/blockml"
+            "commands": ["madge --circular apps/blockml"],
+            "parallel": false
+          }
+        },
+        "build-docker": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "tools/deploy/base-dev",
+            "commands": [
+              "docker-compose up --detach --build blockml-main",
+              "docker-compose up --detach --build blockml-worker"
+            ],
+            "parallel": false
+          }
+        },
+        "up": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["nx pj top", "nx build-docker blockml"],
+            "parallel": false
           }
         }
       }
@@ -208,9 +294,13 @@
           }
         },
         "build-tests": {
-          "builder": "@nrwl/workspace:run-commands",
+          "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "rimraf \"./dist/tests/backend\" && tsc --project apps/backend/tsconfig.test.json",
+            "commands": [
+              "rimraf \"./dist/tests/backend\"",
+              "tsc --project apps/backend/tsconfig.test.json"
+            ],
+            "parallel": false,
             "outputPath": "dist/tests/backend"
           }
         },
@@ -227,13 +317,32 @@
         "format": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "prettier \"apps/backend/**/*.{ts,js,json,scss,html}\" --write --config .prettierrc.yaml"
+            "commands": [
+              "prettier \"apps/backend/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
           }
         },
         "circular": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "madge --circular apps/backend"
+            "commands": ["madge --circular apps/backend"],
+            "parallel": false
+          }
+        },
+        "build-docker": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "tools/deploy/base-dev",
+            "commands": ["docker-compose up --detach --build backend"],
+            "parallel": false
+          }
+        },
+        "up": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["nx pj top", "nx build-docker backend"],
+            "parallel": false
           }
         }
       }

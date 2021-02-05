@@ -6,6 +6,7 @@
   "implicitDependencies": {
     ".eslintignore": "*",
     ".eslintrc.js": "*",
+    "ava-js-e2e.config.js": "*",
     "ava-js.config.js": "*",
     "ava.config.js": "*",
     "nx.json": "*",
@@ -22,17 +23,21 @@
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
         "cacheableOperations": [
-          "build",
           "lint",
+          "circular",
+          "build",
+          "build-tests",
           "test",
           "e2e",
-          "build-tests",
-          "circular"
+          "pj"
         ]
       }
     }
   },
   "projects": {
+    "top": {
+      "tags": []
+    },
     "api": {
       "tags": []
     },
@@ -43,7 +48,8 @@
       "tags": []
     },
     "backend": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["disk", "blockml"]
     }
   }
 }
