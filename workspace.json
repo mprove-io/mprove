@@ -18,6 +18,19 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
+              "nx affected --target=build",
+              "nx affected --target=test",
+              "nx pj top",
+              "nx affected --target=up",
+              "nx affected --target=e2e"
+            ],
+            "parallel": false
+          }
+        },
+        "steps-all": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
               "nx run-many --target=build --all",
               "nx run-many --target=test --all",
               "nx pj top",

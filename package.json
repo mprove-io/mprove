@@ -10,18 +10,6 @@
   "scripts": {
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "nx": "nx",
-    "update": "nx migrate latest",
-    "workspace-generator": "nx workspace-generator",
-    "dep-graph": "nx dep-graph",
-    "help": "nx help",
-    "affected:apps": "nx affected:apps",
-    "affected:libs": "nx affected:libs",
-    "affected:build": "nx affected:build",
-    "affected:e2e": "nx affected:e2e",
-    "affected:test": "nx affected:test",
-    "affected:lint": "nx affected:lint",
-    "affected:dep-graph": "nx affected:dep-graph",
-    "affected": "nx affected",
     "x:format": "prettier \"**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml",
     "x:circular": "madge --circular {apps,libs}",
     "x:lint": "eslint \"**/*.ts\"",
@@ -34,6 +22,7 @@
     "pj": "nx pj top",
     "up": "nx run-many --target=up --all",
     "e2e": "nx run-many --target=e2e --all",
+    "steps-all": "nx steps-all top",
     "steps": "nx steps top"
   },
   "dependencies": {

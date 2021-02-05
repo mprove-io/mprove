@@ -48,16 +48,16 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    volumes:
+    # volumes:
+    #   # - type: bind
+    #   #   source: 
+    #   #   target: /etc/rabbitmq/      
     #   - type: bind
-    #     source: ./.docker/rabbitmq/etc/
-    #     target: /etc/rabbitmq/      
-      - type: bind
-        source: $M_DATA_RABBIT_DATA_PATH
-        target:  /var/lib/rabbitmq/  
-      - type: bind
-        source: $M_DATA_RABBIT_LOG_PATH
-        target: /var/log/rabbitmq/     
+    #     source: $M_DATA_RABBIT_DATA_PATH
+    #     target:  /var/lib/rabbitmq/  
+    #   - type: bind
+    #     source: $M_DATA_RABBIT_LOG_PATH
+    #     target: /var/log/rabbitmq/     
     # logging:
     #   driver: fluentd
     #   options:
