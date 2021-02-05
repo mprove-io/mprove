@@ -4,7 +4,7 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "~api/*": ["./src/*"],
+      "~api-to-blockml/*": ["./src/*"],
       "@mprove/common": ["../common/src/_index.ts"],
       "~common/*": ["../common/src/*"]
     }

@@ -41,6 +41,21 @@
     "api": {
       "tags": []
     },
+    "api-to-backend": {
+      "tags": []
+    },
+    "api-to-blockml": {
+      "tags": []
+    },
+    "api-to-blockml-worker": {
+      "tags": []
+    },
+    "api-to-disk": {
+      "tags": []
+    },
+    "common": {
+      "tags": []
+    },
     "disk": {
       "tags": []
     },

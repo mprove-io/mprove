@@ -125,6 +125,16 @@
     "~blockml": "dist/tests/blockml/apps/blockml/src",
     "~disk": "dist/tests/disk/apps/disk/src",
     "~api": "dist/tests/api/libs/api/src",
-    "@mprove/api": "dist/tests/api/libs/api/src/_index"
+    "~api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src",
+    "~api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src",
+    "~api-to-blockml-worker": "dist/tests/api-to-blockml-worker/libs/api-to-blockml-worker/src",
+    "~api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src",
+    "~common": "dist/tests/common/libs/common/src",
+    "@mprove/api": "dist/tests/api/libs/api/src/_index",
+    "@mprove/api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src/_index",
+    "@mprove/api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src/_index",
+    "@mprove/api-to-blockml-worker": "dist/tests/api-to-blockml-worker/libs/api-to-blockml-worker/src/_index",
+    "@mprove/api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src/_index",
+    "@mprove/common": "dist/tests/common/libs/common/src/_index"
   }
 }

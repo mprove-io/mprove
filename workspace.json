@@ -42,46 +42,6 @@
         }
       }
     },
-    "api": {
-      "root": "libs/api",
-      "sourceRoot": "libs/api/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/**/*.ts"]
-          }
-        },
-        "build-tests": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "rimraf \"./dist/tests/api\"",
-              "tsc --project libs/api/tsconfig.test.json"
-            ],
-            "parallel": false,
-            "outputPath": "dist/tests/api"
-          }
-        },
-        "format": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "prettier \"libs/api/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
-            ],
-            "parallel": false
-          }
-        },
-        "circular": {
-          "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": ["madge --circular libs/api"],
-            "parallel": false
-          }
-        }
-      }
-    },
     "disk": {
       "root": "apps/disk",
       "sourceRoot": "apps/disk/src",
@@ -355,6 +315,246 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": ["nx pj top", "nx build-docker backend"],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "api-to-backend": {
+      "root": "libs/api-to-backend",
+      "sourceRoot": "libs/api-to-backend/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api-to-backend/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "rimraf \"./dist/tests/api-to-backend\"",
+              "tsc --project libs/api-to-backend/tsconfig.test.json"
+            ],
+            "parallel": false,
+            "outputPath": "dist/tests/api-to-backend"
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "prettier \"libs/api-to-backend/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["madge --circular libs/api-to-backend"],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "api-to-blockml": {
+      "root": "libs/api-to-blockml",
+      "sourceRoot": "libs/api-to-blockml/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api-to-blockml/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "rimraf \"./dist/tests/api-to-blockml\"",
+              "tsc --project libs/api-to-blockml/tsconfig.test.json"
+            ],
+            "parallel": false,
+            "outputPath": "dist/tests/api-to-blockml"
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "prettier \"libs/api-to-blockml/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["madge --circular libs/api-to-blockml"],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "api-to-blockml-worker": {
+      "root": "libs/api-to-blockml-worker",
+      "sourceRoot": "libs/api-to-blockml-worker/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api-to-blockml-worker/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "rimraf \"./dist/tests/api-to-blockml-worker\"",
+              "tsc --project libs/api-to-blockml-worker/tsconfig.test.json"
+            ],
+            "parallel": false,
+            "outputPath": "dist/tests/api-to-blockml-worker"
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "prettier \"libs/api-to-blockml-worker/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["madge --circular libs/api-to-blockml-worker"],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "api-to-disk": {
+      "root": "libs/api-to-disk",
+      "sourceRoot": "libs/api-to-disk/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api-to-disk/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "rimraf \"./dist/tests/api-to-disk\"",
+              "tsc --project libs/api-to-disk/tsconfig.test.json"
+            ],
+            "parallel": false,
+            "outputPath": "dist/tests/api-to-disk"
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "prettier \"libs/api-to-disk/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["madge --circular libs/api-to-disk"],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "common": {
+      "root": "libs/common",
+      "sourceRoot": "libs/common/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/common/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "rimraf \"./dist/tests/common\"",
+              "tsc --project libs/common/tsconfig.test.json"
+            ],
+            "parallel": false,
+            "outputPath": "dist/tests/common"
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "prettier \"libs/common/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["madge --circular libs/common"],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "api": {
+      "root": "libs/api",
+      "sourceRoot": "libs/api/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/**/*.ts"]
+          }
+        },
+        "build-tests": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "rimraf \"./dist/tests/api\"",
+              "tsc --project libs/api/tsconfig.test.json"
+            ],
+            "parallel": false,
+            "outputPath": "dist/tests/api"
+          }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "prettier \"libs/api/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["madge --circular libs/api"],
             "parallel": false
           }
         }
