@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 
@@ -13,10 +14,10 @@ export class DeleteOrganizationService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskDeleteOrganizationRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskDeleteOrganizationRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId } = requestValid.payload;
@@ -29,7 +30,7 @@ export class DeleteOrganizationService {
       await disk.removePath(orgDir);
     }
 
-    let payload: api.ToDiskDeleteOrganizationResponsePayload = {
+    let payload: apiToDisk.ToDiskDeleteOrganizationResponsePayload = {
       deletedOrganizationId: organizationId
     };
 

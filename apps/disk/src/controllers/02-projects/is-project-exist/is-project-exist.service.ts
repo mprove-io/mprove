@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 
@@ -13,10 +14,10 @@ export class IsProjectExistService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskIsProjectExistRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskIsProjectExistRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId, projectId } = requestValid.payload;
@@ -28,14 +29,14 @@ export class IsProjectExistService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
 
-    let payload: api.ToDiskIsProjectExistResponsePayload = {
+    let payload: apiToDisk.ToDiskIsProjectExistResponsePayload = {
       organizationId: organizationId,
       projectId: projectId,
       isProjectExist: isProjectExist

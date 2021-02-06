@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'is-project-exist';
@@ -9,15 +10,15 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp1: api.ToDiskIsProjectExistResponse;
-  let resp2: api.ToDiskIsProjectExistResponse;
+  let resp1: apiToDisk.ToDiskIsProjectExistResponse;
+  let resp2: apiToDisk.ToDiskIsProjectExistResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -25,9 +26,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -38,9 +39,9 @@ test('1', async t => {
       }
     };
 
-    let isProjectExistRequest_1: api.ToDiskIsProjectExistRequest = {
+    let isProjectExistRequest_1: apiToDisk.ToDiskIsProjectExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist,
         traceId: traceId
       },
       payload: {
@@ -49,9 +50,9 @@ test('1', async t => {
       }
     };
 
-    let isProjectExistRequest_2: api.ToDiskIsProjectExistRequest = {
+    let isProjectExistRequest_2: apiToDisk.ToDiskIsProjectExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist,
         traceId: traceId
       },
       payload: {
@@ -66,7 +67,7 @@ test('1', async t => {
     resp1 = await messageService.processMessage(isProjectExistRequest_1);
     resp2 = await messageService.processMessage(isProjectExistRequest_2);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(resp1.payload.isProjectExist, true);

@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { CreateProjectService } from './create-project.service';
 
@@ -11,14 +12,14 @@ export class CreateProjectController {
     private createProjectService: CreateProjectService
   ) {}
 
-  @Post(api.ToDiskRequestInfoNameEnum.ToDiskCreateProject)
+  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject)
   async createProject(@Body() body) {
     try {
       let payload = await this.createProjectService.process(body);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: body });
+      return common.makeOkResponse({ payload, cs: this.cs, req: body });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

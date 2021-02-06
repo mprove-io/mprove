@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
-import { api } from './barrels/api';
+import { common } from './barrels/common';
 import { enums } from './barrels/enums';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
@@ -30,7 +30,7 @@ import { getConfig } from './config/get.config';
         return {
           exchanges: [
             {
-              name: api.RabbitExchangesEnum.Disk.toString(),
+              name: common.RabbitExchangesEnum.Disk.toString(),
               type: 'direct'
             }
           ],

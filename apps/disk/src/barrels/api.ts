@@ -1,2 +1,2 @@
-import * as api from '@mprove/api';
-export { api };
+import * as apiToDisk from '@mprove/api-to-disk';
+export { apiToDisk };

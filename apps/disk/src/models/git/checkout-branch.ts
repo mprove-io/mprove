@@ -1,5 +1,6 @@
 import * as nodegit from 'nodegit';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getRepoStatus } from './get-repo-status';
 
@@ -24,14 +25,14 @@ export async function checkoutBranch(item: {
   }
 
   let okStatuses = [
-    api.RepoStatusEnum.NeedPush,
-    api.RepoStatusEnum.NeedPull,
-    api.RepoStatusEnum.Ok
+    apiToDisk.RepoStatusEnum.NeedPush,
+    apiToDisk.RepoStatusEnum.NeedPull,
+    apiToDisk.RepoStatusEnum.Ok
   ];
 
   if (okStatuses.indexOf(repoStatus) < 0) {
-    throw new api.ServerError({
-      message: api.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
+    throw new common.ServerError({
+      message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
     });
   }
 

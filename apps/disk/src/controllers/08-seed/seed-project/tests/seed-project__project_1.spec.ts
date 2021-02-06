@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 const testId = 'seed-project__project_1';
@@ -9,14 +10,14 @@ const organizationId = testId;
 const projectId = 'project_1';
 
 test('1', async t => {
-  let resp: api.ToDiskSeedProjectResponse;
+  let resp: apiToDisk.ToDiskSeedProjectResponse;
 
   try {
     const { messageService } = await prepareTest(organizationId);
 
-    const seedProjectRequest: api.ToDiskSeedProjectRequest = {
+    const seedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
         traceId: traceId
       },
       payload: {
@@ -29,9 +30,9 @@ test('1', async t => {
 
     resp = await messageService.processMessage(seedProjectRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
+  t.is(resp.payload.repoStatus, apiToDisk.RepoStatusEnum.Ok);
   t.is(resp.payload.files[0].fileId, 'r.md');
 });

@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import 'module-alias/register';
 import { AppModule } from './app.module';
-import { api } from './barrels/api';
+import { common } from './barrels/common';
 
 async function bootstrap() {
-  api.listenProcessEvents();
+  common.listenProcessEvents();
 
   const app = await NestFactory.create(AppModule);
   await app.listen(3002);

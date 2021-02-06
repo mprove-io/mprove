@@ -1,5 +1,5 @@
 import * as nodegit from 'nodegit';
-import { api } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { constants } from '~disk/barrels/constants';
 import { disk } from '~disk/barrels/disk';
 import { helper } from '~disk/barrels/helper';
@@ -22,7 +22,7 @@ export async function createInitialCommitToProd(item: {
       destinationPath: item.prodDir
     });
   } else {
-    let fileName = api.README_FILE_NAME;
+    let fileName = common.README_FILE_NAME;
     let filePath = `${item.prodDir}/${fileName}`;
 
     let projectName = helper.capitalizeFirstLetter(item.projectId);

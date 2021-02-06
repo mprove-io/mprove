@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'delete-branch__local';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskDeleteBranchResponse;
+  let resp: apiToDisk.ToDiskDeleteBranchResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let createBranchRequest: api.ToDiskCreateBranchRequest = {
+    let createBranchRequest: apiToDisk.ToDiskCreateBranchRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
         traceId: traceId
       },
       payload: {
@@ -52,9 +53,9 @@ test('1', async t => {
       }
     };
 
-    let deleteBranchRequest: api.ToDiskDeleteBranchRequest = {
+    let deleteBranchRequest: apiToDisk.ToDiskDeleteBranchRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
         traceId: traceId
       },
       payload: {
@@ -72,7 +73,7 @@ test('1', async t => {
 
     resp = await messageService.processMessage(deleteBranchRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(resp.payload.deletedBranch, 'b2');

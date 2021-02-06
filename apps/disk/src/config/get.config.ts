@@ -1,4 +1,5 @@
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { enums } from '~disk/barrels/enums';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getDevConfig } from './get-dev.config';
@@ -16,10 +17,10 @@ export function getConfig() {
       ? getTestConfig(devConfig)
       : devConfig;
 
-  let validatedConfig = api.transformValidSync({
+  let validatedConfig = common.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: api.ErEnum.DISK_WRONG_ENV_VALUES
+    errorMessage: apiToDisk.ErEnum.DISK_WRONG_ENV_VALUES
   });
 
   return validatedConfig;

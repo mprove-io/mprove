@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'revert-repo-to-last-commit__ok';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskRevertRepoToLastCommitResponse;
+  let resp: apiToDisk.ToDiskRevertRepoToLastCommitResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let saveFileRequest: api.ToDiskSaveFileRequest = {
+    let saveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -53,9 +54,9 @@ test('1', async t => {
       }
     };
 
-    let revertRepoToLastCommitRequest: api.ToDiskRevertRepoToLastCommitRequest = {
+    let revertRepoToLastCommitRequest: apiToDisk.ToDiskRevertRepoToLastCommitRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
         traceId: traceId
       },
       payload: {
@@ -75,8 +76,8 @@ test('1', async t => {
 
     resp = await messageService.processMessage(revertRepoToLastCommitRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
+  t.is(resp.payload.repoStatus, apiToDisk.RepoStatusEnum.Ok);
 });

@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { MergeRepoService } from './merge-repo.service';
 
@@ -11,14 +12,14 @@ export class MergeRepoController {
     private mergeRepoService: MergeRepoService
   ) {}
 
-  @Post(api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo)
+  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMergeRepo)
   async mergeRepo(@Body() body) {
     try {
       let payload = await this.mergeRepoService.process(body);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: body });
+      return common.makeOkResponse({ payload, cs: this.cs, req: body });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

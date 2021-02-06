@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'pull-repo__force-need-push';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskPullRepoResponse;
+  let resp: apiToDisk.ToDiskPullRepoResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let createDevRepoRequest: api.ToDiskCreateDevRepoRequest = {
+    let createDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
         traceId: traceId
       },
       payload: {
@@ -49,9 +50,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_saveFileRequest_1: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_1: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -65,9 +66,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_commitRepoRequest_1: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_1: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -80,9 +81,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_saveFileRequest_2: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_2: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -96,9 +97,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_commitRepoRequest_2: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_2: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -111,9 +112,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_pushRepoRequest: api.ToDiskPushRepoRequest = {
+    let r1_master_pushRepoRequest: apiToDisk.ToDiskPushRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
         traceId: traceId
       },
       payload: {
@@ -125,9 +126,9 @@ test('1', async t => {
       }
     };
 
-    let r2_master_createFileRequest: api.ToDiskCreateFileRequest = {
+    let r2_master_createFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
         traceId: traceId
       },
       payload: {
@@ -141,9 +142,9 @@ test('1', async t => {
       }
     };
 
-    let r2_master_commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    let r2_master_commitRepoRequest: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -156,9 +157,9 @@ test('1', async t => {
       }
     };
 
-    let r2_master_pullRepoRequest: api.ToDiskPullRepoRequest = {
+    let r2_master_pullRepoRequest: apiToDisk.ToDiskPullRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskPullRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPullRepo,
         traceId: traceId
       },
       payload: {
@@ -187,8 +188,8 @@ test('1', async t => {
 
     resp = await messageService.processMessage(r2_master_pullRepoRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp.payload.repoStatus, api.RepoStatusEnum.NeedPush);
+  t.is(resp.payload.repoStatus, apiToDisk.RepoStatusEnum.NeedPush);
 });

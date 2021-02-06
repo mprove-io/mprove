@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { CreateOrganizationService } from './create-organization.service';
 
@@ -11,14 +12,14 @@ export class CreateOrganizationController {
     private createOrganizationService: CreateOrganizationService
   ) {}
 
-  @Post(api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization)
+  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization)
   async createOrganization(@Body() body) {
     try {
       let payload = await this.createOrganizationService.process(body);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: body });
+      return common.makeOkResponse({ payload, cs: this.cs, req: body });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

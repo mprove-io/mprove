@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 
@@ -13,10 +14,10 @@ export class CreateOrganizationService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskCreateOrganizationRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskCreateOrganizationRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId } = requestValid.payload;
@@ -25,14 +26,14 @@ export class CreateOrganizationService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === true) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_ALREADY_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_ALREADY_EXIST
       });
     }
 
     await disk.ensureDir(orgDir);
 
-    let payload: api.ToDiskCreateOrganizationResponsePayload = {
+    let payload: apiToDisk.ToDiskCreateOrganizationResponsePayload = {
       organizationId: organizationId
     };
 

@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'delete-folder';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskDeleteFolderResponse;
+  let resp: apiToDisk.ToDiskDeleteFolderResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let createFolderRequest: api.ToDiskCreateFolderRequest = {
+    let createFolderRequest: apiToDisk.ToDiskCreateFolderRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
         traceId: traceId
       },
       payload: {
@@ -52,9 +53,9 @@ test('1', async t => {
       }
     };
 
-    let deleteFolderRequest: api.ToDiskDeleteFolderRequest = {
+    let deleteFolderRequest: apiToDisk.ToDiskDeleteFolderRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteFolder,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFolder,
         traceId: traceId
       },
       payload: {
@@ -66,9 +67,9 @@ test('1', async t => {
       }
     };
 
-    let commitRepoRequest: api.ToDiskCommitRepoRequest = {
+    let commitRepoRequest: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -89,8 +90,8 @@ test('1', async t => {
 
     resp = await messageService.processMessage(deleteFolderRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp.payload.repoStatus, api.RepoStatusEnum.NeedCommit);
+  t.is(resp.payload.repoStatus, apiToDisk.RepoStatusEnum.NeedCommit);
 });

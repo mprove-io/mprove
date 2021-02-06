@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -14,10 +15,10 @@ export class RenameCatalogNodeService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskRenameCatalogNodeRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskRenameCatalogNodeRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -41,22 +42,22 @@ export class RenameCatalogNodeService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -65,8 +66,8 @@ export class RenameCatalogNodeService {
       localBranch: branch
     });
     if (isBranchExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -80,16 +81,16 @@ export class RenameCatalogNodeService {
 
     let isOldPathExist = await disk.isPathExist(oldPath);
     if (isOldPathExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_OLD_PATH_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_OLD_PATH_IS_NOT_EXIST
       });
     }
 
     //
     let isNewPathExist = await disk.isPathExist(newPath);
     if (isNewPathExist === true) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_NEW_PATH_ALREADY_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_NEW_PATH_ALREADY_EXIST
       });
     }
     await disk.renamePath({
@@ -115,7 +116,7 @@ export class RenameCatalogNodeService {
       readFiles: false
     });
 
-    let payload: api.ToDiskRenameCatalogNodeResponsePayload = {
+    let payload: apiToDisk.ToDiskRenameCatalogNodeResponsePayload = {
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,

@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'move-catalog-node__folder';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskMoveCatalogNodeResponse;
+  let resp: apiToDisk.ToDiskMoveCatalogNodeResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let createFolderRequest_1: api.ToDiskCreateFolderRequest = {
+    let createFolderRequest_1: apiToDisk.ToDiskCreateFolderRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
         traceId: traceId
       },
       payload: {
@@ -52,9 +53,9 @@ test('1', async t => {
       }
     };
 
-    let createFolderRequest_2: api.ToDiskCreateFolderRequest = {
+    let createFolderRequest_2: apiToDisk.ToDiskCreateFolderRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
         traceId: traceId
       },
       payload: {
@@ -67,9 +68,9 @@ test('1', async t => {
       }
     };
 
-    let moveCatalogNodeRequest: api.ToDiskMoveCatalogNodeRequest = {
+    let moveCatalogNodeRequest: apiToDisk.ToDiskMoveCatalogNodeRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
         traceId: traceId
       },
       payload: {
@@ -90,7 +91,7 @@ test('1', async t => {
 
     resp = await messageService.processMessage(moveCatalogNodeRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(resp.payload.nodes[0].children[0].children[0].id, 'p1/fo1/fo2');

@@ -1,6 +1,6 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
-import { api } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { MessageService } from './message.service';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class ConsumerService {
   constructor(private messageService: MessageService) {}
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___',
     queue: 'abcdefghijklmnopqrstuvwxyz___'
   })
@@ -17,7 +17,7 @@ export class ConsumerService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___abcd',
     queue: 'abcdefghijklmnopqrstuvwxyz___abcd'
   })
@@ -26,7 +26,7 @@ export class ConsumerService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___efgh',
     queue: 'abcdefghijklmnopqrstuvwxyz___efgh'
   })
@@ -35,7 +35,7 @@ export class ConsumerService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___ijkl',
     queue: 'abcdefghijklmnopqrstuvwxyz___ijkl'
   })
@@ -44,7 +44,7 @@ export class ConsumerService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___mnop',
     queue: 'abcdefghijklmnopqrstuvwxyz___mnop'
   })
@@ -53,7 +53,7 @@ export class ConsumerService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___qrst',
     queue: 'abcdefghijklmnopqrstuvwxyz___qrst'
   })
@@ -62,7 +62,7 @@ export class ConsumerService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___uvwx',
     queue: 'abcdefghijklmnopqrstuvwxyz___uvwx'
   })
@@ -71,7 +71,7 @@ export class ConsumerService {
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Disk.toString(),
+    exchange: common.RabbitExchangesEnum.Disk.toString(),
     routingKey: 'abcdefghijklmnopqrstuvwxyz___yz',
     queue: 'abcdefghijklmnopqrstuvwxyz___yz'
   })

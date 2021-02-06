@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -14,10 +15,10 @@ export class DeleteBranchService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskDeleteBranchRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskDeleteBranchRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId, projectId, repoId, branch } = requestValid.payload;
@@ -30,28 +31,28 @@ export class DeleteBranchService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
-    if (branch === api.BRANCH_MASTER) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED
+    if (branch === common.BRANCH_MASTER) {
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_BRANCH_MASTER_CAN_NOT_BE_DELETED
       });
     }
 
@@ -60,12 +61,12 @@ export class DeleteBranchService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      branchName: api.BRANCH_MASTER
+      branchName: common.BRANCH_MASTER
     });
 
     let errorIfNoLocalBranch = true;
 
-    if (repoId === api.PROD_REPO_ID) {
+    if (repoId === common.PROD_REPO_ID) {
       let isRemoteBranchExist = await git.isRemoteBranchExist({
         repoDir: repoDir,
         remoteBranch: branch
@@ -91,8 +92,8 @@ export class DeleteBranchService {
         branch: branch
       });
     } else if (errorIfNoLocalBranch === true) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -105,7 +106,7 @@ export class DeleteBranchService {
       })
     );
 
-    let payload: api.ToDiskDeleteBranchResponsePayload = {
+    let payload: apiToDisk.ToDiskDeleteBranchResponsePayload = {
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,

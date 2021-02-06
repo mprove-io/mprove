@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -14,10 +15,10 @@ export class CreateFileService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskCreateFileRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskCreateFileRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -46,22 +47,22 @@ export class CreateFileService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -70,8 +71,8 @@ export class CreateFileService {
       localBranch: branch
     });
     if (isBranchExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -85,15 +86,15 @@ export class CreateFileService {
 
     let isParentPathExist = await disk.isPathExist(parentPath);
     if (isParentPathExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_PARENT_PATH_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_PARENT_PATH_IS_NOT_EXIST
       });
     }
 
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === true) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_FILE_ALREADY_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_FILE_ALREADY_EXIST
       });
     }
 
@@ -106,7 +107,7 @@ export class CreateFileService {
 
     await git.addChangesToStage({ repoDir: repoDir });
 
-    if (repoId === api.PROD_REPO_ID) {
+    if (repoId === common.PROD_REPO_ID) {
       await git.commit({
         repoDir: repoDir,
         userAlias: userAlias,
@@ -138,7 +139,7 @@ export class CreateFileService {
       readFiles: false
     });
 
-    let payload: api.ToDiskCreateFileResponsePayload = {
+    let payload: apiToDisk.ToDiskCreateFileResponsePayload = {
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,
@@ -155,33 +156,33 @@ export class CreateFileService {
 function getContentFromFileName(item: { fileName: string }) {
   let content: string;
 
-  let regPart = api.MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
+  let regPart = common.MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
   let rPart = regPart.exec(item.fileName.toLowerCase());
 
   let part: any = rPart ? rPart[1] : undefined;
 
-  let regExt = api.MyRegex.CAPTURE_EXT();
+  let regExt = common.MyRegex.CAPTURE_EXT();
   let rExt = regExt.exec(item.fileName.toLowerCase());
 
   let ext: any = rExt ? rExt[1] : '';
 
   switch (ext) {
-    case api.FileExtensionEnum.View:
+    case apiToDisk.FileExtensionEnum.View:
       content = `view: ${part}`;
       break;
-    case api.FileExtensionEnum.Model:
+    case apiToDisk.FileExtensionEnum.Model:
       content = `model: ${part}`;
       break;
-    case api.FileExtensionEnum.Dashboard:
+    case apiToDisk.FileExtensionEnum.Dashboard:
       content = `dashboard: ${part}`;
       break;
-    case api.FileExtensionEnum.Viz:
+    case apiToDisk.FileExtensionEnum.Viz:
       content = `viz: ${part}`;
       break;
-    case api.FileExtensionEnum.Udf:
+    case apiToDisk.FileExtensionEnum.Udf:
       content = `udf: ${part}`;
       break;
-    case api.FileExtensionEnum.Md:
+    case apiToDisk.FileExtensionEnum.Md:
       content = '';
       break;
     default:

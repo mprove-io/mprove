@@ -1,9 +1,10 @@
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 
 export interface ItemStatus {
-  repoStatus: api.RepoStatusEnum;
+  repoStatus: apiToDisk.RepoStatusEnum;
 
-  conflicts: api.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 
   currentBranch: string;
 }

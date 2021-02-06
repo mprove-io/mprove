@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'merge-repo__fast-forward-need-push';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskMergeRepoResponse;
+  let resp: apiToDisk.ToDiskMergeRepoResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let r1_createBranchRequest: api.ToDiskCreateBranchRequest = {
+    let r1_createBranchRequest: apiToDisk.ToDiskCreateBranchRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
         traceId: traceId
       },
       payload: {
@@ -52,9 +53,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_saveFileRequest_1: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_1: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -68,9 +69,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_commitRepoRequest_1: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_1: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -83,9 +84,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_saveFileRequest_2: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_2: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -99,9 +100,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_commitRepoRequest_2: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_2: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -114,9 +115,9 @@ test('1', async t => {
       }
     };
 
-    let b2_mergeRepoRequest: api.ToDiskMergeRepoRequest = {
+    let b2_mergeRepoRequest: apiToDisk.ToDiskMergeRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
         traceId: traceId
       },
       payload: {
@@ -145,8 +146,8 @@ test('1', async t => {
 
     resp = await messageService.processMessage(b2_mergeRepoRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
   // NeedPush because we merge with different branch
-  t.is(resp.payload.repoStatus, api.RepoStatusEnum.NeedPush);
+  t.is(resp.payload.repoStatus, apiToDisk.RepoStatusEnum.NeedPush);
 });

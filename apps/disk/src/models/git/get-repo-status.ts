@@ -1,5 +1,6 @@
 import * as nodegit from 'nodegit';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
@@ -20,7 +21,7 @@ export async function getRepoStatus(item: {
   // NeedPush
   // Ok
 
-  let conflicts: api.DiskFileLine[] = [];
+  let conflicts: common.DiskFileLine[] = [];
 
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
 
@@ -52,7 +53,7 @@ export async function getRepoStatus(item: {
     let fileArray = file.content.split('\n');
 
     fileArray.forEach((s: string, ind) => {
-      if (s.match(api.MyRegex.CONTAINS_CONFLICT_START())) {
+      if (s.match(common.MyRegex.CONTAINS_CONFLICT_START())) {
         conflicts.push({
           fileId: file.fileId,
           fileName: file.name,
@@ -65,7 +66,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedResolve
   if (conflicts.length > 0) {
     return {
-      repoStatus: api.RepoStatusEnum.NeedResolve,
+      repoStatus: apiToDisk.RepoStatusEnum.NeedResolve,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -74,7 +75,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedCommit
   if (patchesTreeToIndex.length > 0) {
     return {
-      repoStatus: api.RepoStatusEnum.NeedCommit,
+      repoStatus: apiToDisk.RepoStatusEnum.NeedCommit,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -89,7 +90,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPush
   if (isBranchExistRemote === false) {
     return {
-      repoStatus: api.RepoStatusEnum.NeedPush,
+      repoStatus: apiToDisk.RepoStatusEnum.NeedPush,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -118,7 +119,7 @@ export async function getRepoStatus(item: {
   // RETURN Ok
   if (localCommitId === remoteOriginCommitId) {
     return {
-      repoStatus: api.RepoStatusEnum.Ok,
+      repoStatus: apiToDisk.RepoStatusEnum.Ok,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -127,7 +128,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPull
   if (localCommitId === baseCommitId) {
     return {
-      repoStatus: api.RepoStatusEnum.NeedPull,
+      repoStatus: apiToDisk.RepoStatusEnum.NeedPull,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -136,7 +137,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPush
   if (remoteOriginCommitId === baseCommitId) {
     return {
-      repoStatus: api.RepoStatusEnum.NeedPush,
+      repoStatus: apiToDisk.RepoStatusEnum.NeedPush,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -145,7 +146,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPull
   // diverged
   return {
-    repoStatus: api.RepoStatusEnum.NeedPull,
+    repoStatus: apiToDisk.RepoStatusEnum.NeedPull,
     conflicts: conflicts,
     currentBranch: currentBranchName
   };

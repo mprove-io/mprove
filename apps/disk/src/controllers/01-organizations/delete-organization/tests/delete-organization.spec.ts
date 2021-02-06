@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'delete-organization';
@@ -8,13 +9,13 @@ let traceId = '123';
 let organizationId = testId;
 
 test('1', async t => {
-  let resp: api.ToDiskIsOrganizationExistResponse;
+  let resp: apiToDisk.ToDiskIsOrganizationExistResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -22,9 +23,9 @@ test('1', async t => {
       }
     };
 
-    let deleteOrganizationRequest: api.ToDiskDeleteOrganizationRequest = {
+    let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
         traceId: traceId
       },
       payload: {
@@ -32,9 +33,9 @@ test('1', async t => {
       }
     };
 
-    let isOrganizationExistRequest: api.ToDiskIsOrganizationExistRequest = {
+    let isOrganizationExistRequest: apiToDisk.ToDiskIsOrganizationExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
         traceId: traceId
       },
       payload: {
@@ -47,7 +48,7 @@ test('1', async t => {
 
     resp = await messageService.processMessage(isOrganizationExistRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
   t.is(resp.payload.isOrganizationExist, false);
 });

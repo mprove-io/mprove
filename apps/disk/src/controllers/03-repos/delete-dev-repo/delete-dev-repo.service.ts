@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 
@@ -13,10 +14,10 @@ export class DeleteDevRepoService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskDeleteDevRepoRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskDeleteDevRepoRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let { organizationId, projectId, devRepoId } = requestValid.payload;
@@ -29,22 +30,22 @@ export class DeleteDevRepoService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isDevRepoExist = await disk.isPathExist(devRepoDir);
     if (isDevRepoExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -52,7 +53,7 @@ export class DeleteDevRepoService {
 
     await disk.removePath(devRepoDir);
 
-    let payload: api.ToDiskDeleteDevRepoResponsePayload = {
+    let payload: apiToDisk.ToDiskDeleteDevRepoResponsePayload = {
       organizationId: organizationId,
       projectId: projectId,
       deletedRepoId: devRepoId

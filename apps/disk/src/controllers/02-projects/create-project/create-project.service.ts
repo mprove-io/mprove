@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -14,10 +15,10 @@ export class CreateProjectService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskCreateProjectRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskCreateProjectRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -34,15 +35,15 @@ export class CreateProjectService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === true) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_PROJECT_ALREADY_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_PROJECT_ALREADY_EXIST
       });
     }
 
@@ -64,7 +65,7 @@ export class CreateProjectService {
       orgPath: orgPath
     });
 
-    let payload: api.ToDiskCreateProjectResponsePayload = {
+    let payload: apiToDisk.ToDiskCreateProjectResponsePayload = {
       organizationId: organizationId,
       projectId: projectId
     };

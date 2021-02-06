@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'is-organization-exist';
@@ -8,15 +9,15 @@ let traceId = '123';
 let organizationId = testId;
 
 test('1', async t => {
-  let resp1: api.ToDiskIsOrganizationExistResponse;
-  let resp2: api.ToDiskIsOrganizationExistResponse;
+  let resp1: apiToDisk.ToDiskIsOrganizationExistResponse;
+  let resp2: apiToDisk.ToDiskIsOrganizationExistResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let isOrganizationExistRequest_1: api.ToDiskIsOrganizationExistRequest = {
+    let isOrganizationExistRequest_1: apiToDisk.ToDiskIsOrganizationExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
         traceId: traceId
       },
       payload: {
@@ -34,9 +35,9 @@ test('1', async t => {
       }
     };
 
-    let isOrganizationExistRequest_2: api.ToDiskIsOrganizationExistRequest = {
+    let isOrganizationExistRequest_2: apiToDisk.ToDiskIsOrganizationExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist,
         traceId: traceId
       },
       payload: {
@@ -49,7 +50,7 @@ test('1', async t => {
     resp1 = await messageService.processMessage(isOrganizationExistRequest_1);
     resp2 = await messageService.processMessage(isOrganizationExistRequest_2);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(resp1.payload.isOrganizationExist, true);

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -14,10 +15,10 @@ export class DeleteFileService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskDeleteFileRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskDeleteFileRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -40,22 +41,22 @@ export class DeleteFileService {
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await disk.isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -64,8 +65,8 @@ export class DeleteFileService {
       localBranch: branch
     });
     if (isBranchExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -79,8 +80,8 @@ export class DeleteFileService {
 
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === false) {
-      throw new api.ServerError({
-        message: api.ErEnum.DISK_FILE_IS_NOT_EXIST
+      throw new common.ServerError({
+        message: apiToDisk.ErEnum.DISK_FILE_IS_NOT_EXIST
       });
     }
 
@@ -90,7 +91,7 @@ export class DeleteFileService {
 
     await git.addChangesToStage({ repoDir: repoDir });
 
-    if (repoId === api.PROD_REPO_ID) {
+    if (repoId === common.PROD_REPO_ID) {
       await git.commit({
         repoDir: repoDir,
         userAlias: userAlias,
@@ -122,7 +123,7 @@ export class DeleteFileService {
       readFiles: false
     });
 
-    let payload: api.ToDiskDeleteFileResponsePayload = {
+    let payload: apiToDisk.ToDiskDeleteFileResponsePayload = {
       organizationId: organizationId,
       projectId: projectId,
       repoId: repoId,

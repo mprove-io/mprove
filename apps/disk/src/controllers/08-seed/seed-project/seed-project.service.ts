@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -14,10 +15,10 @@ export class SeedProjectService {
       'mDataOrgPath'
     );
 
-    let requestValid = await api.transformValid({
-      classType: api.ToDiskSeedProjectRequest,
+    let requestValid = await common.transformValid({
+      classType: apiToDisk.ToDiskSeedProjectRequest,
       object: request,
-      errorMessage: api.ErEnum.DISK_WRONG_REQUEST_PARAMS
+      errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -68,7 +69,7 @@ export class SeedProjectService {
       })
     );
 
-    let payload: api.ToDiskSeedProjectResponsePayload = {
+    let payload: apiToDisk.ToDiskSeedProjectResponsePayload = {
       organizationId: organizationId,
       projectId: projectId,
       repoId: devRepoId,

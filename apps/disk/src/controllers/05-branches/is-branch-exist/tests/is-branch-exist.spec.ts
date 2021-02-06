@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'is-branch-exist';
@@ -9,17 +10,17 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp1: api.ToDiskIsBranchExistResponse;
-  let resp2: api.ToDiskIsBranchExistResponse;
-  let resp3: api.ToDiskIsBranchExistResponse;
-  let resp4: api.ToDiskIsBranchExistResponse;
+  let resp1: apiToDisk.ToDiskIsBranchExistResponse;
+  let resp2: apiToDisk.ToDiskIsBranchExistResponse;
+  let resp3: apiToDisk.ToDiskIsBranchExistResponse;
+  let resp4: apiToDisk.ToDiskIsBranchExistResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -27,9 +28,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -40,9 +41,9 @@ test('1', async t => {
       }
     };
 
-    let isBranchExistRequest_1: api.ToDiskIsBranchExistRequest = {
+    let isBranchExistRequest_1: apiToDisk.ToDiskIsBranchExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
         traceId: traceId
       },
       payload: {
@@ -54,9 +55,9 @@ test('1', async t => {
       }
     };
 
-    let isBranchExistRequest_2: api.ToDiskIsBranchExistRequest = {
+    let isBranchExistRequest_2: apiToDisk.ToDiskIsBranchExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
         traceId: traceId
       },
       payload: {
@@ -68,9 +69,9 @@ test('1', async t => {
       }
     };
 
-    let isBranchExistRequest_3: api.ToDiskIsBranchExistRequest = {
+    let isBranchExistRequest_3: apiToDisk.ToDiskIsBranchExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
         traceId: traceId
       },
       payload: {
@@ -82,9 +83,9 @@ test('1', async t => {
       }
     };
 
-    let isBranchExistRequest_4: api.ToDiskIsBranchExistRequest = {
+    let isBranchExistRequest_4: apiToDisk.ToDiskIsBranchExistRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
         traceId: traceId
       },
       payload: {
@@ -104,7 +105,7 @@ test('1', async t => {
     resp3 = await messageService.processMessage(isBranchExistRequest_3);
     resp4 = await messageService.processMessage(isBranchExistRequest_4);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(resp1.payload.isBranchExist, true);

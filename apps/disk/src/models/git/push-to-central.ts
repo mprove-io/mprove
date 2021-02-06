@@ -1,5 +1,6 @@
 import * as nodegit from 'nodegit';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getRepoStatus } from './get-repo-status';
 import { constantFetchOptions } from './_constant-fetch-options';
@@ -20,11 +21,11 @@ export async function pushToCentral(item: {
     })
   );
 
-  let okStatuses = [api.RepoStatusEnum.NeedPush];
+  let okStatuses = [apiToDisk.RepoStatusEnum.NeedPush];
 
   if (okStatuses.indexOf(repoStatus) < 0) {
-    throw new api.ServerError({
-      message: api.ErEnum.DISK_REPO_STATUS_IS_NOT_NEED_PUSH
+    throw new common.ServerError({
+      message: apiToDisk.ErEnum.DISK_REPO_STATUS_IS_NOT_NEED_PUSH
     });
   }
 

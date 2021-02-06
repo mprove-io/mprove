@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'revert-repo-to-production__ok';
@@ -9,16 +10,16 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp1: api.ToDiskRevertRepoToProductionResponse;
-  let resp2: api.ToDiskGetFileResponse;
+  let resp1: apiToDisk.ToDiskRevertRepoToProductionResponse;
+  let resp2: apiToDisk.ToDiskGetFileResponse;
   let content1 = '1';
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -26,9 +27,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -39,9 +40,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_saveFileRequest_1: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_1: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -55,9 +56,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_commitRepoRequest_1: api.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_1: apiToDisk.ToDiskCommitRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
@@ -70,9 +71,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_pushRepoRequest: api.ToDiskPushRepoRequest = {
+    let r1_master_pushRepoRequest: apiToDisk.ToDiskPushRepoRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
         traceId: traceId
       },
       payload: {
@@ -84,9 +85,9 @@ test('1', async t => {
       }
     };
 
-    let r1_master_saveFileRequest_2: api.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_2: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
@@ -100,9 +101,9 @@ test('1', async t => {
       }
     };
 
-    let revertRepoToProductionRequest: api.ToDiskRevertRepoToProductionRequest = {
+    let revertRepoToProductionRequest: apiToDisk.ToDiskRevertRepoToProductionRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction,
         traceId: traceId
       },
       payload: {
@@ -113,9 +114,9 @@ test('1', async t => {
       }
     };
 
-    let getFileRequest: api.ToDiskGetFileRequest = {
+    let getFileRequest: apiToDisk.ToDiskGetFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskGetFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetFile,
         traceId: traceId
       },
       payload: {
@@ -142,9 +143,9 @@ test('1', async t => {
 
     resp2 = await messageService.processMessage(getFileRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp1.payload.repoStatus, api.RepoStatusEnum.Ok);
+  t.is(resp1.payload.repoStatus, apiToDisk.RepoStatusEnum.Ok);
   t.is(resp2.payload.content, content1);
 });

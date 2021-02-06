@@ -1,13 +1,13 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { api } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { enums } from '~disk/barrels/enums';
 import { interfaces } from '~disk/barrels/interfaces';
 
 export function getDevConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
-  let commonConfig: api.Config = api.getCommonConfig(envFile);
+  let commonConfig: common.Config = common.getCommonConfig(envFile);
 
   let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
     interfaces.Config

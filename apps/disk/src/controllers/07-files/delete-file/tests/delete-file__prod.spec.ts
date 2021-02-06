@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'delete-file__prod';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskDeleteFileResponse;
+  let resp: apiToDisk.ToDiskDeleteFileResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,15 +38,15 @@ test('1', async t => {
       }
     };
 
-    let deleteFileRequest: api.ToDiskDeleteFileRequest = {
+    let deleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
         traceId: traceId
       },
       payload: {
         organizationId: organizationId,
         projectId: projectId,
-        repoId: api.PROD_REPO_ID,
+        repoId: common.PROD_REPO_ID,
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
         userAlias: 'r1'
@@ -57,8 +58,8 @@ test('1', async t => {
 
     resp = await messageService.processMessage(deleteFileRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp.payload.repoStatus, api.RepoStatusEnum.Ok);
+  t.is(resp.payload.repoStatus, apiToDisk.RepoStatusEnum.Ok);
 });

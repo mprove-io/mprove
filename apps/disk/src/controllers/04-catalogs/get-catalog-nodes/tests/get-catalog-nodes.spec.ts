@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'get-catalog-nodes';
@@ -9,14 +10,14 @@ let organizationId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
-  let resp: api.ToDiskGetCatalogNodesResponse;
+  let resp: apiToDisk.ToDiskGetCatalogNodesResponse;
 
   try {
     let { messageService } = await prepareTest(organizationId);
 
-    let createOrganizationRequest: api.ToDiskCreateOrganizationRequest = {
+    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
         traceId: traceId
       },
       payload: {
@@ -24,9 +25,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: api.ToDiskCreateProjectRequest = {
+    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -37,9 +38,9 @@ test('1', async t => {
       }
     };
 
-    let getCatalogNodesRequest: api.ToDiskGetCatalogNodesRequest = {
+    let getCatalogNodesRequest: apiToDisk.ToDiskGetCatalogNodesRequest = {
       info: {
-        name: api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
         traceId: traceId
       },
       payload: {
@@ -55,7 +56,7 @@ test('1', async t => {
 
     resp = await messageService.processMessage(getCatalogNodesRequest);
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(resp.payload.nodes[0].children[0].id, 'p1/readme.md');

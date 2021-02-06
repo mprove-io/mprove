@@ -1,8 +1,8 @@
 import { IsEnum, IsString } from 'class-validator';
-import { api } from '~disk/barrels/api';
+import { common } from '~disk/barrels/common';
 import { enums } from '~disk/barrels/enums';
 
-export class Config extends api.Config {
+export class Config extends common.Config {
   @IsEnum(enums.DiskEnvEnum)
   diskEnv?: enums.DiskEnvEnum;
 
