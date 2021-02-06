@@ -2,7 +2,8 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { Connection } from 'typeorm';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
@@ -19,13 +20,13 @@ export class SeedRecordsController {
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  @Post(api.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
   async seedRecords(@Body() body) {
     try {
-      let reqValid = await api.transformValid({
-        classType: api.ToBackendSeedRecordsRequest,
+      let reqValid = await common.transformValid({
+        classType: apiToBackend.ToBackendSeedRecordsRequest,
         object: body,
-        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let payloadUsers = reqValid.payload.users;
@@ -38,7 +39,7 @@ export class SeedRecordsController {
         await asyncPool(
           1,
           payloadUsers,
-          async (x: api.ToBackendSeedRecordsRequestPayloadUsers) => {
+          async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsers) => {
             let alias = await this.usersService.makeAlias(x.email);
             let { salt, hash } = helper.isDefined(x.password)
               ? await this.usersService.makeSaltAndHash(x.password)
@@ -74,11 +75,11 @@ export class SeedRecordsController {
         });
       });
 
-      let payload: api.ToBackendSeedRecordsResponse['payload'] = {};
+      let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
@@ -12,7 +13,7 @@ let password = '123';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: api.ToBackendGetUserProfileResponse;
+  let resp: apiToBackend.ToBackendGetUserProfileResponse;
 
   try {
     prep = await prepareTest({
@@ -23,27 +24,30 @@ test('1', async t => {
           {
             email,
             password,
-            isEmailVerified: api.BoolEnum.TRUE
+            isEmailVerified: common.BoolEnum.TRUE
           }
         ]
       }
     });
 
-    resp = await helper.sendToBackend<api.ToBackendGetUserProfileResponse>({
-      httpServer: prep.httpServer,
-      req: <api.ToBackendGetUserProfileRequest>{
-        info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
-          traceId: traceId
-        },
-        payload: {}
+    resp = await helper.sendToBackend<apiToBackend.ToBackendGetUserProfileResponse>(
+      {
+        httpServer: prep.httpServer,
+        req: <apiToBackend.ToBackendGetUserProfileRequest>{
+          info: {
+            name:
+              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
+            traceId: traceId
+          },
+          payload: {}
+        }
       }
-    });
+    );
 
     await prep.app.close();
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp?.info?.error?.message, api.ErEnum.BACKEND_UNAUTHORIZED);
+  t.is(resp?.info?.error?.message, apiToBackend.ErEnum.BACKEND_UNAUTHORIZED);
 });

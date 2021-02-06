@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -15,13 +16,13 @@ export class ConfirmUserEmailController {
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  @Post(api.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
   async confirmUserEmail(@Body() body) {
     try {
-      let reqValid = await api.transformValid({
-        classType: api.ToBackendConfirmUserEmailRequest,
+      let reqValid = await common.transformValid({
+        classType: apiToBackend.ToBackendConfirmUserEmailRequest,
         object: body,
-        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let { token } = reqValid.payload;
@@ -31,13 +32,13 @@ export class ConfirmUserEmailController {
       });
 
       if (helper.isUndefined(user)) {
-        throw new api.ServerError({
-          message: api.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        throw new common.ServerError({
+          message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
         });
       }
 
-      if (user.is_email_verified === api.BoolEnum.FALSE) {
-        user.is_email_verified = api.BoolEnum.TRUE;
+      if (user.is_email_verified === common.BoolEnum.FALSE) {
+        user.is_email_verified = common.BoolEnum.TRUE;
 
         await this.connection.transaction(async manager => {
           await db.modifyRecords({
@@ -51,9 +52,9 @@ export class ConfirmUserEmailController {
 
       let payload = {};
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

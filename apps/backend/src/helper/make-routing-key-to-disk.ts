@@ -1,4 +1,5 @@
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 
 export function makeRoutingKeyToDisk(item: {
   organizationId: string;
@@ -21,9 +22,10 @@ export function makeRoutingKeyToDisk(item: {
   let orgGroup = orgGroups.find(x => x.includes(orgFirstLetter));
 
   if (!orgGroup) {
-    throw new api.ServerError({
+    throw new common.ServerError({
       message:
-        api.ErEnum.BACKEND_ORGANIZATION_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+        apiToBackend.ErEnum
+          .BACKEND_ORGANIZATION_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
     });
   }
 
@@ -37,9 +39,10 @@ export function makeRoutingKeyToDisk(item: {
     projectGroup = projectGroups.find(x => x.includes(projectFirstLetter));
 
     if (!projectGroup) {
-      throw new api.ServerError({
+      throw new common.ServerError({
         message:
-          api.ErEnum.BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+          apiToBackend.ErEnum
+            .BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
       });
     }
   }

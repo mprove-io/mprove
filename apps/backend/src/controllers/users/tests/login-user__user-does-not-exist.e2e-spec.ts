@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
@@ -12,7 +13,7 @@ let password = '123';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: api.ToBackendLoginUserResponse;
+  let resp: apiToBackend.ToBackendLoginUserResponse;
 
   try {
     prep = await prepareTest({
@@ -20,11 +21,11 @@ test('1', async t => {
       deleteRecordsPayload: { emails: [email] }
     });
 
-    resp = await helper.sendToBackend<api.ToBackendLoginUserResponse>({
+    resp = await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
       httpServer: prep.httpServer,
-      req: <api.ToBackendLoginUserRequest>{
+      req: <apiToBackend.ToBackendLoginUserRequest>{
         info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+          name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
           traceId: traceId
         },
         payload: {
@@ -36,8 +37,11 @@ test('1', async t => {
 
     await prep.app.close();
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, api.ErEnum.BACKEND_USER_DOES_NOT_EXIST);
+  t.is(
+    resp.info.error.message,
+    apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+  );
 });

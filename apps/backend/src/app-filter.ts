@@ -5,7 +5,8 @@ import {
   HttpStatus
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from './barrels/api';
+import { apiToBackend } from './barrels/api-to-backend';
+import { common } from './barrels/common';
 import { interfaces } from './barrels/interfaces';
 
 @Catch()
@@ -24,14 +25,14 @@ export class AppFilter implements ExceptionFilter {
 
     let e =
       (exception as any).message === 'Unauthorized'
-        ? new api.ServerError({
-            message: api.ErEnum.BACKEND_UNAUTHORIZED,
+        ? new common.ServerError({
+            message: apiToBackend.ErEnum.BACKEND_UNAUTHORIZED,
             originalError: exception
           })
         : exception;
 
     response
       .status(HttpStatus.CREATED)
-      .json(api.makeErrorResponse({ e: e, cs: this.cs, req: request }));
+      .json(common.makeErrorResponse({ e: e, cs: this.cs, req: request }));
   }
 }

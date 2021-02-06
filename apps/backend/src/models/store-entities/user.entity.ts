@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
 @Entity('user')
@@ -14,7 +15,7 @@ export class UserEntity {
   alias: string;
 
   @Column({ type: constants.VARCHAR })
-  is_email_verified: api.BoolEnum;
+  is_email_verified: common.BoolEnum;
 
   @Column({ unique: true, type: constants.VARCHAR })
   email_verification_token: string;
@@ -47,7 +48,7 @@ export class UserEntity {
   timezone: string;
 
   @Column({ type: constants.VARCHAR })
-  status: api.UserStatusEnum;
+  status: apiToBackend.UserStatusEnum;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

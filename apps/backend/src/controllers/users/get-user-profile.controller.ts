@@ -1,7 +1,8 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '~backend/auth-guards/jwt-auth.guard';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -12,22 +13,22 @@ import { User } from '~backend/decorators/user.decorator';
 export class GetUserProfileController {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
-  @Post(api.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
   async getUserProfile(@Body() body, @User() user: entities.UserEntity) {
     try {
-      let reqValid = await api.transformValid({
-        classType: api.ToBackendGetUserProfileRequest,
+      let reqValid = await common.transformValid({
+        classType: apiToBackend.ToBackendGetUserProfileRequest,
         object: body,
-        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let payload: api.ToBackendGetUserProfileResponsePayload = {
+      let payload: apiToBackend.ToBackendGetUserProfileResponsePayload = {
         user: wrapper.wrapToApiUser(user)
       };
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

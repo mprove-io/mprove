@@ -1,6 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
+import { apiToDisk } from '~backend/barrels/api-to-disk';
+import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 import { makeRoutingKeyToDisk } from '~backend/helper/make-routing-key-to-disk';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -12,13 +15,13 @@ export class RebuildStructSpecialController {
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  @Post(api.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial)
   async rebuildStructSpecial(@Body() body) {
     try {
-      let reqValid = await api.transformValid({
-        classType: api.ToBackendRebuildStructSpecialRequest,
+      let reqValid = await common.transformValid({
+        classType: apiToBackend.ToBackendRebuildStructSpecialRequest,
         object: body,
-        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let {
@@ -38,9 +41,9 @@ export class RebuildStructSpecialController {
         projectId: projectId
       });
 
-      let getCatalogFilesRequest: api.ToDiskGetCatalogFilesRequest = {
+      let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
         info: {
-          name: api.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
           traceId: reqValid.info.traceId
         },
         payload: {
@@ -51,7 +54,7 @@ export class RebuildStructSpecialController {
         }
       };
 
-      let getCatalogFilesResponse = await this.rabbitService.sendToDisk<api.ToDiskGetCatalogFilesResponse>(
+      let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
         {
           routingKey: routingKey,
           message: getCatalogFilesRequest
@@ -59,19 +62,20 @@ export class RebuildStructSpecialController {
       );
 
       if (
-        getCatalogFilesResponse.info.status !== api.ResponseInfoStatusEnum.Ok
+        getCatalogFilesResponse.info.status !== common.ResponseInfoStatusEnum.Ok
       ) {
-        throw new api.ServerError({
-          message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+        throw new common.ServerError({
+          message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
           originalError: getCatalogFilesResponse.info.error
         });
       }
 
       // to blockml
 
-      let rebuildStructRequest: api.ToBlockmlRebuildStructRequest = {
+      let rebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
         info: {
-          name: api.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
+          name:
+            apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
           traceId: reqValid.info.traceId
         },
         payload: {
@@ -80,8 +84,8 @@ export class RebuildStructSpecialController {
           projectId: projectId,
           weekStart: weekStart,
           files: getCatalogFilesResponse.payload.files.map(
-            (f: api.DiskCatalogFile) => {
-              let file: api.File = {
+            (f: apiToDisk.DiskCatalogFile) => {
+              let file: apiToBlockml.File = {
                 content: f.content,
                 name: f.name,
                 path: f.fileId
@@ -93,25 +97,27 @@ export class RebuildStructSpecialController {
         }
       };
 
-      let rebuildStructResponse = await this.rabbitService.sendToBlockml<api.ToBlockmlRebuildStructResponse>(
+      let rebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
         {
-          routingKey: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+          routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
           message: rebuildStructRequest
         }
       );
 
-      if (rebuildStructResponse.info.status !== api.ResponseInfoStatusEnum.Ok) {
-        throw new api.ServerError({
-          message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+      if (
+        rebuildStructResponse.info.status !== common.ResponseInfoStatusEnum.Ok
+      ) {
+        throw new common.ServerError({
+          message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
           originalError: rebuildStructResponse.info.error
         });
       }
 
       let payload = rebuildStructResponse.payload;
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

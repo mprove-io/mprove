@@ -1,4 +1,5 @@
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 
@@ -8,7 +9,7 @@ export function makeUser(item: {
   hash?: string;
   salt?: string;
   alias: string;
-  isEmailVerified: api.BoolEnum;
+  isEmailVerified: common.BoolEnum;
   emailVerificationToken?: string;
   passwordResetToken?: string;
   passwordResetExpiresTs?: string;
@@ -27,8 +28,8 @@ export function makeUser(item: {
     last_name: null,
     avatar_url_small: undefined,
     avatar_url_big: undefined,
-    timezone: api.USE_PROJECT_DEFAULT_TIMEZONE,
-    status: api.UserStatusEnum.Pending,
+    timezone: common.USE_PROJECT_DEFAULT_TIMEZONE,
+    status: apiToBackend.UserStatusEnum.Pending,
     server_ts: undefined
   };
   return userEntity;

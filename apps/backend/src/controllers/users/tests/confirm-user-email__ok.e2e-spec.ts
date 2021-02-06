@@ -1,5 +1,6 @@
 import test from 'ava';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
@@ -12,7 +13,7 @@ let emailToken = helper.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: api.ToBackendConfirmUserEmailResponse;
+  let resp: apiToBackend.ToBackendConfirmUserEmailResponse;
 
   try {
     prep = await prepareTest({
@@ -22,34 +23,38 @@ test('1', async t => {
         users: [
           {
             email: email,
-            isEmailVerified: api.BoolEnum.FALSE,
+            isEmailVerified: common.BoolEnum.FALSE,
             emailVerificationToken: emailToken
           }
         ]
       }
     });
 
-    resp = await helper.sendToBackend<api.ToBackendConfirmUserEmailResponse>({
-      httpServer: prep.httpServer,
-      req: <api.ToBackendConfirmUserEmailRequest>{
-        info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
-          traceId: traceId
-        },
-        payload: {
-          token: emailToken
+    resp = await helper.sendToBackend<apiToBackend.ToBackendConfirmUserEmailResponse>(
+      {
+        httpServer: prep.httpServer,
+        req: <apiToBackend.ToBackendConfirmUserEmailRequest>{
+          info: {
+            name:
+              apiToBackend.ToBackendRequestInfoNameEnum
+                .ToBackendConfirmUserEmail,
+            traceId: traceId
+          },
+          payload: {
+            token: emailToken
+          }
         }
       }
-    });
+    );
 
     await prep.app.close();
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.deepEqual(resp, <api.ToBackendConfirmUserEmailResponse>{
+  t.deepEqual(resp, <apiToBackend.ToBackendConfirmUserEmailResponse>{
     info: {
-      status: api.ResponseInfoStatusEnum.Ok,
+      status: common.ResponseInfoStatusEnum.Ok,
       traceId: traceId
     },
     payload: {}

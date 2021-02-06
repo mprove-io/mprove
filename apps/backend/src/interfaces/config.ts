@@ -1,8 +1,8 @@
 import { IsEnum, IsInt, IsString } from 'class-validator';
-import { api } from '~backend/barrels/api';
+import { common } from '~backend/barrels/common';
 import { enums } from '~backend/barrels/enums';
 
-export class Config extends api.Config {
+export class Config extends common.Config {
   @IsEnum(enums.BackendEnvEnum)
   backendEnv?: enums.BackendEnvEnum;
 
@@ -15,12 +15,12 @@ export class Config extends api.Config {
   @IsString()
   firstUserPassword?: string;
 
-  @IsEnum(api.BoolEnum)
-  registerOnlyInvitedUsers?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  registerOnlyInvitedUsers?: common.BoolEnum;
 
   //
-  @IsEnum(api.BoolEnum)
-  sendEmail?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  sendEmail?: common.BoolEnum;
 
   @IsString()
   verifyEmailUrl?: string;
@@ -47,8 +47,8 @@ export class Config extends api.Config {
   @IsInt()
   smtpPort?: number;
 
-  @IsEnum(api.BoolEnum)
-  smtpSecure?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  smtpSecure?: common.BoolEnum;
 
   @IsString()
   smtpAuthUser?: string;

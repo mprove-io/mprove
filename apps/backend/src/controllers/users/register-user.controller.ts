@@ -2,7 +2,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
@@ -21,13 +22,13 @@ export class RegisterUserController {
     private userRepository: repositories.UserRepository
   ) {}
 
-  @Post(api.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
   async registerUser(@Body() body) {
     try {
-      let reqValid = await api.transformValid({
-        classType: api.ToBackendRegisterUserRequest,
+      let reqValid = await common.transformValid({
+        classType: apiToBackend.ToBackendRegisterUserRequest,
         object: body,
-        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let { email, password } = reqValid.payload;
@@ -40,8 +41,8 @@ export class RegisterUserController {
 
       if (helper.isDefined(user)) {
         if (helper.isDefined(user.hash)) {
-          throw new api.ServerError({
-            message: api.ErEnum.BACKEND_USER_ALREADY_REGISTERED
+          throw new common.ServerError({
+            message: apiToBackend.ErEnum.BACKEND_USER_ALREADY_REGISTERED
           });
         } else {
           user.hash = hash;
@@ -62,16 +63,16 @@ export class RegisterUserController {
           interfaces.Config['registerOnlyInvitedUsers']
         >('registerOnlyInvitedUsers');
 
-        if (onlyInv === api.BoolEnum.TRUE) {
-          throw new api.ServerError({
-            message: api.ErEnum.BACKEND_USER_IS_NOT_INVITED
+        if (onlyInv === common.BoolEnum.TRUE) {
+          throw new common.ServerError({
+            message: apiToBackend.ErEnum.BACKEND_USER_IS_NOT_INVITED
           });
         } else {
           let alias = await this.usersService.makeAlias(email);
 
           newUser = gen.makeUser({
             email: email,
-            isEmailVerified: api.BoolEnum.FALSE,
+            isEmailVerified: common.BoolEnum.FALSE,
             hash: hash,
             salt: salt,
             alias: alias
@@ -100,13 +101,13 @@ export class RegisterUserController {
         }
       }
 
-      let payload: api.ToBackendRegisterUserResponsePayload = {
+      let payload: apiToBackend.ToBackendRegisterUserResponsePayload = {
         userId: newUser.user_id
       };
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

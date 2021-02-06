@@ -2,7 +2,8 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { LocalAuthGuard } from '~backend/auth-guards/local-auth.guard';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -16,23 +17,23 @@ export class LoginUserController {
     private cs: ConfigService<interfaces.Config>
   ) {}
 
-  @Post(api.ToBackendRequestInfoNameEnum.ToBackendLoginUser)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser)
   async loginUser(@Body() body, @User() user: entities.UserEntity) {
     try {
-      let reqValid = await api.transformValid({
-        classType: api.ToBackendLoginUserRequest,
+      let reqValid = await common.transformValid({
+        classType: apiToBackend.ToBackendLoginUserRequest,
         object: body,
-        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
-      let payload: api.ToBackendLoginUserResponsePayload = {
+      let payload: apiToBackend.ToBackendLoginUserResponsePayload = {
         token: this.jwtService.sign({ userId: user.user_id }),
         user: wrapper.wrapToApiUser(user)
       };
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

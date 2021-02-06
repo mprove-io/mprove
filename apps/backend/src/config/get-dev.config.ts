@@ -1,13 +1,13 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { api } from '~backend/barrels/api';
+import { common } from '~backend/barrels/common';
 import { enums } from '~backend/barrels/enums';
 import { interfaces } from '~backend/barrels/interfaces';
 
 export function getDevConfig(envFilePath) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
-  let commonConfig: api.Config = api.getCommonConfig(envFile);
+  let commonConfig: common.Config = common.getCommonConfig(envFile);
 
   let devConfig: interfaces.Config = Object.assign({}, commonConfig, <
     interfaces.Config
@@ -16,11 +16,11 @@ export function getDevConfig(envFilePath) {
     jwtSecret: envFile.BACKEND_JWT_SECRET,
     firstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
     firstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
-    registerOnlyInvitedUsers: <api.BoolEnum>(
+    registerOnlyInvitedUsers: <common.BoolEnum>(
       envFile.BACKEND_REGISTER_ONLY_INVITED_USERS
     ),
     //
-    sendEmail: <api.BoolEnum>envFile.BACKEND_SEND_EMAIL,
+    sendEmail: <common.BoolEnum>envFile.BACKEND_SEND_EMAIL,
     verifyEmailUrl: envFile.BACKEND_VERIFY_EMAIL_URL,
     sendEmailFromName: envFile.BACKEND_SEND_EMAIL_FROM_NAME,
     sendEmailFromAddress: envFile.BACKEND_SEND_EMAIL_FROM_ADDRESS,
@@ -30,7 +30,7 @@ export function getDevConfig(envFilePath) {
     //
     smtpHost: envFile.BACKEND_SMTP_HOST,
     smtpPort: Number(envFile.BACKEND_SMTP_PORT),
-    smtpSecure: <api.BoolEnum>envFile.BACKEND_SMTP_SECURE,
+    smtpSecure: <common.BoolEnum>envFile.BACKEND_SMTP_SECURE,
     smtpAuthUser: envFile.BACKEND_SMTP_AUTH_USER,
     smtpAuthPassword: envFile.BACKEND_SMTP_AUTH_PASSWORD,
     //

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Connection } from 'typeorm';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
@@ -27,14 +28,14 @@ export class UsersService {
   }
 
   async makeAlias(email: string) {
-    let reg = api.MyRegex.CAPTURE_ALIAS();
+    let reg = common.MyRegex.CAPTURE_ALIAS();
     let r = reg.exec(email);
 
     let alias = r ? r[1] : undefined;
 
     if (helper.isUndefined(alias)) {
-      throw new api.ServerError({
-        message: api.ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
       });
     }
 
@@ -65,7 +66,7 @@ export class UsersService {
 
     let user = gen.makeUser({
       email: email,
-      isEmailVerified: api.BoolEnum.TRUE,
+      isEmailVerified: common.BoolEnum.TRUE,
       salt: salt,
       hash: hash,
       alias: alias

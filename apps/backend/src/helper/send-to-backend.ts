@@ -1,5 +1,6 @@
 import * as request from 'supertest';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { isDefined } from './is-defined';
 
 export async function sendToBackend<T>(item: {
@@ -19,18 +20,18 @@ export async function sendToBackend<T>(item: {
   let response = await rq.send(req);
 
   if (response.status !== 201) {
-    throw new api.ServerError({
-      message: api.ErEnum.BACKEND_ERROR_CODE_FROM_BACKEND,
+    throw new common.ServerError({
+      message: apiToBackend.ErEnum.BACKEND_ERROR_CODE_FROM_BACKEND,
       originalError: response.text
     });
   }
 
   if (
     checkIsOk === true &&
-    response.body.info.status !== api.ResponseInfoStatusEnum.Ok
+    response.body.info.status !== common.ResponseInfoStatusEnum.Ok
   ) {
-    throw new api.ServerError({
-      message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BACKEND,
+    throw new common.ServerError({
+      message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BACKEND,
       originalError: response.body.info.error
     });
   }

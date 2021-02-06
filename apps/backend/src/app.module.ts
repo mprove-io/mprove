@@ -11,7 +11,7 @@ import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
 import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
-import { api } from './barrels/api';
+import { common } from './barrels/common';
 import { enums } from './barrels/enums';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
@@ -47,11 +47,11 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
     return {
       exchanges: [
         {
-          name: api.RabbitExchangesEnum.Blockml.toString(),
+          name: common.RabbitExchangesEnum.Blockml.toString(),
           type: 'direct'
         },
         {
-          name: api.RabbitExchangesEnum.Disk.toString(),
+          name: common.RabbitExchangesEnum.Disk.toString(),
           type: 'direct'
         }
       ],
@@ -100,7 +100,7 @@ let mailerModule = MailerModule.forRootAsync({
       port: cs.get<interfaces.Config['smtpPort']>('smtpPort'),
       secure:
         cs.get<interfaces.Config['smtpSecure']>('smtpSecure') ===
-        api.BoolEnum.TRUE
+        common.BoolEnum.TRUE
           ? true
           : false,
       auth: {
@@ -184,7 +184,7 @@ export class AppModule implements OnModuleInit {
         }
       }
     } catch (e) {
-      api.handleError(e);
+      common.handleError(e);
       process.exit(1);
     }
   }

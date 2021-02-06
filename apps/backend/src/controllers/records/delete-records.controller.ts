@@ -2,7 +2,9 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToDisk } from '~backend/barrels/api-to-disk';
+import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
@@ -16,13 +18,13 @@ export class DeleteRecordsController {
     private userRepository: repositories.UserRepository
   ) {}
 
-  @Post(api.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
   async deleteRecords(@Body() body) {
     try {
-      let reqValid = await api.transformValid({
-        classType: api.ToBackendDeleteRecordsRequest,
+      let reqValid = await common.transformValid({
+        classType: apiToBackend.ToBackendDeleteRecordsRequest,
         object: body,
-        errorMessage: api.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
 
       let { organizationIds, emails } = reqValid.payload;
@@ -31,9 +33,10 @@ export class DeleteRecordsController {
 
       if (helper.isDefined(organizationIds) && organizationIds.length > 0) {
         await asyncPool(1, organizationIds, async (x: string) => {
-          let deleteOrganizationRequest: api.ToDiskDeleteOrganizationRequest = {
+          let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
             info: {
-              name: api.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
+              name:
+                apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
               traceId: reqValid.info.traceId
             },
             payload: {
@@ -46,7 +49,7 @@ export class DeleteRecordsController {
             projectId: null
           });
 
-          let deleteOrganizationResp = await this.rabbitService.sendToDisk<api.ToDiskDeleteOrganizationResponse>(
+          let deleteOrganizationResp = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
             {
               routingKey: routingKey,
               message: deleteOrganizationRequest
@@ -54,10 +57,11 @@ export class DeleteRecordsController {
           );
 
           if (
-            deleteOrganizationResp.info.status !== api.ResponseInfoStatusEnum.Ok
+            deleteOrganizationResp.info.status !==
+            common.ResponseInfoStatusEnum.Ok
           ) {
-            throw new api.ServerError({
-              message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+            throw new common.ServerError({
+              message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
               originalError: deleteOrganizationResp.info.error
             });
           }
@@ -70,11 +74,11 @@ export class DeleteRecordsController {
         await this.userRepository.delete({ email: In(emails) });
       }
 
-      let payload: api.ToBackendDeleteRecordsResponse['payload'] = {};
+      let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

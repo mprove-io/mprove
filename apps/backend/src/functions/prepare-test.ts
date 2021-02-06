@@ -2,7 +2,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '~backend/app.module';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { getConfig } from '~backend/config/get.config';
@@ -10,10 +10,10 @@ import { RabbitService } from '~backend/services/rabbit.service';
 
 export async function prepareTest(item: {
   traceId: string;
-  seedRecordsPayload?: api.ToBackendSeedRecordsRequestPayload;
-  deleteRecordsPayload?: api.ToBackendDeleteRecordsRequestPayload;
+  seedRecordsPayload?: apiToBackend.ToBackendSeedRecordsRequestPayload;
+  deleteRecordsPayload?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
   overrideConfigOptions?: interfaces.Config;
-  loginUserPayload?: api.ToBackendLoginUserRequestPayload;
+  loginUserPayload?: apiToBackend.ToBackendLoginUserRequestPayload;
 }) {
   let {
     traceId,
@@ -39,12 +39,13 @@ export async function prepareTest(item: {
   let httpServer = app.getHttpServer();
 
   if (helper.isDefined(deleteRecordsPayload)) {
-    await helper.sendToBackend<api.ToBackendDeleteRecordsResponse>({
+    await helper.sendToBackend<apiToBackend.ToBackendDeleteRecordsResponse>({
       checkIsOk: true,
       httpServer: httpServer,
-      req: <api.ToBackendDeleteRecordsRequest>{
+      req: <apiToBackend.ToBackendDeleteRecordsRequest>{
         info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+          name:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
           traceId: traceId
         },
         payload: deleteRecordsPayload
@@ -53,12 +54,12 @@ export async function prepareTest(item: {
   }
 
   if (helper.isDefined(seedRecordsPayload)) {
-    await helper.sendToBackend<api.ToBackendSeedRecordsResponse>({
+    await helper.sendToBackend<apiToBackend.ToBackendSeedRecordsResponse>({
       checkIsOk: true,
       httpServer: httpServer,
-      req: <api.ToBackendSeedRecordsRequest>{
+      req: <apiToBackend.ToBackendSeedRecordsRequest>{
         info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+          name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
           traceId: traceId
         },
         payload: seedRecordsPayload
@@ -66,20 +67,22 @@ export async function prepareTest(item: {
     });
   }
 
-  let loginUserResp: api.ToBackendLoginUserResponse;
+  let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
 
   if (helper.isDefined(loginUserPayload)) {
-    loginUserResp = await helper.sendToBackend<api.ToBackendLoginUserResponse>({
-      checkIsOk: true,
-      httpServer: httpServer,
-      req: <api.ToBackendLoginUserRequest>{
-        info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-          traceId: traceId
-        },
-        payload: loginUserPayload
+    loginUserResp = await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>(
+      {
+        checkIsOk: true,
+        httpServer: httpServer,
+        req: <apiToBackend.ToBackendLoginUserRequest>{
+          info: {
+            name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+            traceId: traceId
+          },
+          payload: loginUserPayload
+        }
       }
-    });
+    );
   }
 
   let rabbitService = moduleRef.get<RabbitService>(RabbitService);

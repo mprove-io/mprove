@@ -1,4 +1,5 @@
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { enums } from '~backend/barrels/enums';
 import { interfaces } from '~backend/barrels/interfaces';
 import { getDevConfig } from './get-dev.config';
@@ -16,10 +17,10 @@ export function getConfig() {
       ? getTestConfig(devConfig)
       : devConfig;
 
-  let validatedConfig = api.transformValidSync({
+  let validatedConfig = common.transformValidSync({
     classType: interfaces.Config,
     object: config,
-    errorMessage: api.ErEnum.BACKEND_WRONG_ENV_VALUES
+    errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_ENV_VALUES
   });
 
   return validatedConfig;

@@ -1,6 +1,7 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 
 @Injectable()
 export class RabbitService {
@@ -12,18 +13,18 @@ export class RabbitService {
   }) {
     let { routingKey, message, checkIsOk } = item;
 
-    let response = await this.amqpConnection.request<api.MyResponse>({
-      exchange: api.RabbitExchangesEnum.Disk.toString(),
+    let response = await this.amqpConnection.request<common.MyResponse>({
+      exchange: common.RabbitExchangesEnum.Disk.toString(),
       routingKey: routingKey,
       payload: message
     });
 
     if (
       checkIsOk === true &&
-      response.info?.status !== api.ResponseInfoStatusEnum.Ok
+      response.info?.status !== common.ResponseInfoStatusEnum.Ok
     ) {
-      throw new api.ServerError({
-        message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
         originalError: response.info?.error
       });
     }
@@ -38,18 +39,18 @@ export class RabbitService {
   }) {
     let { routingKey, message, checkIsOk } = item;
 
-    let response = await this.amqpConnection.request<api.MyResponse>({
-      exchange: api.RabbitExchangesEnum.Blockml.toString(),
+    let response = await this.amqpConnection.request<common.MyResponse>({
+      exchange: common.RabbitExchangesEnum.Blockml.toString(),
       routingKey: routingKey,
       payload: message
     });
 
     if (
       checkIsOk === true &&
-      response.info?.status !== api.ResponseInfoStatusEnum.Ok
+      response.info?.status !== common.ResponseInfoStatusEnum.Ok
     ) {
-      throw new api.ServerError({
-        message: api.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
         originalError: response.info?.error
       });
     }

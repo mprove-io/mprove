@@ -1,5 +1,8 @@
 import test from 'ava';
-import { api } from '~backend/barrels/api';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
+import { apiToDisk } from '~backend/barrels/api-to-disk';
+import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
@@ -15,7 +18,7 @@ let userAlias = 'rbobert';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: api.ToBlockmlRebuildStructResponse;
+  let resp: apiToBlockml.ToBlockmlRebuildStructResponse;
 
   try {
     prep = await prepareTest({
@@ -30,12 +33,12 @@ test('1', async t => {
       projectId: null
     });
 
-    await prep.rabbitService.sendToDisk<api.ToDiskSeedProjectResponse>({
+    await prep.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>({
       checkIsOk: true,
       routingKey: routingKey,
-      message: <api.ToDiskSeedProjectRequest>{
+      message: <apiToDisk.ToDiskSeedProjectRequest>{
         info: {
-          name: api.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
+          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
           traceId: traceId
         },
         payload: {
@@ -47,34 +50,38 @@ test('1', async t => {
       }
     });
 
-    resp = await helper.sendToBackend<api.ToBlockmlRebuildStructResponse>({
-      httpServer: prep.httpServer,
-      req: <api.ToBackendRebuildStructSpecialRequest>{
-        info: {
-          name: api.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial,
-          traceId: traceId
-        },
-        payload: {
-          organizationId: organizationId,
-          projectId: projectId,
-          repoId: devRepoId,
-          branch: 'master',
-          structId: testId,
-          weekStart: api.ProjectWeekStartEnum.Monday,
-          connections: [
-            {
-              name: 'c1',
-              type: api.ConnectionTypeEnum.PostgreSQL
-            }
-          ]
+    resp = await helper.sendToBackend<apiToBlockml.ToBlockmlRebuildStructResponse>(
+      {
+        httpServer: prep.httpServer,
+        req: <apiToBackend.ToBackendRebuildStructSpecialRequest>{
+          info: {
+            name:
+              apiToBackend.ToBackendRequestInfoNameEnum
+                .ToBackendRebuildStructSpecial,
+            traceId: traceId
+          },
+          payload: {
+            organizationId: organizationId,
+            projectId: projectId,
+            repoId: devRepoId,
+            branch: 'master',
+            structId: testId,
+            weekStart: common.ProjectWeekStartEnum.Monday,
+            connections: [
+              {
+                name: 'c1',
+                type: common.ConnectionTypeEnum.PostgreSQL
+              }
+            ]
+          }
         }
       }
-    });
+    );
 
     await prep.app.close();
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
-  t.is(resp.info.status, api.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });
