@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "declaration": true,
-    "target": "es6"
-  },
-  "exclude": ["**/*.spec.ts", "**/*.e2e-spec.ts"]
-}
