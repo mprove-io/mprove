@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { enums } from '~api-to-disk/barrels/enums';
-import { ToDiskRequest } from '../to-disk-request';
+import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateBranchRequestPayload {
   @IsString()

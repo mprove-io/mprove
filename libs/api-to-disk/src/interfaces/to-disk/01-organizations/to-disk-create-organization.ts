@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
-import { ToDiskRequest } from '../to-disk-request';
+import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateOrganizationRequestPayload {
   @IsString()

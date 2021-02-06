@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { User } from '~api-to-backend/interfaces/ints/_index';
-import { ToBackendRequest } from '../to-backend-request';
+import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetUserProfileRequest extends ToBackendRequest {
   readonly payload: { [K in any]: never };

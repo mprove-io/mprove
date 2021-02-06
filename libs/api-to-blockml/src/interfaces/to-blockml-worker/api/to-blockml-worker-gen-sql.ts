@@ -1,5 +1,5 @@
 import { common } from '~api-to-blockml/barrels/common';
-import { ToBlockmlWorkerRequest } from '../to-blockml-worker-request';
+import { ToBlockmlWorkerRequest } from '~api-to-blockml/interfaces/to-blockml-worker/to-blockml-worker-request';
 
 export class ToBlockmlWorkerGenSqlRequest extends ToBlockmlWorkerRequest {
   readonly payload: any;

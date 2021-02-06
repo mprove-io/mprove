@@ -6,7 +6,7 @@ import {
   Query,
   UdfsDict
 } from '~api-to-blockml/interfaces/ints/_index';
-import { ToBlockmlRequest } from '../to-blockml-request';
+import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlProcessQueryRequestPayload {
   @IsString()

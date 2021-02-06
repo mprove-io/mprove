@@ -6,7 +6,7 @@ import {
   DiskCatalogFile,
   DiskCatalogNode
 } from '~api-to-disk/interfaces/ints/_index';
-import { ToDiskRequest } from '../to-disk-request';
+import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskSeedProjectRequestPayload {
   @IsString()
