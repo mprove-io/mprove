@@ -1,11 +1,11 @@
 import * as crypto from 'crypto';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeQueryId(item: {
   sql: string[];
   organizationId: string;
   projectId: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sql, organizationId, projectId, connection } = item;
 

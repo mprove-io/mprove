@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -34,7 +34,7 @@ export function checkAlwaysJoin(
     let joinList = x.always_join.split(',');
 
     joinList.forEach(asPart => {
-      let reg = api.MyRegex.CAPTURE_WORD_BETWEEN_WHITESPACES();
+      let reg = common.MyRegex.CAPTURE_WORD_BETWEEN_WHITESPACES();
       let r;
 
       if ((r = reg.exec(asPart))) {

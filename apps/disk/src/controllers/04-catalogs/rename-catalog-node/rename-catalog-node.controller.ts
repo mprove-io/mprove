@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { RenameCatalogNodeService } from './rename-catalog-node.service';

@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -27,11 +27,11 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (field.fieldClass === api.FieldClassEnum.Filter) {
+      if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
         return;
       }
 
-      if (field.result === api.FieldResultEnum.Number) {
+      if (field.result === apiToBlockml.FieldResultEnum.Number) {
         if (helper.isUndefined(field.format_number)) {
           field.format_number = '';
           field.format_number_line_num = 0;
@@ -71,7 +71,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_FORMAT_NUMBER,
               message:
-                `${enums.ParameterEnum.FormatNumber} can only be used with fields where ${enums.ParameterEnum.Result} is "${api.FieldResultEnum.Number}". ` +
+                `${enums.ParameterEnum.FormatNumber} can only be used with fields where ${enums.ParameterEnum.Result} is "${apiToBlockml.FieldResultEnum.Number}". ` +
                 `Found field ${enums.ParameterEnum.Result} "${field.result}".`,
               lines: [
                 {
@@ -90,7 +90,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_PREFIX,
               message:
-                `${enums.ParameterEnum.CurrencyPrefix} can only be used with fields where ${enums.ParameterEnum.Result} is "${api.FieldResultEnum.Number}". ` +
+                `${enums.ParameterEnum.CurrencyPrefix} can only be used with fields where ${enums.ParameterEnum.Result} is "${apiToBlockml.FieldResultEnum.Number}". ` +
                 `Found field ${enums.ParameterEnum.Result} "${field.result}".`,
               lines: [
                 {
@@ -109,7 +109,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_SUFFIX,
               message:
-                `${enums.ParameterEnum.CurrencySuffix} can only be used with fields where ${enums.ParameterEnum.Result} is "${api.FieldResultEnum.Number}". ` +
+                `${enums.ParameterEnum.CurrencySuffix} can only be used with fields where ${enums.ParameterEnum.Result} is "${apiToBlockml.FieldResultEnum.Number}". ` +
                 `Found field ${enums.ParameterEnum.Result} "${field.result}".`,
               lines: [
                 {

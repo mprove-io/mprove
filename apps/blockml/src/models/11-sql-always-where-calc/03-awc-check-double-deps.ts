@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -76,7 +76,7 @@ export function awcCheckDoubleDeps(
             return;
           }
 
-          if (depField.fieldClass === api.FieldClassEnum.Filter) {
+          if (depField.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_FILTER,

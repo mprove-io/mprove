@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -33,7 +33,7 @@ export function checkSorts<T extends types.dzType>(
       }
 
       report.sorts.split(',').forEach(part => {
-        let reg = api.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G();
+        let reg = common.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G();
         let r = reg.exec(part);
 
         if (helper.isUndefined(r)) {

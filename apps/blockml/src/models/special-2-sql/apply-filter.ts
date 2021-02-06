@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
@@ -9,7 +9,7 @@ export function applyFilter(item: {
 }) {
   let { filterFieldsConditions, as, input } = item;
 
-  let reg = api.MyRegex.APPLY_FILTER();
+  let reg = common.MyRegex.APPLY_FILTER();
   let r;
 
   while ((r = reg.exec(input))) {
@@ -29,7 +29,7 @@ export function applyFilter(item: {
         ? conditions.join('\n')
         : `'empty filter ${as}.${f} applied' = 'empty filter ${as}.${f} applied'`;
 
-    conditionsString = api.MyRegex.replaceMproveFilter(
+    conditionsString = common.MyRegex.replaceMproveFilter(
       conditionsString,
       target
     );
@@ -37,7 +37,7 @@ export function applyFilter(item: {
     input = start + conditionsString + end;
   }
 
-  input = api.MyRegex.removeLastN(input);
+  input = common.MyRegex.removeLastN(input);
 
   return input;
 }

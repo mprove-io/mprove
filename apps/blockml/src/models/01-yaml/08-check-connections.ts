@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -11,7 +11,7 @@ let func = enums.FuncEnum.CheckConnections;
 export function checkConnections(
   item: {
     filesAny: any[];
-    connections: api.ProjectConnection[];
+    connections: common.ProjectConnection[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
@@ -25,12 +25,12 @@ export function checkConnections(
 
   item.filesAny.forEach(file => {
     if (
-      [api.FileExtensionEnum.View, api.FileExtensionEnum.Model].indexOf(
+      [common.FileExtensionEnum.View, common.FileExtensionEnum.Model].indexOf(
         file.ext
       ) > -1
     ) {
       let parameters = Object.keys(file).filter(
-        x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM())
+        x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM())
       );
 
       if (parameters.indexOf(enums.ParameterEnum.Connection.toString()) < 0) {

@@ -1,5 +1,5 @@
 import * as nodegit from 'nodegit';
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { getRepoStatus } from './get-repo-status';

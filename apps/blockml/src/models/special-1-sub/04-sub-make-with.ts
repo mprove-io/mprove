@@ -1,4 +1,5 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -20,9 +21,9 @@ export function subMakeWith(item: {
   let table: string;
 
   if (helper.isDefined(view.table)) {
-    if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+    if (connection.type === common.ConnectionTypeEnum.BigQuery) {
       table = '`' + view.table + '`';
-    } else if (connection.type === api.ConnectionTypeEnum.PostgreSQL) {
+    } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
       table = view.table;
     }
   } else {
@@ -43,7 +44,7 @@ export function subMakeWith(item: {
   Object.keys(needsAll).forEach(fieldName => {
     let field = view.fields.find(viewField => viewField.name === fieldName);
 
-    if (field.fieldClass === api.FieldClassEnum.Dimension) {
+    if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
       if (helper.isDefined(field.unnest)) {
         flats[field.unnest] = 1;
       }

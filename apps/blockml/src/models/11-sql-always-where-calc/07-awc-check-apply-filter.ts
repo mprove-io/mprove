@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -31,7 +32,7 @@ export function awcCheckApplyFilter(
 
     let input = x.sql_always_where_calc;
 
-    let reg = api.MyRegex.CAPTURE_START_FIELD_TARGET_END();
+    let reg = common.MyRegex.CAPTURE_START_FIELD_TARGET_END();
     let r;
 
     while ((r = reg.exec(input))) {
@@ -61,7 +62,7 @@ export function awcCheckApplyFilter(
         return;
       }
 
-      if (field.fieldClass !== api.FieldClassEnum.Filter) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
             title:

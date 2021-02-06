@@ -1,8 +1,8 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 
 export function makeTimestampCloseBeforeAfterForUnit(item: {
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
   forUnit: string;
   sInteger: number;
   open: string;
@@ -12,7 +12,7 @@ export function makeTimestampCloseBeforeAfterForUnit(item: {
   let sql;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql =
         forUnit === enums.FractionUnitEnum.Minutes
           ? `TIMESTAMP_ADD(${open}, INTERVAL ${sInteger} MINUTE)`
@@ -32,7 +32,7 @@ export function makeTimestampCloseBeforeAfterForUnit(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql =
         forUnit === enums.FractionUnitEnum.Minutes
           ? `${open} + INTERVAL '${sInteger} minute'`

@@ -1,15 +1,16 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barTimestamp } from '~blockml/barrels/bar-timestamp';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 
 export function processFilter(item: {
   filterBricks: string[];
-  result: api.FieldResultEnum;
+  result: apiToBlockml.FieldResultEnum;
   // parameters below do not affect validation
-  weekStart?: api.ProjectWeekStartEnum;
-  connection?: api.ProjectConnection;
+  weekStart?: common.ProjectWeekStartEnum;
+  connection?: common.ProjectConnection;
   timezone?: string;
   proc?: string;
   sqlTsSelect?: string;
@@ -17,7 +18,7 @@ export function processFilter(item: {
   NOTs?: string[];
   INs?: string[];
   NOTINs?: string[];
-  fractions?: api.Fraction[];
+  fractions?: apiToBlockml.Fraction[];
 }): { valid: number; brick?: string } {
   let {
     filterBricks,
@@ -36,11 +37,11 @@ export function processFilter(item: {
 
   weekStart = helper.isDefined(weekStart)
     ? weekStart
-    : api.ProjectWeekStartEnum.Monday;
+    : common.ProjectWeekStartEnum.Monday;
 
   let cn = {
     name: 'cn',
-    type: api.ConnectionTypeEnum.PostgreSQL
+    type: common.ConnectionTypeEnum.PostgreSQL
   };
   connection = helper.isDefined(connection) ? connection : cn;
 
@@ -72,10 +73,10 @@ export function processFilter(item: {
       return;
     }
 
-    if (result === api.FieldResultEnum.Number) {
+    if (result === apiToBlockml.FieldResultEnum.Number) {
       // IS EQUAL TO
       // IS NOT EQUAL TO
-      if ((r = api.MyRegex.BRICK_NUMBER_NOT_AND_DIGITS().exec(brick))) {
+      if ((r = common.MyRegex.BRICK_NUMBER_NOT_AND_DIGITS().exec(brick))) {
         not = r[1];
 
         let equals = brick.split(',');
@@ -87,7 +88,7 @@ export function processFilter(item: {
             return;
           }
 
-          let eReg = api.MyRegex.BRICK_NUMBER_EQUAL_TO();
+          let eReg = common.MyRegex.BRICK_NUMBER_EQUAL_TO();
           let eR = eReg.exec(equal);
 
           if (eR) {
@@ -116,22 +117,24 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.NumberIsNotEqualTo,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.NumberIsNotEqualTo,
             numberValues: numValues
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.NumberIsEqualTo,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.NumberIsEqualTo,
             numberValues: numValues
           });
         }
 
         // IS GREATER THAN OR EQUAL TO
       } else if (
-        (r = api.MyRegex.BRICK_NUMBER_IS_GREATER_THAN_OR_EQUAL_TO().exec(brick))
+        (r = common.MyRegex.BRICK_NUMBER_IS_GREATER_THAN_OR_EQUAL_TO().exec(
+          brick
+        ))
       ) {
         value = r[1];
 
@@ -139,27 +142,29 @@ export function processFilter(item: {
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.NumberIsGreaterThanOrEqualTo,
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.NumberIsGreaterThanOrEqualTo,
           numberValue1: Number(value)
         });
 
         // IS GREATER THAN
-      } else if ((r = api.MyRegex.BRICK_NUMBER_IS_GREATER_THAN().exec(brick))) {
+      } else if (
+        (r = common.MyRegex.BRICK_NUMBER_IS_GREATER_THAN().exec(brick))
+      ) {
         value = r[1];
 
         ORs.push(`${proc} > ${value}`);
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.NumberIsGreaterThan,
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.NumberIsGreaterThan,
           numberValue1: Number(value)
         });
 
         // IS LESS THAN OR EQUAL TO
       } else if (
-        (r = api.MyRegex.BRICK_NUMBER_IS_LESS_THAN_OR_EQUAL_TO().exec(brick))
+        (r = common.MyRegex.BRICK_NUMBER_IS_LESS_THAN_OR_EQUAL_TO().exec(brick))
       ) {
         value = r[1];
 
@@ -167,37 +172,39 @@ export function processFilter(item: {
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.NumberIsLessThanOrEqualTo,
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.NumberIsLessThanOrEqualTo,
           numberValue1: Number(value)
         });
 
         // IS LESS THAN
-      } else if ((r = api.MyRegex.BRICK_NUMBER_IS_LESS_THAN().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_NUMBER_IS_LESS_THAN().exec(brick))) {
         value = r[1];
 
         ORs.push(`${proc} < ${value}`);
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.NumberIsLessThan,
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.NumberIsLessThan,
           numberValue1: Number(value)
         });
 
         // IS ANY VALUE
-      } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
         ORs.push(constants.SQL_TRUE_CONDITION);
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.NumberIsAnyValue
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.NumberIsAnyValue
         });
       } else {
         // [,]
         // not [,]
-        if ((r = api.MyRegex.BRICK_NUMBER_IS_BETWEEN_INCLUSIVE().exec(brick))) {
+        if (
+          (r = common.MyRegex.BRICK_NUMBER_IS_BETWEEN_INCLUSIVE().exec(brick))
+        ) {
           not = r[1];
           value1 = r[2];
           value2 = r[3];
@@ -207,27 +214,31 @@ export function processFilter(item: {
           if (not) {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.And,
-              type: api.FractionTypeEnum.NumberIsNotBetween,
+              operator: apiToBlockml.FractionOperatorEnum.And,
+              type: apiToBlockml.FractionTypeEnum.NumberIsNotBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
-              numberBetweenOption: api.FractionNumberBetweenOptionEnum.Inclusive
+              numberBetweenOption:
+                apiToBlockml.FractionNumberBetweenOptionEnum.Inclusive
             });
           } else {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.Or,
-              type: api.FractionTypeEnum.NumberIsBetween,
+              operator: apiToBlockml.FractionOperatorEnum.Or,
+              type: apiToBlockml.FractionTypeEnum.NumberIsBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
-              numberBetweenOption: api.FractionNumberBetweenOptionEnum.Inclusive
+              numberBetweenOption:
+                apiToBlockml.FractionNumberBetweenOptionEnum.Inclusive
             });
           }
 
           // [,)
           // not [,)
         } else if (
-          (r = api.MyRegex.BRICK_NUMBER_IS_BETWEEN_LEFT_INCLUSIVE().exec(brick))
+          (r = common.MyRegex.BRICK_NUMBER_IS_BETWEEN_LEFT_INCLUSIVE().exec(
+            brick
+          ))
         ) {
           not = r[1];
           value1 = r[2];
@@ -238,29 +249,29 @@ export function processFilter(item: {
           if (not) {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.And,
-              type: api.FractionTypeEnum.NumberIsNotBetween,
+              operator: apiToBlockml.FractionOperatorEnum.And,
+              type: apiToBlockml.FractionTypeEnum.NumberIsNotBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
               numberBetweenOption:
-                api.FractionNumberBetweenOptionEnum.LeftInclusive
+                apiToBlockml.FractionNumberBetweenOptionEnum.LeftInclusive
             });
           } else {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.Or,
-              type: api.FractionTypeEnum.NumberIsBetween,
+              operator: apiToBlockml.FractionOperatorEnum.Or,
+              type: apiToBlockml.FractionTypeEnum.NumberIsBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
               numberBetweenOption:
-                api.FractionNumberBetweenOptionEnum.LeftInclusive
+                apiToBlockml.FractionNumberBetweenOptionEnum.LeftInclusive
             });
           }
 
           // (,]
           // not (,]
         } else if (
-          (r = api.MyRegex.BRICK_NUMBER_IS_BETWEEN_RIGHT_INCLUSIVE().exec(
+          (r = common.MyRegex.BRICK_NUMBER_IS_BETWEEN_RIGHT_INCLUSIVE().exec(
             brick
           ))
         ) {
@@ -273,29 +284,29 @@ export function processFilter(item: {
           if (not) {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.And,
-              type: api.FractionTypeEnum.NumberIsNotBetween,
+              operator: apiToBlockml.FractionOperatorEnum.And,
+              type: apiToBlockml.FractionTypeEnum.NumberIsNotBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
               numberBetweenOption:
-                api.FractionNumberBetweenOptionEnum.RightInclusive
+                apiToBlockml.FractionNumberBetweenOptionEnum.RightInclusive
             });
           } else {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.Or,
-              type: api.FractionTypeEnum.NumberIsBetween,
+              operator: apiToBlockml.FractionOperatorEnum.Or,
+              type: apiToBlockml.FractionTypeEnum.NumberIsBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
               numberBetweenOption:
-                api.FractionNumberBetweenOptionEnum.RightInclusive
+                apiToBlockml.FractionNumberBetweenOptionEnum.RightInclusive
             });
           }
 
           // (,)
           // not (,)
         } else if (
-          (r = api.MyRegex.BRICK_NUMBER_IS_BETWEEN_EXCLUSIVE().exec(brick))
+          (r = common.MyRegex.BRICK_NUMBER_IS_BETWEEN_EXCLUSIVE().exec(brick))
         ) {
           not = r[1];
           value1 = r[2];
@@ -306,26 +317,28 @@ export function processFilter(item: {
           if (not) {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.And,
-              type: api.FractionTypeEnum.NumberIsNotBetween,
+              operator: apiToBlockml.FractionOperatorEnum.And,
+              type: apiToBlockml.FractionTypeEnum.NumberIsNotBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
-              numberBetweenOption: api.FractionNumberBetweenOptionEnum.Exclusive
+              numberBetweenOption:
+                apiToBlockml.FractionNumberBetweenOptionEnum.Exclusive
             });
           } else {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.Or,
-              type: api.FractionTypeEnum.NumberIsBetween,
+              operator: apiToBlockml.FractionOperatorEnum.Or,
+              type: apiToBlockml.FractionTypeEnum.NumberIsBetween,
               numberValue1: Number(value1),
               numberValue2: Number(value2),
-              numberBetweenOption: api.FractionNumberBetweenOptionEnum.Exclusive
+              numberBetweenOption:
+                apiToBlockml.FractionNumberBetweenOptionEnum.Exclusive
             });
           }
 
           // IS NULL
           // IS NOT NULL
-        } else if ((r = api.MyRegex.BRICK_IS_NULL().exec(brick))) {
+        } else if ((r = common.MyRegex.BRICK_IS_NULL().exec(brick))) {
           not = r[1];
           nullValue = r[2];
 
@@ -334,14 +347,14 @@ export function processFilter(item: {
           if (not) {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.And,
-              type: api.FractionTypeEnum.NumberIsNotNull
+              operator: apiToBlockml.FractionOperatorEnum.And,
+              type: apiToBlockml.FractionTypeEnum.NumberIsNotNull
             });
           } else {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.Or,
-              type: api.FractionTypeEnum.NumberIsNull
+              operator: apiToBlockml.FractionOperatorEnum.Or,
+              type: apiToBlockml.FractionTypeEnum.NumberIsNull
             });
           }
         }
@@ -361,10 +374,10 @@ export function processFilter(item: {
           return;
         }
       }
-    } else if (result === api.FieldResultEnum.String) {
+    } else if (result === apiToBlockml.FieldResultEnum.String) {
       // IS EQUAL TO
       // IS NOT EQUAL TO
-      if ((r = api.MyRegex.BRICK_STRING_IS_EQUAL_TO().exec(brick))) {
+      if ((r = common.MyRegex.BRICK_STRING_IS_EQUAL_TO().exec(brick))) {
         not = r[1];
         value = r[2];
 
@@ -373,22 +386,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.StringIsNotEqualTo,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.StringIsNotEqualTo,
             stringValue: value
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.StringIsEqualTo,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.StringIsEqualTo,
             stringValue: value
           });
         }
 
         // CONTAINS
         // DOES NOT CONTAIN
-      } else if ((r = api.MyRegex.BRICK_STRING_CONTAINS().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_STRING_CONTAINS().exec(brick))) {
         not = r[1];
         value = r[2];
 
@@ -397,22 +410,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.StringDoesNotContain,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.StringDoesNotContain,
             stringValue: value
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.StringContains,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.StringContains,
             stringValue: value
           });
         }
 
         // STARTS WITH
         // DOES NOT START WITH
-      } else if ((r = api.MyRegex.BRICK_STRING_STARTS_WITH().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_STRING_STARTS_WITH().exec(brick))) {
         value = r[1];
         not = r[2];
 
@@ -421,22 +434,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.StringDoesNotStartWith,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.StringDoesNotStartWith,
             stringValue: value
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.StringStartsWith,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.StringStartsWith,
             stringValue: value
           });
         }
 
         // ENDS WITH
         // DOES NOT END WITH
-      } else if ((r = api.MyRegex.BRICK_STRING_ENDS_WITH().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_STRING_ENDS_WITH().exec(brick))) {
         not = r[1];
         value = r[2];
 
@@ -445,22 +458,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.StringDoesNotEndWith,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.StringDoesNotEndWith,
             stringValue: value
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.StringEndsWith,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.StringEndsWith,
             stringValue: value
           });
         }
 
         // IS NULL
         // IS NOT NULL
-      } else if ((r = api.MyRegex.BRICK_IS_NULL().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_NULL().exec(brick))) {
         not = r[1];
         nullValue = r[2];
 
@@ -469,51 +482,51 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.StringIsNotNull
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.StringIsNotNull
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.StringIsNull
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.StringIsNull
           });
         }
 
         // IS BLANK
         // IS NOT BLANK
-      } else if ((r = api.MyRegex.BRICK_STRING_IS_BLANK().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_STRING_IS_BLANK().exec(brick))) {
         not = r[1];
         blank = r[2];
 
-        if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+        if (connection.type === common.ConnectionTypeEnum.BigQuery) {
           condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS STRING)) = 0)`;
-        } else if (connection.type === api.ConnectionTypeEnum.PostgreSQL) {
+        } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
           condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS TEXT)) = 0)`;
         }
 
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.StringIsNotBlank
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.StringIsNotBlank
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.StringIsBlank
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.StringIsBlank
           });
         }
 
         // IS ANY VALUE
-      } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
         condition = constants.SQL_TRUE_CONDITION;
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.StringIsAnyValue
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.StringIsAnyValue
         });
       }
 
@@ -531,37 +544,37 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldResultEnum.Yesno) {
+    } else if (result === apiToBlockml.FieldResultEnum.Yesno) {
       // YESNO YES
-      if ((r = api.MyRegex.BRICK_YESNO_IS_YES().exec(brick))) {
+      if ((r = common.MyRegex.BRICK_YESNO_IS_YES().exec(brick))) {
         condition = `${proc} = 'Yes'`;
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.YesnoIs,
-          yesnoValue: api.FractionYesnoValueEnum.Yes
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.YesnoIs,
+          yesnoValue: apiToBlockml.FractionYesnoValueEnum.Yes
         });
 
         // YESNO NO
-      } else if ((r = api.MyRegex.BRICK_YESNO_IS_NO().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_YESNO_IS_NO().exec(brick))) {
         condition = `${proc} = 'No'`;
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.YesnoIs,
-          yesnoValue: api.FractionYesnoValueEnum.No
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.YesnoIs,
+          yesnoValue: apiToBlockml.FractionYesnoValueEnum.No
         });
 
         // IS ANY VALUE
-      } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
         condition = constants.SQL_TRUE_CONDITION;
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.YesnoIsAnyValue
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.YesnoIsAnyValue
         });
       }
 
@@ -573,7 +586,7 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldResultEnum.Ts) {
+    } else if (result === apiToBlockml.FieldResultEnum.Ts) {
       let {
         currentTs,
         currentMinuteTs,
@@ -611,7 +624,7 @@ export function processFilter(item: {
       let forIntegerStr: string;
       let forUnit;
 
-      if ((r = api.MyRegex.BRICK_TS_INTERVALS().exec(brick))) {
+      if ((r = common.MyRegex.BRICK_TS_INTERVALS().exec(brick))) {
         way = r[1];
         integerStr = r[2];
         unit = r[3];
@@ -779,15 +792,16 @@ export function processFilter(item: {
         if (way.match(/^last$/)) {
           let tsLastCompleteOption =
             complete && plusCurrent
-              ? api.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
+              ? apiToBlockml.FractionTsLastCompleteOptionEnum
+                  .CompletePlusCurrent
               : complete
-              ? api.FractionTsLastCompleteOptionEnum.Complete
-              : api.FractionTsLastCompleteOptionEnum.Incomplete;
+              ? apiToBlockml.FractionTsLastCompleteOptionEnum.Complete
+              : apiToBlockml.FractionTsLastCompleteOptionEnum.Incomplete;
 
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsInLast,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsInLast,
             tsLastValue: Number(integerStr),
             tsLastUnit: <any>unit,
             tsLastCompleteOption: tsLastCompleteOption
@@ -795,74 +809,74 @@ export function processFilter(item: {
         } else if (way.match(/^before$/) && year) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsBeforeDate,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsBeforeDate,
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
             tsDateDay: Number(day),
             tsDateHour: Number(hour),
             tsDateMinute: Number(minute),
             tsForOption: forUnit
-              ? api.FractionTsForOptionEnum.For
-              : api.FractionTsForOptionEnum.ForInfinity,
+              ? apiToBlockml.FractionTsForOptionEnum.For
+              : apiToBlockml.FractionTsForOptionEnum.ForInfinity,
             tsForValue: Number(forIntegerStr),
             tsForUnit: <any>forUnit
           });
         } else if (way.match(/^before$/)) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsBeforeRelative,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsBeforeRelative,
             tsRelativeValue: Number(integerStr),
             tsRelativeUnit: <any>unit,
             tsRelativeCompleteOption: complete
-              ? api.FractionTsRelativeCompleteOptionEnum.Complete
-              : api.FractionTsRelativeCompleteOptionEnum.Incomplete,
+              ? apiToBlockml.FractionTsRelativeCompleteOptionEnum.Complete
+              : apiToBlockml.FractionTsRelativeCompleteOptionEnum.Incomplete,
             tsRelativeWhenOption: when.match(/^ago$/)
-              ? api.FractionTsRelativeWhenOptionEnum.Ago
+              ? apiToBlockml.FractionTsRelativeWhenOptionEnum.Ago
               : when.match(/^in\s+future$/)
-              ? api.FractionTsRelativeWhenOptionEnum.InFuture
+              ? apiToBlockml.FractionTsRelativeWhenOptionEnum.InFuture
               : undefined,
             tsForOption: forUnit
-              ? api.FractionTsForOptionEnum.For
-              : api.FractionTsForOptionEnum.ForInfinity,
+              ? apiToBlockml.FractionTsForOptionEnum.For
+              : apiToBlockml.FractionTsForOptionEnum.ForInfinity,
             tsForValue: Number(forIntegerStr),
             tsForUnit: <any>forUnit
           });
         } else if (way.match(/^after$/) && year) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsAfterDate,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsAfterDate,
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
             tsDateDay: Number(day),
             tsDateHour: Number(hour),
             tsDateMinute: Number(minute),
             tsForOption: forUnit
-              ? api.FractionTsForOptionEnum.For
-              : api.FractionTsForOptionEnum.ForInfinity,
+              ? apiToBlockml.FractionTsForOptionEnum.For
+              : apiToBlockml.FractionTsForOptionEnum.ForInfinity,
             tsForValue: Number(forIntegerStr),
             tsForUnit: <any>forUnit
           });
         } else if (way.match(/^after$/)) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsAfterRelative,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsAfterRelative,
             tsRelativeValue: Number(integerStr),
             tsRelativeUnit: <any>unit,
             tsRelativeCompleteOption: complete
-              ? api.FractionTsRelativeCompleteOptionEnum.Complete
-              : api.FractionTsRelativeCompleteOptionEnum.Incomplete,
+              ? apiToBlockml.FractionTsRelativeCompleteOptionEnum.Complete
+              : apiToBlockml.FractionTsRelativeCompleteOptionEnum.Incomplete,
             tsRelativeWhenOption: when.match(/^ago$/)
-              ? api.FractionTsRelativeWhenOptionEnum.Ago
+              ? apiToBlockml.FractionTsRelativeWhenOptionEnum.Ago
               : when.match(/^in\s+future$/)
-              ? api.FractionTsRelativeWhenOptionEnum.InFuture
+              ? apiToBlockml.FractionTsRelativeWhenOptionEnum.InFuture
               : undefined,
             tsForOption: forUnit
-              ? api.FractionTsForOptionEnum.For
-              : api.FractionTsForOptionEnum.ForInfinity,
+              ? apiToBlockml.FractionTsForOptionEnum.For
+              : apiToBlockml.FractionTsForOptionEnum.ForInfinity,
             tsForValue: Number(forIntegerStr),
             tsForUnit: <any>forUnit
           });
@@ -871,7 +885,7 @@ export function processFilter(item: {
         // IS
         // BETWEEN
         // on (year)/(month)/(day) (hour):(minute) [to (year)/(month)/(day) (hour):(minute)]
-      } else if ((r = api.MyRegex.BRICK_TS_IS_BETWEEN_ON().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_TS_IS_BETWEEN_ON().exec(brick))) {
         year = r[1];
         month = r[2];
         day = r[3];
@@ -923,8 +937,8 @@ export function processFilter(item: {
         if (toYear) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsInRange,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsInRange,
 
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
@@ -941,8 +955,8 @@ export function processFilter(item: {
         } else if (minute) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsOnMinute,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsOnMinute,
 
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
@@ -953,8 +967,8 @@ export function processFilter(item: {
         } else if (hour) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsOnHour,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsOnHour,
 
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
@@ -964,8 +978,8 @@ export function processFilter(item: {
         } else if (day) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsOnDay,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsOnDay,
 
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
@@ -974,8 +988,8 @@ export function processFilter(item: {
         } else if (month) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsOnMonth,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsOnMonth,
 
             tsDateYear: Number(year),
             tsDateMonth: Number(month)
@@ -983,8 +997,8 @@ export function processFilter(item: {
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsOnYear,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsOnYear,
 
             tsDateYear: Number(year)
           });
@@ -992,7 +1006,7 @@ export function processFilter(item: {
 
         // IS NULL
         // IS NOT NULL
-      } else if ((r = api.MyRegex.BRICK_IS_NULL().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_NULL().exec(brick))) {
         not = r[1];
         nullValue = r[2];
 
@@ -1001,14 +1015,14 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.TsIsNotNull
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.TsIsNotNull
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.TsIsNull
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.TsIsNull
           });
         }
 
@@ -1019,13 +1033,13 @@ export function processFilter(item: {
         }
 
         // IS ANY VALUE
-      } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
         ORs.push(constants.SQL_TRUE_CONDITION);
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.TsIsAnyValue
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.TsIsAnyValue
         });
 
         if (not && condition) {
@@ -1038,10 +1052,10 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldResultEnum.DayOfWeek) {
+    } else if (result === apiToBlockml.FieldResultEnum.DayOfWeek) {
       // IS
       // IS NOT
-      if ((r = api.MyRegex.BRICK_DAY_OF_WEEK_IS().exec(brick))) {
+      if ((r = common.MyRegex.BRICK_DAY_OF_WEEK_IS().exec(brick))) {
         not = r[1];
         value = r[2];
 
@@ -1050,22 +1064,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.DayOfWeekIsNot,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.DayOfWeekIsNot,
             dayOfWeekValue: <any>value.toLowerCase()
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.DayOfWeekIs,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.DayOfWeekIs,
             dayOfWeekValue: <any>value.toLowerCase()
           });
         }
 
         // IS NULL
         // IS NOT NULL
-      } else if ((r = api.MyRegex.BRICK_IS_NULL().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_NULL().exec(brick))) {
         not = r[1];
         nullValue = r[2];
 
@@ -1074,25 +1088,25 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.DayOfWeekIsNotNull
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.DayOfWeekIsNotNull
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.DayOfWeekIsNull
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.DayOfWeekIsNull
           });
         }
 
         // IS ANY VALUE
-      } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
         condition = constants.SQL_TRUE_CONDITION;
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.DayOfWeekIsAnyValue
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.DayOfWeekIsAnyValue
         });
       }
 
@@ -1110,8 +1124,8 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldResultEnum.DayOfWeekIndex) {
-      if ((r = api.MyRegex.BRICK_DAY_OF_WEEK_INDEX_IS_EQUAL().exec(brick))) {
+    } else if (result === apiToBlockml.FieldResultEnum.DayOfWeekIndex) {
+      if ((r = common.MyRegex.BRICK_DAY_OF_WEEK_INDEX_IS_EQUAL().exec(brick))) {
         not = r[1];
 
         let equals = brick.split(',');
@@ -1123,7 +1137,7 @@ export function processFilter(item: {
             return;
           }
 
-          let eReg = api.MyRegex.BRICK_DAY_OF_WEEK_INDEX_EQUAL_TO();
+          let eReg = common.MyRegex.BRICK_DAY_OF_WEEK_INDEX_EQUAL_TO();
           let eR = eReg.exec(equal);
 
           if (eR) {
@@ -1152,22 +1166,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.DayOfWeekIndexIsNotEqualTo,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.DayOfWeekIndexIsNotEqualTo,
             dayOfWeekIndexValues: dayOfWeekIndexValuesString
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.DayOfWeekIndexIsEqualTo,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.DayOfWeekIndexIsEqualTo,
             dayOfWeekIndexValues: dayOfWeekIndexValuesString
           });
         }
       } else {
         // IS NULL
         // IS NOT NULL
-        if ((r = api.MyRegex.BRICK_IS_NULL().exec(brick))) {
+        if ((r = common.MyRegex.BRICK_IS_NULL().exec(brick))) {
           not = r[1];
           nullValue = r[2];
 
@@ -1176,25 +1190,25 @@ export function processFilter(item: {
           if (not) {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.And,
-              type: api.FractionTypeEnum.DayOfWeekIndexIsNotNull
+              operator: apiToBlockml.FractionOperatorEnum.And,
+              type: apiToBlockml.FractionTypeEnum.DayOfWeekIndexIsNotNull
             });
           } else {
             fractions.push({
               brick: brick,
-              operator: api.FractionOperatorEnum.Or,
-              type: api.FractionTypeEnum.DayOfWeekIndexIsNull
+              operator: apiToBlockml.FractionOperatorEnum.Or,
+              type: apiToBlockml.FractionTypeEnum.DayOfWeekIndexIsNull
             });
           }
 
           // IS ANY VALUE
-        } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+        } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
           condition = constants.SQL_TRUE_CONDITION;
 
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.DayOfWeekIndexIsAnyValue
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.DayOfWeekIndexIsAnyValue
           });
         }
 
@@ -1213,10 +1227,10 @@ export function processFilter(item: {
           return;
         }
       }
-    } else if (result === api.FieldResultEnum.MonthName) {
+    } else if (result === apiToBlockml.FieldResultEnum.MonthName) {
       // IS
       // IS NOT
-      if ((r = api.MyRegex.BRICK_MONTH_NAME_IS().exec(brick))) {
+      if ((r = common.MyRegex.BRICK_MONTH_NAME_IS().exec(brick))) {
         not = r[1];
         value = r[2];
 
@@ -1225,22 +1239,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.MonthNameIsNot,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.MonthNameIsNot,
             monthNameValue: <any>value.toLowerCase()
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.MonthNameIs,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.MonthNameIs,
             monthNameValue: <any>value.toLowerCase()
           });
         }
 
         // IS NULL
         // IS NOT NULL
-      } else if ((r = api.MyRegex.BRICK_IS_NULL().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_NULL().exec(brick))) {
         not = r[1];
         nullValue = r[2];
 
@@ -1249,25 +1263,25 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.MonthNameIsNotNull
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.MonthNameIsNotNull
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.MonthNameIsNull
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.MonthNameIsNull
           });
         }
 
         // IS ANY VALUE
-      } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
         condition = constants.SQL_TRUE_CONDITION;
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.MonthNameIsAnyValue
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.MonthNameIsAnyValue
         });
       }
 
@@ -1285,10 +1299,10 @@ export function processFilter(item: {
         answerError = { valid: 0, brick: brick };
         return;
       }
-    } else if (result === api.FieldResultEnum.QuarterOfYear) {
+    } else if (result === apiToBlockml.FieldResultEnum.QuarterOfYear) {
       // IS
       // IS NOT
-      if ((r = api.MyRegex.BRICK_QUARTER_OF_YEAR_IS().exec(brick))) {
+      if ((r = common.MyRegex.BRICK_QUARTER_OF_YEAR_IS().exec(brick))) {
         not = r[1];
         value = r[2];
 
@@ -1297,22 +1311,22 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.QuarterOfYearIsNot,
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.QuarterOfYearIsNot,
             quarterOfYearValue: <any>value
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.QuarterOfYearIs,
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.QuarterOfYearIs,
             quarterOfYearValue: <any>value
           });
         }
 
         // IS NULL
         // IS NOT NULL
-      } else if ((r = api.MyRegex.BRICK_IS_NULL().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_NULL().exec(brick))) {
         not = r[1];
         nullValue = r[2];
 
@@ -1321,25 +1335,25 @@ export function processFilter(item: {
         if (not) {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.And,
-            type: api.FractionTypeEnum.QuarterOfYearIsNotNull
+            operator: apiToBlockml.FractionOperatorEnum.And,
+            type: apiToBlockml.FractionTypeEnum.QuarterOfYearIsNotNull
           });
         } else {
           fractions.push({
             brick: brick,
-            operator: api.FractionOperatorEnum.Or,
-            type: api.FractionTypeEnum.QuarterOfYearIsNull
+            operator: apiToBlockml.FractionOperatorEnum.Or,
+            type: apiToBlockml.FractionTypeEnum.QuarterOfYearIsNull
           });
         }
 
         // IS ANY VALUE
-      } else if ((r = api.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
+      } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
         condition = constants.SQL_TRUE_CONDITION;
 
         fractions.push({
           brick: brick,
-          operator: api.FractionOperatorEnum.Or,
-          type: api.FractionTypeEnum.QuarterOfYearIsAnyValue
+          operator: apiToBlockml.FractionOperatorEnum.Or,
+          type: apiToBlockml.FractionTypeEnum.QuarterOfYearIsAnyValue
         });
       }
 

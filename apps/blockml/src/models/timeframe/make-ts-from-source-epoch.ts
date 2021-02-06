@@ -1,20 +1,20 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTsFromSourceEpoch(item: {
   sql: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sql, connection } = item;
 
   let ts;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       ts = `TIMESTAMP_SECONDS(${sql})`;
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       ts = `TIMESTAMP 'epoch' + (${sql}) * INTERVAL '1 second'`;
       break;
     }

@@ -1,4 +1,5 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -26,14 +27,14 @@ export function makeDepMeasuresAndDimensions(item: {
     Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(depName => {
       let depModelField = model.fields.find(mField => mField.name === depName);
 
-      if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
+      if (depModelField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
         if (helper.isUndefined(depMeasures[constants.MF])) {
           depMeasures[constants.MF] = {};
         }
         depMeasures[constants.MF][depName] = 1;
       }
 
-      if (depModelField.fieldClass === api.FieldClassEnum.Dimension) {
+      if (depModelField.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
         if (helper.isUndefined(depDimensions[constants.MF])) {
           depDimensions[constants.MF] = {};
         }
@@ -54,14 +55,16 @@ export function makeDepMeasuresAndDimensions(item: {
             vField => vField.name === depName
           );
 
-          if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
+          if (depViewField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
             if (helper.isUndefined(depMeasures[alias])) {
               depMeasures[alias] = {};
             }
             depMeasures[alias][depName] = 1;
           }
 
-          if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
+          if (
+            depViewField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
+          ) {
             if (helper.isUndefined(depDimensions[alias])) {
               depDimensions[alias] = {};
             }
@@ -73,7 +76,7 @@ export function makeDepMeasuresAndDimensions(item: {
   }
 
   [...select, ...Object.keys(filters)].forEach(element => {
-    let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+    let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 
     let asName = r[1];
@@ -82,7 +85,7 @@ export function makeDepMeasuresAndDimensions(item: {
     if (asName === constants.MF) {
       let field = model.fields.find(mField => mField.name === fieldName);
 
-      if (field.fieldClass !== api.FieldClassEnum.Calculation) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation) {
         return;
       }
 
@@ -91,14 +94,16 @@ export function makeDepMeasuresAndDimensions(item: {
           mField => mField.name === depName
         );
 
-        if (depModelField.fieldClass === api.FieldClassEnum.Measure) {
+        if (depModelField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
           if (helper.isUndefined(depMeasures[asName])) {
             depMeasures[asName] = {};
           }
           depMeasures[asName][depName] = 1;
         }
 
-        if (depModelField.fieldClass === api.FieldClassEnum.Dimension) {
+        if (
+          depModelField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
+        ) {
           if (helper.isUndefined(depDimensions[asName])) {
             depDimensions[asName] = {};
           }
@@ -117,14 +122,18 @@ export function makeDepMeasuresAndDimensions(item: {
               vField => vField.name === depName
             );
 
-            if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
+            if (
+              depViewField.fieldClass === apiToBlockml.FieldClassEnum.Measure
+            ) {
               if (helper.isUndefined(depMeasures[alias])) {
                 depMeasures[alias] = {};
               }
               depMeasures[alias][depName] = 1;
             }
 
-            if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
+            if (
+              depViewField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
+            ) {
               if (helper.isUndefined(depDimensions[alias])) {
                 depDimensions[alias] = {};
               }
@@ -137,7 +146,7 @@ export function makeDepMeasuresAndDimensions(item: {
       let join = model.joins.find(j => j.as === asName);
       let field = join.view.fields.find(vField => vField.name === fieldName);
 
-      if (field.fieldClass !== api.FieldClassEnum.Calculation) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation) {
         return;
       }
 
@@ -147,14 +156,16 @@ export function makeDepMeasuresAndDimensions(item: {
             vField => vField.name === depName
           );
 
-          if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
+          if (depViewField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
             if (helper.isUndefined(depMeasures[asName])) {
               depMeasures[asName] = {};
             }
             depMeasures[asName][depName] = 1;
           }
 
-          if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
+          if (
+            depViewField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
+          ) {
             if (helper.isUndefined(depDimensions[asName])) {
               depDimensions[asName] = {};
             }

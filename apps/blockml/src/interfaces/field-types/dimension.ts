@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 
 export interface Dimension {
   hidden?: string; // boolean
@@ -13,10 +13,10 @@ export interface Dimension {
   sql?: string;
   sql_line_num?: number;
 
-  type?: api.FieldTypeEnum;
+  type?: apiToBlockml.FieldTypeEnum;
   type_line_num?: number;
 
-  result?: api.FieldResultEnum;
+  result?: apiToBlockml.FieldResultEnum;
   result_line_num?: number;
 
   unnest?: string;
@@ -45,7 +45,7 @@ export interface Dimension {
 
   name_line_num?: number;
 
-  fieldClass?: api.FieldClassEnum;
+  fieldClass?: apiToBlockml.FieldClassEnum;
 
   sqlReal?: string;
 

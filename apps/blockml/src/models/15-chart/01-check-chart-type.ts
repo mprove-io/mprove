@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -45,27 +45,27 @@ export function checkChartType<T extends types.dzType>(
 
       if (
         [
-          api.ChartTypeEnum.Area,
-          api.ChartTypeEnum.AreaNormalized,
-          api.ChartTypeEnum.AreaStacked,
-          api.ChartTypeEnum.BarHorizontal,
-          api.ChartTypeEnum.BarHorizontalGrouped,
-          api.ChartTypeEnum.BarHorizontalNormalized,
-          api.ChartTypeEnum.BarHorizontalStacked,
-          api.ChartTypeEnum.BarVertical,
-          api.ChartTypeEnum.BarVerticalGrouped,
-          api.ChartTypeEnum.BarVerticalNormalized,
-          api.ChartTypeEnum.BarVerticalStacked,
-          api.ChartTypeEnum.Gauge,
-          api.ChartTypeEnum.GaugeLinear,
-          api.ChartTypeEnum.HeatMap,
-          api.ChartTypeEnum.Line,
-          api.ChartTypeEnum.NumberCard,
-          api.ChartTypeEnum.Pie,
-          api.ChartTypeEnum.PieAdvanced,
-          api.ChartTypeEnum.PieGrid,
-          api.ChartTypeEnum.Table,
-          api.ChartTypeEnum.TreeMap
+          apiToBlockml.ChartTypeEnum.Area,
+          apiToBlockml.ChartTypeEnum.AreaNormalized,
+          apiToBlockml.ChartTypeEnum.AreaStacked,
+          apiToBlockml.ChartTypeEnum.BarHorizontal,
+          apiToBlockml.ChartTypeEnum.BarHorizontalGrouped,
+          apiToBlockml.ChartTypeEnum.BarHorizontalNormalized,
+          apiToBlockml.ChartTypeEnum.BarHorizontalStacked,
+          apiToBlockml.ChartTypeEnum.BarVertical,
+          apiToBlockml.ChartTypeEnum.BarVerticalGrouped,
+          apiToBlockml.ChartTypeEnum.BarVerticalNormalized,
+          apiToBlockml.ChartTypeEnum.BarVerticalStacked,
+          apiToBlockml.ChartTypeEnum.Gauge,
+          apiToBlockml.ChartTypeEnum.GaugeLinear,
+          apiToBlockml.ChartTypeEnum.HeatMap,
+          apiToBlockml.ChartTypeEnum.Line,
+          apiToBlockml.ChartTypeEnum.NumberCard,
+          apiToBlockml.ChartTypeEnum.Pie,
+          apiToBlockml.ChartTypeEnum.PieAdvanced,
+          apiToBlockml.ChartTypeEnum.PieGrid,
+          apiToBlockml.ChartTypeEnum.Table,
+          apiToBlockml.ChartTypeEnum.TreeMap
         ].indexOf(report.type) < 0
       ) {
         item.errors.push(

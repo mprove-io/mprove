@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -34,7 +35,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
     while (restart2) {
       restart2 = false;
 
-      let reg2 = api.MyRegex.CAPTURE_DOUBLE_REF_G(); // g works because of restart
+      let reg2 = common.MyRegex.CAPTURE_DOUBLE_REF_G(); // g works because of restart
       let r2;
 
       while ((r2 = reg2.exec(sqlAlwaysWhereCalcReal))) {
@@ -46,8 +47,9 @@ export function awcMakeDoubleDepsAfterSubstitutions(
         let depField = join.view.fields.find(f => f.name === depName);
 
         switch (true) {
-          case depField.fieldClass === api.FieldClassEnum.Calculation: {
-            sqlAlwaysWhereCalcReal = api.MyRegex.replaceAndConvert(
+          case depField.fieldClass ===
+            apiToBlockml.FieldClassEnum.Calculation: {
+            sqlAlwaysWhereCalcReal = common.MyRegex.replaceAndConvert(
               sqlAlwaysWhereCalcReal,
               depField.sqlReal,
               asName,
@@ -58,7 +60,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
             break;
           }
 
-          case depField.fieldClass === api.FieldClassEnum.Dimension: {
+          case depField.fieldClass === apiToBlockml.FieldClassEnum.Dimension: {
             if (
               helper.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
@@ -71,7 +73,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
             break;
           }
 
-          case depField.fieldClass === api.FieldClassEnum.Measure: {
+          case depField.fieldClass === apiToBlockml.FieldClassEnum.Measure: {
             if (
               helper.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]

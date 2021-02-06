@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -34,7 +35,7 @@ export function awcSubstituteSingleRefs(
     while (restartSingles) {
       restartSingles = false;
 
-      let reg = api.MyRegex.CAPTURE_SINGLE_REF_G(); // g works because of restart
+      let reg = common.MyRegex.CAPTURE_SINGLE_REF_G(); // g works because of restart
       let r;
 
       while ((r = reg.exec(sqlAlwaysWhereCalcReal))) {
@@ -42,10 +43,11 @@ export function awcSubstituteSingleRefs(
         let referenceField = x.fields.find(f => f.name === fieldName);
 
         switch (true) {
-          case referenceField.fieldClass === api.FieldClassEnum.Calculation: {
+          case referenceField.fieldClass ===
+            apiToBlockml.FieldClassEnum.Calculation: {
             // referenceField.sqlReal
             // ${calc1}   >>>   (${dim2} + ${b.order_items_total} + ${mea1})
-            sqlAlwaysWhereCalcReal = api.MyRegex.replaceSingleRefs(
+            sqlAlwaysWhereCalcReal = common.MyRegex.replaceSingleRefs(
               sqlAlwaysWhereCalcReal,
               fieldName,
               referenceField.sqlReal
@@ -55,13 +57,15 @@ export function awcSubstituteSingleRefs(
             break;
           }
 
-          case referenceField.fieldClass === api.FieldClassEnum.Dimension: {
+          case referenceField.fieldClass ===
+            apiToBlockml.FieldClassEnum.Dimension: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
               x.sql_always_where_calc_line_num;
             break;
           }
 
-          case referenceField.fieldClass === api.FieldClassEnum.Measure: {
+          case referenceField.fieldClass ===
+            apiToBlockml.FieldClassEnum.Measure: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
               x.sql_always_where_calc_line_num;
             break;

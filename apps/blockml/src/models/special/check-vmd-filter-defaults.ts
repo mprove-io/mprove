@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -29,19 +30,19 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
     x.filters = {};
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== api.FieldClassEnum.Filter) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Filter) {
         return;
       }
 
       if (
-        x.fileExt === api.FileExtensionEnum.Dashboard &&
+        x.fileExt === common.FileExtensionEnum.Dashboard &&
         helper.isUndefined(field.default)
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.DASHBOARD_FILTER_MUST_HAVE_DEFAULT,
             message:
-              `${api.FileExtensionEnum.Dashboard} ${api.FieldClassEnum.Filter} must ` +
+              `${common.FileExtensionEnum.Dashboard} ${apiToBlockml.FieldClassEnum.Filter} must ` +
               `have "${enums.ParameterEnum.Default}" parameter`,
             lines: [
               {

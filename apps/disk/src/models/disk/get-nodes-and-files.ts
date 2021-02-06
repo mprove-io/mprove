@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 
@@ -118,22 +118,22 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         let ext: any = r ? r[1] : '';
 
         switch (ext) {
-          case apiToDisk.FileExtensionEnum.View:
+          case common.FileExtensionEnum.View:
             viewNodes.push(node);
             break;
-          case apiToDisk.FileExtensionEnum.Model:
+          case common.FileExtensionEnum.Model:
             modelNodes.push(node);
             break;
-          case apiToDisk.FileExtensionEnum.Dashboard:
+          case common.FileExtensionEnum.Dashboard:
             dashboardNodes.push(node);
             break;
-          case apiToDisk.FileExtensionEnum.Viz:
+          case common.FileExtensionEnum.Viz:
             vizNodes.push(node);
             break;
-          case apiToDisk.FileExtensionEnum.Udf:
+          case common.FileExtensionEnum.Udf:
             udfNodes.push(node);
             break;
-          case apiToDisk.FileExtensionEnum.Md:
+          case common.FileExtensionEnum.Md:
             mdNodes.push(node);
             break;
           default:

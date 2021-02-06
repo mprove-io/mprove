@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -31,7 +31,7 @@ export function makeViewAsDeps(
       let input = x.derived_table;
 
       // checking AS
-      let reg = api.MyRegex.CAPTURE_VIEW_REF_G();
+      let reg = common.MyRegex.CAPTURE_VIEW_REF_G();
       let r;
 
       while ((r = reg.exec(input))) {
@@ -79,7 +79,7 @@ export function makeViewAsDeps(
       }
 
       // checking doubles
-      let reg2 = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+      let reg2 = common.MyRegex.CAPTURE_DOUBLE_REF_G();
       let r2;
 
       while ((r2 = reg2.exec(input))) {

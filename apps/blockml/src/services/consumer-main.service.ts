@@ -1,7 +1,7 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { ProcessDashboardService } from '~blockml/controllers/process-dashboard/process-dashboard.service';
 import { ProcessQueryService } from '~blockml/controllers/process-query/process-query.service';
@@ -17,47 +17,47 @@ export class ConsumerMainService {
   ) {}
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Blockml.toString(),
-    routingKey: api.RabbitBlockmlRoutingEnum.ProcessDashboard.toString(),
-    queue: api.RabbitBlockmlRoutingEnum.ProcessDashboard.toString()
+    exchange: common.RabbitExchangesEnum.Blockml.toString(),
+    routingKey: common.RabbitBlockmlRoutingEnum.ProcessDashboard.toString(),
+    queue: common.RabbitBlockmlRoutingEnum.ProcessDashboard.toString()
   })
   async processDashboard(request: any, context: any) {
     try {
       let payload = await this.processDashboardService.process(request);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Blockml.toString(),
-    routingKey: api.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-    queue: api.RabbitBlockmlRoutingEnum.ProcessQuery.toString()
+    exchange: common.RabbitExchangesEnum.Blockml.toString(),
+    routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+    queue: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString()
   })
   async processQuery(request: any, context: any) {
     try {
       let payload = await this.queryService.process(request);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.Blockml.toString(),
-    routingKey: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-    queue: api.RabbitBlockmlRoutingEnum.RebuildStruct.toString()
+    exchange: common.RabbitExchangesEnum.Blockml.toString(),
+    routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+    queue: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString()
   })
   async rebuildStruct(request: any, context: any) {
     try {
       let payload = await this.structService.rebuild(request);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 }

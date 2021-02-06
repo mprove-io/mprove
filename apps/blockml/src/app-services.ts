@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from './barrels/api';
+import { common } from './barrels/common';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { GenSqlService } from './controllers/gen-sql/gen-sql.service';
@@ -79,7 +79,7 @@ export const appServices = [
     ) => {
       let isWorker = cs.get<interfaces.Config['isWorker']>('isWorker');
 
-      return isWorker === api.BoolEnum.TRUE
+      return isWorker === common.BoolEnum.TRUE
         ? new ConsumerWorkerService(cs, genSqlService)
         : {};
     },

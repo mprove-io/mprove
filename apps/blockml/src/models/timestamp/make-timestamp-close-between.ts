@@ -1,7 +1,7 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimestampCloseBetween(item: {
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
   year: string;
   month: string;
   day: string;
@@ -20,7 +20,7 @@ export function makeTimestampCloseBetween(item: {
   let sql;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql = minute
         ? `TIMESTAMP_ADD(${open}, INTERVAL 1 MINUTE)`
         : hour
@@ -35,7 +35,7 @@ export function makeTimestampCloseBetween(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = minute
         ? `${open} + INTERVAL '1 minute'`
         : hour

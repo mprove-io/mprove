@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 
@@ -13,7 +13,7 @@ export function log(
   content: any
 ) {
   let logIO = cs.get<interfaces.Config['logIO']>('logIO');
-  if (logIO === api.BoolEnum.FALSE) {
+  if (logIO === common.BoolEnum.FALSE) {
     return;
   }
 

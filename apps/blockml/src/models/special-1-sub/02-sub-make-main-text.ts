@@ -1,5 +1,6 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barMeasure } from '~blockml/barrels/bar-measure';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -48,33 +49,33 @@ export function subMakeMainText(item: {
 
     let sqlSelect;
 
-    if (field.fieldClass === api.FieldClassEnum.Dimension) {
+    if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
       i++;
 
       sqlSelect = fieldName;
 
       groupMainBy.push(`${i}`); // toString
-    } else if (field.fieldClass === api.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
       i++;
 
       // remove ${ } on singles (no doubles exists in _real of view measures)
-      sqlFinal = api.MyRegex.removeBracketsOnSingles(field.sqlReal);
+      sqlFinal = common.MyRegex.removeBracketsOnSingles(field.sqlReal);
 
       if (
         [
-          api.FieldTypeEnum.SumByKey,
-          api.FieldTypeEnum.AverageByKey,
-          api.FieldTypeEnum.MedianByKey,
-          api.FieldTypeEnum.PercentileByKey
+          apiToBlockml.FieldTypeEnum.SumByKey,
+          apiToBlockml.FieldTypeEnum.AverageByKey,
+          apiToBlockml.FieldTypeEnum.MedianByKey,
+          apiToBlockml.FieldTypeEnum.PercentileByKey
         ].indexOf(field.type) > -1
       ) {
         // remove ${ } on singles (no doubles exists in _real of view measures)
-        sqlKeyFinal = api.MyRegex.removeBracketsOnSingles(field.sqlKeyReal);
+        sqlKeyFinal = common.MyRegex.removeBracketsOnSingles(field.sqlKeyReal);
       }
 
       switch (true) {
-        case field.type === api.FieldTypeEnum.SumByKey: {
-          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+        case field.type === apiToBlockml.FieldTypeEnum.SumByKey: {
+          if (connection.type === common.ConnectionTypeEnum.BigQuery) {
             extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
@@ -87,8 +88,8 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.AverageByKey: {
-          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+        case field.type === apiToBlockml.FieldTypeEnum.AverageByKey: {
+          if (connection.type === common.ConnectionTypeEnum.BigQuery) {
             extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
@@ -101,8 +102,8 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.MedianByKey: {
-          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+        case field.type === apiToBlockml.FieldTypeEnum.MedianByKey: {
+          if (connection.type === common.ConnectionTypeEnum.BigQuery) {
             extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
           }
 
@@ -115,8 +116,8 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.PercentileByKey: {
-          if (connection.type === api.ConnectionTypeEnum.BigQuery) {
+        case field.type === apiToBlockml.FieldTypeEnum.PercentileByKey: {
+          if (connection.type === common.ConnectionTypeEnum.BigQuery) {
             extraUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
           }
 
@@ -129,7 +130,7 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.Min: {
+        case field.type === apiToBlockml.FieldTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
             connection: connection
@@ -138,7 +139,7 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.Max: {
+        case field.type === apiToBlockml.FieldTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
             connection: connection
@@ -147,7 +148,7 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.CountDistinct: {
+        case field.type === apiToBlockml.FieldTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
             connection: connection
@@ -156,7 +157,7 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.List: {
+        case field.type === apiToBlockml.FieldTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
             connection: connection
@@ -165,19 +166,21 @@ export function subMakeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.Custom: {
+        case field.type === apiToBlockml.FieldTypeEnum.Custom: {
           sqlSelect = sqlFinal;
           break;
         }
       }
-    } else if (field.fieldClass === api.FieldClassEnum.Calculation) {
-      sqlFinal = api.MyRegex.removeBracketsOnCalculationSingles(field.sqlReal);
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Calculation) {
+      sqlFinal = common.MyRegex.removeBracketsOnCalculationSingles(
+        field.sqlReal
+      );
       // no need to substitute doubles (they not exists in view fields)
 
       sqlSelect = sqlFinal;
     }
 
-    if (field.fieldClass !== api.FieldClassEnum.Calculation) {
+    if (field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation) {
       mainText.push(`  ${sqlSelect} as ${fieldName},`);
     }
 

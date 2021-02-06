@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,7 +26,7 @@ export function makeFieldsDeps<T extends types.vmType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       newEntities.push(x);
       return;
     }
@@ -35,7 +36,7 @@ export function makeFieldsDeps<T extends types.vmType>(
     x.fields.forEach(field => {
       x.fieldsDeps[field.name] = {};
       if (
-        field.fieldClass !== api.FieldClassEnum.Filter &&
+        field.fieldClass !== apiToBlockml.FieldClassEnum.Filter &&
         helper.isDefined(field.sql)
       ) {
         if (
@@ -49,7 +50,7 @@ export function makeFieldsDeps<T extends types.vmType>(
           return;
         }
 
-        let reg = api.MyRegex.CAPTURE_SINGLE_REF_G();
+        let reg = common.MyRegex.CAPTURE_SINGLE_REF_G();
         let r;
 
         while ((r = reg.exec(field.sql))) {
@@ -60,7 +61,7 @@ export function makeFieldsDeps<T extends types.vmType>(
       }
 
       if (
-        field.fieldClass === api.FieldClassEnum.Measure &&
+        field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
         helper.isDefined(field.sql_key)
       ) {
         if (
@@ -74,7 +75,7 @@ export function makeFieldsDeps<T extends types.vmType>(
           return;
         }
 
-        let reg2 = api.MyRegex.CAPTURE_SINGLE_REF_G();
+        let reg2 = common.MyRegex.CAPTURE_SINGLE_REF_G();
         let r2;
 
         while ((r2 = reg2.exec(field.sql_key))) {
@@ -109,7 +110,7 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
   value: string;
   lineNum: number;
 }): boolean {
-  let reg = api.MyRegex.CAPTURE_REFS_G();
+  let reg = common.MyRegex.CAPTURE_REFS_G();
   let r;
 
   let captures: string[] = [];
@@ -119,11 +120,11 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
   }
 
   switch (item.fileVM.fileExt) {
-    case api.FileExtensionEnum.View: {
+    case common.FileExtensionEnum.View: {
       let viewWrongChars: string[] = [];
 
       captures.forEach(cap => {
-        let reg2 = api.MyRegex.CAPTURE_NOT_ALLOWED_VIEW_REF_CHARS_G();
+        let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_VIEW_REF_CHARS_G();
         let r2;
 
         while ((r2 = reg2.exec(cap))) {
@@ -154,11 +155,11 @@ export function checkCharsInFieldRefs<T extends types.vmType>(item: {
       break;
     }
 
-    case api.FileExtensionEnum.Model: {
+    case common.FileExtensionEnum.Model: {
       let modelWrongChars: string[] = [];
 
       captures.forEach(cap => {
-        let reg3 = api.MyRegex.CAPTURE_NOT_ALLOWED_MODEL_REF_CHARS_G();
+        let reg3 = common.MyRegex.CAPTURE_NOT_ALLOWED_MODEL_REF_CHARS_G();
         let r3;
 
         while ((r3 = reg3.exec(cap))) {

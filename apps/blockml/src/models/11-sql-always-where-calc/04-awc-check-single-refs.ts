@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -29,7 +30,7 @@ export function awcCheckSingleRefs(
       return;
     }
 
-    let reg = api.MyRegex.CAPTURE_SINGLE_REF_G();
+    let reg = common.MyRegex.CAPTURE_SINGLE_REF_G();
     let r;
 
     let references: string[] = [];
@@ -59,7 +60,7 @@ export function awcCheckSingleRefs(
         return;
       }
 
-      if (referenceField.fieldClass === api.FieldClassEnum.Filter) {
+      if (referenceField.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_MODEL_FILTER,

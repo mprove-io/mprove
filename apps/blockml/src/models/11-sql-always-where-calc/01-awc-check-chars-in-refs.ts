@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -29,7 +29,7 @@ export function awcCheckCharsInRefs(
       return;
     }
 
-    let reg = api.MyRegex.CAPTURE_REFS_G();
+    let reg = common.MyRegex.CAPTURE_REFS_G();
     let r;
     let captures: string[] = [];
 
@@ -40,7 +40,7 @@ export function awcCheckCharsInRefs(
     let wrongChars: string[] = [];
 
     captures.forEach(cap => {
-      let reg2 = api.MyRegex.CAPTURE_NOT_ALLOWED_MODEL_REF_CHARS_G();
+      let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_MODEL_REF_CHARS_G();
       let r2;
 
       while ((r2 = reg2.exec(cap))) {
@@ -58,7 +58,7 @@ export function awcCheckCharsInRefs(
           title: enums.ErTitleEnum.WRONG_CHARS_IN_SQL_ALWAYS_WHERE_CALC_REFS,
           message:
             `characters "${wrongCharsString}" can not be used ` +
-            `inside \$\{\} of ${api.FileExtensionEnum.Model}`,
+            `inside \$\{\} of ${common.FileExtensionEnum.Model}`,
           lines: [
             {
               line: x.sql_always_where_calc_line_num,

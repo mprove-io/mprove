@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,14 +25,14 @@ export function jswSubstituteSingleRefs(
       .forEach(join => {
         let sqlWhereReal = join.sql_where;
 
-        let reg = api.MyRegex.CAPTURE_SINGLE_REF();
+        let reg = common.MyRegex.CAPTURE_SINGLE_REF();
         let r;
 
         while ((r = reg.exec(sqlWhereReal))) {
           let reference = r[1];
           let referenceField = x.fields.find(f => f.name === reference);
 
-          sqlWhereReal = api.MyRegex.replaceSingleRefs(
+          sqlWhereReal = common.MyRegex.replaceSingleRefs(
             sqlWhereReal,
             reference,
             referenceField.sql

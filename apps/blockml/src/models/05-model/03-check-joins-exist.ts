@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -28,7 +28,7 @@ export function checkJoinsExist(
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.MISSING_JOINS,
-          message: `${api.FileExtensionEnum.Model} must have "${enums.ParameterEnum.Joins}" parameter`,
+          message: `${common.FileExtensionEnum.Model} must have "${enums.ParameterEnum.Joins}" parameter`,
           lines: [
             {
               line: x.model_line_num,

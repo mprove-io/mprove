@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -32,7 +33,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
       }
 
       Object.keys(report.options)
-        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
             [
@@ -143,7 +144,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             ].indexOf(parameter) > -1 &&
             !report.options[parameter]
               .toString()
-              .match(api.MyRegex.TRUE_FALSE())
+              .match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
@@ -166,21 +167,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.Interpolation &&
             [
-              api.ChartInterpolationEnum.Basis,
-              api.ChartInterpolationEnum.BasisClosed,
-              api.ChartInterpolationEnum.Bundle,
-              api.ChartInterpolationEnum.Cardinal,
-              api.ChartInterpolationEnum.CardinalClosed,
-              api.ChartInterpolationEnum.CatmullRomClosed,
-              api.ChartInterpolationEnum.CatmullRom,
-              api.ChartInterpolationEnum.Linear,
-              api.ChartInterpolationEnum.LinearClosed,
-              api.ChartInterpolationEnum.MonotoneX,
-              api.ChartInterpolationEnum.MonotoneY,
-              api.ChartInterpolationEnum.Natural,
-              api.ChartInterpolationEnum.Step,
-              api.ChartInterpolationEnum.StepAfter,
-              api.ChartInterpolationEnum.StepBefore
+              apiToBlockml.ChartInterpolationEnum.Basis,
+              apiToBlockml.ChartInterpolationEnum.BasisClosed,
+              apiToBlockml.ChartInterpolationEnum.Bundle,
+              apiToBlockml.ChartInterpolationEnum.Cardinal,
+              apiToBlockml.ChartInterpolationEnum.CardinalClosed,
+              apiToBlockml.ChartInterpolationEnum.CatmullRomClosed,
+              apiToBlockml.ChartInterpolationEnum.CatmullRom,
+              apiToBlockml.ChartInterpolationEnum.Linear,
+              apiToBlockml.ChartInterpolationEnum.LinearClosed,
+              apiToBlockml.ChartInterpolationEnum.MonotoneX,
+              apiToBlockml.ChartInterpolationEnum.MonotoneY,
+              apiToBlockml.ChartInterpolationEnum.Natural,
+              apiToBlockml.ChartInterpolationEnum.Step,
+              apiToBlockml.ChartInterpolationEnum.StepAfter,
+              apiToBlockml.ChartInterpolationEnum.StepBefore
             ].indexOf(report.options[parameter]) < 0
           ) {
             item.errors.push(
@@ -204,21 +205,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.ColorScheme &&
             [
-              api.ChartColorSchemeEnum.Air,
-              api.ChartColorSchemeEnum.Aqua,
-              api.ChartColorSchemeEnum.Cool,
-              api.ChartColorSchemeEnum.Fire,
-              api.ChartColorSchemeEnum.Flame,
-              api.ChartColorSchemeEnum.Forest,
-              api.ChartColorSchemeEnum.Horizon,
-              api.ChartColorSchemeEnum.Natural,
-              api.ChartColorSchemeEnum.Neons,
-              api.ChartColorSchemeEnum.Night,
-              api.ChartColorSchemeEnum.NightLights,
-              api.ChartColorSchemeEnum.Ocean,
-              api.ChartColorSchemeEnum.Picnic,
-              api.ChartColorSchemeEnum.Solar,
-              api.ChartColorSchemeEnum.Vivid
+              apiToBlockml.ChartColorSchemeEnum.Air,
+              apiToBlockml.ChartColorSchemeEnum.Aqua,
+              apiToBlockml.ChartColorSchemeEnum.Cool,
+              apiToBlockml.ChartColorSchemeEnum.Fire,
+              apiToBlockml.ChartColorSchemeEnum.Flame,
+              apiToBlockml.ChartColorSchemeEnum.Forest,
+              apiToBlockml.ChartColorSchemeEnum.Horizon,
+              apiToBlockml.ChartColorSchemeEnum.Natural,
+              apiToBlockml.ChartColorSchemeEnum.Neons,
+              apiToBlockml.ChartColorSchemeEnum.Night,
+              apiToBlockml.ChartColorSchemeEnum.NightLights,
+              apiToBlockml.ChartColorSchemeEnum.Ocean,
+              apiToBlockml.ChartColorSchemeEnum.Picnic,
+              apiToBlockml.ChartColorSchemeEnum.Solar,
+              apiToBlockml.ChartColorSchemeEnum.Vivid
             ].indexOf(report.options[parameter]) < 0
           ) {
             item.errors.push(
@@ -242,8 +243,8 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.SchemeType &&
             [
-              api.ChartSchemeTypeEnum.Linear,
-              api.ChartSchemeTypeEnum.Ordinal
+              apiToBlockml.ChartSchemeTypeEnum.Linear,
+              apiToBlockml.ChartSchemeTypeEnum.Ordinal
             ].indexOf(report.options[parameter]) < 0
           ) {
             item.errors.push(
@@ -277,7 +278,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.Max.toString()
             ].indexOf(parameter) > -1 &&
             !report.options[parameter].match(
-              api.MyRegex.CAPTURE_DIGITS_START_TO_END_G()
+              common.MyRegex.CAPTURE_DIGITS_START_TO_END_G()
             )
           ) {
             item.errors.push(
@@ -306,7 +307,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.RangeFillOpacity.toString()
             ].indexOf(parameter) > -1 &&
             !report.options[parameter].match(
-              api.MyRegex.CAPTURE_FLOAT_START_TO_END_G()
+              common.MyRegex.CAPTURE_FLOAT_START_TO_END_G()
             )
           ) {
             item.errors.push(
@@ -336,7 +337,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.YScaleMax.toString()
             ].indexOf(parameter) > -1 &&
             !report.options[parameter].match(
-              api.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G()
+              common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G()
             )
           ) {
             item.errors.push(
@@ -365,8 +366,8 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.TextColor.toString(),
               enums.ParameterEnum.EmptyColor.toString()
             ].indexOf(parameter) > -1 &&
-            !report.options[parameter].match(api.MyRegex.CAPTURE_RGB_G()) &&
-            !report.options[parameter].match(api.MyRegex.CAPTURE_RGBA_G())
+            !report.options[parameter].match(common.MyRegex.CAPTURE_RGB_G()) &&
+            !report.options[parameter].match(common.MyRegex.CAPTURE_RGBA_G())
           ) {
             item.errors.push(
               new BmError({

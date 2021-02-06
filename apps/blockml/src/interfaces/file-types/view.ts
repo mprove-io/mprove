@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { FieldAny } from '~blockml/interfaces/field/field-any';
 import { FileBasic } from '~blockml/interfaces/file/file-basic';
 import { FilterBricksDictionary } from '~blockml/interfaces/filter-bricks-dictionary';
@@ -31,7 +31,7 @@ export interface View extends FileBasic {
 
   //
 
-  connection?: api.ProjectConnection;
+  connection?: common.ProjectConnection;
 
   fieldsDeps?: {
     [fieldName: string]: {

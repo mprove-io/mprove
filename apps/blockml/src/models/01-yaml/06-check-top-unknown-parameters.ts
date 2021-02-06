@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -26,7 +26,7 @@ export function checkTopUnknownParameters(
     let errorsOnStart = item.errors.length;
 
     Object.keys(file)
-      .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+      .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
           [
@@ -39,7 +39,7 @@ export function checkTopUnknownParameters(
         }
 
         switch (file.ext) {
-          case api.FileExtensionEnum.Udf: {
+          case common.FileExtensionEnum.Udf: {
             if (
               [
                 enums.ParameterEnum.Udf.toString(),
@@ -51,7 +51,7 @@ export function checkTopUnknownParameters(
                   title: enums.ErTitleEnum.UNKNOWN_UDF_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${api.FileExtensionEnum.Udf} file`,
+                    `${common.FileExtensionEnum.Udf} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -66,7 +66,7 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case api.FileExtensionEnum.View: {
+          case common.FileExtensionEnum.View: {
             if (
               [
                 enums.ParameterEnum.View.toString(),
@@ -84,7 +84,7 @@ export function checkTopUnknownParameters(
                   title: enums.ErTitleEnum.UNKNOWN_VIEW_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${api.FileExtensionEnum.View} file`,
+                    `${common.FileExtensionEnum.View} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -99,7 +99,7 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case api.FileExtensionEnum.Model: {
+          case common.FileExtensionEnum.Model: {
             if (
               [
                 enums.ParameterEnum.Model.toString(),
@@ -123,7 +123,7 @@ export function checkTopUnknownParameters(
                   title: enums.ErTitleEnum.UNKNOWN_MODEL_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${api.FileExtensionEnum.Model} file`,
+                    `${common.FileExtensionEnum.Model} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -138,7 +138,7 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case api.FileExtensionEnum.Dashboard: {
+          case common.FileExtensionEnum.Dashboard: {
             if (
               [
                 enums.ParameterEnum.Dashboard.toString(),
@@ -157,7 +157,7 @@ export function checkTopUnknownParameters(
                   title: enums.ErTitleEnum.UNKNOWN_DASHBOARD_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${api.FileExtensionEnum.Dashboard} file`,
+                    `${common.FileExtensionEnum.Dashboard} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],
@@ -172,7 +172,7 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case api.FileExtensionEnum.Viz: {
+          case common.FileExtensionEnum.Viz: {
             if (
               [
                 enums.ParameterEnum.Viz.toString(),
@@ -188,7 +188,7 @@ export function checkTopUnknownParameters(
                   title: enums.ErTitleEnum.UNKNOWN_VIZ_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
-                    `${api.FileExtensionEnum.Viz} file`,
+                    `${common.FileExtensionEnum.Viz} file`,
                   lines: [
                     {
                       line: file[parameter + constants.LINE_NUM],

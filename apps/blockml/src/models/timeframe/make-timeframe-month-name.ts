@@ -1,15 +1,15 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimeframeMonthName(item: {
   sqlTimestamp: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sqlTimestamp, connection } = item;
 
   let sql: string;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql = `CASE
       WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 1 THEN 'January'
       WHEN EXTRACT(MONTH FROM ${sqlTimestamp}) = 2 THEN 'February'
@@ -27,7 +27,7 @@ export function makeTimeframeMonthName(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = `TO_CHAR(${sqlTimestamp}, 'FMMonth')`;
       break;
     }

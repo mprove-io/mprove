@@ -1,10 +1,10 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 
 export function makeMeasureAverageByKey(item: {
   sqlKeyFinal: string;
   sqlFinal: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { connection, sqlKeyFinal, sqlFinal } = item;
 
@@ -13,7 +13,7 @@ export function makeMeasureAverageByKey(item: {
   let sqlSelect;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       numerator =
         `${constants.UDF_MPROVE_ARRAY_SUM}(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(` +
         sqlKeyFinal +
@@ -30,7 +30,7 @@ export function makeMeasureAverageByKey(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       let val =
         'CAST(FLOOR(COALESCE(' +
         sqlFinal +

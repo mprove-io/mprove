@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -31,8 +31,8 @@ export function splitFiles(
     let filePath = file.path;
 
     switch (file.ext) {
-      case api.FileExtensionEnum.Udf: {
-        if (file.name === file.udf + api.FileExtensionEnum.Udf) {
+      case common.FileExtensionEnum.Udf: {
+        if (file.name === file.udf + common.FileExtensionEnum.Udf) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -63,8 +63,8 @@ export function splitFiles(
         break;
       }
 
-      case api.FileExtensionEnum.View: {
-        if (file.name === file.view + api.FileExtensionEnum.View) {
+      case common.FileExtensionEnum.View: {
+        if (file.name === file.view + common.FileExtensionEnum.View) {
           let label: string = file.label ? file.label : file.view;
           let labelLineNum: number = file.label_line_num
             ? file.label_line_num
@@ -102,8 +102,8 @@ export function splitFiles(
         break;
       }
 
-      case api.FileExtensionEnum.Model: {
-        if (file.name === file.model + api.FileExtensionEnum.Model) {
+      case common.FileExtensionEnum.Model: {
+        if (file.name === file.model + common.FileExtensionEnum.Model) {
           let label: string = file.label ? file.label : file.model;
           let labelLineNum: number = file.label_line_num
             ? file.label_line_num
@@ -141,8 +141,8 @@ export function splitFiles(
         break;
       }
 
-      case api.FileExtensionEnum.Dashboard: {
-        if (file.name === file.dashboard + api.FileExtensionEnum.Dashboard) {
+      case common.FileExtensionEnum.Dashboard: {
+        if (file.name === file.dashboard + common.FileExtensionEnum.Dashboard) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -173,8 +173,8 @@ export function splitFiles(
         break;
       }
 
-      case api.FileExtensionEnum.Viz: {
-        if (file.name === file.viz + api.FileExtensionEnum.Viz) {
+      case common.FileExtensionEnum.Viz: {
+        if (file.name === file.viz + common.FileExtensionEnum.Viz) {
           delete file.ext;
           delete file.name;
           delete file.path;

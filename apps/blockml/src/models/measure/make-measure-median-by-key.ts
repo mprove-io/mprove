@@ -1,10 +1,10 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 
 export function makeMeasureMedianByKey(item: {
   sqlKeyFinal: string;
   sqlFinal: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { connection, sqlKeyFinal, sqlFinal } = item;
 

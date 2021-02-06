@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -25,13 +25,13 @@ export function checkSupportUdfs(
   item.filesAny.forEach(file => {
     if (
       [
-        api.FileExtensionEnum.View.toString(),
-        api.FileExtensionEnum.Model.toString()
+        common.FileExtensionEnum.View.toString(),
+        common.FileExtensionEnum.Model.toString()
       ].indexOf(file.ext) > -1 &&
-      file.connection.type !== api.ConnectionTypeEnum.BigQuery
+      file.connection.type !== common.ConnectionTypeEnum.BigQuery
     ) {
       let udfsParameter = Object.keys(file)
-        .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .find(p => p === enums.ParameterEnum.Udfs.toString());
 
       if (helper.isDefined(udfsParameter)) {

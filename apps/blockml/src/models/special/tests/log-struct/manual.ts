@@ -1,5 +1,5 @@
 import * as fse from 'fs-extra';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { prepareTest } from '~blockml/functions/prepare-test';
@@ -18,9 +18,9 @@ async function run() {
     toDir
   } = await prepareTest(caller, func, testId);
 
-  let connection: api.ProjectConnection = {
+  let connection: common.ProjectConnection = {
     name: 'c1',
-    type: api.ConnectionTypeEnum.PostgreSQL
+    type: common.ConnectionTypeEnum.PostgreSQL
   };
 
   await structService.rebuildStruct({
@@ -28,7 +28,7 @@ async function run() {
     dir: dataDir,
     structId: structId,
     connections: [connection],
-    weekStart: api.ProjectWeekStartEnum.Monday
+    weekStart: common.ProjectWeekStartEnum.Monday
   });
 
   if (helper.isDefined(toDir)) {

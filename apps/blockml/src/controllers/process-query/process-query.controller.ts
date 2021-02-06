@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { ProcessQueryService } from './process-query.service';
 
@@ -11,14 +12,14 @@ export class ProcessQueryController {
     private processQueryService: ProcessQueryService
   ) {}
 
-  @Post(api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery)
+  @Post(apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery)
   async processQuery(@Body() body) {
     try {
       let payload = await this.processQueryService.process(body);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: body });
+      return common.makeOkResponse({ payload, cs: this.cs, req: body });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
   }
 }

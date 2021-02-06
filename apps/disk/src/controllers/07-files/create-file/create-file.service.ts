@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { git } from '~disk/barrels/git';
@@ -167,22 +167,22 @@ function getContentFromFileName(item: { fileName: string }) {
   let ext: any = rExt ? rExt[1] : '';
 
   switch (ext) {
-    case apiToDisk.FileExtensionEnum.View:
+    case common.FileExtensionEnum.View:
       content = `view: ${part}`;
       break;
-    case apiToDisk.FileExtensionEnum.Model:
+    case common.FileExtensionEnum.Model:
       content = `model: ${part}`;
       break;
-    case apiToDisk.FileExtensionEnum.Dashboard:
+    case common.FileExtensionEnum.Dashboard:
       content = `dashboard: ${part}`;
       break;
-    case apiToDisk.FileExtensionEnum.Viz:
+    case common.FileExtensionEnum.Viz:
       content = `viz: ${part}`;
       break;
-    case apiToDisk.FileExtensionEnum.Udf:
+    case common.FileExtensionEnum.Udf:
       content = `udf: ${part}`;
       break;
-    case apiToDisk.FileExtensionEnum.Md:
+    case common.FileExtensionEnum.Md:
       content = '';
       break;
     default:

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -72,7 +72,7 @@ export function sawCheckDoubleDeps(
           );
 
           return;
-        } else if (depField.fieldClass === api.FieldClassEnum.Filter) {
+        } else if (depField.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_FILTER,
@@ -91,7 +91,9 @@ export function sawCheckDoubleDeps(
           );
 
           return;
-        } else if (depField.fieldClass === api.FieldClassEnum.Measure) {
+        } else if (
+          depField.fieldClass === apiToBlockml.FieldClassEnum.Measure
+        ) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MEASURE,
@@ -110,7 +112,9 @@ export function sawCheckDoubleDeps(
           );
 
           return;
-        } else if (depField.fieldClass === api.FieldClassEnum.Calculation) {
+        } else if (
+          depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
+        ) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_CALCULATION,

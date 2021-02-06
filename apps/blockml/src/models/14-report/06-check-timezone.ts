@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -23,7 +23,7 @@ export function checkTimezone<T extends types.dzType>(
 
   let timezonesHash: { [tzValue: string]: number } = {};
 
-  api.timezones.forEach(group => {
+  common.timezones.forEach(group => {
     group.zones.forEach(tz => {
       timezonesHash[tz.value] = 1;
     });

@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barYaml } from '~blockml/barrels/bar-yaml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
@@ -8,10 +9,10 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildYaml(
   item: {
     errors: BmError[];
-    files: api.File[];
+    files: apiToBlockml.File[];
     structId: string;
-    weekStart: api.ProjectWeekStartEnum;
-    connections: api.ProjectConnection[];
+    weekStart: common.ProjectWeekStartEnum;
+    connections: common.ProjectConnection[];
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>

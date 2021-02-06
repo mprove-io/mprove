@@ -1,6 +1,6 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { prepareTest } from '~blockml/functions/prepare-test';
@@ -29,7 +29,7 @@ test('1', async t => {
       dir: dataDir,
       structId: structId,
       connections: [],
-      weekStart: api.ProjectWeekStartEnum.Monday
+      weekStart: common.ProjectWeekStartEnum.Monday
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
@@ -38,7 +38,7 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(errors.length, 2);

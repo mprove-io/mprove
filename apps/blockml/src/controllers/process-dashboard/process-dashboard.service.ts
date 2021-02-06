@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { barWrapper } from '~blockml/barrels/bar-wrapper';
+import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
@@ -17,17 +18,17 @@ export class ProcessDashboardService {
   async process(request: any) {
     if (
       request.info?.name !==
-      api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessDashboard
+      apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessDashboard
     ) {
-      throw new api.ServerError({
-        message: api.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
+      throw new common.ServerError({
+        message: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
       });
     }
 
-    let reqValid = await api.transformValid({
-      classType: api.ToBlockmlProcessDashboardRequest,
+    let reqValid = await common.transformValid({
+      classType: apiToBlockml.ToBlockmlProcessDashboardRequest,
       object: request,
-      errorMessage: api.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
+      errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -60,7 +61,7 @@ export class ProcessDashboardService {
       let filters: interfaces.FilterBricksDictionary = {};
 
       Object.keys(report.default_filters)
-        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(defaultFilter => {
           if (report.default_filters[defaultFilter].length > 0) {
             filters[defaultFilter] = report.default_filters[defaultFilter];
@@ -127,7 +128,7 @@ export class ProcessDashboardService {
       query.temp = true;
     });
 
-    let payload: api.ToBlockmlProcessDashboardResponsePayload = {
+    let payload: apiToBlockml.ToBlockmlProcessDashboardResponsePayload = {
       dashboard: newDashboard,
       mconfigs: dashMconfigs,
       queries: dashQueries

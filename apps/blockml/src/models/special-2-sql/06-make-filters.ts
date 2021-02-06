@@ -1,4 +1,5 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -71,7 +72,9 @@ export function makeFilters(item: {
   Object.keys(allFilters).forEach(element => {
     let filterBricks = allFilters[element];
 
-    let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
+    let r = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(
+      element
+    );
     let asName = r[1];
     let fieldName = r[2];
 
@@ -84,13 +87,13 @@ export function makeFilters(item: {
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName);
 
-    if (field.result === api.FieldResultEnum.Ts) {
-      if (field.fieldClass === api.FieldClassEnum.Filter) {
+    if (field.result === apiToBlockml.FieldResultEnum.Ts) {
+      if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
         sqlTimestampSelect = constants.MPROVE_FILTER;
       } else if (asName === constants.MF) {
         // remove ${ } on doubles (no singles exists in _real of model dimensions)
         // ${a.city} + ${b.country}   >>>   a.city + b.country
-        sqlTimestampSelect = api.MyRegex.removeBracketsOnDoubles(
+        sqlTimestampSelect = common.MyRegex.removeBracketsOnDoubles(
           field.sqlTimestampReal
         );
       } else {
@@ -105,13 +108,15 @@ export function makeFilters(item: {
 
     let proc: string;
 
-    if (field.fieldClass === api.FieldClassEnum.Measure) {
-      if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+    if (field.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
+      if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
         proc = `${asName}_${fieldName}`;
-      } else if (model.connection.type === api.ConnectionTypeEnum.PostgreSQL) {
+      } else if (
+        model.connection.type === common.ConnectionTypeEnum.PostgreSQL
+      ) {
         proc = processedFields[element];
       }
-    } else if (field.fieldClass === api.FieldClassEnum.Filter) {
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
       proc = constants.MPROVE_FILTER;
     } else {
       proc = processedFields[element];
@@ -250,13 +255,13 @@ export function makeFilters(item: {
       }
     }
 
-    if (field.fieldClass === api.FieldClassEnum.Calculation) {
+    if (field.fieldClass === apiToBlockml.FieldClassEnum.Calculation) {
       whereCalc[element] = conds;
-    } else if (field.fieldClass === api.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
       havingMain[element] = conds;
-    } else if (field.fieldClass === api.FieldClassEnum.Dimension) {
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
       whereMain[element] = conds;
-    } else if (field.fieldClass === api.FieldClassEnum.Filter) {
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
       filterFieldsConditions[element] = conds;
     }
   });

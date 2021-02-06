@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -37,13 +37,13 @@ export function checkListenFilters<T extends types.dzType>(
 
       if (
         helper.isDefined(report.listen_filters) &&
-        x.fileExt === api.FileExtensionEnum.Viz
+        x.fileExt === common.FileExtensionEnum.Viz
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.VIZ_REPORT_CAN_NOT_HAVE_LISTEN_FILTERS,
             message:
-              `${api.FileExtensionEnum.Viz} does not support ` +
+              `${common.FileExtensionEnum.Viz} does not support ` +
               `"${enums.ParameterEnum.ListenFilters}" parameter for reports`,
             lines: [
               {
@@ -63,7 +63,7 @@ export function checkListenFilters<T extends types.dzType>(
       let model = item.models.find(m => m.name === report.model);
 
       Object.keys(report.listen_filters)
-        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(filterName => {
           let dashboardField = (<interfaces.Dashboard>x).fields.find(
             f => f.name === filterName
@@ -75,7 +75,7 @@ export function checkListenFilters<T extends types.dzType>(
                 title:
                   enums.ErTitleEnum.REPORT_LISTENS_MISSING_DASHBOARD_FILTER,
                 message:
-                  `report listens ${api.FileExtensionEnum.Dashboard} filter "${filterName}" ` +
+                  `report listens ${common.FileExtensionEnum.Dashboard} filter "${filterName}" ` +
                   'that is missing or not valid',
                 lines: [
                   {
@@ -92,7 +92,7 @@ export function checkListenFilters<T extends types.dzType>(
           }
 
           report.listen_filters[filterName].split(',').forEach(part => {
-            let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(part);
 
             if (helper.isUndefined(r)) {

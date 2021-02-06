@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -26,7 +26,7 @@ export function checkCycles<T extends types.vmType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       newEntities.push(x);
       return;
     }

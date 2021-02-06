@@ -1,20 +1,20 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimeframeDayOfYear(item: {
   sqlTimestamp: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sqlTimestamp, connection } = item;
 
   let sql: string;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql = `EXTRACT(DAYOFYEAR FROM ${sqlTimestamp})`;
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = `EXTRACT(DOY FROM ${sqlTimestamp})`;
       break;
     }

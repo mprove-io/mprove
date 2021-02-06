@@ -1,18 +1,18 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimeframeWeekOfYear(item: {
   sqlTimestamp: string;
-  connection: api.ProjectConnection;
-  weekStart: api.ProjectWeekStartEnum;
+  connection: common.ProjectConnection;
+  weekStart: common.ProjectWeekStartEnum;
 }) {
   let { sqlTimestamp, connection, weekStart } = item;
 
   let sql: string;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql =
-        weekStart === api.ProjectWeekStartEnum.Sunday
+        weekStart === common.ProjectWeekStartEnum.Sunday
           ? `CAST(FORMAT_TIMESTAMP('%V', ${sqlTimestamp}) AS INT64)`
           : `CASE
 WHEN EXTRACT(DAYOFWEEK FROM TIMESTAMP_TRUNC(CAST(${sqlTimestamp} AS TIMESTAMP), YEAR)) = 1 THEN ` +
@@ -26,7 +26,7 @@ END`;
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = `EXTRACT(WEEK from ${sqlTimestamp})`;
       break;
     }

@@ -1,6 +1,6 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -16,9 +16,9 @@ test('1', async t => {
   let entDashboards: interfaces.Dashboard[];
 
   try {
-    let connection: api.ProjectConnection = {
+    let connection: common.ProjectConnection = {
       name: 'c1',
-      type: api.ConnectionTypeEnum.BigQuery
+      type: common.ConnectionTypeEnum.BigQuery
     };
 
     let {
@@ -35,7 +35,7 @@ test('1', async t => {
       dir: dataDir,
       structId: structId,
       connections: [connection],
-      weekStart: api.ProjectWeekStartEnum.Monday
+      weekStart: common.ProjectWeekStartEnum.Monday
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
@@ -44,7 +44,7 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   let sql = `#standardSQL
@@ -120,9 +120,9 @@ test('2', async t => {
   let entDashboards: interfaces.Dashboard[];
 
   try {
-    let connection: api.ProjectConnection = {
+    let connection: common.ProjectConnection = {
       name: 'c1',
-      type: api.ConnectionTypeEnum.PostgreSQL
+      type: common.ConnectionTypeEnum.PostgreSQL
     };
 
     let {
@@ -139,7 +139,7 @@ test('2', async t => {
       dir: dataDir,
       structId: structId,
       connections: [connection],
-      weekStart: api.ProjectWeekStartEnum.Monday
+      weekStart: common.ProjectWeekStartEnum.Monday
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
@@ -148,7 +148,7 @@ test('2', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   let sql = `WITH

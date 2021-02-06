@@ -1,6 +1,6 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,14 +25,14 @@ test('1', async t => {
       toDir
     } = await prepareTest(caller, func, testId);
 
-    let c1: api.ProjectConnection = {
+    let c1: common.ProjectConnection = {
       name: 'c1',
-      type: api.ConnectionTypeEnum.BigQuery
+      type: common.ConnectionTypeEnum.BigQuery
     };
 
-    let c2: api.ProjectConnection = {
+    let c2: common.ProjectConnection = {
       name: 'c2',
-      type: api.ConnectionTypeEnum.BigQuery
+      type: common.ConnectionTypeEnum.BigQuery
     };
 
     await structService.rebuildStruct({
@@ -40,7 +40,7 @@ test('1', async t => {
       dir: dataDir,
       structId: structId,
       connections: [c1, c2],
-      weekStart: api.ProjectWeekStartEnum.Monday
+      weekStart: common.ProjectWeekStartEnum.Monday
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
@@ -49,7 +49,7 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(errors.length, 2);

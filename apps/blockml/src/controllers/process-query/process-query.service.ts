@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
+import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { RabbitService } from '~blockml/services/rabbit.service';
@@ -16,17 +17,17 @@ export class ProcessQueryService {
   async process(request: any) {
     if (
       request.info?.name !==
-      api.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery
+      apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery
     ) {
-      throw new api.ServerError({
-        message: api.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
+      throw new common.ServerError({
+        message: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
       });
     }
 
-    let reqValid = await api.transformValid({
-      classType: api.ToBlockmlProcessQueryRequest,
+    let reqValid = await common.transformValid({
+      classType: apiToBlockml.ToBlockmlProcessQueryRequest,
       object: request,
-      errorMessage: api.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
+      errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -71,10 +72,10 @@ export class ProcessQueryService {
       sql: sql
     });
 
-    let query: api.Query = {
+    let query: apiToBlockml.Query = {
       queryId: queryId,
       sql: sql,
-      status: api.QueryStatusEnum.New,
+      status: apiToBlockml.QueryStatusEnum.New,
       lastRunBy: undefined,
       lastRunTs: 1,
       lastCancelTs: 1,
@@ -94,7 +95,7 @@ export class ProcessQueryService {
       fractions: filtersFractions[fieldId]
     }));
 
-    let payload: api.ToBlockmlProcessQueryResponsePayload = {
+    let payload: apiToBlockml.ToBlockmlProcessQueryResponsePayload = {
       mconfig: mconfig,
       query: query
     };

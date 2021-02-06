@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -56,9 +56,9 @@ export function checkJoinHideShowFields(
 
       if (helper.isDefined(join[enums.ParameterEnum.HideFields])) {
         join[enums.ParameterEnum.HideFields]
-          .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+          .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(asFieldName => {
-            let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(asFieldName);
 
             if (helper.isUndefined(r)) {
@@ -130,9 +130,9 @@ export function checkJoinHideShowFields(
 
       if (helper.isDefined(join[enums.ParameterEnum.ShowFields])) {
         join[enums.ParameterEnum.ShowFields]
-          .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+          .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(asFieldName => {
-            let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+            let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(asFieldName);
 
             if (helper.isUndefined(r)) {

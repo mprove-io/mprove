@@ -1,8 +1,8 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeMeasureMin(item: {
   sqlFinal: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { connection, sqlFinal } = item;
 

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -24,7 +24,7 @@ export function setImplicitLabel<T extends types.vmdType>(
     x.fields.forEach(field => {
       if (
         helper.isUndefined(field.label) &&
-        field.fieldClass !== api.FieldClassEnum.Time
+        field.fieldClass !== apiToBlockml.FieldClassEnum.Time
       ) {
         field.label = field.name;
         field.label_line_num = 0;

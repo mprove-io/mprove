@@ -1,31 +1,31 @@
 import { IsEnum, IsInt, IsString } from 'class-validator';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 
-export class Config extends api.Config {
+export class Config extends common.Config {
   @IsEnum(enums.BlockmlEnvEnum)
   blockmlEnv?: enums.BlockmlEnvEnum;
 
-  @IsEnum(api.BoolEnum)
-  logIO?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  logIO?: common.BoolEnum;
 
   @IsEnum(enums.FuncEnum)
   logFunc?: enums.FuncEnum;
 
-  @IsEnum(api.BoolEnum)
-  copyLogsToModels?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  copyLogsToModels?: common.BoolEnum;
 
   @IsString()
   logsPath?: string;
 
-  @IsEnum(api.BoolEnum)
-  isSingle?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  isSingle?: common.BoolEnum;
 
-  @IsEnum(api.BoolEnum)
-  isMain?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  isMain?: common.BoolEnum;
 
-  @IsEnum(api.BoolEnum)
-  isWorker?: api.BoolEnum;
+  @IsEnum(common.BoolEnum)
+  isWorker?: common.BoolEnum;
 
   @IsInt()
   concurrencyLimit?: number;

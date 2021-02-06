@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -32,7 +33,7 @@ export function checkChartTileParameters<T extends types.dzType>(
       }
 
       Object.keys(report.tile)
-        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
             [
@@ -99,18 +100,18 @@ export function checkChartTileParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.TileWidth &&
             [
-              api.ChartTileWidthEnum._1,
-              api.ChartTileWidthEnum._2,
-              api.ChartTileWidthEnum._3,
-              api.ChartTileWidthEnum._4,
-              api.ChartTileWidthEnum._5,
-              api.ChartTileWidthEnum._6,
-              api.ChartTileWidthEnum._7,
-              api.ChartTileWidthEnum._8,
-              api.ChartTileWidthEnum._9,
-              api.ChartTileWidthEnum._10,
-              api.ChartTileWidthEnum._11,
-              api.ChartTileWidthEnum._12
+              apiToBlockml.ChartTileWidthEnum._1,
+              apiToBlockml.ChartTileWidthEnum._2,
+              apiToBlockml.ChartTileWidthEnum._3,
+              apiToBlockml.ChartTileWidthEnum._4,
+              apiToBlockml.ChartTileWidthEnum._5,
+              apiToBlockml.ChartTileWidthEnum._6,
+              apiToBlockml.ChartTileWidthEnum._7,
+              apiToBlockml.ChartTileWidthEnum._8,
+              apiToBlockml.ChartTileWidthEnum._9,
+              apiToBlockml.ChartTileWidthEnum._10,
+              apiToBlockml.ChartTileWidthEnum._11,
+              apiToBlockml.ChartTileWidthEnum._12
             ].indexOf(report.tile[parameter]) < 0
           ) {
             item.errors.push(
@@ -134,23 +135,23 @@ export function checkChartTileParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.TileHeight &&
             [
-              api.ChartTileHeightEnum._300,
-              api.ChartTileHeightEnum._400,
-              api.ChartTileHeightEnum._500,
-              api.ChartTileHeightEnum._600,
-              api.ChartTileHeightEnum._700,
-              api.ChartTileHeightEnum._800,
-              api.ChartTileHeightEnum._900,
-              api.ChartTileHeightEnum._1000,
-              api.ChartTileHeightEnum._1100,
-              api.ChartTileHeightEnum._1200,
-              api.ChartTileHeightEnum._1300,
-              api.ChartTileHeightEnum._1400,
-              api.ChartTileHeightEnum._1500,
-              api.ChartTileHeightEnum._1600,
-              api.ChartTileHeightEnum._1700,
-              api.ChartTileHeightEnum._1800,
-              api.ChartTileHeightEnum._1900
+              apiToBlockml.ChartTileHeightEnum._300,
+              apiToBlockml.ChartTileHeightEnum._400,
+              apiToBlockml.ChartTileHeightEnum._500,
+              apiToBlockml.ChartTileHeightEnum._600,
+              apiToBlockml.ChartTileHeightEnum._700,
+              apiToBlockml.ChartTileHeightEnum._800,
+              apiToBlockml.ChartTileHeightEnum._900,
+              apiToBlockml.ChartTileHeightEnum._1000,
+              apiToBlockml.ChartTileHeightEnum._1100,
+              apiToBlockml.ChartTileHeightEnum._1200,
+              apiToBlockml.ChartTileHeightEnum._1300,
+              apiToBlockml.ChartTileHeightEnum._1400,
+              apiToBlockml.ChartTileHeightEnum._1500,
+              apiToBlockml.ChartTileHeightEnum._1600,
+              apiToBlockml.ChartTileHeightEnum._1700,
+              apiToBlockml.ChartTileHeightEnum._1800,
+              apiToBlockml.ChartTileHeightEnum._1900
             ].indexOf(report.tile[parameter]) < 0
           ) {
             item.errors.push(
@@ -173,9 +174,10 @@ export function checkChartTileParameters<T extends types.dzType>(
 
           if (
             parameter === enums.ParameterEnum.ViewSize &&
-            [api.ChartViewSizeEnum.Auto, api.ChartViewSizeEnum.Manual].indexOf(
-              report.tile[parameter]
-            ) < 0
+            [
+              apiToBlockml.ChartViewSizeEnum.Auto,
+              apiToBlockml.ChartViewSizeEnum.Manual
+            ].indexOf(report.tile[parameter]) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -201,7 +203,7 @@ export function checkChartTileParameters<T extends types.dzType>(
               enums.ParameterEnum.ViewHeight.toString()
             ].indexOf(parameter) > -1 &&
             !report.tile[parameter].match(
-              api.MyRegex.CAPTURE_DIGITS_START_TO_END_G()
+              common.MyRegex.CAPTURE_DIGITS_START_TO_END_G()
             )
           ) {
             item.errors.push(

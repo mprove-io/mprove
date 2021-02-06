@@ -1,4 +1,5 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -47,7 +48,9 @@ export function makeWith(item: {
   let filt: { [s: string]: { [f: string]: number } } = {};
 
   Object.keys(filters).forEach(element => {
-    let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
+    let r = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(
+      element
+    );
     let asName = r[1];
     let fieldName = r[2];
 
@@ -68,10 +71,10 @@ export function makeWith(item: {
       let sourceTable;
 
       if (helper.isDefined(join.view.table)) {
-        if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+        if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
           sourceTable = '`' + join.view.table + '`';
         } else if (
-          model.connection.type === api.ConnectionTypeEnum.PostgreSQL
+          model.connection.type === common.ConnectionTypeEnum.PostgreSQL
         ) {
           sourceTable = join.view.table;
         }
@@ -123,7 +126,7 @@ export function makeWith(item: {
             ? 'RIGHT OUTER JOIN'
             : constants.UNKNOWN_JOIN_TYPE;
 
-        let sqlOnFinal = api.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
+        let sqlOnFinal = common.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
 
         contents.push(
           `${joinTypeString} ${viewTable} as ${asName} ${constants.ON} ${sqlOnFinal}`
@@ -143,7 +146,7 @@ export function makeWith(item: {
         Object.keys(filt[asName]).forEach(fieldName => {
           let field = join.view.fields.find(f => f.name === fieldName);
 
-          if (field.result === api.FieldResultEnum.Ts) {
+          if (field.result === apiToBlockml.FieldResultEnum.Ts) {
             // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
             let sqlTimestampSelect = field.sqlTimestampReal;
             let sqlTimestampName = field.sqlTimestampName;
@@ -164,7 +167,7 @@ export function makeWith(item: {
         Object.keys(needsAll[asName]).forEach(fieldName => {
           let field = join.view.fields.find(f => f.name === fieldName);
 
-          if (field.fieldClass === api.FieldClassEnum.Dimension) {
+          if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
             if (helper.isDefined(field.unnest)) {
               flats[field.unnest] = 1;
             }

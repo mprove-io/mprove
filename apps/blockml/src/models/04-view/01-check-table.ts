@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -31,7 +31,7 @@ export function checkTable(
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.MISSING_TABLE,
-          message: `${api.FileExtensionEnum.View} must have "${enums.ParameterEnum.Table}" or "${enums.ParameterEnum.DerivedTable}" parameter`,
+          message: `${common.FileExtensionEnum.View} must have "${enums.ParameterEnum.Table}" or "${enums.ParameterEnum.DerivedTable}" parameter`,
           lines: [
             {
               line: x.view_line_num,

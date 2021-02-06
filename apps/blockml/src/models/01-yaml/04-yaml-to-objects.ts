@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import * as y from 'js-yaml';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -58,11 +58,11 @@ export function yamlToObjects(
     tiedFileArray.forEach((s: string, index) => {
       // remove comments
 
-      let sReg = api.MyRegex.COMMENTS_G();
+      let sReg = common.MyRegex.COMMENTS_G();
       s = s.replace(sReg, '\t');
       // s = s.replace(sReg, '');
 
-      let reg = api.MyRegex.CAPTURE_PARAMETER_AND_VALUE();
+      let reg = common.MyRegex.CAPTURE_PARAMETER_AND_VALUE();
       let r = reg.exec(s);
 
       let num: number = index + 1;

@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSql } from '~blockml/barrels/bar-sql';
+import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
@@ -14,26 +15,27 @@ export async function genSql(
 
   let isSingle = cs.get<interfaces.Config['isSingle']>('isSingle');
 
-  if (isSingle === api.BoolEnum.TRUE) {
+  if (isSingle === common.BoolEnum.TRUE) {
     outcome = genSqlPro(genSqlItem);
   } else {
-    let genSqlRequest: api.ToBlockmlWorkerGenSqlRequest = {
+    let genSqlRequest: apiToBlockml.ToBlockmlWorkerGenSqlRequest = {
       info: {
-        name: api.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql,
+        name:
+          apiToBlockml.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql,
         traceId: traceId
       },
       payload: genSqlItem
     };
 
     // is main
-    let resp = await rabbitService.sendToBlockmlWorker<api.MyResponse>({
-      routingKey: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
+    let resp = await rabbitService.sendToBlockmlWorker<common.MyResponse>({
+      routingKey: common.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
       message: genSqlRequest
     });
 
-    if (resp.info.status !== api.ResponseInfoStatusEnum.Ok) {
-      throw new api.ServerError({
-        message: api.ErEnum.BLOCKML_GEN_SQL_OUTCOME_ERROR,
+    if (resp.info.status !== common.ResponseInfoStatusEnum.Ok) {
+      throw new common.ServerError({
+        message: apiToBlockml.ErEnum.BLOCKML_GEN_SQL_OUTCOME_ERROR,
         originalError: resp.info.error
       });
     }

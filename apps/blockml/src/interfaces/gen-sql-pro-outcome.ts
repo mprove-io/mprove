@@ -1,10 +1,10 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { VarsSqlStep } from './vars-sql-step';
 
 export interface GenSqlProOutcome {
   sql: string[];
   filtersFractions: {
-    [s: string]: api.Fraction[];
+    [s: string]: apiToBlockml.Fraction[];
   };
   varsSqlSteps: VarsSqlStep[];
 }

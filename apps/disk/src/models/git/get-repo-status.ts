@@ -1,5 +1,5 @@
 import * as nodegit from 'nodegit';
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -29,7 +29,7 @@ export function checkVizReportsExist(
         new BmError({
           title: enums.ErTitleEnum.VIZ_MISSING_REPORTS,
           message:
-            `${api.FileExtensionEnum.Viz} must have ` +
+            `${common.FileExtensionEnum.Viz} must have ` +
             `"${enums.ParameterEnum.Reports}" parameter`,
           lines: [
             {
@@ -47,7 +47,7 @@ export function checkVizReportsExist(
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.VIZ_TOO_MANY_REPORTS,
-          message: `${api.FileExtensionEnum.Viz} must have exactly one report`,
+          message: `${common.FileExtensionEnum.Viz} must have exactly one report`,
           lines: [
             {
               line: x.viz_line_num,

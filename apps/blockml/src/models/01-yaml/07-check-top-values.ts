@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -26,7 +26,7 @@ export function checkTopValues(
     let errorsOnStart = item.errors.length;
 
     Object.keys(file)
-      .filter(x => !x.toString().match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+      .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
           [
@@ -40,7 +40,7 @@ export function checkTopValues(
 
         if (
           parameter === enums.ParameterEnum.Hidden.toString() &&
-          !file[parameter].toString().match(api.MyRegex.TRUE_FALSE())
+          !file[parameter].toString().match(common.MyRegex.TRUE_FALSE())
         ) {
           item.errors.push(
             new BmError({
@@ -69,7 +69,7 @@ export function checkTopValues(
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()
-            .match(api.MyRegex.CAPTURE_SPECIAL_CHARS_G())
+            .match(common.MyRegex.CAPTURE_SPECIAL_CHARS_G())
         ) {
           item.errors.push(
             new BmError({

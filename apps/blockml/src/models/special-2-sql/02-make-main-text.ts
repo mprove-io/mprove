@@ -1,5 +1,6 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barMeasure } from '~blockml/barrels/bar-measure';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -41,7 +42,7 @@ export function makeMainText(item: {
   let i = 0;
 
   select.forEach(element => {
-    let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+    let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 
     let asName = r[1];
@@ -65,13 +66,13 @@ export function makeMainText(item: {
   });
 
   Object.keys(filters).forEach(element => {
-    let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+    let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 
     let asName = r[1];
     let fieldName = r[2];
 
-    let fieldClass: api.FieldClassEnum =
+    let fieldClass: apiToBlockml.FieldClassEnum =
       asName === constants.MF
         ? model.fields.find(mField => mField.name === fieldName).fieldClass
         : model.joins
@@ -80,7 +81,7 @@ export function makeMainText(item: {
 
     filtered[element] = { asName: asName, fieldName: fieldName };
 
-    if (fieldClass === api.FieldClassEnum.Measure) {
+    if (fieldClass === apiToBlockml.FieldClassEnum.Measure) {
       selected[element] = { asName: asName, fieldName: fieldName };
     }
   });
@@ -102,12 +103,12 @@ export function makeMainText(item: {
 
     let sqlSelect;
 
-    if (field.fieldClass === api.FieldClassEnum.Dimension) {
+    if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
       i++;
 
       if (asName === constants.MF) {
         // remove ${ } on doubles (no singles exists in _real of model dimensions)
-        sqlSelect = api.MyRegex.removeBracketsOnDoubles(field.sqlReal);
+        sqlSelect = common.MyRegex.removeBracketsOnDoubles(field.sqlReal);
       } else {
         sqlSelect = `${asName}.${fieldName}`;
       }
@@ -115,41 +116,43 @@ export function makeMainText(item: {
       if (selected[element]) {
         groupMainBy.push(`${i}`); // toString
       }
-    } else if (field.fieldClass === api.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
       i++;
 
       if (asName === constants.MF) {
         // remove ${ } on doubles (no singles exists in _real of model measures)
-        sqlFinal = api.MyRegex.removeBracketsOnDoubles(field.sqlReal);
+        sqlFinal = common.MyRegex.removeBracketsOnDoubles(field.sqlReal);
 
         if (
           [
-            api.FieldTypeEnum.SumByKey,
-            api.FieldTypeEnum.AverageByKey,
-            api.FieldTypeEnum.MedianByKey,
-            api.FieldTypeEnum.PercentileByKey
+            apiToBlockml.FieldTypeEnum.SumByKey,
+            apiToBlockml.FieldTypeEnum.AverageByKey,
+            apiToBlockml.FieldTypeEnum.MedianByKey,
+            apiToBlockml.FieldTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on doubles (no singles exists in _real of model measures)
-          sqlKeyFinal = api.MyRegex.removeBracketsOnDoubles(field.sqlKeyReal);
+          sqlKeyFinal = common.MyRegex.removeBracketsOnDoubles(
+            field.sqlKeyReal
+          );
         }
       } else {
         // remove ${ } on singles (no doubles exists in _real of view measures)
-        sqlFinal = api.MyRegex.removeBracketsOnSinglesWithAlias(
+        sqlFinal = common.MyRegex.removeBracketsOnSinglesWithAlias(
           field.sqlReal,
           asName
         );
 
         if (
           [
-            api.FieldTypeEnum.SumByKey,
-            api.FieldTypeEnum.AverageByKey,
-            api.FieldTypeEnum.MedianByKey,
-            api.FieldTypeEnum.PercentileByKey
+            apiToBlockml.FieldTypeEnum.SumByKey,
+            apiToBlockml.FieldTypeEnum.AverageByKey,
+            apiToBlockml.FieldTypeEnum.MedianByKey,
+            apiToBlockml.FieldTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on singles (no doubles exists in _real of view measures)
-          sqlKeyFinal = api.MyRegex.removeBracketsOnSinglesWithAlias(
+          sqlKeyFinal = common.MyRegex.removeBracketsOnSinglesWithAlias(
             field.sqlKeyReal,
             asName
           );
@@ -157,8 +160,8 @@ export function makeMainText(item: {
       }
 
       switch (true) {
-        case field.type === api.FieldTypeEnum.SumByKey: {
-          if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+        case field.type === apiToBlockml.FieldTypeEnum.SumByKey: {
+          if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
             mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
@@ -171,8 +174,8 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.AverageByKey: {
-          if (model.connection.type === api.ConnectionTypeEnum.BigQuery) {
+        case field.type === apiToBlockml.FieldTypeEnum.AverageByKey: {
+          if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
             mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
 
@@ -185,7 +188,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.MedianByKey: {
+        case field.type === apiToBlockml.FieldTypeEnum.MedianByKey: {
           mainUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasureMedianByKey({
@@ -197,7 +200,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.PercentileByKey: {
+        case field.type === apiToBlockml.FieldTypeEnum.PercentileByKey: {
           mainUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasurePercentileByKey({
@@ -210,7 +213,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.Min: {
+        case field.type === apiToBlockml.FieldTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -219,7 +222,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.Max: {
+        case field.type === apiToBlockml.FieldTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -228,7 +231,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.CountDistinct: {
+        case field.type === apiToBlockml.FieldTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -237,7 +240,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.List: {
+        case field.type === apiToBlockml.FieldTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -246,21 +249,21 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === api.FieldTypeEnum.Custom: {
+        case field.type === apiToBlockml.FieldTypeEnum.Custom: {
           sqlSelect = sqlFinal;
           break;
         }
       }
-    } else if (field.fieldClass === api.FieldClassEnum.Calculation) {
+    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Calculation) {
       if (asName === constants.MF) {
-        sqlFinal = api.MyRegex.removeBracketsOnCalculationSinglesMf(
+        sqlFinal = common.MyRegex.removeBracketsOnCalculationSinglesMf(
           field.sqlReal
         );
-        sqlFinal = api.MyRegex.removeBracketsOnCalculationDoubles(sqlFinal);
+        sqlFinal = common.MyRegex.removeBracketsOnCalculationDoubles(sqlFinal);
 
         sqlSelect = sqlFinal;
       } else {
-        sqlFinal = api.MyRegex.removeBracketsOnCalculationSinglesWithAlias(
+        sqlFinal = common.MyRegex.removeBracketsOnCalculationSinglesWithAlias(
           field.sqlReal,
           asName
         );
@@ -272,7 +275,7 @@ export function makeMainText(item: {
 
     if (
       helper.isDefined(selected[element]) &&
-      field.fieldClass !== api.FieldClassEnum.Calculation
+      field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation
     ) {
       let sel = `  ${sqlSelect} as ${asName}_${fieldName},`;
       mainText = mainText.concat(sel.split('\n'));

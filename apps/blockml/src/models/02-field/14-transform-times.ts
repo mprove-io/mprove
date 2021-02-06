@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barTimeframe } from '~blockml/barrels/bar-timeframe';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -13,7 +14,7 @@ let func = enums.FuncEnum.TransformTimes;
 export function transformTimes<T extends types.vmType>(
   item: {
     entities: Array<T>;
-    weekStart: api.ProjectWeekStartEnum;
+    weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
@@ -28,7 +29,7 @@ export function transformTimes<T extends types.vmType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       newEntities.push(x);
       return;
     }
@@ -36,7 +37,7 @@ export function transformTimes<T extends types.vmType>(
     let newFields: interfaces.FieldAny[] = [];
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== api.FieldClassEnum.Time) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Time) {
         newFields.push(field);
         return;
       }
@@ -111,11 +112,11 @@ export function transformTimes<T extends types.vmType>(
         let sqlTransformed: string;
         let name: string;
         let label: string;
-        let result: api.FieldResultEnum;
+        let result: apiToBlockml.FieldResultEnum;
 
         switch (true) {
           case timeframe === enums.TimeframeEnum.DayOfWeek: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
 
             label = enums.TimeLabelEnum.DayOfWeek;
 
@@ -124,12 +125,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.DayOfWeek;
+            result = apiToBlockml.FieldResultEnum.DayOfWeek;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.DayOfWeekIndex: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfWeekIndex;
 
             sqlTransformed = barTimeframe.makeTimeframeDayOfWeekIndex({
@@ -138,12 +139,12 @@ export function transformTimes<T extends types.vmType>(
               weekStart: item.weekStart
             });
 
-            result = api.FieldResultEnum.DayOfWeekIndex;
+            result = apiToBlockml.FieldResultEnum.DayOfWeekIndex;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.DayOfYear: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfYear;
 
             // no need for weekStart
@@ -152,12 +153,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Number;
+            result = apiToBlockml.FieldResultEnum.Number;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Week: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Week;
 
             sqlTransformed = barTimeframe.makeTimeframeWeek({
@@ -166,12 +167,12 @@ export function transformTimes<T extends types.vmType>(
               weekStart: item.weekStart
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.WeekOfYear: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.WeekOfYear;
 
             sqlTransformed = barTimeframe.makeTimeframeWeekOfYear({
@@ -180,12 +181,12 @@ export function transformTimes<T extends types.vmType>(
               weekStart: item.weekStart
             });
 
-            result = api.FieldResultEnum.Number;
+            result = apiToBlockml.FieldResultEnum.Number;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Date: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Date;
 
             sqlTransformed = barTimeframe.makeTimeframeDate({
@@ -193,12 +194,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.DayOfMonth: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.DayOfMonth;
 
             sqlTransformed = barTimeframe.makeTimeframeDayOfMonth({
@@ -206,12 +207,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Number;
+            result = apiToBlockml.FieldResultEnum.Number;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Hour: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Hour;
 
             sqlTransformed = barTimeframe.makeTimeframeHour({
@@ -219,12 +220,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.HourOfDay: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.HourOfDay;
 
             sqlTransformed = barTimeframe.makeTimeframeHourOfDay({
@@ -232,7 +233,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Number;
+            result = apiToBlockml.FieldResultEnum.Number;
             break;
           }
 
@@ -242,12 +243,12 @@ export function transformTimes<T extends types.vmType>(
             timeframe === enums.TimeframeEnum.Hour6 ||
             timeframe === enums.TimeframeEnum.Hour8 ||
             timeframe === enums.TimeframeEnum.Hour12: {
-            let reg = api.MyRegex.CAPTURE_DIGITS_G();
+            let reg = common.MyRegex.CAPTURE_DIGITS_G();
             let r = reg.exec(timeframe);
 
             let num = r[1];
 
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = timeframe;
 
             sqlTransformed = barTimeframe.makeTimeframeHourNum({
@@ -256,12 +257,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Minute: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Minute;
 
             sqlTransformed = barTimeframe.makeTimeframeMinute({
@@ -269,7 +270,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
@@ -279,11 +280,11 @@ export function transformTimes<T extends types.vmType>(
             timeframe === enums.TimeframeEnum.Minute10 ||
             timeframe === enums.TimeframeEnum.Minute15 ||
             timeframe === enums.TimeframeEnum.Minute30: {
-            let reg = api.MyRegex.CAPTURE_DIGITS_G();
+            let reg = common.MyRegex.CAPTURE_DIGITS_G();
             let r = reg.exec(timeframe);
             let num = r[1];
 
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = timeframe;
 
             sqlTransformed = barTimeframe.makeTimeframeMinuteNum({
@@ -292,12 +293,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Month: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Month;
 
             sqlTransformed = barTimeframe.makeTimeframeMonth({
@@ -305,12 +306,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.MonthName: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.MonthName;
 
             sqlTransformed = barTimeframe.makeTimeframeMonthName({
@@ -318,12 +319,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.MonthName;
+            result = apiToBlockml.FieldResultEnum.MonthName;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.MonthNum: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.MonthNum;
 
             sqlTransformed = barTimeframe.makeTimeframeMonthNum({
@@ -331,12 +332,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Number;
+            result = apiToBlockml.FieldResultEnum.Number;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Quarter: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Quarter;
 
             sqlTransformed = barTimeframe.makeTimeframeQuarter({
@@ -344,12 +345,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.QuarterOfYear: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.QuarterOfYear;
 
             sqlTransformed = barTimeframe.makeTimeframeQuarterOfYear({
@@ -357,12 +358,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.QuarterOfYear;
+            result = apiToBlockml.FieldResultEnum.QuarterOfYear;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Time: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Time;
 
             sqlTransformed = barTimeframe.makeTimeframeTime({
@@ -370,12 +371,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.TimeOfDay: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.TimeOfDay;
 
             sqlTransformed = barTimeframe.makeTimeframeTimeOfDay({
@@ -383,12 +384,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.String;
+            result = apiToBlockml.FieldResultEnum.String;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.Year: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.Year;
 
             sqlTransformed = barTimeframe.makeTimeframeYear({
@@ -396,12 +397,12 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Ts;
+            result = apiToBlockml.FieldResultEnum.Ts;
             break;
           }
 
           case timeframe === enums.TimeframeEnum.YesNoHasValue: {
-            name = field.name + api.TRIPLE_UNDERSCORE + timeframe;
+            name = field.name + common.TRIPLE_UNDERSCORE + timeframe;
             label = enums.TimeLabelEnum.YesNoHasValue;
 
             sqlTransformed = barTimeframe.makeTimeframeYesNoHasValue({
@@ -409,7 +410,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = api.FieldResultEnum.Yesno;
+            result = apiToBlockml.FieldResultEnum.Yesno;
             break;
           }
 
@@ -443,7 +444,7 @@ export function transformTimes<T extends types.vmType>(
           sql: sqlTransformed,
           sql_line_num: field.sql_line_num,
 
-          type: api.FieldTypeEnum.Custom,
+          type: apiToBlockml.FieldTypeEnum.Custom,
           type_line_num: 0,
 
           result: result,
@@ -465,14 +466,16 @@ export function transformTimes<T extends types.vmType>(
           //
           name: name,
           name_line_num: field.name_line_num,
-          fieldClass: api.FieldClassEnum.Dimension,
+          fieldClass: apiToBlockml.FieldClassEnum.Dimension,
           // sqlReal: undefined,
           groupId: field.name,
           sqlTimestamp:
-            result === api.FieldResultEnum.Ts ? sqlTimestamp : undefined,
+            result === apiToBlockml.FieldResultEnum.Ts
+              ? sqlTimestamp
+              : undefined,
           sqlTimestampName:
-            result === api.FieldResultEnum.Ts
-              ? field.name + api.TRIPLE_UNDERSCORE + constants.TIMESTAMP
+            result === apiToBlockml.FieldResultEnum.Ts
+              ? field.name + common.TRIPLE_UNDERSCORE + constants.TIMESTAMP
               : undefined
           // sqlTimestampReal: undefined,
         };

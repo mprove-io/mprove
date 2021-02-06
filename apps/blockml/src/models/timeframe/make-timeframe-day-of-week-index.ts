@@ -1,18 +1,18 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimeframeDayOfWeekIndex(item: {
   sqlTimestamp: string;
-  connection: api.ProjectConnection;
-  weekStart: api.ProjectWeekStartEnum;
+  connection: common.ProjectConnection;
+  weekStart: common.ProjectWeekStartEnum;
 }) {
   let { sqlTimestamp, connection, weekStart } = item;
 
   let sql: string;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql =
-        weekStart === api.ProjectWeekStartEnum.Sunday
+        weekStart === common.ProjectWeekStartEnum.Sunday
           ? `EXTRACT(DAYOFWEEK FROM ${sqlTimestamp})`
           : `CASE
       WHEN EXTRACT(DAYOFWEEK FROM ${sqlTimestamp}) = 1 THEN 7
@@ -21,9 +21,9 @@ export function makeTimeframeDayOfWeekIndex(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql =
-        weekStart === api.ProjectWeekStartEnum.Sunday
+        weekStart === common.ProjectWeekStartEnum.Sunday
           ? `EXTRACT(DOW FROM ${sqlTimestamp}) + 1`
           : `CASE
       WHEN EXTRACT(DOW FROM ${sqlTimestamp}) + 1 = 1 THEN 7

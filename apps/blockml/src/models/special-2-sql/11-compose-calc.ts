@@ -1,4 +1,5 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -51,7 +52,9 @@ export function composeCalc(item: {
   }
 
   select.forEach(element => {
-    let r = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(element);
+    let r = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G().exec(
+      element
+    );
 
     let asName = r[1];
     let fieldName = r[2];
@@ -64,11 +67,11 @@ export function composeCalc(item: {
             .view.fields.find(vField => vField.name === fieldName);
 
     let selectString =
-      field.fieldClass === api.FieldClassEnum.Dimension
+      field.fieldClass === apiToBlockml.FieldClassEnum.Dimension
         ? `  ${asName}_${fieldName},`
-        : field.fieldClass === api.FieldClassEnum.Measure
+        : field.fieldClass === apiToBlockml.FieldClassEnum.Measure
         ? `  ${asName}_${fieldName},`
-        : field.fieldClass === api.FieldClassEnum.Calculation
+        : field.fieldClass === apiToBlockml.FieldClassEnum.Calculation
         ? `  ${processedFields[element]} as ${asName}_${fieldName},`
         : constants.UNKNOWN_FIELD_CLASS;
 
@@ -86,11 +89,11 @@ export function composeCalc(item: {
     sql.push(`${constants.WHERE}`);
 
     if (helper.isDefined(model.sqlAlwaysWhereCalcReal)) {
-      let sqlAlwaysWhereCalcFinal = api.MyRegex.removeBracketsOnCalculationSinglesMf(
+      let sqlAlwaysWhereCalcFinal = common.MyRegex.removeBracketsOnCalculationSinglesMf(
         model.sqlAlwaysWhereCalcReal
       );
 
-      sqlAlwaysWhereCalcFinal = api.MyRegex.removeBracketsOnCalculationDoubles(
+      sqlAlwaysWhereCalcFinal = common.MyRegex.removeBracketsOnCalculationDoubles(
         sqlAlwaysWhereCalcFinal
       );
 
@@ -122,7 +125,7 @@ export function composeCalc(item: {
     mySorts.forEach(part => {
       let r;
 
-      if ((r = api.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G().exec(part))) {
+      if ((r = common.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G().exec(part))) {
         let sorter = r[1];
         let desc = r[2];
 

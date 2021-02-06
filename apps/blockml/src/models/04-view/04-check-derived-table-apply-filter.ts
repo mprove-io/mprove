@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -31,7 +32,7 @@ export function checkDerivedTableApplyFilter(
 
     let input = x.derived_table;
 
-    let reg2 = api.MyRegex.CAPTURE_START_FIELD_TARGET_END();
+    let reg2 = common.MyRegex.CAPTURE_START_FIELD_TARGET_END();
     let r2;
 
     while ((r2 = reg2.exec(input))) {
@@ -59,7 +60,7 @@ export function checkDerivedTableApplyFilter(
         return;
       }
 
-      if (field.fieldClass !== api.FieldClassEnum.Filter) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER,

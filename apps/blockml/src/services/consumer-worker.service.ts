@@ -1,7 +1,7 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { GenSqlService } from '~blockml/controllers/gen-sql/gen-sql.service';
 
@@ -13,17 +13,17 @@ export class ConsumerWorkerService {
   ) {}
 
   @RabbitRPC({
-    exchange: api.RabbitExchangesEnum.BlockmlWorker.toString(),
-    routingKey: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
-    queue: api.RabbitBlockmlWorkerRoutingEnum.GenSql.toString()
+    exchange: common.RabbitExchangesEnum.BlockmlWorker.toString(),
+    routingKey: common.RabbitBlockmlWorkerRoutingEnum.GenSql.toString(),
+    queue: common.RabbitBlockmlWorkerRoutingEnum.GenSql.toString()
   })
   async genSql(request: any, context: any) {
     try {
       let payload = await this.genSqlService.gen(request);
 
-      return api.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, req: request });
     } catch (e) {
-      return api.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, req: request });
     }
   }
 }

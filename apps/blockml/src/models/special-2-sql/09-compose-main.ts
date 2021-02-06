@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -53,7 +53,7 @@ export function composeMain(item: {
       if (helper.isDefined(join.sqlWhereReal)) {
         // remove ${ } on doubles (no singles exists in _real of sql_where)
         // ${a.city} + ${b.country}   >>>   a.city + b.country
-        let sqlWhereFinal = api.MyRegex.removeBracketsOnDoubles(
+        let sqlWhereFinal = common.MyRegex.removeBracketsOnDoubles(
           join.sqlWhereReal
         );
 
@@ -89,7 +89,7 @@ export function composeMain(item: {
       // remove ${ } on doubles (no singles exists in _real of sql_always_where)
       // ${a.city} + ${b.country}   >>>   a.city + b.country
 
-      let sqlAlwaysWhereFinal = api.MyRegex.removeBracketsOnDoubles(
+      let sqlAlwaysWhereFinal = common.MyRegex.removeBracketsOnDoubles(
         model.sqlAlwaysWhereReal
       );
 

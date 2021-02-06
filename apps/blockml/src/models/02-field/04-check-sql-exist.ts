@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -26,12 +26,12 @@ export function checkSqlExist<T extends types.vmdType>(
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (field.fieldClass === api.FieldClassEnum.Filter) {
+      if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
         if (helper.isDefined(field.sql)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.UNEXPECTED_SQL_IN_FILTER,
-              message: `parameter "${enums.ParameterEnum.Sql}" can not be used with ${api.FieldClassEnum.Filter} field`,
+              message: `parameter "${enums.ParameterEnum.Sql}" can not be used with ${apiToBlockml.FieldClassEnum.Filter} field`,
               lines: [
                 {
                   line: field.sql_line_num,
@@ -46,10 +46,10 @@ export function checkSqlExist<T extends types.vmdType>(
       } else if (
         helper.isUndefined(field.sql) &&
         [
-          api.FieldClassEnum.Dimension,
-          api.FieldClassEnum.Time,
-          api.FieldClassEnum.Measure,
-          api.FieldClassEnum.Calculation
+          apiToBlockml.FieldClassEnum.Dimension,
+          apiToBlockml.FieldClassEnum.Time,
+          apiToBlockml.FieldClassEnum.Measure,
+          apiToBlockml.FieldClassEnum.Calculation
         ].indexOf(field.fieldClass) > -1
       ) {
         item.errors.push(

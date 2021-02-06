@@ -1,17 +1,17 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 
 export function makeMeasureSumByKey(item: {
   sqlKeyFinal: string;
   sqlFinal: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { connection, sqlKeyFinal, sqlFinal } = item;
 
   let sqlSelect;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sqlSelect =
         `COALESCE(${constants.UDF_MPROVE_ARRAY_SUM}(ARRAY_AGG(DISTINCT CONCAT(CONCAT(CAST(` +
         sqlKeyFinal +
@@ -21,7 +21,7 @@ export function makeMeasureSumByKey(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       let val =
         'CAST(FLOOR(COALESCE(' +
         sqlFinal +

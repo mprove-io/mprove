@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -22,7 +22,7 @@ export function processTimezone(item: {
   let mainQueryProcessed: interfaces.VarsSql['mainQueryProcessed'] = [];
 
   mainQueryProcessed = mainQuery.map(x => {
-    let reg = api.MyRegex.TIMESTAMP_START_END();
+    let reg = common.MyRegex.TIMESTAMP_START_END();
     let r;
 
     while ((r = reg.exec(x))) {
@@ -32,12 +32,12 @@ export function processTimezone(item: {
 
       if (timezone !== constants.UTC) {
         switch (model.connection.type) {
-          case api.ConnectionTypeEnum.BigQuery: {
+          case common.ConnectionTypeEnum.BigQuery: {
             two = `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', ${two}, '${timezone}'))`;
             break;
           }
 
-          case api.ConnectionTypeEnum.PostgreSQL: {
+          case common.ConnectionTypeEnum.PostgreSQL: {
             two = `TIMEZONE('${timezone}', ${two}::TIMESTAMPTZ)`;
             break;
           }

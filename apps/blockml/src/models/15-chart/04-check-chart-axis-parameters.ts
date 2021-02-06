@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -32,7 +32,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
       }
 
       Object.keys(report.axis)
-        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
             [
@@ -105,7 +105,9 @@ export function checkChartAxisParameters<T extends types.dzType>(
               enums.ParameterEnum.ShowYAxisLabel.toString(),
               enums.ParameterEnum.ShowAxis.toString()
             ].indexOf(parameter) > -1 &&
-            !report.axis[parameter].toString().match(api.MyRegex.TRUE_FALSE())
+            !report.axis[parameter]
+              .toString()
+              .match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({

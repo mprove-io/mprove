@@ -1,11 +1,11 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 
 export function makeMeasurePercentileByKey(item: {
   sqlKeyFinal: string;
   sqlFinal: string;
   percentile: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { connection, sqlKeyFinal, sqlFinal, percentile } = item;
 

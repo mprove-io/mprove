@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barBuilder } from '~blockml/barrels/bar-builder';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { barWrapper } from '~blockml/barrels/bar-wrapper';
 import { barYaml } from '~blockml/barrels/bar-yaml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
@@ -20,17 +21,17 @@ export class RebuildStructService {
   async rebuild(request: any) {
     if (
       request.info?.name !==
-      api.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
+      apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
     ) {
-      throw new api.ServerError({
-        message: api.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
+      throw new common.ServerError({
+        message: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
       });
     }
 
-    let reqValid = await api.transformValid({
-      classType: api.ToBlockmlRebuildStructRequest,
+    let reqValid = await common.transformValid({
+      classType: apiToBlockml.ToBlockmlRebuildStructRequest,
       object: request,
-      errorMessage: api.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
+      errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
     });
 
     let {
@@ -89,7 +90,7 @@ export class RebuildStructService {
     let queries = [...dashQueries, ...vizQueries];
     let mconfigs = [...dashMconfigs, ...vizMconfigs];
 
-    let payload: api.ToBlockmlRebuildStructResponsePayload = {
+    let payload: apiToBlockml.ToBlockmlRebuildStructResponsePayload = {
       errors: apiErrors,
       udfsDict: udfsDict,
       views: apiViews,
@@ -107,10 +108,10 @@ export class RebuildStructService {
     traceId: string;
     dir: string;
     structId: string;
-    weekStart: api.ProjectWeekStartEnum;
-    connections: api.ProjectConnection[];
+    weekStart: common.ProjectWeekStartEnum;
+    connections: common.ProjectConnection[];
   }) {
-    let files: api.File[] = await barYaml.collectFiles(
+    let files: apiToBlockml.File[] = await barYaml.collectFiles(
       {
         dir: item.dir,
         structId: item.structId,
@@ -130,10 +131,10 @@ export class RebuildStructService {
 
   async rebuildStructStateless(item: {
     traceId: string;
-    files: api.File[];
+    files: apiToBlockml.File[];
     structId: string;
-    weekStart: api.ProjectWeekStartEnum;
-    connections: api.ProjectConnection[];
+    weekStart: common.ProjectWeekStartEnum;
+    connections: common.ProjectConnection[];
   }) {
     //
     let errors: BmError[] = [];
@@ -193,7 +194,7 @@ export class RebuildStructService {
       this.cs
     );
 
-    let udfsDict: api.UdfsDict = barBuilder.buildUdf(
+    let udfsDict: apiToBlockml.UdfsDict = barBuilder.buildUdf(
       {
         udfs: udfs,
         structId: item.structId,

@@ -1,20 +1,20 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimeframeYesNoHasValue(item: {
   sqlTimestamp: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sqlTimestamp, connection } = item;
 
   let sql: string;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql = `CASE WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes' ELSE 'No' END`;
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = `CASE WHEN (${sqlTimestamp}) IS NOT NULL THEN 'Yes' ELSE 'No' END`;
       break;
     }

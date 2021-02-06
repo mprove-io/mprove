@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,13 +26,13 @@ export function checkMeasures<T extends types.vmType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       newEntities.push(x);
       return;
     }
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== api.FieldClassEnum.Measure) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Measure) {
         return;
       }
 
@@ -52,15 +53,15 @@ export function checkMeasures<T extends types.vmType>(
         return;
       } else if (
         [
-          api.FieldTypeEnum.CountDistinct,
-          api.FieldTypeEnum.SumByKey,
-          api.FieldTypeEnum.AverageByKey,
-          api.FieldTypeEnum.MedianByKey,
-          api.FieldTypeEnum.PercentileByKey,
-          api.FieldTypeEnum.Min,
-          api.FieldTypeEnum.Max,
-          api.FieldTypeEnum.List,
-          api.FieldTypeEnum.Custom
+          apiToBlockml.FieldTypeEnum.CountDistinct,
+          apiToBlockml.FieldTypeEnum.SumByKey,
+          apiToBlockml.FieldTypeEnum.AverageByKey,
+          apiToBlockml.FieldTypeEnum.MedianByKey,
+          apiToBlockml.FieldTypeEnum.PercentileByKey,
+          apiToBlockml.FieldTypeEnum.Min,
+          apiToBlockml.FieldTypeEnum.Max,
+          apiToBlockml.FieldTypeEnum.List,
+          apiToBlockml.FieldTypeEnum.Custom
         ].indexOf(field.type) < 0
       ) {
         item.errors.push(
@@ -80,10 +81,10 @@ export function checkMeasures<T extends types.vmType>(
       } else if (
         !field.sql_key &&
         [
-          api.FieldTypeEnum.SumByKey,
-          api.FieldTypeEnum.AverageByKey,
-          api.FieldTypeEnum.MedianByKey,
-          api.FieldTypeEnum.PercentileByKey
+          apiToBlockml.FieldTypeEnum.SumByKey,
+          apiToBlockml.FieldTypeEnum.AverageByKey,
+          apiToBlockml.FieldTypeEnum.MedianByKey,
+          apiToBlockml.FieldTypeEnum.PercentileByKey
         ].indexOf(field.type) > -1
       ) {
         item.errors.push(
@@ -102,10 +103,10 @@ export function checkMeasures<T extends types.vmType>(
         return;
       }
 
-      if ([api.ConnectionTypeEnum.BigQuery].indexOf(x.connection.type) < 0) {
+      if ([common.ConnectionTypeEnum.BigQuery].indexOf(x.connection.type) < 0) {
         if (
-          field.type === api.FieldTypeEnum.MedianByKey ||
-          field.type === api.FieldTypeEnum.PercentileByKey
+          field.type === apiToBlockml.FieldTypeEnum.MedianByKey ||
+          field.type === apiToBlockml.FieldTypeEnum.PercentileByKey
         ) {
           item.errors.push(
             new BmError({
@@ -113,7 +114,7 @@ export function checkMeasures<T extends types.vmType>(
                 enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
               message:
                 `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
-                `"${x.connection.type}". Consider using a "${api.FieldTypeEnum.Custom}" type.`,
+                `"${x.connection.type}". Consider using a "${apiToBlockml.FieldTypeEnum.Custom}" type.`,
               lines: [
                 {
                   line: field.type_line_num,
@@ -131,7 +132,7 @@ export function checkMeasures<T extends types.vmType>(
             new BmError({
               title:
                 enums.ErTitleEnum.PERCENTILE_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `consider using a "${api.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
+              message: `consider using a "${apiToBlockml.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
               lines: [
                 {
                   line: field.percentile_line_num,
@@ -145,7 +146,7 @@ export function checkMeasures<T extends types.vmType>(
         }
       }
 
-      if (field.type === api.FieldTypeEnum.PercentileByKey) {
+      if (field.type === apiToBlockml.FieldTypeEnum.PercentileByKey) {
         if (helper.isUndefined(field.percentile)) {
           item.errors.push(
             new BmError({
@@ -162,7 +163,7 @@ export function checkMeasures<T extends types.vmType>(
           );
           return;
         } else {
-          let reg = api.MyRegex.DIGITS_1_TO_99_G();
+          let reg = common.MyRegex.DIGITS_1_TO_99_G();
 
           let r = reg.exec(field.percentile);
 
@@ -187,12 +188,12 @@ export function checkMeasures<T extends types.vmType>(
 
       if (
         helper.isDefined(field.sql) &&
-        !field.sql.match(api.MyRegex.CONTAINS_BLOCKML_REF())
+        !field.sql.match(common.MyRegex.CONTAINS_BLOCKML_REF())
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MEASURE_SQL_MISSING_BLOCKML_REFERENCE,
-            message: `${api.FieldClassEnum.Measure} ${enums.ParameterEnum.Sql} must have a BlockML reference to ${api.FieldClassEnum.Dimension}`,
+            message: `${apiToBlockml.FieldClassEnum.Measure} ${enums.ParameterEnum.Sql} must have a BlockML reference to ${apiToBlockml.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.sql_line_num,
@@ -207,12 +208,12 @@ export function checkMeasures<T extends types.vmType>(
 
       if (
         helper.isDefined(field.sql_key) &&
-        !field.sql_key.match(api.MyRegex.CONTAINS_BLOCKML_REF())
+        !field.sql_key.match(common.MyRegex.CONTAINS_BLOCKML_REF())
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MEASURE_SQL_KEY_MISSING_BLOCKML_REFERENCE,
-            message: `${api.FieldClassEnum.Measure} ${enums.ParameterEnum.SqlKey} must have a BlockML reference to ${api.FieldClassEnum.Dimension}`,
+            message: `${apiToBlockml.FieldClassEnum.Measure} ${enums.ParameterEnum.SqlKey} must have a BlockML reference to ${apiToBlockml.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.sql_key_line_num,

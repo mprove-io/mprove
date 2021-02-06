@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -29,13 +29,13 @@ export function checkJoinUnknownParameters(
       Object.keys(join)
         .filter(
           k =>
-            !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()) &&
+            !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()) &&
             [enums.ParameterEnum.View.toString()].indexOf(k) < 0
         )
         .forEach(parameter => {
           if (
             parameter === enums.ParameterEnum.Hidden.toString() &&
-            !join[parameter].toString().match(api.MyRegex.TRUE_FALSE())
+            !join[parameter].toString().match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({

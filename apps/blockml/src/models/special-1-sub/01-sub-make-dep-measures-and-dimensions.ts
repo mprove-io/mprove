@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -20,18 +20,18 @@ export function subMakeDepMeasuresAndDimensions(item: {
   select.forEach(fieldName => {
     let field = view.fields.find(vField => vField.name === fieldName);
 
-    if (field.fieldClass !== api.FieldClassEnum.Calculation) {
+    if (field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation) {
       return;
     }
 
     Object.keys(view.fieldsDepsAfterSingles[fieldName]).forEach(depName => {
       let depViewField = view.fields.find(vField => vField.name === depName);
 
-      if (depViewField.fieldClass === api.FieldClassEnum.Measure) {
+      if (depViewField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
         depMeasures[depName] = 1;
       }
 
-      if (depViewField.fieldClass === api.FieldClassEnum.Dimension) {
+      if (depViewField.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
         depDimensions[depName] = 1;
       }
     });

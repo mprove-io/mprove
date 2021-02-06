@@ -1,20 +1,20 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimeframeDate(item: {
   sqlTimestamp: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sqlTimestamp, connection } = item;
 
   let sql: string;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql = `CAST(CAST(${sqlTimestamp} AS DATE) AS STRING)`;
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = `SUBSTRING((${sqlTimestamp})::TEXT FROM 1 FOR 10)`;
       break;
     }

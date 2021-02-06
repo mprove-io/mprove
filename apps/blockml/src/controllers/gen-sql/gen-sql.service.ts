@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
+import { common } from '~blockml/barrels/common';
 
 @Injectable()
 export class GenSqlService {
   async gen(request: any) {
     if (
       request.info?.name !==
-      api.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql
+      apiToBlockml.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql
     ) {
-      throw new api.ServerError({
-        message: api.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_INFO_NAME
+      throw new common.ServerError({
+        message: apiToBlockml.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_INFO_NAME
       });
     }
 
-    let reqValid = await api.transformValid({
-      classType: api.ToBlockmlWorkerGenSqlRequest,
+    let reqValid = await common.transformValid({
+      classType: apiToBlockml.ToBlockmlWorkerGenSqlRequest,
       object: request,
-      errorMessage: api.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_PARAMS
+      errorMessage: apiToBlockml.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_PARAMS
     });
 
     let payload = barSpecial.genSqlPro(reqValid.payload);

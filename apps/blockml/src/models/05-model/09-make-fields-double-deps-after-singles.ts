@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -32,7 +33,7 @@ export function makeFieldsDoubleDepsAfterSingles(
         restart = false;
 
         let r;
-        let reg = api.MyRegex.CAPTURE_DOUBLE_REF_G(); // g works because of restart
+        let reg = common.MyRegex.CAPTURE_DOUBLE_REF_G(); // g works because of restart
 
         while ((r = reg.exec(f.sqlReal))) {
           let asName: string = r[1];
@@ -43,8 +44,8 @@ export function makeFieldsDoubleDepsAfterSingles(
             field => field.name === depName
           );
 
-          if (depField.fieldClass === api.FieldClassEnum.Calculation) {
-            f.sqlReal = api.MyRegex.replaceAndConvert(
+          if (depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation) {
+            f.sqlReal = common.MyRegex.replaceAndConvert(
               f.sqlReal,
               depField.sqlReal,
               asName,
@@ -69,16 +70,16 @@ export function makeFieldsDoubleDepsAfterSingles(
 
       // work with sqlKeyReal
       if (
-        f.fieldClass === api.FieldClassEnum.Measure &&
+        f.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
         [
-          api.FieldTypeEnum.SumByKey,
-          api.FieldTypeEnum.AverageByKey,
-          api.FieldTypeEnum.MedianByKey,
-          api.FieldTypeEnum.PercentileByKey
+          apiToBlockml.FieldTypeEnum.SumByKey,
+          apiToBlockml.FieldTypeEnum.AverageByKey,
+          apiToBlockml.FieldTypeEnum.MedianByKey,
+          apiToBlockml.FieldTypeEnum.PercentileByKey
         ].indexOf(f.type) > -1
       ) {
         let r2;
-        let reg2 = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+        let reg2 = common.MyRegex.CAPTURE_DOUBLE_REF_G();
 
         while ((r2 = reg2.exec(f.sqlKeyReal))) {
           let asName2: string = r2[1];

@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,20 +26,23 @@ export function checkCalculations<T extends types.vmType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       newEntities.push(x);
       return;
     }
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== api.FieldClassEnum.Calculation) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation) {
         return;
       }
-      if (field.sql && !field.sql.match(api.MyRegex.CONTAINS_BLOCKML_REF())) {
+      if (
+        field.sql &&
+        !field.sql.match(common.MyRegex.CONTAINS_BLOCKML_REF())
+      ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.CALCULATION_SQL_MISSING_BLOCKML_REFERENCE,
-            message: `${api.FieldClassEnum.Calculation} ${enums.ParameterEnum.Sql} must have a BlockML reference`,
+            message: `${apiToBlockml.FieldClassEnum.Calculation} ${enums.ParameterEnum.Sql} must have a BlockML reference`,
             lines: [
               {
                 line: field.sql_line_num,

@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
 import { barSpecial } from '~blockml/barrels/bar-special';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -37,9 +37,9 @@ export function checkDefaultFilters<T extends types.dzType>(
       let model = item.models.find(m => m.name === report.model);
 
       Object.keys(report.default_filters)
-        .filter(k => !k.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(defaultFilter => {
-          let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+          let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
           let r = reg.exec(defaultFilter);
 
           if (helper.isUndefined(r)) {

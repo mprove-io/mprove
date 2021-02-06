@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -9,7 +10,7 @@ let func = enums.FuncEnum.RemoveWrongExt;
 
 export function removeWrongExt(
   item: {
-    files: api.File[];
+    files: apiToBlockml.File[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
@@ -21,25 +22,25 @@ export function removeWrongExt(
 
   let file2s: interfaces.File2[] = [];
 
-  item.files.forEach((x: api.File) => {
+  item.files.forEach((x: apiToBlockml.File) => {
     let fp = {
       path: x.path,
       content: x.content
     };
 
-    let reg = api.MyRegex.CAPTURE_EXT();
+    let reg = common.MyRegex.CAPTURE_EXT();
     let r = reg.exec(x.name.toLowerCase());
 
     let ext: any = r ? r[1] : ''; // any
 
     if (
       [
-        api.FileExtensionEnum.View,
-        api.FileExtensionEnum.Model,
-        api.FileExtensionEnum.Dashboard,
-        api.FileExtensionEnum.Viz,
-        api.FileExtensionEnum.Udf,
-        api.FileExtensionEnum.Md
+        common.FileExtensionEnum.View,
+        common.FileExtensionEnum.Model,
+        common.FileExtensionEnum.Dashboard,
+        common.FileExtensionEnum.Viz,
+        common.FileExtensionEnum.Udf,
+        common.FileExtensionEnum.Md
       ].indexOf(ext) > -1
     ) {
       let f: interfaces.File2 = file2s.find(z => z.name === x.name);
@@ -57,7 +58,7 @@ export function removeWrongExt(
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.WRONG_FILE_EXTENSION,
-          message: `valid BlockML file extensions are: ${api.FileExtensionEnum.View} ${api.FileExtensionEnum.Model} ${api.FileExtensionEnum.Dashboard} ${api.FileExtensionEnum.Viz} ${api.FileExtensionEnum.Udf} ${api.FileExtensionEnum.Md}`,
+          message: `valid BlockML file extensions are: ${common.FileExtensionEnum.View} ${common.FileExtensionEnum.Model} ${common.FileExtensionEnum.Dashboard} ${common.FileExtensionEnum.Viz} ${common.FileExtensionEnum.Udf} ${common.FileExtensionEnum.Md}`,
           lines: [
             {
               line: 0,

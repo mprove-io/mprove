@@ -2,7 +2,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
 import { appServices } from '~blockml/app-services';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -17,7 +17,7 @@ export async function prepareTest(
   caller: enums.CallerEnum,
   func: enums.FuncEnum,
   testId: string,
-  connection?: api.ProjectConnection,
+  connection?: common.ProjectConnection,
   overrideConfigOptions?: interfaces.Config
 ) {
   let mockConfig: interfaces.Config = Object.assign(
@@ -70,7 +70,7 @@ export async function prepareTest(
   let dataDir = `${constants.SRC_PATH}/models/${pack}/tests/${f}/data/${testId}`;
 
   let toDir =
-    copyLogsToModels === api.BoolEnum.FALSE
+    copyLogsToModels === common.BoolEnum.FALSE
       ? null
       : helper.isDefined(connection)
       ? `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`

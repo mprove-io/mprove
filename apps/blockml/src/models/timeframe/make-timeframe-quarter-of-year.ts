@@ -1,20 +1,20 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimeframeQuarterOfYear(item: {
   sqlTimestamp: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sqlTimestamp, connection } = item;
 
   let sql: string;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql = `CONCAT(CAST('Q' AS STRING), CAST(EXTRACT(QUARTER FROM ${sqlTimestamp}) AS STRING))`;
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = `CAST('Q' AS VARCHAR) || CAST(EXTRACT(QUARTER FROM ${sqlTimestamp})::integer AS VARCHAR)`;
       break;
     }

@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,28 +26,29 @@ export function checkDimensions<T extends types.vmType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       newEntities.push(x);
       return;
     }
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== api.FieldClassEnum.Dimension) {
+      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Dimension) {
         return;
       }
 
       if (helper.isUndefined(field.type)) {
-        field.type = api.FieldTypeEnum.Custom;
+        field.type = apiToBlockml.FieldTypeEnum.Custom;
         field.type_line_num = 0;
       } else if (
-        [api.FieldTypeEnum.Custom, api.FieldTypeEnum.YesnoIsTrue].indexOf(
-          field.type
-        ) < 0
+        [
+          apiToBlockml.FieldTypeEnum.Custom,
+          apiToBlockml.FieldTypeEnum.YesnoIsTrue
+        ].indexOf(field.type) < 0
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_DIMENSION_TYPE,
-            message: `"${field.type}" is not valid type for ${api.FieldClassEnum.Dimension}`,
+            message: `"${field.type}" is not valid type for ${apiToBlockml.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.type_line_num,
@@ -59,7 +61,7 @@ export function checkDimensions<T extends types.vmType>(
         return;
       }
 
-      if (x.connection.type !== api.ConnectionTypeEnum.BigQuery) {
+      if (x.connection.type !== common.ConnectionTypeEnum.BigQuery) {
         if (helper.isDefined(field.unnest)) {
           item.errors.push(
             new BmError({

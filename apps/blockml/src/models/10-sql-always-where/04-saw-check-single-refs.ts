@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -29,7 +30,7 @@ export function sawCheckSingleRefs(
       return;
     }
 
-    let reg = api.MyRegex.CAPTURE_SINGLE_REF_G();
+    let reg = common.MyRegex.CAPTURE_SINGLE_REF_G();
     let r;
 
     let references: string[] = [];
@@ -58,7 +59,7 @@ export function sawCheckSingleRefs(
         return;
       }
 
-      if (referenceField.fieldClass === api.FieldClassEnum.Filter) {
+      if (referenceField.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_FILTER,
@@ -77,7 +78,7 @@ export function sawCheckSingleRefs(
         return;
       }
 
-      if (referenceField.fieldClass === api.FieldClassEnum.Measure) {
+      if (referenceField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_MEASURE,
@@ -96,7 +97,9 @@ export function sawCheckSingleRefs(
         return;
       }
 
-      if (referenceField.fieldClass === api.FieldClassEnum.Calculation) {
+      if (
+        referenceField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
+      ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_CALCULATION,

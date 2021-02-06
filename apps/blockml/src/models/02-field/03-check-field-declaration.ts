@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -39,7 +40,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       );
 
       let fieldKeysLineNums: number[] = Object.keys(field)
-        .filter(y => y.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+        .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .map(y => field[y]);
 
       if (declarations.length === 0) {
@@ -78,7 +79,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
 
       let declaration = declarations[0];
 
-      if (field[declaration].match(api.MyRegex.CAPTURE_SPECIAL_CHARS_G())) {
+      if (field[declaration].match(common.MyRegex.CAPTURE_SPECIAL_CHARS_G())) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,
@@ -99,8 +100,8 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       let fieldName = field[fieldClass];
 
       if (
-        x.fileExt === api.FileExtensionEnum.Dashboard &&
-        fieldClass !== api.FieldClassEnum.Filter
+        x.fileExt === common.FileExtensionEnum.Dashboard &&
+        fieldClass !== apiToBlockml.FieldClassEnum.Filter
       ) {
         item.errors.push(
           new BmError({
@@ -126,7 +127,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       let newFieldProps: interfaces.FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
-        fieldClass: <api.FieldClassEnum>fieldClass
+        fieldClass: <apiToBlockml.FieldClassEnum>fieldClass
       };
       Object.assign(field, newFieldProps);
     });

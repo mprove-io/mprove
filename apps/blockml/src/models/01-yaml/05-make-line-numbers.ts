@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -56,12 +56,12 @@ export function processLineNumbersRecursive(item: {
   errors: BmError[];
 }): any[] {
   Object.keys(item.hash).forEach(oldPar => {
-    let reg = api.MyRegex.CAPTURE_BETWEEN_LINE_NUM();
+    let reg = common.MyRegex.CAPTURE_BETWEEN_LINE_NUM();
     let r = reg.exec(oldPar);
 
     let lineNumber: number = r ? Number(r[1]) : 0;
 
-    let npReg = api.MyRegex.BETWEEN_LINE_NUM_G();
+    let npReg = common.MyRegex.BETWEEN_LINE_NUM_G();
     let newPar = oldPar.replace(npReg, '');
 
     if (helper.isUndefined(item.hash[oldPar])) {
@@ -130,11 +130,11 @@ export function processLineNumbersRecursive(item: {
           // !hash && !array - convert to string
         } else {
           // cut "_line_num___12345___line_num_" from parameter's value globally
-          let eReg = api.MyRegex.BETWEEN_LINE_NUM_G();
+          let eReg = common.MyRegex.BETWEEN_LINE_NUM_G();
           element = element.toString().replace(eReg, '');
 
           // remove whitespaces
-          let reg2 = api.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
+          let reg2 = common.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
           let r2 = reg2.exec(element);
           element = r2 ? r2[1] : element;
 
@@ -154,17 +154,17 @@ export function processLineNumbersRecursive(item: {
       // !hash && !array - convert to string
     } else {
       // cut "_line_num___12345___line_num_" from parameter's value globally
-      let npReg2 = api.MyRegex.BETWEEN_LINE_NUM_G();
+      let npReg2 = common.MyRegex.BETWEEN_LINE_NUM_G();
       item.hash[newPar] = item.hash[newPar].toString().replace(npReg2, '');
       // remove whitespaces
-      let reg3 = api.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
+      let reg3 = common.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
       let r3 = reg3.exec(item.hash[newPar]);
       item.hash[newPar] = r3 ? r3[1] : item.hash[newPar];
     }
   });
 
   Object.keys(item.hash).forEach(par => {
-    let reg = api.MyRegex.CAPTURE_WITHOUT_END_LINE_NUMBERS();
+    let reg = common.MyRegex.CAPTURE_WITHOUT_END_LINE_NUMBERS();
     let r = reg.exec(par);
 
     if (r) {

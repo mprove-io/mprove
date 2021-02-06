@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,14 +25,14 @@ export function jsoSubstituteSingleRefs(
       .forEach(join => {
         let sqlOnReal = join.sql_on;
 
-        let reg = api.MyRegex.CAPTURE_SINGLE_REF();
+        let reg = common.MyRegex.CAPTURE_SINGLE_REF();
         let r;
 
         while ((r = reg.exec(sqlOnReal))) {
           let reference = r[1];
           let referenceField = x.fields.find(f => f.name === reference);
 
-          sqlOnReal = api.MyRegex.replaceSingleRefs(
+          sqlOnReal = common.MyRegex.replaceSingleRefs(
             sqlOnReal,
             reference,
             referenceField.sql

@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { ChartAxis } from './chart/chart-axis';
 import { ChartData } from './chart/chart-data';
 import { ChartOptions } from './chart/chart-options';
@@ -28,7 +28,7 @@ export interface Report {
   limit: string; // string
   limit_line_num: number;
 
-  type: api.ChartTypeEnum;
+  type: apiToBlockml.ChartTypeEnum;
   type_line_num: number;
 
   data: ChartData;
@@ -63,7 +63,7 @@ export interface Report {
   combinedFilters: FilterBricksDictionary;
 
   filtersFractions: {
-    [s: string]: api.Fraction[];
+    [s: string]: apiToBlockml.Fraction[];
   };
 
   sql: string[];

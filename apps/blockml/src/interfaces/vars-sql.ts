@@ -1,15 +1,16 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
 import { ViewPart } from './view-part';
 
 export interface VarsSql {
-  weekStart?: api.ProjectWeekStartEnum;
+  weekStart?: common.ProjectWeekStartEnum;
   timezone?: string;
   select?: string[];
   sorts?: string;
   limit?: string;
   filters?: FilterBricksDictionary;
-  filtersFractions?: { [s: string]: api.Fraction[] };
+  filtersFractions?: { [s: string]: apiToBlockml.Fraction[] };
 
   depMeasures?: { [as: string]: { [fieldName: string]: number } };
   depDimensions?: { [as: string]: { [fieldName: string]: number } };

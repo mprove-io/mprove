@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 
 export interface Filter {
   hidden?: string; // boolean
@@ -13,7 +13,7 @@ export interface Filter {
   // sql?: string;
   // sql_line_num?: number;
 
-  result?: api.FieldResultEnum;
+  result?: apiToBlockml.FieldResultEnum;
   result_line_num?: number;
 
   default?: string[];
@@ -25,7 +25,7 @@ export interface Filter {
 
   name_line_num?: number;
 
-  fieldClass?: api.FieldClassEnum;
+  fieldClass?: apiToBlockml.FieldClassEnum;
 
-  fractions?: api.Fraction[];
+  fractions?: apiToBlockml.Fraction[];
 }

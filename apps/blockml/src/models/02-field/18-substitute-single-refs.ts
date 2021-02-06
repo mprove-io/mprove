@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -21,7 +22,7 @@ export function substituteSingleRefs<T extends types.vmType>(
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.entities.forEach(x => {
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       return;
     }
 
@@ -32,20 +33,20 @@ export function substituteSingleRefs<T extends types.vmType>(
 
       switch (true) {
         // process dimensions (they can reference only dimensions - already checked)
-        case field.fieldClass === api.FieldClassEnum.Dimension: {
+        case field.fieldClass === apiToBlockml.FieldClassEnum.Dimension: {
           let dimension: interfaces.Dimension = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
 
-          let reg = api.MyRegex.CAPTURE_SINGLE_REF();
+          let reg = common.MyRegex.CAPTURE_SINGLE_REF();
           let r;
 
           while ((r = reg.exec(sqlReal))) {
             let reference = r[1];
             let referenceField = x.fields.find(f => f.name === reference);
 
-            sqlReal = api.MyRegex.replaceSingleRefs(
+            sqlReal = common.MyRegex.replaceSingleRefs(
               sqlReal,
               reference,
               referenceField.sql
@@ -55,17 +56,17 @@ export function substituteSingleRefs<T extends types.vmType>(
           dimension.sqlReal = sqlReal;
 
           // sqlTimestampReal
-          if (dimension.result === api.FieldResultEnum.Ts) {
+          if (dimension.result === apiToBlockml.FieldResultEnum.Ts) {
             let sqlTimestampReal = dimension.sqlTimestamp; // init
 
-            let reg2 = api.MyRegex.CAPTURE_SINGLE_REF();
+            let reg2 = common.MyRegex.CAPTURE_SINGLE_REF();
             let r2;
 
             while ((r2 = reg2.exec(sqlTimestampReal))) {
               let reference2 = r2[1];
               let referenceField2 = x.fields.find(f => f.name === reference2);
 
-              sqlTimestampReal = api.MyRegex.replaceSingleRefs(
+              sqlTimestampReal = common.MyRegex.replaceSingleRefs(
                 sqlTimestampReal,
                 reference2,
                 referenceField2.sql
@@ -78,21 +79,21 @@ export function substituteSingleRefs<T extends types.vmType>(
         }
 
         // process measures of Models (they can reference only dimensions - already checked)
-        case field.fieldClass === api.FieldClassEnum.Measure &&
-          x.fileExt === api.FileExtensionEnum.Model: {
+        case field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+          x.fileExt === common.FileExtensionEnum.Model: {
           let measure: interfaces.Measure = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
 
-          let reg = api.MyRegex.CAPTURE_SINGLE_REF();
+          let reg = common.MyRegex.CAPTURE_SINGLE_REF();
           let r;
 
           while ((r = reg.exec(sqlReal))) {
             let reference = r[1];
             let referenceField = x.fields.find(f => f.name === reference);
 
-            sqlReal = api.MyRegex.replaceSingleRefs(
+            sqlReal = common.MyRegex.replaceSingleRefs(
               sqlReal,
               reference,
               referenceField.sql
@@ -104,22 +105,22 @@ export function substituteSingleRefs<T extends types.vmType>(
           // sqlKeyReal
           if (
             [
-              api.FieldTypeEnum.SumByKey,
-              api.FieldTypeEnum.AverageByKey,
-              api.FieldTypeEnum.MedianByKey,
-              api.FieldTypeEnum.PercentileByKey
+              apiToBlockml.FieldTypeEnum.SumByKey,
+              apiToBlockml.FieldTypeEnum.AverageByKey,
+              apiToBlockml.FieldTypeEnum.MedianByKey,
+              apiToBlockml.FieldTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init
 
-            let reg2 = api.MyRegex.CAPTURE_SINGLE_REF();
+            let reg2 = common.MyRegex.CAPTURE_SINGLE_REF();
             let r2;
 
             while ((r2 = reg2.exec(sqlKeyReal))) {
               let reference2 = r2[1];
               let referenceField2 = x.fields.find(f => f.name === reference2);
 
-              sqlKeyReal = api.MyRegex.replaceSingleRefs(
+              sqlKeyReal = common.MyRegex.replaceSingleRefs(
                 sqlKeyReal,
                 reference2,
                 referenceField2.sql
@@ -132,14 +133,14 @@ export function substituteSingleRefs<T extends types.vmType>(
         }
 
         // process measures of Views (they can reference only dimensions - already checked)
-        case field.fieldClass === api.FieldClassEnum.Measure &&
-          x.fileExt === api.FileExtensionEnum.View: {
+        case field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+          x.fileExt === common.FileExtensionEnum.View: {
           let measure: interfaces.Measure = field;
 
           // sqlReal
           let sqlReal = field.sql; // init
 
-          let reg = api.MyRegex.CAPTURE_SINGLE_REF_G();
+          let reg = common.MyRegex.CAPTURE_SINGLE_REF_G();
           let r;
 
           // can't replace here because we leave single references to dimensions untouched
@@ -155,15 +156,15 @@ export function substituteSingleRefs<T extends types.vmType>(
           // sqlKeyReal
           if (
             [
-              api.FieldTypeEnum.SumByKey,
-              api.FieldTypeEnum.AverageByKey,
-              api.FieldTypeEnum.MedianByKey,
-              api.FieldTypeEnum.PercentileByKey
+              apiToBlockml.FieldTypeEnum.SumByKey,
+              apiToBlockml.FieldTypeEnum.AverageByKey,
+              apiToBlockml.FieldTypeEnum.MedianByKey,
+              apiToBlockml.FieldTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init
 
-            let reg2 = api.MyRegex.CAPTURE_SINGLE_REF_G();
+            let reg2 = common.MyRegex.CAPTURE_SINGLE_REF_G();
             let r2;
 
             // can't replace here because we leave single references to dimensions untouched
@@ -180,7 +181,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         }
 
         // process calculations (they can reference anything - already checked)
-        case field.fieldClass === api.FieldClassEnum.Calculation: {
+        case field.fieldClass === apiToBlockml.FieldClassEnum.Calculation: {
           let calculation: interfaces.Calculation = field;
 
           // sqlReal
@@ -199,7 +200,7 @@ export function substituteSingleRefs<T extends types.vmType>(
 
             deps = []; // needs to be reinitialized after each restart
 
-            let reg = api.MyRegex.CAPTURE_SINGLE_REF_G(); // g works because of restart
+            let reg = common.MyRegex.CAPTURE_SINGLE_REF_G(); // g works because of restart
             let r;
 
             while ((r = reg.exec(sqlReal))) {
@@ -209,8 +210,8 @@ export function substituteSingleRefs<T extends types.vmType>(
 
               switch (true) {
                 case referenceField.fieldClass ===
-                  api.FieldClassEnum.Calculation: {
-                  sqlReal = api.MyRegex.replaceSingleRefs(
+                  apiToBlockml.FieldClassEnum.Calculation: {
+                  sqlReal = common.MyRegex.replaceSingleRefs(
                     sqlReal,
                     reference,
                     referenceField.sql
@@ -221,7 +222,7 @@ export function substituteSingleRefs<T extends types.vmType>(
                 }
 
                 case referenceField.fieldClass ===
-                  api.FieldClassEnum.Dimension: {
+                  apiToBlockml.FieldClassEnum.Dimension: {
                   deps.push({
                     depName: reference,
                     depLineNum: calculation.sql_line_num
@@ -229,7 +230,8 @@ export function substituteSingleRefs<T extends types.vmType>(
                   break;
                 }
 
-                case referenceField.fieldClass === api.FieldClassEnum.Measure: {
+                case referenceField.fieldClass ===
+                  apiToBlockml.FieldClassEnum.Measure: {
                   deps.push({
                     depName: reference,
                     depLineNum: calculation.sql_line_num

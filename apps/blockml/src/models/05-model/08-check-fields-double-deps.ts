@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -66,7 +66,7 @@ export function checkFieldsDoubleDeps(
             return;
           }
 
-          if (depField.fieldClass === api.FieldClassEnum.Filter) {
+          if (depField.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.MODEL_FIELD_REFS_FILTER,
@@ -84,8 +84,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === api.FieldClassEnum.Dimension &&
-            depField.fieldClass === api.FieldClassEnum.Measure
+            field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
+            depField.fieldClass === apiToBlockml.FieldClassEnum.Measure
           ) {
             item.errors.push(
               new BmError({
@@ -107,8 +107,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === api.FieldClassEnum.Dimension &&
-            depField.fieldClass === api.FieldClassEnum.Calculation
+            field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
+            depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
           ) {
             item.errors.push(
               new BmError({
@@ -130,8 +130,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === api.FieldClassEnum.Measure &&
-            depField.fieldClass === api.FieldClassEnum.Measure
+            field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+            depField.fieldClass === apiToBlockml.FieldClassEnum.Measure
           ) {
             item.errors.push(
               new BmError({
@@ -153,8 +153,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === api.FieldClassEnum.Measure &&
-            depField.fieldClass === api.FieldClassEnum.Calculation
+            field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+            depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
           ) {
             item.errors.push(
               new BmError({

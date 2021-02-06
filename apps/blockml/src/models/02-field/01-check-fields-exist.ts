@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -27,7 +27,7 @@ export function checkFieldsExist<T extends types.vmdType>(
 
     if (
       helper.isUndefined(x.fields) &&
-      x.fileExt === api.FileExtensionEnum.View
+      x.fileExt === common.FileExtensionEnum.View
     ) {
       item.errors.push(
         new BmError({

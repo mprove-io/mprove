@@ -1,7 +1,7 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTimestampOpenFromDateParts(item: {
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
   year: string;
   month: string;
   day: string;
@@ -19,7 +19,7 @@ export function makeTimestampOpenFromDateParts(item: {
   let sql;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql = minute
         ? `TIMESTAMP('${year}-${month}-${day} ${hour}:${minute}:00')`
         : hour
@@ -34,7 +34,7 @@ export function makeTimestampOpenFromDateParts(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql = minute
         ? `'${year}-${month}-${day} ${hour}:${minute}:00'::TIMESTAMP`
         : hour

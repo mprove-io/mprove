@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -59,7 +60,7 @@ export function checkViewAsDeps(
                 enums.ErTitleEnum
                   .DERIVED_TABLE_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION,
               message:
-                `The ${api.FileExtensionEnum.View} can refer to other views ` +
+                `The ${common.FileExtensionEnum.View} can refer to other views ` +
                 `with the same connection name. View "${x.name}" with connection ` +
                 `"${x.connection.name}" references view "${referencedViewName}" ` +
                 `with connection "${referencedView.connection.name}"`,
@@ -78,7 +79,7 @@ export function checkViewAsDeps(
         if (helper.isDefined(referencedView.derived_table)) {
           let input = referencedView.derived_table;
 
-          let reg = api.MyRegex.CAPTURE_START_FIELD_TARGET_END();
+          let reg = common.MyRegex.CAPTURE_START_FIELD_TARGET_END();
           let r = reg.exec(input);
 
           if (r) {
@@ -121,7 +122,7 @@ export function checkViewAsDeps(
               })
             );
             return;
-          } else if (field.fieldClass === api.FieldClassEnum.Filter) {
+          } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER,
@@ -145,8 +146,8 @@ export function checkViewAsDeps(
 
     if (helper.isDefined(x.derived_table)) {
       let input = x.derived_table;
-      input = api.MyRegex.replaceViewRefs(input, x.name);
-      input = api.MyRegex.removeBracketsOnViewFieldRefs(input);
+      input = common.MyRegex.replaceViewRefs(input, x.name);
+      input = common.MyRegex.removeBracketsOnViewFieldRefs(input);
 
       x.derivedTableStart = input.split('\n');
     }

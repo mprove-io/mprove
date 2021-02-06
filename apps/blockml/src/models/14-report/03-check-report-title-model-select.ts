@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -31,7 +31,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
         let lineNums: number[] = [];
 
         Object.keys(report)
-          .filter(p => p.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+          .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(l => lineNums.push(report[l]));
 
         item.errors.push(

@@ -1,8 +1,8 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 
 export function makeTimestampOpenBeforeAfterInFutureComplete(item: {
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
   unit: string;
   integer: number;
   currentYearTs: string;
@@ -29,7 +29,7 @@ export function makeTimestampOpenBeforeAfterInFutureComplete(item: {
   let sql;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql =
         unit === enums.FractionUnitEnum.Minutes
           ? `TIMESTAMP_ADD(${currentMinuteTs}, INTERVAL ${integer} + 1 MINUTE)`
@@ -52,7 +52,7 @@ export function makeTimestampOpenBeforeAfterInFutureComplete(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql =
         unit === enums.FractionUnitEnum.Minutes
           ? `${currentMinuteTs} + INTERVAL '${integer + 1} minute'`

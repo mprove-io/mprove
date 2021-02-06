@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -23,7 +24,7 @@ export function makeFieldsDoubleDeps(
     x.fieldsDoubleDeps = {};
 
     x.fields.forEach(f => {
-      if (f.fieldClass === api.FieldClassEnum.Filter) {
+      if (f.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
         return;
       }
 
@@ -31,7 +32,7 @@ export function makeFieldsDoubleDeps(
 
       // work with sql
       let r;
-      let reg = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+      let reg = common.MyRegex.CAPTURE_DOUBLE_REF_G();
 
       while ((r = reg.exec(f.sql))) {
         let as: string = r[1];
@@ -46,16 +47,16 @@ export function makeFieldsDoubleDeps(
 
       // work with sqlKey
       if (
-        f.fieldClass === api.FieldClassEnum.Measure &&
+        f.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
         [
-          api.FieldTypeEnum.SumByKey,
-          api.FieldTypeEnum.AverageByKey,
-          api.FieldTypeEnum.MedianByKey,
-          api.FieldTypeEnum.PercentileByKey
+          apiToBlockml.FieldTypeEnum.SumByKey,
+          apiToBlockml.FieldTypeEnum.AverageByKey,
+          apiToBlockml.FieldTypeEnum.MedianByKey,
+          apiToBlockml.FieldTypeEnum.PercentileByKey
         ].indexOf(f.type) > -1
       ) {
         let r2;
-        let reg2 = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+        let reg2 = common.MyRegex.CAPTURE_DOUBLE_REF_G();
 
         while ((r2 = reg2.exec(f.sql_key))) {
           let as: string = r2[1];

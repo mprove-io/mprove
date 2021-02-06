@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -21,14 +22,14 @@ export function transformYesNoDimensions<T extends types.vmType>(
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.entities.forEach((x: T) => {
-    if (x.fileExt === api.FileExtensionEnum.Dashboard) {
+    if (x.fileExt === common.FileExtensionEnum.Dashboard) {
       return;
     }
 
     x.fields.forEach(field => {
       if (
-        field.fieldClass === api.FieldClassEnum.Dimension &&
-        field.type === api.FieldTypeEnum.YesnoIsTrue
+        field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
+        field.type === apiToBlockml.FieldTypeEnum.YesnoIsTrue
       ) {
         field.sql = `CASE WHEN (${field.sql}) IS TRUE THEN 'Yes' ELSE 'No' END`;
       }

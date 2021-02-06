@@ -1,4 +1,4 @@
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { enums } from '~disk/barrels/enums';
 import { interfaces } from '~disk/barrels/interfaces';

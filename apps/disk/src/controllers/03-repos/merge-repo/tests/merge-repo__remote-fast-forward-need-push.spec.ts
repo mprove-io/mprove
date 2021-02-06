@@ -1,5 +1,5 @@
 import test from 'ava';
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -30,7 +30,7 @@ export function sawMakeDoubleDepsAfterSingles(
       return;
     }
 
-    let reg = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+    let reg = common.MyRegex.CAPTURE_DOUBLE_REF_G();
     let r;
 
     while ((r = reg.exec(x.sqlAlwaysWhereReal))) {

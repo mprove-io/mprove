@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -63,7 +63,7 @@ export function makeNeedsDoubles(item: {
   ];
 
   elements.forEach(element => {
-    let reg = api.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+    let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
     let r = reg.exec(element);
 
     let aName = r[1];

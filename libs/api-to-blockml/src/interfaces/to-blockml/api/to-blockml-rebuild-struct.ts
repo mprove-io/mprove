@@ -4,6 +4,7 @@ import { common } from '~api-to-blockml/barrels/common';
 import {
   BmlError,
   Dashboard,
+  File,
   Mconfig,
   Model,
   Query,

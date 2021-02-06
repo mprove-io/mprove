@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -30,7 +30,7 @@ export function jsoMakeJoinsDoubleDepsAfterSingles(
         let sqlOnReal = join.sqlOnReal;
 
         let r;
-        let reg = api.MyRegex.CAPTURE_DOUBLE_REF_G();
+        let reg = common.MyRegex.CAPTURE_DOUBLE_REF_G();
 
         while ((r = reg.exec(sqlOnReal))) {
           let asName: string = r[1];

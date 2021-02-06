@@ -1,20 +1,20 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 
 export function makeTsFromSourceYYYYMMDD(item: {
   sql: string;
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
 }) {
   let { sql, connection } = item;
 
   let ts;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       ts = `PARSE_TIMESTAMP('%Y%m%d', CAST(${sql} AS STRING))`;
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       ts = `TO_DATE(${sql}::VARCHAR, 'YYYYMMDD')::TIMESTAMP`;
       break;
     }

@@ -1,8 +1,8 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 
 export function makeTimestampCloseLastCompletePlusCurrent(item: {
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
   unit: string;
   currentYearTs: string;
   currentQuarterTs: string;
@@ -27,7 +27,7 @@ export function makeTimestampCloseLastCompletePlusCurrent(item: {
   let sql;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       sql =
         unit === enums.FractionUnitEnum.Minutes
           ? `TIMESTAMP_ADD(${currentMinuteTs}, INTERVAL 1 MINUTE)`
@@ -47,7 +47,7 @@ export function makeTimestampCloseLastCompletePlusCurrent(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       sql =
         unit === enums.FractionUnitEnum.Minutes
           ? `${currentMinuteTs} + INTERVAL '1 minute'`

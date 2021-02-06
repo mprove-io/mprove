@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api';
+import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 import { CreateOrganizationService } from '~disk/controllers/01-organizations/create-organization/create-organization.service';

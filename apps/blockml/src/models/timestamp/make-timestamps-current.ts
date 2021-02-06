@@ -1,8 +1,8 @@
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 
 export function makeTimestampsCurrent(item: {
-  connection: api.ProjectConnection;
+  connection: common.ProjectConnection;
   timezone: any;
   weekStart: any;
 }) {
@@ -18,7 +18,7 @@ export function makeTimestampsCurrent(item: {
   let currentYearTimestamp;
 
   switch (connection.type) {
-    case api.ConnectionTypeEnum.BigQuery: {
+    case common.ConnectionTypeEnum.BigQuery: {
       currentTimestamp =
         timezone === constants.UTC
           ? 'CURRENT_TIMESTAMP()'
@@ -29,7 +29,7 @@ export function makeTimestampsCurrent(item: {
       currentDateTimestamp = `TIMESTAMP_TRUNC(${currentTimestamp}, DAY)`;
 
       currentWeekStartTimestamp =
-        weekStart === api.ProjectWeekStartEnum.Sunday
+        weekStart === common.ProjectWeekStartEnum.Sunday
           ? `TIMESTAMP_TRUNC(${currentTimestamp}, WEEK)`
           : `TIMESTAMP_ADD(TIMESTAMP_TRUNC(${currentTimestamp}, WEEK), INTERVAL 1 DAY)`;
 
@@ -39,7 +39,7 @@ export function makeTimestampsCurrent(item: {
       break;
     }
 
-    case api.ConnectionTypeEnum.PostgreSQL: {
+    case common.ConnectionTypeEnum.PostgreSQL: {
       currentTimestamp =
         timezone === constants.UTC
           ? 'CURRENT_TIMESTAMP'
@@ -50,7 +50,7 @@ export function makeTimestampsCurrent(item: {
       currentDateTimestamp = `DATE_TRUNC('day', ${currentTimestamp})`;
 
       currentWeekStartTimestamp =
-        weekStart === api.ProjectWeekStartEnum.Sunday
+        weekStart === common.ProjectWeekStartEnum.Sunday
           ? `DATE_TRUNC('week', ${currentTimestamp}) + INTERVAL '-1 day'`
           : `DATE_TRUNC('week', ${currentTimestamp})`;
 

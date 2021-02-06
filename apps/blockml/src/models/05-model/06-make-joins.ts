@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -37,7 +37,7 @@ export function makeJoins(
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW,
-            message: `${api.FileExtensionEnum.View} "${viewName}" is missing or not valid`,
+            message: `${common.FileExtensionEnum.View} "${viewName}" is missing or not valid`,
             lines: [
               {
                 line: errorLine,
@@ -56,7 +56,7 @@ export function makeJoins(
             title:
               enums.ErTitleEnum.JOIN_REFERENCED_VIEW_HAS_DIFFERENT_CONNECTION,
             message:
-              `The ${api.FileExtensionEnum.Model} can refer to views ` +
+              `The ${common.FileExtensionEnum.Model} can refer to views ` +
               `with the same connection name. Model "${x.name}" with connection ` +
               `"${x.connection.name}" references view "${view.name}" ` +
               `with connection "${view.connection.name}"`,

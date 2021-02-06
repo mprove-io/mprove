@@ -1,4 +1,4 @@
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -43,11 +43,11 @@ export function subComposeCalc(item: {
     let field = view.fields.find(vField => vField.name === fieldName);
 
     let selectString =
-      field.fieldClass === api.FieldClassEnum.Dimension
+      field.fieldClass === apiToBlockml.FieldClassEnum.Dimension
         ? `${fieldName},`
-        : field.fieldClass === api.FieldClassEnum.Measure
+        : field.fieldClass === apiToBlockml.FieldClassEnum.Measure
         ? `${fieldName},`
-        : field.fieldClass === api.FieldClassEnum.Calculation
+        : field.fieldClass === apiToBlockml.FieldClassEnum.Calculation
         ? `${processedFields[fieldName]} as ${fieldName},`
         : '';
 

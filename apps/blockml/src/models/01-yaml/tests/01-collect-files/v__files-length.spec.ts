@@ -1,6 +1,7 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { prepareTest } from '~blockml/functions/prepare-test';
@@ -10,7 +11,7 @@ let func = enums.FuncEnum.CollectFiles;
 let testId = 'v__files-length';
 
 test('1', async t => {
-  let files: api.File[];
+  let files: apiToBlockml.File[];
 
   try {
     let {
@@ -27,7 +28,7 @@ test('1', async t => {
       dir: dataDir,
       structId: structId,
       connections: [],
-      weekStart: api.ProjectWeekStartEnum.Monday
+      weekStart: common.ProjectWeekStartEnum.Monday
     });
 
     files = await helper.readLog(fromDir, enums.LogTypeEnum.Files);
@@ -35,7 +36,7 @@ test('1', async t => {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
-    api.logToConsole(e);
+    common.logToConsole(e);
   }
 
   t.is(files.length, 5);

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -52,7 +52,7 @@ export function checkJoinsFromView(
       if (helper.isUndefined(j.from_view) && helper.isUndefined(j.join_view)) {
         let lineNums: number[] = [];
         Object.keys(j)
-          .filter(p => p.match(api.MyRegex.ENDS_WITH_LINE_NUM()))
+          .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(l => lineNums.push(j[l]));
 
         item.errors.push(
@@ -81,7 +81,7 @@ export function checkJoinsFromView(
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MISSING_FROM_VIEW_ELEMENT,
-            message: `${api.FileExtensionEnum.Model} must have exactly one Join with "${enums.ParameterEnum.FromView}" parameter`,
+            message: `${common.FileExtensionEnum.Model} must have exactly one Join with "${enums.ParameterEnum.FromView}" parameter`,
             lines: [
               {
                 line: x.joins_line_num,
@@ -104,7 +104,7 @@ export function checkJoinsFromView(
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.TOO_MANY_FROM_VIEW,
-            message: `${api.FileExtensionEnum.Model} must have only one Join with "${enums.ParameterEnum.FromView}" parameter`,
+            message: `${common.FileExtensionEnum.Model} must have only one Join with "${enums.ParameterEnum.FromView}" parameter`,
             lines: lines
           })
         );

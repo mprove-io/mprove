@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { api } from '~blockml/barrels/api';
+import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -28,24 +28,24 @@ export function checkChartDataParameters<T extends types.dzType>(
     x.reports.forEach(report => {
       if (
         [
-          api.ChartTypeEnum.BarVertical,
-          api.ChartTypeEnum.BarVerticalGrouped,
-          api.ChartTypeEnum.BarVerticalStacked,
-          api.ChartTypeEnum.BarVerticalNormalized,
-          api.ChartTypeEnum.BarHorizontal,
-          api.ChartTypeEnum.BarHorizontalGrouped,
-          api.ChartTypeEnum.BarHorizontalStacked,
-          api.ChartTypeEnum.BarHorizontalNormalized,
-          api.ChartTypeEnum.Pie,
-          api.ChartTypeEnum.PieAdvanced,
-          api.ChartTypeEnum.PieGrid,
-          api.ChartTypeEnum.Line,
-          api.ChartTypeEnum.Area,
-          api.ChartTypeEnum.AreaStacked,
-          api.ChartTypeEnum.AreaNormalized,
-          api.ChartTypeEnum.HeatMap,
-          api.ChartTypeEnum.TreeMap,
-          api.ChartTypeEnum.Gauge
+          apiToBlockml.ChartTypeEnum.BarVertical,
+          apiToBlockml.ChartTypeEnum.BarVerticalGrouped,
+          apiToBlockml.ChartTypeEnum.BarVerticalStacked,
+          apiToBlockml.ChartTypeEnum.BarVerticalNormalized,
+          apiToBlockml.ChartTypeEnum.BarHorizontal,
+          apiToBlockml.ChartTypeEnum.BarHorizontalGrouped,
+          apiToBlockml.ChartTypeEnum.BarHorizontalStacked,
+          apiToBlockml.ChartTypeEnum.BarHorizontalNormalized,
+          apiToBlockml.ChartTypeEnum.Pie,
+          apiToBlockml.ChartTypeEnum.PieAdvanced,
+          apiToBlockml.ChartTypeEnum.PieGrid,
+          apiToBlockml.ChartTypeEnum.Line,
+          apiToBlockml.ChartTypeEnum.Area,
+          apiToBlockml.ChartTypeEnum.AreaStacked,
+          apiToBlockml.ChartTypeEnum.AreaNormalized,
+          apiToBlockml.ChartTypeEnum.HeatMap,
+          apiToBlockml.ChartTypeEnum.TreeMap,
+          apiToBlockml.ChartTypeEnum.Gauge
         ].indexOf(report.type) > -1 &&
         (helper.isUndefined(report.data) ||
           helper.isUndefined(report.data.x_field))
@@ -70,14 +70,14 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         [
-          api.ChartTypeEnum.BarVertical,
-          api.ChartTypeEnum.BarHorizontal,
-          api.ChartTypeEnum.Pie,
-          api.ChartTypeEnum.PieAdvanced,
-          api.ChartTypeEnum.PieGrid,
-          api.ChartTypeEnum.TreeMap,
-          api.ChartTypeEnum.NumberCard,
-          api.ChartTypeEnum.Gauge
+          apiToBlockml.ChartTypeEnum.BarVertical,
+          apiToBlockml.ChartTypeEnum.BarHorizontal,
+          apiToBlockml.ChartTypeEnum.Pie,
+          apiToBlockml.ChartTypeEnum.PieAdvanced,
+          apiToBlockml.ChartTypeEnum.PieGrid,
+          apiToBlockml.ChartTypeEnum.TreeMap,
+          apiToBlockml.ChartTypeEnum.NumberCard,
+          apiToBlockml.ChartTypeEnum.Gauge
         ].indexOf(report.type) > -1 &&
         (helper.isUndefined(report.data) ||
           helper.isUndefined(report.data.y_field))
@@ -102,17 +102,17 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         [
-          api.ChartTypeEnum.BarVerticalGrouped,
-          api.ChartTypeEnum.BarVerticalStacked,
-          api.ChartTypeEnum.BarVerticalNormalized,
-          api.ChartTypeEnum.BarHorizontalGrouped,
-          api.ChartTypeEnum.BarHorizontalStacked,
-          api.ChartTypeEnum.BarHorizontalNormalized,
-          api.ChartTypeEnum.Line,
-          api.ChartTypeEnum.Area,
-          api.ChartTypeEnum.AreaStacked,
-          api.ChartTypeEnum.AreaNormalized,
-          api.ChartTypeEnum.HeatMap
+          apiToBlockml.ChartTypeEnum.BarVerticalGrouped,
+          apiToBlockml.ChartTypeEnum.BarVerticalStacked,
+          apiToBlockml.ChartTypeEnum.BarVerticalNormalized,
+          apiToBlockml.ChartTypeEnum.BarHorizontalGrouped,
+          apiToBlockml.ChartTypeEnum.BarHorizontalStacked,
+          apiToBlockml.ChartTypeEnum.BarHorizontalNormalized,
+          apiToBlockml.ChartTypeEnum.Line,
+          apiToBlockml.ChartTypeEnum.Area,
+          apiToBlockml.ChartTypeEnum.AreaStacked,
+          apiToBlockml.ChartTypeEnum.AreaNormalized,
+          apiToBlockml.ChartTypeEnum.HeatMap
         ].indexOf(report.type) > -1 &&
         (helper.isUndefined(report.data) ||
           helper.isUndefined(report.data.y_fields))
@@ -136,7 +136,7 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
-        report.type === api.ChartTypeEnum.GaugeLinear &&
+        report.type === apiToBlockml.ChartTypeEnum.GaugeLinear &&
         (helper.isUndefined(report.data) ||
           helper.isUndefined(report.data.value_field))
       ) {
