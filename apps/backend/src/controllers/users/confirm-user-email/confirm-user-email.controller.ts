@@ -4,12 +4,12 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
-import { decorators } from '~backend/barrels/decorators';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
+import { Public, ValidateRequest } from '~backend/decorators/_index';
 
-@decorators.Public()
+@Public()
 @Controller()
 export class ConfirmUserEmailController {
   constructor(
@@ -19,14 +19,12 @@ export class ConfirmUserEmailController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
-  async confirmUserEmail(@Body() body) {
+  async confirmUserEmail(
+    @Body() body,
+    @ValidateRequest(apiToBackend.ToBackendConfirmUserEmailRequest)
+    reqValid: apiToBackend.ToBackendConfirmUserEmailRequest
+  ) {
     try {
-      let reqValid = await common.transformValid({
-        classType: apiToBackend.ToBackendConfirmUserEmailRequest,
-        object: body,
-        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-      });
-
       let { token } = reqValid.payload;
 
       let user = await this.userRepository.findOne({

@@ -2,10 +2,10 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { decorators } from '~backend/barrels/decorators';
 import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
+import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 
 @Controller()
 export class GetUserProfileController {
@@ -14,15 +14,11 @@ export class GetUserProfileController {
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
   async getUserProfile(
     @Body() body,
-    @decorators.AttachUser() user: entities.UserEntity
+    @AttachUser() user: entities.UserEntity,
+    @ValidateRequest(apiToBackend.ToBackendGetUserProfileRequest)
+    reqValid: apiToBackend.ToBackendGetUserProfileRequest
   ) {
     try {
-      let reqValid = await common.transformValid({
-        classType: apiToBackend.ToBackendGetUserProfileRequest,
-        object: body,
-        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-      });
-
       let payload: apiToBackend.ToBackendGetUserProfileResponsePayload = {
         user: wrapper.wrapToApiUser(user)
       };

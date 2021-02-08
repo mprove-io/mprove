@@ -2,7 +2,7 @@ import { IsEnum, IsString } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
 import { enums } from '~api-to-blockml/barrels/enums';
 
-export class ToBlockmlRequestInfo implements common.RequestInfo {
+export class ToBlockmlRequestInfo extends common.RequestInfo {
   @IsEnum(enums.ToBlockmlRequestInfoNameEnum)
   name: enums.ToBlockmlRequestInfoNameEnum;
 

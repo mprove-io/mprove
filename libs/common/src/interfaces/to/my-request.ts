@@ -1,11 +1,10 @@
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { IsDefined } from 'class-validator';
 import { RequestInfo } from './request-info';
 
 export class MyRequest {
-  @ValidateNested()
-  @Type(() => RequestInfo)
+  @IsDefined()
   readonly info: RequestInfo;
 
+  @IsDefined()
   readonly payload: any;
 }

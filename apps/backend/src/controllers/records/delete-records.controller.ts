@@ -5,13 +5,13 @@ import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { decorators } from '~backend/barrels/decorators';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
+import { Public, ValidateRequest } from '~backend/decorators/_index';
 import { RabbitService } from '~backend/services/rabbit.service';
 
-@decorators.Public()
+@Public()
 @Controller()
 export class DeleteRecordsController {
   constructor(
@@ -21,14 +21,12 @@ export class DeleteRecordsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
-  async deleteRecords(@Body() body) {
+  async deleteRecords(
+    @Body() body,
+    @ValidateRequest(apiToBackend.ToBackendDeleteRecordsRequest)
+    reqValid: apiToBackend.ToBackendDeleteRecordsRequest
+  ) {
     try {
-      let reqValid = await common.transformValid({
-        classType: apiToBackend.ToBackendDeleteRecordsRequest,
-        object: body,
-        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-      });
-
       let { organizationIds, emails } = reqValid.payload;
 
       // toDisk

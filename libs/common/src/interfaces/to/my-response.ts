@@ -1,11 +1,10 @@
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { IsDefined } from 'class-validator';
 import { ResponseInfo } from './response-info';
 
 export class MyResponse {
-  @ValidateNested()
-  @Type(() => ResponseInfo)
+  @IsDefined()
   readonly info: ResponseInfo;
 
+  @IsDefined()
   readonly payload: any;
 }

@@ -6,14 +6,14 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { db } from '~backend/barrels/db';
-import { decorators } from '~backend/barrels/decorators';
 import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { Public, ValidateRequest } from '~backend/decorators/_index';
 import { UsersService } from '~backend/services/users.service';
 
-@decorators.Public()
+@Public()
 @Controller()
 export class SeedRecordsController {
   constructor(
@@ -23,14 +23,12 @@ export class SeedRecordsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
-  async seedRecords(@Body() body) {
+  async seedRecords(
+    @Body() body,
+    @ValidateRequest(apiToBackend.ToBackendSeedRecordsRequest)
+    reqValid: apiToBackend.ToBackendSeedRecordsRequest
+  ) {
     try {
-      let reqValid = await common.transformValid({
-        classType: apiToBackend.ToBackendSeedRecordsRequest,
-        object: body,
-        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-      });
-
       let payloadUsers = reqValid.payload.users;
 
       //

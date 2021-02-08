@@ -5,15 +5,15 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
-import { decorators } from '~backend/barrels/decorators';
 import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
+import { Public, ValidateRequest } from '~backend/decorators/_index';
 import { UsersService } from '~backend/services/users.service';
 
-@decorators.Public()
+@Public()
 @Controller()
 export class RegisterUserController {
   constructor(
@@ -25,14 +25,12 @@ export class RegisterUserController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
-  async registerUser(@Body() body) {
+  async registerUser(
+    @Body() body,
+    @ValidateRequest(apiToBackend.ToBackendRegisterUserRequest)
+    reqValid: apiToBackend.ToBackendRegisterUserRequest
+  ) {
     try {
-      let reqValid = await common.transformValid({
-        classType: apiToBackend.ToBackendRegisterUserRequest,
-        object: body,
-        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-      });
-
       let { email, password } = reqValid.payload;
 
       let newUser: entities.UserEntity;

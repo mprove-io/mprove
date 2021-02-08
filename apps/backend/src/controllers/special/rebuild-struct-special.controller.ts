@@ -4,12 +4,12 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { decorators } from '~backend/barrels/decorators';
 import { interfaces } from '~backend/barrels/interfaces';
+import { Public, ValidateRequest } from '~backend/decorators/_index';
 import { makeRoutingKeyToDisk } from '~backend/helper/make-routing-key-to-disk';
 import { RabbitService } from '~backend/services/rabbit.service';
 
-@decorators.Public()
+@Public()
 @Controller()
 export class RebuildStructSpecialController {
   constructor(
@@ -18,14 +18,12 @@ export class RebuildStructSpecialController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial)
-  async rebuildStructSpecial(@Body() body) {
+  async rebuildStructSpecial(
+    @Body() body,
+    @ValidateRequest(apiToBackend.ToBackendRebuildStructSpecialRequest)
+    reqValid: apiToBackend.ToBackendRebuildStructSpecialRequest
+  ) {
     try {
-      let reqValid = await common.transformValid({
-        classType: apiToBackend.ToBackendRebuildStructSpecialRequest,
-        object: body,
-        errorMessage: apiToBackend.ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-      });
-
       let {
         organizationId,
         projectId,
