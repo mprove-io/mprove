@@ -6,12 +6,14 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { db } from '~backend/barrels/db';
+import { decorators } from '~backend/barrels/decorators';
 import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { UsersService } from '~backend/services/users.service';
 
+@decorators.Public()
 @Controller()
 export class SeedRecordsController {
   constructor(

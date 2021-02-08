@@ -5,11 +5,13 @@ import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { decorators } from '~backend/barrels/decorators';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@decorators.Public()
 @Controller()
 export class DeleteRecordsController {
   constructor(

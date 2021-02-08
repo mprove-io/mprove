@@ -4,10 +4,12 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
+import { decorators } from '~backend/barrels/decorators';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 
+@decorators.Public()
 @Controller()
 export class ConfirmUserEmailController {
   constructor(

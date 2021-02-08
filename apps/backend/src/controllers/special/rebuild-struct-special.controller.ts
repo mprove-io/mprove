@@ -4,10 +4,12 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { decorators } from '~backend/barrels/decorators';
 import { interfaces } from '~backend/barrels/interfaces';
 import { makeRoutingKeyToDisk } from '~backend/helper/make-routing-key-to-disk';
 import { RabbitService } from '~backend/services/rabbit.service';
 
+@decorators.Public()
 @Controller()
 export class RebuildStructSpecialController {
   constructor(

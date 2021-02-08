@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AppFilter } from './app-filter';
+import { JwtAuthGuard } from './auth-guards/jwt-auth.guard';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { interfaces } from './barrels/interfaces';
@@ -17,5 +18,9 @@ export const appProviders = [
     inject: [ConfigService]
   },
   LocalStrategy,
-  JwtStrategy
+  JwtStrategy,
+  {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard
+  }
 ];

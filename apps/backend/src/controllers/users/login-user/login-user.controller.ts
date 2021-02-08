@@ -9,6 +9,7 @@ import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 
+@decorators.Public()
 @UseGuards(LocalAuthGuard)
 @Controller()
 export class LoginUserController {

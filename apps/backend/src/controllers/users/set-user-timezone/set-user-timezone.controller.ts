@@ -1,7 +1,6 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
-import { JwtAuthGuard } from '~backend/auth-guards/jwt-auth.guard';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
@@ -11,7 +10,6 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 
-@UseGuards(JwtAuthGuard)
 @Controller()
 export class SetUserTimezoneController {
   constructor(
