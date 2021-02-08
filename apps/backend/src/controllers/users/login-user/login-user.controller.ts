@@ -29,15 +29,11 @@ export class LoginUserController {
     @ValidateRequest(apiToBackend.ToBackendLoginUserRequest)
     reqValid: apiToBackend.ToBackendLoginUserRequest
   ) {
-    try {
-      let payload: apiToBackend.ToBackendLoginUserResponsePayload = {
-        token: this.jwtService.sign({ userId: user.user_id }),
-        user: wrapper.wrapToApiUser(user)
-      };
+    let payload: apiToBackend.ToBackendLoginUserResponsePayload = {
+      token: this.jwtService.sign({ userId: user.user_id }),
+      user: wrapper.wrapToApiUser(user)
+    };
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
-    } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
-    }
+    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
   }
 }

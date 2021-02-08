@@ -26,59 +26,54 @@ export class DeleteRecordsController {
     @ValidateRequest(apiToBackend.ToBackendDeleteRecordsRequest)
     reqValid: apiToBackend.ToBackendDeleteRecordsRequest
   ) {
-    try {
-      let { organizationIds, emails } = reqValid.payload;
+    let { organizationIds, emails } = reqValid.payload;
 
-      // toDisk
+    // toDisk
 
-      if (helper.isDefined(organizationIds) && organizationIds.length > 0) {
-        await asyncPool(1, organizationIds, async (x: string) => {
-          let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
-            info: {
-              name:
-                apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
-              traceId: reqValid.info.traceId
-            },
-            payload: {
-              organizationId: x
-            }
-          };
-
-          let routingKey = helper.makeRoutingKeyToDisk({
-            organizationId: x,
-            projectId: null
-          });
-
-          let deleteOrganizationResp = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
-            {
-              routingKey: routingKey,
-              message: deleteOrganizationRequest
-            }
-          );
-
-          if (
-            deleteOrganizationResp.info.status !==
-            common.ResponseInfoStatusEnum.Ok
-          ) {
-            throw new common.ServerError({
-              message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
-              originalError: deleteOrganizationResp.info.error
-            });
+    if (helper.isDefined(organizationIds) && organizationIds.length > 0) {
+      await asyncPool(1, organizationIds, async (x: string) => {
+        let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
+          info: {
+            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
+            traceId: reqValid.info.traceId
+          },
+          payload: {
+            organizationId: x
           }
+        };
+
+        let routingKey = helper.makeRoutingKeyToDisk({
+          organizationId: x,
+          projectId: null
         });
-      }
 
-      // db
+        let deleteOrganizationResp = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
+          {
+            routingKey: routingKey,
+            message: deleteOrganizationRequest
+          }
+        );
 
-      if (helper.isDefined(emails) && emails.length > 0) {
-        await this.userRepository.delete({ email: In(emails) });
-      }
-
-      let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
-
-      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
-    } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
+        if (
+          deleteOrganizationResp.info.status !==
+          common.ResponseInfoStatusEnum.Ok
+        ) {
+          throw new common.ServerError({
+            message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+            originalError: deleteOrganizationResp.info.error
+          });
+        }
+      });
     }
+
+    // db
+
+    if (helper.isDefined(emails) && emails.length > 0) {
+      await this.userRepository.delete({ email: In(emails) });
+    }
+
+    let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
+
+    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
   }
 }

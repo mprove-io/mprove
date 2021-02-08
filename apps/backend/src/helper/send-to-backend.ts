@@ -1,3 +1,4 @@
+import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -19,7 +20,7 @@ export async function sendToBackend<T>(item: {
 
   let response = await rq.send(req);
 
-  if (response.status !== 201) {
+  if (response.status !== HttpStatus.CREATED) {
     throw new common.ServerError({
       message: apiToBackend.ErEnum.BACKEND_ERROR_CODE_FROM_BACKEND,
       originalError: response.text

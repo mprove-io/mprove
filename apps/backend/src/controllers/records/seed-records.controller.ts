@@ -28,58 +28,54 @@ export class SeedRecordsController {
     @ValidateRequest(apiToBackend.ToBackendSeedRecordsRequest)
     reqValid: apiToBackend.ToBackendSeedRecordsRequest
   ) {
-    try {
-      let payloadUsers = reqValid.payload.users;
+    let payloadUsers = reqValid.payload.users;
 
-      //
+    //
 
-      let users: entities.UserEntity[] = [];
+    let users: entities.UserEntity[] = [];
 
-      if (helper.isDefined(payloadUsers)) {
-        await asyncPool(
-          1,
-          payloadUsers,
-          async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsers) => {
-            let alias = await this.usersService.makeAlias(x.email);
-            let { salt, hash } = helper.isDefined(x.password)
-              ? await this.usersService.makeSaltAndHash(x.password)
-              : { salt: undefined, hash: undefined };
+    if (helper.isDefined(payloadUsers)) {
+      await asyncPool(
+        1,
+        payloadUsers,
+        async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsers) => {
+          let alias = await this.usersService.makeAlias(x.email);
+          let { salt, hash } = helper.isDefined(x.password)
+            ? await this.usersService.makeSaltAndHash(x.password)
+            : { salt: undefined, hash: undefined };
 
-            let newUser = gen.makeUser({
-              userId: x.userId,
-              email: x.email,
-              isEmailVerified: x.isEmailVerified,
-              emailVerificationToken: x.emailVerificationToken,
-              passwordResetToken: x.passwordResetToken,
-              hash: hash,
-              salt: salt,
-              alias: alias,
-              passwordResetExpiresTs: helper.isDefined(x.passwordResetToken)
-                ? helper.makeTsUsingOffsetFromNow(
-                    constants.PASSWORD_EXPIRES_OFFSET
-                  )
-                : undefined
-            });
+          let newUser = gen.makeUser({
+            userId: x.userId,
+            email: x.email,
+            isEmailVerified: x.isEmailVerified,
+            emailVerificationToken: x.emailVerificationToken,
+            passwordResetToken: x.passwordResetToken,
+            hash: hash,
+            salt: salt,
+            alias: alias,
+            passwordResetExpiresTs: helper.isDefined(x.passwordResetToken)
+              ? helper.makeTsUsingOffsetFromNow(
+                  constants.PASSWORD_EXPIRES_OFFSET
+                )
+              : undefined
+          });
 
-            users.push(newUser);
-          }
-        );
-      }
-
-      await this.connection.transaction(async manager => {
-        await db.addRecords({
-          manager: manager,
-          records: {
-            users: users
-          }
-        });
-      });
-
-      let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};
-
-      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
-    } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
+          users.push(newUser);
+        }
+      );
     }
+
+    await this.connection.transaction(async manager => {
+      await db.addRecords({
+        manager: manager,
+        records: {
+          users: users
+        }
+      });
+    });
+
+    let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};
+
+    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
   }
 }

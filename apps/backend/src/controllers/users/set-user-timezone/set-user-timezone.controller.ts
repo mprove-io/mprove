@@ -27,38 +27,34 @@ export class SetUserTimezoneController {
     @ValidateRequest(apiToBackend.ToBackendSetUserTimezoneRequest)
     reqValid: apiToBackend.ToBackendSetUserTimezoneRequest
   ) {
-    try {
-      let { timezone } = reqValid.payload;
+    let { timezone } = reqValid.payload;
 
-      user.timezone = timezone;
+    user.timezone = timezone;
 
-      let userMembers = <entities.MemberEntity[]>(
-        await this.memberRepository.find({
-          member_id: user.user_id
-        })
-      );
+    let userMembers = <entities.MemberEntity[]>await this.memberRepository.find(
+      {
+        member_id: user.user_id
+      }
+    );
 
-      userMembers.map(member => {
-        member.timezone = timezone;
+    userMembers.map(member => {
+      member.timezone = timezone;
+    });
+
+    await this.connection.transaction(async manager => {
+      await db.modifyRecords({
+        manager: manager,
+        records: {
+          users: [user],
+          members: userMembers
+        }
       });
+    });
 
-      await this.connection.transaction(async manager => {
-        await db.modifyRecords({
-          manager: manager,
-          records: {
-            users: [user],
-            members: userMembers
-          }
-        });
-      });
+    let payload: apiToBackend.ToBackendSetUserTimezoneResponsePayload = {
+      user: wrapper.wrapToApiUser(user)
+    };
 
-      let payload: apiToBackend.ToBackendSetUserTimezoneResponsePayload = {
-        user: wrapper.wrapToApiUser(user)
-      };
-
-      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
-    } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
-    }
+    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
   }
 }

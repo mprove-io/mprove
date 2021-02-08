@@ -24,37 +24,33 @@ export class ConfirmUserEmailController {
     @ValidateRequest(apiToBackend.ToBackendConfirmUserEmailRequest)
     reqValid: apiToBackend.ToBackendConfirmUserEmailRequest
   ) {
-    try {
-      let { token } = reqValid.payload;
+    let { token } = reqValid.payload;
 
-      let user = await this.userRepository.findOne({
-        email_verification_token: token
+    let user = await this.userRepository.findOne({
+      email_verification_token: token
+    });
+
+    if (helper.isUndefined(user)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
-
-      if (helper.isUndefined(user)) {
-        throw new common.ServerError({
-          message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
-        });
-      }
-
-      if (user.is_email_verified === common.BoolEnum.FALSE) {
-        user.is_email_verified = common.BoolEnum.TRUE;
-
-        await this.connection.transaction(async manager => {
-          await db.modifyRecords({
-            manager: manager,
-            records: {
-              users: [user]
-            }
-          });
-        });
-      }
-
-      let payload = {};
-
-      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
-    } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
     }
+
+    if (user.is_email_verified === common.BoolEnum.FALSE) {
+      user.is_email_verified = common.BoolEnum.TRUE;
+
+      await this.connection.transaction(async manager => {
+        await db.modifyRecords({
+          manager: manager,
+          records: {
+            users: [user]
+          }
+        });
+      });
+    }
+
+    let payload = {};
+
+    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
   }
 }

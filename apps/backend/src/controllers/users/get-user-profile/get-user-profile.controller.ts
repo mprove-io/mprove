@@ -18,14 +18,10 @@ export class GetUserProfileController {
     @ValidateRequest(apiToBackend.ToBackendGetUserProfileRequest)
     reqValid: apiToBackend.ToBackendGetUserProfileRequest
   ) {
-    try {
-      let payload: apiToBackend.ToBackendGetUserProfileResponsePayload = {
-        user: wrapper.wrapToApiUser(user)
-      };
+    let payload: apiToBackend.ToBackendGetUserProfileResponsePayload = {
+      user: wrapper.wrapToApiUser(user)
+    };
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
-    } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
-    }
+    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
   }
 }

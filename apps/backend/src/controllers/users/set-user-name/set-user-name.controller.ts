@@ -25,40 +25,36 @@ export class SetUserNameController {
     @ValidateRequest(apiToBackend.ToBackendSetUserNameRequest)
     reqValid: apiToBackend.ToBackendSetUserNameRequest
   ) {
-    try {
-      let { firstName, lastName } = reqValid.payload;
+    let { firstName, lastName } = reqValid.payload;
 
-      user.first_name = firstName;
-      user.last_name = lastName;
+    user.first_name = firstName;
+    user.last_name = lastName;
 
-      let userMembers = <entities.MemberEntity[]>(
-        await this.memberRepository.find({
-          member_id: user.user_id
-        })
-      );
+    let userMembers = <entities.MemberEntity[]>await this.memberRepository.find(
+      {
+        member_id: user.user_id
+      }
+    );
 
-      userMembers.map(member => {
-        member.first_name = firstName;
-        member.last_name = lastName;
+    userMembers.map(member => {
+      member.first_name = firstName;
+      member.last_name = lastName;
+    });
+
+    await this.connection.transaction(async manager => {
+      await db.modifyRecords({
+        manager: manager,
+        records: {
+          users: [user],
+          members: userMembers
+        }
       });
+    });
 
-      await this.connection.transaction(async manager => {
-        await db.modifyRecords({
-          manager: manager,
-          records: {
-            users: [user],
-            members: userMembers
-          }
-        });
-      });
+    let payload: apiToBackend.ToBackendSetUserNameResponsePayload = {
+      user: wrapper.wrapToApiUser(user)
+    };
 
-      let payload: apiToBackend.ToBackendSetUserNameResponsePayload = {
-        user: wrapper.wrapToApiUser(user)
-      };
-
-      return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
-    } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
-    }
+    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
   }
 }
