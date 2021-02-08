@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { enums } from '~common/barrels/enums';
-import { Config, MyRequest, MyResponse } from '~common/interfaces/_index';
+import { Config, MyResponse } from '~common/interfaces/_index';
 import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {
-  req: MyRequest;
+  req: any;
   payload: any;
   cs: ConfigService<Config>;
 }) {

@@ -1,12 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { Public, ValidateRequest } from '~backend/decorators/_index';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -16,13 +14,11 @@ import { RabbitService } from '~backend/services/rabbit.service';
 export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
-    private cs: ConfigService<interfaces.Config>,
     private userRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
   async deleteRecords(
-    @Body() body,
     @ValidateRequest(apiToBackend.ToBackendDeleteRecordsRequest)
     reqValid: apiToBackend.ToBackendDeleteRecordsRequest
   ) {
@@ -74,6 +70,6 @@ export class DeleteRecordsController {
 
     let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

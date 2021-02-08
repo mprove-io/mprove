@@ -1,19 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 
 @Controller()
 export class GetUserProfileController {
-  constructor(private cs: ConfigService<interfaces.Config>) {}
+  constructor() {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
   async getUserProfile(
-    @Body() body,
     @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendGetUserProfileRequest)
     reqValid: apiToBackend.ToBackendGetUserProfileRequest
@@ -22,6 +18,6 @@ export class GetUserProfileController {
       user: wrapper.wrapToApiUser(user)
     };
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

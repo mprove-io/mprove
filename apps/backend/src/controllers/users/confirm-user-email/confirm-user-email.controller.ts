@@ -1,11 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { Public, ValidateRequest } from '~backend/decorators/_index';
 
@@ -14,13 +12,11 @@ import { Public, ValidateRequest } from '~backend/decorators/_index';
 export class ConfirmUserEmailController {
   constructor(
     private userRepository: repositories.UsersRepository,
-    private connection: Connection,
-    private cs: ConfigService<interfaces.Config>
+    private connection: Connection
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
   async confirmUserEmail(
-    @Body() body,
     @ValidateRequest(apiToBackend.ToBackendConfirmUserEmailRequest)
     reqValid: apiToBackend.ToBackendConfirmUserEmailRequest
   ) {
@@ -51,6 +47,6 @@ export class ConfirmUserEmailController {
 
     let payload = {};
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

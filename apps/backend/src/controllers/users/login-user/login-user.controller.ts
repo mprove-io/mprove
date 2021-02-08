@@ -1,11 +1,8 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LocalAuthGuard } from '~backend/auth-guards/local-auth.guard';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import {
   AttachUser,
@@ -17,14 +14,10 @@ import {
 @UseGuards(LocalAuthGuard)
 @Controller()
 export class LoginUserController {
-  constructor(
-    private jwtService: JwtService,
-    private cs: ConfigService<interfaces.Config>
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser)
   async loginUser(
-    @Body() body,
     @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendLoginUserRequest)
     reqValid: apiToBackend.ToBackendLoginUserRequest
@@ -34,6 +27,6 @@ export class LoginUserController {
       user: wrapper.wrapToApiUser(user)
     };
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

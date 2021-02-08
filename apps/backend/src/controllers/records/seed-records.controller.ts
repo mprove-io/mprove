@@ -1,15 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
 import { Public, ValidateRequest } from '~backend/decorators/_index';
 import { UsersService } from '~backend/services/users.service';
 
@@ -18,13 +15,11 @@ import { UsersService } from '~backend/services/users.service';
 export class SeedRecordsController {
   constructor(
     private usersService: UsersService,
-    private connection: Connection,
-    private cs: ConfigService<interfaces.Config>
+    private connection: Connection
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
   async seedRecords(
-    @Body() body,
     @ValidateRequest(apiToBackend.ToBackendSeedRecordsRequest)
     reqValid: apiToBackend.ToBackendSeedRecordsRequest
   ) {
@@ -76,6 +71,6 @@ export class SeedRecordsController {
 
     let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

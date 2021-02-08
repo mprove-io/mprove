@@ -1,28 +1,21 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-
-let type = apiToBackend.ToBackendSetUserTimezoneRequest;
 
 @Controller()
 export class SetUserTimezoneController {
   constructor(
     private connection: Connection,
-    private cs: ConfigService<interfaces.Config>,
     private memberRepository: repositories.MembersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone)
   async setUserTimezone(
-    @Body() body,
     @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendSetUserTimezoneRequest)
     reqValid: apiToBackend.ToBackendSetUserTimezoneRequest
@@ -55,6 +48,6 @@ export class SetUserTimezoneController {
       user: wrapper.wrapToApiUser(user)
     };
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

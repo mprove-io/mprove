@@ -1,10 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
 import { Public, ValidateRequest } from '~backend/decorators/_index';
 import { makeRoutingKeyToDisk } from '~backend/helper/make-routing-key-to-disk';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -12,14 +10,10 @@ import { RabbitService } from '~backend/services/rabbit.service';
 @Public()
 @Controller()
 export class RebuildStructSpecialController {
-  constructor(
-    private rabbitService: RabbitService,
-    private cs: ConfigService<interfaces.Config>
-  ) {}
+  constructor(private rabbitService: RabbitService) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial)
   async rebuildStructSpecial(
-    @Body() body,
     @ValidateRequest(apiToBackend.ToBackendRebuildStructSpecialRequest)
     reqValid: apiToBackend.ToBackendRebuildStructSpecialRequest
   ) {
@@ -113,6 +107,6 @@ export class RebuildStructSpecialController {
 
     let payload = rebuildStructResponse.payload;
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

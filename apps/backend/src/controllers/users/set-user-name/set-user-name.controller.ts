@@ -1,11 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -14,13 +11,11 @@ import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 export class SetUserNameController {
   constructor(
     private connection: Connection,
-    private cs: ConfigService<interfaces.Config>,
     private memberRepository: repositories.MembersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName)
   async setUserName(
-    @Body() body,
     @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendSetUserNameRequest)
     reqValid: apiToBackend.ToBackendSetUserNameRequest
@@ -55,6 +50,6 @@ export class SetUserNameController {
       user: wrapper.wrapToApiUser(user)
     };
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }

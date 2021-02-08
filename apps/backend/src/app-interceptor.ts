@@ -1,17 +1,33 @@
-// import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-// import { Observable } from 'rxjs';
-// import { tap } from 'rxjs/operators';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { common } from './barrels/common';
+import { interfaces } from './barrels/interfaces';
 
-// @Injectable()
-// export class AppInterceptor implements NestInterceptor {
-//   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-//     // console.log('Before...');
+@Injectable()
+export class AppInterceptor implements NestInterceptor {
+  constructor(private cs: ConfigService<interfaces.Config>) {}
 
-//     // const now = Date.now();
-//     return next
-//       .handle()
-//       .pipe(
-//         tap(() => ))
-//       );
-//   }
-// }
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler
+  ): Observable<common.MyResponse> {
+    const body = context.switchToHttp().getRequest().body;
+
+    return next.handle().pipe(
+      map(payload =>
+        common.makeOkResponse({
+          payload: payload,
+          cs: this.cs,
+          req: body
+        })
+      )
+    );
+  }
+}

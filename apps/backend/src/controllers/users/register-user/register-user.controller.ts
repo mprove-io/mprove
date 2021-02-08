@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -26,7 +26,6 @@ export class RegisterUserController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
   async registerUser(
-    @Body() body,
     @ValidateRequest(apiToBackend.ToBackendRegisterUserRequest)
     reqValid: apiToBackend.ToBackendRegisterUserRequest
   ) {
@@ -104,6 +103,6 @@ export class RegisterUserController {
       userId: newUser.user_id
     };
 
-    return common.makeOkResponse({ payload, cs: this.cs, req: reqValid });
+    return payload;
   }
 }
