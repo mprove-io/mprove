@@ -11,7 +11,7 @@ import { repositories } from '~backend/barrels/repositories';
 @Controller()
 export class ConfirmUserEmailController {
   constructor(
-    private userRepository: repositories.UserRepository,
+    private userRepository: repositories.UsersRepository,
     private connection: Connection,
     private cs: ConfigService<interfaces.Config>
   ) {}

@@ -15,7 +15,7 @@ export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
     private cs: ConfigService<interfaces.Config>,
-    private userRepository: repositories.UserRepository
+    private userRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)

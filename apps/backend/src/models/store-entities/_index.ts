@@ -4,7 +4,7 @@
 // export * from './error.entity';
 // export * from './file.entity';
 // export * from './mconfig.entity';
-// export * from './member.entity';
+export * from './member.entity';
 // export * from './message.entity';
 // export * from './model.entity';
 // export * from './view.entity';

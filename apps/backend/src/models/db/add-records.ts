@@ -59,7 +59,7 @@ export async function addRecords(item: {
   // let members = records.members;
 
   if (helper.isDefined(users) && users.length > 0) {
-    let storeUsers = manager.getCustomRepository(repositories.UserRepository);
+    let storeUsers = manager.getCustomRepository(repositories.UsersRepository);
 
     await storeUsers.insert(users);
     // .catch(e =>

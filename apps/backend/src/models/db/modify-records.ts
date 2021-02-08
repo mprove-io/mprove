@@ -18,7 +18,7 @@ export async function modifyRecords(item: {
     // mconfigs?: entities.MconfigEntity[];
     // dashboards?: entities.DashboardEntity[];
     // errors?: entities.ErrorEntity[];
-    // members?: entities.MemberEntity[];
+    members?: entities.MemberEntity[];
   };
 }) {
   let { manager, records } = item;
@@ -56,12 +56,10 @@ export async function modifyRecords(item: {
   // let mconfigs = records.mconfigs;
   // let dashboards = records.dashboards;
   // let errors = records.errors;
-  // let members = records.members;
+  let members = records.members;
 
   if (helper.isDefined(users) && users.length > 0) {
-    let storeUsers = manager.getCustomRepository(repositories.UserRepository);
-
-    await storeUsers.save(users);
+    await manager.getCustomRepository(repositories.UsersRepository).save(users);
   }
 
   // if (projects && projects.length > 0) {
@@ -138,11 +136,9 @@ export async function modifyRecords(item: {
   //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_SAVE));
   // }
 
-  // if (members && members.length > 0) {
-  //   let storeMembers = getMembersRepo(manager);
-
-  //   await storeMembers
-  //     .save(members)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_SAVE));
-  // }
+  if (helper.isDefined(members) && members.length > 0) {
+    await manager
+      .getCustomRepository(repositories.MembersRepository)
+      .save(members);
+  }
 }

@@ -19,7 +19,7 @@ export class RegisterUserController {
     private connection: Connection,
     private cs: ConfigService<interfaces.Config>,
     private mailerService: MailerService,
-    private userRepository: repositories.UserRepository
+    private userRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)

@@ -9,5 +9,6 @@ export const appControllers = [
   controllers.ConfirmUserEmailController,
   controllers.GetUserProfileController,
   controllers.LoginUserController,
-  controllers.RegisterUserController
+  controllers.RegisterUserController,
+  controllers.SetUserNameController
 ];

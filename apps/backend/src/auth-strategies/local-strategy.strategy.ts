@@ -9,7 +9,7 @@ import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private userRepository: repositories.UserRepository) {
+  constructor(private userRepository: repositories.UsersRepository) {
     super({
       usernameField: 'payload[]email',
       passwordField: 'payload[]password'

@@ -1,3 +1,3 @@
 import { entities } from './barrels/entities';
 
-export const appEntities = [entities.UserEntity];
+export const appEntities = [entities.UserEntity, entities.MemberEntity];

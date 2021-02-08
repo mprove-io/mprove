@@ -12,7 +12,7 @@ import { repositories } from '~backend/barrels/repositories';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private userRepository: repositories.UserRepository
+    private userRepository: repositories.UsersRepository
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

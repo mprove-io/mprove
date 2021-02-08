@@ -158,7 +158,7 @@ export class AppModule implements OnModuleInit {
     private connection: Connection,
     private usersService: UsersService,
     private cs: ConfigService<interfaces.Config>,
-    private userRepository: repositories.UserRepository
+    private userRepository: repositories.UsersRepository
   ) {}
 
   async onModuleInit() {
