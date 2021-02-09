@@ -24,7 +24,7 @@ export function sawCheckCharsInRefs(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       newModels.push(x);
       return;
     }

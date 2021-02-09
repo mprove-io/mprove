@@ -5,7 +5,6 @@ import { appServices } from '~blockml/app-services';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { getConfig } from '~blockml/config/get.config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
@@ -60,7 +59,7 @@ export async function prepareTest(
 
   let traceId = '123';
 
-  let structId = helper.isDefined(connection)
+  let structId = common.isDefined(connection)
     ? `${caller}/${f}/${testId}/${connection.type}`
     : `${caller}/${f}/${testId}`;
 
@@ -72,7 +71,7 @@ export async function prepareTest(
   let toDir =
     copyLogsToModels === common.BoolEnum.FALSE
       ? null
-      : helper.isDefined(connection)
+      : common.isDefined(connection)
       ? `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`
       : `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}`;
 

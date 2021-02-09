@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -30,7 +31,7 @@ export function jswCheckDoubleDeps(
         Object.keys(join.sqlWhereDoubleDeps).forEach(depAs => {
           let depJoin = x.joins.find(j => j.as === depAs);
 
-          if (helper.isUndefined(depJoin)) {
+          if (common.isUndefined(depJoin)) {
             item.errors.push(
               new BmError({
                 title:
@@ -55,7 +56,7 @@ export function jswCheckDoubleDeps(
               f => f.name === depFieldName
             );
 
-            if (helper.isUndefined(depField)) {
+            if (common.isUndefined(depField)) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_WHERE_REFS_MISSING_FIELD,

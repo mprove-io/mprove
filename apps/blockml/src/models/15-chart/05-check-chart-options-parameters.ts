@@ -28,7 +28,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isUndefined(report.options)) {
+      if (common.isUndefined(report.options)) {
         return;
       }
 

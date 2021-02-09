@@ -29,7 +29,7 @@ export function makeWith(item: {
     model
   } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     filterFieldsConditions,
     mainText,
     joins,
@@ -54,7 +54,7 @@ export function makeWith(item: {
     let asName = r[1];
     let fieldName = r[2];
 
-    if (helper.isUndefined(filt[asName])) {
+    if (common.isUndefined(filt[asName])) {
       filt[asName] = {};
     }
     filt[asName][fieldName] = 1;
@@ -62,7 +62,7 @@ export function makeWith(item: {
   // end of prepare
 
   model.joinsSorted
-    .filter(z => helper.isDefined(joins[z]))
+    .filter(z => common.isDefined(joins[z]))
     .forEach(asName => {
       let join = model.joins.find(j => j.as === asName);
 
@@ -70,7 +70,7 @@ export function makeWith(item: {
 
       let sourceTable;
 
-      if (helper.isDefined(join.view.table)) {
+      if (common.isDefined(join.view.table)) {
         if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
           sourceTable = '`' + join.view.table + '`';
         } else if (
@@ -81,7 +81,7 @@ export function makeWith(item: {
       } else {
         sourceTable = `${constants.DERIVED}__${join.view.name}__${asName}`;
 
-        if (helper.isDefined(join.view.udfs)) {
+        if (common.isDefined(join.view.udfs)) {
           join.view.udfs.forEach(udf => {
             mainUdfs[udf] = 1;
           });
@@ -139,7 +139,7 @@ export function makeWith(item: {
       let i = 0;
 
       // check for need of ___timestamp
-      if (helper.isDefined(filt[asName])) {
+      if (common.isDefined(filt[asName])) {
         // $as ne 'mf' (by design)
         let once: { [s: string]: number } = {};
 
@@ -151,7 +151,7 @@ export function makeWith(item: {
             let sqlTimestampSelect = field.sqlTimestampReal;
             let sqlTimestampName = field.sqlTimestampName;
 
-            if (helper.isDefined(once[sqlTimestampName])) {
+            if (common.isDefined(once[sqlTimestampName])) {
               return;
             }
             once[sqlTimestampName] = 1;
@@ -168,7 +168,7 @@ export function makeWith(item: {
           let field = join.view.fields.find(f => f.name === fieldName);
 
           if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
-            if (helper.isDefined(field.unnest)) {
+            if (common.isDefined(field.unnest)) {
               flats[field.unnest] = 1;
             }
             // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)

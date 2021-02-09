@@ -35,7 +35,7 @@ export function checkLimit<T extends types.dzType>(
       let reg = common.MyRegex.CAPTURE_DIGITS_START_TO_END_G();
       let r = reg.exec(report.limit);
 
-      if (helper.isUndefined(r)) {
+      if (common.isUndefined(r)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_WRONG_LIMIT,

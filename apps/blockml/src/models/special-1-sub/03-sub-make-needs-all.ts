@@ -1,5 +1,5 @@
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.SubMakeNeedsAll;
@@ -11,7 +11,7 @@ export function subMakeNeedsAll(item: {
 }) {
   let { selected, varsSubSteps, view } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSub>({ selected });
+  let varsInput = common.makeCopy<interfaces.VarsSub>({ selected });
 
   let needsAll: interfaces.VarsSub['needsAll'] = {};
 

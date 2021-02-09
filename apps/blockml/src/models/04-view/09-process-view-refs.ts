@@ -24,7 +24,7 @@ export function processViewRefs(
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.views
-    .filter(x => helper.isDefined(x.derived_table))
+    .filter(x => common.isDefined(x.derived_table))
     .forEach(x => {
       x.parts = {};
 

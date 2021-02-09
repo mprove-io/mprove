@@ -2,7 +2,6 @@ import * as nodegit from 'nodegit';
 import { common } from '~disk/barrels/common';
 import { constants } from '~disk/barrels/constants';
 import { disk } from '~disk/barrels/disk';
-import { helper } from '~disk/barrels/helper';
 
 export async function createInitialCommitToProd(item: {
   prodDir: string;
@@ -25,7 +24,7 @@ export async function createInitialCommitToProd(item: {
     let fileName = common.README_FILE_NAME;
     let filePath = `${item.prodDir}/${fileName}`;
 
-    let projectName = helper.capitalizeFirstLetter(item.projectId);
+    let projectName = common.capitalizeFirstLetter(item.projectId);
     let content = `# ${projectName}`;
 
     await disk.writeToFile({

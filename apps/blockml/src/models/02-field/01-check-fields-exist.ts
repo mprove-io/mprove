@@ -26,7 +26,7 @@ export function checkFieldsExist<T extends types.vmdType>(
     let errorsOnStart = item.errors.length;
 
     if (
-      helper.isUndefined(x.fields) &&
+      common.isUndefined(x.fields) &&
       x.fileExt === common.FileExtensionEnum.View
     ) {
       item.errors.push(
@@ -45,7 +45,7 @@ export function checkFieldsExist<T extends types.vmdType>(
       return;
     }
 
-    if (helper.isUndefined(x.fields)) {
+    if (common.isUndefined(x.fields)) {
       x.fields = [];
     }
 

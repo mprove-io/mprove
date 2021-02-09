@@ -2,7 +2,6 @@ import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.MakeDepMeasuresAndDimensions;
@@ -15,7 +14,7 @@ export function makeDepMeasuresAndDimensions(item: {
 }) {
   let { select, filters, varsSqlSteps, model } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     select,
     filters
   });
@@ -23,19 +22,19 @@ export function makeDepMeasuresAndDimensions(item: {
   let depMeasures: interfaces.VarsSql['depMeasures'] = {};
   let depDimensions: interfaces.VarsSql['depDimensions'] = {};
 
-  if (helper.isDefined(model.sqlAlwaysWhereCalcDepsAfterSingles)) {
+  if (common.isDefined(model.sqlAlwaysWhereCalcDepsAfterSingles)) {
     Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(depName => {
       let depModelField = model.fields.find(mField => mField.name === depName);
 
       if (depModelField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
-        if (helper.isUndefined(depMeasures[constants.MF])) {
+        if (common.isUndefined(depMeasures[constants.MF])) {
           depMeasures[constants.MF] = {};
         }
         depMeasures[constants.MF][depName] = 1;
       }
 
       if (depModelField.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
-        if (helper.isUndefined(depDimensions[constants.MF])) {
+        if (common.isUndefined(depDimensions[constants.MF])) {
           depDimensions[constants.MF] = {};
         }
         depDimensions[constants.MF][depName] = 1;
@@ -43,7 +42,7 @@ export function makeDepMeasuresAndDimensions(item: {
     });
   }
 
-  if (helper.isDefined(model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions)) {
+  if (common.isDefined(model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions)) {
     Object.keys(model.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions).forEach(
       alias => {
         Object.keys(
@@ -56,7 +55,7 @@ export function makeDepMeasuresAndDimensions(item: {
           );
 
           if (depViewField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
-            if (helper.isUndefined(depMeasures[alias])) {
+            if (common.isUndefined(depMeasures[alias])) {
               depMeasures[alias] = {};
             }
             depMeasures[alias][depName] = 1;
@@ -65,7 +64,7 @@ export function makeDepMeasuresAndDimensions(item: {
           if (
             depViewField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
           ) {
-            if (helper.isUndefined(depDimensions[alias])) {
+            if (common.isUndefined(depDimensions[alias])) {
               depDimensions[alias] = {};
             }
             depDimensions[alias][depName] = 1;
@@ -95,7 +94,7 @@ export function makeDepMeasuresAndDimensions(item: {
         );
 
         if (depModelField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
-          if (helper.isUndefined(depMeasures[asName])) {
+          if (common.isUndefined(depMeasures[asName])) {
             depMeasures[asName] = {};
           }
           depMeasures[asName][depName] = 1;
@@ -104,7 +103,7 @@ export function makeDepMeasuresAndDimensions(item: {
         if (
           depModelField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
         ) {
-          if (helper.isUndefined(depDimensions[asName])) {
+          if (common.isUndefined(depDimensions[asName])) {
             depDimensions[asName] = {};
           }
           depDimensions[asName][depName] = 1;
@@ -125,7 +124,7 @@ export function makeDepMeasuresAndDimensions(item: {
             if (
               depViewField.fieldClass === apiToBlockml.FieldClassEnum.Measure
             ) {
-              if (helper.isUndefined(depMeasures[alias])) {
+              if (common.isUndefined(depMeasures[alias])) {
                 depMeasures[alias] = {};
               }
               depMeasures[alias][depName] = 1;
@@ -134,7 +133,7 @@ export function makeDepMeasuresAndDimensions(item: {
             if (
               depViewField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
             ) {
-              if (helper.isUndefined(depDimensions[alias])) {
+              if (common.isUndefined(depDimensions[alias])) {
                 depDimensions[alias] = {};
               }
               depDimensions[alias][depName] = 1;
@@ -157,7 +156,7 @@ export function makeDepMeasuresAndDimensions(item: {
           );
 
           if (depViewField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
-            if (helper.isUndefined(depMeasures[asName])) {
+            if (common.isUndefined(depMeasures[asName])) {
               depMeasures[asName] = {};
             }
             depMeasures[asName][depName] = 1;
@@ -166,7 +165,7 @@ export function makeDepMeasuresAndDimensions(item: {
           if (
             depViewField.fieldClass === apiToBlockml.FieldClassEnum.Dimension
           ) {
-            if (helper.isUndefined(depDimensions[asName])) {
+            if (common.isUndefined(depDimensions[asName])) {
               depDimensions[asName] = {};
             }
             depDimensions[asName][depName] = 1;

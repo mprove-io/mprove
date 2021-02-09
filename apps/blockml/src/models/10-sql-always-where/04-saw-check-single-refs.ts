@@ -25,7 +25,7 @@ export function sawCheckSingleRefs(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       newModels.push(x);
       return;
     }
@@ -42,7 +42,7 @@ export function sawCheckSingleRefs(
     references.forEach(reference => {
       let referenceField = x.fields.find(f => f.name === reference);
 
-      if (helper.isUndefined(referenceField)) {
+      if (common.isUndefined(referenceField)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_MISSING_FIELD,

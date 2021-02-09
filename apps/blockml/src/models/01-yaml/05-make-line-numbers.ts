@@ -64,7 +64,7 @@ export function processLineNumbersRecursive(item: {
     let npReg = common.MyRegex.BETWEEN_LINE_NUM_G();
     let newPar = oldPar.replace(npReg, '');
 
-    if (helper.isUndefined(item.hash[oldPar])) {
+    if (common.isUndefined(item.hash[oldPar])) {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.UNDEFINED_VALUE,
@@ -87,7 +87,7 @@ export function processLineNumbersRecursive(item: {
     if (oldPar !== newPar) {
       item.hash[newPar] = item.hash[oldPar];
 
-      if (helper.isUndefined(item.hash[newPar + constants.LINE_NUMBERS])) {
+      if (common.isUndefined(item.hash[newPar + constants.LINE_NUMBERS])) {
         item.hash[newPar + constants.LINE_NUMBERS] = [];
       }
 

@@ -27,7 +27,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isUndefined(report.axis)) {
+      if (common.isUndefined(report.axis)) {
         return;
       }
 

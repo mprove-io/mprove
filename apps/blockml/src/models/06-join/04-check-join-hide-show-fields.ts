@@ -39,8 +39,8 @@ export function checkJoinHideShowFields(
       };
 
       if (
-        helper.isDefined(join[enums.ParameterEnum.HideFields]) &&
-        helper.isDefined(join[enums.ParameterEnum.ShowFields])
+        common.isDefined(join[enums.ParameterEnum.HideFields]) &&
+        common.isDefined(join[enums.ParameterEnum.ShowFields])
       ) {
         item.errors.push(
           new BmError({
@@ -54,14 +54,14 @@ export function checkJoinHideShowFields(
         return;
       }
 
-      if (helper.isDefined(join[enums.ParameterEnum.HideFields])) {
+      if (common.isDefined(join[enums.ParameterEnum.HideFields])) {
         join[enums.ParameterEnum.HideFields]
           .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(asFieldName => {
             let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(asFieldName);
 
-            if (helper.isUndefined(r)) {
+            if (common.isUndefined(r)) {
               item.errors.push(
                 new BmError({
                   title:
@@ -97,7 +97,7 @@ export function checkJoinHideShowFields(
               vField => vField.name === fieldName
             );
 
-            if (helper.isDefined(viewField)) {
+            if (common.isDefined(viewField)) {
               // override
               viewField.hidden = 'true';
             } else {
@@ -128,14 +128,14 @@ export function checkJoinHideShowFields(
           });
       }
 
-      if (helper.isDefined(join[enums.ParameterEnum.ShowFields])) {
+      if (common.isDefined(join[enums.ParameterEnum.ShowFields])) {
         join[enums.ParameterEnum.ShowFields]
           .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(asFieldName => {
             let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(asFieldName);
 
-            if (helper.isUndefined(r)) {
+            if (common.isUndefined(r)) {
               item.errors.push(
                 new BmError({
                   title:
@@ -171,7 +171,7 @@ export function checkJoinHideShowFields(
               vField => vField.name === fieldName
             );
 
-            if (helper.isDefined(viewField)) {
+            if (common.isDefined(viewField)) {
               // override
               viewField.hidden = 'false';
             } else {

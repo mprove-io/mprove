@@ -3,7 +3,6 @@ import { barMeasure } from '~blockml/barrels/bar-measure';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.SubMakeMainText;
@@ -17,7 +16,7 @@ export function subMakeMainText(item: {
 }) {
   let { select, depMeasures, depDimensions, varsSubSteps, view } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSub>({
+  let varsInput = common.makeCopy<interfaces.VarsSub>({
     select,
     depMeasures,
     depDimensions

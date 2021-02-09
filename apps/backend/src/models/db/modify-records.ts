@@ -1,4 +1,5 @@
 import { EntityManager } from 'typeorm';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
@@ -30,7 +31,7 @@ export async function modifyRecords(item: {
   });
 
   // if (!item.skipChunk) {
-  //   let chunkId = helper.makeId();
+  //   let chunkId = common.makeId();
 
   //   let chunk = generator.makeChunk({
   //     chunk_id: chunkId,
@@ -58,7 +59,7 @@ export async function modifyRecords(item: {
   // let errors = records.errors;
   let members = records.members;
 
-  if (helper.isDefined(users) && users.length > 0) {
+  if (common.isDefined(users) && users.length > 0) {
     await manager.getCustomRepository(repositories.UsersRepository).save(users);
   }
 
@@ -136,7 +137,7 @@ export async function modifyRecords(item: {
   //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_SAVE));
   // }
 
-  if (helper.isDefined(members) && members.length > 0) {
+  if (common.isDefined(members) && members.length > 0) {
     await manager
       .getCustomRepository(repositories.MembersRepository)
       .save(members);

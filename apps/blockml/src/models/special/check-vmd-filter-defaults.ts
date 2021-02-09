@@ -36,7 +36,7 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
 
       if (
         x.fileExt === common.FileExtensionEnum.Dashboard &&
-        helper.isUndefined(field.default)
+        common.isUndefined(field.default)
       ) {
         item.errors.push(
           new BmError({
@@ -56,7 +56,7 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
         return;
       }
 
-      if (helper.isUndefined(field.default)) {
+      if (common.isUndefined(field.default)) {
         x.filters[field.name] = [];
       } else {
         let p = processFilter({
@@ -83,7 +83,7 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
           return;
         }
 
-        x.filters[field.name] = helper.makeCopy(field.default);
+        x.filters[field.name] = common.makeCopy(field.default);
       }
     });
 

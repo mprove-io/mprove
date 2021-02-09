@@ -23,7 +23,7 @@ export function jswUpdateJoinsDoubleDepsAfterSingles(
     x.joins
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
-        if (helper.isUndefined(join.sqlWhereReal)) {
+        if (common.isUndefined(join.sqlWhereReal)) {
           return;
         }
 
@@ -35,7 +35,7 @@ export function jswUpdateJoinsDoubleDepsAfterSingles(
           let dep: string = r[2];
 
           if (
-            helper.isUndefined(x.joinsDoubleDepsAfterSingles[join.as][asName])
+            common.isUndefined(x.joinsDoubleDepsAfterSingles[join.as][asName])
           ) {
             x.joinsDoubleDepsAfterSingles[join.as][asName] = {};
           }

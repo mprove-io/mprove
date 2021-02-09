@@ -24,7 +24,7 @@ export function checkJoinsExist(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.joins)) {
+    if (common.isUndefined(x.joins)) {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.MISSING_JOINS,

@@ -43,7 +43,7 @@ test('1', async t => {
       fromDir,
       enums.LogTypeEnum.Entities
     );
-    if (helper.isDefined(toDir)) {
+    if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {

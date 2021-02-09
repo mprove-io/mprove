@@ -37,7 +37,7 @@ export function makeFieldsDeps<T extends types.vmType>(
       x.fieldsDeps[field.name] = {};
       if (
         field.fieldClass !== apiToBlockml.FieldClassEnum.Filter &&
-        helper.isDefined(field.sql)
+        common.isDefined(field.sql)
       ) {
         if (
           !checkCharsInFieldRefs({
@@ -62,7 +62,7 @@ export function makeFieldsDeps<T extends types.vmType>(
 
       if (
         field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
-        helper.isDefined(field.sql_key)
+        common.isDefined(field.sql_key)
       ) {
         if (
           !checkCharsInFieldRefs({

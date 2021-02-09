@@ -5,7 +5,6 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { gen } from '~backend/barrels/gen';
-import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
@@ -33,7 +32,7 @@ export class UsersService {
 
     let alias = r ? r[1] : undefined;
 
-    if (helper.isUndefined(alias)) {
+    if (common.isUndefined(alias)) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
       });
@@ -46,7 +45,7 @@ export class UsersService {
     while (restart) {
       let aliasUser = await this.userRepository.findOne({ alias: alias });
 
-      if (helper.isDefined(aliasUser)) {
+      if (common.isDefined(aliasUser)) {
         alias = `${alias}${count}`;
         count++;
       } else {

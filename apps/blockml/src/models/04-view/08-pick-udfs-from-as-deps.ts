@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -51,7 +52,7 @@ export function pickUdfsFromAsDeps(
       Object.keys(linkedViews).forEach(name => {
         let view = item.views.find(v => v.name === name);
 
-        if (helper.isDefined(view.udfs) && view.udfs.length > 0) {
+        if (common.isDefined(view.udfs) && view.udfs.length > 0) {
           view.udfs.forEach(udfName => {
             linkedUdfs[udfName] = 1;
           });

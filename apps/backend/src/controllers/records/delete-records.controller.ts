@@ -26,7 +26,7 @@ export class DeleteRecordsController {
 
     // toDisk
 
-    if (helper.isDefined(organizationIds) && organizationIds.length > 0) {
+    if (common.isDefined(organizationIds) && organizationIds.length > 0) {
       await asyncPool(1, organizationIds, async (x: string) => {
         let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
           info: {
@@ -64,7 +64,7 @@ export class DeleteRecordsController {
 
     // db
 
-    if (helper.isDefined(emails) && emails.length > 0) {
+    if (common.isDefined(emails) && emails.length > 0) {
       await this.userRepository.delete({ email: In(emails) });
     }
 

@@ -55,7 +55,7 @@ export function checkConnections(
 
       let connection = item.connections.find(c => c.name === connectionName);
 
-      if (helper.isUndefined(connection)) {
+      if (common.isUndefined(connection)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.CONNECTION_NOT_FOUND,

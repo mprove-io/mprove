@@ -2,7 +2,6 @@ import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { processFilter } from '~blockml/models/special/process-filter';
 
@@ -27,7 +26,7 @@ export function makeFilters(item: {
     model
   } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     joins,
     filters,
     weekStart,
@@ -48,20 +47,20 @@ export function makeFilters(item: {
   Object.keys(model.filters).forEach(modelFilter => {
     let modelFilterName = `${constants.MF}.${modelFilter}`;
 
-    if (helper.isUndefined(filters[modelFilterName])) {
+    if (common.isUndefined(filters[modelFilterName])) {
       untouchedFilters[modelFilterName] = model.filters[modelFilter];
     }
   });
 
   model.joinsSorted
-    .filter(x => helper.isDefined(joins[x]))
+    .filter(x => common.isDefined(joins[x]))
     .forEach(asName => {
       let join = model.joins.find(j => j.as === asName);
 
       Object.keys(join.view.filters).forEach(viewFilter => {
         let viewFilterName = `${asName}.${viewFilter}`;
 
-        if (helper.isUndefined(filters[viewFilterName])) {
+        if (common.isUndefined(filters[viewFilterName])) {
           untouchedFilters[viewFilterName] = join.view.filters[viewFilter];
         }
       });

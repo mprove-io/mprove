@@ -32,7 +32,7 @@ test('1', async t => {
     });
 
     files = await helper.readLog(fromDir, enums.LogTypeEnum.Files);
-    if (helper.isDefined(toDir)) {
+    if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {

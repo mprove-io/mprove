@@ -25,7 +25,7 @@ export function jswMakeDoubleDeps(
       .forEach(join => {
         join.sqlWhereDoubleDeps = {};
 
-        if (helper.isUndefined(join.sql_where)) {
+        if (common.isUndefined(join.sql_where)) {
           return;
         }
 
@@ -36,7 +36,7 @@ export function jswMakeDoubleDeps(
           let as: string = r[1];
           let dep: string = r[2];
 
-          if (helper.isUndefined(join.sqlWhereDoubleDeps[as])) {
+          if (common.isUndefined(join.sqlWhereDoubleDeps[as])) {
             join.sqlWhereDoubleDeps[as] = {};
           }
 

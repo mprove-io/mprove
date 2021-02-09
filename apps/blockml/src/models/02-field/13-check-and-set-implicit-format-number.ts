@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -32,7 +33,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
       }
 
       if (field.result === apiToBlockml.FieldResultEnum.Number) {
-        if (helper.isUndefined(field.format_number)) {
+        if (common.isUndefined(field.format_number)) {
           field.format_number = '';
           field.format_number_line_num = 0;
         } else {
@@ -56,17 +57,17 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
           }
         }
 
-        if (helper.isUndefined(field.currency_prefix)) {
+        if (common.isUndefined(field.currency_prefix)) {
           field.currency_prefix = '$';
           field.currency_prefix_line_num = 0;
         }
 
-        if (helper.isUndefined(field.currency_suffix)) {
+        if (common.isUndefined(field.currency_suffix)) {
           field.currency_suffix = '';
           field.currency_suffix_line_num = 0;
         }
       } else {
-        if (helper.isDefined(field.format_number)) {
+        if (common.isDefined(field.format_number)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_FORMAT_NUMBER,
@@ -85,7 +86,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
           return;
         }
 
-        if (helper.isDefined(field.currency_prefix)) {
+        if (common.isDefined(field.currency_prefix)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_PREFIX,
@@ -104,7 +105,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
           return;
         }
 
-        if (helper.isDefined(field.currency_suffix)) {
+        if (common.isDefined(field.currency_suffix)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISUSE_OF_CURRENCY_SUFFIX,

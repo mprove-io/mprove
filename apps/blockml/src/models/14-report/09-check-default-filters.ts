@@ -29,7 +29,7 @@ export function checkDefaultFilters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isUndefined(report.default_filters)) {
+      if (common.isUndefined(report.default_filters)) {
         report.default_filters = {};
         return;
       }
@@ -42,7 +42,7 @@ export function checkDefaultFilters<T extends types.dzType>(
           let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
           let r = reg.exec(defaultFilter);
 
-          if (helper.isUndefined(r)) {
+          if (common.isUndefined(r)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DEFAULT_FILTER_WRONG_REFERENCE,
@@ -69,7 +69,7 @@ export function checkDefaultFilters<T extends types.dzType>(
               mField => mField.name === fieldName
             );
 
-            if (helper.isUndefined(modelField)) {
+            if (common.isUndefined(modelField)) {
               item.errors.push(
                 new BmError({
                   title:
@@ -94,7 +94,7 @@ export function checkDefaultFilters<T extends types.dzType>(
           } else {
             let join = model.joins.find(j => j.as === asName);
 
-            if (helper.isUndefined(join)) {
+            if (common.isUndefined(join)) {
               item.errors.push(
                 new BmError({
                   title:
@@ -120,7 +120,7 @@ export function checkDefaultFilters<T extends types.dzType>(
               vField => vField.name === fieldName
             );
 
-            if (helper.isUndefined(viewField)) {
+            if (common.isUndefined(viewField)) {
               item.errors.push(
                 new BmError({
                   title:
@@ -145,7 +145,7 @@ export function checkDefaultFilters<T extends types.dzType>(
             }
           }
 
-          if (helper.isDefined(report.listen[defaultFilter])) {
+          if (common.isDefined(report.listen[defaultFilter])) {
             item.errors.push(
               new BmError({
                 title:

@@ -26,7 +26,7 @@ export function jswCheckApplyFilter(
     let errorsOnStart = item.errors.length;
 
     x.joins
-      .filter(j => j.as !== x.fromAs && helper.isDefined(j.sql_where))
+      .filter(j => j.as !== x.fromAs && common.isDefined(j.sql_where))
       .forEach(join => {
         let input = join.sql_where;
 
@@ -41,7 +41,7 @@ export function jswCheckApplyFilter(
 
           let field = x.fields.find(f => f.name === fieldName);
 
-          if (helper.isUndefined(field)) {
+          if (common.isUndefined(field)) {
             item.errors.push(
               new BmError({
                 title:

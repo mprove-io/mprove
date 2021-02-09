@@ -1,7 +1,6 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.MakeNeedsDoubles;
@@ -14,7 +13,7 @@ export function makeNeedsDoubles(item: {
 }) {
   let { selected, filters, varsSqlSteps, model } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     selected,
     filters
   });
@@ -69,7 +68,7 @@ export function makeNeedsDoubles(item: {
     let aName = r[1];
     let fName = r[2];
 
-    if (helper.isUndefined(needsDoubles[aName])) {
+    if (common.isUndefined(needsDoubles[aName])) {
       needsDoubles[aName] = {};
     }
     needsDoubles[aName][fName] = 1;
@@ -90,7 +89,7 @@ export function makeNeedsDoubles(item: {
           Object.keys(
             model.fieldsDoubleDepsAfterSingles[fieldName][alias]
           ).forEach(dep => {
-            if (helper.isUndefined(needsDoubles[alias])) {
+            if (common.isUndefined(needsDoubles[alias])) {
               needsDoubles[alias] = {};
             }
             needsDoubles[alias][dep] = 1;

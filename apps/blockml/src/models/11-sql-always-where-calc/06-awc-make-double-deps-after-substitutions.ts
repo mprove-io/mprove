@@ -23,7 +23,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
   item.models.forEach(x => {
     x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions = {};
 
-    if (helper.isUndefined(x.sql_always_where_calc)) {
+    if (common.isUndefined(x.sql_always_where_calc)) {
       return;
     }
 
@@ -62,7 +62,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
 
           case depField.fieldClass === apiToBlockml.FieldClassEnum.Dimension: {
             if (
-              helper.isUndefined(
+              common.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
               )
             ) {
@@ -75,7 +75,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
 
           case depField.fieldClass === apiToBlockml.FieldClassEnum.Measure: {
             if (
-              helper.isUndefined(
+              common.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
               )
             ) {

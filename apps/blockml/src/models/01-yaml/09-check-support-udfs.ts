@@ -34,7 +34,7 @@ export function checkSupportUdfs(
         .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .find(p => p === enums.ParameterEnum.Udfs.toString());
 
-      if (helper.isDefined(udfsParameter)) {
+      if (common.isDefined(udfsParameter)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION,

@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -24,7 +25,7 @@ export function checkViewUdfs(
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isDefined(x.udfs)) {
+    if (common.isDefined(x.udfs)) {
       x.udfs.forEach(u => {
         if (item.udfs.findIndex(udf => udf.name === u) < 0) {
           item.errors.push(

@@ -57,7 +57,7 @@ export function makeFieldsDoubleDepsAfterSingles(
           } else {
             // ok
             if (
-              helper.isUndefined(x.fieldsDoubleDepsAfterSingles[f.name][asName])
+              common.isUndefined(x.fieldsDoubleDepsAfterSingles[f.name][asName])
             ) {
               x.fieldsDoubleDepsAfterSingles[f.name][asName] = {};
             }
@@ -86,7 +86,7 @@ export function makeFieldsDoubleDepsAfterSingles(
           let depName2: string = r2[2];
 
           if (
-            helper.isUndefined(x.fieldsDoubleDepsAfterSingles[f.name][asName2])
+            common.isUndefined(x.fieldsDoubleDepsAfterSingles[f.name][asName2])
           ) {
             x.fieldsDoubleDepsAfterSingles[f.name][asName2] = {};
           }

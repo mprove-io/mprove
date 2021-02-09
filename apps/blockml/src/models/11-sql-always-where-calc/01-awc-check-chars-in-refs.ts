@@ -24,7 +24,7 @@ export function awcCheckCharsInRefs(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.sql_always_where_calc)) {
+    if (common.isUndefined(x.sql_always_where_calc)) {
       newModels.push(x);
       return;
     }

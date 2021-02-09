@@ -4,7 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { Strategy } from 'passport-local';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
@@ -19,13 +18,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(email: string, password: string) {
     let user = await this.userRepository.findOne({ email: email });
 
-    if (helper.isUndefined(user)) {
+    if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
-    if (helper.isUndefined(user.hash)) {
+    if (common.isUndefined(user.hash)) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
       });

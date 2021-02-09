@@ -1,6 +1,6 @@
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.FindJoinsUsingJoinsDeps;
@@ -12,7 +12,7 @@ export function findJoinsUsingJoinsDeps(item: {
 }) {
   let { needsDoubles, varsSqlSteps, model } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({ needsDoubles });
+  let varsInput = common.makeCopy<interfaces.VarsSql>({ needsDoubles });
 
   let joins: interfaces.VarsSql['joins'] = {};
 
@@ -31,7 +31,7 @@ export function findJoinsUsingJoinsDeps(item: {
       Object.keys(model.joinsDoubleDepsAfterSingles[asName])
         .filter(depAs => depAs !== model.fromAs && depAs !== constants.MF)
         .forEach(depAs => {
-          if (helper.isUndefined(joins[depAs])) {
+          if (common.isUndefined(joins[depAs])) {
             joins[depAs] = 1;
             restart = true;
           }

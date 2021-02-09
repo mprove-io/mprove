@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,7 +26,7 @@ export function checkFieldIsObject<T extends types.vmdType>(
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (helper.isDefined(field) && field.constructor !== Object) {
+      if (common.isDefined(field) && field.constructor !== Object) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FIELD_IS_NOT_A_DICTIONARY,

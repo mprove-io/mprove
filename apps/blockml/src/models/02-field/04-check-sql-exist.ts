@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -27,7 +28,7 @@ export function checkSqlExist<T extends types.vmdType>(
 
     x.fields.forEach(field => {
       if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
-        if (helper.isDefined(field.sql)) {
+        if (common.isDefined(field.sql)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.UNEXPECTED_SQL_IN_FILTER,
@@ -44,7 +45,7 @@ export function checkSqlExist<T extends types.vmdType>(
           return;
         }
       } else if (
-        helper.isUndefined(field.sql) &&
+        common.isUndefined(field.sql) &&
         [
           apiToBlockml.FieldClassEnum.Dimension,
           apiToBlockml.FieldClassEnum.Time,

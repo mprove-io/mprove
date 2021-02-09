@@ -3,6 +3,7 @@ import { Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
@@ -24,7 +25,7 @@ export class ResetUserPasswordController {
     @ValidateRequest(apiToBackend.ToBackendResetUserPasswordRequest)
     reqValid: apiToBackend.ToBackendResetUserPasswordRequest
   ) {
-    user.password_reset_token = helper.makeId();
+    user.password_reset_token = common.makeId();
     user.password_reset_expires_ts = helper.makeTsUsingOffsetFromNow(
       constants.PASSWORD_EXPIRES_OFFSET
     );

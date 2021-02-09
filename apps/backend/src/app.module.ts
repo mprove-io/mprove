@@ -13,7 +13,6 @@ import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
 import { common } from './barrels/common';
 import { enums } from './barrels/enums';
-import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
@@ -173,10 +172,10 @@ export class AppModule implements OnModuleInit {
         'firstUserPassword'
       );
 
-      if (helper.isDefined(email) && helper.isDefined(password)) {
+      if (common.isDefined(email) && common.isDefined(password)) {
         let firstUser = await this.userRepository.findOne({ email: email });
 
-        if (helper.isUndefined(firstUser)) {
+        if (common.isUndefined(firstUser)) {
           await this.usersService.addFirstUser({
             email: email,
             password: password

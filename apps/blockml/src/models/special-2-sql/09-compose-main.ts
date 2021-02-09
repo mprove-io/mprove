@@ -1,7 +1,6 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { applyFilter } from './apply-filter';
 
@@ -28,7 +27,7 @@ export function composeMain(item: {
     model
   } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     top,
     joins,
     whereMain,
@@ -45,12 +44,12 @@ export function composeMain(item: {
 
   model.joinsSorted
     .filter(
-      asName => asName !== model.fromAs && helper.isDefined(joins[asName])
+      asName => asName !== model.fromAs && common.isDefined(joins[asName])
     )
     .forEach(asName => {
       let join = model.joins.find(j => j.as === asName);
 
-      if (helper.isDefined(join.sqlWhereReal)) {
+      if (common.isDefined(join.sqlWhereReal)) {
         // remove ${ } on doubles (no singles exists in _real of sql_where)
         // ${a.city} + ${b.country}   >>>   a.city + b.country
         let sqlWhereFinal = common.MyRegex.removeBracketsOnDoubles(
@@ -70,7 +69,7 @@ export function composeMain(item: {
   if (
     joinsWhere.length > 0 ||
     whereMainLength > 0 ||
-    helper.isDefined(model.sqlAlwaysWhereReal)
+    common.isDefined(model.sqlAlwaysWhereReal)
   ) {
     mainQuery.push(`    ${constants.WHERE}`);
 
@@ -85,7 +84,7 @@ export function composeMain(item: {
       mainQuery.push(`      ${constants.AND}`);
     });
 
-    if (helper.isDefined(model.sqlAlwaysWhereReal)) {
+    if (common.isDefined(model.sqlAlwaysWhereReal)) {
       // remove ${ } on doubles (no singles exists in _real of sql_always_where)
       // ${a.city} + ${b.country}   >>>   a.city + b.country
 

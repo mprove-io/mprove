@@ -33,7 +33,7 @@ export function makeJoins(
       let errorLine =
         j.as === x.fromAs ? j.from_view_line_num : j.join_view_line_num;
 
-      if (helper.isUndefined(view)) {
+      if (common.isUndefined(view)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.JOIN_CALLS_MISSING_VIEW,
@@ -75,19 +75,19 @@ export function makeJoins(
       let viewLabel = view.label;
       let viewDescription = view.description;
 
-      j.view = helper.makeCopy(view);
+      j.view = common.makeCopy(view);
 
-      j.label = helper.isDefined(j.label) ? j.label : viewLabel;
+      j.label = common.isDefined(j.label) ? j.label : viewLabel;
 
-      j.label_line_num = helper.isDefined(j.label_line_num)
+      j.label_line_num = common.isDefined(j.label_line_num)
         ? j.label_line_num
         : 0;
 
-      j.description = helper.isDefined(j.description)
+      j.description = common.isDefined(j.description)
         ? j.description
         : viewDescription;
 
-      j.description_line_num = helper.isDefined(j.description_line_num)
+      j.description_line_num = common.isDefined(j.description_line_num)
         ? j.description_line_num
         : 0;
     });

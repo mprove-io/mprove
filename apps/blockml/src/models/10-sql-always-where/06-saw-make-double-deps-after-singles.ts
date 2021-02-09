@@ -22,11 +22,11 @@ export function sawMakeDoubleDepsAfterSingles(
   item.models.forEach(x => {
     x.sqlAlwaysWhereDoubleDepsAfterSingles = {};
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       return;
     }
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       return;
     }
 
@@ -37,7 +37,7 @@ export function sawMakeDoubleDepsAfterSingles(
       let asName: string = r[1];
       let dep: string = r[2];
 
-      if (helper.isUndefined(x.sqlAlwaysWhereDoubleDepsAfterSingles[asName])) {
+      if (common.isUndefined(x.sqlAlwaysWhereDoubleDepsAfterSingles[asName])) {
         x.sqlAlwaysWhereDoubleDepsAfterSingles[asName] = {};
       }
 

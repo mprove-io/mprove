@@ -27,7 +27,7 @@ export function checkChartData<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isUndefined(report.data)) {
+      if (common.isUndefined(report.data)) {
         return;
       }
 

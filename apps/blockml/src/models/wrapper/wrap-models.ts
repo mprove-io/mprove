@@ -1,4 +1,5 @@
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -79,7 +80,7 @@ export function wrapModels(item: {
     });
 
     nodes.forEach(node => {
-      if (helper.isDefined(node.children)) {
+      if (common.isDefined(node.children)) {
         let filters: apiToBlockml.ModelNode[] = [];
         let dimensions: apiToBlockml.ModelNode[] = [];
         let measures: apiToBlockml.ModelNode[] = [];
@@ -194,7 +195,7 @@ export function wrapModels(item: {
         node.children = sortedChildren;
 
         node.children.forEach(nc => {
-          if (helper.isDefined(nc.children)) {
+          if (common.isDefined(nc.children)) {
             nc.children = nc.children.sort((a, b) => {
               let labelA = a.label.toUpperCase();
               let labelB = b.label.toUpperCase();

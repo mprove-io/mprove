@@ -28,7 +28,7 @@ export function checkChartTileParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isUndefined(report.tile)) {
+      if (common.isUndefined(report.tile)) {
         return;
       }
 

@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -53,7 +54,7 @@ export function checkJoinsCyclesAndToposort(
             path: x.filePath
           });
 
-          if (helper.isDefined(cycledJoin.sql_where_line_num)) {
+          if (common.isDefined(cycledJoin.sql_where_line_num)) {
             lines.push({
               line: cycledJoin.sql_where_line_num,
               name: x.fileName,

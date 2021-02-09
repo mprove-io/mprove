@@ -27,7 +27,7 @@ export function checkAliases(
     let aliases: { as: string; asLineNums: number[] }[] = [];
 
     x.joins.forEach(j => {
-      if (helper.isUndefined(j.as)) {
+      if (common.isUndefined(j.as)) {
         let lineNums: number[] = [];
         Object.keys(j)
           .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
@@ -57,7 +57,7 @@ export function checkAliases(
         aliases.push({ as: j.as, asLineNums: [j.as_line_num] });
       }
 
-      if (helper.isDefined(j.from_view)) {
+      if (common.isDefined(j.from_view)) {
         x.fromAs = j.as;
       }
     });

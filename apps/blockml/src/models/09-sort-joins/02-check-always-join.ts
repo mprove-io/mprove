@@ -26,7 +26,7 @@ export function checkAlwaysJoin(
 
     x.alwaysJoinUnique = {};
 
-    if (helper.isUndefined(x.always_join)) {
+    if (common.isUndefined(x.always_join)) {
       newModels.push(x);
       return;
     }
@@ -42,7 +42,7 @@ export function checkAlwaysJoin(
 
         let join = x.joins.find(j => j.as === asName);
 
-        if (helper.isUndefined(join)) {
+        if (common.isUndefined(join)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.ALWAYS_JOIN_REFS_MISSING_JOIN,

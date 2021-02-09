@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -47,8 +48,8 @@ export function checkChartDataParameters<T extends types.dzType>(
           apiToBlockml.ChartTypeEnum.TreeMap,
           apiToBlockml.ChartTypeEnum.Gauge
         ].indexOf(report.type) > -1 &&
-        (helper.isUndefined(report.data) ||
-          helper.isUndefined(report.data.x_field))
+        (common.isUndefined(report.data) ||
+          common.isUndefined(report.data.x_field))
       ) {
         item.errors.push(
           new BmError({
@@ -79,8 +80,8 @@ export function checkChartDataParameters<T extends types.dzType>(
           apiToBlockml.ChartTypeEnum.NumberCard,
           apiToBlockml.ChartTypeEnum.Gauge
         ].indexOf(report.type) > -1 &&
-        (helper.isUndefined(report.data) ||
-          helper.isUndefined(report.data.y_field))
+        (common.isUndefined(report.data) ||
+          common.isUndefined(report.data.y_field))
       ) {
         item.errors.push(
           new BmError({
@@ -114,8 +115,8 @@ export function checkChartDataParameters<T extends types.dzType>(
           apiToBlockml.ChartTypeEnum.AreaNormalized,
           apiToBlockml.ChartTypeEnum.HeatMap
         ].indexOf(report.type) > -1 &&
-        (helper.isUndefined(report.data) ||
-          helper.isUndefined(report.data.y_fields))
+        (common.isUndefined(report.data) ||
+          common.isUndefined(report.data.y_fields))
       ) {
         item.errors.push(
           new BmError({
@@ -137,8 +138,8 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         report.type === apiToBlockml.ChartTypeEnum.GaugeLinear &&
-        (helper.isUndefined(report.data) ||
-          helper.isUndefined(report.data.value_field))
+        (common.isUndefined(report.data) ||
+          common.isUndefined(report.data.value_field))
       ) {
         item.errors.push(
           new BmError({
@@ -158,9 +159,9 @@ export function checkChartDataParameters<T extends types.dzType>(
         return;
       }
 
-      if (helper.isDefined(report.data)) {
+      if (common.isDefined(report.data)) {
         if (
-          helper.isDefined(report.data.x_field) &&
+          common.isDefined(report.data.x_field) &&
           report.select.indexOf(report.data.x_field) < 0
         ) {
           item.errors.push(
@@ -182,7 +183,7 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
 
         if (
-          helper.isDefined(report.data.y_field) &&
+          common.isDefined(report.data.y_field) &&
           report.select.indexOf(report.data.y_field) < 0
         ) {
           item.errors.push(
@@ -204,7 +205,7 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
 
         if (
-          helper.isDefined(report.data.multi_field) &&
+          common.isDefined(report.data.multi_field) &&
           report.select.indexOf(report.data.multi_field) < 0
         ) {
           item.errors.push(
@@ -226,7 +227,7 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
 
         if (
-          helper.isDefined(report.data.value_field) &&
+          common.isDefined(report.data.value_field) &&
           report.select.indexOf(report.data.value_field) < 0
         ) {
           item.errors.push(
@@ -248,7 +249,7 @@ export function checkChartDataParameters<T extends types.dzType>(
         }
 
         if (
-          helper.isDefined(report.data.previous_value_field) &&
+          common.isDefined(report.data.previous_value_field) &&
           report.select.indexOf(report.data.previous_value_field) < 0
         ) {
           item.errors.push(
@@ -269,7 +270,7 @@ export function checkChartDataParameters<T extends types.dzType>(
           return;
         }
 
-        if (helper.isDefined(report.data.y_fields)) {
+        if (common.isDefined(report.data.y_fields)) {
           if (!Array.isArray(report.data.y_fields)) {
             item.errors.push(
               new BmError({
@@ -309,7 +310,7 @@ export function checkChartDataParameters<T extends types.dzType>(
           });
         }
 
-        if (helper.isDefined(report.data.hide_columns)) {
+        if (common.isDefined(report.data.hide_columns)) {
           if (!Array.isArray(report.data.hide_columns)) {
             item.errors.push(
               new BmError({

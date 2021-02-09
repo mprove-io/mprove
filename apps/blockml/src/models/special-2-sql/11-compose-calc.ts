@@ -31,7 +31,7 @@ export function composeCalc(item: {
     model
   } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     filterFieldsConditions,
     mainQueryProcessed,
     select,
@@ -84,11 +84,11 @@ export function composeCalc(item: {
 
   if (
     Object.keys(whereCalc).length > 0 ||
-    helper.isDefined(model.sqlAlwaysWhereCalcReal)
+    common.isDefined(model.sqlAlwaysWhereCalcReal)
   ) {
     sql.push(`${constants.WHERE}`);
 
-    if (helper.isDefined(model.sqlAlwaysWhereCalcReal)) {
+    if (common.isDefined(model.sqlAlwaysWhereCalcReal)) {
       let sqlAlwaysWhereCalcFinal = common.MyRegex.removeBracketsOnCalculationSinglesMf(
         model.sqlAlwaysWhereCalcReal
       );

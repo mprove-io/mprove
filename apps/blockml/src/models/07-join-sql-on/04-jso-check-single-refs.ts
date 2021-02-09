@@ -40,7 +40,7 @@ export function jsoCheckSingleRefs(
         references.forEach(reference => {
           let referenceField = x.fields.find(f => f.name === reference);
 
-          if (helper.isUndefined(referenceField)) {
+          if (common.isUndefined(referenceField)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_MISSING_FIELD,

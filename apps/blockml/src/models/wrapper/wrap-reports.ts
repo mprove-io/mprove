@@ -1,4 +1,5 @@
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -26,7 +27,7 @@ export function wrapReports(item: {
       });
     });
 
-    let chartId = helper.makeId();
+    let chartId = common.makeId();
 
     let chart: apiToBlockml.Chart = {
       chartId: chartId,
@@ -83,65 +84,65 @@ export function wrapReports(item: {
       schemeType:
         report.options?.scheme_type || apiToBlockml.ChartSchemeTypeEnum.Ordinal,
 
-      pageSize: helper.isDefined(report.options?.page_size)
+      pageSize: common.isDefined(report.options?.page_size)
         ? Number(report.options.page_size)
         : 500,
 
-      arcWidth: helper.isDefined(report.options?.arc_width)
+      arcWidth: common.isDefined(report.options?.arc_width)
         ? Number(report.options.arc_width)
         : 0.25,
 
-      barPadding: helper.isDefined(report.options?.bar_padding)
+      barPadding: common.isDefined(report.options?.bar_padding)
         ? Number(report.options.bar_padding)
         : 8,
 
-      groupPadding: helper.isDefined(report.options?.group_padding)
+      groupPadding: common.isDefined(report.options?.group_padding)
         ? Number(report.options.group_padding)
         : 16,
 
-      innerPadding: helper.isDefined(report.options?.inner_padding)
+      innerPadding: common.isDefined(report.options?.inner_padding)
         ? Number(report.options.inner_padding)
         : 8,
 
-      rangeFillOpacity: helper.isDefined(report.options?.range_fill_opacity)
+      rangeFillOpacity: common.isDefined(report.options?.range_fill_opacity)
         ? Number(report.options.range_fill_opacity)
         : 0.15,
 
-      angleSpan: helper.isDefined(report.options?.angle_span)
+      angleSpan: common.isDefined(report.options?.angle_span)
         ? Number(report.options.angle_span)
         : 240,
 
-      startAngle: helper.isDefined(report.options?.start_angle)
+      startAngle: common.isDefined(report.options?.start_angle)
         ? Number(report.options.start_angle)
         : -120,
 
-      bigSegments: helper.isDefined(report.options?.big_segments)
+      bigSegments: common.isDefined(report.options?.big_segments)
         ? Number(report.options.big_segments)
         : 10,
 
-      smallSegments: helper.isDefined(report.options?.small_segments)
+      smallSegments: common.isDefined(report.options?.small_segments)
         ? Number(report.options.small_segments)
         : 5,
 
-      min: helper.isDefined(report.options?.min)
+      min: common.isDefined(report.options?.min)
         ? Number(report.options.min)
         : 0,
 
-      max: helper.isDefined(report.options?.max)
+      max: common.isDefined(report.options?.max)
         ? Number(report.options.max)
         : 100,
 
       units: report.options?.units,
 
-      yScaleMin: helper.isDefined(report.options?.y_scale_min)
+      yScaleMin: common.isDefined(report.options?.y_scale_min)
         ? Number(report.options.y_scale_min)
         : undefined,
 
-      xScaleMax: helper.isDefined(report.options?.x_scale_max)
+      xScaleMax: common.isDefined(report.options?.x_scale_max)
         ? Number(report.options.x_scale_max)
         : undefined,
 
-      yScaleMax: helper.isDefined(report.options?.y_scale_max)
+      yScaleMax: common.isDefined(report.options?.y_scale_max)
         ? Number(report.options.y_scale_max)
         : undefined,
 
@@ -155,10 +156,10 @@ export function wrapReports(item: {
       tileHeight:
         report.tile?.tile_height || apiToBlockml.ChartTileHeightEnum._500,
       viewSize: report.tile?.view_size || apiToBlockml.ChartViewSizeEnum.Auto,
-      viewWidth: helper.isDefined(report.tile?.view_width)
+      viewWidth: common.isDefined(report.tile?.view_width)
         ? Number(report.tile.view_width)
         : 600,
-      viewHeight: helper.isDefined(report.tile?.view_height)
+      viewHeight: common.isDefined(report.tile?.view_height)
         ? Number(report.tile.view_height)
         : 200
     };
@@ -188,7 +189,7 @@ export function wrapReports(item: {
       serverTs: 1
     };
 
-    let mconfigId = helper.makeId();
+    let mconfigId = common.makeId();
 
     let mconfig: apiToBlockml.Mconfig = {
       structId: structId,

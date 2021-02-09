@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -19,7 +20,7 @@ export function sawUpdateAlwaysJoinUnique(
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       return;
     }
 

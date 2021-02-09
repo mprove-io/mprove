@@ -9,7 +9,7 @@ let testId = 'confirm-user-email__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
-let emailToken = helper.makeId();
+let emailToken = common.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {

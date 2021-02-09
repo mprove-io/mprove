@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -26,7 +27,7 @@ export function checkChartType<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isUndefined(report.type)) {
+      if (common.isUndefined(report.type)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_MISSING_TYPE,

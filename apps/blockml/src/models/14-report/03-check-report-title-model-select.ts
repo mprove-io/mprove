@@ -27,7 +27,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isUndefined(report.title)) {
+      if (common.isUndefined(report.title)) {
         let lineNums: number[] = [];
 
         Object.keys(report)
@@ -50,7 +50,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
         return;
       }
 
-      if (helper.isUndefined(report.model)) {
+      if (common.isUndefined(report.model)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MISSING_REPORT_MODEL,
@@ -69,7 +69,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
 
       let model = item.models.find(m => m.name === report.model);
 
-      if (helper.isUndefined(model)) {
+      if (common.isUndefined(model)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_REPORT_MODEL,
@@ -86,7 +86,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
         return;
       }
 
-      if (helper.isUndefined(report.select)) {
+      if (common.isUndefined(report.select)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MISSING_REPORT_SELECT,

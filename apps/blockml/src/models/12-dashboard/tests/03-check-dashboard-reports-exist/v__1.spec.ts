@@ -40,7 +40,7 @@ test('1', async t => {
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
     dashboards = await helper.readLog(fromDir, enums.LogTypeEnum.Ds);
-    if (helper.isDefined(toDir)) {
+    if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {

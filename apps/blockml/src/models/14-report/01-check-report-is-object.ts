@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -25,7 +26,7 @@ export function checkReportIsObject<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
-      if (helper.isDefined(report) && report.constructor !== Object) {
+      if (common.isDefined(report) && report.constructor !== Object) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_IS_NOT_A_DICTIONARY,

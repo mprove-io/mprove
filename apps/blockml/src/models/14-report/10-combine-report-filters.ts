@@ -27,7 +27,7 @@ export function combineReportFilters<T extends types.dzType>(
       Object.keys(report.default_filters)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(defaultFilter => {
-          report.combinedFilters[defaultFilter] = helper.makeCopy(
+          report.combinedFilters[defaultFilter] = common.makeCopy(
             report.default_filters[defaultFilter]
           );
         });
@@ -40,7 +40,7 @@ export function combineReportFilters<T extends types.dzType>(
           f => f === listen
         );
 
-        report.combinedFilters[listenFilter] = helper.makeCopy(
+        report.combinedFilters[listenFilter] = common.makeCopy(
           (<interfaces.Dashboard>x).filters[dashFilter]
         );
       });

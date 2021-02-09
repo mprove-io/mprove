@@ -34,7 +34,7 @@ export function checkSelectElements<T extends types.dzType>(
         let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
         let r = reg.exec(element);
 
-        if (helper.isUndefined(r)) {
+        if (common.isUndefined(r)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_WRONG_SELECT_ELEMENT,
@@ -59,7 +59,7 @@ export function checkSelectElements<T extends types.dzType>(
             mField => mField.name === fieldName
           );
 
-          if (helper.isUndefined(modelField)) {
+          if (common.isUndefined(modelField)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_WRONG_SELECT_MODEL_FIELD,
@@ -80,7 +80,7 @@ export function checkSelectElements<T extends types.dzType>(
         } else {
           let join = model.joins.find(j => j.as === asName);
 
-          if (helper.isUndefined(join)) {
+          if (common.isUndefined(join)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_WRONG_SELECT_ALIAS,
@@ -101,7 +101,7 @@ export function checkSelectElements<T extends types.dzType>(
 
           let viewField = join.view.fields.find(f => f.name === fieldName);
 
-          if (helper.isUndefined(viewField)) {
+          if (common.isUndefined(viewField)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_WRONG_SELECT_VIEW_FIELD,

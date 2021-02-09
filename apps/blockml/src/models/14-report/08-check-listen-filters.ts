@@ -30,13 +30,13 @@ export function checkListenFilters<T extends types.dzType>(
     x.reports.forEach(report => {
       report.listen = {};
 
-      if (helper.isUndefined(report.listen_filters)) {
+      if (common.isUndefined(report.listen_filters)) {
         report.listen_filters = {};
         return;
       }
 
       if (
-        helper.isDefined(report.listen_filters) &&
+        common.isDefined(report.listen_filters) &&
         x.fileExt === common.FileExtensionEnum.Viz
       ) {
         item.errors.push(
@@ -69,7 +69,7 @@ export function checkListenFilters<T extends types.dzType>(
             f => f.name === filterName
           );
 
-          if (helper.isUndefined(dashboardField)) {
+          if (common.isUndefined(dashboardField)) {
             item.errors.push(
               new BmError({
                 title:
@@ -95,7 +95,7 @@ export function checkListenFilters<T extends types.dzType>(
             let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
             let r = reg.exec(part);
 
-            if (helper.isUndefined(r)) {
+            if (common.isUndefined(r)) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.REPORT_WRONG_LISTENER,
@@ -126,7 +126,7 @@ export function checkListenFilters<T extends types.dzType>(
                 mField => mField.name === fieldName
               );
 
-              if (helper.isUndefined(modelField)) {
+              if (common.isUndefined(modelField)) {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_MODEL_FIELD,
@@ -147,7 +147,7 @@ export function checkListenFilters<T extends types.dzType>(
                 return;
               }
 
-              if (helper.isDefined(report.listen[listener])) {
+              if (common.isDefined(report.listen[listener])) {
                 item.errors.push(
                   new BmError({
                     title:
@@ -191,7 +191,7 @@ export function checkListenFilters<T extends types.dzType>(
             } else {
               let join = model.joins.find(j => j.as === asName);
 
-              if (helper.isUndefined(join)) {
+              if (common.isUndefined(join)) {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_ALIAS,
@@ -216,7 +216,7 @@ export function checkListenFilters<T extends types.dzType>(
                 vField => vField.name === fieldName
               );
 
-              if (helper.isUndefined(viewField)) {
+              if (common.isUndefined(viewField)) {
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.REPORT_WRONG_LISTENER_VIEW_FIELD,
@@ -238,7 +238,7 @@ export function checkListenFilters<T extends types.dzType>(
                 return;
               }
 
-              if (helper.isDefined(report.listen[listener])) {
+              if (common.isDefined(report.listen[listener])) {
                 item.errors.push(
                   new BmError({
                     title:

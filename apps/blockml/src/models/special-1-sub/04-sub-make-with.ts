@@ -14,13 +14,13 @@ export function subMakeWith(item: {
 }) {
   let { needsAll, varsSubSteps, view } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSub>({ needsAll });
+  let varsInput = common.makeCopy<interfaces.VarsSub>({ needsAll });
 
   let connection = view.connection;
   let myWith: interfaces.VarsSub['myWith'] = [];
   let table: string;
 
-  if (helper.isDefined(view.table)) {
+  if (common.isDefined(view.table)) {
     if (connection.type === common.ConnectionTypeEnum.BigQuery) {
       table = '`' + view.table + '`';
     } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
@@ -45,7 +45,7 @@ export function subMakeWith(item: {
     let field = view.fields.find(viewField => viewField.name === fieldName);
 
     if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
-      if (helper.isDefined(field.unnest)) {
+      if (common.isDefined(field.unnest)) {
         flats[field.unnest] = 1;
       }
 

@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -26,7 +27,7 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (helper.isUndefined(field.result)) {
+      if (common.isUndefined(field.result)) {
         switch (field.fieldClass) {
           case apiToBlockml.FieldClassEnum.Dimension: {
             if (field.type === apiToBlockml.FieldTypeEnum.YesnoIsTrue) {

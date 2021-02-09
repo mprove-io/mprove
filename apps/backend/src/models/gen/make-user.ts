@@ -1,7 +1,6 @@
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
 
 export function makeUser(item: {
   userId?: string;
@@ -15,12 +14,12 @@ export function makeUser(item: {
   passwordResetExpiresTs?: string;
 }) {
   let userEntity: entities.UserEntity = {
-    user_id: item.userId || helper.makeId(),
+    user_id: item.userId || common.makeId(),
     email: item.email,
     password_reset_token: item.passwordResetToken,
     password_reset_expires_ts: item.passwordResetExpiresTs,
     is_email_verified: item.isEmailVerified,
-    email_verification_token: item.emailVerificationToken || helper.makeId(),
+    email_verification_token: item.emailVerificationToken || common.makeId(),
     hash: item.hash,
     salt: item.salt,
     alias: item.alias,

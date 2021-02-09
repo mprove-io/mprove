@@ -1,4 +1,5 @@
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
@@ -47,10 +48,10 @@ export function wrapField(item: {
     nodeClass: field.fieldClass
   };
 
-  if (helper.isDefined(field.groupId)) {
+  if (common.isDefined(field.groupId)) {
     let groupNode = children.find(c => c.id === `${alias}.${field.groupId}`);
 
-    if (helper.isDefined(groupNode)) {
+    if (common.isDefined(groupNode)) {
       groupNode.children.push(fieldNode);
     } else {
       let newGroupNode: apiToBlockml.ModelNode = {

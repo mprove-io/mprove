@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -24,7 +25,7 @@ export function sawCheckDoubleDeps(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       newModels.push(x);
       return;
     }
@@ -32,7 +33,7 @@ export function sawCheckDoubleDeps(
     Object.keys(x.sqlAlwaysWhereDoubleDeps).forEach(depAs => {
       let depJoin = x.joins.find(j => j.as === depAs);
 
-      if (helper.isUndefined(depJoin)) {
+      if (common.isUndefined(depJoin)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_ALIAS_IN_SQL_ALWAYS_WHERE_REFERENCE,
@@ -54,7 +55,7 @@ export function sawCheckDoubleDeps(
       Object.keys(x.sqlAlwaysWhereDoubleDeps[depAs]).forEach(depFieldName => {
         let depField = depJoin.view.fields.find(f => f.name === depFieldName);
 
-        if (helper.isUndefined(depField)) {
+        if (common.isUndefined(depField)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MISSING_FIELD,

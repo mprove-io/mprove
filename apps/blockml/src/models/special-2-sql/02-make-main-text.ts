@@ -3,7 +3,6 @@ import { barMeasure } from '~blockml/barrels/bar-measure';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.MakeMainText;
@@ -25,7 +24,7 @@ export function makeMainText(item: {
     varsSqlSteps
   } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     select,
     filters,
     depMeasures,
@@ -274,7 +273,7 @@ export function makeMainText(item: {
     }
 
     if (
-      helper.isDefined(selected[element]) &&
+      common.isDefined(selected[element]) &&
       field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation
     ) {
       let sel = `  ${sqlSelect} as ${asName}_${fieldName},`;

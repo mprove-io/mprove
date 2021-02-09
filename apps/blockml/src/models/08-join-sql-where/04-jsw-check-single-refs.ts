@@ -28,7 +28,7 @@ export function jswCheckSingleRefs(
     x.joins
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
-        if (helper.isUndefined(join.sql_where)) {
+        if (common.isUndefined(join.sql_where)) {
           return;
         }
 
@@ -44,7 +44,7 @@ export function jswCheckSingleRefs(
         references.forEach(reference => {
           let referenceField = x.fields.find(f => f.name === reference);
 
-          if (helper.isUndefined(referenceField)) {
+          if (common.isUndefined(referenceField)) {
             item.errors.push(
               new BmError({
                 title:

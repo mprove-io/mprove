@@ -25,8 +25,8 @@ test('1', async t => {
             email: email,
             password: password,
             isEmailVerified: common.BoolEnum.FALSE,
-            passwordResetToken: helper.makeId(),
-            emailVerificationToken: helper.makeId()
+            passwordResetToken: common.makeId(),
+            emailVerificationToken: common.makeId()
           }
         ]
       }

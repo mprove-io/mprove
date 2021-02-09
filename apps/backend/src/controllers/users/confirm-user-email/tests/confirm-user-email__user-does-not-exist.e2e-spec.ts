@@ -8,7 +8,7 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'confirm-user-email__user-does-not-exist';
 
 let traceId = testId;
-let emailToken = helper.makeId();
+let emailToken = common.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {

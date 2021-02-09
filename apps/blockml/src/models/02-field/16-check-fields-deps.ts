@@ -35,7 +35,7 @@ export function checkFieldsDeps<T extends types.vmType>(
       Object.keys(x.fieldsDeps[field.name]).forEach(depName => {
         let dependentField = x.fields.find(f => f.name === depName);
 
-        if (helper.isUndefined(dependentField)) {
+        if (common.isUndefined(dependentField)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REFERENCE_TO_NOT_VALID_FIELD,

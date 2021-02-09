@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -24,7 +25,7 @@ export function checkMdzAccess<T extends types.mdzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isDefined(x.access_users)) {
+    if (common.isDefined(x.access_users)) {
       x.access_users.forEach(u => {
         if (typeof u !== 'string' && !(<any>u instanceof String)) {
           item.errors.push(
@@ -45,7 +46,7 @@ export function checkMdzAccess<T extends types.mdzType>(
       });
     }
 
-    if (helper.isDefined(x.access_roles)) {
+    if (common.isDefined(x.access_roles)) {
       x.access_roles.forEach(u => {
         if (typeof u !== 'string' && !(<any>u instanceof String)) {
           item.errors.push(

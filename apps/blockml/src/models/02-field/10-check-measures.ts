@@ -36,7 +36,7 @@ export function checkMeasures<T extends types.vmType>(
         return;
       }
 
-      if (helper.isUndefined(field.type)) {
+      if (common.isUndefined(field.type)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.MISSING_TYPE_FOR_MEASURE,
@@ -127,7 +127,7 @@ export function checkMeasures<T extends types.vmType>(
           return;
         }
 
-        if (helper.isDefined(field.percentile)) {
+        if (common.isDefined(field.percentile)) {
           item.errors.push(
             new BmError({
               title:
@@ -147,7 +147,7 @@ export function checkMeasures<T extends types.vmType>(
       }
 
       if (field.type === apiToBlockml.FieldTypeEnum.PercentileByKey) {
-        if (helper.isUndefined(field.percentile)) {
+        if (common.isUndefined(field.percentile)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MISSING_PERCENTILE,
@@ -167,7 +167,7 @@ export function checkMeasures<T extends types.vmType>(
 
           let r = reg.exec(field.percentile);
 
-          if (helper.isUndefined(r)) {
+          if (common.isUndefined(r)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.WRONG_PERCENTILE,
@@ -187,7 +187,7 @@ export function checkMeasures<T extends types.vmType>(
       }
 
       if (
-        helper.isDefined(field.sql) &&
+        common.isDefined(field.sql) &&
         !field.sql.match(common.MyRegex.CONTAINS_BLOCKML_REF())
       ) {
         item.errors.push(
@@ -207,7 +207,7 @@ export function checkMeasures<T extends types.vmType>(
       }
 
       if (
-        helper.isDefined(field.sql_key) &&
+        common.isDefined(field.sql_key) &&
         !field.sql_key.match(common.MyRegex.CONTAINS_BLOCKML_REF())
       ) {
         item.errors.push(

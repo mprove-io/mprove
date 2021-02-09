@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -28,7 +29,7 @@ export function checkFieldsDoubleDeps(
       Object.keys(x.fieldsDoubleDeps[fieldName]).forEach(as => {
         let join = x.joins.find(j => j.as === as);
 
-        if (helper.isUndefined(join)) {
+        if (common.isUndefined(join)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.MODEL_FIELD_WRONG_ALIAS_IN_REFERENCE,
@@ -49,7 +50,7 @@ export function checkFieldsDoubleDeps(
           let field = x.fields.find(f => f.name === fieldName);
           let depField = join.view.fields.find(f => f.name === depName);
 
-          if (helper.isUndefined(depField)) {
+          if (common.isUndefined(depField)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.MODEL_FIELD_REFS_NOT_VALID_FIELD,

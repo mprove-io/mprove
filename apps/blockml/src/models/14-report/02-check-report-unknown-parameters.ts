@@ -133,7 +133,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
           }
 
           if (
-            helper.isDefined(report[parameter]) &&
+            common.isDefined(report[parameter]) &&
             report[parameter].constructor !== Object &&
             [
               enums.ParameterEnum.DefaultFilters.toString(),

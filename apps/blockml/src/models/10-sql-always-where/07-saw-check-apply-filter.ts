@@ -25,7 +25,7 @@ export function sawCheckApplyFilter(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       newModels.push(x);
       return;
     }
@@ -43,7 +43,7 @@ export function sawCheckApplyFilter(
 
       let field = x.fields.find(f => f.name === fieldName);
 
-      if (helper.isUndefined(field)) {
+      if (common.isUndefined(field)) {
         item.errors.push(
           new BmError({
             title:

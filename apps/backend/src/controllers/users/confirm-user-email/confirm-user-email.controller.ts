@@ -3,7 +3,6 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
-import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { Public, ValidateRequest } from '~backend/decorators/_index';
 
@@ -26,7 +25,7 @@ export class ConfirmUserEmailController {
       email_verification_token: token
     });
 
-    if (helper.isUndefined(user)) {
+    if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });

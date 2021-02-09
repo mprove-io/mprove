@@ -2,7 +2,6 @@ import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let toposort = require('toposort');
@@ -28,7 +27,7 @@ export function makeTop(item: {
     udfsDict
   } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSql>({
+  let varsInput = common.makeCopy<interfaces.VarsSql>({
     mainUdfs,
     withParts,
     withDerivedTables,
@@ -42,7 +41,7 @@ export function makeTop(item: {
   }
 
   // adding model level udfs to main udfs
-  if (helper.isDefined(model.udfs)) {
+  if (common.isDefined(model.udfs)) {
     model.udfs.forEach(udf => {
       mainUdfs[udf] = 1;
     });

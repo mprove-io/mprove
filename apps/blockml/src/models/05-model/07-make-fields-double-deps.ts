@@ -38,7 +38,7 @@ export function makeFieldsDoubleDeps(
         let as: string = r[1];
         let dep: string = r[2];
 
-        if (helper.isUndefined(x.fieldsDoubleDeps[f.name][as])) {
+        if (common.isUndefined(x.fieldsDoubleDeps[f.name][as])) {
           x.fieldsDoubleDeps[f.name][as] = {};
         }
 
@@ -62,7 +62,7 @@ export function makeFieldsDoubleDeps(
           let as: string = r2[1];
           let dep: string = r2[2];
 
-          if (helper.isUndefined(x.fieldsDoubleDeps[f.name][as])) {
+          if (common.isUndefined(x.fieldsDoubleDeps[f.name][as])) {
             x.fieldsDoubleDeps[f.name][as] = {};
           }
 

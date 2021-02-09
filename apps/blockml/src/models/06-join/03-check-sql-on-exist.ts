@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -26,7 +27,7 @@ export function checkSqlOnExist(
     x.joins
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
-        if (helper.isUndefined(join.sql_on)) {
+        if (common.isUndefined(join.sql_on)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.JOIN_MISSING_SQL_ON,

@@ -1,4 +1,5 @@
 import { EntityManager } from 'typeorm';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
@@ -30,7 +31,7 @@ export async function addRecords(item: {
   });
 
   // if (!item.skip_chunk) {
-  //   let chunkId = helper.makeId();
+  //   let chunkId = common.makeId();
 
   //   let chunk = gen.makeChunk({
   //     chunk_id: chunkId,
@@ -58,7 +59,7 @@ export async function addRecords(item: {
   // let errors = records.errors;
   // let members = records.members;
 
-  if (helper.isDefined(users) && users.length > 0) {
+  if (common.isDefined(users) && users.length > 0) {
     let storeUsers = manager.getCustomRepository(repositories.UsersRepository);
 
     await storeUsers.insert(users);

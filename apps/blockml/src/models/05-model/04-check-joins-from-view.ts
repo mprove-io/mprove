@@ -27,7 +27,7 @@ export function checkJoinsFromView(
     let froms: number[] = [];
 
     x.joins.forEach(j => {
-      if (helper.isDefined(j.from_view) && helper.isDefined(j.join_view)) {
+      if (common.isDefined(j.from_view) && common.isDefined(j.join_view)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FROM_VIEW_AND_JOIN_VIEW,
@@ -49,7 +49,7 @@ export function checkJoinsFromView(
         return;
       }
 
-      if (helper.isUndefined(j.from_view) && helper.isUndefined(j.join_view)) {
+      if (common.isUndefined(j.from_view) && common.isUndefined(j.join_view)) {
         let lineNums: number[] = [];
         Object.keys(j)
           .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
@@ -71,7 +71,7 @@ export function checkJoinsFromView(
         return;
       }
 
-      if (helper.isDefined(j.from_view)) {
+      if (common.isDefined(j.from_view)) {
         froms.push(j.from_view_line_num);
       }
     });

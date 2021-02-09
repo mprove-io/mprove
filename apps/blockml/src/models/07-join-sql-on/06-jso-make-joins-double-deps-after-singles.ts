@@ -37,7 +37,7 @@ export function jsoMakeJoinsDoubleDepsAfterSingles(
           let dep: string = r[2];
 
           if (
-            helper.isUndefined(x.joinsDoubleDepsAfterSingles[join.as][asName])
+            common.isUndefined(x.joinsDoubleDepsAfterSingles[join.as][asName])
           ) {
             x.joinsDoubleDepsAfterSingles[join.as][asName] = {};
           }

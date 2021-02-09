@@ -40,7 +40,7 @@ test('1', async t => {
 
     views = await helper.readLog(fromDir, enums.LogTypeEnum.Views);
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);
-    if (helper.isDefined(toDir)) {
+    if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {

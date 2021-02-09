@@ -24,7 +24,7 @@ export function checkVizReportsExist(
   item.vizs.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.reports)) {
+    if (common.isUndefined(x.reports)) {
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.VIZ_MISSING_REPORTS,

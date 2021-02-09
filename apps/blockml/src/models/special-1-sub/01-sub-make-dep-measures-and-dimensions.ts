@@ -1,6 +1,6 @@
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 let func = enums.FuncEnum.SubMakeDepMeasuresAndDimensions;
@@ -12,7 +12,7 @@ export function subMakeDepMeasuresAndDimensions(item: {
 }) {
   let { select, varsSubSteps, view } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSub>({ select });
+  let varsInput = common.makeCopy<interfaces.VarsSub>({ select });
 
   let depMeasures: interfaces.VarsSub['depMeasures'] = {};
   let depDimensions: interfaces.VarsSub['depDimensions'] = {};

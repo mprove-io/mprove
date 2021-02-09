@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 export function applyFilter(item: {
@@ -20,7 +19,7 @@ export function applyFilter(item: {
 
     let filterName = `${as}.${f}`;
 
-    let conditions = helper.isDefined(filterFieldsConditions[filterName])
+    let conditions = common.isDefined(filterFieldsConditions[filterName])
       ? filterFieldsConditions[filterName]
       : [];
 

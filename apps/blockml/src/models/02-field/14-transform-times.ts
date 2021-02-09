@@ -42,7 +42,7 @@ export function transformTimes<T extends types.vmType>(
         return;
       }
 
-      if (helper.isUndefined(field.timeframes)) {
+      if (common.isUndefined(field.timeframes)) {
         field.timeframes = [
           enums.TimeframeEnum.Time,
           enums.TimeframeEnum.Date,
@@ -75,7 +75,7 @@ export function transformTimes<T extends types.vmType>(
       let ts;
 
       if (
-        helper.isUndefined(field.source) ||
+        common.isUndefined(field.source) ||
         field.source === enums.TimeSourceEnum.Timestamp
       ) {
         ts = field.sql;

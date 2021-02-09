@@ -25,7 +25,7 @@ export function awcCheckSingleRefs(
   item.models.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.sql_always_where_calc)) {
+    if (common.isUndefined(x.sql_always_where_calc)) {
       newModels.push(x);
       return;
     }
@@ -42,7 +42,7 @@ export function awcCheckSingleRefs(
     references.forEach(reference => {
       let referenceField = x.fields.find(f => f.name === reference);
 
-      if (helper.isUndefined(referenceField)) {
+      if (common.isUndefined(referenceField)) {
         item.errors.push(
           new BmError({
             title:

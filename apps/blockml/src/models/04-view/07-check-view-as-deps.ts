@@ -34,7 +34,7 @@ export function checkViewAsDeps(
           v => v.name === referencedViewName
         );
 
-        if (helper.isUndefined(referencedView)) {
+        if (common.isUndefined(referencedView)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_VIEW,
@@ -76,7 +76,7 @@ export function checkViewAsDeps(
           return;
         }
 
-        if (helper.isDefined(referencedView.derived_table)) {
+        if (common.isDefined(referencedView.derived_table)) {
           let input = referencedView.derived_table;
 
           let reg = common.MyRegex.CAPTURE_START_FIELD_TARGET_END();
@@ -107,7 +107,7 @@ export function checkViewAsDeps(
         Object.keys(x.asDeps[as].fieldNames).forEach(fieldName => {
           let field = referencedView.fields.find(f => f.name === fieldName);
 
-          if (helper.isUndefined(field)) {
+          if (common.isUndefined(field)) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.DERIVED_TABLE_REFERENCES_MISSING_FIELD,
@@ -144,7 +144,7 @@ export function checkViewAsDeps(
       });
     }
 
-    if (helper.isDefined(x.derived_table)) {
+    if (common.isDefined(x.derived_table)) {
       let input = x.derived_table;
       input = common.MyRegex.replaceViewRefs(input, x.name);
       input = common.MyRegex.removeBracketsOnViewFieldRefs(input);

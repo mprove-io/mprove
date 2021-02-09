@@ -1,4 +1,5 @@
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -23,7 +24,7 @@ export function subComposeCalc(item: {
     viewPartName
   } = item;
 
-  let varsInput = helper.makeCopy<interfaces.VarsSub>({
+  let varsInput = common.makeCopy<interfaces.VarsSub>({
     mainQuery,
     select,
     processedFields

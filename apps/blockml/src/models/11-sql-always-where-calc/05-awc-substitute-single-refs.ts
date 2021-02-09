@@ -23,7 +23,7 @@ export function awcSubstituteSingleRefs(
   item.models.forEach(x => {
     x.sqlAlwaysWhereCalcDepsAfterSingles = {};
 
-    if (helper.isUndefined(x.sql_always_where_calc)) {
+    if (common.isUndefined(x.sql_always_where_calc)) {
       return;
     }
 

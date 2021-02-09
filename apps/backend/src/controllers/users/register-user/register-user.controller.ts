@@ -7,7 +7,6 @@ import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
-import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { Public, ValidateRequest } from '~backend/decorators/_index';
@@ -37,8 +36,8 @@ export class RegisterUserController {
 
     let user = await this.userRepository.findOne({ email: email });
 
-    if (helper.isDefined(user)) {
-      if (helper.isDefined(user.hash)) {
+    if (common.isDefined(user)) {
+      if (common.isDefined(user.hash)) {
         throw new common.ServerError({
           message: apiToBackend.ErEnum.BACKEND_USER_ALREADY_REGISTERED
         });
@@ -56,7 +55,7 @@ export class RegisterUserController {
       }
     }
 
-    if (helper.isUndefined(user)) {
+    if (common.isUndefined(user)) {
       let onlyInv = this.cs.get<interfaces.Config['registerOnlyInvitedUsers']>(
         'registerOnlyInvitedUsers'
       );

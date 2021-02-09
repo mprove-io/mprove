@@ -36,7 +36,7 @@ export function checkDimensions<T extends types.vmType>(
         return;
       }
 
-      if (helper.isUndefined(field.type)) {
+      if (common.isUndefined(field.type)) {
         field.type = apiToBlockml.FieldTypeEnum.Custom;
         field.type_line_num = 0;
       } else if (
@@ -62,7 +62,7 @@ export function checkDimensions<T extends types.vmType>(
       }
 
       if (x.connection.type !== common.ConnectionTypeEnum.BigQuery) {
-        if (helper.isDefined(field.unnest)) {
+        if (common.isDefined(field.unnest)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.UNNEST_IS_NOT_SUPPORTED_FOR_CONNECTION,

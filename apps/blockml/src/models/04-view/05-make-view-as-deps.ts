@@ -27,7 +27,7 @@ export function makeViewAsDeps(
     // init
     x.asDeps = {};
 
-    if (helper.isDefined(x.derived_table)) {
+    if (common.isDefined(x.derived_table)) {
       let input = x.derived_table;
 
       // checking AS
@@ -55,7 +55,7 @@ export function makeViewAsDeps(
           return;
         }
 
-        if (helper.isUndefined(x.asDeps[alias])) {
+        if (common.isUndefined(x.asDeps[alias])) {
           x.asDeps[alias] = { viewName: view, fieldNames: {} };
         } else if (x.asDeps[alias].viewName !== view) {
           item.errors.push(
@@ -86,7 +86,7 @@ export function makeViewAsDeps(
         let as: string = r2[1];
         let dep: string = r2[2];
 
-        if (helper.isUndefined(x.asDeps[as])) {
+        if (common.isUndefined(x.asDeps[as])) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.DERIVED_TABLE_NO_VIEW_REFERENCE,

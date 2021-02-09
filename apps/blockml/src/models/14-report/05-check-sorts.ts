@@ -28,7 +28,7 @@ export function checkSorts<T extends types.dzType>(
     x.reports.forEach(report => {
       report.sortingsAry = [];
 
-      if (helper.isUndefined(report.sorts)) {
+      if (common.isUndefined(report.sorts)) {
         return;
       }
 
@@ -36,7 +36,7 @@ export function checkSorts<T extends types.dzType>(
         let reg = common.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G();
         let r = reg.exec(part);
 
-        if (helper.isUndefined(r)) {
+        if (common.isUndefined(r)) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_WRONG_SORTS_SYNTAX,
@@ -80,7 +80,7 @@ export function checkSorts<T extends types.dzType>(
 
         report.sortingsAry.push({
           fieldId: sorter,
-          desc: helper.isDefined(desc)
+          desc: common.isDefined(desc)
         });
       });
     });

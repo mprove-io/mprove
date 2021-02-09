@@ -22,7 +22,7 @@ export function sawMakeDoubleDeps(
   item.models.forEach(x => {
     x.sqlAlwaysWhereDoubleDeps = {};
 
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       return;
     }
 
@@ -33,7 +33,7 @@ export function sawMakeDoubleDeps(
       let as: string = r[1];
       let dep: string = r[2];
 
-      if (helper.isUndefined(x.sqlAlwaysWhereDoubleDeps[as])) {
+      if (common.isUndefined(x.sqlAlwaysWhereDoubleDeps[as])) {
         x.sqlAlwaysWhereDoubleDeps[as] = {};
       }
 

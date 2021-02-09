@@ -32,7 +32,7 @@ export function jsoMakeDoubleDeps(
           let as: string = r[1];
           let dep: string = r[2];
 
-          if (helper.isUndefined(join.sqlOnDoubleDeps[as])) {
+          if (common.isUndefined(join.sqlOnDoubleDeps[as])) {
             join.sqlOnDoubleDeps[as] = {};
           }
 

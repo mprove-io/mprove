@@ -2,6 +2,7 @@ import { Controller, Post } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
@@ -29,13 +30,13 @@ export class SeedRecordsController {
 
     let users: entities.UserEntity[] = [];
 
-    if (helper.isDefined(payloadUsers)) {
+    if (common.isDefined(payloadUsers)) {
       await asyncPool(
         1,
         payloadUsers,
         async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsers) => {
           let alias = await this.usersService.makeAlias(x.email);
-          let { salt, hash } = helper.isDefined(x.password)
+          let { salt, hash } = common.isDefined(x.password)
             ? await this.usersService.makeSaltAndHash(x.password)
             : { salt: undefined, hash: undefined };
 
@@ -48,7 +49,7 @@ export class SeedRecordsController {
             hash: hash,
             salt: salt,
             alias: alias,
-            passwordResetExpiresTs: helper.isDefined(x.passwordResetToken)
+            passwordResetExpiresTs: common.isDefined(x.passwordResetToken)
               ? helper.makeTsUsingOffsetFromNow(
                   constants.PASSWORD_EXPIRES_OFFSET
                 )

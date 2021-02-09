@@ -22,7 +22,7 @@ export function awcMakeDoubleDeps(
   item.models.forEach(x => {
     x.sqlAlwaysWhereCalcDoubleDeps = {};
 
-    if (helper.isUndefined(x.sql_always_where_calc)) {
+    if (common.isUndefined(x.sql_always_where_calc)) {
       return;
     }
 
@@ -33,7 +33,7 @@ export function awcMakeDoubleDeps(
       let as: string = r[1];
       let dep: string = r[2];
 
-      if (helper.isUndefined(x.sqlAlwaysWhereCalcDoubleDeps[as])) {
+      if (common.isUndefined(x.sqlAlwaysWhereCalcDoubleDeps[as])) {
         x.sqlAlwaysWhereCalcDoubleDeps[as] = {};
       }
 

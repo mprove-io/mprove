@@ -47,7 +47,7 @@ export async function fetchSql<T extends types.dzType>(
 
       let filters: interfaces.FilterBricksDictionary = {};
 
-      if (helper.isDefined(report.combinedFilters)) {
+      if (common.isDefined(report.combinedFilters)) {
         Object.keys(report.combinedFilters).forEach(filter => {
           // remove empty filters
           if (report.combinedFilters[filter].length > 0) {

@@ -20,7 +20,7 @@ export function sawSubstituteSingleRefs(
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   item.models.forEach(x => {
-    if (helper.isUndefined(x.sql_always_where)) {
+    if (common.isUndefined(x.sql_always_where)) {
       return;
     }
 

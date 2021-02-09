@@ -2,7 +2,6 @@ import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { isDefined } from './is-defined';
 
 export async function sendToBackend<T>(item: {
   httpServer: any;
@@ -14,7 +13,7 @@ export async function sendToBackend<T>(item: {
 
   let rq = request(httpServer).post('/' + req.info.name);
 
-  if (isDefined(loginToken)) {
+  if (common.isDefined(loginToken)) {
     rq = rq.auth(loginToken, { type: 'bearer' });
   }
 

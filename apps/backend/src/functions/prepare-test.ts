@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '~backend/app.module';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { getConfig } from '~backend/config/get.config';
@@ -38,7 +39,7 @@ export async function prepareTest(item: {
   await app.init();
   let httpServer = app.getHttpServer();
 
-  if (helper.isDefined(deleteRecordsPayload)) {
+  if (common.isDefined(deleteRecordsPayload)) {
     await helper.sendToBackend<apiToBackend.ToBackendDeleteRecordsResponse>({
       checkIsOk: true,
       httpServer: httpServer,
@@ -53,7 +54,7 @@ export async function prepareTest(item: {
     });
   }
 
-  if (helper.isDefined(seedRecordsPayload)) {
+  if (common.isDefined(seedRecordsPayload)) {
     await helper.sendToBackend<apiToBackend.ToBackendSeedRecordsResponse>({
       checkIsOk: true,
       httpServer: httpServer,
@@ -69,7 +70,7 @@ export async function prepareTest(item: {
 
   let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
 
-  if (helper.isDefined(loginUserPayload)) {
+  if (common.isDefined(loginUserPayload)) {
     loginUserResp = await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>(
       {
         checkIsOk: true,

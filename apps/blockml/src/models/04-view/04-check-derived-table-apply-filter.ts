@@ -25,7 +25,7 @@ export function checkDerivedTableApplyFilter(
   item.views.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (helper.isUndefined(x.derived_table)) {
+    if (common.isUndefined(x.derived_table)) {
       newViews.push(x);
       return;
     }
@@ -43,7 +43,7 @@ export function checkDerivedTableApplyFilter(
 
       let field = x.fields.find(f => f.name === fieldName);
 
-      if (helper.isUndefined(field)) {
+      if (common.isUndefined(field)) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.APPLY_FILTER_REFS_MISSING_FILTER,

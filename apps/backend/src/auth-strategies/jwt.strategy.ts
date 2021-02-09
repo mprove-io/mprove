@@ -4,7 +4,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 
@@ -24,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     let user = await this.userRepository.findOne(payload.userId);
 
-    if (helper.isUndefined(user)) {
+    if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });

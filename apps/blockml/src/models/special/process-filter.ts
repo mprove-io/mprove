@@ -3,7 +3,6 @@ import { barTimestamp } from '~blockml/barrels/bar-timestamp';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 
 export function processFilter(item: {
   filterBricks: string[];
@@ -35,7 +34,7 @@ export function processFilter(item: {
     fractions
   } = item;
 
-  weekStart = helper.isDefined(weekStart)
+  weekStart = common.isDefined(weekStart)
     ? weekStart
     : common.ProjectWeekStartEnum.Monday;
 
@@ -43,16 +42,16 @@ export function processFilter(item: {
     name: 'cn',
     type: common.ConnectionTypeEnum.PostgreSQL
   };
-  connection = helper.isDefined(connection) ? connection : cn;
+  connection = common.isDefined(connection) ? connection : cn;
 
-  timezone = helper.isDefined(timezone) ? timezone : constants.UTC;
-  proc = helper.isDefined(proc) ? proc : 'proc';
-  sqlTsSelect = helper.isDefined(sqlTsSelect) ? sqlTsSelect : 'sqlTsSelect';
-  ORs = helper.isDefined(ORs) ? ORs : [];
-  NOTs = helper.isDefined(NOTs) ? NOTs : [];
-  INs = helper.isDefined(INs) ? INs : [];
-  NOTINs = helper.isDefined(NOTINs) ? NOTINs : [];
-  fractions = helper.isDefined(fractions) ? fractions : [];
+  timezone = common.isDefined(timezone) ? timezone : constants.UTC;
+  proc = common.isDefined(proc) ? proc : 'proc';
+  sqlTsSelect = common.isDefined(sqlTsSelect) ? sqlTsSelect : 'sqlTsSelect';
+  ORs = common.isDefined(ORs) ? ORs : [];
+  NOTs = common.isDefined(NOTs) ? NOTs : [];
+  INs = common.isDefined(INs) ? INs : [];
+  NOTINs = common.isDefined(NOTINs) ? NOTINs : [];
+  fractions = common.isDefined(fractions) ? fractions : [];
 
   let answerError: { valid: number; brick?: string };
 
@@ -910,7 +909,7 @@ export function processFilter(item: {
           connection: connection
         });
 
-        if (helper.isUndefined(toYear)) {
+        if (common.isUndefined(toYear)) {
           close = barTimestamp.makeTimestampCloseBetween({
             open: open,
             year: year,

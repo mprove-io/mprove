@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -26,7 +27,7 @@ export function checkJoinType(
     x.joins
       .filter(j => j.as !== x.fromAs)
       .forEach(join => {
-        if (helper.isUndefined(join.type)) {
+        if (common.isUndefined(join.type)) {
           join.type = enums.JoinTypeEnum.LeftOuter;
           join.type_line_num = 0;
         } else if (

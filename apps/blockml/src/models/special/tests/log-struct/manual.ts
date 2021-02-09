@@ -1,7 +1,6 @@
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
-import { helper } from '~blockml/barrels/helper';
 import { prepareTest } from '~blockml/functions/prepare-test';
 
 let caller = enums.CallerEnum.RebuildStruct;
@@ -31,7 +30,7 @@ async function run() {
     weekStart: common.ProjectWeekStartEnum.Monday
   });
 
-  if (helper.isDefined(toDir)) {
+  if (common.isDefined(toDir)) {
     fse.copySync(fromDir, toDir);
   }
 }
