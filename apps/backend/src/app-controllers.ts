@@ -11,5 +11,6 @@ export const appControllers = [
   controllers.LoginUserController,
   controllers.RegisterUserController,
   controllers.SetUserNameController,
-  controllers.SetUserTimezoneController
+  controllers.SetUserTimezoneController,
+  controllers.ResetUserPasswordController
 ];

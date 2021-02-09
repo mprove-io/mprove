@@ -23,7 +23,7 @@ export class Config extends common.Config {
   sendEmail?: common.BoolEnum;
 
   @IsString()
-  verifyEmailUrl?: string;
+  hostUrl?: string;
 
   @IsString()
   sendEmailFromName?: string;

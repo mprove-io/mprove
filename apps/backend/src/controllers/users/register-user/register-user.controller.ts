@@ -85,11 +85,9 @@ export class RegisterUserController {
           });
         });
 
-        let url = this.cs.get<interfaces.Config['verifyEmailUrl']>(
-          'verifyEmailUrl'
-        );
+        let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 
-        let link = `${url}/confirm-email?token=${newUser.email_verification_token}`;
+        let link = `${hostUrl}/confirm-email?token=${newUser.email_verification_token}`;
 
         await this.mailerService.sendMail({
           to: email,

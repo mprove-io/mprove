@@ -21,7 +21,7 @@ export function getDevConfig(envFilePath) {
     ),
     //
     sendEmail: <common.BoolEnum>envFile.BACKEND_SEND_EMAIL,
-    verifyEmailUrl: envFile.BACKEND_VERIFY_EMAIL_URL,
+    hostUrl: envFile.BACKEND_HOST_URL,
     sendEmailFromName: envFile.BACKEND_SEND_EMAIL_FROM_NAME,
     sendEmailFromAddress: envFile.BACKEND_SEND_EMAIL_FROM_ADDRESS,
     emailTransport: <enums.EmailTransportEnum>envFile.BACKEND_EMAIL_TRANSPORT,

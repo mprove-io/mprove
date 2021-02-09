@@ -7,5 +7,6 @@ export * from './users/confirm-user-email';
 export * from './users/get-user-profile';
 export * from './users/login-user';
 export * from './users/register-user';
+export * from './users/reset-user-password';
 export * from './users/set-user-name';
 export * from './users/set-user-timezone';
