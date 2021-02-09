@@ -13,10 +13,10 @@ export function processFilter(item: {
   timezone?: string;
   proc?: string;
   sqlTsSelect?: string;
-  ORs?: string[];
-  NOTs?: string[];
-  INs?: string[];
-  NOTINs?: string[];
+  ors?: string[];
+  nots?: string[];
+  ins?: string[];
+  notIns?: string[];
   fractions?: apiToBlockml.Fraction[];
 }): { valid: number; brick?: string } {
   let {
@@ -27,10 +27,10 @@ export function processFilter(item: {
     timezone,
     proc,
     sqlTsSelect,
-    ORs,
-    NOTs,
-    INs,
-    NOTINs,
+    ors,
+    nots,
+    ins,
+    notIns,
     fractions
   } = item;
 
@@ -47,10 +47,10 @@ export function processFilter(item: {
   timezone = common.isDefined(timezone) ? timezone : constants.UTC;
   proc = common.isDefined(proc) ? proc : 'proc';
   sqlTsSelect = common.isDefined(sqlTsSelect) ? sqlTsSelect : 'sqlTsSelect';
-  ORs = common.isDefined(ORs) ? ORs : [];
-  NOTs = common.isDefined(NOTs) ? NOTs : [];
-  INs = common.isDefined(INs) ? INs : [];
-  NOTINs = common.isDefined(NOTINs) ? NOTINs : [];
+  ors = common.isDefined(ors) ? ors : [];
+  nots = common.isDefined(nots) ? nots : [];
+  ins = common.isDefined(ins) ? ins : [];
+  notIns = common.isDefined(notIns) ? notIns : [];
   fractions = common.isDefined(fractions) ? fractions : [];
 
   let answerError: { valid: number; brick?: string };
@@ -95,17 +95,17 @@ export function processFilter(item: {
           }
 
           if (not && num) {
-            NOTINs.push(num);
+            notIns.push(num);
             nums.push(num);
           } else if (num) {
-            INs.push(num);
+            ins.push(num);
             nums.push(num);
           } else if (not) {
-            NOTs.push(constants.FAIL);
+            nots.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           } else {
-            ORs.push(constants.FAIL);
+            ors.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           }
@@ -137,7 +137,7 @@ export function processFilter(item: {
       ) {
         value = r[1];
 
-        ORs.push(`${proc} >= ${value}`);
+        ors.push(`${proc} >= ${value}`);
 
         fractions.push({
           brick: brick,
@@ -152,7 +152,7 @@ export function processFilter(item: {
       ) {
         value = r[1];
 
-        ORs.push(`${proc} > ${value}`);
+        ors.push(`${proc} > ${value}`);
 
         fractions.push({
           brick: brick,
@@ -167,7 +167,7 @@ export function processFilter(item: {
       ) {
         value = r[1];
 
-        ORs.push(`${proc} <= ${value}`);
+        ors.push(`${proc} <= ${value}`);
 
         fractions.push({
           brick: brick,
@@ -180,7 +180,7 @@ export function processFilter(item: {
       } else if ((r = common.MyRegex.BRICK_NUMBER_IS_LESS_THAN().exec(brick))) {
         value = r[1];
 
-        ORs.push(`${proc} < ${value}`);
+        ors.push(`${proc} < ${value}`);
 
         fractions.push({
           brick: brick,
@@ -191,7 +191,7 @@ export function processFilter(item: {
 
         // IS ANY VALUE
       } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        ORs.push(constants.SQL_TRUE_CONDITION);
+        ors.push(constants.SQL_TRUE_CONDITION);
 
         fractions.push({
           brick: brick,
@@ -360,15 +360,15 @@ export function processFilter(item: {
 
         // common for else of number
         if (not && condition) {
-          NOTs.push(`NOT ${condition}`);
+          nots.push(`NOT ${condition}`);
         } else if (condition) {
-          ORs.push(condition);
+          ors.push(condition);
         } else if (not) {
-          NOTs.push(constants.FAIL);
+          nots.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         } else {
-          ORs.push(constants.FAIL);
+          ors.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         }
@@ -531,15 +531,15 @@ export function processFilter(item: {
 
       // common for string
       if (not && condition) {
-        NOTs.push(`NOT ${condition}`);
+        nots.push(`NOT ${condition}`);
       } else if (condition) {
-        ORs.push(condition);
+        ors.push(condition);
       } else if (not) {
-        NOTs.push(constants.FAIL);
+        nots.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        ORs.push(constants.FAIL);
+        ors.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
@@ -579,9 +579,9 @@ export function processFilter(item: {
 
       // common for yesno
       if (condition) {
-        ORs.push(condition);
+        ors.push(condition);
       } else {
-        ORs.push(constants.FAIL);
+        ors.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
@@ -786,7 +786,7 @@ export function processFilter(item: {
           two = '';
         }
 
-        ORs.push(`(${one}` + `${two})`);
+        ors.push(`(${one}` + `${two})`);
 
         if (way.match(/^last$/)) {
           let tsLastCompleteOption =
@@ -931,7 +931,7 @@ export function processFilter(item: {
           });
         }
 
-        ORs.push(`(${sqlTsSelect} >= ${open} AND ${sqlTsSelect} < ${close})`);
+        ors.push(`(${sqlTsSelect} >= ${open} AND ${sqlTsSelect} < ${close})`);
 
         if (toYear) {
           fractions.push({
@@ -1026,14 +1026,14 @@ export function processFilter(item: {
         }
 
         if (not && condition) {
-          NOTs.push(`NOT ${condition}`);
+          nots.push(`NOT ${condition}`);
         } else if (condition) {
-          ORs.push(condition);
+          ors.push(condition);
         }
 
         // IS ANY VALUE
       } else if ((r = common.MyRegex.BRICK_IS_ANY_VALUE().exec(brick))) {
-        ORs.push(constants.SQL_TRUE_CONDITION);
+        ors.push(constants.SQL_TRUE_CONDITION);
 
         fractions.push({
           brick: brick,
@@ -1042,12 +1042,12 @@ export function processFilter(item: {
         });
 
         if (not && condition) {
-          NOTs.push(`NOT ${condition}`);
+          nots.push(`NOT ${condition}`);
         } else if (condition) {
-          ORs.push(condition);
+          ors.push(condition);
         }
       } else {
-        ORs.push(constants.FAIL);
+        ors.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
@@ -1111,15 +1111,15 @@ export function processFilter(item: {
 
       // common for DayOfWeek
       if (not && condition) {
-        NOTs.push(`NOT ${condition}`);
+        nots.push(`NOT ${condition}`);
       } else if (condition) {
-        ORs.push(condition);
+        ors.push(condition);
       } else if (not) {
-        NOTs.push(constants.FAIL);
+        nots.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        ORs.push(constants.FAIL);
+        ors.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
@@ -1144,17 +1144,17 @@ export function processFilter(item: {
           }
 
           if (not && num) {
-            NOTINs.push(num);
+            notIns.push(num);
             dayOfWeekIndexValues.push(num);
           } else if (num) {
-            INs.push(num);
+            ins.push(num);
             dayOfWeekIndexValues.push(num);
           } else if (not) {
-            NOTs.push(constants.FAIL);
+            nots.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           } else {
-            ORs.push(constants.FAIL);
+            ors.push(constants.FAIL);
             answerError = { valid: 0, brick: brick };
             return;
           }
@@ -1213,15 +1213,15 @@ export function processFilter(item: {
 
         // common for DayOfWeekIndex
         if (not && condition) {
-          NOTs.push(`NOT ${condition}`);
+          nots.push(`NOT ${condition}`);
         } else if (condition) {
-          ORs.push(condition);
+          ors.push(condition);
         } else if (not) {
-          NOTs.push(constants.FAIL);
+          nots.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         } else {
-          ORs.push(constants.FAIL);
+          ors.push(constants.FAIL);
           answerError = { valid: 0, brick: brick };
           return;
         }
@@ -1286,15 +1286,15 @@ export function processFilter(item: {
 
       // common for MonthName
       if (not && condition) {
-        NOTs.push(`NOT ${condition}`);
+        nots.push(`NOT ${condition}`);
       } else if (condition) {
-        ORs.push(condition);
+        ors.push(condition);
       } else if (not) {
-        NOTs.push(constants.FAIL);
+        nots.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        ORs.push(constants.FAIL);
+        ors.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }
@@ -1358,15 +1358,15 @@ export function processFilter(item: {
 
       // common for QuarterOfYear
       if (not && condition) {
-        NOTs.push(`NOT ${condition}`);
+        nots.push(`NOT ${condition}`);
       } else if (condition) {
-        ORs.push(condition);
+        ors.push(condition);
       } else if (not) {
-        NOTs.push(constants.FAIL);
+        nots.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       } else {
-        ORs.push(constants.FAIL);
+        ors.push(constants.FAIL);
         answerError = { valid: 0, brick: brick };
         return;
       }

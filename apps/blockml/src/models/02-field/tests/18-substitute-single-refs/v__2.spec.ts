@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';

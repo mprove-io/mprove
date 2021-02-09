@@ -131,10 +131,10 @@ export function makeFilters(item: {
       connection: model.connection,
       timezone: timezone,
       sqlTsSelect: sqlTimestampSelect,
-      ORs: myORs,
-      NOTs: myNOTs,
-      INs: myINs,
-      NOTINs: myNOTINs,
+      ors: myORs,
+      nots: myNOTs,
+      ins: myINs,
+      notIns: myNOTINs,
       fractions: filtersFractions[element]
     });
 

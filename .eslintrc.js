@@ -52,6 +52,18 @@ module.exports = {
         selector: ['enumMember'],
         format: ['PascalCase', 'UPPER_CASE'],
         leadingUnderscore: 'forbid'
+      },
+      {
+        selector: ['method'],
+        format: ['camelCase']
+      },
+      {
+        selector: ['property'],
+        format: ['camelCase', 'snake_case']
+      },
+      {
+        selector: ['class', 'interface', 'enum'],
+        format: ['PascalCase']
       }
     ],
     '@typescript-eslint/no-empty-function': 'off',
