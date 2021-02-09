@@ -9,10 +9,10 @@ import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
-import { Public, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { UsersService } from '~backend/services/users.service';
 
-@Public()
+@SkipJwtCheck()
 @Controller()
 export class RegisterUserController {
   constructor(

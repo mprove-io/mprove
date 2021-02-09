@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -8,10 +8,12 @@ import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
-import { Public, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { UsersService } from '~backend/services/users.service';
 
-@Public()
+@UseGuards(TestRoutesGuard)
+@SkipJwtCheck()
 @Controller()
 export class SeedRecordsController {
   constructor(

@@ -1,16 +1,16 @@
 import { Controller, Post, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LocalAuthGuard } from '~backend/auth-guards/local-auth.guard';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import {
   AttachUser,
-  Public,
+  SkipJwtCheck,
   ValidateRequest
 } from '~backend/decorators/_index';
+import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
 
-@Public()
+@SkipJwtCheck()
 @UseGuards(LocalAuthGuard)
 @Controller()
 export class LoginUserController {

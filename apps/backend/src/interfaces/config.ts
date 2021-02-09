@@ -9,6 +9,9 @@ export class Config extends common.Config {
   @IsString()
   jwtSecret?: string;
 
+  @IsEnum(common.BoolEnum)
+  allowTestRoutes?: common.BoolEnum;
+
   @IsString()
   firstUserEmail?: string;
 

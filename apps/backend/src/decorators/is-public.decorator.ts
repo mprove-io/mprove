@@ -1,4 +1,4 @@
 import { SetMetadata } from '@nestjs/common';
 import { constants } from '~backend/barrels/constants';
 
-export const Public = () => SetMetadata(constants.IS_PUBLIC_KEY, true);
+export const SkipJwtCheck = () => SetMetadata(constants.SKIP_JWT, true);

@@ -4,9 +4,9 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { repositories } from '~backend/barrels/repositories';
-import { Public, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 
-@Public()
+@SkipJwtCheck()
 @Controller()
 export class ConfirmUserEmailController {
   constructor(

@@ -14,6 +14,7 @@ export function getDevConfig(envFilePath) {
   >{
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
     jwtSecret: envFile.BACKEND_JWT_SECRET,
+    allowTestRoutes: envFile.BACKEND_ALLOW_TEST_ROUTES,
     firstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
     firstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
     registerOnlyInvitedUsers: <common.BoolEnum>(

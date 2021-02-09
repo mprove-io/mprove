@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -6,10 +6,12 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
-import { Public, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { RabbitService } from '~backend/services/rabbit.service';
 
-@Public()
+@UseGuards(TestRoutesGuard)
+@SkipJwtCheck()
 @Controller()
 export class DeleteRecordsController {
   constructor(

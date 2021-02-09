@@ -1,13 +1,15 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { Public, ValidateRequest } from '~backend/decorators/_index';
+import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { makeRoutingKeyToDisk } from '~backend/helper/make-routing-key-to-disk';
 import { RabbitService } from '~backend/services/rabbit.service';
 
-@Public()
+@UseGuards(TestRoutesGuard)
+@SkipJwtCheck()
 @Controller()
 export class RebuildStructSpecialController {
   constructor(private rabbitService: RabbitService) {}

@@ -5,6 +5,7 @@ export function getProdConfig(devConfig: interfaces.Config) {
   let prodConfig = Object.assign({}, devConfig);
 
   prodConfig.mproveLogIsColor = common.BoolEnum.FALSE;
+  prodConfig.allowTestRoutes = common.BoolEnum.FALSE;
 
   return prodConfig;
 }
