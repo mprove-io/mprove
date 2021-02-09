@@ -8,3 +8,4 @@ export * from './users/register-user/register-user.controller';
 export * from './users/reset-user-password/reset-user-password.controller';
 export * from './users/set-user-name/set-user-name.controller';
 export * from './users/set-user-timezone/set-user-timezone.controller';
+export * from './users/update-user-password/update-user-password.controller';

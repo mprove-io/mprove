@@ -10,3 +10,4 @@ export * from './users/register-user';
 export * from './users/reset-user-password';
 export * from './users/set-user-name';
 export * from './users/set-user-timezone';
+export * from './users/update-user-password';
