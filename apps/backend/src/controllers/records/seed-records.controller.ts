@@ -51,7 +51,9 @@ export class SeedRecordsController {
             hash: hash,
             salt: salt,
             alias: alias,
-            passwordResetExpiresTs: common.isDefined(x.passwordResetToken)
+            passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
+              ? x.passwordResetExpiresTs
+              : common.isDefined(x.passwordResetToken)
               ? helper.makeTsUsingOffsetFromNow(
                   constants.PASSWORD_EXPIRES_OFFSET
                 )

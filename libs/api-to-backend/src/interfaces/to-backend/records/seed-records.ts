@@ -26,6 +26,10 @@ export class ToBackendSeedRecordsRequestPayloadUsers {
   @IsOptional()
   @IsString()
   passwordResetToken?: string;
+
+  @IsOptional()
+  @IsString()
+  passwordResetExpiresTs?: string;
 }
 
 export class ToBackendSeedRecordsRequestPayload {

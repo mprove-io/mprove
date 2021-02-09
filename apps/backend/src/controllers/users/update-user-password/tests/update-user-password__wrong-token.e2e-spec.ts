@@ -5,13 +5,14 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'update-user-password__ok';
+let testId = 'update-user-password__wrong-token';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123';
 let newPassword = '456';
-let passwordResetToken = 'jf29734j57293458';
+let passwordResetToken = 'fj823984fj589324';
+let wrongPasswordResetToken = 'fk230g6epe569';
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -41,7 +42,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        passwordResetToken,
+        passwordResetToken: wrongPasswordResetToken,
         newPassword
       }
     };
@@ -59,5 +60,8 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error, undefined);
+  t.is(
+    resp.info.error.message,
+    apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
+  );
 });

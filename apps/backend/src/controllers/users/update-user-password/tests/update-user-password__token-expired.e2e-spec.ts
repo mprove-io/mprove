@@ -5,13 +5,14 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'update-user-password__ok';
+let testId = 'update-user-password__token-expired';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123';
 let newPassword = '456';
-let passwordResetToken = 'jf29734j57293458';
+let passwordResetToken = 'dj293d4958734d95';
+let expiredPasswordResetExpiresTs = '1';
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -27,7 +28,8 @@ test('1', async t => {
             email,
             password,
             isEmailVerified: common.BoolEnum.TRUE,
-            passwordResetToken
+            passwordResetToken,
+            passwordResetExpiresTs: expiredPasswordResetExpiresTs
           }
         ]
       },
@@ -59,5 +61,8 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error, undefined);
+  t.is(
+    resp.info.error.message,
+    apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
+  );
 });
