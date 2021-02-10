@@ -176,7 +176,7 @@ export function wrapReports(item: {
     let query: apiToBlockml.Query = {
       queryId: queryId,
       sql: report.sql,
-      status: apiToBlockml.QueryStatusEnum.New,
+      status: common.QueryStatusEnum.New,
       lastRunBy: undefined,
       lastRunTs: 1,
       lastCancelTs: 1,

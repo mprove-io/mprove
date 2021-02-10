@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
-import { enums } from '~api-to-blockml/barrels/enums';
+import { common } from '~api-to-blockml/barrels/common';
 
 export class Query {
   @IsString()
@@ -8,8 +8,8 @@ export class Query {
   @IsString({ each: true })
   sql: string[];
 
-  @IsEnum(enums.QueryStatusEnum)
-  status: enums.QueryStatusEnum;
+  @IsEnum(common.QueryStatusEnum)
+  status: common.QueryStatusEnum;
 
   @IsString()
   lastRunBy: string;

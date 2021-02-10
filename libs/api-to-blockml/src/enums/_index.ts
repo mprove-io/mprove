@@ -6,6 +6,5 @@ export * from './field-type.enum';
 export * from './fraction/_index';
 export * from './model-node-id-suffix.enum';
 export * from './model-node-label.enum';
-export * from './query-status.enum';
 export * from './to-blockml-request-info-name.enum';
 export * from './to-blockml-worker-request-info-name.enum';

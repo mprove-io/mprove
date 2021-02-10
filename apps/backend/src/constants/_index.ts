@@ -1,2 +1,2 @@
-export * from './data-types';
+export * from './datatypes';
 export * from './top';

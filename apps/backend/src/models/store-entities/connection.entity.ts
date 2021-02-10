@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
 @Entity('connections')
@@ -10,10 +11,43 @@ export class ConnectionEntity {
   connection_id: string; // name
 
   @Column({ type: constants.VARCHAR })
-  type: string;
+  type: common.ConnectionTypeEnum;
 
-  @Column({ type: constants.VARCHAR })
+  // bigquery
+
+  @Column({ type: constants.VARCHAR, nullable: true })
   bigquery_project: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  bigquery_client_email: string;
+
+  @Column({ type: constants.TEXT, nullable: true })
+  bigquery_credentials: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  bigquery_credentials_file_path: string;
+
+  @Column({ type: constants.INT, nullable: true })
+  bigquery_query_size_limit: number;
+
+  // postgres
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  postgres_host: string;
+
+  @Column({ type: constants.INT, nullable: true })
+  postgres_port: number;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  postgres_database: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  postgres_user: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  postgres_password: string;
+
+  //
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

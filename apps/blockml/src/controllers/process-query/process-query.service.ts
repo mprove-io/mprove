@@ -75,7 +75,7 @@ export class ProcessQueryService {
     let query: apiToBlockml.Query = {
       queryId: queryId,
       sql: sql,
-      status: apiToBlockml.QueryStatusEnum.New,
+      status: common.QueryStatusEnum.New,
       lastRunBy: undefined,
       lastRunTs: 1,
       lastCancelTs: 1,

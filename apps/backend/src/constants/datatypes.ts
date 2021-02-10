@@ -12,3 +12,9 @@ export const STRUCT_ID_VARCHAR = 'varchar';
 export const USER_ID_VARCHAR = 'varchar';
 export const VIEW_ID_VARCHAR = 'varchar';
 export const VISUALIZATION_ID_VARCHAR = 'varchar';
+
+export const VARCHAR = 'varchar';
+export const BIGINT = 'bigint';
+export const INT = 'int';
+export const TEXT = 'text';
+export const MEDIUMTEXT = 'mediumtext';
