@@ -3,13 +3,13 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
-@Entity('member')
+@Entity('members')
 export class MemberEntity {
-  @PrimaryColumn({ type: constants.VARCHAR })
-  member_id: string; // user_id
+  @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
+  project_id: string; // composite
 
-  @PrimaryColumn({ type: constants.VARCHAR })
-  project_id: string;
+  @PrimaryColumn({ type: constants.MEMBER_ID_VARCHAR })
+  member_id: string; // user_id
 
   @Column({ unique: true, type: constants.VARCHAR, nullable: true })
   alias: string;

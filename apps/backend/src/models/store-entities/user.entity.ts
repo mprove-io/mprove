@@ -3,9 +3,9 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
-@Entity('user')
+@Entity('users')
 export class UserEntity {
-  @PrimaryColumn({ type: constants.VARCHAR })
+  @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
   user_id: string;
 
   @Column({ unique: true, type: constants.VARCHAR })

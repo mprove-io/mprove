@@ -1,0 +1,14 @@
+export const CONNECTION_ID_VARCHAR = 'varchar';
+export const DASHBOARD_ID_VARCHAR = 'varchar';
+export const ERROR_ID_VARCHAR = 'varchar';
+export const MCONFIG_ID_VARCHAR = 'varchar';
+export const MEMBER_ID_VARCHAR = 'varchar';
+export const MODEL_ID_VARCHAR = 'varchar';
+export const ORGANIZATION_ID_VARCHAR = 'varchar';
+export const PROJECT_ID_VARCHAR = 'varchar';
+export const QUERY_ID_VARCHAR = 'varchar';
+export const REPO_ID_VARCHAR = 'varchar';
+export const STRUCT_ID_VARCHAR = 'varchar';
+export const USER_ID_VARCHAR = 'varchar';
+export const VIEW_ID_VARCHAR = 'varchar';
+export const VISUALIZATION_ID_VARCHAR = 'varchar';
