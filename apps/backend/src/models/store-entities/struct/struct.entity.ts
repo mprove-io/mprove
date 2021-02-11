@@ -9,6 +9,12 @@ export class StructEntity {
   @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR })
   struct_id: string;
 
+  @Column({ type: constants.TEXT })
+  errors: string;
+
+  @Column({ type: constants.TEXT })
+  udfs_dict: string;
+
   @Column({ type: constants.BIGINT })
   server_ts: string;
 }

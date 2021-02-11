@@ -8,10 +8,10 @@ export class UserEntity {
   @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
   user_id: string;
 
-  @Column({ unique: true, type: constants.VARCHAR })
+  @Column({ unique: true, type: constants.USER_EMAIL_VARCHAR })
   email: string;
 
-  @Column({ unique: true, type: constants.VARCHAR, nullable: true })
+  @Column({ unique: true, type: constants.USER_ALIAS_VARCHAR, nullable: true })
   alias: string;
 
   @Column({ type: constants.VARCHAR })
@@ -32,22 +32,22 @@ export class UserEntity {
   @Column({ type: constants.VARCHAR, nullable: true })
   salt: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_FIRST_NAME_VARCHAR, nullable: true })
   first_name: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_LAST_NAME_VARCHAR, nullable: true })
   last_name: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_AVATAR_URL_SMALL_VARCHAR, nullable: true })
   avatar_url_small: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_AVATAR_URL_BIG_VARCHAR, nullable: true })
   avatar_url_big: string;
 
-  @Column({ type: constants.VARCHAR })
+  @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 
-  @Column({ type: constants.VARCHAR })
+  @Column({ type: constants.USER_STATUS_VARCHAR })
   status: apiToBackend.UserStatusEnum;
 
   @Column({ type: constants.BIGINT })

@@ -8,28 +8,31 @@ export class MemberEntity {
   @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
   project_id: string; // composite
 
-  @PrimaryColumn({ type: constants.MEMBER_ID_VARCHAR })
+  @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
   member_id: string; // user_id
 
-  @Column({ unique: true, type: constants.VARCHAR, nullable: true })
+  @Column({ unique: true, type: constants.USER_EMAIL_VARCHAR })
+  email: string;
+
+  @Column({ unique: true, type: constants.USER_ALIAS_VARCHAR, nullable: true })
   alias: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_FIRST_NAME_VARCHAR, nullable: true })
   first_name: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_LAST_NAME_VARCHAR, nullable: true })
   last_name: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_AVATAR_URL_SMALL_VARCHAR, nullable: true })
   avatar_url_small: string;
 
-  @Column({ type: constants.VARCHAR, nullable: true })
+  @Column({ type: constants.USER_AVATAR_URL_BIG_VARCHAR, nullable: true })
   avatar_url_big: string;
 
-  @Column({ type: constants.VARCHAR })
+  @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 
-  @Column({ type: constants.VARCHAR })
+  @Column({ type: constants.USER_STATUS_VARCHAR })
   status: apiToBackend.UserStatusEnum; // MemberStatusEnum
 
   @Column({ type: constants.VARCHAR })

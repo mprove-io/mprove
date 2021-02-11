@@ -19,7 +19,7 @@ export class ProjectEntity {
   @Column({ type: constants.VARCHAR })
   week_start: common.ProjectWeekStartEnum;
 
-  @Column({ type: constants.VARCHAR })
+  @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 
   @Column({ type: constants.BIGINT })

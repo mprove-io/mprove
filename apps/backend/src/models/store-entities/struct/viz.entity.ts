@@ -2,25 +2,19 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
-@Entity('models')
-export class ModelEntity {
+@Entity('vizs')
+export class VizEntity {
   @PrimaryColumn({ type: constants.STRUCT_ID_VARCHAR })
   struct_id: string; // composite
 
-  @PrimaryColumn({ type: constants.MODEL_ID_VARCHAR })
-  model_id: string; // name
-
-  @Column({ type: constants.JSON })
-  content: string;
+  @PrimaryColumn({ type: constants.VISUALIZATION_ID_VARCHAR })
+  viz_id: string; // name
 
   @Column({ type: constants.JSON })
   access_users: string;
 
   @Column({ type: constants.JSON })
   access_roles: string;
-
-  @Column({ type: constants.VARCHAR })
-  label: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   gr: string;
@@ -29,13 +23,7 @@ export class ModelEntity {
   hidden: common.BoolEnum;
 
   @Column({ type: constants.JSON })
-  fields: string;
-
-  @Column({ type: constants.JSON })
-  nodes: string;
-
-  @Column({ type: constants.TEXT, nullable: true })
-  description: string;
+  reports: string;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;
