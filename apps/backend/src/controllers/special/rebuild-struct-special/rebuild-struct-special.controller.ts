@@ -3,9 +3,9 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { helper } from '~backend/barrels/helper';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
-import { makeRoutingKeyToDisk } from '~backend/helper/make-routing-key-to-disk';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @UseGuards(TestRoutesGuard)
@@ -31,7 +31,7 @@ export class RebuildStructSpecialController {
 
     // to disk
 
-    let routingKey = makeRoutingKeyToDisk({
+    let routingKey = helper.makeRoutingKeyToDisk({
       organizationId: organizationId,
       projectId: projectId
     });
@@ -52,18 +52,10 @@ export class RebuildStructSpecialController {
     let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
       {
         routingKey: routingKey,
-        message: getCatalogFilesRequest
+        message: getCatalogFilesRequest,
+        checkIsOk: true
       }
     );
-
-    if (
-      getCatalogFilesResponse.info.status !== common.ResponseInfoStatusEnum.Ok
-    ) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
-        originalError: getCatalogFilesResponse.info.error
-      });
-    }
 
     // to blockml
 

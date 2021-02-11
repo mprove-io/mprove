@@ -1,6 +1,17 @@
 import { repositories } from './barrels/repositories';
 
 export const appRepositories = [
-  repositories.UsersRepository,
-  repositories.MembersRepository
+  repositories.DashboardsRepository,
+  repositories.MconfigsRepository,
+  repositories.ModelsRepository,
+  repositories.QueriesRepository,
+  repositories.StructsRepository,
+  repositories.ViewsRepository,
+  repositories.VizsRepository,
+  repositories.BranchesRepository,
+  repositories.ConnectionsRepository,
+  repositories.MembersRepository,
+  repositories.OrgsRepository,
+  repositories.ProjectsRepository,
+  repositories.UsersRepository
 ];

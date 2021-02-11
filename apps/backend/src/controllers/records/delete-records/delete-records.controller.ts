@@ -45,22 +45,13 @@ export class DeleteRecordsController {
           projectId: null
         });
 
-        let deleteOrganizationResp = await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
+        await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
           {
             routingKey: routingKey,
-            message: deleteOrganizationRequest
+            message: deleteOrganizationRequest,
+            checkIsOk: true
           }
         );
-
-        if (
-          deleteOrganizationResp.info.status !==
-          common.ResponseInfoStatusEnum.Ok
-        ) {
-          throw new common.ServerError({
-            message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
-            originalError: deleteOrganizationResp.info.error
-          });
-        }
       });
     }
 

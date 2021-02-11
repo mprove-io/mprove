@@ -5,9 +5,10 @@ export function makeRoutingKeyToDisk(item: {
   organizationId: string;
   projectId: string;
 }) {
-  let orgGroups: Array<string> = ['abcdefghijklmnopqrstuvwxyz'];
+  let orgGroups: Array<string> = ['0123456789abcdefghijklmnopqrstuvwxyz'];
 
   let projectGroups: Array<string> = [
+    '0123456789',
     'abcd',
     'efgh',
     'ijkl',
@@ -19,9 +20,9 @@ export function makeRoutingKeyToDisk(item: {
 
   let orgFirstLetter = item.organizationId.substring(0, 1).toLowerCase();
 
-  let orgGroup = orgGroups.find(x => x.includes(orgFirstLetter));
+  let orgGroupIndex = orgGroups.findIndex(x => x.includes(orgFirstLetter));
 
-  if (!orgGroup) {
+  if (orgGroupIndex < 0) {
     throw new common.ServerError({
       message:
         apiToBackend.ErEnum
@@ -29,16 +30,16 @@ export function makeRoutingKeyToDisk(item: {
     });
   }
 
-  let projectGroup: string;
+  let projectGroupIndex: number;
 
-  if (item.projectId === null || typeof item.projectId === 'undefined') {
-    projectGroup = '';
-  } else {
+  if (common.isDefined(item.projectId)) {
     let projectFirstLetter = item.projectId.substring(0, 1).toLowerCase();
 
-    projectGroup = projectGroups.find(x => x.includes(projectFirstLetter));
+    projectGroupIndex = projectGroups.findIndex(x =>
+      x.includes(projectFirstLetter)
+    );
 
-    if (!projectGroup) {
+    if (projectGroupIndex < 0) {
       throw new common.ServerError({
         message:
           apiToBackend.ErEnum
@@ -47,6 +48,9 @@ export function makeRoutingKeyToDisk(item: {
     }
   }
 
-  let routingKey = `${orgGroup}___${projectGroup}`;
+  let routingKey = common.isDefined(projectGroupIndex)
+    ? `${orgGroupIndex}${common.TRIPLE_UNDERSCORE}${projectGroupIndex}`
+    : `${orgGroupIndex}${common.TRIPLE_UNDERSCORE}`;
+
   return routingKey;
 }

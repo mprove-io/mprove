@@ -10,6 +10,7 @@ export async function addRecords(item: {
   // skipChunk?: boolean;
   records: {
     users?: entities.UserEntity[];
+    orgs?: entities.OrgEntity[];
     // projects?: entities.ProjectEntity[];
     // repos?: entities.RepoEntity[];
     // files?: entities.FileEntity[];
@@ -48,6 +49,7 @@ export async function addRecords(item: {
   // }
 
   let users = records.users;
+  let orgs = records.orgs;
   // let projects = records.projects;
   // let repos = records.repos;
   // let files = records.files;
@@ -60,12 +62,13 @@ export async function addRecords(item: {
   // let members = records.members;
 
   if (common.isDefined(users) && users.length > 0) {
-    let storeUsers = manager.getCustomRepository(repositories.UsersRepository);
+    await manager
+      .getCustomRepository(repositories.UsersRepository)
+      .insert(users);
+  }
 
-    await storeUsers.insert(users);
-    // .catch(e =>
-    //   helper.reThrow(e, enums.storeErrorsEnum.STORE_USERS_INSERT)
-    // )
+  if (common.isDefined(orgs) && orgs.length > 0) {
+    await manager.getCustomRepository(repositories.OrgsRepository).insert(orgs);
   }
 
   // if (projects && projects.length > 0) {
