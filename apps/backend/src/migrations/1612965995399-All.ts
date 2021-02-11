@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class All1612965995399 implements MigrationInterface {
   name = 'All1612965995399';
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE `queries` DROP COLUMN `struct_id`');
     await queryRunner.query(
       'ALTER TABLE `connections` ADD `bigquery_client_email` varchar(255) NULL'
@@ -71,7 +71,7 @@ export class All1612965995399 implements MigrationInterface {
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE `connections` CHANGE `bigquery_project` `bigquery_project` varchar(255) NOT NULL'
     );

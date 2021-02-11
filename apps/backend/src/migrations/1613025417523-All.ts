@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class All1613025417523 implements MigrationInterface {
   name = 'All1613025417523';
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'CREATE TABLE `branches` (`struct_id` varchar(255) NOT NULL, `project_id` varchar(255) NOT NULL, `branch_id` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`project_id`, `branch_id`)) ENGINE=InnoDB'
     );
@@ -90,7 +90,7 @@ export class All1613025417523 implements MigrationInterface {
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE `structs` DROP COLUMN `udfs_dict`');
     await queryRunner.query('ALTER TABLE `structs` DROP COLUMN `errors`');
     await queryRunner.query('ALTER TABLE `models` DROP COLUMN `description`');
