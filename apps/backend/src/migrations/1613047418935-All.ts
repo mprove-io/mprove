@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class All1613047418935 implements MigrationInterface {
   name = 'All1613047418935';
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'CREATE TABLE `branches` (`struct_id` varchar(255) NOT NULL, `project_id` varchar(255) NOT NULL, `branch_id` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`project_id`, `branch_id`)) ENGINE=InnoDB'
     );
@@ -45,7 +45,7 @@ export class All1613047418935 implements MigrationInterface {
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'DROP INDEX `IDX_c0d176bcc1665dc7cb60482c81` ON `users`'
     );
