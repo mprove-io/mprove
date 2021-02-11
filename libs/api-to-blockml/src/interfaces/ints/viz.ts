@@ -32,9 +32,6 @@ export class Viz {
   @Type(() => Report)
   reports: Report[];
 
-  @IsBoolean()
-  temp: boolean;
-
   @IsInt()
   serverTs: number;
 }

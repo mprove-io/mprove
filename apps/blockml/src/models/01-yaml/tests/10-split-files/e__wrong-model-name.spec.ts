@@ -30,7 +30,7 @@ test('1', async t => {
     } = await prepareTest(caller, func, testId);
 
     let connection: common.ProjectConnection = {
-      name: 'c1',
+      connectionId: 'c1',
       type: common.ConnectionTypeEnum.PostgreSQL
     };
 

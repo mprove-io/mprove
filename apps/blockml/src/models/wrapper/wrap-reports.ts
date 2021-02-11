@@ -175,7 +175,9 @@ export function wrapReports(item: {
 
     let query: apiToBlockml.Query = {
       queryId: queryId,
-      sql: report.sql,
+      projectId: projectId,
+      connectionId: model.connection.connectionId,
+      sql: report.sql.join('\n'),
       status: common.QueryStatusEnum.New,
       lastRunBy: undefined,
       lastRunTs: 1,
@@ -185,7 +187,6 @@ export function wrapReports(item: {
       lastErrorMessage: undefined,
       lastErrorTs: 1,
       data: undefined,
-      temp: false,
       serverTs: 1
     };
 

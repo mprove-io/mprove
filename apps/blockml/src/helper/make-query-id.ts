@@ -12,7 +12,11 @@ export function makeQueryId(item: {
   let sqlString = sql.join('\n');
 
   let text =
-    sqlString + organizationId + projectId + connection.name + connection.type;
+    sqlString +
+    organizationId +
+    projectId +
+    connection.connectionId +
+    connection.type;
 
   const hash = crypto.createHash('sha256').update(text).digest('hex');
 

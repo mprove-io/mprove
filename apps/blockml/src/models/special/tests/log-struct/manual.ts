@@ -18,7 +18,7 @@ async function run() {
   } = await prepareTest(caller, func, testId);
 
   let connection: common.ProjectConnection = {
-    name: 'c1',
+    connectionId: 'c1',
     type: common.ConnectionTypeEnum.PostgreSQL
   };
 

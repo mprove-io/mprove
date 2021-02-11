@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
@@ -17,25 +18,25 @@ export class MconfigEntity {
   model_id: string;
 
   @Column({ type: constants.JSON })
-  select: string;
+  select: string[];
 
   @Column({ type: constants.JSON })
-  sortings: string;
+  sortings: apiToBlockml.Sorting[];
 
-  @Column({ type: constants.JSON })
+  @Column({ type: constants.TEXT })
   sorts: string;
 
-  @Column({ type: constants.VARCHAR })
+  @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 
   @Column({ type: constants.INT })
   limit: number;
 
   @Column({ type: constants.JSON })
-  filters: string;
+  filters: apiToBlockml.Filter[];
 
   @Column({ type: constants.JSON })
-  charts: string;
+  charts: apiToBlockml.Chart[];
 
   @Column({ type: constants.VARCHAR })
   temp: common.BoolEnum;

@@ -50,7 +50,7 @@ export function makeJoins(
         return;
       }
 
-      if (view.connection.name !== x.connection.name) {
+      if (view.connection.connectionId !== x.connection.connectionId) {
         item.errors.push(
           new BmError({
             title:
@@ -58,8 +58,8 @@ export function makeJoins(
             message:
               `The ${common.FileExtensionEnum.Model} can refer to views ` +
               `with the same connection name. Model "${x.name}" with connection ` +
-              `"${x.connection.name}" references view "${view.name}" ` +
-              `with connection "${view.connection.name}"`,
+              `"${x.connection.connectionId}" references view "${view.name}" ` +
+              `with connection "${view.connection.connectionId}"`,
             lines: [
               {
                 line: errorLine,

@@ -69,7 +69,7 @@ test('1', async t => {
             weekStart: common.ProjectWeekStartEnum.Monday,
             connections: [
               {
-                name: 'c1',
+                connectionId: 'c1',
                 type: common.ConnectionTypeEnum.PostgreSQL
               }
             ]

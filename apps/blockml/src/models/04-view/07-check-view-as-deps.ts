@@ -53,7 +53,9 @@ export function checkViewAsDeps(
           return;
         }
 
-        if (referencedView.connection.name !== x.connection.name) {
+        if (
+          referencedView.connection.connectionId !== x.connection.connectionId
+        ) {
           item.errors.push(
             new BmError({
               title:
@@ -62,8 +64,8 @@ export function checkViewAsDeps(
               message:
                 `The ${common.FileExtensionEnum.View} can refer to other views ` +
                 `with the same connection name. View "${x.name}" with connection ` +
-                `"${x.connection.name}" references view "${referencedViewName}" ` +
-                `with connection "${referencedView.connection.name}"`,
+                `"${x.connection.connectionId}" references view "${referencedViewName}" ` +
+                `with connection "${referencedView.connection.connectionId}"`,
               lines: [
                 {
                   line: x.derived_table_line_num,

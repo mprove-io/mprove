@@ -53,7 +53,9 @@ export function checkConnections(
 
       let connectionName = file[enums.ParameterEnum.Connection];
 
-      let connection = item.connections.find(c => c.name === connectionName);
+      let connection = item.connections.find(
+        c => c.connectionId === connectionName
+      );
 
       if (common.isUndefined(connection)) {
         item.errors.push(

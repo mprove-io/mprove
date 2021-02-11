@@ -36,7 +36,6 @@ export function wrapVizs(item: {
       gr: x.group,
       hidden: helper.toBoolean(x.hidden),
       reports: apiReports,
-      temp: false,
       serverTs: 1
     });
   });

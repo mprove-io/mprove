@@ -25,11 +25,11 @@ test('1', async t => {
     } = await prepareTest(caller, func, testId);
 
     let connection1: common.ProjectConnection = {
-      name: 'c1',
+      connectionId: 'c1',
       type: common.ConnectionTypeEnum.PostgreSQL
     };
     let connection2: common.ProjectConnection = {
-      name: 'c2',
+      connectionId: 'c2',
       type: common.ConnectionTypeEnum.BigQuery
     };
 

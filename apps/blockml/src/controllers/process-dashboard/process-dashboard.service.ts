@@ -124,10 +124,6 @@ export class ProcessDashboardService {
       mconfig.temp = true;
     });
 
-    dashQueries.forEach(query => {
-      query.temp = true;
-    });
-
     let payload: apiToBlockml.ToBlockmlProcessDashboardResponsePayload = {
       dashboard: newDashboard,
       mconfigs: dashMconfigs,

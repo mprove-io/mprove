@@ -74,7 +74,9 @@ export class ProcessQueryService {
 
     let query: apiToBlockml.Query = {
       queryId: queryId,
-      sql: sql,
+      projectId: projectId,
+      connectionId: model.connection.connectionId,
+      sql: sql.join('\n'),
       status: common.QueryStatusEnum.New,
       lastRunBy: undefined,
       lastRunTs: 1,
@@ -84,7 +86,6 @@ export class ProcessQueryService {
       lastErrorMessage: undefined,
       lastErrorTs: 1,
       data: undefined,
-      temp: true,
       serverTs: 1
     };
 

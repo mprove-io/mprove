@@ -3,7 +3,7 @@ import { enums } from '~common/barrels/enums';
 
 export class ProjectConnection {
   @IsString()
-  name: string;
+  connectionId: string;
 
   @IsEnum(enums.ConnectionTypeEnum)
   type: enums.ConnectionTypeEnum;

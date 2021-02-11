@@ -17,7 +17,7 @@ test('1', async t => {
 
   try {
     let connection: common.ProjectConnection = {
-      name: 'c1',
+      connectionId: 'c1',
       type: common.ConnectionTypeEnum.BigQuery
     };
 
@@ -93,7 +93,7 @@ test('2', async t => {
 
   try {
     let connection: common.ProjectConnection = {
-      name: 'c1',
+      connectionId: 'c1',
       type: common.ConnectionTypeEnum.PostgreSQL
     };
 

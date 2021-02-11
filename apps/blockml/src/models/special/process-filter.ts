@@ -39,7 +39,7 @@ export function processFilter(item: {
     : common.ProjectWeekStartEnum.Monday;
 
   let cn = {
-    name: 'cn',
+    connectionId: 'cn',
     type: common.ConnectionTypeEnum.PostgreSQL
   };
   connection = common.isDefined(connection) ? connection : cn;

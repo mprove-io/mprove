@@ -1,12 +1,18 @@
-import { IsBoolean, IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
 
 export class Query {
   @IsString()
+  projectId: string;
+
+  @IsString()
+  connectionId: string;
+
+  @IsString()
   queryId: string;
 
-  @IsString({ each: true })
-  sql: string[];
+  @IsString()
+  sql: string;
 
   @IsEnum(common.QueryStatusEnum)
   status: common.QueryStatusEnum;
@@ -34,9 +40,6 @@ export class Query {
 
   @IsString()
   data: string;
-
-  @IsBoolean()
-  temp: boolean;
 
   @IsInt()
   serverTs: number;

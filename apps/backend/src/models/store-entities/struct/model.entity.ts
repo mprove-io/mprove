@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
@@ -11,13 +12,13 @@ export class ModelEntity {
   model_id: string; // name
 
   @Column({ type: constants.JSON })
-  content: string;
+  content: any;
 
   @Column({ type: constants.JSON })
-  access_users: string;
+  access_users: string[];
 
   @Column({ type: constants.JSON })
-  access_roles: string;
+  access_roles: string[];
 
   @Column({ type: constants.VARCHAR })
   label: string;
@@ -29,10 +30,10 @@ export class ModelEntity {
   hidden: common.BoolEnum;
 
   @Column({ type: constants.JSON })
-  fields: string;
+  fields: apiToBlockml.ModelField[];
 
   @Column({ type: constants.JSON })
-  nodes: string;
+  nodes: apiToBlockml.ModelNode[];
 
   @Column({ type: constants.TEXT, nullable: true })
   description: string;
