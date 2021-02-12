@@ -5,48 +5,52 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'register-user__user-already-registered';
+let testId = 'create-organization__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123';
+let orgName = testId;
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendRegisterUserResponse;
+  let resp: apiToBackend.ToBackendCreateOrganizationResponse;
 
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { emails: [email] },
+      deleteRecordsPayload: {
+        emails: [email],
+        orgNames: [orgName]
+      },
       seedRecordsPayload: {
         users: [
           {
-            email: email,
-            password: password,
-            isEmailVerified: common.BoolEnum.FALSE,
-            passwordResetToken: common.makeId(),
-            emailVerificationToken: common.makeId()
+            email,
+            password,
+            isEmailVerified: common.BoolEnum.TRUE
           }
         ]
-      }
+      },
+      loginUserPayload: { email, password }
     });
 
-    let registerUserReq: apiToBackend.ToBackendRegisterUserRequest = {
+    let req: apiToBackend.ToBackendCreateOrganizationRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+        name:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrganization,
         traceId: traceId
       },
       payload: {
-        email: email,
-        password: password
+        name: orgName
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendRegisterUserResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateOrganizationResponse>(
       {
         httpServer: prep.httpServer,
-        req: registerUserReq
+        loginToken: prep.loginToken,
+        req: req
       }
     );
 
@@ -55,8 +59,6 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(
-    resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_USER_ALREADY_REGISTERED
-  );
+  t.is(resp.info.error, undefined);
+  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });

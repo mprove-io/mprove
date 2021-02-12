@@ -15,24 +15,23 @@ test('1', async t => {
   let resp: apiToBackend.ToBackendConfirmUserEmailResponse;
 
   try {
-    prep = await prepareTest({
-      traceId: traceId
-    });
+    prep = await prepareTest({ traceId: traceId });
+
+    let confirmUserEmailRequest: apiToBackend.ToBackendConfirmUserEmailRequest = {
+      info: {
+        name:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+        traceId: traceId
+      },
+      payload: {
+        token: emailToken
+      }
+    };
 
     resp = await helper.sendToBackend<apiToBackend.ToBackendConfirmUserEmailResponse>(
       {
         httpServer: prep.httpServer,
-        req: <apiToBackend.ToBackendConfirmUserEmailRequest>{
-          info: {
-            name:
-              apiToBackend.ToBackendRequestInfoNameEnum
-                .ToBackendConfirmUserEmail,
-            traceId: traceId
-          },
-          payload: {
-            token: emailToken
-          }
-        }
+        req: confirmUserEmailRequest
       }
     );
 

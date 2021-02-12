@@ -31,11 +31,6 @@ export class RebuildStructSpecialController {
 
     // to disk
 
-    let routingKey = helper.makeRoutingKeyToDisk({
-      organizationId: organizationId,
-      projectId: projectId
-    });
-
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
@@ -51,7 +46,10 @@ export class RebuildStructSpecialController {
 
     let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
       {
-        routingKey: routingKey,
+        routingKey: helper.makeRoutingKeyToDisk({
+          organizationId: organizationId,
+          projectId: projectId
+        }),
         message: getCatalogFilesRequest,
         checkIsOk: true
       }

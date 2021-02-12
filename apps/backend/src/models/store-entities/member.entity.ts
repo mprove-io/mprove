@@ -11,10 +11,10 @@ export class MemberEntity {
   @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
   member_id: string; // user_id
 
-  @Column({ unique: true, type: constants.USER_EMAIL_VARCHAR })
+  @Column({ type: constants.USER_EMAIL_VARCHAR })
   email: string;
 
-  @Column({ unique: true, type: constants.USER_ALIAS_VARCHAR, nullable: true })
+  @Column({ type: constants.USER_ALIAS_VARCHAR, nullable: true })
   alias: string;
 
   @Column({ type: constants.USER_FIRST_NAME_VARCHAR, nullable: true })

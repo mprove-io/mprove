@@ -31,7 +31,7 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendResetUserPasswordRequest = {
+    let resetUserPasswordReq: apiToBackend.ToBackendResetUserPasswordRequest = {
       info: {
         name:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
@@ -44,7 +44,7 @@ test('1', async t => {
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: req
+        req: resetUserPasswordReq
       }
     );
 

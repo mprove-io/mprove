@@ -33,7 +33,7 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendSetUserNameRequest = {
+    let setUserNameReq: apiToBackend.ToBackendSetUserNameRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
         traceId: traceId
@@ -48,7 +48,7 @@ test('1', async t => {
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: req
+        req: setUserNameReq
       }
     );
 

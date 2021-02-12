@@ -31,18 +31,19 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
+    let getUserProfileReq: apiToBackend.ToBackendGetUserProfileRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
+        traceId: traceId
+      },
+      payload: {}
+    };
+
     resp = await helper.sendToBackend<apiToBackend.ToBackendGetUserProfileResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: <apiToBackend.ToBackendGetUserProfileRequest>{
-          info: {
-            name:
-              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
-            traceId: traceId
-          },
-          payload: {}
-        }
+        req: getUserProfileReq
       }
     );
 

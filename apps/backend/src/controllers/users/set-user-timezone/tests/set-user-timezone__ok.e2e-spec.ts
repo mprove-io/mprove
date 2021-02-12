@@ -32,7 +32,7 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendSetUserTimezoneRequest = {
+    let setUserTimezoneReq: apiToBackend.ToBackendSetUserTimezoneRequest = {
       info: {
         name:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
@@ -47,7 +47,7 @@ test('1', async t => {
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: req
+        req: setUserTimezoneReq
       }
     );
 

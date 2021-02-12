@@ -4,14 +4,14 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
+import { entities } from '~backend/barrels/entities';
 import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { RabbitService } from '~backend/services/rabbit.service';
 
-@SkipJwtCheck()
 @Controller()
 export class CreateOrganizationController {
   constructor(
@@ -22,6 +22,7 @@ export class CreateOrganizationController {
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrganization)
   async createOrganization(
+    @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendCreateOrganizationRequest)
     reqValid: apiToBackend.ToBackendCreateOrganizationRequest
   ) {
@@ -36,7 +37,9 @@ export class CreateOrganizationController {
     }
 
     let newOrg = gen.makeOrg({
-      name: name
+      name: name,
+      ownerId: user.user_id,
+      ownerEmail: user.email
     });
 
     await this.connection.transaction(async manager => {

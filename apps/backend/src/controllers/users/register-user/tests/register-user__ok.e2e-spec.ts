@@ -21,20 +21,21 @@ test('1', async t => {
       deleteRecordsPayload: { emails: [email] }
     });
 
+    let registerUserReq: apiToBackend.ToBackendRegisterUserRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+        traceId: traceId
+      },
+      payload: {
+        email: email,
+        password: password
+      }
+    };
+
     resp = await helper.sendToBackend<apiToBackend.ToBackendRegisterUserResponse>(
       {
         httpServer: prep.httpServer,
-        req: <apiToBackend.ToBackendRegisterUserRequest>{
-          info: {
-            name:
-              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
-            traceId: traceId
-          },
-          payload: {
-            email: email,
-            password: password
-          }
-        }
+        req: registerUserReq
       }
     );
 

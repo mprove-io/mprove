@@ -16,6 +16,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
+    private orgsRepository: repositories.OrgsRepository,
     private userRepository: repositories.UsersRepository
   ) {}
 
@@ -24,38 +25,39 @@ export class DeleteRecordsController {
     @ValidateRequest(apiToBackend.ToBackendDeleteRecordsRequest)
     reqValid: apiToBackend.ToBackendDeleteRecordsRequest
   ) {
-    let { organizationIds, emails } = reqValid.payload;
+    let { orgNames, emails } = reqValid.payload;
 
-    // toDisk
+    if (common.isDefined(orgNames) && orgNames.length > 0) {
+      await asyncPool(1, orgNames, async (x: string) => {
+        let org = await this.orgsRepository.findOne({ name: x });
 
-    if (common.isDefined(organizationIds) && organizationIds.length > 0) {
-      await asyncPool(1, organizationIds, async (x: string) => {
-        let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
-          info: {
-            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
-            traceId: reqValid.info.traceId
-          },
-          payload: {
-            organizationId: x
-          }
-        };
+        if (common.isDefined(org)) {
+          let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
+            info: {
+              name:
+                apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
+              traceId: reqValid.info.traceId
+            },
+            payload: {
+              organizationId: org.organization_id
+            }
+          };
 
-        let routingKey = helper.makeRoutingKeyToDisk({
-          organizationId: x,
-          projectId: null
-        });
+          await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
+            {
+              routingKey: helper.makeRoutingKeyToDisk({
+                organizationId: org.organization_id,
+                projectId: null
+              }),
+              message: deleteOrganizationRequest,
+              checkIsOk: true
+            }
+          );
 
-        await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
-          {
-            routingKey: routingKey,
-            message: deleteOrganizationRequest,
-            checkIsOk: true
-          }
-        );
+          await this.orgsRepository.delete({ name: In(orgNames) });
+        }
       });
     }
-
-    // db
 
     if (common.isDefined(emails) && emails.length > 0) {
       await this.userRepository.delete({ email: In(emails) });

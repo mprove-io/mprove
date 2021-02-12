@@ -24,57 +24,63 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        organizationIds: [organizationId]
+        orgNames: [organizationId]
       }
     });
 
-    let routingKey = helper.makeRoutingKeyToDisk({
-      organizationId: organizationId,
-      projectId: null
-    });
+    // to disk
+
+    let seedProjectReq: apiToDisk.ToDiskSeedProjectRequest = {
+      info: {
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        devRepoId: devRepoId,
+        userAlias: userAlias
+      }
+    };
 
     await prep.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>({
       checkIsOk: true,
-      routingKey: routingKey,
-      message: <apiToDisk.ToDiskSeedProjectRequest>{
-        info: {
-          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
-          traceId: traceId
-        },
-        payload: {
-          organizationId: organizationId,
-          projectId: projectId,
-          devRepoId: devRepoId,
-          userAlias: userAlias
-        }
-      }
+      routingKey: helper.makeRoutingKeyToDisk({
+        organizationId: organizationId,
+        projectId: null
+      }),
+      message: seedProjectReq
     });
+
+    // to backend
+
+    let rebuildStructSpecialReq: apiToBackend.ToBackendRebuildStructSpecialRequest = {
+      info: {
+        name:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendRebuildStructSpecial,
+        traceId: traceId
+      },
+      payload: {
+        organizationId: organizationId,
+        projectId: projectId,
+        repoId: devRepoId,
+        branch: 'master',
+        structId: testId,
+        weekStart: common.ProjectWeekStartEnum.Monday,
+        connections: [
+          {
+            connectionId: 'c1',
+            type: common.ConnectionTypeEnum.PostgreSQL
+          }
+        ]
+      }
+    };
 
     resp = await helper.sendToBackend<apiToBlockml.ToBlockmlRebuildStructResponse>(
       {
         httpServer: prep.httpServer,
-        req: <apiToBackend.ToBackendRebuildStructSpecialRequest>{
-          info: {
-            name:
-              apiToBackend.ToBackendRequestInfoNameEnum
-                .ToBackendRebuildStructSpecial,
-            traceId: traceId
-          },
-          payload: {
-            organizationId: organizationId,
-            projectId: projectId,
-            repoId: devRepoId,
-            branch: 'master',
-            structId: testId,
-            weekStart: common.ProjectWeekStartEnum.Monday,
-            connections: [
-              {
-                connectionId: 'c1',
-                type: common.ConnectionTypeEnum.PostgreSQL
-              }
-            ]
-          }
-        }
+        req: rebuildStructSpecialReq
       }
     );
 

@@ -10,7 +10,7 @@ export class ToBackendDeleteRecordsRequestPayload {
 
   @IsOptional()
   @IsString({ each: true })
-  readonly organizationIds?: string[];
+  readonly orgNames?: string[];
 }
 
 export class ToBackendDeleteRecordsRequest extends ToBackendRequest {

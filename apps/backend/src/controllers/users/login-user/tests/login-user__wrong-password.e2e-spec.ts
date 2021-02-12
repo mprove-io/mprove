@@ -31,18 +31,20 @@ test('1', async t => {
       }
     });
 
+    let loginUserReq: apiToBackend.ToBackendLoginUserRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        traceId: traceId
+      },
+      payload: {
+        email: email,
+        password: wrongPassword
+      }
+    };
+
     resp = await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
       httpServer: prep.httpServer,
-      req: <apiToBackend.ToBackendLoginUserRequest>{
-        info: {
-          name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-          traceId: traceId
-        },
-        payload: {
-          email: email,
-          password: wrongPassword
-        }
-      }
+      req: loginUserReq
     });
 
     await prep.app.close();

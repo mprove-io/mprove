@@ -30,20 +30,21 @@ test('1', async t => {
       }
     });
 
+    let confirmUserEmailReq: apiToBackend.ToBackendConfirmUserEmailRequest = {
+      info: {
+        name:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+        traceId: traceId
+      },
+      payload: {
+        token: emailToken
+      }
+    };
+
     resp = await helper.sendToBackend<apiToBackend.ToBackendConfirmUserEmailResponse>(
       {
         httpServer: prep.httpServer,
-        req: <apiToBackend.ToBackendConfirmUserEmailRequest>{
-          info: {
-            name:
-              apiToBackend.ToBackendRequestInfoNameEnum
-                .ToBackendConfirmUserEmail,
-            traceId: traceId
-          },
-          payload: {
-            token: emailToken
-          }
-        }
+        req: confirmUserEmailReq
       }
     );
 
@@ -52,11 +53,6 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.deepEqual(resp, <apiToBackend.ToBackendConfirmUserEmailResponse>{
-    info: {
-      status: common.ResponseInfoStatusEnum.Ok,
-      traceId: traceId
-    },
-    payload: {}
-  });
+  t.is(resp.info.error, undefined);
+  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });

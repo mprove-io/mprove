@@ -21,18 +21,20 @@ test('1', async t => {
       deleteRecordsPayload: { emails: [email] }
     });
 
+    let loginUserReq: apiToBackend.ToBackendLoginUserRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        traceId: traceId
+      },
+      payload: {
+        email: email,
+        password: password
+      }
+    };
+
     resp = await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
       httpServer: prep.httpServer,
-      req: <apiToBackend.ToBackendLoginUserRequest>{
-        info: {
-          name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-          traceId: traceId
-        },
-        payload: {
-          email: email,
-          password: password
-        }
-      }
+      req: loginUserReq
     });
 
     await prep.app.close();
