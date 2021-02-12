@@ -15,5 +15,5 @@ export const appControllers = [
   controllers.ResetUserPasswordController,
   controllers.UpdateUserPasswordController,
 
-  controllers.CreateOrganizationController
+  controllers.CreateOrgController
 ];

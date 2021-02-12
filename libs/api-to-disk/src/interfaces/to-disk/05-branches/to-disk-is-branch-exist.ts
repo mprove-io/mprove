@@ -5,7 +5,7 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskIsBranchExistRequestPayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly projectId: string;
@@ -28,7 +28,7 @@ export class ToDiskIsBranchExistRequest extends ToDiskRequest {
 
 export class ToDiskIsBranchExistResponsePayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly projectId: string;

@@ -5,12 +5,12 @@ import { wrapReports } from './wrap-reports';
 
 export function wrapDashboards(item: {
   structId: string;
-  organizationId: string;
+  orgId: string;
   projectId: string;
   dashboards: interfaces.Dashboard[];
   models: interfaces.Model[];
 }) {
-  let { structId, organizationId, projectId, models, dashboards } = item;
+  let { structId, orgId, projectId, models, dashboards } = item;
 
   let apiDashboards: apiToBlockml.Dashboard[] = [];
   let dashMconfigs: apiToBlockml.Mconfig[] = [];
@@ -31,7 +31,7 @@ export function wrapDashboards(item: {
     });
 
     let { apiReports, mconfigs, queries } = wrapReports({
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       structId: structId,
       models: models,

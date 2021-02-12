@@ -23,7 +23,7 @@ export class CreateBranchService {
 
     let { traceId } = requestValid.info;
     let {
-      organizationId,
+      orgId,
       projectId,
       repoId,
       newBranch,
@@ -31,7 +31,7 @@ export class CreateBranchService {
       isFromRemote
     } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
@@ -40,7 +40,7 @@ export class CreateBranchService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
@@ -102,7 +102,7 @@ export class CreateBranchService {
     );
 
     let payload: apiToDisk.ToDiskCreateBranchResponsePayload = {
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,

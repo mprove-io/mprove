@@ -5,7 +5,7 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendRebuildStructSpecialRequestPayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly projectId: string;

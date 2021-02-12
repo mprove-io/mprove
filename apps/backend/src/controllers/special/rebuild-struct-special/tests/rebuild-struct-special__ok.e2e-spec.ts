@@ -10,7 +10,7 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'rebuild-struct-special__ok';
 
 let traceId = testId;
-let organizationId = testId;
+let orgId = testId;
 let projectId = testId;
 let devRepoId = 'rbobert@example.com';
 let userAlias = 'rbobert';
@@ -24,7 +24,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        orgNames: [organizationId]
+        orgNames: [orgId]
       }
     });
 
@@ -36,7 +36,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         devRepoId: devRepoId,
         userAlias: userAlias
@@ -46,7 +46,7 @@ test('1', async t => {
     await prep.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>({
       checkIsOk: true,
       routingKey: helper.makeRoutingKeyToDisk({
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: null
       }),
       message: seedProjectReq
@@ -62,7 +62,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: devRepoId,
         branch: 'master',

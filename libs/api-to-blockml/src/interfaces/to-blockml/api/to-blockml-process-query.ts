@@ -10,7 +10,7 @@ import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-block
 
 export class ToBlockmlProcessQueryRequestPayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly projectId: string;

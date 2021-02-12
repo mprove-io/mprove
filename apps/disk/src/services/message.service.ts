@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
-import { CreateOrganizationService } from '~disk/controllers/01-organizations/create-organization/create-organization.service';
-import { DeleteOrganizationService } from '~disk/controllers/01-organizations/delete-organization/delete-organization.service';
-import { IsOrganizationExistService } from '~disk/controllers/01-organizations/is-organization-exist/is-organization-exist.service';
+import { CreateOrgService } from '~disk/controllers/01-orgs/create-org/create-org.service';
+import { DeleteOrgService } from '~disk/controllers/01-orgs/delete-org/delete-org.service';
+import { IsOrgExistService } from '~disk/controllers/01-orgs/is-org-exist/is-org-exist.service';
 import { CreateProjectService } from '~disk/controllers/02-projects/create-project/create-project.service';
 import { DeleteProjectService } from '~disk/controllers/02-projects/delete-project/delete-project.service';
 import { IsProjectExistService } from '~disk/controllers/02-projects/is-project-exist/is-project-exist.service';
@@ -37,9 +37,9 @@ export class MessageService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
 
-    private createOrganizationService: CreateOrganizationService,
-    private deleteOrganizationService: DeleteOrganizationService,
-    private isOrganizationExistService: IsOrganizationExistService,
+    private createOrgService: CreateOrgService,
+    private deleteOrgService: DeleteOrgService,
+    private isOrgExistService: IsOrgExistService,
 
     private createProjectService: CreateProjectService,
     private deleteProjectService: DeleteProjectService,
@@ -86,12 +86,12 @@ export class MessageService {
 
   async processSwitch(request: any): Promise<any> {
     switch (request.info.name) {
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization:
-        return await this.createOrganizationService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization:
-        return await this.deleteOrganizationService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist:
-        return await this.isOrganizationExistService.process(request);
+      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg:
+        return await this.createOrgService.process(request);
+      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg:
+        return await this.deleteOrgService.process(request);
+      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrgExist:
+        return await this.isOrgExistService.process(request);
 
       case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject:
         return await this.createProjectService.process(request);

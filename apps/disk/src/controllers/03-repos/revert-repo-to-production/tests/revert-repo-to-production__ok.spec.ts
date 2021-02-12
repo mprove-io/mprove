@@ -6,7 +6,7 @@ import { prepareTest } from '~disk/functions/prepare-test';
 let testId = 'revert-repo-to-production__ok';
 
 let traceId = '123';
-let organizationId = testId;
+let orgId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
@@ -15,15 +15,15 @@ test('1', async t => {
   let content1 = '1';
 
   try {
-    let { messageService } = await prepareTest(organizationId);
+    let { messageService } = await prepareTest(orgId);
 
-    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
+    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId
+        orgId: orgId
       }
     };
 
@@ -33,7 +33,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
         userAlias: 'r1'
@@ -46,7 +46,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
@@ -62,7 +62,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
@@ -77,7 +77,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
@@ -91,7 +91,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
@@ -107,7 +107,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master'
@@ -120,7 +120,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
@@ -128,7 +128,7 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrganizationRequest);
+    await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
 
     // await helper.delay(1000);

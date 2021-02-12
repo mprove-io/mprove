@@ -6,7 +6,7 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateDevRepoRequestPayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly projectId: string;
@@ -23,7 +23,7 @@ export class ToDiskCreateDevRepoRequest extends ToDiskRequest {
 
 export class ToDiskCreateDevRepoResponsePayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly projectId: string;

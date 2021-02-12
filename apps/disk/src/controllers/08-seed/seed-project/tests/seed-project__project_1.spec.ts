@@ -6,14 +6,14 @@ import { prepareTest } from '~disk/functions/prepare-test';
 const testId = 'seed-project__project_1';
 
 const traceId = '123';
-const organizationId = testId;
+const orgId = testId;
 const projectId = 'project_1';
 
 test('1', async t => {
   let resp: apiToDisk.ToDiskSeedProjectResponse;
 
   try {
-    const { messageService } = await prepareTest(organizationId);
+    const { messageService } = await prepareTest(orgId);
 
     const seedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
       info: {
@@ -21,7 +21,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
         userAlias: 'r1'

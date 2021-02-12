@@ -1,4 +1,4 @@
-export * from './organizations/create-organization';
+export * from './orgs/create-org';
 export * from './records/delete-records';
 export * from './records/seed-records';
 export * from './special/rebuild-struct-special';

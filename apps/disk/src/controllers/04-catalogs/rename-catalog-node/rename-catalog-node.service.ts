@@ -22,7 +22,7 @@ export class RenameCatalogNodeService {
     });
 
     let {
-      organizationId,
+      orgId,
       projectId,
       repoId,
       branch,
@@ -30,7 +30,7 @@ export class RenameCatalogNodeService {
       newName
     } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
@@ -43,7 +43,7 @@ export class RenameCatalogNodeService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
@@ -117,7 +117,7 @@ export class RenameCatalogNodeService {
     });
 
     let payload: apiToDisk.ToDiskRenameCatalogNodeResponsePayload = {
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,

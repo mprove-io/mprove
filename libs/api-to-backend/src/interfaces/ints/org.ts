@@ -1,8 +1,8 @@
 import { IsInt, IsString } from 'class-validator';
 
-export class Organization {
+export class Org {
   @IsString()
-  organizationId: string;
+  orgId: string;
 
   @IsString()
   name: string;

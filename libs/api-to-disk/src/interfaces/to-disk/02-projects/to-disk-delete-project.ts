@@ -5,7 +5,7 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskDeleteProjectRequestPayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly projectId: string;
@@ -19,7 +19,7 @@ export class ToDiskDeleteProjectRequest extends ToDiskRequest {
 
 export class ToDiskDeleteProjectResponsePayload {
   @IsString()
-  readonly organizationId: string;
+  readonly orgId: string;
 
   @IsString()
   readonly deletedProjectId: string;

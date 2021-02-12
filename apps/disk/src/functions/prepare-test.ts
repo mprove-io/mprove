@@ -9,7 +9,7 @@ import { ConsumerService } from '~disk/services/consumer.service';
 import { MessageService } from '~disk/services/message.service';
 
 export async function prepareTest(
-  organizationId: string,
+  orgId: string,
   overrideConfigOptions?: interfaces.Config
 ) {
   let app: INestApplication;
@@ -38,7 +38,7 @@ export async function prepareTest(
 
   let orgPath = cs.get<interfaces.Config['mDataOrgPath']>('mDataOrgPath');
 
-  let orgDir = `${orgPath}/${organizationId}`;
+  let orgDir = `${orgPath}/${orgId}`;
 
   let isOrgExist = fse.pathExistsSync(orgDir);
   if (isOrgExist === true) {

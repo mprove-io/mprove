@@ -20,7 +20,7 @@ export class RebuildStructSpecialController {
     reqValid: apiToBackend.ToBackendRebuildStructSpecialRequest
   ) {
     let {
-      organizationId,
+      orgId,
       projectId,
       repoId,
       branch,
@@ -37,7 +37,7 @@ export class RebuildStructSpecialController {
         traceId: reqValid.info.traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: repoId,
         branch: branch
@@ -47,7 +47,7 @@ export class RebuildStructSpecialController {
     let getCatalogFilesResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
       {
         routingKey: helper.makeRoutingKeyToDisk({
-          organizationId: organizationId,
+          orgId: orgId,
           projectId: projectId
         }),
         message: getCatalogFilesRequest,
@@ -64,7 +64,7 @@ export class RebuildStructSpecialController {
       },
       payload: {
         structId: structId,
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         weekStart: weekStart,
         files: getCatalogFilesResponse.payload.files.map(

@@ -22,7 +22,7 @@ export class CommitRepoService {
     });
 
     let {
-      organizationId,
+      orgId,
       projectId,
       repoId,
       branch,
@@ -30,14 +30,14 @@ export class CommitRepoService {
       commitMessage
     } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
@@ -91,7 +91,7 @@ export class CommitRepoService {
     );
 
     let payload: apiToDisk.ToDiskCommitRepoResponsePayload = {
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,

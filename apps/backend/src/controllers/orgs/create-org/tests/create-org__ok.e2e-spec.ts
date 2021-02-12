@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'create-organization__ok';
+let testId = 'create-org__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
@@ -14,7 +14,7 @@ let orgName = testId;
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateOrganizationResponse;
+  let resp: apiToBackend.ToBackendCreateOrgResponse;
 
   try {
     prep = await prepareTest({
@@ -35,10 +35,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateOrganizationRequest = {
+    let req: apiToBackend.ToBackendCreateOrgRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrganization,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
         traceId: traceId
       },
       payload: {
@@ -46,13 +45,11 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateOrganizationResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      }
-    );
+    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateOrgResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {

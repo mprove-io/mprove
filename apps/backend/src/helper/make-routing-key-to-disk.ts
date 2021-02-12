@@ -2,7 +2,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 
 export function makeRoutingKeyToDisk(item: {
-  organizationId: string;
+  orgId: string;
   projectId: string;
 }) {
   let orgGroups: Array<string> = ['0123456789abcdefghijklmnopqrstuvwxyz'];
@@ -18,15 +18,14 @@ export function makeRoutingKeyToDisk(item: {
     'yz'
   ];
 
-  let orgFirstLetter = item.organizationId.substring(0, 1).toLowerCase();
+  let orgFirstLetter = item.orgId.substring(0, 1).toLowerCase();
 
   let orgGroupIndex = orgGroups.findIndex(x => x.includes(orgFirstLetter));
 
   if (orgGroupIndex < 0) {
     throw new common.ServerError({
       message:
-        apiToBackend.ErEnum
-          .BACKEND_ORGANIZATION_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+        apiToBackend.ErEnum.BACKEND_ORG_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
     });
   }
 

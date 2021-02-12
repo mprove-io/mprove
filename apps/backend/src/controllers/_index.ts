@@ -1,4 +1,4 @@
-export * from './organizations/create-organization/create-organization.controller';
+export * from './orgs/create-org/create-org.controller';
 export * from './records/delete-records/delete-records.controller';
 export * from './records/seed-records/seed-records.controller';
 export * from './special/rebuild-struct-special/rebuild-struct-special.controller';

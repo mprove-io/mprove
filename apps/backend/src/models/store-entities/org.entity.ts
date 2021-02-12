@@ -9,8 +9,8 @@ export class OrgEntity {
   @Column({ type: constants.USER_EMAIL_VARCHAR })
   owner_email: string;
 
-  @PrimaryColumn({ type: constants.ORGANIZATION_ID_VARCHAR })
-  organization_id: string;
+  @PrimaryColumn({ type: constants.ORG_ID_VARCHAR })
+  org_id: string;
 
   @Column({ unique: true, type: constants.VARCHAR })
   name: string;

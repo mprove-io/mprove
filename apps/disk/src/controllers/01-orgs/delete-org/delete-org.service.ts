@@ -6,7 +6,7 @@ import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
 
 @Injectable()
-export class CreateOrganizationService {
+export class DeleteOrgService {
   constructor(private cs: ConfigService<interfaces.Config>) {}
 
   async process(request: any) {
@@ -15,26 +15,23 @@ export class CreateOrganizationService {
     );
 
     let requestValid = await common.transformValid({
-      classType: apiToDisk.ToDiskCreateOrganizationRequest,
+      classType: apiToDisk.ToDiskDeleteOrgRequest,
       object: request,
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let { organizationId } = requestValid.payload;
+    let { orgId } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
 
     let isOrgExist = await disk.isPathExist(orgDir);
+
     if (isOrgExist === true) {
-      throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORGANIZATION_ALREADY_EXIST
-      });
+      await disk.removePath(orgDir);
     }
 
-    await disk.ensureDir(orgDir);
-
-    let payload: apiToDisk.ToDiskCreateOrganizationResponsePayload = {
-      organizationId: organizationId
+    let payload: apiToDisk.ToDiskDeleteOrgResponsePayload = {
+      deletedOrgId: orgId
     };
 
     return payload;

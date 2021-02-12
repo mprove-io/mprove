@@ -5,12 +5,12 @@ import { wrapReports } from './wrap-reports';
 
 export function wrapVizs(item: {
   structId: string;
-  organizationId: string;
+  orgId: string;
   projectId: string;
   models: interfaces.Model[];
   vizs: interfaces.Viz[];
 }) {
-  let { structId, organizationId, projectId, models, vizs } = item;
+  let { structId, orgId, projectId, models, vizs } = item;
 
   let apiVizs: apiToBlockml.Viz[] = [];
   let vizMconfigs: apiToBlockml.Mconfig[] = [];
@@ -18,7 +18,7 @@ export function wrapVizs(item: {
 
   vizs.forEach(x => {
     let { apiReports, mconfigs, queries } = wrapReports({
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       structId: structId,
       models: models,

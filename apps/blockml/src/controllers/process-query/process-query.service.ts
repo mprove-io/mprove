@@ -31,7 +31,7 @@ export class ProcessQueryService {
     });
 
     let {
-      organizationId,
+      orgId,
       projectId,
       weekStart,
       udfsDict,
@@ -66,7 +66,7 @@ export class ProcessQueryService {
     );
 
     let queryId = helper.makeQueryId({
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       connection: model.connection,
       sql: sql

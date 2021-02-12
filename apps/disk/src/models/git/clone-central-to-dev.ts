@@ -3,14 +3,14 @@ import { constants } from '~disk/barrels/constants';
 import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function cloneCentralToDev(item: {
-  organizationId: string;
+  orgId: string;
   projectId: string;
   devRepoId: string;
   orgPath: string;
 }) {
-  let { organizationId, projectId, devRepoId, orgPath } = item;
+  let { orgId, projectId, devRepoId, orgPath } = item;
 
-  let projectDir = `${orgPath}/${organizationId}/${projectId}`;
+  let projectDir = `${orgPath}/${orgId}/${projectId}`;
 
   let dirCentral = `${projectDir}/${constants.CENTRAL_REPO_ID}`;
   let dirDev = `${projectDir}/${devRepoId}`;

@@ -13,18 +13,18 @@ import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @Controller()
-export class CreateOrganizationController {
+export class CreateOrgController {
   constructor(
     private connection: Connection,
     private rabbitService: RabbitService,
     private orgsRepository: repositories.OrgsRepository
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrganization)
-  async createOrganization(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
+  async createOrg(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateOrganizationRequest)
-    reqValid: apiToBackend.ToBackendCreateOrganizationRequest
+    @ValidateRequest(apiToBackend.ToBackendCreateOrgRequest)
+    reqValid: apiToBackend.ToBackendCreateOrgRequest
   ) {
     let { name } = reqValid.payload;
 
@@ -32,7 +32,7 @@ export class CreateOrganizationController {
 
     if (common.isDefined(org)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ORGANIZATION_ALREADY_EXIST
+        message: apiToBackend.ErEnum.BACKEND_ORG_ALREADY_EXIST
       });
     }
 
@@ -51,29 +51,27 @@ export class CreateOrganizationController {
       });
     });
 
-    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
+    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: reqValid.info.traceId
       },
       payload: {
-        organizationId: newOrg.organization_id
+        orgId: newOrg.org_id
       }
     };
 
-    await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrganizationResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          organizationId: newOrg.organization_id,
-          projectId: undefined
-        }),
-        message: createOrganizationRequest,
-        checkIsOk: true
-      }
-    );
+    await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrgResponse>({
+      routingKey: helper.makeRoutingKeyToDisk({
+        orgId: newOrg.org_id,
+        projectId: undefined
+      }),
+      message: createOrgRequest,
+      checkIsOk: true
+    });
 
-    let payload: apiToBackend.ToBackendCreateOrganizationResponsePayload = {
-      organization: wrapper.wrapToApiOrg(newOrg)
+    let payload: apiToBackend.ToBackendCreateOrgResponsePayload = {
+      org: wrapper.wrapToApiOrg(newOrg)
     };
 
     return payload;

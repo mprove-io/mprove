@@ -9,7 +9,7 @@ export const VISUALIZATION_ID_VARCHAR = 'varchar';
 
 export const BRANCH_ID_VARCHAR = 'varchar';
 export const CONNECTION_ID_VARCHAR = 'varchar';
-export const ORGANIZATION_ID_VARCHAR = 'varchar';
+export const ORG_ID_VARCHAR = 'varchar';
 export const PROJECT_ID_VARCHAR = 'varchar';
 export const USER_ID_VARCHAR = 'varchar';
 

@@ -21,14 +21,9 @@ export class SeedProjectService {
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let {
-      organizationId,
-      projectId,
-      devRepoId,
-      userAlias
-    } = requestValid.payload;
+    let { orgId, projectId, devRepoId, userAlias } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let devRepoDir = `${projectDir}/${devRepoId}`;
 
@@ -47,7 +42,7 @@ export class SeedProjectService {
     });
 
     await git.cloneCentralToDev({
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       devRepoId: devRepoId,
       orgPath: orgPath
@@ -70,7 +65,7 @@ export class SeedProjectService {
     );
 
     let payload: apiToDisk.ToDiskSeedProjectResponsePayload = {
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       repoId: devRepoId,
       repoStatus: repoStatus,

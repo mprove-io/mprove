@@ -20,9 +20,9 @@ export class DeleteProjectService {
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let { organizationId, projectId } = requestValid.payload;
+    let { orgId, projectId } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
 
     //
@@ -30,7 +30,7 @@ export class DeleteProjectService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
@@ -46,7 +46,7 @@ export class DeleteProjectService {
     await disk.removePath(projectDir);
 
     let payload: apiToDisk.ToDiskDeleteProjectResponsePayload = {
-      organizationId: organizationId,
+      orgId: orgId,
       deletedProjectId: projectId
     };
 

@@ -1,6 +1,6 @@
-import { CreateOrganizationService } from './controllers/01-organizations/create-organization/create-organization.service';
-import { DeleteOrganizationService } from './controllers/01-organizations/delete-organization/delete-organization.service';
-import { IsOrganizationExistService } from './controllers/01-organizations/is-organization-exist/is-organization-exist.service';
+import { CreateOrgService } from './controllers/01-orgs/create-org/create-org.service';
+import { DeleteOrgService } from './controllers/01-orgs/delete-org/delete-org.service';
+import { IsOrgExistService } from './controllers/01-orgs/is-org-exist/is-org-exist.service';
 import { CreateProjectService } from './controllers/02-projects/create-project/create-project.service';
 import { DeleteProjectService } from './controllers/02-projects/delete-project/delete-project.service';
 import { IsProjectExistService } from './controllers/02-projects/is-project-exist/is-project-exist.service';
@@ -33,9 +33,9 @@ export const appServices = [
   ConsumerService,
   MessageService,
 
-  CreateOrganizationService,
-  DeleteOrganizationService,
-  IsOrganizationExistService,
+  CreateOrgService,
+  DeleteOrgService,
+  IsOrgExistService,
 
   CreateProjectService,
   DeleteProjectService,

@@ -1,7 +1,7 @@
 export enum ToDiskRequestInfoNameEnum {
-  ToDiskCreateOrganization = 'ToDiskCreateOrganization',
-  ToDiskDeleteOrganization = 'ToDiskDeleteOrganization',
-  ToDiskIsOrganizationExist = 'ToDiskIsOrganizationExist',
+  ToDiskCreateOrg = 'ToDiskCreateOrg',
+  ToDiskDeleteOrg = 'ToDiskDeleteOrg',
+  ToDiskIsOrgExist = 'ToDiskIsOrgExist',
 
   ToDiskCreateProject = 'ToDiskCreateProject',
   ToDiskDeleteProject = 'ToDiskDeleteProject',

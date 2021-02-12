@@ -6,12 +6,12 @@ import { interfaces } from '~blockml/barrels/interfaces';
 
 export function wrapReports(item: {
   structId: string;
-  organizationId: string;
+  orgId: string;
   projectId: string;
   reports: interfaces.Report[];
   models: interfaces.Model[];
 }) {
-  let { structId, organizationId, projectId, models, reports } = item;
+  let { structId, orgId, projectId, models, reports } = item;
 
   let apiReports: apiToBlockml.Report[] = [];
   let mconfigs: apiToBlockml.Mconfig[] = [];
@@ -168,7 +168,7 @@ export function wrapReports(item: {
 
     let queryId = helper.makeQueryId({
       sql: report.sql,
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       connection: model.connection
     });

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class All1613047418935 implements MigrationInterface {
-  name = 'All1613047418935';
+export class All1613124593020 implements MigrationInterface {
+  name = 'All1613124593020';
 
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -11,13 +11,13 @@ export class All1613047418935 implements MigrationInterface {
       'CREATE TABLE `connections` (`project_id` varchar(255) NOT NULL, `connection_id` varchar(255) NOT NULL, `type` varchar(255) NOT NULL, `bigquery_project` varchar(255) NULL, `bigquery_client_email` varchar(255) NULL, `bigquery_credentials` text NULL, `bigquery_credentials_file_path` varchar(255) NULL, `bigquery_query_size_limit` int NULL, `postgres_host` varchar(255) NULL, `postgres_port` int NULL, `postgres_database` varchar(255) NULL, `postgres_user` varchar(255) NULL, `postgres_password` varchar(255) NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`project_id`, `connection_id`)) ENGINE=InnoDB'
     );
     await queryRunner.query(
-      'CREATE TABLE `members` (`project_id` varchar(255) NOT NULL, `member_id` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `alias` varchar(255) NULL, `first_name` varchar(255) NULL, `last_name` varchar(255) NULL, `avatar_url_small` varchar(255) NULL, `avatar_url_big` varchar(255) NULL, `timezone` varchar(255) NOT NULL, `status` varchar(255) NOT NULL, `is_editor` varchar(255) NOT NULL, `is_admin` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, UNIQUE INDEX `IDX_2714af51e3f7dd42cf66eeb08d` (`email`), UNIQUE INDEX `IDX_1977502cf06b3005768826e1e3` (`alias`), PRIMARY KEY (`project_id`, `member_id`)) ENGINE=InnoDB'
+      'CREATE TABLE `members` (`project_id` varchar(255) NOT NULL, `member_id` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `alias` varchar(255) NULL, `first_name` varchar(255) NULL, `last_name` varchar(255) NULL, `avatar_url_small` varchar(255) NULL, `avatar_url_big` varchar(255) NULL, `timezone` varchar(255) NOT NULL, `status` varchar(255) NOT NULL, `is_editor` varchar(255) NOT NULL, `is_admin` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`project_id`, `member_id`)) ENGINE=InnoDB'
     );
     await queryRunner.query(
-      'CREATE TABLE `orgs` (`organization_id` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, UNIQUE INDEX `IDX_e9066f92474bd063a2d45b5b7e` (`name`), PRIMARY KEY (`organization_id`)) ENGINE=InnoDB'
+      'CREATE TABLE `orgs` (`owner_id` varchar(255) NOT NULL, `owner_email` varchar(255) NOT NULL, `org_id` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, UNIQUE INDEX `IDX_e9066f92474bd063a2d45b5b7e` (`name`), PRIMARY KEY (`org_id`)) ENGINE=InnoDB'
     );
     await queryRunner.query(
-      'CREATE TABLE `projects` (`organization_id` varchar(255) NOT NULL, `project_id` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `week_start` varchar(255) NOT NULL, `timezone` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`project_id`)) ENGINE=InnoDB'
+      'CREATE TABLE `projects` (`org_id` varchar(255) NOT NULL, `project_id` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `week_start` varchar(255) NOT NULL, `timezone` varchar(255) NOT NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`project_id`)) ENGINE=InnoDB'
     );
     await queryRunner.query(
       'CREATE TABLE `dashboards` (`struct_id` varchar(255) NOT NULL, `dashboard_id` varchar(255) NOT NULL, `content` json NOT NULL, `access_users` json NOT NULL, `access_roles` json NOT NULL, `title` text NULL, `gr` varchar(255) NULL, `hidden` varchar(255) NOT NULL, `fields` json NOT NULL, `reports` json NOT NULL, `temp` varchar(255) NOT NULL, `description` text NULL, `server_ts` bigint NOT NULL, PRIMARY KEY (`struct_id`, `dashboard_id`)) ENGINE=InnoDB'
@@ -71,12 +71,6 @@ export class All1613047418935 implements MigrationInterface {
       'DROP INDEX `IDX_e9066f92474bd063a2d45b5b7e` ON `orgs`'
     );
     await queryRunner.query('DROP TABLE `orgs`');
-    await queryRunner.query(
-      'DROP INDEX `IDX_1977502cf06b3005768826e1e3` ON `members`'
-    );
-    await queryRunner.query(
-      'DROP INDEX `IDX_2714af51e3f7dd42cf66eeb08d` ON `members`'
-    );
     await queryRunner.query('DROP TABLE `members`');
     await queryRunner.query('DROP TABLE `connections`');
     await queryRunner.query('DROP TABLE `branches`');

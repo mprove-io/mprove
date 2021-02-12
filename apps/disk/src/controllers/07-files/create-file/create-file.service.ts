@@ -22,7 +22,7 @@ export class CreateFileService {
     });
 
     let {
-      organizationId,
+      orgId,
       projectId,
       repoId,
       branch,
@@ -31,7 +31,7 @@ export class CreateFileService {
       userAlias
     } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
@@ -48,7 +48,7 @@ export class CreateFileService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
@@ -140,7 +140,7 @@ export class CreateFileService {
     });
 
     let payload: apiToDisk.ToDiskCreateFileResponsePayload = {
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,

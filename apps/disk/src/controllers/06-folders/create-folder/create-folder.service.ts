@@ -22,7 +22,7 @@ export class CreateFolderService {
     });
 
     let {
-      organizationId,
+      orgId,
       projectId,
       repoId,
       branch,
@@ -30,7 +30,7 @@ export class CreateFolderService {
       parentNodeId
     } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${organizationId}`;
+    let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
@@ -46,7 +46,7 @@ export class CreateFolderService {
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_ORGANIZATION_IS_NOT_EXIST
+        message: apiToDisk.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
@@ -119,7 +119,7 @@ export class CreateFolderService {
     });
 
     let payload: apiToDisk.ToDiskCreateFolderResponsePayload = {
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,

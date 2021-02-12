@@ -32,24 +32,23 @@ export class DeleteRecordsController {
         let org = await this.orgsRepository.findOne({ name: x });
 
         if (common.isDefined(org)) {
-          let deleteOrganizationRequest: apiToDisk.ToDiskDeleteOrganizationRequest = {
+          let deleteOrgRequest: apiToDisk.ToDiskDeleteOrgRequest = {
             info: {
-              name:
-                apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrganization,
+              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
               traceId: reqValid.info.traceId
             },
             payload: {
-              organizationId: org.organization_id
+              orgId: org.org_id
             }
           };
 
-          await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrganizationResponse>(
+          await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>(
             {
               routingKey: helper.makeRoutingKeyToDisk({
-                organizationId: org.organization_id,
+                orgId: org.org_id,
                 projectId: null
               }),
-              message: deleteOrganizationRequest,
+              message: deleteOrgRequest,
               checkIsOk: true
             }
           );

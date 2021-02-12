@@ -3,19 +3,19 @@ import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
-import { IsOrganizationExistService } from './is-organization-exist.service';
+import { DeleteOrgService } from './delete-org.service';
 
 @Controller()
-export class IsOrganizationExistController {
+export class DeleteOrgController {
   constructor(
     private cs: ConfigService<interfaces.Config>,
-    private isOrganizationExistService: IsOrganizationExistService
+    private deleteOrgService: DeleteOrgService
   ) {}
 
-  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrganizationExist)
-  async isOrganizationExist(@Body() body) {
+  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg)
+  async deleteOrg(@Body() body) {
     try {
-      let payload = await this.isOrganizationExistService.process(body);
+      let payload = await this.deleteOrgService.process(body);
 
       return common.makeOkResponse({ payload, cs: this.cs, req: body });
     } catch (e) {

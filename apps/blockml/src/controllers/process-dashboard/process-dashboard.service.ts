@@ -33,7 +33,7 @@ export class ProcessDashboardService {
 
     let {
       structId,
-      organizationId,
+      orgId,
       projectId,
       weekStart,
       udfsDict,
@@ -108,7 +108,7 @@ export class ProcessDashboardService {
       dashQueries
     } = barWrapper.wrapDashboards({
       structId: structId,
-      organizationId: organizationId,
+      orgId: orgId,
       projectId: projectId,
       models: models,
       dashboards: [dashboard]

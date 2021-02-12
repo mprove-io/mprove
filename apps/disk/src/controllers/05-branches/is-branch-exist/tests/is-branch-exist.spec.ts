@@ -6,7 +6,7 @@ import { prepareTest } from '~disk/functions/prepare-test';
 let testId = 'is-branch-exist';
 
 let traceId = '123';
-let organizationId = testId;
+let orgId = testId;
 let projectId = 'p1';
 
 test('1', async t => {
@@ -16,15 +16,15 @@ test('1', async t => {
   let resp4: apiToDisk.ToDiskIsBranchExistResponse;
 
   try {
-    let { messageService } = await prepareTest(organizationId);
+    let { messageService } = await prepareTest(orgId);
 
-    let createOrganizationRequest: apiToDisk.ToDiskCreateOrganizationRequest = {
+    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrganization,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId
+        orgId: orgId
       }
     };
 
@@ -34,7 +34,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
         userAlias: 'r1'
@@ -47,7 +47,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
@@ -61,7 +61,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
@@ -75,7 +75,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'unknown_branch',
@@ -89,7 +89,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        organizationId: organizationId,
+        orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
         branch: 'unknown_branch',
@@ -97,7 +97,7 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrganizationRequest);
+    await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
 
     resp1 = await messageService.processMessage(isBranchExistRequest_1);

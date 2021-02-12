@@ -1,2 +1,2 @@
-export * from './organization';
+export * from './org';
 export * from './user';

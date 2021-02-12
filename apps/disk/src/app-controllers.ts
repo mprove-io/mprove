@@ -1,9 +1,9 @@
 import { controllers } from './barrels/controllers';
 
 export const appControllers = [
-  controllers.CreateOrganizationController,
-  controllers.DeleteOrganizationController,
-  controllers.IsOrganizationExistController,
+  controllers.CreateOrgController,
+  controllers.DeleteOrgController,
+  controllers.IsOrgExistController,
 
   controllers.CreateProjectController,
   controllers.DeleteProjectController,
