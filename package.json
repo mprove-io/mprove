@@ -9,6 +9,10 @@
   },
   "scripts": {
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "mig:drop": "npm run typeorm schema:drop",
+    "mig:run": "npm run typeorm migration:run",
+    "mig:gen": "npm run typeorm migration:generate -- -n All",
+    "mig": "npm run mig:drop && npm run mig:run && npm run mig:gen && npm run mig:run",
     "nx": "nx",
     "x:format": "prettier \"**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml",
     "x:circular": "madge --circular {apps,libs}",
