@@ -32,11 +32,33 @@ export class ToBackendSeedRecordsRequestPayloadUsers {
   passwordResetExpiresTs?: string;
 }
 
+export class ToBackendSeedRecordsRequestPayloadOrgs {
+  @IsOptional()
+  @IsString()
+  orgId?: string;
+
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  ownerId?: string;
+
+  @IsOptional()
+  @IsString()
+  ownerEmail?: string;
+}
+
 export class ToBackendSeedRecordsRequestPayload {
   @IsOptional()
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadUsers)
   readonly users?: ToBackendSeedRecordsRequestPayloadUsers[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ToBackendSeedRecordsRequestPayloadOrgs)
+  readonly orgs?: ToBackendSeedRecordsRequestPayloadOrgs[];
 }
 
 export class ToBackendSeedRecordsRequest extends ToBackendRequest {
