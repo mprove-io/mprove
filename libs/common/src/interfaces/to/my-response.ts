@@ -3,8 +3,8 @@ import { ResponseInfo } from './response-info';
 
 export class MyResponse {
   @IsDefined()
-  readonly info: ResponseInfo;
+  info: ResponseInfo;
 
   @IsDefined()
-  readonly payload: any;
+  payload: any;
 }

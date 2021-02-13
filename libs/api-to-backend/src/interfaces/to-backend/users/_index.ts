@@ -5,6 +5,7 @@ export * from './login-user';
 export * from './logout-user';
 export * from './register-user';
 export * from './reset-user-password';
+export * from './set-user-avatar';
 export * from './set-user-name';
 export * from './set-user-timezone';
 export * from './update-user-password';

@@ -6,23 +6,23 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendSetUserTimezoneRequestPayload {
   @IsString()
-  readonly timezone: string;
+  timezone: string;
 }
 
 export class ToBackendSetUserTimezoneRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendSetUserTimezoneRequestPayload)
-  readonly payload: ToBackendSetUserTimezoneRequestPayload;
+  payload: ToBackendSetUserTimezoneRequestPayload;
 }
 
 export class ToBackendSetUserTimezoneResponsePayload {
   @ValidateNested()
   @Type(() => User)
-  readonly user: User;
+  user: User;
 }
 
 export class ToBackendSetUserTimezoneResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendSetUserTimezoneResponsePayload)
-  readonly payload: ToBackendSetUserTimezoneResponsePayload;
+  payload: ToBackendSetUserTimezoneResponsePayload;
 }

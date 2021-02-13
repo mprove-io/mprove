@@ -5,22 +5,22 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateOrgRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 }
 
 export class ToDiskCreateOrgRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskCreateOrgRequestPayload)
-  readonly payload: ToDiskCreateOrgRequestPayload;
+  payload: ToDiskCreateOrgRequestPayload;
 }
 
 export class ToDiskCreateOrgResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 }
 
 export class ToDiskCreateOrgResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskCreateOrgResponsePayload)
-  readonly payload: ToDiskCreateOrgResponsePayload;
+  payload: ToDiskCreateOrgResponsePayload;
 }

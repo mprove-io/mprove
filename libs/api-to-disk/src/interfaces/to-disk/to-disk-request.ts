@@ -6,5 +6,5 @@ import { ToDiskRequestInfo } from './to-disk-request-info';
 export class ToDiskRequest extends common.MyRequest {
   @ValidateNested()
   @Type(() => ToDiskRequestInfo)
-  readonly info: ToDiskRequestInfo;
+  info: ToDiskRequestInfo;
 }

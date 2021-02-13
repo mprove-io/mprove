@@ -12,55 +12,55 @@ import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-block
 
 export class ToBlockmlProcessDashboardRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly structId: string;
+  structId: string;
 
   @IsEnum(common.ProjectWeekStartEnum)
-  readonly weekStart: common.ProjectWeekStartEnum;
+  weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
   @Type(() => UdfsDict)
-  readonly udfsDict: UdfsDict;
+  udfsDict: UdfsDict;
 
-  readonly modelContents: any[];
+  modelContents: any[];
 
-  readonly dashboardContent: any;
+  dashboardContent: any;
 
   @IsString()
-  readonly newDashboardId: string;
+  newDashboardId: string;
 
   @ValidateNested()
   @Type(() => DashboardField)
-  readonly newDashboardFields: DashboardField[];
+  newDashboardFields: DashboardField[];
 }
 
 export class ToBlockmlProcessDashboardRequest extends ToBlockmlRequest {
   @ValidateNested()
   @Type(() => ToBlockmlProcessDashboardRequestPayload)
-  readonly payload: ToBlockmlProcessDashboardRequestPayload;
+  payload: ToBlockmlProcessDashboardRequestPayload;
 }
 
 export class ToBlockmlProcessDashboardResponsePayload {
   @ValidateNested()
   @Type(() => Dashboard)
-  readonly dashboard: Dashboard;
+  dashboard: Dashboard;
 
   @ValidateNested()
   @Type(() => Mconfig)
-  readonly mconfigs: Mconfig[];
+  mconfigs: Mconfig[];
 
   @ValidateNested()
   @Type(() => Query)
-  readonly queries: Query[];
+  queries: Query[];
 }
 
 export class ToBlockmlProcessDashboardResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBlockmlProcessDashboardResponsePayload)
-  readonly payload: ToBlockmlProcessDashboardResponsePayload;
+  payload: ToBlockmlProcessDashboardResponsePayload;
 }

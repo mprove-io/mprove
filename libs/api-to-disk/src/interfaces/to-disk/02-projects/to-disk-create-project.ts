@@ -5,34 +5,34 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateProjectRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly devRepoId: string;
+  devRepoId: string;
 
   @IsString()
-  readonly userAlias: string;
+  userAlias: string;
 }
 
 export class ToDiskCreateProjectRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskCreateProjectRequestPayload)
-  readonly payload: ToDiskCreateProjectRequestPayload;
+  payload: ToDiskCreateProjectRequestPayload;
 }
 
 export class ToDiskCreateProjectResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 }
 
 export class ToDiskCreateProjectResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskCreateProjectResponsePayload)
-  readonly payload: ToDiskCreateProjectResponsePayload;
+  payload: ToDiskCreateProjectResponsePayload;
 }

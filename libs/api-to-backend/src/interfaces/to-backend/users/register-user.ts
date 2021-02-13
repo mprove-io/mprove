@@ -5,25 +5,25 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendRegisterUserRequestPayload {
   @IsString()
-  readonly email: string;
+  email: string;
 
   @IsString()
-  readonly password: string;
+  password: string;
 }
 
 export class ToBackendRegisterUserRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendRegisterUserRequestPayload)
-  readonly payload: ToBackendRegisterUserRequestPayload;
+  payload: ToBackendRegisterUserRequestPayload;
 }
 
 export class ToBackendRegisterUserResponsePayload {
   @IsString()
-  readonly userId: string;
+  userId: string;
 }
 
 export class ToBackendRegisterUserResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendRegisterUserResponsePayload)
-  readonly payload: ToBackendRegisterUserResponsePayload;
+  payload: ToBackendRegisterUserResponsePayload;
 }

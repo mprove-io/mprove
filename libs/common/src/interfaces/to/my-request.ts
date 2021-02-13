@@ -3,8 +3,8 @@ import { RequestInfo } from './request-info';
 
 export class MyRequest {
   @IsDefined()
-  readonly info: RequestInfo;
+  info: RequestInfo;
 
   @IsDefined()
-  readonly payload: any;
+  payload: any;
 }

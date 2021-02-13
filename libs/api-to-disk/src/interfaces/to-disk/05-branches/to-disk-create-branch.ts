@@ -6,53 +6,53 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateBranchRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly newBranch: string;
+  newBranch: string;
 
   @IsString()
-  readonly fromBranch: string;
+  fromBranch: string;
 
   @IsBoolean()
-  readonly isFromRemote: boolean;
+  isFromRemote: boolean;
 }
 
 export class ToDiskCreateBranchRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskCreateBranchRequestPayload)
-  readonly payload: ToDiskCreateBranchRequestPayload;
+  payload: ToDiskCreateBranchRequestPayload;
 }
 
 export class ToDiskCreateBranchResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 }
 
 export class ToDiskCreateBranchResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskCreateBranchResponsePayload)
-  readonly payload: ToDiskCreateBranchResponsePayload;
+  payload: ToDiskCreateBranchResponsePayload;
 }

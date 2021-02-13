@@ -5,22 +5,22 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendIsOrgExistRequestPayload {
   @IsString()
-  readonly name: string;
+  name: string;
 }
 
 export class ToBackendIsOrgExistRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendIsOrgExistRequestPayload)
-  readonly payload: ToBackendIsOrgExistRequestPayload;
+  payload: ToBackendIsOrgExistRequestPayload;
 }
 
 export class ToBackendIsOrgExistResponsePayload {
   @IsBoolean()
-  readonly isExist: boolean;
+  isExist: boolean;
 }
 
 export class ToBackendIsOrgExistResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendIsOrgExistResponsePayload)
-  readonly payload: ToBackendIsOrgExistResponsePayload;
+  payload: ToBackendIsOrgExistResponsePayload;
 }

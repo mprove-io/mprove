@@ -6,5 +6,5 @@ import { ToBlockmlRequestInfo } from './to-blockml-request-info';
 export class ToBlockmlRequest extends common.MyRequest {
   @ValidateNested()
   @Type(() => ToBlockmlRequestInfo)
-  readonly info: ToBlockmlRequestInfo;
+  info: ToBlockmlRequestInfo;
 }

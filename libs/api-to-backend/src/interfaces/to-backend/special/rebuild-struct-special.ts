@@ -5,30 +5,30 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendRebuildStructSpecialRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly structId: string;
+  structId: string;
 
   @IsEnum(common.ProjectWeekStartEnum)
-  readonly weekStart: common.ProjectWeekStartEnum;
+  weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
   @Type(() => common.ProjectConnection)
-  readonly connections: common.ProjectConnection[];
+  connections: common.ProjectConnection[];
 }
 
 export class ToBackendRebuildStructSpecialRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendRebuildStructSpecialRequestPayload)
-  readonly payload: ToBackendRebuildStructSpecialRequestPayload;
+  payload: ToBackendRebuildStructSpecialRequestPayload;
 }

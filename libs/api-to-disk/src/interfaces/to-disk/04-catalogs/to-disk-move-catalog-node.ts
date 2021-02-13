@@ -7,57 +7,57 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskMoveCatalogNodeRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly fromNodeId: string;
+  fromNodeId: string;
 
   @IsString()
-  readonly toNodeId: string;
+  toNodeId: string;
 }
 
 export class ToDiskMoveCatalogNodeRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskMoveCatalogNodeRequestPayload)
-  readonly payload: ToDiskMoveCatalogNodeRequestPayload;
+  payload: ToDiskMoveCatalogNodeRequestPayload;
 }
 
 export class ToDiskMoveCatalogNodeResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 
   @ValidateNested()
   @Type(() => DiskCatalogNode)
-  readonly nodes: Array<DiskCatalogNode>;
+  nodes: Array<DiskCatalogNode>;
 }
 
 export class ToDiskMoveCatalogNodeResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskMoveCatalogNodeResponsePayload)
-  readonly payload: ToDiskMoveCatalogNodeResponsePayload;
+  payload: ToDiskMoveCatalogNodeResponsePayload;
 }

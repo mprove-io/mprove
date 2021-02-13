@@ -6,56 +6,56 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskMergeRepoRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly theirBranch: string;
+  theirBranch: string;
 
   @IsBoolean()
-  readonly isTheirBranchRemote: boolean;
+  isTheirBranchRemote: boolean;
 
   @IsString()
-  readonly userAlias: string;
+  userAlias: string;
 }
 
 export class ToDiskMergeRepoRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskMergeRepoRequestPayload)
-  readonly payload: ToDiskMergeRepoRequestPayload;
+  payload: ToDiskMergeRepoRequestPayload;
 }
 
 export class ToDiskMergeRepoResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 }
 
 export class ToDiskMergeRepoResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskMergeRepoResponsePayload)
-  readonly payload: ToDiskMergeRepoResponsePayload;
+  payload: ToDiskMergeRepoResponsePayload;
 }

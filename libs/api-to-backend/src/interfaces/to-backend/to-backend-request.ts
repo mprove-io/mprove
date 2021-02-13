@@ -6,5 +6,5 @@ import { ToBackendRequestInfo } from './to-backend-request-info';
 export class ToBackendRequest extends common.MyRequest {
   @ValidateNested()
   @Type(() => ToBackendRequestInfo)
-  readonly info: ToBackendRequestInfo;
+  info: ToBackendRequestInfo;
 }

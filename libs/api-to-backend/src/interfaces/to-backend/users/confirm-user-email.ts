@@ -5,15 +5,15 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendConfirmUserEmailRequestPayload {
   @IsString()
-  readonly token: string;
+  token: string;
 }
 
 export class ToBackendConfirmUserEmailRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendConfirmUserEmailRequestPayload)
-  readonly payload: ToBackendConfirmUserEmailRequestPayload;
+  payload: ToBackendConfirmUserEmailRequestPayload;
 }
 
 export class ToBackendConfirmUserEmailResponse extends common.MyResponse {
-  readonly payload: { [k in any]: never };
+  payload: { [k in any]: never };
 }

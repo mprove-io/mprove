@@ -6,29 +6,29 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendLoginUserRequestPayload {
   @IsString()
-  readonly email: string;
+  email: string;
 
   @IsString()
-  readonly password: string;
+  password: string;
 }
 
 export class ToBackendLoginUserRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendLoginUserRequestPayload)
-  readonly payload: ToBackendLoginUserRequestPayload;
+  payload: ToBackendLoginUserRequestPayload;
 }
 
 export class ToBackendLoginUserResponsePayload {
   @IsString()
-  readonly token: string;
+  token: string;
 
   @ValidateNested()
   @Type(() => User)
-  readonly user: User;
+  user: User;
 }
 
 export class ToBackendLoginUserResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendLoginUserResponsePayload)
-  readonly payload: ToBackendLoginUserResponsePayload;
+  payload: ToBackendLoginUserResponsePayload;
 }

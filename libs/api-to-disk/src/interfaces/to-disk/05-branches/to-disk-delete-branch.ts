@@ -6,50 +6,50 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskDeleteBranchRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 }
 
 export class ToDiskDeleteBranchRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskDeleteBranchRequestPayload)
-  readonly payload: ToDiskDeleteBranchRequestPayload;
+  payload: ToDiskDeleteBranchRequestPayload;
 }
 
 export class ToDiskDeleteBranchResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly deletedBranch: string;
+  deletedBranch: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 }
 
 export class ToDiskDeleteBranchResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskDeleteBranchResponsePayload)
-  readonly payload: ToDiskDeleteBranchResponsePayload;
+  payload: ToDiskDeleteBranchResponsePayload;
 }

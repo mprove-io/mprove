@@ -6,19 +6,19 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 export class ToBackendDeleteRecordsRequestPayload {
   @IsOptional()
   @IsString({ each: true })
-  readonly emails?: string[];
+  emails?: string[];
 
   @IsOptional()
   @IsString({ each: true })
-  readonly orgNames?: string[];
+  orgNames?: string[];
 }
 
 export class ToBackendDeleteRecordsRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendDeleteRecordsRequestPayload)
-  readonly payload: ToBackendDeleteRecordsRequestPayload;
+  payload: ToBackendDeleteRecordsRequestPayload;
 }
 
 export class ToBackendDeleteRecordsResponse extends common.MyResponse {
-  readonly payload: { [k in any]: never };
+  payload: { [k in any]: never };
 }

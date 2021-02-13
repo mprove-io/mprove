@@ -7,57 +7,57 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskDeleteFolderRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly folderNodeId: string;
+  folderNodeId: string;
 }
 
 export class ToDiskDeleteFolderRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskDeleteFolderRequestPayload)
-  readonly payload: ToDiskDeleteFolderRequestPayload;
+  payload: ToDiskDeleteFolderRequestPayload;
 }
 
 export class ToDiskDeleteFolderResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsString()
-  readonly deletedFolderNodeId: string;
+  deletedFolderNodeId: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 
   @ValidateNested()
   @Type(() => DiskCatalogNode)
-  readonly nodes: Array<DiskCatalogNode>;
+  nodes: Array<DiskCatalogNode>;
 }
 
 export class ToDiskDeleteFolderResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskDeleteFolderResponsePayload)
-  readonly payload: ToDiskDeleteFolderResponsePayload;
+  payload: ToDiskDeleteFolderResponsePayload;
 }

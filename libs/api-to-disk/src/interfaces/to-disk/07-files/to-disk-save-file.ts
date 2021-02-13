@@ -6,56 +6,56 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskSaveFileRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly fileNodeId: string;
+  fileNodeId: string;
 
   @IsString()
-  readonly content: string;
+  content: string;
 
   @IsString()
-  readonly userAlias: string;
+  userAlias: string;
 }
 
 export class ToDiskSaveFileRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskSaveFileRequestPayload)
-  readonly payload: ToDiskSaveFileRequestPayload;
+  payload: ToDiskSaveFileRequestPayload;
 }
 
 export class ToDiskSaveFileResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 }
 
 export class ToDiskSaveFileResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskSaveFileResponsePayload)
-  readonly payload: ToDiskSaveFileResponsePayload;
+  payload: ToDiskSaveFileResponsePayload;
 }

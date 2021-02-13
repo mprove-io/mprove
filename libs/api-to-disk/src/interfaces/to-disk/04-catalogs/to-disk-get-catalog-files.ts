@@ -7,51 +7,51 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskGetCatalogFilesRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 }
 
 export class ToDiskGetCatalogFilesRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskGetCatalogFilesRequestPayload)
-  readonly payload: ToDiskGetCatalogFilesRequestPayload;
+  payload: ToDiskGetCatalogFilesRequestPayload;
 }
 
 export class ToDiskGetCatalogFilesResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 
   @ValidateNested()
   @Type(() => DiskCatalogFile)
-  readonly files: DiskCatalogFile[];
+  files: DiskCatalogFile[];
 }
 
 export class ToDiskGetCatalogFilesResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskGetCatalogFilesResponsePayload)
-  readonly payload: ToDiskGetCatalogFilesResponsePayload;
+  payload: ToDiskGetCatalogFilesResponsePayload;
 }

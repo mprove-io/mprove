@@ -5,49 +5,49 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskIsBranchExistRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsBoolean()
-  readonly isRemote: boolean;
+  isRemote: boolean;
 }
 
 export class ToDiskIsBranchExistRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskIsBranchExistRequestPayload)
-  readonly payload: ToDiskIsBranchExistRequestPayload;
+  payload: ToDiskIsBranchExistRequestPayload;
 }
 
 export class ToDiskIsBranchExistResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsBoolean()
-  readonly isRemote: boolean;
+  isRemote: boolean;
 
   @IsBoolean()
-  readonly isBranchExist: boolean;
+  isBranchExist: boolean;
 }
 
 export class ToDiskIsBranchExistResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskIsBranchExistResponsePayload)
-  readonly payload: ToDiskIsBranchExistResponsePayload;
+  payload: ToDiskIsBranchExistResponsePayload;
 }

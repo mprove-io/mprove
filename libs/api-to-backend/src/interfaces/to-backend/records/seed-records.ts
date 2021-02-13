@@ -53,20 +53,20 @@ export class ToBackendSeedRecordsRequestPayload {
   @IsOptional()
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadUsers)
-  readonly users?: ToBackendSeedRecordsRequestPayloadUsers[];
+  users?: ToBackendSeedRecordsRequestPayloadUsers[];
 
   @IsOptional()
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadOrgs)
-  readonly orgs?: ToBackendSeedRecordsRequestPayloadOrgs[];
+  orgs?: ToBackendSeedRecordsRequestPayloadOrgs[];
 }
 
 export class ToBackendSeedRecordsRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayload)
-  readonly payload: ToBackendSeedRecordsRequestPayload;
+  payload: ToBackendSeedRecordsRequestPayload;
 }
 
 export class ToBackendSeedRecordsResponse extends common.MyResponse {
-  readonly payload: { [k in any]: never };
+  payload: { [k in any]: never };
 }

@@ -5,25 +5,25 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskIsOrgExistRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 }
 
 export class ToDiskIsOrgExistRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskIsOrgExistRequestPayload)
-  readonly payload: ToDiskIsOrgExistRequestPayload;
+  payload: ToDiskIsOrgExistRequestPayload;
 }
 
 export class ToDiskIsOrgExistResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsBoolean()
-  readonly isOrgExist: boolean;
+  isOrgExist: boolean;
 }
 
 export class ToDiskIsOrgExistResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskIsOrgExistResponsePayload)
-  readonly payload: ToDiskIsOrgExistResponsePayload;
+  payload: ToDiskIsOrgExistResponsePayload;
 }

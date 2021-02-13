@@ -16,68 +16,68 @@ import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-block
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly structId: string;
+  structId: string;
 
   @IsEnum(common.ProjectWeekStartEnum)
-  readonly weekStart: common.ProjectWeekStartEnum;
+  weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
   @Type(() => File)
-  readonly files: File[];
+  files: File[];
 
   @ValidateNested()
   @Type(() => common.ProjectConnection)
-  readonly connections: common.ProjectConnection[];
+  connections: common.ProjectConnection[];
 }
 
 export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {
   @ValidateNested()
   @Type(() => ToBlockmlRebuildStructRequestPayload)
-  readonly payload: ToBlockmlRebuildStructRequestPayload;
+  payload: ToBlockmlRebuildStructRequestPayload;
 }
 
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
   @Type(() => BmlError)
-  readonly errors: BmlError[];
+  errors: BmlError[];
 
   @ValidateNested()
   @Type(() => UdfsDict)
-  readonly udfsDict: UdfsDict;
+  udfsDict: UdfsDict;
 
   @ValidateNested()
   @Type(() => View)
-  readonly views: View[];
+  views: View[];
 
   @ValidateNested()
   @Type(() => Model)
-  readonly models: Model[];
+  models: Model[];
 
   @ValidateNested()
   @Type(() => Dashboard)
-  readonly dashboards: Dashboard[];
+  dashboards: Dashboard[];
 
   @ValidateNested()
   @Type(() => Viz)
-  readonly vizs: Viz[];
+  vizs: Viz[];
 
   @ValidateNested()
   @Type(() => Mconfig)
-  readonly mconfigs: Mconfig[];
+  mconfigs: Mconfig[];
 
   @ValidateNested()
   @Type(() => Query)
-  readonly queries: Query[];
+  queries: Query[];
 }
 
 export class ToBlockmlRebuildStructResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBlockmlRebuildStructResponsePayload)
-  readonly payload: ToBlockmlRebuildStructResponsePayload;
+  payload: ToBlockmlRebuildStructResponsePayload;
 }

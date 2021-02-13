@@ -7,57 +7,57 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateFolderRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly parentNodeId: string;
+  parentNodeId: string;
 
   @IsString()
-  readonly folderName: string;
+  folderName: string;
 }
 
 export class ToDiskCreateFolderRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskCreateFolderRequestPayload)
-  readonly payload: ToDiskCreateFolderRequestPayload;
+  payload: ToDiskCreateFolderRequestPayload;
 }
 
 export class ToDiskCreateFolderResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 
   @ValidateNested()
   @Type(() => DiskCatalogNode)
-  readonly nodes: Array<DiskCatalogNode>;
+  nodes: Array<DiskCatalogNode>;
 }
 
 export class ToDiskCreateFolderResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskCreateFolderResponsePayload)
-  readonly payload: ToDiskCreateFolderResponsePayload;
+  payload: ToDiskCreateFolderResponsePayload;
 }

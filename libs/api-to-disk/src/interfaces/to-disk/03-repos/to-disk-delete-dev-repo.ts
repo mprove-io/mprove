@@ -5,34 +5,34 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskDeleteDevRepoRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly devRepoId: string;
+  devRepoId: string;
 }
 
 export class ToDiskDeleteDevRepoRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskDeleteDevRepoRequestPayload)
-  readonly payload: ToDiskDeleteDevRepoRequestPayload;
+  payload: ToDiskDeleteDevRepoRequestPayload;
 }
 
 export class ToDiskDeleteDevRepoResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly deletedRepoId: string;
+  deletedRepoId: string;
 }
 
 export class ToDiskDeleteDevRepoResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskDeleteDevRepoResponsePayload)
-  readonly payload: ToDiskDeleteDevRepoResponsePayload;
+  payload: ToDiskDeleteDevRepoResponsePayload;
 }

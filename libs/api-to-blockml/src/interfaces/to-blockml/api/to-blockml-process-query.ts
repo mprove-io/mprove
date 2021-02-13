@@ -10,43 +10,43 @@ import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-block
 
 export class ToBlockmlProcessQueryRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsEnum(common.ProjectWeekStartEnum)
-  readonly weekStart: common.ProjectWeekStartEnum;
+  weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
   @Type(() => UdfsDict)
-  readonly udfsDict: UdfsDict;
+  udfsDict: UdfsDict;
 
   @ValidateNested()
   @Type(() => Mconfig)
-  readonly mconfig: Mconfig;
+  mconfig: Mconfig;
 
-  readonly modelContent: any;
+  modelContent: any;
 }
 
 export class ToBlockmlProcessQueryRequest extends ToBlockmlRequest {
   @ValidateNested()
   @Type(() => ToBlockmlProcessQueryRequestPayload)
-  readonly payload: ToBlockmlProcessQueryRequestPayload;
+  payload: ToBlockmlProcessQueryRequestPayload;
 }
 
 export class ToBlockmlProcessQueryResponsePayload {
   @ValidateNested()
   @Type(() => Query)
-  readonly query: Query;
+  query: Query;
 
   @ValidateNested()
   @Type(() => Mconfig)
-  readonly mconfig: Mconfig;
+  mconfig: Mconfig;
 }
 
 export class ToBlockmlProcessQueryResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBlockmlProcessQueryResponsePayload)
-  readonly payload: ToBlockmlProcessQueryResponsePayload;
+  payload: ToBlockmlProcessQueryResponsePayload;
 }

@@ -6,53 +6,53 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskGetFileRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly fileNodeId: string;
+  fileNodeId: string;
 }
 
 export class ToDiskGetFileRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskGetFileRequestPayload)
-  readonly payload: ToDiskGetFileRequestPayload;
+  payload: ToDiskGetFileRequestPayload;
 }
 
 export class ToDiskGetFileResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 
   @IsString()
-  readonly content: string;
+  content: string;
 }
 
 export class ToDiskGetFileResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskGetFileResponsePayload)
-  readonly payload: ToDiskGetFileResponsePayload;
+  payload: ToDiskGetFileResponsePayload;
 }

@@ -6,50 +6,50 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskPushRepoRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 
   @IsString()
-  readonly userAlias: string;
+  userAlias: string;
 }
 
 export class ToDiskPushRepoRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskPushRepoRequestPayload)
-  readonly payload: ToDiskPushRepoRequestPayload;
+  payload: ToDiskPushRepoRequestPayload;
 }
 
 export class ToDiskPushRepoResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 }
 
 export class ToDiskPushRepoResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskPushRepoResponsePayload)
-  readonly payload: ToDiskPushRepoResponsePayload;
+  payload: ToDiskPushRepoResponsePayload;
 }

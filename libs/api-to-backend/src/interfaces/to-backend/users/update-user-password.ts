@@ -5,18 +5,18 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendUpdateUserPasswordRequestPayload {
   @IsString()
-  readonly passwordResetToken: string;
+  passwordResetToken: string;
 
   @IsString()
-  readonly newPassword: string;
+  newPassword: string;
 }
 
 export class ToBackendUpdateUserPasswordRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendUpdateUserPasswordRequestPayload)
-  readonly payload: ToBackendUpdateUserPasswordRequestPayload;
+  payload: ToBackendUpdateUserPasswordRequestPayload;
 }
 
 export class ToBackendUpdateUserPasswordResponse extends common.MyResponse {
-  readonly payload: { [k in any]: never };
+  payload: { [k in any]: never };
 }

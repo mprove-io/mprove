@@ -5,15 +5,15 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendDeleteOrgRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 }
 
 export class ToBackendDeleteOrgRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendDeleteOrgRequestPayload)
-  readonly payload: ToBackendDeleteOrgRequestPayload;
+  payload: ToBackendDeleteOrgRequestPayload;
 }
 
 export class ToBackendDeleteOrgResponse extends common.MyResponse {
-  readonly payload: { [k in any]: never };
+  payload: { [k in any]: never };
 }

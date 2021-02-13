@@ -6,47 +6,47 @@ import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskRevertRepoToProductionRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly branch: string;
+  branch: string;
 }
 
 export class ToDiskRevertRepoToProductionRequest extends ToDiskRequest {
   @ValidateNested()
   @Type(() => ToDiskRevertRepoToProductionRequestPayload)
-  readonly payload: ToDiskRevertRepoToProductionRequestPayload;
+  payload: ToDiskRevertRepoToProductionRequestPayload;
 }
 
 export class ToDiskRevertRepoToProductionResponsePayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly projectId: string;
+  projectId: string;
 
   @IsString()
-  readonly repoId: string;
+  repoId: string;
 
   @IsString()
-  readonly currentBranch: string;
+  currentBranch: string;
 
   @IsEnum(enums.RepoStatusEnum)
-  readonly repoStatus: enums.RepoStatusEnum;
+  repoStatus: enums.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
-  readonly conflicts: common.DiskFileLine[];
+  conflicts: common.DiskFileLine[];
 }
 
 export class ToDiskRevertRepoToProductionResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToDiskRevertRepoToProductionResponsePayload)
-  readonly payload: ToDiskRevertRepoToProductionResponsePayload;
+  payload: ToDiskRevertRepoToProductionResponsePayload;
 }

@@ -6,28 +6,28 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendSetOrgInfoRequestPayload {
   @IsString()
-  readonly orgId: string;
+  orgId: string;
 
   @IsString()
-  readonly companySize: string;
+  companySize: string;
 
   @IsString()
-  readonly contactPhone: string;
+  contactPhone: string;
 }
 
 export class ToBackendSetOrgInfoRequest extends ToBackendRequest {
   @ValidateNested()
   @Type(() => ToBackendSetOrgInfoRequestPayload)
-  readonly payload: ToBackendSetOrgInfoRequestPayload;
+  payload: ToBackendSetOrgInfoRequestPayload;
 }
 
 export class ToBackendSetOrgInfoResponsePayload {
   @IsString()
-  readonly org: Org;
+  org: Org;
 }
 
 export class ToBackendSetOrgInfoResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendSetOrgInfoResponsePayload)
-  readonly payload: ToBackendSetOrgInfoResponsePayload;
+  payload: ToBackendSetOrgInfoResponsePayload;
 }
