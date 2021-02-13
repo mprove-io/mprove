@@ -22,6 +22,9 @@ export class ProjectEntity {
   @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 
+  @Column({ type: constants.VARCHAR })
+  allow_timezones: common.BoolEnum;
+
   @Column({ type: constants.BIGINT })
   server_ts: string;
 }
