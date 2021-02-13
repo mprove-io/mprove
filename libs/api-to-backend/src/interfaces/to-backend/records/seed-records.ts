@@ -68,5 +68,5 @@ export class ToBackendSeedRecordsRequest extends ToBackendRequest {
 }
 
 export class ToBackendSeedRecordsResponse extends common.MyResponse {
-  readonly payload: { [K in any]: never };
+  readonly payload: { [k in any]: never };
 }

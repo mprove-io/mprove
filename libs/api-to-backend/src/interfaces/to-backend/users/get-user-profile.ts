@@ -5,7 +5,7 @@ import { User } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetUserProfileRequest extends ToBackendRequest {
-  readonly payload: { [K in any]: never };
+  readonly payload: { [k in any]: never };
 }
 
 export class ToBackendGetUserProfileResponsePayload {

@@ -18,5 +18,5 @@ export class ToBackendUpdateUserPasswordRequest extends ToBackendRequest {
 }
 
 export class ToBackendUpdateUserPasswordResponse extends common.MyResponse {
-  readonly payload: { [K in any]: never };
+  readonly payload: { [k in any]: never };
 }

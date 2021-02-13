@@ -15,5 +15,5 @@ export class ToBackendConfirmUserEmailRequest extends ToBackendRequest {
 }
 
 export class ToBackendConfirmUserEmailResponse extends common.MyResponse {
-  readonly payload: { [K in any]: never };
+  readonly payload: { [k in any]: never };
 }
