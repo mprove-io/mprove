@@ -79,7 +79,7 @@ export class SeedRecordsController {
             orgId: x.orgId,
             name: x.name,
             ownerEmail: x.ownerEmail,
-            ownerId: x.ownerId
+            ownerId: users.find(u => u.email === x.ownerEmail).user_id
           });
 
           let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {

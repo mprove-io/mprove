@@ -46,7 +46,7 @@ export class ToBackendSeedRecordsRequestPayloadOrgs {
 
   @IsOptional()
   @IsString()
-  ownerEmail?: string;
+  ownerEmail: string;
 }
 
 export class ToBackendSeedRecordsRequestPayload {

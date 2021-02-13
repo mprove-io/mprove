@@ -9,7 +9,6 @@ let testId = 'create-org__org-already-exists';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
-let userId = `testId`;
 let password = '123';
 let orgName = testId;
 let prep: interfaces.Prep;
@@ -29,15 +28,13 @@ test('1', async t => {
           {
             email,
             password,
-            isEmailVerified: common.BoolEnum.TRUE,
-            userId
+            isEmailVerified: common.BoolEnum.TRUE
           }
         ],
         orgs: [
           {
             name: orgName,
-            ownerEmail: email,
-            ownerId: userId
+            ownerEmail: email
           }
         ]
       },
