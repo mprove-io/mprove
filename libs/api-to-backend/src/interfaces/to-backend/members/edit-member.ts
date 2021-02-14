@@ -30,7 +30,7 @@ export class ToBackendEditMemberRequest extends ToBackendRequest {
 export class ToBackendEditMemberResponsePayload {
   @ValidateNested()
   @Type(() => Member)
-  projectMembers: Member[];
+  member: Member;
 }
 
 export class ToBackendEditMemberResponse extends common.MyResponse {

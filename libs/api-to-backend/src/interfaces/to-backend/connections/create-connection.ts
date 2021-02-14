@@ -58,7 +58,7 @@ export class ToBackendCreateConnectionRequest extends ToBackendRequest {
 export class ToBackendCreateConnectionResponsePayload {
   @ValidateNested()
   @Type(() => Connection)
-  projectConnections: Connection[];
+  connection: Connection;
 }
 
 export class ToBackendCreateConnectionResponse extends common.MyResponse {

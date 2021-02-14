@@ -18,7 +18,7 @@ export class ToBackendGetMembersRequest extends ToBackendRequest {
 export class ToBackendGetMembersResponsePayload {
   @ValidateNested()
   @Type(() => Member)
-  projectMembers: Member[];
+  members: Member[];
 }
 
 export class ToBackendGetMembersResponse extends common.MyResponse {

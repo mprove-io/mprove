@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { Connection } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendDeleteConnectionRequestPayload {
@@ -19,9 +18,7 @@ export class ToBackendDeleteConnectionRequest extends ToBackendRequest {
 }
 
 export class ToBackendDeleteConnectionResponsePayload {
-  @ValidateNested()
-  @Type(() => Connection)
-  projectConnections: Connection[];
+  payload: { [k in any]: never };
 }
 
 export class ToBackendDeleteConnectionResponse extends common.MyResponse {
