@@ -1,3 +1,4 @@
+export * from './connection';
 export * from './member';
 export * from './org';
 export * from './org-users-item';
