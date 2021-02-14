@@ -36,10 +36,13 @@ export class MemberEntity {
   status: apiToBackend.UserStatusEnum; // MemberStatusEnum
 
   @Column({ type: constants.VARCHAR })
+  is_admin: common.BoolEnum;
+
+  @Column({ type: constants.VARCHAR })
   is_editor: common.BoolEnum;
 
   @Column({ type: constants.VARCHAR })
-  is_admin: common.BoolEnum;
+  is_explorer: common.BoolEnum;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;
