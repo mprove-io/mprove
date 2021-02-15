@@ -12,7 +12,7 @@ let func = enums.FuncEnum.CheckDefaultFilters;
 
 export function checkDefaultFilters<T extends types.dzType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     models: interfaces.Model[];
     errors: BmError[];
     structId: string;

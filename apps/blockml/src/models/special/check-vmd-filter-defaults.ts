@@ -12,7 +12,7 @@ let func = enums.FuncEnum.CheckVmdFilterDefaults;
 
 export function checkVmdFilterDefaults<T extends types.vmdType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

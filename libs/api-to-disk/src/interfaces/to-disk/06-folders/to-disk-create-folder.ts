@@ -51,7 +51,7 @@ export class ToDiskCreateFolderResponsePayload {
 
   @ValidateNested()
   @Type(() => common.DiskCatalogNode)
-  nodes: Array<common.DiskCatalogNode>;
+  nodes: common.DiskCatalogNode[];
 }
 
 export class ToDiskCreateFolderResponse extends common.MyResponse {

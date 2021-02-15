@@ -12,7 +12,7 @@ let func = enums.FuncEnum.CheckFieldUnknownParameters;
 
 export function checkFieldUnknownParameters<T extends types.vmdType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

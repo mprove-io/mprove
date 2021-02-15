@@ -11,7 +11,7 @@ let func = enums.FuncEnum.SetImplicitLabel;
 
 export function setImplicitLabel<T extends types.vmdType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

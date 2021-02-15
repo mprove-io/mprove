@@ -10,7 +10,7 @@ let func = enums.FuncEnum.CheckSorts;
 
 export function checkSorts<T extends types.dzType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

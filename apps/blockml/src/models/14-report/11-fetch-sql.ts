@@ -15,7 +15,7 @@ let func = enums.FuncEnum.FetchSql;
 export async function fetchSql<T extends types.dzType>(
   item: {
     traceId: string;
-    entities: Array<T>;
+    entities: T[];
     models: interfaces.Model[];
     udfsDict: apiToBlockml.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;

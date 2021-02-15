@@ -49,7 +49,7 @@ export class ToDiskSeedProjectResponsePayload {
 
   @ValidateNested()
   @Type(() => common.DiskCatalogNode)
-  nodes: Array<common.DiskCatalogNode>;
+  nodes: common.DiskCatalogNode[];
 }
 
 export class ToDiskSeedProjectResponse extends common.MyResponse {

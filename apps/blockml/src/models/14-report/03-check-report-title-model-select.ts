@@ -10,7 +10,7 @@ let func = enums.FuncEnum.CheckReportTitleModelSelect;
 
 export function checkReportTitleModelSelect<T extends types.dzType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     models: interfaces.Model[];
     errors: BmError[];
     structId: string;

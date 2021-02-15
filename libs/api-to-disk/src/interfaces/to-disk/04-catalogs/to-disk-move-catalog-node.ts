@@ -51,7 +51,7 @@ export class ToDiskMoveCatalogNodeResponsePayload {
 
   @ValidateNested()
   @Type(() => common.DiskCatalogNode)
-  nodes: Array<common.DiskCatalogNode>;
+  nodes: common.DiskCatalogNode[];
 }
 
 export class ToDiskMoveCatalogNodeResponse extends common.MyResponse {

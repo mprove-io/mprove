@@ -5,9 +5,9 @@ export function makeRoutingKeyToDisk(item: {
   orgId: string;
   projectId: string;
 }) {
-  let orgGroups: Array<string> = ['0123456789abcdefghijklmnopqrstuvwxyz'];
+  let orgGroups: string[] = ['0123456789abcdefghijklmnopqrstuvwxyz'];
 
-  let projectGroups: Array<string> = [
+  let projectGroups: string[] = [
     '0123456789',
     'abcd',
     'efgh',

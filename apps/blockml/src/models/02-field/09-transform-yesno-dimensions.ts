@@ -11,7 +11,7 @@ let func = enums.FuncEnum.TransformYesNoDimensions;
 
 export function transformYesNoDimensions<T extends types.vmType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

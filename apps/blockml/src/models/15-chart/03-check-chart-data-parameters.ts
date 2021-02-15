@@ -11,7 +11,7 @@ let func = enums.FuncEnum.CheckChartDataParameters;
 
 export function checkChartDataParameters<T extends types.dzType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

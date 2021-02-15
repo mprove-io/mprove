@@ -10,7 +10,7 @@ let func = enums.FuncEnum.CheckMdzAccess;
 
 export function checkMdzAccess<T extends types.mdzType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

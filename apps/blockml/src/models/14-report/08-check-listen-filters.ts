@@ -11,7 +11,7 @@ let func = enums.FuncEnum.CheckListenFilters;
 
 export function checkListenFilters<T extends types.dzType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     models: interfaces.Model[];
     errors: BmError[];
     structId: string;

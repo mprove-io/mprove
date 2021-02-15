@@ -12,7 +12,7 @@ let func = enums.FuncEnum.CheckFieldDeclaration;
 
 export function checkFieldDeclaration<T extends types.vmdType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

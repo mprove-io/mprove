@@ -10,7 +10,7 @@ let func = enums.FuncEnum.CheckFieldIsObject;
 
 export function checkFieldIsObject<T extends types.vmdType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;

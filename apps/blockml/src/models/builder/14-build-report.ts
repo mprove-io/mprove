@@ -11,7 +11,7 @@ import { RabbitService } from '~blockml/services/rabbit.service';
 export async function buildReport<T extends types.dzType>(
   item: {
     traceId: string;
-    entities: Array<T>;
+    entities: T[];
     models: interfaces.Model[];
     udfsDict: apiToBlockml.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;

@@ -13,14 +13,14 @@ let func = enums.FuncEnum.TransformTimes;
 
 export function transformTimes<T extends types.vmType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
-): Array<T> {
+): T[] {
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 

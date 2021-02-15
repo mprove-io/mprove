@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 export function buildField<T extends types.vmdType>(
   item: {
-    entities: Array<T>;
+    entities: T[];
     errors: BmError[];
     structId: string;
     weekStart: common.ProjectWeekStartEnum;
