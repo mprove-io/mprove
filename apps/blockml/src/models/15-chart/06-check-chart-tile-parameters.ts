@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -100,18 +99,18 @@ export function checkChartTileParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.TileWidth &&
             [
-              apiToBlockml.ChartTileWidthEnum._1,
-              apiToBlockml.ChartTileWidthEnum._2,
-              apiToBlockml.ChartTileWidthEnum._3,
-              apiToBlockml.ChartTileWidthEnum._4,
-              apiToBlockml.ChartTileWidthEnum._5,
-              apiToBlockml.ChartTileWidthEnum._6,
-              apiToBlockml.ChartTileWidthEnum._7,
-              apiToBlockml.ChartTileWidthEnum._8,
-              apiToBlockml.ChartTileWidthEnum._9,
-              apiToBlockml.ChartTileWidthEnum._10,
-              apiToBlockml.ChartTileWidthEnum._11,
-              apiToBlockml.ChartTileWidthEnum._12
+              common.ChartTileWidthEnum._1,
+              common.ChartTileWidthEnum._2,
+              common.ChartTileWidthEnum._3,
+              common.ChartTileWidthEnum._4,
+              common.ChartTileWidthEnum._5,
+              common.ChartTileWidthEnum._6,
+              common.ChartTileWidthEnum._7,
+              common.ChartTileWidthEnum._8,
+              common.ChartTileWidthEnum._9,
+              common.ChartTileWidthEnum._10,
+              common.ChartTileWidthEnum._11,
+              common.ChartTileWidthEnum._12
             ].indexOf(report.tile[parameter]) < 0
           ) {
             item.errors.push(
@@ -135,23 +134,23 @@ export function checkChartTileParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.TileHeight &&
             [
-              apiToBlockml.ChartTileHeightEnum._300,
-              apiToBlockml.ChartTileHeightEnum._400,
-              apiToBlockml.ChartTileHeightEnum._500,
-              apiToBlockml.ChartTileHeightEnum._600,
-              apiToBlockml.ChartTileHeightEnum._700,
-              apiToBlockml.ChartTileHeightEnum._800,
-              apiToBlockml.ChartTileHeightEnum._900,
-              apiToBlockml.ChartTileHeightEnum._1000,
-              apiToBlockml.ChartTileHeightEnum._1100,
-              apiToBlockml.ChartTileHeightEnum._1200,
-              apiToBlockml.ChartTileHeightEnum._1300,
-              apiToBlockml.ChartTileHeightEnum._1400,
-              apiToBlockml.ChartTileHeightEnum._1500,
-              apiToBlockml.ChartTileHeightEnum._1600,
-              apiToBlockml.ChartTileHeightEnum._1700,
-              apiToBlockml.ChartTileHeightEnum._1800,
-              apiToBlockml.ChartTileHeightEnum._1900
+              common.ChartTileHeightEnum._300,
+              common.ChartTileHeightEnum._400,
+              common.ChartTileHeightEnum._500,
+              common.ChartTileHeightEnum._600,
+              common.ChartTileHeightEnum._700,
+              common.ChartTileHeightEnum._800,
+              common.ChartTileHeightEnum._900,
+              common.ChartTileHeightEnum._1000,
+              common.ChartTileHeightEnum._1100,
+              common.ChartTileHeightEnum._1200,
+              common.ChartTileHeightEnum._1300,
+              common.ChartTileHeightEnum._1400,
+              common.ChartTileHeightEnum._1500,
+              common.ChartTileHeightEnum._1600,
+              common.ChartTileHeightEnum._1700,
+              common.ChartTileHeightEnum._1800,
+              common.ChartTileHeightEnum._1900
             ].indexOf(report.tile[parameter]) < 0
           ) {
             item.errors.push(
@@ -175,8 +174,8 @@ export function checkChartTileParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.ViewSize &&
             [
-              apiToBlockml.ChartViewSizeEnum.Auto,
-              apiToBlockml.ChartViewSizeEnum.Manual
+              common.ChartViewSizeEnum.Auto,
+              common.ChartViewSizeEnum.Manual
             ].indexOf(report.tile[parameter]) < 0
           ) {
             item.errors.push(

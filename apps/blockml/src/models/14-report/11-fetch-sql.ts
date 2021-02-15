@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
@@ -17,7 +16,7 @@ export async function fetchSql<T extends types.dzType>(
     traceId: string;
     entities: T[];
     models: interfaces.Model[];
-    udfsDict: apiToBlockml.UdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;

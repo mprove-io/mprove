@@ -1,4 +1,4 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { wrapReports } from './wrap-reports';
@@ -12,12 +12,12 @@ export function wrapDashboards(item: {
 }) {
   let { structId, orgId, projectId, models, dashboards } = item;
 
-  let apiDashboards: apiToBlockml.Dashboard[] = [];
-  let dashMconfigs: apiToBlockml.Mconfig[] = [];
-  let dashQueries: apiToBlockml.Query[] = [];
+  let apiDashboards: common.Dashboard[] = [];
+  let dashMconfigs: common.Mconfig[] = [];
+  let dashQueries: common.Query[] = [];
 
   dashboards.forEach(x => {
-    let dashFields: apiToBlockml.DashboardField[] = [];
+    let dashFields: common.DashboardField[] = [];
 
     x.fields.forEach(field => {
       dashFields.push({

@@ -1,11 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
-import {
-  Mconfig,
-  Query,
-  UdfsDict
-} from '~api-to-blockml/interfaces/ints/_index';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlProcessQueryRequestPayload {
@@ -19,12 +14,12 @@ export class ToBlockmlProcessQueryRequestPayload {
   weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
-  @Type(() => UdfsDict)
-  udfsDict: UdfsDict;
+  @Type(() => common.UdfsDict)
+  udfsDict: common.UdfsDict;
 
   @ValidateNested()
-  @Type(() => Mconfig)
-  mconfig: Mconfig;
+  @Type(() => common.Mconfig)
+  mconfig: common.Mconfig;
 
   modelContent: any;
 }
@@ -37,12 +32,12 @@ export class ToBlockmlProcessQueryRequest extends ToBlockmlRequest {
 
 export class ToBlockmlProcessQueryResponsePayload {
   @ValidateNested()
-  @Type(() => Query)
-  query: Query;
+  @Type(() => common.Query)
+  query: common.Query;
 
   @ValidateNested()
-  @Type(() => Mconfig)
-  mconfig: Mconfig;
+  @Type(() => common.Mconfig)
+  mconfig: common.Mconfig;
 }
 
 export class ToBlockmlProcessQueryResponse extends common.MyResponse {

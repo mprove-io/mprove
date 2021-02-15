@@ -1,4 +1,3 @@
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 
@@ -28,7 +27,7 @@ export function makeUser(item: {
     avatar_url_small: undefined,
     avatar_url_big: undefined,
     timezone: common.USE_PROJECT_DEFAULT_TIMEZONE,
-    status: apiToBackend.UserStatusEnum.Pending,
+    status: common.UserStatusEnum.Pending,
     server_ts: undefined
   };
   return userEntity;

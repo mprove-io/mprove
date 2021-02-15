@@ -1,17 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
-import {
-  BmlError,
-  Dashboard,
-  File,
-  Mconfig,
-  Model,
-  Query,
-  UdfsDict,
-  View,
-  Viz
-} from '~api-to-blockml/interfaces/ints/_index';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlRebuildStructRequestPayload {
@@ -28,8 +17,8 @@ export class ToBlockmlRebuildStructRequestPayload {
   weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
-  @Type(() => File)
-  files: File[];
+  @Type(() => common.BmlFile)
+  files: common.BmlFile[];
 
   @ValidateNested()
   @Type(() => common.ProjectConnection)
@@ -44,36 +33,36 @@ export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {
 
 export class ToBlockmlRebuildStructResponsePayload {
   @ValidateNested()
-  @Type(() => BmlError)
-  errors: BmlError[];
+  @Type(() => common.BmlError)
+  errors: common.BmlError[];
 
   @ValidateNested()
-  @Type(() => UdfsDict)
-  udfsDict: UdfsDict;
+  @Type(() => common.UdfsDict)
+  udfsDict: common.UdfsDict;
 
   @ValidateNested()
-  @Type(() => View)
-  views: View[];
+  @Type(() => common.View)
+  views: common.View[];
 
   @ValidateNested()
-  @Type(() => Model)
-  models: Model[];
+  @Type(() => common.Model)
+  models: common.Model[];
 
   @ValidateNested()
-  @Type(() => Dashboard)
-  dashboards: Dashboard[];
+  @Type(() => common.Dashboard)
+  dashboards: common.Dashboard[];
 
   @ValidateNested()
-  @Type(() => Viz)
-  vizs: Viz[];
+  @Type(() => common.Viz)
+  vizs: common.Viz[];
 
   @ValidateNested()
-  @Type(() => Mconfig)
-  mconfigs: Mconfig[];
+  @Type(() => common.Mconfig)
+  mconfigs: common.Mconfig[];
 
   @ValidateNested()
-  @Type(() => Query)
-  queries: Query[];
+  @Type(() => common.Query)
+  queries: common.Query[];
 }
 
 export class ToBlockmlRebuildStructResponse extends common.MyResponse {

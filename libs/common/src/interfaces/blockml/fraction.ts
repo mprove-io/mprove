@@ -1,5 +1,5 @@
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { enums } from '~api-to-blockml/barrels/enums';
+import { enums } from '~common/barrels/enums';
 
 export class Fraction {
   @IsString()

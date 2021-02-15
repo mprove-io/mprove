@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barMeasure } from '~blockml/barrels/bar-measure';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
@@ -71,7 +70,7 @@ export function makeMainText(item: {
     let asName = r[1];
     let fieldName = r[2];
 
-    let fieldClass: apiToBlockml.FieldClassEnum =
+    let fieldClass: common.FieldClassEnum =
       asName === constants.MF
         ? model.fields.find(mField => mField.name === fieldName).fieldClass
         : model.joins
@@ -80,7 +79,7 @@ export function makeMainText(item: {
 
     filtered[element] = { asName: asName, fieldName: fieldName };
 
-    if (fieldClass === apiToBlockml.FieldClassEnum.Measure) {
+    if (fieldClass === common.FieldClassEnum.Measure) {
       selected[element] = { asName: asName, fieldName: fieldName };
     }
   });
@@ -102,7 +101,7 @@ export function makeMainText(item: {
 
     let sqlSelect;
 
-    if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
+    if (field.fieldClass === common.FieldClassEnum.Dimension) {
       i++;
 
       if (asName === constants.MF) {
@@ -115,7 +114,7 @@ export function makeMainText(item: {
       if (selected[element]) {
         groupMainBy.push(`${i}`); // toString
       }
-    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === common.FieldClassEnum.Measure) {
       i++;
 
       if (asName === constants.MF) {
@@ -124,10 +123,10 @@ export function makeMainText(item: {
 
         if (
           [
-            apiToBlockml.FieldTypeEnum.SumByKey,
-            apiToBlockml.FieldTypeEnum.AverageByKey,
-            apiToBlockml.FieldTypeEnum.MedianByKey,
-            apiToBlockml.FieldTypeEnum.PercentileByKey
+            common.FieldTypeEnum.SumByKey,
+            common.FieldTypeEnum.AverageByKey,
+            common.FieldTypeEnum.MedianByKey,
+            common.FieldTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on doubles (no singles exists in _real of model measures)
@@ -144,10 +143,10 @@ export function makeMainText(item: {
 
         if (
           [
-            apiToBlockml.FieldTypeEnum.SumByKey,
-            apiToBlockml.FieldTypeEnum.AverageByKey,
-            apiToBlockml.FieldTypeEnum.MedianByKey,
-            apiToBlockml.FieldTypeEnum.PercentileByKey
+            common.FieldTypeEnum.SumByKey,
+            common.FieldTypeEnum.AverageByKey,
+            common.FieldTypeEnum.MedianByKey,
+            common.FieldTypeEnum.PercentileByKey
           ].indexOf(field.type) > -1
         ) {
           // remove ${ } on singles (no doubles exists in _real of view measures)
@@ -159,7 +158,7 @@ export function makeMainText(item: {
       }
 
       switch (true) {
-        case field.type === apiToBlockml.FieldTypeEnum.SumByKey: {
+        case field.type === common.FieldTypeEnum.SumByKey: {
           if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
             mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -173,7 +172,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.AverageByKey: {
+        case field.type === common.FieldTypeEnum.AverageByKey: {
           if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
             mainUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
           }
@@ -187,7 +186,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.MedianByKey: {
+        case field.type === common.FieldTypeEnum.MedianByKey: {
           mainUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasureMedianByKey({
@@ -199,7 +198,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.PercentileByKey: {
+        case field.type === common.FieldTypeEnum.PercentileByKey: {
           mainUdfs[constants.UDF_MPROVE_APPROX_PERCENTILE_DISTINCT_DISC] = 1;
 
           sqlSelect = barMeasure.makeMeasurePercentileByKey({
@@ -212,7 +211,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.Min: {
+        case field.type === common.FieldTypeEnum.Min: {
           sqlSelect = barMeasure.makeMeasureMin({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -221,7 +220,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.Max: {
+        case field.type === common.FieldTypeEnum.Max: {
           sqlSelect = barMeasure.makeMeasureMax({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -230,7 +229,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.CountDistinct: {
+        case field.type === common.FieldTypeEnum.CountDistinct: {
           sqlSelect = barMeasure.makeMeasureCountDistinct({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -239,7 +238,7 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.List: {
+        case field.type === common.FieldTypeEnum.List: {
           sqlSelect = barMeasure.makeMeasureList({
             sqlFinal: sqlFinal,
             connection: model.connection
@@ -248,12 +247,12 @@ export function makeMainText(item: {
           break;
         }
 
-        case field.type === apiToBlockml.FieldTypeEnum.Custom: {
+        case field.type === common.FieldTypeEnum.Custom: {
           sqlSelect = sqlFinal;
           break;
         }
       }
-    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Calculation) {
+    } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
       if (asName === constants.MF) {
         sqlFinal = common.MyRegex.removeBracketsOnCalculationSinglesMf(
           field.sqlReal
@@ -274,7 +273,7 @@ export function makeMainText(item: {
 
     if (
       common.isDefined(selected[element]) &&
-      field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation
+      field.fieldClass !== common.FieldClassEnum.Calculation
     ) {
       let sel = `  ${sqlSelect} as ${asName}_${fieldName},`;
       mainText = mainText.concat(sel.split('\n'));

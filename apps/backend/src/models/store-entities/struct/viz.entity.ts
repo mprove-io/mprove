@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
@@ -24,7 +23,7 @@ export class VizEntity {
   hidden: common.BoolEnum;
 
   @Column({ type: constants.JSON })
-  reports: apiToBlockml.Report[];
+  reports: common.Report[];
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

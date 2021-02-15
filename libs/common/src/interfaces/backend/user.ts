@@ -1,12 +1,9 @@
-import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
-import { enums } from '~api-to-backend/barrels/enums';
+import { IsEnum, IsInt, IsString } from 'class-validator';
+import { enums } from '~common/barrels/enums';
 
-export class Member {
+export class User {
   @IsString()
-  projectId: string;
-
-  @IsString()
-  memberId: string;
+  userId: string;
 
   @IsString()
   email: string;
@@ -31,15 +28,6 @@ export class Member {
 
   @IsEnum(enums.UserStatusEnum)
   status: enums.UserStatusEnum;
-
-  @IsBoolean()
-  isAdmin: boolean;
-
-  @IsBoolean()
-  isEditor: boolean;
-
-  @IsBoolean()
-  isExplorer: boolean;
 
   @IsInt()
   serverTs: number;

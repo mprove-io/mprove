@@ -1,4 +1,4 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 
 export interface Measure {
   hidden?: string; // boolean
@@ -13,10 +13,10 @@ export interface Measure {
   sql?: string;
   sql_line_num?: number;
 
-  type?: apiToBlockml.FieldTypeEnum;
+  type?: common.FieldTypeEnum;
   type_line_num?: number;
 
-  result?: apiToBlockml.FieldResultEnum;
+  result?: common.FieldResultEnum;
   result_line_num?: number;
 
   format_number?: string;
@@ -40,7 +40,7 @@ export interface Measure {
 
   name_line_num?: number;
 
-  fieldClass?: apiToBlockml.FieldClassEnum;
+  fieldClass?: common.FieldClassEnum;
 
   sqlReal?: string;
 

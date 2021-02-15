@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -36,7 +35,7 @@ export function makeFieldsDeps<T extends types.vmType>(
     x.fields.forEach(field => {
       x.fieldsDeps[field.name] = {};
       if (
-        field.fieldClass !== apiToBlockml.FieldClassEnum.Filter &&
+        field.fieldClass !== common.FieldClassEnum.Filter &&
         common.isDefined(field.sql)
       ) {
         if (
@@ -61,7 +60,7 @@ export function makeFieldsDeps<T extends types.vmType>(
       }
 
       if (
-        field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+        field.fieldClass === common.FieldClassEnum.Measure &&
         common.isDefined(field.sql_key)
       ) {
         if (

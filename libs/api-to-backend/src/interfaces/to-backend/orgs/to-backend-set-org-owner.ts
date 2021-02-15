@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { Org } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendSetOrgOwnerRequestPayload {
@@ -20,7 +19,7 @@ export class ToBackendSetOrgOwnerRequest extends ToBackendRequest {
 
 export class ToBackendSetOrgOwnerResponsePayload {
   @IsString()
-  org: Org;
+  org: common.Org;
 }
 
 export class ToBackendSetOrgOwnerResponse extends common.MyResponse {

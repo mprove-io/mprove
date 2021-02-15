@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -44,7 +43,7 @@ export function subMakeWith(item: {
   Object.keys(needsAll).forEach(fieldName => {
     let field = view.fields.find(viewField => viewField.name === fieldName);
 
-    if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
+    if (field.fieldClass === common.FieldClassEnum.Dimension) {
       if (common.isDefined(field.unnest)) {
         flats[field.unnest] = 1;
       }

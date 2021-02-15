@@ -1,6 +1,5 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -11,7 +10,7 @@ let func = enums.FuncEnum.CollectFiles;
 let testId = 'v__files-length';
 
 test('1', async t => {
-  let files: apiToBlockml.File[];
+  let files: common.BmlFile[];
 
   try {
     let {

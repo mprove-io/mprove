@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { Model } from './file-types/model';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
@@ -11,5 +10,5 @@ export interface GenSqlItem {
   limit: string;
   filters: FilterBricksDictionary;
   model: Model;
-  udfsDict: apiToBlockml.UdfsDict;
+  udfsDict: common.UdfsDict;
 }

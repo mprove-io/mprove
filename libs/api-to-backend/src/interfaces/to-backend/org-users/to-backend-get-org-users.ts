@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { enums } from '~api-to-backend/barrels/enums';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetOrgUsersRequestPayload {
@@ -34,8 +33,8 @@ export class OrgUsersItem {
   @IsString()
   lastName: string;
 
-  @IsEnum(enums.UserStatusEnum)
-  status: enums.UserStatusEnum;
+  @IsEnum(common.UserStatusEnum)
+  status: common.UserStatusEnum;
 
   @IsString({ each: true })
   projectAdminProjects: string[];

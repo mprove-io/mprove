@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~api-to-blockml/barrels/enums';
+import { enums } from '~common/barrels/enums';
 import { Fraction } from './fraction';
 
 export class DashboardField {

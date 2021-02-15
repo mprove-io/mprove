@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -67,11 +66,11 @@ export function composeCalc(item: {
             .view.fields.find(vField => vField.name === fieldName);
 
     let selectString =
-      field.fieldClass === apiToBlockml.FieldClassEnum.Dimension
+      field.fieldClass === common.FieldClassEnum.Dimension
         ? `  ${asName}_${fieldName},`
-        : field.fieldClass === apiToBlockml.FieldClassEnum.Measure
+        : field.fieldClass === common.FieldClassEnum.Measure
         ? `  ${asName}_${fieldName},`
-        : field.fieldClass === apiToBlockml.FieldClassEnum.Calculation
+        : field.fieldClass === common.FieldClassEnum.Calculation
         ? `  ${processedFields[element]} as ${asName}_${fieldName},`
         : constants.UNKNOWN_FIELD_CLASS;
 

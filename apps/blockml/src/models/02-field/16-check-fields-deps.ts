@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -65,9 +64,7 @@ export function checkFieldsDeps<T extends types.vmType>(
             })
           );
           return;
-        } else if (
-          dependentField.fieldClass === apiToBlockml.FieldClassEnum.Filter
-        ) {
+        } else if (dependentField.fieldClass === common.FieldClassEnum.Filter) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.FIELD_REFS_FILTER,
@@ -85,8 +82,8 @@ export function checkFieldsDeps<T extends types.vmType>(
           );
           return;
         } else if (
-          field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
-          dependentField.fieldClass === apiToBlockml.FieldClassEnum.Measure
+          field.fieldClass === common.FieldClassEnum.Dimension &&
+          dependentField.fieldClass === common.FieldClassEnum.Measure
         ) {
           item.errors.push(
             new BmError({
@@ -105,8 +102,8 @@ export function checkFieldsDeps<T extends types.vmType>(
           );
           return;
         } else if (
-          field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
-          dependentField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
+          field.fieldClass === common.FieldClassEnum.Dimension &&
+          dependentField.fieldClass === common.FieldClassEnum.Calculation
         ) {
           item.errors.push(
             new BmError({
@@ -125,8 +122,8 @@ export function checkFieldsDeps<T extends types.vmType>(
           );
           return;
         } else if (
-          field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
-          dependentField.fieldClass === apiToBlockml.FieldClassEnum.Measure
+          field.fieldClass === common.FieldClassEnum.Measure &&
+          dependentField.fieldClass === common.FieldClassEnum.Measure
         ) {
           item.errors.push(
             new BmError({
@@ -145,8 +142,8 @@ export function checkFieldsDeps<T extends types.vmType>(
           );
           return;
         } else if (
-          field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
-          dependentField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
+          field.fieldClass === common.FieldClassEnum.Measure &&
+          dependentField.fieldClass === common.FieldClassEnum.Calculation
         ) {
           item.errors.push(
             new BmError({

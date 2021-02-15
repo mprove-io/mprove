@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
+import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
 @Entity('structs')
@@ -11,10 +11,10 @@ export class StructEntity {
   struct_id: string;
 
   @Column({ type: constants.JSON })
-  errors: apiToBlockml.BmlError[];
+  errors: common.BmlError[];
 
   @Column({ type: constants.JSON })
-  udfs_dict: apiToBlockml.UdfsDict;
+  udfs_dict: common.UdfsDict;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

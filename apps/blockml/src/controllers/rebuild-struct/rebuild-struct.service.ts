@@ -111,7 +111,7 @@ export class RebuildStructService {
     weekStart: common.ProjectWeekStartEnum;
     connections: common.ProjectConnection[];
   }) {
-    let files: apiToBlockml.File[] = await barYaml.collectFiles(
+    let files: common.BmlFile[] = await barYaml.collectFiles(
       {
         dir: item.dir,
         structId: item.structId,
@@ -131,7 +131,7 @@ export class RebuildStructService {
 
   async rebuildStructStateless(item: {
     traceId: string;
-    files: apiToBlockml.File[];
+    files: common.BmlFile[];
     structId: string;
     weekStart: common.ProjectWeekStartEnum;
     connections: common.ProjectConnection[];
@@ -194,7 +194,7 @@ export class RebuildStructService {
       this.cs
     );
 
-    let udfsDict: apiToBlockml.UdfsDict = barBuilder.buildUdf(
+    let udfsDict: common.UdfsDict = barBuilder.buildUdf(
       {
         udfs: udfs,
         structId: item.structId,

@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -101,7 +100,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
 
       if (
         x.fileExt === common.FileExtensionEnum.Dashboard &&
-        fieldClass !== apiToBlockml.FieldClassEnum.Filter
+        fieldClass !== common.FieldClassEnum.Filter
       ) {
         item.errors.push(
           new BmError({
@@ -127,7 +126,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       let newFieldProps: interfaces.FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
-        fieldClass: <apiToBlockml.FieldClassEnum>fieldClass
+        fieldClass: <common.FieldClassEnum>fieldClass
       };
       Object.assign(field, newFieldProps);
     });

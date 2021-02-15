@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -86,8 +85,8 @@ export function makeFilters(item: {
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName);
 
-    if (field.result === apiToBlockml.FieldResultEnum.Ts) {
-      if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
+    if (field.result === common.FieldResultEnum.Ts) {
+      if (field.fieldClass === common.FieldClassEnum.Filter) {
         sqlTimestampSelect = constants.MPROVE_FILTER;
       } else if (asName === constants.MF) {
         // remove ${ } on doubles (no singles exists in _real of model dimensions)
@@ -107,7 +106,7 @@ export function makeFilters(item: {
 
     let proc: string;
 
-    if (field.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
+    if (field.fieldClass === common.FieldClassEnum.Measure) {
       if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
         proc = `${asName}_${fieldName}`;
       } else if (
@@ -115,7 +114,7 @@ export function makeFilters(item: {
       ) {
         proc = processedFields[element];
       }
-    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
+    } else if (field.fieldClass === common.FieldClassEnum.Filter) {
       proc = constants.MPROVE_FILTER;
     } else {
       proc = processedFields[element];
@@ -254,13 +253,13 @@ export function makeFilters(item: {
       }
     }
 
-    if (field.fieldClass === apiToBlockml.FieldClassEnum.Calculation) {
+    if (field.fieldClass === common.FieldClassEnum.Calculation) {
       whereCalc[element] = conds;
-    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === common.FieldClassEnum.Measure) {
       havingMain[element] = conds;
-    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
+    } else if (field.fieldClass === common.FieldClassEnum.Dimension) {
       whereMain[element] = conds;
-    } else if (field.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
+    } else if (field.fieldClass === common.FieldClassEnum.Filter) {
       filterFieldsConditions[element] = conds;
     }
   });

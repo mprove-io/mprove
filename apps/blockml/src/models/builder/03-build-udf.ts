@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barUdf } from '~blockml/barrels/bar-udf';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
@@ -14,7 +14,7 @@ export function buildUdf(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let udfsDict: apiToBlockml.UdfsDict = barUdf.makeUdfsDict(
+  let udfsDict: common.UdfsDict = barUdf.makeUdfsDict(
     {
       udfsUser: item.udfs,
       structId: item.structId,

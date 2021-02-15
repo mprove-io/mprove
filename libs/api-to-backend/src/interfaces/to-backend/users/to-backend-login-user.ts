@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { User } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendLoginUserRequestPayload {
@@ -23,8 +22,8 @@ export class ToBackendLoginUserResponsePayload {
   token: string;
 
   @ValidateNested()
-  @Type(() => User)
-  user: User;
+  @Type(() => common.User)
+  user: common.User;
 }
 
 export class ToBackendLoginUserResponse extends common.MyResponse {

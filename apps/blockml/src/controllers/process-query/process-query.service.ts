@@ -72,7 +72,7 @@ export class ProcessQueryService {
       sql: sql
     });
 
-    let query: apiToBlockml.Query = {
+    let query: common.Query = {
       queryId: queryId,
       projectId: projectId,
       connectionId: model.connection.connectionId,

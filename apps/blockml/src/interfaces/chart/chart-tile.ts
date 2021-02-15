@@ -1,13 +1,13 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 
 export interface ChartTile {
-  tile_width: apiToBlockml.ChartTileWidthEnum;
+  tile_width: common.ChartTileWidthEnum;
   tile_width_line_num: number;
 
-  tile_height: apiToBlockml.ChartTileHeightEnum;
+  tile_height: common.ChartTileHeightEnum;
   tile_height_line_num: number;
 
-  view_size: apiToBlockml.ChartViewSizeEnum;
+  view_size: common.ChartViewSizeEnum;
   view_size_line_num: number;
 
   view_width: string; // number

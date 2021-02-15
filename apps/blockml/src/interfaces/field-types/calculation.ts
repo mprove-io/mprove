@@ -1,4 +1,4 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 
 export interface Calculation {
   hidden?: string; // boolean
@@ -13,7 +13,7 @@ export interface Calculation {
   sql?: string;
   sql_line_num?: number;
 
-  result?: apiToBlockml.FieldResultEnum;
+  result?: common.FieldResultEnum;
   result_line_num?: number;
 
   format_number?: string;
@@ -31,7 +31,7 @@ export interface Calculation {
 
   name_line_num?: number;
 
-  fieldClass?: apiToBlockml.FieldClassEnum;
+  fieldClass?: common.FieldClassEnum;
 
   sqlReal?: string;
 }

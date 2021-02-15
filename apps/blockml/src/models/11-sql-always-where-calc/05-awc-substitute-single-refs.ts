@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -44,7 +43,7 @@ export function awcSubstituteSingleRefs(
 
         switch (true) {
           case referenceField.fieldClass ===
-            apiToBlockml.FieldClassEnum.Calculation: {
+            common.FieldClassEnum.Calculation: {
             // referenceField.sqlReal
             // ${calc1}   >>>   (${dim2} + ${b.order_items_total} + ${mea1})
             sqlAlwaysWhereCalcReal = common.MyRegex.replaceSingleRefs(
@@ -57,15 +56,13 @@ export function awcSubstituteSingleRefs(
             break;
           }
 
-          case referenceField.fieldClass ===
-            apiToBlockml.FieldClassEnum.Dimension: {
+          case referenceField.fieldClass === common.FieldClassEnum.Dimension: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
               x.sql_always_where_calc_line_num;
             break;
           }
 
-          case referenceField.fieldClass ===
-            apiToBlockml.FieldClassEnum.Measure: {
+          case referenceField.fieldClass === common.FieldClassEnum.Measure: {
             x.sqlAlwaysWhereCalcDepsAfterSingles[fieldName] =
               x.sql_always_where_calc_line_num;
             break;

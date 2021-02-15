@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -60,7 +59,7 @@ export function checkDerivedTableApplyFilter(
         return;
       }
 
-      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Filter) {
+      if (field.fieldClass !== common.FieldClassEnum.Filter) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.APPLY_FILTER_MUST_REFERENCE_A_FILTER,

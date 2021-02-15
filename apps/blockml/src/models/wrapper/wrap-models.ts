@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
@@ -8,27 +7,27 @@ import { wrapField } from './wrap-field';
 export function wrapModels(item: {
   structId: string;
   models: interfaces.Model[];
-}): apiToBlockml.Model[] {
+}): common.Model[] {
   let { structId, models } = item;
 
-  let apiModels: apiToBlockml.Model[] = [];
+  let apiModels: common.Model[] = [];
 
   models.forEach(x => {
-    let apiFields: apiToBlockml.ModelField[] = [];
-    let nodes: apiToBlockml.ModelNode[] = [];
+    let apiFields: common.ModelField[] = [];
+    let nodes: common.ModelNode[] = [];
 
     {
       // model fields scope
-      let children: apiToBlockml.ModelNode[] = [];
+      let children: common.ModelNode[] = [];
 
-      let node: apiToBlockml.ModelNode = {
+      let node: common.ModelNode = {
         id: constants.MF,
-        label: apiToBlockml.ModelNodeLabelEnum.ModelFields,
+        label: common.ModelNodeLabelEnum.ModelFields,
         description: undefined,
         hidden: false,
         isField: false,
         children: children,
-        nodeClass: apiToBlockml.FieldClassEnum.Join
+        nodeClass: common.FieldClassEnum.Join
       };
 
       x.fields.forEach(field => {
@@ -49,17 +48,17 @@ export function wrapModels(item: {
 
     x.joins.forEach(join => {
       // join fields scope
-      let children: apiToBlockml.ModelNode[] = [];
+      let children: common.ModelNode[] = [];
       let joinHidden = helper.toBoolean(join.hidden);
 
-      let node: apiToBlockml.ModelNode = {
+      let node: common.ModelNode = {
         id: join.as,
         label: join.label,
         description: join.description,
         hidden: joinHidden,
         isField: false,
         children: children,
-        nodeClass: apiToBlockml.FieldClassEnum.Join,
+        nodeClass: common.FieldClassEnum.Join,
         viewName: join.view.name
       };
 
@@ -81,29 +80,29 @@ export function wrapModels(item: {
 
     nodes.forEach(node => {
       if (common.isDefined(node.children)) {
-        let filters: apiToBlockml.ModelNode[] = [];
-        let dimensions: apiToBlockml.ModelNode[] = [];
-        let measures: apiToBlockml.ModelNode[] = [];
-        let calculations: apiToBlockml.ModelNode[] = [];
+        let filters: common.ModelNode[] = [];
+        let dimensions: common.ModelNode[] = [];
+        let measures: common.ModelNode[] = [];
+        let calculations: common.ModelNode[] = [];
 
         node.children.forEach(n => {
           switch (true) {
-            case n.nodeClass === apiToBlockml.FieldClassEnum.Filter: {
+            case n.nodeClass === common.FieldClassEnum.Filter: {
               filters.push(n);
               break;
             }
 
-            case n.nodeClass === apiToBlockml.FieldClassEnum.Dimension: {
+            case n.nodeClass === common.FieldClassEnum.Dimension: {
               dimensions.push(n);
               break;
             }
 
-            case n.nodeClass === apiToBlockml.FieldClassEnum.Measure: {
+            case n.nodeClass === common.FieldClassEnum.Measure: {
               measures.push(n);
               break;
             }
 
-            case n.nodeClass === apiToBlockml.FieldClassEnum.Calculation: {
+            case n.nodeClass === common.FieldClassEnum.Calculation: {
               calculations.push(n);
               break;
             }
@@ -134,17 +133,17 @@ export function wrapModels(item: {
           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
         });
 
-        let sortedChildren: apiToBlockml.ModelNode[] = [];
+        let sortedChildren: common.ModelNode[] = [];
 
         if (sortedDimensions.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${apiToBlockml.ModelNodeIdSuffixEnum.Dimensions}`,
-            label: apiToBlockml.ModelNodeLabelEnum.Dimensions,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Dimensions}`,
+            label: common.ModelNodeLabelEnum.Dimensions,
             description: undefined,
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: apiToBlockml.FieldClassEnum.Info
+            nodeClass: common.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedDimensions);
@@ -152,13 +151,13 @@ export function wrapModels(item: {
 
         if (sortedMeasures.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${apiToBlockml.ModelNodeIdSuffixEnum.Measures}`,
-            label: apiToBlockml.ModelNodeLabelEnum.Measures,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Measures}`,
+            label: common.ModelNodeLabelEnum.Measures,
             description: undefined,
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: apiToBlockml.FieldClassEnum.Info
+            nodeClass: common.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedMeasures);
@@ -166,13 +165,13 @@ export function wrapModels(item: {
 
         if (sortedCalculations.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${apiToBlockml.ModelNodeIdSuffixEnum.Calculations}`,
-            label: apiToBlockml.ModelNodeLabelEnum.Calculations,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Calculations}`,
+            label: common.ModelNodeLabelEnum.Calculations,
             description: undefined,
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: apiToBlockml.FieldClassEnum.Info
+            nodeClass: common.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedCalculations);
@@ -180,13 +179,13 @@ export function wrapModels(item: {
 
         if (sortedFilters.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${apiToBlockml.ModelNodeIdSuffixEnum.Filters}`,
-            label: apiToBlockml.ModelNodeLabelEnum.FilterOnlyFields,
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Filters}`,
+            label: common.ModelNodeLabelEnum.FilterOnlyFields,
             description: undefined,
             hidden: false,
             isField: false,
             children: [],
-            nodeClass: apiToBlockml.FieldClassEnum.Info
+            nodeClass: common.FieldClassEnum.Info
           });
 
           sortedChildren = sortedChildren.concat(sortedFilters);

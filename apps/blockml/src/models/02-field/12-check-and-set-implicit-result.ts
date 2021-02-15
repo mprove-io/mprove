@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -29,35 +28,35 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
     x.fields.forEach(field => {
       if (common.isUndefined(field.result)) {
         switch (field.fieldClass) {
-          case apiToBlockml.FieldClassEnum.Dimension: {
-            if (field.type === apiToBlockml.FieldTypeEnum.YesnoIsTrue) {
-              field.result = apiToBlockml.FieldResultEnum.Yesno;
+          case common.FieldClassEnum.Dimension: {
+            if (field.type === common.FieldTypeEnum.YesnoIsTrue) {
+              field.result = common.FieldResultEnum.Yesno;
               field.result_line_num = 0;
             } else {
-              field.result = apiToBlockml.FieldResultEnum.String;
+              field.result = common.FieldResultEnum.String;
               field.result_line_num = 0;
             }
             return;
           }
 
-          case apiToBlockml.FieldClassEnum.Measure: {
-            if (field.type === apiToBlockml.FieldTypeEnum.List) {
-              field.result = apiToBlockml.FieldResultEnum.String;
+          case common.FieldClassEnum.Measure: {
+            if (field.type === common.FieldTypeEnum.List) {
+              field.result = common.FieldResultEnum.String;
               field.result_line_num = 0;
             } else {
-              field.result = apiToBlockml.FieldResultEnum.Number;
+              field.result = common.FieldResultEnum.Number;
               field.result_line_num = 0;
             }
             return;
           }
 
-          case apiToBlockml.FieldClassEnum.Calculation: {
-            field.result = apiToBlockml.FieldResultEnum.Number;
+          case common.FieldClassEnum.Calculation: {
+            field.result = common.FieldResultEnum.Number;
             field.result_line_num = 0;
             return;
           }
 
-          case apiToBlockml.FieldClassEnum.Filter: {
+          case common.FieldClassEnum.Filter: {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.MISSING_FILTER_RESULT,
@@ -76,17 +75,17 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
         }
       } else {
         switch (field.fieldClass) {
-          case apiToBlockml.FieldClassEnum.Dimension: {
+          case common.FieldClassEnum.Dimension: {
             if (
               [
-                apiToBlockml.FieldResultEnum.String,
-                apiToBlockml.FieldResultEnum.Number
+                common.FieldResultEnum.String,
+                common.FieldResultEnum.Number
               ].indexOf(field.result) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_DIMENSION_RESULT,
-                  message: `"${field.result}" is not valid result for ${apiToBlockml.FieldClassEnum.Dimension}`,
+                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Dimension}`,
                   lines: [
                     {
                       line: field.result_line_num,
@@ -101,17 +100,17 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
             break;
           }
 
-          case apiToBlockml.FieldClassEnum.Measure: {
+          case common.FieldClassEnum.Measure: {
             if (
               [
-                apiToBlockml.FieldResultEnum.String,
-                apiToBlockml.FieldResultEnum.Number
+                common.FieldResultEnum.String,
+                common.FieldResultEnum.Number
               ].indexOf(field.result) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_MEASURE_RESULT,
-                  message: `"${field.result}" is not valid result for ${apiToBlockml.FieldClassEnum.Measure}`,
+                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Measure}`,
                   lines: [
                     {
                       line: field.result_line_num,
@@ -126,17 +125,17 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
             break;
           }
 
-          case apiToBlockml.FieldClassEnum.Calculation: {
+          case common.FieldClassEnum.Calculation: {
             if (
               [
-                apiToBlockml.FieldResultEnum.String,
-                apiToBlockml.FieldResultEnum.Number
+                common.FieldResultEnum.String,
+                common.FieldResultEnum.Number
               ].indexOf(field.result) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_CALCULATION_RESULT,
-                  message: `"${field.result}" is not valid result for ${apiToBlockml.FieldClassEnum.Calculation}`,
+                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Calculation}`,
                   lines: [
                     {
                       line: field.result_line_num,
@@ -151,23 +150,23 @@ export function checkAndSetImplicitResult<T extends types.vmdType>(
             break;
           }
 
-          case apiToBlockml.FieldClassEnum.Filter: {
+          case common.FieldClassEnum.Filter: {
             if (
               [
-                apiToBlockml.FieldResultEnum.String,
-                apiToBlockml.FieldResultEnum.Number,
-                apiToBlockml.FieldResultEnum.DayOfWeek,
-                apiToBlockml.FieldResultEnum.DayOfWeekIndex,
-                apiToBlockml.FieldResultEnum.MonthName,
-                apiToBlockml.FieldResultEnum.QuarterOfYear,
-                apiToBlockml.FieldResultEnum.Ts,
-                apiToBlockml.FieldResultEnum.Yesno
+                common.FieldResultEnum.String,
+                common.FieldResultEnum.Number,
+                common.FieldResultEnum.DayOfWeek,
+                common.FieldResultEnum.DayOfWeekIndex,
+                common.FieldResultEnum.MonthName,
+                common.FieldResultEnum.QuarterOfYear,
+                common.FieldResultEnum.Ts,
+                common.FieldResultEnum.Yesno
               ].indexOf(field.result) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.WRONG_FILTER_RESULT,
-                  message: `"${field.result}" is not valid result for ${apiToBlockml.FieldClassEnum.Filter}`,
+                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Filter}`,
                   lines: [
                     {
                       line: field.result_line_num,

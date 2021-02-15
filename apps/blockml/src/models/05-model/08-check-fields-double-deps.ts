@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -67,7 +66,7 @@ export function checkFieldsDoubleDeps(
             return;
           }
 
-          if (depField.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
+          if (depField.fieldClass === common.FieldClassEnum.Filter) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.MODEL_FIELD_REFS_FILTER,
@@ -85,8 +84,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
-            depField.fieldClass === apiToBlockml.FieldClassEnum.Measure
+            field.fieldClass === common.FieldClassEnum.Dimension &&
+            depField.fieldClass === common.FieldClassEnum.Measure
           ) {
             item.errors.push(
               new BmError({
@@ -108,8 +107,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
-            depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
+            field.fieldClass === common.FieldClassEnum.Dimension &&
+            depField.fieldClass === common.FieldClassEnum.Calculation
           ) {
             item.errors.push(
               new BmError({
@@ -131,8 +130,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
-            depField.fieldClass === apiToBlockml.FieldClassEnum.Measure
+            field.fieldClass === common.FieldClassEnum.Measure &&
+            depField.fieldClass === common.FieldClassEnum.Measure
           ) {
             item.errors.push(
               new BmError({
@@ -154,8 +153,8 @@ export function checkFieldsDoubleDeps(
           }
 
           if (
-            field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
-            depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
+            field.fieldClass === common.FieldClassEnum.Measure &&
+            depField.fieldClass === common.FieldClassEnum.Calculation
           ) {
             item.errors.push(
               new BmError({

@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class File {
+export class BmlFile {
   @IsString()
   name: string;
 

@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
@@ -13,12 +12,12 @@ export function wrapReports(item: {
 }) {
   let { structId, orgId, projectId, models, reports } = item;
 
-  let apiReports: apiToBlockml.Report[] = [];
-  let mconfigs: apiToBlockml.Mconfig[] = [];
-  let queries: apiToBlockml.Query[] = [];
+  let apiReports: common.Report[] = [];
+  let mconfigs: common.Mconfig[] = [];
+  let queries: common.Query[] = [];
 
   reports.forEach(report => {
-    let filters: apiToBlockml.Filter[] = [];
+    let filters: common.Filter[] = [];
 
     Object.keys(report.filtersFractions).forEach(fieldId => {
       filters.push({
@@ -29,7 +28,7 @@ export function wrapReports(item: {
 
     let chartId = common.makeId();
 
-    let chart: apiToBlockml.Chart = {
+    let chart: common.Chart = {
       chartId: chartId,
       isValid: true,
       title: report.title,
@@ -70,8 +69,7 @@ export function wrapReports(item: {
       timeline: helper.toBoolean(report.options?.timeline),
 
       interpolation:
-        report.options?.interpolation ||
-        apiToBlockml.ChartInterpolationEnum.Linear,
+        report.options?.interpolation || common.ChartInterpolationEnum.Linear,
 
       autoScale: helper.toBoolean(report.options?.auto_scale),
       doughnut: helper.toBoolean(report.options?.doughnut),
@@ -79,10 +77,10 @@ export function wrapReports(item: {
       labels: helper.toBoolean(report.options?.labels),
 
       colorScheme:
-        report.options?.color_scheme || apiToBlockml.ChartColorSchemeEnum.Cool,
+        report.options?.color_scheme || common.ChartColorSchemeEnum.Cool,
 
       schemeType:
-        report.options?.scheme_type || apiToBlockml.ChartSchemeTypeEnum.Ordinal,
+        report.options?.scheme_type || common.ChartSchemeTypeEnum.Ordinal,
 
       pageSize: common.isDefined(report.options?.page_size)
         ? Number(report.options.page_size)
@@ -152,10 +150,9 @@ export function wrapReports(item: {
       emptyColor: report.options?.empty_color || constants.RGBA_0,
 
       // tile
-      tileWidth: report.tile?.tile_width || apiToBlockml.ChartTileWidthEnum._6,
-      tileHeight:
-        report.tile?.tile_height || apiToBlockml.ChartTileHeightEnum._500,
-      viewSize: report.tile?.view_size || apiToBlockml.ChartViewSizeEnum.Auto,
+      tileWidth: report.tile?.tile_width || common.ChartTileWidthEnum._6,
+      tileHeight: report.tile?.tile_height || common.ChartTileHeightEnum._500,
+      viewSize: report.tile?.view_size || common.ChartViewSizeEnum.Auto,
       viewWidth: common.isDefined(report.tile?.view_width)
         ? Number(report.tile.view_width)
         : 600,
@@ -173,7 +170,7 @@ export function wrapReports(item: {
       connection: model.connection
     });
 
-    let query: apiToBlockml.Query = {
+    let query: common.Query = {
       queryId: queryId,
       projectId: projectId,
       connectionId: model.connection.connectionId,
@@ -192,7 +189,7 @@ export function wrapReports(item: {
 
     let mconfigId = common.makeId();
 
-    let mconfig: apiToBlockml.Mconfig = {
+    let mconfig: common.Mconfig = {
       structId: structId,
       mconfigId: mconfigId,
       queryId: queryId,

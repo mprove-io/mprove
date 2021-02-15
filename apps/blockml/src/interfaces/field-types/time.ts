@@ -1,4 +1,4 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 
 export interface Time {
@@ -29,5 +29,5 @@ export interface Time {
 
   name_line_num?: number;
 
-  fieldClass?: apiToBlockml.FieldClassEnum;
+  fieldClass?: common.FieldClassEnum;
 }

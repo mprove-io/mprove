@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
@@ -12,7 +11,7 @@ let func = enums.FuncEnum.ProcessViewRefs;
 export function processViewRefs(
   item: {
     views: interfaces.View[];
-    udfsDict: apiToBlockml.UdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;

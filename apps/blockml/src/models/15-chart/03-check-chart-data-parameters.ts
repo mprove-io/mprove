@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -29,24 +28,24 @@ export function checkChartDataParameters<T extends types.dzType>(
     x.reports.forEach(report => {
       if (
         [
-          apiToBlockml.ChartTypeEnum.BarVertical,
-          apiToBlockml.ChartTypeEnum.BarVerticalGrouped,
-          apiToBlockml.ChartTypeEnum.BarVerticalStacked,
-          apiToBlockml.ChartTypeEnum.BarVerticalNormalized,
-          apiToBlockml.ChartTypeEnum.BarHorizontal,
-          apiToBlockml.ChartTypeEnum.BarHorizontalGrouped,
-          apiToBlockml.ChartTypeEnum.BarHorizontalStacked,
-          apiToBlockml.ChartTypeEnum.BarHorizontalNormalized,
-          apiToBlockml.ChartTypeEnum.Pie,
-          apiToBlockml.ChartTypeEnum.PieAdvanced,
-          apiToBlockml.ChartTypeEnum.PieGrid,
-          apiToBlockml.ChartTypeEnum.Line,
-          apiToBlockml.ChartTypeEnum.Area,
-          apiToBlockml.ChartTypeEnum.AreaStacked,
-          apiToBlockml.ChartTypeEnum.AreaNormalized,
-          apiToBlockml.ChartTypeEnum.HeatMap,
-          apiToBlockml.ChartTypeEnum.TreeMap,
-          apiToBlockml.ChartTypeEnum.Gauge
+          common.ChartTypeEnum.BarVertical,
+          common.ChartTypeEnum.BarVerticalGrouped,
+          common.ChartTypeEnum.BarVerticalStacked,
+          common.ChartTypeEnum.BarVerticalNormalized,
+          common.ChartTypeEnum.BarHorizontal,
+          common.ChartTypeEnum.BarHorizontalGrouped,
+          common.ChartTypeEnum.BarHorizontalStacked,
+          common.ChartTypeEnum.BarHorizontalNormalized,
+          common.ChartTypeEnum.Pie,
+          common.ChartTypeEnum.PieAdvanced,
+          common.ChartTypeEnum.PieGrid,
+          common.ChartTypeEnum.Line,
+          common.ChartTypeEnum.Area,
+          common.ChartTypeEnum.AreaStacked,
+          common.ChartTypeEnum.AreaNormalized,
+          common.ChartTypeEnum.HeatMap,
+          common.ChartTypeEnum.TreeMap,
+          common.ChartTypeEnum.Gauge
         ].indexOf(report.type) > -1 &&
         (common.isUndefined(report.data) ||
           common.isUndefined(report.data.x_field))
@@ -71,14 +70,14 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         [
-          apiToBlockml.ChartTypeEnum.BarVertical,
-          apiToBlockml.ChartTypeEnum.BarHorizontal,
-          apiToBlockml.ChartTypeEnum.Pie,
-          apiToBlockml.ChartTypeEnum.PieAdvanced,
-          apiToBlockml.ChartTypeEnum.PieGrid,
-          apiToBlockml.ChartTypeEnum.TreeMap,
-          apiToBlockml.ChartTypeEnum.NumberCard,
-          apiToBlockml.ChartTypeEnum.Gauge
+          common.ChartTypeEnum.BarVertical,
+          common.ChartTypeEnum.BarHorizontal,
+          common.ChartTypeEnum.Pie,
+          common.ChartTypeEnum.PieAdvanced,
+          common.ChartTypeEnum.PieGrid,
+          common.ChartTypeEnum.TreeMap,
+          common.ChartTypeEnum.NumberCard,
+          common.ChartTypeEnum.Gauge
         ].indexOf(report.type) > -1 &&
         (common.isUndefined(report.data) ||
           common.isUndefined(report.data.y_field))
@@ -103,17 +102,17 @@ export function checkChartDataParameters<T extends types.dzType>(
 
       if (
         [
-          apiToBlockml.ChartTypeEnum.BarVerticalGrouped,
-          apiToBlockml.ChartTypeEnum.BarVerticalStacked,
-          apiToBlockml.ChartTypeEnum.BarVerticalNormalized,
-          apiToBlockml.ChartTypeEnum.BarHorizontalGrouped,
-          apiToBlockml.ChartTypeEnum.BarHorizontalStacked,
-          apiToBlockml.ChartTypeEnum.BarHorizontalNormalized,
-          apiToBlockml.ChartTypeEnum.Line,
-          apiToBlockml.ChartTypeEnum.Area,
-          apiToBlockml.ChartTypeEnum.AreaStacked,
-          apiToBlockml.ChartTypeEnum.AreaNormalized,
-          apiToBlockml.ChartTypeEnum.HeatMap
+          common.ChartTypeEnum.BarVerticalGrouped,
+          common.ChartTypeEnum.BarVerticalStacked,
+          common.ChartTypeEnum.BarVerticalNormalized,
+          common.ChartTypeEnum.BarHorizontalGrouped,
+          common.ChartTypeEnum.BarHorizontalStacked,
+          common.ChartTypeEnum.BarHorizontalNormalized,
+          common.ChartTypeEnum.Line,
+          common.ChartTypeEnum.Area,
+          common.ChartTypeEnum.AreaStacked,
+          common.ChartTypeEnum.AreaNormalized,
+          common.ChartTypeEnum.HeatMap
         ].indexOf(report.type) > -1 &&
         (common.isUndefined(report.data) ||
           common.isUndefined(report.data.y_fields))
@@ -137,7 +136,7 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
-        report.type === apiToBlockml.ChartTypeEnum.GaugeLinear &&
+        report.type === common.ChartTypeEnum.GaugeLinear &&
         (common.isUndefined(report.data) ||
           common.isUndefined(report.data.value_field))
       ) {

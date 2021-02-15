@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -59,7 +58,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
           }
 
           switch (field.fieldClass) {
-            case apiToBlockml.FieldClassEnum.Dimension: {
+            case common.FieldClassEnum.Dimension: {
               if (
                 [
                   enums.ParameterEnum.Dimension.toString(),
@@ -78,7 +77,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${apiToBlockml.FieldClassEnum.Dimension}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Dimension}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -93,7 +92,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
               break;
             }
 
-            case apiToBlockml.FieldClassEnum.Time: {
+            case common.FieldClassEnum.Time: {
               if (
                 [
                   enums.ParameterEnum.Time.toString(),
@@ -109,7 +108,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${apiToBlockml.FieldClassEnum.Time}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Time}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -124,7 +123,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
               break;
             }
 
-            case apiToBlockml.FieldClassEnum.Measure: {
+            case common.FieldClassEnum.Measure: {
               if (
                 [
                   enums.ParameterEnum.Measure.toString(),
@@ -144,7 +143,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${apiToBlockml.FieldClassEnum.Measure}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Measure}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -159,7 +158,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
               break;
             }
 
-            case apiToBlockml.FieldClassEnum.Calculation: {
+            case common.FieldClassEnum.Calculation: {
               if (
                 [
                   enums.ParameterEnum.Calculation.toString(),
@@ -176,7 +175,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${apiToBlockml.FieldClassEnum.Calculation}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Calculation}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],
@@ -191,7 +190,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
               break;
             }
 
-            case apiToBlockml.FieldClassEnum.Filter: {
+            case common.FieldClassEnum.Filter: {
               if (
                 [
                   enums.ParameterEnum.Filter.toString(),
@@ -205,7 +204,7 @@ export function checkFieldUnknownParameters<T extends types.vmdType>(
                 item.errors.push(
                   new BmError({
                     title: enums.ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${apiToBlockml.FieldClassEnum.Filter}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Filter}`,
                     lines: [
                       {
                         line: field[parameter + constants.LINE_NUM],

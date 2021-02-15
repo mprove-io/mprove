@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { log } from '~blockml/helper/_index';
@@ -9,7 +9,7 @@ let func = enums.FuncEnum.LogStruct;
 
 export async function logStruct(
   item: {
-    udfsDict: apiToBlockml.UdfsDict;
+    udfsDict: common.UdfsDict;
     views: interfaces.View[];
     models: interfaces.Model[];
     dashboards: interfaces.Dashboard[];

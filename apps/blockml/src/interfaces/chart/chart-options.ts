@@ -1,4 +1,4 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 
 export interface ChartOptions {
   animations: string; // boolean
@@ -28,7 +28,7 @@ export interface ChartOptions {
   timeline: string; // boolean
   timeline_line_num: number;
 
-  interpolation: apiToBlockml.ChartInterpolationEnum;
+  interpolation: common.ChartInterpolationEnum;
   interpolation_line_num: number;
 
   auto_scale: string; // boolean
@@ -43,10 +43,10 @@ export interface ChartOptions {
   labels: string; // boolean
   labels_line_num: number;
 
-  color_scheme: apiToBlockml.ChartColorSchemeEnum;
+  color_scheme: common.ChartColorSchemeEnum;
   color_scheme_line_num: number;
 
-  scheme_type: apiToBlockml.ChartSchemeTypeEnum;
+  scheme_type: common.ChartSchemeTypeEnum;
   scheme_type_line_num: number;
 
   page_size: string;

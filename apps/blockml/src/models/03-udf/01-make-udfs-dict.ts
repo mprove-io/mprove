@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -20,7 +20,7 @@ export function makeUdfsDict(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let udfsDict: apiToBlockml.UdfsDict = {};
+  let udfsDict: common.UdfsDict = {};
 
   item.udfsUser.forEach(u => {
     udfsDict[u.name] = u.sql;

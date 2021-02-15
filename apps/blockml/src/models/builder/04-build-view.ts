@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barView } from '~blockml/barrels/bar-view';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
@@ -10,7 +9,7 @@ export function buildView(
   item: {
     views: interfaces.View[];
     udfs: interfaces.Udf[];
-    udfsDict: apiToBlockml.UdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;

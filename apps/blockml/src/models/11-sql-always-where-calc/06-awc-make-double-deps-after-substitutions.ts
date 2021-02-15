@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -47,8 +46,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
         let depField = join.view.fields.find(f => f.name === depName);
 
         switch (true) {
-          case depField.fieldClass ===
-            apiToBlockml.FieldClassEnum.Calculation: {
+          case depField.fieldClass === common.FieldClassEnum.Calculation: {
             sqlAlwaysWhereCalcReal = common.MyRegex.replaceAndConvert(
               sqlAlwaysWhereCalcReal,
               depField.sqlReal,
@@ -60,7 +58,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
             break;
           }
 
-          case depField.fieldClass === apiToBlockml.FieldClassEnum.Dimension: {
+          case depField.fieldClass === common.FieldClassEnum.Dimension: {
             if (
               common.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]
@@ -73,7 +71,7 @@ export function awcMakeDoubleDepsAfterSubstitutions(
             break;
           }
 
-          case depField.fieldClass === apiToBlockml.FieldClassEnum.Measure: {
+          case depField.fieldClass === common.FieldClassEnum.Measure: {
             if (
               common.isUndefined(
                 x.sqlAlwaysWhereCalcDoubleDepsAfterSubstitutions[asName]

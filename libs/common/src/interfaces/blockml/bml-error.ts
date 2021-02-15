@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { common } from '~api-to-blockml/barrels/common';
+import { DiskFileLine } from '~common/interfaces/disk/_index';
 
 export class BmlError {
   @IsString()
@@ -10,6 +10,6 @@ export class BmlError {
   message: string;
 
   @ValidateNested()
-  @Type(() => common.DiskFileLine)
-  lines: common.DiskFileLine[];
+  @Type(() => DiskFileLine)
+  lines: DiskFileLine[];
 }

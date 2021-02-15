@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -44,7 +43,7 @@ export function makeFieldsDoubleDepsAfterSingles(
             field => field.name === depName
           );
 
-          if (depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation) {
+          if (depField.fieldClass === common.FieldClassEnum.Calculation) {
             f.sqlReal = common.MyRegex.replaceAndConvert(
               f.sqlReal,
               depField.sqlReal,
@@ -70,12 +69,12 @@ export function makeFieldsDoubleDepsAfterSingles(
 
       // work with sqlKeyReal
       if (
-        f.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+        f.fieldClass === common.FieldClassEnum.Measure &&
         [
-          apiToBlockml.FieldTypeEnum.SumByKey,
-          apiToBlockml.FieldTypeEnum.AverageByKey,
-          apiToBlockml.FieldTypeEnum.MedianByKey,
-          apiToBlockml.FieldTypeEnum.PercentileByKey
+          common.FieldTypeEnum.SumByKey,
+          common.FieldTypeEnum.AverageByKey,
+          common.FieldTypeEnum.MedianByKey,
+          common.FieldTypeEnum.PercentileByKey
         ].indexOf(f.type) > -1
       ) {
         let r2;

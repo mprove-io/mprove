@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -46,27 +45,27 @@ export function checkChartType<T extends types.dzType>(
 
       if (
         [
-          apiToBlockml.ChartTypeEnum.Area,
-          apiToBlockml.ChartTypeEnum.AreaNormalized,
-          apiToBlockml.ChartTypeEnum.AreaStacked,
-          apiToBlockml.ChartTypeEnum.BarHorizontal,
-          apiToBlockml.ChartTypeEnum.BarHorizontalGrouped,
-          apiToBlockml.ChartTypeEnum.BarHorizontalNormalized,
-          apiToBlockml.ChartTypeEnum.BarHorizontalStacked,
-          apiToBlockml.ChartTypeEnum.BarVertical,
-          apiToBlockml.ChartTypeEnum.BarVerticalGrouped,
-          apiToBlockml.ChartTypeEnum.BarVerticalNormalized,
-          apiToBlockml.ChartTypeEnum.BarVerticalStacked,
-          apiToBlockml.ChartTypeEnum.Gauge,
-          apiToBlockml.ChartTypeEnum.GaugeLinear,
-          apiToBlockml.ChartTypeEnum.HeatMap,
-          apiToBlockml.ChartTypeEnum.Line,
-          apiToBlockml.ChartTypeEnum.NumberCard,
-          apiToBlockml.ChartTypeEnum.Pie,
-          apiToBlockml.ChartTypeEnum.PieAdvanced,
-          apiToBlockml.ChartTypeEnum.PieGrid,
-          apiToBlockml.ChartTypeEnum.Table,
-          apiToBlockml.ChartTypeEnum.TreeMap
+          common.ChartTypeEnum.Area,
+          common.ChartTypeEnum.AreaNormalized,
+          common.ChartTypeEnum.AreaStacked,
+          common.ChartTypeEnum.BarHorizontal,
+          common.ChartTypeEnum.BarHorizontalGrouped,
+          common.ChartTypeEnum.BarHorizontalNormalized,
+          common.ChartTypeEnum.BarHorizontalStacked,
+          common.ChartTypeEnum.BarVertical,
+          common.ChartTypeEnum.BarVerticalGrouped,
+          common.ChartTypeEnum.BarVerticalNormalized,
+          common.ChartTypeEnum.BarVerticalStacked,
+          common.ChartTypeEnum.Gauge,
+          common.ChartTypeEnum.GaugeLinear,
+          common.ChartTypeEnum.HeatMap,
+          common.ChartTypeEnum.Line,
+          common.ChartTypeEnum.NumberCard,
+          common.ChartTypeEnum.Pie,
+          common.ChartTypeEnum.PieAdvanced,
+          common.ChartTypeEnum.PieGrid,
+          common.ChartTypeEnum.Table,
+          common.ChartTypeEnum.TreeMap
         ].indexOf(report.type) < 0
       ) {
         item.errors.push(

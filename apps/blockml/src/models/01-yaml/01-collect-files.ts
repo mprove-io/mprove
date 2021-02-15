@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import * as walk from 'walk';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -16,12 +15,12 @@ export async function collectFiles(
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
-): Promise<apiToBlockml.File[]> {
+): Promise<common.BmlFile[]> {
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   return new Promise((resolve, reject) => {
-    let files: apiToBlockml.File[] = [];
+    let files: common.BmlFile[] = [];
 
     let walker = walk.walk(item.dir, { followLinks: false });
 

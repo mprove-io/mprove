@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
@@ -30,10 +29,10 @@ export class DashboardEntity {
   hidden: common.BoolEnum;
 
   @Column({ type: constants.JSON })
-  fields: apiToBlockml.DashboardField[];
+  fields: common.DashboardField[];
 
   @Column({ type: constants.JSON })
-  reports: apiToBlockml.Report[];
+  reports: common.Report[];
 
   @Column({ type: constants.VARCHAR })
   temp: common.BoolEnum;

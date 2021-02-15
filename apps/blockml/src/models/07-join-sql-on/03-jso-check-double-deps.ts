@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -73,7 +72,7 @@ export function jsoCheckDoubleDeps(
               return;
             }
 
-            if (depField.fieldClass === apiToBlockml.FieldClassEnum.Filter) {
+            if (depField.fieldClass === common.FieldClassEnum.Filter) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_FILTER,
@@ -93,7 +92,7 @@ export function jsoCheckDoubleDeps(
               return;
             }
 
-            if (depField.fieldClass === apiToBlockml.FieldClassEnum.Measure) {
+            if (depField.fieldClass === common.FieldClassEnum.Measure) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE,
@@ -113,9 +112,7 @@ export function jsoCheckDoubleDeps(
               return;
             }
 
-            if (
-              depField.fieldClass === apiToBlockml.FieldClassEnum.Calculation
-            ) {
+            if (depField.fieldClass === common.FieldClassEnum.Calculation) {
               item.errors.push(
                 new BmError({
                   title: enums.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION,

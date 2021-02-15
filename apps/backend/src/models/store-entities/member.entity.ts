@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 
@@ -33,7 +32,7 @@ export class MemberEntity {
   timezone: string;
 
   @Column({ type: constants.USER_STATUS_VARCHAR })
-  status: apiToBackend.UserStatusEnum; // MemberStatusEnum
+  status: common.UserStatusEnum; // MemberStatusEnum
 
   @Column({ type: constants.VARCHAR })
   is_admin: common.BoolEnum;

@@ -7,7 +7,6 @@ import {
   ValidateNested
 } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { Connection } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendEditConnectionRequestPayload {
@@ -57,8 +56,8 @@ export class ToBackendEditConnectionRequest extends ToBackendRequest {
 
 export class ToBackendEditConnectionResponsePayload {
   @ValidateNested()
-  @Type(() => Connection)
-  connection: Connection;
+  @Type(() => common.Connection)
+  connection: common.Connection;
 }
 
 export class ToBackendEditConnectionResponse extends common.MyResponse {

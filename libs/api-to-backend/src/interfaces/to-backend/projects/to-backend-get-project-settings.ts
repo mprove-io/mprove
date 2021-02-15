@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { Project } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetProjectSettingsRequestPayload {
@@ -17,8 +16,8 @@ export class ToBackendGetProjectSettingsRequest extends ToBackendRequest {
 
 export class ToBackendGetProjectSettingsResponsePayload {
   @ValidateNested()
-  @Type(() => Project)
-  project: Project[];
+  @Type(() => common.Project)
+  project: common.Project[];
 }
 
 export class ToBackendGetProjectSettingsResponse extends common.MyResponse {

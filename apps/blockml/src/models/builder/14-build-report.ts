@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barReport } from '~blockml/barrels/bar-report';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
@@ -13,7 +12,7 @@ export async function buildReport<T extends types.dzType>(
     traceId: string;
     entities: T[];
     models: interfaces.Model[];
-    udfsDict: apiToBlockml.UdfsDict;
+    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     errors: BmError[];
     structId: string;

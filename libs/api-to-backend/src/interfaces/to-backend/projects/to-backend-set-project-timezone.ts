@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { Project } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendSetProjectTimezoneRequestPayload {
@@ -20,7 +19,7 @@ export class ToBackendSetProjectTimezoneRequest extends ToBackendRequest {
 
 export class ToBackendSetProjectTimezoneResponsePayload {
   @IsString()
-  project: Project;
+  project: common.Project;
 }
 
 export class ToBackendSetProjectTimezoneResponse extends common.MyResponse {

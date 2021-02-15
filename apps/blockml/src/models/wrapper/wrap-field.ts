@@ -1,21 +1,20 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 
 export function wrapField(item: {
-  wrappedFields: apiToBlockml.ModelField[];
+  wrappedFields: common.ModelField[];
   field: interfaces.FieldAny;
   alias: string;
   fileName: string;
-  children: apiToBlockml.ModelNode[];
-  node: apiToBlockml.ModelNode;
+  children: common.ModelNode[];
+  node: common.ModelNode;
 }) {
   let { wrappedFields, field, alias, fileName, children, node } = item;
 
   let fieldHidden = helper.toBoolean(field.hidden);
 
-  let modelField: apiToBlockml.ModelField = {
+  let modelField: common.ModelField = {
     id: `${alias}.${field.name}`,
     hidden: fieldHidden,
     label: field.label,
@@ -36,7 +35,7 @@ export function wrapField(item: {
 
   wrappedFields.push(modelField);
 
-  let fieldNode: apiToBlockml.ModelNode = {
+  let fieldNode: common.ModelNode = {
     id: `${alias}.${field.name}`,
     label: field.label,
     description: field.description,
@@ -54,14 +53,14 @@ export function wrapField(item: {
     if (common.isDefined(groupNode)) {
       groupNode.children.push(fieldNode);
     } else {
-      let newGroupNode: apiToBlockml.ModelNode = {
+      let newGroupNode: common.ModelNode = {
         id: `${alias}.${field.groupId}`,
         label: field.group_label,
         description: field.group_description,
         hidden: fieldHidden,
         isField: false,
         children: [fieldNode],
-        nodeClass: apiToBlockml.FieldClassEnum.Dimension
+        nodeClass: common.FieldClassEnum.Dimension
       };
 
       children.push(newGroupNode);

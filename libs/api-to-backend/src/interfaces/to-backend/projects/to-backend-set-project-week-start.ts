@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
-import { Project } from '~api-to-backend/interfaces/ints/_index';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendSetProjectWeekStartRequestPayload {
@@ -20,7 +19,7 @@ export class ToBackendSetProjectWeekStartRequest extends ToBackendRequest {
 
 export class ToBackendSetProjectWeekStartResponsePayload {
   @IsString()
-  project: Project;
+  project: common.Project;
 }
 
 export class ToBackendSetProjectWeekStartResponse extends common.MyResponse {

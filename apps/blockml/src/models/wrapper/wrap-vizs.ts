@@ -1,4 +1,4 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
+import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { wrapReports } from './wrap-reports';
@@ -12,9 +12,9 @@ export function wrapVizs(item: {
 }) {
   let { structId, orgId, projectId, models, vizs } = item;
 
-  let apiVizs: apiToBlockml.Viz[] = [];
-  let vizMconfigs: apiToBlockml.Mconfig[] = [];
-  let vizQueries: apiToBlockml.Query[] = [];
+  let apiVizs: common.Viz[] = [];
+  let vizMconfigs: common.Mconfig[] = [];
+  let vizQueries: common.Query[] = [];
 
   vizs.forEach(x => {
     let { apiReports, mconfigs, queries } = wrapReports({

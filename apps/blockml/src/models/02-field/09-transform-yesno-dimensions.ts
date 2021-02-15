@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -28,8 +27,8 @@ export function transformYesNoDimensions<T extends types.vmType>(
 
     x.fields.forEach(field => {
       if (
-        field.fieldClass === apiToBlockml.FieldClassEnum.Dimension &&
-        field.type === apiToBlockml.FieldTypeEnum.YesnoIsTrue
+        field.fieldClass === common.FieldClassEnum.Dimension &&
+        field.type === common.FieldTypeEnum.YesnoIsTrue
       ) {
         field.sql = `CASE WHEN (${field.sql}) IS TRUE THEN 'Yes' ELSE 'No' END`;
       }

@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -146,7 +145,7 @@ export function makeWith(item: {
         Object.keys(filt[asName]).forEach(fieldName => {
           let field = join.view.fields.find(f => f.name === fieldName);
 
-          if (field.result === apiToBlockml.FieldResultEnum.Ts) {
+          if (field.result === common.FieldResultEnum.Ts) {
             // no need to remove ${ } (no singles or doubles exists in _real of view dimensions)
             let sqlTimestampSelect = field.sqlTimestampReal;
             let sqlTimestampName = field.sqlTimestampName;
@@ -167,7 +166,7 @@ export function makeWith(item: {
         Object.keys(needsAll[asName]).forEach(fieldName => {
           let field = join.view.fields.find(f => f.name === fieldName);
 
-          if (field.fieldClass === apiToBlockml.FieldClassEnum.Dimension) {
+          if (field.fieldClass === common.FieldClassEnum.Dimension) {
             if (common.isDefined(field.unnest)) {
               flats[field.unnest] = 1;
             }

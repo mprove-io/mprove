@@ -1,7 +1,7 @@
-import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 
-export function wrapToApiUser(user: entities.UserEntity): apiToBackend.User {
+export function wrapToApiUser(user: entities.UserEntity): common.User {
   return {
     userId: user.user_id,
     email: user.email,

@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsString } from 'class-validator';
-import { common } from '~api-to-backend/barrels/common';
+import { enums } from '~common/barrels/enums';
 
 export class Connection {
   @IsString()
@@ -8,8 +8,8 @@ export class Connection {
   @IsString()
   connectionId: string;
 
-  @IsEnum(common.ConnectionTypeEnum)
-  type: common.ConnectionTypeEnum;
+  @IsEnum(enums.ConnectionTypeEnum)
+  type: enums.ConnectionTypeEnum;
 
   @IsString()
   bigqueryCredentials: string;

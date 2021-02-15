@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
-import { common } from '~api-to-backend/barrels/common';
+import { enums } from '~common/barrels/enums';
 
 export class Project {
   @IsString()
@@ -11,8 +11,8 @@ export class Project {
   @IsString()
   timezone: string;
 
-  @IsEnum(common.ProjectWeekStartEnum)
-  weekStart: common.ProjectWeekStartEnum;
+  @IsEnum(enums.ProjectWeekStartEnum)
+  weekStart: enums.ProjectWeekStartEnum;
 
   @IsBoolean()
   allowTimezones: boolean;

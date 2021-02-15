@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -32,7 +31,7 @@ export function checkCalculations<T extends types.vmType>(
     }
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Calculation) {
+      if (field.fieldClass !== common.FieldClassEnum.Calculation) {
         return;
       }
       if (
@@ -42,7 +41,7 @@ export function checkCalculations<T extends types.vmType>(
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.CALCULATION_SQL_MISSING_BLOCKML_REFERENCE,
-            message: `${apiToBlockml.FieldClassEnum.Calculation} ${enums.ParameterEnum.Sql} must have a BlockML reference`,
+            message: `${common.FieldClassEnum.Calculation} ${enums.ParameterEnum.Sql} must have a BlockML reference`,
             lines: [
               {
                 line: field.sql_line_num,

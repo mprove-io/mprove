@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barTimeframe } from '~blockml/barrels/bar-timeframe';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
@@ -37,7 +36,7 @@ export function transformTimes<T extends types.vmType>(
     let newFields: interfaces.FieldAny[] = [];
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Time) {
+      if (field.fieldClass !== common.FieldClassEnum.Time) {
         newFields.push(field);
         return;
       }
@@ -112,7 +111,7 @@ export function transformTimes<T extends types.vmType>(
         let sqlTransformed: string;
         let name: string;
         let label: string;
-        let result: apiToBlockml.FieldResultEnum;
+        let result: common.FieldResultEnum;
 
         switch (true) {
           case timeframe === enums.TimeframeEnum.DayOfWeek: {
@@ -125,7 +124,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.DayOfWeek;
+            result = common.FieldResultEnum.DayOfWeek;
             break;
           }
 
@@ -139,7 +138,7 @@ export function transformTimes<T extends types.vmType>(
               weekStart: item.weekStart
             });
 
-            result = apiToBlockml.FieldResultEnum.DayOfWeekIndex;
+            result = common.FieldResultEnum.DayOfWeekIndex;
             break;
           }
 
@@ -153,7 +152,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Number;
+            result = common.FieldResultEnum.Number;
             break;
           }
 
@@ -167,7 +166,7 @@ export function transformTimes<T extends types.vmType>(
               weekStart: item.weekStart
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -181,7 +180,7 @@ export function transformTimes<T extends types.vmType>(
               weekStart: item.weekStart
             });
 
-            result = apiToBlockml.FieldResultEnum.Number;
+            result = common.FieldResultEnum.Number;
             break;
           }
 
@@ -194,7 +193,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -207,7 +206,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Number;
+            result = common.FieldResultEnum.Number;
             break;
           }
 
@@ -220,7 +219,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -233,7 +232,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Number;
+            result = common.FieldResultEnum.Number;
             break;
           }
 
@@ -257,7 +256,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -270,7 +269,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -293,7 +292,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -306,7 +305,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -319,7 +318,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.MonthName;
+            result = common.FieldResultEnum.MonthName;
             break;
           }
 
@@ -332,7 +331,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Number;
+            result = common.FieldResultEnum.Number;
             break;
           }
 
@@ -345,7 +344,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -358,7 +357,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.QuarterOfYear;
+            result = common.FieldResultEnum.QuarterOfYear;
             break;
           }
 
@@ -371,7 +370,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -384,7 +383,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.String;
+            result = common.FieldResultEnum.String;
             break;
           }
 
@@ -397,7 +396,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Ts;
+            result = common.FieldResultEnum.Ts;
             break;
           }
 
@@ -410,7 +409,7 @@ export function transformTimes<T extends types.vmType>(
               connection: x.connection
             });
 
-            result = apiToBlockml.FieldResultEnum.Yesno;
+            result = common.FieldResultEnum.Yesno;
             break;
           }
 
@@ -444,7 +443,7 @@ export function transformTimes<T extends types.vmType>(
           sql: sqlTransformed,
           sql_line_num: field.sql_line_num,
 
-          type: apiToBlockml.FieldTypeEnum.Custom,
+          type: common.FieldTypeEnum.Custom,
           type_line_num: 0,
 
           result: result,
@@ -466,15 +465,13 @@ export function transformTimes<T extends types.vmType>(
           //
           name: name,
           name_line_num: field.name_line_num,
-          fieldClass: apiToBlockml.FieldClassEnum.Dimension,
+          fieldClass: common.FieldClassEnum.Dimension,
           // sqlReal: undefined,
           groupId: field.name,
           sqlTimestamp:
-            result === apiToBlockml.FieldResultEnum.Ts
-              ? sqlTimestamp
-              : undefined,
+            result === common.FieldResultEnum.Ts ? sqlTimestamp : undefined,
           sqlTimestampName:
-            result === apiToBlockml.FieldResultEnum.Ts
+            result === common.FieldResultEnum.Ts
               ? field.name + common.TRIPLE_UNDERSCORE + constants.TIMESTAMP
               : undefined
           // sqlTimestampReal: undefined,

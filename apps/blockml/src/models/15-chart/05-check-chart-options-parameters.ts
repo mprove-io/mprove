@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -167,21 +166,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.Interpolation &&
             [
-              apiToBlockml.ChartInterpolationEnum.Basis,
-              apiToBlockml.ChartInterpolationEnum.BasisClosed,
-              apiToBlockml.ChartInterpolationEnum.Bundle,
-              apiToBlockml.ChartInterpolationEnum.Cardinal,
-              apiToBlockml.ChartInterpolationEnum.CardinalClosed,
-              apiToBlockml.ChartInterpolationEnum.CatmullRomClosed,
-              apiToBlockml.ChartInterpolationEnum.CatmullRom,
-              apiToBlockml.ChartInterpolationEnum.Linear,
-              apiToBlockml.ChartInterpolationEnum.LinearClosed,
-              apiToBlockml.ChartInterpolationEnum.MonotoneX,
-              apiToBlockml.ChartInterpolationEnum.MonotoneY,
-              apiToBlockml.ChartInterpolationEnum.Natural,
-              apiToBlockml.ChartInterpolationEnum.Step,
-              apiToBlockml.ChartInterpolationEnum.StepAfter,
-              apiToBlockml.ChartInterpolationEnum.StepBefore
+              common.ChartInterpolationEnum.Basis,
+              common.ChartInterpolationEnum.BasisClosed,
+              common.ChartInterpolationEnum.Bundle,
+              common.ChartInterpolationEnum.Cardinal,
+              common.ChartInterpolationEnum.CardinalClosed,
+              common.ChartInterpolationEnum.CatmullRomClosed,
+              common.ChartInterpolationEnum.CatmullRom,
+              common.ChartInterpolationEnum.Linear,
+              common.ChartInterpolationEnum.LinearClosed,
+              common.ChartInterpolationEnum.MonotoneX,
+              common.ChartInterpolationEnum.MonotoneY,
+              common.ChartInterpolationEnum.Natural,
+              common.ChartInterpolationEnum.Step,
+              common.ChartInterpolationEnum.StepAfter,
+              common.ChartInterpolationEnum.StepBefore
             ].indexOf(report.options[parameter]) < 0
           ) {
             item.errors.push(
@@ -205,21 +204,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.ColorScheme &&
             [
-              apiToBlockml.ChartColorSchemeEnum.Air,
-              apiToBlockml.ChartColorSchemeEnum.Aqua,
-              apiToBlockml.ChartColorSchemeEnum.Cool,
-              apiToBlockml.ChartColorSchemeEnum.Fire,
-              apiToBlockml.ChartColorSchemeEnum.Flame,
-              apiToBlockml.ChartColorSchemeEnum.Forest,
-              apiToBlockml.ChartColorSchemeEnum.Horizon,
-              apiToBlockml.ChartColorSchemeEnum.Natural,
-              apiToBlockml.ChartColorSchemeEnum.Neons,
-              apiToBlockml.ChartColorSchemeEnum.Night,
-              apiToBlockml.ChartColorSchemeEnum.NightLights,
-              apiToBlockml.ChartColorSchemeEnum.Ocean,
-              apiToBlockml.ChartColorSchemeEnum.Picnic,
-              apiToBlockml.ChartColorSchemeEnum.Solar,
-              apiToBlockml.ChartColorSchemeEnum.Vivid
+              common.ChartColorSchemeEnum.Air,
+              common.ChartColorSchemeEnum.Aqua,
+              common.ChartColorSchemeEnum.Cool,
+              common.ChartColorSchemeEnum.Fire,
+              common.ChartColorSchemeEnum.Flame,
+              common.ChartColorSchemeEnum.Forest,
+              common.ChartColorSchemeEnum.Horizon,
+              common.ChartColorSchemeEnum.Natural,
+              common.ChartColorSchemeEnum.Neons,
+              common.ChartColorSchemeEnum.Night,
+              common.ChartColorSchemeEnum.NightLights,
+              common.ChartColorSchemeEnum.Ocean,
+              common.ChartColorSchemeEnum.Picnic,
+              common.ChartColorSchemeEnum.Solar,
+              common.ChartColorSchemeEnum.Vivid
             ].indexOf(report.options[parameter]) < 0
           ) {
             item.errors.push(
@@ -243,8 +242,8 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.SchemeType &&
             [
-              apiToBlockml.ChartSchemeTypeEnum.Linear,
-              apiToBlockml.ChartSchemeTypeEnum.Ordinal
+              common.ChartSchemeTypeEnum.Linear,
+              common.ChartSchemeTypeEnum.Ordinal
             ].indexOf(report.options[parameter]) < 0
           ) {
             item.errors.push(

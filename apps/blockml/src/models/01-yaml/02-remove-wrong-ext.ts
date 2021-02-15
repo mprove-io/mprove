@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -10,7 +9,7 @@ let func = enums.FuncEnum.RemoveWrongExt;
 
 export function removeWrongExt(
   item: {
-    files: apiToBlockml.File[];
+    files: common.BmlFile[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
@@ -22,7 +21,7 @@ export function removeWrongExt(
 
   let file2s: interfaces.File2[] = [];
 
-  item.files.forEach((x: apiToBlockml.File) => {
+  item.files.forEach((x: common.BmlFile) => {
     let fp = {
       path: x.path,
       content: x.content

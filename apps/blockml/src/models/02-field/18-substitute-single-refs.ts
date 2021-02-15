@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -33,7 +32,7 @@ export function substituteSingleRefs<T extends types.vmType>(
 
       switch (true) {
         // process dimensions (they can reference only dimensions - already checked)
-        case field.fieldClass === apiToBlockml.FieldClassEnum.Dimension: {
+        case field.fieldClass === common.FieldClassEnum.Dimension: {
           let dimension: interfaces.Dimension = field;
 
           // sqlReal
@@ -56,7 +55,7 @@ export function substituteSingleRefs<T extends types.vmType>(
           dimension.sqlReal = sqlReal;
 
           // sqlTimestampReal
-          if (dimension.result === apiToBlockml.FieldResultEnum.Ts) {
+          if (dimension.result === common.FieldResultEnum.Ts) {
             let sqlTimestampReal = dimension.sqlTimestamp; // init
 
             let reg2 = common.MyRegex.CAPTURE_SINGLE_REF();
@@ -79,7 +78,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         }
 
         // process measures of Models (they can reference only dimensions - already checked)
-        case field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+        case field.fieldClass === common.FieldClassEnum.Measure &&
           x.fileExt === common.FileExtensionEnum.Model: {
           let measure: interfaces.Measure = field;
 
@@ -105,10 +104,10 @@ export function substituteSingleRefs<T extends types.vmType>(
           // sqlKeyReal
           if (
             [
-              apiToBlockml.FieldTypeEnum.SumByKey,
-              apiToBlockml.FieldTypeEnum.AverageByKey,
-              apiToBlockml.FieldTypeEnum.MedianByKey,
-              apiToBlockml.FieldTypeEnum.PercentileByKey
+              common.FieldTypeEnum.SumByKey,
+              common.FieldTypeEnum.AverageByKey,
+              common.FieldTypeEnum.MedianByKey,
+              common.FieldTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init
@@ -133,7 +132,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         }
 
         // process measures of Views (they can reference only dimensions - already checked)
-        case field.fieldClass === apiToBlockml.FieldClassEnum.Measure &&
+        case field.fieldClass === common.FieldClassEnum.Measure &&
           x.fileExt === common.FileExtensionEnum.View: {
           let measure: interfaces.Measure = field;
 
@@ -156,10 +155,10 @@ export function substituteSingleRefs<T extends types.vmType>(
           // sqlKeyReal
           if (
             [
-              apiToBlockml.FieldTypeEnum.SumByKey,
-              apiToBlockml.FieldTypeEnum.AverageByKey,
-              apiToBlockml.FieldTypeEnum.MedianByKey,
-              apiToBlockml.FieldTypeEnum.PercentileByKey
+              common.FieldTypeEnum.SumByKey,
+              common.FieldTypeEnum.AverageByKey,
+              common.FieldTypeEnum.MedianByKey,
+              common.FieldTypeEnum.PercentileByKey
             ].indexOf(measure.type) > -1
           ) {
             let sqlKeyReal = measure.sql_key; // init
@@ -181,7 +180,7 @@ export function substituteSingleRefs<T extends types.vmType>(
         }
 
         // process calculations (they can reference anything - already checked)
-        case field.fieldClass === apiToBlockml.FieldClassEnum.Calculation: {
+        case field.fieldClass === common.FieldClassEnum.Calculation: {
           let calculation: interfaces.Calculation = field;
 
           // sqlReal
@@ -210,7 +209,7 @@ export function substituteSingleRefs<T extends types.vmType>(
 
               switch (true) {
                 case referenceField.fieldClass ===
-                  apiToBlockml.FieldClassEnum.Calculation: {
+                  common.FieldClassEnum.Calculation: {
                   sqlReal = common.MyRegex.replaceSingleRefs(
                     sqlReal,
                     reference,
@@ -222,7 +221,7 @@ export function substituteSingleRefs<T extends types.vmType>(
                 }
 
                 case referenceField.fieldClass ===
-                  apiToBlockml.FieldClassEnum.Dimension: {
+                  common.FieldClassEnum.Dimension: {
                   deps.push({
                     depName: reference,
                     depLineNum: calculation.sql_line_num
@@ -231,7 +230,7 @@ export function substituteSingleRefs<T extends types.vmType>(
                 }
 
                 case referenceField.fieldClass ===
-                  apiToBlockml.FieldClassEnum.Measure: {
+                  common.FieldClassEnum.Measure: {
                   deps.push({
                     depName: reference,
                     depLineNum: calculation.sql_line_num

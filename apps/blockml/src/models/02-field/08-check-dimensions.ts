@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
@@ -32,23 +31,22 @@ export function checkDimensions<T extends types.vmType>(
     }
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== apiToBlockml.FieldClassEnum.Dimension) {
+      if (field.fieldClass !== common.FieldClassEnum.Dimension) {
         return;
       }
 
       if (common.isUndefined(field.type)) {
-        field.type = apiToBlockml.FieldTypeEnum.Custom;
+        field.type = common.FieldTypeEnum.Custom;
         field.type_line_num = 0;
       } else if (
-        [
-          apiToBlockml.FieldTypeEnum.Custom,
-          apiToBlockml.FieldTypeEnum.YesnoIsTrue
-        ].indexOf(field.type) < 0
+        [common.FieldTypeEnum.Custom, common.FieldTypeEnum.YesnoIsTrue].indexOf(
+          field.type
+        ) < 0
       ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.WRONG_DIMENSION_TYPE,
-            message: `"${field.type}" is not valid type for ${apiToBlockml.FieldClassEnum.Dimension}`,
+            message: `"${field.type}" is not valid type for ${common.FieldClassEnum.Dimension}`,
             lines: [
               {
                 line: field.type_line_num,

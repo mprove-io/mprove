@@ -1,4 +1,3 @@
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { FilterBricksDictionary } from './filter-bricks-dictionary';
 import { ViewPart } from './view-part';
@@ -10,7 +9,7 @@ export interface VarsSql {
   sorts?: string;
   limit?: string;
   filters?: FilterBricksDictionary;
-  filtersFractions?: { [s: string]: apiToBlockml.Fraction[] };
+  filtersFractions?: { [s: string]: common.Fraction[] };
 
   depMeasures?: { [as: string]: { [fieldName: string]: number } };
   depDimensions?: { [as: string]: { [fieldName: string]: number } };

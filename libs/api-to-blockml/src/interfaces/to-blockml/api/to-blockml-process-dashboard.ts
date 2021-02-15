@@ -1,13 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
-import {
-  Dashboard,
-  DashboardField,
-  Mconfig,
-  Query,
-  UdfsDict
-} from '~api-to-blockml/interfaces/ints/_index';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlProcessDashboardRequestPayload {
@@ -24,8 +17,8 @@ export class ToBlockmlProcessDashboardRequestPayload {
   weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
-  @Type(() => UdfsDict)
-  udfsDict: UdfsDict;
+  @Type(() => common.UdfsDict)
+  udfsDict: common.UdfsDict;
 
   modelContents: any[];
 
@@ -35,8 +28,8 @@ export class ToBlockmlProcessDashboardRequestPayload {
   newDashboardId: string;
 
   @ValidateNested()
-  @Type(() => DashboardField)
-  newDashboardFields: DashboardField[];
+  @Type(() => common.DashboardField)
+  newDashboardFields: common.DashboardField[];
 }
 
 export class ToBlockmlProcessDashboardRequest extends ToBlockmlRequest {
@@ -47,16 +40,16 @@ export class ToBlockmlProcessDashboardRequest extends ToBlockmlRequest {
 
 export class ToBlockmlProcessDashboardResponsePayload {
   @ValidateNested()
-  @Type(() => Dashboard)
-  dashboard: Dashboard;
+  @Type(() => common.Dashboard)
+  dashboard: common.Dashboard;
 
   @ValidateNested()
-  @Type(() => Mconfig)
-  mconfigs: Mconfig[];
+  @Type(() => common.Mconfig)
+  mconfigs: common.Mconfig[];
 
   @ValidateNested()
-  @Type(() => Query)
-  queries: Query[];
+  @Type(() => common.Query)
+  queries: common.Query[];
 }
 
 export class ToBlockmlProcessDashboardResponse extends common.MyResponse {
