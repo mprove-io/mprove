@@ -25,9 +25,9 @@ export async function checkoutBranch(item: {
   }
 
   let okStatuses = [
-    apiToDisk.RepoStatusEnum.NeedPush,
-    apiToDisk.RepoStatusEnum.NeedPull,
-    apiToDisk.RepoStatusEnum.Ok
+    common.RepoStatusEnum.NeedPush,
+    common.RepoStatusEnum.NeedPull,
+    common.RepoStatusEnum.Ok
   ];
 
   if (okStatuses.indexOf(repoStatus) < 0) {

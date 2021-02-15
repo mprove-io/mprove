@@ -21,7 +21,7 @@ export async function pushToCentral(item: {
     })
   );
 
-  let okStatuses = [apiToDisk.RepoStatusEnum.NeedPush];
+  let okStatuses = [common.RepoStatusEnum.NeedPush];
 
   if (okStatuses.indexOf(repoStatus) < 0) {
     throw new common.ServerError({

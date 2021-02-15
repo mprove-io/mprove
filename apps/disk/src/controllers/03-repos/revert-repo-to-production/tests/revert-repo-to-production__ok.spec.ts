@@ -146,6 +146,6 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp1.payload.repoStatus, apiToDisk.RepoStatusEnum.Ok);
+  t.is(resp1.payload.repoStatus, common.RepoStatusEnum.Ok);
   t.is(resp2.payload.content, content1);
 });

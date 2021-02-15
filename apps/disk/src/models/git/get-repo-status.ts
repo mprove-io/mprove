@@ -1,5 +1,4 @@
 import * as nodegit from 'nodegit';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { disk } from '~disk/barrels/disk';
 import { interfaces } from '~disk/barrels/interfaces';
@@ -66,7 +65,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedResolve
   if (conflicts.length > 0) {
     return {
-      repoStatus: apiToDisk.RepoStatusEnum.NeedResolve,
+      repoStatus: common.RepoStatusEnum.NeedResolve,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -75,7 +74,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedCommit
   if (patchesTreeToIndex.length > 0) {
     return {
-      repoStatus: apiToDisk.RepoStatusEnum.NeedCommit,
+      repoStatus: common.RepoStatusEnum.NeedCommit,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -90,7 +89,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPush
   if (isBranchExistRemote === false) {
     return {
-      repoStatus: apiToDisk.RepoStatusEnum.NeedPush,
+      repoStatus: common.RepoStatusEnum.NeedPush,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -119,7 +118,7 @@ export async function getRepoStatus(item: {
   // RETURN Ok
   if (localCommitId === remoteOriginCommitId) {
     return {
-      repoStatus: apiToDisk.RepoStatusEnum.Ok,
+      repoStatus: common.RepoStatusEnum.Ok,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -128,7 +127,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPull
   if (localCommitId === baseCommitId) {
     return {
-      repoStatus: apiToDisk.RepoStatusEnum.NeedPull,
+      repoStatus: common.RepoStatusEnum.NeedPull,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -137,7 +136,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPush
   if (remoteOriginCommitId === baseCommitId) {
     return {
-      repoStatus: apiToDisk.RepoStatusEnum.NeedPush,
+      repoStatus: common.RepoStatusEnum.NeedPush,
       conflicts: conflicts,
       currentBranch: currentBranchName
     };
@@ -146,7 +145,7 @@ export async function getRepoStatus(item: {
   // RETURN NeedPull
   // diverged
   return {
-    repoStatus: apiToDisk.RepoStatusEnum.NeedPull,
+    repoStatus: common.RepoStatusEnum.NeedPull,
     conflicts: conflicts,
     currentBranch: currentBranchName
   };

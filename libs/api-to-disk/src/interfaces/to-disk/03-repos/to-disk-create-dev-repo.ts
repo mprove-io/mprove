@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
-import { enums } from '~api-to-disk/barrels/enums';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskCreateDevRepoRequestPayload {
@@ -34,8 +33,8 @@ export class ToDiskCreateDevRepoResponsePayload {
   @IsString()
   currentBranch: string;
 
-  @IsEnum(enums.RepoStatusEnum)
-  repoStatus: enums.RepoStatusEnum;
+  @IsEnum(common.RepoStatusEnum)
+  repoStatus: common.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)

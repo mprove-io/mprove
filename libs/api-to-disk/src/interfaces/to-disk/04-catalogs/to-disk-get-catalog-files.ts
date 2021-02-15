@@ -1,8 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
-import { enums } from '~api-to-disk/barrels/enums';
-import { DiskCatalogFile } from '~api-to-disk/interfaces/ints/disk-catalog-file';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
 export class ToDiskGetCatalogFilesRequestPayload {
@@ -38,16 +36,16 @@ export class ToDiskGetCatalogFilesResponsePayload {
   @IsString()
   currentBranch: string;
 
-  @IsEnum(enums.RepoStatusEnum)
-  repoStatus: enums.RepoStatusEnum;
+  @IsEnum(common.RepoStatusEnum)
+  repoStatus: common.RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => common.DiskFileLine)
   conflicts: common.DiskFileLine[];
 
   @ValidateNested()
-  @Type(() => DiskCatalogFile)
-  files: DiskCatalogFile[];
+  @Type(() => common.DiskCatalogFile)
+  files: common.DiskCatalogFile[];
 }
 
 export class ToDiskGetCatalogFilesResponse extends common.MyResponse {

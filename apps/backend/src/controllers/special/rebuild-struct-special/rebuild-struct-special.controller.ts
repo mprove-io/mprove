@@ -68,7 +68,7 @@ export class RebuildStructSpecialController {
         projectId: projectId,
         weekStart: weekStart,
         files: getCatalogFilesResponse.payload.files.map(
-          (f: apiToDisk.DiskCatalogFile) => {
+          (f: common.DiskCatalogFile) => {
             let file: apiToBlockml.File = {
               content: f.content,
               name: f.name,

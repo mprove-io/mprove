@@ -1,7 +1,7 @@
-import { apiToDisk } from '~disk/barrels/api-to-disk';
+import { common } from '~disk/barrels/common';
 
 export interface ItemCatalog {
-  files: apiToDisk.DiskCatalogFile[];
+  files: common.DiskCatalogFile[];
 
-  nodes: apiToDisk.DiskCatalogNode[];
+  nodes: common.DiskCatalogNode[];
 }

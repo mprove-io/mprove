@@ -1,6 +1,5 @@
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { interfaces } from '~disk/barrels/interfaces';
 
@@ -10,7 +9,7 @@ export async function getNodesAndFiles(item: {
   repoId: string;
   readFiles: boolean;
 }) {
-  let topNode: apiToDisk.DiskCatalogNode = {
+  let topNode: common.DiskCatalogNode = {
     id: item.projectId,
     name: item.projectId,
     isFolder: true,
@@ -48,18 +47,18 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   repoDirPathLength: number;
   readFiles: boolean;
 }) {
-  let files: apiToDisk.DiskCatalogFile[] = [];
+  let files: common.DiskCatalogFile[] = [];
 
-  let nodes: apiToDisk.DiskCatalogNode[] = [];
+  let nodes: common.DiskCatalogNode[] = [];
 
-  let folderNodes: apiToDisk.DiskCatalogNode[] = [];
-  let mdNodes: apiToDisk.DiskCatalogNode[] = [];
-  let dashboardNodes: apiToDisk.DiskCatalogNode[] = [];
-  let vizNodes: apiToDisk.DiskCatalogNode[] = [];
-  let modelNodes: apiToDisk.DiskCatalogNode[] = [];
-  let viewNodes: apiToDisk.DiskCatalogNode[] = [];
-  let udfNodes: apiToDisk.DiskCatalogNode[] = [];
-  let otherNodes: apiToDisk.DiskCatalogNode[] = [];
+  let folderNodes: common.DiskCatalogNode[] = [];
+  let mdNodes: common.DiskCatalogNode[] = [];
+  let dashboardNodes: common.DiskCatalogNode[] = [];
+  let vizNodes: common.DiskCatalogNode[] = [];
+  let modelNodes: common.DiskCatalogNode[] = [];
+  let viewNodes: common.DiskCatalogNode[] = [];
+  let udfNodes: common.DiskCatalogNode[] = [];
+  let otherNodes: common.DiskCatalogNode[] = [];
 
   let fileNames: string[] = <string[]>await fse.readdir(item.dir);
 
@@ -145,7 +144,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
           let content = <string>await fse.readFile(fileAbsolutePath, 'utf8');
 
-          let file: apiToDisk.DiskCatalogFile = {
+          let file: common.DiskCatalogFile = {
             projectId: item.projectId,
             repoId: item.repoId,
             fileId: fileId,
@@ -161,7 +160,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
     }
   });
 
-  const sortNodes = (elements: apiToDisk.DiskCatalogNode[]) =>
+  const sortNodes = (elements: common.DiskCatalogNode[]) =>
     elements.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 
   nodes = [

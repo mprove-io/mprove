@@ -62,5 +62,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.payload.repoStatus, apiToDisk.RepoStatusEnum.NeedCommit);
+  t.is(resp.payload.repoStatus, common.RepoStatusEnum.NeedCommit);
 });
