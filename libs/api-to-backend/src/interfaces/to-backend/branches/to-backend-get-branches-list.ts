@@ -17,9 +17,18 @@ export class ToBackendGetBranchesListRequest extends ToBackendRequest {
   payload: ToBackendGetBranchesListRequestPayload;
 }
 
+export class ToBackendGetBranchesListResponsePayloadBranchesItem {
+  @IsString()
+  repoId: string;
+
+  @IsString()
+  branchId: string;
+}
+
 export class ToBackendGetBranchesListResponsePayload {
-  @IsString({ each: true })
-  branchIds: string[];
+  @ValidateNested()
+  @Type(() => ToBackendGetBranchesListResponsePayloadBranchesItem)
+  branchesList: ToBackendGetBranchesListResponsePayloadBranchesItem[];
 }
 
 export class ToBackendGetBranchesListResponse extends common.MyResponse {

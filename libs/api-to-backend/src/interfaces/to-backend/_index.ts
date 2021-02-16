@@ -16,3 +16,4 @@ export * from './to-backend-request';
 export * from './to-backend-request-info';
 export * from './users/_index';
 export * from './views/_index';
+export * from './vizs/_index';

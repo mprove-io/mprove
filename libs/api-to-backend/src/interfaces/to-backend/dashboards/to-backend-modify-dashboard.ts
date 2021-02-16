@@ -20,7 +20,7 @@ export class ToBackendModifyDashboardRequestPayload {
   dashboardId: string;
 
   @IsString()
-  dashboardFileText: string;
+  dashboardFileReportText: string;
 }
 
 export class ToBackendModifyDashboardRequest extends ToBackendRequest {
