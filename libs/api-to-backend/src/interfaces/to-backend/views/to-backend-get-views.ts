@@ -11,6 +11,9 @@ export class ToBackendGetViewsRequestPayload {
   projectId: string;
 
   @IsString()
+  repoId: string;
+
+  @IsString()
   branchId: string;
 }
 

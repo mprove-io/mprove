@@ -16,6 +16,9 @@ export class ToBackendGetModelsListRequestPayload {
   projectId: string;
 
   @IsString()
+  repoId: string;
+
+  @IsString()
   branchId: string;
 }
 

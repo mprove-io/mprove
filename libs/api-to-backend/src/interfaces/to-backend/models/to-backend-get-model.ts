@@ -11,6 +11,9 @@ export class ToBackendGetModelRequestPayload {
   projectId: string;
 
   @IsString()
+  repoId: string;
+
+  @IsString()
   branchId: string;
 
   @IsString()
@@ -26,7 +29,7 @@ export class ToBackendGetModelRequest extends ToBackendRequest {
 export class ToBackendGetModelResponsePayload {
   @ValidateNested()
   @Type(() => common.Model)
-  model: common.Model[];
+  model: common.Model;
 }
 
 export class ToBackendGetModelResponse extends common.MyResponse {
