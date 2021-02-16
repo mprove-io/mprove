@@ -6,7 +6,6 @@ export const appEntities = [
   entities.ModelEntity,
   entities.QueryEntity,
   entities.StructEntity,
-  entities.ViewEntity,
   entities.VizEntity,
   entities.BranchEntity,
   entities.ConnectionEntity,

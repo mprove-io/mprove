@@ -14,6 +14,9 @@ export class StructEntity {
   errors: common.BmlError[];
 
   @Column({ type: constants.JSON })
+  views: common.View[];
+
+  @Column({ type: constants.JSON })
   udfs_dict: common.UdfsDict;
 
   @Column({ type: constants.BIGINT })
