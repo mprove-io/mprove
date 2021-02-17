@@ -18,5 +18,6 @@ export const appControllers = [
   controllers.CreateOrgController,
   controllers.GetOrgsListController,
   controllers.GetOrgController,
-  controllers.IsOrgExistController
+  controllers.IsOrgExistController,
+  controllers.SetOrgInfoController
 ];

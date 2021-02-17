@@ -10,6 +10,7 @@ export async function modifyRecords(item: {
   // skipChunk?: boolean;
   records: {
     users?: entities.UserEntity[];
+    orgs?: entities.OrgEntity[];
     // projects?: entities.ProjectEntity[];
     // repos?: entities.RepoEntity[];
     // files?: entities.FileEntity[];
@@ -48,6 +49,7 @@ export async function modifyRecords(item: {
   // }
 
   let users = records.users;
+  let orgs = records.orgs;
   // let projects = records.projects;
   // let repos = records.repos;
   // let files = records.files;
@@ -136,6 +138,10 @@ export async function modifyRecords(item: {
   //     .save(errors)
   //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_SAVE));
   // }
+
+  if (common.isDefined(orgs) && orgs.length > 0) {
+    await manager.getCustomRepository(repositories.OrgsRepository).save(orgs);
+  }
 
   if (common.isDefined(members) && members.length > 0) {
     await manager

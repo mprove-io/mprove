@@ -15,6 +15,12 @@ export class OrgEntity {
   @Column({ unique: true, type: constants.VARCHAR })
   name: string;
 
+  @Column({ type: constants.VARCHAR, nullable: true })
+  company_size: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  contact_phone: string;
+
   @Column({ type: constants.BIGINT })
   server_ts: string;
 }
