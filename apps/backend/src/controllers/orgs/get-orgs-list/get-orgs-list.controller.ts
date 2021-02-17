@@ -1,17 +1,14 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection, In } from 'typeorm';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { RabbitService } from '~backend/services/rabbit.service';
 
 @Controller()
 export class GetOrgsListController {
   constructor(
-    private connection: Connection,
-    private rabbitService: RabbitService,
     private membersRepository: repositories.MembersRepository,
     private projectsRepository: repositories.ProjectsRepository,
     private orgsRepository: repositories.OrgsRepository

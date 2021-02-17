@@ -15,5 +15,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendUpdateUserPassword = 'ToBackendUpdateUserPassword',
   //
   ToBackendCreateOrg = 'ToBackendCreateOrg',
-  ToBackendGetOrgsList = 'ToBackendGetOrgsList'
+  ToBackendGetOrgsList = 'ToBackendGetOrgsList',
+  ToBackendGetOrg = 'ToBackendGetOrg'
 }
