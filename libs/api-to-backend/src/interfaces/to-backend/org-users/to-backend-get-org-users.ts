@@ -16,10 +16,7 @@ export class ToBackendGetOrgUsersRequest extends ToBackendRequest {
 
 export class OrgUsersItem {
   @IsString()
-  avatarUrlSmall: string;
-
-  @IsString()
-  avatarUrlBig: string;
+  avatarSmall: string;
 
   @IsString()
   email: string;

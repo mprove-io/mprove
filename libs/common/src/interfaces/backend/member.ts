@@ -21,10 +21,7 @@ export class Member {
   lastName: string;
 
   @IsString()
-  avatarUrlSmall: string;
-
-  @IsString()
-  avatarUrlBig: string;
+  avatarSmall: string;
 
   @IsString()
   timezone: string;

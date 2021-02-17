@@ -17,9 +17,10 @@ export const USER_EMAIL_VARCHAR = 'varchar';
 export const USER_ALIAS_VARCHAR = 'varchar';
 export const USER_FIRST_NAME_VARCHAR = 'varchar';
 export const USER_LAST_NAME_VARCHAR = 'varchar';
-export const USER_AVATAR_URL_SMALL_VARCHAR = 'varchar';
-export const USER_AVATAR_URL_BIG_VARCHAR = 'varchar';
 export const USER_STATUS_VARCHAR = 'varchar';
+
+export const AVATAR_SMALL_MEDIUMBLOB = 'mediumblob';
+export const AVATAR_BIG_MEDIUMBLOB = 'mediumblob';
 
 export const TIMEZONE_VARCHAR = 'varchar';
 

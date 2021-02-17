@@ -24,8 +24,6 @@ export function makeUser(item: {
     alias: item.alias,
     first_name: null,
     last_name: null,
-    avatar_url_small: undefined,
-    avatar_url_big: undefined,
     timezone: common.USE_PROJECT_DEFAULT_TIMEZONE,
     status: common.UserStatusEnum.Pending,
     server_ts: undefined

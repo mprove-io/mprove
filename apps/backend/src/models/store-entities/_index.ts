@@ -1,3 +1,4 @@
+export * from './avatar.entity';
 export * from './branch.entity';
 export * from './connection.entity';
 export * from './member.entity';

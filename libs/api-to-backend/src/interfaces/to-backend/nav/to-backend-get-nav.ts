@@ -25,6 +25,9 @@ export class ToBackendGetNavRequest extends ToBackendRequest {
 
 export class ToBackendGetNavResponsePayload {
   @IsString()
+  avatarSmall: string;
+
+  @IsString()
   orgId: string;
 
   @IsString()
@@ -35,9 +38,6 @@ export class ToBackendGetNavResponsePayload {
 
   @IsString()
   branchId: string;
-
-  @IsString()
-  avatarSmall: string;
 }
 
 export class ToBackendGetNavResponse extends common.MyResponse {

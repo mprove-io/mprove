@@ -18,12 +18,6 @@ export class User {
   lastName: string;
 
   @IsString()
-  avatarUrlSmall: string;
-
-  @IsString()
-  avatarUrlBig: string;
-
-  @IsString()
   timezone: string;
 
   @IsEnum(enums.UserStatusEnum)

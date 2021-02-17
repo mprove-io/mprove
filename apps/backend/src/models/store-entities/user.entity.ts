@@ -37,12 +37,6 @@ export class UserEntity {
   @Column({ type: constants.USER_LAST_NAME_VARCHAR, nullable: true })
   last_name: string;
 
-  @Column({ type: constants.USER_AVATAR_URL_SMALL_VARCHAR, nullable: true })
-  avatar_url_small: string;
-
-  @Column({ type: constants.USER_AVATAR_URL_BIG_VARCHAR, nullable: true })
-  avatar_url_big: string;
-
   @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 

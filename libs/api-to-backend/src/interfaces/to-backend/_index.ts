@@ -1,3 +1,4 @@
+export * from './avatars/_index';
 export * from './branches/_index';
 export * from './catalogs/_index';
 export * from './connections/_index';
