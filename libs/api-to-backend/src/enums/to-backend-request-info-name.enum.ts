@@ -16,5 +16,6 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendCreateOrg = 'ToBackendCreateOrg',
   ToBackendGetOrgsList = 'ToBackendGetOrgsList',
-  ToBackendGetOrg = 'ToBackendGetOrg'
+  ToBackendGetOrg = 'ToBackendGetOrg',
+  ToBackendIsOrgExist = 'ToBackendIsOrgExist'
 }
