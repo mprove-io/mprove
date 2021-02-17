@@ -7,6 +7,7 @@ export * from './folders/_index';
 export * from './mconfigs/_index';
 export * from './members/_index';
 export * from './models/_index';
+export * from './nav/_index';
 export * from './org-users/_index';
 export * from './orgs/_index';
 export * from './projects/_index';
