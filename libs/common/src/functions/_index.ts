@@ -1,3 +1,4 @@
+export * from './bool-enum-to-boolean';
 export * from './capitalize-first-letter';
 export * from './get-common.config';
 export * from './handle-error';

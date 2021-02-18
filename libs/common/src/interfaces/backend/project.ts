@@ -3,6 +3,9 @@ import { enums } from '~common/barrels/enums';
 
 export class Project {
   @IsString()
+  orgId: string;
+
+  @IsString()
   projectId: string;
 
   @IsString()

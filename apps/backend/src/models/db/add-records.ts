@@ -11,7 +11,7 @@ export async function addRecords(item: {
   records: {
     users?: entities.UserEntity[];
     orgs?: entities.OrgEntity[];
-    // projects?: entities.ProjectEntity[];
+    projects?: entities.ProjectEntity[];
     // repos?: entities.RepoEntity[];
     // files?: entities.FileEntity[];
     // queries?: entities.QueryEntity[];
@@ -50,7 +50,7 @@ export async function addRecords(item: {
 
   let users = records.users;
   let orgs = records.orgs;
-  // let projects = records.projects;
+  let projects = records.projects;
   // let repos = records.repos;
   // let files = records.files;
   // let queries = records.queries;
@@ -71,93 +71,9 @@ export async function addRecords(item: {
     await manager.getCustomRepository(repositories.OrgsRepository).insert(orgs);
   }
 
-  // if (projects && projects.length > 0) {
-  //   let storeProjects = getProjectsRepo(manager);
-
-  //   await storeProjects
-  //     .insert(projects)
-  //     .catch(e =>
-  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_PROJECTS_INSERT)
-  //     );
-  // }
-
-  // if (repos && repos.length > 0) {
-  //   let storeRepos = getReposRepo(manager);
-
-  //   await storeRepos
-  //     .insert(repos)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_REPOS_INSERT));
-  // }
-
-  // if (files && files.length > 0) {
-  //   let storeFiles = getFilesRepo(manager);
-
-  //   await storeFiles
-  //     .insert(files)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_FILES_INSERT));
-  // }
-
-  // if (queries && queries.length > 0) {
-  //   let storeQueries = getQueriesRepo(manager);
-
-  //   await storeQueries
-  //     .insert(queries)
-  //     .catch(e =>
-  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_QUERIES_INSERT)
-  //     );
-  // }
-
-  // if (models && models.length > 0) {
-  //   let storeModels = getModelsRepo(manager);
-
-  //   await storeModels
-  //     .insert(models)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_MODELS_INSERT));
-  // }
-
-  // if (views && views.length > 0) {
-  //   let storeViews = getViewsRepo(manager);
-
-  //   await storeViews
-  //     .insert(views)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_VIEWS_INSERT));
-  // }
-
-  // if (mconfigs && mconfigs.length > 0) {
-  //   let storeMconfigs = getMconfigsRepo(manager);
-
-  //   await storeMconfigs
-  //     .insert(mconfigs)
-  //     .catch(e =>
-  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_MCONFIGS_INSERT)
-  //     );
-  // }
-
-  // if (dashboards && dashboards.length > 0) {
-  //   let storeDashboards = getDashboardsRepo(manager);
-
-  //   await storeDashboards
-  //     .insert(dashboards)
-  //     .catch(e =>
-  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_DASHBOARDS_INSERT)
-  //     );
-  // }
-
-  // if (errors && errors.length > 0) {
-  //   let storeErrors = getErrorsRepo(manager);
-
-  //   await storeErrors
-  //     .insert(errors)
-  //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_ERRORS_INSERT));
-  // }
-
-  // if (members && members.length > 0) {
-  //   let storeMembers = getMembersRepo(manager);
-
-  //   await storeMembers
-  //     .insert(members)
-  //     .catch(e =>
-  //       helper.reThrow(e, enums.storeErrorsEnum.STORE_MEMBERS_INSERT)
-  //     );
-  // }
+  if (common.isDefined(projects) && projects.length > 0) {
+    await manager
+      .getCustomRepository(repositories.ProjectsRepository)
+      .insert(projects);
+  }
 }
