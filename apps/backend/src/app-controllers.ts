@@ -22,5 +22,6 @@ export const appControllers = [
   controllers.SetOrgInfoController,
   controllers.SetOrgOwnerController,
 
-  controllers.CreateProjectController
+  controllers.CreateProjectController,
+  controllers.IsProjectExistController
 ];
