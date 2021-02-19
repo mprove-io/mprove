@@ -14,18 +14,10 @@ export class ToBackendGetProjectsListRequest extends ToBackendRequest {
   payload: ToBackendGetProjectsListRequestPayload;
 }
 
-export class ToBackendGetProjectsListResponsePayloadProjectsItem {
-  @IsString()
-  projectId: string;
-
-  @IsString()
-  name: string;
-}
-
 export class ToBackendGetProjectsListResponsePayload {
   @ValidateNested()
-  @Type(() => ToBackendGetProjectsListResponsePayloadProjectsItem)
-  projectsList: ToBackendGetProjectsListResponsePayloadProjectsItem[];
+  @Type(() => common.ProjectsItem)
+  projectsList: common.ProjectsItem[];
 }
 
 export class ToBackendGetProjectsListResponse extends common.MyResponse {
