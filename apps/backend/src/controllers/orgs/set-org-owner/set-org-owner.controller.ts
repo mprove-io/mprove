@@ -7,11 +7,12 @@ import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { IsOrgOwnerService } from '~backend/services/is-org-owner.service';
 
 @Controller()
 export class SetOrgOwnerController {
   constructor(
-    private orgsRepository: repositories.OrgsRepository,
+    private isOrgOwnerService: IsOrgOwnerService,
     private usersRepository: repositories.UsersRepository,
     private connection: Connection
   ) {}
@@ -24,15 +25,10 @@ export class SetOrgOwnerController {
   ) {
     let { orgId, ownerEmail } = reqValid.payload;
 
-    let org = await this.orgsRepository.findOne({
-      org_id: orgId
+    let org = await this.isOrgOwnerService.getOrg({
+      orgId: orgId,
+      userId: user.user_id
     });
-
-    if (org.owner_id !== user.user_id) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_ORG
-      });
-    }
 
     let newOwner = await this.usersRepository.findOne({
       email: ownerEmail,

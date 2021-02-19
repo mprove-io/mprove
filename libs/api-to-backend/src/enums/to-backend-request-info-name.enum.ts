@@ -23,5 +23,6 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendCreateProject = 'ToBackendCreateProject',
   ToBackendIsProjectExist = 'ToBackendIsProjectExist',
+  ToBackendGetProject = 'ToBackendGetProject',
   ToBackendGetProjectsList = 'ToBackendGetProjectsList'
 }

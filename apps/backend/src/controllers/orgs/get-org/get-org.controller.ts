@@ -1,14 +1,13 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { IsOrgOwnerService } from '~backend/services/is-org-owner.service';
 
 @Controller()
 export class GetOrgController {
-  constructor(private orgsRepository: repositories.OrgsRepository) {}
+  constructor(private isOrgOwnerService: IsOrgOwnerService) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg)
   async getOrg(
@@ -18,15 +17,10 @@ export class GetOrgController {
   ) {
     let { orgId } = reqValid.payload;
 
-    let org = await this.orgsRepository.findOne({
-      org_id: orgId
+    let org = await this.isOrgOwnerService.getOrg({
+      orgId: orgId,
+      userId: user.user_id
     });
-
-    if (org.owner_id !== user.user_id) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_ORG
-      });
-    }
 
     let payload: apiToBackend.ToBackendGetOrgResponsePayload = {
       org: wrapper.wrapToApiOrg(org)
