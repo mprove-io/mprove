@@ -17,7 +17,7 @@ export class ToBackendGetProjectRequest extends ToBackendRequest {
 export class ToBackendGetProjectResponsePayload {
   @ValidateNested()
   @Type(() => common.Project)
-  project: common.Project[];
+  project: common.Project;
 }
 
 export class ToBackendGetProjectResponse extends common.MyResponse {

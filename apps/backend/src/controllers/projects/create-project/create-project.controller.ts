@@ -10,6 +10,7 @@ import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { OrgsService } from '~backend/services/orgs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @Controller()
@@ -17,7 +18,8 @@ export class CreateProjectController {
   constructor(
     private connection: Connection,
     private rabbitService: RabbitService,
-    private orgsRepository: repositories.OrgsRepository
+    private orgsService: OrgsService,
+    private projectsRepository: repositories.ProjectsRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject)
@@ -28,11 +30,13 @@ export class CreateProjectController {
   ) {
     let { name, orgId } = reqValid.payload;
 
-    let org = await this.orgsRepository.findOne({ org_id: orgId });
+    let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
-    if (common.isUndefined(org)) {
+    let project = await this.projectsRepository.findOne({ name: name });
+
+    if (common.isDefined(project)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ORG_IS_NOT_EXIST
+        message: apiToBackend.ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
       });
     }
 

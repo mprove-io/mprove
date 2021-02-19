@@ -4,11 +4,12 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { OrgsService } from '~backend/services/orgs.service';
 
 @Controller()
 export class IsProjectExistController {
   constructor(
-    private orgsRepository: repositories.OrgsRepository,
+    private orgsService: OrgsService,
     private projectsRepository: repositories.ProjectsRepository
   ) {}
 
@@ -20,13 +21,7 @@ export class IsProjectExistController {
   ) {
     let { name, orgId } = reqValid.payload;
 
-    let org = await this.orgsRepository.findOne({ org_id: orgId });
-
-    if (common.isUndefined(org)) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ORG_IS_NOT_EXIST
-      });
-    }
+    let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
     let project = await this.projectsRepository.findOne({ name: name });
 

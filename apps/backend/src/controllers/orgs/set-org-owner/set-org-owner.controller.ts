@@ -7,12 +7,12 @@ import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { IsOrgOwnerService } from '~backend/services/is-org-owner.service';
+import { OrgsService } from '~backend/services/orgs.service';
 
 @Controller()
 export class SetOrgOwnerController {
   constructor(
-    private isOrgOwnerService: IsOrgOwnerService,
+    private orgsService: OrgsService,
     private usersRepository: repositories.UsersRepository,
     private connection: Connection
   ) {}
@@ -25,8 +25,10 @@ export class SetOrgOwnerController {
   ) {
     let { orgId, ownerEmail } = reqValid.payload;
 
-    let org = await this.isOrgOwnerService.getOrg({
-      orgId: orgId,
+    let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
+
+    await this.orgsService.checkUserIsOrgOwner({
+      org: org,
       userId: user.user_id
     });
 
@@ -37,7 +39,7 @@ export class SetOrgOwnerController {
 
     if (common.isUndefined(newOwner)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_NEW_OWNER_IS_NOT_FOUND
+        message: apiToBackend.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND
       });
     }
 

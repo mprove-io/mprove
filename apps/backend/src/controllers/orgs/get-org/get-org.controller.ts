@@ -3,11 +3,11 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { IsOrgOwnerService } from '~backend/services/is-org-owner.service';
+import { OrgsService } from '~backend/services/orgs.service';
 
 @Controller()
 export class GetOrgController {
-  constructor(private isOrgOwnerService: IsOrgOwnerService) {}
+  constructor(private orgsService: OrgsService) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg)
   async getOrg(
@@ -17,8 +17,10 @@ export class GetOrgController {
   ) {
     let { orgId } = reqValid.payload;
 
-    let org = await this.isOrgOwnerService.getOrg({
-      orgId: orgId,
+    let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
+
+    await this.orgsService.checkUserIsOrgOwner({
+      org: org,
       userId: user.user_id
     });
 

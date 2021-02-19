@@ -15,9 +15,7 @@ export class IsOrgExistController {
   ) {
     let { name } = reqValid.payload;
 
-    let org = await this.orgsRepository.findOne({
-      name: name
-    });
+    let org = await this.orgsRepository.findOne({ name: name });
 
     let payload: apiToBackend.ToBackendIsOrgExistResponsePayload = {
       isExist: common.isDefined(org)

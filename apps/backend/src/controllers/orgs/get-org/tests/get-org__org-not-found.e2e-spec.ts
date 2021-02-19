@@ -55,5 +55,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, apiToBackend.ErEnum.BACKEND_ORG_NOT_FOUND);
+  t.is(resp.info.error.message, apiToBackend.ErEnum.BACKEND_ORG_DOES_NOT_EXIST);
 });

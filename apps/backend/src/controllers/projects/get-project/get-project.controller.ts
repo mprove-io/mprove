@@ -1,39 +1,35 @@
-// import { Controller, Post } from '@nestjs/common';
-// import { apiToBackend } from '~backend/barrels/api-to-backend';
-// import { common } from '~backend/barrels/common';
-// import { entities } from '~backend/barrels/entities';
-// import { repositories } from '~backend/barrels/repositories';
-// import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { Controller, Post } from '@nestjs/common';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { entities } from '~backend/barrels/entities';
+import { wrapper } from '~backend/barrels/wrapper';
+import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { ProjectsService } from '~backend/services/projects.service';
 
-// @Controller()
-// export class GetProjectController {
-//   constructor(
-//     private orgsRepository: repositories.OrgsRepository,
-//     private projectsRepository: repositories.ProjectsRepository
-//   ) {}
+@Controller()
+export class GetProjectController {
+  constructor(private projectsService: ProjectsService) {}
 
-//   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject)
-//   async getProject(
-//     @AttachUser() user: entities.UserEntity,
-//     @ValidateRequest(apiToBackend.ToBackendGetProjectRequest)
-//     reqValid: apiToBackend.ToBackendGetProjectRequest
-//   ) {
-//     let { projectId } = reqValid.payload;
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject)
+  async getProject(
+    @AttachUser() user: entities.UserEntity,
+    @ValidateRequest(apiToBackend.ToBackendGetProjectRequest)
+    reqValid: apiToBackend.ToBackendGetProjectRequest
+  ) {
+    let { projectId } = reqValid.payload;
 
-//     let project = await this.orgsRepository.findOne({ org_id: orgId });
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
 
-//     if (common.isUndefined(org)) {
-//       throw new common.ServerError({
-//         message: apiToBackend.ErEnum.BACKEND_ORG_IS_NOT_EXIST
-//       });
-//     }
+    await this.projectsService.checkUserIsProjectAdmin({
+      projectId: projectId,
+      userId: user.user_id
+    });
 
-//     let project = await this.projectsRepository.findOne({ name: name });
+    let payload: apiToBackend.ToBackendGetProjectResponsePayload = {
+      project: wrapper.wrapToApiProject(project)
+    };
 
-//     let payload: apiToBackend.ToBackendGetProjectResponsePayload = {
-//       isExist: common.isDefined(project)
-//     };
-
-//     return payload;
-//   }
-// }
+    return payload;
+  }
+}

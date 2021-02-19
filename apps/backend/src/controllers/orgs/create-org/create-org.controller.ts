@@ -32,7 +32,7 @@ export class CreateOrgController {
 
     if (common.isDefined(org)) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ORG_ALREADY_EXIST
+        message: apiToBackend.ErEnum.BACKEND_ORG_ALREADY_EXISTS
       });
     }
 

@@ -5,12 +5,12 @@ import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { IsOrgOwnerService } from '~backend/services/is-org-owner.service';
+import { OrgsService } from '~backend/services/orgs.service';
 
 @Controller()
 export class SetOrgInfoController {
   constructor(
-    private isOrgOwnerService: IsOrgOwnerService,
+    private orgsService: OrgsService,
     private connection: Connection
   ) {}
 
@@ -22,8 +22,10 @@ export class SetOrgInfoController {
   ) {
     let { orgId, companySize, contactPhone } = reqValid.payload;
 
-    let org = await this.isOrgOwnerService.getOrg({
-      orgId: orgId,
+    let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
+
+    await this.orgsService.checkUserIsOrgOwner({
+      org: org,
       userId: user.user_id
     });
 

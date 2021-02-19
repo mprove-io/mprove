@@ -6,13 +6,16 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { interfaces } from './barrels/interfaces';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { IsOrgOwnerService } from './services/is-org-owner.service';
+import { OrgsService } from './services/orgs.service';
+import { ProjectsService } from './services/projects.service';
 import { RabbitService } from './services/rabbit.service';
 import { UsersService } from './services/users.service';
 
 export const appProviders = [
   RabbitService,
   UsersService,
+  OrgsService,
+  ProjectsService,
   {
     provide: APP_FILTER,
     useFactory: async (configService: ConfigService<interfaces.Config>) =>
@@ -29,6 +32,5 @@ export const appProviders = [
     provide: APP_INTERCEPTOR,
     useClass: AppInterceptor,
     inject: [ConfigService]
-  },
-  IsOrgOwnerService
+  }
 ];
