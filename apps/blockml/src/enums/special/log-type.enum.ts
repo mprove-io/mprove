@@ -12,6 +12,8 @@ export enum LogTypeEnum {
   Models = 'out_models.log',
   Ds = 'out_dashboards.log',
   Vizs = 'out_vizs.log',
+  Confs = 'out_confs.log',
+  ProjectConf = 'out_project_conf.log',
   Entities = 'out_entities.log',
   UdfsDict = 'out_udfs_dict.log'
 }

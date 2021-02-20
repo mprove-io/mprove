@@ -10,6 +10,7 @@ export * from './field-types/filter';
 export * from './field-types/measure';
 export * from './field-types/time';
 export * from './field/field-any';
+export * from './file-types/conf';
 export * from './file-types/dashboard';
 export * from './file-types/model';
 export * from './file-types/udf';

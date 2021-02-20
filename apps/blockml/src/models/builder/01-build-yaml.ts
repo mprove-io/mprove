@@ -10,7 +10,6 @@ export function buildYaml(
     errors: BmError[];
     files: common.BmlFile[];
     structId: string;
-    weekStart: common.ProjectWeekStartEnum;
     connections: common.ProjectConnection[];
     caller: enums.CallerEnum;
   },
@@ -21,6 +20,7 @@ export function buildYaml(
   let models: interfaces.Model[];
   let dashboards: interfaces.Dashboard[];
   let vizs: interfaces.Viz[];
+  let confs: interfaces.Conf[];
 
   let file2s: interfaces.File2[] = barYaml.removeWrongExt(
     {
@@ -118,12 +118,24 @@ export function buildYaml(
   models = splitFilesResult.models;
   dashboards = splitFilesResult.dashboards;
   vizs = splitFilesResult.vizs;
+  confs = splitFilesResult.confs;
+
+  let projectConf = barYaml.checkProjectConf(
+    {
+      confs: confs,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
 
   return {
     udfs: udfs,
     views: views,
     models: models,
     dashboards: dashboards,
-    vizs: vizs
+    vizs: vizs,
+    projectConf: projectConf
   };
 }

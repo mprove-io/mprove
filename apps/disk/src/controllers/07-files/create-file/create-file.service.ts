@@ -185,6 +185,9 @@ function getContentFromFileName(item: { fileName: string }) {
     case common.FileExtensionEnum.Md:
       content = '';
       break;
+    case common.FileExtensionEnum.Conf:
+      content = '';
+      break;
     default:
       content = '';
   }

@@ -8,3 +8,4 @@ export * from './07-check-top-values';
 export * from './08-check-connections';
 export * from './09-check-support-udfs';
 export * from './10-split-files';
+export * from './11-check-project-conf';

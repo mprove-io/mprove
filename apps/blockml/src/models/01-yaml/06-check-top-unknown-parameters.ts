@@ -202,6 +202,34 @@ export function checkTopUnknownParameters(
             }
             break;
           }
+
+          case common.FileExtensionEnum.Conf: {
+            if (
+              [
+                enums.ParameterEnum.WeekStart.toString(),
+                enums.ParameterEnum.DefaultTimezone.toString(),
+                enums.ParameterEnum.AllowTimezones.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: enums.ErTitleEnum.UNKNOWN_CONF_PARAMETER,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${common.FileExtensionEnum.Conf} file`,
+                  lines: [
+                    {
+                      line: file[parameter + constants.LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
         }
 
         if (

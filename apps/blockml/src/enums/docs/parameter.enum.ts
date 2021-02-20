@@ -5,6 +5,10 @@ export enum ParameterEnum {
   //
   FieldClass = 'fieldClass',
   //
+  WeekStart = 'week_start',
+  DefaultTimezone = 'default_timezone',
+  AllowTimezones = 'allow_timezones',
+  //
   AccessRoles = 'access_roles',
   AccessUsers = 'access_users',
   AlwaysJoin = 'always_join',

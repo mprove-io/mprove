@@ -39,7 +39,8 @@ export function removeWrongExt(
         common.FileExtensionEnum.Dashboard,
         common.FileExtensionEnum.Viz,
         common.FileExtensionEnum.Udf,
-        common.FileExtensionEnum.Md
+        common.FileExtensionEnum.Md,
+        common.FileExtensionEnum.Conf
       ].indexOf(ext) > -1
     ) {
       let f: interfaces.File2 = file2s.find(z => z.name === x.name);
@@ -57,7 +58,7 @@ export function removeWrongExt(
       item.errors.push(
         new BmError({
           title: enums.ErTitleEnum.WRONG_FILE_EXTENSION,
-          message: `valid BlockML file extensions are: ${common.FileExtensionEnum.View} ${common.FileExtensionEnum.Model} ${common.FileExtensionEnum.Dashboard} ${common.FileExtensionEnum.Viz} ${common.FileExtensionEnum.Udf} ${common.FileExtensionEnum.Md}`,
+          message: `valid BlockML file extensions are: ${common.FileExtensionEnum.View} ${common.FileExtensionEnum.Model} ${common.FileExtensionEnum.Dashboard} ${common.FileExtensionEnum.Viz} ${common.FileExtensionEnum.Udf} ${common.FileExtensionEnum.Md} ${common.FileExtensionEnum.Conf}`,
           lines: [
             {
               line: 0,

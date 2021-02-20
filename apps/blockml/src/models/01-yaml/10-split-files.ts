@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
+import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -24,6 +25,7 @@ export function splitFiles(
   let models: interfaces.Model[] = [];
   let dashboards: interfaces.Dashboard[] = [];
   let vizs: interfaces.Viz[] = [];
+  let confs: interfaces.Conf[] = [];
 
   item.filesAny.forEach(file => {
     let fileExt = file.ext;
@@ -204,6 +206,38 @@ export function splitFiles(
         }
         break;
       }
+
+      case common.FileExtensionEnum.Conf: {
+        if (file.name === constants.PROJECT + common.FileExtensionEnum.Conf) {
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newConfOptions: interfaces.Conf = {
+            name: constants.PROJECT,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          confs.push(Object.assign(file, newConfOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_CONF_NAME,
+              message: `"${file.name}${common.FileExtensionEnum.Conf}" filename must be "${constants.PROJECT}${common.FileExtensionEnum.Conf}"`,
+              lines: [
+                {
+                  line: 0,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
     }
   });
 
@@ -212,6 +246,7 @@ export function splitFiles(
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Models, models);
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Ds, dashboards);
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Vizs, vizs);
+  helper.log(cs, caller, func, structId, enums.LogTypeEnum.Confs, confs);
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
 
   return {
@@ -219,6 +254,7 @@ export function splitFiles(
     views: views,
     models: models,
     dashboards: dashboards,
-    vizs: vizs
+    vizs: vizs,
+    confs: confs
   };
 }

@@ -143,11 +143,11 @@ export class RebuildStructService {
     let models: interfaces.Model[];
     let dashboards: interfaces.Dashboard[];
     let vizs: interfaces.Viz[];
+    let projectConf: interfaces.Conf;
 
     let yamlBuildItem = barBuilder.buildYaml(
       {
         files: item.files,
-        weekStart: item.weekStart,
         connections: item.connections,
         structId: item.structId,
         errors: errors,
@@ -160,6 +160,7 @@ export class RebuildStructService {
     models = yamlBuildItem.models;
     dashboards = yamlBuildItem.dashboards;
     vizs = yamlBuildItem.vizs;
+    projectConf = yamlBuildItem.projectConf;
 
     views = barBuilder.buildField(
       {

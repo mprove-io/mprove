@@ -4,5 +4,6 @@ export enum FileExtensionEnum {
   Dashboard = '.dashboard',
   Viz = '.viz',
   Udf = '.udf',
-  Md = '.md'
+  Md = '.md',
+  Conf = '.config'
 }
