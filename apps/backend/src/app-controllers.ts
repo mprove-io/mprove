@@ -26,5 +26,6 @@ export const appControllers = [
   controllers.GetProjectController,
   controllers.GetProjectsListController,
   controllers.IsProjectExistController,
-  controllers.SetProjectTimezoneController
+  controllers.SetProjectTimezoneController,
+  controllers.SetProjectWeekStartController
 ];

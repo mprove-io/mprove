@@ -25,5 +25,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendIsProjectExist = 'ToBackendIsProjectExist',
   ToBackendGetProject = 'ToBackendGetProject',
   ToBackendSetProjectTimezone = 'ToBackendSetProjectTimezone',
+  ToBackendSetProjectWeekStart = 'ToBackendSetProjectWeekStart',
   ToBackendGetProjectsList = 'ToBackendGetProjectsList'
 }
