@@ -22,24 +22,12 @@ export function checkProjectConfig(
 
   let errorsOnStart = item.errors.length;
 
-  let projectConf: interfaces.Conf;
+  let conf: interfaces.Conf;
 
-  if (item.confs.length === 0) {
-    projectConf = {
-      allow_timezones: true,
-      default_timezone: common.UTC,
-      week_start: common.ProjectWeekStartEnum.Monday,
-      fileName: undefined,
-      fileExt: undefined,
-      filePath: undefined,
-      name: undefined
-    };
-  } else if (item.confs.length > 1) {
-    // already checked by "duplicate file names" and "wrong extension"
-  } else {
-    projectConf = item.confs[0];
+  if (item.confs.length === 1) {
+    conf = item.confs[0];
 
-    Object.keys(projectConf)
+    Object.keys(conf)
       .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
@@ -54,7 +42,7 @@ export function checkProjectConfig(
 
         if (
           parameter === enums.ParameterEnum.AllowTimezones.toString() &&
-          !projectConf[parameter].toString().match(common.MyRegex.TRUE_FALSE())
+          !conf[parameter].toString().match(common.MyRegex.TRUE_FALSE())
         ) {
           item.errors.push(
             new BmError({
@@ -62,9 +50,9 @@ export function checkProjectConfig(
               message: `parameter "${parameter}:" must be "true" or "false" if specified`,
               lines: [
                 {
-                  line: projectConf[parameter + constants.LINE_NUM],
-                  name: projectConf.fileName,
-                  path: projectConf.filePath
+                  line: conf[parameter + constants.LINE_NUM],
+                  name: conf.fileName,
+                  path: conf.filePath
                 }
               ]
             })
@@ -78,7 +66,7 @@ export function checkProjectConfig(
           [
             common.ProjectWeekStartEnum.Sunday,
             common.ProjectWeekStartEnum.Monday
-          ].indexOf(projectConf[parameter].toString().toLowerCase()) < 0
+          ].indexOf(conf[parameter].toString().toLowerCase()) < 0
         ) {
           item.errors.push(
             new BmError({
@@ -86,9 +74,9 @@ export function checkProjectConfig(
               message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
               lines: [
                 {
-                  line: projectConf[parameter + constants.LINE_NUM],
-                  name: projectConf.fileName,
-                  path: projectConf.filePath
+                  line: conf[parameter + constants.LINE_NUM],
+                  name: conf.fileName,
+                  path: conf.filePath
                 }
               ]
             })
@@ -99,7 +87,7 @@ export function checkProjectConfig(
 
         if (
           parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
-          helper.isTimezoneValid(projectConf[parameter].toString()) === false
+          helper.isTimezoneValid(conf[parameter].toString()) === false
         ) {
           item.errors.push(
             new BmError({
@@ -107,9 +95,9 @@ export function checkProjectConfig(
               message: `wrong ${enums.ParameterEnum.DefaultTimezone} value`,
               lines: [
                 {
-                  line: projectConf[parameter + constants.LINE_NUM],
-                  name: projectConf.fileName,
-                  path: projectConf.filePath
+                  line: conf[parameter + constants.LINE_NUM],
+                  name: conf.fileName,
+                  path: conf.filePath
                 }
               ]
             })
@@ -118,7 +106,24 @@ export function checkProjectConfig(
           return;
         }
       });
+  } else if (item.confs.length === 0) {
+    // do nothing
+  } else {
+    // item.confs.length > 1
+    // already checked by "duplicate file names" and "wrong extension"
   }
+
+  let defaultConf: interfaces.Conf = {
+    allow_timezones: true,
+    default_timezone: common.UTC,
+    week_start: common.ProjectWeekStartEnum.Monday,
+    fileName: undefined,
+    fileExt: undefined,
+    filePath: undefined,
+    name: undefined
+  };
+
+  let projectConfig: interfaces.Conf = Object.assign(defaultConf, conf);
 
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
@@ -127,8 +132,8 @@ export function checkProjectConfig(
     func,
     structId,
     enums.LogTypeEnum.ProjectConf,
-    common.isDefined(projectConf) ? projectConf : ''
+    errorsOnStart === item.errors.length ? projectConfig : ''
   );
 
-  return errorsOnStart === item.errors.length ? projectConf : undefined;
+  return errorsOnStart === item.errors.length ? projectConfig : undefined;
 }
