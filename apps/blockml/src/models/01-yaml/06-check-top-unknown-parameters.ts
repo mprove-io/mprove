@@ -213,7 +213,7 @@ export function checkTopUnknownParameters(
             ) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.UNKNOWN_CONF_PARAMETER,
+                  title: enums.ErTitleEnum.UNKNOWN_PROJECT_CONFIG_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used on top level of ` +
                     `${common.FileExtensionEnum.Conf} file`,

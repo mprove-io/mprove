@@ -120,7 +120,7 @@ export function buildYaml(
   vizs = splitFilesResult.vizs;
   confs = splitFilesResult.confs;
 
-  let projectConf = barYaml.checkProjectConf(
+  let projectConf = barYaml.checkProjectConfig(
     {
       confs: confs,
       structId: item.structId,

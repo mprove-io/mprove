@@ -224,7 +224,7 @@ export function splitFiles(
         } else {
           item.errors.push(
             new BmError({
-              title: enums.ErTitleEnum.WRONG_CONF_NAME,
+              title: enums.ErTitleEnum.WRONG_CONFIG_NAME,
               message: `"${file.name}${common.FileExtensionEnum.Conf}" filename must be "${constants.PROJECT}${common.FileExtensionEnum.Conf}"`,
               lines: [
                 {

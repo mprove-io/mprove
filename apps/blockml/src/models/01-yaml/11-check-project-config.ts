@@ -6,9 +6,9 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-let func = enums.FuncEnum.SplitFiles;
+let func = enums.FuncEnum.CheckProjectConfig;
 
-export function checkProjectConf(
+export function checkProjectConfig(
   item: {
     confs: interfaces.Conf[];
     errors: BmError[];
@@ -35,23 +35,7 @@ export function checkProjectConf(
       name: undefined
     };
   } else if (item.confs.length > 1) {
-    let lines = [];
-
-    item.confs.forEach(c => {
-      lines.push({
-        line: 0,
-        name: c.fileName,
-        path: c.filePath
-      });
-    });
-
-    item.errors.push(
-      new BmError({
-        title: enums.ErTitleEnum.TOO_MANY_PROJECT_CONF_FILES,
-        message: `Project can have only one "${constants.PROJECT}${common.FileExtensionEnum.Conf}" file`,
-        lines: lines
-      })
-    );
+    // already checked by "duplicate file names" and "wrong extension"
   } else {
     projectConf = item.confs[0];
 

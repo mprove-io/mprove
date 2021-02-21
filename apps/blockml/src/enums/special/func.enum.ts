@@ -11,7 +11,7 @@ export enum FuncEnum {
   CheckConnections = '01-yaml/08-check-connections',
   CheckSupportUdfs = '01-yaml/09-check-support-udfs',
   SplitFiles = '01-yaml/10-split-files',
-  CheckProjectConf = '01-yaml/11-check-project-conf',
+  CheckProjectConfig = '01-yaml/11-check-project-config',
 
   CheckFieldsExist = '02-field/01-check-fields-exist',
   CheckFieldIsObject = '02-field/02-check-field-is-object',
