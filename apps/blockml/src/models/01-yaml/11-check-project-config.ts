@@ -72,6 +72,30 @@ export function checkProjectConfig(
 
           return;
         }
+
+        if (
+          parameter === enums.ParameterEnum.WeekStart.toString() &&
+          [
+            common.ProjectWeekStartEnum.Sunday,
+            common.ProjectWeekStartEnum.Monday
+          ].indexOf(projectConf[parameter].toString().toLowerCase()) < 0
+        ) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_WEEK_START,
+              message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
+              lines: [
+                {
+                  line: projectConf[parameter + constants.LINE_NUM],
+                  name: projectConf.fileName,
+                  path: projectConf.filePath
+                }
+              ]
+            })
+          );
+
+          return;
+        }
       });
   }
 
