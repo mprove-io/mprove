@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 
@@ -29,7 +28,7 @@ export function processTimezone(item: {
       let two = r[2];
       let three = r[3];
 
-      if (timezone !== constants.UTC) {
+      if (timezone !== common.UTC) {
         switch (model.connection.type) {
           case common.ConnectionTypeEnum.BigQuery: {
             two = `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', ${two}, '${timezone}'))`;

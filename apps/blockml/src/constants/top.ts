@@ -23,8 +23,6 @@ export const SQL_TRUE_CONDITION = "'any' = 'any'";
 
 export const APPLY_FILTER = 'apply_filter';
 
-export const UTC = 'UTC';
-
 export const WITH = 'WITH';
 export const SELECT = 'SELECT';
 export const FROM = 'FROM';

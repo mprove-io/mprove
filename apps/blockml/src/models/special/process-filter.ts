@@ -43,7 +43,7 @@ export function processFilter(item: {
   };
   connection = common.isDefined(connection) ? connection : cn;
 
-  timezone = common.isDefined(timezone) ? timezone : constants.UTC;
+  timezone = common.isDefined(timezone) ? timezone : common.UTC;
   proc = common.isDefined(proc) ? proc : 'proc';
   sqlTsSelect = common.isDefined(sqlTsSelect) ? sqlTsSelect : 'sqlTsSelect';
   ors = common.isDefined(ors) ? ors : [];

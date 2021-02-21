@@ -96,6 +96,27 @@ export function checkProjectConfig(
 
           return;
         }
+
+        if (
+          parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
+          helper.isTimezoneValid(projectConf[parameter].toString()) === false
+        ) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.WRONG_DEFAULT_TIMEZONE,
+              message: `wrong ${enums.ParameterEnum.DefaultTimezone} value`,
+              lines: [
+                {
+                  line: projectConf[parameter + constants.LINE_NUM],
+                  name: projectConf.fileName,
+                  path: projectConf.filePath
+                }
+              ]
+            })
+          );
+
+          return;
+        }
       });
   }
 

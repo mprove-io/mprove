@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 
 export function makeTimestampsCurrent(item: {
   connection: common.ProjectConnection;
@@ -20,7 +19,7 @@ export function makeTimestampsCurrent(item: {
   switch (connection.type) {
     case common.ConnectionTypeEnum.BigQuery: {
       currentTimestamp =
-        timezone === constants.UTC
+        timezone === common.UTC
           ? 'CURRENT_TIMESTAMP()'
           : `TIMESTAMP(FORMAT_TIMESTAMP('%F %T', CURRENT_TIMESTAMP(), '${timezone}'))`;
 
@@ -41,7 +40,7 @@ export function makeTimestampsCurrent(item: {
 
     case common.ConnectionTypeEnum.PostgreSQL: {
       currentTimestamp =
-        timezone === constants.UTC
+        timezone === common.UTC
           ? 'CURRENT_TIMESTAMP'
           : `TIMEZONE('${timezone}', CURRENT_TIMESTAMP::TIMESTAMPTZ)`;
 

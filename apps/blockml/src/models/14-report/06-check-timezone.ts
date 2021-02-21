@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -21,14 +20,6 @@ export function checkTimezone<T extends types.dzType>(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
-  let timezonesHash: { [tzValue: string]: number } = {};
-
-  common.timezones.forEach(group => {
-    group.zones.forEach(tz => {
-      timezonesHash[tz.value] = 1;
-    });
-  });
-
   let newEntities: T[] = [];
 
   item.entities.forEach(x => {
@@ -36,17 +27,15 @@ export function checkTimezone<T extends types.dzType>(
 
     x.reports.forEach(report => {
       if (!report.timezone) {
-        report.timezone = constants.UTC;
+        report.timezone = common.UTC;
         return;
       }
 
-      if (Object.keys(timezonesHash).indexOf(report.timezone) < 0) {
+      if (helper.isTimezoneValid(report.timezone) === false) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.REPORT_WRONG_TIMEZONE,
-            message:
-              `${enums.ParameterEnum.Timezone} must be one of ` +
-              'Mprove Timezone Selector values',
+            message: `wrong ${enums.ParameterEnum.Timezone} value`,
             lines: [
               {
                 line: report.timezone_line_num,
