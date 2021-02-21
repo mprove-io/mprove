@@ -67,7 +67,6 @@ test('1', async t => {
         repoId: devRepoId,
         branch: 'master',
         structId: testId,
-        weekStart: common.ProjectWeekStartEnum.Monday,
         connections: [
           {
             connectionId: 'c1',

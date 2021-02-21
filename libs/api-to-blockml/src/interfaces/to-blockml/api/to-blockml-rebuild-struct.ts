@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
@@ -12,9 +12,6 @@ export class ToBlockmlRebuildStructRequestPayload {
 
   @IsString()
   structId: string;
-
-  @IsEnum(common.ProjectWeekStartEnum)
-  weekStart: common.ProjectWeekStartEnum;
 
   @ValidateNested()
   @Type(() => common.BmlFile)
@@ -32,6 +29,15 @@ export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {
 }
 
 export class ToBlockmlRebuildStructResponsePayload {
+  @IsEnum(common.ProjectWeekStartEnum)
+  weekStart: common.ProjectWeekStartEnum;
+
+  @IsString()
+  defaultTimezone: string;
+
+  @IsBoolean()
+  allowTimezones: boolean;
+
   @ValidateNested()
   @Type(() => common.BmlError)
   errors: common.BmlError[];

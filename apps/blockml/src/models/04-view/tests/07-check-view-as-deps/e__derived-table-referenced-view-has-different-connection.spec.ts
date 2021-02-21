@@ -39,8 +39,7 @@ test('1', async t => {
       traceId: traceId,
       dir: dataDir,
       structId: structId,
-      connections: [c1, c2],
-      weekStart: common.ProjectWeekStartEnum.Monday
+      connections: [c1, c2]
     });
 
     errors = await helper.readLog(fromDir, enums.LogTypeEnum.Errors);

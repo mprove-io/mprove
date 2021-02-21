@@ -26,8 +26,7 @@ test('1', async t => {
       traceId: traceId,
       dir: dataDir,
       structId: structId,
-      connections: [],
-      weekStart: common.ProjectWeekStartEnum.Monday
+      connections: []
     });
 
     files = await helper.readLog(fromDir, enums.LogTypeEnum.Files);

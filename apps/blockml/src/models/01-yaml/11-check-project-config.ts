@@ -28,7 +28,7 @@ export function checkProjectConfig(
     projectConf = {
       allow_timezones: true,
       default_timezone: common.UTC,
-      week_start: common.ProjectWeekStartEnum.Sunday,
+      week_start: common.ProjectWeekStartEnum.Monday,
       fileName: undefined,
       fileExt: undefined,
       filePath: undefined,

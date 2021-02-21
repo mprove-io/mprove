@@ -34,14 +34,7 @@ export class RebuildStructService {
       errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
     });
 
-    let {
-      structId,
-      orgId,
-      projectId,
-      weekStart,
-      files,
-      connections
-    } = reqValid.payload;
+    let { structId, orgId, projectId, files, connections } = reqValid.payload;
 
     let {
       errors,
@@ -49,11 +42,13 @@ export class RebuildStructService {
       views,
       models,
       dashboards,
-      vizs
+      vizs,
+      weekStart,
+      allowTimezones,
+      defaultTimezone
     } = await this.rebuildStructStateless({
       traceId: reqValid.info.traceId,
       files: files,
-      weekStart: weekStart,
       structId: structId,
       connections: connections
     });
@@ -98,7 +93,10 @@ export class RebuildStructService {
       dashboards: apiDashboards,
       vizs: apiVizs,
       mconfigs: mconfigs,
-      queries: queries
+      queries: queries,
+      weekStart: weekStart,
+      allowTimezones: allowTimezones,
+      defaultTimezone: defaultTimezone
     };
 
     return payload;
@@ -108,7 +106,6 @@ export class RebuildStructService {
     traceId: string;
     dir: string;
     structId: string;
-    weekStart: common.ProjectWeekStartEnum;
     connections: common.ProjectConnection[];
   }) {
     let files: common.BmlFile[] = await barYaml.collectFiles(
@@ -124,7 +121,6 @@ export class RebuildStructService {
       traceId: item.traceId,
       files: files,
       structId: item.structId,
-      weekStart: item.weekStart,
       connections: item.connections
     });
   }
@@ -133,7 +129,6 @@ export class RebuildStructService {
     traceId: string;
     files: common.BmlFile[];
     structId: string;
-    weekStart: common.ProjectWeekStartEnum;
     connections: common.ProjectConnection[];
   }) {
     //
@@ -162,10 +157,24 @@ export class RebuildStructService {
     vizs = yamlBuildItem.vizs;
     projectConf = yamlBuildItem.projectConf;
 
+    if (common.isUndefined(projectConf)) {
+      return {
+        errors: errors,
+        udfsDict: {},
+        views: [],
+        models: [],
+        dashboards: [],
+        vizs: [],
+        weekStart: common.ProjectWeekStartEnum.Monday,
+        allowTimezones: true,
+        defaultTimezone: common.UTC
+      };
+    }
+
     views = barBuilder.buildField(
       {
         entities: views,
-        weekStart: item.weekStart,
+        weekStart: projectConf.week_start,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildViewField
@@ -176,7 +185,7 @@ export class RebuildStructService {
     models = barBuilder.buildField(
       {
         entities: models,
-        weekStart: item.weekStart,
+        weekStart: projectConf.week_start,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildModelField
@@ -187,7 +196,7 @@ export class RebuildStructService {
     dashboards = barBuilder.buildField(
       {
         entities: dashboards,
-        weekStart: item.weekStart,
+        weekStart: projectConf.week_start,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildDashboardField
@@ -210,7 +219,7 @@ export class RebuildStructService {
         views: views,
         udfs: udfs,
         udfsDict: udfsDict,
-        weekStart: item.weekStart,
+        weekStart: projectConf.week_start,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildView
@@ -317,7 +326,7 @@ export class RebuildStructService {
         entities: dashboards,
         models: models,
         udfsDict: udfsDict,
-        weekStart: item.weekStart,
+        weekStart: projectConf.week_start,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildDashboardReport
@@ -332,7 +341,7 @@ export class RebuildStructService {
         entities: vizs,
         models: models,
         udfsDict: udfsDict,
-        weekStart: item.weekStart,
+        weekStart: projectConf.week_start,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildVizReport
@@ -381,7 +390,10 @@ export class RebuildStructService {
       views: views,
       models: models,
       dashboards: dashboards,
-      vizs: vizs
+      vizs: vizs,
+      weekStart: projectConf.week_start,
+      allowTimezones: projectConf.allow_timezones,
+      defaultTimezone: projectConf.default_timezone
     };
   }
 }

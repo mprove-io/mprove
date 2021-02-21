@@ -25,7 +25,6 @@ export class RebuildStructSpecialController {
       repoId,
       branch,
       structId,
-      weekStart,
       connections
     } = reqValid.payload;
 
@@ -66,7 +65,6 @@ export class RebuildStructSpecialController {
         structId: structId,
         orgId: orgId,
         projectId: projectId,
-        weekStart: weekStart,
         files: getCatalogFilesResponse.payload.files.map(
           (f: common.DiskCatalogFile) => {
             let file: common.BmlFile = {

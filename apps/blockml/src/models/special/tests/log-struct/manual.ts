@@ -26,8 +26,7 @@ async function run() {
     traceId: traceId,
     dir: dataDir,
     structId: structId,
-    connections: [connection],
-    weekStart: common.ProjectWeekStartEnum.Monday
+    connections: [connection]
   });
 
   if (common.isDefined(toDir)) {
