@@ -5,28 +5,33 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'create-org__org-already-exists';
+let testId = 'get-project__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123';
 let orgName = testId;
+let userId = common.makeId();
 let orgId = common.makeId();
+let projectName = testId;
+let projectId = common.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateOrgResponse;
+  let resp: apiToBackend.ToBackendGetProjectResponse;
 
   try {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email],
-        orgNames: [orgName]
+        orgNames: [orgName],
+        projectNames: [projectName]
       },
       seedRecordsPayload: {
         users: [
           {
+            userId,
             email,
             password,
             isEmailVerified: common.BoolEnum.TRUE
@@ -38,31 +43,51 @@ test('1', async t => {
             name: orgName,
             ownerEmail: email
           }
+        ],
+        projects: [
+          {
+            orgId,
+            projectId,
+            name: projectName
+          }
+        ],
+        members: [
+          {
+            memberId: userId,
+            email,
+            projectId,
+            isAdmin: common.BoolEnum.TRUE,
+            isEditor: common.BoolEnum.TRUE,
+            isExplorer: common.BoolEnum.TRUE
+          }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateOrgRequest = {
+    let req: apiToBackend.ToBackendGetProjectRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
         traceId: traceId
       },
       payload: {
-        name: orgName
+        projectId: projectId
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateOrgResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
+    resp = await helper.sendToBackend<apiToBackend.ToBackendGetProjectResponse>(
+      {
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      }
+    );
 
     await prep.app.close();
   } catch (e) {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, apiToBackend.ErEnum.BACKEND_ORG_ALREADY_EXISTS);
+  t.is(resp.info.error, undefined);
+  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });

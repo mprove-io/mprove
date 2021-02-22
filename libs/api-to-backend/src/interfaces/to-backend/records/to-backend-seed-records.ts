@@ -3,7 +3,7 @@ import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendSeedRecordsRequestPayloadUsers {
+export class ToBackendSeedRecordsRequestPayloadUsersItem {
   @IsOptional()
   @IsString()
   userId?: string;
@@ -32,8 +32,7 @@ export class ToBackendSeedRecordsRequestPayloadUsers {
   passwordResetExpiresTs?: string;
 }
 
-export class ToBackendSeedRecordsRequestPayloadOrgs {
-  @IsOptional()
+export class ToBackendSeedRecordsRequestPayloadOrgsItem {
   @IsString()
   orgId?: string;
 
@@ -44,21 +43,61 @@ export class ToBackendSeedRecordsRequestPayloadOrgs {
   @IsString()
   ownerId?: string;
 
-  @IsOptional()
   @IsString()
   ownerEmail: string;
+}
+
+export class ToBackendSeedRecordsRequestPayloadProjectsItem {
+  @IsString()
+  orgId: string;
+
+  @IsString()
+  projectId?: string;
+
+  @IsString()
+  name: string;
+}
+
+export class ToBackendSeedRecordsRequestPayloadMembersItem {
+  @IsString()
+  projectId: string;
+
+  @IsString()
+  email: string;
+
+  @IsString()
+  memberId: string;
+
+  @IsEnum(common.BoolEnum)
+  isAdmin: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  isEditor: common.BoolEnum;
+
+  @IsEnum(common.BoolEnum)
+  isExplorer: common.BoolEnum;
 }
 
 export class ToBackendSeedRecordsRequestPayload {
   @IsOptional()
   @ValidateNested()
-  @Type(() => ToBackendSeedRecordsRequestPayloadUsers)
-  users?: ToBackendSeedRecordsRequestPayloadUsers[];
+  @Type(() => ToBackendSeedRecordsRequestPayloadUsersItem)
+  users?: ToBackendSeedRecordsRequestPayloadUsersItem[];
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ToBackendSeedRecordsRequestPayloadOrgs)
-  orgs?: ToBackendSeedRecordsRequestPayloadOrgs[];
+  @Type(() => ToBackendSeedRecordsRequestPayloadOrgsItem)
+  orgs?: ToBackendSeedRecordsRequestPayloadOrgsItem[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ToBackendSeedRecordsRequestPayloadProjectsItem)
+  projects?: ToBackendSeedRecordsRequestPayloadProjectsItem[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ToBackendSeedRecordsRequestPayloadMembersItem)
+  members?: ToBackendSeedRecordsRequestPayloadMembersItem[];
 }
 
 export class ToBackendSeedRecordsRequest extends ToBackendRequest {

@@ -30,18 +30,22 @@ export class SeedRecordsController {
     reqValid: apiToBackend.ToBackendSeedRecordsRequest
   ) {
     let payloadUsers = reqValid.payload.users;
+    let payloadMembers = reqValid.payload.members;
     let payloadOrgs = reqValid.payload.orgs;
+    let payloadProjects = reqValid.payload.projects;
 
     //
 
     let users: entities.UserEntity[] = [];
     let orgs: entities.OrgEntity[] = [];
+    let projects: entities.ProjectEntity[] = [];
+    let members: entities.MemberEntity[] = [];
 
     if (common.isDefined(payloadUsers)) {
       await asyncPool(
         1,
         payloadUsers,
-        async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsers) => {
+        async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsersItem) => {
           let alias = await this.usersService.makeAlias(x.email);
           let { salt, hash } = common.isDefined(x.password)
             ? await this.usersService.makeSaltAndHash(x.password)
@@ -74,7 +78,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadOrgs,
-        async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadOrgs) => {
+        async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadOrgsItem) => {
           let newOrg = gen.makeOrg({
             orgId: x.orgId,
             name: x.name,
@@ -108,12 +112,78 @@ export class SeedRecordsController {
       );
     }
 
+    if (common.isDefined(payloadProjects)) {
+      await asyncPool(
+        1,
+        payloadProjects,
+        async (
+          x: apiToBackend.ToBackendSeedRecordsRequestPayloadProjectsItem
+        ) => {
+          let newProject = gen.makeProject({
+            orgId: x.orgId,
+            projectId: x.projectId,
+            name: x.name
+          });
+
+          let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+            info: {
+              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+              traceId: reqValid.info.traceId
+            },
+            payload: {
+              orgId: newProject.org_id,
+              projectId: newProject.project_id,
+              devRepoId: users[0].user_id,
+              userAlias: users[0].alias
+            }
+          };
+
+          await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
+            {
+              routingKey: helper.makeRoutingKeyToDisk({
+                orgId: newProject.org_id,
+                projectId: newProject.project_id
+              }),
+              message: createProjectRequest,
+              checkIsOk: true
+            }
+          );
+
+          projects.push(newProject);
+        }
+      );
+    }
+
+    if (common.isDefined(payloadMembers)) {
+      await asyncPool(
+        1,
+        payloadMembers,
+        async (
+          x: apiToBackend.ToBackendSeedRecordsRequestPayloadMembersItem
+        ) => {
+          let user = users.find(u => u.email === x.email);
+
+          let newMember = gen.makeMember({
+            projectId: x.projectId,
+            isAdmin: x.isAdmin,
+            isEditor: x.isEditor,
+            isExplorer: x.isExplorer,
+            user: user
+          });
+
+          members.push(newMember);
+        }
+      );
+    }
+
     await this.connection.transaction(async manager => {
       await db.addRecords({
         manager: manager,
         records: {
           users: users,
-          orgs: orgs
+          orgs: orgs,
+          projects: projects,
+          members: members
         }
       });
     });

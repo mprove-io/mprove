@@ -18,7 +18,8 @@ export class DeleteRecordsController {
     private rabbitService: RabbitService,
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
-    private userRepository: repositories.UsersRepository
+    private usersRepository: repositories.UsersRepository,
+    private membersRepository: repositories.MembersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
@@ -92,7 +93,8 @@ export class DeleteRecordsController {
     }
 
     if (common.isDefined(emails) && emails.length > 0) {
-      await this.userRepository.delete({ email: In(emails) });
+      await this.usersRepository.delete({ email: In(emails) });
+      await this.membersRepository.delete({ email: In(emails) });
     }
 
     let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
