@@ -17,6 +17,7 @@ export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
     private orgsRepository: repositories.OrgsRepository,
+    private projectsRepository: repositories.ProjectsRepository,
     private userRepository: repositories.UsersRepository
   ) {}
 
@@ -25,7 +26,39 @@ export class DeleteRecordsController {
     @ValidateRequest(apiToBackend.ToBackendDeleteRecordsRequest)
     reqValid: apiToBackend.ToBackendDeleteRecordsRequest
   ) {
-    let { orgNames, emails } = reqValid.payload;
+    let { orgNames, projectNames, emails } = reqValid.payload;
+
+    if (common.isDefined(projectNames) && projectNames.length > 0) {
+      await asyncPool(1, projectNames, async (x: string) => {
+        let project = await this.projectsRepository.findOne({ name: x });
+
+        if (common.isDefined(project)) {
+          let deleteProjectRequest: apiToDisk.ToDiskDeleteProjectRequest = {
+            info: {
+              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteProject,
+              traceId: reqValid.info.traceId
+            },
+            payload: {
+              orgId: project.org_id,
+              projectId: project.project_id
+            }
+          };
+
+          await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteProjectResponse>(
+            {
+              routingKey: helper.makeRoutingKeyToDisk({
+                orgId: project.org_id,
+                projectId: project.project_id
+              }),
+              message: deleteProjectRequest,
+              checkIsOk: true
+            }
+          );
+
+          await this.projectsRepository.delete({ name: In(projectNames) });
+        }
+      });
+    }
 
     if (common.isDefined(orgNames) && orgNames.length > 0) {
       await asyncPool(1, orgNames, async (x: string) => {
