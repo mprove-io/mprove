@@ -133,11 +133,20 @@ export class CreateProjectController {
       branchId: common.BRANCH_MASTER
     });
 
+    let newMember = maker.makeMember({
+      projectId: newProject.project_id,
+      user: user,
+      isAdmin: common.BoolEnum.TRUE,
+      isEditor: common.BoolEnum.TRUE,
+      isExplorer: common.BoolEnum.TRUE
+    });
+
     await this.connection.transaction(async manager => {
       await db.addRecords({
         manager: manager,
         records: {
           projects: [newProject],
+          members: [newMember],
           structs: [struct],
           branches: [prodBranch, devBranch],
           vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),

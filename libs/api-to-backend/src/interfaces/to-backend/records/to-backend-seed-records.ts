@@ -37,6 +37,7 @@ export class ToBackendSeedRecordsRequestPayloadUsersItem {
 }
 
 export class ToBackendSeedRecordsRequestPayloadOrgsItem {
+  @IsOptional()
   @IsString()
   orgId?: string;
 
@@ -55,6 +56,7 @@ export class ToBackendSeedRecordsRequestPayloadProjectsItem {
   @IsString()
   orgId: string;
 
+  @IsOptional()
   @IsString()
   projectId?: string;
 

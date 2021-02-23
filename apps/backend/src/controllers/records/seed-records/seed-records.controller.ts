@@ -166,10 +166,10 @@ export class SeedRecordsController {
 
           let newMember = maker.makeMember({
             projectId: x.projectId,
+            user: user,
             isAdmin: x.isAdmin,
             isEditor: x.isEditor,
-            isExplorer: x.isExplorer,
-            user: user
+            isExplorer: x.isExplorer
           });
 
           members.push(newMember);
