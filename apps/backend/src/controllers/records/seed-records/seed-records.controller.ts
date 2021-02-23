@@ -7,8 +7,8 @@ import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
+import { maker } from '~backend/barrels/maker';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -51,7 +51,7 @@ export class SeedRecordsController {
             ? await this.usersService.makeSaltAndHash(x.password)
             : { salt: undefined, hash: undefined };
 
-          let newUser = gen.makeUser({
+          let newUser = maker.makeUser({
             userId: x.userId,
             email: x.email,
             isEmailVerified: x.isEmailVerified,
@@ -80,7 +80,7 @@ export class SeedRecordsController {
         1,
         payloadOrgs,
         async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadOrgsItem) => {
-          let newOrg = gen.makeOrg({
+          let newOrg = maker.makeOrg({
             orgId: x.orgId,
             name: x.name,
             ownerEmail: x.ownerEmail,
@@ -120,7 +120,7 @@ export class SeedRecordsController {
         async (
           x: apiToBackend.ToBackendSeedRecordsRequestPayloadProjectsItem
         ) => {
-          let newProject = gen.makeProject({
+          let newProject = maker.makeProject({
             orgId: x.orgId,
             projectId: x.projectId,
             name: x.name
@@ -164,7 +164,7 @@ export class SeedRecordsController {
         ) => {
           let user = users.find(u => u.email === x.email);
 
-          let newMember = gen.makeMember({
+          let newMember = maker.makeMember({
             projectId: x.projectId,
             isAdmin: x.isAdmin,
             isEditor: x.isEditor,

@@ -6,8 +6,8 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { gen } from '~backend/barrels/gen';
 import { interfaces } from '~backend/barrels/interfaces';
+import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { UsersService } from '~backend/services/users.service';
@@ -67,7 +67,7 @@ export class RegisterUserController {
       } else {
         let alias = await this.usersService.makeAlias(email);
 
-        newUser = gen.makeUser({
+        newUser = maker.makeUser({
           email: email,
           isEmailVerified: common.BoolEnum.FALSE,
           hash: hash,

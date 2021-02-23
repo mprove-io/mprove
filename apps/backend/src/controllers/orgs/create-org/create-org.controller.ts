@@ -5,8 +5,8 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
+import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -36,7 +36,7 @@ export class CreateOrgController {
       });
     }
 
-    let newOrg = gen.makeOrg({
+    let newOrg = maker.makeOrg({
       name: name,
       ownerId: user.user_id,
       ownerEmail: user.email

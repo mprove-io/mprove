@@ -4,7 +4,7 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
-import { gen } from '~backend/barrels/gen';
+import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
@@ -63,7 +63,7 @@ export class UsersService {
 
     let alias = await this.makeAlias(email);
 
-    let user = gen.makeUser({
+    let user = maker.makeUser({
       email: email,
       isEmailVerified: common.BoolEnum.TRUE,
       salt: salt,

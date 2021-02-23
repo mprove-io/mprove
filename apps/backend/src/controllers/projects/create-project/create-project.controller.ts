@@ -6,8 +6,8 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { gen } from '~backend/barrels/gen';
 import { helper } from '~backend/barrels/helper';
+import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -41,7 +41,7 @@ export class CreateProjectController {
       });
     }
 
-    let newProject = gen.makeProject({
+    let newProject = maker.makeProject({
       orgId: orgId,
       name: name
     });
@@ -108,7 +108,7 @@ export class CreateProjectController {
       models
     } = blockmlRebuildStructResponse.payload;
 
-    let struct = gen.makeStruct({
+    let struct = maker.makeStruct({
       projectId: newProject.project_id,
       structId: structId,
       weekStart: weekStart,
@@ -119,14 +119,14 @@ export class CreateProjectController {
       udfsDict: udfsDict
     });
 
-    let prodBranch = gen.makeBranch({
+    let prodBranch = maker.makeBranch({
       structId: structId,
       projectId: newProject.project_id,
       repoId: common.PROD_REPO_ID,
       branchId: common.BRANCH_MASTER
     });
 
-    let devBranch = gen.makeBranch({
+    let devBranch = maker.makeBranch({
       structId: structId,
       projectId: newProject.project_id,
       repoId: user.user_id,
