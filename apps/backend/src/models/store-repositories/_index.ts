@@ -1,3 +1,4 @@
+export * from './avatars.repository';
 export * from './branches.repository';
 export * from './connections.repository';
 export * from './members.repository';

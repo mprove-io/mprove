@@ -16,10 +16,19 @@ import { RabbitService } from '~backend/services/rabbit.service';
 export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
+    private dashboardsRepository: repositories.DashboardsRepository,
+    private mconfigsRepository: repositories.MconfigsRepository,
+    private modelsRepository: repositories.ModelsRepository,
+    // private queriesRepository: repositories.QueriesRepository,
+    private structsRepository: repositories.StructsRepository,
+    private vizsRepository: repositories.VizsRepository,
+    private avatarsRepository: repositories.AvatarsRepository,
+    private branchesRepository: repositories.BranchesRepository,
+    private connectionsRepository: repositories.ConnectionsRepository,
+    private membersRepository: repositories.MembersRepository,
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
-    private usersRepository: repositories.UsersRepository,
-    private membersRepository: repositories.MembersRepository
+    private usersRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
@@ -29,11 +38,18 @@ export class DeleteRecordsController {
   ) {
     let { orgNames, projectNames, emails } = reqValid.payload;
 
+    let structIds = [];
+    let userIds = [];
+    let projectIds = [];
+    let orgIds = [];
+
     if (common.isDefined(projectNames) && projectNames.length > 0) {
       await asyncPool(1, projectNames, async (x: string) => {
         let project = await this.projectsRepository.findOne({ name: x });
 
         if (common.isDefined(project)) {
+          projectIds.push(project.project_id);
+
           let deleteProjectRequest: apiToDisk.ToDiskDeleteProjectRequest = {
             info: {
               name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteProject,
@@ -55,8 +71,6 @@ export class DeleteRecordsController {
               checkIsOk: true
             }
           );
-
-          await this.projectsRepository.delete({ name: In(projectNames) });
         }
       });
     }
@@ -66,6 +80,8 @@ export class DeleteRecordsController {
         let org = await this.orgsRepository.findOne({ name: x });
 
         if (common.isDefined(org)) {
+          orgIds.push(org.org_id);
+
           let deleteOrgRequest: apiToDisk.ToDiskDeleteOrgRequest = {
             info: {
               name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
@@ -86,16 +102,37 @@ export class DeleteRecordsController {
               checkIsOk: true
             }
           );
-
-          await this.orgsRepository.delete({ name: In(orgNames) });
         }
       });
     }
 
     if (common.isDefined(emails) && emails.length > 0) {
-      await this.usersRepository.delete({ email: In(emails) });
-      await this.membersRepository.delete({ email: In(emails) });
+      await asyncPool(1, emails, async (email: string) => {
+        let user = await this.usersRepository.findOne({ email: email });
+        if (common.isDefined(user)) {
+          userIds.push(user.user_id);
+        }
+      });
     }
+
+    let structs = await this.structsRepository.find({
+      project_id: In(projectIds)
+    });
+
+    structIds = structs.map(struct => struct.struct_id);
+
+    await this.dashboardsRepository.delete({ struct_id: In(structIds) });
+    await this.mconfigsRepository.delete({ struct_id: In(structIds) });
+    await this.modelsRepository.delete({ struct_id: In(structIds) });
+    await this.vizsRepository.delete({ struct_id: In(structIds) });
+    await this.structsRepository.delete({ struct_id: In(structIds) });
+    await this.branchesRepository.delete({ project_id: In(projectIds) });
+    await this.connectionsRepository.delete({ project_id: In(projectIds) });
+    await this.membersRepository.delete({ member_id: In(userIds) });
+    await this.projectsRepository.delete({ project_id: In(projectIds) });
+    await this.orgsRepository.delete({ org_id: In(orgIds) });
+    await this.avatarsRepository.delete({ user_id: In(userIds) });
+    await this.usersRepository.delete({ user_id: In(userIds) });
 
     let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
 

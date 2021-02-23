@@ -140,7 +140,11 @@ export class CreateProjectController {
           projects: [newProject],
           structs: [struct],
           branches: [prodBranch, devBranch],
-          vizs: vizs.map(x => wrapper.wrapToEntityViz(x))
+          vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
+          queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
+          models: models.map(x => wrapper.wrapToEntityModel(x)),
+          mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+          dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
         }
       });
     });

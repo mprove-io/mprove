@@ -16,10 +16,10 @@ export async function addRecords(item: {
     structs?: entities.StructEntity[];
     branches?: entities.BranchEntity[];
     vizs?: entities.VizEntity[];
-    // queries?: entities.QueryEntity[];
-    // models?: entities.ModelEntity[];
-    // mconfigs?: entities.MconfigEntity[];
-    // dashboards?: entities.DashboardEntity[];
+    queries?: entities.QueryEntity[];
+    models?: entities.ModelEntity[];
+    mconfigs?: entities.MconfigEntity[];
+    dashboards?: entities.DashboardEntity[];
   };
 }) {
   let { manager, records } = item;
@@ -54,10 +54,10 @@ export async function addRecords(item: {
   let structs = records.structs;
   let branches = records.branches;
   let vizs = records.vizs;
-  // let queries = records.queries;
-  // let models = records.models;
-  // let mconfigs = records.mconfigs;
-  // let dashboards = records.dashboards;
+  let queries = records.queries;
+  let models = records.models;
+  let mconfigs = records.mconfigs;
+  let dashboards = records.dashboards;
 
   if (common.isDefined(users) && users.length > 0) {
     await manager
@@ -95,5 +95,29 @@ export async function addRecords(item: {
 
   if (common.isDefined(vizs) && vizs.length > 0) {
     await manager.getCustomRepository(repositories.VizsRepository).insert(vizs);
+  }
+
+  if (common.isDefined(queries) && queries.length > 0) {
+    await manager
+      .getCustomRepository(repositories.QueriesRepository)
+      .insert(queries);
+  }
+
+  if (common.isDefined(models) && models.length > 0) {
+    await manager
+      .getCustomRepository(repositories.ModelsRepository)
+      .insert(models);
+  }
+
+  if (common.isDefined(mconfigs) && mconfigs.length > 0) {
+    await manager
+      .getCustomRepository(repositories.MconfigsRepository)
+      .insert(mconfigs);
+  }
+
+  if (common.isDefined(dashboards) && dashboards.length > 0) {
+    await manager
+      .getCustomRepository(repositories.DashboardsRepository)
+      .insert(dashboards);
   }
 }
