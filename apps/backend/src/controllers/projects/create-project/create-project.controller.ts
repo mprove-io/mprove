@@ -1,6 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
@@ -45,16 +46,7 @@ export class CreateProjectController {
       name: name
     });
 
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          projects: [newProject]
-        }
-      });
-    });
-
-    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+    let toDiskCreateProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: reqValid.info.traceId
@@ -67,13 +59,90 @@ export class CreateProjectController {
       }
     };
 
-    await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>({
-      routingKey: helper.makeRoutingKeyToDisk({
+    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
+      {
+        routingKey: helper.makeRoutingKeyToDisk({
+          orgId: orgId,
+          projectId: newProject.project_id
+        }),
+        message: toDiskCreateProjectRequest,
+        checkIsOk: true
+      }
+    );
+
+    let structId = common.makeId();
+
+    let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
+      info: {
+        name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
+        traceId: reqValid.info.traceId
+      },
+      payload: {
+        structId: structId,
         orgId: orgId,
-        projectId: newProject.project_id
-      }),
-      message: createProjectRequest,
-      checkIsOk: true
+        projectId: newProject.project_id,
+        files: helper.diskFilesToBlockmlFiles(diskResponse.payload.prodFiles),
+        connections: []
+      }
+    };
+
+    let blockmlRebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
+      {
+        routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+        message: toBlockmlRebuildStructRequest,
+        checkIsOk: true
+      }
+    );
+
+    let {
+      weekStart,
+      allowTimezones,
+      defaultTimezone,
+      errors,
+      views,
+      udfsDict,
+      vizs,
+      mconfigs,
+      queries,
+      dashboards,
+      models
+    } = blockmlRebuildStructResponse.payload;
+
+    let struct = gen.makeStruct({
+      projectId: newProject.project_id,
+      structId: structId,
+      weekStart: weekStart,
+      allowTimezones: common.booleanToBoolEnum(allowTimezones),
+      defaultTimezone: defaultTimezone,
+      errors: errors,
+      views: views,
+      udfsDict: udfsDict
+    });
+
+    let prodBranch = gen.makeBranch({
+      structId: structId,
+      projectId: newProject.project_id,
+      repoId: common.PROD_REPO_ID,
+      branchId: common.BRANCH_MASTER
+    });
+
+    let devBranch = gen.makeBranch({
+      structId: structId,
+      projectId: newProject.project_id,
+      repoId: user.user_id,
+      branchId: common.BRANCH_MASTER
+    });
+
+    await this.connection.transaction(async manager => {
+      await db.addRecords({
+        manager: manager,
+        records: {
+          projects: [newProject],
+          structs: [struct],
+          branches: [prodBranch, devBranch],
+          vizs: vizs.map(x => wrapper.wrapToEntityViz(x))
+        }
+      });
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {

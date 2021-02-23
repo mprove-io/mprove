@@ -1,3 +1,4 @@
+export * from './disk-files-to-blockml-files';
 export * from './make-routing-key-to-disk';
 export * from './make-ts';
 export * from './make-ts-using-offset-from-now';

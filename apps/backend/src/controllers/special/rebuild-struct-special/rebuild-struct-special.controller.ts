@@ -65,15 +65,8 @@ export class RebuildStructSpecialController {
         structId: structId,
         orgId: orgId,
         projectId: projectId,
-        files: getCatalogFilesResponse.payload.files.map(
-          (f: common.DiskCatalogFile) => {
-            let file: common.BmlFile = {
-              content: f.content,
-              name: f.name,
-              path: f.fileId
-            };
-            return file;
-          }
+        files: helper.diskFilesToBlockmlFiles(
+          getCatalogFilesResponse.payload.files
         ),
         connections: connections
       }
@@ -82,18 +75,10 @@ export class RebuildStructSpecialController {
     let rebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
       {
         routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-        message: rebuildStructRequest
+        message: rebuildStructRequest,
+        checkIsOk: true
       }
     );
-
-    if (
-      rebuildStructResponse.info.status !== common.ResponseInfoStatusEnum.Ok
-    ) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
-        originalError: rebuildStructResponse.info.error
-      });
-    }
 
     let payload = rebuildStructResponse.payload;
 

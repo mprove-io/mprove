@@ -29,6 +29,10 @@ export class ToDiskCreateProjectResponsePayload {
 
   @IsString()
   projectId: string;
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogFile)
+  prodFiles: common.DiskCatalogFile[];
 }
 
 export class ToDiskCreateProjectResponse extends common.MyResponse {

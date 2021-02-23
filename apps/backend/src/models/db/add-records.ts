@@ -13,14 +13,13 @@ export async function addRecords(item: {
     orgs?: entities.OrgEntity[];
     projects?: entities.ProjectEntity[];
     members?: entities.MemberEntity[];
-    // repos?: entities.RepoEntity[];
-    // files?: entities.FileEntity[];
+    structs?: entities.StructEntity[];
+    branches?: entities.BranchEntity[];
+    vizs?: entities.VizEntity[];
     // queries?: entities.QueryEntity[];
     // models?: entities.ModelEntity[];
-    // views?: entities.ViewEntity[];
     // mconfigs?: entities.MconfigEntity[];
     // dashboards?: entities.DashboardEntity[];
-    // errors?: entities.ErrorEntity[];
   };
 }) {
   let { manager, records } = item;
@@ -52,14 +51,13 @@ export async function addRecords(item: {
   let orgs = records.orgs;
   let projects = records.projects;
   let members = records.members;
-  // let repos = records.repos;
-  // let files = records.files;
+  let structs = records.structs;
+  let branches = records.branches;
+  let vizs = records.vizs;
   // let queries = records.queries;
   // let models = records.models;
-  // let views = records.views;
   // let mconfigs = records.mconfigs;
   // let dashboards = records.dashboards;
-  // let errors = records.errors;
 
   if (common.isDefined(users) && users.length > 0) {
     await manager
@@ -81,5 +79,21 @@ export async function addRecords(item: {
     await manager
       .getCustomRepository(repositories.MembersRepository)
       .insert(members);
+  }
+
+  if (common.isDefined(structs) && structs.length > 0) {
+    await manager
+      .getCustomRepository(repositories.StructsRepository)
+      .insert(structs);
+  }
+
+  if (common.isDefined(branches) && branches.length > 0) {
+    await manager
+      .getCustomRepository(repositories.BranchesRepository)
+      .insert(branches);
+  }
+
+  if (common.isDefined(vizs) && vizs.length > 0) {
+    await manager.getCustomRepository(repositories.VizsRepository).insert(vizs);
   }
 }

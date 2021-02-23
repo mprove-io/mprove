@@ -60,9 +60,17 @@ export class CreateProjectService {
       orgPath: orgPath
     });
 
+    let prodItemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: common.PROD_REPO_ID,
+      readFiles: true
+    });
+
     let payload: apiToDisk.ToDiskCreateProjectResponsePayload = {
       orgId: orgId,
-      projectId: projectId
+      projectId: projectId,
+      prodFiles: prodItemCatalog.files
     };
 
     return payload;

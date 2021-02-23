@@ -7,10 +7,11 @@ export const STRUCT_ID_VARCHAR = 'varchar';
 export const VIEW_ID_VARCHAR = 'varchar';
 export const VISUALIZATION_ID_VARCHAR = 'varchar';
 
-export const BRANCH_ID_VARCHAR = 'varchar';
-export const CONNECTION_ID_VARCHAR = 'varchar';
 export const ORG_ID_VARCHAR = 'varchar';
 export const PROJECT_ID_VARCHAR = 'varchar';
+export const REPO_ID_VARCHAR = 'varchar';
+export const BRANCH_ID_VARCHAR = 'varchar';
+export const CONNECTION_ID_VARCHAR = 'varchar';
 export const USER_ID_VARCHAR = 'varchar';
 
 export const USER_EMAIL_VARCHAR = 'varchar';

@@ -9,6 +9,9 @@ export class BranchEntity {
   @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
   project_id: string; // composite
 
+  @PrimaryColumn({ type: constants.REPO_ID_VARCHAR })
+  repo_id: string; // composite
+
   @PrimaryColumn({ type: constants.BRANCH_ID_VARCHAR })
   branch_id: string; // name
 
