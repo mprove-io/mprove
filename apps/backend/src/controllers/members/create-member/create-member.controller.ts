@@ -89,7 +89,9 @@ export class CreateMemberController {
       }
     });
 
-    apiMember.avatarSmall = avatar.avatar_small;
+    if (common.isDefined(avatar)) {
+      apiMember.avatarSmall = avatar.avatar_small;
+    }
 
     //
 

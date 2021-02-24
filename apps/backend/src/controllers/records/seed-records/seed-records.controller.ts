@@ -2,6 +2,7 @@ import { Controller, Post, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
@@ -9,6 +10,7 @@ import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
+import { wrapper } from '~backend/barrels/wrapper';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -40,6 +42,13 @@ export class SeedRecordsController {
     let orgs: entities.OrgEntity[] = [];
     let projects: entities.ProjectEntity[] = [];
     let members: entities.MemberEntity[] = [];
+    let structs: entities.StructEntity[] = [];
+    let branches: entities.BranchEntity[] = [];
+    let vizs: entities.VizEntity[] = [];
+    let queries: entities.QueryEntity[] = [];
+    let models: entities.ModelEntity[] = [];
+    let mconfigs: entities.MconfigEntity[] = [];
+    let dashboards: entities.DashboardEntity[] = [];
 
     if (common.isDefined(payloadUsers)) {
       await asyncPool(
@@ -126,9 +135,9 @@ export class SeedRecordsController {
             name: x.name
           });
 
-          let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+          let toDiskSeedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
             info: {
-              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
               traceId: reqValid.info.traceId
             },
             payload: {
@@ -139,18 +148,107 @@ export class SeedRecordsController {
             }
           };
 
-          await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
+          let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>(
             {
               routingKey: helper.makeRoutingKeyToDisk({
                 orgId: newProject.org_id,
                 projectId: newProject.project_id
               }),
-              message: createProjectRequest,
+              message: toDiskSeedProjectRequest,
               checkIsOk: true
             }
           );
 
+          let structId = common.makeId();
+
+          let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
+            info: {
+              name:
+                apiToBlockml.ToBlockmlRequestInfoNameEnum
+                  .ToBlockmlRebuildStruct,
+              traceId: reqValid.info.traceId
+            },
+            payload: {
+              structId: structId,
+              orgId: newProject.org_id,
+              projectId: newProject.project_id,
+              files: helper.diskFilesToBlockmlFiles(diskResponse.payload.files),
+              connections: []
+            }
+          };
+
+          let blockmlRebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
+            {
+              routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+              message: toBlockmlRebuildStructRequest,
+              checkIsOk: true
+            }
+          );
+
+          let {
+            weekStart,
+            allowTimezones,
+            defaultTimezone,
+            errors,
+            views,
+            udfsDict,
+            vizs: vizsApi,
+            mconfigs: mconfigsApi,
+            queries: queriesApi,
+            dashboards: dashboardsApi,
+            models: modelsApi
+          } = blockmlRebuildStructResponse.payload;
+
+          let struct = maker.makeStruct({
+            projectId: newProject.project_id,
+            structId: structId,
+            weekStart: weekStart,
+            allowTimezones: common.booleanToEnum(allowTimezones),
+            defaultTimezone: defaultTimezone,
+            errors: errors,
+            views: views,
+            udfsDict: udfsDict
+          });
+
+          let prodBranch = maker.makeBranch({
+            structId: structId,
+            projectId: newProject.project_id,
+            repoId: common.PROD_REPO_ID,
+            branchId: common.BRANCH_MASTER
+          });
+
+          let devBranch = maker.makeBranch({
+            structId: structId,
+            projectId: newProject.project_id,
+            repoId: users[0].user_id,
+            branchId: common.BRANCH_MASTER
+          });
+
           projects.push(newProject);
+          structs.push(struct);
+          branches = [...branches, prodBranch, devBranch];
+
+          vizs = [...vizs, ...vizsApi.map(z => wrapper.wrapToEntityViz(z))];
+
+          models = [
+            ...models,
+            ...modelsApi.map(z => wrapper.wrapToEntityModel(z))
+          ];
+
+          queries = [
+            ...queries,
+            ...queriesApi.map(z => wrapper.wrapToEntityQuery(z))
+          ];
+
+          dashboards = [
+            ...dashboards,
+            ...dashboardsApi.map(z => wrapper.wrapToEntityDashboard(z))
+          ];
+
+          mconfigs = [
+            ...mconfigs,
+            ...mconfigsApi.map(z => wrapper.wrapToEntityMconfig(z))
+          ];
         }
       );
     }
@@ -184,7 +282,14 @@ export class SeedRecordsController {
           users: users,
           orgs: orgs,
           projects: projects,
-          members: members
+          members: members,
+          structs: structs,
+          branches: branches,
+          vizs: vizs,
+          queries: queries,
+          models: models,
+          mconfigs: mconfigs,
+          dashboards: dashboards
         }
       });
     });

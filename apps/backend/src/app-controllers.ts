@@ -27,5 +27,6 @@ export const appControllers = [
   controllers.GetProjectsListController,
   controllers.IsProjectExistController,
 
-  controllers.GetMembersController
+  controllers.GetMembersController,
+  controllers.CreateMemberController
 ];
