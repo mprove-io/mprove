@@ -3,11 +3,15 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
 export class GetProjectController {
-  constructor(private projectsService: ProjectsService) {}
+  constructor(
+    private projectsService: ProjectsService,
+    private membersService: MembersService
+  ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject)
   async getProject(
@@ -21,9 +25,9 @@ export class GetProjectController {
       projectId: projectId
     });
 
-    await this.projectsService.checkUserIsProjectAdmin({
+    await this.membersService.checkMemberIsProjectAdmin({
       projectId: projectId,
-      userId: user.user_id
+      memberId: user.user_id
     });
 
     let payload: apiToBackend.ToBackendGetProjectResponsePayload = {

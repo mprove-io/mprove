@@ -5,28 +5,26 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'get-members__forbidden-project';
+let testId = 'get-project__member-is-not-admin';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
-let email2 = `2${testId}@example.com`;
 let password = '123';
 let orgName = testId;
 let userId = common.makeId();
-let userId2 = common.makeId();
 let orgId = common.makeId();
 let projectName = testId;
 let projectId = common.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetMembersResponse;
+  let resp: apiToBackend.ToBackendGetProjectResponse;
 
   try {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        emails: [email, email2],
+        emails: [email],
         orgNames: [orgName],
         projectNames: [projectName]
       },
@@ -35,12 +33,6 @@ test('1', async t => {
           {
             userId,
             email,
-            password,
-            isEmailVerified: common.BoolEnum.TRUE
-          },
-          {
-            userId: userId2,
-            email: email2,
             password,
             isEmailVerified: common.BoolEnum.TRUE
           }
@@ -61,8 +53,8 @@ test('1', async t => {
         ],
         members: [
           {
-            memberId: userId2,
-            email: email2,
+            memberId: userId,
+            email,
             projectId,
             isAdmin: common.BoolEnum.FALSE,
             isEditor: common.BoolEnum.TRUE,
@@ -73,9 +65,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetMembersRequest = {
+    let req: apiToBackend.ToBackendGetProjectRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
         traceId: traceId
       },
       payload: {
@@ -83,7 +75,7 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetMembersResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendGetProjectResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -96,5 +88,8 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error.message, apiToBackend.ErEnum.BACKEND_FORBIDDEN_PROJECT);
+  t.is(
+    resp.info.error.message,
+    apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
+  );
 });

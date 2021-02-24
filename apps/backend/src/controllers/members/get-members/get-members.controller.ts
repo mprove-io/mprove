@@ -6,6 +6,7 @@ import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
@@ -13,7 +14,8 @@ export class GetMembersController {
   constructor(
     private membersRepository: repositories.MembersRepository,
     private avatarsRepository: repositories.AvatarsRepository,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
+    private membersService: MembersService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers)
@@ -24,8 +26,12 @@ export class GetMembersController {
   ) {
     let { projectId } = reqValid.payload;
 
-    await this.projectsService.checkUserIsProjectMember({
-      userId: user.user_id,
+    await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
+    await this.membersService.checkProjectMemberExists({
+      memberId: user.user_id,
       projectId: projectId
     });
 

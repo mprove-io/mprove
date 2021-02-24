@@ -5,10 +5,7 @@ import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
 export class ProjectsService {
-  constructor(
-    private projectsRepository: repositories.ProjectsRepository,
-    private membersRepository: repositories.MembersRepository
-  ) {}
+  constructor(private projectsRepository: repositories.ProjectsRepository) {}
 
   async getProjectCheckExists(item: { projectId: string }) {
     let { projectId } = item;
@@ -24,39 +21,5 @@ export class ProjectsService {
     }
 
     return project;
-  }
-
-  async checkUserIsProjectAdmin(item: { userId: string; projectId: string }) {
-    let { projectId, userId } = item;
-
-    let member = await this.membersRepository.findOne({
-      member_id: userId,
-      project_id: projectId
-    });
-
-    if (member.is_admin !== common.BoolEnum.TRUE) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_PROJECT
-      });
-    }
-
-    return;
-  }
-
-  async checkUserIsProjectMember(item: { userId: string; projectId: string }) {
-    let { projectId, userId } = item;
-
-    let member = await this.membersRepository.findOne({
-      member_id: userId,
-      project_id: projectId
-    });
-
-    if (common.isUndefined(member)) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_PROJECT
-      });
-    }
-
-    return;
   }
 }
