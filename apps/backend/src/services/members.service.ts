@@ -7,10 +7,7 @@ import { repositories } from '~backend/barrels/repositories';
 export class MembersService {
   constructor(private membersRepository: repositories.MembersRepository) {}
 
-  async checkMemberIsProjectAdmin(item: {
-    memberId: string;
-    projectId: string;
-  }) {
+  async checkMemberIsAdmin(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
@@ -23,14 +20,9 @@ export class MembersService {
         message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
       });
     }
-
-    return;
   }
 
-  async checkProjectMemberExists(item: {
-    memberId: string;
-    projectId: string;
-  }) {
+  async checkMemberExists(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
@@ -43,7 +35,20 @@ export class MembersService {
         message: apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
+  }
 
-    return;
+  async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {
+    let { projectId, memberId } = item;
+
+    let member = await this.membersRepository.findOne({
+      member_id: memberId,
+      project_id: projectId
+    });
+
+    if (common.isDefined(member)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_MEMBER_ALREADY_EXISTS
+      });
+    }
   }
 }

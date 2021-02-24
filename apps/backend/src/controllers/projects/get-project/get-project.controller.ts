@@ -25,7 +25,7 @@ export class GetProjectController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsProjectAdmin({
+    await this.membersService.checkMemberIsAdmin({
       projectId: projectId,
       memberId: user.user_id
     });

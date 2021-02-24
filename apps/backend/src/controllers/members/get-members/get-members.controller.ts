@@ -30,7 +30,7 @@ export class GetMembersController {
       projectId: projectId
     });
 
-    await this.membersService.checkProjectMemberExists({
+    await this.membersService.checkMemberExists({
       memberId: user.user_id,
       projectId: projectId
     });
