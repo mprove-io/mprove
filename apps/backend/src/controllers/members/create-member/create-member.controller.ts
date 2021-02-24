@@ -1,9 +1,14 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -19,10 +24,13 @@ export class CreateMemberController {
     private connection: Connection,
     private rabbitService: RabbitService,
     private avatarsRepository: repositories.AvatarsRepository,
+    private branchesRepository: repositories.BranchesRepository,
     private usersRepository: repositories.UsersRepository,
     private projectsService: ProjectsService,
     private usersService: UsersService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private mailerService: MailerService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember)
@@ -31,9 +39,10 @@ export class CreateMemberController {
     @ValidateRequest(apiToBackend.ToBackendCreateMemberRequest)
     reqValid: apiToBackend.ToBackendCreateMemberRequest
   ) {
+    let { traceId } = reqValid.info;
     let { projectId, email } = reqValid.payload;
 
-    await this.projectsService.getProjectCheckExists({
+    let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
@@ -82,27 +91,66 @@ export class CreateMemberController {
 
     apiMember.avatarSmall = avatar.avatar_small;
 
-    let newUsers = [];
+    //
 
-    if (common.isDefined(newUser)) {
-      newUsers.push(newUsers);
-    }
+    let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest = {
+      info: {
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+        traceId: traceId
+      },
+      payload: {
+        orgId: project.org_id,
+        projectId: projectId,
+        devRepoId: newMember.member_id
+      }
+    };
+
+    await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>({
+      routingKey: helper.makeRoutingKeyToDisk({
+        orgId: project.org_id,
+        projectId: projectId
+      }),
+      message: toDiskCreateDevRepoRequest,
+      checkIsOk: true
+    });
+
+    //
+
+    let prodBranch = await this.branchesRepository.findOne({
+      project_id: projectId,
+      repo_id: common.PROD_REPO_ID,
+      branch_id: common.BRANCH_MASTER
+    });
+
+    let devBranch = maker.makeBranch({
+      structId: prodBranch.struct_id,
+      projectId: projectId,
+      repoId: newMember.member_id,
+      branchId: common.BRANCH_MASTER
+    });
+
+    //
 
     await this.connection.transaction(async manager => {
       await db.addRecords({
         manager: manager,
         records: {
           members: [newMember],
-          users: newUsers
-          // structs: [struct],
-          // branches: [prodBranch, devBranch],
-          // vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
-          // queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-          // models: models.map(x => wrapper.wrapToEntityModel(x)),
-          // mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          // dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
+          users: common.isDefined(newUser) ? [newUser] : [],
+          branches: [devBranch]
         }
       });
+    });
+
+    //
+
+    let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
+    let link = `${hostUrl}/org/${project.org_id}/project/${projectId}/team`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      subject: `[Mprove] ${user.alias} added you to ${project.name} project team`,
+      text: `Project url: ${link}`
     });
 
     let payload: apiToBackend.ToBackendCreateMemberResponsePayload = {
