@@ -12,10 +12,10 @@ export function wrapToEntityDashboard(
     access_roles: x.accessRoles,
     title: x.title,
     gr: x.gr,
-    hidden: common.booleanToBoolEnum(x.hidden),
+    hidden: common.booleanToEnum(x.hidden),
     fields: x.fields,
     reports: x.reports,
-    temp: common.booleanToBoolEnum(x.temp),
+    temp: common.booleanToEnum(x.temp),
     description: x.description,
     server_ts: x.serverTs.toString()
   };

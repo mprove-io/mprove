@@ -14,7 +14,7 @@ export function wrapToEntityMconfig(x: common.Mconfig): entities.MconfigEntity {
     limit: x.limit,
     filters: x.filters,
     charts: x.charts,
-    temp: common.booleanToBoolEnum(x.temp),
+    temp: common.booleanToEnum(x.temp),
     server_ts: x.serverTs.toString()
   };
 }

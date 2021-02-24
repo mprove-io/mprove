@@ -112,7 +112,7 @@ export class CreateProjectController {
       projectId: newProject.project_id,
       structId: structId,
       weekStart: weekStart,
-      allowTimezones: common.booleanToBoolEnum(allowTimezones),
+      allowTimezones: common.booleanToEnum(allowTimezones),
       defaultTimezone: defaultTimezone,
       errors: errors,
       views: views,

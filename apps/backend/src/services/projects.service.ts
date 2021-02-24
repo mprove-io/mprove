@@ -42,4 +42,21 @@ export class ProjectsService {
 
     return;
   }
+
+  async checkUserIsProjectMember(item: { userId: string; projectId: string }) {
+    let { projectId, userId } = item;
+
+    let member = await this.membersRepository.findOne({
+      member_id: userId,
+      project_id: projectId
+    });
+
+    if (common.isUndefined(member)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_PROJECT
+      });
+    }
+
+    return;
+  }
 }

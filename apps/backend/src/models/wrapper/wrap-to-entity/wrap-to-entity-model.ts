@@ -10,7 +10,7 @@ export function wrapToEntityModel(x: common.Model): entities.ModelEntity {
     access_roles: x.accessRoles,
     label: x.label,
     gr: x.gr,
-    hidden: common.booleanToBoolEnum(x.hidden),
+    hidden: common.booleanToEnum(x.hidden),
     fields: x.fields,
     nodes: x.nodes,
     description: x.description,

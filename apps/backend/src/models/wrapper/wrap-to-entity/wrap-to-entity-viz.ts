@@ -8,7 +8,7 @@ export function wrapToEntityViz(x: common.Viz): entities.VizEntity {
     access_users: x.accessUsers,
     access_roles: x.accessRoles,
     gr: x.gr,
-    hidden: common.booleanToBoolEnum(x.hidden),
+    hidden: common.booleanToEnum(x.hidden),
     reports: x.reports,
     server_ts: x.serverTs.toString()
   };
