@@ -30,5 +30,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetProjectsList = 'ToBackendGetProjectsList',
   //
   ToBackendGetMembers = 'ToBackendGetMembers',
-  ToBackendCreateMember = 'ToBackendCreateMember'
+  ToBackendCreateMember = 'ToBackendCreateMember',
+  ToBackendEditMember = 'ToBackendEditMember'
 }
