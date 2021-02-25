@@ -12,7 +12,10 @@ export class Connection {
   type: enums.ConnectionTypeEnum;
 
   @IsString()
-  bigqueryCredentials: string;
+  bigqueryProject: string;
+
+  @IsString()
+  bigqueryClientEmail: string;
 
   @IsInt()
   bigqueryQuerySizeLimit: number;
@@ -28,9 +31,6 @@ export class Connection {
 
   @IsString()
   postgresUser: string;
-
-  @IsString()
-  postgresPassword: string;
 
   @IsInt()
   serverTs: number;

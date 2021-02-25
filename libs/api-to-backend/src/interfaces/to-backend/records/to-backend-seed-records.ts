@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -84,6 +90,45 @@ export class ToBackendSeedRecordsRequestPayloadMembersItem {
   isExplorer: common.BoolEnum;
 }
 
+export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
+  @IsString()
+  projectId: string;
+
+  @IsString()
+  connectionId: string;
+
+  @IsEnum(common.ConnectionTypeEnum)
+  type: common.ConnectionTypeEnum;
+
+  @IsOptional()
+  @IsString()
+  bigqueryCredentials?: string;
+
+  @IsOptional()
+  @IsInt()
+  bigqueryQuerySizeLimit?: number;
+
+  @IsOptional()
+  @IsString()
+  postgresHost?: string;
+
+  @IsOptional()
+  @IsInt()
+  postgresPort?: number;
+
+  @IsOptional()
+  @IsString()
+  postgresDatabase?: string;
+
+  @IsOptional()
+  @IsString()
+  postgresUser?: string;
+
+  @IsOptional()
+  @IsString()
+  postgresPassword?: string;
+}
+
 export class ToBackendSeedRecordsRequestPayload {
   @IsOptional()
   @ValidateNested()
@@ -104,6 +149,11 @@ export class ToBackendSeedRecordsRequestPayload {
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadMembersItem)
   members?: ToBackendSeedRecordsRequestPayloadMembersItem[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ToBackendSeedRecordsRequestPayloadConnectionsItem)
+  connections?: ToBackendSeedRecordsRequestPayloadConnectionsItem[];
 }
 
 export class ToBackendSeedRecordsRequest extends ToBackendRequest {

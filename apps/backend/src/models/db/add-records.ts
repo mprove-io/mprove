@@ -13,6 +13,7 @@ export async function addRecords(item: {
     orgs?: entities.OrgEntity[];
     projects?: entities.ProjectEntity[];
     members?: entities.MemberEntity[];
+    connections?: entities.ConnectionEntity[];
     structs?: entities.StructEntity[];
     branches?: entities.BranchEntity[];
     vizs?: entities.VizEntity[];

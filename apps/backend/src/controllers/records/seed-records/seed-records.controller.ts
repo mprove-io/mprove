@@ -35,6 +35,7 @@ export class SeedRecordsController {
     let payloadMembers = reqValid.payload.members;
     let payloadOrgs = reqValid.payload.orgs;
     let payloadProjects = reqValid.payload.projects;
+    let payloadConnections = reqValid.payload.connections;
 
     //
 
@@ -42,6 +43,7 @@ export class SeedRecordsController {
     let orgs: entities.OrgEntity[] = [];
     let projects: entities.ProjectEntity[] = [];
     let members: entities.MemberEntity[] = [];
+    let connections: entities.ConnectionEntity[] = [];
     let structs: entities.StructEntity[] = [];
     let branches: entities.BranchEntity[] = [];
     let vizs: entities.VizEntity[] = [];
@@ -173,7 +175,12 @@ export class SeedRecordsController {
               orgId: newProject.org_id,
               projectId: newProject.project_id,
               files: helper.diskFilesToBlockmlFiles(diskResponse.payload.files),
-              connections: []
+              connections: connections
+                .filter(z => z.project_id === newProject.project_id)
+                .map(c => ({
+                  connectionId: c.connection_id,
+                  type: c.type
+                }))
             }
           };
 
@@ -275,6 +282,25 @@ export class SeedRecordsController {
       );
     }
 
+    if (common.isDefined(payloadConnections)) {
+      payloadConnections.forEach(x => {
+        let newConnection = maker.makeConnection({
+          projectId: x.projectId,
+          connectionId: x.connectionId,
+          type: x.type,
+          postgresHost: x.postgresHost,
+          postgresPort: x.postgresPort,
+          postgresDatabase: x.postgresDatabase,
+          postgresUser: x.postgresUser,
+          postgresPassword: x.postgresPassword,
+          bigqueryCredentials: x.bigqueryCredentials,
+          bigqueryQuerySizeLimit: x.bigqueryQuerySizeLimit
+        });
+
+        connections.push(newConnection);
+      });
+    }
+
     await this.connection.transaction(async manager => {
       await db.addRecords({
         manager: manager,
@@ -289,7 +315,8 @@ export class SeedRecordsController {
           queries: queries,
           models: models,
           mconfigs: mconfigs,
-          dashboards: dashboards
+          dashboards: dashboards,
+          connections: connections
         }
       });
     });
