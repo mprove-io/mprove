@@ -22,9 +22,6 @@ export class OrgUsersItem {
   email: string;
 
   @IsString()
-  alias: string;
-
-  @IsString()
   firstName: string;
 
   @IsString()

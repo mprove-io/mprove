@@ -29,5 +29,7 @@ export const appControllers = [
 
   controllers.GetMembersController,
   controllers.CreateMemberController,
-  controllers.EditMemberController
+  controllers.EditMemberController,
+
+  controllers.GetOrgUsersController
 ];
