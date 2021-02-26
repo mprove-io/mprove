@@ -52,6 +52,7 @@ export async function addRecords(item: {
   let orgs = records.orgs;
   let projects = records.projects;
   let members = records.members;
+  let connections = records.connections;
   let structs = records.structs;
   let branches = records.branches;
   let vizs = records.vizs;
@@ -80,6 +81,12 @@ export async function addRecords(item: {
     await manager
       .getCustomRepository(repositories.MembersRepository)
       .insert(members);
+  }
+
+  if (common.isDefined(connections) && connections.length > 0) {
+    await manager
+      .getCustomRepository(repositories.ConnectionsRepository)
+      .insert(connections);
   }
 
   if (common.isDefined(structs) && structs.length > 0) {

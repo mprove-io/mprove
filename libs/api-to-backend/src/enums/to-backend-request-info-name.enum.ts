@@ -35,5 +35,6 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetOrgUsers = 'ToBackendGetOrgUsers',
   //
-  ToBackendGetConnections = 'ToBackendGetConnections'
+  ToBackendGetConnections = 'ToBackendGetConnections',
+  ToBackendCreateConnection = 'ToBackendCreateConnection'
 }
