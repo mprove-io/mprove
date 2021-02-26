@@ -26,4 +26,22 @@ export class ConnectionsService {
       });
     }
   }
+
+  async checkConnectionExists(item: {
+    connectionId: string;
+    projectId: string;
+  }) {
+    let { projectId, connectionId } = item;
+
+    let connection = await this.connectionsRepository.findOne({
+      connection_id: connectionId,
+      project_id: projectId
+    });
+
+    if (common.isUndefined(connection)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+      });
+    }
+  }
 }

@@ -34,5 +34,6 @@ export const appControllers = [
   controllers.GetOrgUsersController,
 
   controllers.GetConnectionsController,
-  controllers.CreateConnectionController
+  controllers.CreateConnectionController,
+  controllers.EditConnectionController
 ];

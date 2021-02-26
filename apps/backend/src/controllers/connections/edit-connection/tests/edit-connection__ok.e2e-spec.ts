@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'create-connection__connection-already-exists';
+let testId = 'edit-connection__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
@@ -19,7 +19,7 @@ let connectionId = 'c1';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateConnectionResponse;
+  let resp: apiToBackend.ToBackendEditConnectionResponse;
 
   try {
     prep = await prepareTest({
@@ -66,17 +66,16 @@ test('1', async t => {
           {
             connectionId: connectionId,
             projectId: projectId,
-            type: common.ConnectionTypeEnum.PostgreSQL
+            type: common.ConnectionTypeEnum.BigQuery
           }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateConnectionRequest = {
+    let req: apiToBackend.ToBackendEditConnectionRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection,
         traceId: traceId
       },
       payload: {
@@ -86,7 +85,7 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateConnectionResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendEditConnectionResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -99,8 +98,6 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(
-    resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
-  );
+  t.is(resp.info.error, undefined);
+  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });

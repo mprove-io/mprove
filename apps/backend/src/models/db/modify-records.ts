@@ -13,6 +13,7 @@ export async function modifyRecords(item: {
     orgs?: entities.OrgEntity[];
     projects?: entities.ProjectEntity[];
     members?: entities.MemberEntity[];
+    connections?: entities.ConnectionEntity[];
     // repos?: entities.RepoEntity[];
     // files?: entities.FileEntity[];
     // queries?: entities.QueryEntity[];
@@ -52,6 +53,7 @@ export async function modifyRecords(item: {
   let orgs = records.orgs;
   let projects = records.projects;
   let members = records.members;
+  let connections = records.connections;
   // let repos = records.repos;
   // let files = records.files;
   // let queries = records.queries;
@@ -79,5 +81,11 @@ export async function modifyRecords(item: {
     await manager
       .getCustomRepository(repositories.MembersRepository)
       .save(members);
+  }
+
+  if (common.isDefined(connections) && connections.length > 0) {
+    await manager
+      .getCustomRepository(repositories.ConnectionsRepository)
+      .save(connections);
   }
 }
