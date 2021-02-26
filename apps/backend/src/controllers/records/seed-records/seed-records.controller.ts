@@ -309,14 +309,14 @@ export class SeedRecordsController {
           orgs: orgs,
           projects: projects,
           members: members,
-          structs: structs,
+          connections: connections,
           branches: branches,
+          structs: structs,
           vizs: vizs,
           queries: queries,
           models: models,
           mconfigs: mconfigs,
-          dashboards: dashboards,
-          connections: connections
+          dashboards: dashboards
         }
       });
     });

@@ -6,9 +6,6 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 export class ToBackendGetBranchesListRequestPayload {
   @IsString()
   projectId: string;
-
-  @IsString()
-  repoId: string;
 }
 
 export class ToBackendGetBranchesListRequest extends ToBackendRequest {
