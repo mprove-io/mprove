@@ -37,5 +37,6 @@ export const appControllers = [
   controllers.CreateConnectionController,
   controllers.EditConnectionController,
 
-  controllers.GetBranchesListController
+  controllers.GetBranchesListController,
+  controllers.IsBranchExistController
 ];

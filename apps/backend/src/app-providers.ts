@@ -11,6 +11,7 @@ import { MembersService } from './services/members.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { RabbitService } from './services/rabbit.service';
+import { ReposService } from './services/repos.service';
 import { UsersService } from './services/users.service';
 
 export const appProviders = [
@@ -19,6 +20,7 @@ export const appProviders = [
   OrgsService,
   ProjectsService,
   ConnectionsService,
+  ReposService,
   MembersService,
   {
     provide: APP_FILTER,
