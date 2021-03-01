@@ -6,6 +6,7 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { interfaces } from './barrels/interfaces';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { BranchesService } from './services/branches.service';
 import { ConnectionsService } from './services/connections.service';
 import { MembersService } from './services/members.service';
 import { OrgsService } from './services/orgs.service';
@@ -21,6 +22,7 @@ export const appProviders = [
   ProjectsService,
   ConnectionsService,
   ReposService,
+  BranchesService,
   MembersService,
   {
     provide: APP_FILTER,
