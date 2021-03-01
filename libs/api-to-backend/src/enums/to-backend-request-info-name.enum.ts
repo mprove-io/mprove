@@ -42,5 +42,7 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetBranchesList = 'ToBackendGetBranchesList',
   ToBackendIsBranchExist = 'ToBackendIsBranchExist',
-  ToBackendCreateBranch = 'ToBackendCreateBranch'
+  ToBackendCreateBranch = 'ToBackendCreateBranch',
+  //
+  ToBackendGetRepo = 'ToBackendGetRepo'
 }

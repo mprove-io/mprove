@@ -39,5 +39,7 @@ export const appControllers = [
 
   controllers.GetBranchesListController,
   controllers.IsBranchExistController,
-  controllers.CreateBranchController
+  controllers.CreateBranchController,
+
+  controllers.GetRepoController
 ];

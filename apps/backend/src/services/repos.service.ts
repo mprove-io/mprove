@@ -6,7 +6,7 @@ import { common } from '~backend/barrels/common';
 export class ReposService {
   constructor() {}
 
-  async checkRepoId(item: { repoId: string; userId: string }) {
+  async checkDevRepoId(item: { repoId: string; userId: string }) {
     if (item.repoId !== item.userId) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_REPO

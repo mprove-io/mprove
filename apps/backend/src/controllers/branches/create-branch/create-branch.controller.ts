@@ -43,7 +43,7 @@ export class CreateBranchController {
       projectId: projectId
     });
 
-    await this.reposService.checkRepoId({
+    await this.reposService.checkDevRepoId({
       repoId: repoId,
       userId: user.user_id
     });
