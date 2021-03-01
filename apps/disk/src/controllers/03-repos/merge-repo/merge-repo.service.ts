@@ -127,7 +127,8 @@ export class MergeRepoService {
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,
-      nodes: itemCatalog.nodes
+      nodes: itemCatalog.nodes,
+      files: itemCatalog.files
     };
 
     return payload;
