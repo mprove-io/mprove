@@ -51,6 +51,10 @@ export class ToDiskMergeRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskFileLine)
   conflicts: common.DiskFileLine[];
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogNode)
+  nodes: common.DiskCatalogNode[];
 }
 
 export class ToDiskMergeRepoResponse extends common.MyResponse {
