@@ -42,5 +42,6 @@ export const appControllers = [
   controllers.CreateBranchController,
 
   controllers.GetRepoController,
+  controllers.CommitRepoController,
   controllers.MergeRepoController
 ];

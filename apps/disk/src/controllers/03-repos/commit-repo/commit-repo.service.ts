@@ -90,13 +90,21 @@ export class CommitRepoService {
       })
     );
 
+    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: false
+    });
+
     let payload: apiToDisk.ToDiskCommitRepoResponsePayload = {
       orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts
+      conflicts: conflicts,
+      nodes: itemCatalog.nodes
     };
 
     return payload;

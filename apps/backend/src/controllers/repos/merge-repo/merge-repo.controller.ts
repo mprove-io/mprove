@@ -47,7 +47,7 @@ export class MergeRepoController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberExists({
+    await this.membersService.checkMemberIsEditorOrAdmin({
       projectId: projectId,
       memberId: user.user_id
     });

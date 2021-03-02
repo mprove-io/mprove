@@ -48,6 +48,10 @@ export class ToDiskCommitRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskFileLine)
   conflicts: common.DiskFileLine[];
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogNode)
+  nodes: common.DiskCatalogNode[];
 }
 
 export class ToDiskCommitRepoResponse extends common.MyResponse {

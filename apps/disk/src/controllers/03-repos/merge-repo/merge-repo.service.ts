@@ -117,7 +117,7 @@ export class MergeRepoService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: true
     });
 
     let payload: apiToDisk.ToDiskMergeRepoResponsePayload = {

@@ -12,6 +12,9 @@ export class ToBackendCommitRepoRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  commitMessage: string;
 }
 
 export class ToBackendCommitRepoRequest extends ToBackendRequest {
