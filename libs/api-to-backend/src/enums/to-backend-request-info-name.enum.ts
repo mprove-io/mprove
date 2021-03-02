@@ -47,5 +47,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetRepo = 'ToBackendGetRepo',
   ToBackendCommitRepo = 'ToBackendCommitRepo',
   ToBackendPushRepo = 'ToBackendPushRepo',
+  ToBackendPullRepo = 'ToBackendPullRepo',
   ToBackendMergeRepo = 'ToBackendMergeRepo'
 }
