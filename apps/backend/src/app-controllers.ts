@@ -43,5 +43,6 @@ export const appControllers = [
 
   controllers.GetRepoController,
   controllers.CommitRepoController,
+  controllers.PushRepoController,
   controllers.MergeRepoController
 ];

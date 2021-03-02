@@ -45,6 +45,10 @@ export class ToDiskPushRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskFileLine)
   conflicts: common.DiskFileLine[];
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogNode)
+  nodes: common.DiskCatalogNode[];
 }
 
 export class ToDiskPushRepoResponse extends common.MyResponse {
