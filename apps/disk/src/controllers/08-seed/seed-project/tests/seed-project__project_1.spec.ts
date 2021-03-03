@@ -34,5 +34,5 @@ test('1', async t => {
   }
 
   t.is(resp.payload.repoStatus, common.RepoStatusEnum.Ok);
-  t.is(resp.payload.files[0].fileId, 'r.md');
+  t.is(resp.payload.files[0].fileId, 'readme.md');
 });

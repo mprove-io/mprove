@@ -1,4 +1,5 @@
 export * from './branches/_index';
+export * from './catalogs/_index';
 export * from './connections/_index';
 export * from './members/_index';
 export * from './org-users/_index';
