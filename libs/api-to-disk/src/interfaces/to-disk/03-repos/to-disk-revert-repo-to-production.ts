@@ -42,6 +42,10 @@ export class ToDiskRevertRepoToProductionResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskFileLine)
   conflicts: common.DiskFileLine[];
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogNode)
+  nodes: common.DiskCatalogNode[];
 }
 
 export class ToDiskRevertRepoToProductionResponse extends common.MyResponse {

@@ -82,13 +82,21 @@ export class RevertRepoToProductionService {
       })
     );
 
+    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: false
+    });
+
     let payload: apiToDisk.ToDiskRevertRepoToProductionResponsePayload = {
       orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts
+      conflicts: conflicts,
+      nodes: itemCatalog.nodes
     };
 
     return payload;
