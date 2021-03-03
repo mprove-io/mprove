@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'rename-catalog-node__folder';
+let testId = 'disk-rename-catalog-node__folder';
 
 let traceId = '123';
 let orgId = testId;

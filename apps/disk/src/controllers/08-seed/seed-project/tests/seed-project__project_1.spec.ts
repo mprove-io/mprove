@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-const testId = 'seed-project__project_1';
+const testId = 'disk-seed-project__project_1';
 
 const traceId = '123';
 const orgId = testId;

@@ -2,7 +2,7 @@ import test from 'ava';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
-let testId = 'create-org';
+let testId = 'disk-create-org';
 
 let traceId = '123';
 let orgId = testId;

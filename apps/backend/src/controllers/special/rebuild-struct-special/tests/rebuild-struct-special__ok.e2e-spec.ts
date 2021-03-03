@@ -7,7 +7,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'rebuild-struct-special__ok';
+let testId = 'backend-rebuild-struct-special__ok';
 
 let traceId = testId;
 let orgId = testId;

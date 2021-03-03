@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'get-org__org-not-found';
+let testId = 'backend-get-org__org-not-found';
 
 let traceId = testId;
 let email = `${testId}@example.com`;

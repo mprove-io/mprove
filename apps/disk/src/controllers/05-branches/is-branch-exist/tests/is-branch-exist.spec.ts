@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'is-branch-exist';
+let testId = 'disk-is-branch-exist';
 
 let traceId = '123';
 let orgId = testId;

@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'create-dev-repo';
+let testId = 'disk-create-dev-repo';
 
 let traceId = '123';
 let orgId = testId;

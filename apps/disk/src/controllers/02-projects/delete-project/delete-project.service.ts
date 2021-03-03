@@ -35,15 +35,11 @@ export class DeleteProjectService {
     }
 
     let isProjectExist = await disk.isPathExist(projectDir);
-    if (isProjectExist === false) {
-      throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_PROJECT_IS_NOT_EXIST
-      });
+    if (isProjectExist === true) {
+      await disk.removePath(projectDir);
     }
 
     //
-
-    await disk.removePath(projectDir);
 
     let payload: apiToDisk.ToDiskDeleteProjectResponsePayload = {
       orgId: orgId,

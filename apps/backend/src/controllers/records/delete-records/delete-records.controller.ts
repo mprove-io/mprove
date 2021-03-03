@@ -36,77 +36,61 @@ export class DeleteRecordsController {
     @ValidateRequest(apiToBackend.ToBackendDeleteRecordsRequest)
     reqValid: apiToBackend.ToBackendDeleteRecordsRequest
   ) {
-    let { orgNames, projectNames, emails } = reqValid.payload;
+    let {
+      orgIds,
+      projectIds,
+      emails,
+      orgNames,
+      projectNames
+    } = reqValid.payload;
+
+    emails = emails || [];
+    projectIds = projectIds || [];
+    orgIds = orgIds || [];
 
     let structIds = [];
     let userIds = [];
-    let projectIds = [];
-    let orgIds = [];
 
     if (common.isDefined(projectNames) && projectNames.length > 0) {
-      await asyncPool(1, projectNames, async (x: string) => {
-        let project = await this.projectsRepository.findOne({ name: x });
-
-        if (common.isDefined(project)) {
-          projectIds.push(project.project_id);
-
-          let deleteProjectRequest: apiToDisk.ToDiskDeleteProjectRequest = {
-            info: {
-              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteProject,
-              traceId: reqValid.info.traceId
-            },
-            payload: {
-              orgId: project.org_id,
-              projectId: project.project_id
-            }
-          };
-
-          await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteProjectResponse>(
-            {
-              routingKey: helper.makeRoutingKeyToDisk({
-                orgId: project.org_id,
-                projectId: project.project_id
-              }),
-              message: deleteProjectRequest,
-              checkIsOk: true
-            }
-          );
-        }
+      let projects = await this.projectsRepository.find({
+        name: In(projectNames)
       });
+      if (projects.length > 0) {
+        projectIds = [...projectIds, ...projects.map(x => x.project_id)];
+      }
     }
 
     if (common.isDefined(orgNames) && orgNames.length > 0) {
-      await asyncPool(1, orgNames, async (x: string) => {
-        let org = await this.orgsRepository.findOne({ name: x });
+      let orgs = await this.orgsRepository.find({ name: In(orgNames) });
+      if (orgs.length > 0) {
+        orgIds = [...orgIds, ...orgs.map(x => x.org_id)];
+      }
+    }
 
-        if (common.isDefined(org)) {
-          orgIds.push(org.org_id);
+    if (orgIds.length > 0) {
+      await asyncPool(1, orgIds, async (x: string) => {
+        let deleteOrgRequest: apiToDisk.ToDiskDeleteOrgRequest = {
+          info: {
+            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
+            traceId: reqValid.info.traceId
+          },
+          payload: {
+            orgId: x
+          }
+        };
 
-          let deleteOrgRequest: apiToDisk.ToDiskDeleteOrgRequest = {
-            info: {
-              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
-              traceId: reqValid.info.traceId
-            },
-            payload: {
-              orgId: org.org_id
-            }
-          };
-
-          await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>(
-            {
-              routingKey: helper.makeRoutingKeyToDisk({
-                orgId: org.org_id,
-                projectId: null
-              }),
-              message: deleteOrgRequest,
-              checkIsOk: true
-            }
-          );
-        }
+        await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>({
+          routingKey: helper.makeRoutingKeyToDisk({
+            orgId: x,
+            projectId: null
+          }),
+          message: deleteOrgRequest,
+          checkIsOk: true
+        });
       });
     }
 
-    if (common.isDefined(emails) && emails.length > 0) {
+    if (emails.length > 0) {
       await asyncPool(1, emails, async (email: string) => {
         let user = await this.usersRepository.findOne({ email: email });
         if (common.isDefined(user)) {

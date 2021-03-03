@@ -14,7 +14,15 @@ export class ToBackendDeleteRecordsRequestPayload {
 
   @IsOptional()
   @IsString({ each: true })
+  orgIds?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
   projectNames?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  projectIds?: string[];
 }
 
 export class ToBackendDeleteRecordsRequest extends ToBackendRequest {

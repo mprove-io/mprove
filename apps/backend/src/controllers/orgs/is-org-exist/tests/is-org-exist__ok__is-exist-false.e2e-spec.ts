@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'is-org-exist__ok__is-exist-false';
+let testId = 'backend-is-org-exist__ok__is-exist-false';
 
 let traceId = testId;
 

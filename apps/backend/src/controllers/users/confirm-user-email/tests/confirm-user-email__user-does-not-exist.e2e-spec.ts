@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'confirm-user-email__user-does-not-exist';
+let testId = 'backend-confirm-user-email__user-does-not-exist';
 
 let traceId = testId;
 let emailToken = common.makeId();

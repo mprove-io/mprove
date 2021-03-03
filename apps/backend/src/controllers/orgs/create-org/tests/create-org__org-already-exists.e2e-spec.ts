@@ -5,13 +5,13 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'create-org__org-already-exists';
+let testId = 'backend-create-org__org-already-exists';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123';
 let orgName = testId;
-let orgId = common.makeId();
+let orgId = testId;
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -22,7 +22,7 @@ test('1', async t => {
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email],
-        orgNames: [orgName]
+        orgIds: [orgId]
       },
       seedRecordsPayload: {
         users: [

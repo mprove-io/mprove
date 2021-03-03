@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'set-org-owner__ok';
+let testId = 'backend-set-org-owner__ok';
 
 let traceId = testId;
 
@@ -13,7 +13,7 @@ let email = `${testId}@example.com`;
 let password = '123';
 
 let orgName = testId;
-let orgId = common.makeId();
+let orgId = testId;
 
 let newOwnerEmail = `new-${testId}@example.com`;
 let newOwnerPassword = '123';
@@ -28,7 +28,7 @@ test('1', async t => {
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email, newOwnerEmail],
-        orgNames: [orgName]
+        orgIds: [orgId]
       },
       seedRecordsPayload: {
         users: [

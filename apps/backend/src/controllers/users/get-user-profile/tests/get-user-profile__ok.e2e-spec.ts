@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'get-user-profile__ok';
+let testId = 'backend-get-user-profile__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;

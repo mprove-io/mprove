@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'create-branch__ok-from-remote-true';
+let testId = 'backend-create-branch__ok-from-remote-true';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
@@ -15,7 +15,7 @@ let userId = common.makeId();
 let repoId = userId;
 let newBranchId = common.makeId();
 let fromBranchId = common.BRANCH_MASTER;
-let orgId = common.makeId();
+let orgId = testId;
 let projectName = testId;
 let projectId = common.makeId();
 let prep: interfaces.Prep;
@@ -28,8 +28,8 @@ test('1', async t => {
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email],
-        orgNames: [orgName],
-        projectNames: [projectName]
+        orgIds: [orgId],
+        projectIds: [projectId]
       },
       seedRecordsPayload: {
         users: [

@@ -5,14 +5,14 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'edit-member__ok';
+let testId = 'backend-edit-member__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
 let userId = common.makeId();
 let password = '123';
 let orgName = testId;
-let orgId = common.makeId();
+let orgId = testId;
 let projectName = testId;
 let projectId = common.makeId();
 
@@ -29,8 +29,8 @@ test('1', async t => {
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email, memberUserEmail],
-        orgNames: [orgName],
-        projectNames: [projectName]
+        orgIds: [orgId],
+        projectIds: [projectId]
       },
       seedRecordsPayload: {
         users: [

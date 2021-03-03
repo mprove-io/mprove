@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'delete-project';
+let testId = 'disk-delete-project';
 
 let traceId = '123';
 let orgId = testId;

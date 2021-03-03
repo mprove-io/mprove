@@ -3,7 +3,7 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-let testId = 'move-catalog-node__file';
+let testId = 'disk-move-catalog-node__file';
 
 let traceId = '123';
 let orgId = testId;
