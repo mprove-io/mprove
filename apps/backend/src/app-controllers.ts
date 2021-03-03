@@ -46,5 +46,6 @@ export const appControllers = [
   controllers.PushRepoController,
   controllers.PullRepoController,
   controllers.RevertRepoToLastCommitController,
+  controllers.RevertRepoToProductionController,
   controllers.MergeRepoController
 ];
