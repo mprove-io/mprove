@@ -50,5 +50,6 @@ export const appControllers = [
   controllers.RevertRepoToProductionController,
   controllers.MergeRepoController,
 
-  controllers.MoveCatalogNodeController
+  controllers.MoveCatalogNodeController,
+  controllers.RenameCatalogNodeController
 ];

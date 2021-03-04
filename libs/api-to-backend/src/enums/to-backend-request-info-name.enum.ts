@@ -53,5 +53,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendRevertRepoToProduction = 'ToBackendRevertRepoToProduction',
   ToBackendMergeRepo = 'ToBackendMergeRepo',
   //
-  ToBackendMoveCatalogNode = 'ToBackendMoveCatalogNode'
+  ToBackendMoveCatalogNode = 'ToBackendMoveCatalogNode',
+  ToBackendRenameCatalogNode = 'ToBackendRenameCatalogNode'
 }
