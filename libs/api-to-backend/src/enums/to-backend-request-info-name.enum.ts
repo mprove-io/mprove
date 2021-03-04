@@ -56,5 +56,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendMoveCatalogNode = 'ToBackendMoveCatalogNode',
   ToBackendRenameCatalogNode = 'ToBackendRenameCatalogNode',
   //
-  ToBackendCreateFolder = 'ToBackendCreateFolder'
+  ToBackendCreateFolder = 'ToBackendCreateFolder',
+  ToBackendDeleteFolder = 'ToBackendDeleteFolder'
 }
