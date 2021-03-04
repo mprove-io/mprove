@@ -51,5 +51,7 @@ export const appControllers = [
   controllers.MergeRepoController,
 
   controllers.MoveCatalogNodeController,
-  controllers.RenameCatalogNodeController
+  controllers.RenameCatalogNodeController,
+
+  controllers.CreateFolderController
 ];
