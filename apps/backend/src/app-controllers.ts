@@ -54,5 +54,7 @@ export const appControllers = [
   controllers.RenameCatalogNodeController,
 
   controllers.CreateFolderController,
-  controllers.DeleteFolderController
+  controllers.DeleteFolderController,
+
+  controllers.GetFileController
 ];

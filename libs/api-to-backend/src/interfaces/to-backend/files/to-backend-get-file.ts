@@ -14,10 +14,7 @@ export class ToBackendGetFileRequestPayload {
   branchId: string;
 
   @IsString()
-  parentNodeId: string;
-
-  @IsString()
-  fileName: string;
+  fileNodeId: string;
 }
 
 export class ToBackendGetFileRequest extends ToBackendRequest {

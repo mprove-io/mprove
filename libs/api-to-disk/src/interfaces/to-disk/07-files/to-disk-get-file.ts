@@ -46,6 +46,10 @@ export class ToDiskGetFileResponsePayload {
   @Type(() => common.DiskFileLine)
   conflicts: common.DiskFileLine[];
 
+  @ValidateNested()
+  @Type(() => common.DiskCatalogNode)
+  nodes: common.DiskCatalogNode[];
+
   @IsString()
   content: string;
 }

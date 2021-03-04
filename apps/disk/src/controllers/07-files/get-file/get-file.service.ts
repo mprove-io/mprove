@@ -88,6 +88,13 @@ export class GetFileService {
       })
     );
 
+    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: true
+    });
+
     let payload: apiToDisk.ToDiskGetFileResponsePayload = {
       orgId: orgId,
       projectId: projectId,
@@ -95,7 +102,8 @@ export class GetFileService {
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,
-      content: content
+      content: content,
+      nodes: itemCatalog.nodes
     };
 
     return payload;
