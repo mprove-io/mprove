@@ -61,5 +61,6 @@ export const appControllers = [
   controllers.CreateFileController,
   controllers.SaveFileController,
 
-  controllers.GetModelsListController
+  controllers.GetModelsListController,
+  controllers.GetModelController
 ];

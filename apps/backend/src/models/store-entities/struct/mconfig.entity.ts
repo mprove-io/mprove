@@ -22,7 +22,7 @@ export class MconfigEntity {
   @Column({ type: constants.JSON })
   sortings: common.Sorting[];
 
-  @Column({ type: constants.TEXT })
+  @Column({ type: constants.TEXT, nullable: true })
   sorts: string;
 
   @Column({ type: constants.TIMEZONE_VARCHAR })

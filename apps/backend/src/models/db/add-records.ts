@@ -106,9 +106,13 @@ export async function addRecords(item: {
   }
 
   if (common.isDefined(queries) && queries.length > 0) {
-    await manager
-      .getCustomRepository(repositories.QueriesRepository)
-      .insert(queries);
+    await manager.connection
+      .createQueryBuilder()
+      .insert()
+      .into(entities.QueryEntity)
+      .values(queries)
+      .orIgnore()
+      .execute();
   }
 
   if (common.isDefined(models) && models.length > 0) {

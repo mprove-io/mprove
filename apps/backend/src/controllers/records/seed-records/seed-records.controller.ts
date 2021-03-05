@@ -124,6 +124,25 @@ export class SeedRecordsController {
       );
     }
 
+    if (common.isDefined(payloadConnections)) {
+      payloadConnections.forEach(x => {
+        let newConnection = maker.makeConnection({
+          projectId: x.projectId,
+          connectionId: x.connectionId,
+          type: x.type,
+          postgresHost: x.postgresHost,
+          postgresPort: x.postgresPort,
+          postgresDatabase: x.postgresDatabase,
+          postgresUser: x.postgresUser,
+          postgresPassword: x.postgresPassword,
+          bigqueryCredentials: x.bigqueryCredentials,
+          bigqueryQuerySizeLimit: x.bigqueryQuerySizeLimit
+        });
+
+        connections.push(newConnection);
+      });
+    }
+
     if (common.isDefined(payloadProjects)) {
       await asyncPool(
         1,
@@ -280,25 +299,6 @@ export class SeedRecordsController {
           members.push(newMember);
         }
       );
-    }
-
-    if (common.isDefined(payloadConnections)) {
-      payloadConnections.forEach(x => {
-        let newConnection = maker.makeConnection({
-          projectId: x.projectId,
-          connectionId: x.connectionId,
-          type: x.type,
-          postgresHost: x.postgresHost,
-          postgresPort: x.postgresPort,
-          postgresDatabase: x.postgresDatabase,
-          postgresUser: x.postgresUser,
-          postgresPassword: x.postgresPassword,
-          bigqueryCredentials: x.bigqueryCredentials,
-          bigqueryQuerySizeLimit: x.bigqueryQuerySizeLimit
-        });
-
-        connections.push(newConnection);
-      });
     }
 
     await this.connection.transaction(async manager => {
