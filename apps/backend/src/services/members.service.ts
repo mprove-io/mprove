@@ -55,6 +55,27 @@ export class MembersService {
     }
   }
 
+  async checkMemberIsEditor(item: { memberId: string; projectId: string }) {
+    let { projectId, memberId } = item;
+
+    let member = await this.membersRepository.findOne({
+      member_id: memberId,
+      project_id: projectId
+    });
+
+    if (common.isUndefined(member)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+      });
+    }
+
+    if (member.is_editor !== common.BoolEnum.TRUE) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
+      });
+    }
+  }
+
   async checkMemberExists(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 

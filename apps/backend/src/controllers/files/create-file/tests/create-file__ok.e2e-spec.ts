@@ -5,20 +5,22 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-connections__member-is-not-editor-or-admin';
+let testId = 'backend-create-file__ok';
 
 let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123';
 let orgName = testId;
 let userId = common.makeId();
+let repoId = userId;
+let branchId = common.BRANCH_MASTER;
 let orgId = testId;
 let projectName = testId;
 let projectId = common.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetConnectionsResponse;
+  let resp: apiToBackend.ToBackendCreateFileResponse;
 
   try {
     prep = await prepareTest({
@@ -56,33 +58,30 @@ test('1', async t => {
             memberId: userId,
             email,
             projectId,
-            isAdmin: common.BoolEnum.FALSE,
-            isEditor: common.BoolEnum.FALSE,
+            isAdmin: common.BoolEnum.TRUE,
+            isEditor: common.BoolEnum.TRUE,
             isExplorer: common.BoolEnum.TRUE
-          }
-        ],
-        connections: [
-          {
-            connectionId: 'c1',
-            projectId: projectId,
-            type: common.ConnectionTypeEnum.PostgreSQL
           }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetConnectionsRequest = {
+    let req: apiToBackend.ToBackendCreateFileRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
         traceId: traceId
       },
       payload: {
-        projectId: projectId
+        projectId: projectId,
+        repoId: repoId,
+        branchId: branchId,
+        parentNodeId: `${projectId}`,
+        fileName: `r.md`
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetConnectionsResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateFileResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -95,8 +94,6 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(
-    resp.info.error.message,
-    apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
-  );
+  t.is(resp.info.error, undefined);
+  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });

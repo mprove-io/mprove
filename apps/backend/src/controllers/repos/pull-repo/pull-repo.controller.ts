@@ -41,17 +41,15 @@ export class PullRepoController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsEditorOrAdmin({
+    await this.membersService.checkMemberIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });
 
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userId: user.user_id,
-        repoId: repoId
-      });
-    }
+    await this.reposService.checkDevRepoId({
+      userId: user.user_id,
+      repoId: repoId
+    });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

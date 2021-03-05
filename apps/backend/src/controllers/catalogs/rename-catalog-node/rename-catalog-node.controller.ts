@@ -41,7 +41,7 @@ export class RenameCatalogNodeController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsEditorOrAdmin({
+    await this.membersService.checkMemberIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });

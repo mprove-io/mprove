@@ -4,34 +4,32 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
-export class CreateFolderController {
+export class CreateFileController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private reposService: ReposService,
-    private rabbitService: RabbitService,
-    private branchesService: BranchesService
+    private rabbitService: RabbitService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder)
-  async createFolder(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile)
+  async createFile(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateFolderRequest)
-    reqValid: apiToBackend.ToBackendCreateFolderRequest
+    @ValidateRequest(apiToBackend.ToBackendCreateFileRequest)
+    reqValid: apiToBackend.ToBackendCreateFileRequest
   ) {
     let {
       projectId,
       repoId,
       branchId,
       parentNodeId,
-      folderName
+      fileName
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -48,15 +46,9 @@ export class CreateFolderController {
       repoId: repoId
     });
 
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: user.user_id,
-      branchId: branchId
-    });
-
-    let toDiskCreateFolderRequest: apiToDisk.ToDiskCreateFolderRequest = {
+    let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -65,22 +57,23 @@ export class CreateFolderController {
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
-        folderName: folderName
+        fileName: fileName,
+        userAlias: user.alias
       }
     };
 
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFolderResponse>(
+    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>(
       {
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.org_id,
           projectId: projectId
         }),
-        message: toDiskCreateFolderRequest,
+        message: toDiskCreateFileRequest,
         checkIsOk: true
       }
     );
 
-    let payload: apiToBackend.ToBackendCreateFolderResponsePayload = {
+    let payload: apiToBackend.ToBackendCreateFileResponsePayload = {
       repo: {
         currentBranchId: branchId,
         repoStatus: diskResponse.payload.repoStatus,
