@@ -120,7 +120,7 @@ export class DeleteFileService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: true
     });
 
     let payload: apiToDisk.ToDiskDeleteFileResponsePayload = {
@@ -131,7 +131,8 @@ export class DeleteFileService {
       repoStatus: repoStatus,
       currentBranch: currentBranch,
       conflicts: conflicts,
-      nodes: itemCatalog.nodes
+      nodes: itemCatalog.nodes,
+      files: itemCatalog.files
     };
 
     return payload;

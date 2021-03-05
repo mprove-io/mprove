@@ -57,5 +57,6 @@ export const appControllers = [
   controllers.DeleteFolderController,
 
   controllers.GetFileController,
+  controllers.DeleteFileController,
   controllers.CreateFileController
 ];

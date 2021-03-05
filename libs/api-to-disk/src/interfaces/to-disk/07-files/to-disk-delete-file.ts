@@ -55,6 +55,10 @@ export class ToDiskDeleteFileResponsePayload {
   @ValidateNested()
   @Type(() => common.DiskCatalogNode)
   nodes: common.DiskCatalogNode[];
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogFile)
+  files: common.DiskCatalogFile[];
 }
 
 export class ToDiskDeleteFileResponse extends common.MyResponse {
