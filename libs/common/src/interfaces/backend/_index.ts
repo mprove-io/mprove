@@ -1,5 +1,6 @@
 export * from './connection';
 export * from './member';
+export * from './models-item';
 export * from './org';
 export * from './orgs-item';
 export * from './project';
