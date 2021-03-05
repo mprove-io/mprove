@@ -118,13 +118,22 @@ export class SaveFileService {
       })
     );
 
+    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: repoId,
+      readFiles: true
+    });
+
     let payload: apiToDisk.ToDiskSaveFileResponsePayload = {
       orgId: orgId,
       projectId: projectId,
       repoId: repoId,
       repoStatus: repoStatus,
       currentBranch: currentBranch,
-      conflicts: conflicts
+      conflicts: conflicts,
+      nodes: itemCatalog.nodes,
+      files: itemCatalog.files
     };
 
     return payload;

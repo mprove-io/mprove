@@ -61,5 +61,6 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetFile = 'ToBackendGetFile',
   ToBackendCreateFile = 'ToBackendCreateFile',
-  ToBackendDeleteFile = 'ToBackendDeleteFile'
+  ToBackendDeleteFile = 'ToBackendDeleteFile',
+  ToBackendSaveFile = 'ToBackendSaveFile'
 }
