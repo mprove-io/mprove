@@ -6,6 +6,7 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { interfaces } from './barrels/interfaces';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
 import { ConnectionsService } from './services/connections.service';
 import { MembersService } from './services/members.service';
@@ -18,6 +19,7 @@ import { UsersService } from './services/users.service';
 
 export const appProviders = [
   RabbitService,
+  BlockmlService,
   UsersService,
   OrgsService,
   ProjectsService,

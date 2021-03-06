@@ -1,16 +1,13 @@
 import { Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { maker } from '~backend/barrels/maker';
-import { repositories } from '~backend/barrels/repositories';
-import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -25,7 +22,7 @@ export class RenameCatalogNodeController {
     private membersService: MembersService,
     private reposService: ReposService,
     private rabbitService: RabbitService,
-    private connectionsRepository: repositories.ConnectionsRepository,
+    private blockmlService: BlockmlService,
     private branchesService: BranchesService
   ) {}
 
@@ -35,6 +32,7 @@ export class RenameCatalogNodeController {
     @ValidateRequest(apiToBackend.ToBackendRenameCatalogNodeRequest)
     reqValid: apiToBackend.ToBackendRenameCatalogNodeRequest
   ) {
+    let { traceId } = reqValid.info;
     let { projectId, repoId, branchId, nodeId, newName } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -83,78 +81,17 @@ export class RenameCatalogNodeController {
       }
     );
 
-    let connections = await this.connectionsRepository.find({
-      project_id: projectId
-    });
-
     let structId = common.makeId();
 
-    let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
-      info: {
-        name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        structId: structId,
-        orgId: project.org_id,
-        projectId: projectId,
-        files: helper.diskFilesToBlockmlFiles(diskResponse.payload.files),
-        connections: connections.map(x => ({
-          connectionId: x.connection_id,
-          type: x.type,
-          bigqueryProject: x.bigquery_project
-        }))
-      }
-    };
-
-    let blockmlRebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
-      {
-        routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-        message: toBlockmlRebuildStructRequest,
-        checkIsOk: true
-      }
-    );
-
-    let {
-      weekStart,
-      allowTimezones,
-      defaultTimezone,
-      errors,
-      views,
-      udfsDict,
-      vizs,
-      mconfigs,
-      queries,
-      dashboards,
-      models
-    } = blockmlRebuildStructResponse.payload;
-
-    let struct = maker.makeStruct({
-      projectId: project.project_id,
-      structId: structId,
-      weekStart: weekStart,
-      allowTimezones: common.booleanToEnum(allowTimezones),
-      defaultTimezone: defaultTimezone,
-      errors: errors,
-      views: views,
-      udfsDict: udfsDict
+    await this.blockmlService.rebuildStruct({
+      traceId,
+      orgId: project.org_id,
+      projectId,
+      structId,
+      diskFiles: diskResponse.payload.files
     });
 
     branch.struct_id = structId;
-
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          structs: [struct],
-          vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
-          queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-          models: models.map(x => wrapper.wrapToEntityModel(x)),
-          mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
-        }
-      });
-    });
 
     await this.connection.transaction(async manager => {
       await db.modifyRecords({

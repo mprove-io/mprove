@@ -1,7 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
@@ -11,6 +10,7 @@ import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { OrgsService } from '~backend/services/orgs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
@@ -20,7 +20,8 @@ export class CreateProjectController {
     private connection: Connection,
     private rabbitService: RabbitService,
     private orgsService: OrgsService,
-    private projectsRepository: repositories.ProjectsRepository
+    private projectsRepository: repositories.ProjectsRepository,
+    private blockmlService: BlockmlService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject)
@@ -29,6 +30,7 @@ export class CreateProjectController {
     @ValidateRequest(apiToBackend.ToBackendCreateProjectRequest)
     reqValid: apiToBackend.ToBackendCreateProjectRequest
   ) {
+    let { traceId } = reqValid.info;
     let { name, orgId } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
@@ -44,6 +46,14 @@ export class CreateProjectController {
     let newProject = maker.makeProject({
       orgId: orgId,
       name: name
+    });
+
+    let newMember = maker.makeMember({
+      projectId: newProject.project_id,
+      user: user,
+      isAdmin: common.BoolEnum.TRUE,
+      isEditor: common.BoolEnum.TRUE,
+      isExplorer: common.BoolEnum.TRUE
     });
 
     let toDiskCreateProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
@@ -72,53 +82,6 @@ export class CreateProjectController {
 
     let structId = common.makeId();
 
-    let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
-      info: {
-        name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        structId: structId,
-        orgId: orgId,
-        projectId: newProject.project_id,
-        files: helper.diskFilesToBlockmlFiles(diskResponse.payload.prodFiles),
-        connections: []
-      }
-    };
-
-    let blockmlRebuildStructResponse = await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
-      {
-        routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-        message: toBlockmlRebuildStructRequest,
-        checkIsOk: true
-      }
-    );
-
-    let {
-      weekStart,
-      allowTimezones,
-      defaultTimezone,
-      errors,
-      views,
-      udfsDict,
-      vizs,
-      mconfigs,
-      queries,
-      dashboards,
-      models
-    } = blockmlRebuildStructResponse.payload;
-
-    let struct = maker.makeStruct({
-      projectId: newProject.project_id,
-      structId: structId,
-      weekStart: weekStart,
-      allowTimezones: common.booleanToEnum(allowTimezones),
-      defaultTimezone: defaultTimezone,
-      errors: errors,
-      views: views,
-      udfsDict: udfsDict
-    });
-
     let prodBranch = maker.makeBranch({
       structId: structId,
       projectId: newProject.project_id,
@@ -133,12 +96,12 @@ export class CreateProjectController {
       branchId: common.BRANCH_MASTER
     });
 
-    let newMember = maker.makeMember({
+    await this.blockmlService.rebuildStruct({
+      traceId,
+      orgId: newProject.org_id,
       projectId: newProject.project_id,
-      user: user,
-      isAdmin: common.BoolEnum.TRUE,
-      isEditor: common.BoolEnum.TRUE,
-      isExplorer: common.BoolEnum.TRUE
+      structId,
+      diskFiles: diskResponse.payload.prodFiles
     });
 
     await this.connection.transaction(async manager => {
@@ -147,13 +110,7 @@ export class CreateProjectController {
         records: {
           projects: [newProject],
           members: [newMember],
-          structs: [struct],
-          branches: [prodBranch, devBranch],
-          vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
-          queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-          models: models.map(x => wrapper.wrapToEntityModel(x)),
-          mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
+          branches: [prodBranch, devBranch]
         }
       });
     });
