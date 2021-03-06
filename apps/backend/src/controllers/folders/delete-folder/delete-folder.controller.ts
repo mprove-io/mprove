@@ -102,12 +102,7 @@ export class DeleteFolderController {
     });
 
     let payload: apiToBackend.ToBackendDeleteFolderResponsePayload = {
-      repo: {
-        currentBranchId: branchId,
-        repoStatus: diskResponse.payload.repoStatus,
-        conflicts: diskResponse.payload.conflicts,
-        nodes: diskResponse.payload.nodes
-      }
+      repo: diskResponse.payload.repo
     };
 
     return payload;

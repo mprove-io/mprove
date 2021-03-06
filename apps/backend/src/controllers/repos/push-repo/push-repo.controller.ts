@@ -95,12 +95,7 @@ export class PushRepoController {
     });
 
     let payload: apiToBackend.ToBackendPushRepoResponsePayload = {
-      repo: {
-        currentBranchId: branchId,
-        repoStatus: diskResponse.payload.repoStatus,
-        conflicts: diskResponse.payload.conflicts,
-        nodes: diskResponse.payload.nodes
-      }
+      repo: diskResponse.payload.repo
     };
 
     return payload;

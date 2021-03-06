@@ -69,12 +69,7 @@ export class GetFileController {
     );
 
     let payload: apiToBackend.ToBackendGetFileResponsePayload = {
-      repo: {
-        currentBranchId: branchId,
-        repoStatus: diskResponse.payload.repoStatus,
-        conflicts: diskResponse.payload.conflicts,
-        nodes: diskResponse.payload.nodes
-      },
+      repo: diskResponse.payload.repo,
       content: diskResponse.payload.content
     };
 
