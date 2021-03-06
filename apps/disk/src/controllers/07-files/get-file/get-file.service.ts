@@ -96,14 +96,16 @@ export class GetFileService {
     });
 
     let payload: apiToDisk.ToDiskGetFileResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      content: content,
-      nodes: itemCatalog.nodes
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      },
+      content: content
     };
 
     return payload;

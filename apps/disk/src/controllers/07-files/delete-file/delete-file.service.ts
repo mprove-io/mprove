@@ -124,14 +124,16 @@ export class DeleteFileService {
     });
 
     let payload: apiToDisk.ToDiskDeleteFileResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      repoId: repoId,
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      },
       deletedFileNodeId: fileNodeId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes,
       files: itemCatalog.files
     };
 

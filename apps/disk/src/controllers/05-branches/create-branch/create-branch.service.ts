@@ -101,13 +101,23 @@ export class CreateBranchService {
       })
     );
 
-    let payload: apiToDisk.ToDiskCreateBranchResponsePayload = {
-      orgId: orgId,
+    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
       projectId: projectId,
+      projectDir: projectDir,
       repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts
+      readFiles: false
+    });
+
+    let payload: apiToDisk.ToDiskCreateBranchResponsePayload = {
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      }
     };
 
     return payload;

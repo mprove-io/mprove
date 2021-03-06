@@ -106,14 +106,24 @@ export class DeleteBranchService {
       })
     );
 
-    let payload: apiToDisk.ToDiskDeleteBranchResponsePayload = {
-      orgId: orgId,
+    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
       projectId: projectId,
+      projectDir: projectDir,
       repoId: repoId,
-      deletedBranch: branch,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts
+      readFiles: false
+    });
+
+    let payload: apiToDisk.ToDiskDeleteBranchResponsePayload = {
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      },
+      deletedBranch: branch
     };
 
     return payload;

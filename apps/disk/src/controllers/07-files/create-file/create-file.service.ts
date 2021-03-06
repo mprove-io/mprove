@@ -140,13 +140,15 @@ export class CreateFileService {
     });
 
     let payload: apiToDisk.ToDiskCreateFileResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      }
     };
 
     return payload;

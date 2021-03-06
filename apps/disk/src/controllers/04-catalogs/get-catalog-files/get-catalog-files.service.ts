@@ -87,12 +87,15 @@ export class GetCatalogFilesService {
     );
 
     let payload: apiToDisk.ToDiskGetCatalogFilesResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      },
       files: itemCatalog.files
     };
 

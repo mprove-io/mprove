@@ -78,5 +78,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.payload.nodes[0].children[0].id, 'p1/fo2');
+  t.is(resp.payload.repo.nodes[0].children[0].id, 'p1/fo2');
 });

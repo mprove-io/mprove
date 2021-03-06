@@ -117,13 +117,15 @@ export class MoveCatalogNodeService {
     });
 
     let payload: apiToDisk.ToDiskMoveCatalogNodeResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes,
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      },
       files: itemCatalog.files
     };
 

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -27,31 +27,12 @@ export class ToDiskDeleteFolderRequest extends ToDiskRequest {
 }
 
 export class ToDiskDeleteFolderResponsePayload {
-  @IsString()
-  orgId: string;
-
-  @IsString()
-  projectId: string;
-
-  @IsString()
-  repoId: string;
-
-  @IsString()
-  currentBranch: string;
+  @ValidateNested()
+  @Type(() => common.Repo)
+  repo: common.Repo;
 
   @IsString()
   deletedFolderNodeId: string;
-
-  @IsEnum(common.RepoStatusEnum)
-  repoStatus: common.RepoStatusEnum;
-
-  @ValidateNested()
-  @Type(() => common.DiskFileLine)
-  conflicts: common.DiskFileLine[];
-
-  @ValidateNested()
-  @Type(() => common.DiskCatalogNode)
-  nodes: common.DiskCatalogNode[];
 
   @ValidateNested()
   @Type(() => common.DiskCatalogFile)

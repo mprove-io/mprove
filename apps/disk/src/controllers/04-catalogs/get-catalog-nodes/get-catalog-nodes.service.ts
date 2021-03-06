@@ -89,13 +89,15 @@ export class GetCatalogNodesService {
     );
 
     let payload: apiToDisk.ToDiskGetCatalogNodesResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      repoId: repoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      }
     };
 
     return payload;

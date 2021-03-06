@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -33,28 +33,9 @@ export class ToDiskCreateFileRequest extends ToDiskRequest {
 }
 
 export class ToDiskCreateFileResponsePayload {
-  @IsString()
-  orgId: string;
-
-  @IsString()
-  projectId: string;
-
-  @IsString()
-  repoId: string;
-
-  @IsString()
-  currentBranch: string;
-
-  @IsEnum(common.RepoStatusEnum)
-  repoStatus: common.RepoStatusEnum;
-
   @ValidateNested()
-  @Type(() => common.DiskFileLine)
-  conflicts: common.DiskFileLine[];
-
-  @ValidateNested()
-  @Type(() => common.DiskCatalogNode)
-  nodes: common.DiskCatalogNode[];
+  @Type(() => common.Repo)
+  repo: common.Repo;
 }
 
 export class ToDiskCreateFileResponse extends common.MyResponse {

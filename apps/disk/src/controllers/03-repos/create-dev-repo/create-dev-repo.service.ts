@@ -68,13 +68,23 @@ export class CreateDevRepoService {
       })
     );
 
-    let payload: apiToDisk.ToDiskCreateDevRepoResponsePayload = {
-      orgId: orgId,
+    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
       projectId: projectId,
+      projectDir: projectDir,
       repoId: devRepoId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts
+      readFiles: false
+    });
+
+    let payload: apiToDisk.ToDiskCreateDevRepoResponsePayload = {
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: devRepoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      }
     };
 
     return payload;

@@ -6,6 +6,15 @@ import { DiskFileLine } from './disk-file-line';
 
 export class Repo {
   @IsString()
+  orgId: string;
+
+  @IsString()
+  projectId: string;
+
+  @IsString()
+  repoId: string;
+
+  @IsString()
   currentBranchId: string;
 
   @IsEnum(enums.RepoStatusEnum)

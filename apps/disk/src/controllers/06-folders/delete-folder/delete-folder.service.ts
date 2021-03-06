@@ -108,14 +108,16 @@ export class DeleteFolderService {
     });
 
     let payload: apiToDisk.ToDiskDeleteFolderResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      repoId: repoId,
+      repo: {
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
+        repoStatus: repoStatus,
+        currentBranchId: currentBranch,
+        conflicts: conflicts,
+        nodes: itemCatalog.nodes
+      },
       deletedFolderNodeId: folderNodeId,
-      repoStatus: repoStatus,
-      currentBranch: currentBranch,
-      conflicts: conflicts,
-      nodes: itemCatalog.nodes,
       files: itemCatalog.files
     };
 

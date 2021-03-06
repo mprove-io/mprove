@@ -165,5 +165,5 @@ test('1', async t => {
   }
 
   // NeedPush because we merge with different branch
-  t.is(resp.payload.repoStatus, common.RepoStatusEnum.NeedPush);
+  t.is(resp.payload.repo.repoStatus, common.RepoStatusEnum.NeedPush);
 });

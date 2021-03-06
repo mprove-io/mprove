@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -24,27 +24,12 @@ export class ToDiskDeleteBranchRequest extends ToDiskRequest {
 }
 
 export class ToDiskDeleteBranchResponsePayload {
-  @IsString()
-  orgId: string;
-
-  @IsString()
-  projectId: string;
-
-  @IsString()
-  repoId: string;
+  @ValidateNested()
+  @Type(() => common.Repo)
+  repo: common.Repo;
 
   @IsString()
   deletedBranch: string;
-
-  @IsString()
-  currentBranch: string;
-
-  @IsEnum(common.RepoStatusEnum)
-  repoStatus: common.RepoStatusEnum;
-
-  @ValidateNested()
-  @Type(() => common.DiskFileLine)
-  conflicts: common.DiskFileLine[];
 }
 
 export class ToDiskDeleteBranchResponse extends common.MyResponse {
