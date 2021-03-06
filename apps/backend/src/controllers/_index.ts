@@ -12,3 +12,4 @@ export * from './records/_index';
 export * from './repos/_index';
 export * from './special/_index';
 export * from './users/_index';
+export * from './views/_index';
