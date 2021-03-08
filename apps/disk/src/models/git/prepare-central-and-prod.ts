@@ -9,7 +9,7 @@ import { constantFetchOptions } from './_constant-fetch-options';
 export async function prepareCentralAndProd(item: {
   projectId: string;
   projectDir: string;
-  useData: boolean;
+  testProjectId: string;
   userAlias: string;
 }) {
   let centralDir = `${item.projectDir}/${constants.CENTRAL_REPO_ID}`;
@@ -28,7 +28,7 @@ export async function prepareCentralAndProd(item: {
 
   await createInitialCommitToProd({
     prodDir: prodDir,
-    useData: item.useData,
+    testProjectId: item.testProjectId,
     projectId: item.projectId,
     userAlias: item.userAlias
   });

@@ -21,7 +21,13 @@ export class SeedProjectService {
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS
     });
 
-    let { orgId, projectId, devRepoId, userAlias } = requestValid.payload;
+    let {
+      orgId,
+      projectId,
+      devRepoId,
+      userAlias,
+      testProjectId
+    } = requestValid.payload;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -37,7 +43,7 @@ export class SeedProjectService {
     await git.prepareCentralAndProd({
       projectId: projectId,
       projectDir: projectDir,
-      useData: true,
+      testProjectId: testProjectId,
       userAlias: userAlias
     });
 

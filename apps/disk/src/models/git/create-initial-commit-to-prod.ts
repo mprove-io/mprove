@@ -6,16 +6,16 @@ import { disk } from '~disk/barrels/disk';
 export async function createInitialCommitToProd(item: {
   prodDir: string;
   projectId: string;
-  useData: boolean;
+  testProjectId: string;
   userAlias: string;
 }) {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.prodDir);
 
-  let sourceDir = `${constants.TEST_PROJECTS}/${item.projectId}`;
+  let sourceDir = `${constants.TEST_PROJECTS}/${item.testProjectId}`;
 
   let isSourceExist = await disk.isPathExist(sourceDir);
 
-  if (item.useData && isSourceExist) {
+  if (common.isDefined(item.testProjectId) && isSourceExist) {
     await disk.copyPath({
       sourcePath: sourceDir,
       destinationPath: item.prodDir

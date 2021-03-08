@@ -49,7 +49,7 @@ export class CreateProjectService {
     await git.prepareCentralAndProd({
       projectId: projectId,
       projectDir: projectDir,
-      useData: false,
+      testProjectId: undefined,
       userAlias: userAlias
     });
 

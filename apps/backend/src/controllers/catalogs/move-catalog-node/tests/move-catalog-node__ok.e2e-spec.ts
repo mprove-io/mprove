@@ -8,15 +8,21 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-move-catalog-node__ok';
 
 let traceId = testId;
+
+let userId = common.makeId();
 let email = `${testId}@example.com`;
 let password = '123';
+
+let orgId = testId;
 let orgName = testId;
-let userId = common.makeId();
+
+let projectId = common.makeId();
+let testProjectId = 't1';
+let projectName = 'p1';
+
 let repoId = userId;
 let branchId = common.BRANCH_MASTER;
-let orgId = testId;
-let projectName = 'p1';
-let projectId = testId;
+
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -50,6 +56,7 @@ test('1', async t => {
           {
             orgId,
             projectId,
+            testProjectId,
             name: projectName
           }
         ],
@@ -77,8 +84,8 @@ test('1', async t => {
         projectId: projectId,
         repoId: repoId,
         branchId: branchId,
-        fromNodeId: `${projectId}/nested/r.md`,
-        toNodeId: `${projectId}/r.md`
+        fromNodeId: `${projectId}/readme.md`,
+        toNodeId: `${projectId}/ecommerce/readme.md`
       }
     };
 

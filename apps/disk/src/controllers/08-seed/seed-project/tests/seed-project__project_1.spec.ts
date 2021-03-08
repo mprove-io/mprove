@@ -3,19 +3,21 @@ import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 
-const testId = 'disk-seed-project__project_1';
+let testId = 'disk-seed-project__project_1';
 
-const traceId = '123';
-const orgId = testId;
-const projectId = 'project_1';
+let traceId = '123';
+
+let orgId = testId;
+let projectId = 'p1';
+let testProjectId = 'project_1';
 
 test('1', async t => {
   let resp: apiToDisk.ToDiskSeedProjectResponse;
 
   try {
-    const { messageService } = await prepareTest(orgId);
+    let { messageService } = await prepareTest(orgId);
 
-    const seedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
+    let seedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
         traceId: traceId
@@ -23,6 +25,7 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         projectId: projectId,
+        testProjectId: testProjectId,
         devRepoId: 'r1',
         userAlias: 'r1'
       }

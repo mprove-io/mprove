@@ -66,6 +66,10 @@ export class ToBackendSeedRecordsRequestPayloadProjectsItem {
   @IsString()
   projectId?: string;
 
+  @IsOptional()
+  @IsString()
+  testProjectId?: string;
+
   @IsString()
   name: string;
 }
