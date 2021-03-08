@@ -13,11 +13,11 @@ let email = `${testId}@example.com`;
 let userId = common.makeId();
 let password = '123';
 
-let orgName = testId;
 let orgId = testId;
+let orgName = testId;
 
-let projectName = testId;
 let projectId = common.makeId();
+let projectName = 'p1';
 
 let prep: interfaces.Prep;
 

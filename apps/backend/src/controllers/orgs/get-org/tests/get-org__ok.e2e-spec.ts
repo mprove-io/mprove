@@ -12,8 +12,8 @@ let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123';
 
-let orgName = testId;
 let orgId = testId;
+let orgName = testId;
 
 let prep: interfaces.Prep;
 

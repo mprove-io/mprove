@@ -8,16 +8,21 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-create-branch__branch-does-not-exist';
 
 let traceId = testId;
+
+let userId = common.makeId();
 let email = `${testId}@example.com`;
 let password = '123';
+
+let orgId = testId;
 let orgName = testId;
-let userId = common.makeId();
+
+let projectId = common.makeId();
+let projectName = 'p1';
+
 let repoId = userId;
 let fromBranchId = 'unk';
 let newBranchId = common.makeId();
-let orgId = testId;
-let projectName = testId;
-let projectId = common.makeId();
+
 let prep: interfaces.Prep;
 
 test('1', async t => {

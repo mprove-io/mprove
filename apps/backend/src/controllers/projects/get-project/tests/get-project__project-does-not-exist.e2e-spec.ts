@@ -8,13 +8,17 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-get-project__project-does-not-exist';
 
 let traceId = testId;
+
+let userId = common.makeId();
 let email = `${testId}@example.com`;
 let password = '123';
-let orgName = testId;
-let userId = common.makeId();
+
 let orgId = testId;
-let projectName = testId;
+let orgName = testId;
+
 let projectId = common.makeId();
+let projectName = 'p1';
+
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -26,8 +30,6 @@ test('1', async t => {
       deleteRecordsPayload: {
         emails: [email],
         orgIds: [orgId]
-        // ,
-        // projectIds: [projectId]
       },
       seedRecordsPayload: {
         users: [

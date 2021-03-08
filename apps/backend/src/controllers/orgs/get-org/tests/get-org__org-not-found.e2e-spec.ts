@@ -8,9 +8,12 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-get-org__org-not-found';
 
 let traceId = testId;
+
 let email = `${testId}@example.com`;
 let password = '123';
+
 let notFoundOrgId = `unk`;
+
 let prep: interfaces.Prep;
 
 test('1', async t => {

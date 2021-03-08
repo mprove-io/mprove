@@ -8,13 +8,17 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-is-branch-exist__ok__is-exist-true';
 
 let traceId = testId;
+
+let userId = common.makeId();
 let email = `${testId}@example.com`;
 let password = '123';
-let orgName = testId;
-let userId = common.makeId();
+
 let orgId = testId;
-let projectName = testId;
+let orgName = testId;
+
 let projectId = common.makeId();
+let projectName = 'p1';
+
 let branchId = common.BRANCH_MASTER;
 
 let prep: interfaces.Prep;

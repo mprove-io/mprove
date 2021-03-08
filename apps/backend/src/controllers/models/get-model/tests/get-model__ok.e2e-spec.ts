@@ -16,8 +16,8 @@ let password = '123';
 let orgId = testId;
 let orgName = testId;
 
-let projectId = common.makeId();
 let testProjectId = 't1';
+let projectId = common.makeId();
 let projectName = 'p1';
 
 let prep: interfaces.Prep;

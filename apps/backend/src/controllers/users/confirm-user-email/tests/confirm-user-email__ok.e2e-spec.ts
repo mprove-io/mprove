@@ -8,8 +8,10 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-confirm-user-email__ok';
 
 let traceId = testId;
+
 let email = `${testId}@example.com`;
 let emailToken = common.makeId();
+
 let prep: interfaces.Prep;
 
 test('1', async t => {

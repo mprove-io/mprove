@@ -8,10 +8,12 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-set-user-name__ok';
 
 let traceId = testId;
+
 let email = `${testId}@example.com`;
 let password = '123';
 let firstName = 'John';
 let lastName = 'Smith';
+
 let prep: interfaces.Prep;
 
 test('1', async t => {

@@ -8,12 +8,14 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-get-org__forbidden-org';
 
 let traceId = testId;
+
 let email = `${testId}@example.com`;
-let emailSecond = `second-${testId}@example.com`;
 let password = '123';
 
-let orgName = testId;
+let emailSecond = `second-${testId}@example.com`;
+
 let orgId = testId;
+let orgName = testId;
 
 let prep: interfaces.Prep;
 

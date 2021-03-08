@@ -13,8 +13,8 @@ let traceId = testId;
 
 let orgId = testId;
 
-let projectId = common.makeId();
 let testProjectId = 't1';
+let projectId = common.makeId();
 
 let devRepoId = 'rbobert@example.com';
 let userAlias = 'rbobert';

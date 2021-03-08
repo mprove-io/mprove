@@ -8,11 +8,13 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-update-user-password__wrong-token';
 
 let traceId = testId;
+
 let email = `${testId}@example.com`;
 let password = '123';
 let newPassword = '456';
 let passwordResetToken = 'fj823984fj589324';
 let wrongPasswordResetToken = 'fk230g6epe569';
+
 let prep: interfaces.Prep;
 
 test('1', async t => {

@@ -14,8 +14,8 @@ let password = '123';
 
 let newOwnerEmail = `new-${testId}@example.com`;
 
-let orgName = testId;
 let orgId = testId;
+let orgName = testId;
 
 let prep: interfaces.Prep;
 

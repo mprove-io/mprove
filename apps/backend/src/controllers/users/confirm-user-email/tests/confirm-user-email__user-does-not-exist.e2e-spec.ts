@@ -9,6 +9,7 @@ let testId = 'backend-confirm-user-email__user-does-not-exist';
 
 let traceId = testId;
 let emailToken = common.makeId();
+
 let prep: interfaces.Prep;
 
 test('1', async t => {

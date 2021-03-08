@@ -8,11 +8,15 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-create-project__project-already-exists';
 
 let traceId = testId;
+
 let email = `${testId}@example.com`;
 let password = '123';
-let orgName = testId;
+
 let orgId = testId;
-let projectName = testId;
+let orgName = testId;
+
+let projectName = 'p1';
+
 let prep: interfaces.Prep;
 
 test('1', async t => {

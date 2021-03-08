@@ -8,16 +8,19 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-edit-member__ok';
 
 let traceId = testId;
-let email = `${testId}@example.com`;
-let userId = common.makeId();
-let password = '123';
-let orgName = testId;
-let orgId = testId;
-let projectName = testId;
-let projectId = common.makeId();
 
-let memberUserEmail = `2${testId}@example.com`;
+let userId = common.makeId();
+let email = `${testId}@example.com`;
+let password = '123';
+
+let orgId = testId;
+let orgName = testId;
+
+let projectId = common.makeId();
+let projectName = 'p1';
+
 let memberUserId = common.makeId();
+let memberUserEmail = `2${testId}@example.com`;
 
 let prep: interfaces.Prep;
 

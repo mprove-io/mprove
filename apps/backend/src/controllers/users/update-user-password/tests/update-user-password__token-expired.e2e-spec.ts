@@ -8,11 +8,13 @@ import { prepareTest } from '~backend/functions/prepare-test';
 let testId = 'backend-update-user-password__token-expired';
 
 let traceId = testId;
+
 let email = `${testId}@example.com`;
 let password = '123';
 let newPassword = '456';
 let passwordResetToken = 'dj293d4958734d95';
 let expiredPasswordResetExpiresTs = '1';
+
 let prep: interfaces.Prep;
 
 test('1', async t => {
