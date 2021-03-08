@@ -7,6 +7,7 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
+import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { ReposService } from '~backend/services/repos.service';
 
@@ -17,6 +18,7 @@ export class GetModelsListController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reposService: ReposService,
+    private modelsService: ModelsService,
     private modelsRepository: repositories.ModelsRepository
   ) {}
 
@@ -32,7 +34,7 @@ export class GetModelsListController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberExists({
+    let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -51,12 +53,27 @@ export class GetModelsListController {
     });
 
     let models = await this.modelsRepository.find({
-      select: ['model_id', 'label', 'gr', 'hidden'],
+      select: [
+        'model_id',
+        'label',
+        'gr',
+        'hidden',
+        'access_roles',
+        'access_users'
+      ],
       where: { struct_id: branch.struct_id }
     });
 
+    let modelsGrantedAccess = models.filter(x =>
+      this.modelsService.checkModelAccess({
+        userAlias: user.alias,
+        memberRoles: member.roles,
+        model: x
+      })
+    );
+
     let payload: apiToBackend.ToBackendGetModelsListResponsePayload = {
-      modelsList: models.map(x => wrapper.wrapToApiModelsItem(x))
+      modelsList: modelsGrantedAccess.map(x => wrapper.wrapToApiModelsItem(x))
     };
 
     return payload;

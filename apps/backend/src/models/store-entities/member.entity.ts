@@ -16,6 +16,9 @@ export class MemberEntity {
   @Column({ type: constants.USER_ALIAS_VARCHAR, nullable: true })
   alias: string;
 
+  @Column({ type: constants.JSON })
+  roles: string[];
+
   @Column({ type: constants.USER_FIRST_NAME_VARCHAR, nullable: true })
   first_name: string;
 

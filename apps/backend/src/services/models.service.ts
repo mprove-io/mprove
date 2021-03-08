@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
+import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
@@ -22,5 +23,26 @@ export class ModelsService {
     }
 
     return model;
+  }
+
+  checkModelAccess(item: {
+    userAlias: string;
+    memberRoles: string[];
+    model: entities.ModelEntity;
+  }): boolean {
+    let { userAlias, memberRoles, model } = item;
+
+    if (model.access_roles.length === 0 && model.access_users.length === 0) {
+      return true;
+    }
+
+    if (
+      model.access_users.indexOf(userAlias) < 0 &&
+      !model.access_roles.some(x => memberRoles.includes(x))
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }

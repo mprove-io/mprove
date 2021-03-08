@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
 import { ConnectionsService } from './services/connections.service';
+import { DashboardsService } from './services/dashboards.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
 import { OrgsService } from './services/orgs.service';
@@ -27,6 +28,7 @@ export const appProviders = [
   ReposService,
   BranchesService,
   ModelsService,
+  DashboardsService,
   MembersService,
   {
     provide: APP_FILTER,

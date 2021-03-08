@@ -1,0 +1,8 @@
+model: ec_m3
+connection: c1
+group: Ecommerce 
+access_users: ['backend-get-model__ok-access-users']
+joins:
+- from_view: ec_order_items
+  as: a
+  

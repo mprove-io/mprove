@@ -3,6 +3,7 @@ import { entities } from '~backend/barrels/entities';
 
 export function makeMember(item: {
   projectId: string;
+  roles?: string[];
   user: entities.UserEntity;
   isEditor: common.BoolEnum;
   isAdmin: common.BoolEnum;
@@ -17,6 +18,7 @@ export function makeMember(item: {
     last_name: item.user.last_name,
     timezone: item.user.timezone,
     status: item.user.status,
+    roles: item.roles || [],
     is_admin: item.isAdmin,
     is_editor: item.isEditor,
     is_explorer: item.isExplorer,

@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-model__ok';
+let testId = 'backend-get-model__forbidden-model';
 
 let traceId = testId;
 
@@ -87,7 +87,7 @@ test('1', async t => {
         projectId: projectId,
         repoId: userId,
         branchId: common.BRANCH_MASTER,
-        modelId: 'ec_m1'
+        modelId: 'ec_m2'
       }
     };
 
@@ -102,6 +102,5 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.error.message, apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL);
 });

@@ -32,7 +32,7 @@ export class GetModelController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberExists({
+    let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -54,6 +54,18 @@ export class GetModelController {
       structId: branch.struct_id,
       modelId: modelId
     });
+
+    let isAccessGranted = this.modelsService.checkModelAccess({
+      userAlias: user.alias,
+      memberRoles: member.roles,
+      model: model
+    });
+
+    if (isAccessGranted === false) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+      });
+    }
 
     let payload: apiToBackend.ToBackendGetModelResponsePayload = {
       model: wrapper.wrapToApiModel(model)

@@ -292,6 +292,7 @@ export class SeedRecordsController {
           let newMember = maker.makeMember({
             projectId: x.projectId,
             user: user,
+            roles: x.roles,
             isAdmin: x.isAdmin,
             isEditor: x.isEditor,
             isExplorer: x.isExplorer

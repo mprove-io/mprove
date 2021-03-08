@@ -76,7 +76,7 @@ export class MembersService {
     }
   }
 
-  async checkMemberExists(item: { memberId: string; projectId: string }) {
+  async getMemberCheckExists(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
     let member = await this.membersRepository.findOne({
@@ -89,6 +89,8 @@ export class MembersService {
         message: apiToBackend.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
+
+    return member;
   }
 
   async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {

@@ -31,7 +31,7 @@ export class GetRepoController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberExists({
+    await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });

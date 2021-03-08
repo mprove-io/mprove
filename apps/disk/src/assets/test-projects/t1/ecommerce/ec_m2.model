@@ -1,0 +1,7 @@
+model: ec_m2
+connection: c1
+group: Ecommerce 
+access_roles: ['marketing']
+joins:
+- from_view: ec_order_items
+  as: a

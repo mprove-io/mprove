@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-models-list__ok';
+let testId = 'backend-get-model__ok-access-users';
 
 let traceId = testId;
 
@@ -23,7 +23,7 @@ let projectName = 'p1';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetModelsListResponse;
+  let resp: apiToBackend.ToBackendGetModelResponse;
 
   try {
     prep = await prepareTest({
@@ -78,25 +78,24 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetModelsListRequest = {
+    let req: apiToBackend.ToBackendGetModelRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModelsList,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
         traceId: traceId
       },
       payload: {
         projectId: projectId,
         repoId: userId,
-        branchId: common.BRANCH_MASTER
+        branchId: common.BRANCH_MASTER,
+        modelId: 'ec_m3'
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetModelsListResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      }
-    );
+    resp = await helper.sendToBackend<apiToBackend.ToBackendGetModelResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {

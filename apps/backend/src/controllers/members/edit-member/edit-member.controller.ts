@@ -42,7 +42,7 @@ export class EditMemberController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberExists({
+    await this.membersService.getMemberCheckExists({
       memberId: memberId,
       projectId: projectId
     });

@@ -27,7 +27,7 @@ export class IsBranchExistController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberExists({
+    await this.membersService.getMemberCheckExists({
       memberId: user.user_id,
       projectId: projectId
     });

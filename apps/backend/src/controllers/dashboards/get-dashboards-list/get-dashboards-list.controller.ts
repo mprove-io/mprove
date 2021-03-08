@@ -6,6 +6,7 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { DashboardsService } from '~backend/services/dashboards.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { ReposService } from '~backend/services/repos.service';
@@ -16,6 +17,7 @@ export class GetDashboardsListController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private dashboardsService: DashboardsService,
     private reposService: ReposService,
     private dashboardsRepository: repositories.DashboardsRepository
   ) {}
@@ -32,7 +34,7 @@ export class GetDashboardsListController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberExists({
+    let member = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -51,12 +53,29 @@ export class GetDashboardsListController {
     });
 
     let dashboards = await this.dashboardsRepository.find({
-      select: ['dashboard_id', 'title', 'gr', 'hidden'],
+      select: [
+        'dashboard_id',
+        'title',
+        'gr',
+        'hidden',
+        'access_roles',
+        'access_users'
+      ],
       where: { struct_id: branch.struct_id }
     });
 
+    let dashboardsGrantedAccess = dashboards.filter(x =>
+      this.dashboardsService.checkDashboardAccess({
+        userAlias: user.alias,
+        memberRoles: member.roles,
+        dashboard: x
+      })
+    );
+
     let payload: apiToBackend.ToBackendGetDashboardsListResponsePayload = {
-      dashboardsList: dashboards.map(x => wrapper.wrapToApiDashboardsItem(x))
+      dashboardsList: dashboardsGrantedAccess.map(x =>
+        wrapper.wrapToApiDashboardsItem(x)
+      )
     };
 
     return payload;
