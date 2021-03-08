@@ -1,6 +1,7 @@
 export * from './branches/_index';
 export * from './catalogs/_index';
 export * from './connections/_index';
+export * from './dashboards/_index';
 export * from './files/_index';
 export * from './folders/_index';
 export * from './members/_index';

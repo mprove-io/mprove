@@ -1,17 +1,9 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetDashboardsListRequestPayload {
-  @IsString()
-  orgId: string;
-
   @IsString()
   projectId: string;
 
@@ -28,25 +20,10 @@ export class ToBackendGetDashboardsListRequest extends ToBackendRequest {
   payload: ToBackendGetDashboardsListRequestPayload;
 }
 
-export class ToBackendGetDashboardsListResponsePayloadDashboardsItem {
-  @IsString()
-  dashboardId: string;
-
-  @IsString()
-  label: string;
-
-  @IsOptional()
-  @IsString()
-  gr?: string;
-
-  @IsBoolean()
-  hidden: boolean;
-}
-
 export class ToBackendGetDashboardsListResponsePayload {
   @ValidateNested()
-  @Type(() => ToBackendGetDashboardsListResponsePayloadDashboardsItem)
-  dashboardsList: ToBackendGetDashboardsListResponsePayloadDashboardsItem[];
+  @Type(() => common.DashboardsItem)
+  dashboardsList: common.DashboardsItem[];
 }
 
 export class ToBackendGetDashboardsListResponse extends common.MyResponse {

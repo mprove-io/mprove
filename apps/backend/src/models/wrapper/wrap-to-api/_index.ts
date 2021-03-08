@@ -1,4 +1,5 @@
 export * from './wrap-to-api-connection';
+export * from './wrap-to-api-dashboards-item';
 export * from './wrap-to-api-member';
 export * from './wrap-to-api-model';
 export * from './wrap-to-api-models-item';

@@ -64,5 +64,7 @@ export const appControllers = [
   controllers.GetModelsListController,
   controllers.GetModelController,
 
-  controllers.GetViewsController
+  controllers.GetViewsController,
+
+  controllers.GetDashboardsListController
 ];
