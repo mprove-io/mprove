@@ -5,9 +5,6 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendGetDashboardRequestPayload {
   @IsString()
-  orgId: string;
-
-  @IsString()
   projectId: string;
 
   @IsString()

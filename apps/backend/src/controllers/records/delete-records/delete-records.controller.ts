@@ -53,6 +53,7 @@ export class DeleteRecordsController {
 
     if (common.isDefined(projectNames) && projectNames.length > 0) {
       let projects = await this.projectsRepository.find({
+        org_id: In(orgIds),
         name: In(projectNames)
       });
       if (projects.length > 0) {

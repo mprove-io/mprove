@@ -1,0 +1,29 @@
+dashboard: ec_d3
+access_users: ['backend-get-dashboard__ok-access-users']
+group: Ecommerce
+fields:
+- filter: order_date
+  result: ts 
+  default:
+  - last 3 years complete
+  
+- filter: customer_age
+  result: number 
+  default:
+  - '[25, 35]'   
+
+reports:
+
+- title: Average sale price by category
+  model: ec_m1
+  select:
+  - f.category
+  - a.average_sale_price_int
+  sorts: a.average_sale_price_int desc
+  listen_filters:
+    order_date: b.created___date
+    customer_age: c.age   
+  type: table
+  tile:
+    tile_width: '4'
+    tile_height: '500'
