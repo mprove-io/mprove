@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -24,6 +24,10 @@ export class ToDiskCreateFileRequestPayload {
 
   @IsString()
   userAlias: string;
+
+  @IsOptional()
+  @IsString()
+  fileText?: string;
 }
 
 export class ToDiskCreateFileRequest extends ToDiskRequest {
@@ -36,6 +40,10 @@ export class ToDiskCreateFileResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogFile)
+  files: common.DiskCatalogFile[];
 }
 
 export class ToDiskCreateFileResponse extends common.MyResponse {

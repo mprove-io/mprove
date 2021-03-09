@@ -68,5 +68,6 @@ export const appControllers = [
 
   controllers.GetDashboardsListController,
   controllers.GetDashboardController,
-  controllers.CreateTempDashboardController
+  controllers.CreateTempDashboardController,
+  controllers.CreateEmptyDashboardController
 ];

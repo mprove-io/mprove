@@ -6,3 +6,5 @@ export const TRIPLE_UNDERSCORE = '___';
 
 export const USE_PROJECT_DEFAULT_TIMEZONE = 'USE_PROJECT_DEFAULT_TIMEZONE';
 export const UTC = 'UTC';
+
+export const BLOCKML_USERS_FOLDER = 'users';

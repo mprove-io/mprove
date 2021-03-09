@@ -28,7 +28,8 @@ export class CreateFileService {
       branch,
       fileName,
       parentNodeId,
-      userAlias
+      userAlias,
+      fileText
     } = requestValid.payload;
 
     let orgDir = `${orgPath}/${orgId}`;
@@ -41,7 +42,7 @@ export class CreateFileService {
 
     let parentPath = repoDir + '/' + parent;
     let filePath = parentPath + fileName;
-    let content = getContentFromFileName({ fileName: fileName });
+    let content = fileText || getContentFromFileName({ fileName: fileName });
 
     //
 
@@ -84,12 +85,7 @@ export class CreateFileService {
       branchName: branch
     });
 
-    let isParentPathExist = await disk.isPathExist(parentPath);
-    if (isParentPathExist === false) {
-      throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_PARENT_PATH_IS_NOT_EXIST
-      });
-    }
+    await disk.ensureDir(parentPath);
 
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === true) {
@@ -136,7 +132,7 @@ export class CreateFileService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: common.isDefined(fileText) ? true : false
     });
 
     let payload: apiToDisk.ToDiskCreateFileResponsePayload = {
@@ -148,7 +144,8 @@ export class CreateFileService {
         currentBranchId: currentBranch,
         conflicts: conflicts,
         nodes: itemCatalog.nodes
-      }
+      },
+      files: itemCatalog.files
     };
 
     return payload;
