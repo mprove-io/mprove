@@ -72,7 +72,10 @@ export class ProcessDashboardService {
       Object.keys(report.listen).forEach(filter => {
         let listen = report.listen[filter];
 
-        if (dashboardFilters[listen].length > 0) {
+        if (
+          common.isDefined(dashboardFilters[listen]) &&
+          dashboardFilters[listen].length > 0
+        ) {
           filters[filter] = dashboardFilters[listen];
         }
       });

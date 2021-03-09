@@ -211,6 +211,7 @@ export function wrapReports(item: {
     mconfigs.push(mconfig);
     queries.push(query);
     apiReports.push({
+      modelId: model.name,
       mconfigId: mconfigId,
       queryId: queryId
     });
