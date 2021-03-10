@@ -2,6 +2,7 @@ import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -65,10 +66,10 @@ export class GetDashboardsListController {
     });
 
     let dashboardsGrantedAccess = dashboards.filter(x =>
-      this.dashboardsService.checkDashboardAccess({
+      helper.checkAccess({
         userAlias: user.alias,
         memberRoles: member.roles,
-        dashboard: x
+        vmd: x
       })
     );
 

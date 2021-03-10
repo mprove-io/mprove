@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 
 @Injectable()
@@ -28,29 +27,5 @@ export class DashboardsService {
     }
 
     return dashboard;
-  }
-
-  checkDashboardAccess(item: {
-    userAlias: string;
-    memberRoles: string[];
-    dashboard: entities.DashboardEntity;
-  }): boolean {
-    let { userAlias, memberRoles, dashboard } = item;
-
-    if (
-      dashboard.access_roles.length === 0 &&
-      dashboard.access_users.length === 0
-    ) {
-      return true;
-    }
-
-    if (
-      dashboard.access_users.indexOf(userAlias) < 0 &&
-      !dashboard.access_roles.some(x => memberRoles.includes(x))
-    ) {
-      return false;
-    }
-
-    return true;
   }
 }

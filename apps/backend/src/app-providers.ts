@@ -17,6 +17,7 @@ import { ProjectsService } from './services/projects.service';
 import { RabbitService } from './services/rabbit.service';
 import { ReposService } from './services/repos.service';
 import { UsersService } from './services/users.service';
+import { VizsService } from './services/vizs.service';
 
 export const appProviders = [
   RabbitService,
@@ -28,6 +29,7 @@ export const appProviders = [
   ReposService,
   BranchesService,
   ModelsService,
+  VizsService,
   DashboardsService,
   MembersService,
   {

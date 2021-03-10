@@ -8,26 +8,24 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
-export class GetModelsListController {
+export class GetVizsController {
   constructor(
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reposService: ReposService,
-    private modelsService: ModelsService,
-    private modelsRepository: repositories.ModelsRepository
+    private vizsRepository: repositories.VizsRepository
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModelsList)
-  async getModelsList(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs)
+  async getVizs(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetModelsListRequest)
-    reqValid: apiToBackend.ToBackendGetModelsListRequest
+    @ValidateRequest(apiToBackend.ToBackendGetVizsRequest)
+    reqValid: apiToBackend.ToBackendGetVizsRequest
   ) {
     let { projectId, repoId, branchId } = reqValid.payload;
 
@@ -53,19 +51,11 @@ export class GetModelsListController {
       branchId: branchId
     });
 
-    let models = await this.modelsRepository.find({
-      select: [
-        'model_id',
-        'label',
-        'gr',
-        'hidden',
-        'access_roles',
-        'access_users'
-      ],
-      where: { struct_id: branch.struct_id }
+    let vizs = await this.vizsRepository.find({
+      struct_id: branch.struct_id
     });
 
-    let modelsGrantedAccess = models.filter(x =>
+    let vizsGrantedAccess = vizs.filter(x =>
       helper.checkAccess({
         userAlias: user.alias,
         memberRoles: member.roles,
@@ -73,8 +63,8 @@ export class GetModelsListController {
       })
     );
 
-    let payload: apiToBackend.ToBackendGetModelsListResponsePayload = {
-      modelsList: modelsGrantedAccess.map(x => wrapper.wrapToApiModelsItem(x))
+    let payload: apiToBackend.ToBackendGetVizsResponsePayload = {
+      vizs: vizsGrantedAccess.map(x => wrapper.wrapToApiViz(x))
     };
 
     return payload;

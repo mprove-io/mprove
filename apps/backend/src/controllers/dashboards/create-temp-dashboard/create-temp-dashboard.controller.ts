@@ -5,6 +5,7 @@ import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -72,10 +73,10 @@ export class CreateTempDashboardController {
       dashboardId: oldDashboardId
     });
 
-    let isAccessGranted = this.dashboardsService.checkDashboardAccess({
+    let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       memberRoles: member.roles,
-      dashboard: oldDashboard
+      vmd: oldDashboard
     });
 
     if (isAccessGranted === false) {

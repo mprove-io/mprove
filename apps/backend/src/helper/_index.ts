@@ -1,3 +1,4 @@
+export * from './check-access';
 export * from './disk-files-to-blockml-files';
 export * from './make-routing-key-to-disk';
 export * from './make-ts';
