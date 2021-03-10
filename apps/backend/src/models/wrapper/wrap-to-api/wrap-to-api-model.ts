@@ -5,7 +5,7 @@ export function wrapToApiModel(x: entities.ModelEntity): common.Model {
   return {
     structId: x.struct_id,
     modelId: x.model_id,
-    filePath: undefined,
+    filePath: x.file_path,
     content: x.content,
     accessUsers: x.access_users,
     accessRoles: x.access_roles,
