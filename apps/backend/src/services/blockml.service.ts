@@ -23,8 +23,9 @@ export class BlockmlService {
     structId: string;
     orgId: string;
     diskFiles: common.DiskCatalogFile[];
+    skipDb?: boolean;
   }) {
-    let { traceId, structId, orgId, projectId, diskFiles } = item;
+    let { traceId, structId, orgId, projectId, diskFiles, skipDb } = item;
 
     let connections = await this.connectionsRepository.find({
       project_id: projectId
@@ -81,18 +82,28 @@ export class BlockmlService {
       udfsDict: udfsDict
     });
 
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          structs: [struct],
-          vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
-          queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-          models: models.map(x => wrapper.wrapToEntityModel(x)),
-          mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
-        }
+    if (skipDb !== true) {
+      await this.connection.transaction(async manager => {
+        await db.addRecords({
+          manager: manager,
+          records: {
+            structs: [struct],
+            vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
+            queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
+            models: models.map(x => wrapper.wrapToEntityModel(x)),
+            mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+            dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
+          }
+        });
       });
-    });
+    }
+
+    return {
+      vizs: vizs,
+      queries: queries,
+      models: models,
+      mconfigs: mconfigs,
+      dashboards: dashboards
+    };
   }
 }

@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
@@ -15,7 +16,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
-export class CreateEmptyDashboardController {
+export class CreateDashboardController {
   constructor(
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
@@ -26,11 +27,11 @@ export class CreateEmptyDashboardController {
     private connection: Connection
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEmptyDashboard)
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard)
   async createEmptyDashboard(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendCreateEmptyDashboardRequest)
-    reqValid: apiToBackend.ToBackendCreateEmptyDashboardRequest
+    @ValidateRequest(apiToBackend.ToBackendCreateDashboardRequest)
+    reqValid: apiToBackend.ToBackendCreateDashboardRequest
   ) {
     let { traceId } = reqValid.info;
     let {
@@ -38,7 +39,7 @@ export class CreateEmptyDashboardController {
       repoId,
       branchId,
       dashboardId,
-      fileText
+      dashboardFileText
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -76,7 +77,7 @@ export class CreateEmptyDashboardController {
         parentNodeId: `${projectId}/${common.BLOCKML_USERS_FOLDER}/${user.alias}`,
         fileName: `${dashboardId}.dashboard`,
         userAlias: user.alias,
-        fileText: fileText
+        fileText: dashboardFileText
       }
     };
 
@@ -91,23 +92,40 @@ export class CreateEmptyDashboardController {
       }
     );
 
-    let structId = common.makeId();
-
-    branch.struct_id = structId;
-
-    await this.blockmlService.rebuildStruct({
+    let {
+      dashboards,
+      vizs,
+      mconfigs,
+      queries,
+      models
+    } = await this.blockmlService.rebuildStruct({
       traceId,
       orgId: project.org_id,
       projectId,
-      structId,
-      diskFiles: diskResponse.payload.files
+      structId: branch.struct_id,
+      diskFiles: diskResponse.payload.files,
+      skipDb: true
     });
 
+    let dashboard = dashboards.find(x => x.dashboardId === dashboardId);
+
+    let dashboardMconfigIds = dashboard.reports.map(x => x.mconfigId);
+    let dashboardMconfigs = mconfigs.filter(
+      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+    );
+
+    let dashboardQueryIds = dashboard.reports.map(x => x.queryId);
+    let dashboardQueries = queries.filter(
+      x => dashboardQueryIds.indexOf(x.queryId) > -1
+    );
+
     await this.connection.transaction(async manager => {
-      await db.modifyRecords({
+      await db.addRecords({
         manager: manager,
         records: {
-          branches: [branch]
+          dashboards: [wrapper.wrapToEntityDashboard(dashboard)],
+          mconfigs: dashboardMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+          queries: dashboardQueries.map(x => wrapper.wrapToEntityQuery(x))
         }
       });
     });

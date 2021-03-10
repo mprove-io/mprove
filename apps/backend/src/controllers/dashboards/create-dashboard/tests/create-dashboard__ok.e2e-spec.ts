@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-create-empty-dashboard__ok';
+let testId = 'backend-create-dashboard__ok';
 
 let traceId = testId;
 
@@ -25,7 +25,7 @@ let dashboardId = common.makeId();
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateEmptyDashboardResponse;
+  let resp: apiToBackend.ToBackendCreateDashboardResponse;
 
   try {
     prep = await prepareTest({
@@ -80,11 +80,10 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateEmptyDashboardRequest = {
+    let req: apiToBackend.ToBackendCreateDashboardRequest = {
       info: {
         name:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCreateEmptyDashboard,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
         traceId: traceId
       },
       payload: {
@@ -92,13 +91,13 @@ test('1', async t => {
         repoId: userId,
         branchId: common.BRANCH_MASTER,
         dashboardId: dashboardId,
-        fileText: `dashboard: ${dashboardId}
+        dashboardFileText: `dashboard: ${dashboardId}
 group: Ecommerce
 `
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateEmptyDashboardResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateDashboardResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,

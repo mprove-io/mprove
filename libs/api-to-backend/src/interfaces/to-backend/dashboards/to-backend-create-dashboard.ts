@@ -1,12 +1,9 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendCreateDashboardRequestPayload {
-  @IsString()
-  orgId: string;
-
   @IsString()
   projectId: string;
 
@@ -22,9 +19,22 @@ export class ToBackendCreateDashboardRequestPayload {
   @IsString()
   dashboardFileText: string;
 
-  @IsOptional()
-  @IsString()
-  copyReportsFromDashboardId?: string;
+  // @IsOptional()
+  // @IsString()
+  // copyReportsFromDashboardId?: string;
+
+  // @IsString()
+  // title: string;
+
+  // @IsOptional()
+  // @IsString()
+  // gr?: string;
+
+  // @IsString({ each: true })
+  // accessUsers: string[];
+
+  // @IsString({ each: true })
+  // accessRoles: string[];
 }
 
 export class ToBackendCreateDashboardRequest extends ToBackendRequest {
@@ -33,22 +43,6 @@ export class ToBackendCreateDashboardRequest extends ToBackendRequest {
   payload: ToBackendCreateDashboardRequestPayload;
 }
 
-export class ToBackendCreateDashboardResponsePayload {
-  @ValidateNested()
-  @Type(() => common.Dashboard)
-  dashboard: common.Dashboard;
-
-  @ValidateNested()
-  @Type(() => common.Mconfig)
-  dashboardMconfigs: common.Mconfig[];
-
-  @ValidateNested()
-  @Type(() => common.Query)
-  dashboardQueries: common.Query[];
-}
-
 export class ToBackendCreateDashboardResponse extends common.MyResponse {
-  @ValidateNested()
-  @Type(() => ToBackendCreateDashboardResponsePayload)
-  payload: ToBackendCreateDashboardResponsePayload;
+  payload: { [k in any]: never };
 }
