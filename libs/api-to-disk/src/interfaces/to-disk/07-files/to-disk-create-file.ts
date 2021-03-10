@@ -17,13 +17,13 @@ export class ToDiskCreateFileRequestPayload {
   branch: string;
 
   @IsString()
+  userAlias: string;
+
+  @IsString()
   parentNodeId: string;
 
   @IsString()
   fileName: string;
-
-  @IsString()
-  userAlias: string;
 
   @IsOptional()
   @IsString()

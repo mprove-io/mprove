@@ -5,9 +5,6 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendCreateVizRequestPayload {
   @IsString()
-  orgId: string;
-
-  @IsString()
   projectId: string;
 
   @IsString()
@@ -15,6 +12,9 @@ export class ToBackendCreateVizRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  vizId: string;
 
   @IsString()
   vizFileText: string;
@@ -26,22 +26,6 @@ export class ToBackendCreateVizRequest extends ToBackendRequest {
   payload: ToBackendCreateVizRequestPayload;
 }
 
-export class ToBackendCreateVizResponsePayload {
-  @ValidateNested()
-  @Type(() => common.Viz)
-  viz: common.Viz;
-
-  @ValidateNested()
-  @Type(() => common.Mconfig)
-  vizMconfig: common.Mconfig;
-
-  @ValidateNested()
-  @Type(() => common.Query)
-  vizQuery: common.Query;
-}
-
 export class ToBackendCreateVizResponse extends common.MyResponse {
-  @ValidateNested()
-  @Type(() => ToBackendCreateVizResponsePayload)
-  payload: ToBackendCreateVizResponsePayload;
+  payload: { [k in any]: never };
 }

@@ -75,5 +75,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendCreateDashboard = 'ToBackendCreateDashboard',
   ToBackendModifyDashboard = 'ToBackendModifyDashboard',
   //
-  ToBackendGetVizs = 'ToBackendGetVizs'
+  ToBackendGetVizs = 'ToBackendGetVizs',
+  ToBackendCreateViz = 'ToBackendCreateViz'
 }
