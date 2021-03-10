@@ -5,9 +5,6 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendModifyVizRequestPayload {
   @IsString()
-  orgId: string;
-
-  @IsString()
   projectId: string;
 
   @IsString()
@@ -29,22 +26,6 @@ export class ToBackendModifyVizRequest extends ToBackendRequest {
   payload: ToBackendModifyVizRequestPayload;
 }
 
-export class ToBackendModifyVizResponsePayload {
-  @ValidateNested()
-  @Type(() => common.Viz)
-  viz: common.Viz;
-
-  @ValidateNested()
-  @Type(() => common.Mconfig)
-  vizMconfig: common.Mconfig;
-
-  @ValidateNested()
-  @Type(() => common.Query)
-  vizQuery: common.Query;
-}
-
 export class ToBackendModifyVizResponse extends common.MyResponse {
-  @ValidateNested()
-  @Type(() => ToBackendModifyVizResponsePayload)
-  payload: ToBackendModifyVizResponsePayload;
+  payload: { [k in any]: never };
 }

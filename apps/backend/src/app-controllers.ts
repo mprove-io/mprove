@@ -73,5 +73,6 @@ export const appControllers = [
   controllers.ModifyDashboardController,
 
   controllers.GetVizsController,
-  controllers.CreateVizController
+  controllers.CreateVizController,
+  controllers.ModifyVizController
 ];

@@ -19,7 +19,7 @@ export async function modifyRecords(item: {
     // files?: entities.FileEntity[];
     // queries?: entities.QueryEntity[];
     // models?: entities.ModelEntity[];
-    // views?: entities.ViewEntity[];
+    vizs?: entities.VizEntity[];
     // mconfigs?: entities.MconfigEntity[];
     dashboards?: entities.DashboardEntity[];
     // errors?: entities.ErrorEntity[];
@@ -60,7 +60,7 @@ export async function modifyRecords(item: {
   // let files = records.files;
   // let queries = records.queries;
   // let models = records.models;
-  // let views = records.views;
+  let vizs = records.vizs;
   // let mconfigs = records.mconfigs;
   let dashboards = records.dashboards;
   // let errors = records.errors;
@@ -101,5 +101,9 @@ export async function modifyRecords(item: {
     await manager
       .getCustomRepository(repositories.DashboardsRepository)
       .save(dashboards);
+  }
+
+  if (common.isDefined(vizs) && vizs.length > 0) {
+    await manager.getCustomRepository(repositories.VizsRepository).save(vizs);
   }
 }
