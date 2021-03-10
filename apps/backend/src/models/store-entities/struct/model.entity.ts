@@ -10,6 +10,9 @@ export class ModelEntity {
   @PrimaryColumn({ type: constants.MODEL_ID_VARCHAR })
   model_id: string; // name
 
+  @Column({ type: constants.TEXT })
+  file_path: string;
+
   @Column({ type: constants.JSON })
   content: any;
 

@@ -7,6 +7,7 @@ export function wrapToApiDashboard(
   return {
     structId: x.struct_id,
     dashboardId: x.dashboard_id,
+    filePath: undefined,
     content: x.content,
     accessUsers: x.access_users,
     accessRoles: x.access_roles,

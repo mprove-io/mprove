@@ -5,9 +5,6 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendModifyDashboardRequestPayload {
   @IsString()
-  orgId: string;
-
-  @IsString()
   projectId: string;
 
   @IsString()
@@ -20,7 +17,7 @@ export class ToBackendModifyDashboardRequestPayload {
   dashboardId: string;
 
   @IsString()
-  dashboardFileReportText: string;
+  dashboardFileText: string;
 }
 
 export class ToBackendModifyDashboardRequest extends ToBackendRequest {
@@ -29,22 +26,6 @@ export class ToBackendModifyDashboardRequest extends ToBackendRequest {
   payload: ToBackendModifyDashboardRequestPayload;
 }
 
-export class ToBackendModifyDashboardResponsePayload {
-  @ValidateNested()
-  @Type(() => common.Dashboard)
-  dashboard: common.Dashboard;
-
-  @ValidateNested()
-  @Type(() => common.Mconfig)
-  dashboardMconfigs: common.Mconfig[];
-
-  @ValidateNested()
-  @Type(() => common.Query)
-  dashboardQueries: common.Query[];
-}
-
 export class ToBackendModifyDashboardResponse extends common.MyResponse {
-  @ValidateNested()
-  @Type(() => ToBackendModifyDashboardResponsePayload)
-  payload: ToBackendModifyDashboardResponsePayload;
+  payload: { [k in any]: never };
 }

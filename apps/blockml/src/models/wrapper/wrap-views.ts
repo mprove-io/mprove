@@ -7,6 +7,7 @@ export function wrapViews(item: { views: interfaces.View[] }) {
   let apiViews: common.View[] = views.map(x => {
     let view: common.View = {
       viewId: x.name,
+      filePath: x.filePath,
       viewDeps: x.viewDeps
     };
     return view;

@@ -16,6 +16,9 @@ export class Model {
   @IsString()
   modelId: string;
 
+  @IsString()
+  filePath: string;
+
   content: any;
 
   @IsString({ each: true })

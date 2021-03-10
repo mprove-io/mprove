@@ -72,5 +72,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetDashboardsList = 'ToBackendGetDashboardsList',
   ToBackendGetDashboard = 'ToBackendGetDashboard',
   ToBackendCreateTempDashboard = 'ToBackendCreateTempDashboard',
-  ToBackendCreateDashboard = 'ToBackendCreateDashboard'
+  ToBackendCreateDashboard = 'ToBackendCreateDashboard',
+  ToBackendModifyDashboard = 'ToBackendModifyDashboard'
 }

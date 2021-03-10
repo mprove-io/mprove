@@ -16,6 +16,9 @@ export class Dashboard {
   @IsString()
   dashboardId: string;
 
+  @IsString()
+  filePath: string;
+
   content: any;
 
   @IsString({ each: true })

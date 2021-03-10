@@ -10,6 +10,9 @@ export class DashboardEntity {
   @PrimaryColumn({ type: constants.DASHBOARD_ID_VARCHAR })
   dashboard_id: string; // name
 
+  @Column({ type: constants.TEXT, nullable: true })
+  file_path: string;
+
   @Column({ type: constants.JSON })
   content: any;
 

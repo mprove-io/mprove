@@ -44,6 +44,7 @@ export function wrapDashboards(item: {
     apiDashboards.push({
       structId: structId,
       dashboardId: x.name,
+      filePath: x.filePath,
       content: x,
       accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],

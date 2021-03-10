@@ -5,7 +5,7 @@ export function diskFilesToBlockmlFiles(diskFiles: common.DiskCatalogFile[]) {
     let blockmlFile: common.BmlFile = {
       content: x.content,
       name: x.name,
-      path: x.fileId
+      path: x.fileNodeId
     };
     return blockmlFile;
   });

@@ -21,7 +21,7 @@ export async function modifyRecords(item: {
     // models?: entities.ModelEntity[];
     // views?: entities.ViewEntity[];
     // mconfigs?: entities.MconfigEntity[];
-    // dashboards?: entities.DashboardEntity[];
+    dashboards?: entities.DashboardEntity[];
     // errors?: entities.ErrorEntity[];
   };
 }) {
@@ -62,7 +62,7 @@ export async function modifyRecords(item: {
   // let models = records.models;
   // let views = records.views;
   // let mconfigs = records.mconfigs;
-  // let dashboards = records.dashboards;
+  let dashboards = records.dashboards;
   // let errors = records.errors;
 
   if (common.isDefined(users) && users.length > 0) {
@@ -95,5 +95,11 @@ export async function modifyRecords(item: {
     await manager
       .getCustomRepository(repositories.BranchesRepository)
       .save(branches);
+  }
+
+  if (common.isDefined(dashboards) && dashboards.length > 0) {
+    await manager
+      .getCustomRepository(repositories.DashboardsRepository)
+      .save(dashboards);
   }
 }

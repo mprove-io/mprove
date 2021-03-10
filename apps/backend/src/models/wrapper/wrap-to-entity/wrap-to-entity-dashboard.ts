@@ -7,6 +7,7 @@ export function wrapToEntityDashboard(
   return {
     struct_id: x.structId,
     dashboard_id: x.dashboardId,
+    file_path: x.filePath,
     content: x.content,
     access_users: x.accessUsers,
     access_roles: x.accessRoles,

@@ -215,6 +215,7 @@ export function wrapModels(item: {
       apiModels.push({
         structId: structId,
         modelId: x.name,
+        filePath: x.filePath,
         content: x,
         accessUsers: x.access_users || [],
         accessRoles: x.access_roles || [],

@@ -15,6 +15,9 @@ export class Viz {
   @IsString()
   vizId: string;
 
+  @IsString()
+  filePath: string;
+
   @IsString({ each: true })
   accessUsers: string[];
 
