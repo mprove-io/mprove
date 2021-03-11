@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class Query {
@@ -17,8 +17,9 @@ export class Query {
   @IsEnum(enums.QueryStatusEnum)
   status: enums.QueryStatusEnum;
 
+  @IsOptional()
   @IsString()
-  lastRunBy: string;
+  lastRunBy?: string;
 
   @IsInt()
   lastRunTs: number;
@@ -29,17 +30,20 @@ export class Query {
   @IsInt()
   lastCompleteTs: number;
 
+  @IsOptional()
   @IsNumber()
-  lastCompleteDuration: number;
+  lastCompleteDuration?: number;
 
+  @IsOptional()
   @IsString()
-  lastErrorMessage: string;
+  lastErrorMessage?: string;
 
   @IsInt()
   lastErrorTs: number;
 
+  @IsOptional()
   @IsString()
-  data: string;
+  data?: any;
 
   @IsInt()
   serverTs: number;

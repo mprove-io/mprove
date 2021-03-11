@@ -132,4 +132,6 @@ export async function addRecords(item: {
       .getCustomRepository(repositories.DashboardsRepository)
       .insert(dashboards);
   }
+
+  // avatars
 }

@@ -16,8 +16,8 @@ export class QueryEntity {
   @Column({ type: constants.MEDIUMTEXT, nullable: true })
   sql: string;
 
-  @Column({ type: constants.MEDIUMTEXT, nullable: true })
-  data: string;
+  @Column({ type: constants.JSON, nullable: true })
+  data: any;
 
   @Column({ type: constants.VARCHAR })
   status: common.QueryStatusEnum;

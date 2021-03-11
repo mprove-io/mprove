@@ -106,18 +106,19 @@ export class DeleteRecordsController {
 
     structIds = structs.map(struct => struct.struct_id);
 
-    await this.dashboardsRepository.delete({ struct_id: In(structIds) });
-    await this.mconfigsRepository.delete({ struct_id: In(structIds) });
-    await this.modelsRepository.delete({ struct_id: In(structIds) });
-    await this.vizsRepository.delete({ struct_id: In(structIds) });
+    await this.usersRepository.delete({ user_id: In(userIds) });
+    await this.orgsRepository.delete({ org_id: In(orgIds) });
+    await this.projectsRepository.delete({ project_id: In(projectIds) });
+    await this.membersRepository.delete({ member_id: In(userIds) });
+    await this.connectionsRepository.delete({ project_id: In(projectIds) });
     await this.structsRepository.delete({ struct_id: In(structIds) });
     await this.branchesRepository.delete({ project_id: In(projectIds) });
-    await this.connectionsRepository.delete({ project_id: In(projectIds) });
-    await this.membersRepository.delete({ member_id: In(userIds) });
-    await this.projectsRepository.delete({ project_id: In(projectIds) });
-    await this.orgsRepository.delete({ org_id: In(orgIds) });
+    await this.vizsRepository.delete({ struct_id: In(structIds) });
+    // queries
+    await this.modelsRepository.delete({ struct_id: In(structIds) });
+    await this.mconfigsRepository.delete({ struct_id: In(structIds) });
+    await this.dashboardsRepository.delete({ struct_id: In(structIds) });
     await this.avatarsRepository.delete({ user_id: In(userIds) });
-    await this.usersRepository.delete({ user_id: In(userIds) });
 
     let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
 
