@@ -1,9 +1,9 @@
 export enum FractionTsLastUnitEnum {
-  Minutes = 'Minutes',
-  Hours = 'Hours',
-  Days = 'Days',
-  Weeks = 'Weeks',
-  Months = 'Months',
-  Quarters = 'Quarters',
-  Years = 'Years'
+  Minutes = 'minutes',
+  Hours = 'hours',
+  Days = 'days',
+  Weeks = 'weeks',
+  Months = 'months',
+  Quarters = 'quarters',
+  Years = 'years'
 }

@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsInt,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
@@ -30,6 +31,7 @@ export class Mconfig {
   @Type(() => Sorting)
   sortings: Sorting[];
 
+  @IsOptional()
   @IsString()
   sorts: string;
 

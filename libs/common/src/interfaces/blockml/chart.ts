@@ -25,169 +25,223 @@ export class Chart {
   @IsEnum(enums.ChartTypeEnum)
   type: enums.ChartTypeEnum;
 
+  @IsOptional()
   @IsString()
   xField: string;
 
+  @IsOptional()
   @IsString()
   yField: string;
 
+  @IsOptional()
   @IsString({ each: true })
-  yFields: string[];
+  yFields?: string[];
 
+  @IsOptional()
   @IsString({ each: true })
-  hideColumns: string[];
+  hideColumns?: string[];
 
+  @IsOptional()
   @IsString()
-  multiField: string;
+  multiField?: string;
 
+  @IsOptional()
   @IsString()
-  valueField: string;
+  valueField?: string;
 
+  @IsOptional()
   @IsString()
-  previousValueField: string;
+  previousValueField?: string;
 
+  @IsOptional()
   @IsBoolean()
-  xAxis: boolean;
+  xAxis?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  showXAxisLabel: boolean;
+  showXAxisLabel?: boolean;
 
+  @IsOptional()
   @IsString()
-  xAxisLabel: string;
+  xAxisLabel?: string;
 
+  @IsOptional()
   @IsBoolean()
-  yAxis: boolean;
+  yAxis?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  showYAxisLabel: boolean;
+  showYAxisLabel?: boolean;
 
+  @IsOptional()
   @IsString()
-  yAxisLabel: string;
+  yAxisLabel?: string;
 
+  @IsOptional()
   @IsBoolean()
-  showAxis: boolean;
+  showAxis?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  animations: boolean;
+  animations?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  gradient: boolean;
+  gradient?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  legend: boolean;
+  legend?: boolean;
 
+  @IsOptional()
   @IsString()
-  legendTitle: string;
+  legendTitle?: string;
 
+  @IsOptional()
   @IsBoolean()
-  tooltipDisabled: boolean;
+  tooltipDisabled?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  roundEdges: boolean;
+  roundEdges?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  roundDomains: boolean;
+  roundDomains?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  showGridLines: boolean;
+  showGridLines?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  timeline: boolean;
+  timeline?: boolean;
 
+  @IsOptional()
   @IsEnum(enums.ChartInterpolationEnum)
-  interpolation: enums.ChartInterpolationEnum;
+  interpolation?: enums.ChartInterpolationEnum;
 
+  @IsOptional()
   @IsBoolean()
-  autoScale: boolean;
+  autoScale?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  doughnut: boolean;
+  doughnut?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  explodeSlices: boolean;
+  explodeSlices?: boolean;
 
+  @IsOptional()
   @IsBoolean()
-  labels: boolean;
+  labels?: boolean;
 
+  @IsOptional()
   @IsEnum(enums.ChartColorSchemeEnum)
-  colorScheme: enums.ChartColorSchemeEnum;
+  colorScheme?: enums.ChartColorSchemeEnum;
 
+  @IsOptional()
   @IsEnum(enums.ChartSchemeTypeEnum)
-  schemeType: enums.ChartSchemeTypeEnum;
+  schemeType?: enums.ChartSchemeTypeEnum;
 
+  @IsOptional()
   @IsInt()
-  pageSize: number;
+  pageSize?: number;
 
+  @IsOptional()
   @IsNumber()
-  arcWidth: number;
+  arcWidth?: number;
 
+  @IsOptional()
   @IsInt()
-  barPadding: number;
+  barPadding?: number;
 
+  @IsOptional()
   @IsInt()
-  groupPadding: number;
+  groupPadding?: number;
 
+  @IsOptional()
   @IsInt()
-  innerPadding: number;
+  innerPadding?: number;
 
-  // absent in docs
+  @IsOptional() // absent in docs
   @IsNumber()
-  rangeFillOpacity: number;
+  rangeFillOpacity?: number;
 
+  @IsOptional()
   @IsInt()
-  angleSpan: number;
+  angleSpan?: number;
 
+  @IsOptional()
   @IsInt()
-  startAngle: number;
+  startAngle?: number;
 
+  @IsOptional()
   @IsInt()
-  bigSegments: number;
+  bigSegments?: number;
 
+  @IsOptional()
   @IsInt()
-  smallSegments: number;
+  smallSegments?: number;
 
+  @IsOptional()
   @IsInt()
-  min: number;
+  min?: number;
 
+  @IsOptional()
   @IsInt()
-  max: number;
+  max?: number;
 
+  @IsOptional()
   @IsString()
-  units: string;
+  units?: string;
 
+  @IsOptional()
   @IsNumber()
-  yScaleMin: number;
+  yScaleMin?: number;
 
+  @IsOptional()
   @IsNumber()
-  yScaleMax: number;
+  yScaleMax?: number;
 
+  @IsOptional()
   @IsNumber()
-  xScaleMax: number;
+  xScaleMax?: number;
 
+  @IsOptional()
   @IsString()
-  bandColor: string;
+  bandColor?: string;
 
+  @IsOptional()
   @IsString()
-  cardColor: string;
+  cardColor?: string;
 
+  @IsOptional()
   @IsString()
-  textColor: string;
+  textColor?: string;
 
+  @IsOptional()
   @IsString()
-  emptyColor: string;
+  emptyColor?: string;
 
+  @IsOptional()
   @IsEnum(enums.ChartTileWidthEnum)
-  tileWidth: enums.ChartTileWidthEnum;
+  tileWidth?: enums.ChartTileWidthEnum;
 
+  @IsOptional()
   @IsEnum(enums.ChartTileHeightEnum)
-  tileHeight: enums.ChartTileHeightEnum;
+  tileHeight?: enums.ChartTileHeightEnum;
 
+  @IsOptional()
   @IsEnum(enums.ChartViewSizeEnum)
-  viewSize: enums.ChartViewSizeEnum;
+  viewSize?: enums.ChartViewSizeEnum;
 
+  @IsOptional()
   @IsInt()
-  viewWidth: number;
+  viewWidth?: number;
 
+  @IsOptional()
   @IsInt()
-  viewHeight: number;
+  viewHeight?: number;
 }

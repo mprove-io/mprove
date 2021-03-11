@@ -79,5 +79,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendCreateViz = 'ToBackendCreateViz',
   ToBackendModifyViz = 'ToBackendModifyViz',
   //
-  ToBackendGetMconfig = 'ToBackendGetMconfig'
+  ToBackendGetMconfig = 'ToBackendGetMconfig',
+  ToBackendCreateTempMconfig = 'ToBackendCreateTempMconfig'
 }
