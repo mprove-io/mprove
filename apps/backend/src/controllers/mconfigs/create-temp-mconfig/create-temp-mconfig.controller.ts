@@ -18,6 +18,8 @@ export class CreateTempMconfigController {
   ) {
     let { mconfig } = reqValid.payload;
 
+    mconfig.temp = true;
+
     await this.connection.transaction(async manager => {
       await db.addRecords({
         manager: manager,
