@@ -2,26 +2,14 @@ import { EntityManager } from 'typeorm';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 
 export async function addRecords(item: {
   manager: EntityManager;
   // sourceInitId: string;
   // skipChunk?: boolean;
-  records: {
-    users?: entities.UserEntity[];
-    orgs?: entities.OrgEntity[];
-    projects?: entities.ProjectEntity[];
-    members?: entities.MemberEntity[];
-    connections?: entities.ConnectionEntity[];
-    structs?: entities.StructEntity[];
-    branches?: entities.BranchEntity[];
-    vizs?: entities.VizEntity[];
-    queries?: entities.QueryEntity[];
-    models?: entities.ModelEntity[];
-    mconfigs?: entities.MconfigEntity[];
-    dashboards?: entities.DashboardEntity[];
-  };
+  records: interfaces.Records;
 }) {
   let { manager, records } = item;
 

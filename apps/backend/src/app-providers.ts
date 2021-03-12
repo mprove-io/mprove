@@ -14,10 +14,12 @@ import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
 import { OrgsService } from './services/orgs.service';
+import { PgService } from './services/pg.service';
 import { ProjectsService } from './services/projects.service';
 import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
 import { ReposService } from './services/repos.service';
+import { RunService } from './services/run.service';
 import { StructsService } from './services/structs.service';
 import { UsersService } from './services/users.service';
 import { VizsService } from './services/vizs.service';
@@ -33,6 +35,8 @@ export const appProviders = [
   BranchesService,
   ModelsService,
   MconfigsService,
+  PgService,
+  RunService,
   StructsService,
   QueriesService,
   VizsService,

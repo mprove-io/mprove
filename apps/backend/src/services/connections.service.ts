@@ -27,7 +27,7 @@ export class ConnectionsService {
     }
   }
 
-  async checkConnectionExists(item: {
+  async getConnectionCheckExists(item: {
     connectionId: string;
     projectId: string;
   }) {
@@ -43,5 +43,7 @@ export class ConnectionsService {
         message: apiToBackend.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
       });
     }
+
+    return connection;
   }
 }

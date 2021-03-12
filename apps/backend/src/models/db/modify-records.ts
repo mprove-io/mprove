@@ -1,29 +1,14 @@
 import { EntityManager } from 'typeorm';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 
 export async function modifyRecords(item: {
   manager: EntityManager;
   // sourceInitId: string;
   // skipChunk?: boolean;
-  records: {
-    users?: entities.UserEntity[];
-    orgs?: entities.OrgEntity[];
-    projects?: entities.ProjectEntity[];
-    members?: entities.MemberEntity[];
-    connections?: entities.ConnectionEntity[];
-    branches?: entities.BranchEntity[];
-    // repos?: entities.RepoEntity[];
-    // files?: entities.FileEntity[];
-    // queries?: entities.QueryEntity[];
-    // models?: entities.ModelEntity[];
-    vizs?: entities.VizEntity[];
-    // mconfigs?: entities.MconfigEntity[];
-    dashboards?: entities.DashboardEntity[];
-    // errors?: entities.ErrorEntity[];
-  };
+  records: interfaces.Records;
 }) {
   let { manager, records } = item;
 
@@ -58,7 +43,7 @@ export async function modifyRecords(item: {
   let branches = records.branches;
   // let repos = records.repos;
   // let files = records.files;
-  // let queries = records.queries;
+  let queries = records.queries;
   // let models = records.models;
   let vizs = records.vizs;
   // let mconfigs = records.mconfigs;
@@ -106,4 +91,12 @@ export async function modifyRecords(item: {
   if (common.isDefined(vizs) && vizs.length > 0) {
     await manager.getCustomRepository(repositories.VizsRepository).save(vizs);
   }
+
+  if (common.isDefined(queries) && queries.length > 0) {
+    await manager
+      .getCustomRepository(repositories.QueriesRepository)
+      .save(queries);
+  }
+
+  return records;
 }

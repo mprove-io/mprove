@@ -43,11 +43,11 @@ export class QueryEntity {
   @Column({ type: constants.BIGINT })
   last_error_ts: string;
 
-  // @Column({ type: constants.VARCHAR, nullable: true })
-  // postgres_query_job_id: string;
+  @Column({ type: constants.VARCHAR, nullable: true })
+  postgres_query_job_id: string;
 
-  // @Column({ type: constants.VARCHAR, nullable: true })
-  // bigquery_query_job_id: string;
+  @Column({ type: constants.VARCHAR, nullable: true })
+  bigquery_query_job_id: string;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

@@ -3,7 +3,6 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { ConnectionsService } from '~backend/services/connections.service';
@@ -16,7 +15,6 @@ export class EditConnectionController {
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private connectionsRepository: repositories.ConnectionsRepository,
     private connection: Connection
   ) {}
 
@@ -48,14 +46,9 @@ export class EditConnectionController {
       projectId: projectId
     });
 
-    await this.connectionsService.checkConnectionExists({
+    let connection = await this.connectionsService.getConnectionCheckExists({
       projectId: projectId,
       connectionId: connectionId
-    });
-
-    let connection = await this.connectionsRepository.findOne({
-      connection_id: connectionId,
-      project_id: projectId
     });
 
     connection.type = type;
