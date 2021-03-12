@@ -5,8 +5,10 @@ import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -18,6 +20,7 @@ export class CreateTempMconfigAndQueryController {
     private connection: Connection,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
+    private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService
   ) {}
@@ -31,7 +34,7 @@ export class CreateTempMconfigAndQueryController {
     reqValid: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest
   ) {
     let { traceId } = reqValid.info;
-    let { mconfig, query } = reqValid.payload;
+    let { mconfig } = reqValid.payload;
 
     let struct = await this.structsService.getStructCheckExists({
       structId: mconfig.structId
@@ -41,10 +44,27 @@ export class CreateTempMconfigAndQueryController {
       projectId: struct.project_id
     });
 
+    let member = await this.membersService.getMemberCheckExists({
+      projectId: struct.project_id,
+      memberId: user.user_id
+    });
+
     let model = await this.modelsService.getModelCheckExists({
       modelId: mconfig.modelId,
       structId: mconfig.structId
     });
+
+    let isAccessGranted = helper.checkAccess({
+      userAlias: user.alias,
+      memberRoles: member.roles,
+      vmd: model
+    });
+
+    if (isAccessGranted === false) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+      });
+    }
 
     let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest = {
       info: {
@@ -82,7 +102,10 @@ export class CreateTempMconfigAndQueryController {
       });
     });
 
-    let payload = {};
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryResponsePayload = {
+      mconfig: newMconfig,
+      query: newQuery
+    };
 
     return payload;
   }

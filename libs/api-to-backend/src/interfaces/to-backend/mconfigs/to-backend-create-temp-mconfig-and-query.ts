@@ -7,10 +7,6 @@ export class ToBackendCreateTempMconfigAndQueryRequestPayload {
   @ValidateNested()
   @Type(() => common.Mconfig)
   mconfig: common.Mconfig;
-
-  @ValidateNested()
-  @Type(() => common.Query)
-  query: common.Query;
 }
 
 export class ToBackendCreateTempMconfigAndQueryRequest extends ToBackendRequest {

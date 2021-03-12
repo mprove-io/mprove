@@ -111,8 +111,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
-        mconfig: mconfig,
-        query: query
+        mconfig: mconfig
       }
     };
 
