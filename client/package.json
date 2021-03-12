@@ -72,7 +72,7 @@
     "@types/uuid": "^2.0.29",
     "codelyzer": "^4.5.0",
     "express": "^4.16.4",
-    "madge": "3.3.0",
+    "madge": "4.0.1",
     "ngrx-store-freeze": "0.2.4",
     "npm-run-all": "^4.1.5",
     "rimraf": "^2.6.2",
