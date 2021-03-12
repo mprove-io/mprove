@@ -15,6 +15,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ReposService } from '~backend/services/repos.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CreateTempDashboardController {
@@ -23,7 +24,7 @@ export class CreateTempDashboardController {
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private structsRepository: repositories.StructsRepository,
+    private structsService: StructsService,
     private modelsRepository: repositories.ModelsRepository,
     private reposService: ReposService,
     private dashboardsService: DashboardsService,
@@ -85,8 +86,8 @@ export class CreateTempDashboardController {
       });
     }
 
-    let struct = await this.structsRepository.findOne({
-      struct_id: branch.struct_id
+    let struct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
     });
 
     let modelIds = oldDashboard.reports.map(x => x.modelId);

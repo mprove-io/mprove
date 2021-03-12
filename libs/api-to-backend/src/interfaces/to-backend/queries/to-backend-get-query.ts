@@ -5,6 +5,9 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendGetQueryRequestPayload {
   @IsString()
+  mconfigId: string;
+
+  @IsString()
   queryId: string;
 }
 

@@ -15,8 +15,10 @@ import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
+import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
 import { ReposService } from './services/repos.service';
+import { StructsService } from './services/structs.service';
 import { UsersService } from './services/users.service';
 import { VizsService } from './services/vizs.service';
 
@@ -31,6 +33,8 @@ export const appProviders = [
   BranchesService,
   ModelsService,
   MconfigsService,
+  StructsService,
+  QueriesService,
   VizsService,
   DashboardsService,
   MembersService,

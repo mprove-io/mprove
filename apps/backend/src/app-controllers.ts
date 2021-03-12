@@ -78,5 +78,7 @@ export const appControllers = [
 
   controllers.GetMconfigController,
   controllers.CreateTempMconfigController,
-  controllers.CreateTempMconfigAndQueryController
+  controllers.CreateTempMconfigAndQueryController,
+  //
+  controllers.GetQueryController
 ];

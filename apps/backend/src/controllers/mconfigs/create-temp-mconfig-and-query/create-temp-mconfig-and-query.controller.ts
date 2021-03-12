@@ -5,12 +5,12 @@ import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CreateTempMconfigAndQueryController {
@@ -19,7 +19,7 @@ export class CreateTempMconfigAndQueryController {
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private rabbitService: RabbitService,
-    private structsRepository: repositories.StructsRepository
+    private structsService: StructsService
   ) {}
 
   @Post(
@@ -33,8 +33,8 @@ export class CreateTempMconfigAndQueryController {
     let { traceId } = reqValid.info;
     let { mconfig, query } = reqValid.payload;
 
-    let struct = await this.structsRepository.findOne({
-      struct_id: mconfig.structId
+    let struct = await this.structsService.getStructCheckExists({
+      structId: mconfig.structId
     });
 
     let project = await this.projectsService.getProjectCheckExists({

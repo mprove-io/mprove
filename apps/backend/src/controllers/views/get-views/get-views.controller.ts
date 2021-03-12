@@ -2,12 +2,12 @@ import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { ReposService } from '~backend/services/repos.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class GetViewsController {
@@ -16,7 +16,7 @@ export class GetViewsController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reposService: ReposService,
-    private structsRepository: repositories.StructsRepository
+    private structsService: StructsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetViews)
@@ -49,9 +49,8 @@ export class GetViewsController {
       branchId: branchId
     });
 
-    let struct = await this.structsRepository.findOne({
-      select: ['views'],
-      where: { struct_id: branch.struct_id }
+    let struct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
     });
 
     let payload: apiToBackend.ToBackendGetViewsResponsePayload = {
