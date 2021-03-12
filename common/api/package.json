@@ -19,6 +19,6 @@
     "typescript": "^3.2.0"
   },
   "dependencies": {
-    "madge": "^3.4.4"
+    "madge": "^4.0.1"
   }
 }
