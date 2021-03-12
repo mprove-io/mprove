@@ -90,6 +90,7 @@ export class ProcessQueryService {
     };
 
     mconfig.queryId = queryId;
+    mconfig.temp = true;
 
     mconfig.filters = Object.keys(filtersFractions).map(fieldId => ({
       fieldId: fieldId,

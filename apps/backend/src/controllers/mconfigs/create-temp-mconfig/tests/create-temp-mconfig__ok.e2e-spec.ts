@@ -99,6 +99,8 @@ test('1', async t => {
       }
     );
 
+    let oldMconfigId = resp1.payload.dashboardMconfigs[0].mconfigId;
+
     let newMconfig = resp1.payload.dashboardMconfigs[0];
     newMconfig.mconfigId = common.makeId();
 
@@ -109,6 +111,7 @@ test('1', async t => {
         traceId: traceId
       },
       payload: {
+        oldMconfigId: oldMconfigId,
         mconfig: newMconfig
       }
     };
