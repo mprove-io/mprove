@@ -102,6 +102,6 @@ test('1', async t => {
   }
 
   t.is(resp.info.error, undefined);
-  t.is(resp.payload.views.length, 7);
+  t.is(resp.payload.views.length, 8);
   t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });

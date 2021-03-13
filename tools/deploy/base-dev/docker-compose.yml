@@ -22,6 +22,13 @@ services:
   #       source: $M_DATA_FLUENT_LOG_PATH
   #       target: /fluentd/log      
 
+  pg:
+    image: postgres
+    env_file:
+      - $PG_ENV_FILE_PATH    
+    ports:
+      - 5432:5432        
+
   db:
     image: mysql:8
     env_file:

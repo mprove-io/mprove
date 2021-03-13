@@ -71,27 +71,31 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: 'c1',
-            type: common.ConnectionTypeEnum.PostgreSQL
+            type: common.ConnectionTypeEnum.PostgreSQL,
+            postgresHost: '0.0.0.0',
+            postgresPort: 5432,
+            postgresDatabase: 'p_db',
+            postgresUser: 'p_user',
+            postgresPassword: 'p_pass'
           }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetDashboardRequest = {
+    let req1: apiToBackend.ToBackendGetVizsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
         traceId: traceId
       },
       payload: {
         projectId: projectId,
         repoId: userId,
-        branchId: common.BRANCH_MASTER,
-        dashboardId: 'ec_d1'
+        branchId: common.BRANCH_MASTER
       }
     };
 
-    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
+    let resp1 = await helper.sendToBackend<apiToBackend.ToBackendGetVizsResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -99,16 +103,15 @@ test('1', async t => {
       }
     );
 
+    let viz = resp1.payload.vizs.find(x => x.vizId === 's_z1');
+
     let req2: apiToBackend.ToBackendRunQueriesRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         traceId: traceId
       },
       payload: {
-        queryIds: [
-          resp1.payload.dashboardMconfigs[0].queryId,
-          resp1.payload.dashboardMconfigs[1].queryId
-        ]
+        queryIds: [viz.reports[0].queryId]
       }
     };
 

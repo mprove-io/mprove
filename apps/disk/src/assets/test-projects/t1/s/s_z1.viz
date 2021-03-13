@@ -1,0 +1,7 @@
+viz: s_z1
+reports:
+- title: 'k'
+  model: s_m1
+  select:
+  - a.k
+  type: table
