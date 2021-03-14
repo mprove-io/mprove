@@ -15,20 +15,17 @@ export class ConnectionEntity {
 
   // bigquery
 
+  @Column({ type: constants.INT, nullable: true })
+  bigquery_query_size_limit: number;
+
+  @Column({ type: constants.JSON, nullable: true })
+  bigquery_credentials: any;
+
   @Column({ type: constants.VARCHAR, nullable: true })
   bigquery_project: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   bigquery_client_email: string;
-
-  @Column({ type: constants.TEXT, nullable: true })
-  bigquery_credentials: string;
-
-  @Column({ type: constants.VARCHAR, nullable: true })
-  bigquery_credentials_file_path: string;
-
-  @Column({ type: constants.INT, nullable: true })
-  bigquery_query_size_limit: number;
 
   // postgres
 

@@ -6,6 +6,7 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { interfaces } from './barrels/interfaces';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
 import { ConnectionsService } from './services/connections.service';
@@ -36,6 +37,7 @@ export const appProviders = [
   ModelsService,
   MconfigsService,
   PgService,
+  BigQueryService,
   RunService,
   StructsService,
   QueriesService,

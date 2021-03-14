@@ -43,13 +43,13 @@ export class RunQueriesController {
         connectionId: query.connection_id
       });
 
-      let rQuery = await this.runService.runQuery({
+      let recordsQuery = await this.runService.runQuery({
         userId: user.user_id,
         query: query,
         connection: connection
       });
 
-      runningQueries.push(rQuery);
+      runningQueries.push(recordsQuery);
     });
 
     let payload: apiToBackend.ToBackendRunQueriesResponsePayload = {

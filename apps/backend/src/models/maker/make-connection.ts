@@ -21,7 +21,6 @@ export function makeConnection(item: {
     bigquery_project: undefined,
     bigquery_client_email: undefined,
     bigquery_credentials: undefined,
-    bigquery_credentials_file_path: undefined,
     bigquery_query_size_limit: item.bigqueryQuerySizeLimit,
     // postgres
     postgres_host: item.postgresHost,

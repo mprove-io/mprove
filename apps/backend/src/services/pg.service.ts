@@ -49,7 +49,7 @@ export class PgService {
       });
     });
 
-    let rQuery = records.queries.find(x => x.query_id === query.query_id);
+    let recordsQuery = records.queries.find(x => x.query_id === query.query_id);
 
     let pgp = pgPromise({ noWarnings: true });
     let pgDb = pgp(cn);
@@ -84,7 +84,7 @@ export class PgService {
           });
         }
       })
-      .catch(async (error: any) => {
+      .catch(async e => {
         // common.logToConsole('error');
         // common.logToConsole(error);
 
@@ -96,7 +96,7 @@ export class PgService {
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Error;
           q.postgres_query_job_id = null;
-          q.last_error_message = error.message;
+          q.last_error_message = e.message;
           q.last_error_ts = helper.makeTs();
 
           await this.connection.transaction(async manager => {
@@ -110,6 +110,6 @@ export class PgService {
         }
       });
 
-    return rQuery;
+    return recordsQuery;
   }
 }

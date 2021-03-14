@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { BigQueryService } from './bigquery.service';
 import { PgService } from './pg.service';
 
 @Injectable()
 export class RunService {
-  constructor(private pgService: PgService) {}
+  constructor(
+    private pgService: PgService,
+    private bigqueryService: BigQueryService
+  ) {}
 
   async runQuery(item: {
     userId: string;
@@ -14,16 +18,22 @@ export class RunService {
   }) {
     let { query, connection, userId } = item;
 
-    let rQuery: entities.QueryEntity;
+    let recordsQuery: entities.QueryEntity;
 
     if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
-      rQuery = await this.pgService.runQuery({
+      recordsQuery = await this.pgService.runQuery({
+        userId,
+        query,
+        connection
+      });
+    } else if (connection.type === common.ConnectionTypeEnum.BigQuery) {
+      recordsQuery = await this.bigqueryService.runQuery({
         userId,
         query,
         connection
       });
     }
 
-    return rQuery;
+    return recordsQuery;
   }
 }
