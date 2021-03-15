@@ -6,6 +6,9 @@ export class Config extends common.Config {
   @IsEnum(enums.BackendEnvEnum)
   backendEnv?: enums.BackendEnvEnum;
 
+  @IsEnum(common.BoolEnum)
+  isCron?: common.BoolEnum;
+
   @IsString()
   jwtSecret?: string;
 

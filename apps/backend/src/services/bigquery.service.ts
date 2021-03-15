@@ -1,7 +1,7 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { common } from '~backend/barrels/common copy';
+import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';

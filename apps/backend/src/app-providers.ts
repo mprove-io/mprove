@@ -4,6 +4,7 @@ import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
+import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { BigQueryService } from './services/bigquery.service';
@@ -22,11 +23,18 @@ import { RabbitService } from './services/rabbit.service';
 import { ReposService } from './services/repos.service';
 import { RunService } from './services/run.service';
 import { StructsService } from './services/structs.service';
+import { TasksService } from './services/tasks.service';
 import { UsersService } from './services/users.service';
 import { VizsService } from './services/vizs.service';
 
 export const appProviders = [
   RabbitService,
+  {
+    provide: TasksService,
+    useFactory: (cs: ConfigService<interfaces.Config>) =>
+      helper.isCron(cs) ? new TasksService(cs) : {},
+    inject: [ConfigService]
+  },
   BlockmlService,
   UsersService,
   OrgsService,

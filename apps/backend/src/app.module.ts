@@ -4,6 +4,7 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as mg from 'nodemailer-mailgun-transport';
 import { Connection } from 'typeorm';
@@ -13,6 +14,7 @@ import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
 import { common } from './barrels/common';
 import { enums } from './barrels/enums';
+import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
 import { repositories } from './barrels/repositories';
 import { getConfig } from './config/get.config';
@@ -142,6 +144,7 @@ let mailerModule = MailerModule.forRootAsync({
 @Module({
   imports: [
     configModule,
+    ScheduleModule.forRoot(),
     jwtModule,
     PassportModule,
     rabbitModule,
@@ -162,24 +165,26 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.connection.runMigrations();
+      if (helper.isCron(this.cs)) {
+        await this.connection.runMigrations();
 
-      let email = this.cs.get<interfaces.Config['firstUserEmail']>(
-        'firstUserEmail'
-      );
+        let email = this.cs.get<interfaces.Config['firstUserEmail']>(
+          'firstUserEmail'
+        );
 
-      let password = this.cs.get<interfaces.Config['firstUserPassword']>(
-        'firstUserPassword'
-      );
+        let password = this.cs.get<interfaces.Config['firstUserPassword']>(
+          'firstUserPassword'
+        );
 
-      if (common.isDefined(email) && common.isDefined(password)) {
-        let firstUser = await this.userRepository.findOne({ email: email });
+        if (common.isDefined(email) && common.isDefined(password)) {
+          let firstUser = await this.userRepository.findOne({ email: email });
 
-        if (common.isUndefined(firstUser)) {
-          await this.usersService.addFirstUser({
-            email: email,
-            password: password
-          });
+          if (common.isUndefined(firstUser)) {
+            await this.usersService.addFirstUser({
+              email: email,
+              password: password
+            });
+          }
         }
       }
     } catch (e) {

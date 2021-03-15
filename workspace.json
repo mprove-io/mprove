@@ -307,7 +307,10 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "cwd": "tools/deploy/base-dev",
-            "commands": ["docker-compose up --detach --build backend"],
+            "commands": [
+              "docker-compose up --detach --build backend-cron",
+              "docker-compose up --detach --build backend"
+            ],
             "parallel": false
           }
         },

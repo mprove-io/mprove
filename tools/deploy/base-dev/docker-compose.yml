@@ -93,6 +93,25 @@ services:
     #     fluentd-async-connect: "true"
     #     tag: backend    
 
+  backend-cron:
+    build:
+      context: ../../../
+      dockerfile: tools/docker/backend.dev.Dockerfile     
+    # container_name: backend-cron
+    image: mprove/mprove-base-m-backend:$MPROVE_BASE_RELEASE_TAG 
+    env_file:
+      - $BACKEND_CRON_ENV_FILE_PATH    
+    volumes:
+      - type: bind
+        source: $BACKEND_CRON_ENV_FILE_PATH
+        target: $BACKEND_CRON_ENV_FILE_PATH      
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: 0.0.0.0:24224
+    #     fluentd-async-connect: "true"
+    #     tag: backend-cron
+
   blockml-main:
     build:
       context: ../../../
