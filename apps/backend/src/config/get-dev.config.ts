@@ -13,7 +13,7 @@ export function getDevConfig(envFilePath) {
     interfaces.Config
   >{
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
-    isCron: <common.BoolEnum>envFile.BACKEND_IS_CRON,
+    isScheduler: <common.BoolEnum>envFile.BACKEND_IS_SCHEDULER,
     jwtSecret: envFile.BACKEND_JWT_SECRET,
     allowTestRoutes: envFile.BACKEND_ALLOW_TEST_ROUTES,
     firstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,

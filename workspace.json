@@ -308,7 +308,7 @@
           "options": {
             "cwd": "tools/deploy/base-dev",
             "commands": [
-              "docker-compose up --detach --build backend-cron",
+              "docker-compose up --detach --build backend-scheduler",
               "docker-compose up --detach --build backend"
             ],
             "parallel": false

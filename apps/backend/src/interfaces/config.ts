@@ -7,7 +7,7 @@ export class Config extends common.Config {
   backendEnv?: enums.BackendEnvEnum;
 
   @IsEnum(common.BoolEnum)
-  isCron?: common.BoolEnum;
+  isScheduler?: common.BoolEnum;
 
   @IsString()
   jwtSecret?: string;

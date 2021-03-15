@@ -165,7 +165,7 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      if (helper.isCron(this.cs)) {
+      if (helper.isScheduler(this.cs)) {
         await this.connection.runMigrations();
 
         let email = this.cs.get<interfaces.Config['firstUserEmail']>(

@@ -34,7 +34,7 @@ export const appProviders = [
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       queriesService: QueriesService
-    ) => (helper.isCron(cs) ? new TasksService(cs, queriesService) : {}),
+    ) => (helper.isScheduler(cs) ? new TasksService(cs, queriesService) : {}),
     inject: [ConfigService, QueriesService]
   },
   BlockmlService,
