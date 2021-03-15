@@ -1,11 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -15,9 +9,6 @@ export class ToBackendEditConnectionRequestPayload {
 
   @IsString()
   connectionId: string;
-
-  @IsEnum(common.ConnectionTypeEnum)
-  type: common.ConnectionTypeEnum;
 
   @IsOptional()
   @IsString()

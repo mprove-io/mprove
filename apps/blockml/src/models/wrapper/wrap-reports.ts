@@ -174,6 +174,7 @@ export function wrapReports(item: {
       queryId: queryId,
       projectId: projectId,
       connectionId: model.connection.connectionId,
+      connectionType: model.connection.type,
       sql: report.sql.join('\n'),
       status: common.QueryStatusEnum.New,
       lastRunBy: undefined,

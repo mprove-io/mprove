@@ -27,7 +27,6 @@ export class EditConnectionController {
     let {
       projectId,
       connectionId,
-      type,
       bigqueryCredentials,
       bigqueryQuerySizeLimit,
       postgresHost,
@@ -51,7 +50,6 @@ export class EditConnectionController {
       connectionId: connectionId
     });
 
-    connection.type = type;
     connection.postgres_host = postgresHost;
     connection.postgres_port = postgresPort;
     connection.postgres_database = postgresDatabase;

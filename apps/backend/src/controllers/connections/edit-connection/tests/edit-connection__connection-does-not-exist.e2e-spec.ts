@@ -78,8 +78,7 @@ test('1', async t => {
       },
       payload: {
         connectionId: connectionId,
-        projectId: projectId,
-        type: common.ConnectionTypeEnum.PostgreSQL
+        projectId: projectId
       }
     };
 

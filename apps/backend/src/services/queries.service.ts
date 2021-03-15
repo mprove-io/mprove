@@ -22,4 +22,11 @@ export class QueriesService {
 
     return query;
   }
+
+  async checkRunningQueries() {
+    let bigqueryRunningQueries = await this.queriesRepository.find({
+      status: common.QueryStatusEnum.Running,
+      connection_type: common.ConnectionTypeEnum.BigQuery
+    });
+  }
 }

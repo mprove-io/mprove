@@ -5,6 +5,7 @@ export function wrapToEntityQuery(x: common.Query): entities.QueryEntity {
   return {
     project_id: x.projectId,
     connection_id: x.connectionId,
+    connection_type: x.connectionType,
     query_id: x.queryId,
     sql: x.sql,
     data: x.data,

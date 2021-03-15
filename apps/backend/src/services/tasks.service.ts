@@ -1,25 +1,48 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Interval } from '@nestjs/schedule';
+import { Cron, CronExpression, Interval } from '@nestjs/schedule';
+import { common } from '~backend/barrels/common';
+import { QueriesService } from './queries.service';
 
 @Injectable()
 export class TasksService {
-  constructor(private cs: ConfigService) {}
+  private isRunningLoopCheckQueries = false;
 
-  private readonly logger = new Logger(TasksService.name);
+  constructor(
+    private cs: ConfigService,
+    private queriesService: QueriesService
+  ) {}
 
-  // @Cron('10 * * * * *')
-  // handleCron() {
-  //   common.logToConsole('Called when the second is 10');
-  // }
+  @Cron(CronExpression.EVERY_SECOND)
+  async loopCheckQueries() {
+    if (this.isRunningLoopCheckQueries === false) {
+      this.isRunningLoopCheckQueries = true;
+
+      // try {
+      await this.queriesService.checkRunningQueries();
+      //     .catch(e =>
+      //       helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_QUERIES)
+      //     );
+      // } catch (err) {
+      //   handler.errorToLog(err);
+      // }
+
+      this.isRunningLoopCheckQueries = false;
+    }
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  handleCron() {
+    common.logToConsole('Called when the second is 10');
+  }
 
   @Interval(10000)
   handleInterval() {
-    this.logger.debug('Called every 10 seconds');
+    common.logToConsole('Called every 10 seconds');
   }
 
   // @Timeout(5000)
   // handleTimeout() {
-  //   this.logger.debug('Called once after 5 seconds');
+  //   common.logToConsole('Called once after 5 seconds');
   // }
 }

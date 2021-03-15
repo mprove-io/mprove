@@ -10,6 +10,9 @@ export class QueryEntity {
   @Column({ type: constants.CONNECTION_ID_VARCHAR })
   connection_id: string; // name
 
+  @Column({ type: constants.VARCHAR })
+  connection_type: common.ConnectionTypeEnum;
+
   @PrimaryColumn({ type: constants.QUERY_ID_VARCHAR })
   query_id: string;
 

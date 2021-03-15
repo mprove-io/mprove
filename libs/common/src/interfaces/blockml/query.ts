@@ -8,6 +8,9 @@ export class Query {
   @IsString()
   connectionId: string;
 
+  @IsEnum(enums.ConnectionTypeEnum)
+  connectionType: enums.ConnectionTypeEnum;
+
   @IsString()
   queryId: string;
 

@@ -76,6 +76,7 @@ export class ProcessQueryService {
       queryId: queryId,
       projectId: projectId,
       connectionId: model.connection.connectionId,
+      connectionType: model.connection.type,
       sql: sql.join('\n'),
       status: common.QueryStatusEnum.New,
       lastRunBy: undefined,

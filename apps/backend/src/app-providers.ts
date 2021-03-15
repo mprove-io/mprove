@@ -31,9 +31,11 @@ export const appProviders = [
   RabbitService,
   {
     provide: TasksService,
-    useFactory: (cs: ConfigService<interfaces.Config>) =>
-      helper.isCron(cs) ? new TasksService(cs) : {},
-    inject: [ConfigService]
+    useFactory: (
+      cs: ConfigService<interfaces.Config>,
+      queriesService: QueriesService
+    ) => (helper.isCron(cs) ? new TasksService(cs, queriesService) : {}),
+    inject: [ConfigService, QueriesService]
   },
   BlockmlService,
   UsersService,
