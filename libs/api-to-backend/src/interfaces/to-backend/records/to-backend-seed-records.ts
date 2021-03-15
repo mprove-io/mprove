@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
+  IsObject,
   IsOptional,
   IsString,
   ValidateNested
@@ -109,8 +110,8 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   type: common.ConnectionTypeEnum;
 
   @IsOptional()
-  @IsString()
-  bigqueryCredentials?: string;
+  @IsObject()
+  bigqueryCredentials?: any;
 
   @IsOptional()
   @IsInt()

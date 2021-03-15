@@ -19,7 +19,8 @@ export class BigQueryService {
     let { query, userId, connection } = item;
 
     let bigquery = new BigQuery({
-      credentials: connection.bigquery_credentials
+      credentials: connection.bigquery_credentials,
+      projectId: connection.bigquery_project
     });
 
     query.last_run_by = userId;

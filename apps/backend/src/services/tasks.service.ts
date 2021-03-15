@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Cron, CronExpression, Interval } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { common } from '~backend/barrels/common';
 import { QueriesService } from './queries.service';
 
@@ -33,13 +33,13 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   handleCron() {
-    common.logToConsole('Called when the second is 10');
-  }
-
-  @Interval(10000)
-  handleInterval() {
     common.logToConsole('Called every 10 seconds');
   }
+
+  // @Interval(10000)
+  // handleInterval() {
+  //   common.logToConsole('Called every 10 seconds');
+  // }
 
   // @Timeout(5000)
   // handleTimeout() {

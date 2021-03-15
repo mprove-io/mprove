@@ -5,22 +5,22 @@ export function makeConnection(item: {
   projectId: string;
   connectionId: string;
   type: common.ConnectionTypeEnum;
-  postgresHost?: string;
-  postgresPort?: number;
-  postgresDatabase?: string;
-  postgresUser?: string;
-  postgresPassword?: string;
-  bigqueryCredentials?: string;
-  bigqueryQuerySizeLimit?: number;
+  postgresHost: string;
+  postgresPort: number;
+  postgresDatabase: string;
+  postgresUser: string;
+  postgresPassword: string;
+  bigqueryCredentials: any;
+  bigqueryQuerySizeLimit: number;
 }) {
   let connectionEntity: entities.ConnectionEntity = {
     project_id: item.projectId,
     connection_id: item.connectionId,
     type: item.type,
     // bigquery
-    bigquery_project: undefined,
-    bigquery_client_email: undefined,
-    bigquery_credentials: undefined,
+    bigquery_credentials: item.bigqueryCredentials,
+    bigquery_project: item.bigqueryCredentials?.project_id,
+    bigquery_client_email: item.bigqueryCredentials?.client_email,
     bigquery_query_size_limit: item.bigqueryQuerySizeLimit,
     // postgres
     postgres_host: item.postgresHost,

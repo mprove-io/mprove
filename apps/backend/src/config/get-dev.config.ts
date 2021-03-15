@@ -14,6 +14,7 @@ export function getDevConfig(envFilePath) {
   >{
     backendEnv: <enums.BackendEnvEnum>envFile.BACKEND_ENV,
     isScheduler: <common.BoolEnum>envFile.BACKEND_IS_SCHEDULER,
+    mDataBigqueryPath: envFile.M_DATA_BIGQUERY_PATH,
     jwtSecret: envFile.BACKEND_JWT_SECRET,
     allowTestRoutes: envFile.BACKEND_ALLOW_TEST_ROUTES,
     firstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,

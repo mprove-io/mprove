@@ -1,11 +1,13 @@
 import test from 'ava';
+import * as fse from 'fs-extra';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { getConfig } from '~backend/config/get.config';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-run-queries__ok';
+let testId = 'backend-run-queries__ok-bigquery';
 
 let traceId = testId;
 
@@ -16,11 +18,16 @@ let password = '123';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't1';
+let testProjectId = 't2';
 let projectId = common.makeId();
 let projectName = 'p1';
 
 let prep: interfaces.Prep;
+
+let config = getConfig();
+let bigqueryTestCredentials = JSON.parse(
+  fse.readFileSync(config.mDataBigqueryPath).toString()
+);
 
 test('1', async t => {
   let resp2: apiToBackend.ToBackendRunQueriesResponse;
@@ -71,12 +78,8 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: 'c1',
-            type: common.ConnectionTypeEnum.PostgreSQL,
-            postgresHost: '0.0.0.0',
-            postgresPort: 5432,
-            postgresDatabase: 'p_db',
-            postgresUser: 'p_user',
-            postgresPassword: 'p_pass'
+            type: common.ConnectionTypeEnum.BigQuery,
+            bigqueryCredentials: bigqueryTestCredentials
           }
         ]
       },

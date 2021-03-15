@@ -10,6 +10,9 @@ export class Config extends common.Config {
   isScheduler?: common.BoolEnum;
 
   @IsString()
+  mDataBigqueryPath?: string;
+
+  @IsString()
   jwtSecret?: string;
 
   @IsEnum(common.BoolEnum)
