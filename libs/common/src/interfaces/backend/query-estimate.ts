@@ -2,11 +2,11 @@ import { IsInt, IsString } from 'class-validator';
 
 export class QueryEstimate {
   @IsString()
-  query_id: string;
+  queryId: string;
 
   @IsInt()
   estimate: number;
 
-  @IsInt()
-  lastRunDryTs: number;
+  @IsString()
+  lastRunDryTs: string;
 }

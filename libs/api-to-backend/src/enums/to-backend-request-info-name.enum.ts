@@ -84,5 +84,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendCreateTempMconfigAndQuery = 'ToBackendCreateTempMconfigAndQuery',
   //
   ToBackendGetQuery = 'ToBackendGetQuery',
-  ToBackendRunQueries = 'ToBackendRunQueries'
+  ToBackendRunQueries = 'ToBackendRunQueries',
+  ToBackendRunQueriesDry = 'ToBackendRunQueriesDry'
 }

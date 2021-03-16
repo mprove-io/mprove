@@ -122,4 +122,6 @@ export async function addRecords(item: {
   }
 
   // avatars
+
+  return records;
 }

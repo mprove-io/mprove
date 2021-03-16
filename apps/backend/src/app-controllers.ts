@@ -81,5 +81,6 @@ export const appControllers = [
   controllers.CreateTempMconfigAndQueryController,
   //
   controllers.GetQueryController,
-  controllers.RunQueriesController
+  controllers.RunQueriesController,
+  controllers.RunQueriesDryController
 ];
