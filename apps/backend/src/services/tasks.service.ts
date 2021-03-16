@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { QueriesService } from './queries.service';
 
@@ -18,14 +19,12 @@ export class TasksService {
     if (this.isRunningLoopCheckQueries === false) {
       this.isRunningLoopCheckQueries = true;
 
-      // try {
-      await this.queriesService.checkRunningQueries();
-      //     .catch(e =>
-      //       helper.reThrow(e, enums.schedulerErrorsEnum.SCHEDULER_CHECK_QUERIES)
-      //     );
-      // } catch (err) {
-      //   handler.errorToLog(err);
-      // }
+      await this.queriesService.checkBigqueryRunningQueries().catch(e => {
+        throw new common.ServerError({
+          message:
+            apiToBackend.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES
+        });
+      });
 
       this.isRunningLoopCheckQueries = false;
     }
