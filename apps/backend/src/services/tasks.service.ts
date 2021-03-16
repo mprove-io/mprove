@@ -20,10 +20,14 @@ export class TasksService {
       this.isRunningLoopCheckQueries = true;
 
       await this.queriesService.checkBigqueryRunningQueries().catch(e => {
-        throw new common.ServerError({
+        let serverError = new common.ServerError({
           message:
-            apiToBackend.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES
+            apiToBackend.ErEnum
+              .BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
+          originalError: e
         });
+
+        common.logToConsole(serverError);
       });
 
       this.isRunningLoopCheckQueries = false;
