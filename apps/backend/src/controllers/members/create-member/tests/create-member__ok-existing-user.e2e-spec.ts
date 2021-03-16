@@ -33,7 +33,8 @@ test('1', async t => {
       deleteRecordsPayload: {
         emails: [email, invitedEmail],
         orgIds: [orgId],
-        projectIds: [projectId]
+        projectIds: [projectId],
+        projectNames: [projectName]
       },
       seedRecordsPayload: {
         users: [

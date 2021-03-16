@@ -46,6 +46,14 @@ export class Query {
 
   @IsOptional()
   @IsString()
+  postgresQueryJobId?: string;
+
+  @IsOptional()
+  @IsString()
+  bigqueryQueryJobId?: string;
+
+  @IsOptional()
+  @IsString()
   data?: any;
 
   @IsInt()

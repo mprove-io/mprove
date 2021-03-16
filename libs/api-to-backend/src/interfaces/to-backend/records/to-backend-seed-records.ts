@@ -163,6 +163,11 @@ export class ToBackendSeedRecordsRequestPayload {
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadConnectionsItem)
   connections?: ToBackendSeedRecordsRequestPayloadConnectionsItem[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.Query)
+  queries?: common.Query[];
 }
 
 export class ToBackendSeedRecordsRequest extends ToBackendRequest {

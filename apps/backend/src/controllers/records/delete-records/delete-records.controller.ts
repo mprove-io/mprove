@@ -19,7 +19,7 @@ export class DeleteRecordsController {
     private dashboardsRepository: repositories.DashboardsRepository,
     private mconfigsRepository: repositories.MconfigsRepository,
     private modelsRepository: repositories.ModelsRepository,
-    // private queriesRepository: repositories.QueriesRepository,
+    private queriesRepository: repositories.QueriesRepository,
     private structsRepository: repositories.StructsRepository,
     private vizsRepository: repositories.VizsRepository,
     private avatarsRepository: repositories.AvatarsRepository,
@@ -114,7 +114,7 @@ export class DeleteRecordsController {
     await this.structsRepository.delete({ struct_id: In(structIds) });
     await this.branchesRepository.delete({ project_id: In(projectIds) });
     await this.vizsRepository.delete({ struct_id: In(structIds) });
-    // queries
+    await this.queriesRepository.delete({ project_id: In(projectIds) });
     await this.modelsRepository.delete({ struct_id: In(structIds) });
     await this.mconfigsRepository.delete({ struct_id: In(structIds) });
     await this.dashboardsRepository.delete({ struct_id: In(structIds) });

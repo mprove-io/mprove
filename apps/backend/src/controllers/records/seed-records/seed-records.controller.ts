@@ -36,6 +36,7 @@ export class SeedRecordsController {
     let payloadOrgs = reqValid.payload.orgs;
     let payloadProjects = reqValid.payload.projects;
     let payloadConnections = reqValid.payload.connections;
+    let payloadQueries = reqValid.payload.queries;
 
     //
 
@@ -301,6 +302,13 @@ export class SeedRecordsController {
           members.push(newMember);
         }
       );
+    }
+
+    if (common.isDefined(payloadQueries)) {
+      queries = [
+        ...queries,
+        ...payloadQueries.map(pq => wrapper.wrapToEntityQuery(pq))
+      ];
     }
 
     await this.connection.transaction(async manager => {

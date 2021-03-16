@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-create-branch__ok-from-remote-false';
+let testId = 'backend-cancel-queries__ok';
 
 let traceId = testId;
 
@@ -19,14 +19,36 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = 'p1';
 
-let repoId = userId;
-let newBranchId = common.makeId();
-let fromBranchId = common.BRANCH_MASTER;
+let connectionId = 'c1';
+let connectionType = common.ConnectionTypeEnum.PostgreSQL;
+
+let queryId = common.makeId();
+let postgresQueryJobId = common.makeId();
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateBranchResponse;
+  let resp1: apiToBackend.ToBackendCancelQueriesResponse;
+
+  let query: common.Query = {
+    projectId: projectId,
+    connectionId: connectionId,
+    connectionType: connectionType,
+    queryId: queryId,
+    sql: '123',
+    data: undefined,
+    status: common.QueryStatusEnum.Running,
+    lastRunBy: userId,
+    lastRunTs: 1,
+    lastCancelTs: 1,
+    lastCompleteTs: 1,
+    lastCompleteDuration: undefined,
+    lastErrorMessage: undefined,
+    lastErrorTs: 1,
+    postgresQueryJobId: postgresQueryJobId,
+    bigqueryQueryJobId: undefined,
+    serverTs: 1
+  };
 
   try {
     prep = await prepareTest({
@@ -48,9 +70,9 @@ test('1', async t => {
         ],
         orgs: [
           {
-            orgId,
-            name: orgName,
-            ownerEmail: email
+            orgId: orgId,
+            ownerEmail: email,
+            name: orgName
           }
         ],
         projects: [
@@ -69,30 +91,34 @@ test('1', async t => {
             isEditor: common.BoolEnum.TRUE,
             isExplorer: common.BoolEnum.TRUE
           }
-        ]
+        ],
+        connections: [
+          {
+            projectId: projectId,
+            connectionId: connectionId,
+            type: connectionType
+          }
+        ],
+        queries: [query]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateBranchRequest = {
+    let req1: apiToBackend.ToBackendCancelQueriesRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
         traceId: traceId
       },
       payload: {
-        projectId: projectId,
-        repoId: repoId,
-        fromBranchId: fromBranchId,
-        newBranchId: newBranchId,
-        isFromRemote: false
+        queryIds: [queryId]
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateBranchResponse>(
+    resp1 = await helper.sendToBackend<apiToBackend.ToBackendCancelQueriesResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: req
+        req: req1
       }
     );
 
@@ -101,6 +127,7 @@ test('1', async t => {
     common.logToConsole(e);
   }
 
-  t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp1.info.error, undefined);
+  t.is(resp1.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp1.payload.canceledQueries.length, 1);
 });
