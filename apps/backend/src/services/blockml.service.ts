@@ -99,6 +99,7 @@ export class BlockmlService {
     }
 
     return {
+      struct: struct,
       vizs: vizs,
       queries: queries,
       models: models,

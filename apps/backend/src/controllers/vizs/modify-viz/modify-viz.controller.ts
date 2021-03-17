@@ -93,6 +93,7 @@ export class ModifyVizController {
     );
 
     let {
+      struct,
       dashboards,
       vizs,
       mconfigs,
@@ -124,7 +125,8 @@ export class ModifyVizController {
       await db.modifyRecords({
         manager: manager,
         records: {
-          vizs: [wrapper.wrapToEntityViz(viz)]
+          vizs: [wrapper.wrapToEntityViz(viz)],
+          structs: [struct]
         }
       });
     });

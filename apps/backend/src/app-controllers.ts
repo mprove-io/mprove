@@ -75,6 +75,7 @@ export const appControllers = [
   controllers.GetVizsController,
   controllers.CreateVizController,
   controllers.ModifyVizController,
+  controllers.DeleteVizController,
 
   controllers.GetMconfigController,
   controllers.CreateTempMconfigController,
