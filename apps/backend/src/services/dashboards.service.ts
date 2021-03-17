@@ -28,4 +28,12 @@ export class DashboardsService {
 
     return dashboard;
   }
+
+  checkDashboardPath(item: { filePath: string; userAlias: string }) {
+    if (item.filePath.split('/')[2] !== item.userAlias) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
+      });
+    }
+  }
 }

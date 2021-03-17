@@ -23,4 +23,12 @@ export class VizsService {
 
     return viz;
   }
+
+  checkVizPath(item: { filePath: string; userAlias: string }) {
+    if (item.filePath.split('/')[2] !== item.userAlias) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_VIZ_PATH
+      });
+    }
+  }
 }

@@ -73,6 +73,13 @@ export class ModifyDashboardController {
       }
     );
 
+    if (member.is_editor === common.BoolEnum.FALSE) {
+      this.dashboardsService.checkDashboardPath({
+        userAlias: user.alias,
+        filePath: existingDashboard.file_path
+      });
+    }
+
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,

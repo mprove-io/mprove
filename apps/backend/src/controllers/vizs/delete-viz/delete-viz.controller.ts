@@ -66,6 +66,13 @@ export class DeleteVizController {
       vizId: vizId
     });
 
+    if (member.is_editor === common.BoolEnum.FALSE) {
+      this.vizsService.checkVizPath({
+        userAlias: user.alias,
+        filePath: existingViz.file_path
+      });
+    }
+
     let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,

@@ -65,6 +65,13 @@ export class ModifyVizController {
       vizId: vizId
     });
 
+    if (member.is_editor === common.BoolEnum.FALSE) {
+      this.vizsService.checkVizPath({
+        userAlias: user.alias,
+        filePath: existingViz.file_path
+      });
+    }
+
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
