@@ -86,5 +86,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetQuery = 'ToBackendGetQuery',
   ToBackendRunQueries = 'ToBackendRunQueries',
   ToBackendRunQueriesDry = 'ToBackendRunQueriesDry',
-  ToBackendCancelQueries = 'ToBackendCancelQueries'
+  ToBackendCancelQueries = 'ToBackendCancelQueries',
+  //
+  ToBackendGetNav = 'ToBackendGetNav'
 }

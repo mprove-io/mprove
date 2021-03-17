@@ -83,5 +83,7 @@ export const appControllers = [
   controllers.GetQueryController,
   controllers.RunQueriesController,
   controllers.RunQueriesDryController,
-  controllers.CancelQueriesController
+  controllers.CancelQueriesController,
+  //
+  controllers.GetNavController
 ];

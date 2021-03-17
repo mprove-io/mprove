@@ -1,20 +1,24 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetNavRequestPayload {
+  @IsOptional()
   @IsString()
-  orgId: string;
+  orgId?: string;
 
+  @IsOptional()
   @IsString()
-  projectId: string;
+  projectId?: string;
 
+  @IsOptional()
   @IsString()
-  repoId: string;
+  repoId?: string;
 
+  @IsOptional()
   @IsString()
-  branchId: string;
+  branchId?: string;
 }
 
 export class ToBackendGetNavRequest extends ToBackendRequest {
