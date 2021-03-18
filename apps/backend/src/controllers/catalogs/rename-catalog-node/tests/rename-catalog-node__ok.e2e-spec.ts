@@ -20,7 +20,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = 'p1';
 
-let repoId = userId;
+let repoId = testId;
 let branchId = common.BRANCH_MASTER;
 
 let prep: interfaces.Prep;

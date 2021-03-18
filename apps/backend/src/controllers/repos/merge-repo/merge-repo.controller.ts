@@ -51,19 +51,19 @@ export class MergeRepoController {
     });
 
     await this.reposService.checkDevRepoId({
-      userId: user.user_id,
+      userAlias: user.alias,
       repoId: repoId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: user.alias,
       branchId: branchId
     });
 
     let theirBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isTheirBranchRemote === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isTheirBranchRemote === true ? common.PROD_REPO_ID : user.alias,
       branchId: theirBranchId
     });
 

@@ -42,7 +42,7 @@ export class CreateFileController {
     });
 
     await this.reposService.checkDevRepoId({
-      userId: user.user_id,
+      userAlias: user.alias,
       repoId: repoId
     });
 

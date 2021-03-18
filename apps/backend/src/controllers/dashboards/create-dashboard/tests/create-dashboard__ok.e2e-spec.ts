@@ -20,6 +20,8 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = 'p1';
 
+let repoId = testId;
+
 let dashboardId = common.makeId();
 
 let prep: interfaces.Prep;
@@ -89,7 +91,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        repoId: userId,
+        repoId: repoId,
         branchId: common.BRANCH_MASTER,
         dashboardId: dashboardId,
         dashboardFileText: `dashboard: ${dashboardId}

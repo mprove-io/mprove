@@ -44,13 +44,13 @@ export class CreateFolderController {
     });
 
     await this.reposService.checkDevRepoId({
-      userId: user.user_id,
+      userAlias: user.alias,
       repoId: repoId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: user.alias,
       branchId: branchId
     });
 

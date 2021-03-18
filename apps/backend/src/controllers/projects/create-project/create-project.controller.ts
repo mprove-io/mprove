@@ -67,7 +67,7 @@ export class CreateProjectController {
       payload: {
         orgId: orgId,
         projectId: newProject.project_id,
-        devRepoId: user.user_id,
+        devRepoId: user.alias,
         userAlias: user.alias
       }
     };
@@ -95,7 +95,7 @@ export class CreateProjectController {
     let devBranch = maker.makeBranch({
       structId: structId,
       projectId: newProject.project_id,
-      repoId: user.user_id,
+      repoId: user.alias,
       branchId: common.BRANCH_MASTER
     });
 

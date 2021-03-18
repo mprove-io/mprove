@@ -34,7 +34,7 @@ export class IsBranchExistController {
 
     let branch = await this.branchesRepository.findOne({
       project_id: projectId,
-      repo_id: user.user_id,
+      repo_id: user.alias,
       branch_id: branchId
     });
 

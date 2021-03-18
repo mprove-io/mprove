@@ -16,8 +16,8 @@ let orgId = testId;
 let testProjectId = 't1';
 let projectId = common.makeId();
 
-let devRepoId = 'rbobert@example.com';
-let userAlias = 'rbobert';
+let devRepoId = testId;
+let userAlias = testId;
 
 let prep: interfaces.Prep;
 

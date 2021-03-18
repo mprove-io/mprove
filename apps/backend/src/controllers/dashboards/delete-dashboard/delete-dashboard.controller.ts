@@ -50,7 +50,7 @@ export class DeleteDashboardController {
 
     if (repoId !== common.PROD_REPO_ID) {
       await this.reposService.checkDevRepoId({
-        userId: user.user_id,
+        userAlias: user.alias,
         repoId: repoId
       });
     }

@@ -22,6 +22,8 @@ let testProjectId = 't2';
 let projectId = common.makeId();
 let projectName = 'p1';
 
+let repoId = testId;
+
 let prep: interfaces.Prep;
 
 let config = getConfig();
@@ -94,7 +96,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        repoId: userId,
+        repoId: repoId,
         branchId: common.BRANCH_MASTER
       }
     };

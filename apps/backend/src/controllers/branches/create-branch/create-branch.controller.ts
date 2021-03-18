@@ -45,7 +45,7 @@ export class CreateBranchController {
 
     await this.reposService.checkDevRepoId({
       repoId: repoId,
-      userId: user.user_id
+      userAlias: user.alias
     });
 
     await this.membersService.getMemberCheckExists({
@@ -55,13 +55,13 @@ export class CreateBranchController {
 
     let fromBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isFromRemote === true ? common.PROD_REPO_ID : user.user_id,
+      repoId: isFromRemote === true ? common.PROD_REPO_ID : user.alias,
       branchId: fromBranchId
     });
 
     await this.branchesService.checkBranchDoesNotExist({
       projectId: projectId,
-      repoId: user.user_id,
+      repoId: user.alias,
       branchId: newBranchId
     });
 
