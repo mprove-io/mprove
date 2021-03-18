@@ -43,15 +43,9 @@ export class DeleteDevRepoService {
     }
 
     let isDevRepoExist = await disk.isPathExist(devRepoDir);
-    if (isDevRepoExist === false) {
-      throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_EXIST
-      });
+    if (isDevRepoExist === true) {
+      await disk.removePath(devRepoDir);
     }
-
-    //
-
-    await disk.removePath(devRepoDir);
 
     let payload: apiToDisk.ToDiskDeleteDevRepoResponsePayload = {
       orgId: orgId,
