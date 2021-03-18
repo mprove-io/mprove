@@ -1,6 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
@@ -31,6 +32,17 @@ export class DeleteMemberController {
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
+
+    await this.membersService.checkMemberIsAdmin({
+      memberId: user.user_id,
+      projectId: projectId
+    });
+
+    if (user.user_id === memberId) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_ADMIN_CAN_NOT_DELETE_HIMSELF
+      });
+    }
 
     let member = await this.membersService.getMemberCheckExists({
       memberId: memberId,

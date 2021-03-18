@@ -4,7 +4,6 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MembersService } from '~backend/services/members.service';
@@ -14,7 +13,6 @@ import { ProjectsService } from '~backend/services/projects.service';
 export class EditMemberController {
   constructor(
     private connection: Connection,
-    private membersRepository: repositories.MembersRepository,
     private projectsService: ProjectsService,
     private membersService: MembersService
   ) {}
@@ -42,14 +40,16 @@ export class EditMemberController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckExists({
+    if (memberId === user.user_id && isAdmin === false) {
+      throw new common.ServerError({
+        message:
+          apiToBackend.ErEnum.BACKEND_ADMIN_CAN_NOT_CHANGE_HIS_ADMIN_STATUS
+      });
+    }
+
+    let member = await this.membersService.getMemberCheckExists({
       memberId: memberId,
       projectId: projectId
-    });
-
-    let member = await this.membersRepository.findOne({
-      member_id: memberId,
-      project_id: projectId
     });
 
     member.is_admin = common.booleanToEnum(isAdmin);
