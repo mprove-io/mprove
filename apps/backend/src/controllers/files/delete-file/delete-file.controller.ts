@@ -12,14 +12,12 @@ import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class DeleteFileController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private reposService: ReposService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService,
     private connection: Connection,
@@ -33,7 +31,9 @@ export class DeleteFileController {
     reqValid: apiToBackend.ToBackendDeleteFileRequest
   ) {
     let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, fileNodeId } = reqValid.payload;
+    let { projectId, branchId, fileNodeId } = reqValid.payload;
+
+    let repoId = user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -42,11 +42,6 @@ export class DeleteFileController {
     await this.membersService.checkMemberIsEditor({
       projectId: projectId,
       memberId: user.user_id
-    });
-
-    await this.reposService.checkDevRepoId({
-      userAlias: user.alias,
-      repoId: repoId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({

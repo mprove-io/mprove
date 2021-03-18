@@ -8,14 +8,12 @@ import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class GetRepoController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private reposService: ReposService,
     private rabbitService: RabbitService
   ) {}
 
@@ -25,7 +23,9 @@ export class GetRepoController {
     @ValidateRequest(apiToBackend.ToBackendGetRepoRequest)
     reqValid: apiToBackend.ToBackendGetRepoRequest
   ) {
-    let { projectId, repoId, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -35,13 +35,6 @@ export class GetRepoController {
       projectId: projectId,
       memberId: user.user_id
     });
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
-    }
 
     let toDiskGetCatalogNodesRequest: apiToDisk.ToDiskGetCatalogNodesRequest = {
       info: {

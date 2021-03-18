@@ -9,7 +9,6 @@ import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class GetVizsController {
@@ -17,7 +16,6 @@ export class GetVizsController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private reposService: ReposService,
     private vizsRepository: repositories.VizsRepository
   ) {}
 
@@ -27,7 +25,9 @@ export class GetVizsController {
     @ValidateRequest(apiToBackend.ToBackendGetVizsRequest)
     reqValid: apiToBackend.ToBackendGetVizsRequest
   ) {
-    let { projectId, repoId, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -37,13 +37,6 @@ export class GetVizsController {
       projectId: projectId,
       memberId: user.user_id
     });
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
-    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

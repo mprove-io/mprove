@@ -12,14 +12,12 @@ import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class CreateBranchController {
   constructor(
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
-    private reposService: ReposService,
     private branchesService: BranchesService,
     private membersService: MembersService,
     private connection: Connection
@@ -33,19 +31,15 @@ export class CreateBranchController {
   ) {
     let {
       projectId,
-      repoId,
       newBranchId,
       fromBranchId,
       isFromRemote
     } = reqValid.payload;
 
+    let repoId = user.alias;
+
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
-    });
-
-    await this.reposService.checkDevRepoId({
-      repoId: repoId,
-      userAlias: user.alias
     });
 
     await this.membersService.getMemberCheckExists({

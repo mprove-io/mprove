@@ -78,7 +78,7 @@ test('1', async t => {
       payload: {
         orgId: undefined,
         projectId: undefined,
-        repoId: undefined,
+        isRepoProd: undefined,
         branchId: undefined
       }
     };

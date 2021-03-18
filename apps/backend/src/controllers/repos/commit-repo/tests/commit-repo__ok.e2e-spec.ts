@@ -19,7 +19,6 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = 'p1';
 
-let repoId = testId;
 let branchId = common.BRANCH_MASTER;
 let commitMessage = 'first';
 
@@ -81,7 +80,6 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        repoId: repoId,
         branchId: branchId,
         commitMessage: commitMessage
       }

@@ -5,7 +5,6 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class GetNavController {
@@ -14,7 +13,6 @@ export class GetNavController {
     private membersRepository: repositories.MembersRepository,
     private projectsRepository: repositories.ProjectsRepository,
     private orgsRepository: repositories.OrgsRepository,
-    private reposService: ReposService,
     private branchesRepository: repositories.BranchesRepository
   ) {}
 
@@ -24,17 +22,15 @@ export class GetNavController {
     @ValidateRequest(apiToBackend.ToBackendGetNavRequest)
     reqValid: apiToBackend.ToBackendGetNavRequest
   ) {
-    let { orgId, projectId, repoId, branchId } = reqValid.payload;
+    let { orgId, projectId, isRepoProd, branchId } = reqValid.payload;
+
+    let repoId =
+      common.isUndefined(isRepoProd) || isRepoProd === true
+        ? common.PROD_REPO_ID
+        : user.alias;
 
     if (common.isUndefined(repoId)) {
       repoId = common.PROD_REPO_ID;
-    }
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
     }
 
     let members = await this.membersRepository.find({
@@ -99,7 +95,7 @@ export class GetNavController {
       avatarSmall: avatar?.avatar_small,
       orgId: resultOrgId,
       projectId: resultProjectId,
-      repoId: resultRepoId,
+      isRepoProd: resultRepoId === common.PROD_REPO_ID,
       branchId: resultBranchId
     };
 

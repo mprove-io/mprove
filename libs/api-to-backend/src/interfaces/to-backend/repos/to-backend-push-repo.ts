@@ -8,9 +8,6 @@ export class ToBackendPushRepoRequestPayload {
   projectId: string;
 
   @IsString()
-  repoId: string;
-
-  @IsString()
   branchId: string;
 }
 

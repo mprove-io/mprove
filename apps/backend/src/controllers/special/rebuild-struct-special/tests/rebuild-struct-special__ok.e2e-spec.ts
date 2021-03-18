@@ -11,10 +11,16 @@ let testId = 'backend-rebuild-struct-special__ok';
 
 let traceId = testId;
 
+let userId = common.makeId();
+let email = `${testId}@example.com`;
+let password = '123';
+
 let orgId = testId;
+let orgName = testId;
 
 let testProjectId = 't1';
 let projectId = common.makeId();
+let projectName = 'p1';
 
 let devRepoId = testId;
 let userAlias = testId;
@@ -28,8 +34,46 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
-        orgNames: [orgId]
-      }
+        emails: [email],
+        orgIds: [orgId],
+        projectIds: [projectId],
+        projectNames: [projectName]
+      },
+      seedRecordsPayload: {
+        users: [
+          {
+            userId,
+            email,
+            password,
+            isEmailVerified: common.BoolEnum.TRUE
+          }
+        ],
+        orgs: [
+          {
+            orgId,
+            name: orgName,
+            ownerEmail: email
+          }
+        ],
+        projects: [
+          {
+            orgId,
+            projectId,
+            name: projectName
+          }
+        ],
+        members: [
+          {
+            memberId: userId,
+            email,
+            projectId,
+            isAdmin: common.BoolEnum.TRUE,
+            isEditor: common.BoolEnum.TRUE,
+            isExplorer: common.BoolEnum.TRUE
+          }
+        ]
+      },
+      loginUserPayload: { email, password }
     });
 
     // to disk
@@ -69,7 +113,7 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         projectId: projectId,
-        repoId: devRepoId,
+        isRepoProd: false,
         branch: 'master',
         structId: testId,
         connections: [
@@ -84,6 +128,7 @@ test('1', async t => {
     resp = await helper.sendToBackend<apiToBlockml.ToBlockmlRebuildStructResponse>(
       {
         httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
         req: rebuildStructSpecialReq
       }
     );

@@ -11,7 +11,6 @@ import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class RevertRepoToLastCommitController {
@@ -19,7 +18,6 @@ export class RevertRepoToLastCommitController {
     private projectsService: ProjectsService,
     private connection: Connection,
     private membersService: MembersService,
-    private reposService: ReposService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService
   ) {}
@@ -32,7 +30,9 @@ export class RevertRepoToLastCommitController {
     @ValidateRequest(apiToBackend.ToBackendRevertRepoToLastCommitRequest)
     reqValid: apiToBackend.ToBackendRevertRepoToLastCommitRequest
   ) {
-    let { projectId, repoId, branchId } = reqValid.payload;
+    let { projectId, branchId } = reqValid.payload;
+
+    let repoId = user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -41,11 +41,6 @@ export class RevertRepoToLastCommitController {
     await this.membersService.checkMemberIsEditor({
       projectId: projectId,
       memberId: user.user_id
-    });
-
-    await this.reposService.checkDevRepoId({
-      userAlias: user.alias,
-      repoId: repoId
     });
 
     let devBranch = await this.branchesService.getBranchCheckExists({

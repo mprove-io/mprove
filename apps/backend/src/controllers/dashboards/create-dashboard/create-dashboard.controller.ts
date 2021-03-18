@@ -13,7 +13,6 @@ import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class CreateDashboardController {
@@ -23,7 +22,6 @@ export class CreateDashboardController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
-    private reposService: ReposService,
     private connection: Connection
   ) {}
 
@@ -36,11 +34,13 @@ export class CreateDashboardController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      repoId,
+      isRepoProd,
       branchId,
       dashboardId,
       dashboardFileText
     } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -50,13 +50,6 @@ export class CreateDashboardController {
       projectId: projectId,
       memberId: user.user_id
     });
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
-    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

@@ -14,7 +14,6 @@ import { DashboardsService } from '~backend/services/dashboards.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class DeleteDashboardController {
@@ -24,7 +23,6 @@ export class DeleteDashboardController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
-    private reposService: ReposService,
     private connection: Connection,
     private dashboardsService: DashboardsService,
     private dashboardsRepository: repositories.DashboardsRepository
@@ -37,7 +35,9 @@ export class DeleteDashboardController {
     reqValid: apiToBackend.ToBackendDeleteDashboardRequest
   ) {
     let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, dashboardId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, dashboardId } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -47,13 +47,6 @@ export class DeleteDashboardController {
       projectId: projectId,
       memberId: user.user_id
     });
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
-    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

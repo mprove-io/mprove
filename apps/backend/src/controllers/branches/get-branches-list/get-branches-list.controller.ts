@@ -41,7 +41,7 @@ export class GetBranchesListController {
     let payload: apiToBackend.ToBackendGetBranchesListResponsePayload = {
       branchesList: branches.map(x => ({
         branchId: x.branch_id,
-        repoId: x.repo_id
+        isRepoProd: x.repo_id === common.PROD_REPO_ID
       }))
     };
 

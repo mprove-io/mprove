@@ -3,30 +3,33 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @UseGuards(TestRoutesGuard)
-@SkipJwtCheck()
 @Controller()
 export class RebuildStructSpecialController {
   constructor(private rabbitService: RabbitService) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial)
   async rebuildStructSpecial(
+    @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendRebuildStructSpecialRequest)
     reqValid: apiToBackend.ToBackendRebuildStructSpecialRequest
   ) {
     let {
       orgId,
       projectId,
-      repoId,
+      isRepoProd,
       branch,
       structId,
       connections
     } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     // to disk
 

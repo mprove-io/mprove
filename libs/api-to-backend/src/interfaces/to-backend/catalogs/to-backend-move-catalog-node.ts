@@ -8,9 +8,6 @@ export class ToBackendMoveCatalogNodeRequestPayload {
   projectId: string;
 
   @IsString()
-  repoId: string;
-
-  @IsString()
   branchId: string;
 
   @IsString()

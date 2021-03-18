@@ -8,9 +8,7 @@ import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class GetModelsListController {
@@ -18,8 +16,6 @@ export class GetModelsListController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private reposService: ReposService,
-    private modelsService: ModelsService,
     private modelsRepository: repositories.ModelsRepository
   ) {}
 
@@ -29,7 +25,9 @@ export class GetModelsListController {
     @ValidateRequest(apiToBackend.ToBackendGetModelsListRequest)
     reqValid: apiToBackend.ToBackendGetModelsListRequest
   ) {
-    let { projectId, repoId, branchId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -39,13 +37,6 @@ export class GetModelsListController {
       projectId: projectId,
       memberId: user.user_id
     });
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
-    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

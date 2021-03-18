@@ -19,7 +19,6 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = 'p1';
 
-let repoId = testId;
 let branchId = common.BRANCH_MASTER;
 
 let prep: interfaces.Prep;
@@ -80,7 +79,6 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        repoId: repoId,
         branchId: branchId,
         fileNodeId: `${projectId}/readme.md`,
         content: '1'

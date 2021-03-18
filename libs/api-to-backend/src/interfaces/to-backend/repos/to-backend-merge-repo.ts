@@ -8,9 +8,6 @@ export class ToBackendMergeRepoRequestPayload {
   projectId: string;
 
   @IsString()
-  repoId: string;
-
-  @IsString()
   branchId: string;
 
   @IsString()

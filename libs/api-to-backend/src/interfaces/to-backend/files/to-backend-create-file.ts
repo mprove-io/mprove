@@ -8,9 +8,6 @@ export class ToBackendCreateFileRequestPayload {
   projectId: string;
 
   @IsString()
-  repoId: string;
-
-  @IsString()
   branchId: string;
 
   @IsString()

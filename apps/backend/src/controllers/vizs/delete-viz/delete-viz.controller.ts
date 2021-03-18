@@ -13,7 +13,6 @@ import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 import { VizsService } from '~backend/services/vizs.service';
 
 @Controller()
@@ -26,7 +25,6 @@ export class DeleteVizController {
     private vizsService: VizsService,
     private vizsRepository: repositories.VizsRepository,
     private blockmlService: BlockmlService,
-    private reposService: ReposService,
     private connection: Connection
   ) {}
 
@@ -37,7 +35,9 @@ export class DeleteVizController {
     reqValid: apiToBackend.ToBackendDeleteVizRequest
   ) {
     let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, vizId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, vizId } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -47,13 +47,6 @@ export class DeleteVizController {
       projectId: projectId,
       memberId: user.user_id
     });
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
-    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

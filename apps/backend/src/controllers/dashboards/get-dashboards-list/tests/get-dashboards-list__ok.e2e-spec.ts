@@ -20,8 +20,6 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = 'p1';
 
-let repoId = testId;
-
 let prep: interfaces.Prep;
 
 test('1', async t => {
@@ -89,7 +87,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        repoId: repoId,
+        isRepoProd: false,
         branchId: common.BRANCH_MASTER
       }
     };

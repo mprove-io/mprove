@@ -8,9 +8,6 @@ export class ToBackendCreateBranchRequestPayload {
   projectId: string;
 
   @IsString()
-  repoId: string;
-
-  @IsString()
   newBranchId: string;
 
   @IsString()

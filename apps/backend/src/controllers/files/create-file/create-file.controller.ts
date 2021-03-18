@@ -7,14 +7,12 @@ import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class CreateFileController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private reposService: ReposService,
     private rabbitService: RabbitService
   ) {}
 
@@ -24,13 +22,9 @@ export class CreateFileController {
     @ValidateRequest(apiToBackend.ToBackendCreateFileRequest)
     reqValid: apiToBackend.ToBackendCreateFileRequest
   ) {
-    let {
-      projectId,
-      repoId,
-      branchId,
-      parentNodeId,
-      fileName
-    } = reqValid.payload;
+    let { projectId, branchId, parentNodeId, fileName } = reqValid.payload;
+
+    let repoId = user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -39,11 +33,6 @@ export class CreateFileController {
     await this.membersService.checkMemberIsEditor({
       projectId: projectId,
       memberId: user.user_id
-    });
-
-    await this.reposService.checkDevRepoId({
-      userAlias: user.alias,
-      repoId: repoId
     });
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {

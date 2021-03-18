@@ -9,7 +9,6 @@ import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { ReposService } from '~backend/services/repos.service';
 
 @Controller()
 export class GetModelController {
@@ -17,7 +16,6 @@ export class GetModelController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private reposService: ReposService,
     private modelsService: ModelsService
   ) {}
 
@@ -27,7 +25,9 @@ export class GetModelController {
     @ValidateRequest(apiToBackend.ToBackendGetModelRequest)
     reqValid: apiToBackend.ToBackendGetModelRequest
   ) {
-    let { projectId, repoId, branchId, modelId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, modelId } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -37,13 +37,6 @@ export class GetModelController {
       projectId: projectId,
       memberId: user.user_id
     });
-
-    if (repoId !== common.PROD_REPO_ID) {
-      await this.reposService.checkDevRepoId({
-        userAlias: user.alias,
-        repoId: repoId
-      });
-    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

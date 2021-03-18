@@ -23,6 +23,8 @@ export class IsBranchExistController {
   ) {
     let { projectId, branchId } = reqValid.payload;
 
+    let repoId = user.alias;
+
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
@@ -34,7 +36,7 @@ export class IsBranchExistController {
 
     let branch = await this.branchesRepository.findOne({
       project_id: projectId,
-      repo_id: user.alias,
+      repo_id: repoId,
       branch_id: branchId
     });
 
