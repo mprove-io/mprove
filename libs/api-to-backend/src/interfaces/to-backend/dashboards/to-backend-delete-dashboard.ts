@@ -5,9 +5,6 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 
 export class ToBackendDeleteDashboardRequestPayload {
   @IsString()
-  orgId: string;
-
-  @IsString()
   projectId: string;
 
   @IsString()
