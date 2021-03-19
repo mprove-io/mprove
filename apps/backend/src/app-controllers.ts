@@ -43,6 +43,7 @@ export const appControllers = [
   controllers.GetBranchesListController,
   controllers.IsBranchExistController,
   controllers.CreateBranchController,
+  controllers.DeleteBranchController,
 
   controllers.GetRepoController,
   controllers.CommitRepoController,
