@@ -21,6 +21,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendIsOrgExist = 'ToBackendIsOrgExist',
   ToBackendSetOrgInfo = 'ToBackendSetOrgInfo',
   ToBackendSetOrgOwner = 'ToBackendSetOrgOwner',
+  ToBackendDeleteOrg = 'ToBackendDeleteOrg',
   //
   ToBackendCreateProject = 'ToBackendCreateProject',
   ToBackendIsProjectExist = 'ToBackendIsProjectExist',
