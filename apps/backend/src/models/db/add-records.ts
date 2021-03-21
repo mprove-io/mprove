@@ -36,18 +36,20 @@ export async function addRecords(item: {
   //     .catch(e => helper.reThrow(e, enums.storeErrorsEnum.STORE_CHUNKS_INSERT));
   // }
 
-  let users = records.users;
-  let orgs = records.orgs;
-  let projects = records.projects;
-  let members = records.members;
-  let connections = records.connections;
-  let structs = records.structs;
-  let branches = records.branches;
-  let vizs = records.vizs;
-  let queries = records.queries;
-  let models = records.models;
-  let mconfigs = records.mconfigs;
-  let dashboards = records.dashboards;
+  let {
+    users,
+    orgs,
+    projects,
+    members,
+    connections,
+    structs,
+    branches,
+    vizs,
+    queries,
+    models,
+    mconfigs,
+    dashboards
+  } = records;
 
   if (common.isDefined(users) && users.length > 0) {
     await manager

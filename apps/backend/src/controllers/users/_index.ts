@@ -1,4 +1,5 @@
 export * from './confirm-user-email/confirm-user-email.controller';
+export * from './delete-user/delete-user.controller';
 export * from './get-user-profile/get-user-profile.controller';
 export * from './login-user/login-user.controller';
 export * from './logout-user/logout-user.controller';

@@ -23,6 +23,7 @@ export const appControllers = [
   controllers.SetOrgInfoController,
   controllers.SetOrgOwnerController,
   controllers.DeleteOrgController,
+  controllers.DeleteUserController,
 
   controllers.CreateProjectController,
   controllers.GetProjectController,

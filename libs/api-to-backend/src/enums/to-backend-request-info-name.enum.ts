@@ -14,6 +14,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendSetUserTimezone = 'ToBackendSetUserTimezone',
   ToBackendResetUserPassword = 'ToBackendResetUserPassword',
   ToBackendUpdateUserPassword = 'ToBackendUpdateUserPassword',
+  ToBackendDeleteUser = 'ToBackendDeleteUser',
   //
   ToBackendCreateOrg = 'ToBackendCreateOrg',
   ToBackendGetOrgsList = 'ToBackendGetOrgsList',
