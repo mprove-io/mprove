@@ -37,6 +37,7 @@ export async function modifyRecords(item: {
 
   let {
     users,
+    avatars,
     orgs,
     projects,
     members,
@@ -52,6 +53,12 @@ export async function modifyRecords(item: {
 
   if (common.isDefined(users) && users.length > 0) {
     await manager.getCustomRepository(repositories.UsersRepository).save(users);
+  }
+
+  if (common.isDefined(avatars) && avatars.length > 0) {
+    await manager
+      .getCustomRepository(repositories.AvatarsRepository)
+      .save(avatars);
   }
 
   if (common.isDefined(orgs) && orgs.length > 0) {

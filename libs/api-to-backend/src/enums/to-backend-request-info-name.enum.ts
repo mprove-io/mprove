@@ -99,5 +99,6 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetNav = 'ToBackendGetNav',
   //
-  ToBackendGetAvatarBig = 'ToBackendGetAvatarBig'
+  ToBackendGetAvatarBig = 'ToBackendGetAvatarBig',
+  ToBackendSetAvatar = 'ToBackendSetAvatar'
 }

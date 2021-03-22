@@ -96,5 +96,6 @@ export const appControllers = [
   //
   controllers.GetNavController,
   //
-  controllers.GetAvatarBigController
+  controllers.GetAvatarBigController,
+  controllers.SetAvatarController
 ];

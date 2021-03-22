@@ -25,11 +25,9 @@ export class SetUserNameController {
     user.first_name = firstName;
     user.last_name = lastName;
 
-    let userMembers = <entities.MemberEntity[]>await this.memberRepository.find(
-      {
-        member_id: user.user_id
-      }
-    );
+    let userMembers = await this.memberRepository.find({
+      member_id: user.user_id
+    });
 
     userMembers.map(member => {
       member.first_name = firstName;

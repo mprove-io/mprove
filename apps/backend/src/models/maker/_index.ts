@@ -1,3 +1,4 @@
+export * from './make-avatar';
 export * from './make-branch';
 export * from './make-connection';
 export * from './make-member';

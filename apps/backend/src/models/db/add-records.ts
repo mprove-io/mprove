@@ -38,6 +38,7 @@ export async function addRecords(item: {
 
   let {
     users,
+    avatars,
     orgs,
     projects,
     members,
@@ -55,6 +56,12 @@ export async function addRecords(item: {
     await manager
       .getCustomRepository(repositories.UsersRepository)
       .insert(users);
+  }
+
+  if (common.isDefined(avatars) && avatars.length > 0) {
+    await manager
+      .getCustomRepository(repositories.AvatarsRepository)
+      .insert(avatars);
   }
 
   if (common.isDefined(orgs) && orgs.length > 0) {
