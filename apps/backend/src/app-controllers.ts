@@ -30,6 +30,7 @@ export const appControllers = [
   controllers.GetProjectsListController,
   controllers.IsProjectExistController,
   controllers.DeleteProjectController,
+  controllers.SetProjectInfoController,
 
   controllers.GetMembersController,
   controllers.CreateMemberController,

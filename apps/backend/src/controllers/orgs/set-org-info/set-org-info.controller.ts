@@ -1,8 +1,10 @@
 import { Controller, Post } from '@nestjs/common';
 import { Connection } from 'typeorm';
+import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { OrgsService } from '~backend/services/orgs.service';
@@ -29,12 +31,21 @@ export class SetOrgInfoController {
       userId: user.user_id
     });
 
-    org.name = name;
-    org.company_size = companySize;
-    org.contact_phone = contactPhone;
+    if (common.isDefined(name)) {
+      org.name = name;
+    }
 
+    if (common.isDefined(companySize)) {
+      org.company_size = companySize;
+    }
+
+    if (common.isDefined(contactPhone)) {
+      org.contact_phone = contactPhone;
+    }
+
+    let records: interfaces.Records;
     await this.connection.transaction(async manager => {
-      await db.modifyRecords({
+      records = await db.modifyRecords({
         manager: manager,
         records: {
           orgs: [org]
@@ -42,8 +53,10 @@ export class SetOrgInfoController {
       });
     });
 
+    let recordsOrg = records.orgs.find(x => x.org_id === orgId);
+
     let payload: apiToBackend.ToBackendSetOrgInfoResponsePayload = {
-      org: wrapper.wrapToApiOrg(org)
+      org: wrapper.wrapToApiOrg(recordsOrg)
     };
 
     return payload;
