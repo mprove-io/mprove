@@ -4,6 +4,7 @@ import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -40,8 +41,10 @@ export class SetAvatarController {
       });
     }
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.modifyRecords({
+      records = await db.modifyRecords({
         manager: manager,
         records: {
           avatars: [avatar]
@@ -50,7 +53,7 @@ export class SetAvatarController {
     });
 
     let payload: apiToBackend.ToBackendSetAvatarResponsePayload = {
-      avatarSmall: avatar.avatar_small
+      avatarSmall: records.avatars[0].avatar_small
     };
 
     return payload;

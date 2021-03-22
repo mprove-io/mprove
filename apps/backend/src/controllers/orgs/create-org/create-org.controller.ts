@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -42,15 +43,6 @@ export class CreateOrgController {
       ownerEmail: user.email
     });
 
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          orgs: [newOrg]
-        }
-      });
-    });
-
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
@@ -70,8 +62,19 @@ export class CreateOrgController {
       checkIsOk: true
     });
 
+    let records: interfaces.Records;
+
+    await this.connection.transaction(async manager => {
+      records = await db.addRecords({
+        manager: manager,
+        records: {
+          orgs: [newOrg]
+        }
+      });
+    });
+
     let payload: apiToBackend.ToBackendCreateOrgResponsePayload = {
-      org: wrapper.wrapToApiOrg(newOrg)
+      org: wrapper.wrapToApiOrg(records.orgs[0])
     };
 
     return payload;

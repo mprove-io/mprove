@@ -4,6 +4,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -46,8 +47,10 @@ export class SetOrgOwnerController {
     org.owner_id = newOwner.user_id;
     org.owner_email = newOwner.email;
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.modifyRecords({
+      records = await db.modifyRecords({
         manager: manager,
         records: {
           orgs: [org]
@@ -56,7 +59,7 @@ export class SetOrgOwnerController {
     });
 
     let payload: apiToBackend.ToBackendSetOrgOwnerResponsePayload = {
-      org: wrapper.wrapToApiOrg(org)
+      org: wrapper.wrapToApiOrg(records.orgs[0])
     };
 
     return payload;

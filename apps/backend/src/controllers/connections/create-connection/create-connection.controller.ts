@@ -3,6 +3,7 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -65,8 +66,10 @@ export class CreateConnectionController {
       bigqueryQuerySizeLimit: bigqueryQuerySizeLimit
     });
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.addRecords({
+      records = await db.addRecords({
         manager: manager,
         records: {
           connections: [newConnection]
@@ -75,7 +78,7 @@ export class CreateConnectionController {
     });
 
     let payload: apiToBackend.ToBackendCreateConnectionResponsePayload = {
-      connection: wrapper.wrapToApiConnection(newConnection)
+      connection: wrapper.wrapToApiConnection(records.connections[0])
     };
 
     return payload;

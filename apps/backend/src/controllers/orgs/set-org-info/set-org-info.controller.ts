@@ -44,6 +44,7 @@ export class SetOrgInfoController {
     }
 
     let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
       records = await db.modifyRecords({
         manager: manager,
@@ -53,10 +54,8 @@ export class SetOrgInfoController {
       });
     });
 
-    let recordsOrg = records.orgs.find(x => x.org_id === orgId);
-
     let payload: apiToBackend.ToBackendSetOrgInfoResponsePayload = {
-      org: wrapper.wrapToApiOrg(recordsOrg)
+      org: wrapper.wrapToApiOrg(records.orgs[0])
     };
 
     return payload;

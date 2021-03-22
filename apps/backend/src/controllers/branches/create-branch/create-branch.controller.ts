@@ -101,6 +101,8 @@ export class CreateBranchController {
       });
     });
 
-    return {};
+    let payload = {};
+
+    return payload;
   }
 }

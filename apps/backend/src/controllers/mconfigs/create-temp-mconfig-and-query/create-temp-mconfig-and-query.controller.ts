@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MembersService } from '~backend/services/members.service';
@@ -92,8 +93,10 @@ export class CreateTempMconfigAndQueryController {
     let newMconfig = blockmlProcessQueryResponse.payload.mconfig;
     let newQuery = blockmlProcessQueryResponse.payload.query;
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.addRecords({
+      records = await db.addRecords({
         manager: manager,
         records: {
           mconfigs: [wrapper.wrapToEntityMconfig(newMconfig)],
@@ -103,8 +106,8 @@ export class CreateTempMconfigAndQueryController {
     });
 
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryResponsePayload = {
-      mconfig: newMconfig,
-      query: newQuery
+      mconfig: wrapper.wrapToApiMconfig(records.mconfigs[0]),
+      query: wrapper.wrapToApiQuery(records.queries[0])
     };
 
     return payload;

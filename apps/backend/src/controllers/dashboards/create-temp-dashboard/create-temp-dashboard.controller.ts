@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -120,8 +121,10 @@ export class CreateTempDashboardController {
     let mconfigs = blockmlProcessDashboardResponse.payload.mconfigs;
     let queries = blockmlProcessDashboardResponse.payload.queries;
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.addRecords({
+      records = await db.addRecords({
         manager: manager,
         records: {
           queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
@@ -132,9 +135,9 @@ export class CreateTempDashboardController {
     });
 
     let payload: apiToBackend.ToBackendCreateTempDashboardResponsePayload = {
-      dashboard: newDashboard,
-      dashboardMconfigs: mconfigs,
-      dashboardQueries: queries
+      dashboard: wrapper.wrapToApiDashboard(records.dashboards[0]),
+      dashboardMconfigs: records.mconfigs.map(x => wrapper.wrapToApiMconfig(x)),
+      dashboardQueries: records.queries.map(x => wrapper.wrapToApiQuery(x))
     };
 
     return payload;

@@ -4,6 +4,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MembersService } from '~backend/services/members.service';
@@ -56,8 +57,10 @@ export class EditMemberController {
     member.is_editor = common.booleanToEnum(isEditor);
     member.is_explorer = common.booleanToEnum(isExplorer);
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.modifyRecords({
+      records = await db.modifyRecords({
         manager: manager,
         records: {
           members: [member]
@@ -66,7 +69,7 @@ export class EditMemberController {
     });
 
     let payload: apiToBackend.ToBackendEditMemberResponsePayload = {
-      member: wrapper.wrapToApiMember(member)
+      member: wrapper.wrapToApiMember(records.members[0])
     };
 
     return payload;

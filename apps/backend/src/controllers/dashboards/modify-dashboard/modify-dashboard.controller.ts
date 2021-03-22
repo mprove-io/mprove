@@ -136,7 +136,9 @@ export class ModifyDashboardController {
           queries: dashboardQueries.map(x => wrapper.wrapToEntityQuery(x))
         }
       });
+    });
 
+    await this.connection.transaction(async manager => {
       await db.modifyRecords({
         manager: manager,
         records: {

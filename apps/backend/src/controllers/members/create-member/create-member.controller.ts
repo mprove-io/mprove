@@ -80,21 +80,6 @@ export class CreateMemberController {
       isExplorer: common.BoolEnum.TRUE
     });
 
-    let apiMember = wrapper.wrapToApiMember(newMember);
-
-    let avatar = await this.avatarsRepository.findOne({
-      select: ['user_id', 'avatar_small'],
-      where: {
-        user_id: newMember.member_id
-      }
-    });
-
-    if (common.isDefined(avatar)) {
-      apiMember.avatarSmall = avatar.avatar_small;
-    }
-
-    //
-
     let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
@@ -116,8 +101,6 @@ export class CreateMemberController {
       checkIsOk: true
     });
 
-    //
-
     let prodBranch = await this.branchesRepository.findOne({
       project_id: projectId,
       repo_id: common.PROD_REPO_ID,
@@ -131,10 +114,10 @@ export class CreateMemberController {
       branchId: common.BRANCH_MASTER
     });
 
-    //
+    let records: interfaces.Records;
 
     await this.connection.transaction(async manager => {
-      await db.addRecords({
+      records = await db.addRecords({
         manager: manager,
         records: {
           members: [newMember],
@@ -144,7 +127,12 @@ export class CreateMemberController {
       });
     });
 
-    //
+    let avatar = await this.avatarsRepository.findOne({
+      select: ['user_id', 'avatar_small'],
+      where: {
+        user_id: newMember.member_id
+      }
+    });
 
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
     let link = `${hostUrl}/org/${project.org_id}/project/${projectId}/team`;
@@ -154,6 +142,12 @@ export class CreateMemberController {
       subject: `[Mprove] ${user.alias} added you to ${project.name} project team`,
       text: `Project url: ${link}`
     });
+
+    let apiMember = wrapper.wrapToApiMember(records.members[0]);
+
+    if (common.isDefined(avatar)) {
+      apiMember.avatarSmall = avatar.avatar_small;
+    }
 
     let payload: apiToBackend.ToBackendCreateMemberResponsePayload = {
       member: apiMember
