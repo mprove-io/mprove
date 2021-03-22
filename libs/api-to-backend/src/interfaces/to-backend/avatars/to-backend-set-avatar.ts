@@ -6,6 +6,9 @@ import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backe
 export class ToBackendSetAvatarRequestPayload {
   @IsString()
   avatarBig: string;
+
+  @IsString()
+  avatarSmall: string;
 }
 
 export class ToBackendSetAvatarRequest extends ToBackendRequest {
