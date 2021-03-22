@@ -3,6 +3,7 @@ import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -34,8 +35,10 @@ export class SetUserTimezoneController {
       member.timezone = timezone;
     });
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.modifyRecords({
+      records = await db.modifyRecords({
         manager: manager,
         records: {
           users: [user],
@@ -45,7 +48,7 @@ export class SetUserTimezoneController {
     });
 
     let payload: apiToBackend.ToBackendSetUserTimezoneResponsePayload = {
-      user: wrapper.wrapToApiUser(user)
+      user: wrapper.wrapToApiUser(records.users[0])
     };
 
     return payload;

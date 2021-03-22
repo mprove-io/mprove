@@ -49,10 +49,8 @@ export class SetProjectInfoController {
       });
     });
 
-    let recordsProject = records.projects.find(x => x.project_id === projectId);
-
     let payload: apiToBackend.ToBackendSetProjectInfoResponsePayload = {
-      project: wrapper.wrapToApiProject(recordsProject)
+      project: wrapper.wrapToApiProject(records.projects[0])
     };
 
     return payload;

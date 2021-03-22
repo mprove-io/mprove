@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
@@ -107,8 +108,10 @@ export class CreateProjectController {
       diskFiles: diskResponse.payload.prodFiles
     });
 
+    let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
-      await db.addRecords({
+      records = await db.addRecords({
         manager: manager,
         records: {
           projects: [newProject],
@@ -119,7 +122,7 @@ export class CreateProjectController {
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {
-      project: wrapper.wrapToApiProject(newProject)
+      project: wrapper.wrapToApiProject(records.projects[0])
     };
 
     return payload;

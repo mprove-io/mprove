@@ -92,6 +92,7 @@ export class CancelQueriesController {
     });
 
     let records: interfaces.Records;
+
     await this.connection.transaction(async manager => {
       records = await db.modifyRecords({
         manager: manager,
