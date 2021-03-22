@@ -8,6 +8,10 @@ export class ToBackendSetOrgInfoRequestPayload {
   orgId: string;
 
   @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
   @IsEnum(common.CompanySizeEnum)
   companySize?: common.CompanySizeEnum;
 

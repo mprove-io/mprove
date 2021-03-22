@@ -20,7 +20,7 @@ export class SetOrgInfoController {
     @ValidateRequest(apiToBackend.ToBackendSetOrgInfoRequest)
     reqValid: apiToBackend.ToBackendSetOrgInfoRequest
   ) {
-    let { orgId, companySize, contactPhone } = reqValid.payload;
+    let { orgId, name, companySize, contactPhone } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -29,6 +29,7 @@ export class SetOrgInfoController {
       userId: user.user_id
     });
 
+    org.name = name;
     org.company_size = companySize;
     org.contact_phone = contactPhone;
 
