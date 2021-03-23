@@ -37,6 +37,7 @@ export class SeedRecordsController {
     let payloadProjects = reqValid.payload.projects;
     let payloadConnections = reqValid.payload.connections;
     let payloadQueries = reqValid.payload.queries;
+    let payloadMconfigs = reqValid.payload.mconfigs;
 
     //
 
@@ -308,6 +309,13 @@ export class SeedRecordsController {
       queries = [
         ...queries,
         ...payloadQueries.map(pq => wrapper.wrapToEntityQuery(pq))
+      ];
+    }
+
+    if (common.isDefined(payloadMconfigs)) {
+      mconfigs = [
+        ...mconfigs,
+        ...payloadMconfigs.map(mc => wrapper.wrapToEntityMconfig(mc))
       ];
     }
 

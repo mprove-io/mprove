@@ -86,30 +86,16 @@ export async function addRecords(item: {
       .insert(connections);
   }
 
-  if (common.isDefined(structs) && structs.length > 0) {
-    await manager
-      .getCustomRepository(repositories.StructsRepository)
-      .insert(structs);
-  }
-
   if (common.isDefined(branches) && branches.length > 0) {
     await manager
       .getCustomRepository(repositories.BranchesRepository)
       .insert(branches);
   }
 
-  if (common.isDefined(vizs) && vizs.length > 0) {
-    await manager.getCustomRepository(repositories.VizsRepository).insert(vizs);
-  }
-
-  if (common.isDefined(queries) && queries.length > 0) {
-    await manager.connection
-      .createQueryBuilder()
-      .insert()
-      .into(entities.QueryEntity)
-      .values(queries)
-      .orIgnore()
-      .execute();
+  if (common.isDefined(structs) && structs.length > 0) {
+    await manager
+      .getCustomRepository(repositories.StructsRepository)
+      .insert(structs);
   }
 
   if (common.isDefined(models) && models.length > 0) {
@@ -130,7 +116,19 @@ export async function addRecords(item: {
       .insert(dashboards);
   }
 
-  // avatars
+  if (common.isDefined(vizs) && vizs.length > 0) {
+    await manager.getCustomRepository(repositories.VizsRepository).insert(vizs);
+  }
+
+  if (common.isDefined(queries) && queries.length > 0) {
+    await manager.connection
+      .createQueryBuilder()
+      .insert()
+      .into(entities.QueryEntity)
+      .values(queries)
+      .orIgnore()
+      .execute();
+  }
 
   return records;
 }

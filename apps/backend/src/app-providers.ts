@@ -32,9 +32,13 @@ export const appProviders = [
     provide: TasksService,
     useFactory: (
       cs: ConfigService<interfaces.Config>,
-      queriesService: QueriesService
-    ) => (helper.isScheduler(cs) ? new TasksService(cs, queriesService) : {}),
-    inject: [ConfigService, QueriesService]
+      queriesService: QueriesService,
+      structsService: StructsService
+    ) =>
+      helper.isScheduler(cs)
+        ? new TasksService(cs, queriesService, structsService)
+        : {},
+    inject: [ConfigService, QueriesService, StructsService]
   },
   BlockmlService,
   UsersService,

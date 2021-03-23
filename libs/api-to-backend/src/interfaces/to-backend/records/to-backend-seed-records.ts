@@ -168,6 +168,11 @@ export class ToBackendSeedRecordsRequestPayload {
   @ValidateNested()
   @Type(() => common.Query)
   queries?: common.Query[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.Mconfig)
+  mconfigs?: common.Mconfig[];
 }
 
 export class ToBackendSeedRecordsRequest extends ToBackendRequest {

@@ -1,7 +1,7 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
-import { Connection } from 'typeorm';
+import { Connection, In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { db } from '~backend/barrels/db';
@@ -13,6 +13,7 @@ import { repositories } from '~backend/barrels/repositories';
 export class QueriesService {
   constructor(
     private queriesRepository: repositories.QueriesRepository,
+    private mconfigsRepository: repositories.MconfigsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private connection: Connection
   ) {}
@@ -147,5 +148,25 @@ export class QueriesService {
         }
       }
     });
+  }
+
+  async removeOrphanedQueries() {
+    let rawData;
+
+    await this.connection.transaction(async manager => {
+      rawData = await manager.query(`
+SELECT 
+  q.query_id
+FROM queries as q 
+LEFT JOIN mconfigs as m ON q.query_id=m.query_id 
+WHERE m.mconfig_id is NULL
+`);
+    });
+
+    let orphanedQueryIds = rawData.map(x => x.query_id);
+
+    if (orphanedQueryIds.length > 0) {
+      await this.queriesRepository.delete({ query_id: In(orphanedQueryIds) });
+    }
   }
 }

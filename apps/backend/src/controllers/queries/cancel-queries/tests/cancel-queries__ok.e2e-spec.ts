@@ -25,10 +25,29 @@ let connectionType = common.ConnectionTypeEnum.PostgreSQL;
 let queryId = common.makeId();
 let postgresQueryJobId = common.makeId();
 
+let structId = common.makeId();
+let mconfigId = common.makeId();
+
 let prep: interfaces.Prep;
 
 test('1', async t => {
   let resp1: apiToBackend.ToBackendCancelQueriesResponse;
+
+  let mconfig: common.Mconfig = {
+    structId: structId,
+    mconfigId: mconfigId,
+    queryId: queryId,
+    modelId: 'abc',
+    select: [],
+    sortings: [],
+    sorts: undefined,
+    timezone: common.UTC,
+    limit: 500,
+    filters: [],
+    charts: [],
+    temp: true,
+    serverTs: 1
+  };
 
   let query: common.Query = {
     projectId: projectId,
@@ -99,7 +118,8 @@ test('1', async t => {
             type: connectionType
           }
         ],
-        queries: [query]
+        queries: [query],
+        mconfigs: [mconfig]
       },
       loginUserPayload: { email, password }
     });
