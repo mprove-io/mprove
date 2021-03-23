@@ -127,7 +127,9 @@ export class ModifyVizController {
           queries: [wrapper.wrapToEntityQuery(vizQuery)]
         }
       });
+    });
 
+    await this.connection.transaction(async manager => {
       await db.modifyRecords({
         manager: manager,
         records: {
