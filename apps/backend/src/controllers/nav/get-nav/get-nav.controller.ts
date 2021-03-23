@@ -38,14 +38,20 @@ export class GetNavController {
     });
 
     let projectIds = members.map(x => x.project_id);
-    let projects = await this.projectsRepository.find({
-      project_id: In(projectIds)
-    });
+    let projects =
+      projectIds.length === 0
+        ? []
+        : await this.projectsRepository.find({
+            project_id: In(projectIds)
+          });
 
     let orgIds = projects.map(x => x.org_id);
-    let orgs = await this.orgsRepository.find({
-      org_id: In(orgIds)
-    });
+    let orgs =
+      orgIds.length === 0
+        ? []
+        : await this.orgsRepository.find({
+            org_id: In(orgIds)
+          });
 
     let existingOrgIds = orgs.map(x => x.org_id);
 

@@ -36,19 +36,28 @@ export class GetOrgUsersController {
 
     let projectIds = projects.map(x => x.project_id);
 
-    let members = await this.membersRepository.find({
-      project_id: In(projectIds)
-    });
+    let members =
+      projectIds.length === 0
+        ? []
+        : await this.membersRepository.find({
+            project_id: In(projectIds)
+          });
 
     let memberIdsWithDuplicates = members.map(x => x.member_id);
 
     let userIds = [...new Set(memberIdsWithDuplicates)];
 
-    let users = await this.usersRepository.find({ user_id: In(userIds) });
+    let users =
+      userIds.length === 0
+        ? []
+        : await this.usersRepository.find({ user_id: In(userIds) });
 
     let orgUsers: apiToBackend.OrgUsersItem[] = [];
 
-    let avatars = await this.avatarsRepository.find({ user_id: In(userIds) });
+    let avatars =
+      userIds.length === 0
+        ? []
+        : await this.avatarsRepository.find({ user_id: In(userIds) });
 
     users.forEach(x => {
       let userMembers = members.filter(m => m.member_id === x.user_id);

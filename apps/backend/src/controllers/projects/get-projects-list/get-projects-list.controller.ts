@@ -26,10 +26,13 @@ export class GetProjectsListController {
     });
 
     let projectIds = userMembers.map(m => m.project_id);
-    let projects = await this.projectsRepository.find({
-      project_id: In(projectIds),
-      org_id: orgId
-    });
+    let projects =
+      projectIds.length === 0
+        ? []
+        : await this.projectsRepository.find({
+            project_id: In(projectIds),
+            org_id: orgId
+          });
 
     let payload: apiToBackend.ToBackendGetProjectsListResponsePayload = {
       projectsList: projects.map(x => wrapper.wrapToApiProjectsItem(x))

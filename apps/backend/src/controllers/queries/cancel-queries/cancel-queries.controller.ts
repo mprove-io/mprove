@@ -30,10 +30,13 @@ export class CancelQueriesController {
   ) {
     let { queryIds } = reqValid.payload;
 
-    let queries = await this.queriesRepository.find({
-      query_id: In(queryIds),
-      status: common.QueryStatusEnum.Running
-    });
+    let queries =
+      queryIds.length === 0
+        ? []
+        : await this.queriesRepository.find({
+            query_id: In(queryIds),
+            status: common.QueryStatusEnum.Running
+          });
 
     let projectIdsWithDuplicates = queries.map(q => q.project_id);
     let uniqueProjectIds = [...new Set(projectIdsWithDuplicates)];
@@ -51,10 +54,13 @@ export class CancelQueriesController {
       memberId: user.user_id
     });
 
-    let projectConnections = await this.connectionsRepository.find({
-      project_id: projectId,
-      connection_id: In(queries.map(q => q.connection_id))
-    });
+    let projectConnections =
+      queries.length === 0
+        ? []
+        : await this.connectionsRepository.find({
+            project_id: projectId,
+            connection_id: In(queries.map(q => q.connection_id))
+          });
 
     await asyncPool(8, queries, async (query: entities.QueryEntity) => {
       let connection = projectConnections.find(

@@ -25,14 +25,20 @@ export class GetOrgsListController {
     });
 
     let userProjectIds = userMembers.map(m => m.project_id);
-    let userProjects = await this.projectsRepository.find({
-      project_id: In(userProjectIds)
-    });
+    let userProjects =
+      userProjectIds.length === 0
+        ? []
+        : await this.projectsRepository.find({
+            project_id: In(userProjectIds)
+          });
 
     let userOrgIds = userProjects.map(p => p.org_id);
-    let userOrgs = await this.orgsRepository.find({
-      org_id: In(userOrgIds)
-    });
+    let userOrgs =
+      userOrgIds.length === 0
+        ? []
+        : await this.orgsRepository.find({
+            org_id: In(userOrgIds)
+          });
 
     let payload: apiToBackend.ToBackendGetOrgsListResponsePayload = {
       orgsList: userOrgs.map(x => wrapper.wrapToApiOrgsItem(x))

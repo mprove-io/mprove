@@ -85,10 +85,13 @@ export class CreateTempDashboardController {
     });
 
     let modelIds = oldDashboard.reports.map(x => x.modelId);
-    let models = await this.modelsRepository.find({
-      struct_id: branch.struct_id,
-      model_id: In(modelIds)
-    });
+    let models =
+      modelIds.length === 0
+        ? []
+        : await this.modelsRepository.find({
+            struct_id: branch.struct_id,
+            model_id: In(modelIds)
+          });
 
     let toBlockmlProcessDashboardRequest: apiToBlockml.ToBlockmlProcessDashboardRequest = {
       info: {

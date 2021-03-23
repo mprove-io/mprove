@@ -49,10 +49,13 @@ export class DeleteUserController {
 
     let userAdminProjectIds = userAdminMembers.map(x => x.project_id);
 
-    let admins = await this.membersRepository.find({
-      project_id: In(userAdminProjectIds),
-      is_admin: common.BoolEnum.TRUE
-    });
+    let admins =
+      userAdminProjectIds.length === 0
+        ? []
+        : await this.membersRepository.find({
+            project_id: In(userAdminProjectIds),
+            is_admin: common.BoolEnum.TRUE
+          });
 
     let erProjectIds = [];
 
@@ -78,9 +81,12 @@ export class DeleteUserController {
 
     let projectIds = userMembers.map(x => x.project_id);
 
-    let projects = await this.projectsRepository.find({
-      project_id: In(projectIds)
-    });
+    let projects =
+      projectIds.length === 0
+        ? []
+        : await this.projectsRepository.find({
+            project_id: In(projectIds)
+          });
 
     await asyncPool(1, userMembers, async (m: entities.MemberEntity) => {
       let project = projects.find(p => p.project_id === m.project_id);

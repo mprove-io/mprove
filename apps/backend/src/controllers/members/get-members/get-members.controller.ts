@@ -39,12 +39,15 @@ export class GetMembersController {
 
     let memberIds = members.map(x => x.member_id);
 
-    let avatars = await this.avatarsRepository.find({
-      select: ['user_id', 'avatar_small'],
-      where: {
-        user_id: In(memberIds)
-      }
-    });
+    let avatars =
+      memberIds.length === 0
+        ? []
+        : await this.avatarsRepository.find({
+            select: ['user_id', 'avatar_small'],
+            where: {
+              user_id: In(memberIds)
+            }
+          });
 
     let apiMembers = members.map(x => wrapper.wrapToApiMember(x));
 

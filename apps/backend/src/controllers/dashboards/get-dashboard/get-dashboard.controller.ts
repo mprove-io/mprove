@@ -66,14 +66,20 @@ export class GetDashboardController {
     }
 
     let mconfigIds = dashboard.reports.map(x => x.mconfigId);
-    let mconfigs = await this.mconfigsRepository.find({
-      mconfig_id: In(mconfigIds)
-    });
+    let mconfigs =
+      mconfigIds.length === 0
+        ? []
+        : await this.mconfigsRepository.find({
+            mconfig_id: In(mconfigIds)
+          });
 
     let queryIds = dashboard.reports.map(x => x.queryId);
-    let queries = await this.queriesRepository.find({
-      query_id: In(queryIds)
-    });
+    let queries =
+      queryIds.length === 0
+        ? []
+        : await this.queriesRepository.find({
+            query_id: In(queryIds)
+          });
 
     let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
       dashboard: wrapper.wrapToApiDashboard(dashboard),
