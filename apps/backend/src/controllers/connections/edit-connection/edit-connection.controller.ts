@@ -29,7 +29,7 @@ export class EditConnectionController {
       projectId,
       connectionId,
       bigqueryCredentials,
-      bigqueryQuerySizeLimit,
+      bigqueryQuerySizeLimitGb,
       postgresHost,
       postgresPort,
       postgresDatabase,
@@ -57,7 +57,7 @@ export class EditConnectionController {
     connection.postgres_user = postgresUser;
     connection.postgres_password = postgresPassword;
     connection.bigquery_credentials = bigqueryCredentials;
-    connection.bigquery_query_size_limit = bigqueryQuerySizeLimit;
+    connection.bigquery_query_size_limit_gb = bigqueryQuerySizeLimitGb;
 
     let records: interfaces.Records;
 

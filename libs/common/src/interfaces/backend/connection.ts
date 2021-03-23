@@ -18,7 +18,7 @@ export class Connection {
   bigqueryClientEmail: string;
 
   @IsInt()
-  bigqueryQuerySizeLimit: number;
+  bigqueryQuerySizeLimitGb: number;
 
   @IsString()
   postgresHost: string;

@@ -16,7 +16,7 @@ export class ConnectionEntity {
   // bigquery
 
   @Column({ type: constants.INT, nullable: true })
-  bigquery_query_size_limit: number;
+  bigquery_query_size_limit_gb: number;
 
   @Column({ type: constants.JSON, nullable: true })
   bigquery_credentials: any;

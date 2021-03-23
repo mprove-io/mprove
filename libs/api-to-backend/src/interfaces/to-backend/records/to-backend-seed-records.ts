@@ -115,7 +115,7 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
 
   @IsOptional()
   @IsInt()
-  bigqueryQuerySizeLimit?: number;
+  bigqueryQuerySizeLimitGb?: number;
 
   @IsOptional()
   @IsString()

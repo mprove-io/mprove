@@ -31,7 +31,7 @@ export class CreateConnectionController {
       connectionId,
       type,
       bigqueryCredentials,
-      bigqueryQuerySizeLimit,
+      bigqueryQuerySizeLimitGb,
       postgresHost,
       postgresPort,
       postgresDatabase,
@@ -63,7 +63,7 @@ export class CreateConnectionController {
       postgresUser: postgresUser,
       postgresPassword: postgresPassword,
       bigqueryCredentials: bigqueryCredentials,
-      bigqueryQuerySizeLimit: bigqueryQuerySizeLimit
+      bigqueryQuerySizeLimitGb: bigqueryQuerySizeLimitGb
     });
 
     let records: interfaces.Records;

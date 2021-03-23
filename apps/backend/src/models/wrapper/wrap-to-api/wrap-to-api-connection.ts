@@ -10,7 +10,7 @@ export function wrapToApiConnection(
     type: x.type,
     bigqueryProject: x.bigquery_project,
     bigqueryClientEmail: x.bigquery_client_email,
-    bigqueryQuerySizeLimit: x.bigquery_query_size_limit,
+    bigqueryQuerySizeLimitGb: x.bigquery_query_size_limit_gb,
     postgresHost: x.postgres_host,
     postgresPort: x.postgres_port,
     postgresDatabase: x.postgres_database,

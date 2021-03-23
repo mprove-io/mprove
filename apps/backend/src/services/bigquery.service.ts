@@ -27,12 +27,16 @@ export class BigQueryService {
     query.last_run_ts = helper.makeTs();
     query.bigquery_query_job_id = null;
 
+    let maximumBytesBilled =
+      connection.bigquery_query_size_limit_gb * 1024 * 1024 * 1024;
+
     let createQueryJobItem = await bigquery
       .createQueryJob({
         destination: undefined,
         dryRun: false,
         useLegacySql: false,
-        query: query.sql
+        query: query.sql,
+        maximumBytesBilled: maximumBytesBilled.toString()
       })
       .catch(e => {
         query.status = common.QueryStatusEnum.Error;

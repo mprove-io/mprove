@@ -1,4 +1,5 @@
 import { common } from '~backend/barrels/common';
+import { constants } from '~backend/barrels/constants';
 import { entities } from '~backend/barrels/entities';
 
 export function makeConnection(item: {
@@ -11,7 +12,7 @@ export function makeConnection(item: {
   postgresUser: string;
   postgresPassword: string;
   bigqueryCredentials: any;
-  bigqueryQuerySizeLimit: number;
+  bigqueryQuerySizeLimitGb: number;
 }) {
   let connectionEntity: entities.ConnectionEntity = {
     project_id: item.projectId,
@@ -21,7 +22,11 @@ export function makeConnection(item: {
     bigquery_credentials: item.bigqueryCredentials,
     bigquery_project: item.bigqueryCredentials?.project_id,
     bigquery_client_email: item.bigqueryCredentials?.client_email,
-    bigquery_query_size_limit: item.bigqueryQuerySizeLimit,
+    bigquery_query_size_limit_gb:
+      common.isDefined(item.bigqueryQuerySizeLimitGb) &&
+      item.bigqueryQuerySizeLimitGb > 0
+        ? item.bigqueryQuerySizeLimitGb
+        : constants.DEFAULT_QUERY_SIZE_LIMIT,
     // postgres
     postgres_host: item.postgresHost,
     postgres_port: item.postgresPort,

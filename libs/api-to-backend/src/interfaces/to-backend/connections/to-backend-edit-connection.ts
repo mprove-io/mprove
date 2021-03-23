@@ -16,7 +16,7 @@ export class ToBackendEditConnectionRequestPayload {
 
   @IsOptional()
   @IsInt()
-  bigqueryQuerySizeLimit?: number;
+  bigqueryQuerySizeLimitGb?: number;
 
   @IsOptional()
   @IsString()
