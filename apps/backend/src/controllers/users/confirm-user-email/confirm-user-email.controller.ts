@@ -1,17 +1,16 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { repositories } from '~backend/barrels/repositories';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 
 @SkipJwtCheck()
 @Controller()
 export class ConfirmUserEmailController {
   constructor(
     private userRepository: repositories.UsersRepository,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
@@ -34,13 +33,11 @@ export class ConfirmUserEmailController {
     if (user.is_email_verified === common.BoolEnum.FALSE) {
       user.is_email_verified = common.BoolEnum.TRUE;
 
-      await this.connection.transaction(async manager => {
-        await db.modifyRecords({
-          manager: manager,
-          records: {
-            users: [user]
-          }
-        });
+      await this.dbService.writeRecords({
+        modify: true,
+        records: {
+          users: [user]
+        }
       });
     }
 

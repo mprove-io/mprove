@@ -1,17 +1,16 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
 
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
-    private connection: Connection,
+    private dbService: DbService,
     private usersService: UsersService
   ) {}
 
@@ -41,13 +40,11 @@ export class UpdateUserPasswordController {
     user.salt = salt;
     user.password_reset_expires_ts = (1).toString();
 
-    await this.connection.transaction(async manager => {
-      await db.modifyRecords({
-        manager: manager,
-        records: {
-          users: [user]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        users: [user]
+      }
     });
 
     let payload = {};

@@ -8,7 +8,6 @@ import { repositories } from '~backend/barrels/repositories';
 export class StructsService {
   constructor(
     private structsRepository: repositories.StructsRepository,
-    private branchesRepository: repositories.BranchesRepository,
     private dashboardsRepository: repositories.DashboardsRepository,
     private mconfigsRepository: repositories.MconfigsRepository,
     private modelsRepository: repositories.ModelsRepository,

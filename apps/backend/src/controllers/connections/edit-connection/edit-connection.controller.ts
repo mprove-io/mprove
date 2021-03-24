@@ -1,12 +1,10 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { ConnectionsService } from '~backend/services/connections.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -16,7 +14,7 @@ export class EditConnectionController {
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection)
@@ -59,15 +57,11 @@ export class EditConnectionController {
     connection.bigquery_credentials = bigqueryCredentials;
     connection.bigquery_query_size_limit_gb = bigqueryQuerySizeLimitGb;
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          connections: [connection]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        connections: [connection]
+      }
     });
 
     let payload: apiToBackend.ToBackendEditConnectionResponsePayload = {

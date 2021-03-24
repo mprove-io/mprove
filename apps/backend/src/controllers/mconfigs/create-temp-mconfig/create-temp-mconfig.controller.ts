@@ -1,12 +1,11 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -15,7 +14,7 @@ import { StructsService } from '~backend/services/structs.service';
 @Controller()
 export class CreateTempMconfigController {
   constructor(
-    private connection: Connection,
+    private dbService: DbService,
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
     private membersService: MembersService,
@@ -72,13 +71,11 @@ export class CreateTempMconfigController {
 
     mconfig.temp = true;
 
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          mconfigs: [wrapper.wrapToEntityMconfig(mconfig)]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        mconfigs: [wrapper.wrapToEntityMconfig(mconfig)]
+      }
     });
 
     let payload = {};

@@ -1,13 +1,11 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { ConnectionsService } from '~backend/services/connections.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
@@ -17,7 +15,7 @@ export class CreateConnectionController {
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection)
@@ -66,15 +64,11 @@ export class CreateConnectionController {
       bigqueryQuerySizeLimitGb: bigqueryQuerySizeLimitGb
     });
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.addRecords({
-        manager: manager,
-        records: {
-          connections: [newConnection]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        connections: [newConnection]
+      }
     });
 
     let payload: apiToBackend.ToBackendCreateConnectionResponsePayload = {

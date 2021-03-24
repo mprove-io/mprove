@@ -4,17 +4,17 @@ import asyncPool from 'tiny-async-pool';
 import { Connection, In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
+import { DbService } from '~backend/services/db.service';
 
 @Injectable()
 export class QueriesService {
   constructor(
     private queriesRepository: repositories.QueriesRepository,
-    private mconfigsRepository: repositories.MconfigsRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
+    private dbService: DbService,
     private connection: Connection
   ) {}
 
@@ -51,13 +51,11 @@ export class QueriesService {
         query.last_error_message = `Project connection not found`;
         query.last_error_ts = helper.makeTs();
 
-        await this.connection.transaction(async manager => {
-          await db.modifyRecords({
-            manager: manager,
-            records: {
-              queries: [query]
-            }
-          });
+        await this.dbService.writeRecords({
+          modify: true,
+          records: {
+            queries: [query]
+          }
         });
         return;
       }
@@ -74,13 +72,11 @@ export class QueriesService {
         query.last_error_message = `Bigquery get Job fail`;
         query.last_error_ts = helper.makeTs();
 
-        await this.connection.transaction(async manager => {
-          await db.modifyRecords({
-            manager: manager,
-            records: {
-              queries: [query]
-            }
-          });
+        await this.dbService.writeRecords({
+          modify: true,
+          records: {
+            queries: [query]
+          }
         });
         return;
       });
@@ -100,13 +96,11 @@ export class QueriesService {
             `Location: '${errorResult.location}'.`;
           query.last_error_ts = helper.makeTs();
 
-          await this.connection.transaction(async manager => {
-            await db.modifyRecords({
-              manager: manager,
-              records: {
-                queries: [query]
-              }
-            });
+          await this.dbService.writeRecords({
+            modify: true,
+            records: {
+              queries: [query]
+            }
           });
         } else {
           let queryResultsItem = await queryJob
@@ -116,13 +110,11 @@ export class QueriesService {
               query.last_error_message = `Bigquery get QueryResults fail`;
               query.last_error_ts = helper.makeTs();
 
-              await this.connection.transaction(async manager => {
-                await db.modifyRecords({
-                  manager: manager,
-                  records: {
-                    queries: [query]
-                  }
-                });
+              await this.dbService.writeRecords({
+                modify: true,
+                records: {
+                  queries: [query]
+                }
               });
               return;
             });
@@ -137,13 +129,11 @@ export class QueriesService {
           query.last_complete_ts = newLastCompleteTs;
           query.last_complete_duration = newLastCompleteDuration;
 
-          await this.connection.transaction(async manager => {
-            await db.modifyRecords({
-              manager: manager,
-              records: {
-                queries: [query]
-              }
-            });
+          await this.dbService.writeRecords({
+            modify: true,
+            records: {
+              queries: [query]
+            }
           });
         }
       }

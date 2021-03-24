@@ -1,17 +1,15 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 
 @Controller()
 export class SetUserTimezoneController {
   constructor(
-    private connection: Connection,
+    private dbService: DbService,
     private memberRepository: repositories.MembersRepository
   ) {}
 
@@ -35,16 +33,12 @@ export class SetUserTimezoneController {
       member.timezone = timezone;
     });
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          users: [user],
-          members: userMembers
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        users: [user],
+        members: userMembers
+      }
     });
 
     let payload: apiToBackend.ToBackendSetUserTimezoneResponsePayload = {

@@ -1,18 +1,17 @@
 import { Controller, Post, UseGuards } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
 import { wrapper } from '~backend/barrels/wrapper';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
+import { DbService } from '~backend/services/db.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
 
@@ -23,7 +22,7 @@ export class SeedRecordsController {
   constructor(
     private rabbitService: RabbitService,
     private usersService: UsersService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
@@ -319,24 +318,22 @@ export class SeedRecordsController {
       ];
     }
 
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          users: users,
-          orgs: orgs,
-          projects: projects,
-          members: members,
-          connections: connections,
-          branches: branches,
-          structs: structs,
-          vizs: vizs,
-          queries: queries,
-          models: models,
-          mconfigs: mconfigs,
-          dashboards: dashboards
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        users: users,
+        orgs: orgs,
+        projects: projects,
+        members: members,
+        connections: connections,
+        branches: branches,
+        structs: structs,
+        vizs: vizs,
+        queries: queries,
+        models: models,
+        mconfigs: mconfigs,
+        dashboards: dashboards
+      }
     });
 
     let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};

@@ -1,15 +1,13 @@
 import { Controller, Post } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BigQueryService } from '~backend/services/bigquery.service';
 import { ConnectionsService } from '~backend/services/connections.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { QueriesService } from '~backend/services/queries.service';
 
@@ -20,7 +18,7 @@ export class RunQueriesDryController {
     private connectionsService: ConnectionsService,
     private bigqueryService: BigQueryService,
     private membersService: MembersService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
@@ -65,15 +63,11 @@ export class RunQueriesDryController {
       .filter(result => common.isDefined(result.errorQuery))
       .map(x => x.errorQuery);
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          queries: errorQueries
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        queries: errorQueries
+      }
     });
 
     let payload: apiToBackend.ToBackendRunQueriesDryResponsePayload = {

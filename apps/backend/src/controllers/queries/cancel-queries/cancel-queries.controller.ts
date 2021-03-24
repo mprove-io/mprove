@@ -1,16 +1,15 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Controller, Post } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
-import { Connection, In } from 'typeorm';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 
 @Controller()
@@ -19,7 +18,7 @@ export class CancelQueriesController {
     private queriesRepository: repositories.QueriesRepository,
     private connectionsRepository: repositories.ConnectionsRepository,
     private membersService: MembersService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
@@ -97,15 +96,11 @@ export class CancelQueriesController {
       query.postgres_query_job_id = null;
     });
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          queries: queries
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        queries: queries
+      }
     });
 
     let payload: apiToBackend.ToBackendCancelQueriesResponsePayload = {

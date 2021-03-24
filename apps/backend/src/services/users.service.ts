@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
+import { DbService } from '~backend/services/db.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private userRepository: repositories.UsersRepository,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   async makeSaltAndHash(password: string) {
@@ -71,13 +70,11 @@ export class UsersService {
       alias: alias
     });
 
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          users: [user]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        users: [user]
+      }
     });
   }
 }

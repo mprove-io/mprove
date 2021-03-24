@@ -1,22 +1,20 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @Controller()
 export class CreateOrgController {
   constructor(
-    private connection: Connection,
+    private dbService: DbService,
     private rabbitService: RabbitService,
     private orgsRepository: repositories.OrgsRepository
   ) {}
@@ -62,15 +60,11 @@ export class CreateOrgController {
       checkIsOk: true
     });
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.addRecords({
-        manager: manager,
-        records: {
-          orgs: [newOrg]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        orgs: [newOrg]
+      }
     });
 
     let payload: apiToBackend.ToBackendCreateOrgResponsePayload = {

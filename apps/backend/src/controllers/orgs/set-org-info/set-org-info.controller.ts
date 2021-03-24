@@ -1,20 +1,15 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
 
 @Controller()
 export class SetOrgInfoController {
-  constructor(
-    private orgsService: OrgsService,
-    private connection: Connection
-  ) {}
+  constructor(private orgsService: OrgsService, private dbService: DbService) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo)
   async setOrgInfo(
@@ -43,15 +38,11 @@ export class SetOrgInfoController {
       org.contact_phone = contactPhone;
     }
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          orgs: [org]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        orgs: [org]
+      }
     });
 
     let payload: apiToBackend.ToBackendSetOrgInfoResponsePayload = {

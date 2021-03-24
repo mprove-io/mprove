@@ -1,15 +1,14 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
 
 @SkipJwtCheck()
@@ -17,7 +16,7 @@ import { UsersService } from '~backend/services/users.service';
 export class RegisterUserController {
   constructor(
     private usersService: UsersService,
-    private connection: Connection,
+    private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
     private mailerService: MailerService,
     private userRepository: repositories.UsersRepository
@@ -44,13 +43,12 @@ export class RegisterUserController {
       } else {
         user.hash = hash;
         user.salt = salt;
-        await this.connection.transaction(async manager => {
-          await db.modifyRecords({
-            manager: manager,
-            records: {
-              users: [user]
-            }
-          });
+
+        await this.dbService.writeRecords({
+          modify: true,
+          records: {
+            users: [user]
+          }
         });
       }
     }
@@ -75,13 +73,11 @@ export class RegisterUserController {
           alias: alias
         });
 
-        await this.connection.transaction(async manager => {
-          await db.addRecords({
-            manager: manager,
-            records: {
-              users: [newUser]
-            }
-          });
+        await this.dbService.writeRecords({
+          modify: false,
+          records: {
+            users: [newUser]
+          }
         });
 
         let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');

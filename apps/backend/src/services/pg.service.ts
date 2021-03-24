@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-import { Connection } from 'typeorm';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
+import { DbService } from '~backend/services/db.service';
 
 @Injectable()
 export class PgService {
   constructor(
     private queriesRepository: repositories.QueriesRepository,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   async runQuery(item: {
@@ -38,15 +36,11 @@ export class PgService {
     query.last_run_by = userId;
     query.last_run_ts = helper.makeTs();
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          queries: [query]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        queries: [query]
+      }
     });
 
     let recordsQuery = records.queries.find(x => x.query_id === query.query_id);
@@ -74,13 +68,11 @@ export class PgService {
             (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
           ).toString();
 
-          await this.connection.transaction(async manager => {
-            await db.modifyRecords({
-              manager: manager,
-              records: {
-                queries: [q]
-              }
-            });
+          await this.dbService.writeRecords({
+            modify: true,
+            records: {
+              queries: [q]
+            }
           });
         }
       })
@@ -99,13 +91,11 @@ export class PgService {
           q.last_error_message = e.message;
           q.last_error_ts = helper.makeTs();
 
-          await this.connection.transaction(async manager => {
-            await db.modifyRecords({
-              manager: manager,
-              records: {
-                queries: [q]
-              }
-            });
+          await this.dbService.writeRecords({
+            modify: true,
+            records: {
+              queries: [q]
+            }
           });
         }
       });

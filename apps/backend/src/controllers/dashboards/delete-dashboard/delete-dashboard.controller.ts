@@ -1,9 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
@@ -11,6 +9,7 @@ import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -23,7 +22,7 @@ export class DeleteDashboardController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
-    private connection: Connection,
+    private dbService: DbService,
     private dashboardsService: DashboardsService,
     private dashboardsRepository: repositories.DashboardsRepository
   ) {}
@@ -108,13 +107,11 @@ export class DeleteDashboardController {
       struct_id: branch.struct_id
     });
 
-    await this.connection.transaction(async manager => {
-      await db.modifyRecords({
-        manager: manager,
-        records: {
-          structs: [struct]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        structs: [struct]
+      }
     });
 
     let payload = {};

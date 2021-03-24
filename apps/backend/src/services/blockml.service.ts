@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
+import { DbService } from '~backend/services/db.service';
 import { RabbitService } from './rabbit.service';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class BlockmlService {
   constructor(
     private connectionsRepository: repositories.ConnectionsRepository,
     private rabbitService: RabbitService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   async rebuildStruct(item: {
@@ -82,19 +81,17 @@ export class BlockmlService {
       udfsDict: udfsDict
     });
 
-    if (skipDb !== true) {
-      await this.connection.transaction(async manager => {
-        await db.addRecords({
-          manager: manager,
-          records: {
-            structs: [struct],
-            vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
-            queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-            models: models.map(x => wrapper.wrapToEntityModel(x)),
-            mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-            dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
-          }
-        });
+    if (skipDb === false) {
+      await this.dbService.writeRecords({
+        modify: false,
+        records: {
+          structs: [struct],
+          vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
+          queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
+          models: models.map(x => wrapper.wrapToEntityModel(x)),
+          mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+          dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
+        }
       });
     }
 

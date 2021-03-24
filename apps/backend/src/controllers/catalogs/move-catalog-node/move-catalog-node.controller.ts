@@ -1,14 +1,13 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -17,7 +16,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 export class MoveCatalogNodeController {
   constructor(
     private projectsService: ProjectsService,
-    private connection: Connection,
+    private dbService: DbService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -88,13 +87,11 @@ export class MoveCatalogNodeController {
 
     branch.struct_id = structId;
 
-    await this.connection.transaction(async manager => {
-      await db.modifyRecords({
-        manager: manager,
-        records: {
-          branches: [branch]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        branches: [branch]
+      }
     });
 
     let payload: apiToBackend.ToBackendMoveCatalogNodeResponsePayload = {

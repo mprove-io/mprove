@@ -1,19 +1,17 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { common } from '~api-to-backend/barrels/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
-import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DbService } from '~backend/services/db.service';
 
 @Controller()
 export class SetAvatarController {
   constructor(
     private avatarsRepository: repositories.AvatarsRepository,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar)
@@ -41,15 +39,11 @@ export class SetAvatarController {
       });
     }
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          avatars: [avatar]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        avatars: [avatar]
+      }
     });
 
     let payload: apiToBackend.ToBackendSetAvatarResponsePayload = {

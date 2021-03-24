@@ -1,15 +1,13 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+import { DbService } from '~backend/services/db.service';
 
 @Injectable()
 export class BigQueryService {
-  constructor(private connection: Connection) {}
+  constructor(private dbService: DbService) {}
 
   async runQuery(item: {
     userId: string;
@@ -52,15 +50,11 @@ export class BigQueryService {
       query.bigquery_query_job_id = queryJob.id;
     }
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.modifyRecords({
-        manager: manager,
-        records: {
-          queries: [query]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        queries: [query]
+      }
     });
 
     let recordsQuery = records.queries.find(x => x.query_id === query.query_id);

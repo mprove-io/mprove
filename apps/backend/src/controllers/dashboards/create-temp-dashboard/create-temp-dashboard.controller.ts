@@ -1,17 +1,16 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection, In } from 'typeorm';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -27,7 +26,7 @@ export class CreateTempDashboardController {
     private structsService: StructsService,
     private modelsRepository: repositories.ModelsRepository,
     private dashboardsService: DashboardsService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard)
@@ -124,17 +123,13 @@ export class CreateTempDashboardController {
     let mconfigs = blockmlProcessDashboardResponse.payload.mconfigs;
     let queries = blockmlProcessDashboardResponse.payload.queries;
 
-    let records: interfaces.Records;
-
-    await this.connection.transaction(async manager => {
-      records = await db.addRecords({
-        manager: manager,
-        records: {
-          queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-          mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-          dashboards: [wrapper.wrapToEntityDashboard(newDashboard)]
-        }
-      });
+    let records = await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
+        mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+        dashboards: [wrapper.wrapToEntityDashboard(newDashboard)]
+      }
     });
 
     let payload: apiToBackend.ToBackendCreateTempDashboardResponsePayload = {

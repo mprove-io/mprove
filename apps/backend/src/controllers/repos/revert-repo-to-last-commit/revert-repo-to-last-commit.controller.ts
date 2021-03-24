@@ -1,13 +1,12 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -16,7 +15,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 export class RevertRepoToLastCommitController {
   constructor(
     private projectsService: ProjectsService,
-    private connection: Connection,
+    private dbService: DbService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService
@@ -81,13 +80,11 @@ export class RevertRepoToLastCommitController {
 
     devBranch.struct_id = prodBranch.struct_id;
 
-    await this.connection.transaction(async manager => {
-      await db.modifyRecords({
-        manager: manager,
-        records: {
-          branches: [devBranch]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        branches: [devBranch]
+      }
     });
 
     let payload: apiToBackend.ToBackendRevertRepoToLastCommitResponsePayload = {

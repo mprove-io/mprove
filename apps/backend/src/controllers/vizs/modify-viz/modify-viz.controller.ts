@@ -1,15 +1,14 @@
 import { Controller, Post } from '@nestjs/common';
-import { Connection } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
-import { db } from '~backend/barrels/db';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
+import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -24,7 +23,7 @@ export class ModifyVizController {
     private projectsService: ProjectsService,
     private vizsService: VizsService,
     private blockmlService: BlockmlService,
-    private connection: Connection
+    private dbService: DbService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz)
@@ -119,24 +118,20 @@ export class ModifyVizController {
     let vizMconfig = mconfigs.find(x => x.mconfigId === vizReport.mconfigId);
     let vizQuery = queries.find(x => x.queryId === vizReport.queryId);
 
-    await this.connection.transaction(async manager => {
-      await db.addRecords({
-        manager: manager,
-        records: {
-          mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
-          queries: [wrapper.wrapToEntityQuery(vizQuery)]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
+        queries: [wrapper.wrapToEntityQuery(vizQuery)]
+      }
     });
 
-    await this.connection.transaction(async manager => {
-      await db.modifyRecords({
-        manager: manager,
-        records: {
-          vizs: [wrapper.wrapToEntityViz(viz)],
-          structs: [struct]
-        }
-      });
+    await this.dbService.writeRecords({
+      modify: true,
+      records: {
+        vizs: [wrapper.wrapToEntityViz(viz)],
+        structs: [struct]
+      }
     });
 
     let payload = {};

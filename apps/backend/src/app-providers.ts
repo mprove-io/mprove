@@ -12,6 +12,7 @@ import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
+import { DbService } from './services/db.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
@@ -40,6 +41,7 @@ export const appProviders = [
         : {},
     inject: [ConfigService, QueriesService, StructsService]
   },
+  DbService,
   BlockmlService,
   UsersService,
   OrgsService,
