@@ -5,7 +5,7 @@ import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'disk-is-org-exist';
 
-let traceId = '123';
+let traceId = testId;
 let orgId = testId;
 
 test('1', async t => {

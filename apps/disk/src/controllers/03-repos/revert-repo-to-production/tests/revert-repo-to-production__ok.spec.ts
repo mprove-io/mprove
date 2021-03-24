@@ -5,7 +5,7 @@ import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'disk-revert-repo-to-production__ok';
 
-let traceId = '123';
+let traceId = testId;
 let orgId = testId;
 let projectId = 'p1';
 

@@ -4,7 +4,7 @@ import { common } from '~disk/barrels/common';
 import { prepareTest } from '~disk/functions/prepare-test';
 let testId = 'disk-create-org';
 
-let traceId = '123';
+let traceId = testId;
 let orgId = testId;
 
 test('1', async t => {

@@ -5,7 +5,7 @@ import { prepareTest } from '~disk/functions/prepare-test';
 
 let testId = 'disk-delete-file__prod';
 
-let traceId = '123';
+let traceId = testId;
 let orgId = testId;
 let projectId = 'p1';
 

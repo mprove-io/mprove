@@ -57,7 +57,7 @@ export async function prepareTest(
   let pack = funcArray[0];
   let f = funcArray[1];
 
-  let traceId = '123';
+  let traceId = testId;
 
   let structId = common.isDefined(connection)
     ? `${caller}/${f}/${testId}/${connection.type}`
