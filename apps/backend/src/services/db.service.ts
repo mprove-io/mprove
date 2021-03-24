@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
+import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
+
+let retry = require('async-retry');
 
 @Injectable()
 export class DbService {
@@ -13,10 +16,28 @@ export class DbService {
   async writeRecords(item: { records: interfaces.Records; modify: boolean }) {
     let { records, modify } = item;
 
-    records =
-      modify === true
-        ? await this.modify({ records: records })
-        : await this.add({ records: records });
+    await retry(
+      async bail => {
+        records =
+          modify === true
+            ? await this.modify({ records: records })
+            : await this.add({ records: records });
+      },
+      {
+        retries: 3, // (default 10)
+        minTimeout: 1000, // ms (default 1000)
+        factor: 1, // (default 2)
+        randomize: true, // 1 to 2 (default true)
+        onRetry: e => {
+          let serverError = new common.ServerError({
+            message: apiToBackend.ErEnum.BACKEND_TRANSACTION_RETRY,
+            originalError: e
+          });
+
+          common.logToConsole(serverError);
+        }
+      }
+    );
 
     return records;
   }
