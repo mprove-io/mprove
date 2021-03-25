@@ -22,6 +22,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
+        idempotencyKeys: [testId],
         emails: [email]
       },
       seedRecordsPayload: {
@@ -40,7 +41,8 @@ test('1', async t => {
     let req: apiToBackend.ToBackendSetAvatarRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         avatarBig: '123',

@@ -31,6 +31,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
+        idempotencyKeys: [testId, testId + '2'],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -76,7 +77,8 @@ test('1', async t => {
     let req1: apiToBackend.ToBackendCreateBranchRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
@@ -97,7 +99,8 @@ test('1', async t => {
     let req2: apiToBackend.ToBackendDeleteBranchRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId + '2'
       },
       payload: {
         projectId: projectId,

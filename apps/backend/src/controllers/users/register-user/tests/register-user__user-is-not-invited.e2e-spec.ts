@@ -20,7 +20,10 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { emails: [email] },
+      deleteRecordsPayload: {
+        idempotencyKeys: [testId],
+        emails: [email]
+      },
       overrideConfigOptions: {
         registerOnlyInvitedUsers: common.BoolEnum.TRUE
       }
@@ -29,7 +32,8 @@ test('1', async t => {
     let registerUserReq: apiToBackend.ToBackendRegisterUserRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         email: email,

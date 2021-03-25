@@ -29,6 +29,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
+        idempotencyKeys: [testId, testId + '2'],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -82,7 +83,8 @@ test('1', async t => {
     let req1: apiToBackend.ToBackendGetDashboardRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
@@ -103,7 +105,8 @@ test('1', async t => {
     let req2: apiToBackend.ToBackendGetMconfigRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId + '2'
       },
       payload: {
         mconfigId: resp1.payload.dashboardMconfigs[0].mconfigId

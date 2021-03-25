@@ -9,11 +9,11 @@ export class IdempEntity {
   @PrimaryColumn({ type: constants.USER_ID_VARCHAR })
   user_id: string;
 
-  @Column({ type: constants.MEDIUMTEXT })
-  request: string;
+  @Column({ type: constants.JSON })
+  req: any;
 
-  @Column({ type: constants.MEDIUMTEXT, nullable: true })
-  response: string;
+  @Column({ type: constants.JSON, nullable: true })
+  resp: any;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

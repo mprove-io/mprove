@@ -20,13 +20,17 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
-      deleteRecordsPayload: { emails: [email] }
+      deleteRecordsPayload: {
+        idempotencyKeys: [testId],
+        emails: [email]
+      }
     });
 
     let loginUserReq: apiToBackend.ToBackendLoginUserRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         email: email,

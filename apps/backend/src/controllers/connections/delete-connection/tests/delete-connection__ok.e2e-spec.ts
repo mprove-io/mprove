@@ -30,6 +30,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
+        idempotencyKeys: [testId],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -83,7 +84,8 @@ test('1', async t => {
       info: {
         name:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         connectionId: connectionId,

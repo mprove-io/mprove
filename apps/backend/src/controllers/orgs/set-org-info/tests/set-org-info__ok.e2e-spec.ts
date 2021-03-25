@@ -24,6 +24,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
+        idempotencyKeys: [testId],
         emails: [email],
         orgIds: [orgId]
       },
@@ -49,7 +50,8 @@ test('1', async t => {
     let req: apiToBackend.ToBackendSetOrgInfoRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         orgId: orgId,

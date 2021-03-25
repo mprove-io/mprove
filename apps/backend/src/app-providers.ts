@@ -58,12 +58,14 @@ export const appProviders = [
   VizsService,
   DashboardsService,
   MembersService,
-  {
-    provide: APP_FILTER,
-    useFactory: async (configService: ConfigService<interfaces.Config>) =>
-      new AppFilter(configService),
-    inject: [ConfigService]
-  },
+  // {
+  //   provide: APP_FILTER,
+  //   useFactory: async (
+  //     configService: ConfigService<interfaces.Config>,
+  //     idempsRepository: repositories.IdempsRepository
+  //   ) => new AppFilter(configService, idempsRepository),
+  //   inject: [ConfigService, repositories.IdempsRepository]
+  // },
   LocalStrategy,
   JwtStrategy,
   {
@@ -71,8 +73,15 @@ export const appProviders = [
     useClass: JwtAuthGuard
   },
   {
+    provide: APP_FILTER,
+    useClass: AppFilter
+    // ,
+    // inject: [ConfigService]
+  },
+  {
     provide: APP_INTERCEPTOR,
-    useClass: AppInterceptor,
-    inject: [ConfigService]
+    useClass: AppInterceptor
+    // ,
+    // inject: [ConfigService]
   }
 ];

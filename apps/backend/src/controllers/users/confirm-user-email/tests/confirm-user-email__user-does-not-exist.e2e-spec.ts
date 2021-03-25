@@ -16,13 +16,19 @@ test('1', async t => {
   let resp: apiToBackend.ToBackendConfirmUserEmailResponse;
 
   try {
-    prep = await prepareTest({ traceId: traceId });
+    prep = await prepareTest({
+      traceId: traceId,
+      deleteRecordsPayload: {
+        idempotencyKeys: [testId]
+      }
+    });
 
     let confirmUserEmailRequest: apiToBackend.ToBackendConfirmUserEmailRequest = {
       info: {
         name:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         token: emailToken

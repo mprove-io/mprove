@@ -29,6 +29,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
+        idempotencyKeys: [testId, testId + '2'],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -87,7 +88,8 @@ test('1', async t => {
     let req1: apiToBackend.ToBackendGetVizsRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
@@ -109,7 +111,8 @@ test('1', async t => {
     let req2: apiToBackend.ToBackendRunQueriesRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId + '2'
       },
       payload: {
         queryIds: [viz.reports[0].queryId]

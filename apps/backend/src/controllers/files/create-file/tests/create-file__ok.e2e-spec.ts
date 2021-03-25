@@ -30,6 +30,7 @@ test('1', async t => {
     prep = await prepareTest({
       traceId: traceId,
       deleteRecordsPayload: {
+        idempotencyKeys: [testId],
         emails: [email],
         orgIds: [orgId],
         projectIds: [projectId],
@@ -75,7 +76,8 @@ test('1', async t => {
     let req: apiToBackend.ToBackendCreateFileRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
-        traceId: traceId
+        traceId: traceId,
+        idempotencyKey: testId
       },
       payload: {
         projectId: projectId,
