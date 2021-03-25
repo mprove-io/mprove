@@ -23,6 +23,9 @@ export class ToBackendDeleteRecordsRequestPayload {
   @IsOptional()
   @IsString({ each: true })
   projectIds?: string[];
+
+  @IsString({ each: true })
+  idempotencyKeys: string[];
 }
 
 export class ToBackendDeleteRecordsRequest extends ToBackendRequest {

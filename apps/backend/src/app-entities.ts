@@ -10,6 +10,7 @@ export const appEntities = [
   entities.AvatarEntity,
   entities.BranchEntity,
   entities.ConnectionEntity,
+  entities.IdempEntity,
   entities.MemberEntity,
   entities.OrgEntity,
   entities.ProjectEntity,

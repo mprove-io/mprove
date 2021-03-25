@@ -40,48 +40,56 @@ export async function prepareTest(item: {
   let httpServer = app.getHttpServer();
 
   if (common.isDefined(deleteRecordsPayload)) {
+    let deleteRecordsRequest: apiToBackend.ToBackendDeleteRecordsRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+        traceId: traceId,
+        idempotencyKey: common.makeId()
+      },
+      payload: deleteRecordsPayload
+    };
+
     await helper.sendToBackend<apiToBackend.ToBackendDeleteRecordsResponse>({
       checkIsOk: true,
       httpServer: httpServer,
-      req: <apiToBackend.ToBackendDeleteRecordsRequest>{
-        info: {
-          name:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
-          traceId: traceId
-        },
-        payload: deleteRecordsPayload
-      }
+      req: deleteRecordsRequest
     });
   }
 
   if (common.isDefined(seedRecordsPayload)) {
+    let seedRecordsRequest: apiToBackend.ToBackendSeedRecordsRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+        traceId: traceId,
+        idempotencyKey: common.makeId()
+      },
+      payload: seedRecordsPayload
+    };
+
     await helper.sendToBackend<apiToBackend.ToBackendSeedRecordsResponse>({
       checkIsOk: true,
       httpServer: httpServer,
-      req: <apiToBackend.ToBackendSeedRecordsRequest>{
-        info: {
-          name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
-          traceId: traceId
-        },
-        payload: seedRecordsPayload
-      }
+      req: seedRecordsRequest
     });
   }
 
   let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
 
   if (common.isDefined(loginUserPayload)) {
+    let loginUserRequest: apiToBackend.ToBackendLoginUserRequest = {
+      info: {
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        traceId: traceId,
+        idempotencyKey: common.makeId()
+      },
+      payload: loginUserPayload
+    };
+
     loginUserResp = await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>(
       {
         checkIsOk: true,
         httpServer: httpServer,
-        req: <apiToBackend.ToBackendLoginUserRequest>{
-          info: {
-            name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-            traceId: traceId
-          },
-          payload: loginUserPayload
-        }
+        req: loginUserRequest
       }
     );
   }

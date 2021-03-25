@@ -8,4 +8,7 @@ export class ToBackendRequestInfo extends common.RequestInfo {
 
   @IsString()
   traceId: string;
+
+  @IsString()
+  idempotencyKey: string;
 }

@@ -28,7 +28,8 @@ export class DeleteRecordsController {
     private membersRepository: repositories.MembersRepository,
     private orgsRepository: repositories.OrgsRepository,
     private projectsRepository: repositories.ProjectsRepository,
-    private usersRepository: repositories.UsersRepository
+    private usersRepository: repositories.UsersRepository,
+    private idempsRepository: repositories.IdempsRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
@@ -41,7 +42,8 @@ export class DeleteRecordsController {
       projectIds,
       emails,
       orgNames,
-      projectNames
+      projectNames,
+      idempotencyKeys
     } = reqValid.payload;
 
     emails = emails || [];
@@ -109,6 +111,11 @@ export class DeleteRecordsController {
 
     structIds = structs.map(struct => struct.struct_id);
 
+    if (idempotencyKeys.length > 0) {
+      await this.idempsRepository.delete({
+        idempotency_key: In(idempotencyKeys)
+      });
+    }
     if (userIds.length > 0) {
       await this.usersRepository.delete({ user_id: In(userIds) });
     }
