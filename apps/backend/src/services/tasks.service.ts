@@ -26,7 +26,7 @@ export class TasksService {
     common.logToConsole('Called every 10 seconds');
   }
 
-  @Cron(CronExpression.EVERY_SECOND)
+  @Cron('*/3 * * * * *')
   async loopCheckQueries() {
     if (this.isRunningLoopCheckQueries === false) {
       this.isRunningLoopCheckQueries = true;
