@@ -1,4 +1,6 @@
 dist/
 node_modules/
 
+package.docker.json
+
 coverage/

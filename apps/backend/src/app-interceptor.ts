@@ -109,66 +109,27 @@ export class AppInterceptor implements NestInterceptor {
 
     return common.isUndefined(idemp)
       ? next.handle().pipe(
-          mergeMap(
-            async payload => {
-              let resp = common.makeOkResponse({
-                payload: payload,
-                cs: this.cs,
-                req: req
-              });
+          mergeMap(async payload => {
+            let resp = common.makeOkResponse({
+              payload: payload,
+              cs: this.cs,
+              req: req
+            });
 
-              let idempEntity: entities.IdempEntity = {
-                idempotency_key: iKey,
-                user_id: userId,
-                req: req,
-                resp: resp,
-                server_ts: helper.makeTs()
-              };
+            let idempEntity: entities.IdempEntity = {
+              idempotency_key: iKey,
+              user_id: userId,
+              req: req,
+              resp: resp,
+              server_ts: helper.makeTs()
+            };
 
-              await this.idempsRepository.save(idempEntity);
+            await this.idempsRepository.save(idempEntity);
 
-              return resp;
-            }
-            // common.makeOkResponse({
-            //   payload: payload,
-            //   cs: this.cs,
-            //   req: req
-            // })
-          )
-          // ,
-          // tap(async resp => {
-          //   let idempEntity: entities.IdempEntity = {
-          //     idempotency_key: iKey,
-          //     user_id: userId,
-          //     req: req,
-          //     resp: resp,
-          //     server_ts: helper.makeTs()
-          //   };
-
-          //   await this.idempsRepository.save(idempEntity);
-          // })
+            return resp;
+          })
         )
-      : // next.handle().pipe(
-      //     map(payload =>
-      //       common.makeOkResponse({
-      //         payload: payload,
-      //         cs: this.cs,
-      //         req: req
-      //       })
-      //     ),
-      //     tap(async resp => {
-      //       let idempEntity: entities.IdempEntity = {
-      //         idempotency_key: iKey,
-      //         user_id: userId,
-      //         req: req,
-      //         resp: resp,
-      //         server_ts: helper.makeTs()
-      //       };
-
-      //       await this.idempsRepository.save(idempEntity);
-      //     })
-      //   )
-      common.isDefined(idemp.resp)
+      : common.isDefined(idemp.resp)
       ? of(idemp.resp)
       : of(respX);
   }

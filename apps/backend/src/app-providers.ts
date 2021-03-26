@@ -6,6 +6,7 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { helper } from './barrels/helper';
 import { interfaces } from './barrels/interfaces';
+import { repositories } from './barrels/repositories';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
@@ -29,18 +30,6 @@ import { VizsService } from './services/vizs.service';
 
 export const appProviders = [
   RabbitService,
-  {
-    provide: TasksService,
-    useFactory: (
-      cs: ConfigService<interfaces.Config>,
-      queriesService: QueriesService,
-      structsService: StructsService
-    ) =>
-      helper.isScheduler(cs)
-        ? new TasksService(cs, queriesService, structsService)
-        : {},
-    inject: [ConfigService, QueriesService, StructsService]
-  },
   DbService,
   BlockmlService,
   UsersService,
@@ -58,14 +47,24 @@ export const appProviders = [
   VizsService,
   DashboardsService,
   MembersService,
-  // {
-  //   provide: APP_FILTER,
-  //   useFactory: async (
-  //     configService: ConfigService<interfaces.Config>,
-  //     idempsRepository: repositories.IdempsRepository
-  //   ) => new AppFilter(configService, idempsRepository),
-  //   inject: [ConfigService, repositories.IdempsRepository]
-  // },
+  {
+    provide: TasksService,
+    useFactory: (
+      cs: ConfigService<interfaces.Config>,
+      queriesService: QueriesService,
+      structsService: StructsService,
+      idempsRepository: repositories.IdempsRepository
+    ) =>
+      helper.isScheduler(cs)
+        ? new TasksService(cs, queriesService, structsService, idempsRepository)
+        : {},
+    inject: [
+      ConfigService,
+      QueriesService,
+      StructsService,
+      repositories.IdempsRepository
+    ]
+  },
   LocalStrategy,
   JwtStrategy,
   {
@@ -75,13 +74,9 @@ export const appProviders = [
   {
     provide: APP_FILTER,
     useClass: AppFilter
-    // ,
-    // inject: [ConfigService]
   },
   {
     provide: APP_INTERCEPTOR,
     useClass: AppInterceptor
-    // ,
-    // inject: [ConfigService]
   }
 ];
