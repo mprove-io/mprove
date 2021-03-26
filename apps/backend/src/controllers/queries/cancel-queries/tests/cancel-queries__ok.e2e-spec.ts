@@ -59,13 +59,15 @@ test('1', async t => {
     status: common.QueryStatusEnum.Running,
     lastRunBy: userId,
     lastRunTs: 1,
-    lastCancelTs: 1,
-    lastCompleteTs: 1,
+    lastCancelTs: undefined,
+    lastCompleteTs: undefined,
     lastCompleteDuration: undefined,
     lastErrorMessage: undefined,
-    lastErrorTs: 1,
+    lastErrorTs: undefined,
     postgresQueryJobId: postgresQueryJobId,
     bigqueryQueryJobId: undefined,
+    bigqueryConsecutiveErrorsGetJob: 0,
+    bigqueryConsecutiveErrorsGetResults: 0,
     serverTs: 1
   };
 

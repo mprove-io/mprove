@@ -1,4 +1,11 @@
-import { IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsJSON,
+  IsNumber,
+  IsOptional,
+  IsString
+} from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class Query {
@@ -21,40 +28,50 @@ export class Query {
   status: enums.QueryStatusEnum;
 
   @IsOptional()
-  @IsString()
-  lastRunBy?: string;
+  @IsJSON()
+  data: any;
 
+  @IsOptional()
+  @IsString()
+  lastRunBy: string;
+
+  @IsOptional()
   @IsInt()
   lastRunTs: number;
 
+  @IsOptional()
   @IsInt()
   lastCancelTs: number;
 
+  @IsOptional()
   @IsInt()
   lastCompleteTs: number;
 
   @IsOptional()
   @IsNumber()
-  lastCompleteDuration?: number;
+  lastCompleteDuration: number;
 
   @IsOptional()
   @IsString()
-  lastErrorMessage?: string;
+  lastErrorMessage: string;
 
+  @IsOptional()
   @IsInt()
   lastErrorTs: number;
 
   @IsOptional()
   @IsString()
-  postgresQueryJobId?: string;
+  postgresQueryJobId: string;
 
   @IsOptional()
   @IsString()
-  bigqueryQueryJobId?: string;
+  bigqueryQueryJobId: string;
 
-  @IsOptional()
-  @IsString()
-  data?: any;
+  @IsInt()
+  bigqueryConsecutiveErrorsGetJob: number;
+
+  @IsInt()
+  bigqueryConsecutiveErrorsGetResults: number;
 
   @IsInt()
   serverTs: number;

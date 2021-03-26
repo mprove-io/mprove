@@ -19,6 +19,16 @@ export function wrapToEntityQuery(x: common.Query): entities.QueryEntity {
     last_error_ts: x.lastErrorTs?.toString(),
     postgres_query_job_id: null,
     bigquery_query_job_id: null,
+    bigquery_consecutive_errors_get_job: common.isDefined(
+      x.bigqueryConsecutiveErrorsGetJob
+    )
+      ? x.bigqueryConsecutiveErrorsGetJob
+      : 0,
+    bigquery_consecutive_errors_get_results: common.isDefined(
+      x.bigqueryConsecutiveErrorsGetResults
+    )
+      ? x.bigqueryConsecutiveErrorsGetResults
+      : 0,
     server_ts: x.serverTs?.toString()
   };
 }

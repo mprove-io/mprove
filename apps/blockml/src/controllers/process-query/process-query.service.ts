@@ -80,13 +80,17 @@ export class ProcessQueryService {
       sql: sql.join('\n'),
       status: common.QueryStatusEnum.New,
       lastRunBy: undefined,
-      lastRunTs: 1,
-      lastCancelTs: 1,
-      lastCompleteTs: 1,
+      lastRunTs: undefined,
+      lastCancelTs: undefined,
+      lastCompleteTs: undefined,
       lastCompleteDuration: undefined,
       lastErrorMessage: undefined,
-      lastErrorTs: 1,
+      lastErrorTs: undefined,
       data: undefined,
+      postgresQueryJobId: undefined,
+      bigqueryQueryJobId: undefined,
+      bigqueryConsecutiveErrorsGetJob: 0,
+      bigqueryConsecutiveErrorsGetResults: 0,
       serverTs: 1
     };
 

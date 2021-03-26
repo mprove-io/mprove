@@ -24,6 +24,8 @@ export class BigQueryService {
     query.last_run_by = userId;
     query.last_run_ts = helper.makeTs();
     query.bigquery_query_job_id = null;
+    query.bigquery_consecutive_errors_get_job = 0;
+    query.bigquery_consecutive_errors_get_results = 0;
 
     let maximumBytesBilled =
       connection.bigquery_query_size_limit_gb * 1024 * 1024 * 1024;

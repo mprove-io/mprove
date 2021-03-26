@@ -68,9 +68,14 @@ export class QueriesService {
       let bigqueryQueryJob = bigquery.job(query.bigquery_query_job_id);
 
       let itemQueryJob = await bigqueryQueryJob.get().catch(async (e: any) => {
-        query.status = common.QueryStatusEnum.Error;
-        query.last_error_message = `Bigquery get Job fail`;
-        query.last_error_ts = helper.makeTs();
+        if (query.bigquery_consecutive_errors_get_job > 2) {
+          query.status = common.QueryStatusEnum.Error;
+          query.last_error_message = `Bigquery get Job fail`;
+          query.last_error_ts = helper.makeTs();
+        } else {
+          query.bigquery_consecutive_errors_get_job =
+            query.bigquery_consecutive_errors_get_job + 1;
+        }
 
         await this.dbService.writeRecords({
           modify: true,
@@ -79,6 +84,14 @@ export class QueriesService {
           }
         });
         return;
+      });
+
+      query.bigquery_consecutive_errors_get_job = 0;
+      await this.dbService.writeRecords({
+        modify: true,
+        records: {
+          queries: [query]
+        }
       });
 
       let queryJob = itemQueryJob[0];
@@ -106,9 +119,14 @@ export class QueriesService {
           let queryResultsItem = await queryJob
             .getQueryResults()
             .catch(async (e: any) => {
-              query.status = common.QueryStatusEnum.Error;
-              query.last_error_message = `Bigquery get QueryResults fail`;
-              query.last_error_ts = helper.makeTs();
+              if (query.bigquery_consecutive_errors_get_results > 2) {
+                query.status = common.QueryStatusEnum.Error;
+                query.last_error_message = `Bigquery get QueryResults fail`;
+                query.last_error_ts = helper.makeTs();
+              } else {
+                query.bigquery_consecutive_errors_get_results =
+                  query.bigquery_consecutive_errors_get_results + 1;
+              }
 
               await this.dbService.writeRecords({
                 modify: true,
@@ -125,6 +143,8 @@ export class QueriesService {
           ).toString();
 
           query.status = common.QueryStatusEnum.Completed;
+          // no need for query.bigquery_consecutive_errors_get_results = 0
+          // because status change to Completed
           query.data = queryResultsItem[0];
           query.last_complete_ts = newLastCompleteTs;
           query.last_complete_duration = newLastCompleteDuration;

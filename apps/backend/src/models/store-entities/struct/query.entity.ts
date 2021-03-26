@@ -19,19 +19,19 @@ export class QueryEntity {
   @Column({ type: constants.MEDIUMTEXT, nullable: true })
   sql: string;
 
-  @Column({ type: constants.JSON, nullable: true })
-  data: any;
-
   @Column({ type: constants.VARCHAR })
   status: common.QueryStatusEnum;
+
+  @Column({ type: constants.JSON, nullable: true })
+  data: any;
 
   @Column({ type: constants.VARCHAR, nullable: true })
   last_run_by: string;
 
-  @Column({ type: constants.BIGINT })
+  @Column({ type: constants.BIGINT, nullable: true })
   last_run_ts: string;
 
-  @Column({ type: constants.BIGINT })
+  @Column({ type: constants.BIGINT, nullable: true })
   last_cancel_ts: string;
 
   @Column({ type: constants.BIGINT, nullable: true })
@@ -43,7 +43,7 @@ export class QueryEntity {
   @Column({ type: constants.MEDIUMTEXT, nullable: true })
   last_error_message: string;
 
-  @Column({ type: constants.BIGINT })
+  @Column({ type: constants.BIGINT, nullable: true })
   last_error_ts: string;
 
   @Column({ type: constants.VARCHAR, nullable: true })
@@ -51,6 +51,12 @@ export class QueryEntity {
 
   @Column({ type: constants.VARCHAR, nullable: true })
   bigquery_query_job_id: string;
+
+  @Column({ type: constants.INT })
+  bigquery_consecutive_errors_get_job: number;
+
+  @Column({ type: constants.INT })
+  bigquery_consecutive_errors_get_results: number;
 
   @Column({ type: constants.BIGINT })
   server_ts: string;

@@ -17,6 +17,11 @@ export function wrapToApiQuery(x: entities.QueryEntity): common.Query {
     lastErrorMessage: x.last_error_message,
     lastErrorTs: Number(x.last_error_ts),
     data: x.data,
+    postgresQueryJobId: x.postgres_query_job_id,
+    bigqueryQueryJobId: x.bigquery_query_job_id,
+    bigqueryConsecutiveErrorsGetJob: x.bigquery_consecutive_errors_get_job,
+    bigqueryConsecutiveErrorsGetResults:
+      x.bigquery_consecutive_errors_get_results,
     serverTs: Number(x.server_ts)
   };
 }
