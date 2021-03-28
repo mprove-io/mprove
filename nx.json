@@ -1,8 +1,6 @@
 {
   "npmScope": "mprove",
-  "affected": {
-    "defaultBase": "ak"
-  },
+  "affected": { "defaultBase": "ak" },
   "implicitDependencies": {
     ".eslintignore": "*",
     ".eslintrc.js": "*",
@@ -10,10 +8,7 @@
     "ava-js.config.js": "*",
     "ava.config.js": "*",
     "nx.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     "tsconfig.base.json": "*",
     "tsconfig.json": "*",
     "workspace.json": "*"
@@ -35,30 +30,15 @@
     }
   },
   "projects": {
-    "top": {
-      "tags": []
-    },
-    "api-to-backend": {
-      "tags": []
-    },
-    "api-to-blockml": {
-      "tags": []
-    },
-    "api-to-disk": {
-      "tags": []
-    },
-    "common": {
-      "tags": []
-    },
-    "disk": {
-      "tags": []
-    },
-    "blockml": {
-      "tags": []
-    },
-    "backend": {
-      "tags": [],
-      "implicitDependencies": ["disk", "blockml"]
-    }
+    "top": { "tags": [] },
+    "api-to-backend": { "tags": [] },
+    "api-to-blockml": { "tags": [] },
+    "api-to-disk": { "tags": [] },
+    "common": { "tags": [] },
+    "disk": { "tags": [] },
+    "blockml": { "tags": [] },
+    "backend": { "tags": [], "implicitDependencies": ["disk", "blockml"] },
+    "front": { "tags": [] },
+    "front-e2e": { "tags": [], "implicitDependencies": ["front"] }
   }
 }
