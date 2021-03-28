@@ -39,6 +39,6 @@
     "blockml": { "tags": [] },
     "backend": { "tags": [], "implicitDependencies": ["disk", "blockml"] },
     "front": { "tags": [] },
-    "front-e2e": { "tags": [], "implicitDependencies": ["front"] }
+    "front-e2e": { "tags": [], "implicitDependencies": ["front", "backend"] }
   }
 }
