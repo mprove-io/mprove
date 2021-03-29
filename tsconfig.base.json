@@ -15,7 +15,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2015",
     "allowJs": true,
-    "types": ["cypress", "node"],
+    "types": ["node", "jest", "cypress"],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": ".",

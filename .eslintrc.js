@@ -65,6 +65,7 @@ module.exports = {
           'error',
           { type: 'element', prefix: 'mprove', style: 'kebab-case' }
         ],
+        quotes: 0,
         'max-len': 0,
         'no-useless-escape': 0,
         '@typescript-eslint/interface-name-prefix': 'off',
