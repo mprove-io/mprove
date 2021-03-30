@@ -36,7 +36,8 @@ module.exports = {
               { sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }
             ]
           }
-        ]
+        ],
+        'no-useless-escape': 0
       }
     },
     {
