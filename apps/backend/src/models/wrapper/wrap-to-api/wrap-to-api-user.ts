@@ -10,6 +10,7 @@ export function wrapToApiUser(user: entities.UserEntity): common.User {
     lastName: user.last_name,
     timezone: user.timezone,
     status: user.status,
+    isEmailVerified: common.enumToBoolean(user.is_email_verified),
     serverTs: Number(user.server_ts)
   };
 }

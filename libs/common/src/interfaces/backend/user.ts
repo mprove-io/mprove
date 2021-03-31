@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class User {
@@ -22,6 +22,9 @@ export class User {
 
   @IsEnum(enums.UserStatusEnum)
   status: enums.UserStatusEnum;
+
+  @IsBoolean()
+  isEmailVerified: boolean;
 
   @IsInt()
   serverTs: number;

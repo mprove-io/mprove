@@ -40,6 +40,7 @@
     "@angular/platform-browser": "^11.2.0",
     "@angular/platform-browser-dynamic": "^11.2.0",
     "@angular/router": "^11.2.0",
+    "@auth0/angular-jwt": "^5.0.2",
     "@golevelup/nestjs-rabbitmq": "^1.15.2",
     "@google-cloud/bigquery": "^5.5.0",
     "@nestjs-modules/mailer": "^1.5.1",
