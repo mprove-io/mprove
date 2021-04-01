@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '~front/app/services/auth.service';
 
 @Component({
   selector: 'mprove-profile',
   templateUrl: './profile.component.html'
 })
-export class ProfileComponent {
-  constructor() {}
+export class ProfileComponent implements OnInit {
+  constructor(private authService: AuthService) {}
+
+  ngOnInit() {
+    this.authService.startWatch();
+  }
 }

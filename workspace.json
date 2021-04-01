@@ -492,6 +492,7 @@
         "build": {
           "executor": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["validator"],
             "outputPath": "dist/apps/front",
             "index": "apps/front/src/index.html",
             "main": "apps/front/src/main.ts",
@@ -556,14 +557,6 @@
               "apps/front/src/**/*.ts",
               "apps/front/src/**/*.html"
             ]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/front"],
-          "options": {
-            "jestConfig": "apps/front/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }

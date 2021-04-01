@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'mprove-register',
@@ -42,7 +43,7 @@ export class RegisterComponent {
 
           this.userStore.update(user);
 
-          this.router.navigate(['verify-email-sent']);
+          this.router.navigate([constants.PATH_VERIFY_EMAIL]);
         })
       )
       .subscribe();
