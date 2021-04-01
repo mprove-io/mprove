@@ -3,7 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'mprove-login',
@@ -16,9 +18,10 @@ export class LoginComponent {
   });
 
   constructor(
-    private readonly fb: FormBuilder,
+    private fb: FormBuilder,
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private userStore: UserStore
   ) {}
 
   onSubmit() {
@@ -36,15 +39,16 @@ export class LoginComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendLoginUserResponse) => {
-          if (resp.payload.user.isEmailVerified === true) {
-            localStorage.setItem('token', resp.payload.token);
+          let user = resp.payload.user;
+          let token = resp.payload.token;
 
-            // this.router.navigate(['profile']);
+          this.userStore.update(user);
+
+          if (user.isEmailVerified === true) {
+            localStorage.setItem('token', token);
+            this.router.navigate([constants.PATH_PROFILE]);
           } else {
-            // this.store.dispatch(
-            //   new actions.UpdateLayoutEmailToVerifyAction(action.payload.user_id)
-            // );
-            // this.router.navigate(['verify-email-sent']);
+            this.router.navigate([constants.PATH_VERIFY_EMAIL]);
           }
         })
       )

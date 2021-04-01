@@ -3,14 +3,21 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginModule } from './login/login.module';
-import { ApiService } from './services/api.service';
-import { AuthService } from './services/auth.service';
+import { AuthModule } from './modules/auth/auth.module';
+import { NavModule } from './modules/nav/nav.module';
+import { ProfileModule } from './modules/profile/profile.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule, LoginModule],
-  providers: [AuthService, ApiService],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    AuthModule,
+    NavModule,
+    ProfileModule
+  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

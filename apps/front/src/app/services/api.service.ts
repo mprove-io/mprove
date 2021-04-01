@@ -15,7 +15,7 @@ import { environment } from '~front/environments/environment';
 import { AuthService } from './auth.service';
 // import { PrinterService } from '@app/services/printer.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ApiService {
   // noMainLoading: string[] = [
   //   api.PATH_CONFIRM,
