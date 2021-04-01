@@ -106,7 +106,7 @@ export class CreateProjectController {
       diskFiles: diskResponse.payload.prodFiles
     });
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: false,
       records: {
         projects: [newProject],
@@ -116,7 +116,7 @@ export class CreateProjectController {
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {
-      project: wrapper.wrapToApiProject(records.projects[0])
+      project: wrapper.wrapToApiProject(newProject)
     };
 
     return payload;

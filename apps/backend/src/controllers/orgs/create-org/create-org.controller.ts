@@ -60,7 +60,7 @@ export class CreateOrgController {
       checkIsOk: true
     });
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: false,
       records: {
         orgs: [newOrg]
@@ -68,7 +68,7 @@ export class CreateOrgController {
     });
 
     let payload: apiToBackend.ToBackendCreateOrgResponsePayload = {
-      org: wrapper.wrapToApiOrg(records.orgs[0])
+      org: wrapper.wrapToApiOrg(newOrg)
     };
 
     return payload;

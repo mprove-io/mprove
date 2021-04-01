@@ -55,7 +55,7 @@ export class EditMemberController {
     member.is_editor = common.booleanToEnum(isEditor);
     member.is_explorer = common.booleanToEnum(isExplorer);
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         members: [member]
@@ -63,7 +63,7 @@ export class EditMemberController {
     });
 
     let payload: apiToBackend.ToBackendEditMemberResponsePayload = {
-      member: wrapper.wrapToApiMember(records.members[0])
+      member: wrapper.wrapToApiMember(member)
     };
 
     return payload;

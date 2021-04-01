@@ -38,7 +38,7 @@ export class SetOrgInfoController {
       org.contact_phone = contactPhone;
     }
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         orgs: [org]
@@ -46,7 +46,7 @@ export class SetOrgInfoController {
     });
 
     let payload: apiToBackend.ToBackendSetOrgInfoResponsePayload = {
-      org: wrapper.wrapToApiOrg(records.orgs[0])
+      org: wrapper.wrapToApiOrg(org)
     };
 
     return payload;

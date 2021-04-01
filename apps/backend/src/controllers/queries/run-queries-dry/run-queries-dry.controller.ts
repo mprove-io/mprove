@@ -63,7 +63,7 @@ export class RunQueriesDryController {
       .filter(result => common.isDefined(result.errorQuery))
       .map(x => x.errorQuery);
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         queries: errorQueries
@@ -72,7 +72,7 @@ export class RunQueriesDryController {
 
     let payload: apiToBackend.ToBackendRunQueriesDryResponsePayload = {
       dryId: dryId,
-      errorQueries: records.queries.map(x => wrapper.wrapToApiQuery(x)),
+      errorQueries: errorQueries.map(x => wrapper.wrapToApiQuery(x)),
       validQueryEstimates: validEstimates
     };
 

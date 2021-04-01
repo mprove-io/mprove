@@ -5,14 +5,13 @@ import { map } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
-import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'mprove-login',
-  templateUrl: './login.component.html'
+  selector: 'mprove-register',
+  templateUrl: './register.component.html'
 })
-export class LoginComponent {
-  loginForm: FormGroup = this.fb.group({
+export class RegisterComponent {
+  registerForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
@@ -24,32 +23,26 @@ export class LoginComponent {
     private userStore: UserStore
   ) {}
 
-  onLogin() {
-    // console.log(this.loginForm.value);
+  onRegister() {
+    // console.log(this.registerForm.value);
 
-    let payload: apiToBackend.ToBackendLoginUserRequestPayload = {
-      email: this.loginForm.value.email,
-      password: this.loginForm.value.password
+    let payload: apiToBackend.ToBackendRegisterUserRequestPayload = {
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password
     };
 
     this.apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendLoginUserResponse) => {
+        map((resp: apiToBackend.ToBackendRegisterUserResponse) => {
           let user = resp.payload.user;
-          let token = resp.payload.token;
 
           this.userStore.update(user);
 
-          if (user.isEmailVerified === true) {
-            localStorage.setItem('token', token);
-            this.router.navigate([constants.PATH_PROFILE]);
-          } else {
-            this.router.navigate([constants.PATH_VERIFY_EMAIL]);
-          }
+          this.router.navigate(['verify-email-sent']);
         })
       )
       .subscribe();

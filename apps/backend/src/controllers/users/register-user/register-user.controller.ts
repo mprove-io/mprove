@@ -7,6 +7,7 @@ import { entities } from '~backend/barrels/entities';
 import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
+import { wrapper } from '~backend/barrels/wrapper';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
@@ -93,7 +94,7 @@ export class RegisterUserController {
     }
 
     let payload: apiToBackend.ToBackendRegisterUserResponsePayload = {
-      userId: newUser.user_id
+      user: wrapper.wrapToApiUser(newUser)
     };
 
     return payload;

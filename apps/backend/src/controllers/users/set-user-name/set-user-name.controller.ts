@@ -33,7 +33,7 @@ export class SetUserNameController {
       member.last_name = lastName;
     });
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         users: [user],
@@ -42,7 +42,7 @@ export class SetUserNameController {
     });
 
     let payload: apiToBackend.ToBackendSetUserNameResponsePayload = {
-      user: wrapper.wrapToApiUser(records.users[0])
+      user: wrapper.wrapToApiUser(user)
     };
 
     return payload;

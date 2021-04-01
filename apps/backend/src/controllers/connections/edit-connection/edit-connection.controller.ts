@@ -57,7 +57,7 @@ export class EditConnectionController {
     connection.bigquery_credentials = bigqueryCredentials;
     connection.bigquery_query_size_limit_gb = bigqueryQuerySizeLimitGb;
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         connections: [connection]
@@ -65,7 +65,7 @@ export class EditConnectionController {
     });
 
     let payload: apiToBackend.ToBackendEditConnectionResponsePayload = {
-      connection: wrapper.wrapToApiConnection(records.connections[0])
+      connection: wrapper.wrapToApiConnection(connection)
     };
 
     return payload;

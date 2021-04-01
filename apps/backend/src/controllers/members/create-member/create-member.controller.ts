@@ -113,7 +113,7 @@ export class CreateMemberController {
       branchId: common.BRANCH_MASTER
     });
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: false,
       records: {
         members: [newMember],
@@ -138,7 +138,7 @@ export class CreateMemberController {
       text: `Project url: ${link}`
     });
 
-    let apiMember = wrapper.wrapToApiMember(records.members[0]);
+    let apiMember = wrapper.wrapToApiMember(newMember);
 
     if (common.isDefined(avatar)) {
       apiMember.avatarSmall = avatar.avatar_small;

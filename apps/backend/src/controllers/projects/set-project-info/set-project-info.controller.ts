@@ -37,7 +37,7 @@ export class SetProjectInfoController {
       project.name = name;
     }
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         projects: [project]
@@ -45,7 +45,7 @@ export class SetProjectInfoController {
     });
 
     let payload: apiToBackend.ToBackendSetProjectInfoResponsePayload = {
-      project: wrapper.wrapToApiProject(records.projects[0])
+      project: wrapper.wrapToApiProject(project)
     };
 
     return payload;

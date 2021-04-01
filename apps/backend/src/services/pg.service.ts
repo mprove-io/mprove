@@ -36,14 +36,12 @@ export class PgService {
     query.last_run_by = userId;
     query.last_run_ts = helper.makeTs();
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         queries: [query]
       }
     });
-
-    let recordsQuery = records.queries.find(x => x.query_id === query.query_id);
 
     let pgp = pgPromise({ noWarnings: true });
     let pgDb = pgp(cn);
@@ -100,6 +98,6 @@ export class PgService {
         }
       });
 
-    return recordsQuery;
+    return query;
   }
 }

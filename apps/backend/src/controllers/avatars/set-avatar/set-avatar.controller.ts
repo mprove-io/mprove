@@ -39,7 +39,7 @@ export class SetAvatarController {
       });
     }
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         avatars: [avatar]
@@ -47,7 +47,7 @@ export class SetAvatarController {
     });
 
     let payload: apiToBackend.ToBackendSetAvatarResponsePayload = {
-      avatarSmall: records.avatars[0].avatar_small
+      avatarSmall: avatar.avatar_small
     };
 
     return payload;

@@ -33,7 +33,7 @@ export class SetUserTimezoneController {
       member.timezone = timezone;
     });
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         users: [user],
@@ -42,7 +42,7 @@ export class SetUserTimezoneController {
     });
 
     let payload: apiToBackend.ToBackendSetUserTimezoneResponsePayload = {
-      user: wrapper.wrapToApiUser(records.users[0])
+      user: wrapper.wrapToApiUser(user)
     };
 
     return payload;

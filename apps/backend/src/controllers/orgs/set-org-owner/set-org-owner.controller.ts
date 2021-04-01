@@ -45,7 +45,7 @@ export class SetOrgOwnerController {
     org.owner_id = newOwner.user_id;
     org.owner_email = newOwner.email;
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         orgs: [org]
@@ -53,7 +53,7 @@ export class SetOrgOwnerController {
     });
 
     let payload: apiToBackend.ToBackendSetOrgOwnerResponsePayload = {
-      org: wrapper.wrapToApiOrg(records.orgs[0])
+      org: wrapper.wrapToApiOrg(org)
     };
 
     return payload;

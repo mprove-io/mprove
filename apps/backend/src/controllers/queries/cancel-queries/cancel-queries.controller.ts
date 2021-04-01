@@ -96,7 +96,7 @@ export class CancelQueriesController {
       query.postgres_query_job_id = null;
     });
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         queries: queries
@@ -104,7 +104,7 @@ export class CancelQueriesController {
     });
 
     let payload: apiToBackend.ToBackendCancelQueriesResponsePayload = {
-      canceledQueries: records.queries.map(x => wrapper.wrapToApiQuery(x))
+      canceledQueries: queries.map(x => wrapper.wrapToApiQuery(x))
     };
 
     return payload;

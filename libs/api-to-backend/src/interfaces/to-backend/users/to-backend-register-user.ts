@@ -18,8 +18,9 @@ export class ToBackendRegisterUserRequest extends ToBackendRequest {
 }
 
 export class ToBackendRegisterUserResponsePayload {
-  @IsString()
-  userId: string;
+  @ValidateNested()
+  @Type(() => common.User)
+  user: common.User;
 }
 
 export class ToBackendRegisterUserResponse extends common.MyResponse {

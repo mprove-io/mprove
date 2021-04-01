@@ -87,7 +87,7 @@ export class RenameCatalogNodeController {
 
     branch.struct_id = structId;
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         branches: [branch]

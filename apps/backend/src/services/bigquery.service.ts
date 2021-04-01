@@ -52,16 +52,14 @@ export class BigQueryService {
       query.bigquery_query_job_id = queryJob.id;
     }
 
-    let records = await this.dbService.writeRecords({
+    await this.dbService.writeRecords({
       modify: true,
       records: {
         queries: [query]
       }
     });
 
-    let recordsQuery = records.queries.find(x => x.query_id === query.query_id);
-
-    return recordsQuery;
+    return query;
   }
 
   async runQueryDry(item: {
