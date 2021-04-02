@@ -2,17 +2,25 @@
   "npmScope": "mprove",
   "affected": { "defaultBase": "ak" },
   "implicitDependencies": {
+    "_.env": "*",
+    ".dockerignore": "*",
+    ".env": "*",
+    ".envrc": "*",
     ".eslintignore": "*",
     ".eslintrc.js": "*",
     "ava-js-e2e.config.js": ["backend", "blockml", "disk"],
     "ava-js.config.js": ["backend", "blockml", "disk"],
     "ava.config.js": ["backend", "blockml", "disk"],
-    "tailwind.config.js": ["front"],
+    "jest.config.js": ["front"],
+    "jest.preset.js": ["front"],
     "nx.json": "*",
+    "orm.config.yml": ["backend"],
     "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "tailwind.config.js": ["front"],
     "tsconfig.base.json": "*",
     "tsconfig.json": "*",
-    "workspace.json": "*"
+    "workspace.json": "*",
+    "yarn.lock": "*"
   },
   "tasksRunnerOptions": {
     "default": {
