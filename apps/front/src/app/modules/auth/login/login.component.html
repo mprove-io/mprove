@@ -1,6 +1,28 @@
-<div>Log In</div>
-<form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-  <input type="email" formControlName="email" />
-  <input type="password" formControlName="password" />
-  <button type="submit" [disabled]="!loginForm.valid">Log In</button>
-</form>
+<div class="bg-b1 flex justify-center items-center h-full">
+  <form
+    class="flex flex-col w-96 space-y-5"
+    [formGroup]="loginForm"
+    (ngSubmit)="onLogin()"
+  >
+    <div class="text-t1 text-2xl text-center">Log In</div>
+    <input
+      class="form-input rounded border-r1 focus:border-r2"
+      type="email"
+      formControlName="email"
+      placeholder="Email"
+    />
+    <input
+      class="form-input rounded border-r1 focus:border-r2"
+      type="password"
+      formControlName="password"
+      placeholder="Password"
+    />
+    <div class="text-t2 text-right">Forgot Password</div>
+    <button
+      class="py-3 bg-b2 text-white rounded"
+      type="submit"
+      [disabled]="!loginForm.valid"
+      >Log In</button
+    >
+  </form>
+</div>

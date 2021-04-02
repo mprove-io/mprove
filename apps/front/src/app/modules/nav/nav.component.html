@@ -1,10 +1,12 @@
-<div class="flex items-center justify-between">
-  <div></div>
-  <div>
-    <button (click)="signUp()">Sign Up</button>
-    <button (click)="login()">Log In</button>
+<div class="h-screen flex flex-col">
+  <div class="flex items-center justify-between h-14 shadow relative">
+    <div></div>
+    <div class="divide-x-2">
+      <button (click)="signUp()">Sign Up</button>
+      <button (click)="login()">Log In</button>
+    </div>
   </div>
-</div>
-<div class="bg-red-50">
-  <router-outlet></router-outlet>
+  <div class="flex-1">
+    <router-outlet></router-outlet>
+  </div>
 </div>

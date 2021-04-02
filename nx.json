@@ -4,9 +4,10 @@
   "implicitDependencies": {
     ".eslintignore": "*",
     ".eslintrc.js": "*",
-    "ava-js-e2e.config.js": "*",
-    "ava-js.config.js": "*",
-    "ava.config.js": "*",
+    "ava-js-e2e.config.js": ["backend", "blockml", "disk"],
+    "ava-js.config.js": ["backend", "blockml", "disk"],
+    "ava.config.js": ["backend", "blockml", "disk"],
+    "tailwind.config.js": ["front"],
     "nx.json": "*",
     "package.json": { "dependencies": "*", "devDependencies": "*" },
     "tsconfig.base.json": "*",
