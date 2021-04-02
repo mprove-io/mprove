@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './modules/auth/auth.module';
 import { NavModule } from './modules/nav/nav.module';
+import { NavbarModule } from './modules/navbar/navbar.module';
 import { ProfileModule } from './modules/profile/profile.module';
 
 @NgModule({
@@ -15,6 +16,7 @@ import { ProfileModule } from './modules/profile/profile.module';
     HttpClientModule,
     AuthModule,
     NavModule,
+    NavbarModule,
     ProfileModule
   ],
   providers: [],

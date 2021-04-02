@@ -5,6 +5,7 @@ import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
 import { VerifyEmailComponent } from './modules/auth/verify-email/verify-email.component';
 import { NavComponent } from './modules/nav/nav.component';
+import { NavbarComponent } from './modules/navbar/navbar.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 
 const routes: Routes = [
@@ -29,7 +30,13 @@ const routes: Routes = [
       {
         component: LoginComponent,
         path: constants.PATH_LOGIN
-      },
+      }
+    ]
+  },
+  {
+    component: NavbarComponent,
+    path: '',
+    children: [
       {
         component: ProfileComponent,
         path: constants.PATH_PROFILE

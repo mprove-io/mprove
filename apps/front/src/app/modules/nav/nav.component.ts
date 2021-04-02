@@ -1,14 +1,18 @@
 import { Component } from '@angular/core';
-import { AuthService } from '~front/app/services/auth.service';
+import { Router } from '@angular/router';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'mprove-nav',
   templateUrl: './nav.component.html'
 })
 export class NavComponent {
-  constructor(private authService: AuthService) {}
+  constructor(private router: Router) {}
 
-  isAuthenticated() {
-    return this.authService.authenticated();
+  signUp() {
+    this.router.navigate([constants.PATH_REGISTER]);
+  }
+  login() {
+    this.router.navigate([constants.PATH_LOGIN]);
   }
 }

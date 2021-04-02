@@ -1,2 +1,10 @@
-<div>Nav</div>
-<router-outlet></router-outlet>
+<div class="flex items-center justify-between">
+  <div></div>
+  <div>
+    <button (click)="signUp()">Sign Up</button>
+    <button (click)="login()">Log In</button>
+  </div>
+</div>
+<div class="bg-red-50">
+  <router-outlet></router-outlet>
+</div>
