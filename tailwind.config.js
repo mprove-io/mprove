@@ -6,6 +6,9 @@ module.exports = {
     extend: {
       boxShadow: {
         m1: '0px 1px 4px rgba(21,34,50,0.078)'
+      },
+      fontFamily: {
+        ms: ['Montserrat', 'sans-serif']
       }
     },
     backgroundColor: theme => ({

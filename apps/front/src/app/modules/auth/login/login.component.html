@@ -4,22 +4,24 @@
     [formGroup]="loginForm"
     (ngSubmit)="onLogin()"
   >
-    <div class="text-t1 text-2xl text-center">Log In</div>
+    <div class="mb-3 text-t1 text-2xl text-center font-ms font-semibold"
+      >Log In</div
+    >
     <input
-      class="form-input rounded border-r1 focus:border-r2"
+      class="form-input rounded border-r1 focus:border-r2 font-ms font-regular"
       type="email"
       formControlName="email"
       placeholder="Email"
     />
     <input
-      class="form-input rounded border-r1 focus:border-r2"
+      class="form-input rounded border-r1 focus:border-r2 font-ms font-regular"
       type="password"
       formControlName="password"
       placeholder="Password"
     />
-    <div class="text-t2 text-right">Forgot Password</div>
+    <div class="text-t2 text-right font-ms font-regular">Forgot Password</div>
     <button
-      class="py-3 bg-b2 text-white rounded"
+      class="py-3 bg-b2 text-white rounded font-ms font-medium"
       type="submit"
       [disabled]="!loginForm.valid"
       >Log In</button
