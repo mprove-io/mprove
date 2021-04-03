@@ -1,12 +1,33 @@
 <div class="h-screen flex flex-col">
-  <div class="flex items-center justify-between h-14 shadow relative">
+  <div class="flex items-center justify-between h-14 shadow relative px-6">
     <div></div>
-    <div class="divide-x-2">
-      <button (click)="signUp()">Sign Up</button>
-      <button (click)="login()">Log In</button>
+    <div class="flex">
+      <button
+        class="font-ms font-medium focus:outline-none w-28 h-8"
+        [ngClass]="{
+          'font-bold': lastUrl === pathRegister,
+          'font-medium': lastUrl === pathLogin
+        }"
+        (click)="signUp()"
+        >Sign Up</button
+      >
+      <div class="flex divide-x-4">
+        <div></div>
+        <div></div>
+      </div>
+      <button
+        class="font-ms font-medium focus:outline-none w-24 h-8"
+        [ngClass]="{
+          'font-bold': lastUrl === pathLogin,
+          'font-medium': lastUrl === pathRegister
+        }"
+        (click)="login()"
+        >Log In</button
+      >
     </div>
   </div>
   <div class="flex-1">
     <router-outlet></router-outlet>
   </div>
 </div>
+<div *ngIf="routerEvents$ | async"></div>

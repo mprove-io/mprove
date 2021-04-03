@@ -1,13 +1,31 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter, tap } from 'rxjs/operators';
 import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'mprove-nav',
   templateUrl: './nav.component.html'
 })
-export class NavComponent {
-  constructor(private router: Router) {}
+export class NavComponent implements OnInit {
+  currentRoute: string;
+
+  pathRegister = constants.PATH_REGISTER;
+  pathLogin = constants.PATH_LOGIN;
+  lastUrl: string;
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: NavigationEnd) => {
+      this.lastUrl = x.url.split('/')[1];
+    })
+  );
+
+  constructor(private router: Router, private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.lastUrl = this.router.url.split('/')[1];
+  }
 
   signUp() {
     this.router.navigate([constants.PATH_REGISTER]);
