@@ -8,7 +8,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'mprove-register',
+  selector: 'm-register',
   templateUrl: './register.component.html'
 })
 export class RegisterComponent {

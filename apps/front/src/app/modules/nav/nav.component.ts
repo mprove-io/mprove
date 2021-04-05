@@ -4,7 +4,7 @@ import { filter, tap } from 'rxjs/operators';
 import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'mprove-nav',
+  selector: 'm-nav',
   templateUrl: './nav.component.html'
 })
 export class NavComponent implements OnInit {

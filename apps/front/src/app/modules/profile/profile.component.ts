@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '~front/app/services/auth.service';
 
 @Component({
-  selector: 'mprove-profile',
+  selector: 'm-profile',
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {

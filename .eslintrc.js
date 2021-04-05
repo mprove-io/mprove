@@ -60,11 +60,11 @@ module.exports = {
         ],
         '@angular-eslint/directive-selector': [
           'error',
-          { type: 'attribute', prefix: 'mprove', style: 'camelCase' }
+          { type: 'attribute', prefix: 'm', style: 'camelCase' }
         ],
         '@angular-eslint/component-selector': [
           'error',
-          { type: 'element', prefix: 'mprove', style: 'kebab-case' }
+          { type: 'element', prefix: 'm', style: 'kebab-case' }
         ],
         quotes: 0,
         'max-len': 0,

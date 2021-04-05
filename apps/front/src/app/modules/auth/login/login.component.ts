@@ -9,7 +9,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'mprove-login',
+  selector: 'm-login',
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {

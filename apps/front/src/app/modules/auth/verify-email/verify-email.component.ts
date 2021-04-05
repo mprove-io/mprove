@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { UserQuery } from '~front/app/queries/user.query';
 
 @Component({
-  selector: 'mprove-verify-email',
+  selector: 'm-verify-email',
   templateUrl: './verify-email.component.html'
 })
 export class VerifyEmailComponent {
