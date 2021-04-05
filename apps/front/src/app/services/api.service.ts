@@ -151,6 +151,8 @@ export class ApiService {
     //   e: <any>null
     // };
 
+    throw new Error('123');
+
     if (res.status !== 201) {
       // throw new MyError(
       //   Object.assign({}, resData, {
@@ -178,7 +180,7 @@ export class ApiService {
   }
 
   private catchErr(e) {
-    console.log(e);
+    // console.log(e);
 
     // let eData = {
     //   request: {
