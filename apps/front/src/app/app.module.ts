@@ -1,6 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './modules/auth/auth.module';
@@ -17,8 +19,11 @@ import { ProfileModule } from './modules/profile/profile.module';
     AuthModule,
     NavModule,
     NavbarModule,
-    ProfileModule
+    ProfileModule,
+    NgxSpinnerModule,
+    BrowserAnimationsModule
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
   bootstrap: [AppComponent]
 })

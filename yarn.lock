@@ -191,7 +191,7 @@
   dependencies:
     eslint-scope "^5.1.0"
 
-"@angular/animations@^11.2.0":
+"@angular/animations@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-11.2.7.tgz#b0e6fd30fa1ac284be7d1c1815e721b38085ef41"
   integrity sha512-i+H5vC2/NUqZwGeoDHpLDn81R3prQGwT1AajMqFw9D3U6VX6G5EfYmn1zLvu8nL2r4cYMsSQ/LKnKl2jnQX0sQ==
@@ -207,14 +207,14 @@
   optionalDependencies:
     parse5 "^5.0.0"
 
-"@angular/common@^11.2.0":
+"@angular/common@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/common/-/common-11.2.7.tgz#4e631f322c28df99c695d4c2d925ce40ac3b942f"
   integrity sha512-+bz/0TYzl/CiQCS1L2iwC7uiV+d+PnhvCs6scu66YKnBK2gSKxdypZZ3UZNbWDyYonAYmghEt+xHvKVpZgzhbw==
   dependencies:
     tslib "^2.0.0"
 
-"@angular/compiler-cli@^11.2.0":
+"@angular/compiler-cli@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-11.2.7.tgz#4cf8e01caf2663747e09f7bdbb2593bc528ae985"
   integrity sha512-pKIL2uwmjWYMZekZCVE6swKOBuB37DkV+oB75AMeW1agWSp7HkAQotRI10UeoG9YNPWTs6GaTWKCsfWB6WVOxw==
@@ -235,47 +235,47 @@
     tslib "^2.0.0"
     yargs "^16.1.1"
 
-"@angular/compiler@^11.2.0":
+"@angular/compiler@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-11.2.7.tgz#aeeed88bed201691559271dc9b9eb54d9eba8234"
   integrity sha512-VikD6d33TjBYqLfECzVSbD/T7DFmNRx9rA4b2R2RNrQ3efW7zUJjJMsYwuQEWhYe0dFsBfMKCb/+yCjH9DYTFg==
   dependencies:
     tslib "^2.0.0"
 
-"@angular/core@^11.2.0":
+"@angular/core@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/core/-/core-11.2.7.tgz#f1329c9367f97ab7d057d2ffc5454821a35dc78a"
   integrity sha512-d/d8mPh90eEs01eWzR2sNOD6aVsv69DCeYWDdNqABe+AnrE/xmNvggeAOMcREEwQB9e6liJgmHbMLktVaMhqyg==
   dependencies:
     tslib "^2.0.0"
 
-"@angular/forms@^11.2.0":
+"@angular/forms@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-11.2.7.tgz#42c47906123397e6adee8b3d02f389c28ea942a2"
   integrity sha512-MhNRZ0Su0z9Lof5wxJbaslIdEbG1C39RJ/xyeIm6+vZ5eCXnC3DqPuD4UIoWCgDQXFZW2pjdIePpLLYZnRNGRg==
   dependencies:
     tslib "^2.0.0"
 
-"@angular/language-service@^11.2.0":
+"@angular/language-service@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-11.2.7.tgz#bacc1940168ed0b1154192215524bed2246dac97"
   integrity sha512-ew8ebVZy7m7XFjn93llEaxQYmwKEXdT2eFBuC7PuHea1mTfl18njOVwIuzeAdbqPL6z7oYgjpE4u/3vH5nuXoQ==
 
-"@angular/platform-browser-dynamic@^11.2.0":
+"@angular/platform-browser-dynamic@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-11.2.7.tgz#8dc997d72bb19d1e48b6307645d557bb4d249aef"
   integrity sha512-gVYcqvoj4IIeiVSxv5+83tkYFRgVYtaLrMY9ClVVw3WZDb61qfv2FStYAJbzBfJOLtYoyTB0t30z3db9kwxzBA==
   dependencies:
     tslib "^2.0.0"
 
-"@angular/platform-browser@^11.2.0":
+"@angular/platform-browser@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-11.2.7.tgz#0526c8f2b43f969f68a8477dcd540b300c7cdeda"
   integrity sha512-b2n8WX4CuNQg4L9t4URqXNoJCdvLqZlDjTW0ClngOGBUMIh2bD4ripJA+1RfkWzpEs+zQM0JKNTmVoXn/Zo1bg==
   dependencies:
     tslib "^2.0.0"
 
-"@angular/router@^11.2.0":
+"@angular/router@11.2.7":
   version "11.2.7"
   resolved "https://registry.yarnpkg.com/@angular/router/-/router-11.2.7.tgz#924609812a3469d0073da5c33207d517183243d9"
   integrity sha512-Uf+DYpusYo/TMRz9NK3LS1cVuFnbbbSQYwIJNY7v9YX1aFdDBKVVOQJGfs3CTVv44J1VVoJsLWfbIJw2pGUIuQ==
@@ -10730,6 +10730,13 @@ next-tick@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
+
+ngx-spinner@^11.0.1:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-spinner/-/ngx-spinner-11.0.1.tgz#6a28953741e4954e61a5bafb6b59d6e35606e5b6"
+  integrity sha512-fHCCxlF1kgEJqeKlgJDJdts/YLM3YH1qrBYcOiqo4b3dKZM1Vzv6yGMEekjsO1tETrmvvqOqsDH1gjJh3QVqjQ==
+  dependencies:
+    tslib "^2.0.0"
 
 nice-try@^1.0.4:
   version "1.0.5"

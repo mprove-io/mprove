@@ -5,10 +5,16 @@ import {
   HttpResponse
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-// import { TdLoadingService } from '@covalent/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 // import { Store } from '@ngrx/store';
-import { Observable, throwError, TimeoutError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import {
+  combineLatest,
+  Observable,
+  throwError,
+  TimeoutError,
+  timer
+} from 'rxjs';
+import { catchError, finalize, map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { environment } from '~front/environments/environment';
@@ -17,23 +23,22 @@ import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  // noMainLoading: string[] = [
-  //   api.PATH_CONFIRM,
-  //   api.PATH_PONG,
-  //   api.PATH_CREATE_MCONFIG,
-  //   api.PATH_CREATE_MCONFIG_AND_QUERY,
-  //   api.PATH_CREATE_DASHBOARD,
-  //   api.PATH_CHECK_PROJECT_ID_UNIQUE,
-  //   api.PATH_RUN_QUERIES_DRY
-  // ];
+  noMainLoading: string[] = [
+    // api.PATH_CONFIRM,
+    // api.PATH_PONG,
+    // api.PATH_CREATE_MCONFIG,
+    // api.PATH_CREATE_MCONFIG_AND_QUERY,
+    // api.PATH_CREATE_DASHBOARD,
+    // api.PATH_CHECK_PROJECT_ID_UNIQUE,
+    // api.PATH_RUN_QUERIES_DRY
+  ];
 
   constructor(
     // private printer: PrinterService,
     private authHttpClient: HttpClient,
-    // ,
     // private store: Store<interfaces.AppState>,
-    // private loadingService: TdLoadingService,
-    private authService: AuthService
+    private authService: AuthService,
+    private spinner: NgxSpinnerService
   ) {}
 
   req(
@@ -96,10 +101,6 @@ export class ApiService {
     //   .pipe(take(1))
     //   .subscribe(x => (initId = x));
 
-    // if (!this.noMainLoading.includes(path)) {
-    //   this.loadingService.register('app');
-    // }
-
     let url = environment.httpUrl + '/' + pathInfoName;
 
     let body: apiToBackend.ToBackendRequest = {
@@ -118,99 +119,107 @@ export class ApiService {
       // responseType: 'json',
     };
 
-    return this.authHttpClient.request('post', url, options).pipe(
-      map((res: HttpResponse<any>) => {
-        console.log(res);
+    if (!this.noMainLoading.includes(pathInfoName)) {
+      this.spinner.show();
+    }
 
-        // let resData = {
-        //   request: {
-        //     url: url,
-        //     options: options
-        //   },
-        //   response: res,
-        //   e: <any>null
-        // };
-
-        if (res.status !== 201) {
-          // throw new MyError(
-          //   Object.assign({}, resData, {
-          //     name: `[MyHttpService] ${res.status} - response code is not 200`,
-          //     message: undefined
-          //   })
-          // );
-        } else if (!res.body.info) {
-          // throw new MyError(
-          //   Object.assign({}, resData, {
-          //     name: `[MyHttpService] ServerResponse does not have info`,
-          //     message: undefined
-          //   })
-          // );
-        } else if (res.body.info.status !== common.ResponseInfoStatusEnum.Ok) {
-          // throw new MyError(
-          //   Object.assign({}, resData, {
-          //     name: `[MyHttpService] ServerResponse status is ${res.body.info.status} (not Ok)`,
-          //     message: undefined
-          //   })
-          // );
-        } else {
-          // if (!this.noMainLoading.includes(path)) {
-          //   setTimeout(() => this.loadingService.resolve('app'), 100);
-          // }
-
-          return res.body;
+    return combineLatest([
+      timer(1500),
+      this.authHttpClient.request('post', url, options)
+    ]).pipe(
+      map(x => x[1]),
+      map((res: HttpResponse<any>) => this.mapRes(res)),
+      catchError(e => this.catchErr(e)),
+      finalize(() => {
+        if (!this.noMainLoading.includes(pathInfoName)) {
+          // setTimeout(() => this.spinner.hide(), 100);
+          this.spinner.hide();
         }
-      }),
-      // timeout(600000),
-      // retry(1),
-      catchError(e => {
-        console.log(e);
-
-        // let eData = {
-        //   request: {
-        //     url: url,
-        //     options: options
-        //   },
-        //   response: <any>null,
-        //   e: e
-        // };
-
-        // if (path !== '/confirm' && path !== '/pong') {
-        //   setTimeout(() => this.loadingService.resolve('app'), 100);
-        // }
-
-        if (e.data) {
-          // return throwError(e);
-        } else if (e instanceof HttpErrorResponse) {
-          // return throwError(
-          //   new MyError(
-          //     Object.assign({}, eData, {
-          //       name: `[MyHttpService] instance of HttpErrorResponse, Code is ${e.status}`,
-          //       message: undefined
-          //     })
-          //   )
-          // );
-        } else if (e instanceof TimeoutError) {
-          // return throwError(
-          //   new MyError(
-          //     Object.assign({}, eData, {
-          //       name: `[MyHttpService] Delay exceeded`,
-          //       message: undefined
-          //     })
-          //   )
-          // );
-        } else {
-          // return throwError(
-          //   new MyError(
-          //     Object.assign({}, eData, {
-          //       name: `[MyHttpService] Other`,
-          //       message: undefined
-          //     })
-          //   )
-          // );
-        }
-
-        return throwError(e.message);
       })
     );
+  }
+
+  private mapRes(res) {
+    // console.log(res);
+
+    // let resData = {
+    //   request: {
+    //     url: url,
+    //     options: options
+    //   },
+    //   response: res,
+    //   e: <any>null
+    // };
+
+    if (res.status !== 201) {
+      // throw new MyError(
+      //   Object.assign({}, resData, {
+      //     name: `[MyHttpService] ${res.status} - response code is not 200`,
+      //     message: undefined
+      //   })
+      // );
+    } else if (!res.body.info) {
+      // throw new MyError(
+      //   Object.assign({}, resData, {
+      //     name: `[MyHttpService] ServerResponse does not have info`,
+      //     message: undefined
+      //   })
+      // );
+    } else if (res.body.info.status !== common.ResponseInfoStatusEnum.Ok) {
+      // throw new MyError(
+      //   Object.assign({}, resData, {
+      //     name: `[MyHttpService] ServerResponse status is ${res.body.info.status} (not Ok)`,
+      //     message: undefined
+      //   })
+      // );
+    }
+
+    return res.body;
+  }
+
+  private catchErr(e) {
+    console.log(e);
+
+    // let eData = {
+    //   request: {
+    //     url: url,
+    //     options: options
+    //   },
+    //   response: <any>null,
+    //   e: e
+    // };
+
+    if (e.data) {
+      // return throwError(e);
+    } else if (e instanceof HttpErrorResponse) {
+      // return throwError(
+      //   new MyError(
+      //     Object.assign({}, eData, {
+      //       name: `[MyHttpService] instance of HttpErrorResponse, Code is ${e.status}`,
+      //       message: undefined
+      //     })
+      //   )
+      // );
+    } else if (e instanceof TimeoutError) {
+      // return throwError(
+      //   new MyError(
+      //     Object.assign({}, eData, {
+      //       name: `[MyHttpService] Delay exceeded`,
+      //       message: undefined
+      //     })
+      //   )
+      // );
+    } else {
+      // return throwError(
+      //   new MyError(
+      //     Object.assign({}, eData, {
+      //       name: `[MyHttpService] Other`,
+      //       message: undefined
+      //     })
+      //   )
+      // );
+    }
+
+    return throwError(e.message);
   }
 }
