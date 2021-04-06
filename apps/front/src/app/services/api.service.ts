@@ -16,7 +16,9 @@ import {
 import { catchError, finalize, map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { enums } from '~front/barrels/enums';
 import { environment } from '~front/environments/environment';
+import { ClientError } from '../models/client-error';
 import { AuthService } from './auth.service';
 // import { PrinterService } from '@app/services/printer.service';
 
@@ -126,8 +128,7 @@ export class ApiService {
       timer(1500),
       this.authHttpClient.request('post', url, options)
     ]).pipe(
-      map(x => x[1]),
-      map(res => this.mapRes(res)),
+      map(x => this.mapRes(x[1])),
       catchError(e => this.catchErr(e)),
       finalize(() => {
         if (!this.noMainLoading.includes(pathInfoName)) {
@@ -150,15 +151,22 @@ export class ApiService {
     //   e: <any>null
     // };
 
-    throw new Error('123');
+    console.log(res);
 
-    if (res.status !== 201) {
+    if (res.status !== 200) {
       // throw new MyError(
       //   Object.assign({}, resData, {
       //     name: `[MyHttpService] ${res.status} - response code is not 200`,
       //     message: undefined
       //   })
       // );
+      throw new ClientError({
+        message: enums.ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201,
+        // reqInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        reqTraceId: '1234e2341e',
+        // reqIdempotencyKey: '5324g5235g34',
+        response: res
+      });
     } else if (!res.body.info) {
       // throw new MyError(
       //   Object.assign({}, resData, {

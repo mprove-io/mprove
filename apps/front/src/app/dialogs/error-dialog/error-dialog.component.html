@@ -1,17 +1,17 @@
 <div class="flex flex-col h-80 bg-white m-10">
-  <div class="flex justify-center text-2xl text-t1 font-ms font-semibold mb-3"
+  <div class="flex justify-center text-2xl text-t1 font-ms font-semibold mb-8"
     >Error</div
   >
   <div class="flex-1 overflow-auto">
     <div class="grid grid-cols-4 gap-4 text-t3 font-ms">
       <div class="">Message</div>
-      <div class="col-span-3">{{ ref.data?.message }}</div>
+      <div class="col-span-3">{{ ref.data?.message || ref.data }}</div>
       <div class="">Path</div>
-      <div class="col-span-3">{{ ref.data?.reqPath }}</div>
+      <div class="col-span-3">{{ ref.data?.reqInfoName }}</div>
       <div class="">TraceId</div>
       <div class="col-span-3">{{ ref.data?.reqTraceId }}</div>
       <div class="">Idemp</div>
-      <div class="col-span-3">{{ ref.data?.reqIdemp }}</div>
+      <div class="col-span-3">{{ ref.data?.reqIdempotencyKey }}</div>
     </div>
   </div>
 

@@ -14,7 +14,6 @@ const routes: Routes = [
     redirectTo: constants.PATH_LOGIN,
     pathMatch: 'full'
   },
-
   {
     component: NavComponent,
     path: '',

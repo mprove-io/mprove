@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
 
-export type UserState = common.User;
+export class UserState extends common.User {}
 
 export function createInitialState(): UserState {
   return {

@@ -11,7 +11,20 @@ export class AppComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    throw Error('123');
     this.authService.startWatch();
+
+    // throw new ClientError({
+    //   message: '12345',
+    //   originalError: 'oerr',
+    //   reqInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+    //   reqTraceId: '1234e2341e',
+    //   reqIdempotencyKey: '5324g5235g34',
+    //   response: {
+    //     a: 'gdfgdsfg',
+    //     b: 'lmdglklkgcdfklgm'
+    //   }
+    // });
+
+    // throw new Error('123');
   }
 }
