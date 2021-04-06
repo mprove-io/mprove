@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import * as y from 'js-yaml';
+import { load } from 'js-yaml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -29,7 +29,7 @@ export function yamlToObjects(
     // try YAML parsing
     let breakOnYamlParsing: boolean;
     try {
-      y.safeLoad(x.content);
+      load(x.content);
     } catch (e) {
       item.errors.push(
         new BmError({
@@ -82,11 +82,11 @@ export function yamlToObjects(
       }
     });
 
-    let parsedYaml;
+    let parsedYaml: any;
 
     let breakOnProcessedYamlParsing: boolean;
     try {
-      parsedYaml = y.safeLoad(processedString);
+      parsedYaml = load(processedString);
     } catch (e) {
       item.errors.push(
         new BmError({

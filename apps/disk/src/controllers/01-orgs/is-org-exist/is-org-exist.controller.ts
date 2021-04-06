@@ -13,7 +13,7 @@ export class IsOrgExistController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrgExist)
-  async isOrgExist(@Body() body) {
+  async isOrgExist(@Body() body: any) {
     try {
       let payload = await this.isOrgExistService.process(body);
 

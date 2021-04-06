@@ -13,7 +13,7 @@ export class DeleteProjectController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteProject)
-  async deleteProject(@Body() body) {
+  async deleteProject(@Body() body: any) {
     try {
       let payload = await this.deleteProjectService.process(body);
 

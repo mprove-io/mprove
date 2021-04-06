@@ -13,7 +13,7 @@ export class PullRepoController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPullRepo)
-  async pullRepo(@Body() body) {
+  async pullRepo(@Body() body: any) {
     try {
       let payload = await this.pullRepoService.process(body);
 

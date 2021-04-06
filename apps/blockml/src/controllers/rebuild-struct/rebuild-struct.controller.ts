@@ -13,7 +13,7 @@ export class RebuildStructController {
   ) {}
 
   @Post(apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct)
-  async rebuildStruct(@Body() body) {
+  async rebuildStruct(@Body() body: any) {
     try {
       let payload = await this.structService.rebuild(body);
 

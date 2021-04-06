@@ -13,7 +13,7 @@ export class GetFileController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetFile)
-  async getFile(@Body() body) {
+  async getFile(@Body() body: any) {
     try {
       let payload = await this.getFileService.process(body);
 

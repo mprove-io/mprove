@@ -13,7 +13,7 @@ export class ProcessDashboardController {
   ) {}
 
   @Post(apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessDashboard)
-  async processDashboard(@Body() body) {
+  async processDashboard(@Body() body: any) {
     try {
       let payload = await this.processDashboardService.process(body);
 

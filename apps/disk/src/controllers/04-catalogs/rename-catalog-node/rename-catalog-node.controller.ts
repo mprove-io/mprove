@@ -13,7 +13,7 @@ export class RenameCatalogNodeController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode)
-  async renameCatalogNode(@Body() body) {
+  async renameCatalogNode(@Body() body: any) {
     try {
       let payload = await this.renameCatalogNodeService.process(body);
 

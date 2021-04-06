@@ -41,7 +41,7 @@ export function checkJoinsCyclesAndToposort(
       let cycles: any[] = g.getCycles();
 
       cycles.forEach(cycle => {
-        let cycledNames: string[] = cycle.map(c => c.name);
+        let cycledNames: string[] = cycle.map((c: any) => c.name);
 
         let lines: interfaces.BmErrorLine[] = [];
 
@@ -75,8 +75,8 @@ export function checkJoinsCyclesAndToposort(
       });
     } else {
       // not cyclic - toposort
-      let graph = [];
-      let zeroDepsJoins = [];
+      let graph: string[][] = [];
+      let zeroDepsJoins: string[] = [];
 
       Object.keys(x.joinsDoubleDepsAfterSingles).forEach(alias => {
         Object.keys(x.joinsDoubleDepsAfterSingles[alias]).forEach(as => {

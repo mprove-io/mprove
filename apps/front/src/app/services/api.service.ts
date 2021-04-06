@@ -1,8 +1,7 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders,
-  HttpResponse
+  HttpHeaders
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -128,7 +127,7 @@ export class ApiService {
       this.authHttpClient.request('post', url, options)
     ]).pipe(
       map(x => x[1]),
-      map((res: HttpResponse<any>) => this.mapRes(res)),
+      map(res => this.mapRes(res)),
       catchError(e => this.catchErr(e)),
       finalize(() => {
         if (!this.noMainLoading.includes(pathInfoName)) {
@@ -139,7 +138,7 @@ export class ApiService {
     );
   }
 
-  private mapRes(res) {
+  private mapRes(res: any) {
     // console.log(res);
 
     // let resData = {
@@ -179,7 +178,7 @@ export class ApiService {
     return res.body;
   }
 
-  private catchErr(e) {
+  private catchErr(e: any) {
     // console.log(e);
 
     // let eData = {

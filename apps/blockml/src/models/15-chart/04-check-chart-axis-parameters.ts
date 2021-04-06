@@ -53,7 +53,10 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   'inside Report Axis',
                 lines: [
                   {
-                    line: report.axis[parameter + constants.LINE_NUM],
+                    line: report.axis[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -63,14 +66,21 @@ export function checkChartAxisParameters<T extends types.dzType>(
             return;
           }
 
-          if (Array.isArray(report.axis[parameter])) {
+          if (
+            Array.isArray(
+              report.axis[parameter as keyof interfaces.ChartAxis] as any
+            )
+          ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_AXIS_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a List`,
                 lines: [
                   {
-                    line: report.axis[parameter + constants.LINE_NUM],
+                    line: report.axis[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -80,14 +90,20 @@ export function checkChartAxisParameters<T extends types.dzType>(
             return;
           }
 
-          if (report.axis[parameter]?.constructor === Object) {
+          if (
+            (report.axis[parameter as keyof interfaces.ChartAxis] as any)
+              ?.constructor === Object
+          ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_AXIS_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a Dictionary`,
                 lines: [
                   {
-                    line: report.axis[parameter + constants.LINE_NUM],
+                    line: report.axis[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -105,7 +121,7 @@ export function checkChartAxisParameters<T extends types.dzType>(
               enums.ParameterEnum.ShowYAxisLabel.toString(),
               enums.ParameterEnum.ShowAxis.toString()
             ].indexOf(parameter) > -1 &&
-            !report.axis[parameter]
+            !(report.axis[parameter as keyof interfaces.ChartAxis] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
@@ -117,7 +133,10 @@ export function checkChartAxisParameters<T extends types.dzType>(
                   '"true" or "false" if specified',
                 lines: [
                   {
-                    line: report.axis[parameter + constants.LINE_NUM],
+                    line: report.axis[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartAxis
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }

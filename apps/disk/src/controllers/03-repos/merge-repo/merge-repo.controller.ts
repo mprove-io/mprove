@@ -13,7 +13,7 @@ export class MergeRepoController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMergeRepo)
-  async mergeRepo(@Body() body) {
+  async mergeRepo(@Body() body: any) {
     try {
       let payload = await this.mergeRepoService.process(body);
 

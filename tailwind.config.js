@@ -19,7 +19,8 @@ module.exports = {
     textColor: theme => ({
       ...theme('colors'),
       t1: '#00030B',
-      t2: '#465EDC'
+      t2: '#465EDC',
+      t3: '#4D4F5C'
     }),
     borderColor: theme => ({
       ...theme('colors'),

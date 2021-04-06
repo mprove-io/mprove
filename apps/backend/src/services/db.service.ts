@@ -17,7 +17,7 @@ export class DbService {
     let { records, modify } = item;
 
     await retry(
-      async bail => {
+      async (bail: any) => {
         records =
           modify === true
             ? await this.modify({ records: records })
@@ -28,7 +28,7 @@ export class DbService {
         minTimeout: 1000, // ms (default 1000)
         factor: 1, // (default 2)
         randomize: true, // 1 to 2 (default true)
-        onRetry: e => {
+        onRetry: (e: any) => {
           let serverError = new common.ServerError({
             message: apiToBackend.ErEnum.BACKEND_TRANSACTION_RETRY,
             originalError: e
@@ -52,7 +52,10 @@ export class DbService {
     let newServerTs = helper.makeTs();
 
     Object.keys(records).forEach(key => {
-      helper.refreshServerTs(records[key], newServerTs);
+      helper.refreshServerTs(
+        records[key as keyof interfaces.Records] as any,
+        newServerTs
+      );
     });
 
     await this.connection.transaction(async manager => {
@@ -185,7 +188,10 @@ export class DbService {
     let newServerTs = helper.makeTs();
 
     Object.keys(records).forEach(key => {
-      helper.refreshServerTs(records[key], newServerTs);
+      helper.refreshServerTs(
+        records[key as keyof interfaces.Records] as any,
+        newServerTs
+      );
     });
 
     await this.connection.transaction(async manager => {

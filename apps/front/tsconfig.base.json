@@ -13,6 +13,10 @@
       "@mprove/common": ["../../libs/common/src/_index.ts"]
     }
   },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictTemplates": true
+  },
   "include": [],
   "files": []
 }

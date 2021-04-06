@@ -13,7 +13,7 @@ export class DeleteOrgController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg)
-  async deleteOrg(@Body() body) {
+  async deleteOrg(@Body() body: any) {
     try {
       let payload = await this.deleteOrgService.process(body);
 

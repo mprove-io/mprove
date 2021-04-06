@@ -1,8 +1,25 @@
-<div>Error-dialog</div>
-<div>{{ ref.data }}</div>
-<!-- <div>fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 fj945867fj934576fj45 </div> -->
-<button
-  class="py-3 bg-b2 text-white rounded font-ms font-medium"
-  (click)="onOk()"
-  >Ok</button
->
+<div class="flex flex-col h-80 bg-white m-10">
+  <div class="flex justify-center text-2xl text-t1 font-ms font-semibold mb-3"
+    >Error</div
+  >
+  <div class="flex-1 overflow-auto">
+    <div class="grid grid-cols-4 gap-4 text-t3 font-ms">
+      <div class="">Message</div>
+      <div class="col-span-3">{{ ref.data?.message }}</div>
+      <div class="">Path</div>
+      <div class="col-span-3">{{ ref.data?.reqPath }}</div>
+      <div class="">TraceId</div>
+      <div class="col-span-3">{{ ref.data?.reqTraceId }}</div>
+      <div class="">Idemp</div>
+      <div class="col-span-3">{{ ref.data?.reqIdemp }}</div>
+    </div>
+  </div>
+
+  <div class="flex mt-9 justify-center">
+    <button
+      class="py-3 bg-b2 w-28 text-white rounded font-ms font-medium"
+      (click)="onOk()"
+      >Ok</button
+    >
+  </div>
+</div>

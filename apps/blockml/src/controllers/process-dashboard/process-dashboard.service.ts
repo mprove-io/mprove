@@ -38,10 +38,12 @@ export class ProcessDashboardService {
       weekStart,
       udfsDict,
       modelContents: models,
-      dashboardContent: dashboard,
+      dashboardContent: dashboardContent,
       newDashboardId,
       newDashboardFields
     } = reqValid.payload;
+
+    let dashboard: interfaces.Dashboard = dashboardContent;
 
     let dashboardFilters: interfaces.FilterBricksDictionary = {};
 

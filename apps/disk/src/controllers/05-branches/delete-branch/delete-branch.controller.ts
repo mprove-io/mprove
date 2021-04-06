@@ -13,7 +13,7 @@ export class DeleteBranchController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch)
-  async deleteBranch(@Body() body) {
+  async deleteBranch(@Body() body: any) {
     try {
       let payload = await this.deleteBranchService.process(body);
 

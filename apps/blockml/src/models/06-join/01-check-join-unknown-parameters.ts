@@ -35,7 +35,9 @@ export function checkJoinUnknownParameters(
         .forEach(parameter => {
           if (
             parameter === enums.ParameterEnum.Hidden.toString() &&
-            !join[parameter].toString().match(common.MyRegex.TRUE_FALSE())
+            !join[parameter as keyof interfaces.Join]
+              .toString()
+              .match(common.MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
@@ -43,7 +45,9 @@ export function checkJoinUnknownParameters(
                 message: `parameter "${enums.ParameterEnum.Hidden}" must be \'true\' or \'false\' if specified`,
                 lines: [
                   {
-                    line: join[parameter + constants.LINE_NUM],
+                    line: join[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Join
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -73,7 +77,9 @@ export function checkJoinUnknownParameters(
                   `with "${enums.ParameterEnum.FromView}"`,
                 lines: [
                   {
-                    line: join[parameter + constants.LINE_NUM],
+                    line: join[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Join
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -106,7 +112,9 @@ export function checkJoinUnknownParameters(
                   `with "${enums.ParameterEnum.JoinView}"`,
                 lines: [
                   {
-                    line: join[parameter + constants.LINE_NUM],
+                    line: join[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Join
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -117,7 +125,7 @@ export function checkJoinUnknownParameters(
           }
 
           if (
-            Array.isArray(join[parameter]) &&
+            Array.isArray(join[parameter as keyof interfaces.Join]) &&
             [
               enums.ParameterEnum.HideFields.toString(),
               enums.ParameterEnum.ShowFields.toString()
@@ -129,24 +137,9 @@ export function checkJoinUnknownParameters(
                 message: `parameter '${parameter}' must have a single value`,
                 lines: [
                   {
-                    line: join[parameter + constants.LINE_NUM],
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (join[parameter]?.constructor === Object) {
-            item.errors.push(
-              new BmError({
-                title: enums.ErTitleEnum.JOIN_UNEXPECTED_DICTIONARY,
-                message: `parameter '${parameter}' must have a single value`,
-                lines: [
-                  {
-                    line: join[parameter + constants.LINE_NUM],
+                    line: join[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Join
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -157,7 +150,28 @@ export function checkJoinUnknownParameters(
           }
 
           if (
-            !Array.isArray(join[parameter]) &&
+            join[parameter as keyof interfaces.Join]?.constructor === Object
+          ) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.JOIN_UNEXPECTED_DICTIONARY,
+                message: `parameter '${parameter}' must have a single value`,
+                lines: [
+                  {
+                    line: join[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Join
+                    ] as number,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          if (
+            !Array.isArray(join[parameter as keyof interfaces.Join]) &&
             [
               enums.ParameterEnum.HideFields.toString(),
               enums.ParameterEnum.ShowFields.toString()
@@ -169,7 +183,9 @@ export function checkJoinUnknownParameters(
                 message: `parameter "${parameter}" must be a List`,
                 lines: [
                   {
-                    line: join[parameter + constants.LINE_NUM],
+                    line: join[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Join
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }

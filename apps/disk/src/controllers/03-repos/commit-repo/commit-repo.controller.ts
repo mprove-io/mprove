@@ -13,7 +13,7 @@ export class CommitRepoController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo)
-  async commitRepo(@Body() body) {
+  async commitRepo(@Body() body: any) {
     try {
       let payload = await this.commitRepoService.process(body);
 

@@ -60,7 +60,7 @@ export class AppInterceptor implements NestInterceptor {
     if (common.isDefined(idemp) && common.isUndefined(idemp.resp)) {
       try {
         await retry(
-          async (bail, num) => {
+          async (bail: any, num: number) => {
             let idempX = await this.idempsRepository.findOne({
               idempotency_key: iKey,
               user_id: userId
@@ -77,7 +77,7 @@ export class AppInterceptor implements NestInterceptor {
             minTimeout: 3000, // ms (default 1000)
             factor: 1, // (default 2)
             randomize: false, // 1 to 2 (default true)
-            onRetry: e => {
+            onRetry: (e: any) => {
               let serverError = new common.ServerError({
                 message: apiToBackend.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
                 originalError: e

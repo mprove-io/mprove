@@ -13,7 +13,7 @@ export class ProcessQueryController {
   ) {}
 
   @Post(apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery)
-  async processQuery(@Body() body) {
+  async processQuery(@Body() body: any) {
     try {
       let payload = await this.processQueryService.process(body);
 

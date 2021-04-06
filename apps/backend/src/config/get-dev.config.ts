@@ -4,7 +4,7 @@ import { common } from '~backend/barrels/common';
 import { enums } from '~backend/barrels/enums';
 import { interfaces } from '~backend/barrels/interfaces';
 
-export function getDevConfig(envFilePath) {
+export function getDevConfig(envFilePath: any) {
   let envFile = parse(fse.readFileSync(envFilePath));
 
   let commonConfig: common.Config = common.getCommonConfig(envFile);

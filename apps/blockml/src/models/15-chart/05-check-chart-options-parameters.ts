@@ -82,7 +82,10 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   'inside Report options',
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -92,14 +95,21 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             return;
           }
 
-          if (Array.isArray(report.options[parameter])) {
+          if (
+            Array.isArray(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            )
+          ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a list`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -109,14 +119,20 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             return;
           }
 
-          if (report.options[parameter]?.constructor === Object) {
+          if (
+            (report.options[parameter as keyof interfaces.ChartOptions] as any)
+              ?.constructor === Object
+          ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a dictionary`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -141,7 +157,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.ExplodeSlices.toString(),
               enums.ParameterEnum.Labels.toString()
             ].indexOf(parameter) > -1 &&
-            !report.options[parameter]
+            !(report.options[parameter as keyof interfaces.ChartOptions] as any)
               .toString()
               .match(common.MyRegex.TRUE_FALSE())
           ) {
@@ -153,7 +169,10 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   '"true" or "false" if specified',
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -181,17 +200,25 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ChartInterpolationEnum.Step,
               common.ChartInterpolationEnum.StepAfter,
               common.ChartInterpolationEnum.StepBefore
-            ].indexOf(report.options[parameter]) < 0
+            ].indexOf(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_INTERPOLATION,
                 message:
-                  `"${report.options[parameter]}" is not valid ` +
-                  `"${parameter}" value`,
+                  `"${
+                    report.options[
+                      parameter as keyof interfaces.ChartOptions
+                    ] as any
+                  }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -219,17 +246,25 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               common.ChartColorSchemeEnum.Picnic,
               common.ChartColorSchemeEnum.Solar,
               common.ChartColorSchemeEnum.Vivid
-            ].indexOf(report.options[parameter]) < 0
+            ].indexOf(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_COLOR_SCHEME,
                 message:
-                  `"${report.options[parameter]}" is not valid ` +
-                  `"${parameter}" value`,
+                  `"${
+                    report.options[
+                      parameter as keyof interfaces.ChartOptions
+                    ] as any
+                  }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -244,17 +279,25 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             [
               common.ChartSchemeTypeEnum.Linear,
               common.ChartSchemeTypeEnum.Ordinal
-            ].indexOf(report.options[parameter]) < 0
+            ].indexOf(
+              report.options[parameter as keyof interfaces.ChartOptions] as any
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_SCHEME_TYPE,
                 message:
-                  `"${report.options[parameter]}" is not valid ` +
-                  `"${parameter}" value`,
+                  `"${
+                    report.options[
+                      parameter as keyof interfaces.ChartOptions
+                    ] as any
+                  }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -276,9 +319,9 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.Min.toString(),
               enums.ParameterEnum.Max.toString()
             ].indexOf(parameter) > -1 &&
-            !report.options[parameter].match(
-              common.MyRegex.CAPTURE_DIGITS_START_TO_END_G()
-            )
+            !(report.options[
+              parameter as keyof interfaces.ChartOptions
+            ] as any).match(common.MyRegex.CAPTURE_DIGITS_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
@@ -286,11 +329,17 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                   enums.ErTitleEnum
                     .REPORT_OPTIONS_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
                 message:
-                  `"${report.options[parameter]}" is not valid ` +
-                  `"${parameter}" value`,
+                  `"${
+                    report.options[
+                      parameter as keyof interfaces.ChartOptions
+                    ] as any
+                  }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -305,20 +354,26 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.ArcWidth.toString(),
               enums.ParameterEnum.RangeFillOpacity.toString()
             ].indexOf(parameter) > -1 &&
-            !report.options[parameter].match(
-              common.MyRegex.CAPTURE_FLOAT_START_TO_END_G()
-            )
+            !(report.options[
+              parameter as keyof interfaces.ChartOptions
+            ] as any).match(common.MyRegex.CAPTURE_FLOAT_START_TO_END_G())
           ) {
             item.errors.push(
               new BmError({
                 title:
                   enums.ErTitleEnum.REPORT_OPTIONS_PARAMETER_MUST_BE_A_NUMBER,
                 message:
-                  `"${report.options[parameter]}" is not valid ` +
-                  `"${parameter}" value`,
+                  `"${
+                    report.options[
+                      parameter as keyof interfaces.ChartOptions
+                    ] as any
+                  }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -335,7 +390,9 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.YScaleMin.toString(),
               enums.ParameterEnum.YScaleMax.toString()
             ].indexOf(parameter) > -1 &&
-            !report.options[parameter].match(
+            !(report.options[
+              parameter as keyof interfaces.ChartOptions
+            ] as any).match(
               common.MyRegex.CAPTURE_MINUS_DIGITS_START_TO_END_G()
             )
           ) {
@@ -344,11 +401,17 @@ export function checkChartOptionsParameters<T extends types.dzType>(
                 title:
                   enums.ErTitleEnum.REPORT_OPTIONS_PARAMETER_MUST_BE_AN_INTEGER,
                 message:
-                  `"${report.options[parameter]}" is not valid ` +
-                  `"${parameter}" value`,
+                  `"${
+                    report.options[
+                      parameter as keyof interfaces.ChartOptions
+                    ] as any
+                  }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -365,18 +428,28 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.TextColor.toString(),
               enums.ParameterEnum.EmptyColor.toString()
             ].indexOf(parameter) > -1 &&
-            !report.options[parameter].match(common.MyRegex.CAPTURE_RGB_G()) &&
-            !report.options[parameter].match(common.MyRegex.CAPTURE_RGBA_G())
+            !(report.options[
+              parameter as keyof interfaces.ChartOptions
+            ] as any).match(common.MyRegex.CAPTURE_RGB_G()) &&
+            !(report.options[
+              parameter as keyof interfaces.ChartOptions
+            ] as any).match(common.MyRegex.CAPTURE_RGBA_G())
           ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_OPTIONS_WRONG_COLOR,
                 message:
-                  `"${report.options[parameter]}" is not valid ` +
-                  `"${parameter}" value`,
+                  `"${
+                    report.options[
+                      parameter as keyof interfaces.ChartOptions
+                    ] as any
+                  }" is not valid ` + `"${parameter}" value`,
                 lines: [
                   {
-                    line: report.options[parameter + constants.LINE_NUM],
+                    line: report.options[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartOptions
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }

@@ -13,7 +13,7 @@ export class GetCatalogNodesController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes)
-  async getCatalogNodes(@Body() body) {
+  async getCatalogNodes(@Body() body: any) {
     try {
       let payload = await this.getCatalogNodesService.process(body);
 

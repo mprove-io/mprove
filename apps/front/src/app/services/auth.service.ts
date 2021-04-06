@@ -20,7 +20,7 @@ export class AuthService {
   authenticated() {
     let jwtHelperService = new JwtHelperService();
 
-    let token: string = localStorage.getItem('token');
+    let token = localStorage.getItem('token');
 
     let isAuthenticated: boolean = common.isDefined(token)
       ? !jwtHelperService.isTokenExpired(token)
@@ -69,6 +69,6 @@ export class AuthService {
     if (common.isDefined(this.checkAuthSubscription)) {
       this.checkAuthSubscription.unsubscribe();
     }
-    this.checkAuthSubscription = null;
+    this.checkAuthSubscription = undefined;
   }
 }

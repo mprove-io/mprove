@@ -13,7 +13,7 @@ export class GenSqlController {
   ) {}
 
   @Post(apiToBlockml.ToBlockmlWorkerRequestInfoNameEnum.ToBlockmlWorkerGenSql)
-  async genSql(@Body() body) {
+  async genSql(@Body() body: any) {
     try {
       let payload = await this.genSqlService.gen(body);
 

@@ -32,7 +32,7 @@ export class StructsService {
   }
 
   async removeOrphanedStructs() {
-    let rawData;
+    let rawData: any;
 
     await this.connection.transaction(async manager => {
       rawData = await manager.query(`
@@ -44,7 +44,8 @@ WHERE b.branch_id is NULL
 `);
     });
 
-    let orphanedStructIds = rawData.map(x => x.struct_id);
+    let orphanedStructIds: string[] =
+      rawData?.map((x: any) => x.struct_id) || [];
 
     if (orphanedStructIds.length > 0) {
       await this.structsRepository.delete({ struct_id: In(orphanedStructIds) });

@@ -13,7 +13,7 @@ export class CreateFolderController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFolder)
-  async createFolder(@Body() body) {
+  async createFolder(@Body() body: any) {
     try {
       let payload = await this.createFolderService.process(body);
 

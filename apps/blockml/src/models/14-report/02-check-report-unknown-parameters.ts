@@ -54,7 +54,10 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                 message: `parameter "${parameter}" can not be used inside Report`,
                 lines: [
                   {
-                    line: report[parameter + constants.LINE_NUM],
+                    line: report[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.Report
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -66,7 +69,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
 
           if (
             [enums.ParameterEnum.Select.toString()].indexOf(parameter) < 0 &&
-            Array.isArray(report[parameter])
+            Array.isArray(report[parameter as keyof interfaces.Report])
           ) {
             item.errors.push(
               new BmError({
@@ -74,7 +77,10 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                 message: `parameter "${parameter}" can not be a list`,
                 lines: [
                   {
-                    line: report[parameter + constants.LINE_NUM],
+                    line: report[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.Report
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -85,7 +91,8 @@ export function checkReportUnknownParameters<T extends types.dzType>(
           }
 
           if (
-            report[parameter]?.constructor === Object &&
+            report[parameter as keyof interfaces.Report]?.constructor ===
+              Object &&
             [
               enums.ParameterEnum.DefaultFilters.toString(),
               enums.ParameterEnum.ListenFilters.toString(),
@@ -102,7 +109,10 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                 message: `parameter "${parameter}" can not be a dictionary`,
                 lines: [
                   {
-                    line: report[parameter + constants.LINE_NUM],
+                    line: report[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.Report
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -114,7 +124,7 @@ export function checkReportUnknownParameters<T extends types.dzType>(
 
           if (
             [enums.ParameterEnum.Select.toString()].indexOf(parameter) > -1 &&
-            !Array.isArray(report[parameter])
+            !Array.isArray(report[parameter as keyof interfaces.Report])
           ) {
             item.errors.push(
               new BmError({
@@ -122,7 +132,10 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                 message: `parameter "${parameter}" must be a list`,
                 lines: [
                   {
-                    line: report[parameter + constants.LINE_NUM],
+                    line: report[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.Report
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -133,8 +146,9 @@ export function checkReportUnknownParameters<T extends types.dzType>(
           }
 
           if (
-            common.isDefined(report[parameter]) &&
-            report[parameter].constructor !== Object &&
+            common.isDefined(report[parameter as keyof interfaces.Report]) &&
+            report[parameter as keyof interfaces.Report].constructor !==
+              Object &&
             [
               enums.ParameterEnum.DefaultFilters.toString(),
               enums.ParameterEnum.ListenFilters.toString(),
@@ -150,7 +164,10 @@ export function checkReportUnknownParameters<T extends types.dzType>(
                 message: `parameter "${parameter}" must be a dictionary`,
                 lines: [
                   {
-                    line: report[parameter + constants.LINE_NUM],
+                    line: report[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.Report
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }

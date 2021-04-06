@@ -27,13 +27,19 @@ export function checkJoinHideShowFields(
 
     x.joins.forEach(join => {
       let hideFieldsErrorLine = {
-        line: join[enums.ParameterEnum.HideFields + constants.LINE_NUM],
+        line: join[
+          (enums.ParameterEnum.HideFields +
+            constants.LINE_NUM) as keyof interfaces.Join
+        ] as number,
         name: x.fileName,
         path: x.filePath
       };
 
       let showFieldsErrorLine = {
-        line: join[enums.ParameterEnum.ShowFields + constants.LINE_NUM],
+        line: join[
+          (enums.ParameterEnum.ShowFields +
+            constants.LINE_NUM) as keyof interfaces.Join
+        ] as number,
         name: x.fileName,
         path: x.filePath
       };

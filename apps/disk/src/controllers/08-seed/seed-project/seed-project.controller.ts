@@ -13,7 +13,7 @@ export class SeedProjectController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject)
-  async seedProject(@Body() body) {
+  async seedProject(@Body() body: any) {
     try {
       let payload = await this.seedProjectService.process(body);
 

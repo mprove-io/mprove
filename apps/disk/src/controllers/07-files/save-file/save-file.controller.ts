@@ -13,7 +13,7 @@ export class SaveFileController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile)
-  async saveFile(@Body() body) {
+  async saveFile(@Body() body: any) {
     try {
       let payload = await this.saveFileService.process(body);
 

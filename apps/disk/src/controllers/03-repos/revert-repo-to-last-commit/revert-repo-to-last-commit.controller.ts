@@ -13,7 +13,7 @@ export class RevertRepoToLastCommitController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit)
-  async revertRepoToLastCommit(@Body() body) {
+  async revertRepoToLastCommit(@Body() body: any) {
     try {
       let payload = await this.revertRepoToLastCommitService.process(body);
 

@@ -1,4 +1,4 @@
-import { BigQuery } from '@google-cloud/bigquery';
+import { BigQuery, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -45,8 +45,8 @@ export class BigQueryService {
       });
 
     if (common.isDefined(createQueryJobItem)) {
-      let queryJob = createQueryJobItem[0];
-      let createQueryJobApiResponse = createQueryJobItem[1];
+      let queryJob = (createQueryJobItem as JobResponse)[0];
+      let createQueryJobApiResponse = (createQueryJobItem as JobResponse)[1];
 
       query.status = common.QueryStatusEnum.Running;
       query.bigquery_query_job_id = queryJob.id;
@@ -92,7 +92,7 @@ export class BigQueryService {
       });
 
     if (common.isDefined(createQueryJobItem)) {
-      let createQueryJobApiResponse = createQueryJobItem[1];
+      let createQueryJobApiResponse = (createQueryJobItem as JobResponse)[1];
 
       let estimate = Number(
         createQueryJobApiResponse.statistics.totalBytesProcessed

@@ -13,7 +13,7 @@ export class DeleteDevRepoController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo)
-  async deleteDevRepo(@Body() body) {
+  async deleteDevRepo(@Body() body: any) {
     try {
       let payload = await this.deleteDevRepoService.process(body);
 

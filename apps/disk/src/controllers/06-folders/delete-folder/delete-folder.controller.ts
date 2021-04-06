@@ -13,7 +13,7 @@ export class DeleteFolderController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFolder)
-  async deleteFolder(@Body() body) {
+  async deleteFolder(@Body() body: any) {
     try {
       let payload = await this.deleteFolderService.process(body);
 

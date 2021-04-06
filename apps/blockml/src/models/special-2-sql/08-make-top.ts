@@ -56,8 +56,8 @@ export function makeTop(item: {
   if (Object.keys(withParts).length > 0) {
     let partNamesSorted: string[] = [];
 
-    let graph = [];
-    let zeroDepsViewPartNames = [];
+    let graph: any[] = [];
+    let zeroDepsViewPartNames: any[] = [];
 
     Object.keys(withParts).forEach(viewPartName => {
       Object.keys(withParts[viewPartName].deps).forEach(dep => {

@@ -35,7 +35,7 @@ export function checkViewCycles(
     let cycles: any[] = g.getCycles();
 
     cycles.forEach(cycle => {
-      let cycledNames: string[] = cycle.map(c => c.name);
+      let cycledNames: string[] = cycle.map((c: any) => c.name);
 
       let lines: interfaces.BmErrorLine[] = [];
 

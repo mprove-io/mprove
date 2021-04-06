@@ -53,7 +53,10 @@ export function checkChartData<T extends types.dzType>(
                   'inside Report Data',
                 lines: [
                   {
-                    line: report.data[parameter + constants.LINE_NUM],
+                    line: report.data[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartData
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -64,7 +67,9 @@ export function checkChartData<T extends types.dzType>(
           }
 
           if (
-            Array.isArray(report.data[parameter]) &&
+            Array.isArray(
+              report.data[parameter as keyof interfaces.ChartData] as any
+            ) &&
             [
               enums.ParameterEnum.YFields.toString(),
               enums.ParameterEnum.HideColumns.toString()
@@ -76,7 +81,10 @@ export function checkChartData<T extends types.dzType>(
                 message: `parameter "${parameter}" can not be a List`,
                 lines: [
                   {
-                    line: report.data[parameter + constants.LINE_NUM],
+                    line: report.data[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartData
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -86,14 +94,20 @@ export function checkChartData<T extends types.dzType>(
             return;
           }
 
-          if (report.data[parameter]?.constructor === Object) {
+          if (
+            (report.data[parameter as keyof interfaces.ChartData] as any)
+              ?.constructor === Object
+          ) {
             item.errors.push(
               new BmError({
                 title: enums.ErTitleEnum.REPORT_DATA_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a Dictionary`,
                 lines: [
                   {
-                    line: report.data[parameter + constants.LINE_NUM],
+                    line: report.data[
+                      (parameter +
+                        constants.LINE_NUM) as keyof interfaces.ChartData
+                    ] as number,
                     name: x.fileName,
                     path: x.filePath
                   }

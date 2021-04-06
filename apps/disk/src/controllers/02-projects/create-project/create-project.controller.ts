@@ -13,7 +13,7 @@ export class CreateProjectController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject)
-  async createProject(@Body() body) {
+  async createProject(@Body() body: any) {
     try {
       let payload = await this.createProjectService.process(body);
 

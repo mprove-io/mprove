@@ -47,10 +47,10 @@ export function checkListenFilters<T extends types.dzType>(
               `"${enums.ParameterEnum.ListenFilters}" parameter for reports`,
             lines: [
               {
-                line:
-                  report[
-                    enums.ParameterEnum.ListenFilters + constants.LINE_NUM
-                  ],
+                line: report[
+                  (enums.ParameterEnum.ListenFilters +
+                    constants.LINE_NUM) as keyof interfaces.Report
+                ] as number,
                 name: x.fileName,
                 path: x.filePath
               }

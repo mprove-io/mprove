@@ -13,7 +13,7 @@ export class CreateOrgController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg)
-  async createOrg(@Body() body) {
+  async createOrg(@Body() body: any) {
     try {
       let payload = await this.createOrgService.process(body);
 

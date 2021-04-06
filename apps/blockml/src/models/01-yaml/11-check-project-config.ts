@@ -42,7 +42,9 @@ export function checkProjectConfig(
 
         if (
           parameter === enums.ParameterEnum.AllowTimezones.toString() &&
-          !conf[parameter].toString().match(common.MyRegex.TRUE_FALSE())
+          !conf[parameter as keyof interfaces.Conf]
+            .toString()
+            .match(common.MyRegex.TRUE_FALSE())
         ) {
           item.errors.push(
             new BmError({
@@ -50,7 +52,9 @@ export function checkProjectConfig(
               message: `parameter "${parameter}:" must be "true" or "false" if specified`,
               lines: [
                 {
-                  line: conf[parameter + constants.LINE_NUM],
+                  line: conf[
+                    (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                  ] as number,
                   name: conf.fileName,
                   path: conf.filePath
                 }
@@ -64,9 +68,11 @@ export function checkProjectConfig(
         if (
           parameter === enums.ParameterEnum.WeekStart.toString() &&
           [
-            common.ProjectWeekStartEnum.Sunday,
-            common.ProjectWeekStartEnum.Monday
-          ].indexOf(conf[parameter].toString().toLowerCase()) < 0
+            common.ProjectWeekStartEnum.Sunday.toString(),
+            common.ProjectWeekStartEnum.Monday.toString()
+          ].indexOf(
+            conf[parameter as keyof interfaces.Conf].toString().toLowerCase()
+          ) < 0
         ) {
           item.errors.push(
             new BmError({
@@ -74,7 +80,9 @@ export function checkProjectConfig(
               message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
               lines: [
                 {
-                  line: conf[parameter + constants.LINE_NUM],
+                  line: conf[
+                    (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                  ] as number,
                   name: conf.fileName,
                   path: conf.filePath
                 }
@@ -87,7 +95,9 @@ export function checkProjectConfig(
 
         if (
           parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
-          helper.isTimezoneValid(conf[parameter].toString()) === false
+          helper.isTimezoneValid(
+            conf[parameter as keyof interfaces.Conf].toString()
+          ) === false
         ) {
           item.errors.push(
             new BmError({
@@ -95,7 +105,9 @@ export function checkProjectConfig(
               message: `wrong ${enums.ParameterEnum.DefaultTimezone} value`,
               lines: [
                 {
-                  line: conf[parameter + constants.LINE_NUM],
+                  line: conf[
+                    (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                  ] as number,
                   name: conf.fileName,
                   path: conf.filePath
                 }

@@ -13,7 +13,7 @@ export class IsProjectExistController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist)
-  async isProjectExist(@Body() body) {
+  async isProjectExist(@Body() body: any) {
     try {
       let payload = await this.isProjectExistService.process(body);
 

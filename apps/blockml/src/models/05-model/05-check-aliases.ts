@@ -31,7 +31,7 @@ export function checkAliases(
         let lineNums: number[] = [];
         Object.keys(j)
           .filter(p => p.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-          .forEach(l => lineNums.push(j[l]));
+          .forEach(l => lineNums.push(j[l as keyof interfaces.Join] as number));
 
         item.errors.push(
           new BmError({

@@ -13,7 +13,7 @@ export class CreateFileController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile)
-  async createFile(@Body() body) {
+  async createFile(@Body() body: any) {
     try {
       let payload = await this.createFileService.process(body);
 

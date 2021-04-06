@@ -40,7 +40,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
 
       let fieldKeysLineNums: number[] = Object.keys(field)
         .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-        .map(y => field[y]);
+        .map(y => field[y as keyof interfaces.FieldAny] as number);
 
       if (declarations.length === 0) {
         item.errors.push(
@@ -78,14 +78,21 @@ export function checkFieldDeclaration<T extends types.vmdType>(
 
       let declaration = declarations[0];
 
-      if (field[declaration].match(common.MyRegex.CAPTURE_SPECIAL_CHARS_G())) {
+      if (
+        (field[declaration as keyof interfaces.FieldAny] as any).match(
+          common.MyRegex.CAPTURE_SPECIAL_CHARS_G()
+        )
+      ) {
         item.errors.push(
           new BmError({
             title: enums.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,
             message: `parameter "${declaration}" contains wrong characters or whitespace`,
             lines: [
               {
-                line: field[declaration + constants.LINE_NUM],
+                line: field[
+                  (declaration +
+                    constants.LINE_NUM) as keyof interfaces.FieldAny
+                ] as number,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -96,7 +103,7 @@ export function checkFieldDeclaration<T extends types.vmdType>(
       }
 
       let fieldClass = declaration;
-      let fieldName = field[fieldClass];
+      let fieldName = field[fieldClass as keyof interfaces.FieldAny] as string;
 
       if (
         x.fileExt === common.FileExtensionEnum.Dashboard &&
@@ -108,7 +115,10 @@ export function checkFieldDeclaration<T extends types.vmdType>(
             message: `Found field '${fieldName}' that is ${fieldClass}`,
             lines: [
               {
-                line: field[declaration + constants.LINE_NUM],
+                line: field[
+                  (declaration +
+                    constants.LINE_NUM) as keyof interfaces.FieldAny
+                ] as number,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -118,10 +128,14 @@ export function checkFieldDeclaration<T extends types.vmdType>(
         return;
       }
 
-      let fieldNameLineNum = field[fieldClass + constants.LINE_NUM];
+      let fieldNameLineNum = field[
+        (fieldClass + constants.LINE_NUM) as keyof interfaces.FieldAny
+      ] as number;
 
-      delete field[fieldClass];
-      delete field[fieldClass + constants.LINE_NUM];
+      delete field[fieldClass as keyof interfaces.FieldAny];
+      delete field[
+        (fieldClass + constants.LINE_NUM) as keyof interfaces.FieldAny
+      ];
 
       let newFieldProps: interfaces.FieldAny = {
         name: fieldName,

@@ -20,7 +20,7 @@ if (!fse.pathExistsSync(targetPath)) {
   updateTarget(targetPath, source, target);
 }
 
-function updateTarget(tPath, s, t) {
+function updateTarget(tPath: string, s: any, t: any) {
   // s.name = 'preparedName';
   // s.version = 'preparedVersion';
 

@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
+    throw Error('123');
     this.authService.startWatch();
   }
 }

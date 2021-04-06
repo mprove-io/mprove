@@ -16,7 +16,7 @@ export class NavComponent implements OnInit {
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
-    tap((x: NavigationEnd) => {
+    tap((x: any) => {
       this.lastUrl = x.url.split('/')[1];
     })
   );

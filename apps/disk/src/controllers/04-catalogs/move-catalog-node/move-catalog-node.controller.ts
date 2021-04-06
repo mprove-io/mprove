@@ -13,7 +13,7 @@ export class MoveCatalogNodeController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode)
-  async moveCatalogNode(@Body() body) {
+  async moveCatalogNode(@Body() body: any) {
     try {
       let payload = await this.moveCatalogNodeService.process(body);
 

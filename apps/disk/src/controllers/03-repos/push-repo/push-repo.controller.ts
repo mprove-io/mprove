@@ -13,7 +13,7 @@ export class PushRepoController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPushRepo)
-  async pushRepo(@Body() body) {
+  async pushRepo(@Body() body: any) {
     try {
       let payload = await this.pushRepoService.process(body);
 

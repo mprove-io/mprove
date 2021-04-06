@@ -57,7 +57,7 @@ export class DeleteUserController {
             is_admin: common.BoolEnum.TRUE
           });
 
-    let erProjectIds = [];
+    let erProjectIds: string[] = [];
 
     userAdminProjectIds.forEach(projectId => {
       let projectAdmins = admins.filter(x => x.project_id === projectId);

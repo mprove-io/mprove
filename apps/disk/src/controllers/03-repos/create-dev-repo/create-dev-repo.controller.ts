@@ -13,7 +13,7 @@ export class CreateDevRepoController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo)
-  async createDevRepo(@Body() body) {
+  async createDevRepo(@Body() body: any) {
     try {
       let payload = await this.createDevRepoService.process(body);
 

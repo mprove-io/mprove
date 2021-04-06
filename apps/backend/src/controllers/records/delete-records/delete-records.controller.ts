@@ -50,8 +50,8 @@ export class DeleteRecordsController {
     projectIds = projectIds || [];
     orgIds = orgIds || [];
 
-    let structIds = [];
-    let userIds = [];
+    let structIds: string[] = [];
+    let userIds: string[] = [];
 
     if (common.isDefined(projectNames) && projectNames.length > 0) {
       let projects = await this.projectsRepository.find({

@@ -13,7 +13,7 @@ export class DeleteFileController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile)
-  async deleteFile(@Body() body) {
+  async deleteFile(@Body() body: any) {
     try {
       let payload = await this.deleteFileService.process(body);
 

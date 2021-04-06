@@ -30,7 +30,7 @@ export async function prepareTest(item: {
     imports: [AppModule]
   })
     .overrideProvider(ConfigService)
-    .useValue({ get: key => mockConfig[key] })
+    .useValue({ get: (key: any) => mockConfig[key as keyof interfaces.Config] })
     .overrideProvider(MailerService)
     .useValue({ sendMail: async () => {} })
     .compile();

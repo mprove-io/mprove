@@ -11,26 +11,12 @@ export class ErrorHandlerService extends ErrorHandler {
   handleError(err: any): void {
     let dialog = this.injector.get(DialogService);
 
-    // let dataName = err.data ? err.data.name : `[MyErrorHandler] ${err.message}`;
-    // let dataMessage = err.data ? err.data.message : undefined;
-    // let dataEventId = err.data ? err.data.event_id : undefined;
-
-    // let data = {
-    //   name: dataName,
-    //   message: dataMessage,
-    //   event_id: dataEventId
-    // };
-
-    // let openDialogs = this.dialog.openDialogs;
-
-    // if (openDialogs.length < 5) {
     this.ngZone.run(() => {
       dialog.open(ErrorDialogComponent, {
         data: err.data,
         enableClose: false
       });
     });
-    // }
 
     super.handleError(err);
   }

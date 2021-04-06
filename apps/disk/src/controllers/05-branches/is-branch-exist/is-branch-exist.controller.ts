@@ -13,7 +13,7 @@ export class IsBranchExistController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist)
-  async isBranchExist(@Body() body) {
+  async isBranchExist(@Body() body: any) {
     try {
       let payload = await this.isBranchExistService.process(body);
 

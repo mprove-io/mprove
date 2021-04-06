@@ -13,7 +13,7 @@ export class CreateBranchController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch)
-  async createBranch(@Body() body) {
+  async createBranch(@Body() body: any) {
     try {
       let payload = await this.createBranchService.process(body);
 

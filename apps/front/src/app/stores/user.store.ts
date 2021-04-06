@@ -6,14 +6,14 @@ export type UserState = common.User;
 
 export function createInitialState(): UserState {
   return {
-    userId: null,
-    email: null,
-    alias: null,
-    firstName: null,
-    lastName: null,
-    timezone: null,
-    status: null,
-    isEmailVerified: null,
+    userId: undefined,
+    email: undefined,
+    alias: undefined,
+    firstName: undefined,
+    lastName: undefined,
+    timezone: undefined,
+    status: undefined,
+    isEmailVerified: undefined,
     serverTs: 1
   };
 }

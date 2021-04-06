@@ -13,7 +13,7 @@ export class RevertRepoToProductionController {
   ) {}
 
   @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToProduction)
-  async revertRepoToProduction(@Body() body) {
+  async revertRepoToProduction(@Body() body: any) {
     try {
       let payload = await this.revertRepoToProductionService.process(body);
 

@@ -35,7 +35,7 @@ export class QueriesService {
   }
 
   async removeOrphanedQueries() {
-    let rawData;
+    let rawData: any;
 
     await this.connection.transaction(async manager => {
       rawData = await manager.query(`
@@ -47,7 +47,7 @@ WHERE m.mconfig_id is NULL
 `);
     });
 
-    let orphanedQueryIds = rawData.map(x => x.query_id);
+    let orphanedQueryIds: string[] = rawData?.map((x: any) => x.query_id) || [];
 
     if (orphanedQueryIds.length > 0) {
       await this.queriesRepository.delete({ query_id: In(orphanedQueryIds) });
@@ -117,8 +117,8 @@ WHERE m.mconfig_id is NULL
           }
         });
 
-        let queryJob = itemQueryJob[0];
-        let queryJobGetResponse: any = itemQueryJob[1];
+        let queryJob = (itemQueryJob as any)[0];
+        let queryJobGetResponse: any = (itemQueryJob as any)[1];
 
         if (queryJobGetResponse.status.state === 'DONE') {
           if (queryJobGetResponse.status.errorResult) {
