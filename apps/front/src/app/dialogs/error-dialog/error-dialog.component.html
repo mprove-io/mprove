@@ -7,11 +7,9 @@
       <div class="">Message</div>
       <div class="col-span-3">{{ ref.data?.message || ref.data }}</div>
       <div class="">Path</div>
-      <div class="col-span-3">{{ ref.data?.reqInfoName }}</div>
+      <div class="col-span-3">{{ ref.data?.reqBody?.info?.name }}</div>
       <div class="">TraceId</div>
-      <div class="col-span-3">{{ ref.data?.reqTraceId }}</div>
-      <div class="">Idemp</div>
-      <div class="col-span-3">{{ ref.data?.reqIdempotencyKey }}</div>
+      <div class="col-span-3">{{ ref.data?.reqBody?.info?.traceId }}</div>
     </div>
   </div>
 

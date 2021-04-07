@@ -9,21 +9,17 @@ export class ErrorHandlerService extends ErrorHandler {
   }
 
   handleError(e: any): void {
-    let dialog = this.injector.get(DialogService);
-
-    // if (e instanceof ClientError) {
-    console.log('response:', e.response);
-    console.log(e.data?.response);
-    console.log(e);
-    console.log(e.prototype);
-    // }
+    let dialogService = this.injector.get(DialogService);
 
     this.ngZone.run(() => {
-      dialog.open(ErrorDialogComponent, {
+      dialogService.open(ErrorDialogComponent, {
         data: e,
         enableClose: false
       });
     });
+
+    console.log('e.stack:');
+    console.log(e.stack);
 
     super.handleError(e);
   }

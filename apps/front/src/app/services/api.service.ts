@@ -5,7 +5,6 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-// import { Store } from '@ngrx/store';
 import {
   combineLatest,
   Observable,
@@ -17,9 +16,11 @@ import { catchError, finalize, map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { enums } from '~front/barrels/enums';
+import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
-import { ClientError } from '../models/client-error';
 import { AuthService } from './auth.service';
+import { MyDialogService } from './my-dialog.service';
+
 // import { PrinterService } from '@app/services/printer.service';
 
 @Injectable({ providedIn: 'root' })
@@ -39,7 +40,8 @@ export class ApiService {
     private authHttpClient: HttpClient,
     // private store: Store<interfaces.AppState>,
     private authService: AuthService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private myDialogService: MyDialogService
   ) {}
 
   req(
@@ -128,7 +130,16 @@ export class ApiService {
       timer(1500),
       this.authHttpClient.request('post', url, options)
     ]).pipe(
-      map(x => this.mapRes(x[1])),
+      map(x =>
+        this.mapRes({
+          res: x[1],
+          req: {
+            url: url,
+            headers: headers,
+            body: body
+          }
+        })
+      ),
       catchError(e => this.catchErr(e)),
       finalize(() => {
         if (!this.noMainLoading.includes(pathInfoName)) {
@@ -139,34 +150,26 @@ export class ApiService {
     );
   }
 
-  private mapRes(res: any) {
-    // console.log(res);
+  private mapRes(item: {
+    res: any;
+    req: {
+      url: string;
+      headers: any;
+      body: any;
+    };
+  }) {
+    let { res, req } = item;
 
-    // let resData = {
-    //   request: {
-    //     url: url,
-    //     options: options
-    //   },
-    //   response: res,
-    //   e: <any>null
-    // };
-
-    console.log(res);
+    let errorData: interfaces.ErrorData = {
+      reqUrl: req.url,
+      reqHeaders: req.headers,
+      reqBody: req.body,
+      response: res
+    };
 
     if (res.status !== 200) {
-      // throw new MyError(
-      //   Object.assign({}, resData, {
-      //     name: `[MyHttpService] ${res.status} - response code is not 200`,
-      //     message: undefined
-      //   })
-      // );
-      throw new ClientError({
-        message: enums.ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201,
-        // reqInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-        reqTraceId: '1234e2341e',
-        // reqIdempotencyKey: '5324g5235g34',
-        response: res
-      });
+      errorData.message = enums.ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201;
+      this.myDialogService.showError(errorData);
     } else if (!res.body.info) {
       // throw new MyError(
       //   Object.assign({}, resData, {
