@@ -5,5 +5,7 @@ import { Component } from '@angular/core';
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent {
+  isUserMenuOpen = false;
+
   constructor() {}
 }

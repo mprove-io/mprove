@@ -1,2 +1,32 @@
-<div>Navbar</div>
-<router-outlet></router-outlet>
+<div class="h-screen flex flex-col">
+  <div class="relative flex items-center justify-between h-14 px-6 shadow">
+    <m-logo></m-logo>
+    <div class="block relative">
+      <button
+        class="block h-10 w-10 rounded-full bg-red-300 focus:outline-none"
+        (click)="isUserMenuOpen = !isUserMenuOpen"
+      ></button>
+      <div
+        class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-xl border-2 border-r3"
+        *ngIf="isUserMenuOpen"
+      >
+        <div
+          class="block px-4 py-2 mt-2 hover:bg-b3 text-t3 font-ms font-medium text-sm"
+          >111</div
+        >
+        <div
+          class="block px-4 py-2 hover:bg-b3 text-t3 font-ms font-medium text-sm"
+          >222</div
+        >
+        <div
+          class="block px-4 py-2 mb-2 hover:bg-b3 text-t3 font-ms font-medium text-sm"
+          >333</div
+        >
+      </div>
+    </div>
+  </div>
+  <div class="flex-1">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+<!-- <div *ngIf="routerEvents$ | async"></div> -->
