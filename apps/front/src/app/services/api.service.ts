@@ -5,23 +5,16 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import {
-  combineLatest,
-  Observable,
-  throwError,
-  TimeoutError,
-  timer
-} from 'rxjs';
+import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { enums } from '~front/barrels/enums';
 import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
 import { AuthService } from './auth.service';
 import { MyDialogService } from './my-dialog.service';
-
-// import { PrinterService } from '@app/services/printer.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -36,9 +29,7 @@ export class ApiService {
   ];
 
   constructor(
-    // private printer: PrinterService,
     private authHttpClient: HttpClient,
-    // private store: Store<interfaces.AppState>,
     private authService: AuthService,
     private spinner: NgxSpinnerService,
     private myDialogService: MyDialogService
@@ -58,33 +49,6 @@ export class ApiService {
       // api.PATH_UPDATE_USER_PASSWORD
     ];
 
-    if (
-      !this.authService.authenticated() &&
-      bypassAuthPaths.indexOf(pathInfoName) < 0
-    ) {
-      // this.printer.log(
-      //   enums.busEnum.MY_HTTP_SERVICE,
-      //   'not authenticated, dispatching Logout...'
-      // );
-      // this.store.dispatch(new actions.LogoutUserAction({ empty: true }));
-      // return throwError(
-      //   new MyError({
-      //     name: `[MyHttpService] not authenticated`,
-      //     message: 'Request not sent because not authenticated'
-      //   })
-      // );
-    }
-
-    // verify required parameter 'payload' is not null or undefined
-    if (common.isUndefined(payload)) {
-      // return throwError(
-      //   new MyError({
-      //     name: `[MyHttpService] no payload`,
-      //     message: 'Request not sent because no payload'
-      //   })
-      // );
-    }
-
     let headers: HttpHeaders = new HttpHeaders({
       // eslint-disable-next-line @typescript-eslint/naming-convention
       'Content-Type': 'application/json',
@@ -94,15 +58,6 @@ export class ApiService {
           ? `Bearer ${localStorage.getItem('token')}`
           : ''
     });
-
-    // let requestId = uuid.v4();
-
-    // let initId: string;
-
-    // this.store
-    //   .select(selectors.getWebSocketInitId)
-    //   .pipe(take(1))
-    //   .subscribe(x => (initId = x));
 
     let url = environment.httpUrl + '/' + pathInfoName;
 
@@ -164,74 +119,41 @@ export class ApiService {
       reqUrl: req.url,
       reqHeaders: req.headers,
       reqBody: req.body,
-      response: res
+      response: res,
+      message:
+        res.status !== 201
+          ? enums.ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201
+          : res.body?.info?.status !== common.ResponseInfoStatusEnum.Ok
+          ? enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
+          : undefined
     };
 
-    if (res.status !== 200) {
-      errorData.message = enums.ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201;
-      this.myDialogService.showError(errorData);
-    } else if (!res.body.info) {
-      // throw new MyError(
-      //   Object.assign({}, resData, {
-      //     name: `[MyHttpService] ServerResponse does not have info`,
-      //     message: undefined
-      //   })
-      // );
-    } else if (res.body.info.status !== common.ResponseInfoStatusEnum.Ok) {
-      // throw new MyError(
-      //   Object.assign({}, resData, {
-      //     name: `[MyHttpService] ServerResponse status is ${res.body.info.status} (not Ok)`,
-      //     message: undefined
-      //   })
-      // );
+    if (common.isDefined(errorData.message)) {
+      this.myDialogService.showError({ errorData, isThrow: true });
     }
+
+    // throw new Error('apiService mapRes');
 
     return res.body;
   }
 
   private catchErr(e: any) {
-    // console.log(e);
-
-    // let eData = {
-    //   request: {
-    //     url: url,
-    //     options: options
-    //   },
-    //   response: <any>null,
-    //   e: e
-    // };
-
-    if (e.data) {
-      // return throwError(e);
-    } else if (e instanceof HttpErrorResponse) {
-      // return throwError(
-      //   new MyError(
-      //     Object.assign({}, eData, {
-      //       name: `[MyHttpService] instance of HttpErrorResponse, Code is ${e.status}`,
-      //       message: undefined
-      //     })
-      //   )
-      // );
-    } else if (e instanceof TimeoutError) {
-      // return throwError(
-      //   new MyError(
-      //     Object.assign({}, eData, {
-      //       name: `[MyHttpService] Delay exceeded`,
-      //       message: undefined
-      //     })
-      //   )
-      // );
-    } else {
-      // return throwError(
-      //   new MyError(
-      //     Object.assign({}, eData, {
-      //       name: `[MyHttpService] Other`,
-      //       message: undefined
-      //     })
-      //   )
-      // );
+    if (e.message === constants.SPECIAL_ERROR) {
+      return EMPTY;
     }
 
-    return throwError(e.message);
+    let errorData: interfaces.ErrorData = {
+      originalError: e,
+      message:
+        e instanceof HttpErrorResponse
+          ? enums.ErEnum.FRONT_INSTANCE_OF_HTTP_ERROR_RESPONSE
+          : e instanceof TimeoutError
+          ? enums.ErEnum.FRONT_INSTANCE_OF_TIMEOUT_ERROR
+          : enums.ErEnum.FRONT_API_UNKNOWN_ERROR
+    };
+
+    this.myDialogService.showError({ errorData, isThrow: false });
+
+    return EMPTY;
   }
 }

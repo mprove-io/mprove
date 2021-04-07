@@ -1,6 +1,8 @@
 import { ErrorHandler, Injectable, Injector, NgZone } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
 import { ErrorDialogComponent } from '~front/app/dialogs/error-dialog/error-dialog.component';
+import { constants } from '~front/barrels/constants';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Injectable()
 export class ErrorHandlerService extends ErrorHandler {
@@ -11,15 +13,19 @@ export class ErrorHandlerService extends ErrorHandler {
   handleError(e: any): void {
     let dialogService = this.injector.get(DialogService);
 
-    this.ngZone.run(() => {
-      dialogService.open(ErrorDialogComponent, {
-        data: e,
-        enableClose: false
-      });
-    });
+    if (e.message !== constants.SPECIAL_ERROR) {
+      this.ngZone.run(() => {
+        let errorData: interfaces.ErrorData = {
+          message: e.message || e,
+          skipLogToConsole: true
+        };
 
-    console.log('e.stack:');
-    console.log(e.stack);
+        dialogService.open(ErrorDialogComponent, {
+          data: errorData,
+          enableClose: false
+        });
+      });
+    }
 
     super.handleError(e);
   }

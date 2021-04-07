@@ -5,4 +5,5 @@ export class ErrorData {
   reqHeaders?: any;
   reqBody?: any;
   response?: any;
+  skipLogToConsole?: boolean;
 }

@@ -13,6 +13,6 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.authService.startWatch();
 
-    // throw new Error('123');
+    // throw new Error('appComponent ngOnInit');
   }
 }
