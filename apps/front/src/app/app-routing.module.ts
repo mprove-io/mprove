@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { constants } from '~front/barrels/constants';
+import { ConfirmEmailComponent } from './modules/auth/confirm-email/confirm-email.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
 import { VerifyEmailComponent } from './modules/auth/verify-email/verify-email.component';
@@ -26,6 +27,10 @@ const routes: Routes = [
       {
         component: VerifyEmailComponent,
         path: constants.PATH_VERIFY_EMAIL
+      },
+      {
+        component: ConfirmEmailComponent,
+        path: constants.PATH_CONFIRM_EMAIL
       },
       {
         component: LoginComponent,

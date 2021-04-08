@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -44,7 +44,8 @@ export class RegisterComponent {
           this.userStore.update(user);
 
           this.router.navigate([constants.PATH_VERIFY_EMAIL]);
-        })
+        }),
+        take(1)
       )
       .subscribe();
   }

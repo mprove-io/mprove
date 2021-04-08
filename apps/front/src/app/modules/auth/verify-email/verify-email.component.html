@@ -1,3 +1,11 @@
-<div>Verify your email address</div>
-<div>We sent an email to {{ email$ | async }}</div>
-<div>Please check your inbox and confirm your email</div>
+<div class="flex flex-col bg-b1 justify-center items-center h-full">
+  <div class="mb-8 text-t1 text-2xl text-center font-semibold"
+    >Verify your email address</div
+  >
+  <div class="text-t1 text-base">We sent an email to {{ email$ | async }}</div>
+  <div class="text-t1 text-base"
+    >Please check your inbox and confirm your email</div
+  >
+  <!-- <div class="mt-8 text-t1 text-base">Didn't receive the email?</div>
+  <div class="text-t2 text-right font-regular">Resend it now</div> -->
+</div>

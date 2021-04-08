@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { UserStore } from '~front/app/stores/user.store';
@@ -58,7 +58,8 @@ export class LoginComponent implements OnInit {
           } else {
             this.router.navigate([constants.PATH_VERIFY_EMAIL]);
           }
-        })
+        }),
+        take(1)
       )
       .subscribe();
   }

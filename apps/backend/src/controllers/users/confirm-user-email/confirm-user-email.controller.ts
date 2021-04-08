@@ -1,7 +1,9 @@
 import { Controller, Post } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { repositories } from '~backend/barrels/repositories';
+import { wrapper } from '~backend/barrels/wrapper';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
 
@@ -10,7 +12,8 @@ import { DbService } from '~backend/services/db.service';
 export class ConfirmUserEmailController {
   constructor(
     private userRepository: repositories.UsersRepository,
-    private dbService: DbService
+    private dbService: DbService,
+    private jwtService: JwtService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
@@ -30,6 +33,8 @@ export class ConfirmUserEmailController {
       });
     }
 
+    let payload: apiToBackend.ToBackendConfirmUserEmailResponsePayload = {};
+
     if (user.is_email_verified === common.BoolEnum.FALSE) {
       user.is_email_verified = common.BoolEnum.TRUE;
 
@@ -39,9 +44,12 @@ export class ConfirmUserEmailController {
           users: [user]
         }
       });
-    }
 
-    let payload = {};
+      payload = {
+        token: this.jwtService.sign({ userId: user.user_id }),
+        user: wrapper.wrapToApiUser(user)
+      };
+    }
 
     return payload;
   }
