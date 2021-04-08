@@ -7,6 +7,7 @@ import { VerifyEmailComponent } from './modules/auth/verify-email/verify-email.c
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { ProfileComponent } from './modules/profile/profile.component';
+import { NavBarResolver } from './resolvers/navbar.resolver';
 
 const routes: Routes = [
   {
@@ -35,6 +36,7 @@ const routes: Routes = [
   {
     component: NavbarComponent,
     path: '',
+    resolve: [NavBarResolver],
     children: [
       {
         component: ProfileComponent,

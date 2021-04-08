@@ -2,7 +2,9 @@
   <button
     class="relative z-10 block h-10 w-10 rounded-full bg-red-300 focus:outline-none"
     (click)="isUserMenuOpen = !isUserMenuOpen"
-  ></button>
+  >
+    <div>{{ initials$ | async | uppercase }}</div>
+  </button>
   <button
     class="fixed inset-0 w-full h-full focus:outline-none cursor-default"
     *ngIf="isUserMenuOpen === true"

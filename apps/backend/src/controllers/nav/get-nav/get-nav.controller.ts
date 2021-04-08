@@ -4,6 +4,7 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
+import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 
 @Controller()
@@ -72,6 +73,7 @@ export class GetNavController {
     let projectMember = members.find(x => x.project_id === resultProjectId);
 
     let resultRepoId =
+      common.isDefined(projectMember) &&
       projectMember.is_editor === common.BoolEnum.TRUE
         ? repoId
         : common.PROD_REPO_ID;
@@ -102,7 +104,8 @@ export class GetNavController {
       orgId: resultOrgId,
       projectId: resultProjectId,
       isRepoProd: resultRepoId === common.PROD_REPO_ID,
-      branchId: resultBranchId
+      branchId: resultBranchId,
+      user: wrapper.wrapToApiUser(user)
     };
 
     return payload;

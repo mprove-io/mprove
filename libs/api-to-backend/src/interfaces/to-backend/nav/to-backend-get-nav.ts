@@ -47,6 +47,10 @@ export class ToBackendGetNavResponsePayload {
 
   @IsString()
   branchId: string;
+
+  @ValidateNested()
+  @Type(() => common.User)
+  user: common.User;
 }
 
 export class ToBackendGetNavResponse extends common.MyResponse {

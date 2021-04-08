@@ -3,9 +3,10 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { interval as observableInterval, Subscription } from 'rxjs';
+import { UserStore } from '~front/app/stores/user.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { UserStore } from '../stores/user.store';
+import { UserQuery } from '../queries/user.query';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -14,7 +15,8 @@ export class AuthService {
   constructor(
     private router: Router,
     private userStore: UserStore,
-    private location: Location
+    private location: Location,
+    private userQuery: UserQuery
   ) {}
 
   authenticated() {
@@ -29,9 +31,16 @@ export class AuthService {
     return isAuthenticated;
   }
 
+  getTokenUserId() {
+    let jwtHelperService = new JwtHelperService();
+
+    let token = localStorage.getItem('token');
+
+    return jwtHelperService.decodeToken(token).userId;
+  }
+
   logout() {
     this.stopWatch();
-    this.userStore.reset();
     this.router.navigate([constants.PATH_LOGIN]);
   }
 

@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.userStore.reset();
     this.authService.startWatch();
   }
 
