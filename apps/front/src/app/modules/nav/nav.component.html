@@ -3,7 +3,7 @@
     <m-logo></m-logo>
     <div class="flex">
       <button
-        class="font-ms font-medium focus:outline-none w-28 h-8"
+        class="font-medium focus:outline-none w-28 h-8"
         [ngClass]="{
           'font-bold': lastUrl === pathRegister,
           'font-medium': lastUrl === pathLogin
@@ -11,12 +11,12 @@
         (click)="signUp()"
         >Sign Up</button
       >
-      <div class="flex divide-x-4">
+      <div class="flex divide-x-2 text-t3">
         <div></div>
         <div></div>
       </div>
       <button
-        class="font-ms font-medium focus:outline-none w-24 h-8"
+        class="font-medium focus:outline-none w-24 h-8"
         [ngClass]="{
           'font-bold': lastUrl === pathLogin,
           'font-medium': lastUrl === pathRegister

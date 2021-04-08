@@ -4,23 +4,21 @@
     [formGroup]="registerForm"
     (ngSubmit)="onRegister()"
   >
-    <div class="mb-3 text-t1 text-2xl text-center font-ms font-semibold"
-      >Sign Up</div
-    >
+    <div class="mb-3 text-t1 text-2xl text-center font-semibold">Sign Up</div>
     <input
-      class="form-input rounded border-r1 focus:border-r2 font-ms font-regular"
+      class="form-input rounded border-r1 focus:border-r2 font-regular"
       type="email"
       formControlName="email"
       placeholder="Email"
     />
     <input
-      class="form-input rounded border-r1 focus:border-r2 font-ms font-regular"
+      class="form-input rounded border-r1 focus:border-r2 font-regular"
       type="password"
       formControlName="password"
       placeholder="Password"
     />
     <button
-      class="py-3 bg-b2 text-white rounded font-ms font-medium"
+      class="py-3 bg-b2 text-white rounded font-medium"
       type="submit"
       [disabled]="!registerForm.valid"
       >Sign Up</button
