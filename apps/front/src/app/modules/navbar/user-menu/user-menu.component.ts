@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserQuery } from '~front/app/queries/user.query';
+import { AuthService } from '~front/app/services/auth.service';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-user-menu',
   templateUrl: './user-menu.component.html'
 })
-export class UserMenuComponent {
+export class UserMenuComponent implements OnInit {
   isUserMenuOpen = false;
 
   initials$ = this.userQuery.select(state => {
@@ -25,5 +28,22 @@ export class UserMenuComponent {
 
     return firstLetter + secondLetter;
   });
-  constructor(private userQuery: UserQuery) {}
+
+  lastUrl: string;
+
+  pathProfile = constants.PATH_PROFILE;
+
+  constructor(
+    private userQuery: UserQuery,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.lastUrl = this.router.url.split('/')[1];
+  }
+
+  logout() {
+    this.authService.logout();
+  }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { constants } from '~front/barrels/constants';
 
@@ -21,7 +21,7 @@ export class NavComponent implements OnInit {
     })
   );
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.lastUrl = this.router.url.split('/')[1];

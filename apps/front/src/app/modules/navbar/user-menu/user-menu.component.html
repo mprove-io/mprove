@@ -1,27 +1,46 @@
 <div class="block relative">
   <button
-    class="relative z-10 block h-10 w-10 rounded-full bg-red-300 focus:outline-none"
+    class="relative z-10 block h-10 w-10 rounded-full bg-blue-200 text-md focus:outline-none tracking-widest"
     (click)="isUserMenuOpen = !isUserMenuOpen"
   >
-    <div>{{ initials$ | async | uppercase }}</div>
+    {{ initials$ | async | uppercase }}
   </button>
+
   <button
     class="fixed inset-0 w-full h-full focus:outline-none cursor-default"
     *ngIf="isUserMenuOpen === true"
     (click)="isUserMenuOpen = false"
   ></button>
+
   <div
     class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-xl border-2 border-r3"
     *ngIf="isUserMenuOpen === true"
   >
-    <div class="block px-4 py-2 mt-2 hover:bg-b3 text-t3 font-medium text-sm"
-      >111</div
+    <div class="block mt-2 px-4 py-2 text-t3 font-bold text-sm">User</div>
+
+    <a
+      class="block px-4 py-2 text-t3 font-medium text-sm"
+      [routerLink]="['/profile']"
+      [ngClass]="{
+        'hover:bg-b3': lastUrl !== pathProfile,
+        'cursor-default': lastUrl === pathProfile
+      }"
+      >Profile</a
     >
-    <div class="block px-4 py-2 hover:bg-b3 text-t3 font-medium text-sm"
-      >222</div
+
+    <button
+      class="block px-4 py-2 text-t3 font-medium text-sm hover:bg-b3 w-full text-left focus:outline-none"
+      (click)="logout()"
+      >LogOut</button
     >
-    <div class="block px-4 py-2 mb-2 hover:bg-b3 text-t3 font-medium text-sm"
-      >333</div
+
+    <div class="block px-4 py-2 text-t3 font-bold text-sm">Resources</div>
+
+    <a
+      class="block mb-2 px-4 py-2 text-t3 font-medium text-sm hover:bg-b3"
+      target="_blank"
+      href="/docs"
+      >Docs</a
     >
   </div>
 </div>
