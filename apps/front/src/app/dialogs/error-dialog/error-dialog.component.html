@@ -1,8 +1,6 @@
-<div class="flex flex-col h-72 bg-white m-10">
-  <div class="flex justify-center text-2xl text-t1 font-semibold mb-8"
-    >Error</div
-  >
-  <div class="flex-1 overflow-auto">
+<div class="flex flex-col items-center h-96 p-9 bg-white">
+  <div class="text-2xl text-t1 font-semibold mb-8">Error</div>
+  <div class="flex-grow overflow-auto">
     <div class="grid grid-cols-4 gap-4 text-t3">
       <div class="">Message</div>
       <div class="col-span-3">{{ ref.data?.message || ref.data }}</div>
@@ -13,7 +11,7 @@
     </div>
   </div>
 
-  <div class="flex mt-9 justify-center">
+  <div class="mt-8">
     <button
       class="py-3 bg-b2 w-28 text-white rounded font-medium"
       (click)="onOk()"

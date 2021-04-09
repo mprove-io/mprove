@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -20,7 +21,8 @@ export class ConfirmEmailComponent implements OnInit {
     private apiService: ApiService,
     private userStore: UserStore,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private myDialogService: MyDialogService
   ) {}
 
   ngOnInit() {
@@ -42,6 +44,8 @@ export class ConfirmEmailComponent implements OnInit {
         map((resp: apiToBackend.ToBackendLoginUserResponse) => {
           let user = resp.payload.user;
           let token = resp.payload.token;
+
+          this.myDialogService.showEmailConfirmed();
 
           if (common.isDefined(user) && common.isDefined(token)) {
             this.userStore.update(user);
