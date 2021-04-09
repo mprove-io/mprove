@@ -82,7 +82,7 @@ export class ApiService {
     }
 
     return combineLatest([
-      timer(1500),
+      timer(1100),
       this.authHttpClient.request('post', url, options)
     ]).pipe(
       map(x =>

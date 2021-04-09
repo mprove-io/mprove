@@ -14,6 +14,7 @@ import { BranchesService } from './services/branches.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
 import { DbService } from './services/db.service';
+import { EmailService } from './services/email.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
@@ -31,6 +32,7 @@ import { VizsService } from './services/vizs.service';
 export const appProviders = [
   RabbitService,
   DbService,
+  EmailService,
   BlockmlService,
   UsersService,
   OrgsService,

@@ -87,6 +87,7 @@ export const appControllers = [
   controllers.LoginUserController,
   controllers.LogoutUserController,
   controllers.RegisterUserController,
+  controllers.ResendUserEmailController,
   controllers.ResetUserPasswordController,
   controllers.SetUserNameController,
   controllers.SetUserTimezoneController,

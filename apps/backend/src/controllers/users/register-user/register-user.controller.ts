@@ -1,4 +1,3 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { Controller, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -10,6 +9,7 @@ import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
+import { EmailService } from '~backend/services/email.service';
 import { UsersService } from '~backend/services/users.service';
 
 @SkipJwtCheck()
@@ -18,8 +18,8 @@ export class RegisterUserController {
   constructor(
     private usersService: UsersService,
     private dbService: DbService,
+    private emailService: EmailService,
     private cs: ConfigService<interfaces.Config>,
-    private mailerService: MailerService,
     private userRepository: repositories.UsersRepository
   ) {}
 
@@ -81,14 +81,9 @@ export class RegisterUserController {
           }
         });
 
-        let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
-
-        let link = `${hostUrl}/confirm-email?token=${newUser.email_verification_token}`;
-
-        await this.mailerService.sendMail({
-          to: email,
-          subject: '[Mprove] Verify your email',
-          text: `Click the link to complete email verification: ${link}`
+        await this.emailService.sendEmailVerification({
+          email: email,
+          emailVerificationToken: newUser.email_verification_token
         });
       }
     }
