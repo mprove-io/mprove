@@ -6,6 +6,19 @@
   <div class="text-t1 text-base"
     >Please check your inbox and confirm your email</div
   >
-  <!-- <div class="mt-8 text-t1 text-base">Didn't receive the email?</div>
-  <div class="text-t2 text-right font-regular">Resend it now</div> -->
+  <div class="mt-8 text-t1 text-base w-">Didn't receive the email?</div>
+  <button
+    class="font-regular focus:outline-none"
+    [ngClass]="{
+      'text-t2': isResendEnabled === true,
+      'text-t3': isResendEnabled === false,
+      'cursor-default': isResendEnabled === false,
+      'text-left': isResendEnabled === false,
+      'font-semibold': isResendEnabled === false,
+      'w-72': isResendEnabled === false
+    }"
+    [disabled]="!isResendEnabled"
+    (click)="resendEmail()"
+    >{{ buttonText }}</button
+  >
 </div>
