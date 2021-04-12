@@ -5,6 +5,7 @@ import { ConfirmEmailComponent } from './modules/auth/confirm-email/confirm-emai
 import { ForgotPasswordComponent } from './modules/auth/forgot-password/forgot-password.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
+import { UpdatePasswordComponent } from './modules/auth/update-password/update-password.component';
 import { VerifyEmailComponent } from './modules/auth/verify-email/verify-email.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
@@ -40,6 +41,10 @@ const routes: Routes = [
       {
         component: ForgotPasswordComponent,
         path: constants.PATH_FORGOT_PASSWORD
+      },
+      {
+        component: UpdatePasswordComponent,
+        path: constants.PATH_UPDATE_PASSWORD
       }
     ]
   },

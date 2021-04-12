@@ -37,8 +37,7 @@ test('1', async t => {
             passwordResetExpiresTs: expiredPasswordResetExpiresTs
           }
         ]
-      },
-      loginUserPayload: { email, password }
+      }
     });
 
     let updateUserPasswordReq: apiToBackend.ToBackendUpdateUserPasswordRequest = {

@@ -1,28 +1,33 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { repositories } from '~backend/barrels/repositories';
+import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
 import { UsersService } from '~backend/services/users.service';
 
+@SkipJwtCheck()
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
     private dbService: DbService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private usersRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword)
   async updateUserPassword(
-    @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendUpdateUserPasswordRequest)
     reqValid: apiToBackend.ToBackendUpdateUserPasswordRequest
   ) {
     let { passwordResetToken, newPassword } = reqValid.payload;
 
-    if (user.password_reset_token !== passwordResetToken) {
+    let user = await this.usersRepository.findOne({
+      password_reset_token: passwordResetToken
+    });
+
+    if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
       });

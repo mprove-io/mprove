@@ -17,7 +17,7 @@ export class ResetUserPasswordController {
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
     private mailerService: MailerService,
-    private userRepository: repositories.UsersRepository
+    private usersRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
@@ -27,7 +27,7 @@ export class ResetUserPasswordController {
   ) {
     let { email } = reqValid.payload;
 
-    let user = await this.userRepository.findOne({
+    let user = await this.usersRepository.findOne({
       email: email
     });
 
