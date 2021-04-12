@@ -31,9 +31,7 @@ export class LoginComponent implements OnInit {
     this.authService.startWatch();
   }
 
-  onLogin() {
-    // console.log(this.loginForm.value);
-
+  login() {
     let payload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
@@ -62,5 +60,9 @@ export class LoginComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  forgotPassword() {
+    this.router.navigate([constants.PATH_FORGOT_PASSWORD]);
   }
 }

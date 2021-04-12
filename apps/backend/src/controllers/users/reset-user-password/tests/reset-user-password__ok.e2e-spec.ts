@@ -43,7 +43,7 @@ test('1', async t => {
         traceId: traceId,
         idempotencyKey: testId
       },
-      payload: {}
+      payload: { email: email }
     };
 
     resp = await helper.sendToBackend<apiToBackend.ToBackendResetUserPasswordResponse>(

@@ -4,26 +4,33 @@ import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
-import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { repositories } from '~backend/barrels/repositories';
+import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
 
+@SkipJwtCheck()
 @Controller()
 export class ResetUserPasswordController {
   constructor(
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
-    private mailerService: MailerService
+    private mailerService: MailerService,
+    private userRepository: repositories.UsersRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
   async resetUserPassword(
-    @AttachUser() user: entities.UserEntity,
     @ValidateRequest(apiToBackend.ToBackendResetUserPasswordRequest)
     reqValid: apiToBackend.ToBackendResetUserPasswordRequest
   ) {
+    let { email } = reqValid.payload;
+
+    let user = await this.userRepository.findOne({
+      email: email
+    });
+
     user.password_reset_token = common.makeId();
     user.password_reset_expires_ts = helper.makeTsUsingOffsetFromNow(
       constants.PASSWORD_EXPIRES_OFFSET

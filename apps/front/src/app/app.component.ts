@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
     // throw new Error('appComponent ngOnInit');
 
     // this.myDialogService.showEmailConfirmed();
+    // this.myDialogService.showPasswordResetSent('test123123@example.com');
 
     // this.myDialogService.showError({
     //   errorData: {

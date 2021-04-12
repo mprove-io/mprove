@@ -4,10 +4,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogModule } from '@ngneat/dialog';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { appDialogs } from './app-dialogs';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { EmailConfirmedDialogComponent } from './dialogs/email-confirmed-dialog/email-confirmed-dialog.component';
-import { ErrorDialogComponent } from './dialogs/error-dialog/error-dialog.component';
 import { AuthModule } from './modules/auth/auth.module';
 import { NavModule } from './modules/nav/nav.module';
 import { NavbarModule } from './modules/navbar/navbar.module';
@@ -16,12 +15,8 @@ import { SharedModule } from './modules/shared/shared.module';
 import { ErrorHandlerService } from './services/error-handler.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ErrorDialogComponent,
-    EmailConfirmedDialogComponent
-  ],
-  entryComponents: [ErrorDialogComponent, EmailConfirmedDialogComponent],
+  declarations: [AppComponent, ...appDialogs],
+  entryComponents: [...appDialogs],
   imports: [
     BrowserModule,
     AppRoutingModule,

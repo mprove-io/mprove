@@ -2,7 +2,7 @@
   <form
     class="flex flex-col w-96 space-y-6"
     [formGroup]="loginForm"
-    (ngSubmit)="onLogin()"
+    (ngSubmit)="login()"
   >
     <div class="mb-3 text-t1 text-2xl text-center font-semibold">Log In</div>
     <input
@@ -17,7 +17,15 @@
       formControlName="password"
       placeholder="Password"
     />
-    <div class="text-t2 text-right font-regular">Forgot Password</div>
+    <div class="flex flex-row justify-between">
+      <div></div>
+      <button
+        type="button"
+        (click)="forgotPassword()"
+        class="text-t2 font-regular focus:outline-none w-40"
+        >Forgot Password</button
+      >
+    </div>
     <button
       class="py-3 bg-b2 text-white rounded font-medium"
       type="submit"
