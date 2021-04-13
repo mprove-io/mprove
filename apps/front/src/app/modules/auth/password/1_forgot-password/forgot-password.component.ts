@@ -37,8 +37,8 @@ export class ForgotPasswordComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
-          this.myDialogService.showPasswordResetSent(email);
-          this.router.navigate([constants.PATH_LOGIN]);
+          localStorage.setItem('passwordResetEmail', email);
+          this.router.navigate([constants.PATH_PASSWORD_RESET_SENT]);
         }),
         take(1)
       )

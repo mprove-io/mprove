@@ -45,16 +45,16 @@ export class ConfirmEmailComponent implements OnInit {
           let user = resp.payload.user;
           let token = resp.payload.token;
 
-          this.myDialogService.showEmailConfirmed();
-
           if (common.isDefined(user) && common.isDefined(token)) {
+            // first email verification
+            this.myDialogService.showEmailConfirmed();
             this.userStore.update(user);
             this.authService.stopWatch();
             localStorage.setItem('token', token);
             this.router.navigate([constants.PATH_PROFILE]);
           } else {
-            // email is already verified
-            this.router.navigate([constants.PATH_LOGIN]);
+            // email was verified already
+            this.router.navigate([constants.PATH_EMAIL_CONFIRMED]);
           }
         }),
         take(1)
