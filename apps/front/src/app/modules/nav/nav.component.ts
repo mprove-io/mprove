@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-nav',
@@ -10,8 +10,8 @@ import { constants } from '~front/barrels/constants';
 export class NavComponent implements OnInit {
   currentRoute: string;
 
-  pathRegister = constants.PATH_REGISTER;
-  pathLogin = constants.PATH_LOGIN;
+  pathRegister = common.PATH_REGISTER;
+  pathLogin = common.PATH_LOGIN;
   lastUrl: string;
 
   routerEvents$ = this.router.events.pipe(
@@ -28,9 +28,9 @@ export class NavComponent implements OnInit {
   }
 
   signUp() {
-    this.router.navigate([constants.PATH_REGISTER]);
+    this.router.navigate([common.PATH_REGISTER]);
   }
   login() {
-    this.router.navigate([constants.PATH_LOGIN]);
+    this.router.navigate([common.PATH_LOGIN]);
   }
 }

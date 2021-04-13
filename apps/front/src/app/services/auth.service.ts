@@ -5,7 +5,6 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { interval as observableInterval, Subscription } from 'rxjs';
 import { UserStore } from '~front/app/stores/user.store';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { UserQuery } from '../queries/user.query';
 
 @Injectable({ providedIn: 'root' })
@@ -42,7 +41,7 @@ export class AuthService {
   logout() {
     this.stopWatch();
     localStorage.removeItem('token');
-    this.router.navigate([constants.PATH_LOGIN]);
+    this.router.navigate([common.PATH_LOGIN]);
   }
 
   startWatch() {
@@ -55,7 +54,7 @@ export class AuthService {
       let firstPath = pathArray[1];
 
       if (
-        [constants.PATH_PROFILE].indexOf(firstPath) > -1 &&
+        [common.PATH_PROFILE].indexOf(firstPath) > -1 &&
         !this.authenticated()
       ) {
         console.log('[WatchAuthenticationService] logout');
@@ -63,14 +62,14 @@ export class AuthService {
       } else if (
         // for other tabs
         [
-          constants.PATH_LOGIN,
-          constants.PATH_REGISTER,
-          constants.PATH_VERIFY_EMAIL
+          common.PATH_LOGIN,
+          common.PATH_REGISTER,
+          common.PATH_VERIFY_EMAIL
         ].indexOf(firstPath) > -1 &&
         this.authenticated()
       ) {
         console.log('[WatchAuthenticationService] profile');
-        this.router.navigate([constants.PATH_PROFILE]);
+        this.router.navigate([common.PATH_PROFILE]);
       }
     });
   }

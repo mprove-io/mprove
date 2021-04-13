@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-new-password-was-set',
@@ -10,6 +10,6 @@ export class NewPasswordWasSetComponent {
   constructor(private router: Router) {}
 
   login() {
-    this.router.navigate([constants.PATH_LOGIN]);
+    this.router.navigate([common.PATH_LOGIN]);
   }
 }

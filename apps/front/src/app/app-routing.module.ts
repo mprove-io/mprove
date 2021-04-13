@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 import { RegisterComponent } from './modules/auth/main/1_register/register.component';
 import { VerifyEmailComponent } from './modules/auth/main/2_verify-email/verify-email.component';
 import { ConfirmEmailComponent } from './modules/auth/main/3_confirm-email/confirm-email.component';
@@ -18,7 +18,7 @@ import { NavBarResolver } from './resolvers/navbar.resolver';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: constants.PATH_LOGIN,
+    redirectTo: common.PATH_LOGIN,
     pathMatch: 'full'
   },
   {
@@ -27,39 +27,39 @@ const routes: Routes = [
     children: [
       {
         component: RegisterComponent,
-        path: constants.PATH_REGISTER
+        path: common.PATH_REGISTER
       },
       {
         component: VerifyEmailComponent,
-        path: constants.PATH_VERIFY_EMAIL
+        path: common.PATH_VERIFY_EMAIL
       },
       {
         component: ConfirmEmailComponent,
-        path: constants.PATH_CONFIRM_EMAIL
+        path: common.PATH_CONFIRM_EMAIL
       },
       {
         component: EmailConfirmedComponent,
-        path: constants.PATH_EMAIL_CONFIRMED
+        path: common.PATH_EMAIL_CONFIRMED
       },
       {
         component: LoginComponent,
-        path: constants.PATH_LOGIN
+        path: common.PATH_LOGIN
       },
       {
         component: ForgotPasswordComponent,
-        path: constants.PATH_FORGOT_PASSWORD
+        path: common.PATH_FORGOT_PASSWORD
       },
       {
         component: PasswordResetSentComponent,
-        path: constants.PATH_PASSWORD_RESET_SENT
+        path: common.PATH_PASSWORD_RESET_SENT
       },
       {
         component: UpdatePasswordComponent,
-        path: constants.PATH_UPDATE_PASSWORD
+        path: common.PATH_UPDATE_PASSWORD
       },
       {
         component: NewPasswordWasSetComponent,
-        path: constants.PATH_NEW_PASSWORD_WAS_SET
+        path: common.PATH_NEW_PASSWORD_WAS_SET
       }
     ]
   },
@@ -70,7 +70,7 @@ const routes: Routes = [
     children: [
       {
         component: ProfileComponent,
-        path: constants.PATH_PROFILE
+        path: common.PATH_PROFILE
       }
     ]
   }

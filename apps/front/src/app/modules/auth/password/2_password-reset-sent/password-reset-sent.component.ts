@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-password-reset-sent',
@@ -16,6 +16,6 @@ export class PasswordResetSentComponent implements OnInit {
   }
 
   done() {
-    this.router.navigate([constants.PATH_LOGIN]);
+    this.router.navigate([common.PATH_LOGIN]);
   }
 }

@@ -7,7 +7,6 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-confirm-email',
@@ -51,10 +50,10 @@ export class ConfirmEmailComponent implements OnInit {
             this.userStore.update(user);
             this.authService.stopWatch();
             localStorage.setItem('token', token);
-            this.router.navigate([constants.PATH_PROFILE]);
+            this.router.navigate([common.PATH_PROFILE]);
           } else {
             // email was verified already
-            this.router.navigate([constants.PATH_EMAIL_CONFIRMED]);
+            this.router.navigate([common.PATH_EMAIL_CONFIRMED]);
           }
         }),
         take(1)

@@ -6,7 +6,7 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 import { AuthService } from '~front/app/services/auth.service';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     if (this.auth.authenticated()) {
       return true;
     } else {
-      this.router.navigate([constants.PATH_LOGIN]);
+      this.router.navigate([common.PATH_LOGIN]);
       return false;
     }
   }

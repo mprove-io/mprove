@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { UserQuery } from '~front/app/queries/user.query';
 import { AuthService } from '~front/app/services/auth.service';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-user-menu',
@@ -31,7 +30,7 @@ export class UserMenuComponent implements OnInit {
 
   lastUrl: string;
 
-  pathProfile = constants.PATH_PROFILE;
+  pathProfile = common.PATH_PROFILE;
 
   constructor(
     private userQuery: UserQuery,

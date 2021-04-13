@@ -4,7 +4,14 @@
     "baseUrl": ".",
     "outDir": "../../dist/out-tsc",
     "sourceMap": false,
-    "allowJs": true
+    "allowJs": true,
+    "paths": {
+      "~front-e2e/*": ["./src/*"],
+      //
+      "~common/*": ["../../libs/common/src/*"],
+      //
+      "@mprove/common": ["../../libs/common/src/_index.ts"]
+    }
   },
   "files": [],
   "include": []

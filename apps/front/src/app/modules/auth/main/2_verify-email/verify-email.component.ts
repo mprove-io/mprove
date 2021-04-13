@@ -7,7 +7,6 @@ import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-verify-email',
@@ -60,7 +59,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
           let isEmailVerified = resp.payload.isEmailVerified;
 
           if (isEmailVerified === true) {
-            this.router.navigate([constants.PATH_LOGIN]);
+            this.router.navigate([common.PATH_LOGIN]);
           } else {
             this.startTimer();
           }

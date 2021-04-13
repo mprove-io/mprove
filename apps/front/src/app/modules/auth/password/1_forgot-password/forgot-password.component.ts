@@ -5,7 +5,7 @@ import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-forgot-password',
@@ -38,7 +38,7 @@ export class ForgotPasswordComponent {
       .pipe(
         map((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
           localStorage.setItem('passwordResetEmail', email);
-          this.router.navigate([constants.PATH_PASSWORD_RESET_SENT]);
+          this.router.navigate([common.PATH_PASSWORD_RESET_SENT]);
         }),
         take(1)
       )
@@ -46,6 +46,6 @@ export class ForgotPasswordComponent {
   }
 
   backToLogin() {
-    this.router.navigate([constants.PATH_LOGIN]);
+    this.router.navigate([common.PATH_LOGIN]);
   }
 }

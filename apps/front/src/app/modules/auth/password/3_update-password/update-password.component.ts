@@ -6,7 +6,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-update-password',
@@ -57,7 +57,7 @@ export class UpdatePasswordComponent implements OnInit {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendUpdateUserPasswordResponse) => {
-          this.router.navigate([constants.PATH_LOGIN]);
+          this.router.navigate([common.PATH_LOGIN]);
         }),
         take(1)
       )

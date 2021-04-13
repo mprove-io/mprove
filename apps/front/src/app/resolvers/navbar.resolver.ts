@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AuthService } from '~front/app/services/auth.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
-import { constants } from '~front/barrels/constants';
+import { common } from '~front/barrels/common';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
 import { UserStore } from '../stores/user.store';
@@ -73,7 +73,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
           if (user.isEmailVerified === true) {
             return true;
           } else {
-            this.router.navigate([constants.PATH_VERIFY_EMAIL]);
+            this.router.navigate([common.PATH_VERIFY_EMAIL]);
             return false;
           }
         })
