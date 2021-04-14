@@ -5,23 +5,26 @@
     (ngSubmit)="onRegister()"
   >
     <div
-      cy="registerTitle"
+      data-cy="registerTitle"
       class="mb-3 text-t1 text-2xl text-center font-semibold"
       >Sign Up</div
     >
     <input
+      data-cy="registerEmailInput"
       class="form-input rounded border-r1 focus:border-r2 font-regular"
       type="email"
       formControlName="email"
       placeholder="Email"
     />
     <input
+      data-cy="registerPasswordInput"
       class="form-input rounded border-r1 focus:border-r2 font-regular"
       type="password"
       formControlName="password"
       placeholder="Password"
     />
     <button
+      data-cy="registerSignUpButton"
       class="py-3 bg-b2 text-white rounded font-medium"
       type="submit"
       [disabled]="!registerForm.valid"

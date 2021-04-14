@@ -111,7 +111,7 @@ export class DeleteRecordsController {
 
     structIds = structs.map(struct => struct.struct_id);
 
-    if (idempotencyKeys.length > 0) {
+    if (common.isDefined(idempotencyKeys) && idempotencyKeys.length > 0) {
       await this.idempsRepository.delete({
         idempotency_key: In(idempotencyKeys)
       });
