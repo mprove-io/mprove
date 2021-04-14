@@ -8,6 +8,7 @@ describe('front-e2e', () => {
   it(testId, () => {
     cy.deletePack({ emails: [email] });
     cy.visit(common.PATH_REGISTER);
+    cy.get(`[data-cy=registerTitle]`);
     cy.get('[data-cy=registerEmailInput]').type(email);
     cy.get('[data-cy=registerPasswordInput]').type(password);
     cy.get('[data-cy=registerSignUpButton]').click();

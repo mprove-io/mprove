@@ -4,14 +4,20 @@
     [formGroup]="loginForm"
     (ngSubmit)="login()"
   >
-    <div class="mb-3 text-t1 text-2xl text-center font-semibold">Log In</div>
+    <div
+      data-cy="loginTitle"
+      class="mb-3 text-t1 text-2xl text-center font-semibold"
+      >Log In</div
+    >
     <input
+      data-cy="loginEmailInput"
       class="form-input rounded border-r1 focus:border-r2 font-regular"
       type="email"
       formControlName="email"
       placeholder="Email"
     />
     <input
+      data-cy="loginPasswordInput"
       class="form-input rounded border-r1 focus:border-r2 font-regular"
       type="password"
       formControlName="password"
@@ -27,6 +33,7 @@
       >
     </div>
     <button
+      data-cy="loginButton"
       class="py-3 bg-b2 text-white rounded font-medium"
       type="submit"
       [disabled]="!loginForm.valid"

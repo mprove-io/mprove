@@ -7,6 +7,7 @@ declare global {
   namespace Cypress {
     interface Chainable<Subject> {
       deletePack(pack: apiToBackend.ToBackendDeleteRecordsRequestPayload): void;
+      seedPack(pack: apiToBackend.ToBackendSeedRecordsRequestPayload): void;
       loading(): void;
       loadingExist(): void;
       loadingNotExist(): void;
@@ -30,6 +31,28 @@ Cypress.Commands.add(
       url:
         'localhost:3000/' +
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+      method: constants.POST,
+      body: body
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'seedPack',
+  (pack: apiToBackend.ToBackendSeedRecordsRequestPayload) => {
+    let body: apiToBackend.ToBackendSeedRecordsRequest = {
+      info: {
+        idempotencyKey: common.makeId(),
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+        traceId: common.makeId()
+      },
+      payload: pack
+    };
+
+    cy.request({
+      url:
+        'localhost:3000/' +
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
       method: constants.POST,
       body: body
     });
