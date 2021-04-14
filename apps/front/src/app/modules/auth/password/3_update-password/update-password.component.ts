@@ -57,7 +57,7 @@ export class UpdatePasswordComponent implements OnInit {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendUpdateUserPasswordResponse) => {
-          this.router.navigate([common.PATH_LOGIN]);
+          this.router.navigate([common.PATH_NEW_PASSWORD_WAS_SET]);
         }),
         take(1)
       )

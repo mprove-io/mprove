@@ -1,6 +1,7 @@
 import { common } from '~front-e2e/barrels/common';
 
 let testId = '_register__ok';
+
 let email = `${testId}@example.com`;
 let password = '123123';
 
