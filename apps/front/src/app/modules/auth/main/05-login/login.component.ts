@@ -32,6 +32,12 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.loginForm.markAllAsTouched();
+
+    if (!this.loginForm.valid) {
+      return;
+    }
+
     let payload: apiToBackend.ToBackendLoginUserRequestPayload = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password

@@ -1,29 +1,37 @@
 <div class="bg-b1 flex justify-center items-center h-full">
-  <form
-    class="flex flex-col w-96 space-y-6"
-    [formGroup]="loginForm"
-    (ngSubmit)="login()"
-  >
-    <div
-      data-cy="loginTitle"
-      class="mb-3 text-t1 text-2xl text-center font-semibold"
+  <form class="flex flex-col w-96" [formGroup]="loginForm" (ngSubmit)="login()">
+    <div data-cy="loginTitle" class="text-t1 text-2xl text-center font-semibold"
       >Log In</div
     >
     <input
       data-cy="loginEmailInput"
-      class="form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-9 form-input rounded border-r1 focus:border-r2 font-regular"
+      [ngClass]="{
+        'border-red-600':
+          loginForm.controls['email'].invalid &&
+          loginForm.controls['email'].touched
+      }"
       type="email"
       formControlName="email"
       placeholder="Email"
     />
+    <m-validation [control]="loginForm.controls['email']"></m-validation>
+
     <input
       data-cy="loginPasswordInput"
-      class="form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-1 form-input rounded border-r1 focus:border-r2 font-regular"
+      [ngClass]="{
+        'border-red-600':
+          loginForm.controls['password'].invalid &&
+          loginForm.controls['password'].touched
+      }"
       type="password"
       formControlName="password"
       placeholder="Password"
     />
-    <div class="flex flex-row justify-between">
+    <m-validation [control]="loginForm.controls['password']"></m-validation>
+
+    <div class="mt-1 flex flex-row justify-between">
       <div></div>
       <button
         data-cy="loginForgotPasswordButton"
@@ -33,11 +41,11 @@
         >Forgot Password</button
       >
     </div>
+
     <button
       data-cy="loginButton"
-      class="py-3 bg-b2 text-white rounded font-medium"
+      class="mt-6 py-3 bg-b2 text-white rounded font-medium focus:outline-none"
       type="submit"
-      [disabled]="!loginForm.valid"
       >Log In</button
     >
   </form>
