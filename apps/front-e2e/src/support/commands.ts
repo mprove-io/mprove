@@ -8,6 +8,7 @@ declare global {
     interface Chainable<Subject> {
       deletePack(pack: apiToBackend.ToBackendDeleteRecordsRequestPayload): void;
       seedPack(pack: apiToBackend.ToBackendSeedRecordsRequestPayload): void;
+      loginUser(item: apiToBackend.ToBackendLoginUserRequestPayload): void;
       loading(): void;
       loadingExist(): void;
       loadingNotExist(): void;
@@ -55,6 +56,33 @@ Cypress.Commands.add(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
       method: constants.POST,
       body: body
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'loginUser',
+  (item: apiToBackend.ToBackendLoginUserRequestPayload) => {
+    let body: apiToBackend.ToBackendLoginUserRequest = {
+      info: {
+        idempotencyKey: common.makeId(),
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        traceId: common.makeId()
+      },
+      payload: item
+    };
+
+    cy.request({
+      url:
+        'localhost:3000/' +
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+      method: constants.POST,
+      body: body
+    }).then(resp => {
+      let payload: apiToBackend.ToBackendLoginUserResponsePayload =
+        resp.body.payload;
+
+      window.localStorage.setItem('token', payload.token);
     });
   }
 );
