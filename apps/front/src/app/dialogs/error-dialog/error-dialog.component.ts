@@ -8,6 +8,10 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './error-dialog.component.html'
 })
 export class ErrorDialogComponent implements OnInit {
+  message: string;
+  path: string;
+  traceId: string;
+
   constructor(public ref: DialogRef<interfaces.ErrorData>) {}
 
   ngOnInit() {
@@ -19,6 +23,15 @@ export class ErrorDialogComponent implements OnInit {
         console.log(stack);
       }
     }
+
+    this.message = common.transformErrorMessage(
+      this.ref.data?.response?.body?.info?.error?.message ||
+        this.ref.data?.message ||
+        this.ref.data
+    );
+
+    this.path = this.ref.data?.reqBody?.info?.name;
+    this.traceId = this.ref.data?.reqBody?.info?.traceId;
   }
 
   onOk() {

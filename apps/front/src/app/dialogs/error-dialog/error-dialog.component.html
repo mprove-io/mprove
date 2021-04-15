@@ -3,11 +3,11 @@
   <div class="flex-grow overflow-auto">
     <div class="grid grid-cols-4 gap-4 text-t3">
       <div class="">Message</div>
-      <div class="col-span-3">{{ ref.data?.message || ref.data }}</div>
+      <div data-cy="errorDialogMessage" class="col-span-3">{{ message }}</div>
       <div class="">Path</div>
-      <div class="col-span-3">{{ ref.data?.reqBody?.info?.name }}</div>
+      <div class="col-span-3">{{ path }}</div>
       <div class="">TraceId</div>
-      <div class="col-span-3">{{ ref.data?.reqBody?.info?.traceId }}</div>
+      <div class="col-span-3">{{ traceId }}</div>
     </div>
   </div>
 
