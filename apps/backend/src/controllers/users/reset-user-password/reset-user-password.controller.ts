@@ -6,9 +6,9 @@ import { common } from '~backend/barrels/common';
 import { constants } from '~backend/barrels/constants';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { repositories } from '~backend/barrels/repositories';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { DbService } from '~backend/services/db.service';
+import { UsersService } from '~backend/services/users.service';
 
 @SkipJwtCheck()
 @Controller()
@@ -17,7 +17,7 @@ export class ResetUserPasswordController {
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>,
     private mailerService: MailerService,
-    private usersRepository: repositories.UsersRepository
+    private usersService: UsersService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
@@ -27,9 +27,11 @@ export class ResetUserPasswordController {
   ) {
     let { email } = reqValid.payload;
 
-    let user = await this.usersRepository.findOne({
+    let user = await this.usersService.getUserByEmailCheckExists({
       email: email
     });
+
+    this.usersService.checkUserHashIsDefined({ user: user });
 
     user.password_reset_token = common.makeId();
     user.password_reset_expires_ts = helper.makeTsUsingOffsetFromNow(

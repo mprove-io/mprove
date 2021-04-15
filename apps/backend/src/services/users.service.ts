@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
+import { entities } from '~backend/barrels/entities';
 import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { DbService } from '~backend/services/db.service';
@@ -9,9 +10,51 @@ import { DbService } from '~backend/services/db.service';
 @Injectable()
 export class UsersService {
   constructor(
-    private userRepository: repositories.UsersRepository,
+    private usersRepository: repositories.UsersRepository,
     private dbService: DbService
   ) {}
+
+  checkUserHashIsDefined(item: { user: entities.UserEntity }) {
+    let { user } = item;
+
+    if (common.isUndefined(user.hash)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+      });
+    }
+  }
+
+  async getUserCheckExists(item: { userId: string }) {
+    let { userId } = item;
+
+    let user = await this.usersRepository.findOne({
+      user_id: userId
+    });
+
+    if (common.isUndefined(user)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+      });
+    }
+
+    return user;
+  }
+
+  async getUserByEmailCheckExists(item: { email: string }) {
+    let { email } = item;
+
+    let user = await this.usersRepository.findOne({
+      email: email
+    });
+
+    if (common.isUndefined(user)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+      });
+    }
+
+    return user;
+  }
 
   async makeSaltAndHash(password: string) {
     // let salt = crypto.randomBytes(16).toString('hex');
@@ -42,7 +85,7 @@ export class UsersService {
     let restart = true;
 
     while (restart) {
-      let aliasUser = await this.userRepository.findOne({ alias: alias });
+      let aliasUser = await this.usersRepository.findOne({ alias: alias });
 
       if (common.isDefined(aliasUser)) {
         alias = `${alias}${count}`;
