@@ -18,14 +18,14 @@ export class UpdatePasswordComponent implements OnInit {
   setPasswordForm: FormGroup = this.fb.group(
     {
       newPassword: [
-        null,
-        Validators.compose([
+        '',
+        [
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(255)
-        ])
+        ]
       ],
-      confirmPassword: [null, Validators.compose([Validators.required])]
+      confirmPassword: ['', [Validators.required]]
     },
     {
       validator: ValidationService.passwordMatchValidator
@@ -45,6 +45,12 @@ export class UpdatePasswordComponent implements OnInit {
   }
 
   setPassword() {
+    this.setPasswordForm.markAllAsTouched();
+
+    if (!this.setPasswordForm.valid) {
+      return;
+    }
+
     let payload: apiToBackend.ToBackendUpdateUserPasswordRequestPayload = {
       passwordResetToken: this.passwordResetToken,
       newPassword: this.setPasswordForm.value.newPassword

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
@@ -11,10 +11,10 @@ export class ValidationService {
     let config = new Map([
       ['noPasswordMatch', 'Passwords do not match'],
       ['required', 'Required'],
-      ['minlength', `Minimum length ${validatorValue.requiredLength}`],
-      ['maxlength', `Maximum length ${validatorValue.requiredLength}`],
-      ['min', `Min value ${validatorValue.min}`],
-      ['max', `Max value ${validatorValue.max}`],
+      ['minlength', `Minimum length: ${validatorValue.requiredLength}`],
+      ['maxlength', `Maximum length: ${validatorValue.requiredLength}`],
+      ['min', `Min value: ${validatorValue.min}`],
+      ['max', `Max value: ${validatorValue.max}`],
       ['email', 'Invalid email address'],
       ['pattern', 'Invalid pattern'],
       [
@@ -33,12 +33,15 @@ export class ValidationService {
     return config.get(validatorName);
   }
 
-  static passwordMatchValidator(control: AbstractControl) {
-    const newPassword: string = control.get('newPassword').value;
-    const confirmPassword: string = control.get('confirmPassword').value;
+  static passwordMatchValidator(
+    group: AbstractControl
+  ): ValidationErrors | null {
+    const newPassword: string = group.get('newPassword').value;
+    const confirmPassword: string = group.get('confirmPassword').value;
     if (newPassword !== confirmPassword) {
-      control.get('confirmPassword').setErrors({ noPasswordMatch: true });
+      group.get('confirmPassword').setErrors({ noPasswordMatch: true });
     }
+    return null;
   }
 
   // static dayOfWeekIndexValuesValidator(control: FormControl) {

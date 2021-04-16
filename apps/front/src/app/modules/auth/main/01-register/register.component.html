@@ -1,33 +1,47 @@
 <div class="bg-b1 flex justify-center items-center h-full">
   <form
-    class="flex flex-col w-96 space-y-6"
+    class="flex flex-col w-96"
     [formGroup]="registerForm"
-    (ngSubmit)="onRegister()"
+    (ngSubmit)="register()"
   >
     <div
       data-cy="registerTitle"
-      class="mb-3 text-t1 text-2xl text-center font-semibold"
+      class="text-t1 text-2xl text-center font-semibold"
       >Sign Up</div
     >
+
     <input
       data-cy="registerEmailInput"
-      class="form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-9 form-input rounded border-r1 focus:border-r2 font-regular"
+      [ngClass]="{
+        'border-red-600':
+          registerForm.controls['email'].invalid &&
+          registerForm.controls['email'].touched
+      }"
       type="email"
       formControlName="email"
       placeholder="Email"
     />
+    <m-validation [control]="registerForm.controls['email']"></m-validation>
+
     <input
       data-cy="registerPasswordInput"
-      class="form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-1 form-input rounded border-r1 focus:border-r2 font-regular"
+      [ngClass]="{
+        'border-red-600':
+          registerForm.controls['password'].invalid &&
+          registerForm.controls['password'].touched
+      }"
       type="password"
       formControlName="password"
       placeholder="Password"
     />
+    <m-validation [control]="registerForm.controls['password']"></m-validation>
+
     <button
       data-cy="registerSignUpButton"
-      class="py-3 bg-b2 text-white rounded font-medium"
+      class="mt-1 py-3 bg-b2 text-white rounded font-medium focus:outline-none"
       type="submit"
-      [disabled]="!registerForm.valid"
       >Sign Up</button
     >
   </form>

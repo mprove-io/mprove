@@ -13,8 +13,14 @@ import { common } from '~front/barrels/common';
 })
 export class RegisterComponent {
   registerForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    email: [
+      '',
+      [Validators.required, Validators.email, Validators.maxLength(255)]
+    ],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(6), Validators.maxLength(255)]
+    ]
   });
 
   constructor(
@@ -24,8 +30,12 @@ export class RegisterComponent {
     private userStore: UserStore
   ) {}
 
-  onRegister() {
-    // console.log(this.registerForm.value);
+  register() {
+    this.registerForm.markAllAsTouched();
+
+    if (!this.registerForm.valid) {
+      return;
+    }
 
     let payload: apiToBackend.ToBackendRegisterUserRequestPayload = {
       email: this.registerForm.value.email,

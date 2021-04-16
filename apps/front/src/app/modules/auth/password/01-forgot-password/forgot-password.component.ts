@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -13,17 +12,25 @@ import { common } from '~front/barrels/common';
 })
 export class ForgotPasswordComponent {
   resetPasswordForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]]
+    email: [
+      '',
+      [Validators.required, Validators.email, Validators.maxLength(255)]
+    ]
   });
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private apiService: ApiService,
-    private myDialogService: MyDialogService
+    private apiService: ApiService
   ) {}
 
   resetPassword() {
+    this.resetPasswordForm.markAllAsTouched();
+
+    if (!this.resetPasswordForm.valid) {
+      return;
+    }
+
     let email = this.resetPasswordForm.value.email;
 
     let payload: apiToBackend.ToBackendResetUserPasswordRequestPayload = {
