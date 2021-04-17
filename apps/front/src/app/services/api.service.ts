@@ -18,14 +18,13 @@ import { MyDialogService } from './my-dialog.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  noMainLoading: string[] = [
-    // api.PATH_CONFIRM,
-    // api.PATH_PONG,
-    // api.PATH_CREATE_MCONFIG,
-    // api.PATH_CREATE_MCONFIG_AND_QUERY,
-    // api.PATH_CREATE_DASHBOARD,
-    // api.PATH_CHECK_PROJECT_ID_UNIQUE,
-    // api.PATH_RUN_QUERIES_DRY
+  showSpinner: apiToBackend.ToBackendRequestInfoNameEnum[] = [
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword
   ];
 
   constructor(
@@ -39,7 +38,7 @@ export class ApiService {
     pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum,
     payload: any
   ): Observable<any> {
-    let bypassAuthPaths = [
+    let bypassAuth = [
       apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser
       // api.PATH_REGISTER_USER,
       // api.PATH_VERIFY_USER_EMAIL,
@@ -54,7 +53,7 @@ export class ApiService {
       'Content-Type': 'application/json',
       // eslint-disable-next-line @typescript-eslint/naming-convention
       Authorization:
-        bypassAuthPaths.indexOf(pathInfoName) < 0
+        bypassAuth.indexOf(pathInfoName) < 0
           ? `Bearer ${localStorage.getItem('token')}`
           : ''
     });
@@ -77,12 +76,17 @@ export class ApiService {
       // responseType: 'json',
     };
 
-    if (!this.noMainLoading.includes(pathInfoName)) {
+    // let spinnerStartedTs: number;
+
+    if (this.showSpinner.includes(pathInfoName)) {
+      // spinnerStartedTs = Date.now();
       this.spinner.show();
     }
 
     return combineLatest([
-      timer(1100),
+      timer(
+        this.showSpinner.includes(pathInfoName) ? constants.MIN_TIME_TO_SPIN : 0
+      ),
       this.authHttpClient.request('post', url, options)
     ]).pipe(
       map(x =>
@@ -97,8 +101,21 @@ export class ApiService {
       ),
       catchError(e => this.catchErr(e)),
       finalize(() => {
-        if (!this.noMainLoading.includes(pathInfoName)) {
-          // setTimeout(() => this.spinner.hide(), 100);
+        if (this.showSpinner.includes(pathInfoName)) {
+          // let endedTs = Date.now();
+
+          // let spinTimeAlready = endedTs - spinnerStartedTs;
+          // console.log('spinTimeAlready:', spinTimeAlready);
+
+          // let time = constants.MIN_TIME_TO_SPIN - spinTimeAlready;
+          // console.log('time:', time);
+
+          // if (time > 0) {
+          //   setTimeout(() => this.spinner.hide(), time);
+          // } else {
+          //   this.spinner.hide();
+          // }
+
           this.spinner.hide();
         }
       })

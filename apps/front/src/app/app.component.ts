@@ -1,6 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router
+} from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { tap } from 'rxjs/operators';
+import { constants } from '~front/barrels/constants';
 import { AuthService } from './services/auth.service';
-import { MyDialogService } from './services/my-dialog.service';
 
 @Component({
   selector: 'm-root',
@@ -9,9 +18,44 @@ import { MyDialogService } from './services/my-dialog.service';
 export class AppComponent implements OnInit {
   title = 'front';
 
+  spinnerStartedTs: number;
+
+  routerEvents$ = this.router.events.pipe(
+    tap((x: any) => {
+      switch (true) {
+        case x instanceof NavigationStart: {
+          this.spinnerStartedTs = Date.now();
+          this.spinner.show();
+          break;
+        }
+
+        case x instanceof NavigationEnd:
+        case x instanceof NavigationCancel:
+        case x instanceof NavigationError: {
+          let navigationEndedTs = Date.now();
+
+          let spinTimeAlready = navigationEndedTs - this.spinnerStartedTs;
+          console.log('spinTimeAlready:', spinTimeAlready);
+
+          let time = constants.MIN_TIME_TO_SPIN - spinTimeAlready;
+          console.log('time:', time);
+
+          if (time > 0) {
+            setTimeout(() => this.spinner.hide(), time);
+          } else {
+            this.spinner.hide();
+          }
+
+          break;
+        }
+      }
+    })
+  );
+
   constructor(
     private authService: AuthService,
-    private myDialogService: MyDialogService
+    private spinner: NgxSpinnerService,
+    private router: Router
   ) {}
 
   ngOnInit() {

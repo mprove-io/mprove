@@ -21,3 +21,4 @@ export const PATH_PASSWORD_RESET_SENT = 'password-reset-sent';
 export const PATH_NEW_PASSWORD_WAS_SET = 'new-password-was-set';
 
 export const PATH_PROFILE = 'profile';
+export const PATH_PRO = 'pro';

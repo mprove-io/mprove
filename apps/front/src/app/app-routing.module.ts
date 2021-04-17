@@ -12,8 +12,10 @@ import { UpdatePasswordComponent } from './modules/auth/password/03-update-passw
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
+import { ProComponent } from './modules/profile/pro/pro.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 import { NavBarResolver } from './resolvers/navbar.resolver';
+import { ProfileResolver } from './resolvers/profile.resolver';
 
 const routes: Routes = [
   {
@@ -70,7 +72,12 @@ const routes: Routes = [
     children: [
       {
         component: ProfileComponent,
-        path: common.PATH_PROFILE
+        path: common.PATH_PROFILE,
+        resolve: [ProfileResolver]
+      },
+      {
+        component: ProComponent,
+        path: common.PATH_PRO
       }
     ]
   }

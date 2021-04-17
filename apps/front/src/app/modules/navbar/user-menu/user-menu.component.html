@@ -3,7 +3,7 @@
     class="relative z-10 block h-10 w-10 rounded-full bg-blue-200 text-md tracking-widest focus:outline-none"
     (click)="isUserMenuOpen = !isUserMenuOpen"
   >
-    {{ initials$ | async | uppercase }}
+    {{ userQuery.initials$ | async }}
   </button>
 
   <button
@@ -18,14 +18,15 @@
   >
     <div class="block mt-2 px-4 py-2 text-t3 font-bold text-sm">User</div>
 
-    <a
-      class="block px-4 py-2 text-t3 font-medium text-sm"
-      [routerLink]="['/profile']"
+    <button
+      class="block px-4 py-2 text-t3 font-medium text-sm w-full text-left focus:outline-none"
       [ngClass]="{
         'hover:bg-b3': lastUrl !== pathProfile,
         'cursor-default': lastUrl === pathProfile
       }"
-      >Profile</a
+      [disabled]="lastUrl === pathProfile"
+      (click)="profile()"
+      >Profile</button
     >
 
     <button

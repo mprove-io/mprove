@@ -40,7 +40,7 @@ export class ConfirmEmailComponent implements OnInit {
         }
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendLoginUserResponse) => {
+        map((resp: apiToBackend.ToBackendConfirmUserEmailResponse) => {
           let user = resp.payload.user;
           let token = resp.payload.token;
 
