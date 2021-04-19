@@ -33,6 +33,9 @@ export class UserQuery extends Query<UserState> {
     return state.firstName.toUpperCase() + state.lastName.toUpperCase();
   });
 
+  email$ = this.select(state => state.email);
+  timezone$ = this.select(state => state.timezone);
+
   constructor(protected store: UserStore) {
     super(store);
   }

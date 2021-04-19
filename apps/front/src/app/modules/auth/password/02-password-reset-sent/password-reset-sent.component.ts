@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '~front/app/services/auth.service';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -9,13 +10,17 @@ import { common } from '~front/barrels/common';
 export class PasswordResetSentComponent implements OnInit {
   email: string;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
-    this.email = localStorage.getItem('passwordResetEmail');
+    this.email = localStorage.getItem('PASSWORD_RESET_EMAIL');
   }
 
   done() {
-    this.router.navigate([common.PATH_LOGIN]);
+    if (this.authService.authenticated()) {
+      this.router.navigate([common.PATH_PROFILE]);
+    } else {
+      this.router.navigate([common.PATH_LOGIN]);
+    }
   }
 }

@@ -4,7 +4,7 @@ export const README_FILE_NAME = 'readme.md';
 
 export const TRIPLE_UNDERSCORE = '___';
 
-export const USE_PROJECT_DEFAULT_TIMEZONE = 'USE_PROJECT_DEFAULT_TIMEZONE';
+export const USE_PROJECT_TIMEZONE = 'USE_PROJECT_TIMEZONE';
 export const UTC = 'UTC';
 
 export const BLOCKML_USERS_FOLDER = 'users';
@@ -20,5 +20,6 @@ export const PATH_UPDATE_PASSWORD = 'update-password';
 export const PATH_PASSWORD_RESET_SENT = 'password-reset-sent';
 export const PATH_NEW_PASSWORD_WAS_SET = 'new-password-was-set';
 
+export const PATH_PASSWORD_RESET_SENT_AUTH = 'password-reset-sent-auth';
 export const PATH_PROFILE = 'profile';
 export const PATH_PRO = 'pro';

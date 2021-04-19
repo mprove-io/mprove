@@ -35,10 +35,10 @@ export class AppComponent implements OnInit {
           let navigationEndedTs = Date.now();
 
           let spinTimeAlready = navigationEndedTs - this.spinnerStartedTs;
-          console.log('spinTimeAlready:', spinTimeAlready);
+          // console.log('spinTimeAlready:', spinTimeAlready);
 
           let time = constants.MIN_TIME_TO_SPIN - spinTimeAlready;
-          console.log('time:', time);
+          // console.log('time:', time);
 
           if (time > 0) {
             setTimeout(() => this.spinner.hide(), time);

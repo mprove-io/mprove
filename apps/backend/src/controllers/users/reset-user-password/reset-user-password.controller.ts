@@ -52,7 +52,7 @@ export class ResetUserPasswordController {
     await this.mailerService.sendMail({
       to: user.email,
       subject: '[Mprove] Reset your password',
-      text: `You requested password change. Click the link to set new password: ${link}`
+      text: `You requested password change. Click the link to set a new password: ${link}`
     });
 
     let payload = {};

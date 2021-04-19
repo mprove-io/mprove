@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
 import { AuthService } from '~front/app/services/auth.service';
 import { common } from '~front/barrels/common';
@@ -11,9 +12,16 @@ import { common } from '~front/barrels/common';
 export class UserMenuComponent implements OnInit {
   isUserMenuOpen = false;
 
+  pathProfile = common.PATH_PROFILE;
+
   lastUrl: string;
 
-  pathProfile = common.PATH_PROFILE;
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      this.lastUrl = x.url.split('/')[1];
+    })
+  );
 
   constructor(
     public userQuery: UserQuery,

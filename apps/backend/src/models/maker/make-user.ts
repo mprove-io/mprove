@@ -25,7 +25,7 @@ export function makeUser(item: {
     alias: item.alias,
     first_name: null,
     last_name: null,
-    timezone: common.USE_PROJECT_DEFAULT_TIMEZONE,
+    timezone: common.USE_PROJECT_TIMEZONE,
     status: item.status || common.UserStatusEnum.Pending,
     server_ts: undefined
   };

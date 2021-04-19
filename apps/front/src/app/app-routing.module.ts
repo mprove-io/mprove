@@ -71,6 +71,10 @@ const routes: Routes = [
     resolve: [NavBarResolver],
     children: [
       {
+        component: PasswordResetSentComponent,
+        path: common.PATH_PASSWORD_RESET_SENT_AUTH
+      },
+      {
         component: ProfileComponent,
         path: common.PATH_PROFILE,
         resolve: [ProfileResolver]
