@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'resend-user-email__ok-verified-true';
+let testId = 'resend-user-email__user-does-not-exist';
 
 let traceId = testId;
 

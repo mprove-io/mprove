@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogModule } from '@ngneat/dialog';
@@ -28,7 +29,8 @@ import { ErrorHandlerService } from './services/error-handler.service';
     NgxSpinnerModule,
     BrowserAnimationsModule,
     DialogModule.forRoot(),
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

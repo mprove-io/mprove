@@ -24,14 +24,17 @@ export class AppComponent implements OnInit {
     tap((x: any) => {
       switch (true) {
         case x instanceof NavigationStart: {
+          // console.log('NavigationStart', x.url);
           this.spinnerStartedTs = Date.now();
           this.spinner.show();
           break;
         }
 
-        case x instanceof NavigationEnd:
-        case x instanceof NavigationCancel:
-        case x instanceof NavigationError: {
+        case x instanceof NavigationEnd ||
+          x instanceof NavigationCancel ||
+          x instanceof NavigationError: {
+          // console.log('NavigationFinish', x.url);
+
           let navigationEndedTs = Date.now();
 
           let spinTimeAlready = navigationEndedTs - this.spinnerStartedTs;

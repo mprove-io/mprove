@@ -4,6 +4,7 @@ import { map, take } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -13,10 +14,11 @@ import { common } from '~front/barrels/common';
 })
 export class ProfileComponent implements OnInit {
   constructor(
-    private authService: AuthService,
     public userQuery: UserQuery,
+    private authService: AuthService,
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private myDialogService: MyDialogService
   ) {}
 
   ngOnInit() {
@@ -44,5 +46,11 @@ export class ProfileComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  editName() {
+    this.myDialogService.showEditName({
+      apiService: this.apiService
+    });
   }
 }

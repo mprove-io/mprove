@@ -1,0 +1,46 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="editNameDialogTitle"
+    class="flex-grow mt-5 text-2xl text-t1 font-semibold text-left"
+    >Edit Name</div
+  >
+
+  <form
+    class="flex flex-col w-80"
+    [formGroup]="editNameForm"
+    (ngSubmit)="save()"
+  >
+    <input
+      data-cy="editNameDialogFirstNameInput"
+      class="mt-9 form-input rounded border-r1 focus:border-r2 font-regular"
+      [ngClass]="{
+        'border-red-600':
+          editNameForm.controls['firstName'].invalid &&
+          editNameForm.controls['firstName'].touched
+      }"
+      formControlName="firstName"
+      placeholder="First Name"
+    />
+    <m-validation [control]="editNameForm.controls['firstName']"></m-validation>
+
+    <input
+      data-cy="editNameDialogLastNameInput"
+      class="mt-1 form-input rounded border-r1 focus:border-r2 font-regular"
+      [ngClass]="{
+        'border-red-600':
+          editNameForm.controls['lastName'].invalid &&
+          editNameForm.controls['lastName'].touched
+      }"
+      formControlName="lastName"
+      placeholder="Last Name"
+    />
+    <m-validation [control]="editNameForm.controls['lastName']"></m-validation>
+
+    <button
+      data-cy="editNameDialogSaveButton"
+      class="mt-6 py-3 w-28 bg-b2 text-white rounded font-medium focus:outline-none"
+      type="submit"
+      >Save</button
+    >
+  </form>
+</div>

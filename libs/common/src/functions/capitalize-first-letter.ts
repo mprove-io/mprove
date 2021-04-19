@@ -1,3 +1,7 @@
+import { isDefined } from './is-defined';
+
 export function capitalizeFirstLetter(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
+  return isDefined(value)
+    ? value.charAt(0).toUpperCase() + value.slice(1)
+    : value;
 }

@@ -22,6 +22,6 @@ describe('front-e2e', () => {
     cy.visit(common.PATH_CONFIRM_EMAIL + '?token=' + emailVerificationToken);
     cy.loading();
     cy.url().should('include', common.PATH_PROFILE);
-    cy.get('[data-cy=emailIsConfirmedDialog]');
+    cy.get('[data-cy=emailIsConfirmedDialogTitle]');
   });
 });

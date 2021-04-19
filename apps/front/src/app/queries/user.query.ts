@@ -6,31 +6,41 @@ import { common } from '~front/barrels/common';
 @Injectable({ providedIn: 'root' })
 export class UserQuery extends Query<UserState> {
   initials$ = this.select(state => {
-    let firstLetter = common.isDefined(state.firstName)
-      ? state.firstName[0]
-      : state.alias[0];
+    console.log(state);
+
+    let firstLetter =
+      common.isDefined(state.firstName) && state.firstName.length > 0
+        ? state.firstName[0]
+        : state.alias[0];
 
     let secondLetter =
-      common.isDefined(state.firstName) && common.isDefined(state.lastName)
+      common.isDefined(state.firstName) &&
+      state.firstName.length > 0 &&
+      common.isDefined(state.lastName) &&
+      state.lastName.length > 0
         ? state.lastName[0]
+        : common.isDefined(state.firstName) && state.firstName.length > 1
+        ? state.firstName[1]
         : state.alias.length > 1
         ? state.alias[1]
         : '_';
 
-    return firstLetter.toUpperCase() + secondLetter.toUpperCase();
+    return (
+      common.capitalizeFirstLetter(firstLetter) +
+      common.capitalizeFirstLetter(secondLetter)
+    );
   });
 
   fullName$ = this.select(state => {
-    if (
-      common.isUndefined(state.firstName) &&
-      common.isUndefined(state.lastName)
-    ) {
-      let second = state.alias.length > 1 ? state.alias[1] : '_';
+    let firstName = common.capitalizeFirstLetter(
+      common.isDefined(state.firstName) ? state.firstName : state.alias[0]
+    );
 
-      return state.alias[0].toUpperCase() + ' ' + second.toUpperCase();
-    }
+    let lastName = common.capitalizeFirstLetter(
+      common.isDefined(state.lastName) ? state.lastName : '_'
+    );
 
-    return state.firstName.toUpperCase() + state.lastName.toUpperCase();
+    return `${firstName} ${lastName}`;
   });
 
   email$ = this.select(state => state.email);

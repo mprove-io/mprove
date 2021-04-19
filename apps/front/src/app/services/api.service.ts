@@ -24,7 +24,8 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName
   ];
 
   constructor(
