@@ -1,11 +1,13 @@
-<div class="bg-b1 flex justify-center items-center h-full">
+<div class="bg-blue1 flex justify-center items-center h-full">
   <form class="flex flex-col w-96" [formGroup]="loginForm" (ngSubmit)="login()">
-    <div data-cy="loginTitle" class="text-t1 text-2xl text-center font-semibold"
+    <div
+      data-cy="loginTitle"
+      class="text-gray2 text-2xl text-center font-semibold"
       >Log In</div
     >
     <input
       data-cy="loginEmailInput"
-      class="mt-9 form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3 font-regular"
       [ngClass]="{
         'border-red-600':
           loginForm.controls['email'].invalid &&
@@ -19,7 +21,7 @@
 
     <input
       data-cy="loginPasswordInput"
-      class="mt-1 form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-1 form-input rounded border-gray3 focus:border-blue3 font-regular"
       [ngClass]="{
         'border-red-600':
           loginForm.controls['password'].invalid &&
@@ -37,14 +39,14 @@
         data-cy="loginForgotPasswordButton"
         type="button"
         (click)="forgotPassword()"
-        class="text-t2 font-regular w-40 focus:outline-none"
+        class="text-blue4 font-regular w-40 focus:outline-none"
         >Forgot Password</button
       >
     </div>
 
     <button
       data-cy="loginButton"
-      class="mt-6 py-3 bg-b2 text-white rounded font-medium focus:outline-none"
+      class="mt-6 py-3 bg-blue3 text-white rounded font-medium focus:outline-none"
       type="submit"
       >Log In</button
     >

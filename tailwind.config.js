@@ -1,3 +1,13 @@
+var blue1 = '#F2F5FA';
+var blue2 = '#E7F2FD';
+var blue3 = '#365EE0';
+var blue4 = '#465EDC';
+
+var gray1 = '#4D4F5C';
+var gray2 = '#00030B';
+var gray3 = '#D7DBEC';
+var gray4 = '#D7DBECA3';
+
 module.exports = {
   prefix: '',
   purge: ['apps/front/src/**/*.{html,ts}'],
@@ -13,23 +23,22 @@ module.exports = {
     },
     backgroundColor: theme => ({
       ...theme('colors'),
-      b1: '#F2F5FA',
-      b2: '#365EE0',
-      b3: '#E7F2FD'
+      blue1,
+      blue2,
+      blue3
     }),
     textColor: theme => ({
       ...theme('colors'),
-      t1: '#00030B',
-      t2: '#465EDC',
-      t3: '#4D4F5C',
-      t4: '#365EE0'
+      blue3,
+      blue4,
+      gray1,
+      gray2
     }),
     borderColor: theme => ({
       ...theme('colors'),
-      r1: '#D7DBEC',
-      r2: '#365EE0',
-      r3: '#D7DBECA3',
-      r4: '#4D4F5C'
+      blue3,
+      gray3,
+      gray4
     })
   },
   variants: {

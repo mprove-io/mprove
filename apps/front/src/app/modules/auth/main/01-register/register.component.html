@@ -1,4 +1,4 @@
-<div class="bg-b1 flex justify-center items-center h-full">
+<div class="bg-blue1 flex justify-center items-center h-full">
   <form
     class="flex flex-col w-96"
     [formGroup]="registerForm"
@@ -6,13 +6,13 @@
   >
     <div
       data-cy="registerTitle"
-      class="text-t1 text-2xl text-center font-semibold"
+      class="text-gray2 text-2xl text-center font-semibold"
       >Sign Up</div
     >
 
     <input
       data-cy="registerEmailInput"
-      class="mt-9 form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3 font-regular"
       [ngClass]="{
         'border-red-600':
           registerForm.controls['email'].invalid &&
@@ -26,7 +26,7 @@
 
     <input
       data-cy="registerPasswordInput"
-      class="mt-1 form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-1 form-input rounded border-gray3 focus:border-blue3 font-regular"
       [ngClass]="{
         'border-red-600':
           registerForm.controls['password'].invalid &&
@@ -40,7 +40,7 @@
 
     <button
       data-cy="registerSignUpButton"
-      class="mt-1 py-3 bg-b2 text-white rounded font-medium focus:outline-none"
+      class="mt-1 py-3 bg-blue3 text-white rounded font-medium focus:outline-none"
       type="submit"
       >Sign Up</button
     >

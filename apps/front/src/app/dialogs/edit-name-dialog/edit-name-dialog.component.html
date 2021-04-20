@@ -1,7 +1,7 @@
 <div class="flex flex-col p-9 bg-white">
   <div
     data-cy="editNameDialogTitle"
-    class="flex-grow mt-5 text-2xl text-t1 font-semibold text-left"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
     >Edit Name</div
   >
 
@@ -12,7 +12,7 @@
   >
     <input
       data-cy="editNameDialogFirstNameInput"
-      class="mt-9 form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3 font-regular"
       [ngClass]="{
         'border-red-600':
           editNameForm.controls['firstName'].invalid &&
@@ -25,7 +25,7 @@
 
     <input
       data-cy="editNameDialogLastNameInput"
-      class="mt-1 form-input rounded border-r1 focus:border-r2 font-regular"
+      class="mt-1 form-input rounded border-gray3 focus:border-blue3 font-regular"
       [ngClass]="{
         'border-red-600':
           editNameForm.controls['lastName'].invalid &&
@@ -39,14 +39,14 @@
     <div class="mt-6">
       <button
         data-cy="editNameDialogSaveButton"
-        class="py-3 w-28 bg-b2 text-white rounded font-medium focus:outline-none"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
         data-cy="editNameDialogCancelButton"
-        class="ml-3 py-3 w-28 rounded border text-t4 border-r2 font-medium focus:outline-none"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         (click)="cancel()"
         >Cancel</button
       >
