@@ -6,13 +6,13 @@ import { VerifyEmailComponent } from './modules/auth/main/02-verify-email/verify
 import { ConfirmEmailComponent } from './modules/auth/main/03-confirm-email/confirm-email.component';
 import { EmailConfirmedComponent } from './modules/auth/main/04-email-confirmed/email-confirmed.component';
 import { LoginComponent } from './modules/auth/main/05-login/login.component';
+import { UserDeletedComponent } from './modules/auth/main/06-user-deleted/user-deleted.component';
 import { ForgotPasswordComponent } from './modules/auth/password/01-forgot-password/forgot-password.component';
 import { PasswordResetSentComponent } from './modules/auth/password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
-import { ProComponent } from './modules/profile/pro/pro.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
@@ -62,6 +62,10 @@ const routes: Routes = [
       {
         component: NewPasswordWasSetComponent,
         path: common.PATH_NEW_PASSWORD_WAS_SET
+      },
+      {
+        component: UserDeletedComponent,
+        path: common.PATH_USER_DELETED
       }
     ]
   },
@@ -78,10 +82,6 @@ const routes: Routes = [
         component: ProfileComponent,
         path: common.PATH_PROFILE,
         resolve: [ProfileResolver]
-      },
-      {
-        component: ProComponent,
-        path: common.PATH_PRO
       }
     ]
   }

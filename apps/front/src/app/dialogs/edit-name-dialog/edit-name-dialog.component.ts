@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { AuthService } from '~front/app/services/auth.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
@@ -19,10 +17,8 @@ export class EditNameDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
-    private router: Router,
     private userStore: UserStore,
-    private userQuery: UserQuery,
-    private authService: AuthService
+    private userQuery: UserQuery
   ) {}
 
   ngOnInit() {
@@ -61,6 +57,7 @@ export class EditNameDialogComponent implements OnInit {
     };
 
     let apiService: ApiService = this.ref.data.apiService;
+
     apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,

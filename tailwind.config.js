@@ -8,6 +8,8 @@ var gray2 = '#00030B';
 var gray3 = '#D7DBEC';
 var gray4 = '#D7DBECA3';
 
+var red1 = '#DE4343';
+
 module.exports = {
   prefix: '',
   purge: ['apps/front/src/**/*.{html,ts}'],
@@ -25,20 +27,23 @@ module.exports = {
       ...theme('colors'),
       blue1,
       blue2,
-      blue3
+      blue3,
+      red1
     }),
     textColor: theme => ({
       ...theme('colors'),
       blue3,
       blue4,
       gray1,
-      gray2
+      gray2,
+      red1
     }),
     borderColor: theme => ({
       ...theme('colors'),
       blue3,
       gray3,
-      gray4
+      gray4,
+      red1
     })
   },
   variants: {

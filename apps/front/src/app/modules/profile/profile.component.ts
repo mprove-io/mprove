@@ -53,4 +53,10 @@ export class ProfileComponent implements OnInit {
       apiService: this.apiService
     });
   }
+
+  deleteUser() {
+    this.myDialogService.showDeleteUser({
+      apiService: this.apiService
+    });
+  }
 }

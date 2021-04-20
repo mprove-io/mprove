@@ -7,7 +7,7 @@
     >
     <input
       data-cy="loginEmailInput"
-      class="mt-9 form-input rounded border-gray3 focus:border-blue3 font-regular"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           loginForm.controls['email'].invalid &&
@@ -21,7 +21,7 @@
 
     <input
       data-cy="loginPasswordInput"
-      class="mt-1 form-input rounded border-gray3 focus:border-blue3 font-regular"
+      class="mt-1 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           loginForm.controls['password'].invalid &&
@@ -39,7 +39,7 @@
         data-cy="loginForgotPasswordButton"
         type="button"
         (click)="forgotPassword()"
-        class="text-blue4 font-regular w-40 focus:outline-none"
+        class="text-blue4 w-40 focus:outline-none"
         >Forgot Password</button
       >
     </div>
