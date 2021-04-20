@@ -6,7 +6,7 @@ import { common } from '~front/barrels/common';
 @Injectable({ providedIn: 'root' })
 export class UserQuery extends Query<UserState> {
   initials$ = this.select(state => {
-    console.log(state);
+    // console.log(state);
 
     let firstLetter =
       common.isDefined(state.firstName) && state.firstName.length > 0

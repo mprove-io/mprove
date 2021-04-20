@@ -21,13 +21,15 @@ module.exports = {
       ...theme('colors'),
       t1: '#00030B',
       t2: '#465EDC',
-      t3: '#4D4F5C'
+      t3: '#4D4F5C',
+      t4: '#365EE0'
     }),
     borderColor: theme => ({
       ...theme('colors'),
       r1: '#D7DBEC',
       r2: '#365EE0',
-      r3: '#D7DBECA3'
+      r3: '#D7DBECA3',
+      r4: '#4D4F5C'
     })
   },
   variants: {

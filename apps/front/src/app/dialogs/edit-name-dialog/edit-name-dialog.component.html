@@ -36,11 +36,20 @@
     />
     <m-validation [control]="editNameForm.controls['lastName']"></m-validation>
 
-    <button
-      data-cy="editNameDialogSaveButton"
-      class="mt-6 py-3 w-28 bg-b2 text-white rounded font-medium focus:outline-none"
-      type="submit"
-      >Save</button
-    >
+    <div class="mt-6">
+      <button
+        data-cy="editNameDialogSaveButton"
+        class="py-3 w-28 bg-b2 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="editNameDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-t4 border-r2 font-medium focus:outline-none"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
   </form>
 </div>
