@@ -59,13 +59,17 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private spinner: NgxSpinnerService,
     private router: Router
-  ) {}
+  ) // ,
+  // private myDialogService: MyDialogService,
+  // private apiService: ApiService
+  {}
 
   ngOnInit() {
     this.authService.startWatch();
 
     // throw new Error('appComponent ngOnInit');
 
+    // this.myDialogService.showEditPhoto({ apiService: this.apiService });
     // this.myDialogService.showEmailConfirmed();
     // this.myDialogService.showPasswordResetSent('test123123@example.com');
 

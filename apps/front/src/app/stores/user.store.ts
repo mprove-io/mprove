@@ -4,7 +4,7 @@ import { common } from '~front/barrels/common';
 
 export class UserState extends common.User {}
 
-export function createInitialState(): UserState {
+function createInitialState(): UserState {
   return {
     userId: undefined,
     email: undefined,

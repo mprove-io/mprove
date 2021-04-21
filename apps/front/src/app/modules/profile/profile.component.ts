@@ -48,6 +48,12 @@ export class ProfileComponent implements OnInit {
       .subscribe();
   }
 
+  editPhoto() {
+    this.myDialogService.showEditPhoto({
+      apiService: this.apiService
+    });
+  }
+
   editName() {
     this.myDialogService.showEditName({
       apiService: this.apiService

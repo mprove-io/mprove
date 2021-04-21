@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogModule } from '@ngneat/dialog';
+import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { appDialogs } from './app-dialogs';
 import { AppRoutingModule } from './app-routing.module';
@@ -33,7 +34,8 @@ import { ErrorHandlerService } from './services/error-handler.service';
     SharedModule,
     ReactiveFormsModule,
     FormsModule,
-    NgSelectModule
+    NgSelectModule,
+    ImageCropperModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
