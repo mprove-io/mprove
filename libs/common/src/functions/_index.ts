@@ -2,6 +2,7 @@ export * from './boolean-to-enum';
 export * from './capitalize-first-letter';
 export * from './enum-to-boolean';
 export * from './get-common.config';
+export * from './get-timezones';
 export * from './handle-error';
 export * from './is-defined';
 export * from './is-undefined';

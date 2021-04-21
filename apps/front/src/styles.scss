@@ -3,6 +3,9 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import '~@ng-select/ng-select/themes/default.theme.css';
+// @import "~@ng-select/ng-select/themes/material.theme.css";
+
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;

@@ -5,6 +5,7 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { DeleteUserDialogComponent } from '../dialogs/delete-user-dialog/delete-user-dialog.component';
 import { EditNameDialogComponent } from '../dialogs/edit-name-dialog/edit-name-dialog.component';
+import { EditTimezoneDialogComponent } from '../dialogs/edit-timezone-dialog/edit-timezone-dialog.component';
 import { EmailConfirmedDialogComponent } from '../dialogs/email-confirmed-dialog/email-confirmed-dialog.component';
 import { ApiService } from './api.service';
 
@@ -33,6 +34,15 @@ export class MyDialogService {
 
   showEditName(item: { apiService: ApiService }): void {
     this.dialogService.open(EditNameDialogComponent, {
+      enableClose: false,
+      data: {
+        apiService: item.apiService
+      }
+    });
+  }
+
+  showEditTimezone(item: { apiService: ApiService }): void {
+    this.dialogService.open(EditTimezoneDialogComponent, {
       enableClose: false,
       data: {
         apiService: item.apiService
