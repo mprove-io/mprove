@@ -26,7 +26,8 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig
   ];
 
   constructor(

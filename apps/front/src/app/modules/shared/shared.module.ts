@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AvatarComponent } from './avatar/avatar.component';
 import { LogoComponent } from './logo/logo.component';
 import { CompletedRingComponent } from './symbols/completed-ring/completed-ring.component';
 import { EmailRingComponent } from './symbols/email-ring/email-ring.component';
@@ -10,7 +11,8 @@ let sharedComponents = [
   LogoComponent,
   CompletedRingComponent,
   EmailRingComponent,
-  ValidationComponent
+  ValidationComponent,
+  AvatarComponent
 ];
 
 @NgModule({

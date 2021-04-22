@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { base64ToFile } from 'ngx-image-cropper';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavStore } from '~front/app/stores/nav.store';
@@ -23,33 +22,33 @@ export class EditPhotoDialogComponent {
 
   imageCropped(event: any) {
     this.croppedImage = event.base64;
-    console.log(event, base64ToFile(event.base64));
+    // console.log(event, base64ToFile(event.base64));
   }
 
   imageLoaded() {
     this.showCropper = true;
-    console.log('Image loaded');
+    // console.log('Image loaded');
   }
 
   cropperReady(sourceImageDimensions: any) {
-    console.log('Cropper ready', sourceImageDimensions);
+    // console.log('Cropper ready', sourceImageDimensions);
   }
 
   loadImageFailed() {
-    console.log('Load failed');
+    console.log('Image load failed');
   }
 
   save() {
     this.ref.close();
 
     let payload: apiToBackend.ToBackendSetAvatarRequestPayload = {
-      avatarBig: '',
+      avatarBig: this.croppedImage,
       avatarSmall: this.croppedImage
     };
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    console.log(this.croppedImage);
+    // console.log(this.croppedImage);
 
     apiService
       .req(
@@ -58,7 +57,7 @@ export class EditPhotoDialogComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendSetAvatarResponse) => {
-          console.log(resp.payload.avatarSmall);
+          // console.log(resp.payload.avatarSmall);
 
           this.navStore.update(state =>
             Object.assign({}, state, {

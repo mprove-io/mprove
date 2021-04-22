@@ -44,6 +44,7 @@ export class UserQuery extends Query<UserState> {
   });
 
   email$ = this.select(state => state.email);
+  userId$ = this.select(state => state.userId);
   timezone$ = this.select(state => state.timezone);
 
   constructor(protected store: UserStore) {

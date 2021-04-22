@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -24,22 +24,11 @@ export class UserMenuComponent implements OnInit {
     })
   );
 
-  avatarSmall: string;
-
-  avatarSmall$ = this.navQuery.avatarSmall$.pipe(
-    tap((x: any) => {
-      console.log(x);
-      this.avatarSmall = x;
-      this.cd.detectChanges();
-    })
-  );
-
   constructor(
     public userQuery: UserQuery,
     public navQuery: NavQuery,
     private authService: AuthService,
-    private router: Router,
-    private cd: ChangeDetectorRef
+    private router: Router
   ) {}
 
   ngOnInit() {

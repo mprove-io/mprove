@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
@@ -15,6 +16,7 @@ import { common } from '~front/barrels/common';
 export class ProfileComponent implements OnInit {
   constructor(
     public userQuery: UserQuery,
+    public navQuery: NavQuery,
     private authService: AuthService,
     private apiService: ApiService,
     private router: Router,
@@ -42,6 +44,38 @@ export class ProfileComponent implements OnInit {
         map((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
           localStorage.setItem('PASSWORD_RESET_EMAIL', email);
           this.router.navigate([common.PATH_PASSWORD_RESET_SENT_AUTH]);
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  showPhoto() {
+    let userId: string;
+
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
+      avatarUserId: userId
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
+          this.myDialogService.showPhoto({
+            apiService: this.apiService,
+            userId: userId,
+            avatarBig: resp.payload.avatarBig
+          });
         }),
         take(1)
       )

@@ -3,7 +3,7 @@
   <div class="flex-1 bg-white mx-6 mt-6 mb-4 rounded shadow-lg">
     <div class="flex flex-row mt-16 ml-32">
       <div class="flex flex-col">
-        <div class="h-16 flex items-center justify-end font-semibold"
+        <div class="h-24 flex items-center justify-end font-semibold"
           >Profile Photo</div
         >
         <div class="h-16 flex items-center justify-end font-semibold">Name</div>
@@ -18,7 +18,7 @@
       </div>
 
       <div class="flex flex-col ml-2">
-        <div class="h-16 flex items-center"></div>
+        <div class="h-24 flex items-center"></div>
         <div class="h-16 flex items-center"></div>
         <div class="h-16 flex items-center text-gray1">
           <svg
@@ -42,7 +42,18 @@
       </div>
 
       <div class="flex flex-col ml-6">
-        <div class="h-16 flex items-center"></div>
+        <div class="h-24 flex items-center">
+          <button
+            class="block h-20 w-20 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+            [ngClass]="{
+              'cursor-default': !(navQuery.avatarSmall$ | async)
+            }"
+            [disabled]="!(navQuery.avatarSmall$ | async)"
+            (click)="showPhoto()"
+          >
+            <m-avatar></m-avatar>
+          </button>
+        </div>
         <div class="h-16 flex items-center max-w-xl truncate">{{
           userQuery.fullName$ | async
         }}</div>
@@ -68,7 +79,7 @@
       </div>
 
       <div class="flex flex-col ml-6">
-        <div class="h-16 flex items-center"
+        <div class="h-24 flex items-center"
           ><button
             (click)="editPhoto()"
             class="py-2 px-3 border border-gray-300 rounded shadow-sm text-sm leading-3 font-medium text-gray-700 focus:outline-none"

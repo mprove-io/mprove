@@ -4,6 +4,7 @@ import { EditPhotoDialogComponent } from './dialogs/edit-photo-dialog/edit-photo
 import { EditTimezoneDialogComponent } from './dialogs/edit-timezone-dialog/edit-timezone-dialog.component';
 import { EmailConfirmedDialogComponent } from './dialogs/email-confirmed-dialog/email-confirmed-dialog.component';
 import { ErrorDialogComponent } from './dialogs/error-dialog/error-dialog.component';
+import { PhotoDialogComponent } from './dialogs/photo-dialog/photo-dialog.component';
 
 export const appDialogs = [
   ErrorDialogComponent,
@@ -11,5 +12,6 @@ export const appDialogs = [
   EditNameDialogComponent,
   DeleteUserDialogComponent,
   EditTimezoneDialogComponent,
-  EditPhotoDialogComponent
+  EditPhotoDialogComponent,
+  PhotoDialogComponent
 ];

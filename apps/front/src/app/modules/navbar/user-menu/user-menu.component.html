@@ -3,8 +3,7 @@
     class="relative z-10 block h-10 w-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
     (click)="isUserMenuOpen = !isUserMenuOpen"
   >
-    <div *ngIf="!avatarSmall">{{ userQuery.initials$ | async }}</div>
-    <img *ngIf="avatarSmall" class="rounded-full" [src]="avatarSmall" />
+    <m-avatar></m-avatar>
   </button>
 
   <button
@@ -48,4 +47,3 @@
 </div>
 
 <div *ngIf="routerEvents$ | async"></div>
-<div *ngIf="avatarSmall$ | async"></div>

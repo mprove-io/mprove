@@ -8,6 +8,7 @@ import { EditNameDialogComponent } from '../dialogs/edit-name-dialog/edit-name-d
 import { EditPhotoDialogComponent } from '../dialogs/edit-photo-dialog/edit-photo-dialog.component';
 import { EditTimezoneDialogComponent } from '../dialogs/edit-timezone-dialog/edit-timezone-dialog.component';
 import { EmailConfirmedDialogComponent } from '../dialogs/email-confirmed-dialog/email-confirmed-dialog.component';
+import { PhotoDialogComponent } from '../dialogs/photo-dialog/photo-dialog.component';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -30,6 +31,22 @@ export class MyDialogService {
   showEmailConfirmed(): void {
     this.dialogService.open(EmailConfirmedDialogComponent, {
       enableClose: false
+    });
+  }
+
+  showPhoto(item: {
+    apiService: ApiService;
+    userId: string;
+    avatarBig: string;
+  }): void {
+    this.dialogService.open(PhotoDialogComponent, {
+      enableClose: true,
+      closeButton: true,
+      data: {
+        apiService: item.apiService,
+        userId: item.userId,
+        avatarBig: item.avatarBig
+      }
     });
   }
 
