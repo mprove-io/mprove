@@ -44,10 +44,12 @@ export class EditPhotoDialogComponent {
 
     let payload: apiToBackend.ToBackendSetAvatarRequestPayload = {
       avatarBig: '',
-      avatarSmall: ''
+      avatarSmall: this.croppedImage
     };
 
     let apiService: ApiService = this.ref.data.apiService;
+
+    console.log(this.croppedImage);
 
     apiService
       .req(
@@ -56,7 +58,13 @@ export class EditPhotoDialogComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendSetAvatarResponse) => {
-          this.navStore.update({ avatarSmall: resp.payload.avatarSmall });
+          console.log(resp.payload.avatarSmall);
+
+          this.navStore.update(state =>
+            Object.assign({}, state, {
+              avatarSmall: resp.payload.avatarSmall
+            })
+          );
         }),
         take(1)
       )

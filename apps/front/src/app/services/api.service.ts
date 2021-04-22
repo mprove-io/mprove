@@ -148,6 +148,14 @@ export class ApiService {
     };
 
     if (common.isDefined(errorData.message)) {
+      if (
+        [apiToBackend.ErEnum.BACKEND_USER_DOES_NOT_EXIST].indexOf(
+          res.body?.info?.error?.message
+        ) > -1
+      ) {
+        this.authService.logout();
+      }
+
       this.myDialogService.showError({ errorData, isThrow: true });
     }
 

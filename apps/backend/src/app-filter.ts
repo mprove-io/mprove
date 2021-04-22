@@ -44,17 +44,26 @@ export class AppFilter implements ExceptionFilter {
       let req: apiToBackend.ToBackendRequest = request.body;
       let user: entities.UserEntity = request.user;
 
-      let idempEntity: entities.IdempEntity = {
-        idempotency_key: req.info.idempotencyKey,
-        user_id: common.isDefined(user?.user_id)
-          ? user.user_id
-          : constants.UNK_USER_ID,
-        req: req,
-        resp: resp,
-        server_ts: helper.makeTs()
-      };
+      try {
+        let idempEntity: entities.IdempEntity = {
+          idempotency_key: req.info.idempotencyKey,
+          user_id: common.isDefined(user?.user_id)
+            ? user.user_id
+            : constants.UNK_USER_ID,
+          req: req,
+          resp: resp,
+          server_ts: helper.makeTs()
+        };
 
-      await this.idempsRepository.save(idempEntity);
+        await this.idempsRepository.save(idempEntity);
+      } catch (er) {
+        common.logToConsole(
+          new common.ServerError({
+            message: apiToBackend.ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
+            originalError: er
+          })
+        );
+      }
 
       response.status(HttpStatus.CREATED).json(resp);
     } catch (err) {

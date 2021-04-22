@@ -12,6 +12,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
+import { NavState, NavStore } from '../stores/nav.store';
 import { UserStore } from '../stores/user.store';
 
 @Injectable({ providedIn: 'root' })
@@ -26,6 +27,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     private authService: AuthService,
     private userQuery: UserQuery,
     private userStore: UserStore,
+    private navStore: NavStore,
     private apiService: ApiService
   ) {}
 
@@ -66,8 +68,24 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav, {})
       .pipe(
         map((resp: apiToBackend.ToBackendGetNavResponse) => {
-          let user = resp.payload.user;
+          let {
+            avatarSmall,
+            orgId,
+            projectId,
+            isRepoProd,
+            branchId,
+            user
+          } = resp.payload;
 
+          let nav: NavState = {
+            avatarSmall,
+            orgId,
+            projectId,
+            isRepoProd,
+            branchId
+          };
+
+          this.navStore.update(nav);
           this.userStore.update(user);
 
           if (user.isEmailVerified === true) {

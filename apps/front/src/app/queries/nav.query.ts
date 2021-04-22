@@ -4,6 +4,8 @@ import { NavState, NavStore } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class NavQuery extends Query<NavState> {
+  avatarSmall$ = this.select(state => state.avatarSmall);
+
   constructor(protected store: NavStore) {
     super(store);
   }
