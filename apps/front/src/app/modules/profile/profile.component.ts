@@ -52,34 +52,20 @@ export class ProfileComponent implements OnInit {
 
   showPhoto() {
     let userId: string;
+    let avatarBig: string;
 
-    this.userQuery.userId$
+    this.navQuery.avatarBig$
       .pipe(
-        tap(x => (userId = x)),
+        tap(x => (avatarBig = x)),
         take(1)
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
-      avatarUserId: userId
-    };
-
-    this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
-        payload
-      )
-      .pipe(
-        map((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
-          this.myDialogService.showPhoto({
-            apiService: this.apiService,
-            userId: userId,
-            avatarBig: resp.payload.avatarBig
-          });
-        }),
-        take(1)
-      )
-      .subscribe();
+    this.myDialogService.showPhoto({
+      apiService: this.apiService,
+      userId: userId,
+      avatarBig: avatarBig
+    });
   }
 
   editPhoto() {

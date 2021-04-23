@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogModule } from '@ngneat/dialog';
+import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { appDialogs } from './app-dialogs';
@@ -42,7 +43,8 @@ import { ErrorHandlerService } from './services/error-handler.service';
     {
       provide: ErrorHandler,
       useClass: ErrorHandlerService
-    }
+    },
+    NgxImageCompressService
   ],
   bootstrap: [AppComponent]
 })

@@ -16,6 +16,9 @@ export class ToBackendGetAvatarBigRequest extends ToBackendRequest {
 
 export class ToBackendGetAvatarBigResponsePayload {
   @IsString()
+  avatarSmall: string;
+
+  @IsString()
   avatarBig: string;
 }
 

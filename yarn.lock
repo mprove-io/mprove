@@ -10858,6 +10858,13 @@ next-tick@~1.0.0:
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
 
+ngx-image-compress@^11.0.3:
+  version "11.0.3"
+  resolved "https://registry.yarnpkg.com/ngx-image-compress/-/ngx-image-compress-11.0.3.tgz#26a84e44bfcc8a85ca681867125360b3d88d4f12"
+  integrity sha512-F1+93cBosm9bNEUmuQM3LvfBg9lzhEITfh8tEhqYb5+OH1HYsjW/nZLQGu5rDS4YCDEA8TQKwmYrrsYjR1t/WA==
+  dependencies:
+    tslib "^2.0.0"
+
 ngx-image-cropper@^3.3.5:
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/ngx-image-cropper/-/ngx-image-cropper-3.3.5.tgz#39f636e3989c5c84241f5130d0124ded6631fbeb"

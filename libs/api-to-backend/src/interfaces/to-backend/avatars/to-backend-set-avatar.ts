@@ -20,6 +20,9 @@ export class ToBackendSetAvatarRequest extends ToBackendRequest {
 export class ToBackendSetAvatarResponsePayload {
   @IsString()
   avatarSmall: string;
+
+  @IsString()
+  avatarBig: string;
 }
 
 export class ToBackendSetAvatarResponse extends common.MyResponse {

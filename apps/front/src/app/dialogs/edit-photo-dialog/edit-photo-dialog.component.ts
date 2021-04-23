@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxImageCompressService } from 'ngx-image-compress';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavStore } from '~front/app/stores/nav.store';
@@ -12,17 +13,36 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 export class EditPhotoDialogComponent {
   imageChangedEvent: any = '';
   croppedImage: any = '';
+  compressedImage: any = '';
   showCropper = false;
 
-  constructor(public ref: DialogRef, private navStore: NavStore) {}
+  constructor(
+    public ref: DialogRef,
+    private navStore: NavStore,
+    private imageCompressService: NgxImageCompressService
+  ) {}
 
   fileChangeEvent(event: any): void {
     this.imageChangedEvent = event;
   }
 
-  imageCropped(event: any) {
+  async imageCropped(event: any) {
+    // console.log('event:', event);
     this.croppedImage = event.base64;
-    // console.log(event, base64ToFile(event.base64));
+
+    let sizeBefore = this.imageCompressService.byteCount(this.croppedImage);
+    // console.log('sizeBefore:', sizeBefore);
+
+    await this.imageCompressService
+      .compressFile(this.croppedImage, -2, 25, 100)
+      .then(result => {
+        this.compressedImage = result;
+
+        let sizeAfter = this.imageCompressService.byteCount(
+          this.compressedImage
+        );
+        // console.log('sizeAfter:', sizeAfter);
+      });
   }
 
   imageLoaded() {
@@ -43,12 +63,10 @@ export class EditPhotoDialogComponent {
 
     let payload: apiToBackend.ToBackendSetAvatarRequestPayload = {
       avatarBig: this.croppedImage,
-      avatarSmall: this.croppedImage
+      avatarSmall: this.compressedImage
     };
 
     let apiService: ApiService = this.ref.data.apiService;
-
-    // console.log(this.croppedImage);
 
     apiService
       .req(
@@ -57,11 +75,10 @@ export class EditPhotoDialogComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendSetAvatarResponse) => {
-          // console.log(resp.payload.avatarSmall);
-
           this.navStore.update(state =>
             Object.assign({}, state, {
-              avatarSmall: resp.payload.avatarSmall
+              avatarSmall: resp.payload.avatarSmall,
+              avatarBig: resp.payload.avatarBig
             })
           );
         }),

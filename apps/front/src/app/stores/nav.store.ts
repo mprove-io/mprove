@@ -3,6 +3,7 @@ import { Store, StoreConfig } from '@datorama/akita';
 
 export class NavState {
   avatarSmall: string;
+  avatarBig: string;
   orgId: string;
   projectId: string;
   isRepoProd: boolean;
@@ -12,6 +13,7 @@ export class NavState {
 function createInitialState(): NavState {
   return {
     avatarSmall: undefined,
+    avatarBig: undefined,
     orgId: undefined,
     projectId: undefined,
     isRepoProd: undefined,

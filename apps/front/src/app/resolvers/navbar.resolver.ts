@@ -78,6 +78,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
           } = resp.payload;
 
           let nav: NavState = {
+            avatarBig: undefined,
             avatarSmall,
             orgId,
             projectId,

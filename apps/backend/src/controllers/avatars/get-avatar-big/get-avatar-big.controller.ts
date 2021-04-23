@@ -21,6 +21,7 @@ export class GetAvatarBigController {
     });
 
     let payload: apiToBackend.ToBackendGetAvatarBigResponsePayload = {
+      avatarSmall: avatar?.avatar_small,
       avatarBig: avatar?.avatar_big
     };
 
