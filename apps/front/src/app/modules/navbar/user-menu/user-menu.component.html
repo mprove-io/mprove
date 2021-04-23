@@ -3,7 +3,7 @@
     class="relative z-10 block h-10 w-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
     (click)="isUserMenuOpen = !isUserMenuOpen"
   >
-    <m-avatar></m-avatar>
+    <m-avatar [avatar]="navQuery.avatarBig$ | async"></m-avatar>
   </button>
 
   <button

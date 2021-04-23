@@ -1,11 +1,2 @@
-<img *ngIf="avatarBig" class="rounded-full" [src]="avatarBig" />
-
-<img
-  *ngIf="!avatarBig && (navQuery.avatarSmall$ | async)"
-  class="rounded-full"
-  [src]="navQuery.avatarSmall$ | async"
-/>
-
-<div *ngIf="!(navQuery.avatarSmall$ | async)">{{
-  userQuery.initials$ | async
-}}</div>
+<img *ngIf="avatar" class="rounded-full" [src]="avatar" />
+<div *ngIf="!avatar">{{ userQuery.initials$ | async }}</div>

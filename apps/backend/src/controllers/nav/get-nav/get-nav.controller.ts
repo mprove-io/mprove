@@ -93,7 +93,6 @@ export class GetNavController {
         : common.BRANCH_MASTER;
 
     let avatar = await this.avatarsRepository.findOne({
-      select: ['avatar_small'],
       where: {
         user_id: user.user_id
       }
@@ -101,6 +100,7 @@ export class GetNavController {
 
     let payload: apiToBackend.ToBackendGetNavResponsePayload = {
       avatarSmall: avatar?.avatar_small,
+      avatarBig: avatar?.avatar_big,
       orgId: resultOrgId,
       projectId: resultProjectId,
       isRepoProd: resultRepoId === common.PROD_REPO_ID,

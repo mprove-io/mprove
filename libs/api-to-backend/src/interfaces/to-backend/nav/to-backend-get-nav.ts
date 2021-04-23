@@ -37,6 +37,9 @@ export class ToBackendGetNavResponsePayload {
   avatarSmall: string;
 
   @IsString()
+  avatarBig: string;
+
+  @IsString()
   orgId: string;
 
   @IsString()

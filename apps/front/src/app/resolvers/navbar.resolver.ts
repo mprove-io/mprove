@@ -70,6 +70,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
         map((resp: apiToBackend.ToBackendGetNavResponse) => {
           let {
             avatarSmall,
+            avatarBig,
             orgId,
             projectId,
             isRepoProd,
@@ -78,7 +79,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
           } = resp.payload;
 
           let nav: NavState = {
-            avatarBig: undefined,
+            avatarBig,
             avatarSmall,
             orgId,
             projectId,

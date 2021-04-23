@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 
 @Component({
@@ -8,7 +7,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 })
 export class AvatarComponent {
   @Input()
-  avatarBig: string;
+  avatar: string;
 
-  constructor(public userQuery: UserQuery, public navQuery: NavQuery) {}
+  constructor(public userQuery: UserQuery) {}
 }
