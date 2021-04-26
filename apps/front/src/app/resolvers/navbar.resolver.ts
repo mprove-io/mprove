@@ -52,16 +52,22 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
     this.tokenUserId = this.authService.getTokenUserId();
 
-    if (this.tokenUserId === undefined) {
+    if (
+      this.tokenUserId === undefined
+      // ||
+      // (common.isDefined(this.userUserId) &&
+      //   this.userUserId !== this.tokenUserId)
+    ) {
       this.authService.logout();
       return of(false);
     }
 
     if (
-      this.userUserId === this.tokenUserId &&
-      this.userIsEmailVerified === true
+      common.isDefined(this.userUserId) &&
+      this.userIsEmailVerified !== true
     ) {
-      return of(true);
+      this.router.navigate([common.PATH_VERIFY_EMAIL]);
+      return of(false);
     }
 
     return this.apiService
