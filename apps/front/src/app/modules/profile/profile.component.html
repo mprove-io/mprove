@@ -76,6 +76,7 @@
         }}</div>
         <div class="flex items-center">
           <button
+            data-cy="profileChangePasswordButton"
             class="mt-3 px-5 py-3 border border-gray-300 text-gray1 shadow-sm rounded font-medium focus:outline-none"
             (click)="changePassword()"
             >Change Password
@@ -94,6 +95,7 @@
       <div class="flex flex-col ml-6">
         <div class="h-24 flex items-center"
           ><button
+            data-cy="profileEditPhotoButton"
             (click)="editPhoto()"
             class="py-2 px-3 border border-gray-300 rounded shadow-sm text-sm leading-3 font-medium text-gray-700 focus:outline-none"
             >Edit</button
@@ -102,6 +104,7 @@
 
         <div class="h-16 flex items-center">
           <button
+            data-cy="profileEditNameButton"
             (click)="editName()"
             class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
             >Edit</button
@@ -110,6 +113,7 @@
 
         <div class="h-16 flex items-center"
           ><button
+            data-cy="profileEditTimezoneButton"
             (click)="editTimezone()"
             class="py-2 px-3 border border-gray-300 rounded shadow-sm text-sm leading-3 font-medium text-gray-700 focus:outline-none"
             >Edit</button
