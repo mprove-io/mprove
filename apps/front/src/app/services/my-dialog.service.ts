@@ -3,6 +3,7 @@ import { DialogService } from '@ngneat/dialog';
 import { ErrorDialogComponent } from '~front/app/dialogs/error-dialog/error-dialog.component';
 import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
+import { CreateOrgDialogComponent } from '../dialogs/create-org-dialog/create-org-dialog.component';
 import { DeleteUserDialogComponent } from '../dialogs/delete-user-dialog/delete-user-dialog.component';
 import { EditNameDialogComponent } from '../dialogs/edit-name-dialog/edit-name-dialog.component';
 import { EditPhotoDialogComponent } from '../dialogs/edit-photo-dialog/edit-photo-dialog.component';
@@ -79,6 +80,15 @@ export class MyDialogService {
 
   showDeleteUser(item: { apiService: ApiService }): void {
     this.dialogService.open(DeleteUserDialogComponent, {
+      enableClose: false,
+      data: {
+        apiService: item.apiService
+      }
+    });
+  }
+
+  showCreateOrg(item: { apiService: ApiService }): void {
+    this.dialogService.open(CreateOrgDialogComponent, {
       enableClose: false,
       data: {
         apiService: item.apiService

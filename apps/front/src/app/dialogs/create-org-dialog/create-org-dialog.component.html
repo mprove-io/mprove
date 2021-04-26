@@ -1,0 +1,42 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="createOrgDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Create Organization</div
+  >
+
+  <form
+    class="flex flex-col w-80"
+    [formGroup]="createOrgForm"
+    (ngSubmit)="create()"
+  >
+    <input
+      data-cy="createOrgDialogOrgNameInput"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          createOrgForm.controls['orgName'].invalid &&
+          createOrgForm.controls['orgName'].touched
+      }"
+      formControlName="orgName"
+      placeholder="Organization Name"
+    />
+    <m-validation [control]="createOrgForm.controls['orgName']"></m-validation>
+
+    <div class="mt-6">
+      <button
+        data-cy="createOrgDialogCreateButton"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="createOrgDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>
