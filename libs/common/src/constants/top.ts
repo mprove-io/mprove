@@ -23,3 +23,8 @@ export const PATH_NEW_PASSWORD_WAS_SET = 'new-password-was-set';
 
 export const PATH_PASSWORD_RESET_SENT_AUTH = 'password-reset-sent-auth';
 export const PATH_PROFILE = 'profile';
+
+export const PATH_ORG = 'org';
+export const PATH_ORG_ACCOUNT = 'account';
+
+export const PARAMETER_ORG_ID = 'orgId';

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -31,7 +32,8 @@ export class NavbarComponent {
     private navStore: NavStore,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   openOrgSelect() {
@@ -65,11 +67,17 @@ export class NavbarComponent {
   orgChange() {
     localStorage.setItem(constants.LOCAL_STORAGE_ORG_ID, this.selectedOrgId);
 
-    this.navStore.update(state =>
-      Object.assign({}, state, {
-        orgId: this.selectedOrgId,
-        orgName: this.orgsList.find(x => x.orgId === this.selectedOrgId).name
-      })
-    );
+    // this.navStore.update(state =>
+    //   Object.assign({}, state, {
+    //     orgId: this.selectedOrgId,
+    //     orgName: this.orgsList.find(x => x.orgId === this.selectedOrgId).name
+    //   })
+    // );
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.selectedOrgId,
+      common.PATH_ORG_ACCOUNT
+    ]);
   }
 }

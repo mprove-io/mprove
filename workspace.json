@@ -571,7 +571,8 @@
           "options": {
             "cypressConfig": "apps/front-e2e/cypress.json",
             "tsConfig": "apps/front-e2e/tsconfig.e2e.json",
-            "devServerTarget": "front:serve"
+            "devServerTarget": "front:serve",
+            "headless": true
           },
           "configurations": {
             "production": {
