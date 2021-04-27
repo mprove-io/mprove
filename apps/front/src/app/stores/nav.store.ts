@@ -5,7 +5,9 @@ export class NavState {
   avatarSmall: string;
   avatarBig: string;
   orgId: string;
+  orgName: string;
   projectId: string;
+  projectName: string;
   isRepoProd: boolean;
   branchId: string;
 }
@@ -15,7 +17,9 @@ function createInitialState(): NavState {
     avatarSmall: undefined,
     avatarBig: undefined,
     orgId: undefined,
+    orgName: undefined,
     projectId: undefined,
+    projectName: undefined,
     isRepoProd: undefined,
     branchId: undefined
   };

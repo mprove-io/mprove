@@ -8,16 +8,17 @@
         class="flex focus:outline-none w-52"
         (open)="openOrgSelect()"
         [loading]="orgsListLoading"
-        [items]="orgsList$ | async"
+        [items]="orgsList"
         [clearable]="false"
         [searchable]="false"
-        [(ngModel)]="selectedOrg"
+        [(ngModel)]="selectedOrgId"
+        (change)="orgChange()"
         placeholder="Organizations"
         bindLabel="name"
         bindValue="orgId"
       >
         <ng-template ng-header-tmp *ngIf="orgsListLength > 0">
-          <div class="font-medium"> Organizations </div>
+          <div class="font-normal"> Organizations </div>
         </ng-template>
         <ng-template ng-footer-tmp>
           <button
@@ -36,4 +37,5 @@
     <router-outlet></router-outlet>
   </div>
 </div>
-<!-- <div *ngIf="routerEvents$ | async"></div> -->
+
+<div *ngIf="selectedOrg$ | async"></div>

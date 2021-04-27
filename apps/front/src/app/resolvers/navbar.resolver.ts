@@ -10,6 +10,7 @@ import { map, take } from 'rxjs/operators';
 import { AuthService } from '~front/app/services/auth.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
 import { NavState, NavStore } from '../stores/nav.store';
@@ -70,15 +71,21 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       return of(false);
     }
 
+    let payload: apiToBackend.ToBackendGetNavRequestPayload = {
+      orgId: localStorage.getItem(constants.LOCAL_STORAGE_ORG_ID)
+    };
+
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav, {})
+      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetNavResponse) => {
           let {
             avatarSmall,
             avatarBig,
             orgId,
+            orgName,
             projectId,
+            projectName,
             isRepoProd,
             branchId,
             user
@@ -88,7 +95,9 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
             avatarBig,
             avatarSmall,
             orgId,
+            orgName,
             projectId,
+            projectName,
             isRepoProd,
             branchId
           };
