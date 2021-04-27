@@ -7,6 +7,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-confirm-email',
@@ -25,7 +26,7 @@ export class ConfirmEmailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    localStorage.removeItem('token');
+    this.authService.clearLocalStorage();
     this.authService.stopWatch();
 
     this.emailConfirmationToken = this.route.snapshot.queryParamMap.get(
@@ -49,7 +50,7 @@ export class ConfirmEmailComponent implements OnInit {
             this.myDialogService.showEmailConfirmed();
             this.userStore.update(user);
             this.authService.stopWatch();
-            localStorage.setItem('token', token);
+            localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
             this.router.navigate([common.PATH_PROFILE]);
           } else {
             // email was verified already

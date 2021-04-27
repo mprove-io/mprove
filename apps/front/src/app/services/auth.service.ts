@@ -5,6 +5,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { interval as observableInterval, Subscription } from 'rxjs';
 import { UserStore } from '~front/app/stores/user.store';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { UserQuery } from '../queries/user.query';
 
 @Injectable({ providedIn: 'root' })
@@ -21,7 +22,7 @@ export class AuthService {
   authenticated() {
     let jwtHelperService = new JwtHelperService();
 
-    let token = localStorage.getItem('token');
+    let token = localStorage.getItem(constants.LOCAL_STORAGE_TOKEN);
 
     let isAuthenticated: boolean = common.isDefined(token)
       ? !jwtHelperService.isTokenExpired(token)
@@ -33,14 +34,19 @@ export class AuthService {
   getTokenUserId() {
     let jwtHelperService = new JwtHelperService();
 
-    let token = localStorage.getItem('token');
+    let token = localStorage.getItem(constants.LOCAL_STORAGE_TOKEN);
 
     return jwtHelperService.decodeToken(token).userId;
   }
 
+  clearLocalStorage() {
+    localStorage.removeItem(constants.LOCAL_STORAGE_TOKEN);
+    localStorage.removeItem(constants.LOCAL_STORAGE_ORG_ID);
+  }
+
   logout() {
     this.stopWatch();
-    localStorage.removeItem('token');
+    this.clearLocalStorage();
     this.router.navigate([common.PATH_LOGIN]);
   }
 

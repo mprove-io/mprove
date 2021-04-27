@@ -57,7 +57,7 @@ export class ApiService {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       Authorization:
         bypassAuth.indexOf(pathInfoName) < 0
-          ? `Bearer ${localStorage.getItem('token')}`
+          ? `Bearer ${localStorage.getItem(constants.LOCAL_STORAGE_TOKEN)}`
           : ''
     });
 

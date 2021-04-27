@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
+import { AuthService } from '~front/app/services/auth.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { common } from '~front/barrels/common';
 
@@ -15,7 +16,8 @@ export class UserDeletedComponent implements OnInit {
   constructor(
     private router: Router,
     private userQuery: UserQuery,
-    private userStore: UserStore
+    private userStore: UserStore,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -26,7 +28,7 @@ export class UserDeletedComponent implements OnInit {
       )
       .subscribe();
 
-    localStorage.removeItem('token');
+    this.authService.clearLocalStorage();
     this.userStore.reset();
   }
 

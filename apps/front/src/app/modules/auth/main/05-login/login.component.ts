@@ -7,6 +7,7 @@ import { AuthService } from '~front/app/services/auth.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-login',
@@ -63,7 +64,7 @@ export class LoginComponent implements OnInit {
 
           if (user.isEmailVerified === true) {
             this.authService.stopWatch();
-            localStorage.setItem('token', token);
+            localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
             this.router.navigate([common.PATH_PROFILE]);
           } else {
             this.router.navigate([common.PATH_VERIFY_EMAIL]);

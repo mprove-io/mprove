@@ -40,7 +40,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    localStorage.removeItem('token');
+    this.authService.clearLocalStorage();
     this.authService.startWatch();
   }
 
