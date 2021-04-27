@@ -65,6 +65,8 @@ export class GetNavController {
         ? orgId
         : existingOrgIds[0];
 
+    let resultOrg = [...orgs, ...ownerOrgs].find(x => x.org_id === resultOrgId);
+
     let existingProjectIds = projects
       .filter(x => x.org_id === resultOrgId)
       .map(x => x.project_id);
@@ -73,6 +75,8 @@ export class GetNavController {
       common.isDefined(projectId) && existingProjectIds.indexOf(projectId) > -1
         ? projectId
         : existingProjectIds[0];
+
+    let resultProject = projects.find(x => x.project_id === resultProjectId);
 
     let projectMember = members.find(x => x.project_id === resultProjectId);
 
@@ -106,7 +110,9 @@ export class GetNavController {
       avatarSmall: avatar?.avatar_small,
       avatarBig: avatar?.avatar_big,
       orgId: resultOrgId,
+      orgName: resultOrg?.name,
       projectId: resultProjectId,
+      projectName: resultProject?.name,
       isRepoProd: resultRepoId === common.PROD_REPO_ID,
       branchId: resultBranchId,
       user: wrapper.wrapToApiUser(user)

@@ -43,7 +43,13 @@ export class ToBackendGetNavResponsePayload {
   orgId: string;
 
   @IsString()
+  orgName: string;
+
+  @IsString()
   projectId: string;
+
+  @IsString()
+  projectName: string;
 
   @IsBoolean()
   isRepoProd: boolean;

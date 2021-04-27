@@ -6,7 +6,6 @@ export function wrapToApiProjectsItem(
 ): common.ProjectsItem {
   return {
     projectId: project.project_id,
-    name: project.name,
-    serverTs: Number(project.server_ts)
+    name: project.name
   };
 }

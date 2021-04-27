@@ -4,6 +4,7 @@ import { map, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -19,6 +20,7 @@ export class NavbarComponent {
 
   constructor(
     private navQuery: NavQuery,
+    private navStore: NavStore,
     private apiService: ApiService,
     private myDialogService: MyDialogService
   ) {}
@@ -47,5 +49,11 @@ export class NavbarComponent {
     this.myDialogService.showCreateOrg({
       apiService: this.apiService
     });
+  }
+
+  orgChange() {
+    this.navStore.update(state =>
+      Object.assign({}, state, { orgId: this.selectedOrg.orgId })
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class ProjectsItem {
   @IsString()
@@ -6,7 +6,4 @@ export class ProjectsItem {
 
   @IsString()
   name: string;
-
-  @IsInt()
-  serverTs: number;
 }
