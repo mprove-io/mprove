@@ -54,7 +54,11 @@ export class GetNavController {
             org_id: In(orgIds)
           });
 
-    let existingOrgIds = orgs.map(x => x.org_id);
+    let ownerOrgs = await this.orgsRepository.find({
+      owner_id: user.user_id
+    });
+
+    let existingOrgIds = [...orgs, ...ownerOrgs].map(x => x.org_id);
 
     let resultOrgId =
       common.isDefined(orgId) && existingOrgIds.indexOf(orgId) > -1

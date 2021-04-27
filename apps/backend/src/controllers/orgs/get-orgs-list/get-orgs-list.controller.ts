@@ -40,8 +40,14 @@ export class GetOrgsListController {
             org_id: In(userOrgIds)
           });
 
+    let ownerOrgs = await this.orgsRepository.find({
+      owner_id: user.user_id
+    });
+
+    let orgs = [...userOrgs, ...ownerOrgs];
+
     let payload: apiToBackend.ToBackendGetOrgsListResponsePayload = {
-      orgsList: userOrgs.map(x => wrapper.wrapToApiOrgsItem(x))
+      orgsList: orgs.map(x => wrapper.wrapToApiOrgsItem(x))
     };
 
     return payload;
