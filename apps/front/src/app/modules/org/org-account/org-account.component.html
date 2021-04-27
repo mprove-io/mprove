@@ -4,4 +4,55 @@
     class="font-semibold text-2xl mt-8 ml-6 text-gray1"
     >Organization - Account</div
   >
+
+  <div class="flex-1 bg-white mx-6 mt-6 mb-4 rounded shadow-lg">
+    <div class="flex flex-row mt-16 ml-32">
+      <div class="flex flex-col">
+        <div class="h-16 flex items-center justify-end font-semibold"
+          >Organization Name</div
+        >
+        <div class="h-16 flex items-center justify-end font-semibold"
+          >Owner</div
+        >
+        <div class="h-16 flex items-center justify-end font-semibold"
+          >Company Size</div
+        >
+        <div class="h-16 flex items-center justify-end font-semibold"
+          >Contact Phone Number</div
+        >
+        <div class="flex items-center justify-end font-semibold"></div>
+      </div>
+
+      <div class="flex flex-col ml-6">
+        <div
+          data-cy="orgAccountName"
+          class="h-16 flex items-center max-w-xl truncate"
+          >{{ orgQuery.name$ | async }}</div
+        >
+        <div
+          data-cy="orgAccountOwnerEmail"
+          class="h-16 flex items-center max-w-xl truncate"
+          >{{ orgQuery.ownerEmail$ | async }}</div
+        >
+        <div
+          data-cy="orgAccountCompanySize"
+          class="h-16 flex items-center max-w-xl truncate"
+          >{{ orgQuery.companySize$ | async }}</div
+        >
+        <div
+          data-cy="orgAccountContactPhone"
+          class="h-16 flex items-center max-w-xl truncate"
+          >{{ orgQuery.contactPhone$ | async }}</div
+        >
+        <div class="flex items-center">
+          <button
+            data-cy="profileDeleteOrgButton"
+            class="mt-7 px-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+            (click)="deleteOrg()"
+            >Delete Organization</button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

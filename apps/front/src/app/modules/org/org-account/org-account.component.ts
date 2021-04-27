@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { UserQuery } from '~front/app/queries/user.query';
+import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
-import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { OrgState } from '~front/app/stores/org.store';
 
 @Component({
   selector: 'm-org-account',
@@ -12,11 +12,30 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 })
 export class OrgAccountComponent {
   constructor(
-    public userQuery: UserQuery,
+    public orgQuery: OrgQuery,
     public navQuery: NavQuery,
-    private authService: AuthService,
+    // private authService: AuthService,
     private apiService: ApiService,
-    private router: Router,
+    // private router: Router,
     private myDialogService: MyDialogService
   ) {}
+
+  deleteOrg() {
+    let org: OrgState;
+    this.orgQuery
+      .select()
+      .pipe(
+        tap(x => {
+          org = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    this.myDialogService.showDeleteOrg({
+      apiService: this.apiService,
+      orgId: org.orgId,
+      orgName: org.name
+    });
+  }
 }
