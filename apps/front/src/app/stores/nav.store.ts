@@ -34,4 +34,17 @@ export class NavStore extends Store<NavState> {
   constructor() {
     super(createInitialState());
   }
+
+  clearNavAndSkipAvatar() {
+    this.update(state =>
+      Object.assign({}, state, {
+        orgId: undefined,
+        orgName: undefined,
+        projectId: undefined,
+        projectName: undefined,
+        isRepoProd: undefined,
+        branchId: undefined
+      })
+    );
+  }
 }

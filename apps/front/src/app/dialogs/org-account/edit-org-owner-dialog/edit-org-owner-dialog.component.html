@@ -1,0 +1,51 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="editOrgOwnerDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Edit Organization Owner</div
+  >
+
+  <form
+    class="flex flex-col w-96"
+    [formGroup]="editOrgOwnerForm"
+    (ngSubmit)="save()"
+  >
+    <input
+      data-cy="editOrgOwnerDialogEmailInput"
+      type="email"
+      class="mt-9 w-80 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          editOrgOwnerForm.controls['ownerEmail'].invalid &&
+          editOrgOwnerForm.controls['ownerEmail'].touched
+      }"
+      formControlName="ownerEmail"
+      placeholder="New Owner Email"
+    />
+    <m-validation
+      [control]="editOrgOwnerForm.controls['ownerEmail']"
+    ></m-validation>
+
+    <p
+      >The new owner must be a registered Mprove user with a verified email
+      address</p
+    >
+
+    <div class="mt-6">
+      <button
+        data-cy="editOrgOwnerDialogSaveButton"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="editOrgOwnerDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

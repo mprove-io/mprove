@@ -63,7 +63,14 @@
             >Edit</button
           ></div
         >
-        <div class="h-16 flex items-center"></div>
+        <div class="h-16 flex items-center">
+          <button
+            data-cy="orgAccountEditOwnerButton"
+            (click)="editOwner()"
+            class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+            >Edit</button
+          ></div
+        >
         <div class="h-16 flex items-center">
           <button
             data-cy="orgAccountEditCompanySizeButton"
@@ -72,7 +79,14 @@
             >Edit</button
           ></div
         >
-        <div class="h-16 flex items-center"></div>
+        <div class="h-16 flex items-center">
+          <button
+            data-cy="orgAccountEditContactPhoneButton"
+            (click)="editContactPhone()"
+            class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+            >Edit</button
+          ></div
+        >
         <div class="flex items-center"></div>
       </div>
     </div>

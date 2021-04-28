@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
@@ -12,13 +12,19 @@ import { common } from '~front/barrels/common';
 })
 export class OrgAccountComponent {
   org: common.Org;
-  org$ = this.orgQuery.select().pipe(tap(x => (this.org = x)));
+  org$ = this.orgQuery.select().pipe(
+    tap(x => {
+      this.org = x;
+      this.cd.detectChanges();
+    })
+  );
 
   constructor(
     public orgQuery: OrgQuery,
     public navQuery: NavQuery,
     private apiService: ApiService,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    private cd: ChangeDetectorRef
   ) {}
 
   deleteOrg() {
@@ -35,6 +41,22 @@ export class OrgAccountComponent {
       orgId: this.org.orgId,
       orgName: this.org.name
     });
+  }
+
+  editOwner() {
+    this.myDialogService.showEditOrgOwner({
+      apiService: this.apiService,
+      orgId: this.org.orgId,
+      ownerEmail: this.org.ownerEmail
+    });
+  }
+
+  editContactPhone() {
+    // this.myDialogService.showEditOrgOwner({
+    //   apiService: this.apiService,
+    //   orgId: this.org.orgId,
+    //   ownerEmail: this.org.ownerEmail
+    // });
   }
 
   editCompanySize() {

@@ -1,0 +1,22 @@
+<div class="bg-blue1 flex justify-center items-center h-full">
+  <div class="flex flex-col items-center">
+    <div>
+      <m-completed-ring></m-completed-ring>
+    </div>
+
+    <div
+      data-cy="orgDeletedTitle"
+      class="mt-5 text-2xl text-gray2 font-semibold"
+      >Organization Owner Changed</div
+    >
+    <div class="mt-5 text-gray1 text-center">
+      <span class="font-semibold">
+        {{ orgName }}
+      </span>
+      owner changed to
+      <span class="font-semibold">
+        {{ newOrgOwner }}
+      </span>
+    </div>
+  </div>
+</div>

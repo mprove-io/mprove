@@ -15,6 +15,8 @@ import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
 import { ProfileComponent } from './modules/profile/profile.component';
+import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
+import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
@@ -85,6 +87,14 @@ const routes: Routes = [
         component: ProfileComponent,
         path: common.PATH_PROFILE,
         resolve: [ProfileResolver]
+      },
+      {
+        component: OrgDeletedComponent,
+        path: common.PATH_ORG_DELETED
+      },
+      {
+        component: OrgOwnerChangedComponent,
+        path: common.PATH_ORG_OWNER_CHANGED
       },
       {
         path: common.PATH_ORG + `/:${common.PARAMETER_ORG_ID}`,
