@@ -5,6 +5,7 @@ import { OrgState, OrgStore } from '../stores/org.store';
 @Injectable({ providedIn: 'root' })
 export class OrgQuery extends Query<OrgState> {
   name$ = this.select(state => state.name);
+  orgId$ = this.select(state => state.orgId);
   ownerEmail$ = this.select(state => state.ownerEmail);
   companySize$ = this.select(state => state.companySize);
   contactPhone$ = this.select(state => state.contactPhone);

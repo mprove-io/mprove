@@ -7,6 +7,7 @@ import { CreateOrgDialogComponent } from '../dialogs/create-org-dialog/create-or
 import { DeleteOrgDialogComponent } from '../dialogs/delete-org-dialog/delete-org-dialog.component';
 import { DeleteUserDialogComponent } from '../dialogs/delete-user-dialog/delete-user-dialog.component';
 import { EditNameDialogComponent } from '../dialogs/edit-name-dialog/edit-name-dialog.component';
+import { EditOrgNameDialogComponent } from '../dialogs/edit-org-name-dialog/edit-org-name-dialog.component';
 import { EditPhotoDialogComponent } from '../dialogs/edit-photo-dialog/edit-photo-dialog.component';
 import { EditTimezoneDialogComponent } from '../dialogs/edit-timezone-dialog/edit-timezone-dialog.component';
 import { EmailConfirmedDialogComponent } from '../dialogs/email-confirmed-dialog/email-confirmed-dialog.component';
@@ -93,6 +94,21 @@ export class MyDialogService {
       enableClose: false,
       data: {
         apiService: item.apiService
+      }
+    });
+  }
+
+  showEditOrgName(item: {
+    apiService: ApiService;
+    orgId: string;
+    orgName: string;
+  }): void {
+    this.dialogService.open(EditOrgNameDialogComponent, {
+      enableClose: false,
+      data: {
+        apiService: item.apiService,
+        orgId: item.orgId,
+        orgName: item.orgName
       }
     });
   }
