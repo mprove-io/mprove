@@ -12,7 +12,6 @@ function createInitialState(): UserState {
     firstName: undefined,
     lastName: undefined,
     timezone: undefined,
-    status: undefined,
     isEmailVerified: undefined,
     serverTs: 1
   };

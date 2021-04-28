@@ -72,7 +72,6 @@ export class SeedRecordsController {
             hash: hash,
             salt: salt,
             alias: alias,
-            status: x.status,
             passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
               ? x.passwordResetExpiresTs
               : common.isDefined(x.passwordResetToken)

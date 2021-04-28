@@ -37,10 +37,6 @@ export class ToBackendSeedRecordsRequestPayloadUsersItem {
   @IsOptional()
   @IsString()
   passwordResetExpiresTs?: string;
-
-  @IsOptional()
-  @IsEnum(common.UserStatusEnum)
-  status?: common.UserStatusEnum;
 }
 
 export class ToBackendSeedRecordsRequestPayloadOrgsItem {

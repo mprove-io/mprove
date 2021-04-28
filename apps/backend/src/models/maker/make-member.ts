@@ -17,7 +17,6 @@ export function makeMember(item: {
     first_name: item.user.first_name,
     last_name: item.user.last_name,
     timezone: item.user.timezone,
-    status: item.user.status,
     roles: item.roles || [],
     is_admin: item.isAdmin,
     is_editor: item.isEditor,

@@ -28,9 +28,6 @@ export class MemberEntity {
   @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 
-  @Column({ type: constants.USER_STATUS_VARCHAR })
-  status: common.UserStatusEnum; // MemberStatusEnum
-
   @Column({ type: constants.VARCHAR })
   is_admin: common.BoolEnum;
 

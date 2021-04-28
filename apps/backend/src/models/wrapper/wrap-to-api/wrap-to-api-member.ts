@@ -11,7 +11,6 @@ export function wrapToApiMember(x: entities.MemberEntity): common.Member {
     lastName: x.last_name,
     avatarSmall: undefined,
     timezone: x.timezone,
-    status: x.status,
     isAdmin: common.enumToBoolean(x.is_admin),
     isEditor: common.enumToBoolean(x.is_editor),
     isExplorer: common.enumToBoolean(x.is_explorer),

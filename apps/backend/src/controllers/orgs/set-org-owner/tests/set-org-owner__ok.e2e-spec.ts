@@ -41,8 +41,7 @@ test('1', async t => {
           {
             email: newOwnerEmail,
             password: newOwnerPassword,
-            isEmailVerified: common.BoolEnum.TRUE,
-            status: common.UserStatusEnum.Active
+            isEmailVerified: common.BoolEnum.TRUE
           }
         ],
         orgs: [

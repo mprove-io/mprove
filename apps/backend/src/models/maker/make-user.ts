@@ -11,7 +11,6 @@ export function makeUser(item: {
   emailVerificationToken?: string;
   passwordResetToken?: string;
   passwordResetExpiresTs?: string;
-  status?: common.UserStatusEnum;
 }) {
   let userEntity: entities.UserEntity = {
     user_id: item.userId || common.makeId(),
@@ -26,7 +25,6 @@ export function makeUser(item: {
     first_name: null,
     last_name: null,
     timezone: common.USE_PROJECT_TIMEZONE,
-    status: item.status || common.UserStatusEnum.Pending,
     server_ts: undefined
   };
   return userEntity;

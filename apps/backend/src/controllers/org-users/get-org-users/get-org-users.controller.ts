@@ -65,7 +65,6 @@ export class GetOrgUsersController {
       let orgUser: apiToBackend.OrgUsersItem = {
         avatarSmall: avatars.find(a => a.user_id === x.user_id)?.avatar_small,
         email: x.email,
-        status: x.status,
         firstName: x.first_name,
         lastName: x.last_name,
         projectAdminProjects: userMembers

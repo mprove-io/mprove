@@ -33,7 +33,7 @@ export class SetOrgOwnerController {
 
     let newOwner = await this.usersRepository.findOne({
       email: ownerEmail,
-      status: common.UserStatusEnum.Active
+      is_email_verified: common.BoolEnum.TRUE
     });
 
     if (common.isUndefined(newOwner)) {

@@ -1,5 +1,4 @@
-import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { IsBoolean, IsInt, IsString } from 'class-validator';
 
 export class User {
   @IsString()
@@ -19,9 +18,6 @@ export class User {
 
   @IsString()
   timezone: string;
-
-  @IsEnum(enums.UserStatusEnum)
-  status: enums.UserStatusEnum;
 
   @IsBoolean()
   isEmailVerified: boolean;

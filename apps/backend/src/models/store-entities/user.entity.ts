@@ -40,9 +40,6 @@ export class UserEntity {
   @Column({ type: constants.TIMEZONE_VARCHAR })
   timezone: string;
 
-  @Column({ type: constants.USER_STATUS_VARCHAR })
-  status: common.UserStatusEnum;
-
   @Column({ type: constants.BIGINT })
   server_ts: string;
 }
