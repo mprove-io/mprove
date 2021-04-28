@@ -4,14 +4,15 @@ import { ErrorDialogComponent } from '~front/app/dialogs/error-dialog/error-dial
 import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { CreateOrgDialogComponent } from '../dialogs/create-org-dialog/create-org-dialog.component';
-import { DeleteOrgDialogComponent } from '../dialogs/delete-org-dialog/delete-org-dialog.component';
-import { DeleteUserDialogComponent } from '../dialogs/delete-user-dialog/delete-user-dialog.component';
-import { EditNameDialogComponent } from '../dialogs/edit-name-dialog/edit-name-dialog.component';
-import { EditOrgNameDialogComponent } from '../dialogs/edit-org-name-dialog/edit-org-name-dialog.component';
-import { EditPhotoDialogComponent } from '../dialogs/edit-photo-dialog/edit-photo-dialog.component';
-import { EditTimezoneDialogComponent } from '../dialogs/edit-timezone-dialog/edit-timezone-dialog.component';
 import { EmailConfirmedDialogComponent } from '../dialogs/email-confirmed-dialog/email-confirmed-dialog.component';
+import { DeleteOrgDialogComponent } from '../dialogs/org-account/delete-org-dialog/delete-org-dialog.component';
+import { EditCompanySizeDialogComponent } from '../dialogs/org-account/edit-company-size-dialog/edit-company-size-dialog.component';
+import { EditOrgNameDialogComponent } from '../dialogs/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
 import { PhotoDialogComponent } from '../dialogs/photo-dialog/photo-dialog.component';
+import { DeleteUserDialogComponent } from '../dialogs/profile/delete-user-dialog/delete-user-dialog.component';
+import { EditNameDialogComponent } from '../dialogs/profile/edit-name-dialog/edit-name-dialog.component';
+import { EditPhotoDialogComponent } from '../dialogs/profile/edit-photo-dialog/edit-photo-dialog.component';
+import { EditTimezoneDialogComponent } from '../dialogs/profile/edit-timezone-dialog/edit-timezone-dialog.component';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -109,6 +110,21 @@ export class MyDialogService {
         apiService: item.apiService,
         orgId: item.orgId,
         orgName: item.orgName
+      }
+    });
+  }
+
+  showEditCompanySize(item: {
+    apiService: ApiService;
+    orgId: string;
+    companySize: string;
+  }): void {
+    this.dialogService.open(EditCompanySizeDialogComponent, {
+      enableClose: false,
+      data: {
+        apiService: item.apiService,
+        orgId: item.orgId,
+        companySize: item.companySize
       }
     });
   }

@@ -27,22 +27,22 @@
         <div
           data-cy="orgAccountName"
           class="h-16 flex items-center max-w-xl truncate"
-          >{{ name }}</div
+          >{{ org?.name }}</div
         >
         <div
           data-cy="orgAccountOwnerEmail"
           class="h-16 flex items-center max-w-xl truncate"
-          >{{ orgQuery.ownerEmail$ | async }}</div
+          >{{ org?.ownerEmail }}</div
         >
         <div
           data-cy="orgAccountCompanySize"
           class="h-16 flex items-center max-w-xl truncate"
-          >{{ orgQuery.companySize$ | async }}</div
+          >{{ org?.companySize }}</div
         >
         <div
           data-cy="orgAccountContactPhone"
           class="h-16 flex items-center max-w-xl truncate"
-          >{{ orgQuery.contactPhone$ | async }}</div
+          >{{ org?.contactPhone }}</div
         >
         <div class="flex items-center">
           <button
@@ -63,9 +63,15 @@
             >Edit</button
           ></div
         >
-
         <div class="h-16 flex items-center"></div>
-        <div class="h-16 flex items-center"></div>
+        <div class="h-16 flex items-center">
+          <button
+            data-cy="orgAccountEditCompanySizeButton"
+            (click)="editCompanySize()"
+            class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+            >Edit</button
+          ></div
+        >
         <div class="h-16 flex items-center"></div>
         <div class="flex items-center"></div>
       </div>
@@ -73,5 +79,4 @@
   </div>
 </div>
 
-<div *ngIf="orgId$ | async"></div>
-<div *ngIf="name$ | async"></div>
+<div *ngIf="org$ | async"></div>
