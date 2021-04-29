@@ -1,16 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { UserQuery } from '~front/app/queries/user.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { AuthService } from '~front/app/services/auth.service';
+import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-user-menu',
   templateUrl: './user-menu.component.html'
 })
-export class UserMenuComponent implements OnInit {
+export class UserMenuComponent implements OnInit, OnDestroy {
+  menuId = 'userMenu';
+
+  openedMenuId: string;
+  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
+    tap(x => (this.openedMenuId = x))
+  );
+
   isUserMenuOpen = false;
 
   pathProfile = common.PATH_PROFILE;
@@ -25,7 +33,8 @@ export class UserMenuComponent implements OnInit {
   );
 
   constructor(
-    public userQuery: UserQuery,
+    public uiQuery: UiQuery,
+    public uiStore: UiStore,
     public navQuery: NavQuery,
     private authService: AuthService,
     private router: Router
@@ -42,5 +51,28 @@ export class UserMenuComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  openMenu() {
+    this.isUserMenuOpen = true;
+    this.uiStore.update({ openedMenuId: this.menuId });
+  }
+
+  closeMenu() {
+    this.isUserMenuOpen = false;
+    this.uiStore.update({ openedMenuId: undefined });
+  }
+
+  toggleMenu() {
+    if (this.isUserMenuOpen === true) {
+      this.closeMenu();
+    } else {
+      this.openMenu();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.menuId === this.openedMenuId)
+      this.uiStore.update({ openedMenuId: undefined });
   }
 }

@@ -1,7 +1,11 @@
 <div class="block relative">
   <button
-    class="relative z-10 block h-10 w-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
-    (click)="isUserMenuOpen = !isUserMenuOpen"
+    class="relative block h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+    [ngClass]="{
+      'cursor-default': openedMenuId && menuId !== openedMenuId
+    }"
+    (click)="toggleMenu()"
+    [disabled]="openedMenuId && menuId !== openedMenuId"
   >
     <m-avatar [avatar]="navQuery.avatarBig$ | async"></m-avatar>
   </button>
@@ -9,7 +13,7 @@
   <button
     class="fixed inset-0 w-full h-full cursor-default focus:outline-none"
     *ngIf="isUserMenuOpen === true"
-    (click)="isUserMenuOpen = false"
+    (click)="closeMenu()"
   ></button>
 
   <div
@@ -47,3 +51,4 @@
 </div>
 
 <div *ngIf="routerEvents$ | async"></div>
+<div *ngIf="openedMenuId$ | async"></div>

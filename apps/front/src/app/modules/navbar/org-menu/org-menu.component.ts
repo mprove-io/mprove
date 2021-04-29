@@ -1,18 +1,26 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { AuthService } from '~front/app/services/auth.service';
 import { NavState } from '~front/app/stores/nav.store';
+import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-org-menu',
   templateUrl: './org-menu.component.html'
 })
-export class OrgMenuComponent implements OnInit {
-  @Input()
+export class OrgMenuComponent implements OnInit, OnDestroy {
+  menuId = 'orgMenu';
+
+  openedMenuId: string;
+  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
+    tap(x => (this.openedMenuId = x))
+  );
+
   isOrgMenuOpen = false;
 
   pathAccount = common.PATH_ACCOUNT;
@@ -36,6 +44,8 @@ export class OrgMenuComponent implements OnInit {
   );
 
   constructor(
+    public uiQuery: UiQuery,
+    public uiStore: UiStore,
     public orgQuery: OrgQuery,
     public navQuery: NavQuery,
     private authService: AuthService,
@@ -56,7 +66,26 @@ export class OrgMenuComponent implements OnInit {
     ]);
   }
 
-  logout() {
-    this.authService.logout();
+  openMenu() {
+    this.isOrgMenuOpen = true;
+    this.uiStore.update({ openedMenuId: this.menuId });
+  }
+
+  closeMenu() {
+    this.isOrgMenuOpen = false;
+    this.uiStore.update({ openedMenuId: undefined });
+  }
+
+  toggleMenu() {
+    if (this.isOrgMenuOpen === true) {
+      this.closeMenu();
+    } else {
+      this.openMenu();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.menuId === this.openedMenuId)
+      this.uiStore.update({ openedMenuId: undefined });
   }
 }

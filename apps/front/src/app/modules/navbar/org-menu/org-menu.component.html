@@ -1,7 +1,11 @@
 <div class="block relative">
   <button
-    class="relative z-10 block h-10 w-10 rounded-full text-md tracking-wider focus:outline-none"
-    (click)="isOrgMenuOpen = !isOrgMenuOpen"
+    class="relative block h-10 w-10 z-10 rounded-full text-md tracking-wider focus:outline-none"
+    [ngClass]="{
+      'cursor-default': openedMenuId && menuId !== openedMenuId
+    }"
+    (click)="toggleMenu()"
+    [disabled]="openedMenuId && menuId !== openedMenuId"
   >
     <div class="flex justify-center">
       <m-settings-icon></m-settings-icon>
@@ -11,7 +15,7 @@
   <button
     class="fixed inset-0 w-full h-full cursor-default focus:outline-none"
     *ngIf="isOrgMenuOpen === true"
-    (click)="isOrgMenuOpen = false"
+    (click)="closeMenu()"
   ></button>
 
   <div
@@ -35,5 +39,6 @@
   </div>
 </div>
 
-<div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="routerEvents$ | async"></div>
+<div *ngIf="openedMenuId$ | async"></div>
