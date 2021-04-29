@@ -55,7 +55,7 @@ export class CreateOrgDialogComponent implements OnInit {
           this.router.navigate([
             common.PATH_ORG,
             resp.payload.org.orgId,
-            common.PATH_ORG_ACCOUNT
+            common.PATH_ACCOUNT
           ]);
         }),
         take(1)

@@ -77,7 +77,7 @@ export class NavbarComponent {
     this.router.navigate([
       common.PATH_ORG,
       this.selectedOrgId,
-      common.PATH_ORG_ACCOUNT
+      common.PATH_ACCOUNT
     ]);
   }
 }

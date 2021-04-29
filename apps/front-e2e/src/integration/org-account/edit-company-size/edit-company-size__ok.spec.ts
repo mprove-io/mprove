@@ -31,7 +31,7 @@ describe('front-e2e', () => {
       ]
     });
     cy.loginUser({ email: email, password: password });
-    cy.visit(`${common.PATH_ORG}/${orgId}/${common.PATH_ORG_ACCOUNT}`);
+    cy.visit(`${common.PATH_ORG}/${orgId}/${common.PATH_ACCOUNT}`);
     cy.get('[data-cy=orgAccountEditCompanySizeButton]').click();
     cy.get('[data-cy=editCompanySizeDialogTimezoneSelect]').click();
     cy.get('.ng-option').eq(1).click();

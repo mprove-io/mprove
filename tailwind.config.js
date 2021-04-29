@@ -7,6 +7,7 @@ var gray1 = '#4D4F5C';
 var gray2 = '#00030B';
 var gray3 = '#D7DBEC';
 var gray4 = '#D7DBECA3';
+var gray5 = '#4F505C';
 
 var red1 = '#DE4343';
 
@@ -36,7 +37,8 @@ module.exports = {
       blue4,
       gray1,
       gray2,
-      red1
+      red1,
+      gray5
     }),
     borderColor: theme => ({
       ...theme('colors'),

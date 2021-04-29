@@ -25,7 +25,7 @@ export const PATH_PASSWORD_RESET_SENT_AUTH = 'password-reset-sent-auth';
 export const PATH_PROFILE = 'profile';
 
 export const PATH_ORG = 'org';
-export const PATH_ORG_ACCOUNT = 'account';
+export const PATH_ACCOUNT = 'account';
 
 export const PATH_ORG_DELETED = 'organization-deleted';
 export const PATH_ORG_OWNER_CHANGED = 'organization-owner-changed';

@@ -1,0 +1,39 @@
+<div class="block relative">
+  <button
+    class="relative z-10 block h-10 w-10 rounded-full text-md tracking-wider focus:outline-none"
+    (click)="isOrgMenuOpen = !isOrgMenuOpen"
+  >
+    <div class="flex justify-center">
+      <m-settings-icon></m-settings-icon>
+    </div>
+  </button>
+
+  <button
+    class="fixed inset-0 w-full h-full cursor-default focus:outline-none"
+    *ngIf="isOrgMenuOpen === true"
+    (click)="isOrgMenuOpen = false"
+  ></button>
+
+  <div
+    class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-xl border-2 border-gray4"
+    *ngIf="isOrgMenuOpen === true"
+  >
+    <div class="block mt-2 px-4 py-2 text-gray1 font-bold text-sm"
+      >{{ nav?.orgName }} Organization</div
+    >
+
+    <button
+      class="block px-4 py-2 text-gray1 font-medium text-sm w-full text-left focus:outline-none"
+      [ngClass]="{
+        'hover:bg-blue2': lastUrl !== pathAccount,
+        'cursor-default': lastUrl === pathAccount
+      }"
+      [disabled]="lastUrl === pathAccount"
+      (click)="account()"
+      >Account</button
+    >
+  </div>
+</div>
+
+<div *ngIf="routerEvents$ | async"></div>
+<div *ngIf="nav$ | async"></div>

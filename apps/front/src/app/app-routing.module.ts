@@ -102,7 +102,7 @@ const routes: Routes = [
         children: [
           {
             component: OrgAccountComponent,
-            path: common.PATH_ORG_ACCOUNT,
+            path: common.PATH_ACCOUNT,
             resolve: [OrgAccountResolver]
           }
         ]

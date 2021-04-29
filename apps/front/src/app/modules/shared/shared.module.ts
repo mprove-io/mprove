@@ -5,6 +5,7 @@ import { AvatarComponent } from './avatar/avatar.component';
 import { LogoComponent } from './logo/logo.component';
 import { CompletedRingComponent } from './symbols/completed-ring/completed-ring.component';
 import { EmailRingComponent } from './symbols/email-ring/email-ring.component';
+import { SettingsIconComponent } from './symbols/settings-icon/settings-icon.component';
 import { ValidationComponent } from './validation/validation.component';
 
 let sharedComponents = [
@@ -12,7 +13,8 @@ let sharedComponents = [
   CompletedRingComponent,
   EmailRingComponent,
   ValidationComponent,
-  AvatarComponent
+  AvatarComponent,
+  SettingsIconComponent
 ];
 
 @NgModule({
