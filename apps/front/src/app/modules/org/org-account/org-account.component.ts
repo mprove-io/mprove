@@ -52,11 +52,11 @@ export class OrgAccountComponent {
   }
 
   editContactPhone() {
-    // this.myDialogService.showEditOrgOwner({
-    //   apiService: this.apiService,
-    //   orgId: this.org.orgId,
-    //   ownerEmail: this.org.ownerEmail
-    // });
+    this.myDialogService.showEditPhoneNumber({
+      apiService: this.apiService,
+      orgId: this.org.orgId,
+      contactPhone: this.org.contactPhone
+    });
   }
 
   editCompanySize() {

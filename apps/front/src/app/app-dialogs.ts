@@ -5,6 +5,7 @@ import { DeleteOrgDialogComponent } from './dialogs/org-account/delete-org-dialo
 import { EditCompanySizeDialogComponent } from './dialogs/org-account/edit-company-size-dialog/edit-company-size-dialog.component';
 import { EditOrgNameDialogComponent } from './dialogs/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
 import { EditOrgOwnerDialogComponent } from './dialogs/org-account/edit-org-owner-dialog/edit-org-owner-dialog.component';
+import { EditPhoneNumberDialogComponent } from './dialogs/org-account/edit-phone-number-dialog/edit-phone-number-dialog.component';
 import { PhotoDialogComponent } from './dialogs/photo-dialog/photo-dialog.component';
 import { DeleteUserDialogComponent } from './dialogs/profile/delete-user-dialog/delete-user-dialog.component';
 import { EditNameDialogComponent } from './dialogs/profile/edit-name-dialog/edit-name-dialog.component';
@@ -25,5 +26,6 @@ export const appDialogs = [
   EditOrgNameDialogComponent,
   EditCompanySizeDialogComponent,
   DeleteOrgDialogComponent,
-  EditOrgOwnerDialogComponent
+  EditOrgOwnerDialogComponent,
+  EditPhoneNumberDialogComponent
 ];
