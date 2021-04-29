@@ -36,7 +36,7 @@ export class DeleteOrgDialogComponent {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendDeleteUserResponse) => {
+        map((resp: apiToBackend.ToBackendDeleteOrgResponse) => {
           localStorage.setItem(
             constants.LOCAL_STORAGE_ORG_NAME,
             this.ref.data.orgName

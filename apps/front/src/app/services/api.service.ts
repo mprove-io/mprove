@@ -28,7 +28,10 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg
   ];
 
   constructor(

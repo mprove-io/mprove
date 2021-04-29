@@ -1,6 +1,6 @@
 <div class="flex flex-col p-9 bg-white">
   <div
-    data-cy="editNameDialogTitle"
+    data-cy="editPhoneNumberDialogTitle"
     class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
     >Edit Contact Phone Number</div
   >
@@ -11,7 +11,7 @@
     (ngSubmit)="save()"
   >
     <input
-      data-cy="editNameDialogContactPhoneInput"
+      data-cy="editPhoneNumberDialogContactPhoneInput"
       type="tel"
       class="mt-9 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
@@ -28,14 +28,14 @@
 
     <div class="mt-6">
       <button
-        data-cy="editNameDialogSaveButton"
+        data-cy="editPhoneNumberDialogSaveButton"
         class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
-        data-cy="editNameDialogCancelButton"
+        data-cy="editPhoneNumberDialogCancelButton"
         class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
