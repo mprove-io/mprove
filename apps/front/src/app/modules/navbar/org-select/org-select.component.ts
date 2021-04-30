@@ -7,6 +7,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-org-select',
@@ -69,5 +70,15 @@ export class OrgSelectComponent {
       this.selectedOrgId,
       common.PATH_ACCOUNT
     ]);
+
+    this.navStore.update(state =>
+      Object.assign({}, state, {
+        projectId: undefined,
+        projectName: undefined
+      })
+    );
+
+    localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_NAME);
+    localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
   }
 }

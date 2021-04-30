@@ -14,27 +14,27 @@
 
   <button
     class="fixed inset-0 w-full h-full cursor-default focus:outline-none"
-    *ngIf="isOrgMenuOpen === true"
+    *ngIf="isProjectMenuOpen === true"
     (click)="closeMenu()"
   ></button>
 
   <div
     class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-xl border-2 border-gray4"
-    *ngIf="isOrgMenuOpen === true"
+    *ngIf="isProjectMenuOpen === true"
   >
     <div class="block mt-2 px-4 py-2 text-gray1 font-bold text-sm"
-      >{{ nav?.orgName }} Organization</div
+      >{{ nav?.projectName }} Project</div
     >
 
     <button
       class="block px-4 py-2 text-gray1 font-medium text-sm w-full text-left focus:outline-none"
       [ngClass]="{
-        'hover:bg-blue2': lastUrl !== pathAccount,
-        'cursor-default': lastUrl === pathAccount
+        'hover:bg-blue2': lastUrl !== pathProject,
+        'cursor-default': lastUrl === pathProject
       }"
-      [disabled]="lastUrl === pathAccount"
-      (click)="account()"
-      >Account</button
+      [disabled]="lastUrl === pathProject"
+      (click)="settings()"
+      >Settings</button
     >
   </div>
 </div>

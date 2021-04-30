@@ -72,7 +72,8 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     }
 
     let payload: apiToBackend.ToBackendGetNavRequestPayload = {
-      orgId: localStorage.getItem(constants.LOCAL_STORAGE_ORG_ID)
+      orgId: localStorage.getItem(constants.LOCAL_STORAGE_ORG_ID),
+      projectId: localStorage.getItem(constants.LOCAL_STORAGE_PROJECT_ID)
     };
 
     return this.apiService

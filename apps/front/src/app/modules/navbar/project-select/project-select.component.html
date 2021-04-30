@@ -1,7 +1,7 @@
 <ng-select
   #projectSelect
   data-cy="projectSelect"
-  class="flex focus:outline-none w-52"
+  class="flex focus:outline-none w-44 ml-5"
   (open)="openProjectSelect()"
   [loading]="projectsListLoading"
   [items]="projectsList"
@@ -13,7 +13,10 @@
   bindLabel="name"
   bindValue="projectId"
 >
-  <ng-template ng-header-tmp *ngIf="projectsListLength > 0">
+  <ng-template
+    ng-header-tmp
+    *ngIf="projectsListLength > 0 && selectedProjectId"
+  >
     <div class="font-normal"> Projects </div>
   </ng-template>
   <ng-template ng-footer-tmp>

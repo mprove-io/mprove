@@ -7,6 +7,7 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavbarComponent } from './navbar.component';
 import { OrgMenuComponent } from './org-menu/org-menu.component';
 import { OrgSelectComponent } from './org-select/org-select.component';
+import { ProjectMenuComponent } from './project-menu/project-menu.component';
 import { ProjectSelectComponent } from './project-select/project-select.component';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 
@@ -16,7 +17,8 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     UserMenuComponent,
     OrgSelectComponent,
     OrgMenuComponent,
-    ProjectSelectComponent
+    ProjectSelectComponent,
+    ProjectMenuComponent
   ],
   imports: [
     CommonModule,

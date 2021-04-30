@@ -1,7 +1,7 @@
 <ng-select
   #orgsSelect
   data-cy="orgSelect"
-  class="flex focus:outline-none w-52"
+  class="flex focus:outline-none w-44"
   (open)="openOrgSelect()"
   [loading]="orgsListLoading"
   [items]="orgsList"
@@ -13,7 +13,7 @@
   bindLabel="name"
   bindValue="orgId"
 >
-  <ng-template ng-header-tmp *ngIf="orgsListLength > 0">
+  <ng-template ng-header-tmp *ngIf="orgsListLength > 0 && selectedOrgId">
     <div class="font-normal"> Organizations </div>
   </ng-template>
   <ng-template ng-footer-tmp>
@@ -21,7 +21,7 @@
       data-cy="orgSelectCreateOrgButton"
       class="py-3 rounded text-blue3 hover:bg-blue2 w-full focus:outline-none"
       (click)="createNewOrg(orgsSelect)"
-      >+ New Organization</button
+      >+ New Org</button
     >
   </ng-template>
 </ng-select>

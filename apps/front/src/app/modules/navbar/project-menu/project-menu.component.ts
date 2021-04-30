@@ -10,27 +10,27 @@ import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-org-menu',
-  templateUrl: './org-menu.component.html'
+  selector: 'm-project-menu',
+  templateUrl: './project-menu.component.html'
 })
-export class OrgMenuComponent implements OnInit, OnDestroy {
-  menuId = 'orgMenu';
+export class ProjectMenuComponent implements OnInit, OnDestroy {
+  menuId = 'projectMenu';
 
   openedMenuId: string;
   openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
     tap(x => (this.openedMenuId = x))
   );
 
-  isOrgMenuOpen = false;
+  isProjectMenuOpen = false;
 
-  pathAccount = common.PATH_ACCOUNT;
+  pathProject = common.PATH_PROJECT;
 
   lastUrl: string;
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
-      this.lastUrl = x.url.split('/')[3];
+      this.lastUrl = x.url.split('/')[5];
       this.cd.detectChanges();
     })
   );
@@ -54,30 +54,32 @@ export class OrgMenuComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.lastUrl = this.router.url.split('/')[3];
+    this.lastUrl = this.router.url.split('/')[5];
   }
 
-  account() {
+  settings() {
     this.closeMenu();
     this.router.navigate([
       common.PATH_ORG,
       this.nav.orgId,
-      common.PATH_ACCOUNT
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_SETTINGS
     ]);
   }
 
   openMenu() {
-    this.isOrgMenuOpen = true;
+    this.isProjectMenuOpen = true;
     this.uiStore.update({ openedMenuId: this.menuId });
   }
 
   closeMenu() {
-    this.isOrgMenuOpen = false;
+    this.isProjectMenuOpen = false;
     this.uiStore.update({ openedMenuId: undefined });
   }
 
   toggleMenu() {
-    if (this.isOrgMenuOpen === true) {
+    if (this.isProjectMenuOpen === true) {
       this.closeMenu();
     } else {
       this.openMenu();

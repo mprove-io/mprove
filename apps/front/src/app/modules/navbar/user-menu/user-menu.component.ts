@@ -45,7 +45,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   }
 
   profile() {
-    this.isUserMenuOpen = false;
+    this.closeMenu();
     this.router.navigate([common.PATH_PROFILE]);
   }
 
