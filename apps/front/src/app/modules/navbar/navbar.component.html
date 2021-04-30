@@ -2,34 +2,7 @@
   <div class="relative flex items-center justify-between h-14 px-6 shadow">
     <m-logo></m-logo>
     <div class="flex flex-row space-x-5 items-center">
-      <ng-select
-        #orgsSelect
-        data-cy="navbarOrgSelect"
-        class="flex focus:outline-none w-52"
-        (open)="openOrgSelect()"
-        [loading]="orgsListLoading"
-        [items]="orgsList"
-        [clearable]="false"
-        [searchable]="false"
-        [(ngModel)]="selectedOrgId"
-        (change)="orgChange()"
-        placeholder="Organizations"
-        bindLabel="name"
-        bindValue="orgId"
-      >
-        <ng-template ng-header-tmp *ngIf="orgsListLength > 0">
-          <div class="font-normal"> Organizations </div>
-        </ng-template>
-        <ng-template ng-footer-tmp>
-          <button
-            data-cy="navbarCreateOrgButton"
-            class="py-3 rounded text-blue3 hover:bg-blue2 w-full focus:outline-none"
-            (click)="createNewOrg(orgsSelect)"
-            >+ New Organization</button
-          >
-        </ng-template>
-      </ng-select>
-
+      <m-org-select></m-org-select>
       <m-org-menu></m-org-menu>
       <m-user-menu></m-user-menu>
     </div>
@@ -38,5 +11,3 @@
     <router-outlet></router-outlet>
   </div>
 </div>
-
-<div *ngIf="selectedOrg$ | async"></div>
