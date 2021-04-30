@@ -24,8 +24,8 @@ describe('front-e2e', () => {
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(common.PATH_PROFILE);
-    cy.get('[data-cy=navbarOrgSelect]').click();
-    cy.get('[data-cy=navbarCreateOrgButton]').click();
+    cy.get('[data-cy=orgSelect]').click();
+    cy.get('[data-cy=orgSelectCreateOrgButton]').click();
     cy.get('[data-cy=createOrgDialogOrgNameInput]').type(orgName);
     cy.get('[data-cy=createOrgDialogCreateButton]').click();
     cy.loading();

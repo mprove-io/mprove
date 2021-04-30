@@ -44,7 +44,13 @@ export class GetOrgsListController {
       owner_id: user.user_id
     });
 
-    let orgs = [...userOrgs, ...ownerOrgs];
+    let orgs = [...userOrgs];
+
+    ownerOrgs.forEach(x => {
+      if (orgs.map(z => z.org_id).indexOf(x.org_id) < 0) {
+        orgs.push(x);
+      }
+    });
 
     let payload: apiToBackend.ToBackendGetOrgsListResponsePayload = {
       orgsList: orgs.map(x => wrapper.wrapToApiOrgsItem(x))

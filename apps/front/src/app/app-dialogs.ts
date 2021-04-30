@@ -1,6 +1,7 @@
 import { EmailConfirmedDialogComponent } from './dialogs/auth/email-confirmed-dialog/email-confirmed-dialog.component';
 import { ErrorDialogComponent } from './dialogs/error-dialog/error-dialog.component';
 import { CreateOrgDialogComponent } from './dialogs/navbar/create-org-dialog/create-org-dialog.component';
+import { CreateProjectDialogComponent } from './dialogs/navbar/create-project-dialog/create-project-dialog.component';
 import { DeleteOrgDialogComponent } from './dialogs/org-account/delete-org-dialog/delete-org-dialog.component';
 import { EditCompanySizeDialogComponent } from './dialogs/org-account/edit-company-size-dialog/edit-company-size-dialog.component';
 import { EditOrgNameDialogComponent } from './dialogs/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
@@ -16,7 +17,9 @@ export const appDialogs = [
   ErrorDialogComponent,
   EmailConfirmedDialogComponent,
   PhotoDialogComponent,
+  // navbar
   CreateOrgDialogComponent,
+  CreateProjectDialogComponent,
   // profile
   EditPhotoDialogComponent,
   EditNameDialogComponent,

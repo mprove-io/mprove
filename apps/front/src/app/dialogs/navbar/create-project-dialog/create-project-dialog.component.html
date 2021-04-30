@@ -1,0 +1,45 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="createProjectDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Create Project</div
+  >
+
+  <form
+    class="flex flex-col w-80"
+    [formGroup]="createProjectForm"
+    (ngSubmit)="create()"
+  >
+    <input
+      data-cy="createProjectDialogProjectNameInput"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          createProjectForm.controls['projectName'].invalid &&
+          createProjectForm.controls['projectName'].touched
+      }"
+      formControlName="projectName"
+      placeholder="Project Name"
+    />
+    <m-validation
+      [control]="createProjectForm.controls['projectName']"
+    ></m-validation>
+
+    <div class="mt-6">
+      <button
+        data-cy="createProjectDialogCreateButton"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Create</button
+      >
+
+      <button
+        data-cy="createProjectDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

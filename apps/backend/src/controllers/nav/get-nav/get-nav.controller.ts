@@ -58,7 +58,9 @@ export class GetNavController {
       owner_id: user.user_id
     });
 
-    let existingOrgIds = [...orgs, ...ownerOrgs].map(x => x.org_id);
+    let orgIdsWithDuplicates = [...orgs, ...ownerOrgs].map(x => x.org_id);
+
+    let existingOrgIds = [...new Set(orgIdsWithDuplicates)];
 
     let resultOrgId =
       common.isDefined(orgId) && existingOrgIds.indexOf(orgId) > -1

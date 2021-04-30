@@ -8,11 +8,11 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-create-org-dialog',
-  templateUrl: './create-org-dialog.component.html'
+  selector: 'm-create-project-dialog',
+  templateUrl: './create-project-dialog.component.html'
 })
-export class CreateOrgDialogComponent implements OnInit {
-  createOrgForm: FormGroup;
+export class CreateProjectDialogComponent implements OnInit {
+  createProjectForm: FormGroup;
 
   constructor(
     public ref: DialogRef,
@@ -21,39 +21,42 @@ export class CreateOrgDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let orgName: string;
+    let projectName: string;
 
-    this.createOrgForm = this.fb.group({
-      orgName: [orgName, [Validators.maxLength(255)]]
+    this.createProjectForm = this.fb.group({
+      projectName: [projectName, [Validators.maxLength(255)]]
     });
   }
 
   create() {
-    this.createOrgForm.markAllAsTouched();
+    this.createProjectForm.markAllAsTouched();
 
-    if (!this.createOrgForm.valid) {
+    if (!this.createProjectForm.valid) {
       return;
     }
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateOrgRequestPayload = {
-      name: this.createOrgForm.value.orgName
+    let payload: apiToBackend.ToBackendCreateProjectRequestPayload = {
+      orgId: this.ref.data.orgId,
+      name: this.createProjectForm.value.projectName
     };
 
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateOrgResponse) => {
+        map((resp: apiToBackend.ToBackendCreateProjectResponse) => {
           this.router.navigate([
             common.PATH_ORG,
-            resp.payload.org.orgId,
-            common.PATH_ACCOUNT
+            resp.payload.project.orgId,
+            common.PATH_PROJECT,
+            resp.payload.project.projectId,
+            common.PATH_SETTINGS
           ]);
         }),
         take(1)

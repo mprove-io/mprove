@@ -6,10 +6,18 @@ import { NavState, NavStore } from '../stores/nav.store';
 export class NavQuery extends Query<NavState> {
   avatarSmall$ = this.select(state => state.avatarSmall);
   avatarBig$ = this.select(state => state.avatarBig);
+
   org$ = this.select(state => ({
     orgId: state.orgId,
     name: state.orgName
   }));
+
+  project$ = this.select(state => ({
+    projectId: state.projectId,
+    name: state.projectName
+  }));
+
+  projectId$ = this.select(state => state.projectId);
 
   constructor(protected store: NavStore) {
     super(store);

@@ -1,0 +1,30 @@
+<ng-select
+  #projectSelect
+  data-cy="projectSelect"
+  class="flex focus:outline-none w-52"
+  (open)="openProjectSelect()"
+  [loading]="projectsListLoading"
+  [items]="projectsList"
+  [clearable]="false"
+  [searchable]="false"
+  [(ngModel)]="selectedProjectId"
+  (change)="projectChange()"
+  placeholder="Projects"
+  bindLabel="name"
+  bindValue="projectId"
+>
+  <ng-template ng-header-tmp *ngIf="projectsListLength > 0">
+    <div class="font-normal"> Projects </div>
+  </ng-template>
+  <ng-template ng-footer-tmp>
+    <button
+      data-cy="projectSelectCreateProjectButton"
+      class="py-3 rounded text-blue3 hover:bg-blue2 w-full focus:outline-none"
+      (click)="createNewProject(projectSelect)"
+      >+ New Project</button
+    >
+  </ng-template>
+</ng-select>
+
+<div *ngIf="selectedProject$ | async"></div>
+<div *ngIf="selectedOrg$ | async"></div>

@@ -7,7 +7,6 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-org-select',
@@ -56,8 +55,8 @@ export class OrgSelectComponent {
       .subscribe();
   }
 
-  createNewOrg(orgsSelect: any) {
-    orgsSelect.close();
+  createNewOrg(orgSelect: any) {
+    orgSelect.close();
 
     this.myDialogService.showCreateOrg({
       apiService: this.apiService
@@ -65,8 +64,6 @@ export class OrgSelectComponent {
   }
 
   orgChange() {
-    localStorage.setItem(constants.LOCAL_STORAGE_ORG_ID, this.selectedOrgId);
-
     this.router.navigate([
       common.PATH_ORG,
       this.selectedOrgId,

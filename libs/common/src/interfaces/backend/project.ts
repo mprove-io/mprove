@@ -10,15 +10,6 @@ export class Project {
   @IsString()
   name: string;
 
-  // @IsString()
-  // timezone: string;
-
-  // @IsEnum(enums.ProjectWeekStartEnum)
-  // weekStart: enums.ProjectWeekStartEnum;
-
-  // @IsBoolean()
-  // allowTimezones: boolean;
-
   @IsInt()
   serverTs: number;
 }

@@ -13,31 +13,37 @@ import { ApiService } from '../services/api.service';
 import { NavStore } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
-export class OrgResolver implements Resolve<Observable<boolean>> {
+export class ProjectResolver implements Resolve<Observable<boolean>> {
   constructor(private navStore: NavStore, private apiService: ApiService) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let payload: apiToBackend.ToBackendGetOrgRequestPayload = {
-      orgId: route.params[common.PARAMETER_ORG_ID]
+    let payload: apiToBackend.ToBackendGetProjectRequestPayload = {
+      projectId: route.params[common.PARAMETER_PROJECT_ID]
     };
 
     return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg, payload)
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        payload
+      )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetOrgResponse) => {
-          let org = resp.payload.org;
+        map((resp: apiToBackend.ToBackendGetProjectResponse) => {
+          let project = resp.payload.project;
 
           this.navStore.update(state =>
             Object.assign({}, state, {
-              orgId: org.orgId,
-              orgName: org.name
+              projectId: project.projectId,
+              projectName: project.name
             })
           );
 
-          localStorage.setItem(constants.LOCAL_STORAGE_ORG_ID, org.orgId);
+          localStorage.setItem(
+            constants.LOCAL_STORAGE_PROJECT_ID,
+            project.projectId
+          );
 
           return true;
         })

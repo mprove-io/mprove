@@ -5,6 +5,7 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../dialogs/auth/email-confirmed-dialog/email-confirmed-dialog.component';
 import { CreateOrgDialogComponent } from '../dialogs/navbar/create-org-dialog/create-org-dialog.component';
+import { CreateProjectDialogComponent } from '../dialogs/navbar/create-project-dialog/create-project-dialog.component';
 import { DeleteOrgDialogComponent } from '../dialogs/org-account/delete-org-dialog/delete-org-dialog.component';
 import { EditCompanySizeDialogComponent } from '../dialogs/org-account/edit-company-size-dialog/edit-company-size-dialog.component';
 import { EditOrgNameDialogComponent } from '../dialogs/org-account/edit-org-name-dialog/edit-org-name-dialog.component';
@@ -97,6 +98,16 @@ export class MyDialogService {
       enableClose: false,
       data: {
         apiService: item.apiService
+      }
+    });
+  }
+
+  showCreateProject(item: { apiService: ApiService; orgId: string }): void {
+    this.dialogService.open(CreateProjectDialogComponent, {
+      enableClose: false,
+      data: {
+        apiService: item.apiService,
+        orgId: item.orgId
       }
     });
   }

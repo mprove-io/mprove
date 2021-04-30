@@ -16,6 +16,7 @@ import { NavModule } from './modules/nav/nav.module';
 import { NavbarModule } from './modules/navbar/navbar.module';
 import { OrgModule } from './modules/org/org.module';
 import { ProfileModule } from './modules/profile/profile.module';
+import { ProjectModule } from './modules/project/project.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { SpecialModule } from './modules/special/special.module';
 import { ErrorHandlerService } from './services/error-handler.service';
@@ -32,6 +33,7 @@ import { ErrorHandlerService } from './services/error-handler.service';
     NavbarModule,
     ProfileModule,
     OrgModule,
+    ProjectModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
     DialogModule.forRoot(),
