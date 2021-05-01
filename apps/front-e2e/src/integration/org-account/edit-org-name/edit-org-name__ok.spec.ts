@@ -34,10 +34,10 @@ describe('front-e2e', () => {
     cy.loginUser({ email: email, password: password });
     cy.visit(`${common.PATH_ORG}/${orgId}/${common.PATH_ACCOUNT}`);
     cy.get('[data-cy=orgAccountEditNameButton]').click();
-    cy.get('[data-cy=editNameDialogOrgNameInput]')
+    cy.get('[data-cy=editOrgNameDialogOrgNameInput]')
       .clear({ force: true })
       .type(newOrgName);
-    cy.get('[data-cy=editNameDialogSaveButton]').click();
+    cy.get('[data-cy=editOrgNameDialogSaveButton]').click();
     cy.loading();
     cy.get('[data-cy=orgAccountName]').should('contain', newOrgName);
   });

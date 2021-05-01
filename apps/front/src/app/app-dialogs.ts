@@ -11,6 +11,7 @@ import { DeleteUserDialogComponent } from './dialogs/profile/delete-user-dialog/
 import { EditNameDialogComponent } from './dialogs/profile/edit-name-dialog/edit-name-dialog.component';
 import { EditPhotoDialogComponent } from './dialogs/profile/edit-photo-dialog/edit-photo-dialog.component';
 import { EditTimezoneDialogComponent } from './dialogs/profile/edit-timezone-dialog/edit-timezone-dialog.component';
+import { EditProjectNameDialogComponent } from './dialogs/project/edit-project-name-dialog/edit-project-name-dialog.component';
 import { PhotoDialogComponent } from './dialogs/shared/photo-dialog/photo-dialog.component';
 
 export const appDialogs = [
@@ -30,5 +31,7 @@ export const appDialogs = [
   EditCompanySizeDialogComponent,
   DeleteOrgDialogComponent,
   EditOrgOwnerDialogComponent,
-  EditPhoneNumberDialogComponent
+  EditPhoneNumberDialogComponent,
+  // project
+  EditProjectNameDialogComponent
 ];

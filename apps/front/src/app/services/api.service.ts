@@ -25,13 +25,18 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
+    // user
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserTimezone,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
+    // org account
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
+    // project settings
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject
   ];
 
   constructor(

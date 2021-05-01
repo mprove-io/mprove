@@ -9,7 +9,7 @@ export class ProjectEntity {
   @PrimaryColumn({ type: constants.PROJECT_ID_VARCHAR })
   project_id: string;
 
-  @PrimaryColumn({ type: constants.VARCHAR })
+  @Column({ type: constants.VARCHAR })
   name: string; // name is unique across org projects
 
   // @Column({ type: constants.ENUM_TO_VARCHAR_DATATYPE })

@@ -2,6 +2,8 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
+import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -20,8 +22,18 @@ export class ProjectSettingsComponent {
   constructor(
     public projectQuery: ProjectQuery,
     public navQuery: NavQuery,
-    // private apiService: ApiService,
-    // private myDialogService: MyDialogService,
+    private apiService: ApiService,
+    private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef
   ) {}
+
+  deleteProject() {}
+
+  editName() {
+    this.myDialogService.showEditProjectName({
+      apiService: this.apiService,
+      projectId: this.project.projectId,
+      projectName: this.project.name
+    });
+  }
 }
