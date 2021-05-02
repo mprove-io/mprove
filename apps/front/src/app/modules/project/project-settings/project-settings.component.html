@@ -16,13 +16,13 @@
 
       <div class="flex flex-col ml-6">
         <div
-          data-cy="ProjectSettingsName"
+          data-cy="projectSettingsName"
           class="h-16 flex items-center max-w-xl truncate"
           >{{ project?.name }}</div
         >
         <div class="flex items-center">
           <button
-            data-cy="ProjectSettingsDeleteProjectButton"
+            data-cy="projectSettingsDeleteProjectButton"
             class="mt-7 px-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
             (click)="deleteProject()"
             >Delete Project</button
@@ -33,7 +33,7 @@
       <div class="flex flex-col ml-6">
         <div class="h-16 flex items-center">
           <button
-            data-cy="ProjectSettingsEditNameButton"
+            data-cy="projectSettingsEditNameButton"
             (click)="editName()"
             class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
             >Edit</button
