@@ -30,6 +30,8 @@ export const PATH_ACCOUNT = 'account';
 export const PATH_ORG_DELETED = 'organization-deleted';
 export const PATH_ORG_OWNER_CHANGED = 'organization-owner-changed';
 
+export const PATH_PROJECT_DELETED = 'project-deleted';
+
 export const PARAMETER_ORG_ID = 'orgId';
 export const PARAMETER_PROJECT_ID = 'projectId';
 

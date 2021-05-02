@@ -18,6 +18,7 @@ import { ProfileComponent } from './modules/profile/profile.component';
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
+import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
@@ -98,6 +99,10 @@ const routes: Routes = [
       {
         component: OrgOwnerChangedComponent,
         path: common.PATH_ORG_OWNER_CHANGED
+      },
+      {
+        component: ProjectDeletedComponent,
+        path: common.PATH_PROJECT_DELETED
       },
       {
         path: common.PATH_ORG + `/:${common.PARAMETER_ORG_ID}`,

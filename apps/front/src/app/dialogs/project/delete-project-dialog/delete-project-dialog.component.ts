@@ -4,46 +4,46 @@ import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { NavStore } from '~front/app/stores/nav.store';
-import { OrgStore } from '~front/app/stores/org.store';
+import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'm-delete-org-dialog',
-  templateUrl: './delete-org-dialog.component.html'
+  selector: 'm-delete-project-dialog',
+  templateUrl: './delete-project-dialog.component.html'
 })
-export class DeleteOrgDialogComponent {
+export class DeleteProjectDialogComponent {
   constructor(
     public ref: DialogRef,
     private router: Router,
-    private orgStore: OrgStore,
+    private projectStore: ProjectStore,
     private navStore: NavStore
   ) {}
 
   delete() {
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendDeleteOrgRequestPayload = {
-      orgId: this.ref.data.orgId
+    let payload: apiToBackend.ToBackendDeleteProjectRequestPayload = {
+      projectId: this.ref.data.projectId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendDeleteOrgResponse) => {
+        map((resp: apiToBackend.ToBackendDeleteProjectResponse) => {
           localStorage.setItem(
-            constants.LOCAL_STORAGE_DELETED_ORG_NAME,
-            this.ref.data.orgName
+            constants.LOCAL_STORAGE_DELETED_PROJECT_NAME,
+            this.ref.data.projectName
           );
-          this.router.navigate([common.PATH_ORG_DELETED]);
-          this.navStore.clearOrgAndDeps();
-          this.orgStore.reset();
+          this.router.navigate([common.PATH_PROJECT_DELETED]);
+          this.navStore.clearProjectAndDeps();
+          this.projectStore.reset();
         }),
         take(1)
       )

@@ -35,11 +35,22 @@ export class NavStore extends Store<NavState> {
     super(createInitialState());
   }
 
-  clearNavAndSkipAvatar() {
+  clearOrgAndDeps() {
     this.update(state =>
       Object.assign({}, state, {
         orgId: undefined,
         orgName: undefined,
+        projectId: undefined,
+        projectName: undefined,
+        isRepoProd: undefined,
+        branchId: undefined
+      })
+    );
+  }
+
+  clearProjectAndDeps() {
+    this.update(state =>
+      Object.assign({}, state, {
         projectId: undefined,
         projectName: undefined,
         isRepoProd: undefined,

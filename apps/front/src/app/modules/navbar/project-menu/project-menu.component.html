@@ -2,10 +2,15 @@
   <button
     class="relative block ml-2 h-10 w-10 z-10 rounded-full text-md tracking-wider focus:outline-none"
     [ngClass]="{
-      'cursor-default': openedMenuId && menuId !== openedMenuId
+      'cursor-default': openedMenuId && menuId !== openedMenuId,
+      'bg-gray-200':
+        nav?.projectId === undefined ||
+        (openedMenuId && menuId !== openedMenuId)
     }"
     (click)="toggleMenu()"
-    [disabled]="openedMenuId && menuId !== openedMenuId"
+    [disabled]="
+      nav?.projectId === undefined || (openedMenuId && menuId !== openedMenuId)
+    "
   >
     <div class="flex justify-center">
       <m-settings-icon></m-settings-icon>

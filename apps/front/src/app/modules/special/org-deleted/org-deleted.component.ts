@@ -13,8 +13,10 @@ export class OrgDeletedComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.orgName = localStorage.getItem(constants.LOCAL_STORAGE_ORG_NAME);
-    localStorage.removeItem(constants.LOCAL_STORAGE_ORG_NAME);
+    this.orgName = localStorage.getItem(
+      constants.LOCAL_STORAGE_DELETED_ORG_NAME
+    );
+    localStorage.removeItem(constants.LOCAL_STORAGE_DELETED_ORG_NAME);
 
     if (common.isUndefined(this.orgName)) {
       this.authService.logout();

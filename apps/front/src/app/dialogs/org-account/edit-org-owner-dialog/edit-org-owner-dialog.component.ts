@@ -62,14 +62,17 @@ export class EditOrgOwnerDialogComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendSetOrgOwnerResponse) => {
           let org = resp.payload.org;
-          localStorage.setItem(constants.LOCAL_STORAGE_ORG_NAME, org.name);
+          localStorage.setItem(
+            constants.LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
+            org.name
+          );
           localStorage.setItem(
             constants.LOCAL_STORAGE_NEW_ORG_OWNER,
             newOwnerEmail
           );
           this.router.navigate([common.PATH_ORG_OWNER_CHANGED]);
           this.orgStore.reset();
-          this.navStore.clearNavAndSkipAvatar();
+          this.navStore.clearOrgAndDeps();
         }),
         take(1)
       )

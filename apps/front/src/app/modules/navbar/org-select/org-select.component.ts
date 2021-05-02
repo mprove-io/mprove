@@ -78,7 +78,6 @@ export class OrgSelectComponent {
       })
     );
 
-    localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_NAME);
     localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
   }
 }

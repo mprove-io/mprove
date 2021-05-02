@@ -27,7 +27,13 @@ export class ProjectSettingsComponent {
     private cd: ChangeDetectorRef
   ) {}
 
-  deleteProject() {}
+  deleteProject() {
+    this.myDialogService.showDeleteProject({
+      apiService: this.apiService,
+      projectId: this.project.projectId,
+      projectName: this.project.name
+    });
+  }
 
   editName() {
     this.myDialogService.showEditProjectName({

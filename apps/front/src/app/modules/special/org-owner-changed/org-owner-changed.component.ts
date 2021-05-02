@@ -14,8 +14,10 @@ export class OrgOwnerChangedComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.orgName = localStorage.getItem(constants.LOCAL_STORAGE_ORG_NAME);
-    localStorage.removeItem(constants.LOCAL_STORAGE_ORG_NAME);
+    this.orgName = localStorage.getItem(
+      constants.LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME
+    );
+    localStorage.removeItem(constants.LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME);
 
     this.newOrgOwner = localStorage.getItem(
       constants.LOCAL_STORAGE_NEW_ORG_OWNER

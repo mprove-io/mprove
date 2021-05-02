@@ -6,6 +6,7 @@
   [loading]="projectsListLoading"
   [items]="projectsList"
   [clearable]="false"
+  [disabled]="selectedOrgId === undefined"
   [searchable]="false"
   [(ngModel)]="selectedProjectId"
   (change)="projectChange()"
