@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Query } from '@datorama/akita';
 import { UserState, UserStore } from '~front/app/stores/user.store';
 import { common } from '~front/barrels/common';
+import { getFullName } from '../functions/get-full-name';
 
 @Injectable({ providedIn: 'root' })
 export class UserQuery extends Query<UserState> {
@@ -31,17 +32,7 @@ export class UserQuery extends Query<UserState> {
     );
   });
 
-  fullName$ = this.select(state => {
-    let firstName = common.capitalizeFirstLetter(
-      common.isDefined(state.firstName) ? state.firstName : state.alias[0]
-    );
-
-    let lastName = common.capitalizeFirstLetter(
-      common.isDefined(state.lastName) ? state.lastName : '_'
-    );
-
-    return `${firstName} ${lastName}`;
-  });
+  fullName$ = this.select(state => getFullName(state));
 
   email$ = this.select(state => state.email);
   userId$ = this.select(state => state.userId);

@@ -3,8 +3,7 @@
     class="relative block ml-2 h-10 w-10 z-10 rounded-full text-md tracking-wider focus:outline-none"
     [ngClass]="{
       'cursor-default': openedMenuId && menuId !== openedMenuId,
-      'bg-gray-200':
-        nav?.orgId === undefined || (openedMenuId && menuId !== openedMenuId)
+      'bg-gray-200': nav?.orgId === undefined
     }"
     (click)="toggleMenu()"
     [disabled]="
@@ -31,10 +30,10 @@
     >
 
     <button
-      class="block px-4 py-2 text-gray1 font-medium text-sm w-full text-left focus:outline-none"
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
       [ngClass]="{
-        'hover:bg-blue2': lastUrl !== pathAccount,
-        'cursor-default': lastUrl === pathAccount
+        'cursor-default': lastUrl === pathAccount,
+        'text-red-800': lastUrl === pathAccount
       }"
       [disabled]="lastUrl === pathAccount"
       (click)="account()"

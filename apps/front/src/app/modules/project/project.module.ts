@@ -4,9 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectSettingsComponent } from './project-settings/project-settings.component';
+import { ProjectTeamComponent } from './project-team/project-team.component';
 
 @NgModule({
-  declarations: [ProjectSettingsComponent],
+  declarations: [ProjectSettingsComponent, ProjectTeamComponent],
   imports: [CommonModule, ReactiveFormsModule, SharedModule, RouterModule]
 })
 export class ProjectModule {}

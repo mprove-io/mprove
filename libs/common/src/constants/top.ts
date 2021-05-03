@@ -37,3 +37,5 @@ export const PARAMETER_PROJECT_ID = 'projectId';
 
 export const PATH_PROJECT = 'project';
 export const PATH_SETTINGS = 'settings';
+
+export const PATH_TEAM = 'team';

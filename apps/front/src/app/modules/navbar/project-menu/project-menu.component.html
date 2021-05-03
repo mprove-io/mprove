@@ -3,9 +3,7 @@
     class="relative block ml-2 h-10 w-10 z-10 rounded-full text-md tracking-wider focus:outline-none"
     [ngClass]="{
       'cursor-default': openedMenuId && menuId !== openedMenuId,
-      'bg-gray-200':
-        nav?.projectId === undefined ||
-        (openedMenuId && menuId !== openedMenuId)
+      'bg-gray-200': nav?.projectId === undefined
     }"
     (click)="toggleMenu()"
     [disabled]="
@@ -32,14 +30,25 @@
     >
 
     <button
-      class="block px-4 py-2 text-gray1 font-medium text-sm w-full text-left focus:outline-none"
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
       [ngClass]="{
-        'hover:bg-blue2': lastUrl !== pathProject,
-        'cursor-default': lastUrl === pathProject
+        'cursor-default': lastUrl === pathSettings,
+        'text-red-800': lastUrl === pathSettings
       }"
-      [disabled]="lastUrl === pathProject"
+      [disabled]="lastUrl === pathSettings"
       (click)="settings()"
       >Settings</button
+    >
+
+    <button
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+      [ngClass]="{
+        'cursor-default': lastUrl === pathTeam,
+        'text-red-800': lastUrl === pathTeam
+      }"
+      [disabled]="lastUrl === pathTeam"
+      (click)="team()"
+      >Team</button
     >
   </div>
 </div>
