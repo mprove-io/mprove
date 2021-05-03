@@ -82,7 +82,8 @@ test('1', async t => {
         memberId: userId,
         isAdmin: false,
         isEditor: true,
-        isExplorer: true
+        isExplorer: true,
+        roles: []
       }
     };
 

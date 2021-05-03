@@ -21,8 +21,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let member of members; let i = index">
-            <td>{{ getFullName(member) }}</td>
+          <tr *ngFor="let m of members; let i = index">
+            <td>{{ m.fullName }}</td>
+            <td>{{ m.email }}</td>
+            <td>{{ m.alias }}</td>
+            <td>{{ m.isAdmin }}</td>
+            <td>{{ m.isEditor }}</td>
+            <td>{{ m.isExplorer }}</td>
+            <td>{{ m.roles }}</td>
           </tr>
         </tbody>
       </table>

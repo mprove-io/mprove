@@ -18,6 +18,9 @@ export class ToBackendEditMemberRequestPayload {
 
   @IsBoolean()
   isExplorer: boolean;
+
+  @IsString({ each: true })
+  roles: string[];
 }
 
 export class ToBackendEditMemberRequest extends ToBackendRequest {

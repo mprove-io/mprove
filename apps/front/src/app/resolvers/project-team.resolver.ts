@@ -31,7 +31,7 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetMembersResponse) => {
           let members = resp.payload.members;
-          this.teamStore.update(members);
+          this.teamStore.update({ members: members });
           return true;
         })
       );

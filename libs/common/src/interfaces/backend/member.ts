@@ -25,6 +25,9 @@ export class Member {
   @IsString()
   timezone: string;
 
+  @IsString({ each: true })
+  roles: string[];
+
   @IsBoolean()
   isAdmin: boolean;
 
