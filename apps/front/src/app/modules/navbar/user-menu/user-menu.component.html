@@ -23,10 +23,10 @@
     <div class="block mt-2 px-4 py-2 text-gray1 font-bold text-sm">User</div>
 
     <button
-      class="block px-4 py-2 text-gray1 font-medium text-sm w-full text-left focus:outline-none"
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
       [ngClass]="{
-        'hover:bg-blue2': lastUrl !== pathProfile,
-        'cursor-default': lastUrl === pathProfile
+        'cursor-default': lastUrl === pathProfile,
+        'text-red-800': lastUrl === pathProfile
       }"
       [disabled]="lastUrl === pathProfile"
       (click)="profile()"

@@ -20,10 +20,6 @@ describe('front-e2e', () => {
     cy.loginUser({ email: email, password: password });
     cy.visit(common.PATH_PROFILE);
     cy.get(`[data-cy=profileTitle]`);
-    cy.get('[data-cy=profileFullName]').should(
-      'contain',
-      (testId[0] + ' ' + '_').toUpperCase()
-    );
     cy.get('[data-cy=profileTimezone]').should(
       'contain',
       common.USE_PROJECT_TIMEZONE

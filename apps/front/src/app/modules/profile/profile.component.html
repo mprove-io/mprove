@@ -17,6 +17,9 @@
         <div class="h-16 flex items-center justify-end font-semibold"
           >Email</div
         >
+        <div class="h-16 flex items-center justify-end font-semibold"
+          >Alias</div
+        >
         <div class="flex items-center justify-end font-semibold"></div>
         <div class="flex items-center justify-end font-semibold"></div>
       </div>
@@ -41,6 +44,7 @@
           </svg>
         </div>
         <div class="h-16 flex items-center"></div>
+        <div class="flex items-center"></div>
         <div class="flex items-center"></div>
         <div class="flex items-center"></div>
       </div>
@@ -73,6 +77,9 @@
         }}</div>
         <div data-cy="profileEmail" class="h-16 flex items-center">{{
           userQuery.email$ | async
+        }}</div>
+        <div data-cy="profileAlias" class="h-16 flex items-center">{{
+          userQuery.alias$ | async
         }}</div>
         <div class="flex items-center">
           <button
@@ -119,6 +126,7 @@
             >Edit</button
           ></div
         >
+        <div class="h-16 flex items-center"></div>
         <div class="h-16 flex items-center"></div>
         <div class="flex items-center"></div>
         <div class="flex items-center"></div>

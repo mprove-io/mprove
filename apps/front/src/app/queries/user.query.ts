@@ -35,6 +35,7 @@ export class UserQuery extends Query<UserState> {
   fullName$ = this.select(state => getFullName(state));
 
   email$ = this.select(state => state.email);
+  alias$ = this.select(state => state.alias);
   userId$ = this.select(state => state.userId);
   timezone$ = this.select(state => state.timezone);
 

@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { getFullName } from '~front/app/functions/get-full-name';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { TeamQuery } from '~front/app/queries/team.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { MemberExtended } from '~front/app/stores/team.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
   selector: 'm-project-team',
@@ -31,4 +32,26 @@ export class ProjectTeamComponent {
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef
   ) {}
+
+  showPhoto(memberId: string) {
+    let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
+      avatarUserId: memberId
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
+          this.myDialogService.showPhoto({
+            apiService: this.apiService,
+            avatarBig: resp.payload.avatarBig
+          });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 }

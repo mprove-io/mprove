@@ -51,7 +51,6 @@ export class ProfileComponent implements OnInit {
   }
 
   showPhoto() {
-    let userId: string;
     let avatarBig: string;
 
     this.navQuery.avatarBig$
@@ -63,7 +62,6 @@ export class ProfileComponent implements OnInit {
 
     this.myDialogService.showPhoto({
       apiService: this.apiService,
-      userId: userId,
       avatarBig: avatarBig
     });
   }

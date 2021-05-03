@@ -1,15 +1,26 @@
 <div class="bg-blue1 flex flex-col h-full">
-  <div
-    data-cy="projectTeamTitle"
-    class="font-semibold text-2xl mt-8 ml-6 text-gray1"
-    >Project - Team
+  <div class="flex flex-row items-center justify-between mt-7 mx-6">
+    <div
+      data-cy="projectTeamTitle"
+      class="flex font-semibold text-2xl text-gray1"
+      >Project - Team
+    </div>
+
+    <div class="flex">
+      <button
+        data-cy="loginButton"
+        class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Invite Member</button
+      >
+    </div>
   </div>
 
-  <div class="flex-1 bg-white mx-6 mt-6 mb-4 rounded shadow-lg">
+  <div class="flex-1 bg-white mx-6 mt-4 mb-4 rounded shadow-lg">
     <div class="mx-5 mt-8 text-gray1">
       <table class="min-w-full divide-y divide-gray-500">
         <thead>
-          <tr class="text-sm h-12">
+          <tr class="text-sm h-12 text-left">
             <th>Name</th>
             <th>Email</th>
             <th>Alias</th>
@@ -22,7 +33,16 @@
         </thead>
         <tbody>
           <tr *ngFor="let m of members; let i = index">
-            <td>{{ m.fullName }}</td>
+            <td class="flex flex-row space-x-5 items-center my-3">
+              <button
+                class="relative block ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+                (click)="showPhoto(m.memberId)"
+                [disabled]="!m.avatarSmall"
+              >
+                <m-avatar [avatar]="m.avatarSmall"></m-avatar>
+              </button>
+              <div>{{ m.fullName }}</div>
+            </td>
             <td>{{ m.email }}</td>
             <td>{{ m.alias }}</td>
             <td>{{ m.isAdmin }}</td>
