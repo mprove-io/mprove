@@ -99,7 +99,7 @@ export class DeleteUserController {
         payload: {
           orgId: project.org_id,
           projectId: project.project_id,
-          devRepoId: user.alias
+          devRepoId: user.user_id
         }
       };
 

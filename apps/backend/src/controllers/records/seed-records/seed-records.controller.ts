@@ -165,7 +165,7 @@ export class SeedRecordsController {
               orgId: newProject.org_id,
               projectId: newProject.project_id,
               testProjectId: x.testProjectId,
-              devRepoId: users[0].alias,
+              devRepoId: users[0].user_id,
               userAlias: users[0].alias
             }
           };
@@ -247,7 +247,7 @@ export class SeedRecordsController {
           let devBranch = maker.makeBranch({
             structId: structId,
             projectId: newProject.project_id,
-            repoId: users[0].alias,
+            repoId: users[0].user_id,
             branchId: common.BRANCH_MASTER
           });
 

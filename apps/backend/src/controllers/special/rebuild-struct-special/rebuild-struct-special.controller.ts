@@ -29,7 +29,7 @@ export class RebuildStructSpecialController {
       connections
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     // to disk
 

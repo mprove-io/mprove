@@ -25,7 +25,7 @@ export class GetRepoController {
   ) {
     let { projectId, isRepoProd, branchId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

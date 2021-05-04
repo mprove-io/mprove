@@ -29,7 +29,7 @@ export class PushRepoController {
   ) {
     let { projectId, branchId } = reqValid.payload;
 
-    let repoId = user.alias;
+    let repoId = user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -42,7 +42,7 @@ export class PushRepoController {
 
     let devBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.alias,
+      repoId: user.user_id,
       branchId: branchId
     });
 

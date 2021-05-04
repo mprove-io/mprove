@@ -24,7 +24,7 @@ export class CreateFileController {
   ) {
     let { projectId, branchId, parentNodeId, fileName } = reqValid.payload;
 
-    let repoId = user.alias;
+    let repoId = user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

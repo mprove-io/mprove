@@ -49,7 +49,7 @@ export class DeleteMemberController {
       projectId: projectId
     });
 
-    let devRepoId = member.alias;
+    let devRepoId = member.member_id;
 
     let toDiskDeleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
       info: {

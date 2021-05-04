@@ -22,7 +22,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = 'p1';
 
-let devRepoId = testId;
+let devRepoId = userId;
 let userAlias = testId;
 
 let prep: interfaces.Prep;

@@ -26,7 +26,7 @@ export class CommitRepoController {
   ) {
     let { projectId, branchId, commitMessage } = reqValid.payload;
 
-    let repoId = user.alias;
+    let repoId = user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -39,7 +39,7 @@ export class CommitRepoController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.alias,
+      repoId: user.user_id,
       branchId: branchId
     });
 

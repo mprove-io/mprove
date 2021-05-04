@@ -23,7 +23,7 @@ export class IsBranchExistController {
   ) {
     let { projectId, branchId } = reqValid.payload;
 
-    let repoId = user.alias;
+    let repoId = user.user_id;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

@@ -25,7 +25,7 @@ export class GetFileController {
   ) {
     let { projectId, isRepoProd, branchId, fileNodeId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.alias;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

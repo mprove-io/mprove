@@ -35,7 +35,7 @@ export class CreateBranchController {
       isFromRemote
     } = reqValid.payload;
 
-    let repoId = user.alias;
+    let repoId = user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -48,13 +48,13 @@ export class CreateBranchController {
 
     let fromBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isFromRemote === true ? common.PROD_REPO_ID : user.alias,
+      repoId: isFromRemote === true ? common.PROD_REPO_ID : user.user_id,
       branchId: fromBranchId
     });
 
     await this.branchesService.checkBranchDoesNotExist({
       projectId: projectId,
-      repoId: user.alias,
+      repoId: user.user_id,
       branchId: newBranchId
     });
 

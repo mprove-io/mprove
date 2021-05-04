@@ -37,7 +37,7 @@ export class MergeRepoController {
       isTheirBranchRemote
     } = reqValid.payload;
 
-    let repoId = user.alias;
+    let repoId = user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -50,13 +50,13 @@ export class MergeRepoController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.alias,
+      repoId: user.user_id,
       branchId: branchId
     });
 
     let theirBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isTheirBranchRemote === true ? common.PROD_REPO_ID : user.alias,
+      repoId: isTheirBranchRemote === true ? common.PROD_REPO_ID : user.user_id,
       branchId: theirBranchId
     });
 

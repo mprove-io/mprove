@@ -32,7 +32,7 @@ export class DeleteFolderController {
     let { traceId } = reqValid.info;
     let { projectId, branchId, folderNodeId } = reqValid.payload;
 
-    let repoId = user.alias;
+    let repoId = user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -45,7 +45,7 @@ export class DeleteFolderController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.alias,
+      repoId: user.user_id,
       branchId: branchId
     });
 
