@@ -8,9 +8,10 @@
 
     <div class="flex">
       <button
-        data-cy="loginButton"
+        data-cy="inviteMemberButton"
         class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
+        (click)="inviteMember()"
         >Invite Member</button
       >
     </div>
@@ -32,23 +33,43 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let m of members; let i = index">
+          <tr *ngFor="let member of members; let i = index">
             <td class="flex flex-row space-x-5 items-center my-3">
               <button
                 class="relative block ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
-                (click)="showPhoto(m.memberId)"
-                [disabled]="!m.avatarSmall"
+                (click)="showPhoto(member.memberId)"
+                [disabled]="!member.avatarSmall"
               >
-                <m-avatar [avatar]="m.avatarSmall"></m-avatar>
+                <m-avatar [avatar]="member.avatarSmall"></m-avatar>
               </button>
-              <div>{{ m.fullName }}</div>
+              <div>{{ member.fullName }}</div>
             </td>
-            <td>{{ m.email }}</td>
-            <td>{{ m.alias }}</td>
-            <td>{{ m.isAdmin }}</td>
-            <td>{{ m.isEditor }}</td>
-            <td>{{ m.isExplorer }}</td>
-            <td>{{ m.roles }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.alias }}</td>
+            <td>{{ member.isAdmin }}</td>
+            <td>{{ member.isEditor }}</td>
+            <td>{{ member.isExplorer }}</td>
+            <td>{{ member.roles }}</td>
+            <td>
+              <button
+                class="h-10 w-10 rounded-full text-red1 focus:outline-none"
+                [ngClass]="{
+                  'text-gray1': member.memberId === userId
+                }"
+                [disabled]="member.memberId === userId"
+                (click)="removeMember(member)"
+              >
+                <div
+                  class="flex justify-center"
+                  [ngClass]="{
+                    'text-gray1': member.memberId === userId,
+                    'cursor-default': member.memberId === userId
+                  }"
+                >
+                  <m-delete-icon></m-delete-icon>
+                </div>
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -56,4 +77,6 @@
   </div>
 </div>
 
+<div *ngIf="userId$ | async"></div>
+<div *ngIf="projectId$ | async"></div>
 <div *ngIf="members$ | async"></div>

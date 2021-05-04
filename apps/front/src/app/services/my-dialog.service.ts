@@ -16,6 +16,8 @@ import { EditPhotoDialogComponent } from '../modules/profile/edit-photo-dialog/e
 import { EditTimezoneDialogComponent } from '../modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
 import { DeleteProjectDialogComponent } from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
 import { EditProjectNameDialogComponent } from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
+import { InviteMemberDialogComponent } from '../modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
+import { RemoveMemberDialogComponent } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import { ApiService } from './api.service';
@@ -210,6 +212,33 @@ export class MyDialogService {
         apiService: item.apiService,
         projectId: item.projectId,
         projectName: item.projectName
+      }
+    });
+  }
+
+  showInviteMember(item: { apiService: ApiService; projectId: string }): void {
+    this.dialogService.open(InviteMemberDialogComponent, {
+      enableClose: false,
+      data: {
+        apiService: item.apiService,
+        projectId: item.projectId
+      }
+    });
+  }
+
+  showRemoveMember(item: {
+    apiService: ApiService;
+    projectId: string;
+    memberId: string;
+    email: string;
+  }): void {
+    this.dialogService.open(RemoveMemberDialogComponent, {
+      enableClose: false,
+      data: {
+        apiService: item.apiService,
+        projectId: item.projectId,
+        memberId: item.memberId,
+        email: item.email
       }
     });
   }

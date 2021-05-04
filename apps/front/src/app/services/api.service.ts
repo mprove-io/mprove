@@ -37,6 +37,9 @@ export class ApiService {
     // project settings
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
+    // project team
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
     // special
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig
   ];

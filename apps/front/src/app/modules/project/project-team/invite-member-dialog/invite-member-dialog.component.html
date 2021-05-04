@@ -1,0 +1,43 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="inviteMemberDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Invite Member</div
+  >
+
+  <form
+    class="flex flex-col w-80"
+    [formGroup]="inviteMemberForm"
+    (ngSubmit)="save()"
+  >
+    <input
+      data-cy="inviteMemberDialogEmailInput"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          inviteMemberForm.controls['email'].invalid &&
+          inviteMemberForm.controls['email'].touched
+      }"
+      formControlName="email"
+      placeholder="Email"
+    />
+    <m-validation [control]="inviteMemberForm.controls['email']"></m-validation>
+
+    <div class="mt-6">
+      <button
+        data-cy="inviteMemberDialogSaveButton"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="inviteMemberDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>
