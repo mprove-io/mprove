@@ -72,7 +72,7 @@ export class RegisterUserController {
     }
 
     await this.dbService.writeRecords({
-      modify: false,
+      modify: common.isDefined(user),
       records: {
         users: [newUser]
       }
