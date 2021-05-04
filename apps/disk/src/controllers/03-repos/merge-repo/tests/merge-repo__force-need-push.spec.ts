@@ -34,7 +34,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
-        userAlias: 'r1'
+        userAlias: 'u1'
       }
     };
 
@@ -65,7 +65,7 @@ test('1', async t => {
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
         content: '1',
-        userAlias: 'r1'
+        userAlias: 'u1'
       }
     };
 
@@ -79,7 +79,7 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: 'master',
-        userAlias: 'r1',
+        userAlias: 'u1',
         commitMessage: 'commitMessage-1'
       }
     };
@@ -96,7 +96,7 @@ test('1', async t => {
         branch: 'b2',
         fileName: 's.view',
         parentNodeId: `${projectId}/`,
-        userAlias: 'r1'
+        userAlias: 'u1'
       }
     };
 
@@ -110,7 +110,7 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: 'b2',
-        userAlias: 'r1',
+        userAlias: 'u1',
         commitMessage: 'commitMessage-2'
       }
     };
@@ -125,7 +125,7 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: 'b2',
-        userAlias: 'r1',
+        userAlias: 'u1',
         theirBranch: 'master',
         isTheirBranchRemote: false
       }

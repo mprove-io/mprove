@@ -34,7 +34,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
-        userAlias: 'r1'
+        userAlias: 'u1'
       }
     };
 

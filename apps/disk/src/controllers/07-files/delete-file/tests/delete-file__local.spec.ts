@@ -34,7 +34,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         devRepoId: 'r1',
-        userAlias: 'r1'
+        userAlias: 'u1'
       }
     };
 
@@ -49,7 +49,7 @@ test('1', async t => {
         repoId: 'r1',
         branch: 'master',
         fileNodeId: `${projectId}/readme.md`,
-        userAlias: 'r1'
+        userAlias: 'u1'
       }
     };
 
