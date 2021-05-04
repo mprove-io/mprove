@@ -45,12 +45,7 @@ export class RegisterUserController {
         user.hash = hash;
         user.salt = salt;
 
-        await this.dbService.writeRecords({
-          modify: true,
-          records: {
-            users: [user]
-          }
-        });
+        newUser = user;
       }
     }
 
@@ -73,20 +68,20 @@ export class RegisterUserController {
           salt: salt,
           alias: alias
         });
-
-        await this.dbService.writeRecords({
-          modify: false,
-          records: {
-            users: [newUser]
-          }
-        });
-
-        await this.emailService.sendEmailVerification({
-          email: email,
-          emailVerificationToken: newUser.email_verification_token
-        });
       }
     }
+
+    await this.dbService.writeRecords({
+      modify: false,
+      records: {
+        users: [newUser]
+      }
+    });
+
+    await this.emailService.sendEmailVerification({
+      email: email,
+      emailVerificationToken: newUser.email_verification_token
+    });
 
     let payload: apiToBackend.ToBackendRegisterUserResponsePayload = {
       user: wrapper.wrapToApiUser(newUser)

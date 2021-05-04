@@ -32,6 +32,11 @@ export class ProjectTeamComponent {
     })
   );
 
+  isUserAdmin: boolean;
+  isUserAdmin$ = this.teamQuery.teamIsUserAdmin$.pipe(
+    tap(x => (this.isUserAdmin = x))
+  );
+
   constructor(
     public teamQuery: TeamQuery,
     public navQuery: NavQuery,

@@ -11,7 +11,11 @@
         data-cy="inviteMemberButton"
         class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
+        [ngClass]="{
+          'bg-gray1': isUserAdmin === false
+        }"
         (click)="inviteMember()"
+        [disabled]="isUserAdmin === false"
         >Invite Member</button
       >
     </div>
@@ -37,6 +41,9 @@
             <td class="flex flex-row space-x-5 items-center my-3">
               <button
                 class="relative block ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+                [ngClass]="{
+                  'cursor-default': !member.avatarSmall
+                }"
                 (click)="showPhoto(member.memberId)"
                 [disabled]="!member.avatarSmall"
               >
@@ -54,16 +61,16 @@
               <button
                 class="h-10 w-10 rounded-full text-red1 focus:outline-none"
                 [ngClass]="{
-                  'text-gray1': member.memberId === userId
+                  'cursor-default': member.memberId === userId
                 }"
-                [disabled]="member.memberId === userId"
+                [disabled]="member.memberId === userId || isUserAdmin === false"
                 (click)="removeMember(member)"
               >
                 <div
                   class="flex justify-center"
                   [ngClass]="{
-                    'text-gray1': member.memberId === userId,
-                    'cursor-default': member.memberId === userId
+                    'text-gray1':
+                      member.memberId === userId || isUserAdmin === false
                   }"
                 >
                   <m-delete-icon></m-delete-icon>
@@ -80,3 +87,4 @@
 <div *ngIf="userId$ | async"></div>
 <div *ngIf="projectId$ | async"></div>
 <div *ngIf="members$ | async"></div>
+<div *ngIf="isUserAdmin$ | async"></div>

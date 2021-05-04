@@ -44,20 +44,16 @@ export class CreateDevRepoService {
     }
 
     let isDevRepoExist = await disk.isPathExist(devRepoDir);
-    if (isDevRepoExist === true) {
-      throw new common.ServerError({
-        message: apiToDisk.ErEnum.DISK_REPO_ALREADY_EXIST
+    if (isDevRepoExist === false) {
+      await git.cloneCentralToDev({
+        orgId: orgId,
+        projectId: projectId,
+        devRepoId: devRepoId,
+        orgPath: orgPath
       });
     }
 
     //
-
-    await git.cloneCentralToDev({
-      orgId: orgId,
-      projectId: projectId,
-      devRepoId: devRepoId,
-      orgPath: orgPath
-    });
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
       await git.getRepoStatus({
