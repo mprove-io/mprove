@@ -61,7 +61,8 @@
               <button
                 class="h-10 w-10 rounded-full text-red1 focus:outline-none"
                 [ngClass]="{
-                  'cursor-default': member.memberId === userId
+                  'cursor-default':
+                    member.memberId === userId || isUserAdmin === false
                 }"
                 [disabled]="member.memberId === userId || isUserAdmin === false"
                 (click)="removeMember(member)"

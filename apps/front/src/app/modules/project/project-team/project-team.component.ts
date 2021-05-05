@@ -15,10 +15,20 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 })
 export class ProjectTeamComponent {
   userId: string;
-  userId$ = this.userQuery.userId$.pipe(tap(x => (this.userId = x)));
+  userId$ = this.userQuery.userId$.pipe(
+    tap(x => {
+      this.userId = x;
+      this.cd.detectChanges();
+    })
+  );
 
   projectId: string;
-  projectId$ = this.navQuery.projectId$.pipe(tap(x => (this.projectId = x)));
+  projectId$ = this.navQuery.projectId$.pipe(
+    tap(x => {
+      this.projectId = x;
+      this.cd.detectChanges();
+    })
+  );
 
   members: MemberExtended[] = [];
   members$ = this.teamQuery.members$.pipe(
@@ -34,7 +44,10 @@ export class ProjectTeamComponent {
 
   isUserAdmin: boolean;
   isUserAdmin$ = this.teamQuery.teamIsUserAdmin$.pipe(
-    tap(x => (this.isUserAdmin = x))
+    tap(x => {
+      this.isUserAdmin = x;
+      this.cd.detectChanges();
+    })
   );
 
   constructor(
