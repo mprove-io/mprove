@@ -12,7 +12,7 @@
         class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         [ngClass]="{
-          'bg-gray1': isUserAdmin === false
+          'bg-gray-500 cursor-default': isUserAdmin === false
         }"
         (click)="inviteMember()"
         [disabled]="isUserAdmin === false"
