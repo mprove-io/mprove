@@ -19,6 +19,14 @@ export class ProjectSettingsComponent {
     })
   );
 
+  isAdmin: boolean;
+  isAdmin$ = this.projectQuery.isAdmin$.pipe(
+    tap(x => {
+      this.isAdmin = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public projectQuery: ProjectQuery,
     public navQuery: NavQuery,

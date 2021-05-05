@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { TeamStore } from '~front/app/stores/team.store';
+import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
   templateUrl: './remove-member-dialog.component.html'
 })
 export class RemoveMemberDialogComponent {
-  constructor(public ref: DialogRef, private teamStore: TeamStore) {}
+  constructor(public ref: DialogRef, private projectStore: ProjectStore) {}
 
   remove() {
     this.ref.close();
@@ -29,7 +29,7 @@ export class RemoveMemberDialogComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendDeleteMemberResponse) => {
-          this.teamStore.update(state => ({
+          this.projectStore.update(state => ({
             members: state.members.filter(
               x => x.memberId !== this.ref.data.memberId
             )

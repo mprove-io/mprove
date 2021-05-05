@@ -37,6 +37,7 @@ module.exports = {
       blue4,
       gray1,
       gray2,
+      gray3,
       red1,
       gray5
     }),

@@ -122,7 +122,7 @@ const routes: Routes = [
               {
                 component: ProjectSettingsComponent,
                 path: common.PATH_SETTINGS,
-                resolve: [ProjectSettingsResolver]
+                resolve: [ProjectSettingsResolver, ProjectTeamResolver]
               },
               {
                 component: ProjectTeamComponent,

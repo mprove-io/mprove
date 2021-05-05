@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { getFullName } from '~front/app/functions/get-full-name';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { TeamQuery } from '~front/app/queries/team.query';
+import { ProjectQuery } from '~front/app/queries/project.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { MemberExtended } from '~front/app/stores/team.store';
+import { MemberExtended } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -31,7 +31,7 @@ export class ProjectTeamComponent {
   );
 
   members: MemberExtended[] = [];
-  members$ = this.teamQuery.members$.pipe(
+  members$ = this.projectQuery.members$.pipe(
     tap(x => {
       x.forEach(m => {
         console.log(m);
@@ -42,16 +42,16 @@ export class ProjectTeamComponent {
     })
   );
 
-  isUserAdmin: boolean;
-  isUserAdmin$ = this.teamQuery.teamIsUserAdmin$.pipe(
+  isAdmin: boolean;
+  isAdmin$ = this.projectQuery.isAdmin$.pipe(
     tap(x => {
-      this.isUserAdmin = x;
+      this.isAdmin = x;
       this.cd.detectChanges();
     })
   );
 
   constructor(
-    public teamQuery: TeamQuery,
+    public projectQuery: ProjectQuery,
     public navQuery: NavQuery,
     public userQuery: UserQuery,
     private apiService: ApiService,

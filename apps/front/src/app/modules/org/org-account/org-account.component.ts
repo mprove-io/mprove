@@ -19,6 +19,14 @@ export class OrgAccountComponent {
     })
   );
 
+  isOrgOwner: boolean;
+  isOrgOwner$ = this.orgQuery.isOrgOwner$.pipe(
+    tap(x => {
+      this.isOrgOwner = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public orgQuery: OrgQuery,
     public navQuery: NavQuery,

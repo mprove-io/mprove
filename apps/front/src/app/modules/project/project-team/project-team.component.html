@@ -12,10 +12,10 @@
         class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         [ngClass]="{
-          'bg-gray-500 cursor-default': isUserAdmin === false
+          'bg-gray-400': isAdmin === false
         }"
         (click)="inviteMember()"
-        [disabled]="isUserAdmin === false"
+        [disabled]="isAdmin === false"
         >Invite Member</button
       >
     </div>
@@ -60,18 +60,14 @@
             <td>
               <button
                 class="h-10 w-10 rounded-full text-red1 focus:outline-none"
-                [ngClass]="{
-                  'cursor-default':
-                    member.memberId === userId || isUserAdmin === false
-                }"
-                [disabled]="member.memberId === userId || isUserAdmin === false"
+                [disabled]="member.memberId === userId || isAdmin === false"
                 (click)="removeMember(member)"
               >
                 <div
                   class="flex justify-center"
                   [ngClass]="{
                     'text-gray1':
-                      member.memberId === userId || isUserAdmin === false
+                      member.memberId === userId || isAdmin === false
                   }"
                 >
                   <m-delete-icon></m-delete-icon>
@@ -88,4 +84,4 @@
 <div *ngIf="userId$ | async"></div>
 <div *ngIf="projectId$ | async"></div>
 <div *ngIf="members$ | async"></div>
-<div *ngIf="isUserAdmin$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>

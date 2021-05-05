@@ -24,7 +24,11 @@
           <button
             data-cy="projectSettingsDeleteProjectButton"
             class="mt-7 px-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+            [ngClass]="{
+              'border-gray3 text-gray3': isAdmin === false
+            }"
             (click)="deleteProject()"
+            [disabled]="isAdmin === false"
             >Delete Project</button
           >
         </div>
@@ -34,8 +38,12 @@
         <div class="h-16 flex items-center">
           <button
             data-cy="projectSettingsEditNameButton"
-            (click)="editName()"
             class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+            [ngClass]="{
+              'text-gray3': isAdmin === false
+            }"
+            [disabled]="isAdmin === false"
+            (click)="editName()"
             >Edit</button
           ></div
         >
@@ -46,3 +54,4 @@
 </div>
 
 <div *ngIf="project$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>

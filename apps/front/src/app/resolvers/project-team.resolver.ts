@@ -9,11 +9,14 @@ import { map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { ApiService } from '../services/api.service';
-import { TeamStore } from '../stores/team.store';
+import { ProjectStore } from '../stores/project.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
-  constructor(private teamStore: TeamStore, private apiService: ApiService) {}
+  constructor(
+    private projectStore: ProjectStore,
+    private apiService: ApiService
+  ) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
@@ -31,7 +34,7 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetMembersResponse) => {
           let members = resp.payload.members;
-          this.teamStore.update({ members: members });
+          this.projectStore.update({ members: members });
           return true;
         })
       );
