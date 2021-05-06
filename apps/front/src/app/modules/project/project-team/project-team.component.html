@@ -54,32 +54,54 @@
             <td>{{ member.email }}</td>
             <td>{{ member.alias }}</td>
             <td>
-              <input
-                type="checkbox"
+              <button
+                class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
+                [ngClass]="{
+                  'bg-blue3 ': member.isAdmin === true && isAdmin === true,
+                  'bg-gray-400': member.isAdmin === true && isAdmin === false,
+                  'border-blue3': isAdmin === true,
+                  'border-gray-400': isAdmin === false
+                }"
                 [value]="member.isAdmin"
-                [checked]="member.isAdmin"
                 (click)="isAdminChange($event, i)"
                 [disabled]="isAdmin === false"
-              />{{ member.isAdmin }}</td
-            >
+              >
+                <m-check-icon *ngIf="member.isAdmin"></m-check-icon>
+              </button>
+            </td>
             <td>
               <button
+                class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
+                [ngClass]="{
+                  'bg-blue3 ': member.isEditor === true && isAdmin === true,
+                  'bg-gray-400': member.isEditor === true && isAdmin === false,
+                  'border-blue3': isAdmin === true,
+                  'border-gray-400': isAdmin === false
+                }"
                 [value]="member.isEditor"
                 (click)="isEditorChange($event, i)"
                 [disabled]="isAdmin === false"
               >
-                {{ member.isEditor }}
+                <m-check-icon *ngIf="member.isEditor"></m-check-icon>
               </button>
             </td>
             <td>
-              <input
-                type="checkbox"
+              <button
+                class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
+                [ngClass]="{
+                  'bg-blue3 ': member.isExplorer === true && isAdmin === true,
+                  'bg-gray-400':
+                    member.isExplorer === true && isAdmin === false,
+                  'border-blue3': isAdmin === true,
+                  'border-gray-400': isAdmin === false
+                }"
                 [value]="member.isExplorer"
-                [checked]="member.isExplorer"
                 (click)="isExplorerChange($event, i)"
                 [disabled]="isAdmin === false"
-              />{{ member.isExplorer }}</td
-            >
+              >
+                <m-check-icon *ngIf="member.isExplorer"></m-check-icon>
+              </button>
+            </td>
             <td>{{ member.roles }}</td>
             <td>
               <button
