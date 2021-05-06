@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { getFullName } from '~front/app/functions/get-full-name';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { MemberExtended } from '~front/app/stores/project.store';
+import { MemberExtended, ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -52,6 +52,7 @@ export class ProjectTeamComponent {
 
   constructor(
     public projectQuery: ProjectQuery,
+    public projectStore: ProjectStore,
     public navQuery: NavQuery,
     public userQuery: UserQuery,
     private apiService: ApiService,
@@ -95,5 +96,36 @@ export class ProjectTeamComponent {
       memberId: member.memberId,
       email: member.email
     });
+  }
+
+  isEditorChange(event: any, i: number) {
+    console.log(event);
+    console.log(i);
+
+    let member = this.members[i];
+
+    let payload: apiToBackend.ToBackendEditMemberRequestPayload = Object.assign(
+      {},
+      member,
+      {
+        isEditor: !member.isEditor
+      }
+    );
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendEditMemberResponse) => {
+          this.projectStore.update(state => {
+            state.members[i] = resp.payload.member;
+            return state;
+          });
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

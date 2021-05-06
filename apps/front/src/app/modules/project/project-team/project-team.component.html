@@ -54,7 +54,15 @@
             <td>{{ member.email }}</td>
             <td>{{ member.alias }}</td>
             <td>{{ member.isAdmin }}</td>
-            <td>{{ member.isEditor }}</td>
+            <td>
+              <input
+                type="checkbox"
+                [value]="member.isEditor"
+                (change)="isEditorChange($event, i)"
+              />
+
+              {{ member.isEditor }}</td
+            >
             <td>{{ member.isExplorer }}</td>
             <td>{{ member.roles }}</td>
             <td>

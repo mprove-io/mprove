@@ -4,6 +4,7 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { AvatarsRepository } from '~backend/models/store-repositories/_index';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -13,6 +14,7 @@ export class EditMemberController {
   constructor(
     private dbService: DbService,
     private projectsService: ProjectsService,
+    private avatarsRepository: AvatarsRepository,
     private membersService: MembersService
   ) {}
 
@@ -63,6 +65,19 @@ export class EditMemberController {
         members: [member]
       }
     });
+
+    let avatar = await this.avatarsRepository.findOne({
+      select: ['user_id', 'avatar_small'],
+      where: {
+        user_id: member.member_id
+      }
+    });
+
+    let apiMember = wrapper.wrapToApiMember(member);
+
+    if (common.isDefined(avatar)) {
+      apiMember.avatarSmall = avatar.avatar_small;
+    }
 
     let payload: apiToBackend.ToBackendEditMemberResponsePayload = {
       member: wrapper.wrapToApiMember(member)
