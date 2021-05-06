@@ -34,7 +34,6 @@ export class ProjectTeamComponent {
   members$ = this.projectQuery.members$.pipe(
     tap(x => {
       x.forEach(m => {
-        console.log(m);
         m.fullName = getFullName(m);
       });
       this.members = x;

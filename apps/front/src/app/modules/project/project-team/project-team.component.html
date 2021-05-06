@@ -36,11 +36,11 @@
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <tr *ngFor="let member of members; let i = index">
-            <td class="flex flex-row space-x-5 items-center my-3">
+        <tbody class="divide-y divide-gray-300">
+          <tr *ngFor="let member of members; let i = index" class="h-16">
+            <td class="flex flex-row space-x-5 items-center h-16">
               <button
-                class="relative block ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+                class="ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
                 [ngClass]="{
                   'cursor-default': !member.avatarSmall
                 }"
