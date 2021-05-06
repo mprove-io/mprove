@@ -53,17 +53,33 @@
             </td>
             <td>{{ member.email }}</td>
             <td>{{ member.alias }}</td>
-            <td>{{ member.isAdmin }}</td>
             <td>
               <input
                 type="checkbox"
-                [value]="member.isEditor"
-                (change)="isEditorChange($event, i)"
-              />
-
-              {{ member.isEditor }}</td
+                [value]="member.isAdmin"
+                [checked]="member.isAdmin"
+                (click)="isAdminChange($event, i)"
+                [disabled]="isAdmin === false"
+              />{{ member.isAdmin }}</td
             >
-            <td>{{ member.isExplorer }}</td>
+            <td>
+              <button
+                [value]="member.isEditor"
+                (click)="isEditorChange($event, i)"
+                [disabled]="isAdmin === false"
+              >
+                {{ member.isEditor }}
+              </button>
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                [value]="member.isExplorer"
+                [checked]="member.isExplorer"
+                (click)="isExplorerChange($event, i)"
+                [disabled]="isAdmin === false"
+              />{{ member.isExplorer }}</td
+            >
             <td>{{ member.roles }}</td>
             <td>
               <button

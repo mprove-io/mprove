@@ -80,7 +80,7 @@ export class EditMemberController {
     }
 
     let payload: apiToBackend.ToBackendEditMemberResponsePayload = {
-      member: wrapper.wrapToApiMember(member)
+      member: apiMember
     };
 
     return payload;

@@ -40,6 +40,7 @@ export class ApiService {
     // project team
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
     // special
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig
   ];

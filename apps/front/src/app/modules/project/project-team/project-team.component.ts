@@ -98,19 +98,39 @@ export class ProjectTeamComponent {
     });
   }
 
-  isEditorChange(event: any, i: number) {
-    console.log(event);
-    console.log(i);
-
+  isAdminChange(event: any, i: number) {
     let member = this.members[i];
+    let m = Object.assign({}, member, {
+      isAdmin: !member.isAdmin
+    });
+    this.apiEditMember(m, i);
+  }
 
-    let payload: apiToBackend.ToBackendEditMemberRequestPayload = Object.assign(
-      {},
-      member,
-      {
-        isEditor: !member.isEditor
-      }
-    );
+  isEditorChange(event: any, i: number) {
+    let member = this.members[i];
+    let m = Object.assign({}, member, {
+      isEditor: !member.isEditor
+    });
+    this.apiEditMember(m, i);
+  }
+
+  isExplorerChange(event: any, i: number) {
+    let member = this.members[i];
+    let m = Object.assign({}, member, {
+      isExplorer: !member.isExplorer
+    });
+    this.apiEditMember(m, i);
+  }
+
+  apiEditMember(member: MemberExtended, i: number) {
+    let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
+      projectId: member.projectId,
+      memberId: member.memberId,
+      isAdmin: member.isAdmin,
+      isEditor: member.isEditor,
+      isExplorer: member.isExplorer,
+      roles: member.roles
+    };
 
     this.apiService
       .req(
