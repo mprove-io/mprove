@@ -1,0 +1,43 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="addRoleDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Add Role</div
+  >
+
+  <form
+    class="flex flex-col w-80"
+    [formGroup]="addRoleForm"
+    (ngSubmit)="save()"
+  >
+    <input
+      data-cy="addRoleDialogRoleInput"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          addRoleForm.controls['role'].invalid &&
+          addRoleForm.controls['role'].touched
+      }"
+      formControlName="role"
+      placeholder="Role"
+    />
+    <m-validation [control]="addRoleForm.controls['role']"></m-validation>
+
+    <div class="mt-6">
+      <button
+        data-cy="addRoleDialogSaveButton"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="addRoleDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

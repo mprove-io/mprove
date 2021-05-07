@@ -147,4 +147,12 @@ export class ProjectTeamComponent {
       )
       .subscribe();
   }
+
+  addRole(member: MemberExtended, i: number) {
+    this.myDialogService.showAddRole({
+      apiService: this.apiService,
+      member: member,
+      i: i
+    });
+  }
 }

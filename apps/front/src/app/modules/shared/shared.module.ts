@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AvatarComponent } from './avatar/avatar.component';
 import { LogoComponent } from './logo/logo.component';
+import { AddIconComponent } from './symbols/add-icon /add-icon.component';
 import { CheckIconComponent } from './symbols/check-icon/check-icon.component';
 import { CompletedRingComponent } from './symbols/completed-ring/completed-ring.component';
 import { DeleteIconComponent } from './symbols/delete-icon/delete-icon.component';
@@ -18,7 +19,8 @@ let sharedComponents = [
   AvatarComponent,
   SettingsIconComponent,
   DeleteIconComponent,
-  CheckIconComponent
+  CheckIconComponent,
+  AddIconComponent
 ];
 
 @NgModule({

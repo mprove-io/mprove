@@ -11,6 +11,7 @@ import { EditNameDialogComponent } from './modules/profile/edit-name-dialog/edit
 import { EditPhotoDialogComponent } from './modules/profile/edit-photo-dialog/edit-photo-dialog.component';
 import { EditTimezoneDialogComponent } from './modules/profile/edit-timezone-dialog/edit-timezone-dialog.component';
 import { EditProjectNameDialogComponent } from './modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
+import { AddRoleDialogComponent } from './modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from './modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
 import { PhotoDialogComponent } from './modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from './modules/special/error-dialog/error-dialog.component';
@@ -35,5 +36,6 @@ export const appDialogs = [
   EditPhoneNumberDialogComponent,
   // project
   EditProjectNameDialogComponent,
-  InviteMemberDialogComponent
+  InviteMemberDialogComponent,
+  AddRoleDialogComponent
 ];
