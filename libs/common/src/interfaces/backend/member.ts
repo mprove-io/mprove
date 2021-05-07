@@ -20,6 +20,9 @@ export class Member {
   lastName: string;
 
   @IsString()
+  fullName: string;
+
+  @IsString()
   avatarSmall: string;
 
   @IsString()

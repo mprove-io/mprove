@@ -39,7 +39,14 @@
         </thead>
 
         <tbody class="divide-y divide-gray-300">
-          <tr *ngFor="let member of members; let i = index" class="h-16">
+          <tr
+            *ngFor="
+              let member of members
+                | paginate: { itemsPerPage: 2, currentPage: p };
+              let i = index
+            "
+            class="h-16"
+          >
             <td>
               <div class="flex">
                 <button
@@ -177,6 +184,11 @@
       </table>
     </div>
   </div>
+
+  <pagination-controls
+    class="flex justify-center mx-6 mt-3 mb-6"
+    (pageChange)="p = $event"
+  ></pagination-controls>
 </div>
 
 <div *ngIf="userId$ | async"></div>

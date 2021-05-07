@@ -24,8 +24,8 @@ import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
-import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
-import { ProjectTeamResolver } from './resolvers/project-team.resolver';
+// import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
+// import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 
 const routes: Routes = [
@@ -122,12 +122,12 @@ const routes: Routes = [
               {
                 component: ProjectSettingsComponent,
                 path: common.PATH_SETTINGS,
-                resolve: [ProjectSettingsResolver, ProjectTeamResolver]
+                resolve: [ProjectResolver]
               },
               {
                 component: ProjectTeamComponent,
                 path: common.PATH_TEAM,
-                resolve: [ProjectTeamResolver]
+                resolve: [ProjectResolver]
               }
             ]
           }

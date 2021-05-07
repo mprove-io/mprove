@@ -78,7 +78,9 @@ test('1', async t => {
         idempotencyKey: testId
       },
       payload: {
-        projectId: projectId
+        projectId: projectId,
+        perPage: 10,
+        pageNum: 1
       }
     };
 

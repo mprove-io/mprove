@@ -11,10 +11,15 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { ApiService } from '../services/api.service';
 import { NavStore } from '../stores/nav.store';
+import { ProjectStore } from '../stores/project.store';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectResolver implements Resolve<Observable<boolean>> {
-  constructor(private navStore: NavStore, private apiService: ApiService) {}
+  constructor(
+    private navStore: NavStore,
+    private projectStore: ProjectStore,
+    private apiService: ApiService
+  ) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
@@ -43,6 +48,13 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
           localStorage.setItem(
             constants.LOCAL_STORAGE_PROJECT_ID,
             project.projectId
+          );
+
+          this.projectStore.update(state =>
+            Object.assign({}, state, {
+              project: resp.payload.project,
+              userMember: resp.payload.userMember
+            })
           );
 
           return true;

@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { MemberExtended, ProjectStore } from '~front/app/stores/project.store';
+import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-add-role-dialog',
@@ -36,7 +37,7 @@ export class AddRoleDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let member: MemberExtended = this.ref.data.member;
+    let member: common.Member = this.ref.data.member;
 
     let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
       projectId: member.projectId,

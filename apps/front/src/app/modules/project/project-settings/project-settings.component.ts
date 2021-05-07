@@ -14,7 +14,7 @@ export class ProjectSettingsComponent {
   project: common.Project;
   project$ = this.projectQuery.select().pipe(
     tap(x => {
-      this.project = x;
+      this.project = x.project;
       this.cd.detectChanges();
     })
   );

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
+import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
@@ -21,7 +22,6 @@ import { InviteMemberDialogComponent } from '../modules/project/project-team/inv
 import { RemoveMemberDialogComponent } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
-import { MemberExtended } from '../stores/project.store';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -247,7 +247,7 @@ export class MyDialogService {
 
   showAddRole(item: {
     apiService: ApiService;
-    member: MemberExtended;
+    member: common.Member;
     i: number;
   }): void {
     this.dialogService.open(AddRoleDialogComponent, {

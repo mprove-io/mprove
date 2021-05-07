@@ -6,14 +6,17 @@ import { ProjectQuery } from '~front/app/queries/project.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { MemberExtended, ProjectStore } from '~front/app/stores/project.store';
+import { ProjectStore } from '~front/app/stores/project.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-project-team',
   templateUrl: './project-team.component.html'
 })
 export class ProjectTeamComponent {
+  p: any = 1;
+
   userId: string;
   userId$ = this.userQuery.userId$.pipe(
     tap(x => {
@@ -30,7 +33,7 @@ export class ProjectTeamComponent {
     })
   );
 
-  members: MemberExtended[] = [];
+  members: common.Member[] = [];
   members$ = this.projectQuery.members$.pipe(
     tap(x => {
       x.forEach(m => {
@@ -88,7 +91,7 @@ export class ProjectTeamComponent {
     });
   }
 
-  removeMember(member: MemberExtended) {
+  removeMember(member: common.Member) {
     this.myDialogService.showRemoveMember({
       apiService: this.apiService,
       projectId: this.projectId,
@@ -121,7 +124,7 @@ export class ProjectTeamComponent {
     this.apiEditMember(m, i);
   }
 
-  apiEditMember(member: MemberExtended, i: number) {
+  apiEditMember(member: common.Member, i: number) {
     let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
       projectId: member.projectId,
       memberId: member.memberId,
@@ -148,7 +151,7 @@ export class ProjectTeamComponent {
       .subscribe();
   }
 
-  addRole(member: MemberExtended, i: number) {
+  addRole(member: common.Member, i: number) {
     this.myDialogService.showAddRole({
       apiService: this.apiService,
       member: member,
@@ -156,7 +159,7 @@ export class ProjectTeamComponent {
     });
   }
 
-  removeRole(member: MemberExtended, i: number, n: number) {
+  removeRole(member: common.Member, i: number, n: number) {
     let newRoles = [...member.roles];
     newRoles.splice(n, 1);
 

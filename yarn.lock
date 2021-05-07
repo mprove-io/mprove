@@ -10872,6 +10872,11 @@ ngx-image-cropper@^3.3.5:
   dependencies:
     tslib "^1.9.0"
 
+ngx-pagination@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-pagination/-/ngx-pagination-5.0.0.tgz#a4b4c150a70aef17ccd825e4543e174a974bbd14"
+  integrity sha512-Ur0pTWRe2ZXoJ8impEzo0IZKxY5aEcQfSmL5uBqW1rHI2J6nfzgZAHsSLagKHFGchXq0PkRlDVVMcIaNxYJwvQ==
+
 ngx-spinner@^11.0.1:
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/ngx-spinner/-/ngx-spinner-11.0.1.tgz#6a28953741e4954e61a5bafb6b59d6e35606e5b6"

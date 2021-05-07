@@ -18,6 +18,10 @@ export class ToBackendGetProjectResponsePayload {
   @ValidateNested()
   @Type(() => common.Project)
   project: common.Project;
+
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
 }
 
 export class ToBackendGetProjectResponse extends common.MyResponse {

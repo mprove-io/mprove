@@ -24,7 +24,7 @@ export class GetMembersController {
     @ValidateRequest(apiToBackend.ToBackendGetMembersRequest)
     reqValid: apiToBackend.ToBackendGetMembersRequest
   ) {
-    let { projectId } = reqValid.payload;
+    let { projectId, perPage, pageNum } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -35,7 +35,16 @@ export class GetMembersController {
       projectId: projectId
     });
 
-    let members = await this.membersRepository.find({ project_id: projectId });
+    const [members, total] = await this.membersRepository.findAndCount({
+      where: {
+        project_id: projectId
+      },
+      order: {
+        email: 'ASC'
+      },
+      take: perPage,
+      skip: (pageNum - 1) * perPage
+    });
 
     let memberIds = members.map(x => x.member_id);
 
@@ -59,7 +68,8 @@ export class GetMembersController {
     });
 
     let payload: apiToBackend.ToBackendGetMembersResponsePayload = {
-      members: apiMembers
+      members: apiMembers,
+      total: total
     };
 
     return payload;
