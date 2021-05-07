@@ -155,4 +155,34 @@ export class ProjectTeamComponent {
       i: i
     });
   }
+
+  removeRole(member: MemberExtended, i: number, n: number) {
+    let newRoles = [...member.roles];
+    newRoles.splice(n, 1);
+
+    let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
+      projectId: member.projectId,
+      memberId: member.memberId,
+      isAdmin: member.isAdmin,
+      isEditor: member.isEditor,
+      isExplorer: member.isExplorer,
+      roles: newRoles
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendEditMemberResponse) => {
+          this.projectStore.update(state => {
+            state.members[i] = resp.payload.member;
+            return state;
+          });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 }

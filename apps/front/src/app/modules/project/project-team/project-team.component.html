@@ -68,12 +68,33 @@
                   (click)="addRole(member, i)"
                   [disabled]="isAdmin === false"
                 >
-                  <m-add-icon></m-add-icon>
+                  <div
+                    [ngClass]="{
+                      'text-gray1': isAdmin === false
+                    }"
+                  >
+                    <m-add-icon></m-add-icon>
+                  </div>
                 </button>
                 <div class="flex flex-col my-3 ml-2">
-                  <div *ngFor="let role of member.roles; let n = index">{{
-                    role
-                  }}</div>
+                  <div *ngFor="let role of member.roles; let n = index">
+                    <div class="flex flex-row items-center">
+                      <div>{{ role }} </div>
+                      <button
+                        class="flex items-center justify-center h-9 w-9 text-red1 rounded focus:outline-none"
+                        (click)="removeRole(member, i, n)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <div
+                          [ngClass]="{
+                            'text-gray1': isAdmin === false
+                          }"
+                        >
+                          <m-delete-icon></m-delete-icon>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </td>
