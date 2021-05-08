@@ -53,11 +53,7 @@ export class EditProjectNameDialogComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendSetProjectInfoResponse) => {
           let project = resp.payload.project;
-          this.projectStore.update(state =>
-            Object.assign({}, state, {
-              project: project
-            })
-          );
+          this.projectStore.update(project);
           this.navStore.update(state =>
             Object.assign({}, state, {
               projectId: project.projectId,

@@ -2,20 +2,14 @@ import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
 
-export class ProjectState {
-  project: common.Project;
-  userMember: common.Member;
-}
+export class ProjectState extends common.Project {}
 
 function createInitialState(): ProjectState {
   return {
-    project: {
-      orgId: undefined,
-      projectId: undefined,
-      name: undefined,
-      serverTs: 1
-    },
-    userMember: undefined
+    orgId: undefined,
+    projectId: undefined,
+    name: undefined,
+    serverTs: 1
   };
 }
 

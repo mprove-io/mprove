@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -14,13 +15,13 @@ export class ProjectSettingsComponent {
   project: common.Project;
   project$ = this.projectQuery.select().pipe(
     tap(x => {
-      this.project = x.project;
+      this.project = x;
       this.cd.detectChanges();
     })
   );
 
   isAdmin: boolean;
-  isAdmin$ = this.projectQuery.isAdmin$.pipe(
+  isAdmin$ = this.memberQuery.isAdmin$.pipe(
     tap(x => {
       this.isAdmin = x;
       this.cd.detectChanges();
@@ -29,6 +30,7 @@ export class ProjectSettingsComponent {
 
   constructor(
     public projectQuery: ProjectQuery,
+    public memberQuery: MemberQuery,
     public navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,

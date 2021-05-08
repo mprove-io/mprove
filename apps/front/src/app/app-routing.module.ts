@@ -20,10 +20,12 @@ import { ProjectTeamComponent } from './modules/project/project-team/project-tea
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
+import { MemberResolver } from './resolvers/member.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
+import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
 
@@ -121,12 +123,12 @@ const routes: Routes = [
               {
                 component: ProjectSettingsComponent,
                 path: common.PATH_SETTINGS,
-                resolve: [ProjectResolver]
+                resolve: [MemberResolver, ProjectSettingsResolver]
               },
               {
                 component: ProjectTeamComponent,
                 path: common.PATH_TEAM,
-                resolve: [TeamResolver]
+                resolve: [MemberResolver, TeamResolver]
               }
             ]
           }

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { map, take, tap } from 'rxjs/operators';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { ProjectQuery } from '~front/app/queries/project.query';
 import { TeamQuery } from '~front/app/queries/team.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -36,10 +36,9 @@ export class ProjectTeamComponent {
   );
 
   isAdmin: boolean;
-  isAdmin$ = this.projectQuery.isAdmin$.pipe(
+  isAdmin$ = this.memberQuery.isAdmin$.pipe(
     tap(x => {
       this.isAdmin = x;
-      console.log(this.isAdmin);
       this.cd.detectChanges();
     })
   );
@@ -48,7 +47,6 @@ export class ProjectTeamComponent {
   members$ = this.teamQuery.members$.pipe(
     tap(x => {
       this.members = x;
-      console.log(this.members);
       this.cd.detectChanges();
     })
   );
@@ -64,7 +62,7 @@ export class ProjectTeamComponent {
   constructor(
     public teamQuery: TeamQuery,
     public teamStore: TeamStore,
-    public projectQuery: ProjectQuery,
+    public memberQuery: MemberQuery,
     public navQuery: NavQuery,
     public userQuery: UserQuery,
     private apiService: ApiService,
@@ -184,9 +182,6 @@ export class ProjectTeamComponent {
   }
 
   addRole(member: common.Member, i: number) {
-    console.log(member);
-    console.log(i);
-
     this.myDialogService.showAddRole({
       apiService: this.apiService,
       member: member,
