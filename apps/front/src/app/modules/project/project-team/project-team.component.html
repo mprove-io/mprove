@@ -42,7 +42,13 @@
           <tr
             *ngFor="
               let member of members
-                | paginate: { itemsPerPage: 2, currentPage: p };
+                | paginate
+                  : {
+                      id: 'members',
+                      itemsPerPage: perPage,
+                      currentPage: currentPage,
+                      totalItems: total
+                    };
               let i = index
             "
             class="h-16"
@@ -187,11 +193,13 @@
 
   <pagination-controls
     class="flex justify-center mx-6 mt-3 mb-6"
-    (pageChange)="p = $event"
+    (pageChange)="getMembers($event)"
+    id="members"
   ></pagination-controls>
 </div>
 
 <div *ngIf="userId$ | async"></div>
 <div *ngIf="projectId$ | async"></div>
-<div *ngIf="members$ | async"></div>
 <div *ngIf="isAdmin$ | async"></div>
+<div *ngIf="members$ | async"></div>
+<div *ngIf="total$ | async"></div>

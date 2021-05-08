@@ -9,3 +9,5 @@ export const LOCAL_STORAGE_DELETED_ORG_NAME = 'deletedOrgName';
 export const LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME = 'changedOwnerOrgName';
 export const LOCAL_STORAGE_DELETED_PROJECT_NAME = 'deletedProjectName';
 export const LOCAL_STORAGE_NEW_ORG_OWNER = 'newOrgOwner';
+
+export const MEMBERS_PER_PAGE = 2;

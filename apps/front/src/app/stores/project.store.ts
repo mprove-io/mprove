@@ -4,7 +4,6 @@ import { common } from '~front/barrels/common';
 
 export class ProjectState {
   project: common.Project;
-  members: common.Member[];
   userMember: common.Member;
 }
 
@@ -16,7 +15,6 @@ function createInitialState(): ProjectState {
       name: undefined,
       serverTs: 1
     },
-    members: [],
     userMember: undefined
   };
 }

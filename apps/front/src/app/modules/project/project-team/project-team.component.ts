@@ -1,21 +1,23 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { map, take, tap } from 'rxjs/operators';
-import { getFullName } from '~front/app/functions/get-full-name';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
+import { TeamQuery } from '~front/app/queries/team.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { ProjectStore } from '~front/app/stores/project.store';
+import { TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-project-team',
   templateUrl: './project-team.component.html'
 })
 export class ProjectTeamComponent {
-  p: any = 1;
+  currentPage: any = 1;
+  perPage = constants.MEMBERS_PER_PAGE;
 
   userId: string;
   userId$ = this.userQuery.userId$.pipe(
@@ -33,34 +35,64 @@ export class ProjectTeamComponent {
     })
   );
 
-  members: common.Member[] = [];
-  members$ = this.projectQuery.members$.pipe(
-    tap(x => {
-      x.forEach(m => {
-        m.fullName = getFullName(m);
-      });
-      this.members = x;
-      this.cd.detectChanges();
-    })
-  );
-
   isAdmin: boolean;
   isAdmin$ = this.projectQuery.isAdmin$.pipe(
     tap(x => {
       this.isAdmin = x;
+      console.log(this.isAdmin);
+      this.cd.detectChanges();
+    })
+  );
+
+  members: common.Member[] = [];
+  members$ = this.teamQuery.members$.pipe(
+    tap(x => {
+      this.members = x;
+      console.log(this.members);
+      this.cd.detectChanges();
+    })
+  );
+
+  total: number;
+  total$ = this.teamQuery.total$.pipe(
+    tap(x => {
+      this.total = x;
       this.cd.detectChanges();
     })
   );
 
   constructor(
+    public teamQuery: TeamQuery,
+    public teamStore: TeamStore,
     public projectQuery: ProjectQuery,
-    public projectStore: ProjectStore,
     public navQuery: NavQuery,
     public userQuery: UserQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef
   ) {}
+
+  getMembers(pageNum: number) {
+    let payload: apiToBackend.ToBackendGetMembersRequestPayload = {
+      projectId: this.projectId,
+      pageNum: pageNum,
+      perPage: this.perPage
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendGetMembersResponse) => {
+          this.teamStore.update(resp.payload);
+          this.currentPage = pageNum;
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 
   showPhoto(memberId: string) {
     let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
@@ -141,7 +173,7 @@ export class ProjectTeamComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          this.projectStore.update(state => {
+          this.teamStore.update(state => {
             state.members[i] = resp.payload.member;
             return state;
           });
@@ -152,6 +184,9 @@ export class ProjectTeamComponent {
   }
 
   addRole(member: common.Member, i: number) {
+    console.log(member);
+    console.log(i);
+
     this.myDialogService.showAddRole({
       apiService: this.apiService,
       member: member,
@@ -179,7 +214,7 @@ export class ProjectTeamComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          this.projectStore.update(state => {
+          this.teamStore.update(state => {
             state.members[i] = resp.payload.member;
             return state;
           });

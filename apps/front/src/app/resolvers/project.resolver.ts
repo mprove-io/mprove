@@ -57,6 +57,8 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
             })
           );
 
+          console.log(resp.payload.userMember);
+
           return true;
         })
       );

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { ProjectStore } from '~front/app/stores/project.store';
+import { TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -19,7 +19,7 @@ export class AddRoleDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
-    private projectStore: ProjectStore
+    private teamStore: TeamStore
   ) {}
 
   ngOnInit() {
@@ -57,7 +57,7 @@ export class AddRoleDialogComponent implements OnInit {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          this.projectStore.update(state => {
+          this.teamStore.update(state => {
             state.members[this.ref.data.i] = resp.payload.member;
             return state;
           });
