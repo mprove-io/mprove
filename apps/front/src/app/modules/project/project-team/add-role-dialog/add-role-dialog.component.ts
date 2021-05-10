@@ -28,7 +28,7 @@ export class AddRoleDialogComponent implements OnInit {
     });
   }
 
-  save() {
+  add() {
     this.addRoleForm.markAllAsTouched();
 
     if (!this.addRoleForm.valid) {

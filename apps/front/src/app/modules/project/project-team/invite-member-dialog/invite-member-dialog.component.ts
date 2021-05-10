@@ -30,7 +30,7 @@ export class InviteMemberDialogComponent implements OnInit {
     });
   }
 
-  save() {
+  invite() {
     this.inviteMemberForm.markAllAsTouched();
 
     if (!this.inviteMemberForm.valid) {

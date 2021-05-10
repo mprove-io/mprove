@@ -8,7 +8,7 @@
   <form
     class="flex flex-col w-80"
     [formGroup]="inviteMemberForm"
-    (ngSubmit)="save()"
+    (ngSubmit)="invite()"
   >
     <input
       data-cy="inviteMemberDialogEmailInput"
@@ -25,10 +25,10 @@
 
     <div class="mt-6">
       <button
-        data-cy="inviteMemberDialogSaveButton"
+        data-cy="inviteMemberDialogInviteButton"
         class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
-        >Save</button
+        >Invite</button
       >
 
       <button

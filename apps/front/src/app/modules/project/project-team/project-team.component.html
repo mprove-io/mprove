@@ -8,7 +8,7 @@
 
     <div class="flex">
       <button
-        data-cy="inviteMemberButton"
+        data-cy="projectTeamInviteMemberButton"
         class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         [ngClass]="{
@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <div class="flex-1 bg-white mx-6 mt-4 mb-4 rounded shadow-lg">
+  <div class="flex-grow bg-white mx-6 mt-4 mb-4 rounded shadow-lg">
     <div class="mx-5 mt-8 text-gray1">
       <table class="min-w-full divide-y divide-gray-500">
         <thead>
@@ -70,13 +70,16 @@
 
             <td class="w-64">{{ member.fullName }}</td>
 
-            <td class="w-64"> {{ member.email }} </td>
+            <td data-cy="projectTeamMemberEmailData" class="w-64">
+              {{ member.email }}
+            </td>
 
             <td class="w-48">{{ member.alias }}</td>
 
             <td class="w-48">
               <div class="flex flex-row items-center">
                 <button
+                  data-cy="projectTeamAddRoleButton"
                   class="flex items-center justify-center h-10 w-10 text-blue3 rounded focus:outline-none"
                   (click)="addRole(member, i)"
                   [disabled]="isAdmin === false"
@@ -94,6 +97,7 @@
                     <div class="flex flex-row items-center">
                       <div>{{ role }} </div>
                       <button
+                        data-cy="projectTeamRemoveRoleButton"
                         class="flex items-center justify-center h-9 w-9 text-red1 rounded focus:outline-none"
                         (click)="removeRole(member, i, n)"
                         [disabled]="isAdmin === false"
@@ -170,6 +174,7 @@
 
             <td>
               <button
+                data-cy="projectTeamRemoveMemberButton"
                 class="h-10 w-10 rounded-full text-red1 focus:outline-none"
                 [disabled]="member.memberId === userId || isAdmin === false"
                 (click)="removeMember(member)"

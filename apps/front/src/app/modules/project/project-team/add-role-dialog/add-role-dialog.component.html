@@ -5,11 +5,7 @@
     >Add Role</div
   >
 
-  <form
-    class="flex flex-col w-80"
-    [formGroup]="addRoleForm"
-    (ngSubmit)="save()"
-  >
+  <form class="flex flex-col w-80" [formGroup]="addRoleForm" (ngSubmit)="add()">
     <input
       data-cy="addRoleDialogRoleInput"
       class="mt-9 form-input rounded border-gray3 focus:border-blue3"
@@ -25,10 +21,10 @@
 
     <div class="mt-6">
       <button
-        data-cy="addRoleDialogSaveButton"
+        data-cy="addRoleDialogAddButton"
         class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
-        >Save</button
+        >Add</button
       >
 
       <button
