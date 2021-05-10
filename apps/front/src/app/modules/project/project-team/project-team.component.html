@@ -21,7 +21,9 @@
     </div>
   </div>
 
-  <div class="flex-grow bg-white mx-6 mt-4 mb-4 rounded shadow-lg">
+  <div
+    class="flex-grow bg-white mx-6 mt-4 mb-4 rounded shadow-lg overflow-y-auto"
+  >
     <div class="mx-5 mt-8 text-gray1">
       <table class="min-w-full divide-y divide-gray-500">
         <thead>
@@ -119,6 +121,7 @@
             <td>
               <div class="flex justify-center">
                 <button
+                  data-cy="projectTeamIsAdminButton"
                   class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
                   [ngClass]="{
                     'bg-blue3 ': member.isAdmin === true && isAdmin === true,
@@ -137,6 +140,7 @@
             <td>
               <div class="flex justify-center">
                 <button
+                  data-cy="projectTeamIsEditorButton"
                   class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
                   [ngClass]="{
                     'bg-blue3 ': member.isEditor === true && isAdmin === true,
@@ -156,6 +160,7 @@
             <td>
               <div class="flex justify-center">
                 <button
+                  data-cy="projectTeamIsExplorerButton"
                   class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
                   [ngClass]="{
                     'bg-blue3 ': member.isExplorer === true && isAdmin === true,
