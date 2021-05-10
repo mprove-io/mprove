@@ -1,11 +1,17 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsInt, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
 export class ToBackendGetOrgUsersRequestPayload {
   @IsString()
   orgId: string;
+
+  @IsInt()
+  pageNum: number;
+
+  @IsInt()
+  perPage: number;
 }
 
 export class ToBackendGetOrgUsersRequest extends ToBackendRequest {
@@ -27,6 +33,9 @@ export class OrgUsersItem {
   @IsString()
   lastName: string;
 
+  @IsString()
+  fullName: string;
+
   @IsString({ each: true })
   projectAdminProjects: string[];
 
@@ -44,6 +53,9 @@ export class ToBackendGetOrgUsersResponsePayload {
   @ValidateNested()
   @Type(() => OrgUsersItem)
   orgUsersList: OrgUsersItem[];
+
+  @IsInt()
+  total: number;
 }
 
 export class ToBackendGetOrgUsersResponse extends common.MyResponse {

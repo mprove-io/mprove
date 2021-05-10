@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-org-users__ok';
+let testId = 'backend-get-org-users__ok-4';
 
 let traceId = testId;
 
@@ -13,11 +13,18 @@ let userId = common.makeId();
 let email = `${testId}@example.com`;
 let password = '123';
 
+let secondUserId = common.makeId();
+let secondEmail = `${testId}2@example.com`;
+let secondPassword = '123';
+
 let orgId = testId;
 let orgName = testId;
 
 let projectId = common.makeId();
 let projectName = 'p1';
+
+let secondProjectId = common.makeId();
+let secondProjectName = 'p2';
 
 let prep: interfaces.Prep;
 
@@ -29,10 +36,10 @@ test('1', async t => {
       traceId: traceId,
       deleteRecordsPayload: {
         idempotencyKeys: [testId],
-        emails: [email],
+        emails: [email, secondEmail],
         orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
+        projectIds: [projectId, secondProjectId],
+        projectNames: [projectName, secondProjectName]
       },
       seedRecordsPayload: {
         users: [
@@ -40,6 +47,12 @@ test('1', async t => {
             userId,
             email,
             password,
+            isEmailVerified: common.BoolEnum.TRUE
+          },
+          {
+            userId: secondUserId,
+            email: secondEmail,
+            password: secondPassword,
             isEmailVerified: common.BoolEnum.TRUE
           }
         ],
@@ -55,6 +68,11 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName
+          },
+          {
+            orgId,
+            projectId: secondProjectId,
+            name: secondProjectName
           }
         ],
         members: [
@@ -62,6 +80,14 @@ test('1', async t => {
             memberId: userId,
             email,
             projectId,
+            isAdmin: common.BoolEnum.TRUE,
+            isEditor: common.BoolEnum.TRUE,
+            isExplorer: common.BoolEnum.TRUE
+          },
+          {
+            memberId: secondUserId,
+            email: secondEmail,
+            projectId: secondProjectId,
             isAdmin: common.BoolEnum.TRUE,
             isEditor: common.BoolEnum.TRUE,
             isExplorer: common.BoolEnum.TRUE
@@ -78,7 +104,9 @@ test('1', async t => {
         idempotencyKey: testId
       },
       payload: {
-        orgId: orgId
+        orgId: orgId,
+        perPage: 1,
+        pageNum: 1
       }
     };
 
@@ -97,4 +125,6 @@ test('1', async t => {
 
   t.is(resp.info.error, undefined);
   t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.payload.total, 2);
+  t.is(resp.payload.orgUsersList.length, 1);
 });

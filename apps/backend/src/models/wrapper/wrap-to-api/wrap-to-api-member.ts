@@ -1,5 +1,6 @@
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { makeFullName } from '~backend/functions/make-full-name';
 
 export function wrapToApiMember(x: entities.MemberEntity): common.Member {
   return {
@@ -9,16 +10,7 @@ export function wrapToApiMember(x: entities.MemberEntity): common.Member {
     alias: x.alias,
     firstName: x.first_name,
     lastName: x.last_name,
-    fullName:
-      common.isDefined(x.first_name) && common.isDefined(x.last_name)
-        ? common.capitalizeFirstLetter(x.first_name) +
-          ' ' +
-          common.capitalizeFirstLetter(x.last_name)
-        : common.isDefined(x.first_name)
-        ? common.capitalizeFirstLetter(x.first_name)
-        : common.isDefined(x.last_name)
-        ? common.capitalizeFirstLetter(x.last_name)
-        : undefined,
+    fullName: makeFullName({ firstName: x.first_name, lastName: x.last_name }),
     avatarSmall: undefined,
     timezone: x.timezone,
     isAdmin: common.enumToBoolean(x.is_admin),

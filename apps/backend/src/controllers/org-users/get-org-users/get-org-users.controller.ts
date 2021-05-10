@@ -1,10 +1,15 @@
 import { Controller, Post } from '@nestjs/common';
-import { In } from 'typeorm';
+import { Connection, In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { makeFullName } from '~backend/functions/make-full-name';
+import {
+  MemberEntity,
+  UserEntity
+} from '~backend/models/store-entities/_index';
 import { OrgsService } from '~backend/services/orgs.service';
 
 @Controller()
@@ -14,7 +19,8 @@ export class GetOrgUsersController {
     private usersRepository: repositories.UsersRepository,
     private avatarsRepository: repositories.AvatarsRepository,
     private projectsRepository: repositories.ProjectsRepository,
-    private orgsService: OrgsService
+    private orgsService: OrgsService,
+    private connection: Connection
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
@@ -23,7 +29,7 @@ export class GetOrgUsersController {
     @ValidateRequest(apiToBackend.ToBackendGetOrgUsersRequest)
     reqValid: apiToBackend.ToBackendGetOrgUsersRequest
   ) {
-    let { orgId } = reqValid.payload;
+    let { orgId, perPage, pageNum } = reqValid.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -36,28 +42,45 @@ export class GetOrgUsersController {
 
     let projectIds = projects.map(x => x.project_id);
 
+    let membersPart: MemberEntity[] = await this.connection
+      .getRepository(MemberEntity)
+      .createQueryBuilder('members')
+      .select('DISTINCT member_id')
+      .where({ project_id: In(projectIds) })
+      .getRawMany();
+
+    let userIds = membersPart.map(x => x.member_id);
+
+    let [users, total]: [
+      UserEntity[],
+      number
+    ] = await this.usersRepository.findAndCount({
+      where: {
+        user_id: In(userIds)
+      },
+      order: {
+        email: 'ASC'
+      },
+      take: perPage,
+      skip: (pageNum - 1) * perPage
+    });
+
     let members =
-      projectIds.length === 0
-        ? []
-        : await this.membersRepository.find({
-            project_id: In(projectIds)
-          });
-
-    let memberIdsWithDuplicates = members.map(x => x.member_id);
-
-    let userIds = [...new Set(memberIdsWithDuplicates)];
-
-    let users =
       userIds.length === 0
         ? []
-        : await this.usersRepository.find({ user_id: In(userIds) });
+        : await this.membersRepository.find({ member_id: In(userIds) });
 
     let orgUsers: apiToBackend.OrgUsersItem[] = [];
 
     let avatars =
       userIds.length === 0
         ? []
-        : await this.avatarsRepository.find({ user_id: In(userIds) });
+        : await this.avatarsRepository.find({
+            select: ['user_id', 'avatar_small'],
+            where: {
+              user_id: In(userIds)
+            }
+          });
 
     users.forEach(x => {
       let userMembers = members.filter(m => m.member_id === x.user_id);
@@ -67,6 +90,10 @@ export class GetOrgUsersController {
         email: x.email,
         firstName: x.first_name,
         lastName: x.last_name,
+        fullName: makeFullName({
+          firstName: x.first_name,
+          lastName: x.last_name
+        }),
         projectAdminProjects: userMembers
           .filter(m => m.is_admin === common.BoolEnum.TRUE)
           .map(m => m.project_id),
@@ -83,7 +110,8 @@ export class GetOrgUsersController {
     });
 
     let payload: apiToBackend.ToBackendGetOrgUsersResponsePayload = {
-      orgUsersList: orgUsers
+      orgUsersList: orgUsers,
+      total: total
     };
 
     return payload;
