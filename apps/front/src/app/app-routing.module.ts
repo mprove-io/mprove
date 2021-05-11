@@ -14,6 +14,7 @@ import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-passw
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
+import { OrgUsersComponent } from './modules/org/org-users/org-users.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
@@ -28,6 +29,7 @@ import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
+import { UsersResolver } from './resolvers/users.resolver';
 
 const routes: Routes = [
   {
@@ -115,6 +117,11 @@ const routes: Routes = [
             component: OrgAccountComponent,
             path: common.PATH_ACCOUNT,
             resolve: [OrgAccountResolver]
+          },
+          {
+            component: OrgUsersComponent,
+            path: common.PATH_USERS,
+            resolve: [UsersResolver]
           },
           {
             path: common.PATH_PROJECT + `/:${common.PARAMETER_PROJECT_ID}`,

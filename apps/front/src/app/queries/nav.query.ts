@@ -18,6 +18,7 @@ export class NavQuery extends Query<NavState> {
   }));
 
   projectId$ = this.select(state => state.projectId);
+  orgId$ = this.select(state => state.orgId);
 
   constructor(protected store: NavStore) {
     super(store);

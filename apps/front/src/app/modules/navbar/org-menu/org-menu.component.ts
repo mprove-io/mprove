@@ -24,6 +24,7 @@ export class OrgMenuComponent implements OnInit, OnDestroy {
   isOrgMenuOpen = false;
 
   pathAccount = common.PATH_ACCOUNT;
+  pathUsers = common.PATH_USERS;
 
   lastUrl: string;
 
@@ -57,13 +58,18 @@ export class OrgMenuComponent implements OnInit, OnDestroy {
     this.lastUrl = this.router.url.split('/')[3];
   }
 
-  account() {
+  navigateAccount() {
     this.closeMenu();
     this.router.navigate([
       common.PATH_ORG,
       this.nav.orgId,
       common.PATH_ACCOUNT
     ]);
+  }
+
+  navigateUsers() {
+    this.closeMenu();
+    this.router.navigate([common.PATH_ORG, this.nav.orgId, common.PATH_USERS]);
   }
 
   openMenu() {

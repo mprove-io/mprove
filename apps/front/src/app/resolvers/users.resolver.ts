@@ -10,40 +10,43 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { TeamStore } from '../stores/team.store';
+import { UsersStore } from '../stores/users.store';
 
 @Injectable({ providedIn: 'root' })
-export class TeamResolver implements Resolve<Observable<boolean>> {
+export class UsersResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private teamStore: TeamStore
+    private usersStore: UsersStore
   ) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let projectId;
+    let orgId;
 
-    this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
-      projectId = x;
+    this.navQuery.orgId$.pipe(take(1)).subscribe(x => {
+      orgId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetMembersRequestPayload = {
-      projectId: projectId,
+    let payload: apiToBackend.ToBackendGetOrgUsersRequestPayload = {
+      orgId: orgId,
       pageNum: 1,
-      perPage: constants.MEMBERS_PER_PAGE
+      perPage: constants.USERS_PER_PAGE
     };
 
     return this.apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetMembersResponse) => {
-          this.teamStore.update(resp.payload);
+        map((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
+          this.usersStore.update({
+            users: resp.payload.orgUsersList,
+            total: resp.payload.total
+          });
           return true;
         })
       );

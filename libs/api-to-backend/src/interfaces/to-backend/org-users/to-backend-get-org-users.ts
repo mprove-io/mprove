@@ -22,10 +22,16 @@ export class ToBackendGetOrgUsersRequest extends ToBackendRequest {
 
 export class OrgUsersItem {
   @IsString()
+  userId: string;
+
+  @IsString()
   avatarSmall: string;
 
   @IsString()
   email: string;
+
+  @IsString()
+  alias: string;
 
   @IsString()
   firstName: string;

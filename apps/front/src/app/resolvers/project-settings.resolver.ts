@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
-import { ProjectQuery } from '../queries/project.query';
+import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ProjectStore } from '../stores/project.store';
 
@@ -15,7 +15,7 @@ import { ProjectStore } from '../stores/project.store';
 export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
   constructor(
     private projectStore: ProjectStore,
-    private projectQuery: ProjectQuery,
+    private navQuery: NavQuery,
     private apiService: ApiService
   ) {}
 
@@ -25,7 +25,7 @@ export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     let projectId;
 
-    this.projectQuery.projectId$.pipe(take(1)).subscribe(x => {
+    this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
       projectId = x;
     });
 

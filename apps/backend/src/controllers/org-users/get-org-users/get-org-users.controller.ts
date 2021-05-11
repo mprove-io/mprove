@@ -86,8 +86,10 @@ export class GetOrgUsersController {
       let userMembers = members.filter(m => m.member_id === x.user_id);
 
       let orgUser: apiToBackend.OrgUsersItem = {
+        userId: x.user_id,
         avatarSmall: avatars.find(a => a.user_id === x.user_id)?.avatar_small,
         email: x.email,
+        alias: x.alias,
         firstName: x.first_name,
         lastName: x.last_name,
         fullName: makeFullName({
@@ -96,14 +98,31 @@ export class GetOrgUsersController {
         }),
         projectAdminProjects: userMembers
           .filter(m => m.is_admin === common.BoolEnum.TRUE)
-          .map(m => m.project_id),
+          .map(m => m.project_id)
+          .map(z => {
+            let project = projects.find(p => p.project_id === z);
+            return project.name;
+          }),
         blockmlEditorProjects: userMembers
           .filter(m => m.is_editor === common.BoolEnum.TRUE)
-          .map(m => m.project_id),
+          .map(m => m.project_id)
+          .map(z => {
+            let project = projects.find(p => p.project_id === z);
+            return project.name;
+          }),
         modelExplorerProjects: userMembers
           .filter(m => m.is_explorer === common.BoolEnum.TRUE)
-          .map(m => m.project_id),
-        projectUserProjects: userMembers.map(m => m.project_id)
+          .map(m => m.project_id)
+          .map(z => {
+            let project = projects.find(p => p.project_id === z);
+            return project.name;
+          }),
+        projectUserProjects: userMembers
+          .map(m => m.project_id)
+          .map(z => {
+            let project = projects.find(p => p.project_id === z);
+            return project.name;
+          })
       };
 
       orgUsers.push(orgUser);
