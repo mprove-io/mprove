@@ -20,8 +20,7 @@ export class ToBackendCreateConnectionRequestPayload {
   type: common.ConnectionTypeEnum;
 
   @IsOptional()
-  @IsString()
-  bigqueryCredentials?: string;
+  bigqueryCredentials?: any;
 
   @IsOptional()
   @IsInt()

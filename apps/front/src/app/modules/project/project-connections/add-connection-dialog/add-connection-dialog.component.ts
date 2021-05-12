@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { ValidationService } from '~front/app/services/validation.service';
 import { ConnectionsStore } from '~front/app/stores/connections.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -20,7 +21,7 @@ export class AddConnectionDialogComponent implements OnInit {
   ];
 
   typePostgreSql = common.ConnectionTypeEnum.PostgreSQL;
-  typeBigQuery = common.ConnectionTypeEnum.BigQuery;
+  typeBigquery = common.ConnectionTypeEnum.BigQuery;
 
   constructor(
     public ref: DialogRef,
@@ -31,8 +32,33 @@ export class AddConnectionDialogComponent implements OnInit {
   ngOnInit() {
     this.addConnectionForm = this.fb.group({
       connectionId: ['', [Validators.maxLength(255)]],
-      type: [common.ConnectionTypeEnum.PostgreSQL]
+      type: [common.ConnectionTypeEnum.PostgreSQL],
+      bigqueryCredentials: [],
+      bigqueryQuerySizeLimitGb: [
+        undefined,
+        [ValidationService.integerValidator]
+      ],
+      postgresHost: [],
+      postgresPort: [],
+      postgresDatabase: [],
+      postgresUser: [],
+      postgresPassword: []
     });
+  }
+
+  changeType(ev: any) {
+    if (ev !== common.ConnectionTypeEnum.BigQuery) {
+      this.addConnectionForm.controls['bigqueryCredentials'].reset();
+      this.addConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
+    }
+
+    if (ev !== common.ConnectionTypeEnum.PostgreSQL) {
+      this.addConnectionForm.controls['postgresHost'].reset();
+      this.addConnectionForm.controls['postgresPort'].reset();
+      this.addConnectionForm.controls['postgresDatabase'].reset();
+      this.addConnectionForm.controls['postgresUser'].reset();
+      this.addConnectionForm.controls['postgresPassword'].reset();
+    }
   }
 
   add() {
@@ -48,13 +74,23 @@ export class AddConnectionDialogComponent implements OnInit {
       projectId: this.ref.data.projectId,
       connectionId: this.addConnectionForm.value.connectionId,
       type: this.addConnectionForm.value.type,
-      bigqueryCredentials: '',
-      bigqueryQuerySizeLimitGb: 1,
-      postgresHost: '',
-      postgresPort: 1234,
-      postgresDatabase: '',
-      postgresUser: '',
-      postgresPassword: ''
+      bigqueryCredentials: common.isDefined(
+        this.addConnectionForm.value.bigqueryCredentials
+      )
+        ? JSON.parse(this.addConnectionForm.value.bigqueryCredentials)
+        : undefined,
+      bigqueryQuerySizeLimitGb: common.isDefined(
+        this.addConnectionForm.value.bigqueryQuerySizeLimitGb
+      )
+        ? Number(this.addConnectionForm.value.bigqueryQuerySizeLimitGb)
+        : undefined,
+      postgresHost: this.addConnectionForm.value.postgresHost,
+      postgresPort: common.isDefined(this.addConnectionForm.value.postgresPort)
+        ? Number(this.addConnectionForm.value.postgresPort)
+        : undefined,
+      postgresDatabase: this.addConnectionForm.value.postgresDatabase,
+      postgresUser: this.addConnectionForm.value.postgresUser,
+      postgresPassword: this.addConnectionForm.value.postgresPassword
     };
 
     let apiService: ApiService = this.ref.data.apiService;

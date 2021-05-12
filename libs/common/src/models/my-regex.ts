@@ -480,4 +480,8 @@ export class MyRegex {
 
     return input.replace(reg, '$1.$2');
   }
+
+  static IS_INTEGER(): RegExp {
+    return cloneRegexp(/^[-]?\d+$/);
+  }
 }

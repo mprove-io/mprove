@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
+import { common } from '~front/barrels/common';
 
 @Injectable({ providedIn: 'root' })
 @Injectable()
@@ -80,17 +81,17 @@ export class ValidationService {
   //   }
   // }
 
-  // static integerValidator(control: FormControl) {
-  //   if (control.value === null) {
-  //     return null;
-  //   }
+  static integerValidator(control: FormControl) {
+    if (control.value === null) {
+      return null;
+    }
 
-  //   if (control.value.toString().match(MyRegex.IS_INTEGER())) {
-  //     return null;
-  //   } else {
-  //     return { isNotInteger: true };
-  //   }
-  // }
+    if (control.value.toString().match(common.MyRegex.IS_INTEGER())) {
+      return null;
+    } else {
+      return { isNotInteger: true };
+    }
+  }
 
   // static doesNotContainThreeUnderscores(control: FormControl) {
   //   if (control.value === null) {
@@ -104,15 +105,15 @@ export class ValidationService {
   //   }
   // }
 
-  // static checkTextSize(control: FormControl) {
-  //   if (control.value === null) {
-  //     return null;
-  //   }
+  static checkTextSize(control: FormControl) {
+    if (control.value === null) {
+      return null;
+    }
 
-  //   return control.value.length > 0 && control.value.length <= 1048576
-  //     ? null
-  //     : { moreThenOneMB: true };
-  // }
+    return control.value.length > 0 && control.value.length <= 1048576
+      ? null
+      : { moreThenOneMB: true };
+  }
 
   // projectNameCheck(control: FormControl) {
   //   const q = new Promise((resolve, reject) => {

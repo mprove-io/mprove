@@ -1,4 +1,4 @@
-<div class="flex flex-col p-9 bg-white">
+<div class="flex-grow flex-col p-9 bg-white overflow-y-auto">
   <div
     data-cy="addConnectionDialogTitle"
     class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
@@ -32,13 +32,120 @@
       [items]="connectionTypes"
       [clearable]="false"
       [searchable]="false"
+      (change)="changeType($event)"
       formControlName="type"
     >
     </ng-select>
 
-    <!-- <div *ngIf="addConnectionForm.controls['type'].value === typePostgreSql"
-      >yep</div
-    > -->
+    <div *ngIf="addConnectionForm.controls['type'].value === typeBigquery">
+      <textarea
+        rows="9"
+        data-cy="addConnectionDialogBigqueryCredentialsInput"
+        class="mt-6 w-80 form-input rounded border-gray3 focus:border-blue3 resize-none"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['bigqueryCredentials'].invalid &&
+            addConnectionForm.controls['bigqueryCredentials'].touched
+        }"
+        formControlName="bigqueryCredentials"
+        placeholder="JSON BigQuery Credentials"
+      ></textarea>
+      <m-validation
+        [control]="addConnectionForm.controls['bigqueryCredentials']"
+      ></m-validation>
+
+      <input
+        data-cy="addConnectionDialogBigqueryQuerySizeLimitGbInput"
+        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['bigqueryQuerySizeLimitGb'].invalid &&
+            addConnectionForm.controls['bigqueryQuerySizeLimitGb'].touched
+        }"
+        formControlName="bigqueryQuerySizeLimitGb"
+        placeholder="Query Size Limit, gb (default: 1)"
+      />
+      <m-validation
+        [control]="addConnectionForm.controls['bigqueryQuerySizeLimitGb']"
+      ></m-validation>
+    </div>
+
+    <div *ngIf="addConnectionForm.controls['type'].value === typePostgreSql">
+      <input
+        data-cy="addConnectionDialogPostgresHostInput"
+        class="w-80 mt-6 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['postgresHost'].invalid &&
+            addConnectionForm.controls['postgresHost'].touched
+        }"
+        formControlName="postgresHost"
+        placeholder="Host"
+      />
+      <m-validation
+        [control]="addConnectionForm.controls['postgresHost']"
+      ></m-validation>
+
+      <input
+        data-cy="addConnectionDialogPostgresPortInput"
+        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['postgresPort'].invalid &&
+            addConnectionForm.controls['postgresPort'].touched
+        }"
+        formControlName="postgresPort"
+        placeholder="Port"
+      />
+      <m-validation
+        [control]="addConnectionForm.controls['postgresPort']"
+      ></m-validation>
+
+      <input
+        data-cy="addConnectionDialogPostgresDatabaseInput"
+        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['postgresDatabase'].invalid &&
+            addConnectionForm.controls['postgresDatabase'].touched
+        }"
+        formControlName="postgresDatabase"
+        placeholder="Database"
+      />
+      <m-validation
+        [control]="addConnectionForm.controls['postgresDatabase']"
+      ></m-validation>
+
+      <input
+        data-cy="addConnectionDialogPostgresUserInput"
+        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['postgresUser'].invalid &&
+            addConnectionForm.controls['postgresUser'].touched
+        }"
+        formControlName="postgresUser"
+        placeholder="User"
+      />
+      <m-validation
+        [control]="addConnectionForm.controls['postgresUser']"
+      ></m-validation>
+
+      <input
+        data-cy="addConnectionDialogPostgresPasswordInput"
+        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            addConnectionForm.controls['postgresPassword'].invalid &&
+            addConnectionForm.controls['postgresPassword'].touched
+        }"
+        formControlName="postgresPassword"
+        placeholder="Password"
+      />
+      <m-validation
+        [control]="addConnectionForm.controls['postgresPassword']"
+      ></m-validation>
+    </div>
 
     <div class="mt-6">
       <button
