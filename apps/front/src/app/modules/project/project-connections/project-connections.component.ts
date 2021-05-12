@@ -84,5 +84,10 @@ export class ProjectConnectionsComponent {
       .subscribe();
   }
 
-  addConnection() {}
+  addConnection() {
+    this.myDialogService.showAddConnection({
+      apiService: this.apiService,
+      projectId: this.projectId
+    });
+  }
 }

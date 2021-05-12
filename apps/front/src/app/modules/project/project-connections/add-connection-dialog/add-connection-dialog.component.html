@@ -1,0 +1,60 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="addConnectionDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Add Connection</div
+  >
+
+  <form
+    class="flex flex-col w-80"
+    [formGroup]="addConnectionForm"
+    (ngSubmit)="add()"
+  >
+    <input
+      data-cy="addConnectionDialogConnectionIdInput"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          addConnectionForm.controls['connectionId'].invalid &&
+          addConnectionForm.controls['connectionId'].touched
+      }"
+      formControlName="connectionId"
+      placeholder="Name"
+    />
+    <m-validation
+      [control]="addConnectionForm.controls['connectionId']"
+    ></m-validation>
+
+    <ng-select
+      #typeSelect
+      data-cy="typeSelect"
+      class="flex focus:outline-none w-80"
+      [items]="connectionTypes"
+      [clearable]="false"
+      [searchable]="false"
+      formControlName="type"
+    >
+    </ng-select>
+
+    <!-- <div *ngIf="addConnectionForm.controls['type'].value === typePostgreSql"
+      >yep</div
+    > -->
+
+    <div class="mt-6">
+      <button
+        data-cy="addConnectionDialogAddButton"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Add</button
+      >
+
+      <button
+        data-cy="addConnectionDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

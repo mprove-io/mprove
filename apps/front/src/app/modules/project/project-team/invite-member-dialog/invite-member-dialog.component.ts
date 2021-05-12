@@ -13,8 +13,6 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 export class InviteMemberDialogComponent implements OnInit {
   inviteMemberForm: FormGroup;
 
-  projectId: string;
-
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
@@ -55,7 +53,8 @@ export class InviteMemberDialogComponent implements OnInit {
         map((resp: apiToBackend.ToBackendCreateMemberResponse) => {
           let member = resp.payload.member;
           this.teamStore.update(state => ({
-            members: [...state.members, member]
+            members: [...state.members, member],
+            total: state.total
           }));
         }),
         take(1)
