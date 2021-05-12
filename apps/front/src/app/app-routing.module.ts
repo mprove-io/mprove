@@ -16,11 +16,13 @@ import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
 import { OrgUsersComponent } from './modules/org/org-users/org-users.component';
 import { ProfileComponent } from './modules/profile/profile.component';
+import { ProjectConnectionsComponent } from './modules/project/project-connections/project-connections.component';
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
+import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
@@ -131,6 +133,11 @@ const routes: Routes = [
                 component: ProjectSettingsComponent,
                 path: common.PATH_SETTINGS,
                 resolve: [MemberResolver, ProjectSettingsResolver]
+              },
+              {
+                component: ProjectConnectionsComponent,
+                path: common.PATH_CONNECTIONS,
+                resolve: [MemberResolver, ConnectionsResolver]
               },
               {
                 component: ProjectTeamComponent,

@@ -21,7 +21,7 @@ export class GetConnectionsController {
     @ValidateRequest(apiToBackend.ToBackendGetConnectionsRequest)
     reqValid: apiToBackend.ToBackendGetConnectionsRequest
   ) {
-    let { projectId } = reqValid.payload;
+    let { projectId, perPage, pageNum } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -32,12 +32,20 @@ export class GetConnectionsController {
       projectId: projectId
     });
 
-    let connections = await this.connectionsRepository.find({
-      project_id: projectId
+    const [connections, total] = await this.connectionsRepository.findAndCount({
+      where: {
+        project_id: projectId
+      },
+      order: {
+        connection_id: 'ASC'
+      },
+      take: perPage,
+      skip: (pageNum - 1) * perPage
     });
 
     let payload: apiToBackend.ToBackendGetConnectionsResponsePayload = {
-      connections: connections.map(x => wrapper.wrapToApiConnection(x))
+      connections: connections.map(x => wrapper.wrapToApiConnection(x)),
+      total: total
     };
 
     return payload;

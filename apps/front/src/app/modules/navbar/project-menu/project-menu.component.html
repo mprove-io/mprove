@@ -36,8 +36,19 @@
         'text-red-800': lastUrl === pathSettings
       }"
       [disabled]="lastUrl === pathSettings"
-      (click)="settings()"
+      (click)="navigateSettings()"
       >Settings</button
+    >
+
+    <button
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+      [ngClass]="{
+        'cursor-default': lastUrl === pathConnections,
+        'text-red-800': lastUrl === pathConnections
+      }"
+      [disabled]="lastUrl === pathConnections"
+      (click)="navigateConnections()"
+      >Connections</button
     >
 
     <button
@@ -47,7 +58,7 @@
         'text-red-800': lastUrl === pathTeam
       }"
       [disabled]="lastUrl === pathTeam"
-      (click)="team()"
+      (click)="navigateTeam()"
       >Team</button
     >
   </div>

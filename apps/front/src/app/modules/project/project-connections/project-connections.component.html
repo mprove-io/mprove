@@ -1,0 +1,80 @@
+<div class="bg-blue1 flex flex-col h-full">
+  <div class="flex flex-row items-center justify-between mt-7 mx-6">
+    <div
+      data-cy="projectConnectionsTitle"
+      class="flex font-semibold text-2xl text-gray1"
+      >Project - Connections
+    </div>
+
+    <div class="flex">
+      <button
+        data-cy="projectConnectionsAddConnectionButton"
+        class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        [ngClass]="{
+          'bg-gray-400': isAdmin === false
+        }"
+        (click)="addConnection()"
+        [disabled]="isAdmin === false"
+        >Add Connection</button
+      >
+    </div>
+  </div>
+
+  <div
+    class="flex-grow bg-white mx-6 mt-4 mb-4 rounded shadow-lg overflow-y-auto"
+  >
+    <div class="mx-5 mt-8 text-gray1">
+      <table class="min-w-full divide-y divide-gray-500">
+        <thead>
+          <tr class="text-sm h-12">
+            <th></th>
+            <th class="text-left">Name</th>
+            <th class="text-left">Type</th>
+            <th class="text-left">Host</th>
+            <th class="text-left">Port</th>
+            <th class="text-left">Database</th>
+            <th class="text-left">User</th>
+            <th class="text-left">Extra</th>
+            <th class="text-left"></th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-300">
+          <tr
+            *ngFor="
+              let connection of connections
+                | paginate
+                  : {
+                      id: 'connections',
+                      itemsPerPage: perPage,
+                      currentPage: currentPage,
+                      totalItems: total
+                    };
+              let i = index
+            "
+            class="h-16"
+          >
+            <td class="w-48">{{ connection.connectionId }}</td>
+
+            <td class="w-48">
+              {{ connection.type }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <pagination-controls
+    class="flex justify-center mx-6 mt-3 mb-6"
+    (pageChange)="getConnections($event)"
+    id="connections"
+  ></pagination-controls>
+</div>
+
+<div *ngIf="projectId$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>
+<div *ngIf="connections$ | async"></div>
+<div *ngIf="total$ | async"></div>

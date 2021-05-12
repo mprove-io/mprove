@@ -24,6 +24,7 @@ export class ProjectMenuComponent implements OnInit, OnDestroy {
   isProjectMenuOpen = false;
 
   pathSettings = common.PATH_SETTINGS;
+  pathConnections = common.PATH_CONNECTIONS;
   pathTeam = common.PATH_TEAM;
 
   lastUrl: string;
@@ -58,7 +59,7 @@ export class ProjectMenuComponent implements OnInit, OnDestroy {
     this.lastUrl = this.router.url.split('/')[5];
   }
 
-  settings() {
+  navigateSettings() {
     this.closeMenu();
     this.router.navigate([
       common.PATH_ORG,
@@ -69,7 +70,18 @@ export class ProjectMenuComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  team() {
+  navigateConnections() {
+    this.closeMenu();
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_CONNECTIONS
+    ]);
+  }
+
+  navigateTeam() {
     this.closeMenu();
     this.router.navigate([
       common.PATH_ORG,
