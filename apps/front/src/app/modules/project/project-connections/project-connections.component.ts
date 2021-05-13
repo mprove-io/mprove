@@ -90,4 +90,20 @@ export class ProjectConnectionsComponent {
       projectId: this.projectId
     });
   }
+
+  deleteConnection(connection: common.Connection) {
+    this.myDialogService.showDeleteConnection({
+      apiService: this.apiService,
+      projectId: connection.projectId,
+      connectionId: connection.connectionId
+    });
+  }
+
+  editConnection(connection: common.Connection, i: number) {
+    this.myDialogService.showEditConnection({
+      apiService: this.apiService,
+      connection: connection,
+      i: i
+    });
+  }
 }

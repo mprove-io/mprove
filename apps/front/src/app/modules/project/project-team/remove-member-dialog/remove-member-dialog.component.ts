@@ -31,7 +31,9 @@ export class RemoveMemberDialogComponent {
         map((resp: apiToBackend.ToBackendDeleteMemberResponse) => {
           this.teamStore.update(state => ({
             members: state.members.filter(
-              x => x.memberId !== this.ref.data.memberId
+              x =>
+                x.memberId !== this.ref.data.memberId ||
+                x.projectId !== this.ref.data.projectId
             )
           }));
         }),

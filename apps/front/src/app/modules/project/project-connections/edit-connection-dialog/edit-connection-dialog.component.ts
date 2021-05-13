@@ -1,0 +1,123 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DialogRef } from '@ngneat/dialog';
+import { map, take } from 'rxjs/operators';
+import { ApiService } from '~front/app/services/api.service';
+import { ValidationService } from '~front/app/services/validation.service';
+import { ConnectionsStore } from '~front/app/stores/connections.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
+
+@Component({
+  selector: 'm-edit-connection-dialog',
+  templateUrl: './edit-connection-dialog.component.html'
+})
+export class EditConnectionDialogComponent implements OnInit {
+  editConnectionForm: FormGroup;
+
+  connectionTypes = [
+    common.ConnectionTypeEnum.PostgreSQL,
+    common.ConnectionTypeEnum.BigQuery
+  ];
+
+  typePostgreSql = common.ConnectionTypeEnum.PostgreSQL;
+  typeBigquery = common.ConnectionTypeEnum.BigQuery;
+
+  constructor(
+    public ref: DialogRef,
+    private fb: FormBuilder,
+    private connectionsStore: ConnectionsStore
+  ) {}
+
+  ngOnInit() {
+    this.editConnectionForm = this.fb.group({
+      connectionId: [this.ref.data.connection.connectionId],
+      type: [this.ref.data.connection.type],
+      bigqueryCredentials: [],
+      bigqueryQuerySizeLimitGb: [
+        this.ref.data.connection.bigqueryQuerySizeLimitGb,
+        [ValidationService.integerValidator]
+      ],
+      postgresHost: [this.ref.data.connection.postgresHost],
+      postgresPort: [this.ref.data.connection.postgresPort],
+      postgresDatabase: [this.ref.data.connection.postgresDatabase],
+      postgresUser: [this.ref.data.connection.postgresUser],
+      postgresPassword: [this.ref.data.connection.postgresPassword]
+    });
+  }
+
+  changeType(ev: any) {
+    if (ev !== common.ConnectionTypeEnum.BigQuery) {
+      this.editConnectionForm.controls['bigqueryCredentials'].reset();
+      this.editConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
+    }
+
+    if (ev !== common.ConnectionTypeEnum.PostgreSQL) {
+      this.editConnectionForm.controls['postgresHost'].reset();
+      this.editConnectionForm.controls['postgresPort'].reset();
+      this.editConnectionForm.controls['postgresDatabase'].reset();
+      this.editConnectionForm.controls['postgresUser'].reset();
+      this.editConnectionForm.controls['postgresPassword'].reset();
+    }
+  }
+
+  save() {
+    this.editConnectionForm.markAllAsTouched();
+
+    if (!this.editConnectionForm.valid) {
+      return;
+    }
+
+    this.ref.close();
+
+    let payload: apiToBackend.ToBackendEditConnectionRequestPayload = {
+      projectId: this.ref.data.connection.projectId,
+      connectionId: this.editConnectionForm.value.connectionId,
+      bigqueryCredentials: common.isDefined(
+        this.editConnectionForm.value.bigqueryCredentials
+      )
+        ? JSON.parse(this.editConnectionForm.value.bigqueryCredentials)
+        : undefined,
+      bigqueryQuerySizeLimitGb: common.isDefined(
+        this.editConnectionForm.value.bigqueryQuerySizeLimitGb
+      )
+        ? Number(this.editConnectionForm.value.bigqueryQuerySizeLimitGb)
+        : undefined,
+      postgresHost: this.editConnectionForm.value.postgresHost,
+      postgresPort: common.isDefined(this.editConnectionForm.value.postgresPort)
+        ? Number(this.editConnectionForm.value.postgresPort)
+        : undefined,
+      postgresDatabase: this.editConnectionForm.value.postgresDatabase,
+      postgresUser: this.editConnectionForm.value.postgresUser,
+      postgresPassword: this.editConnectionForm.value.postgresPassword
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendEditConnectionResponse) => {
+          let connection = resp.payload.connection;
+
+          this.connectionsStore.update(state => {
+            state.connections[this.ref.data.i] = resp.payload.connection;
+
+            return {
+              connections: [...state.connections],
+              total: state.total
+            };
+          });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  cancel() {
+    this.ref.close();
+  }
+}
