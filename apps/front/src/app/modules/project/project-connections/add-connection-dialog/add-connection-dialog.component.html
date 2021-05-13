@@ -27,7 +27,7 @@
 
     <ng-select
       #typeSelect
-      data-cy="typeSelect"
+      data-cy="addConnectionDialogTypeSelect"
       class="flex focus:outline-none w-80"
       [items]="connectionTypes"
       [clearable]="false"
@@ -141,6 +141,7 @@
         }"
         formControlName="postgresPassword"
         placeholder="Password"
+        type="password"
       />
       <m-validation
         [control]="addConnectionForm.controls['postgresPassword']"
