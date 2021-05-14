@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
+import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { ConnectionsStore } from '~front/app/stores/connections.store';
@@ -31,18 +32,103 @@ export class AddConnectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addConnectionForm = this.fb.group({
-      connectionId: ['', [Validators.maxLength(255)]],
-      type: [common.ConnectionTypeEnum.PostgreSQL],
-      bigqueryCredentials: [],
-      bigqueryQuerySizeLimitGb: [
+      connectionId: [
         undefined,
-        [ValidationService.integerValidator]
+        [Validators.required, Validators.maxLength(255)]
       ],
-      postgresHost: [],
-      postgresPort: [],
-      postgresDatabase: [],
-      postgresUser: [],
-      postgresPassword: []
+      type: [common.ConnectionTypeEnum.PostgreSQL],
+      bigqueryCredentials: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              this.addConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.BigQuery,
+            Validators.required
+          )
+        ]
+      ],
+      bigqueryQuerySizeLimitGb: [
+        1,
+        [
+          ValidationService.integerValidator,
+          conditionalValidator(
+            () =>
+              this.addConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.BigQuery,
+            Validators.required
+          )
+        ]
+      ],
+      postgresHost: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              this.addConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresPort: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              this.addConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresDatabase: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              this.addConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresUser: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              this.addConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresPassword: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              this.addConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ]
+    });
+
+    this.addConnectionForm.get('type').valueChanges.subscribe(value => {
+      this.addConnectionForm
+        .get('bigqueryCredentials')
+        .updateValueAndValidity();
+      this.addConnectionForm
+        .get('bigqueryQuerySizeLimitGb')
+        .updateValueAndValidity();
+      this.addConnectionForm.get('postgresHost').updateValueAndValidity();
+      this.addConnectionForm.get('postgresPort').updateValueAndValidity();
+      this.addConnectionForm.get('postgresDatabase').updateValueAndValidity();
+      this.addConnectionForm.get('postgresUser').updateValueAndValidity();
+      this.addConnectionForm.get('postgresPassword').updateValueAndValidity();
     });
   }
 

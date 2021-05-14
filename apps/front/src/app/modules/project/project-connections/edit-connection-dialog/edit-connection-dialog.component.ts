@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
+import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { ConnectionsStore } from '~front/app/stores/connections.store';
@@ -33,16 +34,98 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editConnectionForm = this.fb.group({
       connectionId: [this.ref.data.connection.connectionId],
       type: [this.ref.data.connection.type],
-      bigqueryCredentials: [],
+      bigqueryCredentials: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              this.editConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.BigQuery,
+            Validators.required
+          )
+        ]
+      ],
       bigqueryQuerySizeLimitGb: [
         this.ref.data.connection.bigqueryQuerySizeLimitGb,
-        [ValidationService.integerValidator]
+        [
+          ValidationService.integerValidator,
+          conditionalValidator(
+            () =>
+              this.editConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.BigQuery,
+            Validators.required
+          )
+        ]
       ],
-      postgresHost: [this.ref.data.connection.postgresHost],
-      postgresPort: [this.ref.data.connection.postgresPort],
-      postgresDatabase: [this.ref.data.connection.postgresDatabase],
-      postgresUser: [this.ref.data.connection.postgresUser],
-      postgresPassword: [this.ref.data.connection.postgresPassword]
+      postgresHost: [
+        this.ref.data.connection.postgresHost,
+        [
+          conditionalValidator(
+            () =>
+              this.editConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresPort: [
+        this.ref.data.connection.postgresPort,
+        [
+          conditionalValidator(
+            () =>
+              this.editConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresDatabase: [
+        this.ref.data.connection.postgresDatabase,
+        [
+          conditionalValidator(
+            () =>
+              this.editConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresUser: [
+        this.ref.data.connection.postgresUser,
+        [
+          conditionalValidator(
+            () =>
+              this.editConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ],
+      postgresPassword: [
+        this.ref.data.connection.postgresPassword,
+        [
+          conditionalValidator(
+            () =>
+              this.editConnectionForm.get('type').value ===
+              common.ConnectionTypeEnum.PostgreSQL,
+            Validators.required
+          )
+        ]
+      ]
+    });
+
+    this.editConnectionForm.get('type').valueChanges.subscribe(value => {
+      this.editConnectionForm
+        .get('bigqueryCredentials')
+        .updateValueAndValidity();
+      this.editConnectionForm
+        .get('bigqueryQuerySizeLimitGb')
+        .updateValueAndValidity();
+      this.editConnectionForm.get('postgresHost').updateValueAndValidity();
+      this.editConnectionForm.get('postgresPort').updateValueAndValidity();
+      this.editConnectionForm.get('postgresDatabase').updateValueAndValidity();
+      this.editConnectionForm.get('postgresUser').updateValueAndValidity();
+      this.editConnectionForm.get('postgresPassword').updateValueAndValidity();
     });
   }
 
