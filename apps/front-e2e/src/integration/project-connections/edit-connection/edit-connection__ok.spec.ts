@@ -1,6 +1,6 @@
 import { common } from '~front-e2e/barrels/common';
 
-let testId = '_add-connection__ok-bigquery';
+let testId = '_edit-connection__ok';
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
@@ -12,15 +12,9 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = 'p1';
 
-let bigqueryTestCredentials: any;
+let connectionId = 'c1';
 
 describe('front-e2e', () => {
-  before(function () {
-    cy.fixture('bigquery.txt').then(function (data) {
-      bigqueryTestCredentials = data;
-    });
-  });
-
   it(testId, () => {
     cy.deletePack({
       emails: [email],
@@ -60,24 +54,42 @@ describe('front-e2e', () => {
           isEditor: common.BoolEnum.TRUE,
           isExplorer: common.BoolEnum.TRUE
         }
+      ],
+      connections: [
+        {
+          projectId: projectId,
+          connectionId: connectionId,
+          type: common.ConnectionTypeEnum.PostgreSQL,
+          postgresHost: '1',
+          postgresPort: 2,
+          postgresDatabase: '3',
+          postgresUser: '4',
+          postgresPassword: '5'
+        }
       ]
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(
       `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_CONNECTIONS}`
     );
-    cy.get('[data-cy=projectConnectionsAddConnectionButton]').click();
-    cy.get('[data-cy=addConnectionDialogConnectionIdInput]').type('c1');
-    cy.get('[data-cy=addConnectionDialogTypeSelect]').click();
-    cy.get('.ng-option').eq(1).click();
-    cy.get('[data-cy=addConnectionDialogBigqueryCredentialsInput]').type(
-      bigqueryTestCredentials
-    );
-    cy.get('[data-cy=addConnectionDialogBigqueryQuerySizeLimitGbInput]').type(
-      '3'
-    );
-    cy.get('[data-cy=addConnectionDialogAddButton]').click();
+    cy.get('[data-cy=projectConnectionsEditButton]').click();
+    cy.get('[data-cy=editConnectionDialogPostgresHostInput]')
+      .clear({ force: true })
+      .type('10');
+    cy.get('[data-cy=editConnectionDialogPostgresPortInput]')
+      .clear({ force: true })
+      .type('20');
+    cy.get('[data-cy=editConnectionDialogPostgresDatabaseInput]')
+      .clear({ force: true })
+      .type('30');
+    cy.get('[data-cy=editConnectionDialogPostgresUserInput]')
+      .clear({ force: true })
+      .type('40');
+    cy.get('[data-cy=editConnectionDialogPostgresPasswordInput]')
+      .clear({ force: true })
+      .type('50');
+    cy.get('[data-cy=editConnectionDialogSaveButton]').click();
     cy.loading();
-    cy.get('[data-cy=projectConnectionsDeleteButton]').should('have.length', 1);
+    cy.get('[data-cy=projectConnectionsHost]').should('contain', '10');
   });
 });

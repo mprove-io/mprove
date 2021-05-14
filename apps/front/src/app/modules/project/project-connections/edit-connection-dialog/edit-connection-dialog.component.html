@@ -1,6 +1,6 @@
 <div class="flex-grow flex-col p-9 bg-white overflow-y-auto">
   <div
-    data-cy="addConnectionDialogTitle"
+    data-cy="editConnectionDialogTitle"
     class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
     >Edit Connection</div
   >
@@ -27,7 +27,7 @@
     <div *ngIf="editConnectionForm.controls['type'].value === typeBigquery">
       <textarea
         rows="9"
-        data-cy="addConnectionDialogBigqueryCredentialsInput"
+        data-cy="editConnectionDialogBigqueryCredentialsInput"
         class="mt-6 w-80 form-input rounded border-gray3 focus:border-blue3 resize-none"
         [ngClass]="{
           'border-red-600':
@@ -42,7 +42,7 @@
       ></m-validation>
 
       <input
-        data-cy="addConnectionDialogBigqueryQuerySizeLimitGbInput"
+        data-cy="editConnectionDialogBigqueryQuerySizeLimitGbInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -59,7 +59,7 @@
 
     <div *ngIf="editConnectionForm.controls['type'].value === typePostgreSql">
       <input
-        data-cy="addConnectionDialogPostgresHostInput"
+        data-cy="editConnectionDialogPostgresHostInput"
         class="w-80 mt-6 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -74,7 +74,7 @@
       ></m-validation>
 
       <input
-        data-cy="addConnectionDialogPostgresPortInput"
+        data-cy="editConnectionDialogPostgresPortInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -89,7 +89,7 @@
       ></m-validation>
 
       <input
-        data-cy="addConnectionDialogPostgresDatabaseInput"
+        data-cy="editConnectionDialogPostgresDatabaseInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -104,7 +104,7 @@
       ></m-validation>
 
       <input
-        data-cy="addConnectionDialogPostgresUserInput"
+        data-cy="editConnectionDialogPostgresUserInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -119,7 +119,7 @@
       ></m-validation>
 
       <input
-        data-cy="addConnectionDialogPostgresPasswordInput"
+        data-cy="editConnectionDialogPostgresPasswordInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -137,14 +137,14 @@
 
     <div class="mt-6">
       <button
-        data-cy="addConnectionDialogAddButton"
+        data-cy="editConnectionDialogSaveButton"
         class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
-        data-cy="addConnectionDialogCancelButton"
+        data-cy="editConnectionDialogCancelButton"
         class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"

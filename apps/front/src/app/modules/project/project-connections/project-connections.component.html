@@ -60,7 +60,9 @@
 
             <td class="w-48">{{ connection.type }} </td>
 
-            <td class="w-48">{{ connection.postgresHost }} </td>
+            <td data-cy="projectConnectionsHost" class="w-48"
+              >{{ connection.postgresHost }}
+            </td>
 
             <td class="w-48">{{ connection.postgresPort }} </td>
 
@@ -102,7 +104,7 @@
 
             <td class="w-48">
               <button
-                data-cy="projectConnectionsDeleteConnectionButton"
+                data-cy="projectConnectionsDeleteButton"
                 class="ml-3 h-10 w-10 rounded-full text-red1 focus:outline-none"
                 [disabled]="isAdmin === false"
                 (click)="deleteConnection(connection)"

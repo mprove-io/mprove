@@ -69,9 +69,6 @@ describe('front-e2e', () => {
     cy.get('[data-cy=addConnectionDialogPostgresPasswordInput]').type('5');
     cy.get('[data-cy=addConnectionDialogAddButton]').click();
     cy.loading();
-    cy.get('[data-cy=projectConnectionsDeleteConnectionButton]').should(
-      'have.length',
-      1
-    );
+    cy.get('[data-cy=projectConnectionsDeleteButton]').should('have.length', 1);
   });
 });

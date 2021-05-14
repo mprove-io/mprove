@@ -7,14 +7,12 @@
 
   <div class="mt-6 text-gray1 text-lg"
     >Are you sure you want to remove connection
-    <span class="font-semibold">
-      {{ ref.data.connectionId }} </span
-    >?</div
+    <span class="font-semibold"> {{ ref.data.connectionId }} </span>?</div
   >
 
   <div class="mt-6">
     <button
-      data-cy="deleteConnectionDialogRemoveButton"
+      data-cy="deleteConnectionDialogDeleteButton"
       class="py-3 w-28 border bg-red1 text-white rounded font-medium focus:outline-none"
       (click)="delete()"
       >Delete</button
