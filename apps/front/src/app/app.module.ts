@@ -12,6 +12,7 @@ import { appDialogs } from './app-dialogs';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './modules/auth/auth.module';
+import { BlockmlModule } from './modules/blockml/blockml.module';
 import { NavModule } from './modules/nav/nav.module';
 import { NavbarModule } from './modules/navbar/navbar.module';
 import { OrgModule } from './modules/org/org.module';
@@ -34,6 +35,7 @@ import { ErrorHandlerService } from './services/error-handler.service';
     ProfileModule,
     OrgModule,
     ProjectModule,
+    BlockmlModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
     DialogModule.forRoot(),

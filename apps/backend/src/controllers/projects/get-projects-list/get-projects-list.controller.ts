@@ -34,8 +34,12 @@ export class GetProjectsListController {
             org_id: orgId
           });
 
+    let sortedProjects = projects.sort((a, b) =>
+      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+    );
+
     let payload: apiToBackend.ToBackendGetProjectsListResponsePayload = {
-      projectsList: projects.map(x => wrapper.wrapToApiProjectsItem(x))
+      projectsList: sortedProjects.map(x => wrapper.wrapToApiProjectsItem(x))
     };
 
     return payload;

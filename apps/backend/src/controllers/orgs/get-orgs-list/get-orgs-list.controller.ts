@@ -52,8 +52,12 @@ export class GetOrgsListController {
       }
     });
 
+    let sortedOrgs = orgs.sort((a, b) =>
+      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+    );
+
     let payload: apiToBackend.ToBackendGetOrgsListResponsePayload = {
-      orgsList: orgs.map(x => wrapper.wrapToApiOrgsItem(x))
+      orgsList: sortedOrgs.map(x => wrapper.wrapToApiOrgsItem(x))
     };
 
     return payload;

@@ -1,6 +1,19 @@
 <div class="h-screen flex flex-col">
   <div class="relative flex items-center justify-between h-14 px-6 shadow">
     <m-logo></m-logo>
+
+    <div class="flex flex-row items-center">
+      <button
+        class="block px-4 py-2 text-gray1 font-medium text-sm w-full text-left focus:outline-none"
+        [ngClass]="{
+          'text-gray-400': !nav || !nav.projectId
+        }"
+        (click)="navigateBlockml()"
+        [disabled]="!nav || !nav.projectId"
+        >BlockML</button
+      >
+    </div>
+
     <div class="flex flex-row items-center">
       <m-org-select></m-org-select>
       <m-org-menu></m-org-menu>
@@ -13,3 +26,5 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+
+<div *ngIf="nav$ | async"></div>

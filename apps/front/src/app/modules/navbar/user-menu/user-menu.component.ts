@@ -44,7 +44,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     this.lastUrl = this.router.url.split('/')[1];
   }
 
-  profile() {
+  navigateProfile() {
     this.closeMenu();
     this.router.navigate([common.PATH_PROFILE]);
   }
