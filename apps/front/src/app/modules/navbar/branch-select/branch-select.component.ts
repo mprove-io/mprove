@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
+import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
+import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -33,14 +35,16 @@ export class BranchSelectComponent {
         )
         .subscribe();
 
-      console.log(alias);
-
       this.selectedOrgId = x.orgId;
       this.selectedProjectId = x.projectId;
-      this.selectedBranchItem = this.makeBranchItem(x, alias);
-      this.selectedBranchExtraId = this.selectedBranchItem.extraId;
+      this.selectedBranchItem = common.isDefined(x.projectId)
+        ? this.makeBranchItem(x, alias)
+        : undefined;
+      this.selectedBranchExtraId = this.selectedBranchItem?.extraId;
 
-      this.branchesList = [this.selectedBranchItem];
+      this.branchesList = common.isDefined(this.selectedBranchItem)
+        ? [this.selectedBranchItem]
+        : [];
 
       this.cd.detectChanges();
     })
@@ -93,10 +97,14 @@ export class BranchSelectComponent {
   createNewBranch(branchSelect: any) {
     branchSelect.close();
 
-    // this.myDialogService.showCreateProject({
-    //   apiService: this.apiService,
-    //   orgId: this.selectedOrgId
-    // });
+    this.myDialogService.showCreateBranch({
+      apiService: this.apiService,
+      orgId: this.selectedOrgId,
+      projectId: this.selectedProjectId,
+      branchesList: this.branchesList,
+      selectedBranchItem: this.selectedBranchItem,
+      selectedBranchExtraId: this.selectedBranchExtraId
+    });
   }
 
   branchChange() {
@@ -105,6 +113,8 @@ export class BranchSelectComponent {
       this.selectedOrgId,
       common.PATH_PROJECT,
       this.selectedProjectId,
+      common.PATH_BRANCH,
+      this.selectedBranchExtraId,
       common.PATH_BLOCKML
     ]);
   }
@@ -113,15 +123,23 @@ export class BranchSelectComponent {
     b: apiToBackend.ToBackendGetBranchesListResponsePayloadBranchesItem,
     alias: string
   ) {
+    let extraId = makeBranchExtraId({
+      branchId: b.branchId,
+      isRepoProd: b.isRepoProd,
+      alias: alias
+    });
+
+    let extraName = makeBranchExtraName({
+      branchId: b.branchId,
+      isRepoProd: b.isRepoProd,
+      alias: alias
+    });
+
     return {
       branchId: b.branchId,
       isRepoProd: b.isRepoProd,
-      extraId:
-        common.isUndefined(b.isRepoProd) || common.isUndefined(b.branchId)
-          ? undefined
-          : b.isRepoProd === true
-          ? `prod/${b.branchId}`
-          : `${alias}/${b.branchId}`
+      extraId: extraId,
+      extraName: extraName
     };
   }
 }

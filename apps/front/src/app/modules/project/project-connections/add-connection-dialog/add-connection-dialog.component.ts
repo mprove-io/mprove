@@ -132,13 +132,13 @@ export class AddConnectionDialogComponent implements OnInit {
     });
   }
 
-  changeType(ev: any) {
-    if (ev !== common.ConnectionTypeEnum.BigQuery) {
+  changeType(type: common.ConnectionTypeEnum) {
+    if (type !== common.ConnectionTypeEnum.BigQuery) {
       this.addConnectionForm.controls['bigqueryCredentials'].reset();
       this.addConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
-    if (ev !== common.ConnectionTypeEnum.PostgreSQL) {
+    if (type !== common.ConnectionTypeEnum.PostgreSQL) {
       this.addConnectionForm.controls['postgresHost'].reset();
       this.addConnectionForm.controls['postgresPort'].reset();
       this.addConnectionForm.controls['postgresDatabase'].reset();

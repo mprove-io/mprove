@@ -3,7 +3,9 @@ import { DialogService } from '@ngneat/dialog';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
+import { BranchItem } from '../interfaces/_index';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
+import { CreateBranchDialogComponent } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import { CreateOrgDialogComponent } from '../modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
 import { CreateProjectDialogComponent } from '../modules/navbar/project-select/create-project-dialog/create-project-dialog.component';
 import { DeleteOrgDialogComponent } from '../modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
@@ -113,6 +115,20 @@ export class MyDialogService {
         apiService: item.apiService,
         orgId: item.orgId
       }
+    });
+  }
+
+  showCreateBranch(item: {
+    apiService: ApiService;
+    orgId: string;
+    projectId: string;
+    branchesList: BranchItem[];
+    selectedBranchItem: BranchItem;
+    selectedBranchExtraId: string;
+  }): void {
+    this.dialogService.open(CreateBranchDialogComponent, {
+      enableClose: false,
+      data: item
     });
   }
 

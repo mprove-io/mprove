@@ -147,9 +147,19 @@ const routes: Routes = [
               },
               {
                 component: BlockmlComponent,
-                path: common.PATH_BLOCKML,
+                path:
+                  common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_EXTRA_ID}`,
                 resolve: [
                   // MemberResolver
+                ],
+                children: [
+                  {
+                    component: BlockmlComponent,
+                    path: common.PATH_BLOCKML,
+                    resolve: [
+                      // MemberResolver
+                    ]
+                  }
                 ]
               }
             ]

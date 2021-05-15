@@ -1,7 +1,7 @@
 <ng-select
   #branchSelect
   data-cy="branchSelect"
-  class="flex focus:outline-none w-44 ml-5"
+  class="flex focus:outline-none w-64 ml-5"
   (open)="openBranchSelect()"
   [loading]="branchesListLoading"
   [items]="branchesList"
@@ -11,7 +11,7 @@
   [(ngModel)]="selectedBranchExtraId"
   (change)="branchChange()"
   placeholder="Branches"
-  bindLabel="extraId"
+  bindLabel="extraName"
   bindValue="extraId"
 >
   <ng-template

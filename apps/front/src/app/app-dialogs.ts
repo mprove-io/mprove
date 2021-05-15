@@ -1,4 +1,5 @@
 import { EmailConfirmedDialogComponent } from './modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
+import { CreateBranchDialogComponent } from './modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import { CreateOrgDialogComponent } from './modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
 import { CreateProjectDialogComponent } from './modules/navbar/project-select/create-project-dialog/create-project-dialog.component';
 import { DeleteOrgDialogComponent } from './modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
@@ -26,6 +27,7 @@ export const appDialogs = [
   // navbar
   CreateOrgDialogComponent,
   CreateProjectDialogComponent,
+  CreateBranchDialogComponent,
   // profile
   EditPhotoDialogComponent,
   EditNameDialogComponent,
