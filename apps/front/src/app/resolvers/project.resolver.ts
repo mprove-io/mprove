@@ -41,7 +41,11 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
           this.navStore.update(state =>
             Object.assign({}, state, {
               projectId: project.projectId,
-              projectName: project.name
+              projectName: project.name,
+              branchId: state.branchId || common.BRANCH_MASTER,
+              isProdRepo: common.isDefined(state.branchId)
+                ? state.isRepoProd
+                : true
             })
           );
 

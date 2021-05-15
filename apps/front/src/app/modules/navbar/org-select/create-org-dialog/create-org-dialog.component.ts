@@ -62,7 +62,9 @@ export class CreateOrgDialogComponent implements OnInit {
           this.navStore.update(state =>
             Object.assign({}, state, {
               projectId: undefined,
-              projectName: undefined
+              projectName: undefined,
+              isProdRepo: false,
+              branchId: undefined
             })
           );
 
