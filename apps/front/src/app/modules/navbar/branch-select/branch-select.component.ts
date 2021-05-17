@@ -125,6 +125,27 @@ export class BranchSelectComponent {
     });
   }
 
+  deleteBranch(branchSelect: any) {
+    let alias: string;
+    this.userQuery.alias$
+      .pipe(
+        tap(x => (alias = x)),
+        take(1)
+      )
+      .subscribe();
+
+    branchSelect.close();
+
+    this.myDialogService.showDeleteBranch({
+      apiService: this.apiService,
+      orgId: this.selectedOrgId,
+      projectId: this.selectedProjectId,
+      branchId: this.selectedBranchItem.branchId,
+      isRepoProd: this.selectedBranchItem.isRepoProd,
+      alias: alias
+    });
+  }
+
   branchChange() {
     this.selectedBranchItem = this.branchesList.find(
       x => x.extraId === this.selectedBranchExtraId

@@ -49,6 +49,7 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
     // special
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig
   ];

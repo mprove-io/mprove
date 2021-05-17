@@ -25,7 +25,7 @@
       [control]="createBranchForm.controls['branchId']"
     ></m-validation>
 
-    <div>From Branch:</div>
+    <div>Base on branch:</div>
     <ng-select
       #branchSelect
       data-cy="branchSelect"
@@ -43,7 +43,7 @@
         ng-header-tmp
         *ngIf="branchesList?.length > 0 && selectedBranchItem"
       >
-        <div class="font-semibold text-sm"> Branches </div>
+        <div class="font-semibold text-sm"> Repository - Branch </div>
       </ng-template>
     </ng-select>
 

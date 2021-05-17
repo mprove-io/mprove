@@ -6,6 +6,7 @@ import { interfaces } from '~front/barrels/interfaces';
 import { BranchItem } from '../interfaces/_index';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import { CreateBranchDialogComponent } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
+import { DeleteBranchDialogComponent } from '../modules/navbar/branch-select/delete-branch-dialog/delete-branch-dialog.component';
 import { CreateOrgDialogComponent } from '../modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
 import { CreateProjectDialogComponent } from '../modules/navbar/project-select/create-project-dialog/create-project-dialog.component';
 import { DeleteOrgDialogComponent } from '../modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
@@ -127,6 +128,20 @@ export class MyDialogService {
     selectedBranchExtraId: string;
   }): void {
     this.dialogService.open(CreateBranchDialogComponent, {
+      enableClose: false,
+      data: item
+    });
+  }
+
+  showDeleteBranch(item: {
+    apiService: ApiService;
+    orgId: string;
+    projectId: string;
+    branchId: string;
+    isRepoProd: boolean;
+    alias: string;
+  }): void {
+    this.dialogService.open(DeleteBranchDialogComponent, {
       enableClose: false,
       data: item
     });

@@ -10,7 +10,7 @@
   [searchable]="false"
   [(ngModel)]="selectedProjectId"
   (change)="projectChange()"
-  placeholder="Projects"
+  placeholder="Project"
   bindLabel="name"
   bindValue="projectId"
 >
@@ -18,7 +18,7 @@
     ng-header-tmp
     *ngIf="projectsListLength > 0 && selectedProjectId"
   >
-    <div class="font-semibold text-sm"> Projects </div>
+    <div class="font-semibold text-sm"> Project </div>
   </ng-template>
   <ng-template ng-footer-tmp>
     <button

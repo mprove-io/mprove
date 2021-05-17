@@ -42,7 +42,7 @@ export class NavStore extends Store<NavState> {
         orgName: undefined,
         projectId: undefined,
         projectName: undefined,
-        isRepoProd: undefined,
+        isRepoProd: true,
         branchId: undefined
       })
     );
@@ -53,7 +53,7 @@ export class NavStore extends Store<NavState> {
       Object.assign({}, state, <NavState>{
         projectId: undefined,
         projectName: undefined,
-        isRepoProd: undefined,
+        isRepoProd: true,
         branchId: undefined
       })
     );

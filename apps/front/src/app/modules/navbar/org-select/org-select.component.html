@@ -9,12 +9,12 @@
   [searchable]="false"
   [(ngModel)]="selectedOrgId"
   (change)="orgChange()"
-  placeholder="Organizations"
+  placeholder="Organization"
   bindLabel="name"
   bindValue="orgId"
 >
   <ng-template ng-header-tmp *ngIf="orgsListLength > 0 && selectedOrgId">
-    <div class="font-semibold text-sm"> Organizations </div>
+    <div class="font-semibold text-sm"> Organization </div>
   </ng-template>
   <ng-template ng-footer-tmp>
     <button

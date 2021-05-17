@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
@@ -25,7 +25,8 @@ export class CreateBranchDialogComponent implements OnInit {
     public ref: DialogRef,
     private fb: FormBuilder,
     private router: Router,
-    private userQuery: UserQuery
+    private userQuery: UserQuery,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -89,10 +90,12 @@ export class CreateBranchDialogComponent implements OnInit {
       .subscribe();
   }
 
-  branchChange(branchExtraId: any) {
+  branchChange(branchItem: interfaces.BranchItem) {
     this.selectedBranchItem = this.branchesList.find(
-      x => x.extraId === branchExtraId
+      x => x.extraId === branchItem.extraId
     );
+
+    this.cd.detectChanges();
   }
 
   cancel() {

@@ -4,6 +4,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -38,7 +39,8 @@ export class ProjectSelectComponent {
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private navStore: NavStore
   ) {}
 
   openProjectSelect() {
@@ -85,5 +87,12 @@ export class ProjectSelectComponent {
       this.selectedProjectId,
       common.PATH_SETTINGS
     ]);
+
+    this.navStore.update(state =>
+      Object.assign({}, state, <NavState>{
+        isRepoProd: true,
+        branchId: common.BRANCH_MASTER
+      })
+    );
   }
 }

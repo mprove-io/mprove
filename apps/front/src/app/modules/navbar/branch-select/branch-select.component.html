@@ -10,7 +10,7 @@
   [searchable]="false"
   [(ngModel)]="selectedBranchExtraId"
   (change)="branchChange()"
-  placeholder="Branches"
+  placeholder="Repository - Branch"
   bindLabel="extraName"
   bindValue="extraId"
 >
@@ -18,9 +18,15 @@
     ng-header-tmp
     *ngIf="branchesListLength > 0 && selectedBranchItem"
   >
-    <div class="font-semibold text-sm"> Branches </div>
+    <div class="font-semibold text-sm"> Repository - Branch </div>
   </ng-template>
   <ng-template ng-footer-tmp>
+    <button
+      data-cy="branchSelectDeleteBranchButton"
+      class="py-3 rounded text-red1 hover:bg-blue2 w-full focus:outline-none"
+      (click)="deleteBranch(branchSelect)"
+      >Delete Branch</button
+    >
     <button
       data-cy="branchSelectCreateBranchButton"
       class="py-3 rounded text-blue3 hover:bg-blue2 w-full focus:outline-none"

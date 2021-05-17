@@ -1,0 +1,36 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="deleteBranchDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Delete Branch</div
+  >
+
+  <div class="mt-6 text-gray1 text-lg"
+    >Are you sure you want to delete branch
+    <span class="font-semibold">
+      {{ ref.data.branchId }}
+    </span>
+    in
+    <span class="font-semibold">
+      {{ repoName }}
+    </span>
+    repository ?</div
+  >
+
+  <div class="mt-6">
+    <button
+      data-cy="deleteBranchDialogDeleteButton"
+      class="py-3 w-28 border bg-red1 text-white rounded font-medium focus:outline-none"
+      (click)="delete()"
+      >Delete</button
+    >
+
+    <button
+      data-cy="deleteBranchDialogCancelButton"
+      class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+      type="button"
+      (click)="cancel()"
+      >Cancel</button
+    >
+  </div>
+</div>

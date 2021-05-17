@@ -63,7 +63,7 @@ export class CreateOrgDialogComponent implements OnInit {
             Object.assign({}, state, <NavState>{
               projectId: undefined,
               projectName: undefined,
-              isRepoProd: false,
+              isRepoProd: true,
               branchId: undefined
             })
           );
