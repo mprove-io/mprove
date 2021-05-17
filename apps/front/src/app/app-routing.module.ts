@@ -149,12 +149,12 @@ const routes: Routes = [
               },
               {
                 path: common.PATH_REPO + `/:${common.PARAMETER_REPO_ID}`,
-                resolve: [RepoResolver],
+                resolve: [MemberResolver, RepoResolver],
                 children: [
                   {
                     path:
                       common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_ID}`,
-                    resolve: [BranchResolver],
+                    resolve: [MemberResolver, BranchResolver],
                     children: [
                       {
                         component: BlockmlComponent,

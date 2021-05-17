@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -17,6 +18,17 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './branch-select.component.html'
 })
 export class BranchSelectComponent {
+  branchMaster = common.BRANCH_MASTER;
+
+  isEditor: boolean;
+  isEditor$ = this.memberQuery.isEditor$.pipe(
+    tap(x => {
+      this.isEditor = x;
+      console.log(this.isEditor);
+      this.cd.detectChanges();
+    })
+  );
+
   branchesList: interfaces.BranchItem[] = [];
   branchesListLoading = false;
   branchesListLength = 0;
@@ -62,6 +74,7 @@ export class BranchSelectComponent {
 
   constructor(
     private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
@@ -104,6 +117,33 @@ export class BranchSelectComponent {
               userId: user.userId
             })
           );
+
+          let prodBranchesMaster = this.branchesList.filter(
+            y => y.isRepoProd === true && y.branchId === common.BRANCH_MASTER
+          );
+
+          let prodBranchesNotMaster = this.branchesList.filter(
+            y => y.isRepoProd === true && y.branchId !== common.BRANCH_MASTER
+          );
+
+          let localBranchesMaster = this.branchesList.filter(
+            y => y.isRepoProd === false && y.branchId === common.BRANCH_MASTER
+          );
+
+          let localBranchesNotMaster = this.branchesList.filter(
+            y => y.isRepoProd === false && y.branchId !== common.BRANCH_MASTER
+          );
+
+          this.branchesList =
+            this.isEditor === true
+              ? [
+                  ...prodBranchesMaster,
+                  ...prodBranchesNotMaster,
+                  ...localBranchesMaster,
+                  ...localBranchesNotMaster
+                ]
+              : [...prodBranchesMaster, ...prodBranchesNotMaster];
+
           this.branchesListLength = x.length;
           this.branchesListLoading = false;
         }),
