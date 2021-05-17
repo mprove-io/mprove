@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { NavStore } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -60,10 +60,10 @@ export class CreateOrgDialogComponent implements OnInit {
           ]);
 
           this.navStore.update(state =>
-            Object.assign({}, state, {
+            Object.assign({}, state, <NavState>{
               projectId: undefined,
               projectName: undefined,
-              isProdRepo: false,
+              isRepoProd: false,
               branchId: undefined
             })
           );

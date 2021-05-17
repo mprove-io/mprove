@@ -7,6 +7,7 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -27,19 +28,28 @@ export class BranchSelectComponent {
 
   nav$ = this.navQuery.select().pipe(
     tap(x => {
-      let alias;
-      this.userQuery.alias$
+      let user: UserState;
+      this.userQuery
+        .select()
         .pipe(
-          tap(z => (alias = z)),
+          tap(z => (user = z)),
           take(1)
         )
         .subscribe();
 
       this.selectedOrgId = x.orgId;
       this.selectedProjectId = x.projectId;
-      this.selectedBranchItem = common.isDefined(x.projectId)
-        ? this.makeBranchItem(x, alias)
-        : undefined;
+
+      this.selectedBranchItem =
+        common.isDefined(x.projectId) && common.isDefined(x.branchId)
+          ? this.makeBranchItem({
+              branchId: x.branchId,
+              isRepoProd: x.isRepoProd,
+              alias: user.alias,
+              userId: user.userId
+            })
+          : undefined;
+
       this.selectedBranchExtraId = this.selectedBranchItem?.extraId;
 
       this.branchesList = common.isDefined(this.selectedBranchItem)
@@ -60,10 +70,11 @@ export class BranchSelectComponent {
   ) {}
 
   openBranchSelect() {
-    let alias: string;
-    this.userQuery.alias$
+    let user: UserState;
+    this.userQuery
+      .select()
       .pipe(
-        tap(z => (alias = z)),
+        tap(z => (user = z)),
         take(1)
       )
       .subscribe();
@@ -85,9 +96,16 @@ export class BranchSelectComponent {
             resp.payload.branchesList
         ),
         tap(x => {
-          this.branchesList = x.map(z => this.makeBranchItem(z, alias));
-          this.branchesListLoading = false;
+          this.branchesList = x.map(z =>
+            this.makeBranchItem({
+              branchId: z.branchId,
+              isRepoProd: z.isRepoProd,
+              alias: user.alias,
+              userId: user.userId
+            })
+          );
           this.branchesListLength = x.length;
+          this.branchesListLoading = false;
         }),
         take(1)
       )
@@ -108,38 +126,61 @@ export class BranchSelectComponent {
   }
 
   branchChange() {
+    this.selectedBranchItem = this.branchesList.find(
+      x => x.extraId === this.selectedBranchExtraId
+    );
+
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId =
+      this.selectedBranchItem.isRepoProd === true
+        ? common.PROD_REPO_ID
+        : userId;
+
     this.router.navigate([
       common.PATH_ORG,
       this.selectedOrgId,
       common.PATH_PROJECT,
       this.selectedProjectId,
+      common.PATH_REPO,
+      repoId,
       common.PATH_BRANCH,
-      this.selectedBranchExtraId,
+      this.selectedBranchItem.branchId,
       common.PATH_BLOCKML
     ]);
   }
 
-  makeBranchItem(
-    b: apiToBackend.ToBackendGetBranchesListResponsePayloadBranchesItem,
-    alias: string
-  ) {
+  makeBranchItem(item: {
+    branchId: string;
+    isRepoProd: boolean;
+    alias: string;
+    userId: string;
+  }) {
     let extraId = makeBranchExtraId({
-      branchId: b.branchId,
-      isRepoProd: b.isRepoProd,
-      alias: alias
+      branchId: item.branchId,
+      isRepoProd: item.isRepoProd,
+      userId: item.userId
     });
 
     let extraName = makeBranchExtraName({
-      branchId: b.branchId,
-      isRepoProd: b.isRepoProd,
-      alias: alias
+      branchId: item.branchId,
+      isRepoProd: item.isRepoProd,
+      alias: item.alias
     });
 
-    return {
-      branchId: b.branchId,
-      isRepoProd: b.isRepoProd,
+    let branchItem: interfaces.BranchItem = {
+      branchId: item.branchId,
+      isRepoProd: item.isRepoProd,
       extraId: extraId,
       extraName: extraName
     };
+
+    return branchItem;
   }
 }

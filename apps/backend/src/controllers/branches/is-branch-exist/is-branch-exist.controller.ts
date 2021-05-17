@@ -21,9 +21,9 @@ export class IsBranchExistController {
     @ValidateRequest(apiToBackend.ToBackendIsBranchExistRequest)
     reqValid: apiToBackend.ToBackendIsBranchExistRequest
   ) {
-    let { projectId, branchId } = reqValid.payload;
+    let { projectId, branchId, isRepoProd } = reqValid.payload;
 
-    let repoId = user.user_id;
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

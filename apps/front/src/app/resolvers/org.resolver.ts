@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { ApiService } from '../services/api.service';
-import { NavStore } from '../stores/nav.store';
+import { NavState, NavStore } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class OrgResolver implements Resolve<Observable<boolean>> {
@@ -31,7 +31,7 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
           let org = resp.payload.org;
 
           this.navStore.update(state =>
-            Object.assign({}, state, {
+            Object.assign({}, state, <NavState>{
               orgId: org.orgId,
               orgName: org.name
             })

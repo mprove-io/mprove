@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { ConnectionsStore } from '~front/app/stores/connections.store';
+import {
+  ConnectionsState,
+  ConnectionsStore
+} from '~front/app/stores/connections.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -32,13 +35,16 @@ export class DeleteConnectionDialogComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendDeleteConnectionResponse) => {
-          this.connectionsStore.update(state => ({
-            connections: state.connections.filter(
-              x =>
-                x.connectionId !== this.ref.data.connectionId ||
-                x.projectId !== this.ref.data.projectId
-            )
-          }));
+          this.connectionsStore.update(
+            state =>
+              <ConnectionsState>{
+                connections: state.connections.filter(
+                  x =>
+                    x.connectionId !== this.ref.data.connectionId ||
+                    x.projectId !== this.ref.data.projectId
+                )
+              }
+          );
         }),
         take(1)
       )

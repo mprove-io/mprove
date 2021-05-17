@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -23,7 +24,8 @@ export class CreateBranchDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private userQuery: UserQuery
   ) {}
 
   ngOnInit() {
@@ -59,14 +61,26 @@ export class CreateBranchDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateBranchResponse) => {
+        tap((resp: apiToBackend.ToBackendCreateBranchResponse) => {
+          let userId;
+          this.userQuery.userId$
+            .pipe(
+              tap(x => (userId = x)),
+              take(1)
+            )
+            .subscribe();
+
+          let repoId = userId;
+
           this.router.navigate([
             common.PATH_ORG,
             this.ref.data.orgId,
             common.PATH_PROJECT,
             this.ref.data.projectId,
+            common.PATH_REPO,
+            repoId,
             common.PATH_BRANCH,
-            this.selectedBranchItem.extraId,
+            this.createBranchForm.value.branchId,
             common.PATH_BLOCKML
           ]);
         }),
@@ -76,7 +90,6 @@ export class CreateBranchDialogComponent implements OnInit {
   }
 
   branchChange(branchExtraId: any) {
-    console.log(branchExtraId);
     this.selectedBranchItem = this.branchesList.find(
       x => x.extraId === branchExtraId
     );

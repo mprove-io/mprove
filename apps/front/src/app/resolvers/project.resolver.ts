@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { ApiService } from '../services/api.service';
-import { NavStore } from '../stores/nav.store';
+import { NavState, NavStore } from '../stores/nav.store';
 import { ProjectStore } from '../stores/project.store';
 
 @Injectable({ providedIn: 'root' })
@@ -39,11 +39,11 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
           let project = resp.payload.project;
 
           this.navStore.update(state =>
-            Object.assign({}, state, {
+            Object.assign({}, state, <NavState>{
               projectId: project.projectId,
               projectName: project.name,
               branchId: state.branchId || common.BRANCH_MASTER,
-              isProdRepo: common.isDefined(state.branchId)
+              isRepoProd: common.isDefined(state.branchId)
                 ? state.isRepoProd
                 : true
             })

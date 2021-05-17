@@ -9,6 +9,9 @@ export class ToBackendIsBranchExistRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsBoolean()
+  isRepoProd: boolean;
 }
 
 export class ToBackendIsBranchExistRequest extends ToBackendRequest {

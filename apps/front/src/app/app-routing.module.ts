@@ -23,6 +23,7 @@ import { ProjectTeamComponent } from './modules/project/project-team/project-tea
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
+import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
@@ -31,6 +32,7 @@ import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
+import { RepoResolver } from './resolvers/repo.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
 
@@ -146,18 +148,21 @@ const routes: Routes = [
                 resolve: [MemberResolver, TeamResolver]
               },
               {
-                component: BlockmlComponent,
-                path:
-                  common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_EXTRA_ID}`,
-                resolve: [
-                  // MemberResolver
-                ],
+                path: common.PATH_REPO + `/:${common.PARAMETER_REPO_ID}`,
+                resolve: [RepoResolver],
                 children: [
                   {
-                    component: BlockmlComponent,
-                    path: common.PATH_BLOCKML,
-                    resolve: [
-                      // MemberResolver
+                    path:
+                      common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_ID}`,
+                    resolve: [BranchResolver],
+                    children: [
+                      {
+                        component: BlockmlComponent,
+                        path: common.PATH_BLOCKML,
+                        resolve: [
+                          //
+                        ]
+                      }
                     ]
                   }
                 ]

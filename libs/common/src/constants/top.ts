@@ -34,11 +34,13 @@ export const PATH_ORG_OWNER_CHANGED = 'organization-owner-changed';
 
 export const PATH_PROJECT_DELETED = 'project-deleted';
 
-export const PARAMETER_BRANCH_EXTRA_ID = 'branchExtraId';
 export const PARAMETER_ORG_ID = 'orgId';
 export const PARAMETER_PROJECT_ID = 'projectId';
+export const PARAMETER_REPO_ID = 'repoId';
+export const PARAMETER_BRANCH_ID = 'branchId';
 
 export const PATH_PROJECT = 'project';
+export const PATH_REPO = 'repo';
 export const PATH_BRANCH = 'branch';
 
 export const PATH_SETTINGS = 'settings';

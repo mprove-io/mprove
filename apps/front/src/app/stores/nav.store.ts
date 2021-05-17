@@ -37,7 +37,7 @@ export class NavStore extends Store<NavState> {
 
   clearOrgAndDeps() {
     this.update(state =>
-      Object.assign({}, state, {
+      Object.assign({}, state, <NavState>{
         orgId: undefined,
         orgName: undefined,
         projectId: undefined,
@@ -50,7 +50,7 @@ export class NavStore extends Store<NavState> {
 
   clearProjectAndDeps() {
     this.update(state =>
-      Object.assign({}, state, {
+      Object.assign({}, state, <NavState>{
         projectId: undefined,
         projectName: undefined,
         isRepoProd: undefined,

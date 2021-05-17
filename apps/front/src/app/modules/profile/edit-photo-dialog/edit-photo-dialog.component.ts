@@ -3,7 +3,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { NavStore } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -76,7 +76,7 @@ export class EditPhotoDialogComponent {
       .pipe(
         map((resp: apiToBackend.ToBackendSetAvatarResponse) => {
           this.navStore.update(state =>
-            Object.assign({}, state, {
+            Object.assign({}, state, <NavState>{
               avatarSmall: resp.payload.avatarSmall,
               avatarBig: resp.payload.avatarBig
             })

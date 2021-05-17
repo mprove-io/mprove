@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { TeamStore } from '~front/app/stores/team.store';
+import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -29,13 +29,16 @@ export class RemoveMemberDialogComponent {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendDeleteMemberResponse) => {
-          this.teamStore.update(state => ({
-            members: state.members.filter(
-              x =>
-                x.memberId !== this.ref.data.memberId ||
-                x.projectId !== this.ref.data.projectId
-            )
-          }));
+          this.teamStore.update(
+            state =>
+              <TeamState>{
+                members: state.members.filter(
+                  x =>
+                    x.memberId !== this.ref.data.memberId ||
+                    x.projectId !== this.ref.data.projectId
+                )
+              }
+          );
         }),
         take(1)
       )

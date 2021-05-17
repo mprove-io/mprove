@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
-import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { NavState } from '~front/app/stores/nav.store';
@@ -28,27 +27,25 @@ export class NavbarComponent {
   ) {}
 
   navigateBlockml() {
-    let alias;
-    this.userQuery.alias$
+    let userId;
+    this.userQuery.userId$
       .pipe(
-        tap(z => (alias = z)),
+        tap(x => (userId = x)),
         take(1)
       )
       .subscribe();
 
-    let branchExtraId = makeBranchExtraId({
-      branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd,
-      alias: alias
-    });
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
 
     this.router.navigate([
       common.PATH_ORG,
       this.nav.orgId,
       common.PATH_PROJECT,
       this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
       common.PATH_BRANCH,
-      branchExtraId,
+      this.nav.branchId,
       common.PATH_BLOCKML
     ]);
   }

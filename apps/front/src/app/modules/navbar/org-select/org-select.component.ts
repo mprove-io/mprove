@@ -4,7 +4,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavStore } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -72,10 +72,10 @@ export class OrgSelectComponent {
     ]);
 
     this.navStore.update(state =>
-      Object.assign({}, state, {
+      Object.assign({}, state, <NavState>{
         projectId: undefined,
         projectName: undefined,
-        isProdRepo: false,
+        isRepoProd: false,
         branchId: undefined
       })
     );

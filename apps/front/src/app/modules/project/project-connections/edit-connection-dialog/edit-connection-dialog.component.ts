@@ -5,7 +5,10 @@ import { map, take } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { ConnectionsStore } from '~front/app/stores/connections.store';
+import {
+  ConnectionsState,
+  ConnectionsStore
+} from '~front/app/stores/connections.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -189,7 +192,7 @@ export class EditConnectionDialogComponent implements OnInit {
           this.connectionsStore.update(state => {
             state.connections[this.ref.data.i] = resp.payload.connection;
 
-            return {
+            return <ConnectionsState>{
               connections: [...state.connections],
               total: state.total
             };

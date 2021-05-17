@@ -5,7 +5,10 @@ import { map, take } from 'rxjs/operators';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { ConnectionsStore } from '~front/app/stores/connections.store';
+import {
+  ConnectionsState,
+  ConnectionsStore
+} from '~front/app/stores/connections.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -190,10 +193,13 @@ export class AddConnectionDialogComponent implements OnInit {
         map((resp: apiToBackend.ToBackendCreateConnectionResponse) => {
           let connection = resp.payload.connection;
 
-          this.connectionsStore.update(state => ({
-            connections: [...state.connections, connection],
-            total: state.total
-          }));
+          this.connectionsStore.update(
+            state =>
+              <ConnectionsState>{
+                connections: [...state.connections, connection],
+                total: state.total
+              }
+          );
         }),
         take(1)
       )

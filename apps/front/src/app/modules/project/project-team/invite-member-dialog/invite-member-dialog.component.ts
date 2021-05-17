@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { TeamStore } from '~front/app/stores/team.store';
+import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -52,10 +52,13 @@ export class InviteMemberDialogComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendCreateMemberResponse) => {
           let member = resp.payload.member;
-          this.teamStore.update(state => ({
-            members: [...state.members, member],
-            total: state.total
-          }));
+          this.teamStore.update(
+            state =>
+              <TeamState>{
+                members: [...state.members, member],
+                total: state.total
+              }
+          );
         }),
         take(1)
       )

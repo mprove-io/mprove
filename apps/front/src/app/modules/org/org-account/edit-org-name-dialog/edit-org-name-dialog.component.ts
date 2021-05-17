@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { NavStore } from '~front/app/stores/nav.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { OrgStore } from '~front/app/stores/org.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
@@ -55,7 +55,7 @@ export class EditOrgNameDialogComponent implements OnInit {
           let org = resp.payload.org;
           this.orgStore.update(org);
           this.navStore.update(state =>
-            Object.assign({}, state, {
+            Object.assign({}, state, <NavState>{
               orgId: org.orgId,
               orgName: org.name
             })
