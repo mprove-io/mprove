@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import {
   IActionMapping,
   KEYS,
-  TreeComponent
+  TreeComponent,
+  TreeNode
 } from '@circlon/angular-tree-component';
 import { take, tap } from 'rxjs/operators';
 import { RepoQuery } from '~front/app/queries/repo.query';
@@ -10,7 +11,8 @@ import { RepoState } from '~front/app/stores/repo.store';
 
 @Component({
   selector: 'm-blockml-tree',
-  templateUrl: './blockml-tree.component.html'
+  templateUrl: './blockml-tree.component.html',
+  styleUrls: ['blockml-tree.component.scss']
 })
 export class BlockmlTreeComponent {
   repo: RepoState;
@@ -71,5 +73,17 @@ export class BlockmlTreeComponent {
     //   .pipe(take(1))
     //   .subscribe(id => (selectedProjectId = id));
     // this.itemsTree.treeModel.getNodeById(selectedProjectId).expand();
+  }
+
+  nodeOnClick(node: TreeNode) {
+    node.toggleActivated();
+    if (node.data.isFolder) {
+      if (node.hasChildren) {
+        node.toggleExpanded();
+        console.log('1');
+      }
+    } else {
+      // this.navigateService.navigateToFileLine(node.data.file_id);
+    }
   }
 }

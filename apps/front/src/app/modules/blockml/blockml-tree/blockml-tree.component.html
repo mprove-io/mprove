@@ -1,4 +1,4 @@
-<div class="catalog-tree">
+<div class="catalog-tree bg-white mx-6 mt-6 mb-4 rounded shadow-lg w-full">
   <tree-root
     #itemsTree
     [nodes]="repo?.nodes"
@@ -8,39 +8,41 @@
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
       <div class="flex flex-row">
-        <div>{{ node.data.name }}</div>
-
-        <!-- <div
-          fxFlex
-          fxLayout="row"
-          fxLayoutAlign="start center"
+        <div
           data-cy="blockmlTreeItem"
-          class="catalog-tree__file_clickable"
+          class="catalog-tree__file_clickable flex flex-row bg-blue-100 cursor-pointer px-5 py-2 w-full"
           [ngClass]="{
             'catalog-tree__file_hover': !node.hasChildren,
             'catalog-tree__file-active': !node.hasChildren && node.isFocused
           }"
           (click)="nodeOnClick(node)"
         >
-          <div class="catalog-tree__file-inner">
-            <div
-              *ngIf="!node.data.is_folder"
-              class="catalog-tree__file-icon catalog-tree__file-icon_{{node.data.file_id | extension}}"
-            >
-              {{ node.data.file_id | extension: true }}
+          <div
+            class="relative flex flex-row"
+            [ngClass]="{
+              'ml-5': !node.data.isFolder,
+              'ml-3': node.data.isFolder
+            }"
+          >
+            <div *ngIf="node.data.isFolder" class="bg-yellow-300">
+              <m-settings-icon></m-settings-icon>
             </div>
 
             <div
-              fxFlex
+              *ngIf="!node.data.isFolder"
+              class="font-bold h-7 w-7 bg-yellow-300"
               [ngClass]="{
-                'catalog-tree__file-name_offset-left_20': !node.data.is_folder,
-                'catalog-tree__file-name_offset-left_10': node.data.is_folder
+                'text-[#5dd0a8]': true
               }"
             >
+              {{ node.data.fileId | extension }}
+            </div>
+
+            <div class="ml-2">
               {{ node.data.name }}
             </div>
           </div>
-        </div> -->
+        </div>
 
         <!-- <button
           *ngIf="(isDev$ | async) && node.data.is_folder"

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AvatarComponent } from './avatar/avatar.component';
 import { LogoComponent } from './logo/logo.component';
+import { ExtensionPipe } from './pipes/extension.pipe';
 import { AddIconComponent } from './symbols/add-icon /add-icon.component';
 import { CheckIconComponent } from './symbols/check-icon/check-icon.component';
 import { CompletedRingComponent } from './symbols/completed-ring/completed-ring.component';
@@ -23,9 +24,11 @@ let sharedComponents = [
   AddIconComponent
 ];
 
+let pipesArray = [ExtensionPipe];
+
 @NgModule({
-  declarations: [...sharedComponents],
+  declarations: [...sharedComponents, ...pipesArray],
   imports: [CommonModule, ReactiveFormsModule],
-  exports: [...sharedComponents]
+  exports: [...sharedComponents, ...pipesArray]
 })
 export class SharedModule {}
