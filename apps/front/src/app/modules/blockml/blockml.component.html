@@ -1,7 +1,18 @@
 <div class="bg-blue1 flex flex-col h-full">
-  <div
-    data-cy="blockmlTitle"
-    class="font-semibold text-2xl mt-8 ml-6 text-gray1"
-    >BlockML
+  <div class="flex flex-row h-full">
+    <div class="flex flex-col flex-grow">
+      <div
+        data-cy="blockmlTitle"
+        class="font-semibold text-2xl mt-8 ml-6 text-gray1"
+        >BlockML
+      </div>
+
+      <div class="flex flex-row h-full flex-grow">
+        <m-blockml-tree class="flex w-1/3 bg-green-400"></m-blockml-tree>
+        <div class="flex-grow">Editor</div>
+      </div>
+    </div>
+
+    <div class="flex w-3/12">Right</div>
   </div>
 </div>

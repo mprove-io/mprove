@@ -23,6 +23,7 @@ import { ProjectTeamComponent } from './modules/project/project-team/project-tea
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
+import { BlockmlResolver } from './resolvers/blockml.resolver';
 import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
@@ -159,9 +160,7 @@ const routes: Routes = [
                       {
                         component: BlockmlComponent,
                         path: common.PATH_BLOCKML,
-                        resolve: [
-                          //
-                        ]
+                        resolve: [BlockmlResolver]
                       }
                     ]
                   }

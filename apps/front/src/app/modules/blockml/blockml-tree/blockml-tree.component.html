@@ -1,0 +1,114 @@
+<div class="catalog-tree">
+  <tree-root
+    #itemsTree
+    [nodes]="repo?.nodes"
+    [options]="treeOptions"
+    (initialized)="treeOnInitialized()"
+    (updateData)="treeOnUpdateData()"
+  >
+    <ng-template #treeNodeTemplate let-node="node" let-index="index">
+      <div class="flex flex-row">
+        <div>{{ node.data.name }}</div>
+
+        <!-- <div
+          fxFlex
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          data-cy="blockmlTreeItem"
+          class="catalog-tree__file_clickable"
+          [ngClass]="{
+            'catalog-tree__file_hover': !node.hasChildren,
+            'catalog-tree__file-active': !node.hasChildren && node.isFocused
+          }"
+          (click)="nodeOnClick(node)"
+        >
+          <div class="catalog-tree__file-inner">
+            <div
+              *ngIf="!node.data.is_folder"
+              class="catalog-tree__file-icon catalog-tree__file-icon_{{node.data.file_id | extension}}"
+            >
+              {{ node.data.file_id | extension: true }}
+            </div>
+
+            <div
+              fxFlex
+              [ngClass]="{
+                'catalog-tree__file-name_offset-left_20': !node.data.is_folder,
+                'catalog-tree__file-name_offset-left_10': node.data.is_folder
+              }"
+            >
+              {{ node.data.name }}
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <button
+          *ngIf="(isDev$ | async) && node.data.is_folder"
+          class="catalog-tree__menu-button"
+          [matMenuTriggerFor]="folderMenu"
+          data-cy="blockmlTreeFolderOptionsButton"
+          [ngClass]="{ disableFolderOptions: needSave$ | async }"
+          [disabled]="needSave$ | async"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button> -->
+
+        <!-- <mat-menu #folderMenu="matMenu">
+          <button
+            mat-menu-item
+            data-cy="blockmlTreeFolderOptionsNewFileButton"
+            (click)="openNewFileDialog(node)"
+          >
+            New file</button
+          >
+          <button
+            mat-menu-item
+            data-cy="blockmlTreeFolderOptionsNewFolderButton"
+            (click)="openNewFolderDialog(node)"
+          >
+            New folder</button
+          >
+          <button
+            mat-menu-item
+            data-cy="blockmlTreeFolderOptionsRenameFolderButton"
+            [disabled]="node.data.id === (projectId$ | async)"
+            (click)="openRenameFolderDialog(node)"
+          >
+            Rename folder
+          </button>
+          <button
+            mat-menu-item
+            data-cy="blockmlTreeFolderOptionsDeleteFolderButton"
+            [disabled]="node.data.id === (projectId$ | async)"
+            (click)="openDeleteFolderDialog(node)"
+          >
+            Delete folder
+          </button>
+        </mat-menu> -->
+
+        <!-- <button
+          *ngIf="(isDev$ | async) && !node.data.is_folder"
+          class="catalog-tree__menu-button"
+          [matMenuTriggerFor]="fileMenu"
+          data-cy="blockmlTreeFileOptionsButton"
+          [ngClass]="{ disableFileOptions: needSave$ | async }"
+          [disabled]="needSave$ | async"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button> -->
+
+        <!-- <mat-menu #fileMenu="matMenu">
+          <button
+            mat-menu-item
+            data-cy="blockmlTreeFileOptionsDeleteFileButton"
+            (click)="openDeleteFileDialog(node)"
+          >
+            Delete file</button
+          >
+        </mat-menu> -->
+      </div>
+    </ng-template>
+  </tree-root>
+</div>
+
+<div *ngIf="repo$ | async"></div>

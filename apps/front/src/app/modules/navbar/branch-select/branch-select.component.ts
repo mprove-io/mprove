@@ -24,7 +24,6 @@ export class BranchSelectComponent {
   isEditor$ = this.memberQuery.isEditor$.pipe(
     tap(x => {
       this.isEditor = x;
-      console.log(this.isEditor);
       this.cd.detectChanges();
     })
   );
