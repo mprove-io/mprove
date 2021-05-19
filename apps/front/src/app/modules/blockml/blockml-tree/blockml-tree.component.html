@@ -1,4 +1,4 @@
-<div class="catalog-tree bg-white mx-6 mt-6 mb-4 rounded shadow-lg w-full">
+<div class="bg-white mx-6 mt-6 mb-4 rounded shadow-lg w-full">
   <tree-root
     #itemsTree
     [nodes]="repo?.nodes"
@@ -10,37 +10,54 @@
       <div class="flex flex-row">
         <div
           data-cy="blockmlTreeItem"
-          class="catalog-tree__file_clickable flex flex-row bg-blue-100 cursor-pointer px-5 py-2 w-full"
-          [ngClass]="{
-            'catalog-tree__file_hover': !node.hasChildren,
-            'catalog-tree__file-active': !node.hasChildren && node.isFocused
-          }"
+          class="group flex flex-row cursor-pointer px-5 py-2 w-full hover:bg-blue2 select-none"
           (click)="nodeOnClick(node)"
         >
           <div
-            class="relative flex flex-row"
+            class="relative flex flex-row items-center w-full"
             [ngClass]="{
-              'ml-5': !node.data.isFolder,
-              'ml-3': node.data.isFolder
+              'ml-7': !node.data.isFolder,
+              'ml-0': node.data.isFolder
             }"
           >
-            <div *ngIf="node.data.isFolder" class="bg-yellow-300">
-              <m-settings-icon></m-settings-icon>
+            <div class="flex flex-grow flex-row items-center">
+              <div *ngIf="node.data.isFolder" class="flex flex-row space-x-1">
+                <m-chevron-right-icon
+                  *ngIf="!node.isExpanded"
+                ></m-chevron-right-icon>
+                <m-chevron-down-icon
+                  *ngIf="node.isExpanded"
+                ></m-chevron-down-icon>
+
+                <m-folder-closed-icon
+                  *ngIf="!node.isExpanded"
+                ></m-folder-closed-icon>
+                <m-folder-open-icon
+                  *ngIf="node.isExpanded"
+                ></m-folder-open-icon>
+              </div>
+
+              <div
+                *ngIf="!node.data.isFolder"
+                class="font-bold h-7 w-7"
+                [ngClass]="{
+                  'text-[#5dd0a8]': true
+                }"
+              >
+                {{ node.data.fileId | extension }}
+              </div>
+
+              <div class="ml-2">
+                {{ node.data.name }}
+              </div>
             </div>
 
-            <div
-              *ngIf="!node.data.isFolder"
-              class="font-bold h-7 w-7 bg-yellow-300"
-              [ngClass]="{
-                'text-[#5dd0a8]': true
-              }"
+            <button
+              class="flex invisible group-hover:visible h-9 w-9 rounded focus:outline-none hover:bg-blue-200 items-center justify-center"
+              (click)="nodeOptionsClick(node, $event)"
             >
-              {{ node.data.fileId | extension }}
-            </div>
-
-            <div class="ml-2">
-              {{ node.data.name }}
-            </div>
+              <m-dots-vertical-icon></m-dots-vertical-icon>
+            </button>
           </div>
         </div>
 

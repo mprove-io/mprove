@@ -80,10 +80,14 @@ export class BlockmlTreeComponent {
     if (node.data.isFolder) {
       if (node.hasChildren) {
         node.toggleExpanded();
-        console.log('1');
       }
     } else {
       // this.navigateService.navigateToFileLine(node.data.file_id);
     }
+  }
+
+  nodeOptionsClick(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
+    console.log('nodeOptionsClick');
   }
 }
