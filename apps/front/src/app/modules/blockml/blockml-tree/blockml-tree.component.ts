@@ -5,8 +5,10 @@ import {
   TreeComponent,
   TreeNode
 } from '@circlon/angular-tree-component';
-import { take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
+import { NavState } from '~front/app/stores/nav.store';
 import { RepoState } from '~front/app/stores/repo.store';
 
 @Component({
@@ -21,8 +23,7 @@ export class BlockmlTreeComponent {
       this.repo = x;
       console.log(x);
       this.cd.detectChanges();
-    }),
-    take(1)
+    })
   );
 
   actionMapping: IActionMapping = {
@@ -37,11 +38,25 @@ export class BlockmlTreeComponent {
     displayField: 'name'
   };
 
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
-  constructor(public repoQuery: RepoQuery, private cd: ChangeDetectorRef) {}
+  constructor(
+    public repoQuery: RepoQuery,
+    private cd: ChangeDetectorRef,
+    private navQuery: NavQuery
+  ) {}
 
   treeOnInitialized() {
+    this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
+
     // this.store
     //   .select(selectors.getSelectedProjectModeRepoFilePath)
     //   .pipe(
@@ -67,12 +82,7 @@ export class BlockmlTreeComponent {
   }
 
   treeOnUpdateData() {
-    // let selectedProjectId: string;
-    // this.store
-    //   .select(selectors.getSelectedProjectId)
-    //   .pipe(take(1))
-    //   .subscribe(id => (selectedProjectId = id));
-    // this.itemsTree.treeModel.getNodeById(selectedProjectId).expand();
+    this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
   }
 
   nodeOnClick(node: TreeNode) {
@@ -84,10 +94,5 @@ export class BlockmlTreeComponent {
     } else {
       // this.navigateService.navigateToFileLine(node.data.file_id);
     }
-  }
-
-  nodeOptionsClick(node: TreeNode, event: MouseEvent) {
-    event.stopPropagation();
-    console.log('nodeOptionsClick');
   }
 }

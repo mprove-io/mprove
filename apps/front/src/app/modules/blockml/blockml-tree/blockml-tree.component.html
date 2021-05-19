@@ -16,17 +16,18 @@
           <div
             class="relative flex flex-row items-center w-full"
             [ngClass]="{
-              'ml-7': !node.data.isFolder,
-              'ml-0': node.data.isFolder
+              'ml-10': !node.data.isFolder,
+              'ml-3': node.data.isFolder
             }"
           >
             <div class="flex flex-grow flex-row items-center">
               <div *ngIf="node.data.isFolder" class="flex flex-row space-x-1">
+                <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
                 <m-chevron-right-icon
-                  *ngIf="!node.isExpanded"
+                  *ngIf="!node.isExpanded && node.hasChildren"
                 ></m-chevron-right-icon>
                 <m-chevron-down-icon
-                  *ngIf="node.isExpanded"
+                  *ngIf="node.isExpanded && node.hasChildren"
                 ></m-chevron-down-icon>
 
                 <m-folder-closed-icon
@@ -52,12 +53,12 @@
               </div>
             </div>
 
-            <button
-              class="flex invisible group-hover:visible h-9 w-9 rounded focus:outline-none hover:bg-blue-200 items-center justify-center"
-              (click)="nodeOptionsClick(node, $event)"
-            >
-              <m-dots-vertical-icon></m-dots-vertical-icon>
-            </button>
+            <div class="flex invisible group-hover:visible">
+              <m-folder-options
+                *ngIf="node.data.isFolder"
+                [node]="node"
+              ></m-folder-options>
+            </div>
           </div>
         </div>
 
@@ -131,3 +132,4 @@
 </div>
 
 <div *ngIf="repo$ | async"></div>
+<div *ngIf="nav$ | async"></div>

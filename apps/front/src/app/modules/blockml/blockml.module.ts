@@ -5,10 +5,15 @@ import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { SharedModule } from '../shared/shared.module';
 import { BlockmlTreeComponent } from './blockml-tree/blockml-tree.component';
+import { FolderOptionsComponent } from './blockml-tree/folder-options/folder-options.component';
 import { BlockmlComponent } from './blockml.component';
 
 @NgModule({
-  declarations: [BlockmlComponent, BlockmlTreeComponent],
+  declarations: [
+    BlockmlComponent,
+    BlockmlTreeComponent,
+    FolderOptionsComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
