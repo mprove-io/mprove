@@ -5,6 +5,7 @@
     [options]="treeOptions"
     (initialized)="treeOnInitialized()"
     (updateData)="treeOnUpdateData()"
+    (moveNode)="onMoveNode($event)"
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
       <div class="flex flex-row">
@@ -31,10 +32,10 @@
                 ></m-chevron-down-icon>
 
                 <m-folder-closed-icon
-                  *ngIf="!node.isExpanded"
+                  *ngIf="!node.isExpanded || !node.hasChildren"
                 ></m-folder-closed-icon>
                 <m-folder-open-icon
-                  *ngIf="node.isExpanded"
+                  *ngIf="node.isExpanded && node.hasChildren"
                 ></m-folder-open-icon>
               </div>
 

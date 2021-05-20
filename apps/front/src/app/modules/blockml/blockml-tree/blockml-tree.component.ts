@@ -5,11 +5,13 @@ import {
   TreeComponent,
   TreeNode
 } from '@circlon/angular-tree-component';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
+import { ApiService } from '~front/app/services/api.service';
 import { NavState } from '~front/app/stores/nav.store';
-import { RepoState } from '~front/app/stores/repo.store';
+import { RepoState, RepoStore } from '~front/app/stores/repo.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
   selector: 'm-blockml-tree',
@@ -27,7 +29,14 @@ export class BlockmlTreeComponent {
   );
 
   actionMapping: IActionMapping = {
-    mouse: {},
+    mouse: {
+      // dragStart: () => {
+      //   this.cd.detach();
+      // },
+      // dragEnd: () => {
+      //   this.cd.reattach();
+      // }
+    },
     keys: {
       [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`)
     }
@@ -35,7 +44,10 @@ export class BlockmlTreeComponent {
 
   treeOptions = {
     actionMapping: this.actionMapping,
-    displayField: 'name'
+    displayField: 'name',
+    allowDrag: (node: TreeNode) => node.data.id !== this.nav.projectId,
+    allowDrop: (node: TreeNode, to: { parent: any; index: number }) =>
+      to.parent.data.isFolder && to.parent.data.id !== node.parent.data.id
   };
 
   nav: NavState;
@@ -51,7 +63,9 @@ export class BlockmlTreeComponent {
   constructor(
     public repoQuery: RepoQuery,
     private cd: ChangeDetectorRef,
-    private navQuery: NavQuery
+    private navQuery: NavQuery,
+    private apiService: ApiService,
+    private repoStore: RepoStore
   ) {}
 
   treeOnInitialized() {
@@ -94,5 +108,29 @@ export class BlockmlTreeComponent {
     } else {
       // this.navigateService.navigateToFileLine(node.data.file_id);
     }
+  }
+
+  onMoveNode(event: any) {
+    this.itemsTree.treeModel.getNodeById(event.to.parent.id).expand();
+
+    let payload: apiToBackend.ToBackendMoveCatalogNodeRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      fromNodeId: event.node.id,
+      toNodeId: event.to.parent.id + '/' + event.node.name
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {
+          this.repoStore.update(resp.payload.repo);
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }
