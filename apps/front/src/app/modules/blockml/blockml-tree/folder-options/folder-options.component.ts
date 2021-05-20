@@ -104,6 +104,18 @@ export class FolderOptionsComponent implements OnDestroy {
     this.closeMenu();
   }
 
+  renameFolder(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
+    this.myDialogService.showRenameFolder({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      nodeId: node.data.id,
+      folderName: node.data.name
+    });
+    this.closeMenu();
+  }
+
   ngOnDestroy() {
     if (this.menuId === this.openedMenuId)
       this.uiStore.update({ openedMenuId: undefined });
