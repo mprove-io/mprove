@@ -47,7 +47,9 @@ export class BlockmlTreeComponent {
     displayField: 'name',
     allowDrag: (node: TreeNode) => node.data.id !== this.nav.projectId,
     allowDrop: (node: TreeNode, to: { parent: any; index: number }) =>
-      to.parent.data.isFolder && to.parent.data.id !== node.parent.data.id
+      (to.parent.data.isFolder && to.parent.data.id !== node.parent.data.id) ||
+      (!to.parent.data.isFolder &&
+        to.parent.parent.data.id !== node.parent.data.id)
   };
 
   nav: NavState;
@@ -111,13 +113,30 @@ export class BlockmlTreeComponent {
   }
 
   onMoveNode(event: any) {
-    this.itemsTree.treeModel.getNodeById(event.to.parent.id).expand();
+    this.cd.detach();
+
+    // console.log(event.to.parent);
+
+    let nameArray = event.to.parent.id.split('/');
+    if (nameArray.length > 1) {
+      nameArray.pop();
+    }
+
+    let parentId = event.to.parent.isFolder
+      ? event.to.parent.id
+      : nameArray.join('/');
+
+    // console.log(parentId);
+
+    this.itemsTree.treeModel.getNodeById(parentId).expand();
+
+    let toNodeId = parentId + '/' + event.node.name;
 
     let payload: apiToBackend.ToBackendMoveCatalogNodeRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       fromNodeId: event.node.id,
-      toNodeId: event.to.parent.id + '/' + event.node.name
+      toNodeId: toNodeId
     };
 
     this.apiService
@@ -128,6 +147,7 @@ export class BlockmlTreeComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.cd.reattach();
         }),
         take(1)
       )
