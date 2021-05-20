@@ -1,4 +1,6 @@
 import { EmailConfirmedDialogComponent } from './modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
+import { DeleteFileDialogComponent } from './modules/blockml/blockml-tree/file-options/delete-file-dialog/delete-file-dialog.component';
+import { RenameFileDialogComponent } from './modules/blockml/blockml-tree/file-options/rename-file-dialog/rename-file-dialog.component';
 import { CreateFileDialogComponent } from './modules/blockml/blockml-tree/folder-options/create-file-dialog/create-file-dialog.component';
 import { CreateFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
 import { DeleteFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
@@ -54,9 +56,12 @@ export const appDialogs = [
   AddConnectionDialogComponent,
   DeleteConnectionDialogComponent,
   EditConnectionDialogComponent,
-  // blockml tree
+  // blockml tree - folder options
   CreateFolderDialogComponent,
   CreateFileDialogComponent,
   DeleteFolderDialogComponent,
-  RenameFolderDialogComponent
+  RenameFolderDialogComponent,
+  // blockml tree - file options
+  DeleteFileDialogComponent,
+  RenameFileDialogComponent
 ];

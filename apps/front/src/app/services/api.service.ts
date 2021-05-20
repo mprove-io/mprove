@@ -56,7 +56,8 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile
   ];
 
   constructor(

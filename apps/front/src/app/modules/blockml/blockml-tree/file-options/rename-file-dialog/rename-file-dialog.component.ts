@@ -9,11 +9,11 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'm-create-file-dialog',
-  templateUrl: './create-file-dialog.component.html'
+  selector: 'm-rename-file-dialog',
+  templateUrl: './rename-file-dialog.component.html'
 })
-export class CreateFileDialogComponent implements OnInit {
-  createFileForm: FormGroup;
+export class RenameFileDialogComponent implements OnInit {
+  renameFileForm: FormGroup;
 
   extList = constants.EXT_LIST;
 
@@ -27,10 +27,16 @@ export class CreateFileDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let fileName: string;
+    let nameArray = this.ref.data.fileName.split('.');
+    if (nameArray.length > 1) {
+      nameArray.pop();
+    }
 
-    this.createFileForm = this.fb.group({
-      fileName: [fileName, [Validators.required, Validators.maxLength(255)]],
+    this.renameFileForm = this.fb.group({
+      fileName: [
+        nameArray.join('.'),
+        [Validators.required, Validators.maxLength(255)]
+      ],
       fileExt: [this.fileExt]
     });
   }
@@ -41,31 +47,31 @@ export class CreateFileDialogComponent implements OnInit {
   }
 
   create() {
-    this.createFileForm.markAllAsTouched();
+    this.renameFileForm.markAllAsTouched();
 
-    if (!this.createFileForm.valid) {
+    if (!this.renameFileForm.valid) {
       return;
     }
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
+    let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
-      parentNodeId: this.ref.data.parentNodeId,
-      fileName:
-        this.createFileForm.value.fileName + this.createFileForm.value.fileExt
+      nodeId: this.ref.data.nodeId,
+      newName:
+        this.renameFileForm.value.fileName + this.renameFileForm.value.fileExt
     };
 
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
         payload
       )
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
+        tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
           this.repoStore.update(resp.payload.repo);
         }),
         take(1)

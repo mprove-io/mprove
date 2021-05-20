@@ -5,6 +5,8 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { BranchItem } from '../interfaces/_index';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
+import { DeleteFileDialogComponent } from '../modules/blockml/blockml-tree/file-options/delete-file-dialog/delete-file-dialog.component';
+import { RenameFileDialogComponent } from '../modules/blockml/blockml-tree/file-options/rename-file-dialog/rename-file-dialog.component';
 import { CreateFileDialogComponent } from '../modules/blockml/blockml-tree/folder-options/create-file-dialog/create-file-dialog.component';
 import { CreateFolderDialogComponent } from '../modules/blockml/blockml-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
 import { DeleteFolderDialogComponent } from '../modules/blockml/blockml-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
@@ -316,6 +318,32 @@ export class MyDialogService {
     folderName: string;
   }): void {
     this.dialogService.open(RenameFolderDialogComponent, {
+      enableClose: false,
+      data: item
+    });
+  }
+
+  showRenameFile(item: {
+    apiService: ApiService;
+    projectId: string;
+    branchId: string;
+    nodeId: string;
+    fileName: string;
+  }): void {
+    this.dialogService.open(RenameFileDialogComponent, {
+      enableClose: false,
+      data: item
+    });
+  }
+
+  showDeleteFile(item: {
+    apiService: ApiService;
+    projectId: string;
+    branchId: string;
+    fileNodeId: string;
+    fileName: string;
+  }): void {
+    this.dialogService.open(DeleteFileDialogComponent, {
       enableClose: false,
       data: item
     });

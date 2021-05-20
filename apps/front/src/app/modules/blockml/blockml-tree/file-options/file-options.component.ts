@@ -12,21 +12,21 @@ import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-folder-options',
-  templateUrl: './folder-options.component.html'
+  selector: 'm-file-options',
+  templateUrl: './file-options.component.html'
 })
-export class FolderOptionsComponent implements OnDestroy {
+export class FileOptionsComponent implements OnDestroy {
   @Input()
   node: TreeNode;
 
-  menuId = 'folderOptions';
+  menuId = 'fileOptions';
 
   openedMenuId: string;
   openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
     tap(x => (this.openedMenuId = x))
   );
 
-  isFolderOptionsMenuOpen = false;
+  isFileOptionsMenuOpen = false;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -48,7 +48,7 @@ export class FolderOptionsComponent implements OnDestroy {
   ) {}
 
   openMenu() {
-    this.isFolderOptionsMenuOpen = true;
+    this.isFileOptionsMenuOpen = true;
     this.uiStore.update({ openedMenuId: this.menuId });
   }
 
@@ -56,61 +56,39 @@ export class FolderOptionsComponent implements OnDestroy {
     if (common.isDefined(event)) {
       event.stopPropagation();
     }
-    this.isFolderOptionsMenuOpen = false;
+    this.isFileOptionsMenuOpen = false;
     this.uiStore.update({ openedMenuId: undefined });
   }
 
   toggleMenu(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
-    if (this.isFolderOptionsMenuOpen === true) {
+    if (this.isFileOptionsMenuOpen === true) {
       this.closeMenu();
     } else {
       this.openMenu();
     }
   }
 
-  newFolder(node: TreeNode, event: MouseEvent) {
+  deleteFile(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
-    this.myDialogService.showCreateFolder({
+    this.myDialogService.showDeleteFile({
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
-      parentNodeId: node.data.id
+      fileNodeId: node.data.id,
+      fileName: node.data.name
     });
     this.closeMenu();
   }
 
-  newFile(node: TreeNode, event: MouseEvent) {
+  renameFile(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
-    this.myDialogService.showCreateFile({
-      apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      parentNodeId: node.data.id
-    });
-    this.closeMenu();
-  }
-
-  deleteFolder(node: TreeNode, event: MouseEvent) {
-    event.stopPropagation();
-    this.myDialogService.showDeleteFolder({
-      apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      folderNodeId: node.data.id,
-      folderName: node.data.name
-    });
-    this.closeMenu();
-  }
-
-  renameFolder(node: TreeNode, event: MouseEvent) {
-    event.stopPropagation();
-    this.myDialogService.showRenameFolder({
+    this.myDialogService.showRenameFile({
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       nodeId: node.data.id,
-      folderName: node.data.name
+      fileName: node.data.name
     });
     this.closeMenu();
   }

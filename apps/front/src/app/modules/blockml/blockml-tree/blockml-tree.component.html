@@ -58,6 +58,11 @@
                 *ngIf="node.data.isFolder"
                 [node]="node"
               ></m-folder-options>
+
+              <m-file-options
+                *ngIf="!node.data.isFolder"
+                [node]="node"
+              ></m-file-options>
             </div>
           </div>
         </div>
