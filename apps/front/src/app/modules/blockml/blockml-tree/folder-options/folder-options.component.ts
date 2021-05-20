@@ -71,13 +71,35 @@ export class FolderOptionsComponent implements OnDestroy {
   }
 
   newFolder(node: TreeNode, event: MouseEvent) {
-    console.log(node);
     event.stopPropagation();
     this.myDialogService.showCreateFolder({
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       parentNodeId: node.data.id
+    });
+    this.closeMenu();
+  }
+
+  newFile(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
+    this.myDialogService.showCreateFile({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      parentNodeId: node.data.id
+    });
+    this.closeMenu();
+  }
+
+  deleteFolder(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
+    this.myDialogService.showDeleteFolder({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      folderNodeId: node.data.id,
+      folderName: node.data.name
     });
     this.closeMenu();
   }

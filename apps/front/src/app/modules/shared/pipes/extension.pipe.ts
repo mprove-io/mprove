@@ -12,17 +12,32 @@ export class ExtensionPipe implements PipeTransform {
       ext = valueChunks[1];
 
       switch (ext) {
-        case 'model':
-          s = 'm';
-          break;
-        case 'dashboard':
-          s = 'd';
-          break;
         case 'view':
           s = 'v';
           break;
+
+        case 'model':
+          s = 'm';
+          break;
+
+        case 'dashboard':
+          s = 'd';
+          break;
+
+        case 'viz':
+          s = 'z';
+          break;
+
         case 'udf':
           s = 'u';
+          break;
+
+        case 'config':
+          s = 'c';
+          break;
+
+        case 'md':
+          s = 't';
           break;
       }
     }

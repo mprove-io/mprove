@@ -40,12 +40,12 @@
 
               <div
                 *ngIf="!node.data.isFolder"
-                class="font-bold h-7 w-7"
+                class="font-bold w-7 text-center"
                 [ngClass]="{
                   'text-[#5dd0a8]': true
                 }"
               >
-                {{ node.data.fileId | extension }}
+                {{ node.data.fileId | extension: true | capitalize }}
               </div>
 
               <div class="ml-2">

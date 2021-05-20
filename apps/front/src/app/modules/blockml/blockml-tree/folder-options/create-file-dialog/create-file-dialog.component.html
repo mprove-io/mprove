@@ -1,0 +1,58 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="createFileDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Create File</div
+  >
+
+  <form
+    class="flex flex-col w-80"
+    [formGroup]="createFileForm"
+    (ngSubmit)="create()"
+  >
+    <input
+      data-cy="createFileDialogFileNameInput"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          createFileForm.controls['fileName'].invalid &&
+          createFileForm.controls['fileName'].touched
+      }"
+      formControlName="fileName"
+      placeholder="File Name"
+    />
+    <m-validation
+      [control]="createFileForm.controls['fileName']"
+    ></m-validation>
+
+    <div>Type:</div>
+    <ng-select
+      #typeSelect
+      data-cy="typeSelect"
+      class="mt-2 flex focus:outline-none w-80"
+      [items]="extList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="extChange($event)"
+      formControlName="fileExt"
+    >
+    </ng-select>
+
+    <div class="mt-72">
+      <button
+        data-cy="createFileDialogCreateButton"
+        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Create</button
+      >
+
+      <button
+        data-cy="createFileDialogCancelButton"
+        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

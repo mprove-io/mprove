@@ -53,7 +53,9 @@ export class ApiService {
     // special
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
     // blockml tree
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder
   ];
 
   constructor(

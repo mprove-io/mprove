@@ -12,12 +12,13 @@ import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-clo
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { LogoComponent } from './logo/logo.component';
+import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
 import { ValidationComponent } from './validation/validation.component';
 
-let pipesArray = [ExtensionPipe];
+let pipesArray = [ExtensionPipe, CapitalizePipe];
 
 let sharedComponents = [
   LogoComponent,

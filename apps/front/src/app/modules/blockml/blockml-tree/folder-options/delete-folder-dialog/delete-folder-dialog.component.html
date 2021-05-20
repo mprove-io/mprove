@@ -1,25 +1,25 @@
 <div class="flex flex-col p-9 bg-white">
   <div
-    data-cy="deleteConnectionDialogTitle"
+    data-cy="deleteFolderDialogTitle"
     class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
-    >Delete Connection</div
+    >Delete Folder</div
   >
 
   <div class="mt-6 text-gray1 text-lg"
-    >Are you sure you want to delete connection
-    <span class="font-semibold"> {{ ref.data.connectionId }} </span>?</div
+    >Are you sure you want to delete folder
+    <span class="font-semibold"> {{ this.ref.data.folderName }} </span>?</div
   >
 
   <div class="mt-6">
     <button
-      data-cy="deleteConnectionDialogDeleteButton"
+      data-cy="deleteFolderDialogDeleteButton"
       class="py-3 w-28 border bg-red1 text-white rounded font-medium focus:outline-none"
       (click)="delete()"
       >Delete</button
     >
 
     <button
-      data-cy="deleteConnectionDialogCancelButton"
+      data-cy="deleteFolderDialogCancelButton"
       class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
       type="button"
       (click)="cancel()"

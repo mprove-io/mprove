@@ -1,5 +1,7 @@
 import { EmailConfirmedDialogComponent } from './modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
+import { CreateFileDialogComponent } from './modules/blockml/blockml-tree/folder-options/create-file-dialog/create-file-dialog.component';
 import { CreateFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
+import { DeleteFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import { CreateBranchDialogComponent } from './modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import { DeleteBranchDialogComponent } from './modules/navbar/branch-select/delete-branch-dialog/delete-branch-dialog.component';
 import { CreateOrgDialogComponent } from './modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
@@ -52,5 +54,7 @@ export const appDialogs = [
   DeleteConnectionDialogComponent,
   EditConnectionDialogComponent,
   // blockml tree
-  CreateFolderDialogComponent
+  CreateFolderDialogComponent,
+  CreateFileDialogComponent,
+  DeleteFolderDialogComponent
 ];
