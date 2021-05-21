@@ -1,0 +1,20 @@
+<div class="flex flex-col bg-white ml-6 mt-6 mb-4 rounded shadow-lg w-full">
+  <div>1</div>
+
+  <!-- <ngx-monaco-editor
+    fxFlex
+    *ngIf="fileEditorTheme"
+    class="file-editor__code-editor"
+    data-cy="blockmlFileEditorCodeEditor"
+    [options]="editorOptions"
+    [(ngModel)]="code"
+    (ngModelChange)="onTextChanged()"
+    (onInit)="onEditorInit($event)"
+  ></ngx-monaco-editor> -->
+
+  <div>{{ code }}</div>
+</div>
+
+<!-- <div *ngIf="repo$ | async"></div>
+<div *ngIf="nav$ | async"></div> -->
+<div *ngIf="code$ | async"></div>

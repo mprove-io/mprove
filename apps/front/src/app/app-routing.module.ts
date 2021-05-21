@@ -11,6 +11,7 @@ import { ForgotPasswordComponent } from './modules/auth/password/01-forgot-passw
 import { PasswordResetSentComponent } from './modules/auth/password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
+import { BlockmlEditorComponent } from './modules/blockml/blockml-editor/blockml-editor.component';
 import { BlockmlComponent } from './modules/blockml/blockml.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
@@ -26,6 +27,7 @@ import { ProjectDeletedComponent } from './modules/special/project-deleted/proje
 import { BlockmlResolver } from './resolvers/blockml.resolver';
 import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
+import { FileResolver } from './resolvers/file.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
@@ -160,7 +162,16 @@ const routes: Routes = [
                       {
                         component: BlockmlComponent,
                         path: common.PATH_BLOCKML,
-                        resolve: [BlockmlResolver]
+                        resolve: [BlockmlResolver],
+                        children: [
+                          {
+                            component: BlockmlEditorComponent,
+                            path:
+                              common.PATH_FILE +
+                              `/:${common.PARAMETER_FILE_ID}`,
+                            resolve: [FileResolver]
+                          }
+                        ]
                       }
                     ]
                   }

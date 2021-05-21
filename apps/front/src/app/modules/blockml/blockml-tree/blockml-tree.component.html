@@ -1,4 +1,4 @@
-<div class="bg-white mx-6 mt-6 mb-4 rounded shadow-lg w-full">
+<div class="bg-white ml-6 mt-6 mb-4 rounded shadow-lg w-full">
   <tree-root
     #itemsTree
     [nodes]="repo?.nodes"
@@ -67,71 +67,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <button
-          *ngIf="(isDev$ | async) && node.data.is_folder"
-          class="catalog-tree__menu-button"
-          [matMenuTriggerFor]="folderMenu"
-          data-cy="blockmlTreeFolderOptionsButton"
-          [ngClass]="{ disableFolderOptions: needSave$ | async }"
-          [disabled]="needSave$ | async"
-        >
-          <mat-icon>more_vert</mat-icon>
-        </button> -->
-
-        <!-- <mat-menu #folderMenu="matMenu">
-          <button
-            mat-menu-item
-            data-cy="blockmlTreeFolderOptionsNewFileButton"
-            (click)="openNewFileDialog(node)"
-          >
-            New file</button
-          >
-          <button
-            mat-menu-item
-            data-cy="blockmlTreeFolderOptionsNewFolderButton"
-            (click)="openNewFolderDialog(node)"
-          >
-            New folder</button
-          >
-          <button
-            mat-menu-item
-            data-cy="blockmlTreeFolderOptionsRenameFolderButton"
-            [disabled]="node.data.id === (projectId$ | async)"
-            (click)="openRenameFolderDialog(node)"
-          >
-            Rename folder
-          </button>
-          <button
-            mat-menu-item
-            data-cy="blockmlTreeFolderOptionsDeleteFolderButton"
-            [disabled]="node.data.id === (projectId$ | async)"
-            (click)="openDeleteFolderDialog(node)"
-          >
-            Delete folder
-          </button>
-        </mat-menu> -->
-
-        <!-- <button
-          *ngIf="(isDev$ | async) && !node.data.is_folder"
-          class="catalog-tree__menu-button"
-          [matMenuTriggerFor]="fileMenu"
-          data-cy="blockmlTreeFileOptionsButton"
-          [ngClass]="{ disableFileOptions: needSave$ | async }"
-          [disabled]="needSave$ | async"
-        >
-          <mat-icon>more_vert</mat-icon>
-        </button> -->
-
-        <!-- <mat-menu #fileMenu="matMenu">
-          <button
-            mat-menu-item
-            data-cy="blockmlTreeFileOptionsDeleteFileButton"
-            (click)="openDeleteFileDialog(node)"
-          >
-            Delete file</button
-          >
-        </mat-menu> -->
       </div>
     </ng-template>
   </tree-root>

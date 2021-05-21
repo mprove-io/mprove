@@ -2078,6 +2078,11 @@
     "@angular-devkit/schematics" "11.2.6"
     jsonc-parser "3.0.0"
 
+"@sentinel-one/ngx-monaco-editor@^9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@sentinel-one/ngx-monaco-editor/-/ngx-monaco-editor-9.0.1.tgz#ec0ee8ffd1e2ba30dad0702fdc50344cfcc636d9"
+  integrity sha512-z0j2GbzIWEaUs42GFpxL7bYGFQDP21+l/bbYAda1ByosuIfe4MXK8Sa1pAhgg1vNrYD5q1CRTzVShfHzjqSs1A==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"

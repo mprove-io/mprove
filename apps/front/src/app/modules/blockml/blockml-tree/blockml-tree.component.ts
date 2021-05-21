@@ -9,6 +9,7 @@ import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -67,7 +68,8 @@ export class BlockmlTreeComponent {
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private repoStore: RepoStore
+    private repoStore: RepoStore,
+    private navigateService: NavigateService
   ) {}
 
   treeOnInitialized() {
@@ -108,7 +110,7 @@ export class BlockmlTreeComponent {
         node.toggleExpanded();
       }
     } else {
-      // this.navigateService.navigateToFileLine(node.data.file_id);
+      this.navigateService.navigateToFileLine(node.data.fileId);
     }
   }
 

@@ -7,9 +7,11 @@
         >BlockML
       </div>
 
-      <div class="flex flex-row h-full flex-grow">
+      <div class="flex flex-row h-full flex-grow flex-stretch">
         <m-blockml-tree class="flex w-1/3"></m-blockml-tree>
-        <div class="flex-grow">Editor</div>
+        <div class="flex-grow">
+          <router-outlet></router-outlet>
+        </div>
       </div>
     </div>
 
