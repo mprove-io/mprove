@@ -499,7 +499,15 @@
             "polyfills": "apps/front/src/polyfills.ts",
             "tsConfig": "apps/front/tsconfig.app.json",
             "aot": true,
-            "assets": ["apps/front/src/favicon.svg", "apps/front/src/assets"],
+            "assets": [
+              "apps/front/src/favicon.svg",
+              "apps/front/src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@sentinel-one/ngx-monaco-editor/assets/monaco",
+                "output": "./assets/monaco/"
+              }
+            ],
             "styles": ["apps/front/src/styles.scss"],
             "scripts": []
           },

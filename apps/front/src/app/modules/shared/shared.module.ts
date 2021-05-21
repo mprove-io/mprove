@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { AvatarComponent } from './avatar/avatar.component';
 import { AddIconComponent } from './icons/add-icon /add-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
@@ -41,7 +42,7 @@ let sharedComponents = [
 
 @NgModule({
   declarations: [...sharedComponents, ...pipesArray],
-  imports: [CommonModule, ReactiveFormsModule],
-  exports: [...sharedComponents, ...pipesArray]
+  imports: [CommonModule, ReactiveFormsModule, MonacoEditorModule.forRoot()],
+  exports: [...sharedComponents, ...pipesArray, MonacoEditorModule]
 })
 export class SharedModule {}

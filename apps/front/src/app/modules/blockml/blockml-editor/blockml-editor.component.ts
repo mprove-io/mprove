@@ -8,9 +8,19 @@ import { RepoStore } from '~front/app/stores/repo.store';
 
 @Component({
   selector: 'm-blockml-editor',
-  templateUrl: './blockml-editor.component.html'
+  templateUrl: './blockml-editor.component.html',
+  styleUrls: ['blockml-editor.component.scss']
 })
 export class BlockmlEditorComponent {
+  fileEditorTheme = 'vs-dark';
+
+  editorOptions = {
+    // automaticLayout: true,
+    theme: this.fileEditorTheme,
+    fontSize: 16,
+    language: 'yaml'
+  };
+
   code: string;
   code$ = this.fileQuery.content$.pipe(
     tap(x => {
