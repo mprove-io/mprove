@@ -37,6 +37,9 @@ export class FileResolver implements Resolve<Observable<boolean>> {
         nav = x;
       });
 
+    let fileIdArr = fileId.split(common.TRIPLE_UNDERSCORE);
+    let fileName = fileIdArr[fileIdArr.length - 1];
+
     let payload: apiToBackend.ToBackendGetFileRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
@@ -50,7 +53,11 @@ export class FileResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetFileResponse) => {
           this.repoStore.update(resp.payload.repo);
-          this.fileStore.update({ content: resp.payload.content });
+          this.fileStore.update({
+            content: resp.payload.content,
+            name: fileName,
+            fileId: fileId
+          });
           return true;
         })
       );

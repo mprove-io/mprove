@@ -3,11 +3,13 @@ import { Store, StoreConfig } from '@datorama/akita';
 
 export class UiState {
   openedMenuId: string;
+  needSave: boolean;
 }
 
 function createInitialState(): UiState {
   return {
-    openedMenuId: undefined
+    openedMenuId: undefined,
+    needSave: false
   };
 }
 

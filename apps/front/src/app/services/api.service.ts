@@ -58,7 +58,9 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
+    // blockml editor
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile
   ];
 
   constructor(

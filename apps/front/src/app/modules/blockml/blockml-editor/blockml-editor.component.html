@@ -1,5 +1,35 @@
 <div class="flex flex-col h-full">
-  <div class="h-[100px]">1</div>
+  <div class="flex flex-row justify-between items-center px-5 py-5">
+    <div>{{ file?.name }}</div>
+
+    <div class="">
+      <button
+        type="button"
+        data-cy="blockmlEditorSaveButton"
+        class="py-2 w-28 text-white rounded font-medium focus:outline-none"
+        [ngClass]="{
+          'bg-gray-400 cursor-default': !needSave,
+          'bg-blue3': needSave
+        }"
+        (click)="save()"
+        [disabled]="!needSave"
+        >Save</button
+      >
+
+      <button
+        type="button"
+        data-cy="blockmlEditorCancelButton"
+        class="ml-3 py-2 w-28 rounded border font-medium focus:outline-none"
+        [ngClass]="{
+          ' text-gray-400 border-gray-400 cursor-default': !needSave,
+          'text-blue3 border-blue3 ': needSave
+        }"
+        (click)="cancel()"
+        [disabled]="!needSave"
+        >Cancel</button
+      >
+    </div>
+  </div>
 
   <div class="bg-[#1E1E1E] rounded h-full">
     <!-- <div class="bg-green-300 h-full">3</div> -->
@@ -9,11 +39,13 @@
       class="my-code-editor"
       data-cy="blockmlEditor"
       [options]="editorOptions"
-      [(ngModel)]="code"
+      [(ngModel)]="content"
+      (ngModelChange)="onTextChanged()"
+      (onInit)="onEditorInit($event)"
     ></ngx-monaco-editor>
   </div>
 </div>
 
-<!-- <div *ngIf="repo$ | async"></div>
-<div *ngIf="nav$ | async"></div> -->
-<div *ngIf="code$ | async"></div>
+<div *ngIf="needSave$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="file$ | async"></div>
