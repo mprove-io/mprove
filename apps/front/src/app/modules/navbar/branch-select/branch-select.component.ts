@@ -39,6 +39,8 @@ export class BranchSelectComponent {
 
   nav$ = this.navQuery.select().pipe(
     tap(x => {
+      // console.log('branch-select:',x.branchId);
+
       let user: UserState;
       this.userQuery
         .select()

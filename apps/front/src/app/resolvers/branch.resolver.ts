@@ -54,6 +54,8 @@ export class BranchResolver implements Resolve<Observable<boolean>> {
         map((resp: apiToBackend.ToBackendIsBranchExistResponse) => {
           let isExist = resp.payload.isExist;
 
+          // console.log('branch-resolver:', branchId);
+
           if (isExist === true) {
             this.navStore.update(state =>
               Object.assign({}, state, <NavState>{

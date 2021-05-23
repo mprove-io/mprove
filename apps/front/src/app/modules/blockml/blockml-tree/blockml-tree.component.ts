@@ -73,6 +73,10 @@ export class BlockmlTreeComponent {
   ) {}
 
   treeOnInitialized() {
+    if (this.repo.nodes.length === 0) {
+      return;
+    }
+
     this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
 
     // this.store
@@ -100,6 +104,10 @@ export class BlockmlTreeComponent {
   }
 
   treeOnUpdateData() {
+    if (this.repo.nodes.length === 0) {
+      return;
+    }
+
     this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
   }
 

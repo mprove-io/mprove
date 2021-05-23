@@ -8,13 +8,16 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { apiToDisk } from '~front/barrels/api-to-disk';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { enums } from '~front/barrels/enums';
 import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
+import { RepoStore } from '../stores/repo.store';
 import { AuthService } from './auth.service';
 import { MyDialogService } from './my-dialog.service';
+import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -67,7 +70,9 @@ export class ApiService {
     private authHttpClient: HttpClient,
     private authService: AuthService,
     private spinner: NgxSpinnerService,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    private repoStore: RepoStore,
+    private navigateService: NavigateService
   ) {}
 
   req(
@@ -190,7 +195,36 @@ export class ApiService {
         this.authService.logout();
       }
 
-      this.myDialogService.showError({ errorData, isThrow: true });
+      if (
+        errorData.message ===
+          enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK &&
+        errorData.response.body.info.error.message ===
+          apiToBackend.ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK &&
+        errorData.response.body.info.error.originalError?.message ===
+          apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
+      ) {
+        console.log('repo is not clean');
+
+        let branchId =
+          errorData.response.body.info.error.originalError.data.currentBranch;
+
+        // console.log('api-service:', branchId);
+
+        setTimeout(() => {
+          this.navigateService.navigateToBlockml(branchId);
+
+          this.myDialogService.showError({
+            errorData: {
+              message:
+                enums.ErEnum
+                  .CAN_NOT_SWITCH_BRANCH_WHILE_IT_HAS_UNCOMMITTED_CHANGES
+            },
+            isThrow: false
+          });
+        }, 0);
+      } else {
+        this.myDialogService.showError({ errorData, isThrow: true });
+      }
     }
 
     // throw new Error('apiService mapRes');

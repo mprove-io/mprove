@@ -54,7 +54,10 @@
               </div>
             </div>
 
-            <div class="flex invisible group-hover:visible">
+            <div
+              *ngIf="nav.isRepoProd === false"
+              class="flex invisible group-hover:visible"
+            >
               <m-folder-options
                 *ngIf="node.data.isFolder"
                 [node]="node"

@@ -2,7 +2,7 @@
   <div class="flex flex-row justify-between items-center px-5 py-5">
     <div>{{ file?.name }}</div>
 
-    <div class="">
+    <div *ngIf="nav?.isRepoProd === false">
       <button
         type="button"
         data-cy="blockmlEditorSaveButton"

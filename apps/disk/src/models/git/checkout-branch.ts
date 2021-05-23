@@ -32,7 +32,10 @@ export async function checkoutBranch(item: {
 
   if (okStatuses.indexOf(repoStatus) < 0) {
     throw new common.ServerError({
-      message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
+      message: apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH,
+      data: {
+        currentBranch: currentBranch
+      }
     });
   }
 
