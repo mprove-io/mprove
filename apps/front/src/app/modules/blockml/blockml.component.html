@@ -25,6 +25,20 @@
 
           <button
             type="button"
+            data-cy="blockmlCommitButton"
+            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
+            [ngClass]="{
+              'bg-gray-400 cursor-default':
+                repo.repoStatus !== repoStatusNeedPull,
+              'bg-blue3': repo.repoStatus === repoStatusNeedPull
+            }"
+            (click)="pull()"
+            [disabled]="repo.repoStatus !== repoStatusNeedPull"
+            >Pull</button
+          >
+
+          <button
+            type="button"
             data-cy="blockmlPushButton"
             class="py-2 px-5 text-white rounded font-medium focus:outline-none"
             [ngClass]="{
