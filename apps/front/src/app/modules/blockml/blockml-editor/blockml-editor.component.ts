@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileState } from '~front/app/stores/file.store';
@@ -55,7 +54,6 @@ export class BlockmlEditorComponent {
   );
 
   constructor(
-    public repoQuery: RepoQuery,
     public fileQuery: FileQuery,
     public uiQuery: UiQuery,
     public navQuery: NavQuery,

@@ -63,7 +63,9 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
     // blockml editor
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+    // blockml
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo
   ];
 
   constructor(
