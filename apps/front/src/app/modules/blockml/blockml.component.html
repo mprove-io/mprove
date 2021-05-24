@@ -8,11 +8,11 @@
           >BlockML
         </div>
 
-        <div *ngIf="nav?.isRepoProd === false">
+        <div *ngIf="nav?.isRepoProd === false" class="space-x-3">
           <button
             type="button"
             data-cy="blockmlCommitButton"
-            class="py-2 w-28 text-white rounded font-medium focus:outline-none"
+            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
                 repo.repoStatus !== repoStatusNeedCommit,
@@ -21,6 +21,20 @@
             (click)="commit()"
             [disabled]="repo.repoStatus !== repoStatusNeedCommit"
             >Commit</button
+          >
+
+          <button
+            type="button"
+            data-cy="blockmlPushButton"
+            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
+            [ngClass]="{
+              'bg-gray-400 cursor-default':
+                repo.repoStatus !== repoStatusNeedPush,
+              'bg-blue3': repo.repoStatus === repoStatusNeedPush
+            }"
+            (click)="push()"
+            [disabled]="repo.repoStatus !== repoStatusNeedPush"
+            >Push To Production</button
           >
         </div>
       </div>

@@ -15,6 +15,7 @@ import { common } from '~front/barrels/common';
 })
 export class BlockmlComponent implements OnInit {
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
+  repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -73,6 +74,23 @@ export class BlockmlComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
+          this.repoStore.update(resp.payload.repo);
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  push() {
+    let payload: apiToBackend.ToBackendPushRepoRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId
+    };
+
+    this.apiService
+      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo, payload)
+      .pipe(
+        tap((resp: apiToBackend.ToBackendPushRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
         }),
         take(1)

@@ -4,6 +4,7 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { maker } from '~backend/barrels/maker';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
@@ -71,7 +72,8 @@ export class PushRepoController {
       }
     );
 
-    let prodBranch = await this.branchesService.getBranchCheckExists({
+    let prodBranch = maker.makeBranch({
+      structId: devBranch.struct_id,
       projectId: projectId,
       repoId: common.PROD_REPO_ID,
       branchId: branchId

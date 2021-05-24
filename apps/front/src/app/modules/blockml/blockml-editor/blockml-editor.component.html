@@ -2,7 +2,7 @@
   <div class="flex flex-row justify-between items-center px-5 py-5">
     <div>{{ file?.name }}</div>
 
-    <div *ngIf="nav?.isRepoProd === false">
+    <div *ngIf="nav?.isRepoProd === false" class="space-x-3">
       <button
         type="button"
         data-cy="blockmlEditorSaveButton"
@@ -19,7 +19,7 @@
       <button
         type="button"
         data-cy="blockmlEditorCancelButton"
-        class="ml-3 py-2 w-28 rounded border font-medium focus:outline-none"
+        class="py-2 w-28 rounded border font-medium focus:outline-none"
         [ngClass]="{
           ' text-gray-400 border-gray-400 cursor-default': !needSave,
           'text-blue3 border-blue3 ': needSave
