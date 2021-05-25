@@ -1,10 +1,12 @@
 <button
-  class="flex relative z-10 h-9 w-9 rounded focus:outline-none hover:bg-blue-200 items-center justify-center"
+  class="flex relative z-10 h-9 w-9 rounded focus:outline-none items-center justify-center"
   [ngClass]="{
-    'cursor-default': openedMenuId && menuId !== openedMenuId
+    'cursor-default text-gray-400':
+      (openedMenuId && menuId !== openedMenuId) || needSave === true,
+    'hover:bg-blue-200': needSave === false
   }"
   (click)="toggleMenu($event)"
-  [disabled]="openedMenuId && menuId !== openedMenuId"
+  [disabled]="(openedMenuId && menuId !== openedMenuId) || needSave === true"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
@@ -41,3 +43,4 @@
 <div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>
+<div *ngIf="needSave$ | async"></div>

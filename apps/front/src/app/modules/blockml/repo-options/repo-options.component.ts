@@ -51,6 +51,9 @@ export class RepoOptionsComponent implements OnDestroy {
     })
   );
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   constructor(
     public uiQuery: UiQuery,
     public fileQuery: FileQuery,

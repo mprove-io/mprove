@@ -18,11 +18,14 @@
             class="py-2 px-5 text-white rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
-                repo.repoStatus !== repoStatusNeedCommit,
-              'bg-blue3': repo.repoStatus === repoStatusNeedCommit
+                repo.repoStatus !== repoStatusNeedCommit || needSave === true,
+              'bg-blue3':
+                repo.repoStatus === repoStatusNeedCommit && needSave === false
             }"
             (click)="commit()"
-            [disabled]="repo.repoStatus !== repoStatusNeedCommit"
+            [disabled]="
+              repo.repoStatus !== repoStatusNeedCommit || needSave === true
+            "
             >Commit</button
           >
 
@@ -33,10 +36,14 @@
             *ngIf="repo.repoStatus === repoStatusNeedPull"
             [ngClass]="{
               'bg-gray-400 cursor-default':
-                repo.repoStatus !== repoStatusNeedPull,
-              'bg-blue3': repo.repoStatus === repoStatusNeedPull
+                repo.repoStatus !== repoStatusNeedPull || needSave === true,
+              'bg-blue3':
+                repo.repoStatus === repoStatusNeedPull && needSave === false
             }"
             (click)="pull()"
+            [disabled]="
+              repo.repoStatus !== repoStatusNeedPull || needSave === true
+            "
             >Pull from Production</button
           >
 
@@ -46,11 +53,14 @@
             class="py-2 px-5 text-white rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
-                repo.repoStatus !== repoStatusNeedPush,
-              'bg-blue3': repo.repoStatus === repoStatusNeedPush
+                repo.repoStatus !== repoStatusNeedPush || needSave === true,
+              'bg-blue3':
+                repo.repoStatus === repoStatusNeedPush && needSave === false
             }"
             (click)="push()"
-            [disabled]="repo.repoStatus !== repoStatusNeedPush"
+            [disabled]="
+              repo.repoStatus !== repoStatusNeedPush || needSave === true
+            "
             >Push to Production</button
           >
 
@@ -83,3 +93,4 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>
+<div *ngIf="needSave$ | async"></div>

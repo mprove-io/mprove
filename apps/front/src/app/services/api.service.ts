@@ -53,6 +53,7 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
     // special
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
     // blockml tree

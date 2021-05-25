@@ -5,6 +5,7 @@ import { filter, switchMap, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { FileState } from '~front/app/stores/file.store';
@@ -59,10 +60,14 @@ export class BlockmlComponent implements OnInit {
     })
   );
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private fileQuery: FileQuery,
     public repoQuery: RepoQuery,
     public repoStore: RepoStore,

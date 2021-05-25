@@ -6,7 +6,7 @@
   [loading]="branchesListLoading"
   [items]="branchesList"
   [clearable]="false"
-  [disabled]="selectedProjectId === undefined"
+  [disabled]="selectedProjectId === undefined || needSave === true"
   [searchable]="false"
   [(ngModel)]="selectedBranchExtraId"
   (change)="branchChange()"
@@ -14,10 +14,7 @@
   bindLabel="extraName"
   bindValue="extraId"
 >
-  <ng-template
-    ng-header-tmp
-    *ngIf="branchesListLength > 0 && selectedBranchItem"
-  >
+  <ng-template ng-header-tmp>
     <div class="font-semibold text-sm"> Repository - Branch </div>
   </ng-template>
   <ng-template ng-footer-tmp *ngIf="isEditor === true">
@@ -29,14 +26,27 @@
           selectedBranchItem.branchId === branchMaster,
         'text-red1 hover:bg-blue2': selectedBranchItem.branchId !== branchMaster
       }"
-      (click)="deleteBranch(branchSelect)"
+      (click)="deleteBranch(branchSelect, $event)"
       [disabled]="selectedBranchItem.branchId === branchMaster"
       >Delete Branch</button
     >
+
+    <button
+      data-cy="branchSelectMergeBranchButton"
+      class="py-3 rounded w-full focus:outline-none"
+      [ngClass]="{
+        'text-gray-400 cursor-default': selectedBranchItem.isRepoProd === true,
+        'text-blue3 hover:bg-blue2': selectedBranchItem.isRepoProd === false
+      }"
+      (click)="mergeBranch(branchSelect, $event)"
+      [disabled]="selectedBranchItem.isRepoProd === true"
+      >Merge Branch</button
+    >
+
     <button
       data-cy="branchSelectCreateBranchButton"
       class="py-3 rounded text-blue3 hover:bg-blue2 w-full focus:outline-none"
-      (click)="createNewBranch(branchSelect)"
+      (click)="createNewBranch(branchSelect, $event)"
       >+ New Local Branch</button
     >
   </ng-template>
@@ -44,3 +54,5 @@
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
+<div *ngIf="file$ | async"></div>
+<div *ngIf="needSave$ | async"></div>

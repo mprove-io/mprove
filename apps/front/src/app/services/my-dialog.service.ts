@@ -13,6 +13,7 @@ import { DeleteFolderDialogComponent } from '../modules/blockml/blockml-tree/fol
 import { RenameFolderDialogComponent } from '../modules/blockml/blockml-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import { CreateBranchDialogComponent } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import { DeleteBranchDialogComponent } from '../modules/navbar/branch-select/delete-branch-dialog/delete-branch-dialog.component';
+import { MergeBranchDialogComponent } from '../modules/navbar/branch-select/merge-branch-dialog/merge-branch-dialog.component';
 import { CreateOrgDialogComponent } from '../modules/navbar/org-select/create-org-dialog/create-org-dialog.component';
 import { CreateProjectDialogComponent } from '../modules/navbar/project-select/create-project-dialog/create-project-dialog.component';
 import { DeleteOrgDialogComponent } from '../modules/org/org-account/delete-org-dialog/delete-org-dialog.component';
@@ -35,6 +36,7 @@ import { RemoveMemberDialogComponent } from '../modules/project/project-team/rem
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import { ApiService } from './api.service';
+import { FileService } from './file.service';
 
 @Injectable({ providedIn: 'root' })
 export class MyDialogService {
@@ -118,6 +120,21 @@ export class MyDialogService {
     selectedBranchExtraId: string;
   }): void {
     this.dialogService.open(CreateBranchDialogComponent, {
+      enableClose: false,
+      data: item
+    });
+  }
+
+  showMergeBranch(item: {
+    apiService: ApiService;
+    fileService: FileService;
+    projectId: string;
+    fileId: string;
+    currentBranchId: string;
+    currentBranchExtraName: string;
+    branchesList: BranchItem[];
+  }): void {
+    this.dialogService.open(MergeBranchDialogComponent, {
       enableClose: false,
       data: item
     });

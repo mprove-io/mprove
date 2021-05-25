@@ -3,11 +3,15 @@ import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
+import { FileQuery } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
+import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { FileState } from '~front/app/stores/file.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -73,11 +77,25 @@ export class BranchSelectComponent {
     })
   );
 
+  file: FileState;
+  file$ = this.fileQuery.select().pipe(
+    tap(x => {
+      this.file = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   constructor(
     private userQuery: UserQuery,
+    private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
+    private fileQuery: FileQuery,
     private apiService: ApiService,
+    private fileService: FileService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
     private router: Router
@@ -153,7 +171,8 @@ export class BranchSelectComponent {
       .subscribe();
   }
 
-  createNewBranch(branchSelect: any) {
+  createNewBranch(branchSelect: any, event: MouseEvent) {
+    event.stopPropagation();
     branchSelect.close();
 
     this.myDialogService.showCreateBranch({
@@ -166,7 +185,25 @@ export class BranchSelectComponent {
     });
   }
 
-  deleteBranch(branchSelect: any) {
+  mergeBranch(branchSelect: any, event: MouseEvent) {
+    event.stopPropagation();
+    branchSelect.close();
+
+    this.myDialogService.showMergeBranch({
+      apiService: this.apiService,
+      fileService: this.fileService,
+      projectId: this.selectedProjectId,
+      fileId: this.file.fileId,
+      currentBranchId: this.selectedBranchItem.branchId,
+      currentBranchExtraName: this.selectedBranchItem.extraName,
+      branchesList: this.branchesList
+    });
+  }
+
+  deleteBranch(branchSelect: any, event: MouseEvent) {
+    event.stopPropagation();
+    branchSelect.close();
+
     let alias: string;
     this.userQuery.alias$
       .pipe(
@@ -174,8 +211,6 @@ export class BranchSelectComponent {
         take(1)
       )
       .subscribe();
-
-    branchSelect.close();
 
     this.myDialogService.showDeleteBranch({
       apiService: this.apiService,
