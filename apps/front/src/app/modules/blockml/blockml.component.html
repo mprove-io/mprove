@@ -37,7 +37,7 @@
               'bg-blue3': repo.repoStatus === repoStatusNeedPull
             }"
             (click)="pull()"
-            >Pull</button
+            >Pull from Production</button
           >
 
           <button
@@ -51,7 +51,7 @@
             }"
             (click)="push()"
             [disabled]="repo.repoStatus !== repoStatusNeedPush"
-            >Push To Production</button
+            >Push to Production</button
           >
 
           <m-repo-options></m-repo-options>
@@ -81,4 +81,5 @@
 
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>

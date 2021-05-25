@@ -1,9 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, take, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { filter, switchMap, take, tap } from 'rxjs/operators';
+import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { ApiService } from '~front/app/services/api.service';
+import { FileService } from '~front/app/services/file.service';
+import { FileState } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -22,6 +26,14 @@ export class BlockmlComponent implements OnInit {
   nav$ = this.navQuery.select().pipe(
     tap(x => {
       this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  file: FileState;
+  file$ = this.fileQuery.select().pipe(
+    tap(x => {
+      this.file = x;
       this.cd.detectChanges();
     })
   );
@@ -51,9 +63,11 @@ export class BlockmlComponent implements OnInit {
     private router: Router,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private fileQuery: FileQuery,
     public repoQuery: RepoQuery,
     public repoStore: RepoStore,
-    private apiService: ApiService
+    private apiService: ApiService,
+    public fileService: FileService
   ) {}
 
   ngOnInit() {
@@ -111,6 +125,11 @@ export class BlockmlComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
         }),
+        switchMap(x =>
+          common.isDefined(this.file.fileId)
+            ? this.fileService.getFile()
+            : of([])
+        ),
         take(1)
       )
       .subscribe();

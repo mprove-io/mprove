@@ -30,6 +30,12 @@
     (click)="revertToProduction($event)"
     >Revert to Production</button
   >
+
+  <button
+    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+    (click)="pullFromProduction($event)"
+    >Pull from Production</button
+  >
 </div>
 
 <div *ngIf="openedMenuId$ | async"></div>

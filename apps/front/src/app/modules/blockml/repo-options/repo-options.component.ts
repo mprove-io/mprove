@@ -2,12 +2,13 @@ import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TreeNode } from '@circlon/angular-tree-component';
 import { of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
+import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
@@ -56,6 +57,7 @@ export class RepoOptionsComponent implements OnDestroy {
     public uiStore: UiStore,
     public repoStore: RepoStore,
     public fileStore: FileStore,
+    public fileService: FileService,
     public navQuery: NavQuery,
     private authService: AuthService,
     private router: Router,
@@ -89,33 +91,12 @@ export class RepoOptionsComponent implements OnDestroy {
 
   revertToLastCommit(event?: MouseEvent) {
     event.stopPropagation();
-
     this.closeMenu();
 
     let payload: apiToBackend.ToBackendRevertRepoToLastCommitRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId
     };
-
-    let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload;
-
-    let fileId = this.file.fileId;
-    let fileName: string;
-
-    if (common.isDefined(fileId)) {
-      let fileIdArr = fileId.split(common.TRIPLE_UNDERSCORE);
-      fileName = fileIdArr[fileIdArr.length - 1];
-
-      getFilePayload = {
-        projectId: this.nav.projectId,
-        isRepoProd: this.nav.isRepoProd,
-        branchId: this.nav.branchId,
-        fileNodeId:
-          this.nav.projectId +
-          '/' +
-          fileId.split(common.TRIPLE_UNDERSCORE).join('/')
-      };
-    }
 
     this.apiService
       .req(
@@ -128,22 +109,8 @@ export class RepoOptionsComponent implements OnDestroy {
           this.repoStore.update(resp.payload.repo);
         }),
         switchMap(x =>
-          common.isDefined(fileId)
-            ? this.apiService
-                .req(
-                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-                  getFilePayload
-                )
-                .pipe(
-                  map((resp: apiToBackend.ToBackendGetFileResponse) => {
-                    this.repoStore.update(resp.payload.repo);
-                    this.fileStore.update({
-                      content: resp.payload.content,
-                      name: fileName,
-                      fileId: fileId
-                    });
-                  })
-                )
+          common.isDefined(this.file.fileId)
+            ? this.fileService.getFile()
             : of([])
         ),
         take(1)
@@ -153,14 +120,56 @@ export class RepoOptionsComponent implements OnDestroy {
 
   revertToProduction(event?: MouseEvent) {
     event.stopPropagation();
-    // this.myDialogService.showDeleteFile({
-    //   apiService: this.apiService,
-    //   projectId: this.nav.projectId,
-    //   branchId: this.nav.branchId,
-    //   fileNodeId: node.data.id,
-    //   fileName: node.data.name
-    // });
     this.closeMenu();
+
+    let payload: apiToBackend.ToBackendRevertRepoToProductionRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendRevertRepoToProduction,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendRevertRepoToProductionResponse) => {
+          this.repoStore.update(resp.payload.repo);
+        }),
+        switchMap(x =>
+          common.isDefined(this.file.fileId)
+            ? this.fileService.getFile()
+            : of([])
+        ),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  pullFromProduction(event?: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId
+    };
+
+    this.apiService
+      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo, payload)
+      .pipe(
+        tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
+          this.repoStore.update(resp.payload.repo);
+        }),
+        switchMap(x =>
+          common.isDefined(this.file.fileId)
+            ? this.fileService.getFile()
+            : of([])
+        ),
+        take(1)
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {

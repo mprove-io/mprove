@@ -69,7 +69,8 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
     // blockml repo options
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction
   ];
 
   constructor(
