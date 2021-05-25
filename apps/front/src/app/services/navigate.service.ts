@@ -188,7 +188,7 @@ export class NavigateService {
   //   );
   // }
 
-  navigateToBlockml(branchId: string) {
+  navigateToBlockml(branchId?: string) {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -200,7 +200,7 @@ export class NavigateService {
       common.PATH_REPO,
       repoId,
       common.PATH_BRANCH,
-      branchId,
+      common.isDefined(branchId) ? branchId : this.nav.branchId,
       common.PATH_BLOCKML
     ]);
   }

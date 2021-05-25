@@ -9,6 +9,7 @@ import { BlockmlTreeComponent } from './blockml-tree/blockml-tree.component';
 import { FileOptionsComponent } from './blockml-tree/file-options/file-options.component';
 import { FolderOptionsComponent } from './blockml-tree/folder-options/folder-options.component';
 import { BlockmlComponent } from './blockml.component';
+import { RepoOptionsComponent } from './repo-options/repo-options.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { BlockmlComponent } from './blockml.component';
     BlockmlTreeComponent,
     FolderOptionsComponent,
     FileOptionsComponent,
-    BlockmlEditorComponent
+    BlockmlEditorComponent,
+    RepoOptionsComponent
   ],
   imports: [
     CommonModule,

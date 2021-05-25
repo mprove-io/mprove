@@ -1,0 +1,37 @@
+<button
+  class="flex relative z-10 h-9 w-9 rounded focus:outline-none hover:bg-blue-200 items-center justify-center"
+  [ngClass]="{
+    'cursor-default': openedMenuId && menuId !== openedMenuId
+  }"
+  (click)="toggleMenu($event)"
+  [disabled]="openedMenuId && menuId !== openedMenuId"
+>
+  <m-dots-vertical-icon></m-dots-vertical-icon>
+</button>
+
+<button
+  class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
+  *ngIf="isRepoOptionsMenuOpen === true"
+  (click)="closeMenu($event)"
+></button>
+
+<div
+  class="absolute right-0 mt-1 w-64 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
+  *ngIf="isRepoOptionsMenuOpen === true"
+>
+  <button
+    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+    (click)="revertToLastCommit($event)"
+    >Revert to Last Commit</button
+  >
+
+  <button
+    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+    (click)="revertToProduction($event)"
+    >Revert to Production</button
+  >
+</div>
+
+<div *ngIf="openedMenuId$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="file$ | async"></div>

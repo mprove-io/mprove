@@ -8,7 +8,10 @@
           >BlockML
         </div>
 
-        <div *ngIf="nav?.isRepoProd === false" class="space-x-3">
+        <div
+          *ngIf="nav?.isRepoProd === false"
+          class="relative flex flex-row space-x-3 items-center"
+        >
           <button
             type="button"
             data-cy="blockmlCommitButton"
@@ -27,13 +30,13 @@
             type="button"
             data-cy="blockmlCommitButton"
             class="py-2 px-5 text-white rounded font-medium focus:outline-none"
+            *ngIf="repo.repoStatus === repoStatusNeedPull"
             [ngClass]="{
               'bg-gray-400 cursor-default':
                 repo.repoStatus !== repoStatusNeedPull,
               'bg-blue3': repo.repoStatus === repoStatusNeedPull
             }"
             (click)="pull()"
-            [disabled]="repo.repoStatus !== repoStatusNeedPull"
             >Pull</button
           >
 
@@ -50,6 +53,8 @@
             [disabled]="repo.repoStatus !== repoStatusNeedPush"
             >Push To Production</button
           >
+
+          <m-repo-options></m-repo-options>
         </div>
       </div>
 
@@ -70,7 +75,7 @@
       </div>
     </div>
 
-    <div class="flex w-3/12">Right</div>
+    <div class="flex w-3/12"></div>
   </div>
 </div>
 
