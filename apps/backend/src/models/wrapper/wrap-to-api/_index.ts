@@ -10,5 +10,6 @@ export * from './wrap-to-api-orgs-item';
 export * from './wrap-to-api-project';
 export * from './wrap-to-api-projects-item';
 export * from './wrap-to-api-query';
+export * from './wrap-to-api-struct';
 export * from './wrap-to-api-user';
 export * from './wrap-to-api-viz';

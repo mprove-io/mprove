@@ -4,17 +4,22 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class GetRepoController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private rabbitService: RabbitService
+    private rabbitService: RabbitService,
+    private structsService: StructsService,
+    private branchesService: BranchesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo)
@@ -60,8 +65,19 @@ export class GetRepoController {
       }
     );
 
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
+      branchId: diskResponse.payload.repo.currentBranchId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
+    });
+
     let payload: apiToBackend.ToBackendGetRepoResponsePayload = {
-      repo: diskResponse.payload.repo
+      repo: diskResponse.payload.repo,
+      struct: wrapper.wrapToApiStruct(struct)
     };
 
     return payload;

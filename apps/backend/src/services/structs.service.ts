@@ -40,7 +40,7 @@ SELECT
   s.struct_id
 FROM structs as s 
 LEFT JOIN branches as b ON s.struct_id=b.struct_id 
-WHERE b.branch_id is NULL
+WHERE b.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 10 MINUTE)
 `);
     });
 

@@ -7,4 +7,5 @@ export * from './orgs-item';
 export * from './project';
 export * from './projects-item';
 export * from './query-estimate';
+export * from './struct';
 export * from './user';
