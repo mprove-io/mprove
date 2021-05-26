@@ -68,7 +68,7 @@ export class GetRepoController {
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: isRepoProd === true ? common.PROD_REPO_ID : user.user_id,
-      branchId: diskResponse.payload.repo.currentBranchId
+      branchId: branchId
     });
 
     let struct = await this.structsService.getStructCheckExists({

@@ -81,7 +81,7 @@ export class BlockmlService {
       udfsDict: udfsDict
     });
 
-    if (skipDb === false) {
+    if (common.isUndefined(skipDb) || skipDb === false) {
       await this.dbService.writeRecords({
         modify: false,
         records: {
