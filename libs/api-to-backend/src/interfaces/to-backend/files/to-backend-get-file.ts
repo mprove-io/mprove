@@ -30,6 +30,10 @@ export class ToBackendGetFileResponsePayload {
 
   @IsString()
   content: string;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  struct: common.Struct;
 }
 
 export class ToBackendGetFileResponse extends common.MyResponse {

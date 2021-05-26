@@ -11,12 +11,14 @@ import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { NavState } from '../stores/nav.store';
 import { RepoStore } from '../stores/repo.store';
+import { StructStore } from '../stores/struct.store';
 
 @Injectable({ providedIn: 'root' })
 export class BlockmlResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private repoStore: RepoStore,
+    private structStore: StructStore,
     private apiService: ApiService
   ) {}
 
@@ -42,8 +44,8 @@ export class BlockmlResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
-          let repo = resp.payload.repo;
-          this.repoStore.update(repo);
+          this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
 
           return true;
         })

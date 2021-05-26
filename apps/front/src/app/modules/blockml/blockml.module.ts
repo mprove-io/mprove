@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { SharedModule } from '../shared/shared.module';
 import { BlockmlEditorComponent } from './blockml-editor/blockml-editor.component';
+import { BlockmlRightComponent } from './blockml-right/blockml-right.component';
 import { BlockmlTreeComponent } from './blockml-tree/blockml-tree.component';
 import { FileOptionsComponent } from './blockml-tree/file-options/file-options.component';
 import { FolderOptionsComponent } from './blockml-tree/folder-options/folder-options.component';
@@ -18,7 +19,8 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     FolderOptionsComponent,
     FileOptionsComponent,
     BlockmlEditorComponent,
-    RepoOptionsComponent
+    RepoOptionsComponent,
+    BlockmlRightComponent
   ],
   imports: [
     CommonModule,

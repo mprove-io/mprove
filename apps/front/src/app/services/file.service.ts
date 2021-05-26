@@ -7,6 +7,7 @@ import { NavQuery } from '../queries/nav.query';
 import { FileState, FileStore } from '../stores/file.store';
 import { NavState } from '../stores/nav.store';
 import { RepoStore } from '../stores/repo.store';
+import { StructStore } from '../stores/struct.store';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -28,6 +29,7 @@ export class FileService {
   constructor(
     public fileQuery: FileQuery,
     public repoStore: RepoStore,
+    public structStore: StructStore,
     public fileStore: FileStore,
     public navQuery: NavQuery,
     private apiService: ApiService
@@ -36,14 +38,14 @@ export class FileService {
     this.nav$.subscribe();
   }
 
-  getFile() {
+  getFile(fileId?: string) {
     let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload;
 
-    let fileId = this.file.fileId;
+    let fileIdx = fileId || this.file.fileId;
     let fileName: string;
 
-    if (common.isDefined(fileId)) {
-      let fileIdArr = fileId.split(common.TRIPLE_UNDERSCORE);
+    if (common.isDefined(fileIdx)) {
+      let fileIdArr = fileIdx.split(common.TRIPLE_UNDERSCORE);
       fileName = fileIdArr[fileIdArr.length - 1];
 
       getFilePayload = {
@@ -53,7 +55,7 @@ export class FileService {
         fileNodeId:
           this.nav.projectId +
           '/' +
-          fileId.split(common.TRIPLE_UNDERSCORE).join('/')
+          fileIdx.split(common.TRIPLE_UNDERSCORE).join('/')
       };
     }
 
@@ -65,10 +67,12 @@ export class FileService {
       .pipe(
         map((resp: apiToBackend.ToBackendGetFileResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
+
           this.fileStore.update({
             content: resp.payload.content,
             name: fileName,
-            fileId: fileId
+            fileId: fileIdx
           });
         })
       );
