@@ -11,6 +11,7 @@ import { FileService } from '~front/app/services/file.service';
 import { FileState } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
+import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -72,6 +73,7 @@ export class BlockmlComponent implements OnInit {
     public repoQuery: RepoQuery,
     public repoStore: RepoStore,
     private apiService: ApiService,
+    public structStore: StructStore,
     public fileService: FileService
   ) {}
 
@@ -95,6 +97,7 @@ export class BlockmlComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCommitRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         take(1)
       )
@@ -112,6 +115,7 @@ export class BlockmlComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendPushRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         take(1)
       )
@@ -129,6 +133,7 @@ export class BlockmlComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         switchMap(x =>
           common.isDefined(this.file.fileId)

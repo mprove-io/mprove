@@ -4,6 +4,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { RepoStore } from '~front/app/stores/repo.store';
+import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -16,6 +17,7 @@ export class CreateFolderDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
+    public structStore: StructStore,
     private repoStore: RepoStore
   ) {}
 
@@ -53,6 +55,7 @@ export class CreateFolderDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFolderResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         take(1)
       )

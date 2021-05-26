@@ -12,6 +12,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
+import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 
 @Component({
@@ -69,6 +70,7 @@ export class BlockmlTreeComponent {
     private navQuery: NavQuery,
     private apiService: ApiService,
     private repoStore: RepoStore,
+    public structStore: StructStore,
     private navigateService: NavigateService
   ) {}
 
@@ -157,6 +159,8 @@ export class BlockmlTreeComponent {
       .pipe(
         tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
+
           this.cd.reattach();
         }),
         take(1)

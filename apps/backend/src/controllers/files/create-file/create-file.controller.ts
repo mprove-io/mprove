@@ -3,16 +3,21 @@ import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class CreateFileController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private branchesService: BranchesService,
+    private structsService: StructsService,
     private rabbitService: RabbitService
   ) {}
 
@@ -62,8 +67,19 @@ export class CreateFileController {
       }
     );
 
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
+    });
+
     let payload: apiToBackend.ToBackendCreateFileResponsePayload = {
-      repo: diskResponse.payload.repo
+      repo: diskResponse.payload.repo,
+      struct: wrapper.wrapToApiStruct(struct)
     };
 
     return payload;

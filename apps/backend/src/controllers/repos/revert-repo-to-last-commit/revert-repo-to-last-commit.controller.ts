@@ -4,12 +4,15 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class RevertRepoToLastCommitController {
@@ -18,6 +21,8 @@ export class RevertRepoToLastCommitController {
     private dbService: DbService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
+    private structsService: StructsService,
+    private blockmlService: BlockmlService,
     private branchesService: BranchesService
   ) {}
 
@@ -29,6 +34,7 @@ export class RevertRepoToLastCommitController {
     @ValidateRequest(apiToBackend.ToBackendRevertRepoToLastCommitRequest)
     reqValid: apiToBackend.ToBackendRevertRepoToLastCommitRequest
   ) {
+    let { traceId } = reqValid.info;
     let { projectId, branchId } = reqValid.payload;
 
     let repoId = user.user_id;
@@ -72,13 +78,17 @@ export class RevertRepoToLastCommitController {
       }
     );
 
-    let prodBranch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: common.PROD_REPO_ID,
-      branchId: branchId
-    });
+    let structId = common.makeId();
 
-    devBranch.struct_id = prodBranch.struct_id;
+    devBranch.struct_id = structId;
+
+    await this.blockmlService.rebuildStruct({
+      traceId,
+      orgId: project.org_id,
+      projectId,
+      structId,
+      diskFiles: diskResponse.payload.files
+    });
 
     await this.dbService.writeRecords({
       modify: true,
@@ -87,8 +97,13 @@ export class RevertRepoToLastCommitController {
       }
     });
 
+    let struct = await this.structsService.getStructCheckExists({
+      structId: structId
+    });
+
     let payload: apiToBackend.ToBackendRevertRepoToLastCommitResponsePayload = {
-      repo: diskResponse.payload.repo
+      repo: diskResponse.payload.repo,
+      struct: wrapper.wrapToApiStruct(struct)
     };
 
     return payload;

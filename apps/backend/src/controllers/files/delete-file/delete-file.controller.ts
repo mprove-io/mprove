@@ -4,6 +4,7 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
@@ -11,6 +12,7 @@ import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StructsService } from '~backend/services/structs.service';
 
 @Controller()
 export class DeleteFileController {
@@ -19,6 +21,7 @@ export class DeleteFileController {
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService,
+    private structsService: StructsService,
     private dbService: DbService,
     private blockmlService: BlockmlService
   ) {}
@@ -94,8 +97,13 @@ export class DeleteFileController {
       }
     });
 
+    let struct = await this.structsService.getStructCheckExists({
+      structId: structId
+    });
+
     let payload: apiToBackend.ToBackendDeleteFileResponsePayload = {
-      repo: diskResponse.payload.repo
+      repo: diskResponse.payload.repo,
+      struct: wrapper.wrapToApiStruct(struct)
     };
 
     return payload;

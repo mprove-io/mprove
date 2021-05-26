@@ -86,7 +86,7 @@ export class RevertRepoToLastCommitService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: true
     });
 
     let payload: apiToDisk.ToDiskRevertRepoToLastCommitResponsePayload = {
@@ -98,7 +98,8 @@ export class RevertRepoToLastCommitService {
         currentBranchId: currentBranch,
         conflicts: conflicts,
         nodes: itemCatalog.nodes
-      }
+      },
+      files: itemCatalog.files
     };
 
     return payload;

@@ -24,6 +24,10 @@ export class ToBackendDeleteFolderResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  struct: common.Struct;
 }
 
 export class ToBackendDeleteFolderResponse extends common.MyResponse {

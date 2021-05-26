@@ -27,6 +27,10 @@ export class ToBackendCreateFolderResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  struct: common.Struct;
 }
 
 export class ToBackendCreateFolderResponse extends common.MyResponse {

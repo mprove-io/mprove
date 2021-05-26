@@ -4,6 +4,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { RepoStore } from '~front/app/stores/repo.store';
+import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -23,6 +24,7 @@ export class CreateFileDialogComponent implements OnInit {
     public ref: DialogRef,
     private fb: FormBuilder,
     private repoStore: RepoStore,
+    public structStore: StructStore,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -67,6 +69,7 @@ export class CreateFileDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         take(1)
       )

@@ -21,6 +21,10 @@ export class ToBackendRevertRepoToLastCommitResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @ValidateNested()
+  @Type(() => common.Repo)
+  struct: common.Struct;
 }
 
 export class ToBackendRevertRepoToLastCommitResponse extends common.MyResponse {

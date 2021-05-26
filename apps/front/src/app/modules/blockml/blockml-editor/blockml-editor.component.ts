@@ -7,6 +7,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { FileState } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
+import { StructStore } from '~front/app/stores/struct.store';
 import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -60,6 +61,7 @@ export class BlockmlEditorComponent {
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private repoStore: RepoStore,
+    public structStore: StructStore,
     private uiStore: UiStore
   ) {}
 
@@ -108,8 +110,10 @@ export class BlockmlEditorComponent {
     this.apiService
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile, payload)
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteFileResponse) => {
+        tap((resp: apiToBackend.ToBackendSaveFileResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
+
           this.originalText = this.content;
           this.uiStore.update(state =>
             Object.assign({}, state, <UiState>{ needSave: false })

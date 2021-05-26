@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { TreeNode } from '@circlon/angular-tree-component';
 import { of } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
@@ -7,13 +6,11 @@ import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
-import { AuthService } from '~front/app/services/auth.service';
 import { FileService } from '~front/app/services/file.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
+import { StructStore } from '~front/app/stores/struct.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -62,11 +59,8 @@ export class RepoOptionsComponent implements OnDestroy {
     public fileStore: FileStore,
     public fileService: FileService,
     public navQuery: NavQuery,
-    private authService: AuthService,
-    private router: Router,
-    private navigateService: NavigateService,
+    public structStore: StructStore,
     private cd: ChangeDetectorRef,
-    private myDialogService: MyDialogService,
     private apiService: ApiService
   ) {}
 
@@ -110,6 +104,7 @@ export class RepoOptionsComponent implements OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         switchMap(x =>
           common.isDefined(this.file.fileId)
@@ -139,6 +134,7 @@ export class RepoOptionsComponent implements OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendRevertRepoToProductionResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         switchMap(x =>
           common.isDefined(this.file.fileId)
@@ -164,6 +160,7 @@ export class RepoOptionsComponent implements OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
+          this.structStore.update(resp.payload.struct);
         }),
         switchMap(x =>
           common.isDefined(this.file.fileId)
