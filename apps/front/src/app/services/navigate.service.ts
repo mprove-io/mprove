@@ -205,7 +205,9 @@ export class NavigateService {
     ]);
   }
 
-  navigateToFileLine(fileId: string, line?: number) {
+  navigateToFileLine(item: { underscoreFileId?: string; lineNumber?: number }) {
+    let { underscoreFileId, lineNumber } = item;
+
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -220,49 +222,17 @@ export class NavigateService {
       this.nav.branchId,
       common.PATH_BLOCKML,
       common.PATH_FILE,
-      fileId
+      underscoreFileId
     ];
 
     console.log(ar);
 
-    if (common.isDefined(line)) {
+    if (common.isDefined(lineNumber) && lineNumber !== 0) {
       this.router.navigate(ar, {
-        queryParams: { line: line }
+        queryParams: { line: lineNumber }
       });
     } else {
       this.router.navigate(ar);
     }
   }
-
-  // private getStoreValues() {
-  //   this.store
-  //     .select(selectors.getLayoutProjectId)
-  //     .pipe(take(1))
-  //     .subscribe(x => (this.projectId = x));
-
-  //   this.store
-  //     .select(selectors.getLayoutMode)
-  //     .pipe(take(1))
-  //     .subscribe(x => (this.mode = x));
-
-  //   this.store
-  //     .select(selectors.getSelectedProjectModeRepoModelId)
-  //     .pipe(take(1))
-  //     .subscribe(x => (this.modelId = x));
-
-  //   this.store
-  //     .select(selectors.getSelectedMconfigId)
-  //     .pipe(take(1))
-  //     .subscribe(x => (this.mconfigId = x));
-
-  //   this.store
-  //     .select(selectors.getSelectedQueryId)
-  //     .pipe(take(1))
-  //     .subscribe(x => (this.queryId = x));
-
-  //   this.store
-  //     .select(selectors.getLayoutChartId)
-  //     .pipe(take(1))
-  //     .subscribe(x => (this.chartId = x));
-  // }
 }

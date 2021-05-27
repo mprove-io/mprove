@@ -1,10 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { getFileExtension } from '~front/app/functions/get-file-extension';
+import { transformBlockmlErrorTitle } from '~front/app/functions/transform-blockml-error-title';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { StructState } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 
@@ -31,7 +33,8 @@ export class BlockmlErrorsComponent {
 
           return Object.assign({}, error, <BmlErrorExtra>{
             errorExt: errorExt,
-            sortOrder: this.errorSortOrder(errorExt)
+            sortOrder: this.errorSortOrder(errorExt),
+            title: transformBlockmlErrorTitle(error.title)
           });
         })
         .sort((a, b) => {
@@ -51,6 +54,7 @@ export class BlockmlErrorsComponent {
   constructor(
     public fileQuery: FileQuery,
     public structQuery: StructQuery,
+    public navigateService: NavigateService,
     public uiQuery: UiQuery,
     public navQuery: NavQuery,
     private cd: ChangeDetectorRef
@@ -79,5 +83,17 @@ export class BlockmlErrorsComponent {
       default:
         return 0;
     }
+  }
+
+  goToFileLine(line: common.DiskFileLine) {
+    let lineFileIdAr = line.fileId.split('/');
+    lineFileIdAr.shift();
+
+    let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileId,
+      lineNumber: line.lineNumber
+    });
   }
 }

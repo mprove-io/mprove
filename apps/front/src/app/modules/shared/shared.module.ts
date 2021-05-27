@@ -9,6 +9,7 @@ import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down
 import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-right-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
+import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
@@ -37,7 +38,8 @@ let sharedComponents = [
   ChevronRightIconComponent,
   FolderOpenIconComponent,
   FolderClosedIconComponent,
-  DotsVerticalIconComponent
+  DotsVerticalIconComponent,
+  ExclamationIconComponent
 ];
 
 @NgModule({

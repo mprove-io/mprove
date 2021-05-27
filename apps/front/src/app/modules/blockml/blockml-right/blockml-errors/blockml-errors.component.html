@@ -1,19 +1,27 @@
-<div class="mx-6 mt-6">
-  <div class="font-semibold text-2xl text-gray1">Errors</div>
+<div class="mt-6">
+  <div
+    class="flex flex-row items-center space-x-3 mx-6 font-semibold text-2xl text-red1"
+  >
+    <m-exclamation-icon></m-exclamation-icon>
+    <div>BlockML Errors</div>
+  </div>
 
   <div *ngIf="errors" class="mt-5 space-y-5">
     <div *ngFor="let error of errors">
+      <div class="mx-6 text-red1">{{ error.title }}</div>
+      <div class="ml-10 mr-6 mt-2 mb-1 text-gray-500 text-lg">{{
+        error.message | capitalize
+      }}</div>
       <div
         *ngFor="let line of error.lines"
-        class="flex flex-row justify-between"
+        class="pl-10 pr-6 py-2 hover:bg-blue2 hover:cursor-pointer"
+        (click)="goToFileLine(line)"
       >
-        <!-- <div>{{ line.fileId }}</div> -->
-        <div>{{ line.fileName }}</div>
-        <div>{{ line.lineNumber }}</div>
+        <div *ngIf="line.lineNumber !== 0"
+          >{{ line.fileName }} - {{ line.lineNumber }}</div
+        >
+        <div *ngIf="line.lineNumber === 0">{{ line.fileName }}</div>
       </div>
-      <!-- <div>{{ error.errorExt }}</div> -->
-      <div>{{ error.title }}</div>
-      <div>{{ error.message }}</div>
     </div>
   </div>
 </div>

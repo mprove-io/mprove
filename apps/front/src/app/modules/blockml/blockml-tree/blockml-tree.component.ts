@@ -120,7 +120,9 @@ export class BlockmlTreeComponent {
         node.toggleExpanded();
       }
     } else {
-      this.navigateService.navigateToFileLine(node.data.fileId);
+      this.navigateService.navigateToFileLine({
+        underscoreFileId: node.data.fileId
+      });
     }
   }
 
