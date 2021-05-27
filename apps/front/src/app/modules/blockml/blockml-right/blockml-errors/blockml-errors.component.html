@@ -1,0 +1,21 @@
+<div class="mx-6 mt-6">
+  <div class="font-semibold text-2xl text-gray1">Errors</div>
+
+  <div *ngIf="errors" class="mt-5 space-y-5">
+    <div *ngFor="let error of errors">
+      <div
+        *ngFor="let line of error.lines"
+        class="flex flex-row justify-between"
+      >
+        <!-- <div>{{ line.fileId }}</div> -->
+        <div>{{ line.fileName }}</div>
+        <div>{{ line.lineNumber }}</div>
+      </div>
+      <!-- <div>{{ error.errorExt }}</div> -->
+      <div>{{ error.title }}</div>
+      <div>{{ error.message }}</div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="struct$ | async"></div>

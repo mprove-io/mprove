@@ -1,0 +1,16 @@
+<div class="mx-6 mt-6">
+  <div class="font-semibold text-2xl text-gray1">Conflicts</div>
+
+  <div *ngIf="repo?.conflicts" class="mt-5 space-y-5">
+    <div
+      *ngFor="let conflict of repo.conflicts"
+      class="flex flex-row justify-between"
+    >
+      <!-- <div>{{ conflict.fileId }}</div> -->
+      <div>{{ conflict.fileName }}</div>
+      <div>{{ conflict.lineNumber }}</div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="repo$ | async"></div>

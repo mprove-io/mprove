@@ -1,7 +1,14 @@
 <div class="bg-white ml-6 mr-6 mt-6 mb-4 rounded shadow-lg w-full">
-  <div *ngIf="struct?.errors">
-    <div *ngFor="let error of struct.errors">{{ error.title }}</div>
-  </div>
+  <m-repo-conflicts
+    *ngIf="repo && repo.conflicts.length > 0"
+  ></m-repo-conflicts>
+
+  <m-blockml-errors
+    *ngIf="
+      repo && repo.conflicts.length === 0 && struct && struct.errors.length > 0
+    "
+  ></m-blockml-errors>
 </div>
 
+<div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>
