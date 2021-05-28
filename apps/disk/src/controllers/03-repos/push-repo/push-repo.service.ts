@@ -27,6 +27,8 @@ export class PushRepoService {
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
+    let prodRepoDir = `${projectDir}/${common.PROD_REPO_ID}`;
+
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
@@ -76,32 +78,28 @@ export class PushRepoService {
       branch: branch
     });
 
-    if (repoId !== common.PROD_REPO_ID) {
-      let prodDir = `${projectDir}/${common.PROD_REPO_ID}`;
-
-      let isProdBranchExist = await git.isLocalBranchExist({
-        repoDir: prodDir,
-        localBranch: branch
-      });
-      if (isProdBranchExist === false) {
-        await git.createBranch({
-          repoDir: prodDir,
-          fromBranch: `origin/${branch}`,
-          newBranch: branch
-        });
-      }
-
-      await git.merge({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: repoId,
-        repoDir: repoDir,
-        userAlias: userAlias,
-        branch: branch,
-        theirBranch: `origin/${branch}`,
-        isTheirBranchRemote: true
+    let isProdBranchExist = await git.isLocalBranchExist({
+      repoDir: prodRepoDir,
+      localBranch: branch
+    });
+    if (isProdBranchExist === false) {
+      await git.createBranch({
+        repoDir: prodRepoDir,
+        fromBranch: `origin/${branch}`,
+        newBranch: branch
       });
     }
+
+    await git.merge({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: common.PROD_REPO_ID,
+      repoDir: prodRepoDir,
+      userAlias: userAlias,
+      branch: branch,
+      theirBranch: `origin/${branch}`,
+      isTheirBranchRemote: true
+    });
 
     let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
       await git.getRepoStatus({

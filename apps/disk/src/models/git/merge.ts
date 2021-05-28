@@ -1,4 +1,5 @@
 import * as nodegit from 'nodegit';
+import { constantFetchOptions } from './_constant-fetch-options';
 
 export async function merge(item: {
   projectId: string;
@@ -11,6 +12,8 @@ export async function merge(item: {
   isTheirBranchRemote: boolean;
 }) {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
+
+  await gitRepo.fetch('origin', constantFetchOptions);
 
   // try fast forward
 
