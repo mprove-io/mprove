@@ -1,13 +1,16 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileState } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
-import { RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
+import { RepoState, RepoStore } from '~front/app/stores/repo.store';
+import { StructState, StructStore } from '~front/app/stores/struct.store';
 import { UiState, UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -19,6 +22,8 @@ import { common } from '~front/barrels/common';
 })
 export class BlockmlEditorComponent {
   fileEditorTheme = 'vs-dark';
+
+  line: number;
 
   editor: monaco.editor.IStandaloneCodeEditor = null;
 
@@ -50,19 +55,48 @@ export class BlockmlEditorComponent {
       this.file = x;
       this.content = x.content;
       this.originalText = x.content;
+      this.refreshMarkers();
       this.cd.detectChanges();
+    })
+  );
+
+  repo: RepoState;
+  repo$ = this.repoQuery.select().pipe(
+    tap(x => {
+      this.repo = x;
+      this.refreshMarkers();
+      this.cd.detectChanges();
+    })
+  );
+
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+      this.refreshMarkers();
+      this.cd.detectChanges();
+    })
+  );
+
+  routeLine$ = this.route.queryParams.pipe(
+    tap(params => {
+      this.line = Number(params['line'] ? params['line'] : 1);
+      this.moveToLine();
     })
   );
 
   constructor(
     public fileQuery: FileQuery,
+    public structQuery: StructQuery,
     public uiQuery: UiQuery,
     public navQuery: NavQuery,
+    public repoQuery: RepoQuery,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private repoStore: RepoStore,
     public structStore: StructStore,
-    private uiStore: UiStore
+    private uiStore: UiStore,
+    private route: ActivatedRoute
   ) {}
 
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
@@ -77,9 +111,75 @@ export class BlockmlEditorComponent {
     this.refreshMarkers();
   }
 
-  refreshMarkers() {}
+  removeMarkers() {
+    if (!this.editor || !this.editor.getModel()) {
+      return;
+    }
+    monaco.editor.setModelMarkers(this.editor.getModel(), 'Conflicts', []);
+    monaco.editor.setModelMarkers(this.editor.getModel(), 'BlockML', []);
+  }
 
-  removeMarkers() {}
+  refreshMarkers() {
+    if (!this.editor || !this.editor.getModel()) {
+      return;
+    }
+
+    if (this.repo.repoStatus === common.RepoStatusEnum.NeedResolve) {
+      let conflictMarkers: monaco.editor.IMarkerData[] = [];
+
+      this.repo.conflicts
+        .filter(x => x.fileId === this.file.fileId)
+        .map(x => x.lineNumber)
+        .forEach(cLineNumber => {
+          if (cLineNumber !== 0) {
+            conflictMarkers.push({
+              startLineNumber: cLineNumber,
+              endLineNumber: cLineNumber,
+              startColumn: 1,
+              endColumn: 99,
+              message: `conflict`,
+              severity: monaco.MarkerSeverity.Error
+            });
+          }
+        });
+
+      monaco.editor.setModelMarkers(
+        this.editor.getModel(),
+        'Conflicts',
+        conflictMarkers
+      );
+    } else {
+      let errorMarkers: monaco.editor.IMarkerData[] = [];
+
+      this.struct.errors.forEach(error =>
+        error.lines
+          .filter(x => {
+            let lineFileIdAr = x.fileId.split('/');
+            lineFileIdAr.shift();
+            let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
+            return fileId === this.file.fileId;
+          })
+          .map(eLine => {
+            if (eLine.lineNumber !== 0) {
+              errorMarkers.push({
+                startLineNumber: eLine.lineNumber,
+                endLineNumber: eLine.lineNumber,
+                startColumn: 1,
+                endColumn: 99,
+                message: `${error.title}: ${error.message}`,
+                severity: monaco.MarkerSeverity.Error
+              });
+            }
+          })
+      );
+
+      monaco.editor.setModelMarkers(
+        this.editor.getModel(),
+        'BlockML',
+        errorMarkers
+      );
+    }
+  }
 
   onTextChanged() {
     this.removeMarkers();
@@ -130,5 +230,14 @@ export class BlockmlEditorComponent {
     this.uiStore.update(state =>
       Object.assign({}, state, <UiState>{ needSave: false })
     );
+  }
+
+  async moveToLine() {
+    setTimeout(() => {
+      if (this.editor) {
+        this.editor.revealLineInCenter(this.line);
+        this.editor.setPosition({ column: 1, lineNumber: this.line });
+      }
+    }, 50);
   }
 }
