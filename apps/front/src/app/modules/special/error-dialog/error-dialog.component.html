@@ -2,11 +2,18 @@
   <div class="text-2xl text-gray2 font-semibold mb-8">Error</div>
   <div class="flex-grow overflow-auto">
     <div class="grid grid-cols-4 gap-4 text-gray1">
-      <div class="">Message</div>
+      <div>Message</div>
       <div data-cy="errorDialogMessage" class="col-span-3">{{ message }}</div>
-      <div class="">Path</div>
+
+      <div>Info</div>
+      <div class="col-span-3" *ngIf="originalErrorMessage">
+        {{ originalErrorMessage }}
+      </div>
+
+      <div>Path</div>
       <div class="col-span-3">{{ path }}</div>
-      <div class="">TraceId</div>
+
+      <div>TraceId</div>
       <div class="col-span-3">{{ traceId }}</div>
     </div>
   </div>

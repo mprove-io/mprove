@@ -8,6 +8,7 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './error-dialog.component.html'
 })
 export class ErrorDialogComponent implements OnInit {
+  originalErrorMessage: string;
   message: string;
   path: string;
   traceId: string;
@@ -28,6 +29,10 @@ export class ErrorDialogComponent implements OnInit {
       this.ref.data?.response?.body?.info?.error?.message ||
         this.ref.data?.message ||
         this.ref.data
+    );
+
+    this.originalErrorMessage = common.transformErrorMessage(
+      this.ref.data?.response?.body?.info?.error?.originalError?.message
     );
 
     this.path = this.ref.data?.reqBody?.info?.name;

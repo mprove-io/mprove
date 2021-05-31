@@ -44,7 +44,17 @@ export function buildYaml(
 
   let filesAny: any[] = barYaml.yamlToObjects(
     {
-      file3s: file3s,
+      file3s: file3s.filter(
+        x =>
+          [
+            common.FileExtensionEnum.Conf,
+            common.FileExtensionEnum.Udf,
+            common.FileExtensionEnum.View,
+            common.FileExtensionEnum.Model,
+            common.FileExtensionEnum.Viz,
+            common.FileExtensionEnum.Dashboard
+          ].indexOf(x.ext) > -1
+      ),
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
