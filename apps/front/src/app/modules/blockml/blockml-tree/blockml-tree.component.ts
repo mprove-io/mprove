@@ -1,11 +1,18 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  ViewChild
+} from '@angular/core';
 import {
   IActionMapping,
   KEYS,
   TreeComponent,
   TreeNode
 } from '@circlon/angular-tree-component';
+import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -14,13 +21,14 @@ import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-blockml-tree',
   templateUrl: './blockml-tree.component.html',
   styleUrls: ['blockml-tree.component.scss']
 })
-export class BlockmlTreeComponent {
+export class BlockmlTreeComponent implements OnDestroy {
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
@@ -62,12 +70,15 @@ export class BlockmlTreeComponent {
     })
   );
 
+  expandLevel$: Subscription;
+
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
     public repoQuery: RepoQuery,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private fileQuery: FileQuery,
     private apiService: ApiService,
     private repoStore: RepoStore,
     public structStore: StructStore,
@@ -80,29 +91,35 @@ export class BlockmlTreeComponent {
     }
 
     this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
+    this.cd.detectChanges();
 
-    // this.store
-    //   .select(selectors.getSelectedProjectModeRepoFilePath)
-    //   .pipe(
-    //     tap(path => {
-    //       if (path) {
-    //         let cPath: string;
-    //         path.forEach((p, i, a) => {
-    //           cPath = cPath ? cPath + '/' + p : p;
-    //           this.itemsTree.treeModel.getNodeById(cPath).expand();
-    //         });
-    //       } else {
-    //         let selectedProjectId: string;
-    //         this.store
-    //           .select(selectors.getSelectedProjectId)
-    //           .pipe(take(1))
-    //           .subscribe(id => (selectedProjectId = id));
-    //         this.itemsTree.treeModel.getNodeById(selectedProjectId).expand();
-    //       }
-    //     }),
-    //     take(1)
-    //   )
-    //   .subscribe();
+    this.expandLevel$ = this.fileQuery
+      .select()
+      .pipe(
+        tap(x => {
+          let projectId: string;
+          this.navQuery.projectId$
+            .pipe(
+              tap(z => {
+                projectId = z;
+              }),
+              take(1)
+            )
+            .subscribe();
+
+          let levelPath: string = projectId;
+
+          if (common.isDefined(x.fileId)) {
+            x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
+              levelPath = levelPath ? `${levelPath}/${part}` : part;
+              this.itemsTree.treeModel.getNodeById(levelPath).expand();
+            });
+          }
+
+          this.cd.detectChanges();
+        })
+      )
+      .subscribe();
   }
 
   treeOnUpdateData() {
@@ -168,5 +185,9 @@ export class BlockmlTreeComponent {
         take(1)
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.expandLevel$.unsubscribe();
   }
 }
