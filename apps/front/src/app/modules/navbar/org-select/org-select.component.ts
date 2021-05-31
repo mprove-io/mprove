@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
@@ -27,9 +28,13 @@ export class OrgSelectComponent {
     })
   );
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   constructor(
     private navQuery: NavQuery,
     private navStore: NavStore,
+    private uiQuery: UiQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,

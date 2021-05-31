@@ -9,6 +9,7 @@
   [searchable]="false"
   [(ngModel)]="selectedOrgId"
   (change)="orgChange()"
+  [disabled]="needSave === true"
   placeholder="Organization"
   bindLabel="name"
   bindValue="orgId"
@@ -27,3 +28,4 @@
 </ng-select>
 
 <div *ngIf="selectedOrg$ | async"></div>
+<div *ngIf="needSave$ | async"></div>

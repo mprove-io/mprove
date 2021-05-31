@@ -32,6 +32,9 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     })
   );
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   constructor(
     public uiQuery: UiQuery,
     public uiStore: UiStore,

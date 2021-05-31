@@ -4,7 +4,6 @@ import { filter, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { AuthService } from '~front/app/services/auth.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
@@ -45,12 +44,14 @@ export class ProjectMenuComponent implements OnInit, OnDestroy {
     })
   );
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   constructor(
     public uiQuery: UiQuery,
     public uiStore: UiStore,
     public orgQuery: OrgQuery,
     public navQuery: NavQuery,
-    private authService: AuthService,
     private router: Router,
     private cd: ChangeDetectorRef
   ) {}

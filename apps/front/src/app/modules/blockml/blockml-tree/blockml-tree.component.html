@@ -54,9 +54,12 @@
               </div>
             </div>
 
-            <div class="h-9 w-9" *ngIf="nav.isRepoProd === true"></div>
             <div
-              *ngIf="nav.isRepoProd === false"
+              class="h-9 w-9"
+              *ngIf="nav.isRepoProd === true || needSave === true"
+            ></div>
+            <div
+              *ngIf="nav.isRepoProd === false && needSave === false"
               class="flex invisible group-hover:visible"
             >
               <m-folder-options
@@ -78,3 +81,4 @@
 
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="needSave$ | async"></div>

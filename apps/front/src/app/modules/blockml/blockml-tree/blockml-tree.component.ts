@@ -15,6 +15,7 @@ import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
@@ -72,12 +73,16 @@ export class BlockmlTreeComponent implements OnDestroy {
 
   expandLevel$: Subscription;
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
     public repoQuery: RepoQuery,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private fileQuery: FileQuery,
     private apiService: ApiService,
     private repoStore: RepoStore,

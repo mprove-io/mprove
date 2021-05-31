@@ -7,6 +7,7 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
+import { ConfirmService } from '~front/app/services/confirm.service';
 import { FileState } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
@@ -93,6 +94,7 @@ export class BlockmlEditorComponent {
     public repoQuery: RepoQuery,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
+    private confirmService: ConfirmService,
     private repoStore: RepoStore,
     public structStore: StructStore,
     private uiStore: UiStore,
@@ -239,5 +241,23 @@ export class BlockmlEditorComponent {
         this.editor.setPosition({ column: 1, lineNumber: this.line });
       }
     }, 50);
+  }
+
+  canDeactivate(): Promise<boolean> | boolean {
+    if (this.needSave === false) {
+      return true;
+    }
+
+    return this.confirmService.confirm('Discard changes?').then(answer => {
+      if (answer === true) {
+        this.uiStore.update(state =>
+          Object.assign({}, state, <UiState>{ needSave: false })
+        );
+
+        return true;
+      } else {
+        return false;
+      }
+    });
   }
 }

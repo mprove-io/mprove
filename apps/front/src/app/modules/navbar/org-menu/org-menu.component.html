@@ -2,12 +2,16 @@
   <button
     class="relative block ml-2 h-10 w-10 z-10 rounded-full text-md tracking-wider focus:outline-none"
     [ngClass]="{
-      'cursor-default': openedMenuId && menuId !== openedMenuId,
-      'bg-gray-200': nav?.orgId === undefined
+      'cursor-default bg-gray-200':
+        nav?.orgId === undefined ||
+        needSave === true ||
+        (openedMenuId && menuId !== openedMenuId)
     }"
     (click)="toggleMenu()"
     [disabled]="
-      nav?.orgId === undefined || (openedMenuId && menuId !== openedMenuId)
+      nav?.orgId === undefined ||
+      needSave === true ||
+      (openedMenuId && menuId !== openedMenuId)
     "
   >
     <div class="flex justify-center">
@@ -56,3 +60,4 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="openedMenuId$ | async"></div>
+<div *ngIf="needSave$ | async"></div>

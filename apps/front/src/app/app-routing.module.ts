@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { common } from '~front/barrels/common';
+import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
 import { VerifyEmailComponent } from './modules/auth/main/02-verify-email/verify-email.component';
 import { ConfirmEmailComponent } from './modules/auth/main/03-confirm-email/confirm-email.component';
@@ -166,6 +167,7 @@ const routes: Routes = [
                         children: [
                           {
                             component: BlockmlEditorComponent,
+                            canDeactivate: [DeactivateGuard],
                             path:
                               common.PATH_FILE +
                               `/:${common.PARAMETER_FILE_ID}`,

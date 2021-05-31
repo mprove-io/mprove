@@ -6,7 +6,7 @@
   [loading]="projectsListLoading"
   [items]="projectsList"
   [clearable]="false"
-  [disabled]="selectedOrgId === undefined"
+  [disabled]="selectedOrgId === undefined || needSave === true"
   [searchable]="false"
   [(ngModel)]="selectedProjectId"
   (change)="projectChange()"
@@ -32,3 +32,4 @@
 
 <div *ngIf="selectedProject$ | async"></div>
 <div *ngIf="selectedOrg$ | async"></div>
+<div *ngIf="needSave$ | async"></div>
