@@ -211,8 +211,6 @@ export class ApiService {
         errorData.response.body.info.error.originalError?.message ===
           apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
       ) {
-        console.log('repo is not clean');
-
         let branchId =
           errorData.response.body.info.error.originalError.data.currentBranch;
 

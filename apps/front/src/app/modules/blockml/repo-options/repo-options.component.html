@@ -1,4 +1,5 @@
 <button
+  data-cy="repoOptionsMenuButton"
   class="flex relative z-10 h-9 w-9 rounded focus:outline-none items-center justify-center"
   [ngClass]="{
     'cursor-default text-gray-400':
@@ -22,18 +23,21 @@
   *ngIf="isRepoOptionsMenuOpen === true"
 >
   <button
+    data-cy="repoOptionsRevertRepoToLastCommitButton"
     class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
     (click)="revertToLastCommit($event)"
     >Revert to Last Commit</button
   >
 
   <button
+    data-cy="repoOptionsRevertRepoToProductionButton"
     class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
     (click)="revertToProduction($event)"
     >Revert to Production</button
   >
 
   <button
+    data-cy="repoOptionsPullFromProductionButton"
     class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
     (click)="pullFromProduction($event)"
     >Pull from Production</button

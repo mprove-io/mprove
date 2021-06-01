@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, take, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
 import { FileQuery } from '~front/app/queries/file.query';
@@ -12,6 +12,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { FileState } from '~front/app/stores/file.store';
+import { MemberStore } from '~front/app/stores/member.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -92,6 +93,7 @@ export class BranchSelectComponent {
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
+    private memberStore: MemberStore,
     private navQuery: NavQuery,
     private fileQuery: FileQuery,
     private apiService: ApiService,
@@ -119,53 +121,73 @@ export class BranchSelectComponent {
 
     this.apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
         payload
       )
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetBranchesListResponse) =>
-            resp.payload.branchesList
-        ),
-        tap(x => {
-          this.branchesList = x.map(z =>
-            this.makeBranchItem({
-              branchId: z.branchId,
-              isRepoProd: z.isRepoProd,
-              alias: user.alias,
-              userId: user.userId
-            })
-          );
-
-          let prodBranchesMaster = this.branchesList.filter(
-            y => y.isRepoProd === true && y.branchId === common.BRANCH_MASTER
-          );
-
-          let prodBranchesNotMaster = this.branchesList.filter(
-            y => y.isRepoProd === true && y.branchId !== common.BRANCH_MASTER
-          );
-
-          let localBranchesMaster = this.branchesList.filter(
-            y => y.isRepoProd === false && y.branchId === common.BRANCH_MASTER
-          );
-
-          let localBranchesNotMaster = this.branchesList.filter(
-            y => y.isRepoProd === false && y.branchId !== common.BRANCH_MASTER
-          );
-
-          this.branchesList =
-            this.isEditor === true
-              ? [
-                  ...prodBranchesMaster,
-                  ...prodBranchesNotMaster,
-                  ...localBranchesMaster,
-                  ...localBranchesNotMaster
-                ]
-              : [...prodBranchesMaster, ...prodBranchesNotMaster];
-
-          this.branchesListLength = x.length;
-          this.branchesListLoading = false;
+        tap((resp: apiToBackend.ToBackendGetProjectResponse) => {
+          this.memberStore.update(resp.payload.userMember);
+          return true;
         }),
+        switchMap(a =>
+          this.apiService
+            .req(
+              apiToBackend.ToBackendRequestInfoNameEnum
+                .ToBackendGetBranchesList,
+              payload
+            )
+            .pipe(
+              map(
+                (resp: apiToBackend.ToBackendGetBranchesListResponse) =>
+                  resp.payload.branchesList
+              ),
+              tap(x => {
+                this.branchesList = x.map(z =>
+                  this.makeBranchItem({
+                    branchId: z.branchId,
+                    isRepoProd: z.isRepoProd,
+                    alias: user.alias,
+                    userId: user.userId
+                  })
+                );
+
+                let prodBranchesMaster = this.branchesList.filter(
+                  y =>
+                    y.isRepoProd === true && y.branchId === common.BRANCH_MASTER
+                );
+
+                let prodBranchesNotMaster = this.branchesList.filter(
+                  y =>
+                    y.isRepoProd === true && y.branchId !== common.BRANCH_MASTER
+                );
+
+                let localBranchesMaster = this.branchesList.filter(
+                  y =>
+                    y.isRepoProd === false &&
+                    y.branchId === common.BRANCH_MASTER
+                );
+
+                let localBranchesNotMaster = this.branchesList.filter(
+                  y =>
+                    y.isRepoProd === false &&
+                    y.branchId !== common.BRANCH_MASTER
+                );
+
+                this.branchesList =
+                  this.isEditor === true
+                    ? [
+                        ...prodBranchesMaster,
+                        ...prodBranchesNotMaster,
+                        ...localBranchesMaster,
+                        ...localBranchesNotMaster
+                      ]
+                    : [...prodBranchesMaster, ...prodBranchesNotMaster];
+
+                this.branchesListLength = x.length;
+                this.branchesListLoading = false;
+              })
+            )
+        ),
         take(1)
       )
       .subscribe();

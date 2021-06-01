@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { TreeNode } from '@circlon/angular-tree-component';
-import { of } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
@@ -59,6 +59,7 @@ export class RepoOptionsComponent implements OnDestroy {
     public fileStore: FileStore,
     public fileService: FileService,
     public navQuery: NavQuery,
+    private navigateService: NavigateService,
     public structStore: StructStore,
     private cd: ChangeDetectorRef,
     private apiService: ApiService
@@ -105,12 +106,14 @@ export class RepoOptionsComponent implements OnDestroy {
         tap((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
+
+          this.navigateService.navigateToBlockml();
         }),
-        switchMap(x =>
-          common.isDefined(this.file.fileId)
-            ? this.fileService.getFile()
-            : of([])
-        ),
+        // switchMap(x =>
+        //   common.isDefined(this.file.fileId)
+        //     ? this.fileService.getFile()
+        //     : of([])
+        // ),
         take(1)
       )
       .subscribe();
@@ -135,12 +138,14 @@ export class RepoOptionsComponent implements OnDestroy {
         tap((resp: apiToBackend.ToBackendRevertRepoToProductionResponse) => {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
+
+          this.navigateService.navigateToBlockml();
         }),
-        switchMap(x =>
-          common.isDefined(this.file.fileId)
-            ? this.fileService.getFile()
-            : of([])
-        ),
+        // switchMap(x =>
+        //   common.isDefined(this.file.fileId)
+        //     ? this.fileService.getFile()
+        //     : of([])
+        // ),
         take(1)
       )
       .subscribe();
@@ -161,12 +166,14 @@ export class RepoOptionsComponent implements OnDestroy {
         tap((resp: apiToBackend.ToBackendPullRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
+
+          this.navigateService.navigateToBlockml();
         }),
-        switchMap(x =>
-          common.isDefined(this.file.fileId)
-            ? this.fileService.getFile()
-            : of([])
-        ),
+        // switchMap(x =>
+        //   common.isDefined(this.file.fileId)
+        //     ? this.fileService.getFile()
+        //     : of([])
+        // ),
         take(1)
       )
       .subscribe();
