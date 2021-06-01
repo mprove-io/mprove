@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -24,6 +25,7 @@ export class RenameFileDialogComponent implements OnInit {
     public ref: DialogRef,
     private fb: FormBuilder,
     private repoStore: RepoStore,
+    private navigateService: NavigateService,
     public structStore: StructStore,
     private cd: ChangeDetectorRef
   ) {}
@@ -57,12 +59,14 @@ export class RenameFileDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let newName =
+      this.renameFileForm.value.fileName + this.renameFileForm.value.fileExt;
+
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
       nodeId: this.ref.data.nodeId,
-      newName:
-        this.renameFileForm.value.fileName + this.renameFileForm.value.fileExt
+      newName: newName
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -76,6 +80,15 @@ export class RenameFileDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
+
+          let fId = this.ref.data.parentNodeId + '/' + newName;
+          let fIdAr = fId.split('/');
+          fIdAr.shift();
+          let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+
+          this.navigateService.navigateToFileLine({
+            underscoreFileId: fileId
+          });
         }),
         take(1)
       )
