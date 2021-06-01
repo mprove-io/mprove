@@ -11,7 +11,10 @@
       <div class="flex flex-row">
         <div
           data-cy="blockmlTreeItem"
-          class="group flex flex-row cursor-pointer px-5 py-2 w-full hover:bg-blue2 select-none"
+          class="group flex flex-row cursor-pointer hover:bg-blue2 px-5 py-2 w-full select-none"
+          [ngClass]="{
+            ' font-semibold': !!fileNodeId && node.data.id === fileNodeId
+          }"
           (click)="nodeOnClick(node)"
         >
           <div
@@ -82,3 +85,4 @@
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="file$ | async"></div>

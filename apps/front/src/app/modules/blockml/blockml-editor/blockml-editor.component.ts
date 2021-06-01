@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
@@ -8,7 +8,7 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ConfirmService } from '~front/app/services/confirm.service';
-import { FileState } from '~front/app/stores/file.store';
+import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructState, StructStore } from '~front/app/stores/struct.store';
@@ -21,7 +21,7 @@ import { common } from '~front/barrels/common';
   templateUrl: './blockml-editor.component.html',
   styleUrls: ['blockml-editor.component.scss']
 })
-export class BlockmlEditorComponent {
+export class BlockmlEditorComponent implements OnDestroy {
   fileEditorTheme = 'vs-dark';
 
   line: number;
@@ -96,6 +96,7 @@ export class BlockmlEditorComponent {
     private apiService: ApiService,
     private confirmService: ConfirmService,
     private repoStore: RepoStore,
+    private fileStore: FileStore,
     public structStore: StructStore,
     private uiStore: UiStore,
     private route: ActivatedRoute
@@ -259,5 +260,9 @@ export class BlockmlEditorComponent {
         return false;
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.fileStore.reset();
   }
 }

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -25,6 +26,7 @@ export class CreateFileDialogComponent implements OnInit {
     private fb: FormBuilder,
     private repoStore: RepoStore,
     public structStore: StructStore,
+    private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -51,12 +53,14 @@ export class CreateFileDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let fileName =
+      this.createFileForm.value.fileName + this.createFileForm.value.fileExt;
+
     let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
       parentNodeId: this.ref.data.parentNodeId,
-      fileName:
-        this.createFileForm.value.fileName + this.createFileForm.value.fileExt
+      fileName: fileName
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -70,6 +74,15 @@ export class CreateFileDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
+
+          let fId = this.ref.data.parentNodeId + '/' + fileName;
+          let fIdAr = fId.split('/');
+          fIdAr.shift();
+          let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+
+          this.navigateService.navigateToFileLine({
+            underscoreFileId: fileId
+          });
         }),
         take(1)
       )

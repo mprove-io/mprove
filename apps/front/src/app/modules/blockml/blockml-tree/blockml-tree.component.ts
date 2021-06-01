@@ -76,6 +76,35 @@ export class BlockmlTreeComponent implements OnDestroy {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  fileNodeId: string;
+
+  file$ = this.fileQuery.select().pipe(
+    tap(x => {
+      if (common.isUndefined(x.fileId)) {
+        this.fileNodeId = undefined;
+        this.cd.detectChanges();
+        return;
+      }
+
+      let projectId;
+
+      this.navQuery
+        .select()
+        .pipe(
+          tap(z => {
+            projectId = z.projectId;
+          }),
+          take(1)
+        )
+        .subscribe();
+
+      let fIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
+
+      this.fileNodeId = [projectId, ...fIdAr].join('/');
+      this.cd.detectChanges();
+    })
+  );
+
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
