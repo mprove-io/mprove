@@ -10,7 +10,7 @@
 
         <div
           *ngIf="nav?.isRepoProd === false"
-          class="relative flex flex-row space-x-3 items-center"
+          class="flex flex-row space-x-3 items-center"
         >
           <button
             type="button"
@@ -64,7 +64,9 @@
             >Push to Production</button
           >
 
-          <m-repo-options></m-repo-options>
+          <div class="relative">
+            <m-repo-options></m-repo-options>
+          </div>
         </div>
       </div>
 

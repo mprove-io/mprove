@@ -13,6 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './modules/auth/auth.module';
 import { BlockmlModule } from './modules/blockml/blockml.module';
+import { ModelModule } from './modules/model/model.module';
 import { NavModule } from './modules/nav/nav.module';
 import { NavbarModule } from './modules/navbar/navbar.module';
 import { OrgModule } from './modules/org/org.module';
@@ -36,6 +37,7 @@ import { ErrorHandlerService } from './services/error-handler.service';
     OrgModule,
     ProjectModule,
     BlockmlModule,
+    ModelModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
     DialogModule.forRoot(),

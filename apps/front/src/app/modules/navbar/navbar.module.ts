@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { BranchSelectComponent } from './branch-select/branch-select.component';
+import { ModelsMenuComponent } from './models-menu/models-menu.component';
 import { NavbarComponent } from './navbar.component';
 import { OrgMenuComponent } from './org-menu/org-menu.component';
 import { OrgSelectComponent } from './org-select/org-select.component';
@@ -20,7 +21,8 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     OrgSelectComponent,
     OrgMenuComponent,
     ProjectSelectComponent,
-    ProjectMenuComponent
+    ProjectMenuComponent,
+    ModelsMenuComponent
   ],
   imports: [
     CommonModule,

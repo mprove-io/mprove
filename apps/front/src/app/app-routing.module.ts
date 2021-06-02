@@ -14,6 +14,7 @@ import { UpdatePasswordComponent } from './modules/auth/password/03-update-passw
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { BlockmlEditorComponent } from './modules/blockml/blockml-editor/blockml-editor.component';
 import { BlockmlComponent } from './modules/blockml/blockml.component';
+import { ModelComponent } from './modules/model/model.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
@@ -173,6 +174,23 @@ const routes: Routes = [
                               `/:${common.PARAMETER_FILE_ID}`,
                             resolve: [FileResolver]
                           }
+                        ]
+                      },
+                      {
+                        component: ModelComponent,
+                        path: common.PATH_MODEL,
+                        resolve: [
+                          // BlockmlResolver
+                        ],
+                        children: [
+                          // {
+                          //   component: BlockmlEditorComponent,
+                          //   canDeactivate: [DeactivateGuard],
+                          //   path:
+                          //     common.PATH_FILE +
+                          //     `/:${common.PARAMETER_FILE_ID}`,
+                          //   resolve: [FileResolver]
+                          // }
                         ]
                       }
                     ]

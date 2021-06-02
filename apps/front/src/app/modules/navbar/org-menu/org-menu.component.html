@@ -1,8 +1,8 @@
-<div class="block relative">
+<div class="relative">
   <button
-    class="relative block ml-2 h-10 w-10 z-10 rounded-full text-md tracking-wider focus:outline-none"
+    class="ml-2 h-10 w-10 z-10 rounded-full text-md tracking-wider focus:outline-none"
     [ngClass]="{
-      'cursor-default bg-gray-200':
+      'cursor-default':
         nav?.orgId === undefined ||
         needSave === true ||
         (openedMenuId && menuId !== openedMenuId)
@@ -20,13 +20,13 @@
   </button>
 
   <button
-    class="fixed inset-0 w-full h-full cursor-default focus:outline-none"
+    class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
     *ngIf="isOrgMenuOpen === true"
     (click)="closeMenu()"
   ></button>
 
   <div
-    class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-xl border-2 border-gray4"
+    class="absolute right-0 mt-1 w-48 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isOrgMenuOpen === true"
   >
     <div class="block mt-2 px-4 py-2 text-gray1 font-bold text-sm"

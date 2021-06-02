@@ -1,0 +1,50 @@
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, tap } from 'rxjs/operators';
+import { FileQuery } from '~front/app/queries/file.query';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { UiQuery } from '~front/app/queries/ui.query';
+import { ApiService } from '~front/app/services/api.service';
+import { FileService } from '~front/app/services/file.service';
+import { NavState } from '~front/app/stores/nav.store';
+import { RepoStore } from '~front/app/stores/repo.store';
+import { StructStore } from '~front/app/stores/struct.store';
+
+@Component({
+  selector: 'm-model',
+  templateUrl: './model.component.html'
+})
+export class ModelComponent {
+  lastUrl: string;
+
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      let ar = x.url.split('/');
+      this.lastUrl = ar[ar.length - 1];
+      this.cd.detectChanges();
+    })
+  );
+
+  constructor(
+    private router: Router,
+    private cd: ChangeDetectorRef,
+    private navQuery: NavQuery,
+    private uiQuery: UiQuery,
+    private fileQuery: FileQuery,
+    public repoQuery: RepoQuery,
+    public repoStore: RepoStore,
+    private apiService: ApiService,
+    public structStore: StructStore,
+    public fileService: FileService
+  ) {}
+}

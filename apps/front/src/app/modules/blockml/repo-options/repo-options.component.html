@@ -1,6 +1,6 @@
 <button
   data-cy="repoOptionsMenuButton"
-  class="flex relative z-10 h-9 w-9 rounded focus:outline-none items-center justify-center"
+  class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center"
   [ngClass]="{
     'cursor-default text-gray-400':
       (openedMenuId && menuId !== openedMenuId) || needSave === true,
@@ -13,13 +13,13 @@
 </button>
 
 <button
-  class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
+  class="fixed inset-0 z-9 w-full h-full cursor-default focus:outline-none"
   *ngIf="isRepoOptionsMenuOpen === true"
   (click)="closeMenu($event)"
 ></button>
 
 <div
-  class="absolute right-0 mt-1 w-64 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
+  class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
   *ngIf="isRepoOptionsMenuOpen === true"
 >
   <button
