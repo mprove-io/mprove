@@ -48,13 +48,15 @@ export class OrgsService {
     ownerEmail: string;
     name: string;
     traceId: string;
+    orgId?: string;
   }) {
-    let { ownerId, ownerEmail, name, traceId } = item;
+    let { ownerId, ownerEmail, name, traceId, orgId } = item;
 
     let newOrg = maker.makeOrg({
       name: name,
       ownerId: ownerId,
-      ownerEmail: ownerEmail
+      ownerEmail: ownerEmail,
+      orgId: orgId
     });
 
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {

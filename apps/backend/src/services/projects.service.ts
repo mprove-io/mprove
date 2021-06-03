@@ -41,12 +41,14 @@ export class ProjectsService {
     user: entities.UserEntity;
     traceId: string;
     testProjectId: string;
+    projectId?: string;
   }) {
-    let { orgId, name, user, traceId, testProjectId } = item;
+    let { orgId, name, user, traceId, projectId, testProjectId } = item;
 
     let newProject = maker.makeProject({
       orgId: orgId,
-      name: name
+      name: name,
+      projectId: projectId
     });
 
     let newMember = maker.makeMember({

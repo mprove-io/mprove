@@ -215,7 +215,8 @@ export class AppModule implements OnModuleInit {
               ownerId: firstUser.user_id,
               ownerEmail: firstUser.email,
               name: common.FIRST_ORG_NAME,
-              traceId: common.makeId()
+              traceId: common.makeId(),
+              orgId: firstOrgId
             });
           }
         }
@@ -237,6 +238,7 @@ export class AppModule implements OnModuleInit {
               name: common.FIRST_PROJECT_NAME,
               user: firstUser,
               traceId: common.makeId(),
+              projectId: firstProjectId,
               testProjectId: 't1'
             });
           }
