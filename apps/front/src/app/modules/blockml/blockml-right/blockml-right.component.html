@@ -8,6 +8,19 @@
       repo && repo.conflicts.length === 0 && struct && struct.errors.length > 0
     "
   ></m-blockml-errors>
+
+  <div
+    *ngIf="
+      repo &&
+      repo.conflicts.length === 0 &&
+      struct &&
+      struct.errors.length === 0
+    "
+    class="flex flex-col space-y-3 justify-center items-center h-full"
+  >
+    <m-completed-ring></m-completed-ring>
+    <div class="text-xl"> BlockML is valid </div>
+  </div>
 </div>
 
 <div *ngIf="repo$ | async"></div>

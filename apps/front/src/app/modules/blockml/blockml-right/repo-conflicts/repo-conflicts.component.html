@@ -1,21 +1,23 @@
-<div class="mt-6">
+<div class="flex flex-col h-full">
   <div
-    class="flex flex-row items-center space-x-3 mx-6 font-semibold text-2xl text-red1"
+    class="flex mt-6 mx-6 mb-6 flex-row items-center space-x-3 font-semibold text-2xl text-red1"
   >
     <m-exclamation-icon></m-exclamation-icon>
     <div>Merge Conflicts</div>
   </div>
 
-  <div *ngIf="repo?.conflicts" class="mt-5">
-    <div
-      *ngFor="let conflict of repo.conflicts"
-      class="px-6 py-2 hover:bg-blue2 hover:cursor-pointer"
-      (click)="goToFileLine(conflict)"
-    >
-      <div *ngIf="conflict.lineNumber !== 0"
-        >{{ conflict.fileName }} - {{ conflict.lineNumber }}</div
+  <div class="flex flex-grow flex-col overflow-y-auto">
+    <div *ngIf="repo?.conflicts" class="mt-5">
+      <div
+        *ngFor="let conflict of repo.conflicts"
+        class="px-6 py-2 hover:bg-blue2 hover:cursor-pointer"
+        (click)="goToFileLine(conflict)"
       >
-      <div *ngIf="conflict.lineNumber === 0">{{ conflict.fileName }}</div>
+        <div *ngIf="conflict.lineNumber !== 0"
+          >{{ conflict.fileName }} - {{ conflict.lineNumber }}</div
+        >
+        <div *ngIf="conflict.lineNumber === 0">{{ conflict.fileName }}</div>
+      </div>
     </div>
   </div>
 </div>
