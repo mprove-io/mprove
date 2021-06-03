@@ -19,6 +19,8 @@ export function getDevConfig(envFilePath: any) {
     allowTestRoutes: envFile.BACKEND_ALLOW_TEST_ROUTES,
     firstUserEmail: envFile.BACKEND_FIRST_USER_EMAIL,
     firstUserPassword: envFile.BACKEND_FIRST_USER_PASSWORD,
+    firstOrgId: envFile.BACKEND_FIRST_ORG_ID,
+    firstProjectId: envFile.BACKEND_FIRST_PROJECT_ID,
     registerOnlyInvitedUsers: <common.BoolEnum>(
       envFile.BACKEND_REGISTER_ONLY_INVITED_USERS
     ),

@@ -1,5 +1,8 @@
 export const PROD_REPO_ID = 'prod';
 export const BRANCH_MASTER = 'master';
+export const FIRST_ORG_NAME = 'demo';
+export const FIRST_PROJECT_NAME = 'p1';
+
 export const README_FILE_NAME = 'readme.md';
 
 export const TRIPLE_UNDERSCORE = '___';

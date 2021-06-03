@@ -24,10 +24,17 @@ export class Config extends common.Config {
   @IsString()
   firstUserPassword?: string;
 
+  @IsString()
+  firstOrgId?: string;
+
+  @IsString()
+  firstProjectId?: string;
+
   @IsEnum(common.BoolEnum)
   registerOnlyInvitedUsers?: common.BoolEnum;
 
   //
+
   @IsEnum(common.BoolEnum)
   sendEmail?: common.BoolEnum;
 

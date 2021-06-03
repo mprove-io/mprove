@@ -1,16 +1,14 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
-import { maker } from '~backend/barrels/maker';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { DbService } from '~backend/services/db.service';
 import { OrgsService } from '~backend/services/orgs.service';
+import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 @Controller()
@@ -18,6 +16,7 @@ export class CreateProjectController {
   constructor(
     private dbService: DbService,
     private rabbitService: RabbitService,
+    private projectsService: ProjectsService,
     private orgsService: OrgsService,
     private projectsRepository: repositories.ProjectsRepository,
     private blockmlService: BlockmlService
@@ -45,74 +44,12 @@ export class CreateProjectController {
       });
     }
 
-    let newProject = maker.makeProject({
+    let newProject = await this.projectsService.addProject({
       orgId: orgId,
-      name: name
-    });
-
-    let newMember = maker.makeMember({
-      projectId: newProject.project_id,
+      name: name,
+      traceId: reqValid.info.traceId,
       user: user,
-      isAdmin: common.BoolEnum.TRUE,
-      isEditor: common.BoolEnum.TRUE,
-      isExplorer: common.BoolEnum.TRUE
-    });
-
-    let toDiskCreateProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
-      info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        orgId: orgId,
-        projectId: newProject.project_id,
-        devRepoId: user.user_id,
-        userAlias: user.alias
-      }
-    };
-
-    let diskResponse = await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
-      {
-        routingKey: helper.makeRoutingKeyToDisk({
-          orgId: orgId,
-          projectId: newProject.project_id
-        }),
-        message: toDiskCreateProjectRequest,
-        checkIsOk: true
-      }
-    );
-
-    let structId = common.makeId();
-
-    let prodBranch = maker.makeBranch({
-      structId: structId,
-      projectId: newProject.project_id,
-      repoId: common.PROD_REPO_ID,
-      branchId: common.BRANCH_MASTER
-    });
-
-    let devBranch = maker.makeBranch({
-      structId: structId,
-      projectId: newProject.project_id,
-      repoId: user.user_id,
-      branchId: common.BRANCH_MASTER
-    });
-
-    await this.blockmlService.rebuildStruct({
-      traceId,
-      orgId: newProject.org_id,
-      projectId: newProject.project_id,
-      structId,
-      diskFiles: diskResponse.payload.prodFiles
-    });
-
-    await this.dbService.writeRecords({
-      modify: false,
-      records: {
-        projects: [newProject],
-        members: [newMember],
-        branches: [prodBranch, devBranch]
-      }
+      testProjectId: undefined
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {

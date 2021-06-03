@@ -113,11 +113,13 @@ export class UsersService {
       alias: alias
     });
 
-    await this.dbService.writeRecords({
+    let records = await this.dbService.writeRecords({
       modify: false,
       records: {
         users: [user]
       }
     });
+
+    return records.users[0];
   }
 }
