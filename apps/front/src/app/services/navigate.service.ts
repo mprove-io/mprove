@@ -223,7 +223,7 @@ export class NavigateService {
     ]);
   }
 
-  navigateToFileLine(item: { underscoreFileId?: string; lineNumber?: number }) {
+  navigateToFileLine(item: { underscoreFileId: string; lineNumber?: number }) {
     let { underscoreFileId, lineNumber } = item;
 
     let repoId =

@@ -2,14 +2,23 @@
   <div class="flex flex-row h-full">
     <div class="flex flex-col flex-grow mx-6 mb-6 mt-8">
       <div class="flex flex-row justify-between items-center h-11">
-        <div class="flex flex-row items-center">
+        <div class="flex flex-row items-center space-x-5">
           <div
             data-cy="blockmlTitle"
             class="flex font-semibold text-2xl text-gray1 items-center self-center"
           >
             Model
           </div>
-          <div class="ml-5 text-xl">{{ model?.label }}</div>
+
+          <div class="text-xl text-gray1">{{ model?.label | capitalize }}</div>
+
+          <button
+            class="flex flex-row items-center text-blue-500 focus:outline-none"
+            (click)="goToFile()"
+          >
+            <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+            <div class="ml-2 text-xl">File</div>
+          </button>
         </div>
 
         <div class="flex flex-row space-x-3 items-center"> </div>

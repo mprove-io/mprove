@@ -8,6 +8,7 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ConfirmService } from '~front/app/services/confirm.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { FileState, FileStore } from '~front/app/stores/file.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoState, RepoStore } from '~front/app/stores/repo.store';
@@ -95,6 +96,7 @@ export class BlockmlEditorComponent implements OnDestroy {
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private confirmService: ConfirmService,
+    private navigateService: NavigateService,
     private repoStore: RepoStore,
     private fileStore: FileStore,
     public structStore: StructStore,
@@ -260,6 +262,15 @@ export class BlockmlEditorComponent implements OnDestroy {
         return false;
       }
     });
+  }
+
+  goTo() {
+    let ar = this.file.name.split('.');
+    let ext = ar[ar.length - 1];
+
+    if (`.${ext}` === common.FileExtensionEnum.Model) {
+      this.navigateService.navigateToModel(ar[0]);
+    }
   }
 
   ngOnDestroy() {

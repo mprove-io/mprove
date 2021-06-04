@@ -7,10 +7,12 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-model',
@@ -54,6 +56,16 @@ export class ModelComponent {
     public repoStore: RepoStore,
     private apiService: ApiService,
     public structStore: StructStore,
-    public fileService: FileService
+    public fileService: FileService,
+    public navigateService: NavigateService
   ) {}
+
+  goToFile() {
+    let fileIdAr = this.model.filePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
 }

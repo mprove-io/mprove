@@ -1,6 +1,19 @@
 <div class="flex flex-col h-full">
   <div class="flex flex-row justify-between items-center px-5 py-5">
-    <div>{{ file?.name }}</div>
+    <div class="flex flex-row items-center space-x-5">
+      <div class="text-lg text-gray1">{{ file?.name }}</div>
+
+      <button
+        class="flex flex-row items-center text-blue-500 focus:outline-none"
+        (click)="goTo()"
+        *ngIf="(file?.name | extension) === 'model'"
+      >
+        <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+        <div class="ml-2 text-lg">
+          {{ file?.name | extension | capitalize }}</div
+        >
+      </button>
+    </div>
 
     <div *ngIf="nav?.isRepoProd === false" class="space-x-3">
       <button

@@ -1,6 +1,10 @@
 import { common } from '~front/barrels/common';
 
 export function getFileExtension(value: string, short?: boolean) {
+  if (common.isUndefined(value)) {
+    return value;
+  }
+
   const valueChunks: string[] = value.split('.');
 
   let ext = '.other';
