@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { FileQuery } from '~front/app/queries/file.query';
+import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
+import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
@@ -17,6 +18,14 @@ import { StructStore } from '~front/app/stores/struct.store';
 })
 export class ModelComponent {
   lastUrl: string;
+
+  model: ModelState;
+  model$ = this.modelQuery.select().pipe(
+    tap(x => {
+      this.model = x;
+      this.cd.detectChanges();
+    })
+  );
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -40,7 +49,7 @@ export class ModelComponent {
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
-    private fileQuery: FileQuery,
+    private modelQuery: ModelQuery,
     public repoQuery: RepoQuery,
     public repoStore: RepoStore,
     private apiService: ApiService,

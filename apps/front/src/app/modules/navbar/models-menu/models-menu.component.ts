@@ -5,6 +5,7 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -15,6 +16,8 @@ import { common } from '~front/barrels/common';
   templateUrl: './models-menu.component.html'
 })
 export class ModelsMenuComponent implements OnInit, OnDestroy {
+  pathModelId = '';
+
   menuId = 'modelsMenu';
 
   modelsList: common.ModelsItem[] = [];
@@ -59,6 +62,7 @@ export class ModelsMenuComponent implements OnInit, OnDestroy {
     public navQuery: NavQuery,
     private router: Router,
     private apiService: ApiService,
+    private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -123,6 +127,11 @@ export class ModelsMenuComponent implements OnInit, OnDestroy {
     } else {
       this.openMenu();
     }
+  }
+
+  goToModel(modelId: string) {
+    this.closeMenu();
+    this.navigateService.navigateToModel(modelId);
   }
 
   ngOnDestroy() {

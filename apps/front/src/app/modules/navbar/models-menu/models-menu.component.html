@@ -33,12 +33,24 @@
       <div *ngIf="modelsListLength === 0"> 0 valid models </div>
 
       <div *ngIf="modelsListLength > 0">
-        <div
+        <button
+          *ngFor="let item of modelsList"
+          class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+          [ngClass]="{
+            'cursor-default': lastUrl === pathModelId,
+            'text-red-800': lastUrl === pathModelId
+          }"
+          [disabled]="lastUrl === pathModelId"
+          (click)="goToModel(item.modelId)"
+          >{{ item.label }}</button
+        >
+
+        <!-- <div 
           *ngFor="let item of modelsList"
           class="pl-4 pr-6 py-2 hover:bg-blue2 hover:cursor-pointer"
         >
           {{ item.label }}
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

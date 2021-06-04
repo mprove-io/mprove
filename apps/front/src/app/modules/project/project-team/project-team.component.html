@@ -1,12 +1,12 @@
 <div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-row items-center justify-between mt-7 mx-6">
-    <div
-      data-cy="projectTeamTitle"
-      class="flex font-semibold text-2xl text-gray1"
-      >Project - Team
-    </div>
+  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8">
+    <div class="flex flex-row items-center justify-between h-11">
+      <div
+        data-cy="projectTeamTitle"
+        class="flex font-semibold text-2xl text-gray1"
+        >Project - Team
+      </div>
 
-    <div class="flex">
       <button
         data-cy="projectTeamInviteMemberButton"
         class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
@@ -19,193 +19,193 @@
         >Invite Member</button
       >
     </div>
-  </div>
 
-  <div
-    class="flex-grow bg-white mx-6 mt-4 mb-4 rounded shadow-lg overflow-y-auto"
-  >
-    <div class="mx-5 mt-8 text-gray1">
-      <table class="min-w-full divide-y divide-gray-500">
-        <thead>
-          <tr class="text-sm h-12">
-            <th></th>
-            <th class="text-left">Name</th>
-            <th class="text-left">Email</th>
-            <th class="text-left">Alias</th>
-            <th class="text-left">Access Roles</th>
-            <th class="text-center">Project Admin</th>
-            <th class="text-center">BlockML Editor</th>
-            <th class="text-center">Model Explorer</th>
-            <th></th>
-          </tr>
-        </thead>
+    <div class="flex-grow bg-white mt-6 mb-4 rounded shadow-lg overflow-y-auto">
+      <div class="mx-5 mt-8 text-gray1">
+        <table class="min-w-full divide-y divide-gray-500">
+          <thead>
+            <tr class="text-sm h-12">
+              <th></th>
+              <th class="text-left">Name</th>
+              <th class="text-left">Email</th>
+              <th class="text-left">Alias</th>
+              <th class="text-left">Access Roles</th>
+              <th class="text-center">Project Admin</th>
+              <th class="text-center">BlockML Editor</th>
+              <th class="text-center">Model Explorer</th>
+              <th></th>
+            </tr>
+          </thead>
 
-        <tbody class="divide-y divide-gray-300">
-          <tr
-            *ngFor="
-              let member of members
-                | paginate
-                  : {
-                      id: 'members',
-                      itemsPerPage: perPage,
-                      currentPage: currentPage,
-                      totalItems: total
-                    };
-              let i = index
-            "
-            class="h-16"
-          >
-            <td class="w-24">
-              <div class="flex">
-                <button
-                  class="ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
-                  [ngClass]="{
-                    'cursor-default': !member.avatarSmall
-                  }"
-                  (click)="showPhoto(member.memberId)"
-                  [disabled]="!member.avatarSmall"
-                >
-                  <m-avatar [avatar]="member.avatarSmall"></m-avatar>
-                </button>
-              </div>
-            </td>
-
-            <td class="w-64">{{ member.fullName }}</td>
-
-            <td data-cy="projectTeamMemberEmailData" class="w-64">
-              {{ member.email }}
-            </td>
-
-            <td class="w-48">{{ member.alias }}</td>
-
-            <td class="w-48">
-              <div class="flex flex-row items-center">
-                <button
-                  data-cy="projectTeamAddRoleButton"
-                  class="flex items-center justify-center h-10 w-10 text-blue3 rounded focus:outline-none"
-                  (click)="addRole(member, i)"
-                  [disabled]="isAdmin === false"
-                >
-                  <div
+          <tbody class="divide-y divide-gray-300">
+            <tr
+              *ngFor="
+                let member of members
+                  | paginate
+                    : {
+                        id: 'members',
+                        itemsPerPage: perPage,
+                        currentPage: currentPage,
+                        totalItems: total
+                      };
+                let i = index
+              "
+              class="h-16"
+            >
+              <td class="w-24">
+                <div class="flex">
+                  <button
+                    class="ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
                     [ngClass]="{
-                      'text-gray1': isAdmin === false
+                      'cursor-default': !member.avatarSmall
                     }"
+                    (click)="showPhoto(member.memberId)"
+                    [disabled]="!member.avatarSmall"
                   >
-                    <m-add-icon></m-add-icon>
-                  </div>
-                </button>
-                <div class="flex flex-col my-3 ml-2">
-                  <div *ngFor="let role of member.roles; let n = index">
-                    <div class="flex flex-row items-center">
-                      <div>{{ role }} </div>
-                      <button
-                        data-cy="projectTeamRemoveRoleButton"
-                        class="flex items-center justify-center h-9 w-9 text-red1 rounded focus:outline-none"
-                        (click)="removeRole(member, i, n)"
-                        [disabled]="isAdmin === false"
-                      >
-                        <div
-                          [ngClass]="{
-                            'text-gray1': isAdmin === false
-                          }"
+                    <m-avatar [avatar]="member.avatarSmall"></m-avatar>
+                  </button>
+                </div>
+              </td>
+
+              <td class="w-64">{{ member.fullName }}</td>
+
+              <td data-cy="projectTeamMemberEmailData" class="w-64">
+                {{ member.email }}
+              </td>
+
+              <td class="w-48">{{ member.alias }}</td>
+
+              <td class="w-48">
+                <div class="flex flex-row items-center">
+                  <button
+                    data-cy="projectTeamAddRoleButton"
+                    class="flex items-center justify-center h-10 w-10 text-blue3 rounded focus:outline-none"
+                    (click)="addRole(member, i)"
+                    [disabled]="isAdmin === false"
+                  >
+                    <div
+                      [ngClass]="{
+                        'text-gray1': isAdmin === false
+                      }"
+                    >
+                      <m-add-icon></m-add-icon>
+                    </div>
+                  </button>
+                  <div class="flex flex-col my-3 ml-2">
+                    <div *ngFor="let role of member.roles; let n = index">
+                      <div class="flex flex-row items-center">
+                        <div>{{ role }} </div>
+                        <button
+                          data-cy="projectTeamRemoveRoleButton"
+                          class="flex items-center justify-center h-9 w-9 text-red1 rounded focus:outline-none"
+                          (click)="removeRole(member, i, n)"
+                          [disabled]="isAdmin === false"
                         >
-                          <m-delete-icon></m-delete-icon>
-                        </div>
-                      </button>
+                          <div
+                            [ngClass]="{
+                              'text-gray1': isAdmin === false
+                            }"
+                          >
+                            <m-delete-icon></m-delete-icon>
+                          </div>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </td>
+              </td>
 
-            <td>
-              <div class="flex justify-center">
-                <button
-                  data-cy="projectTeamIsAdminButton"
-                  class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
-                  [ngClass]="{
-                    'bg-blue3 ': member.isAdmin === true && isAdmin === true,
-                    'bg-gray-400': member.isAdmin === true && isAdmin === false,
-                    'border-blue3': isAdmin === true,
-                    'border-gray-400': isAdmin === false
-                  }"
-                  (click)="isAdminChange($event, i)"
-                  [disabled]="isAdmin === false"
-                >
-                  <m-check-icon *ngIf="member.isAdmin"></m-check-icon>
-                </button>
-              </div>
-            </td>
-
-            <td>
-              <div class="flex justify-center">
-                <button
-                  data-cy="projectTeamIsEditorButton"
-                  class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
-                  [ngClass]="{
-                    'bg-blue3 ': member.isEditor === true && isAdmin === true,
-                    'bg-gray-400':
-                      member.isEditor === true && isAdmin === false,
-                    'border-blue3': isAdmin === true,
-                    'border-gray-400': isAdmin === false
-                  }"
-                  (click)="isEditorChange($event, i)"
-                  [disabled]="isAdmin === false"
-                >
-                  <m-check-icon *ngIf="member.isEditor"></m-check-icon>
-                </button>
-              </div>
-            </td>
-
-            <td>
-              <div class="flex justify-center">
-                <button
-                  data-cy="projectTeamIsExplorerButton"
-                  class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
-                  [ngClass]="{
-                    'bg-blue3 ': member.isExplorer === true && isAdmin === true,
-                    'bg-gray-400':
-                      member.isExplorer === true && isAdmin === false,
-                    'border-blue3': isAdmin === true,
-                    'border-gray-400': isAdmin === false
-                  }"
-                  (click)="isExplorerChange($event, i)"
-                  [disabled]="isAdmin === false"
-                >
-                  <m-check-icon *ngIf="member.isExplorer"></m-check-icon>
-                </button>
-              </div>
-            </td>
-
-            <td>
-              <button
-                data-cy="projectTeamRemoveMemberButton"
-                class="h-10 w-10 rounded-full text-red1 focus:outline-none"
-                [disabled]="member.memberId === userId || isAdmin === false"
-                (click)="removeMember(member)"
-              >
-                <div
-                  class="flex justify-center"
-                  [ngClass]="{
-                    'text-gray1':
-                      member.memberId === userId || isAdmin === false
-                  }"
-                >
-                  <m-delete-icon></m-delete-icon>
+              <td>
+                <div class="flex justify-center">
+                  <button
+                    data-cy="projectTeamIsAdminButton"
+                    class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
+                    [ngClass]="{
+                      'bg-blue3 ': member.isAdmin === true && isAdmin === true,
+                      'bg-gray-400':
+                        member.isAdmin === true && isAdmin === false,
+                      'border-blue3': isAdmin === true,
+                      'border-gray-400': isAdmin === false
+                    }"
+                    (click)="isAdminChange($event, i)"
+                    [disabled]="isAdmin === false"
+                  >
+                    <m-check-icon *ngIf="member.isAdmin"></m-check-icon>
+                  </button>
                 </div>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+              </td>
 
-  <pagination-controls
-    class="flex justify-center mx-6 mt-3 mb-6"
-    (pageChange)="getMembers($event)"
-    id="members"
-  ></pagination-controls>
+              <td>
+                <div class="flex justify-center">
+                  <button
+                    data-cy="projectTeamIsEditorButton"
+                    class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
+                    [ngClass]="{
+                      'bg-blue3 ': member.isEditor === true && isAdmin === true,
+                      'bg-gray-400':
+                        member.isEditor === true && isAdmin === false,
+                      'border-blue3': isAdmin === true,
+                      'border-gray-400': isAdmin === false
+                    }"
+                    (click)="isEditorChange($event, i)"
+                    [disabled]="isAdmin === false"
+                  >
+                    <m-check-icon *ngIf="member.isEditor"></m-check-icon>
+                  </button>
+                </div>
+              </td>
+
+              <td>
+                <div class="flex justify-center">
+                  <button
+                    data-cy="projectTeamIsExplorerButton"
+                    class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
+                    [ngClass]="{
+                      'bg-blue3 ':
+                        member.isExplorer === true && isAdmin === true,
+                      'bg-gray-400':
+                        member.isExplorer === true && isAdmin === false,
+                      'border-blue3': isAdmin === true,
+                      'border-gray-400': isAdmin === false
+                    }"
+                    (click)="isExplorerChange($event, i)"
+                    [disabled]="isAdmin === false"
+                  >
+                    <m-check-icon *ngIf="member.isExplorer"></m-check-icon>
+                  </button>
+                </div>
+              </td>
+
+              <td>
+                <button
+                  data-cy="projectTeamRemoveMemberButton"
+                  class="h-10 w-10 rounded-full text-red1 focus:outline-none"
+                  [disabled]="member.memberId === userId || isAdmin === false"
+                  (click)="removeMember(member)"
+                >
+                  <div
+                    class="flex justify-center"
+                    [ngClass]="{
+                      'text-gray1':
+                        member.memberId === userId || isAdmin === false
+                    }"
+                  >
+                    <m-delete-icon></m-delete-icon>
+                  </div>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <pagination-controls
+      class="flex justify-center mt-3"
+      (pageChange)="getMembers($event)"
+      id="members"
+    ></pagination-controls>
+  </div>
 </div>
 
 <div *ngIf="userId$ | async"></div>

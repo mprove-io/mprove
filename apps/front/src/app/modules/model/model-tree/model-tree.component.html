@@ -11,11 +11,8 @@
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
       <div class="flex flex-row w-full">
         <div
-          data-cy="blockmlTreeItem"
+          data-cy="modelTreeItem"
           class="group flex flex-row cursor-pointer hover:bg-blue2 px-5 py-1 w-full select-none"
-          [ngClass]="{
-            ' font-semibold': !!fileNodeId && node.data.id === fileNodeId
-          }"
           (click)="nodeOnClick(node)"
         >
           <div
@@ -26,7 +23,7 @@
             }"
           >
             <div class="flex flex-grow flex-row items-center">
-              <div *ngIf="node.data.isFolder" class="flex flex-row space-x-1">
+              <!-- <div *ngIf="node.data.isFolder" class="flex flex-row space-x-1">
                 <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
                 <m-chevron-right-icon
                   *ngIf="!node.isExpanded && node.hasChildren"
@@ -41,9 +38,9 @@
                 <m-folder-open-icon
                   *ngIf="node.isExpanded && node.hasChildren"
                 ></m-folder-open-icon>
-              </div>
+              </div> -->
 
-              <div
+              <!-- <div
                 *ngIf="!node.data.isFolder"
                 class="font-bold w-7 text-center"
                 [ngClass]="{
@@ -51,18 +48,19 @@
                 }"
               >
                 {{ node.data.fileId | extension: true | capitalize }}
-              </div>
+              </div> -->
 
-              <div class="ml-2">
+              <!-- <div class="ml-2">
                 {{ node.data.name }}
-              </div>
+              </div> -->
             </div>
 
-            <div
+            <!-- <div
               class="h-9 w-9"
               *ngIf="nav.isRepoProd === true || needSave === true"
-            ></div>
-            <div
+            ></div> -->
+
+            <!-- <div
               *ngIf="nav.isRepoProd === false && needSave === false"
               class="flex invisible group-hover:visible"
             >
@@ -75,7 +73,7 @@
                 *ngIf="!node.data.isFolder"
                 [node]="node"
               ></m-file-options>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

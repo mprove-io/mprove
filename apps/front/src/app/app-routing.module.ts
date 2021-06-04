@@ -31,6 +31,7 @@ import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { FileResolver } from './resolvers/file.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
+import { ModelResolver } from './resolvers/model.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
@@ -178,20 +179,12 @@ const routes: Routes = [
                       },
                       {
                         component: ModelComponent,
-                        path: common.PATH_MODEL,
-                        resolve: [
-                          // BlockmlResolver
+                        canDeactivate: [
+                          // DeactivateGuard
                         ],
-                        children: [
-                          // {
-                          //   component: BlockmlEditorComponent,
-                          //   canDeactivate: [DeactivateGuard],
-                          //   path:
-                          //     common.PATH_FILE +
-                          //     `/:${common.PARAMETER_FILE_ID}`,
-                          //   resolve: [FileResolver]
-                          // }
-                        ]
+                        path:
+                          common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
+                        resolve: [ModelResolver]
                       }
                     ]
                   }

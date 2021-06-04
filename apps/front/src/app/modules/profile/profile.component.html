@@ -1,135 +1,139 @@
 <div class="bg-blue1 flex flex-col h-full">
-  <div
-    data-cy="profileTitle"
-    class="font-semibold text-2xl mt-8 ml-6 text-gray1"
-    >Profile</div
-  >
-  <div class="flex-1 bg-white mx-6 mt-6 mb-4 rounded shadow-lg">
-    <div class="flex flex-row mt-16 ml-32">
-      <div class="flex flex-col">
-        <div class="h-24 flex items-center justify-end font-semibold"
-          >Profile Photo</div
-        >
-        <div class="h-16 flex items-center justify-end font-semibold">Name</div>
-        <div class="h-16 flex items-center justify-end font-semibold"
-          >Default Time Zone</div
-        >
-        <div class="h-16 flex items-center justify-end font-semibold"
-          >Email</div
-        >
-        <div class="h-16 flex items-center justify-end font-semibold"
-          >Alias</div
-        >
-        <div class="flex items-center justify-end font-semibold"></div>
-        <div class="flex items-center justify-end font-semibold"></div>
-      </div>
-
-      <div class="flex flex-col ml-2">
-        <div class="h-24 flex items-center"></div>
-        <div class="h-16 flex items-center"></div>
-        <div class="h-16 flex items-center text-gray1">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8">
+    <div class="flex h-11 items-center">
+      <div data-cy="profileTitle" class="font-semibold text-2xl text-gray1"
+        >Profile</div
+      >
+    </div>
+    <div class="flex-1 bg-white mt-6 rounded shadow-lg">
+      <div class="flex flex-row mt-16 ml-32">
+        <div class="flex flex-col">
+          <div class="h-24 flex items-center justify-end font-semibold"
+            >Profile Photo</div
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+          <div class="h-16 flex items-center justify-end font-semibold"
+            >Name</div
+          >
+          <div class="h-16 flex items-center justify-end font-semibold"
+            >Default Time Zone</div
+          >
+          <div class="h-16 flex items-center justify-end font-semibold"
+            >Email</div
+          >
+          <div class="h-16 flex items-center justify-end font-semibold"
+            >Alias</div
+          >
+          <div class="flex items-center justify-end font-semibold"></div>
+          <div class="flex items-center justify-end font-semibold"></div>
         </div>
-        <div class="h-16 flex items-center"></div>
-        <div class="flex items-center"></div>
-        <div class="flex items-center"></div>
-        <div class="flex items-center"></div>
-      </div>
 
-      <div class="flex flex-col ml-6">
-        <div class="h-24 flex items-center">
-          <div class="flex flex-row">
-            <button
-              class="block h-20 w-20 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
-              [ngClass]="{
-                'cursor-default': !(navQuery.avatarBig$ | async)
-              }"
-              [disabled]="!(navQuery.avatarBig$ | async)"
-              (click)="showPhoto()"
+        <div class="flex flex-col ml-2">
+          <div class="h-24 flex items-center"></div>
+          <div class="h-16 flex items-center"></div>
+          <div class="h-16 flex items-center text-gray1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <m-avatar [avatar]="navQuery.avatarBig$ | async"></m-avatar>
-            </button>
-            <!-- <div class="ml-5 h-20 w-20">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <div class="h-16 flex items-center"></div>
+          <div class="flex items-center"></div>
+          <div class="flex items-center"></div>
+          <div class="flex items-center"></div>
+        </div>
+
+        <div class="flex flex-col ml-6">
+          <div class="h-24 flex items-center">
+            <div class="flex flex-row">
+              <button
+                class="block h-20 w-20 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+                [ngClass]="{
+                  'cursor-default': !(navQuery.avatarBig$ | async)
+                }"
+                [disabled]="!(navQuery.avatarBig$ | async)"
+                (click)="showPhoto()"
+              >
+                <m-avatar [avatar]="navQuery.avatarBig$ | async"></m-avatar>
+              </button>
+              <!-- <div class="ml-5 h-20 w-20">
               <m-avatar [avatar]="navQuery.avatarSmall$ | async"></m-avatar>
             </div> -->
+            </div>
+          </div>
+          <div
+            data-cy="profileFullName"
+            class="h-16 flex items-center max-w-xl truncate"
+            >{{ userQuery.fullName$ | async }}</div
+          >
+          <div data-cy="profileTimezone" class="h-16 flex items-center">{{
+            userQuery.timezone$ | async
+          }}</div>
+          <div data-cy="profileEmail" class="h-16 flex items-center">{{
+            userQuery.email$ | async
+          }}</div>
+          <div data-cy="profileAlias" class="h-16 flex items-center">{{
+            userQuery.alias$ | async
+          }}</div>
+          <div class="flex items-center">
+            <button
+              data-cy="profileChangePasswordButton"
+              class="mt-3 px-5 py-3 border border-gray-300 text-gray1 shadow-sm rounded font-medium focus:outline-none"
+              (click)="changePassword()"
+              >Change Password
+            </button>
+          </div>
+          <div class="flex items-center">
+            <button
+              data-cy="profileDeleteUserButton"
+              class="mt-7 px-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+              (click)="deleteUser()"
+              >Delete User</button
+            >
           </div>
         </div>
-        <div
-          data-cy="profileFullName"
-          class="h-16 flex items-center max-w-xl truncate"
-          >{{ userQuery.fullName$ | async }}</div
-        >
-        <div data-cy="profileTimezone" class="h-16 flex items-center">{{
-          userQuery.timezone$ | async
-        }}</div>
-        <div data-cy="profileEmail" class="h-16 flex items-center">{{
-          userQuery.email$ | async
-        }}</div>
-        <div data-cy="profileAlias" class="h-16 flex items-center">{{
-          userQuery.alias$ | async
-        }}</div>
-        <div class="flex items-center">
-          <button
-            data-cy="profileChangePasswordButton"
-            class="mt-3 px-5 py-3 border border-gray-300 text-gray1 shadow-sm rounded font-medium focus:outline-none"
-            (click)="changePassword()"
-            >Change Password
-          </button>
-        </div>
-        <div class="flex items-center">
-          <button
-            data-cy="profileDeleteUserButton"
-            class="mt-7 px-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
-            (click)="deleteUser()"
-            >Delete User</button
+
+        <div class="flex flex-col ml-6">
+          <div class="h-24 flex items-center"
+            ><button
+              data-cy="profileEditPhotoButton"
+              (click)="editPhoto()"
+              class="py-2 px-3 border border-gray-300 rounded shadow-sm text-sm leading-3 font-medium text-gray-700 focus:outline-none"
+              >Edit</button
+            ></div
           >
+
+          <div class="h-16 flex items-center">
+            <button
+              data-cy="profileEditNameButton"
+              (click)="editName()"
+              class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+              >Edit</button
+            ></div
+          >
+
+          <div class="h-16 flex items-center"
+            ><button
+              data-cy="profileEditTimezoneButton"
+              (click)="editTimezone()"
+              class="py-2 px-3 border border-gray-300 rounded shadow-sm text-sm leading-3 font-medium text-gray-700 focus:outline-none"
+              >Edit</button
+            ></div
+          >
+          <div class="h-16 flex items-center"></div>
+          <div class="h-16 flex items-center"></div>
+          <div class="flex items-center"></div>
+          <div class="flex items-center"></div>
         </div>
-      </div>
-
-      <div class="flex flex-col ml-6">
-        <div class="h-24 flex items-center"
-          ><button
-            data-cy="profileEditPhotoButton"
-            (click)="editPhoto()"
-            class="py-2 px-3 border border-gray-300 rounded shadow-sm text-sm leading-3 font-medium text-gray-700 focus:outline-none"
-            >Edit</button
-          ></div
-        >
-
-        <div class="h-16 flex items-center">
-          <button
-            data-cy="profileEditNameButton"
-            (click)="editName()"
-            class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
-            >Edit</button
-          ></div
-        >
-
-        <div class="h-16 flex items-center"
-          ><button
-            data-cy="profileEditTimezoneButton"
-            (click)="editTimezone()"
-            class="py-2 px-3 border border-gray-300 rounded shadow-sm text-sm leading-3 font-medium text-gray-700 focus:outline-none"
-            >Edit</button
-          ></div
-        >
-        <div class="h-16 flex items-center"></div>
-        <div class="h-16 flex items-center"></div>
-        <div class="flex items-center"></div>
-        <div class="flex items-center"></div>
       </div>
     </div>
   </div>

@@ -1,124 +1,126 @@
 <div class="bg-blue1 flex flex-col h-full">
-  <div
-    data-cy="orgUsersTitle"
-    class="font-semibold text-2xl mt-8 ml-6 text-gray1"
-    >Organization - Users</div
-  >
-
-  <div
-    class="flex-grow bg-white mx-6 mt-4 mb-4 rounded shadow-lg overflow-y-auto"
-  >
-    <div class="mx-5 mt-8 text-gray1">
-      <table class="min-w-full divide-y divide-gray-500">
-        <thead>
-          <tr class="text-sm h-12">
-            <th></th>
-            <th class="text-left">Name</th>
-            <th class="text-left">Email</th>
-            <th class="text-left">Alias</th>
-            <th class="text-left">Project User</th>
-            <th class="text-left">Project Admin</th>
-            <th class="text-left">BlockML Editor</th>
-            <th class="text-left">Model Explorer</th>
-          </tr>
-        </thead>
-
-        <tbody class="divide-y divide-gray-300">
-          <tr
-            *ngFor="
-              let user of users
-                | paginate
-                  : {
-                      id: 'users',
-                      itemsPerPage: perPage,
-                      currentPage: currentPage,
-                      totalItems: total
-                    };
-              let i = index
-            "
-            class="h-16"
-          >
-            <td class="w-24">
-              <div class="flex">
-                <button
-                  class="ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
-                  [ngClass]="{
-                    'cursor-default': !user.avatarSmall
-                  }"
-                  (click)="showPhoto(user.userId)"
-                  [disabled]="!user.avatarSmall"
-                >
-                  <m-avatar [avatar]="user.avatarSmall"></m-avatar>
-                </button>
-              </div>
-            </td>
-
-            <td class="w-64">{{ user.fullName }}</td>
-
-            <td data-cy="orgUsersUserEmailData" class="w-64">
-              {{ user.email }}
-            </td>
-
-            <td class="w-48">{{ user.alias }}</td>
-            <td class="w-48">
-              <div class="flex flex-col my-3">
-                <div
-                  *ngFor="let projectUserProject of user.projectUserProjects"
-                >
-                  <div class="flex flex-row items-center">
-                    <div>{{ projectUserProject }} </div>
-                  </div>
-                </div>
-              </div></td
-            >
-            <td class="w-48">
-              <div class="flex flex-col my-3">
-                <div
-                  *ngFor="let projectAdminProject of user.projectAdminProjects"
-                >
-                  <div class="flex flex-row items-center">
-                    <div>{{ projectAdminProject }} </div>
-                  </div>
-                </div>
-              </div></td
-            >
-            <td class="w-48">
-              <div class="flex flex-col my-3">
-                <div
-                  *ngFor="
-                    let blockmlEditorProject of user.blockmlEditorProjects
-                  "
-                >
-                  <div class="flex flex-row items-center">
-                    <div>{{ blockmlEditorProject }} </div>
-                  </div>
-                </div>
-              </div></td
-            >
-            <td class="w-48">
-              <div class="flex flex-col my-3">
-                <div
-                  *ngFor="
-                    let modelExplorerProject of user.modelExplorerProjects
-                  "
-                >
-                  <div class="flex flex-row items-center">
-                    <div>{{ modelExplorerProject }} </div>
-                  </div>
-                </div>
-              </div></td
-            >
-          </tr>
-        </tbody>
-      </table>
+  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8">
+    <div class="flex h-11 items-center">
+      <div data-cy="orgUsersTitle" class="font-semibold text-2xl text-gray1"
+        >Organization - Users</div
+      >
     </div>
-  </div>
 
-  <pagination-controls
-    class="flex justify-center mx-6 mt-3 mb-6"
-    (pageChange)="getUsers($event)"
-    id="users"
-  ></pagination-controls>
+    <div class="flex-grow bg-white mt-6 mb-4 rounded shadow-lg overflow-y-auto">
+      <div class="mx-5 mt-8 text-gray1">
+        <table class="min-w-full divide-y divide-gray-500">
+          <thead>
+            <tr class="text-sm h-12">
+              <th></th>
+              <th class="text-left">Name</th>
+              <th class="text-left">Email</th>
+              <th class="text-left">Alias</th>
+              <th class="text-left">Project User</th>
+              <th class="text-left">Project Admin</th>
+              <th class="text-left">BlockML Editor</th>
+              <th class="text-left">Model Explorer</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-300">
+            <tr
+              *ngFor="
+                let user of users
+                  | paginate
+                    : {
+                        id: 'users',
+                        itemsPerPage: perPage,
+                        currentPage: currentPage,
+                        totalItems: total
+                      };
+                let i = index
+              "
+              class="h-16"
+            >
+              <td class="w-24">
+                <div class="flex">
+                  <button
+                    class="ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+                    [ngClass]="{
+                      'cursor-default': !user.avatarSmall
+                    }"
+                    (click)="showPhoto(user.userId)"
+                    [disabled]="!user.avatarSmall"
+                  >
+                    <m-avatar [avatar]="user.avatarSmall"></m-avatar>
+                  </button>
+                </div>
+              </td>
+
+              <td class="w-64">{{ user.fullName }}</td>
+
+              <td data-cy="orgUsersUserEmailData" class="w-64">
+                {{ user.email }}
+              </td>
+
+              <td class="w-48">{{ user.alias }}</td>
+              <td class="w-48">
+                <div class="flex flex-col my-3">
+                  <div
+                    *ngFor="let projectUserProject of user.projectUserProjects"
+                  >
+                    <div class="flex flex-row items-center">
+                      <div>{{ projectUserProject }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
+              <td class="w-48">
+                <div class="flex flex-col my-3">
+                  <div
+                    *ngFor="
+                      let projectAdminProject of user.projectAdminProjects
+                    "
+                  >
+                    <div class="flex flex-row items-center">
+                      <div>{{ projectAdminProject }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
+              <td class="w-48">
+                <div class="flex flex-col my-3">
+                  <div
+                    *ngFor="
+                      let blockmlEditorProject of user.blockmlEditorProjects
+                    "
+                  >
+                    <div class="flex flex-row items-center">
+                      <div>{{ blockmlEditorProject }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
+              <td class="w-48">
+                <div class="flex flex-col my-3">
+                  <div
+                    *ngFor="
+                      let modelExplorerProject of user.modelExplorerProjects
+                    "
+                  >
+                    <div class="flex flex-row items-center">
+                      <div>{{ modelExplorerProject }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <pagination-controls
+      class="flex justify-center mt-3"
+      (pageChange)="getUsers($event)"
+      id="users"
+    ></pagination-controls>
+  </div>
 </div>
 
 <div *ngIf="orgId$ | async"></div>
