@@ -14,7 +14,7 @@
           data-cy="blockmlTreeItem"
           class="group flex flex-row cursor-pointer hover:bg-blue2 px-5 py-1 w-full select-none"
           [ngClass]="{
-            ' font-semibold': !!fileNodeId && node.data.id === fileNodeId
+            'font-semibold': !!fileNodeId && node.data.id === fileNodeId
           }"
           (click)="nodeOnClick(node)"
         >

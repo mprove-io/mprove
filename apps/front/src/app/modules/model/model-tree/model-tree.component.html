@@ -2,43 +2,54 @@
   <tree-root
     class="w-full h-2 mt-4"
     #itemsTree
-    [nodes]="repo?.nodes"
+    [nodes]="model?.nodes"
     [options]="treeOptions"
     (initialized)="treeOnInitialized()"
     (updateData)="treeOnUpdateData()"
-    (moveNode)="onMoveNode($event)"
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
       <div class="flex flex-row w-full">
         <div
           data-cy="modelTreeItem"
-          class="group flex flex-row cursor-pointer hover:bg-blue2 px-5 py-1 w-full select-none"
+          class="group flex flex-row px-5 py-1 w-full select-none"
+          [ngClass]="{
+            'cursor-pointer hover:bg-blue2':
+              node.data.nodeClass !== nodeClassInfo
+          }"
           (click)="nodeOnClick(node)"
         >
-          <div
-            class="relative flex flex-row items-center w-full"
-            [ngClass]="{
-              'ml-10': !node.data.isFolder,
-              'ml-3': node.data.isFolder
-            }"
-          >
+          <div class="relative flex flex-row items-center w-full">
             <div class="flex flex-grow flex-row items-center">
-              <!-- <div *ngIf="node.data.isFolder" class="flex flex-row space-x-1">
-                <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
-                <m-chevron-right-icon
-                  *ngIf="!node.isExpanded && node.hasChildren"
-                ></m-chevron-right-icon>
-                <m-chevron-down-icon
-                  *ngIf="node.isExpanded && node.hasChildren"
-                ></m-chevron-down-icon>
+              <div
+                *ngIf="
+                  !node.data.isField && node.data.nodeClass !== nodeClassInfo
+                "
+                class="flex flex-row space-x-1 items-center"
+              >
+                <div
+                  class="items-center"
+                  [ngClass]="{
+                    'ml-4':
+                      node.data.nodeClass === nodeClassDimension &&
+                      node.data.isField === false
+                  }"
+                >
+                  <m-chevron-right-icon
+                    *ngIf="!node.isExpanded && node.hasChildren"
+                  ></m-chevron-right-icon>
 
-                <m-folder-closed-icon
+                  <m-chevron-down-icon
+                    *ngIf="node.isExpanded && node.hasChildren"
+                  ></m-chevron-down-icon>
+
+                  <!-- <m-folder-closed-icon
                   *ngIf="!node.isExpanded || !node.hasChildren"
-                ></m-folder-closed-icon>
-                <m-folder-open-icon
+                  ></m-folder-closed-icon>
+                  <m-folder-open-icon
                   *ngIf="node.isExpanded && node.hasChildren"
-                ></m-folder-open-icon>
-              </div> -->
+                  ></m-folder-open-icon> -->
+                </div>
+              </div>
 
               <!-- <div
                 *ngIf="!node.data.isFolder"
@@ -50,15 +61,30 @@
                 {{ node.data.fileId | extension: true | capitalize }}
               </div> -->
 
-              <!-- <div class="ml-2">
-                {{ node.data.name }}
-              </div> -->
+              <div
+                class="text-gray1"
+                [ngClass]="{
+                  'ml-2': node.hasChildren,
+                  'ml-5':
+                    !node.hasChildren &&
+                    node.parent.data.nodeClass !== nodeClassDimension,
+                  'ml-9': node.parent.data.nodeClass === nodeClassDimension
+                }"
+              >
+                <div
+                  *ngIf="node.data.nodeClass === nodeClassInfo"
+                  class="font-semibold"
+                >
+                  {{ node.data.label | uppercase }}
+                </div>
+
+                <div *ngIf="node.data.nodeClass !== nodeClassInfo">
+                  {{ node.data.label | capitalize }}
+                </div>
+              </div>
             </div>
 
-            <!-- <div
-              class="h-9 w-9"
-              *ngIf="nav.isRepoProd === true || needSave === true"
-            ></div> -->
+            <div class="h-8 w-8" *ngIf="true"></div>
 
             <!-- <div
               *ngIf="nav.isRepoProd === false && needSave === false"
@@ -81,7 +107,5 @@
   </tree-root>
 </div>
 
-<div *ngIf="repo$ | async"></div>
-<div *ngIf="nav$ | async"></div>
-<div *ngIf="needSave$ | async"></div>
-<div *ngIf="file$ | async"></div>
+<div *ngIf="model$ | async"></div>
+<!-- <div *ngIf="nav$ | async"></div> -->
