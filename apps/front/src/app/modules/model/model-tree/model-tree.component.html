@@ -2,7 +2,7 @@
   <tree-root
     class="w-full h-2 mt-4"
     #itemsTree
-    [nodes]="model?.nodes"
+    [nodes]="nodesExtra"
     [options]="treeOptions"
     (initialized)="treeOnInitialized()"
     (updateData)="treeOnUpdateData()"
@@ -108,4 +108,5 @@
 </div>
 
 <div *ngIf="model$ | async"></div>
+<div *ngIf="mconfig$ | async"></div>
 <!-- <div *ngIf="nav$ | async"></div> -->

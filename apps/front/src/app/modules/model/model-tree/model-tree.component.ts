@@ -5,16 +5,24 @@ import {
   TreeNode
 } from '@circlon/angular-tree-component';
 import { tap } from 'rxjs/operators';
+import { ModelNode } from '~common/_index';
 import { FileQuery } from '~front/app/queries/file.query';
+import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { MconfigState } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
+
+export class ModelNodeExtra extends common.ModelNode {
+  isSelected: boolean;
+  isFiltered: boolean;
+}
 
 @Component({
   selector: 'm-model-tree',
@@ -26,11 +34,28 @@ export class ModelTreeComponent {
   nodeClassInfo = common.FieldClassEnum.Info;
   nodeClassDimension = common.FieldClassEnum.Dimension;
 
+  nodesExtra: ModelNodeExtra[] = [];
+
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.model = x;
+
       console.log(x);
+
+      this.makeNodesExtra();
+      this.cd.detectChanges();
+    })
+  );
+
+  mconfig: MconfigState;
+  mconfig$ = this.mconfigQuery.select().pipe(
+    tap(x => {
+      this.mconfig = x;
+
+      console.log(x);
+
+      this.makeNodesExtra();
       this.cd.detectChanges();
     })
   );
@@ -70,6 +95,7 @@ export class ModelTreeComponent {
     public modelQuery: ModelQuery,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private mconfigQuery: MconfigQuery,
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
     private apiService: ApiService,
@@ -129,11 +155,34 @@ export class ModelTreeComponent {
       if (node.hasChildren) {
         node.toggleExpanded();
       }
-    } else {
-      // this.navigateService.navigateToFileLine({
-      //   underscoreFileId: node.data.fileId
-      // });
     }
+  }
+
+  select() {}
+
+  makeNodesExtra() {
+    this.nodesExtra = this.model.nodes.map(topNode => {
+      topNode.children.map(middleNode => {
+        middleNode.children.map(leafNode => this.updateNodeExtra(leafNode));
+        return this.updateNodeExtra(middleNode);
+      });
+      return this.updateNodeExtra(topNode);
+    });
+  }
+
+  updateNodeExtra(node: ModelNode): ModelNodeExtra {
+    return Object.assign(node, <ModelNodeExtra>{
+      isSelected:
+        common.isDefined(this.mconfig) && node.isField === true
+          ? this.mconfig.select.findIndex(x => x === node.id) > -1
+          : false,
+      isFiltered:
+        common.isDefined(this.mconfig) && node.isField === true
+          ? this.mconfig.filters.findIndex(
+              filter => filter.fieldId === node.id
+            ) > -1
+          : false
+    });
   }
 
   // ngOnDestroy() {
