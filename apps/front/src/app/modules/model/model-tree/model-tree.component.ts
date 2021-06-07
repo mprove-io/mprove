@@ -4,19 +4,18 @@ import {
   TreeComponent,
   TreeNode
 } from '@circlon/angular-tree-component';
-import { tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
-import { FileQuery } from '~front/app/queries/file.query';
 import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { MconfigState } from '~front/app/stores/mconfig.store';
+import { StructService } from '~front/app/services/struct.service';
+import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
-import { RepoStore } from '~front/app/stores/repo.store';
+import { QueryStore } from '~front/app/stores/query.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 export class ModelNodeExtra extends common.ModelNode {
@@ -33,6 +32,8 @@ export class ModelNodeExtra extends common.ModelNode {
 export class ModelTreeComponent {
   nodeClassInfo = common.FieldClassEnum.Info;
   nodeClassDimension = common.FieldClassEnum.Dimension;
+  nodeClassMeasure = common.FieldClassEnum.Measure;
+  nodeClassCalculation = common.FieldClassEnum.Calculation;
 
   nodesExtra: ModelNodeExtra[] = [];
 
@@ -94,12 +95,11 @@ export class ModelTreeComponent {
   constructor(
     public modelQuery: ModelQuery,
     private cd: ChangeDetectorRef,
-    private navQuery: NavQuery,
     private mconfigQuery: MconfigQuery,
-    private uiQuery: UiQuery,
-    private fileQuery: FileQuery,
     private apiService: ApiService,
-    private repoStore: RepoStore,
+    private structService: StructService,
+    private mconfigStore: MconfigStore,
+    private queryStore: QueryStore,
     public structStore: StructStore,
     private navigateService: NavigateService
   ) {}
@@ -155,10 +155,48 @@ export class ModelTreeComponent {
       if (node.hasChildren) {
         node.toggleExpanded();
       }
+    } else {
+      this.selectField(node);
     }
   }
 
-  select() {}
+  selectField(node: TreeNode) {
+    let newMconfig = this.structService.makeMconfig();
+    console.log(newMconfig);
+
+    if (node.data.isSelected === true) {
+      //
+    } else {
+      newMconfig.select = [...newMconfig.select, node.data.id];
+    }
+
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
+      mconfig: newMconfig
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendCreateTempMconfigAndQuery,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
+          let { mconfig, query } = resp.payload;
+
+          this.mconfigStore.update(mconfig);
+          this.queryStore.update(query);
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  filterField(node: TreeNode) {
+    let newMconfig = this.structService.makeMconfig();
+
+    // if ()
+  }
 
   makeNodesExtra() {
     this.nodesExtra = this.model.nodes.map(topNode => {
@@ -173,11 +211,11 @@ export class ModelTreeComponent {
   updateNodeExtra(node: ModelNode): ModelNodeExtra {
     return Object.assign(node, <ModelNodeExtra>{
       isSelected:
-        common.isDefined(this.mconfig) && node.isField === true
+        common.isDefined(this.mconfig?.structId) && node.isField === true
           ? this.mconfig.select.findIndex(x => x === node.id) > -1
           : false,
       isFiltered:
-        common.isDefined(this.mconfig) && node.isField === true
+        common.isDefined(this.mconfig?.structId) && node.isField === true
           ? this.mconfig.filters.findIndex(
               filter => filter.fieldId === node.id
             ) > -1

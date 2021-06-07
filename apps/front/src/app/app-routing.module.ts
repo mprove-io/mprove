@@ -26,7 +26,6 @@ import { ProjectTeamComponent } from './modules/project/project-team/project-tea
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
-import { BlockmlResolver } from './resolvers/blockml.resolver';
 import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { FileResolver } from './resolvers/file.resolver';
@@ -38,6 +37,7 @@ import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
+import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoResolver } from './resolvers/repo.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
@@ -160,12 +160,15 @@ const routes: Routes = [
                   {
                     path:
                       common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_ID}`,
-                    resolve: [MemberResolver, BranchResolver],
+                    resolve: [
+                      MemberResolver,
+                      BranchResolver,
+                      RepoStructResolver
+                    ],
                     children: [
                       {
                         component: BlockmlComponent,
                         path: common.PATH_BLOCKML,
-                        resolve: [BlockmlResolver],
                         children: [
                           {
                             component: BlockmlEditorComponent,

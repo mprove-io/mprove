@@ -53,11 +53,9 @@ export class StructService {
     this.mconfig$.subscribe();
   }
 
-  private makeMconfig(item: {
-    newMconfigId: string;
-    newQueryId: string;
-  }): common.Mconfig {
-    let { newMconfigId, newQueryId } = item;
+  makeMconfig(): common.Mconfig {
+    let newMconfigId = common.makeId();
+    let newQueryId = common.makeId();
 
     let emptyMconfig: common.Mconfig = {
       structId: this.struct.structId,
@@ -78,7 +76,7 @@ export class StructService {
       serverTs: 1
     };
 
-    return common.isDefined(this.mconfig)
+    return common.isDefined(this.mconfig.structId)
       ? Object.assign({}, this.mconfig, <common.Mconfig>{
           mconfigId: newMconfigId,
           queryId: newQueryId,

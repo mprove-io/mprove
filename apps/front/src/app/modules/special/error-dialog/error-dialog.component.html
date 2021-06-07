@@ -5,7 +5,7 @@
       <div>Message</div>
       <div data-cy="errorDialogMessage" class="col-span-3">{{ message }}</div>
 
-      <div>Info</div>
+      <div *ngIf="originalErrorMessage">Info</div>
       <div class="col-span-3" *ngIf="originalErrorMessage">
         {{ originalErrorMessage }}
       </div>

@@ -14,7 +14,6 @@ import { constants } from '~front/barrels/constants';
 import { enums } from '~front/barrels/enums';
 import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
-import { RepoStore } from '../stores/repo.store';
 import { AuthService } from './auth.service';
 import { MyDialogService } from './my-dialog.service';
 import { NavigateService } from './navigate.service';
@@ -71,7 +70,9 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
     // blockml repo options
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction,
+    // model tree
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery
   ];
 
   constructor(
@@ -79,7 +80,6 @@ export class ApiService {
     private authService: AuthService,
     private spinner: NgxSpinnerService,
     private myDialogService: MyDialogService,
-    private repoStore: RepoStore,
     private navigateService: NavigateService
   ) {}
 

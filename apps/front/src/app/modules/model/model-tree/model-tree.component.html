@@ -8,13 +8,17 @@
     (updateData)="treeOnUpdateData()"
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
-      <div class="flex flex-row w-full">
+      <div class="flex flex-row w-full h-10 group">
         <div
           data-cy="modelTreeItem"
           class="group flex flex-row px-5 py-1 w-full select-none"
           [ngClass]="{
-            'cursor-pointer hover:bg-blue2':
-              node.data.nodeClass !== nodeClassInfo
+            'cursor-pointer': node.data.nodeClass !== nodeClassInfo,
+            'bg-blue-50':
+              node.data.nodeClass === nodeClassDimension &&
+              node.data.isField === true,
+            'bg-purple-50': node.data.nodeClass === nodeClassMeasure,
+            'bg-green-50': node.data.nodeClass === nodeClassCalculation
           }"
           (click)="nodeOnClick(node)"
         >
@@ -67,8 +71,8 @@
                   'ml-2': node.hasChildren,
                   'ml-5':
                     !node.hasChildren &&
-                    node.parent.data.nodeClass !== nodeClassDimension,
-                  'ml-9': node.parent.data.nodeClass === nodeClassDimension
+                    node.parent?.data.nodeClass !== nodeClassDimension,
+                  'ml-9': node.parent?.data.nodeClass === nodeClassDimension
                 }"
               >
                 <div
@@ -84,7 +88,29 @@
               </div>
             </div>
 
-            <div class="h-8 w-8" *ngIf="true"></div>
+            <!-- <div class="h-8 w-8" *ngIf="true"></div> -->
+
+            <button
+              *ngIf="
+                node.data.isField === true && node.data.isSelected === true
+              "
+              type="button"
+              data-cy="blockmlTreeSelectButton"
+              class="rounded-full focus:outline-none bg-blue3 text-white h-2 w-2"
+            ></button>
+
+            <button
+              *ngIf="node.data.isField === true"
+              type="button"
+              data-cy="blockmlTreeSelectButton"
+              class="py-1 px-5 ml-3 rounded focus:outline-none invisible group-hover:visible"
+              [ngClass]="{
+                'bg-blue3 text-white visible': node.data.isFiltered === true,
+                'bg-white': node.data.isFiltered === false
+              }"
+              (click)="filterField(node)"
+              >Filter</button
+            >
 
             <!-- <div
               *ngIf="nav.isRepoProd === false && needSave === false"
