@@ -14,7 +14,9 @@ import { UpdatePasswordComponent } from './modules/auth/password/03-update-passw
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { BlockmlEditorComponent } from './modules/blockml/blockml-editor/blockml-editor.component';
 import { BlockmlComponent } from './modules/blockml/blockml.component';
+import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
+import { QueryComponent } from './modules/model/query/query.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
@@ -29,6 +31,7 @@ import { ProjectDeletedComponent } from './modules/special/project-deleted/proje
 import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { FileResolver } from './resolvers/file.resolver';
+import { MconfigResolver } from './resolvers/mconfig.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
 import { ModelResolver } from './resolvers/model.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
@@ -37,6 +40,7 @@ import { OrgResolver } from './resolvers/org.resolver';
 import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
+import { QueryResolver } from './resolvers/query.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoResolver } from './resolvers/repo.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
@@ -182,12 +186,27 @@ const routes: Routes = [
                       },
                       {
                         component: ModelComponent,
-                        canDeactivate: [
-                          // DeactivateGuard
-                        ],
                         path:
                           common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
-                        resolve: [ModelResolver]
+                        resolve: [ModelResolver],
+                        children: [
+                          {
+                            component: MconfigComponent,
+                            path:
+                              common.PATH_MCONFIG +
+                              `/:${common.PARAMETER_MCONFIG_ID}`,
+                            resolve: [MconfigResolver],
+                            children: [
+                              {
+                                component: QueryComponent,
+                                path:
+                                  common.PATH_QUERY +
+                                  `/:${common.PARAMETER_QUERY_ID}`,
+                                resolve: [QueryResolver]
+                              }
+                            ]
+                          }
+                        ]
                       }
                     ]
                   }

@@ -165,7 +165,7 @@ export class ModelTreeComponent {
     console.log(newMconfig);
 
     if (node.data.isSelected === true) {
-      //
+      newMconfig = this.removeField({ newMconfig, fieldId: node.data.id });
     } else {
       newMconfig.select = [...newMconfig.select, node.data.id];
     }
@@ -186,10 +186,71 @@ export class ModelTreeComponent {
 
           this.mconfigStore.update(mconfig);
           this.queryStore.update(query);
+
+          this.navigateService.navigateMconfigQueryData({
+            mconfigId: mconfig.mconfigId,
+            queryId: mconfig.queryId
+          });
         }),
         take(1)
       )
       .subscribe();
+  }
+
+  removeField(item: { newMconfig: common.Mconfig; fieldId: string }) {
+    let { newMconfig, fieldId } = item;
+
+    newMconfig = this.removeFieldFromSelect({ newMconfig, fieldId });
+    newMconfig = this.removeFieldFromSortings({ newMconfig, fieldId });
+
+    // newMconfig.charts = newMconfig.charts.map(chart =>
+    //   this.removeFieldFromChart(chart, fieldId)
+    // );
+
+    return newMconfig;
+  }
+
+  removeFieldFromSelect(item: { newMconfig: common.Mconfig; fieldId: string }) {
+    let { newMconfig, fieldId } = item;
+
+    let fieldIndex = newMconfig.select.findIndex(x => x === fieldId);
+
+    newMconfig.select = [
+      ...newMconfig.select.slice(0, fieldIndex),
+      ...newMconfig.select.slice(fieldIndex + 1)
+    ];
+
+    return newMconfig;
+  }
+
+  removeFieldFromSortings(item: {
+    newMconfig: common.Mconfig;
+    fieldId: string;
+  }) {
+    let { newMconfig, fieldId } = item;
+
+    let fIndex = newMconfig.sortings.findIndex(x => x.fieldId === fieldId);
+
+    if (fIndex > -1) {
+      // field should be removed from sortings and sorts
+      newMconfig.sortings = [
+        ...newMconfig.sortings.slice(0, fIndex),
+        ...newMconfig.sortings.slice(fIndex + 1)
+      ];
+
+      let newSorts: string[] = [];
+
+      newMconfig.sortings.forEach(sorting =>
+        sorting.desc === true
+          ? newSorts.push(`${sorting.fieldId} desc`)
+          : newSorts.push(sorting.fieldId)
+      );
+
+      newMconfig.sorts =
+        newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
+    }
+
+    return newMconfig;
   }
 
   filterField(node: TreeNode) {

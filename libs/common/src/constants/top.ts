@@ -27,8 +27,10 @@ export const PATH_NEW_PASSWORD_WAS_SET = 'new-password-was-set';
 export const PATH_PASSWORD_RESET_SENT_AUTH = 'password-reset-sent-auth';
 export const PATH_PROFILE = 'profile';
 export const PATH_BLOCKML = 'blockml';
-export const PATH_MODEL = 'model';
 export const PATH_FILE = 'file';
+export const PATH_MODEL = 'model';
+export const PATH_MCONFIG = 'mconfig';
+export const PATH_QUERY = 'query';
 
 export const PATH_ORG = 'org';
 export const PATH_ACCOUNT = 'account';
@@ -45,6 +47,8 @@ export const PARAMETER_REPO_ID = 'repoId';
 export const PARAMETER_BRANCH_ID = 'branchId';
 export const PARAMETER_FILE_ID = 'fileId';
 export const PARAMETER_MODEL_ID = 'modelId';
+export const PARAMETER_MCONFIG_ID = 'mconfigId';
+export const PARAMETER_QUERY_ID = 'queryId';
 
 export const PATH_PROJECT = 'project';
 export const PATH_REPO = 'repo';

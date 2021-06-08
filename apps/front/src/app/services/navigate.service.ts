@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
+import { ModelQuery } from '../queries/model.query';
 import { NavQuery } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';
+import { ModelState } from '../stores/model.store';
 import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
@@ -12,7 +14,13 @@ export class NavigateService {
   nav$ = this.navQuery.select().pipe(
     tap(x => {
       this.nav = x;
-      // this.cd.detectChanges();
+    })
+  );
+
+  model: ModelState;
+  model$ = this.modelQuery.select().pipe(
+    tap(x => {
+      this.model = x;
     })
   );
 
@@ -20,16 +28,17 @@ export class NavigateService {
   userId$ = this.userQuery.userId$.pipe(
     tap(x => {
       this.userId = x;
-      // this.cd.detectChanges();
     })
   );
 
   constructor(
     private navQuery: NavQuery,
+    private modelQuery: ModelQuery,
     private userQuery: UserQuery,
     private router: Router
   ) {
     this.nav$.subscribe();
+    this.model$.subscribe();
     this.userId$.subscribe();
   }
 
@@ -63,22 +72,29 @@ export class NavigateService {
   //   }
   // }
 
-  // navigateMconfigQueryData(mconfigId?: string, queryId?: string) {
-  //   this.getStoreValues();
-  //   this.router.navigate([
-  //     '/project',
-  //     this.projectId,
-  //     'mode',
-  //     this.mode,
-  //     'model',
-  //     this.modelId,
-  //     'mconfig',
-  //     mconfigId ? mconfigId : this.mconfigId,
-  //     'query',
-  //     queryId ? queryId : this.queryId,
-  //     'data'
-  //   ]);
-  // }
+  navigateMconfigQueryData(item: { mconfigId: string; queryId: string }) {
+    let { mconfigId, queryId } = item;
+
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_MODEL,
+      this.model.modelId,
+      common.PATH_MCONFIG,
+      mconfigId,
+      common.PATH_QUERY,
+      queryId
+    ]);
+  }
 
   // navigateMconfigQueryFilters(mconfigId?: string, queryId?: string) {
   //   this.getStoreValues();
