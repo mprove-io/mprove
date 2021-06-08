@@ -27,13 +27,56 @@
       <div class="flex flex-row flex-grow mt-6">
         <m-model-tree class="flex w-1/4"></m-model-tree>
 
-        <div class="flex flex-grow ml-6">
-          <div class="bg-white rounded shadow-lg w-full">
-            <div class="flex justify-center items-center h-full text-xl"
-              >Select fields...</div
-            >
+        <div class="flex flex-col flex-grow ml-6 space-y-6">
+          <div
+            class="bg-white rounded shadow-md w-full"
+            [ngClass]="{
+              'flex-1': filtersIsExpanded
+            }"
+          >
+            <div class="flex h-full">
+              <div class="flex h-16 items-center">
+                <m-panel-title
+                  [title]="'Filters'"
+                  [isExpanded]="filtersIsExpanded"
+                  (toggleEvent)="toggleFiltersPanel()"
+                ></m-panel-title>
+              </div>
+            </div>
+          </div>
 
-            <!-- <router-outlet *ngIf="lastUrl !== pathBlockml"></router-outlet> -->
+          <div
+            class="bg-white rounded shadow-md w-full"
+            [ngClass]="{
+              'flex-1': chartIsExpanded
+            }"
+          >
+            <div class="flex h-full">
+              <div class="flex h-16 items-center">
+                <m-panel-title
+                  [title]="'Chart'"
+                  [isExpanded]="chartIsExpanded"
+                  (toggleEvent)="toggleChartPanel()"
+                ></m-panel-title>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded shadow-md w-full"
+            [ngClass]="{
+              'flex-1': dataIsExpanded
+            }"
+          >
+            <div class="flex h-full">
+              <div class="flex h-16 items-center">
+                <m-panel-title
+                  [title]="'Data'"
+                  [isExpanded]="dataIsExpanded"
+                  (toggleEvent)="toggleDataPanel()"
+                ></m-panel-title>
+              </div>
+            </div>
           </div>
         </div>
       </div>

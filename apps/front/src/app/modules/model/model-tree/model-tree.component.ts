@@ -232,7 +232,6 @@ export class ModelTreeComponent {
     let fIndex = newMconfig.sortings.findIndex(x => x.fieldId === fieldId);
 
     if (fIndex > -1) {
-      // field should be removed from sortings and sorts
       newMconfig.sortings = [
         ...newMconfig.sortings.slice(0, fIndex),
         ...newMconfig.sortings.slice(fIndex + 1)

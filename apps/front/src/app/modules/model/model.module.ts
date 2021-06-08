@@ -7,6 +7,7 @@ import { SharedModule } from '../shared/shared.module';
 import { MconfigComponent } from './mconfig/mconfig.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model.component';
+import { PanelTitleComponent } from './panel-title/panel-title.component';
 import { QueryComponent } from './query/query.component';
 
 @NgModule({
@@ -14,7 +15,8 @@ import { QueryComponent } from './query/query.component';
     ModelComponent,
     ModelTreeComponent,
     MconfigComponent,
-    QueryComponent
+    QueryComponent,
+    PanelTitleComponent
   ],
   imports: [
     CommonModule,

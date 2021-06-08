@@ -46,6 +46,10 @@ export class ModelComponent {
     })
   );
 
+  filtersIsExpanded = false;
+  chartIsExpanded = false;
+  dataIsExpanded = false;
+
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
@@ -59,6 +63,18 @@ export class ModelComponent {
     public fileService: FileService,
     public navigateService: NavigateService
   ) {}
+
+  toggleFiltersPanel() {
+    this.filtersIsExpanded = !this.filtersIsExpanded;
+  }
+
+  toggleChartPanel() {
+    this.chartIsExpanded = !this.chartIsExpanded;
+  }
+
+  toggleDataPanel() {
+    this.dataIsExpanded = !this.dataIsExpanded;
+  }
 
   goToFile() {
     let fileIdAr = this.model.filePath.split('/');
