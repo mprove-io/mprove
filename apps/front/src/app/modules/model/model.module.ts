@@ -9,6 +9,7 @@ import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
 import { QueryComponent } from './query/query.component';
+import { SqlComponent } from './sql/sql.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { QueryComponent } from './query/query.component';
     ModelTreeComponent,
     MconfigComponent,
     QueryComponent,
-    PanelTitleComponent
+    PanelTitleComponent,
+    SqlComponent
   ],
   imports: [
     CommonModule,

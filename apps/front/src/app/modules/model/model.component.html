@@ -35,7 +35,7 @@
             }"
           >
             <div class="flex h-full">
-              <div class="flex h-16 items-center">
+              <div class="flex h-16 items-center flex-shrink-0">
                 <m-panel-title
                   [title]="'Filters'"
                   [isExpanded]="filtersIsExpanded"
@@ -52,7 +52,7 @@
             }"
           >
             <div class="flex h-full">
-              <div class="flex h-16 items-center">
+              <div class="flex h-16 items-center flex-shrink-0">
                 <m-panel-title
                   [title]="'Chart'"
                   [isExpanded]="chartIsExpanded"
@@ -68,13 +68,46 @@
               'flex-1': dataIsExpanded
             }"
           >
-            <div class="flex h-full">
-              <div class="flex h-16 items-center">
+            <div class="flex flex-col h-full">
+              <div class="flex h-16 items-center flex-shrink-0">
                 <m-panel-title
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
                   (toggleEvent)="toggleDataPanel()"
                 ></m-panel-title>
+
+                <button
+                  class="w-24 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
+                  [ngClass]="{
+                    'font-semibold': resultsIsShow,
+                    'text-gray-400 cursor-default': !dataIsExpanded
+                  }"
+                  [disabled]="!dataIsExpanded"
+                  (click)="toggleResults()"
+                  >Results</button
+                >
+
+                <button
+                  class="w-16 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
+                  [ngClass]="{
+                    'font-semibold': sqlIsShow,
+                    'text-gray-400 cursor-default': !dataIsExpanded
+                  }"
+                  [disabled]="!dataIsExpanded"
+                  (click)="toggleSql()"
+                  >SQL</button
+                >
+              </div>
+
+              <div
+                class="flex flex-row flex-stretch h-full mt-5 mx-5"
+                *ngIf="dataIsExpanded"
+              >
+                <div *ngIf="resultsIsShow" class="flex-1">Results</div>
+
+                <div class="flex-1 h-full w-full" *ngIf="sqlIsShow">
+                  <m-sql></m-sql>
+                </div>
               </div>
             </div>
           </div>

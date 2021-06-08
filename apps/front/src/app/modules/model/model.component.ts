@@ -50,6 +50,9 @@ export class ModelComponent {
   chartIsExpanded = false;
   dataIsExpanded = false;
 
+  sqlIsShow = false;
+  resultsIsShow = false;
+
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
@@ -64,12 +67,32 @@ export class ModelComponent {
     public navigateService: NavigateService
   ) {}
 
+  toggleSql() {
+    this.sqlIsShow = !this.sqlIsShow;
+  }
+
+  toggleResults() {
+    this.resultsIsShow = !this.resultsIsShow;
+    if (this.sqlIsShow) {
+      this.sqlIsShow = false;
+      setTimeout(() => (this.sqlIsShow = true));
+    }
+  }
+
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
+    if (this.dataIsExpanded) {
+      this.dataIsExpanded = false;
+      setTimeout(() => (this.dataIsExpanded = true));
+    }
   }
 
   toggleChartPanel() {
     this.chartIsExpanded = !this.chartIsExpanded;
+    if (this.dataIsExpanded) {
+      this.dataIsExpanded = false;
+      setTimeout(() => (this.dataIsExpanded = true));
+    }
   }
 
   toggleDataPanel() {
