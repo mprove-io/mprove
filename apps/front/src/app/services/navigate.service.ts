@@ -218,7 +218,11 @@ export class NavigateService {
       common.PATH_BRANCH,
       this.nav.branchId,
       common.PATH_MODEL,
-      modelId
+      modelId,
+      common.PATH_MCONFIG,
+      common.EMPTY,
+      common.PATH_QUERY,
+      common.EMPTY
     ]);
   }
 

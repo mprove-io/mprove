@@ -6,6 +6,7 @@ import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { MconfigStore } from '~front/app/stores/mconfig.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -60,6 +61,7 @@ export class ModelsMenuComponent implements OnInit, OnDestroy {
     public uiStore: UiStore,
     public orgQuery: OrgQuery,
     public navQuery: NavQuery,
+    private mconfigStore: MconfigStore,
     private router: Router,
     private apiService: ApiService,
     private navigateService: NavigateService,
@@ -131,6 +133,7 @@ export class ModelsMenuComponent implements OnInit, OnDestroy {
 
   goToModel(modelId: string) {
     this.closeMenu();
+    this.mconfigStore.reset();
     this.navigateService.navigateToModel(modelId);
   }
 

@@ -4,7 +4,7 @@
       <div class="flex flex-row justify-between items-center h-11">
         <div class="flex flex-row items-center space-x-5">
           <div
-            data-cy="blockmlTitle"
+            data-cy="modelTitle"
             class="flex font-semibold text-2xl text-gray1 items-center self-center"
           >
             Model
@@ -97,13 +97,48 @@
                   (click)="toggleSql()"
                   >SQL</button
                 >
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="ml-12 text-gray1 text-lg select-none"
+                  >Limit</div
+                >
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  [formGroup]="limitForm"
+                  class="flex items-center ml-5"
+                >
+                  <input
+                    data-cy="modelLimitInput"
+                    class="w-24 form-input rounded border-gray3 focus:border-blue3"
+                    [ngClass]="{
+                      'border-red-600':
+                        limitForm.controls['limit'].invalid &&
+                        limitForm.controls['limit'].touched
+                    }"
+                    type="limit"
+                    formControlName="limit"
+                  />
+                  <m-validation
+                    [control]="limitForm.controls['limit']"
+                  ></m-validation>
+                </div>
               </div>
 
               <div
                 class="flex flex-row flex-stretch h-full mt-5 mx-5"
                 *ngIf="dataIsExpanded"
               >
-                <div *ngIf="resultsIsShow" class="flex-1">Results</div>
+                <div *ngIf="resultsIsShow" class="flex-1 h-full">
+                  <div
+                    *ngIf="mconfig?.select.length === 0"
+                    class="flex items-center justify-center text-xl h-full"
+                    >Select fields...</div
+                  >
+
+                  <div *ngIf="mconfig?.select.length > 0">Table</div>
+                </div>
 
                 <div class="flex-1 h-full w-full" *ngIf="sqlIsShow">
                   <m-sql></m-sql>
@@ -120,3 +155,4 @@
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="model$ | async"></div>
+<div *ngIf="mconfig$ | async"></div>

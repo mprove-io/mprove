@@ -4,7 +4,7 @@ import {
   Resolve,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -29,6 +29,11 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
     let queryId = route.params[common.PARAMETER_QUERY_ID];
+
+    if (queryId === common.EMPTY) {
+      this.queryStore.reset();
+      return of(true);
+    }
 
     let nav: NavState;
     this.navQuery

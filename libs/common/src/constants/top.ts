@@ -50,6 +50,8 @@ export const PARAMETER_MODEL_ID = 'modelId';
 export const PARAMETER_MCONFIG_ID = 'mconfigId';
 export const PARAMETER_QUERY_ID = 'queryId';
 
+export const EMPTY = 'empty';
+
 export const PATH_PROJECT = 'project';
 export const PATH_REPO = 'repo';
 export const PATH_BRANCH = 'branch';

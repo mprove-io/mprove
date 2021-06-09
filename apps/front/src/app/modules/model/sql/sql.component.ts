@@ -28,7 +28,6 @@ export class SqlComponent {
     tap(x => {
       this.query = x;
       this.content = x.sql;
-      console.log(this.content);
       this.cd.detectChanges();
     })
   );

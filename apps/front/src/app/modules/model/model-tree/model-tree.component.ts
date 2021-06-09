@@ -42,7 +42,7 @@ export class ModelTreeComponent {
     tap(x => {
       this.model = x;
 
-      console.log(x);
+      // console.log(x);
 
       this.makeNodesExtra();
       this.cd.detectChanges();
@@ -54,7 +54,7 @@ export class ModelTreeComponent {
     tap(x => {
       this.mconfig = x;
 
-      console.log(x);
+      // console.log(x);
 
       this.makeNodesExtra();
       this.cd.detectChanges();
@@ -162,7 +162,7 @@ export class ModelTreeComponent {
 
   selectField(node: TreeNode) {
     let newMconfig = this.structService.makeMconfig();
-    console.log(newMconfig);
+    // console.log(newMconfig);
 
     if (node.data.isSelected === true) {
       newMconfig = this.removeField({ newMconfig, fieldId: node.data.id });
