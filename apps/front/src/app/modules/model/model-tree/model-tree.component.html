@@ -23,7 +23,7 @@
           (click)="nodeOnClick(node)"
         >
           <div class="relative flex flex-row items-center w-full">
-            <div class="flex flex-grow flex-row items-center">
+            <div class="flex flex-row items-center">
               <div
                 *ngIf="
                   !node.data.isField && node.data.nodeClass !== nodeClassInfo
@@ -45,39 +45,30 @@
                   <m-chevron-down-icon
                     *ngIf="node.isExpanded && node.hasChildren"
                   ></m-chevron-down-icon>
-
-                  <!-- <m-folder-closed-icon
-                  *ngIf="!node.isExpanded || !node.hasChildren"
-                  ></m-folder-closed-icon>
-                  <m-folder-open-icon
-                  *ngIf="node.isExpanded && node.hasChildren"
-                  ></m-folder-open-icon> -->
                 </div>
               </div>
 
-              <!-- <div
-                *ngIf="!node.data.isFolder"
-                class="font-bold w-7 text-center"
-                [ngClass]="{
-                  'text-[#5dd0a8]': true
-                }"
-              >
-                {{ node.data.fileId | extension: true | capitalize }}
-              </div> -->
-
               <div
-                class="text-gray1"
+                *ngIf="node.data.isField === true"
+                class="flex items-center h-2 w-2"
                 [ngClass]="{
-                  'ml-2': node.hasChildren,
-                  'ml-5':
+                  'ml-1':
                     !node.hasChildren &&
                     node.parent?.data.nodeClass !== nodeClassDimension,
-                  'ml-9': node.parent?.data.nodeClass === nodeClassDimension
+                  'ml-5': node.parent?.data.nodeClass === nodeClassDimension
                 }"
               >
                 <div
+                  *ngIf="node.data.isSelected === true"
+                  data-cy="blockmlTreeSelectedSymbol"
+                  class="rounded-full focus:outline-none bg-blue3 text-white h-2 w-2"
+                ></div>
+              </div>
+
+              <div class="text-gray1 ml-3">
+                <div
                   *ngIf="node.data.nodeClass === nodeClassInfo"
-                  class="font-semibold"
+                  class="ml-3 font-semibold"
                 >
                   {{ node.data.label | uppercase }}
                 </div>
@@ -88,16 +79,7 @@
               </div>
             </div>
 
-            <!-- <div class="h-8 w-8" *ngIf="true"></div> -->
-
-            <button
-              *ngIf="
-                node.data.isField === true && node.data.isSelected === true
-              "
-              type="button"
-              data-cy="blockmlTreeSelectButton"
-              class="rounded-full focus:outline-none bg-blue3 text-white h-2 w-2"
-            ></button>
+            <div class="flex flex-grow"></div>
 
             <button
               *ngIf="node.data.isField === true"

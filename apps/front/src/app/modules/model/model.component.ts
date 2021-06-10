@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, tap } from 'rxjs/operators';
+import { filter, map, take, tap } from 'rxjs/operators';
 import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -10,12 +10,15 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { MconfigState } from '~front/app/stores/mconfig.store';
+import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
+import { QueryStore } from '~front/app/stores/query.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -95,7 +98,10 @@ export class ModelComponent {
     private apiService: ApiService,
     public structStore: StructStore,
     public fileService: FileService,
-    public navigateService: NavigateService
+    public navigateService: NavigateService,
+    private mconfigStore: MconfigStore,
+    private queryStore: QueryStore,
+    private structService: StructService
   ) {}
 
   toggleSql() {
@@ -145,5 +151,43 @@ export class ModelComponent {
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
+  }
+
+  limitBlur() {
+    let limit = this.limitForm.controls['limit'];
+
+    let newMconfig = this.structService.makeMconfig();
+
+    if (!this.limitForm.valid || Number(limit.value) === newMconfig.limit) {
+      return;
+    }
+
+    newMconfig.limit = Number(limit.value);
+
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
+      mconfig: newMconfig
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendCreateTempMconfigAndQuery,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
+          let { mconfig, query } = resp.payload;
+
+          this.mconfigStore.update(mconfig);
+          this.queryStore.update(query);
+
+          this.navigateService.navigateMconfigQueryData({
+            mconfigId: mconfig.mconfigId,
+            queryId: mconfig.queryId
+          });
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

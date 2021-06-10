@@ -80,9 +80,10 @@
                   class="w-24 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
                   [ngClass]="{
                     'font-semibold': resultsIsShow,
-                    'text-gray-400 cursor-default': !dataIsExpanded
+                    'text-gray-400 cursor-default':
+                      !dataIsExpanded || mconfig?.select.length === 0
                   }"
-                  [disabled]="!dataIsExpanded"
+                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   (click)="toggleResults()"
                   >Results</button
                 >
@@ -91,9 +92,10 @@
                   class="w-16 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
                   [ngClass]="{
                     'font-semibold': sqlIsShow,
-                    'text-gray-400 cursor-default': !dataIsExpanded
+                    'text-gray-400 cursor-default':
+                      !dataIsExpanded || mconfig?.select.length === 0
                   }"
-                  [disabled]="!dataIsExpanded"
+                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   (click)="toggleSql()"
                   >SQL</button
                 >
@@ -119,6 +121,7 @@
                     }"
                     type="limit"
                     formControlName="limit"
+                    (blur)="limitBlur()"
                   />
                   <m-validation
                     [control]="limitForm.controls['limit']"
@@ -130,18 +133,23 @@
                 class="flex flex-row flex-stretch h-full mt-5 mx-5"
                 *ngIf="dataIsExpanded"
               >
-                <div *ngIf="resultsIsShow" class="flex-1 h-full">
-                  <div
-                    *ngIf="mconfig?.select.length === 0"
-                    class="flex items-center justify-center text-xl h-full"
-                    >Select fields...</div
-                  >
+                <div
+                  *ngIf="mconfig?.select.length === 0"
+                  class="flex items-center justify-center text-xl h-full w-full"
+                  >Select fields...</div
+                >
 
-                  <div *ngIf="mconfig?.select.length > 0">Table</div>
-                </div>
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="flex flex-row items-center justify-center w-full"
+                >
+                  <div *ngIf="resultsIsShow" class="flex-1 h-full">
+                    <div>Table</div>
+                  </div>
 
-                <div class="flex-1 h-full w-full" *ngIf="sqlIsShow">
-                  <m-sql></m-sql>
+                  <div *ngIf="sqlIsShow" class="flex-1 h-full w-full">
+                    <m-sql></m-sql>
+                  </div>
                 </div>
               </div>
             </div>
