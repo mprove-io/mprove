@@ -1,0 +1,31 @@
+<table class="min-w-full divide-y divide-gray-500">
+  <thead>
+    <tr class="text-sm h-12">
+      <th *ngFor="let column of sortedColumns; let columnIndex = index">
+        <div class="flex flex-row">
+          <div>{{ column.topLabel | capitalize }}</div>
+
+          <div *ngIf="column.groupLabel" class="ml-10">{{
+            column.groupLabel | capitalize
+          }}</div>
+
+          <div class="ml-10" data-cy="mainTableColumnLabel">{{
+            column.label | capitalize
+          }}</div>
+        </div>
+      </th>
+    </tr>
+  </thead>
+
+  <tbody class="divide-y divide-gray-300">
+    <tr data-cy="mainTableRow" *ngFor="let row of filteredData; let i = index">
+      <td data-cy="mainTableCell" *ngFor="let column of sortedColumns">
+        {{ row[column.sqlName] }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="mconfigSelectModelFields$ | async"></div>
+<div *ngIf="mconfig$ | async"></div>
+<div *ngIf="query$ | async"></div>
