@@ -34,6 +34,10 @@
             >Error - {{ errorTimeAgo$ | async }}</div
           >
 
+          <div *ngIf="query?.status === queryStatusEnum.Error">{{
+            query?.lastErrorMessage
+          }}</div>
+
           <div *ngIf="query?.status === queryStatusEnum.Canceled"
             >Canceled - {{ canceledTimeAgo$ | async }}</div
           >
@@ -164,10 +168,7 @@
                 </div>
               </div>
 
-              <div
-                class="flex flex-row flex-stretch h-full mt-5 mx-5"
-                *ngIf="dataIsExpanded"
-              >
+              <div class="flex flex-grow mt-5 mx-5 h-2" *ngIf="dataIsExpanded">
                 <div
                   *ngIf="mconfig?.select.length === 0"
                   class="flex items-center justify-center text-xl h-full w-full"
@@ -176,10 +177,12 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="flex flex-row items-center justify-center w-full"
+                  class="flex flex-row items-start justify-center w-full h-full"
                 >
                   <div *ngIf="resultsIsShow" class="flex-1 h-full">
-                    <m-main-table></m-main-table>
+                    <div class="flex flex-col h-full overflow-auto">
+                      <m-main-table></m-main-table>
+                    </div>
                   </div>
 
                   <div *ngIf="sqlIsShow" class="flex-1 h-full w-full">
