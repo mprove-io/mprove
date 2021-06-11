@@ -2,7 +2,7 @@
   <div class="flex flex-row h-full">
     <div class="flex flex-col flex-grow mx-6 mb-6 mt-8">
       <div class="flex flex-row justify-between items-center h-11">
-        <div class="flex flex-row items-center space-x-5">
+        <div class="flex flex-row items-center space-x-5 w-full">
           <div
             data-cy="modelTitle"
             class="flex font-semibold text-2xl text-gray1 items-center self-center"
@@ -19,6 +19,41 @@
             <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
             <div class="ml-2 text-xl">File</div>
           </button>
+
+          <div class="flex-grow"></div>
+
+          <div
+            *ngIf="query?.status === queryStatusEnum.Running"
+            class="flex flex-row"
+          >
+            <div>Running - seconds</div>
+            <div class="w-8 ml-1">{{ runSecondsAgo$ | async }}</div>
+          </div>
+
+          <div *ngIf="query?.status === queryStatusEnum.Error"
+            >Error - {{ errorTimeAgo$ | async }}</div
+          >
+
+          <div *ngIf="query?.status === queryStatusEnum.Canceled"
+            >Canceled - {{ canceledTimeAgo$ | async }}</div
+          >
+
+          <div *ngIf="query?.status === queryStatusEnum.Completed"
+            >Completed - {{ completedTimeAgo$ | async }}</div
+          >
+
+          <button
+            type="button"
+            data-cy="modelRunButton"
+            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
+            [ngClass]="{
+              'bg-gray-400 cursor-default': false,
+              'bg-blue3': true
+            }"
+            (click)="run()"
+            [disabled]="false"
+            >Run</button
+          >
         </div>
 
         <div class="flex flex-row space-x-3 items-center"> </div>
@@ -164,3 +199,4 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mconfig$ | async"></div>
+<div *ngIf="query$ | async"></div>

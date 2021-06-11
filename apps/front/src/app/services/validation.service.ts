@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { common } from '~front/barrels/common';
 
 @Injectable({ providedIn: 'root' })
-@Injectable()
 export class ValidationService {
   constructor(private router: Router) {}
 

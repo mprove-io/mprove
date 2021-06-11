@@ -1,21 +1,24 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { interval, of, Subscription } from 'rxjs';
+import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { QueryQuery } from '~front/app/queries/query.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
+import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
-import { QueryStore } from '~front/app/stores/query.store';
+import { QueryState, QueryStore } from '~front/app/stores/query.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -25,7 +28,9 @@ import { common } from '~front/barrels/common';
   selector: 'm-model',
   templateUrl: './model.component.html'
 })
-export class ModelComponent {
+export class ModelComponent implements OnInit, OnDestroy {
+  queryStatusEnum = common.QueryStatusEnum;
+
   lastUrl: string;
 
   model: ModelState;
@@ -66,6 +71,14 @@ export class ModelComponent {
     })
   );
 
+  query: QueryState;
+  query$ = this.queryQuery.select().pipe(
+    tap(x => {
+      this.query = x;
+      this.cd.detectChanges();
+    })
+  );
+
   limitForm: FormGroup = this.fb.group({
     limit: [
       undefined,
@@ -82,14 +95,40 @@ export class ModelComponent {
   chartIsExpanded = false;
   dataIsExpanded = true;
 
-  sqlIsShow = true;
+  sqlIsShow = false;
   resultsIsShow = true;
+
+  runSecondsAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => {
+      let s = this.timeService.secondsAgoFromNow(this.query.lastRunTs);
+      return s < 0 ? 0 : s;
+    })
+  );
+
+  errorTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.timeAgoFromNow(this.query.lastErrorTs))
+  );
+
+  canceledTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.timeAgoFromNow(this.query.lastCancelTs))
+  );
+
+  completedTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x => this.timeService.timeAgoFromNow(this.query.lastCompleteTs))
+  );
+
+  checkRunning$: Subscription;
 
   constructor(
     private router: Router,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private queryQuery: QueryQuery,
     private uiQuery: UiQuery,
     private modelQuery: ModelQuery,
     public repoQuery: RepoQuery,
@@ -101,8 +140,42 @@ export class ModelComponent {
     public navigateService: NavigateService,
     private mconfigStore: MconfigStore,
     private queryStore: QueryStore,
-    private structService: StructService
+    private structService: StructService,
+    private timeService: TimeService
   ) {}
+
+  ngOnInit() {
+    this.checkRunning$ = interval(3000)
+      .pipe(
+        startWith(0),
+        switchMap(() => {
+          if (this.query?.status === common.QueryStatusEnum.Running) {
+            let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+              mconfigId: this.mconfig.mconfigId,
+              queryId: this.query.queryId
+            };
+
+            return this.apiService
+              .req(
+                apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                payload
+              )
+              .pipe(
+                tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
+                  this.queryStore.update(resp.payload.query);
+                })
+              );
+          } else {
+            return of(1);
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.checkRunning$.unsubscribe();
+  }
 
   toggleSql() {
     this.sqlIsShow = !this.sqlIsShow;
@@ -185,6 +258,26 @@ export class ModelComponent {
             mconfigId: mconfig.mconfigId,
             queryId: mconfig.queryId
           });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  run() {
+    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      queryIds: [this.query.queryId]
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          let { runningQueries } = resp.payload;
+          this.queryStore.update(runningQueries[0]);
         }),
         take(1)
       )

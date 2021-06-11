@@ -11,7 +11,6 @@ import { StructState } from '../stores/struct.store';
 import { UserState } from '../stores/user.store';
 
 @Injectable({ providedIn: 'root' })
-@Injectable()
 export class StructService {
   user: UserState;
   user$ = this.userQuery.select().pipe(
