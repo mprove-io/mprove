@@ -1,9 +1,13 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { tap } from 'rxjs/operators';
-import { MconfigQuery } from '~front/app/queries/mconfig.query';
+import { map, take, tap } from 'rxjs/operators';
+import { ColumnField, MconfigQuery } from '~front/app/queries/mconfig.query';
 import { QueryQuery } from '~front/app/queries/query.query';
-import { MconfigState } from '~front/app/stores/mconfig.store';
-import { QueryState } from '~front/app/stores/query.store';
+import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
+import { StructService } from '~front/app/services/struct.service';
+import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
+import { QueryState, QueryStore } from '~front/app/stores/query.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -11,7 +15,7 @@ import { common } from '~front/barrels/common';
   templateUrl: './main-table.component.html'
 })
 export class MainTableComponent {
-  sortedColumns: common.ModelField[];
+  sortedColumns: ColumnField[];
   mconfigSelectModelFields$ = this.mconfigQuery.selectModelFields$.pipe(
     tap(x => {
       this.sortedColumns = x;
@@ -41,6 +45,101 @@ export class MainTableComponent {
   constructor(
     public mconfigQuery: MconfigQuery,
     public queryQuery: QueryQuery,
+    private structService: StructService,
+    private apiService: ApiService,
+    private mconfigStore: MconfigStore,
+    private queryStore: QueryStore,
+    private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}
+
+  sort(fieldId: string, desc: boolean) {
+    // const { fieldId, desc } = params;
+    let newMconfig = this.structService.makeMconfig();
+
+    let newSortings: common.Sorting[] = [];
+
+    let fIndex = newMconfig.sortings.findIndex(
+      sorting => sorting.fieldId === fieldId
+    );
+
+    if (fIndex > -1 && newMconfig.sortings[fIndex].desc === true && desc) {
+      // desc should be removed from sortings and asc should be added to end
+
+      let sorting: common.Sorting = { fieldId: fieldId, desc: false };
+
+      newSortings = [
+        ...newMconfig.sortings.slice(0, fIndex),
+        ...newMconfig.sortings.slice(fIndex + 1),
+        sorting
+      ];
+    } else if (
+      fIndex > -1 &&
+      newMconfig.sortings[fIndex].desc === true &&
+      !desc
+    ) {
+      // not possible in UI
+      // asc should be removed from sortings
+
+      newSortings = [
+        ...newMconfig.sortings.slice(0, fIndex),
+        ...newMconfig.sortings.slice(fIndex + 1)
+      ];
+    } else if (fIndex > -1 && newMconfig.sortings[fIndex].desc === false) {
+      // asc should be removed from sortings
+      newSortings = [
+        ...newMconfig.sortings.slice(0, fIndex),
+        ...newMconfig.sortings.slice(fIndex + 1)
+      ];
+    } else if (fIndex < 0) {
+      // should be added to sortings
+      let sorting: common.Sorting = { fieldId: fieldId, desc: desc };
+
+      newSortings = [...newMconfig.sortings, sorting];
+    }
+
+    newMconfig.sortings = newSortings;
+
+    // create sorts
+    let newSorts: string[] = [];
+
+    newMconfig.sortings.forEach(sorting =>
+      sorting.desc
+        ? newSorts.push(`${sorting.fieldId} desc`)
+        : newSorts.push(sorting.fieldId)
+    );
+
+    newMconfig.sorts =
+      newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
+
+    this.nav(newMconfig);
+  }
+
+  nav(newMconfig: common.Mconfig) {
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
+      mconfig: newMconfig
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendCreateTempMconfigAndQuery,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
+          let { mconfig, query } = resp.payload;
+
+          this.mconfigStore.update(mconfig);
+          this.queryStore.update(query);
+
+          this.navigateService.navigateMconfigQueryData({
+            mconfigId: mconfig.mconfigId,
+            queryId: mconfig.queryId
+          });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 }

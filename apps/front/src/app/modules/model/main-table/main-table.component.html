@@ -2,19 +2,47 @@
   <thead>
     <tr class="h-12">
       <th *ngFor="let column of sortedColumns; let columnIndex = index">
-        <div class="flex flex-col justify-center items-start">
-          <div class="font-normal text-sm">{{
-            column.topLabel | capitalize
-          }}</div>
-
-          <div class="flex flex-row font-semibold">
-            <div *ngIf="column.groupLabel">{{
-              column.groupLabel | capitalize
+        <div class="flex flex-row justify-start items-center">
+          <div class="flex flex-col justify-center items-start">
+            <div class="font-normal text-sm">{{
+              column.topLabel | capitalize
             }}</div>
 
-            <div data-cy="mainTableColumnLabel">{{
-              column.label | capitalize
-            }}</div>
+            <div class="flex flex-row font-semibold">
+              <div *ngIf="column.groupLabel">{{
+                column.groupLabel | capitalize
+              }}</div>
+
+              <div data-cy="mainTableColumnLabel">{{
+                column.label | capitalize
+              }}</div>
+            </div>
+          </div>
+
+          <div class="ml-5">
+            <button
+              *ngIf="column.sorting?.desc === false"
+              class="h-8 w-8 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
+              (click)="sort(column.id, false)"
+            >
+              <m-chevron-up-icon></m-chevron-up-icon>
+            </button>
+
+            <button
+              *ngIf="column.sorting?.desc === true"
+              class="h-8 w-8 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
+              (click)="sort(column.id, true)"
+            >
+              <m-chevron-down-icon></m-chevron-down-icon>
+            </button>
+
+            <button
+              *ngIf="!column.sorting"
+              class="h-8 w-8 flex items-center justify-center focus:outline-none"
+              (click)="sort(column.id, true)"
+            >
+              <m-chevron-down-icon></m-chevron-down-icon>
+            </button>
           </div>
         </div>
       </th>
