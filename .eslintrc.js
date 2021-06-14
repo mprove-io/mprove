@@ -21,7 +21,9 @@ module.exports = {
     {
       files: ['*.html'],
       extends: ['plugin:@nrwl/nx/angular-template'],
-      rules: {}
+      rules: {
+        '@angular-eslint/template/no-negated-async': 'off'
+      }
     },
     {
       files: ['*.js'],

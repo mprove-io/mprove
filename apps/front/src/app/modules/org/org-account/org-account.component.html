@@ -1,114 +1,116 @@
 <div class="bg-blue1 flex flex-col h-full">
-  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8">
+  <div class="flex flex-grow flex-col mx-6 mb-6 mt-8 h-2">
     <div class="flex h-11 items-center">
       <div data-cy="orgAccountTitle" class="font-semibold text-2xl text-gray1"
         >Organization - Account</div
       >
     </div>
 
-    <div class="flex-1 bg-white mt-6 rounded shadow-lg">
-      <div class="flex flex-row mt-16 ml-32">
-        <div class="flex flex-col">
-          <div class="h-16 flex items-center justify-end font-semibold"
-            >Organization Name</div
-          >
-          <div class="h-16 flex items-center justify-end font-semibold"
-            >Owner</div
-          >
-          <div class="h-16 flex items-center justify-end font-semibold"
-            >Company Size</div
-          >
-          <div class="h-16 flex items-center justify-end font-semibold"
-            >Contact Phone Number</div
-          >
-          <div class="flex items-center justify-end font-semibold"></div>
-        </div>
-
-        <div class="flex flex-col ml-6">
-          <div
-            data-cy="orgAccountName"
-            class="h-16 flex items-center max-w-xl truncate"
-            >{{ org?.name }}</div
-          >
-          <div
-            data-cy="orgAccountOwnerEmail"
-            class="h-16 flex items-center max-w-xl truncate"
-            >{{ org?.ownerEmail }}</div
-          >
-          <div
-            data-cy="orgAccountCompanySize"
-            class="h-16 flex items-center max-w-xl truncate"
-            >{{ org?.companySize }}</div
-          >
-          <div
-            data-cy="orgAccountContactPhone"
-            class="h-16 flex items-center max-w-xl truncate"
-            >{{ org?.contactPhone }}</div
-          >
-          <div class="flex items-center">
-            <button
-              data-cy="orgAccountDeleteOrgButton"
-              class="mt-7 px-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
-              [ngClass]="{
-                'border-gray3 text-gray3': isOrgOwner === false
-              }"
-              [disabled]="isOrgOwner === false"
-              (click)="deleteOrg()"
-              >Delete Organization</button
+    <div class="flex flex-1 bg-white mt-6 rounded shadow-lg w-full h-2">
+      <div class="w-full h-full overflow-auto">
+        <div class="flex flex-row mt-16 ml-32">
+          <div class="flex flex-col">
+            <div class="h-16 flex items-center justify-end font-semibold"
+              >Organization Name</div
             >
+            <div class="h-16 flex items-center justify-end font-semibold"
+              >Owner</div
+            >
+            <div class="h-16 flex items-center justify-end font-semibold"
+              >Company Size</div
+            >
+            <div class="h-16 flex items-center justify-end font-semibold"
+              >Contact Phone Number</div
+            >
+            <div class="flex items-center justify-end font-semibold"></div>
           </div>
-        </div>
 
-        <div class="flex flex-col ml-6">
-          <div class="h-16 flex items-center">
-            <button
-              data-cy="orgAccountEditNameButton"
-              class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
-              [ngClass]="{
-                'text-gray3': isOrgOwner === false
-              }"
-              [disabled]="isOrgOwner === false"
-              (click)="editName()"
-              >Edit</button
-            ></div
-          >
-          <div class="h-16 flex items-center">
-            <button
-              data-cy="orgAccountEditOwnerButton"
-              class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
-              [ngClass]="{
-                'text-gray3': isOrgOwner === false
-              }"
-              [disabled]="isOrgOwner === false"
-              (click)="editOwner()"
-              >Edit</button
-            ></div
-          >
-          <div class="h-16 flex items-center">
-            <button
-              data-cy="orgAccountEditCompanySizeButton"
-              class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
-              [ngClass]="{
-                'text-gray3': isOrgOwner === false
-              }"
-              [disabled]="isOrgOwner === false"
-              (click)="editCompanySize()"
-              >Edit</button
-            ></div
-          >
-          <div class="h-16 flex items-center">
-            <button
-              data-cy="orgAccountEditContactPhoneButton"
-              class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
-              [ngClass]="{
-                'text-gray3': isOrgOwner === false
-              }"
-              [disabled]="isOrgOwner === false"
-              (click)="editContactPhone()"
-              >Edit</button
-            ></div
-          >
-          <div class="flex items-center"></div>
+          <div class="flex flex-col ml-6">
+            <div
+              data-cy="orgAccountName"
+              class="h-16 flex items-center max-w-xl truncate"
+              >{{ org?.name }}</div
+            >
+            <div
+              data-cy="orgAccountOwnerEmail"
+              class="h-16 flex items-center max-w-xl truncate"
+              >{{ org?.ownerEmail }}</div
+            >
+            <div
+              data-cy="orgAccountCompanySize"
+              class="h-16 flex items-center max-w-xl truncate"
+              >{{ org?.companySize }}</div
+            >
+            <div
+              data-cy="orgAccountContactPhone"
+              class="h-16 flex items-center max-w-xl truncate"
+              >{{ org?.contactPhone }}</div
+            >
+            <div class="flex items-center">
+              <button
+                data-cy="orgAccountDeleteOrgButton"
+                class="mt-7 px-5 mb-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+                [ngClass]="{
+                  'border-gray3 text-gray3': isOrgOwner === false
+                }"
+                [disabled]="isOrgOwner === false"
+                (click)="deleteOrg()"
+                >Delete Organization</button
+              >
+            </div>
+          </div>
+
+          <div class="flex flex-col ml-6">
+            <div class="h-16 flex items-center">
+              <button
+                data-cy="orgAccountEditNameButton"
+                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                [ngClass]="{
+                  'text-gray3': isOrgOwner === false
+                }"
+                [disabled]="isOrgOwner === false"
+                (click)="editName()"
+                >Edit</button
+              ></div
+            >
+            <div class="h-16 flex items-center">
+              <button
+                data-cy="orgAccountEditOwnerButton"
+                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                [ngClass]="{
+                  'text-gray3': isOrgOwner === false
+                }"
+                [disabled]="isOrgOwner === false"
+                (click)="editOwner()"
+                >Edit</button
+              ></div
+            >
+            <div class="h-16 flex items-center">
+              <button
+                data-cy="orgAccountEditCompanySizeButton"
+                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                [ngClass]="{
+                  'text-gray3': isOrgOwner === false
+                }"
+                [disabled]="isOrgOwner === false"
+                (click)="editCompanySize()"
+                >Edit</button
+              ></div
+            >
+            <div class="h-16 flex items-center">
+              <button
+                data-cy="orgAccountEditContactPhoneButton"
+                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                [ngClass]="{
+                  'text-gray3': isOrgOwner === false
+                }"
+                [disabled]="isOrgOwner === false"
+                (click)="editContactPhone()"
+                >Edit</button
+              ></div
+            >
+            <div class="flex items-center"></div>
+          </div>
         </div>
       </div>
     </div>

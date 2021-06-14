@@ -72,8 +72,9 @@
                 ></div>
               </div>
 
-              <div class="text-gray1 ml-0">
+              <div class="text-gray1 ml-0 truncate">
                 <div
+                  class="truncate"
                   *ngIf="node.data.nodeClass === nodeClassInfo"
                   class="ml-9 font-semibold"
                 >
@@ -81,6 +82,7 @@
                 </div>
 
                 <div
+                  class="truncate"
                   *ngIf="node.data.nodeClass !== nodeClassInfo"
                   [ngClass]="{
                     'ml-3':
