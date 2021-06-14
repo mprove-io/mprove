@@ -28,7 +28,11 @@ services:
       - $PG_ENV_FILE_PATH
     ports:
       - 5432:5432
-
+    volumes:
+      - type: bind
+        source: $M_DATA_PG_PATH
+        target: /var/lib/postgresql/data
+        
   db:
     image: mysql:8
     env_file:
