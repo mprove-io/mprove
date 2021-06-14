@@ -8,17 +8,24 @@
     (updateData)="treeOnUpdateData()"
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
-      <div class="flex flex-row w-full h-10 group">
+      <div
+        class="flex flex-row w-full h-10 group"
+        [ngClass]="{
+          'pl-6 pr-5':
+            node.data.nodeClass === nodeClassDimension ||
+            node.data.nodeClass === nodeClassMeasure ||
+            node.data.nodeClass === nodeClassCalculation
+        }"
+      >
         <div
           data-cy="modelTreeItem"
-          class="group flex flex-row px-5 py-1 w-full select-none"
+          class="group flex flex-row pr-5 py-1 w-full select-none"
           [ngClass]="{
             'cursor-pointer': node.data.nodeClass !== nodeClassInfo,
-            'bg-blue-50':
-              node.data.nodeClass === nodeClassDimension &&
-              node.data.isField === true,
+            'bg-blue-50': node.data.nodeClass === nodeClassDimension,
             'bg-purple-50': node.data.nodeClass === nodeClassMeasure,
-            'bg-green-50': node.data.nodeClass === nodeClassCalculation
+            'bg-green-50': node.data.nodeClass === nodeClassCalculation,
+            'px-5': !node.data.isField
           }"
           (click)="nodeOnClick(node)"
         >
@@ -33,7 +40,7 @@
                 <div
                   class="items-center"
                   [ngClass]="{
-                    'ml-4':
+                    'ml-2':
                       node.data.nodeClass === nodeClassDimension &&
                       node.data.isField === false
                   }"
@@ -50,12 +57,12 @@
 
               <div
                 *ngIf="node.data.isField === true"
-                class="flex items-center h-2 w-2"
+                class="flex items-center h-2 w-2 mr-3"
                 [ngClass]="{
-                  'ml-1':
+                  'ml-4':
                     !node.hasChildren &&
                     node.parent?.data.nodeClass !== nodeClassDimension,
-                  'ml-5': node.parent?.data.nodeClass === nodeClassDimension
+                  'ml-10': node.parent?.data.nodeClass === nodeClassDimension
                 }"
               >
                 <div
@@ -65,15 +72,25 @@
                 ></div>
               </div>
 
-              <div class="text-gray1 ml-3">
+              <div class="text-gray1 ml-0">
                 <div
                   *ngIf="node.data.nodeClass === nodeClassInfo"
-                  class="ml-3 font-semibold"
+                  class="ml-9 font-semibold"
                 >
                   {{ node.data.label | uppercase }}
                 </div>
 
-                <div *ngIf="node.data.nodeClass !== nodeClassInfo">
+                <div
+                  *ngIf="node.data.nodeClass !== nodeClassInfo"
+                  [ngClass]="{
+                    'ml-3':
+                      node.hasChildren &&
+                      node.data.nodeClass !== nodeClassDimension,
+                    'ml-2':
+                      node.hasChildren &&
+                      node.data.nodeClass === nodeClassDimension
+                  }"
+                >
                   {{ node.data.label | capitalize }}
                 </div>
               </div>
@@ -84,7 +101,7 @@
             <button
               *ngIf="node.data.isField === true"
               type="button"
-              data-cy="blockmlTreeSelectButton"
+              data-cy="blockmlTreeFilterButton"
               class="py-1 px-5 ml-3 rounded focus:outline-none invisible group-hover:visible"
               [ngClass]="{
                 'bg-blue3 text-white visible': node.data.isFiltered === true,

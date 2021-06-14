@@ -8,10 +8,12 @@
               column.topLabel | capitalize
             }}</div>
 
-            <div class="flex flex-row font-semibold">
+            <div class="flex flex-row font-semibold space-x-1">
               <div *ngIf="column.groupLabel">{{
                 column.groupLabel | capitalize
               }}</div>
+
+              <div *ngIf="column.groupLabel">-</div>
 
               <div data-cy="mainTableColumnLabel">{{
                 column.label | capitalize
