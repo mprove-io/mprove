@@ -177,15 +177,16 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="flex flex-row items-start justify-center w-full h-full"
+                  class="flex flex-row items-start justify-center space-x-5 w-full h-full"
                 >
-                  <div *ngIf="resultsIsShow" class="flex-1 h-full w-2">
-                    <div class="flex flex-col h-full overflow-auto">
-                      <m-main-table></m-main-table>
-                    </div>
+                  <div
+                    *ngIf="resultsIsShow"
+                    class="flex-1 h-full w-2 overflow-auto"
+                  >
+                    <m-main-table></m-main-table>
                   </div>
 
-                  <div *ngIf="sqlIsShow" class="flex-1 h-full w-full">
+                  <div *ngIf="sqlIsShow" class="flex-1 h-full w-2">
                     <m-sql></m-sql>
                   </div>
                 </div>

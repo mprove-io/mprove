@@ -1,59 +1,73 @@
-<table class="min-w-full divide-y divide-gray-500 h-full">
-  <thead>
-    <tr class="h-12">
-      <th *ngFor="let column of sortedColumns; let columnIndex = index">
-        <div class="flex flex-row justify-start items-center">
-          <div class="flex flex-col justify-center items-start truncate">
-            <div class="font-normal text-sm">{{
+<table class="">
+  <thead class="">
+    <tr class="">
+      <th
+        style="min-width: 200px; max-width: 350px"
+        class="px-5"
+        *ngFor="let column of sortedColumns; let columnIndex = index"
+      >
+        <div class="mr-5 h-12 flex items-center justify-start">
+          <button
+            *ngIf="column.sorting?.desc === false"
+            class="h-6 w-6 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
+            (click)="sort(column.id, false)"
+          >
+            <m-chevron-up-icon></m-chevron-up-icon>
+          </button>
+
+          <button
+            *ngIf="column.sorting?.desc === true"
+            class="h-6 w-6 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
+            (click)="sort(column.id, true)"
+          >
+            <m-chevron-down-icon></m-chevron-down-icon>
+          </button>
+
+          <button
+            *ngIf="!column.sorting"
+            class="h-6 w-6 flex items-center justify-center focus:outline-none"
+            (click)="sort(column.id, true)"
+          >
+            <m-chevron-down-icon></m-chevron-down-icon>
+          </button>
+        </div>
+
+        <div
+          class="flex flex-col justify-center items-start overflow-clip overflow-hidden"
+        >
+          <div class="flex flex-col justify-center items-start">
+            <div class="font-normal text-sm truncate">{{
               column.topLabel | capitalize
             }}</div>
 
-            <div class="flex flex-row font-semibold space-x-1">
-              <div *ngIf="column.groupLabel">{{
-                column.groupLabel | capitalize
-              }}</div>
+            <div class="flex flex-row font-semibold text-left h-12">
+              <div *ngIf="column.groupLabel"
+                >{{ column.groupLabel | capitalize }} -
+                {{ column.label | capitalize }}</div
+              >
 
-              <div *ngIf="column.groupLabel">-</div>
-
-              <div data-cy="mainTableColumnLabel">{{
+              <div *ngIf="!column.groupLabel" class="">{{
                 column.label | capitalize
               }}</div>
             </div>
-          </div>
-
-          <div class="ml-5 mr-5">
-            <button
-              *ngIf="column.sorting?.desc === false"
-              class="h-8 w-8 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
-              (click)="sort(column.id, false)"
-            >
-              <m-chevron-up-icon></m-chevron-up-icon>
-            </button>
-
-            <button
-              *ngIf="column.sorting?.desc === true"
-              class="h-8 w-8 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
-              (click)="sort(column.id, true)"
-            >
-              <m-chevron-down-icon></m-chevron-down-icon>
-            </button>
-
-            <button
-              *ngIf="!column.sorting"
-              class="h-8 w-8 flex items-center justify-center focus:outline-none"
-              (click)="sort(column.id, true)"
-            >
-              <m-chevron-down-icon></m-chevron-down-icon>
-            </button>
           </div>
         </div>
       </th>
     </tr>
   </thead>
 
-  <tbody class="divide-y divide-gray-300">
-    <tr data-cy="mainTableRow" *ngFor="let row of filteredData; let i = index">
-      <td data-cy="mainTableCell" *ngFor="let column of sortedColumns">
+  <tbody class="">
+    <tr
+      class=""
+      data-cy="mainTableRow"
+      *ngFor="let row of filteredData; let i = index"
+    >
+      <td
+        style="min-width: 200px; max-width: 350px"
+        data-cy="mainTableCell"
+        *ngFor="let column of sortedColumns"
+        class="px-5 truncate"
+      >
         {{ row[column.sqlName] }}
       </td>
     </tr>
