@@ -199,7 +199,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
-    if (this.dataIsExpanded) {
+    if (this.dataIsExpanded && this.sqlIsShow) {
       this.dataIsExpanded = false;
       setTimeout(() => (this.dataIsExpanded = true));
     }
@@ -207,7 +207,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   toggleChartPanel() {
     this.chartIsExpanded = !this.chartIsExpanded;
-    if (this.dataIsExpanded) {
+    if (this.dataIsExpanded && this.sqlIsShow) {
       this.dataIsExpanded = false;
       setTimeout(() => (this.dataIsExpanded = true));
     }

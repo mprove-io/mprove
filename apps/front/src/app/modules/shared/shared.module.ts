@@ -4,7 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { AvatarComponent } from './avatar/avatar.component';
 import { AddIconComponent } from './icons/add-icon /add-icon.component';
+import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
+import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
@@ -45,7 +47,9 @@ let sharedComponents = [
   FolderClosedIconComponent,
   DotsVerticalIconComponent,
   ExclamationIconComponent,
-  ArrowNarrowRightIconComponent
+  ArrowNarrowRightIconComponent,
+  ArrowLeftIconComponent,
+  ArrowRightIconComponent
 ];
 
 @NgModule({

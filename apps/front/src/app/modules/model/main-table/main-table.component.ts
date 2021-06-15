@@ -115,6 +115,55 @@ export class MainTableComponent {
     this.nav(newMconfig);
   }
 
+  remove(columnId: string) {
+    let index = this.mconfig.select.indexOf(columnId);
+
+    let newMconfig = this.structService.makeMconfig();
+
+    let newColumnsOrder = Array.from(newMconfig.select);
+
+    newColumnsOrder.splice(index, 1);
+
+    newMconfig.select = newColumnsOrder;
+    this.nav(newMconfig);
+  }
+
+  moveLeft(columnId: string) {
+    let index = this.mconfig.select.indexOf(columnId);
+
+    let newMconfig = this.structService.makeMconfig();
+
+    let newColumnsOrder = Array.from(newMconfig.select);
+
+    let tmp = newColumnsOrder[index];
+
+    let toIndex: number = index - 1;
+
+    newColumnsOrder[index] = newColumnsOrder[toIndex];
+    newColumnsOrder[toIndex] = tmp;
+
+    newMconfig.select = newColumnsOrder;
+    this.nav(newMconfig);
+  }
+
+  moveRight(columnId: string) {
+    let index = this.mconfig.select.indexOf(columnId);
+
+    let newMconfig = this.structService.makeMconfig();
+
+    let newColumnsOrder = Array.from(newMconfig.select);
+
+    let tmp = newColumnsOrder[index];
+
+    let toIndex: number = index + 1;
+
+    newColumnsOrder[index] = newColumnsOrder[toIndex];
+    newColumnsOrder[toIndex] = tmp;
+
+    newMconfig.select = newColumnsOrder;
+    this.nav(newMconfig);
+  }
+
   nav(newMconfig: common.Mconfig) {
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
       mconfig: newMconfig
