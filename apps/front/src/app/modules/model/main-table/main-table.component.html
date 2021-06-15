@@ -9,18 +9,18 @@
         <div class="mr-5 h-12 flex items-center justify-start space-x-5">
           <button
             *ngIf="column.sorting?.desc === false"
-            class="h-6 w-6 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
+            class="h-6 w-6 flex items-center justify-center text-blue-500 focus:outline-none"
             (click)="sort(column.id, false)"
           >
-            <m-chevron-up-icon></m-chevron-up-icon>
+            <m-asc-icon></m-asc-icon>
           </button>
 
           <button
             *ngIf="column.sorting?.desc === true"
-            class="h-6 w-6 flex items-center justify-center bg-blue-500 text-white focus:outline-none"
+            class="h-6 w-6 flex items-center justify-center text-blue-500 focus:outline-none"
             (click)="sort(column.id, true)"
           >
-            <m-chevron-down-icon></m-chevron-down-icon>
+            <m-desc-icon></m-desc-icon>
           </button>
 
           <button
@@ -28,7 +28,7 @@
             class="h-6 w-6 flex items-center justify-center focus:outline-none invisible group-hover:visible"
             (click)="sort(column.id, true)"
           >
-            <m-chevron-down-icon></m-chevron-down-icon>
+            <m-desc-icon></m-desc-icon>
           </button>
 
           <button

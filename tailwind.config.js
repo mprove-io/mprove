@@ -17,6 +17,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      scale: {
+        '-1': '-1'
+      },
       boxShadow: {
         m1: '0px 1px 4px rgba(21,34,50,0.078)'
       },

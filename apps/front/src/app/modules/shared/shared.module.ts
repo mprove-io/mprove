@@ -7,12 +7,14 @@ import { AddIconComponent } from './icons/add-icon /add-icon.component';
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
+import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
 import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-right-icon.component';
 import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
+import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
 import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
@@ -49,7 +51,9 @@ let sharedComponents = [
   ExclamationIconComponent,
   ArrowNarrowRightIconComponent,
   ArrowLeftIconComponent,
-  ArrowRightIconComponent
+  ArrowRightIconComponent,
+  DescIconComponent,
+  AscIconComponent
 ];
 
 @NgModule({
