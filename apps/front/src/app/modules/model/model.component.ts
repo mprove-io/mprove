@@ -95,6 +95,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   chartIsExpanded = false;
   dataIsExpanded = true;
 
+  isFormat = true;
+
   sqlIsShow = false;
   resultsIsShow = true;
 
@@ -175,6 +177,10 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.checkRunning$.unsubscribe();
+  }
+
+  toggleFormat() {
+    this.isFormat = !this.isFormat;
   }
 
   toggleSql() {

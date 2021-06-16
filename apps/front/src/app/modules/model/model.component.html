@@ -139,9 +139,21 @@
                   >SQL</button
                 >
 
+                <button
+                  class="ml-5 items-center text-lg select-none focus:outline-none"
+                  [ngClass]="{
+                    'text-blue-500': isFormat,
+                    'text-gray1': !isFormat,
+                    'text-gray-400 cursor-default': !dataIsExpanded
+                  }"
+                  (click)="toggleFormat()"
+                >
+                  <m-currency-dollar-icon></m-currency-dollar-icon
+                ></button>
+
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-12 text-gray1 text-lg select-none"
+                  class="ml-5 text-gray1 text-lg select-none"
                   >Limit</div
                 >
 
@@ -183,7 +195,7 @@
                     *ngIf="resultsIsShow"
                     class="flex-1 h-full w-2 overflow-auto"
                   >
-                    <m-main-table></m-main-table>
+                    <m-main-table [isFormat]="isFormat"></m-main-table>
                   </div>
 
                   <div *ngIf="sqlIsShow" class="flex-1 h-full w-2">

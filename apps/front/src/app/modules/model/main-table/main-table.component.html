@@ -112,7 +112,7 @@
     <tr
       class=""
       data-cy="mainTableRow"
-      *ngFor="let row of filteredData; let i = index"
+      *ngFor="let row of qData; let i = index"
     >
       <!-- <td
         style="min-width: 200px; max-width: 350px"
@@ -123,7 +123,7 @@
           'bg-blue-50': (i + 1) % 2 === 0
         }"
       >
-        {{ row[column.sqlName] }}
+        {{ isFormat === true ? row[column.sqlName]?.fValue : row[column.sqlName]?.value }}
       </td> -->
 
       <td
@@ -134,13 +134,18 @@
         [ngClass]="{
           'bg-blue6':
             (i + 1) % 2 === 0 && column.fieldClass === fieldClassDimension,
-          'bg-purple-100':
+          'bg-purple-100 text-right':
             (i + 1) % 2 === 0 && column.fieldClass === fieldClassMeasure,
           'bg-green2':
-            (i + 1) % 2 === 0 && column.fieldClass === fieldClassCalculation
+            (i + 1) % 2 === 0 && column.fieldClass === fieldClassCalculation,
+          'text-right': column.result === fieldResultNumber
         }"
       >
-        {{ row[column.sqlName] }}
+        {{
+          isFormat === true
+            ? row[column.sqlName]?.fValue
+            : row[column.sqlName]?.value
+        }}
       </td>
     </tr>
   </tbody>
@@ -148,4 +153,4 @@
 
 <div *ngIf="mconfigSelectModelFields$ | async"></div>
 <div *ngIf="mconfig$ | async"></div>
-<div *ngIf="query$ | async"></div>
+<div *ngIf="qData$ | async"></div>

@@ -13,6 +13,7 @@ import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
 import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-right-icon.component';
 import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.component';
+import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/currency-dollar-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
@@ -53,7 +54,8 @@ let sharedComponents = [
   ArrowLeftIconComponent,
   ArrowRightIconComponent,
   DescIconComponent,
-  AscIconComponent
+  AscIconComponent,
+  CurrencyDollarIconComponent
 ];
 
 @NgModule({

@@ -1,13 +1,10 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { ColumnField, MconfigQuery } from '~front/app/queries/mconfig.query';
-import { QueryQuery } from '~front/app/queries/query.query';
-import { ApiService } from '~front/app/services/api.service';
+import { QueryQuery, RData } from '~front/app/queries/query.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
-import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
-import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
-import { QueryState, QueryStore } from '~front/app/stores/query.store';
+import { MconfigState } from '~front/app/stores/mconfig.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -18,6 +15,8 @@ export class MainTableComponent {
   fieldClassDimension = common.FieldClassEnum.Dimension;
   fieldClassMeasure = common.FieldClassEnum.Measure;
   fieldClassCalculation = common.FieldClassEnum.Calculation;
+
+  fieldResultNumber = common.FieldResultEnum.Number;
 
   sortedColumns: ColumnField[];
   mconfigSelectModelFields$ = this.mconfigQuery.selectModelFields$.pipe(
@@ -35,26 +34,22 @@ export class MainTableComponent {
     })
   );
 
-  filteredData: any = [];
-
-  query: QueryState;
-  query$ = this.queryQuery.select().pipe(
+  qData: RData[];
+  qData$ = this.queryQuery.qData$.pipe(
     tap(x => {
-      this.query = x;
-      this.filteredData = x.data;
+      this.qData = x;
       this.cd.detectChanges();
     })
   );
+
+  @Input()
+  isFormat = true;
 
   constructor(
     public mconfigQuery: MconfigQuery,
     public mconfigService: MconfigService,
     public queryQuery: QueryQuery,
     private structService: StructService,
-    private apiService: ApiService,
-    private mconfigStore: MconfigStore,
-    private queryStore: QueryStore,
-    private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}
 
