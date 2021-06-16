@@ -3,7 +3,7 @@
     <tr class="">
       <th
         style="min-width: 200px; max-width: 350px"
-        class="px-5 group"
+        class="group align-top"
         *ngFor="let column of sortedColumns; let columnIndex = index"
       >
         <div class="mr-5 h-12 flex items-center justify-start space-x-5">
@@ -40,7 +40,7 @@
           </div>
 
           <button
-            class="h-6 w-6 flex items-center justify-center focus:outline-none invisible group-hover:visible"
+            class="h-6 w-6 flex items-center justify-center text-red1 focus:outline-none invisible group-hover:visible"
             (click)="remove(column.id)"
           >
             <m-delete-icon></m-delete-icon>
@@ -80,14 +80,19 @@
         </div>
 
         <div
-          class="flex flex-col justify-center items-start overflow-clip overflow-hidden"
+          class="flex flex-col px-5 py-2 justify-center items-start overflow-clip overflow-hidden"
+          [ngClass]="{
+            'bg-blue-300': column.fieldClass === fieldClassDimension,
+            'bg-purple-300': column.fieldClass === fieldClassMeasure,
+            'bg-green-300': column.fieldClass === fieldClassCalculation
+          }"
         >
           <div class="flex flex-col justify-center items-start">
             <div class="font-normal text-sm truncate">{{
               column.topLabel | capitalize
             }}</div>
 
-            <div class="flex flex-row font-semibold text-left h-12">
+            <div class="flex flex-row font-semibold text-left">
               <div *ngIf="column.groupLabel"
                 >{{ column.groupLabel | capitalize }} -
                 {{ column.label | capitalize }}</div

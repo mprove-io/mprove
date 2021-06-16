@@ -15,6 +15,10 @@ import { common } from '~front/barrels/common';
   templateUrl: './main-table.component.html'
 })
 export class MainTableComponent {
+  fieldClassDimension = common.FieldClassEnum.Dimension;
+  fieldClassMeasure = common.FieldClassEnum.Measure;
+  fieldClassCalculation = common.FieldClassEnum.Calculation;
+
   sortedColumns: ColumnField[];
   mconfigSelectModelFields$ = this.mconfigQuery.selectModelFields$.pipe(
     tap(x => {
@@ -130,36 +134,34 @@ export class MainTableComponent {
   }
 
   moveLeft(columnId: string) {
-    let index = this.mconfig.select.indexOf(columnId);
+    let sortedSelect = this.sortedColumns.map(x => x.id);
+    let index = sortedSelect.indexOf(columnId);
 
     let newMconfig = this.structService.makeMconfig();
 
-    let newColumnsOrder = Array.from(newMconfig.select);
-
-    let tmp = newColumnsOrder[index];
+    let newColumnsOrder = Array.from(sortedSelect);
 
     let toIndex: number = index - 1;
 
     newColumnsOrder[index] = newColumnsOrder[toIndex];
-    newColumnsOrder[toIndex] = tmp;
+    newColumnsOrder[toIndex] = columnId;
 
     newMconfig.select = newColumnsOrder;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   moveRight(columnId: string) {
-    let index = this.mconfig.select.indexOf(columnId);
+    let sortedSelect = this.sortedColumns.map(x => x.id);
+    let index = sortedSelect.indexOf(columnId);
 
     let newMconfig = this.structService.makeMconfig();
 
-    let newColumnsOrder = Array.from(newMconfig.select);
-
-    let tmp = newColumnsOrder[index];
+    let newColumnsOrder = Array.from(sortedSelect);
 
     let toIndex: number = index + 1;
 
-    newColumnsOrder[index] = newColumnsOrder[toIndex];
-    newColumnsOrder[toIndex] = tmp;
+    newColumnsOrder[index] = sortedSelect[toIndex];
+    newColumnsOrder[toIndex] = columnId;
 
     newMconfig.select = newColumnsOrder;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
