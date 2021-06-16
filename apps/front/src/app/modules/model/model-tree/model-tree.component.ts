@@ -4,18 +4,18 @@ import {
   TreeComponent,
   TreeNode
 } from '@circlon/angular-tree-component';
-import { map, take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
 import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { ApiService } from '~front/app/services/api.service';
+import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
 import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
 import { QueryStore } from '~front/app/stores/query.store';
 import { StructStore } from '~front/app/stores/struct.store';
-import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 export class ModelNodeExtra extends common.ModelNode {
@@ -99,6 +99,7 @@ export class ModelTreeComponent {
     private apiService: ApiService,
     private structService: StructService,
     private mconfigStore: MconfigStore,
+    private mconfigService: MconfigService,
     private queryStore: QueryStore,
     public structStore: StructStore,
     private navigateService: NavigateService
@@ -165,91 +166,15 @@ export class ModelTreeComponent {
     // console.log(newMconfig);
 
     if (node.data.isSelected === true) {
-      newMconfig = this.removeField({ newMconfig, fieldId: node.data.id });
+      newMconfig = this.mconfigService.removeField({
+        newMconfig,
+        fieldId: node.data.id
+      });
     } else {
       newMconfig.select = [...newMconfig.select, node.data.id];
     }
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
-      mconfig: newMconfig
-    };
-
-    this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateTempMconfigAndQuery,
-        payload
-      )
-      .pipe(
-        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
-          let { mconfig, query } = resp.payload;
-
-          this.mconfigStore.update(mconfig);
-          this.queryStore.update(query);
-
-          this.navigateService.navigateMconfigQueryData({
-            mconfigId: mconfig.mconfigId,
-            queryId: mconfig.queryId
-          });
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  removeField(item: { newMconfig: common.Mconfig; fieldId: string }) {
-    let { newMconfig, fieldId } = item;
-
-    newMconfig = this.removeFieldFromSelect({ newMconfig, fieldId });
-    newMconfig = this.removeFieldFromSortings({ newMconfig, fieldId });
-
-    // newMconfig.charts = newMconfig.charts.map(chart =>
-    //   this.removeFieldFromChart(chart, fieldId)
-    // );
-
-    return newMconfig;
-  }
-
-  removeFieldFromSelect(item: { newMconfig: common.Mconfig; fieldId: string }) {
-    let { newMconfig, fieldId } = item;
-
-    let fieldIndex = newMconfig.select.findIndex(x => x === fieldId);
-
-    newMconfig.select = [
-      ...newMconfig.select.slice(0, fieldIndex),
-      ...newMconfig.select.slice(fieldIndex + 1)
-    ];
-
-    return newMconfig;
-  }
-
-  removeFieldFromSortings(item: {
-    newMconfig: common.Mconfig;
-    fieldId: string;
-  }) {
-    let { newMconfig, fieldId } = item;
-
-    let fIndex = newMconfig.sortings.findIndex(x => x.fieldId === fieldId);
-
-    if (fIndex > -1) {
-      newMconfig.sortings = [
-        ...newMconfig.sortings.slice(0, fIndex),
-        ...newMconfig.sortings.slice(fIndex + 1)
-      ];
-
-      let newSorts: string[] = [];
-
-      newMconfig.sortings.forEach(sorting =>
-        sorting.desc === true
-          ? newSorts.push(`${sorting.fieldId} desc`)
-          : newSorts.push(sorting.fieldId)
-      );
-
-      newMconfig.sorts =
-        newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
-    }
-
-    return newMconfig;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   filterField(node: TreeNode) {

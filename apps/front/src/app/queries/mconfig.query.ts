@@ -8,6 +8,7 @@ import { ModelQuery } from './model.query';
 
 export class ColumnField extends common.ModelField {
   sorting: common.Sorting;
+  sortingNumber: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -36,7 +37,8 @@ export class MconfigQuery extends Query<MconfigState> {
           select.forEach((fieldId: string) => {
             let field = fields.find(f => f.id === fieldId);
             let f: ColumnField = Object.assign({}, field, {
-              sorting: sortings.find(x => x.fieldId === fieldId)
+              sorting: sortings.find(x => x.fieldId === fieldId),
+              sortingNumber: sortings.findIndex(s => s.fieldId === fieldId)
             });
 
             if (field.fieldClass === common.FieldClassEnum.Dimension) {

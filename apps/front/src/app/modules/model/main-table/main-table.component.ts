@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { map, take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ColumnField, MconfigQuery } from '~front/app/queries/mconfig.query';
 import { QueryQuery } from '~front/app/queries/query.query';
 import { ApiService } from '~front/app/services/api.service';
+import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
 import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
 import { QueryState, QueryStore } from '~front/app/stores/query.store';
-import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -44,6 +44,7 @@ export class MainTableComponent {
 
   constructor(
     public mconfigQuery: MconfigQuery,
+    public mconfigService: MconfigService,
     public queryQuery: QueryQuery,
     private structService: StructService,
     private apiService: ApiService,
@@ -112,7 +113,7 @@ export class MainTableComponent {
     newMconfig.sorts =
       newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
 
-    this.nav(newMconfig);
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   remove(columnId: string) {
@@ -120,12 +121,12 @@ export class MainTableComponent {
 
     let newMconfig = this.structService.makeMconfig();
 
-    let newColumnsOrder = Array.from(newMconfig.select);
+    newMconfig = this.mconfigService.removeField({
+      newMconfig,
+      fieldId: columnId
+    });
 
-    newColumnsOrder.splice(index, 1);
-
-    newMconfig.select = newColumnsOrder;
-    this.nav(newMconfig);
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   moveLeft(columnId: string) {
@@ -143,7 +144,7 @@ export class MainTableComponent {
     newColumnsOrder[toIndex] = tmp;
 
     newMconfig.select = newColumnsOrder;
-    this.nav(newMconfig);
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   moveRight(columnId: string) {
@@ -161,34 +162,6 @@ export class MainTableComponent {
     newColumnsOrder[toIndex] = tmp;
 
     newMconfig.select = newColumnsOrder;
-    this.nav(newMconfig);
-  }
-
-  nav(newMconfig: common.Mconfig) {
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
-      mconfig: newMconfig
-    };
-
-    this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateTempMconfigAndQuery,
-        payload
-      )
-      .pipe(
-        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
-          let { mconfig, query } = resp.payload;
-
-          this.mconfigStore.update(mconfig);
-          this.queryStore.update(query);
-
-          this.navigateService.navigateMconfigQueryData({
-            mconfigId: mconfig.mconfigId,
-            queryId: mconfig.queryId
-          });
-        }),
-        take(1)
-      )
-      .subscribe();
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }
