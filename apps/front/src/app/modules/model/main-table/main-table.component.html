@@ -82,9 +82,9 @@
         <div
           class="flex flex-col px-5 py-2 justify-center items-start overflow-clip overflow-hidden"
           [ngClass]="{
-            'bg-blue-300': column.fieldClass === fieldClassDimension,
+            'bg-blue5': column.fieldClass === fieldClassDimension,
             'bg-purple-300': column.fieldClass === fieldClassMeasure,
-            'bg-green-300': column.fieldClass === fieldClassCalculation
+            'bg-green1': column.fieldClass === fieldClassCalculation
           }"
         >
           <div class="flex flex-col justify-center items-start">
@@ -114,11 +114,31 @@
       data-cy="mainTableRow"
       *ngFor="let row of filteredData; let i = index"
     >
+      <!-- <td
+        style="min-width: 200px; max-width: 350px"
+        data-cy="mainTableCell"
+        *ngFor="let column of sortedColumns"
+        class="px-5 truncate"
+        [ngClass]="{
+          'bg-blue-50': (i + 1) % 2 === 0
+        }"
+      >
+        {{ row[column.sqlName] }}
+      </td> -->
+
       <td
         style="min-width: 200px; max-width: 350px"
         data-cy="mainTableCell"
         *ngFor="let column of sortedColumns"
         class="px-5 truncate"
+        [ngClass]="{
+          'bg-blue6':
+            (i + 1) % 2 === 0 && column.fieldClass === fieldClassDimension,
+          'bg-purple-100':
+            (i + 1) % 2 === 0 && column.fieldClass === fieldClassMeasure,
+          'bg-green2':
+            (i + 1) % 2 === 0 && column.fieldClass === fieldClassCalculation
+        }"
       >
         {{ row[column.sqlName] }}
       </td>

@@ -22,9 +22,9 @@
           class="group flex flex-row pr-5 py-1 w-full select-none"
           [ngClass]="{
             'cursor-pointer': node.data.nodeClass !== nodeClassInfo,
-            'bg-blue-50': node.data.nodeClass === nodeClassDimension,
-            'bg-purple-50': node.data.nodeClass === nodeClassMeasure,
-            'bg-green-50': node.data.nodeClass === nodeClassCalculation,
+            'bg-blue2': node.data.nodeClass === nodeClassDimension,
+            'bg-purple-100': node.data.nodeClass === nodeClassMeasure,
+            'bg-green2': node.data.nodeClass === nodeClassCalculation,
             'px-5': !node.data.isField
           }"
           (click)="nodeOnClick(node)"
