@@ -76,7 +76,7 @@ export class QueryService {
     ) {
       formatDefaultLocale({
         decimal: '.',
-        thousands: ',',
+        thousands: ' ',
         grouping: [3],
         currency: [currencyPrefix, currencySuffix]
       });

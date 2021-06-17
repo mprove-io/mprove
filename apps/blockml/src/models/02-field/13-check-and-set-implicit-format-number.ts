@@ -33,7 +33,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
 
       if (field.result === common.FieldResultEnum.Number) {
         if (common.isUndefined(field.format_number)) {
-          field.format_number = '';
+          field.format_number = ',';
           field.format_number_line_num = 0;
         } else {
           try {

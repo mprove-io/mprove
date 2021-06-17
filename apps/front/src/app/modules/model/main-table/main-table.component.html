@@ -114,19 +114,24 @@
       data-cy="mainTableRow"
       *ngFor="let row of qData; let i = index"
     >
-      <!-- <td
+      <td
         style="min-width: 200px; max-width: 350px"
         data-cy="mainTableCell"
         *ngFor="let column of sortedColumns"
         class="px-5 truncate"
         [ngClass]="{
-          'bg-blue-50': (i + 1) % 2 === 0
+          'bg-gray-100': (i + 1) % 2 === 0,
+          'text-right': column.result === fieldResultNumber
         }"
       >
-        {{ isFormat === true ? row[column.sqlName]?.fValue : row[column.sqlName]?.value }}
-      </td> -->
+        {{
+          isFormat === true
+            ? row[column.sqlName]?.fValue
+            : row[column.sqlName]?.value
+        }}
+      </td>
 
-      <td
+      <!-- <td
         style="min-width: 200px; max-width: 350px"
         data-cy="mainTableCell"
         *ngFor="let column of sortedColumns"
@@ -146,7 +151,7 @@
             ? row[column.sqlName]?.fValue
             : row[column.sqlName]?.value
         }}
-      </td>
+      </td> -->
     </tr>
   </tbody>
 </table>

@@ -122,8 +122,8 @@
                     'text-gray-400 cursor-default':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
-                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   (click)="toggleResults()"
+                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   >Results</button
                 >
 
@@ -134,8 +134,8 @@
                     'text-gray-400 cursor-default':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
-                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   (click)="toggleSql()"
+                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   >SQL</button
                 >
 
@@ -147,6 +147,7 @@
                     'text-gray-400 cursor-default': !dataIsExpanded
                   }"
                   (click)="toggleFormat()"
+                  [disabled]="!dataIsExpanded"
                 >
                   <m-currency-dollar-icon></m-currency-dollar-icon
                 ></button>
