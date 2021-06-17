@@ -45,6 +45,7 @@ export class ModelTreeComponent {
       // console.log(x);
 
       this.makeNodesExtra();
+      console.log(this.nodesExtra);
       this.cd.detectChanges();
     })
   );
@@ -205,6 +206,22 @@ export class ModelTreeComponent {
               filter => filter.fieldId === node.id
             ) > -1
           : false
+    });
+  }
+
+  goToFileLine(
+    event: MouseEvent,
+    fieldFilePath: string,
+    fieldLineNumber: number
+  ) {
+    event.stopPropagation();
+
+    let fileIdAr = fieldFilePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE),
+      lineNumber: fieldLineNumber
     });
   }
 

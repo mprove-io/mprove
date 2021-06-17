@@ -140,6 +140,7 @@
                 >
 
                 <button
+                  *ngIf="mconfig?.select.length > 0"
                   class="ml-5 items-center text-lg select-none focus:outline-none"
                   [ngClass]="{
                     'text-blue-500': isFormat,

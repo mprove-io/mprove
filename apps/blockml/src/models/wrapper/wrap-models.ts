@@ -35,6 +35,7 @@ export function wrapModels(item: {
           wrappedFields: apiFields,
           field: field,
           alias: constants.MF,
+          filePath: x.filePath,
           fileName: x.fileName,
           children: children,
           node: node
@@ -68,6 +69,7 @@ export function wrapModels(item: {
           field: field,
           alias: join.as,
           fileName: join.view.fileName,
+          filePath: join.view.filePath,
           children: children,
           node: node
         });

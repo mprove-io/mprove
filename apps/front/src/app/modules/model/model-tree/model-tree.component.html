@@ -23,8 +23,12 @@
           [ngClass]="{
             'cursor-pointer': node.data.nodeClass !== nodeClassInfo,
             'bg-blue2': node.data.nodeClass === nodeClassDimension,
-            'bg-purple-100': node.data.nodeClass === nodeClassMeasure,
-            'bg-green2': node.data.nodeClass === nodeClassCalculation,
+            'hover:bg-blue5':
+              node.data.nodeClass === nodeClassDimension && node.data.isField,
+            'bg-purple-100 hover:bg-purple-200':
+              node.data.nodeClass === nodeClassMeasure,
+            'bg-green2 hover:bg-green1':
+              node.data.nodeClass === nodeClassCalculation,
             'px-5': !node.data.isField
           }"
           (click)="nodeOnClick(node)"
@@ -104,29 +108,25 @@
               *ngIf="node.data.isField === true"
               type="button"
               data-cy="blockmlTreeFilterButton"
-              class="py-1 px-5 ml-3 rounded focus:outline-none invisible group-hover:visible"
+              class="px-5 ml-3 rounded focus:outline-none invisible group-hover:visible"
               [ngClass]="{
-                'bg-blue3 text-white visible': node.data.isFiltered === true,
-                'bg-white': node.data.isFiltered === false
+                'bg-blue3 text-blue3 visible': node.data.isFiltered === true,
+                'hover:bg-white': node.data.isFiltered === false
               }"
               (click)="filterField(node)"
-              >Filter</button
             >
+              <div *ngIf="node.data.isFiltered === false" class="text-lg">
+                Filter
+              </div>
+              <div *ngIf="node.data.isFiltered === true"> F </div>
+            </button>
 
-            <!-- <div
-              *ngIf="nav.isRepoProd === false && needSave === false"
-              class="flex invisible group-hover:visible"
+            <div
+              *ngIf="node.data.isField === true"
+              class="flex ml-5 invisible group-hover:visible"
             >
-              <m-folder-options
-                *ngIf="node.data.isFolder"
-                [node]="node"
-              ></m-folder-options>
-
-              <m-file-options
-                *ngIf="!node.data.isFolder"
-                [node]="node"
-              ></m-file-options>
-            </div> -->
+              <m-field-options [node]="node"></m-field-options>
+            </div>
           </div>
         </div>
       </div>

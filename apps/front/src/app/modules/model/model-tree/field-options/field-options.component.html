@@ -1,0 +1,31 @@
+<button
+  data-cy="fieldOptionsMenuButton"
+  class="flex relative z-10 h-7 w-7 rounded focus:outline-none hover:bg-white items-center justify-center"
+  [ngClass]="{
+    'cursor-default': openedMenuId && menuId !== openedMenuId
+  }"
+  (click)="toggleMenu($event)"
+  [disabled]="openedMenuId && menuId !== openedMenuId"
+>
+  <m-dots-vertical-icon></m-dots-vertical-icon>
+</button>
+
+<button
+  class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
+  *ngIf="isFieldOptionsMenuOpen === true"
+  (click)="closeMenu($event)"
+></button>
+
+<div
+  class="absolute right-0 mt-1 w-48 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
+  *ngIf="isFieldOptionsMenuOpen === true"
+>
+  <button
+    data-cy="fileOptionsGoToFileLineButton"
+    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+    (click)="goToFileLine($event)"
+    >Go to File Line</button
+  >
+</div>
+
+<div *ngIf="openedMenuId$ | async"></div>

@@ -35,6 +35,10 @@ export class ModelNode {
   fieldFileName?: string;
 
   @IsOptional()
+  @IsString()
+  fieldFilePath?: string;
+
+  @IsOptional()
   @IsInt()
   fieldLineNum?: number;
 
