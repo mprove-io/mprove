@@ -18,6 +18,7 @@ import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
 import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-icon.component';
+import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
@@ -55,7 +56,8 @@ let sharedComponents = [
   ArrowRightIconComponent,
   DescIconComponent,
   AscIconComponent,
-  CurrencyDollarIconComponent
+  CurrencyDollarIconComponent,
+  FilterIconComponent
 ];
 
 @NgModule({

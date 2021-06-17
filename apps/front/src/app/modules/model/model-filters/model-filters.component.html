@@ -1,0 +1,22 @@
+<div *ngFor="let filter of extendedFilters; let filterIndex = index">
+  <div class="flex flex-row">
+    <div class="flex flex-col justify-center items-start">
+      <div class="font-normal text-sm truncate">{{
+        filter.field.topLabel | capitalize
+      }}</div>
+
+      <div class="flex flex-row font-semibold text-left">
+        <div *ngIf="filter.field.groupLabel"
+          >{{ filter.field.groupLabel | capitalize }} -
+          {{ filter.field.label | capitalize }}</div
+        >
+
+        <div *ngIf="!filter.field.groupLabel" class="">{{
+          filter.field.label | capitalize
+        }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="extendedFilters$ | async"></div>

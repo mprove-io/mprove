@@ -178,10 +178,36 @@ export class ModelTreeComponent {
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
-  filterField(node: TreeNode) {
+  filterField(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
+
     let newMconfig = this.structService.makeMconfig();
 
-    // if ()
+    if (node.data.isFiltered === true) {
+      let filterIndex = newMconfig.filters.findIndex(
+        filt => filt.fieldId === node.data.id
+      );
+
+      newMconfig.filters = [
+        ...newMconfig.filters.slice(0, filterIndex),
+        ...newMconfig.filters.slice(filterIndex + 1)
+      ];
+    } else {
+      let newFraction: common.Fraction = {
+        brick: 'any',
+        operator: common.FractionOperatorEnum.Or,
+        type: common.FractionTypeEnum.StringIsAnyValue // 'any'
+      };
+
+      let newFilter: common.Filter = {
+        fieldId: node.data.id,
+        fractions: [newFraction]
+      };
+
+      newMconfig.filters = [...newMconfig.filters, newFilter];
+    }
+
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   makeNodesExtra() {

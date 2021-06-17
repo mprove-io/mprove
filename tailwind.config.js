@@ -50,6 +50,8 @@ module.exports = {
     }),
     textColor: theme => ({
       ...theme('colors'),
+      blue1,
+      blue2,
       blue3,
       blue4,
       gray1,
