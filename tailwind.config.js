@@ -24,6 +24,7 @@ module.exports = {
   purge: ['apps/front/src/**/*.{html,ts}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    groupLevel: 10,
     groupScope: 'scope',
     extend: {
       scale: {

@@ -19,7 +19,7 @@
       >
         <div
           data-cy="modelTreeItem"
-          class="group flex flex-row pr-5 py-1 w-full select-none"
+          class="group flex flex-row pr-5 w-full select-none"
           [ngClass]="{
             'cursor-pointer': node.data.nodeClass !== nodeClassInfo,
             'bg-blue2': node.data.nodeClass === nodeClassDimension,
@@ -108,16 +108,14 @@
               *ngIf="node.data.isField === true"
               type="button"
               data-cy="blockmlTreeFilterButton"
-              class="ml-3 rounded h-7 w-28 flex items-center justify-center hover:bg-white focus:outline-none invisible group-hover:visible"
+              class="group-scope h-10 ml-3 rounded w-28 flex items-center justify-center focus:outline-none invisible group-hover:visible"
               [ngClass]="{
                 'text-blue3': node.data.isFiltered === true,
                 'text-gray1': node.data.isFiltered === false
               }"
               (click)="filterField(node, $event)"
             >
-              <div
-                class="flex flex-row space-x-2 items-center justify-center group-scope"
-              >
+              <div class="flex flex-row space-x-2 items-center justify-center">
                 <div class="w-16">
                   <div class="text-xl invisible group-scope-hover:visible"
                     >Filter</div
