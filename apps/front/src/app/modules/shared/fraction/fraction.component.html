@@ -1,0 +1,58 @@
+<div [ngSwitch]="fieldResult" class="ml-10">
+  <!-- <m-fraction-number
+    *ngSwitchCase="fieldResultEnum.Number"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    (fractionChange)="fractionChange($event)"
+  ></m-fraction-number> -->
+
+  <m-fraction-string
+    *ngSwitchCase="fieldResultEnum.String"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    [fractionIndex]="fractionIndex"
+    (fractionUpdate)="fractionUpdate.emit($event)"
+  ></m-fraction-string>
+
+  <!-- <m-fraction-day-of-week
+    *ngSwitchCase="fieldResultEnum.DayOfWeek"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    (fractionChange)="fractionChange($event)"
+  ></m-fraction-day-of-week> -->
+
+  <!-- <m-fraction-day-of-week-index
+    *ngSwitchCase="fieldResultEnum.DayOfWeekIndex"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    (fractionChange)="fractionChange($event)"
+  ></m-fraction-day-of-week-index> -->
+
+  <!-- <m-fraction-month-name
+    *ngSwitchCase="fieldResultEnum.MonthName"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    (fractionChange)="fractionChange($event)"
+  ></m-fraction-month-name> -->
+
+  <!-- <m-fraction-quarter-of-year
+    *ngSwitchCase="fieldResultEnum.QuarterOfYear"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    (fractionChange)="fractionChange($event)"
+  ></m-fraction-quarter-of-year> -->
+
+  <!-- <m-fraction-ts
+    *ngSwitchCase="fieldResultEnum.Ts"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    (fractionChange)="fractionChange($event)"
+  ></m-fraction-ts> -->
+
+  <!-- <m-fraction-yesno
+    *ngSwitchCase="fieldResultEnum.Yesno"
+    [fraction]="fraction"
+    [isFirst]="isFirst"
+    (fractionChange)="fractionChange($event)"
+  ></m-fraction-yesno> -->
+</div>

@@ -41,11 +41,8 @@ export class ModelTreeComponent {
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.model = x;
-
-      // console.log(x);
-
       this.makeNodesExtra();
-      console.log(this.nodesExtra);
+      // console.log(this.nodesExtra);
       this.cd.detectChanges();
     })
   );

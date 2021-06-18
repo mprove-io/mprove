@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { AvatarComponent } from './avatar/avatar.component';
+import { FractionStringComponent } from './fraction/fraction-string/fraction-string.component';
+import { FractionComponent } from './fraction/fraction.component';
 import { AddIconComponent } from './icons/add-icon /add-icon.component';
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
@@ -57,12 +60,20 @@ let sharedComponents = [
   DescIconComponent,
   AscIconComponent,
   CurrencyDollarIconComponent,
-  FilterIconComponent
+  FilterIconComponent,
+  FractionComponent,
+  FractionStringComponent
 ];
 
 @NgModule({
   declarations: [...sharedComponents, ...pipesArray],
-  imports: [CommonModule, ReactiveFormsModule, MonacoEditorModule.forRoot()],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MonacoEditorModule.forRoot(),
+    FormsModule,
+    NgSelectModule
+  ],
   exports: [...sharedComponents, ...pipesArray, MonacoEditorModule]
 })
 export class SharedModule {}

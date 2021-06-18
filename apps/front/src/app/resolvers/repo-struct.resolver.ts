@@ -49,8 +49,7 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
-          console.log('struct');
-          console.log(resp.payload.struct);
+          // console.log(resp.payload.struct);
 
           return true;
         })
