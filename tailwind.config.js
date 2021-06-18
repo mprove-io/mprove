@@ -24,6 +24,7 @@ module.exports = {
   purge: ['apps/front/src/**/*.{html,ts}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    groupScope: 'scope',
     extend: {
       scale: {
         '-1': '-1'
@@ -77,6 +78,7 @@ module.exports = {
       strategy: 'class'
     }),
     require('@tailwindcss/line-clamp'),
-    require('@tailwindcss/typography')
+    require('@tailwindcss/typography'),
+    require('tailwindcss-nested-groups')
   ]
 };

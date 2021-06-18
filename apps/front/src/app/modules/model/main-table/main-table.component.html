@@ -6,11 +6,19 @@
         class="group align-top"
         *ngFor="let column of sortedColumns; let columnIndex = index"
       >
-        <div class="mr-5 h-12 flex items-center justify-start space-x-5">
+        <div class="mr-5 h-12 flex items-center justify-start space-x-3">
           <div class="flex items-center justify-start">
+            <div
+              class="h-8 w-4 flex items-center justify-center text-blue-500 select-none"
+            >
+              <div *ngIf="column.sortingNumber > -1">{{
+                column.sortingNumber + 1
+              }}</div>
+            </div>
+
             <button
               *ngIf="column.sorting?.desc === false"
-              class="h-6 w-6 flex items-center justify-center text-blue-500 focus:outline-none"
+              class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 text-blue-500 focus:outline-none"
               (click)="sort(column.id, false)"
             >
               <m-asc-icon></m-asc-icon>
@@ -18,7 +26,7 @@
 
             <button
               *ngIf="column.sorting?.desc === true"
-              class="h-6 w-6 flex items-center justify-center text-blue-500 focus:outline-none"
+              class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 text-blue-500 focus:outline-none"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -26,32 +34,29 @@
 
             <button
               *ngIf="!column.sorting"
-              class="h-6 w-6 flex items-center justify-center focus:outline-none invisible group-hover:visible"
+              class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 focus:outline-none invisible group-hover:visible"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
             </button>
-
-            <div class="h-6 w-6 text-blue-500 select-none">
-              <div *ngIf="column.sortingNumber > -1">{{
-                column.sortingNumber + 1
-              }}</div>
-            </div>
           </div>
 
           <button
-            class="h-6 w-6 flex items-center justify-center text-red1 focus:outline-none invisible group-hover:visible"
+            class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 focus:outline-none invisible group-hover:visible"
             (click)="remove(column.id)"
           >
             <m-delete-icon></m-delete-icon>
           </button>
 
           <button
-            class="h-6 w-6 flex items-center justify-center focus:outline-none invisible group-hover:visible"
+            class="h-8 w-8 flex items-center justify-center rounded focus:outline-none invisible group-hover:visible"
             [ngClass]="{
               'cursor-default text-gray-400':
                 columnIndex === 0 ||
-                column.fieldClass !== sortedColumns[columnIndex - 1].fieldClass
+                column.fieldClass !== sortedColumns[columnIndex - 1].fieldClass,
+              'hover:bg-blue2':
+                columnIndex !== 0 &&
+                column.fieldClass === sortedColumns[columnIndex - 1].fieldClass
             }"
             [disabled]="
               columnIndex === 0 ||
@@ -63,12 +68,15 @@
           </button>
 
           <button
+            class="h-8 w-8 flex items-center justify-center rounded focus:outline-none invisible group-hover:visible"
             [ngClass]="{
               'cursor-default text-gray-400':
                 columnIndex + 1 === sortedColumns.length ||
-                column.fieldClass !== sortedColumns[columnIndex + 1].fieldClass
+                column.fieldClass !== sortedColumns[columnIndex + 1].fieldClass,
+              'hover:bg-blue2':
+                columnIndex + 1 !== sortedColumns.length &&
+                column.fieldClass === sortedColumns[columnIndex + 1].fieldClass
             }"
-            class="h-6 w-6 flex items-center justify-center focus:outline-none invisible group-hover:visible"
             (click)="moveRight(column.id)"
             [disabled]="
               columnIndex + 1 === sortedColumns.length ||

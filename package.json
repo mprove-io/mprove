@@ -159,6 +159,7 @@
     "prettier": "2.2.1",
     "prettier-plugin-organize-imports": "^1.1.1",
     "tailwindcss": "^2.0.3",
+    "tailwindcss-nested-groups": "^1.2.4",
     "ts-jest": "26.4.0",
     "ts-loader": "^6.2.1",
     "ts-node": "~9.1.1",

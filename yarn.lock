@@ -14777,6 +14777,13 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
+tailwindcss-nested-groups@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/tailwindcss-nested-groups/-/tailwindcss-nested-groups-1.2.4.tgz#f9840b9bddc69eceb04a869f5e6ef093e380e3b8"
+  integrity sha512-SrW9VTgH5/PmW/E0q1+TC7TckhVfonDpiYiLKsRYX57FEcM3LemiH7JYcsTlubM+eAVkd9Jjj03pTiyfnDBibQ==
+  dependencies:
+    postcss-selector-parser "^6.0.4"
+
 tailwindcss@^2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-2.0.4.tgz#cf13e62738c3a27065664e449d93b66ee2945506"

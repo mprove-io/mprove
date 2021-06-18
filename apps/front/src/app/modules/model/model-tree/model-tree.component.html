@@ -108,22 +108,32 @@
               *ngIf="node.data.isField === true"
               type="button"
               data-cy="blockmlTreeFilterButton"
-              class="ml-3 rounded h-7 w-24 flex items-center justify-center hover:bg-white focus:outline-none invisible group-hover:visible"
+              class="ml-3 rounded h-7 w-28 flex items-center justify-center hover:bg-white focus:outline-none invisible group-hover:visible"
               [ngClass]="{
-                'text-blue3 visible': node.data.isFiltered === true,
+                'text-blue3': node.data.isFiltered === true,
                 'text-gray1': node.data.isFiltered === false
               }"
               (click)="filterField(node, $event)"
             >
-              <div class="flex flex-row space-x-2 items-center justify-center">
-                <m-filter-icon></m-filter-icon>
-                <div class="text-xl">Filter</div>
+              <div
+                class="flex flex-row space-x-2 items-center justify-center group-scope"
+              >
+                <div class="w-16">
+                  <div class="text-xl invisible group-scope-hover:visible"
+                    >Filter</div
+                  >
+                </div>
+                <m-filter-icon
+                  [ngClass]="{
+                    visible: node.data.isFiltered === true
+                  }"
+                ></m-filter-icon>
               </div>
             </button>
 
             <div
               *ngIf="node.data.isField === true"
-              class="flex ml-5 invisible group-hover:visible"
+              class="flex ml-1 invisible group-hover:visible"
             >
               <m-field-options [node]="node"></m-field-options>
             </div>
