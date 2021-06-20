@@ -12,7 +12,7 @@
     <ng-select
       #fractionStringTypeSelect
       data-cy="fractionStringTypeSelect"
-      class="flex w-56 focus:outline-none"
+      class="flex w-56 focus:outline-none h-[36px]"
       [items]="fractionStringTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -24,6 +24,7 @@
     </ng-select>
 
     <div
+      class="flex flex-col ml-5"
       *ngIf="
         fraction.type === fractionTypeEnum.StringIsEqualTo ||
         fraction.type === fractionTypeEnum.StringContains ||
@@ -35,51 +36,25 @@
         fraction.type === fractionTypeEnum.StringDoesNotEndWith
       "
     >
-      <input
-        data-cy="fractionStringValueInput"
-        class="w-48 h-[36px] ml-5 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            fractionForm.controls['stringValue'].invalid &&
-            fractionForm.controls['stringValue'].touched
-        }"
-        formControlName="stringValue"
-        (blur)="stringValueBlur()"
-      />
-      <!-- <m-validation
-        [control]="fractionForm.controls['stringValue']"
-      ></m-validation> -->
+      <div class="">
+        <input
+          data-cy="fractionStringValueInput"
+          class="w-48 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+          [ngClass]="{
+            'border-red-600':
+              fractionForm.controls['stringValue'].invalid &&
+              fractionForm.controls['stringValue'].touched
+          }"
+          formControlName="stringValue"
+          (blur)="stringValueBlur()"
+        />
+
+        <m-validation
+          [control]="fractionForm.controls['stringValue']"
+        ></m-validation>
+      </div>
     </div>
   </form>
-
-  <!-- <form
-    [formGroup]="stringValueForm"
-    *ngIf="
-      fraction.type === fractionTypeEnum.StringIsEqualTo ||
-      fraction.type === fractionTypeEnum.StringContains ||
-      fraction.type === fractionTypeEnum.StringStartsWith ||
-      fraction.type === fractionTypeEnum.StringEndsWith ||
-      fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
-      fraction.type === fractionTypeEnum.StringDoesNotContain ||
-      fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
-      fraction.type === fractionTypeEnum.StringDoesNotEndWith
-    "
-  >
-    <mat-form-field>
-      <input
-        matInput
-        type="text"
-        formControlName="stringValue"
-        data-cy="fractionStringValue"
-        (blur)="stringValueBlur(stringValueForm.controls['stringValue'].value)"
-      />
-      <mat-error>
-        <m-validation-msg
-          [errors]="stringValueForm.controls['stringValue'].errors"
-        ></m-validation-msg>
-      </mat-error>
-    </mat-form-field>
-  </form> -->
 
   <!-- StringIsNull -->
   <!-- StringIsBlank -->

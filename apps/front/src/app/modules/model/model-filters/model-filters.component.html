@@ -1,6 +1,6 @@
 <div *ngFor="let filter of extendedFilters; let filterIndex = index">
-  <div class="flex flex-row mb-3">
-    <div class="flex flex-col justify-center items-start w-32">
+  <div class="flex flex-row">
+    <div class="flex flex-col justify-start items-start w-32">
       <div class="font-normal text-sm truncate">{{
         filter.field.topLabel | capitalize
       }}</div>
@@ -17,34 +17,34 @@
       </div>
     </div>
 
-    <div
-      class="flex flex-row justify-start items-center"
-      *ngFor="
-        let fraction of filter.fractions;
-        let isFirst = first;
-        let fractionIndex = index
-      "
-    >
-      <m-fraction
-        [fieldResult]="filter.field.result"
-        [fraction]="fraction"
-        [fractionIndex]="fractionIndex"
-        [isFirst]="isFirst"
-        (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
+    <div class="mt-1">
+      <div
+        class="h-16 flex flex-row justify-start items-start"
+        *ngFor="
+          let fraction of filter.fractions;
+          let isFirst = first;
+          let fractionIndex = index
+        "
       >
-      </m-fraction>
+        <m-fraction
+          [fieldResult]="filter.field.result"
+          [fraction]="fraction"
+          [fractionIndex]="fractionIndex"
+          [isFirst]="isFirst"
+          (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
+        >
+        </m-fraction>
 
-      <!-- <button
-        mat-icon-button
-        color="warn"
-        (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+        <!-- <button
+      mat-icon-button
+      color="warn"
+      (click)="deleteFraction(filter, filterIndex, fractionIndex)"
       >
-        <mat-icon>close</mat-icon>
-      </button> -->
+      <mat-icon>close</mat-icon>
+    </button> -->
 
-      <!-- <span *ngIf="fraction.has_duplicates" class="model-filters__error"
-        >duplicate filter</span
-      > -->
+        <span *ngIf="fraction.hasDuplicates">duplicate filter</span>
+      </div>
     </div>
   </div>
 </div>

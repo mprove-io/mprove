@@ -158,10 +158,11 @@
                   [ngClass]="{
                     'text-blue-500': isFormat,
                     'text-gray1': !isFormat,
-                    'text-gray-400 cursor-default': !dataIsExpanded
+                    'text-gray-400 cursor-default':
+                      !dataIsExpanded || !resultsIsShow
                   }"
                   (click)="toggleFormat()"
-                  [disabled]="!dataIsExpanded"
+                  [disabled]="!dataIsExpanded || !resultsIsShow"
                 >
                   <m-currency-dollar-icon></m-currency-dollar-icon
                 ></button>
