@@ -9,7 +9,7 @@
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
       <div
-        class="flex flex-row w-full h-10 group"
+        class="flex flex-row w-full h-11 group-scope"
         [ngClass]="{
           'pl-6 pr-5':
             node.data.nodeClass === nodeClassDimension ||
@@ -19,7 +19,7 @@
       >
         <div
           data-cy="modelTreeItem"
-          class="group flex flex-row pr-5 w-full select-none"
+          class="flex flex-row pr-5 w-full select-none"
           [ngClass]="{
             'cursor-pointer': node.data.nodeClass !== nodeClassInfo,
             'bg-blue2': node.data.nodeClass === nodeClassDimension,
@@ -108,16 +108,18 @@
               *ngIf="node.data.isField === true"
               type="button"
               data-cy="blockmlTreeFilterButton"
-              class="group-scope h-10 ml-3 rounded w-28 flex items-center justify-center focus:outline-none invisible group-hover:visible"
+              class="group h-10 ml-3 rounded w-28 flex items-center justify-center focus:outline-none invisible group-scope-hover:visible"
               [ngClass]="{
                 'text-blue3': node.data.isFiltered === true,
                 'text-gray1': node.data.isFiltered === false
               }"
               (click)="filterField(node, $event)"
             >
-              <div class="flex flex-row space-x-2 items-center justify-center">
+              <div
+                class="flex px-2 py-1 flex-row space-x-2 items-center justify-center rounded group-hover:bg-white"
+              >
                 <div class="w-16">
-                  <div class="text-xl invisible group-scope-hover:visible"
+                  <div class="text-xl invisible group-hover:visible"
                     >Filter</div
                   >
                 </div>
@@ -131,7 +133,7 @@
 
             <div
               *ngIf="node.data.isField === true"
-              class="flex ml-1 invisible group-hover:visible"
+              class="flex ml-2 invisible group-scope-hover:visible"
             >
               <m-field-options [node]="node"></m-field-options>
             </div>
