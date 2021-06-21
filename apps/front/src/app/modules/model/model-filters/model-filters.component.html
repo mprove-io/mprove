@@ -1,19 +1,28 @@
 <div *ngFor="let filter of extendedFilters; let filterIndex = index">
-  <div class="flex flex-row">
-    <div class="flex flex-col justify-start items-start w-32">
-      <div class="font-normal text-sm truncate">{{
-        filter.field.topLabel | capitalize
-      }}</div>
+  <div class="flex flex-row items-start justify-start">
+    <div class="flex flex-row items-center justify-center">
+      <button
+        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2"
+        (click)="addFraction(filter, filterIndex)"
+      >
+        <m-add-icon></m-add-icon>
+      </button>
 
-      <div class="flex flex-row font-semibold text-left">
-        <div *ngIf="filter.field.groupLabel"
-          >{{ filter.field.groupLabel | capitalize }} -
-          {{ filter.field.label | capitalize }}</div
-        >
-
-        <div *ngIf="!filter.field.groupLabel" class="">{{
-          filter.field.label | capitalize
+      <div class="flex flex-col justify-start items-start w-32 ml-3">
+        <div class="font-normal text-sm truncate">{{
+          filter.field.topLabel | capitalize
         }}</div>
+
+        <div class="flex flex-row font-semibold text-left">
+          <div *ngIf="filter.field.groupLabel"
+            >{{ filter.field.groupLabel | capitalize }} -
+            {{ filter.field.label | capitalize }}</div
+          >
+
+          <div *ngIf="!filter.field.groupLabel" class="">{{
+            filter.field.label | capitalize
+          }}</div>
+        </div>
       </div>
     </div>
 
