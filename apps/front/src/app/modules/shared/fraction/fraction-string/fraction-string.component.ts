@@ -18,6 +18,8 @@ import { FractionTypeItem } from '../fraction.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionStringComponent implements OnInit {
+  defaultStringValue = 'abc';
+
   fractionTypeEnum = common.FractionTypeEnum;
   fractionOperatorEnum = common.FractionOperatorEnum;
 
@@ -110,14 +112,20 @@ export class FractionStringComponent implements OnInit {
         brick: newBrick,
         operator: this.fraction.operator,
         type: this.fraction.type,
-        stringValue: value,
-        hasDuplicates: this.fraction.hasDuplicates
+        stringValue: value
+        // hasDuplicates: this.fraction.hasDuplicates
       };
 
       if (this.fractionForm.valid) {
         this.emitFractionUpdate();
       }
     }
+  }
+
+  updateControlValueFromFraction() {
+    this.fractionForm.controls['stringValue'].setValue(
+      this.fraction.stringValue
+    );
   }
 
   getValueBrick(fractionType: common.FractionTypeEnum, value: string) {
@@ -158,8 +166,8 @@ export class FractionStringComponent implements OnInit {
         this.fraction = {
           brick: `any`,
           operator: common.FractionOperatorEnum.Or,
-          type: fractionType,
-          hasDuplicates: this.fraction.hasDuplicates
+          type: fractionType
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -168,64 +176,60 @@ export class FractionStringComponent implements OnInit {
 
       case this.fractionTypeEnum.StringIsEqualTo: {
         this.fraction = {
-          brick: `-${this.fraction.stringValue}-`,
+          brick: `-${this.defaultStringValue}-`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
 
         break;
       }
 
       case this.fractionTypeEnum.StringContains: {
         this.fraction = {
-          brick: `%${this.fraction.stringValue}%`,
+          brick: `%${this.defaultStringValue}%`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
 
         break;
       }
 
       case this.fractionTypeEnum.StringStartsWith: {
         this.fraction = {
-          brick: `${this.fraction.stringValue}%`,
+          brick: `${this.defaultStringValue}%`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
 
         break;
       }
 
       case this.fractionTypeEnum.StringEndsWith: {
         this.fraction = {
-          brick: `%${this.fraction.stringValue}`,
+          brick: `%${this.defaultStringValue}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
 
         break;
       }
@@ -234,8 +238,8 @@ export class FractionStringComponent implements OnInit {
         this.fraction = {
           brick: `null`,
           operator: common.FractionOperatorEnum.Or,
-          type: fractionType,
-          hasDuplicates: this.fraction.hasDuplicates
+          type: fractionType
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -246,8 +250,8 @@ export class FractionStringComponent implements OnInit {
         this.fraction = {
           brick: `blank`,
           operator: common.FractionOperatorEnum.Or,
-          type: fractionType,
-          hasDuplicates: this.fraction.hasDuplicates
+          type: fractionType
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -256,65 +260,57 @@ export class FractionStringComponent implements OnInit {
 
       case this.fractionTypeEnum.StringIsNotEqualTo: {
         this.fraction = {
-          brick: `not -${this.fraction.stringValue}-`,
+          brick: `not -${this.defaultStringValue}-`,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.StringDoesNotContain: {
         this.fraction = {
-          brick: `not %${this.fraction.stringValue}%`,
+          brick: `not %${this.defaultStringValue}%`,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.StringDoesNotStartWith: {
         this.fraction = {
-          brick: `${this.fraction.stringValue}% not`,
+          brick: `${this.defaultStringValue}% not`,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.StringDoesNotEndWith: {
         this.fraction = {
-          brick: `not %${this.fraction.stringValue}`,
+          brick: `not %${this.defaultStringValue}`,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
-          stringValue: this.fraction.stringValue,
-          hasDuplicates: this.fraction.hasDuplicates
+          stringValue: this.defaultStringValue
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
-        if (this.fractionForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
@@ -322,8 +318,8 @@ export class FractionStringComponent implements OnInit {
         this.fraction = {
           brick: `not null`,
           operator: common.FractionOperatorEnum.And,
-          type: fractionType,
-          hasDuplicates: this.fraction.hasDuplicates
+          type: fractionType
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -334,8 +330,8 @@ export class FractionStringComponent implements OnInit {
         this.fraction = {
           brick: `not blank`,
           operator: common.FractionOperatorEnum.And,
-          type: fractionType,
-          hasDuplicates: this.fraction.hasDuplicates
+          type: fractionType
+          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();

@@ -54,9 +54,7 @@ export function processFilter(item: {
 
   let answerError: { valid: number; brick?: string };
 
-  let bricks = [...new Set(filterBricks)];
-
-  bricks.forEach(brick => {
+  filterBricks.forEach(brick => {
     let r;
     let num: string;
     let value: string;

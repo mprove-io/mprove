@@ -1,14 +1,15 @@
-<div class="flex flex-row items-center justify-start">
-  <div class="ml-5 w-10">
-    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.Or"
-      >OR</div
-    >
-    <div *ngIf="!isFirst && fraction.operator === fractionOperatorEnum.And"
-      >AND</div
-    >
+<div class="flex flex-row items-start justify-start h-16">
+  <div class="flex ml-5 w-10 h-[36px] items-center justify-start">
+    {{
+      !isFirst && fraction.operator === fractionOperatorEnum.Or
+        ? 'OR'
+        : !isFirst && fraction.operator === fractionOperatorEnum.And
+        ? 'AND'
+        : ''
+    }}
   </div>
 
-  <form class="flex flex-row" [formGroup]="fractionForm">
+  <form class="flex flex-row ml-2" [formGroup]="fractionForm">
     <ng-select
       #fractionStringTypeSelect
       data-cy="fractionStringTypeSelect"
@@ -23,20 +24,19 @@
     >
     </ng-select>
 
-    <div
-      class="flex flex-col ml-5"
-      *ngIf="
-        fraction.type === fractionTypeEnum.StringIsEqualTo ||
-        fraction.type === fractionTypeEnum.StringContains ||
-        fraction.type === fractionTypeEnum.StringStartsWith ||
-        fraction.type === fractionTypeEnum.StringEndsWith ||
-        fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
-        fraction.type === fractionTypeEnum.StringDoesNotContain ||
-        fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
-        fraction.type === fractionTypeEnum.StringDoesNotEndWith
-      "
-    >
-      <div class="">
+    <div class="flex flex-col ml-5">
+      <div
+        *ngIf="
+          fraction.type === fractionTypeEnum.StringIsEqualTo ||
+          fraction.type === fractionTypeEnum.StringContains ||
+          fraction.type === fractionTypeEnum.StringStartsWith ||
+          fraction.type === fractionTypeEnum.StringEndsWith ||
+          fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
+          fraction.type === fractionTypeEnum.StringDoesNotContain ||
+          fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
+          fraction.type === fractionTypeEnum.StringDoesNotEndWith
+        "
+      >
         <input
           data-cy="fractionStringValueInput"
           class="w-48 h-[36px] form-input rounded border-gray3 focus:border-blue3"
