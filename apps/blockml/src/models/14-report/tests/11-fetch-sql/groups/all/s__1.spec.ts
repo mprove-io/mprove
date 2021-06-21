@@ -92,8 +92,8 @@ WITH
     GROUP BY 1, 4, 5, 6, 7
   )
 SELECT
-  ((b_mea1 + b_dim6 + 1) + b_dim8 + 2) + ((mf_mea1 + mf_dim6 + 1) + mf_dim8 + 2) + 3 as mf_calc3,
-  c_dim1
+  c_dim1,
+  ((b_mea1 + b_dim6 + 1) + b_dim8 + 2) + ((mf_mea1 + mf_dim6 + 1) + mf_dim8 + 2) + 3 as mf_calc3
 FROM main
 LIMIT 500`;
 
@@ -180,8 +180,8 @@ test('2', async t => {
     GROUP BY 1, 4, 5, 6, 7
   )
 SELECT
-  ((b_mea1 + b_dim6 + 1) + b_dim8 + 2) + ((mf_mea1 + mf_dim6 + 1) + mf_dim8 + 2) + 3 as mf_calc3,
-  c_dim1
+  c_dim1,
+  ((b_mea1 + b_dim6 + 1) + b_dim8 + 2) + ((mf_mea1 + mf_dim6 + 1) + mf_dim8 + 2) + 3 as mf_calc3
 FROM main
 LIMIT 500`;
 

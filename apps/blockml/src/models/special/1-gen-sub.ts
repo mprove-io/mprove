@@ -8,6 +8,8 @@ export function genSub(item: {
 }) {
   let { select, view, viewPartName } = item;
 
+  select = [...select].sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
+
   let varsSubSteps: interfaces.ViewPart['varsSubSteps'] = [];
 
   let { depMeasures, depDimensions } = barSub.subMakeDepMeasuresAndDimensions({

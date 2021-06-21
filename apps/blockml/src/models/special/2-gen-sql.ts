@@ -11,6 +11,10 @@ export async function genSql(
   traceId: string,
   genSqlItem: interfaces.GenSqlItem
 ) {
+  genSqlItem.select = [...genSqlItem.select].sort((a, b) =>
+    a > b ? 1 : b > a ? -1 : 0
+  );
+
   let outcome: interfaces.GenSqlProOutcome;
 
   let isSingle = cs.get<interfaces.Config['isSingle']>('isSingle');
