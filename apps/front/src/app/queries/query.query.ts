@@ -25,6 +25,9 @@ export class QueryQuery extends Query<QueryState> {
     this.data$
   ]).pipe(
     map(([fields, data]: [ColumnField[], any[]]) =>
+      // console.log('combineLatest');
+      // console.log(data);
+      // console.log(fields);
       this.queryService.makeQData({ data: data, columns: fields })
     )
   );

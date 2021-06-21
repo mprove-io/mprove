@@ -38,10 +38,10 @@ export class QueryService {
           value: value,
           fValue: this.formatValue({
             value: value,
-            formatNumber: column.formatNumber,
-            fieldResult: column.result,
-            currencyPrefix: column.currencyPrefix,
-            currencySuffix: column.currencySuffix
+            formatNumber: column?.formatNumber,
+            fieldResult: column?.result,
+            currencyPrefix: column?.currencyPrefix,
+            currencySuffix: column?.currencySuffix
           })
         };
 
