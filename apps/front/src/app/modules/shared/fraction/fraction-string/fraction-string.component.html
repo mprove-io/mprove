@@ -24,35 +24,34 @@
     >
     </ng-select>
 
-    <div class="flex flex-col ml-5">
-      <div
-        *ngIf="
-          fraction.type === fractionTypeEnum.StringIsEqualTo ||
-          fraction.type === fractionTypeEnum.StringContains ||
-          fraction.type === fractionTypeEnum.StringStartsWith ||
-          fraction.type === fractionTypeEnum.StringEndsWith ||
-          fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
-          fraction.type === fractionTypeEnum.StringDoesNotContain ||
-          fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
-          fraction.type === fractionTypeEnum.StringDoesNotEndWith
-        "
-      >
-        <input
-          data-cy="fractionStringValueInput"
-          class="w-48 h-[36px] form-input rounded border-gray3 focus:border-blue3"
-          [ngClass]="{
-            'border-red-600':
-              fractionForm.controls['stringValue'].invalid &&
-              fractionForm.controls['stringValue'].touched
-          }"
-          formControlName="stringValue"
-          (blur)="stringValueBlur()"
-        />
+    <div
+      class="flex flex-col ml-5"
+      *ngIf="
+        fraction.type === fractionTypeEnum.StringIsEqualTo ||
+        fraction.type === fractionTypeEnum.StringContains ||
+        fraction.type === fractionTypeEnum.StringStartsWith ||
+        fraction.type === fractionTypeEnum.StringEndsWith ||
+        fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
+        fraction.type === fractionTypeEnum.StringDoesNotContain ||
+        fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
+        fraction.type === fractionTypeEnum.StringDoesNotEndWith
+      "
+    >
+      <input
+        data-cy="fractionStringValueInput"
+        class="w-48 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            fractionForm.controls['stringValue'].invalid &&
+            fractionForm.controls['stringValue'].touched
+        }"
+        formControlName="stringValue"
+        (blur)="stringValueBlur()"
+      />
 
-        <m-validation
-          [control]="fractionForm.controls['stringValue']"
-        ></m-validation>
-      </div>
+      <m-validation
+        [control]="fractionForm.controls['stringValue']"
+      ></m-validation>
     </div>
   </form>
 

@@ -31,13 +31,19 @@
 
     <div class="mt-1">
       <div
-        class="h-16 flex flex-row justify-start items-start"
+        class="h-16 flex flex-row justify-start items-start group"
         *ngFor="
           let fraction of filter.fractions;
           let isFirst = first;
           let fractionIndex = index
         "
       >
+        <button
+          class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 ml-5 invisible group-hover:visible focus:outline-none"
+          (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+        >
+          <m-delete-icon></m-delete-icon>
+        </button>
         <m-fraction
           [fieldResult]="filter.field.result"
           [fraction]="fraction"
@@ -46,14 +52,6 @@
           (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
         >
         </m-fraction>
-
-        <!-- <button
-      mat-icon-button
-      color="warn"
-      (click)="deleteFraction(filter, filterIndex, fractionIndex)"
-      >
-      <mat-icon>close</mat-icon>
-    </button> -->
 
         <!-- <span *ngIf="fraction.hasDuplicates">duplicate filter</span> -->
       </div>

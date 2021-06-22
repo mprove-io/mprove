@@ -89,4 +89,38 @@ export class ModelFiltersComponent {
 
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  deleteFraction(
+    filterExtended: FilterExtended,
+    filterIndex: number,
+    fractionIndex: number
+  ) {
+    let newMconfig = this.structService.makeMconfig();
+
+    let fractions = filterExtended.fractions;
+
+    if (fractions.length === 1) {
+      newMconfig.filters = [
+        ...newMconfig.filters.slice(0, filterIndex),
+        ...newMconfig.filters.slice(filterIndex + 1)
+      ];
+    } else {
+      let newFractions = [
+        ...fractions.slice(0, fractionIndex),
+        ...fractions.slice(fractionIndex + 1)
+      ];
+
+      let newFilter = Object.assign({}, filterExtended, {
+        fractions: newFractions
+      });
+
+      newMconfig.filters = [
+        ...newMconfig.filters.slice(0, filterIndex),
+        newFilter,
+        ...newMconfig.filters.slice(filterIndex + 1)
+      ];
+    }
+
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }
