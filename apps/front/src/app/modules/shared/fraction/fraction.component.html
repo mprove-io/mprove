@@ -1,4 +1,17 @@
-<div [ngSwitch]="fieldResult">
+<div
+  [ngSwitch]="fieldResult"
+  class="flex flex-row items-start justify-start h-16"
+>
+  <div class="flex ml-5 w-10 h-[36px] items-center justify-start">
+    {{
+      !isFirst && fraction.operator === fractionOperatorEnum.Or
+        ? 'OR'
+        : !isFirst && fraction.operator === fractionOperatorEnum.And
+        ? 'AND'
+        : ''
+    }}
+  </div>
+
   <!-- <m-fraction-number
     *ngSwitchCase="fieldResultEnum.Number"
     [fraction]="fraction"

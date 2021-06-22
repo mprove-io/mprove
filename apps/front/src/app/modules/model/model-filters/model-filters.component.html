@@ -5,7 +5,7 @@
   >
     <div class="flex flex-row items-center justify-center">
       <button
-        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2"
+        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 focus:outline-none"
         (click)="addFraction(filter, filterIndex)"
       >
         <m-add-icon></m-add-icon>
@@ -52,8 +52,6 @@
           (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
         >
         </m-fraction>
-
-        <!-- <span *ngIf="fraction.hasDuplicates">duplicate filter</span> -->
       </div>
     </div>
   </div>

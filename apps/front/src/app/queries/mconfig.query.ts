@@ -11,12 +11,8 @@ export class ColumnField extends common.ModelField {
   sortingNumber: number;
 }
 
-export class FractionExtended extends common.Fraction {
-  // hasDuplicates: boolean;
-}
-
 export class FilterExtended extends common.Filter {
-  fractions: FractionExtended[];
+  fractions: common.Fraction[];
   field: ColumnField;
 }
 
@@ -92,13 +88,6 @@ export class MconfigQuery extends Query<MconfigState> {
                   fraction.operator === common.FractionOperatorEnum.And
               )
             ]
-            // .map(fraction =>
-            //   Object.assign({}, fraction, <FractionExtended>{
-            //     hasDuplicates:
-            //       filter.fractions.filter(x => x.brick === fraction.brick)
-            //         .length > 1
-            //   })
-            // )
           })
         );
       }

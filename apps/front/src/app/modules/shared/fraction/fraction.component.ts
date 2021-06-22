@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FractionExtended } from '~front/app/queries/mconfig.query';
 import { common } from '~front/barrels/common';
 import { EventFractionUpdate } from '../../model/model-filters/model-filters.component';
 
@@ -13,11 +12,13 @@ export class FractionTypeItem {
   templateUrl: './fraction.component.html'
 })
 export class FractionComponent {
+  fractionOperatorEnum = common.FractionOperatorEnum;
+
   fieldResultEnum = common.FieldResultEnum;
 
   @Input() fieldResult: common.FieldResultEnum;
 
-  @Input() fraction: FractionExtended;
+  @Input() fraction: common.Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
 

@@ -1,16 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import {
-  FilterExtended,
-  FractionExtended,
-  MconfigQuery
-} from '~front/app/queries/mconfig.query';
+import { FilterExtended, MconfigQuery } from '~front/app/queries/mconfig.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
 
 export class EventFractionUpdate {
-  fraction: FractionExtended;
+  fraction: common.Fraction;
   fractionIndex: number;
 }
 

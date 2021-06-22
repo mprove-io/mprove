@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EventFractionUpdate } from '~front/app/modules/model/model-filters/model-filters.component';
-import { FractionExtended } from '~front/app/queries/mconfig.query';
 import { common } from '~front/barrels/common';
 import { FractionTypeItem } from '../fraction.component';
 
@@ -21,9 +20,8 @@ export class FractionStringComponent implements OnInit {
   defaultStringValue = 'abc';
 
   fractionTypeEnum = common.FractionTypeEnum;
-  fractionOperatorEnum = common.FractionOperatorEnum;
 
-  @Input() fraction: FractionExtended;
+  @Input() fraction: common.Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
@@ -113,7 +111,6 @@ export class FractionStringComponent implements OnInit {
         operator: this.fraction.operator,
         type: this.fraction.type,
         stringValue: value
-        // hasDuplicates: this.fraction.hasDuplicates
       };
 
       if (this.fractionForm.valid) {
@@ -167,7 +164,6 @@ export class FractionStringComponent implements OnInit {
           brick: `any`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -180,7 +176,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -195,7 +190,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -210,7 +204,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -225,7 +218,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -239,7 +231,6 @@ export class FractionStringComponent implements OnInit {
           brick: `null`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -251,7 +242,6 @@ export class FractionStringComponent implements OnInit {
           brick: `blank`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -264,7 +254,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -278,7 +267,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -292,7 +280,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -306,7 +293,6 @@ export class FractionStringComponent implements OnInit {
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.updateControlValueFromFraction();
@@ -319,7 +305,6 @@ export class FractionStringComponent implements OnInit {
           brick: `not null`,
           operator: common.FractionOperatorEnum.And,
           type: fractionType
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
@@ -331,7 +316,6 @@ export class FractionStringComponent implements OnInit {
           brick: `not blank`,
           operator: common.FractionOperatorEnum.And,
           type: fractionType
-          // hasDuplicates: this.fraction.hasDuplicates
         };
 
         this.emitFractionUpdate();
