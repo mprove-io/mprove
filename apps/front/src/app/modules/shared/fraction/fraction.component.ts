@@ -7,6 +7,11 @@ export class FractionTypeItem {
   value: common.FractionTypeEnum;
 }
 
+export class FractionNumberBetweenOptionItem {
+  label: string;
+  value: common.FractionNumberBetweenOptionEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'

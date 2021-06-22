@@ -12,12 +12,13 @@
     }}
   </div>
 
-  <!-- <m-fraction-number
+  <m-fraction-number
     *ngSwitchCase="fieldResultEnum.Number"
     [fraction]="fraction"
     [isFirst]="isFirst"
-    (fractionChange)="fractionChange($event)"
-  ></m-fraction-number> -->
+    [fractionIndex]="fractionIndex"
+    (fractionUpdate)="fractionUpdate.emit($event)"
+  ></m-fraction-number>
 
   <m-fraction-string
     *ngSwitchCase="fieldResultEnum.String"

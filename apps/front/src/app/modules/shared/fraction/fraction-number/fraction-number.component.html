@@ -1,0 +1,68 @@
+<div class="flex flex-row ml-2">
+  <form [formGroup]="fractionTypeForm">
+    <ng-select
+      #fractionNumberTypeSelect
+      data-cy="fractionNumberTypeSelect"
+      class="flex w-64 focus:outline-none h-[36px]"
+      [items]="fractionNumberTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="typeChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="fractionType"
+    >
+    </ng-select>
+  </form>
+
+  <form
+    [formGroup]="numberValuesForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.NumberIsEqualTo ||
+      fraction.type === fractionTypeEnum.NumberIsNotEqualTo
+    "
+  >
+  </form>
+
+  <form
+    [formGroup]="numberSingleValueForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.NumberIsGreaterThan ||
+      fraction.type === fractionTypeEnum.NumberIsGreaterThanOrEqualTo ||
+      fraction.type === fractionTypeEnum.NumberIsLessThan ||
+      fraction.type === fractionTypeEnum.NumberIsLessThanOrEqualTo
+    "
+  >
+  </form>
+
+  <form
+    [formGroup]="numberBetweenOptionsForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.NumberIsBetween ||
+      fraction.type === fractionTypeEnum.NumberIsNotBetween
+    "
+  >
+    <ng-select
+      #fractionBetweenOptionSelect
+      data-cy="fractionBetweenOptionSelect"
+      class="flex w-48 focus:outline-none h-[36px] ml-5"
+      [items]="fractionNumberBetweenOptionsList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="betweenOptionChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="numberBetweenOption"
+    >
+    </ng-select>
+  </form>
+
+  <form
+    [formGroup]="numberBetweenForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.NumberIsBetween ||
+      fraction.type === fractionTypeEnum.NumberIsNotBetween
+    "
+  >
+  </form>
+</div>

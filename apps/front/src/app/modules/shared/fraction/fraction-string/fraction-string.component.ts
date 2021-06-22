@@ -27,6 +27,7 @@ export class FractionStringComponent implements OnInit {
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
+  fractionTypeForm: FormGroup;
   fractionForm: FormGroup;
 
   fractionStringTypesList: FractionTypeItem[] = [
@@ -87,7 +88,14 @@ export class FractionStringComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
+    this.buildFractionTypeForm();
     this.buildFractionForm();
+  }
+
+  buildFractionTypeForm() {
+    this.fractionTypeForm = this.fb.group({
+      fractionType: [this.fraction.type]
+    });
   }
 
   buildFractionForm() {

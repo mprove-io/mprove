@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
 import { common } from '~front/barrels/common';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
-  constructor(private router: Router) {}
+  constructor() {}
 
   static getValidatorErrorMessage(validatorName: string, validatorValue?: any) {
     let config = new Map([
@@ -44,41 +43,41 @@ export class ValidationService {
     return null;
   }
 
-  // static dayOfWeekIndexValuesValidator(control: FormControl) {
-  //   if (control.value === null) {
-  //     return null;
-  //   }
+  static dayOfWeekIndexValuesValidator(control: FormControl) {
+    if (control.value === null) {
+      return null;
+    }
 
-  //   if (control.value.match(MyRegex.IS_DAY_OF_WEEK_INDEX_VALUES())) {
-  //     return null;
-  //   } else {
-  //     return { isNotDayOfWeekIndexValues: true };
-  //   }
-  // }
+    if (control.value.match(common.MyRegex.IS_DAY_OF_WEEK_INDEX_VALUES())) {
+      return null;
+    } else {
+      return { isNotDayOfWeekIndexValues: true };
+    }
+  }
 
-  // static numberValuesValidator(control: FormControl) {
-  //   if (control.value === null) {
-  //     return null;
-  //   }
+  static numberValuesValidator(control: FormControl) {
+    if (control.value === null) {
+      return null;
+    }
 
-  //   if (control.value.match(MyRegex.IS_NUMBER_VALUES())) {
-  //     return null;
-  //   } else {
-  //     return { isNotNumberValues: true };
-  //   }
-  // }
+    if (control.value.match(common.MyRegex.IS_NUMBER_VALUES())) {
+      return null;
+    } else {
+      return { isNotNumberValues: true };
+    }
+  }
 
-  // static numberValidator(control: FormControl) {
-  //   if (control.value === null) {
-  //     return null;
-  //   }
+  static numberValidator(control: FormControl) {
+    if (control.value === null) {
+      return null;
+    }
 
-  //   if (control.value.toString().match(MyRegex.IS_NUMBER())) {
-  //     return null;
-  //   } else {
-  //     return { isNotNumber: true };
-  //   }
-  // }
+    if (control.value.toString().match(common.MyRegex.IS_NUMBER())) {
+      return null;
+    } else {
+      return { isNotNumber: true };
+    }
+  }
 
   static integerValidator(control: FormControl) {
     if (control.value === null) {

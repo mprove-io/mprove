@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { AvatarComponent } from './avatar/avatar.component';
+import { FractionNumberComponent } from './fraction/fraction-number/fraction-number.component';
 import { FractionStringComponent } from './fraction/fraction-string/fraction-string.component';
 import { FractionComponent } from './fraction/fraction.component';
 import { AddIconComponent } from './icons/add-icon /add-icon.component';
@@ -62,7 +63,8 @@ let sharedComponents = [
   CurrencyDollarIconComponent,
   FilterIconComponent,
   FractionComponent,
-  FractionStringComponent
+  FractionStringComponent,
+  FractionNumberComponent
 ];
 
 @NgModule({
