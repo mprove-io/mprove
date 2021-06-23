@@ -21,7 +21,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionNumberComponent implements OnInit {
-  defaultNumberValue = 100;
+  defaultNumberValues = '100, 200, 300';
+  defaultNumberValue1 = 100;
+  defaultNumberValue2 = 200;
 
   fractionTypeEnum = common.FractionTypeEnum;
 
@@ -109,21 +111,15 @@ export class FractionNumberComponent implements OnInit {
 
   ngOnInit() {
     this.buildFractionTypeForm();
-    this.buildNumberBetweenOptionsForm();
     this.buildNumberValuesForm();
     this.buildNumberSingleValueForm();
     this.buildNumberBetweenForm();
+    this.buildNumberBetweenOptionsForm();
   }
 
   buildFractionTypeForm() {
     this.fractionTypeForm = this.fb.group({
       fractionType: [this.fraction.type]
-    });
-  }
-
-  buildNumberBetweenOptionsForm() {
-    this.numberBetweenOptionsForm = this.fb.group({
-      numberBetweenOption: [this.fraction.numberBetweenOption]
     });
   }
 
@@ -142,7 +138,7 @@ export class FractionNumberComponent implements OnInit {
 
   buildNumberSingleValueForm() {
     this.numberSingleValueForm = this.fb.group({
-      numberSingleValue: [
+      numberValue1: [
         this.fraction.numberValue1,
         Validators.compose([
           Validators.required,
@@ -171,6 +167,12 @@ export class FractionNumberComponent implements OnInit {
           Validators.maxLength(255)
         ])
       ]
+    });
+  }
+
+  buildNumberBetweenOptionsForm() {
+    this.numberBetweenOptionsForm = this.fb.group({
+      numberBetweenOption: [this.fraction.numberBetweenOption]
     });
   }
 
@@ -227,10 +229,41 @@ export class FractionNumberComponent implements OnInit {
     return newBrick;
   }
 
+  updateControlNumberValuesFromFraction() {
+    this.numberValuesForm.controls['numberValues'].setValue(
+      this.fraction.numberValues
+    );
+  }
+
+  updateControlSingleValueFormNumberValue1FromFraction() {
+    this.numberSingleValueForm.controls['numberValue1'].setValue(
+      this.fraction.numberValue1
+    );
+  }
+
+  updateControlBetweenFormFirstValueFromFraction() {
+    this.numberBetweenForm.controls['numberBetweenFirstValue'].setValue(
+      this.fraction.numberValue1
+    );
+  }
+
+  updateControlBetweenFormSecondValueFromFraction() {
+    this.numberBetweenForm.controls['numberBetweenSecondValue'].setValue(
+      this.fraction.numberValue2
+    );
+  }
+
+  updateControlBetweenOptionsFormBetweenOptionFromFraction() {
+    this.numberBetweenOptionsForm.controls['numberBetweenOption'].setValue(
+      this.fraction.numberBetweenOption
+    );
+  }
+
   typeChange(fractionTypeItem: FractionTypeItem) {
     let fractionType = fractionTypeItem.value;
 
     switch (fractionType) {
+      //
       case this.fractionTypeEnum.NumberIsAnyValue: {
         this.fraction = {
           brick: `any`,
@@ -242,78 +275,79 @@ export class FractionNumberComponent implements OnInit {
         break;
       }
 
+      //
       case this.fractionTypeEnum.NumberIsEqualTo: {
+        let newNumberValues = this.defaultNumberValues;
+
         this.fraction = {
-          brick: `${this.fraction.numberValues}`,
+          brick: `${newNumberValues}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          numberValues: this.fraction.numberValues
+          numberValues: newNumberValues
         };
 
-        if (this.numberValuesForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlNumberValuesFromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.NumberIsGreaterThan: {
+        let newNumberValue1 = this.defaultNumberValue1;
+
         this.fraction = {
-          brick: `> ${this.fraction.numberValue1 || ''}`,
+          brick: `> ${newNumberValue1}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          numberValue1: this.fraction.numberValue1
+          numberValue1: newNumberValue1
         };
 
-        if (this.numberSingleValueForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlSingleValueFormNumberValue1FromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.NumberIsGreaterThanOrEqualTo: {
+        let newNumberValue1 = this.defaultNumberValue1;
+
         this.fraction = {
-          brick: `>= ${this.fraction.numberValue1 || ''}`,
+          brick: `>= ${newNumberValue1}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          numberValue1: this.fraction.numberValue1
+          numberValue1: newNumberValue1
         };
 
-        if (this.numberSingleValueForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlSingleValueFormNumberValue1FromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.NumberIsLessThan: {
+        let newNumberValue1 = this.defaultNumberValue1;
+
         this.fraction = {
-          brick: `< ${this.fraction.numberValue1 || ''}`,
+          brick: `< ${newNumberValue1}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          numberValue1: this.fraction.numberValue1
+          numberValue1: newNumberValue1
         };
 
-        if (this.numberSingleValueForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlSingleValueFormNumberValue1FromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.NumberIsLessThanOrEqualTo: {
+        let newNumberValue1 = this.defaultNumberValue1;
+
         this.fraction = {
-          brick: `<= ${this.fraction.numberValue1 || ''}`,
+          brick: `<= ${newNumberValue1}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          numberValue1: this.fraction.numberValue1
+          numberValue1: newNumberValue1
         };
 
-        if (this.numberSingleValueForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlSingleValueFormNumberValue1FromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
@@ -329,15 +363,15 @@ export class FractionNumberComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.NumberIsBetween: {
-        let newBetweenOption =
-          this.fraction.numberBetweenOption ||
-          common.FractionNumberBetweenOptionEnum.Inclusive;
+        let newBetweenOption = common.FractionNumberBetweenOptionEnum.Inclusive;
+        let newNumberValue1 = this.defaultNumberValue1;
+        let newNumberValue2 = this.defaultNumberValue2;
 
         let newBrick = this.getBetweenBrick(
           fractionType,
           newBetweenOption,
-          this.fraction.numberValue1,
-          this.fraction.numberValue2
+          newNumberValue1,
+          newNumberValue2
         );
 
         this.fraction = {
@@ -345,42 +379,44 @@ export class FractionNumberComponent implements OnInit {
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           numberBetweenOption: newBetweenOption,
-          numberValue1: this.fraction.numberValue1,
-          numberValue2: this.fraction.numberValue2
+          numberValue1: newNumberValue1,
+          numberValue2: newNumberValue2
         };
 
-        if (this.numberBetweenForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlBetweenOptionsFormBetweenOptionFromFraction();
+        this.updateControlBetweenFormFirstValueFromFraction();
+        this.updateControlBetweenFormSecondValueFromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
+      //
       case this.fractionTypeEnum.NumberIsNotEqualTo: {
+        let newNumberValues = this.defaultNumberValues;
+
         this.fraction = {
-          brick: `not ${this.fraction.numberValues}`,
+          brick: `not ${newNumberValues}`,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
-          numberValues: this.fraction.numberValues
+          numberValues: newNumberValues
         };
 
-        if (this.numberValuesForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.updateControlNumberValuesFromFraction();
+        this.emitFractionUpdate();
 
         break;
       }
 
       case this.fractionTypeEnum.NumberIsNotBetween: {
-        let newBetweenOption =
-          this.fraction.numberBetweenOption ||
-          common.FractionNumberBetweenOptionEnum.Inclusive;
+        let newBetweenOption = common.FractionNumberBetweenOptionEnum.Inclusive;
+        let newNumberValue1 = this.defaultNumberValue1;
+        let newNumberValue2 = this.defaultNumberValue2;
 
         let newBrick = this.getBetweenBrick(
           fractionType,
           newBetweenOption,
-          this.fraction.numberValue1,
-          this.fraction.numberValue2
+          newNumberValue1,
+          newNumberValue2
         );
 
         this.fraction = {
@@ -388,14 +424,14 @@ export class FractionNumberComponent implements OnInit {
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           numberBetweenOption: newBetweenOption,
-          numberValue1: this.fraction.numberValue1,
-          numberValue2: this.fraction.numberValue2
+          numberValue1: newNumberValue1,
+          numberValue2: newNumberValue2
         };
 
-        if (this.numberBetweenForm.valid) {
-          this.emitFractionUpdate();
-        }
-
+        this.updateControlBetweenOptionsFormBetweenOptionFromFraction();
+        this.updateControlBetweenFormFirstValueFromFraction();
+        this.updateControlBetweenFormSecondValueFromFraction();
+        this.emitFractionUpdate();
         break;
       }
 
@@ -417,12 +453,14 @@ export class FractionNumberComponent implements OnInit {
 
   betweenOptionChange(fractionBetweenItem: FractionNumberBetweenOptionItem) {
     let fractionBetweenOption = fractionBetweenItem.value;
+    let newNumberValue1 = this.defaultNumberValue1;
+    let newNumberValue2 = this.defaultNumberValue2;
 
     let newBrick = this.getBetweenBrick(
       this.fraction.type,
       fractionBetweenOption,
-      this.fraction.numberValue1,
-      this.fraction.numberValue2
+      newNumberValue1,
+      newNumberValue2
     );
 
     this.fraction = {
@@ -430,13 +468,13 @@ export class FractionNumberComponent implements OnInit {
       operator: this.fraction.operator,
       type: this.fraction.type,
       numberBetweenOption: fractionBetweenOption,
-      numberValue1: this.fraction.numberValue1,
-      numberValue2: this.fraction.numberValue2
+      numberValue1: newNumberValue1,
+      numberValue2: newNumberValue2
     };
 
-    if (this.numberBetweenForm.valid) {
-      this.emitFractionUpdate();
-    }
+    this.updateControlBetweenFormFirstValueFromFraction();
+    this.updateControlBetweenFormSecondValueFromFraction();
+    this.emitFractionUpdate();
   }
 
   numberValuesBlur() {
@@ -459,7 +497,7 @@ export class FractionNumberComponent implements OnInit {
   }
 
   numberSingleValueBlur() {
-    let value = this.numberSingleValueForm.controls['numberSingleValue'].value;
+    let value = this.numberSingleValueForm.controls['numberValue1'].value;
 
     if (value !== this.fraction.numberValue1) {
       let newBrick = this.getSingleBrick(this.fraction.type, value);
@@ -468,7 +506,7 @@ export class FractionNumberComponent implements OnInit {
         brick: newBrick,
         operator: this.fraction.operator,
         type: this.fraction.type,
-        numberValue1: value
+        numberValue1: Number(value)
       };
 
       if (this.numberSingleValueForm.valid) {
@@ -481,26 +519,28 @@ export class FractionNumberComponent implements OnInit {
     let value = this.numberBetweenForm.controls['numberBetweenFirstValue']
       .value;
 
-    if (value !== this.fraction.numberValue1) {
-      let newBrick = this.getBetweenBrick(
-        this.fraction.type,
-        this.fraction.numberBetweenOption,
-        value,
-        this.fraction.numberValue2
-      );
+    if (value === this.fraction.numberValue1) {
+      return;
+    }
 
-      this.fraction = {
-        brick: newBrick,
-        operator: this.fraction.operator,
-        type: this.fraction.type,
-        numberBetweenOption: this.fraction.numberBetweenOption,
-        numberValue1: value,
-        numberValue2: this.fraction.numberValue2
-      };
+    let newBrick = this.getBetweenBrick(
+      this.fraction.type,
+      this.fraction.numberBetweenOption,
+      value,
+      this.fraction.numberValue2
+    );
 
-      if (this.numberBetweenForm.valid) {
-        this.emitFractionUpdate();
-      }
+    this.fraction = {
+      brick: newBrick,
+      operator: this.fraction.operator,
+      type: this.fraction.type,
+      numberBetweenOption: this.fraction.numberBetweenOption,
+      numberValue1: Number(value),
+      numberValue2: this.fraction.numberValue2
+    };
+
+    if (this.numberBetweenForm.valid) {
+      this.emitFractionUpdate();
     }
   }
 
@@ -508,26 +548,28 @@ export class FractionNumberComponent implements OnInit {
     let value = this.numberBetweenForm.controls['numberBetweenSecondValue']
       .value;
 
-    if (value !== this.fraction.numberValue2) {
-      let newBrick = this.getBetweenBrick(
-        this.fraction.type,
-        this.fraction.numberBetweenOption,
-        this.fraction.numberValue1,
-        value
-      );
+    if (value === this.fraction.numberValue2) {
+      return;
+    }
 
-      this.fraction = {
-        brick: newBrick,
-        operator: this.fraction.operator,
-        type: this.fraction.type,
-        numberBetweenOption: this.fraction.numberBetweenOption,
-        numberValue1: this.fraction.numberValue1,
-        numberValue2: value
-      };
+    let newBrick = this.getBetweenBrick(
+      this.fraction.type,
+      this.fraction.numberBetweenOption,
+      this.fraction.numberValue1,
+      value
+    );
 
-      if (this.numberBetweenForm.valid) {
-        this.emitFractionUpdate();
-      }
+    this.fraction = {
+      brick: newBrick,
+      operator: this.fraction.operator,
+      type: this.fraction.type,
+      numberBetweenOption: this.fraction.numberBetweenOption,
+      numberValue1: this.fraction.numberValue1,
+      numberValue2: Number(value)
+    };
+
+    if (this.numberBetweenForm.valid) {
+      this.emitFractionUpdate();
     }
   }
 
