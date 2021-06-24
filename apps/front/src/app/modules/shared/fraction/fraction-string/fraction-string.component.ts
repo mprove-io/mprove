@@ -100,7 +100,6 @@ export class FractionStringComponent implements OnInit {
 
   buildFractionForm() {
     this.fractionForm = this.fb.group({
-      fractionType: [this.fraction.type],
       stringValue: [
         this.fraction.stringValue,
         Validators.compose([Validators.required, Validators.maxLength(255)])

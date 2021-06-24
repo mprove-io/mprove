@@ -12,6 +12,11 @@ export class FractionNumberBetweenOptionItem {
   value: common.FractionNumberBetweenOptionEnum;
 }
 
+export class FractionYesnoValueItem {
+  label: string;
+  value: common.FractionYesnoValueEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'

@@ -1,9 +1,9 @@
-<div class="flex flex-row ml-2 space-x-5">
+<div class="flex flex-row ml-2 space-x-5 h-16">
   <form [formGroup]="fractionTypeForm">
     <ng-select
       #fractionStringTypeSelect
       data-cy="fractionStringTypeSelect"
-      class="flex w-64 focus:outline-none h-16"
+      class="flex w-64 focus:outline-none"
       [items]="fractionStringTypesList"
       [clearable]="false"
       [searchable]="false"

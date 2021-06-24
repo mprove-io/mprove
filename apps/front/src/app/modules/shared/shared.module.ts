@@ -6,6 +6,7 @@ import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { AvatarComponent } from './avatar/avatar.component';
 import { FractionNumberComponent } from './fraction/fraction-number/fraction-number.component';
 import { FractionStringComponent } from './fraction/fraction-string/fraction-string.component';
+import { FractionYesnoComponent } from './fraction/fraction-yesno/fraction-yesno.component';
 import { FractionComponent } from './fraction/fraction.component';
 import { AddIconComponent } from './icons/add-icon /add-icon.component';
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
@@ -64,7 +65,8 @@ let sharedComponents = [
   FilterIconComponent,
   FractionComponent,
   FractionStringComponent,
-  FractionNumberComponent
+  FractionNumberComponent,
+  FractionYesnoComponent
 ];
 
 @NgModule({

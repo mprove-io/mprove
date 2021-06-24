@@ -60,10 +60,11 @@
     (fractionChange)="fractionChange($event)"
   ></m-fraction-ts> -->
 
-  <!-- <m-fraction-yesno
+  <m-fraction-yesno
     *ngSwitchCase="fieldResultEnum.Yesno"
     [fraction]="fraction"
     [isFirst]="isFirst"
-    (fractionChange)="fractionChange($event)"
-  ></m-fraction-yesno> -->
+    [fractionIndex]="fractionIndex"
+    (fractionUpdate)="fractionUpdate.emit($event)"
+  ></m-fraction-yesno>
 </div>
