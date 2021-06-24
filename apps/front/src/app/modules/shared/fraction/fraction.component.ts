@@ -17,6 +17,11 @@ export class FractionYesnoValueItem {
   value: common.FractionYesnoValueEnum;
 }
 
+export class FractionMonthNameValueItem {
+  label: string;
+  value: common.FractionMonthNameValueEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'

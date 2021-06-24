@@ -39,12 +39,13 @@
     (fractionChange)="fractionChange($event)"
   ></m-fraction-day-of-week-index> -->
 
-  <!-- <m-fraction-month-name
+  <m-fraction-month-name
     *ngSwitchCase="fieldResultEnum.MonthName"
     [fraction]="fraction"
     [isFirst]="isFirst"
-    (fractionChange)="fractionChange($event)"
-  ></m-fraction-month-name> -->
+    [fractionIndex]="fractionIndex"
+    (fractionUpdate)="fractionUpdate.emit($event)"
+  ></m-fraction-month-name>
 
   <!-- <m-fraction-quarter-of-year
     *ngSwitchCase="fieldResultEnum.QuarterOfYear"

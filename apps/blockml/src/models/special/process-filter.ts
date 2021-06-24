@@ -1236,14 +1236,14 @@ export function processFilter(item: {
             brick: brick,
             operator: common.FractionOperatorEnum.And,
             type: common.FractionTypeEnum.MonthNameIsNot,
-            monthNameValue: <any>value.toLowerCase()
+            monthNameValue: <any>value
           });
         } else {
           fractions.push({
             brick: brick,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.MonthNameIs,
-            monthNameValue: <any>value.toLowerCase()
+            monthNameValue: <any>value
           });
         }
 
