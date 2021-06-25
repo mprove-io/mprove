@@ -27,6 +27,11 @@ export class FractionDayOfWeekValueItem {
   value: common.FractionDayOfWeekValueEnum;
 }
 
+export class FractionQuarterOfYearValueItem {
+  label: string;
+  value: common.FractionQuarterOfYearValueEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'

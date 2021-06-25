@@ -1,0 +1,39 @@
+<div class="flex flex-row ml-2 space-x-5 h-16">
+  <form [formGroup]="fractionTypeForm">
+    <ng-select
+      #fractionQuarterOfYearTypeSelect
+      data-cy="fractionQuarterOfYearTypeSelect"
+      class="flex w-64 focus:outline-none"
+      [items]="fractionQuarterOfYearTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="typeChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="fractionType"
+    >
+    </ng-select>
+  </form>
+
+  <form
+    [formGroup]="fractionForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.QuarterOfYearIs ||
+      fraction.type === fractionTypeEnum.QuarterOfYearIsNot
+    "
+  >
+    <ng-select
+      #fractionQuarterOfYearValueSelect
+      data-cy="fractionQuarterOfYearValueSelect"
+      class="flex w-48 focus:outline-none h-[36px]"
+      [items]="fractionQuarterOfYearValuesList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="quarterOfYearValueChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="quarterOfYearValue"
+    >
+    </ng-select>
+  </form>
+</div>
