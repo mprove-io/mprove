@@ -22,10 +22,9 @@
       fraction.type === fractionTypeEnum.DayOfWeekIndexIsNotEqualTo
     "
   >
-    <textarea
-      rows="2"
+    <input
       data-cy="fractionDayOfWeekIndexValuesInput"
-      class="w-[404px] form-input rounded border-gray3 focus:border-blue3 resize-none rows"
+      class="w-[404px] h-[36px] form-input rounded border-gray3 focus:border-blue3 resize-none rows"
       [ngClass]="{
         'border-red-600':
           dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].invalid &&
@@ -33,7 +32,7 @@
       }"
       formControlName="dayOfWeekIndexValues"
       (blur)="dayOfWeekIndexValuesBlur()"
-    ></textarea>
+    />
     <m-validation
       [control]="dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues']"
     ></m-validation>

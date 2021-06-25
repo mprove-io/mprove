@@ -22,10 +22,9 @@
       fraction.type === fractionTypeEnum.NumberIsNotEqualTo
     "
   >
-    <textarea
-      rows="2"
+    <input
       data-cy="fractionNumberValuesInput"
-      class="w-[404px] form-input rounded border-gray3 focus:border-blue3 resize-none rows"
+      class="w-[404px] h-[36px] form-input rounded border-gray3 focus:border-blue3 resize-none rows"
       [ngClass]="{
         'border-red-600':
           numberValuesForm.controls['numberValues'].invalid &&
@@ -33,7 +32,7 @@
       }"
       formControlName="numberValues"
       (blur)="numberValuesBlur()"
-    ></textarea>
+    />
     <m-validation
       [control]="numberValuesForm.controls['numberValues']"
     ></m-validation>
