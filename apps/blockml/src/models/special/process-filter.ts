@@ -1061,14 +1061,14 @@ export function processFilter(item: {
             brick: brick,
             operator: common.FractionOperatorEnum.And,
             type: common.FractionTypeEnum.DayOfWeekIsNot,
-            dayOfWeekValue: <any>value.toLowerCase()
+            dayOfWeekValue: <any>value
           });
         } else {
           fractions.push({
             brick: brick,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.DayOfWeekIs,
-            dayOfWeekValue: <any>value.toLowerCase()
+            dayOfWeekValue: <any>value
           });
         }
 

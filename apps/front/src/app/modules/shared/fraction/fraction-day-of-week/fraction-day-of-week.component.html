@@ -1,0 +1,39 @@
+<div class="flex flex-row ml-2 space-x-5 h-16">
+  <form [formGroup]="fractionTypeForm">
+    <ng-select
+      #fractionDayOfWeekTypeSelect
+      data-cy="fractionDayOfWeekTypeSelect"
+      class="flex w-64 focus:outline-none"
+      [items]="fractionDayOfWeekTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="typeChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="fractionType"
+    >
+    </ng-select>
+  </form>
+
+  <form
+    [formGroup]="fractionForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.DayOfWeekIs ||
+      fraction.type === fractionTypeEnum.DayOfWeekIsNot
+    "
+  >
+    <ng-select
+      #fractionDayOfWeekValueSelect
+      data-cy="fractionDayOfWeekValueSelect"
+      class="flex w-48 focus:outline-none h-[36px]"
+      [items]="fractionDayOfWeekValuesList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="dayOfWeekValueChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="dayOfWeekValue"
+    >
+    </ng-select>
+  </form>
+</div>

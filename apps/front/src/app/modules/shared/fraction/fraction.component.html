@@ -25,12 +25,13 @@
     (fractionUpdate)="fractionUpdate.emit($event)"
   ></m-fraction-string>
 
-  <!-- <m-fraction-day-of-week
+  <m-fraction-day-of-week
     *ngSwitchCase="fieldResultEnum.DayOfWeek"
     [fraction]="fraction"
     [isFirst]="isFirst"
-    (fractionChange)="fractionChange($event)"
-  ></m-fraction-day-of-week> -->
+    [fractionIndex]="fractionIndex"
+    (fractionUpdate)="fractionUpdate.emit($event)"
+  ></m-fraction-day-of-week>
 
   <!-- <m-fraction-day-of-week-index
     *ngSwitchCase="fieldResultEnum.DayOfWeekIndex"

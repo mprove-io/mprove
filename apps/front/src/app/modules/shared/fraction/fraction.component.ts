@@ -22,6 +22,11 @@ export class FractionMonthNameValueItem {
   value: common.FractionMonthNameValueEnum;
 }
 
+export class FractionDayOfWeekValueItem {
+  label: string;
+  value: common.FractionDayOfWeekValueEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'
