@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { AvatarComponent } from './avatar/avatar.component';
+import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
 import { FractionMonthNameComponent } from './fraction/fraction-month-name/fraction-month-name.component';
 import { FractionNumberComponent } from './fraction/fraction-number/fraction-number.component';
@@ -72,7 +73,8 @@ let sharedComponents = [
   FractionYesnoComponent,
   FractionMonthNameComponent,
   FractionDayOfWeekComponent,
-  FractionQuarterOfYearComponent
+  FractionQuarterOfYearComponent,
+  FractionDayOfWeekIndexComponent
 ];
 
 @NgModule({

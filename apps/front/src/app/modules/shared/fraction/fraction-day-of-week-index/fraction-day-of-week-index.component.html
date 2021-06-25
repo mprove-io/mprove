@@ -1,0 +1,41 @@
+<div class="flex flex-row ml-2 space-x-5 h-16">
+  <form [formGroup]="fractionTypeForm">
+    <ng-select
+      #fractionDayOfWeekIndexTypeSelect
+      data-cy="fractionDayOfWeekIndexTypeSelect"
+      class="flex w-64 focus:outline-none"
+      [items]="fractionDayOfWeekIndexTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="typeChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="fractionType"
+    >
+    </ng-select>
+  </form>
+
+  <form
+    [formGroup]="dayOfWeekIndexValuesForm"
+    *ngIf="
+      fraction.type === fractionTypeEnum.DayOfWeekIndexIsEqualTo ||
+      fraction.type === fractionTypeEnum.DayOfWeekIndexIsNotEqualTo
+    "
+  >
+    <textarea
+      rows="2"
+      data-cy="fractionDayOfWeekIndexValuesInput"
+      class="w-[404px] form-input rounded border-gray3 focus:border-blue3 resize-none rows"
+      [ngClass]="{
+        'border-red-600':
+          dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].invalid &&
+          dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues'].touched
+      }"
+      formControlName="dayOfWeekIndexValues"
+      (blur)="dayOfWeekIndexValuesBlur()"
+    ></textarea>
+    <m-validation
+      [control]="dayOfWeekIndexValuesForm.controls['dayOfWeekIndexValues']"
+    ></m-validation>
+  </form>
+</div>
