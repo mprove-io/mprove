@@ -263,7 +263,6 @@ export class FractionNumberComponent implements OnInit {
     let fractionType = fractionTypeItem.value;
 
     switch (fractionType) {
-      //
       case this.fractionTypeEnum.NumberIsAnyValue: {
         this.fraction = {
           brick: `any`,
@@ -275,7 +274,6 @@ export class FractionNumberComponent implements OnInit {
         break;
       }
 
-      //
       case this.fractionTypeEnum.NumberIsEqualTo: {
         let newNumberValues = this.defaultNumberValues;
 
@@ -390,7 +388,6 @@ export class FractionNumberComponent implements OnInit {
         break;
       }
 
-      //
       case this.fractionTypeEnum.NumberIsNotEqualTo: {
         let newNumberValues = this.defaultNumberValues;
 

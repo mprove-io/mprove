@@ -1,0 +1,17 @@
+<div class="flex flex-row ml-2 space-x-5 h-16">
+  <form [formGroup]="fractionTypeForm">
+    <ng-select
+      #fractionTsTypeSelect
+      data-cy="fractionTsTypeSelect"
+      class="flex w-64 focus:outline-none"
+      [items]="fractionTsTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      (change)="typeChange($event)"
+      bindLabel="label"
+      bindValue="value"
+      formControlName="fractionType"
+    >
+    </ng-select>
+  </form>
+</div>

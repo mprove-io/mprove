@@ -10,6 +10,7 @@ import { FractionMonthNameComponent } from './fraction/fraction-month-name/fract
 import { FractionNumberComponent } from './fraction/fraction-number/fraction-number.component';
 import { FractionQuarterOfYearComponent } from './fraction/fraction-quarter-of-year/fraction-quarter-of-year.component';
 import { FractionStringComponent } from './fraction/fraction-string/fraction-string.component';
+import { FractionTsComponent } from './fraction/fraction-ts/fraction-ts.component';
 import { FractionYesnoComponent } from './fraction/fraction-yesno/fraction-yesno.component';
 import { FractionComponent } from './fraction/fraction.component';
 import { AddIconComponent } from './icons/add-icon /add-icon.component';
@@ -74,7 +75,8 @@ let sharedComponents = [
   FractionMonthNameComponent,
   FractionDayOfWeekComponent,
   FractionQuarterOfYearComponent,
-  FractionDayOfWeekIndexComponent
+  FractionDayOfWeekIndexComponent,
+  FractionTsComponent
 ];
 
 @NgModule({

@@ -128,7 +128,6 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
         break;
       }
 
-      //
       case this.fractionTypeEnum.DayOfWeekIndexIsNotEqualTo: {
         let dayOfWeekIndexValues = this.defaultDayOfWeekIndexValues;
 

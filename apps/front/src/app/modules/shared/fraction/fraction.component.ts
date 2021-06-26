@@ -50,8 +50,4 @@ export class FractionComponent {
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   constructor() {}
-
-  // fractionUpdate(eventFractionUpdate: EventFractionUpdate) {
-  //   this.fractionUpdate.emit(eventFractionUpdate);
-  // }
 }

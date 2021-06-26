@@ -57,12 +57,13 @@
     (fractionUpdate)="fractionUpdate.emit($event)"
   ></m-fraction-quarter-of-year>
 
-  <!-- <m-fraction-ts
+  <m-fraction-ts
     *ngSwitchCase="fieldResultEnum.Ts"
     [fraction]="fraction"
     [isFirst]="isFirst"
-    (fractionChange)="fractionChange($event)"
-  ></m-fraction-ts> -->
+    [fractionIndex]="fractionIndex"
+    (fractionUpdate)="fractionUpdate.emit($event)"
+  ></m-fraction-ts>
 
   <m-fraction-yesno
     *ngSwitchCase="fieldResultEnum.Yesno"
