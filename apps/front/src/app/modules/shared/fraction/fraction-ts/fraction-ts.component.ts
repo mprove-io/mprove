@@ -432,69 +432,100 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
   }
 
+  getYearString(date: Date) {
+    let year = this.getYearPart(date);
+
+    return `${year}`;
+  }
+
+  getMonthString(date: Date) {
+    let year = this.getYearPart(date);
+    let month = this.getMonthPart(date);
+
+    return `${year}/${month}`;
+  }
+
+  getDayString(date: Date) {
+    let year = this.getYearPart(date);
+    let month = this.getMonthPart(date);
+    let day = this.getDayPart(date);
+
+    return `${year}/${month}/${day}`;
+  }
+
+  getHourString(date: Date) {
+    let year = this.getYearPart(date);
+    let month = this.getMonthPart(date);
+    let day = this.getDayPart(date);
+    let hour = this.getHourPart(date);
+
+    return `${year}/${month}/${day} ${hour}`;
+  }
+
   getMinuteString(date: Date) {
-    let year = date.getFullYear();
+    let year = this.getYearPart(date);
+    let month = this.getMonthPart(date);
+    let day = this.getDayPart(date);
+    let hour = this.getHourPart(date);
+    let minute = this.getMinutePart(date);
+
+    return `${year}/${month}/${day} ${hour}:${minute}`;
+  }
+
+  // parts
+
+  getYearPart(date: Date) {
+    let fullYear = date.getFullYear();
+    let fullYearString = fullYear.toString();
+    let fullYearStringLength = fullYearString.length;
+
+    let year =
+      fullYearStringLength === 1
+        ? `000${fullYear}`
+        : fullYearStringLength === 2
+        ? `00${fullYear}`
+        : fullYearStringLength === 3
+        ? `0${fullYear}`
+        : `${fullYear}`;
+
+    return `${year}`;
+  }
+
+  getMonthPart(date: Date) {
     let month =
       (date.getMonth() + 1).toString().length > 1
         ? date.getMonth() + 1
         : `0${date.getMonth() + 1}`;
+
+    return `${month}`;
+  }
+
+  getDayPart(date: Date) {
     let day =
       date.getDay().toString().length > 1 ? date.getDay() : `0${date.getDay()}`;
+
+    return `${day}`;
+  }
+
+  getHourPart(date: Date) {
     let hour =
       date.getHours().toString().length > 1
         ? date.getHours()
         : `0${date.getHours()}`;
+
+    return `${hour}`;
+  }
+
+  getMinutePart(date: Date) {
     let minute =
       date.getMinutes().toString().length > 1
         ? date.getMinutes()
         : `0${date.getMinutes()}`;
 
-    return `${year}/${month}/${day} ${hour}:${minute}`;
+    return `${minute}`;
   }
 
-  getHourString(date: Date) {
-    let year = date.getFullYear();
-    let month =
-      (date.getMonth() + 1).toString().length > 1
-        ? date.getMonth() + 1
-        : `0${date.getMonth() + 1}`;
-    let day =
-      date.getDay().toString().length > 1 ? date.getDay() : `0${date.getDay()}`;
-    let hour =
-      date.getHours().toString().length > 1
-        ? date.getHours()
-        : `0${date.getHours()}`;
-
-    return `${year}/${month}/${day} ${hour}`;
-  }
-
-  getDayString(date: Date) {
-    let year = date.getFullYear();
-    let month =
-      (date.getMonth() + 1).toString().length > 1
-        ? date.getMonth() + 1
-        : `0${date.getMonth() + 1}`;
-    let day =
-      date.getDay().toString().length > 1 ? date.getDay() : `0${date.getDay()}`;
-
-    return `${year}/${month}/${day}`;
-  }
-
-  getMonthString(date: Date) {
-    let year = date.getFullYear;
-    let month =
-      (date.getMonth() + 1).toString().length > 1
-        ? date.getMonth() + 1
-        : `0${date.getMonth() + 1}`;
-
-    return `${year}/${month}`;
-  }
-
-  getYearString(date: Date) {
-    let year = date.getFullYear();
-
-    return `${year}`;
-  }
+  //
 
   buildFractionRange() {
     this.fraction = {
@@ -689,13 +720,32 @@ export class FractionTsComponent implements OnInit, OnChanges {
     };
   }
 
-  yearOpenChange() {
+  yearOpenClose() {
     if (this.date.getFullYear() !== this.fraction.tsDateYear) {
       this.fraction = {
         brick: `on ${this.getYearString(this.date)}`,
         operator: this.fraction.operator,
         type: this.fraction.type,
         tsDateYear: this.date.getFullYear()
+      };
+
+      this.emitFractionUpdate();
+    }
+  }
+
+  monthOpenClose() {
+    if (
+      this.date.getFullYear() !== this.fraction.tsDateYear ||
+      this.date.getMonth() + 1 !== this.fraction.tsDateMonth
+    ) {
+      console.log(`on ${this.getMonthString(this.date)}`);
+
+      this.fraction = {
+        brick: `on ${this.getMonthString(this.date)}`,
+        operator: this.fraction.operator,
+        type: this.fraction.type,
+        tsDateYear: this.date.getFullYear(),
+        tsDateMonth: this.date.getMonth() + 1
       };
 
       this.emitFractionUpdate();

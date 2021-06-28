@@ -15,6 +15,7 @@
     </ng-select>
   </form>
 
+  <!-- on -->
   <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
     class="h-[36px]"
@@ -22,6 +23,16 @@
     nzMode="year"
     nzAllowClear="false"
     [(ngModel)]="date"
-    (nzOnOpenChange)="yearOpenChange()"
+    (nzOnOpenChange)="yearOpenClose()"
+  ></nz-date-picker>
+
+  <nz-date-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
+    class="h-[36px]"
+    data-cy="fractionTsDate"
+    nzMode="month"
+    nzAllowClear="false"
+    [(ngModel)]="date"
+    (nzOnOpenChange)="monthOpenClose()"
   ></nz-date-picker>
 </div>
