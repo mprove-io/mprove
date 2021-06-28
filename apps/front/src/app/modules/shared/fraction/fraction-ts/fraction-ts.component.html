@@ -14,4 +14,14 @@
     >
     </ng-select>
   </form>
+
+  <nz-date-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
+    class="h-[36px]"
+    data-cy="fractionTsDate"
+    nzMode="year"
+    nzAllowClear="false"
+    [(ngModel)]="date"
+    (nzOnOpenChange)="yearOpenChange()"
+  ></nz-date-picker>
 </div>

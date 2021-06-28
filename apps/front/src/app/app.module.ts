@@ -1,4 +1,6 @@
+import { registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import en from '@angular/common/locales/en';
 import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -22,6 +24,8 @@ import { ProjectModule } from './modules/project/project.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { SpecialModule } from './modules/special/special.module';
 import { ErrorHandlerService } from './services/error-handler.service';
+
+registerLocaleData(en);
 
 @NgModule({
   declarations: [AppComponent, ...appDialogs],

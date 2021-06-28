@@ -9,8 +9,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import * as moment from 'moment';
-import { Moment } from 'moment';
+import { en_US, NzI18nService } from 'ng-zorro-antd/i18n';
 import { EventFractionUpdate } from '~front/app/modules/model/model-filters/model-filters.component';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
@@ -30,14 +29,25 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
-  date: Moment;
-  dateTo: Moment;
+  date: Date;
+  dateTo: Date;
 
   fractionTypeForm: FormGroup;
 
   forValueForm: FormGroup;
   relativeValueForm: FormGroup;
   lastValueForm: FormGroup;
+
+  // yearConfig: IDatePickerConfig = {
+  //   disableKeypress: true,
+  //   format: 'YYYY',
+  //   enableMonthSelector: true,
+  //   showNearMonthDays: false,
+  //   showTwentyFourHours: true,
+  //   timeSeparator: ':',
+  //   showMultipleYearsNavigation: false,
+  //   showGoToCurrent: false
+  // };
 
   fractionTsTypesList: FractionTypeItem[] = [
     {
@@ -98,9 +108,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private i18n: NzI18nService) {}
 
   ngOnInit() {
+    this.i18n.setLocale(en_US);
+
     this.buildFractionTypeForm();
 
     this.resetDateUsingFraction();
@@ -109,6 +121,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.buildForValueForm();
     this.buildRelativeValueForm();
     this.buildLastValueForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.resetDateUsingFraction();
+    this.resetDateToUsingFraction();
   }
 
   buildForValueForm() {
@@ -150,37 +167,64 @@ export class FractionTsComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.resetDateUsingFraction();
-    this.resetDateToUsingFraction();
-  }
-
   resetDateUsingFraction() {
-    let dateNow = moment();
+    let now = new Date();
 
-    this.date = moment({
-      year: this.fraction.tsDateYear || dateNow.year(),
-      month: this.fraction.tsDateMonth ? this.fraction.tsDateMonth - 1 : 0,
-      day: this.fraction.tsDateDay ? this.fraction.tsDateDay : 1,
-      hour: this.fraction.tsDateHour ? this.fraction.tsDateHour : 0,
-      minute: this.fraction.tsDateMinute ? this.fraction.tsDateMinute : 0,
-      second: 0,
-      millisecond: 0
-    });
+    let year = this.fraction.tsDateYear || now.getFullYear();
+    let monthIndex = common.isDefined(this.fraction.tsDateMonth)
+      ? this.fraction.tsDateMonth - 1
+      : 0;
+    let day = common.isDefined(this.fraction.tsDateDay)
+      ? this.fraction.tsDateDay
+      : 1;
+    let hour = common.isDefined(this.fraction.tsDateHour)
+      ? this.fraction.tsDateHour
+      : 0;
+    let minute = common.isDefined(this.fraction.tsDateMinute)
+      ? this.fraction.tsDateMinute
+      : 0;
+    let second = 0;
+    let millisecond = 0;
+
+    this.date = new Date(
+      year,
+      monthIndex,
+      day,
+      hour,
+      minute,
+      second,
+      millisecond
+    );
   }
 
   resetDateToUsingFraction() {
-    let dateNow = moment();
+    let now = new Date();
 
-    this.dateTo = moment({
-      year: this.fraction.tsDateToYear || dateNow.year(),
-      month: this.fraction.tsDateToMonth ? this.fraction.tsDateToMonth - 1 : 0,
-      day: this.fraction.tsDateToDay ? this.fraction.tsDateToDay : 1,
-      hour: this.fraction.tsDateToHour ? this.fraction.tsDateToHour : 0,
-      minute: this.fraction.tsDateToMinute ? this.fraction.tsDateToMinute : 0,
-      second: 0,
-      millisecond: 0
-    });
+    let year = this.fraction.tsDateToYear || now.getFullYear();
+    let monthIndex = common.isDefined(this.fraction.tsDateToMonth)
+      ? this.fraction.tsDateToMonth - 1
+      : 0;
+    let day = common.isDefined(this.fraction.tsDateToDay)
+      ? this.fraction.tsDateToDay
+      : 1;
+    let hour = common.isDefined(this.fraction.tsDateToHour)
+      ? this.fraction.tsDateToHour
+      : 0;
+    let minute = common.isDefined(this.fraction.tsDateToMinute)
+      ? this.fraction.tsDateToMinute
+      : 0;
+    let second = 0;
+    let millisecond = 0;
+
+    this.dateTo = new Date(
+      year,
+      monthIndex,
+      day,
+      hour,
+      minute,
+      second,
+      millisecond
+    );
   }
 
   buildFractionTypeForm() {
@@ -209,7 +253,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
           brick: `on ${this.getYearString(this.date)}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          tsDateYear: this.date.year()
+          tsDateYear: this.date.getFullYear()
         };
 
         this.emitFractionUpdate();
@@ -221,8 +265,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
           brick: `on ${this.getMonthString(this.date)}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          tsDateYear: this.date.year(),
-          tsDateMonth: this.date.month() + 1
+          tsDateYear: this.date.getFullYear(),
+          tsDateMonth: this.date.getMonth() + 1
         };
 
         this.emitFractionUpdate();
@@ -234,9 +278,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
           brick: `on ${this.getDayString(this.date)}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          tsDateYear: this.date.year(),
-          tsDateMonth: this.date.month() + 1,
-          tsDateDay: this.date.date()
+          tsDateYear: this.date.getFullYear(),
+          tsDateMonth: this.date.getMonth() + 1,
+          tsDateDay: this.date.getDay()
         };
 
         this.emitFractionUpdate();
@@ -248,10 +292,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
           brick: `on ${this.getHourString(this.date)}`,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
-          tsDateYear: this.date.year(),
-          tsDateMonth: this.date.month() + 1,
-          tsDateDay: this.date.date(),
-          tsDateHour: this.date.hour()
+          tsDateYear: this.date.getFullYear(),
+          tsDateMonth: this.date.getMonth() + 1,
+          tsDateDay: this.date.getDay(),
+          tsDateHour: this.date.getHours()
         };
 
         this.emitFractionUpdate();
@@ -259,7 +303,16 @@ export class FractionTsComponent implements OnInit, OnChanges {
       }
 
       case this.fractionTypeEnum.TsIsOnMinute: {
-        this.buildFractionMinute();
+        this.fraction = {
+          brick: `on ${this.getMinuteString(this.date)}`,
+          operator: common.FractionOperatorEnum.Or,
+          type: common.FractionTypeEnum.TsIsOnMinute,
+          tsDateYear: this.date.getFullYear(),
+          tsDateMonth: this.date.getMonth() + 1,
+          tsDateDay: this.date.getDay(),
+          tsDateHour: this.date.getHours(),
+          tsDateMinute: this.date.getMinutes()
+        };
 
         this.emitFractionUpdate();
         break;
@@ -379,75 +432,68 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
   }
 
-  getMinuteString(date: Moment) {
-    let year = date.year();
+  getMinuteString(date: Date) {
+    let year = date.getFullYear();
     let month =
-      (date.month() + 1).toString().length > 1
-        ? date.month() + 1
-        : `0${date.month() + 1}`;
+      (date.getMonth() + 1).toString().length > 1
+        ? date.getMonth() + 1
+        : `0${date.getMonth() + 1}`;
     let day =
-      date.date().toString().length > 1 ? date.date() : `0${date.date()}`;
+      date.getDay().toString().length > 1 ? date.getDay() : `0${date.getDay()}`;
     let hour =
-      date.hour().toString().length > 1 ? date.hour() : `0${date.hour()}`;
+      date.getHours().toString().length > 1
+        ? date.getHours()
+        : `0${date.getHours()}`;
     let minute =
-      date.minute().toString().length > 1 ? date.minute() : `0${date.minute()}`;
+      date.getMinutes().toString().length > 1
+        ? date.getMinutes()
+        : `0${date.getMinutes()}`;
 
     return `${year}/${month}/${day} ${hour}:${minute}`;
   }
 
-  getHourString(date: Moment) {
-    let year = date.year();
+  getHourString(date: Date) {
+    let year = date.getFullYear();
     let month =
-      (date.month() + 1).toString().length > 1
-        ? date.month() + 1
-        : `0${date.month() + 1}`;
+      (date.getMonth() + 1).toString().length > 1
+        ? date.getMonth() + 1
+        : `0${date.getMonth() + 1}`;
     let day =
-      date.date().toString().length > 1 ? date.date() : `0${date.date()}`;
+      date.getDay().toString().length > 1 ? date.getDay() : `0${date.getDay()}`;
     let hour =
-      date.hour().toString().length > 1 ? date.hour() : `0${date.hour()}`;
+      date.getHours().toString().length > 1
+        ? date.getHours()
+        : `0${date.getHours()}`;
 
     return `${year}/${month}/${day} ${hour}`;
   }
 
-  getDayString(date: Moment) {
-    let year = date.year();
+  getDayString(date: Date) {
+    let year = date.getFullYear();
     let month =
-      (date.month() + 1).toString().length > 1
-        ? date.month() + 1
-        : `0${date.month() + 1}`;
+      (date.getMonth() + 1).toString().length > 1
+        ? date.getMonth() + 1
+        : `0${date.getMonth() + 1}`;
     let day =
-      date.date().toString().length > 1 ? date.date() : `0${date.date()}`;
+      date.getDay().toString().length > 1 ? date.getDay() : `0${date.getDay()}`;
 
     return `${year}/${month}/${day}`;
   }
 
-  getMonthString(date: Moment) {
-    let year = date.year();
+  getMonthString(date: Date) {
+    let year = date.getFullYear;
     let month =
-      (date.month() + 1).toString().length > 1
-        ? date.month() + 1
-        : `0${date.month() + 1}`;
+      (date.getMonth() + 1).toString().length > 1
+        ? date.getMonth() + 1
+        : `0${date.getMonth() + 1}`;
 
     return `${year}/${month}`;
   }
 
-  getYearString(date: Moment) {
-    let year = date.year();
+  getYearString(date: Date) {
+    let year = date.getFullYear();
 
     return `${year}`;
-  }
-
-  buildFractionMinute() {
-    this.fraction = {
-      brick: `on ${this.getMinuteString(this.date)}`,
-      operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsOnMinute,
-      tsDateYear: this.date.year(),
-      tsDateMonth: this.date.month() + 1,
-      tsDateDay: this.date.date(),
-      tsDateHour: this.date.hour(),
-      tsDateMinute: this.date.minute()
-    };
   }
 
   buildFractionRange() {
@@ -457,17 +503,17 @@ export class FractionTsComponent implements OnInit, OnChanges {
       )}`,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsInRange,
-      tsDateYear: this.date.year(),
-      tsDateMonth: this.date.month() + 1,
-      tsDateDay: this.date.date(),
-      tsDateHour: this.date.hour(),
-      tsDateMinute: this.date.minute(),
+      tsDateYear: this.date.getFullYear(),
+      tsDateMonth: this.date.getMonth() + 1,
+      tsDateDay: this.date.getDay(),
+      tsDateHour: this.date.getHours(),
+      tsDateMinute: this.date.getMinutes(),
 
-      tsDateToYear: this.dateTo.year(),
-      tsDateToMonth: this.dateTo.month() + 1,
-      tsDateToDay: this.dateTo.date(),
-      tsDateToHour: this.dateTo.hour(),
-      tsDateToMinute: this.dateTo.minute()
+      tsDateToYear: this.dateTo.getFullYear(),
+      tsDateToMonth: this.dateTo.getMonth() + 1,
+      tsDateToDay: this.dateTo.getDay(),
+      tsDateToHour: this.dateTo.getHours(),
+      tsDateToMinute: this.dateTo.getMinutes()
     };
   }
 
@@ -486,11 +532,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
       brick: newBrick,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsBeforeDate,
-      tsDateYear: this.date.year(),
-      tsDateMonth: this.date.month() + 1,
-      tsDateDay: this.date.date(),
-      tsDateHour: this.date.hour(),
-      tsDateMinute: this.date.minute(),
+      tsDateYear: this.date.getFullYear(),
+      tsDateMonth: this.date.getMonth() + 1,
+      tsDateDay: this.date.getDay(),
+      tsDateHour: this.date.getHours(),
+      tsDateMinute: this.date.getMinutes(),
 
       tsForOption: newTsForOption,
       tsForValue: this.fraction.tsForValue,
@@ -513,11 +559,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
       brick: newBrick,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsAfterDate,
-      tsDateYear: this.date.year(),
-      tsDateMonth: this.date.month() + 1,
-      tsDateDay: this.date.date(),
-      tsDateHour: this.date.hour(),
-      tsDateMinute: this.date.minute(),
+      tsDateYear: this.date.getFullYear(),
+      tsDateMonth: this.date.getMonth() + 1,
+      tsDateDay: this.date.getDay(),
+      tsDateHour: this.date.getHours(),
+      tsDateMinute: this.date.getMinutes(),
 
       tsForOption: newTsForOption,
       tsForValue: this.fraction.tsForValue,
@@ -641,6 +687,19 @@ export class FractionTsComponent implements OnInit, OnChanges {
       tsLastUnit: newLastUnit,
       tsLastCompleteOption: newLastCompleteOption
     };
+  }
+
+  yearOpenChange() {
+    if (this.date.getFullYear() !== this.fraction.tsDateYear) {
+      this.fraction = {
+        brick: `on ${this.getYearString(this.date)}`,
+        operator: this.fraction.operator,
+        type: this.fraction.type,
+        tsDateYear: this.date.getFullYear()
+      };
+
+      this.emitFractionUpdate();
+    }
   }
 
   emitFractionUpdate() {

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { AvatarComponent } from './avatar/avatar.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
@@ -86,7 +87,8 @@ let sharedComponents = [
     ReactiveFormsModule,
     MonacoEditorModule.forRoot(),
     FormsModule,
-    NgSelectModule
+    NgSelectModule,
+    NzDatePickerModule
   ],
   exports: [...sharedComponents, ...pipesArray, MonacoEditorModule]
 })
