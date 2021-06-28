@@ -195,6 +195,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
       second,
       millisecond
     );
+
+    this.date.setFullYear(year);
   }
 
   resetDateToUsingFraction() {
@@ -225,6 +227,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
       second,
       millisecond
     );
+
+    this.dateTo.setFullYear(year);
   }
 
   buildFractionTypeForm() {
