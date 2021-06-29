@@ -808,6 +808,30 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
   }
 
+  minuteOpenClose() {
+    if (
+      this.date.getFullYear() !== this.fraction.tsDateYear ||
+      this.date.getMonth() + 1 !== this.fraction.tsDateMonth ||
+      this.date.getDate() !== this.fraction.tsDateDay ||
+      this.date.getHours() !== this.fraction.tsDateHour ||
+      this.date.getMinutes() !== this.fraction.tsDateMinute ||
+      this.date.getSeconds() !== 0
+    ) {
+      this.fraction = {
+        brick: `on ${this.getMinuteString(this.date)}`,
+        operator: common.FractionOperatorEnum.Or,
+        type: common.FractionTypeEnum.TsIsOnMinute,
+        tsDateYear: this.date.getFullYear(),
+        tsDateMonth: this.date.getMonth() + 1,
+        tsDateDay: this.date.getDate(),
+        tsDateHour: this.date.getHours(),
+        tsDateMinute: this.date.getMinutes()
+      };
+
+      this.emitFractionUpdate();
+    }
+  }
+
   disabledMinutes() {
     return [0];
     // Array.from(Array(60).keys());
