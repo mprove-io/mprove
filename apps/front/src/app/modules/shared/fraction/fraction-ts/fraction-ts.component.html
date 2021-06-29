@@ -46,47 +46,98 @@
     (nzOnOpenChange)="dayOpenClose()"
   ></nz-date-picker>
 
-  <nz-date-picker
+  <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
-    class="h-[36px]"
-    data-cy="fractionTsDate"
-    nzMode="date"
-    nzAllowClear="false"
-    [(ngModel)]="date"
-    (nzOnOpenChange)="hourOpenClose()"
-  ></nz-date-picker>
+    class="flex flex-row space-x-5"
+  >
+    <nz-date-picker
+      class="h-[36px]"
+      data-cy="fractionTsDate"
+      nzMode="date"
+      nzAllowClear="false"
+      [(ngModel)]="date"
+      (nzOnOpenChange)="hourOpenClose()"
+    ></nz-date-picker>
 
-  <nz-time-picker
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
-    class="h-[36px]"
-    data-cy="fractionTsTime"
-    nzAllowEmpty="false"
-    [nzMinuteStep]="nzMinuteStep"
-    [nzSecondStep]="nzSecondStep"
-    [nzDisabledMinutes]="disabledMinutes"
-    [nzDisabledSeconds]="disabledSeconds"
-    [(ngModel)]="date"
-    (nzOpenChange)="hourOpenClose()"
-  ></nz-time-picker>
+    <nz-time-picker
+      class="h-[36px]"
+      data-cy="fractionTsTime"
+      nzAllowEmpty="false"
+      [nzMinuteStep]="nzMinuteStep"
+      [nzSecondStep]="nzSecondStep"
+      [nzDisabledMinutes]="disabledMinutes"
+      [nzDisabledSeconds]="disabledSeconds"
+      [(ngModel)]="date"
+      (nzOpenChange)="hourOpenClose()"
+    ></nz-time-picker>
+  </div>
 
-  <nz-date-picker
+  <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
-    class="h-[36px]"
-    data-cy="fractionTsDate"
-    nzMode="date"
-    nzAllowClear="false"
-    [(ngModel)]="date"
-    (nzOnOpenChange)="minuteOpenClose()"
-  ></nz-date-picker>
+    class="flex flex-row space-x-5"
+  >
+    <nz-date-picker
+      class="h-[36px]"
+      data-cy="fractionTsDate"
+      nzMode="date"
+      nzAllowClear="false"
+      [(ngModel)]="date"
+      (nzOnOpenChange)="minuteOpenClose()"
+    ></nz-date-picker>
 
-  <nz-time-picker
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
-    class="h-[36px]"
-    data-cy="fractionTsTime"
-    nzAllowEmpty="false"
-    [nzSecondStep]="nzSecondStep"
-    [nzDisabledSeconds]="disabledSeconds"
-    [(ngModel)]="date"
-    (nzOpenChange)="minuteOpenClose()"
-  ></nz-time-picker>
+    <nz-time-picker
+      class="h-[36px]"
+      data-cy="fractionTsTime"
+      nzAllowEmpty="false"
+      [nzSecondStep]="nzSecondStep"
+      [nzDisabledSeconds]="disabledSeconds"
+      [(ngModel)]="date"
+      (nzOpenChange)="minuteOpenClose()"
+    ></nz-time-picker>
+  </div>
+
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsInRange"
+    class="flex flex-row space-x-5"
+  >
+    <nz-date-picker
+      class="h-[36px]"
+      data-cy="fractionTsDate"
+      nzMode="date"
+      nzAllowClear="false"
+      [(ngModel)]="date"
+      (nzOnOpenChange)="rangeFromOpenClose()"
+    ></nz-date-picker>
+
+    <nz-time-picker
+      class="h-[36px]"
+      data-cy="fractionTsTime"
+      nzAllowEmpty="false"
+      [nzSecondStep]="nzSecondStep"
+      [nzDisabledSeconds]="disabledSeconds"
+      [(ngModel)]="date"
+      (nzOpenChange)="rangeFromOpenClose()"
+    ></nz-time-picker>
+
+    <div class="flex h-[36px] justify-center items-center">to</div>
+
+    <nz-date-picker
+      class="h-[36px]"
+      data-cy="fractionTsDateTo"
+      nzMode="date"
+      nzAllowClear="false"
+      [(ngModel)]="dateTo"
+      (nzOnOpenChange)="rangeToOpenClose()"
+    ></nz-date-picker>
+
+    <nz-time-picker
+      class="h-[36px]"
+      data-cy="fractionTsTimeTo"
+      nzAllowEmpty="false"
+      [nzSecondStep]="nzSecondStep"
+      [nzDisabledSeconds]="disabledSeconds"
+      [(ngModel)]="dateTo"
+      (nzOpenChange)="rangeToOpenClose()"
+    ></nz-time-picker>
+  </div>
 </div>

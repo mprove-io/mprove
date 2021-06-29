@@ -333,6 +333,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       }
 
       case this.fractionTypeEnum.TsIsInRange: {
+        this.date = new Date();
+        this.dateTo = new Date();
+
+        this.date.setSeconds(0);
+        this.dateTo.setSeconds(0);
+
         this.buildFractionRange();
 
         this.emitFractionUpdate();
@@ -809,14 +815,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
   }
 
   minuteOpenClose() {
-    if (
-      this.date.getFullYear() !== this.fraction.tsDateYear ||
-      this.date.getMonth() + 1 !== this.fraction.tsDateMonth ||
-      this.date.getDate() !== this.fraction.tsDateDay ||
-      this.date.getHours() !== this.fraction.tsDateHour ||
-      this.date.getMinutes() !== this.fraction.tsDateMinute ||
-      this.date.getSeconds() !== 0
-    ) {
+    if (this.isDateNotEqualFractionDateZeroSeconds()) {
       this.fraction = {
         brick: `on ${this.getMinuteString(this.date)}`,
         operator: common.FractionOperatorEnum.Or,
@@ -827,6 +826,44 @@ export class FractionTsComponent implements OnInit, OnChanges {
         tsDateHour: this.date.getHours(),
         tsDateMinute: this.date.getMinutes()
       };
+
+      this.emitFractionUpdate();
+    }
+  }
+
+  isDateNotEqualFractionDateZeroSeconds(): boolean {
+    return (
+      this.date.getFullYear() !== this.fraction.tsDateYear ||
+      this.date.getMonth() + 1 !== this.fraction.tsDateMonth ||
+      this.date.getDate() !== this.fraction.tsDateDay ||
+      this.date.getHours() !== this.fraction.tsDateHour ||
+      this.date.getMinutes() !== this.fraction.tsDateMinute ||
+      this.date.getSeconds() !== 0
+    );
+  }
+
+  isDateToNotEqualFractionDateToZeroSeconds(): boolean {
+    return (
+      this.dateTo.getFullYear() !== this.fraction.tsDateToYear ||
+      this.dateTo.getMonth() + 1 !== this.fraction.tsDateToMonth ||
+      this.dateTo.getDate() !== this.fraction.tsDateToDay ||
+      this.dateTo.getHours() !== this.fraction.tsDateToHour ||
+      this.dateTo.getMinutes() !== this.fraction.tsDateToMinute ||
+      this.dateTo.getSeconds() !== 0
+    );
+  }
+
+  rangeFromOpenClose() {
+    if (this.isDateNotEqualFractionDateZeroSeconds()) {
+      this.buildFractionRange();
+
+      this.emitFractionUpdate();
+    }
+  }
+
+  rangeToOpenClose() {
+    if (this.isDateToNotEqualFractionDateToZeroSeconds()) {
+      this.buildFractionRange();
 
       this.emitFractionUpdate();
     }
