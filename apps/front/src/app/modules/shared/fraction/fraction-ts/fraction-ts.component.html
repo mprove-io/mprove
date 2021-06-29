@@ -35,4 +35,38 @@
     [(ngModel)]="date"
     (nzOnOpenChange)="monthOpenClose()"
   ></nz-date-picker>
+
+  <nz-date-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
+    class="h-[36px]"
+    data-cy="fractionTsDate"
+    nzMode="date"
+    nzAllowClear="false"
+    [(ngModel)]="date"
+    (nzOnOpenChange)="dayOpenClose()"
+  ></nz-date-picker>
+
+  <nz-date-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
+    class="h-[36px]"
+    data-cy="fractionTsDate"
+    nzMode="date"
+    nzAllowClear="false"
+    [(ngModel)]="date"
+    (nzOnOpenChange)="hourOpenClose()"
+  ></nz-date-picker>
+
+  <nz-time-picker
+    *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
+    class="h-[36px]"
+    data-cy="fractionTsTime"
+    nzAllowEmpty="false"
+    nzShowNow="false"
+    [nzMinuteStep]="nzMinuteStep"
+    [nzSecondStep]="nzSecondStep"
+    [nzDisabledMinutes]="disabledMinutes"
+    [nzDisabledSeconds]="disabledSeconds"
+    [(ngModel)]="date"
+    (nzOpenChange)="hourOpenClose()"
+  ></nz-time-picker>
 </div>
