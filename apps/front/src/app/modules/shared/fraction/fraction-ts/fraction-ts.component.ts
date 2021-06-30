@@ -14,7 +14,12 @@ import { en_US, NzI18nService } from 'ng-zorro-antd/i18n';
 import { EventFractionUpdate } from '~front/app/modules/model/model-filters/model-filters.component';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
-import { FractionTypeItem } from '../fraction.component';
+import {
+  FractionTsRelativeCompleteOptionItem,
+  FractionTsRelativeUnitItem,
+  FractionTsRelativeWhenOptionItem,
+  FractionTypeItem
+} from '../fraction.component';
 
 @Component({
   selector: 'm-fraction-ts',
@@ -35,8 +40,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   fractionTypeForm: FormGroup;
 
-  forValueForm: FormGroup;
   relativeValueForm: FormGroup;
+
+  tsRelativeUnitForm: FormGroup;
+  tsRelativeCompleteForm: FormGroup;
+  tsRelativeWhenForm: FormGroup;
+
+  forValueForm: FormGroup;
   lastValueForm: FormGroup;
 
   nzMinuteStep = 60;
@@ -101,6 +111,59 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
   ];
 
+  fractionTsRelativeUnitsList: FractionTsRelativeUnitItem[] = [
+    {
+      label: 'Years',
+      value: common.FractionTsRelativeUnitEnum.Years
+    },
+    {
+      label: 'Quarters',
+      value: common.FractionTsRelativeUnitEnum.Quarters
+    },
+    {
+      label: 'Months',
+      value: common.FractionTsRelativeUnitEnum.Months
+    },
+    {
+      label: 'Weeks',
+      value: common.FractionTsRelativeUnitEnum.Weeks
+    },
+    {
+      label: 'Days',
+      value: common.FractionTsRelativeUnitEnum.Days
+    },
+    {
+      label: 'Hours',
+      value: common.FractionTsRelativeUnitEnum.Hours
+    },
+    {
+      label: 'Minutes',
+      value: common.FractionTsRelativeUnitEnum.Minutes
+    }
+  ];
+
+  fractionTsRelativeCompleteOptionsList: FractionTsRelativeCompleteOptionItem[] = [
+    {
+      label: 'complete',
+      value: common.FractionTsRelativeCompleteOptionEnum.Complete
+    },
+    {
+      label: 'incomplete',
+      value: common.FractionTsRelativeCompleteOptionEnum.Incomplete
+    }
+  ];
+
+  fractionTsRelativeWhenOptionsList: FractionTsRelativeWhenOptionItem[] = [
+    {
+      label: 'ago',
+      value: common.FractionTsRelativeWhenOptionEnum.Ago
+    },
+    {
+      label: 'in future',
+      value: common.FractionTsRelativeWhenOptionEnum.InFuture
+    }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private i18n: NzI18nService,
@@ -110,20 +173,47 @@ export class FractionTsComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.i18n.setLocale(en_US);
 
-    this.buildFractionTypeForm();
-
     this.resetDateUsingFraction();
     this.resetDateToUsingFraction();
 
-    this.buildForValueForm();
-    this.buildRelativeValueForm();
+    this.buildFractionTypeForm();
 
+    this.buildRelativeValueForm();
+    this.buildTsRelativeUnitForm();
+    this.buildTsRelativeCompleteForm();
+    this.buildTsRelativeWhenForm();
+
+    this.buildForValueForm();
     this.buildLastValueForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.resetDateUsingFraction();
     this.resetDateToUsingFraction();
+  }
+
+  buildFractionTypeForm() {
+    this.fractionTypeForm = this.fb.group({
+      fractionType: [this.fraction.type]
+    });
+  }
+
+  buildTsRelativeUnitForm() {
+    this.tsRelativeUnitForm = this.fb.group({
+      tsRelativeUnit: [this.fraction.tsRelativeUnit]
+    });
+  }
+
+  buildTsRelativeCompleteForm() {
+    this.tsRelativeCompleteForm = this.fb.group({
+      tsRelativeCompleteOption: [this.fraction.tsRelativeCompleteOption]
+    });
+  }
+
+  buildTsRelativeWhenForm() {
+    this.tsRelativeWhenForm = this.fb.group({
+      tsRelativeWhenOption: [this.fraction.tsRelativeWhenOption]
+    });
   }
 
   buildForValueForm() {
@@ -229,15 +319,31 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.dateTo.setFullYear(year);
   }
 
-  buildFractionTypeForm() {
-    this.fractionTypeForm = this.fb.group({
-      fractionType: [this.fraction.type]
-    });
+  updateRelativeControls() {
+    this.updateControlTsRelativeValueFromFraction();
+    this.updateControlTsRelativeUnitFromFraction();
+    this.updateControlTsRelativeCompleteOptionFromFraction();
+    this.updateControlTsRelativeWhenOptionFromFraction();
   }
 
   updateControlTsRelativeValueFromFraction() {
     this.relativeValueForm.controls['tsRelativeValue'].setValue(
       this.fraction.tsRelativeValue
+    );
+  }
+  updateControlTsRelativeUnitFromFraction() {
+    this.tsRelativeUnitForm.controls['tsRelativeUnit'].setValue(
+      this.fraction.tsRelativeUnit
+    );
+  }
+  updateControlTsRelativeCompleteOptionFromFraction() {
+    this.tsRelativeCompleteForm.controls['tsRelativeCompleteOption'].setValue(
+      this.fraction.tsRelativeCompleteOption
+    );
+  }
+  updateControlTsRelativeWhenOptionFromFraction() {
+    this.tsRelativeWhenForm.controls['tsRelativeWhenOption'].setValue(
+      this.fraction.tsRelativeWhenOption
     );
   }
 
@@ -396,7 +502,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsForUnit = undefined;
 
         this.buildFractionBeforeRelative();
-        this.updateControlTsRelativeValueFromFraction();
+        this.updateRelativeControls();
 
         this.emitFractionUpdate();
 
@@ -415,7 +521,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsForUnit = undefined;
 
         this.buildFractionAfterRelative();
-        this.updateControlTsRelativeValueFromFraction();
+        this.updateRelativeControls();
 
         this.emitFractionUpdate();
         break;
@@ -901,7 +1007,34 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
     if (value !== this.fraction.tsRelativeValue) {
       this.fraction.tsRelativeValue = Number(value);
+      this.buildRelative();
+    }
+  }
 
+  relativeTsUnitOptionChange() {
+    let value = this.tsRelativeUnitForm.controls['tsRelativeUnit'].value;
+
+    if (value !== this.fraction.tsRelativeUnit) {
+      this.fraction.tsRelativeUnit = value;
+      this.buildRelative();
+    }
+  }
+
+  relativeTsCompleteOptionChange() {
+    let value = this.tsRelativeCompleteForm.controls['tsRelativeCompleteOption']
+      .value;
+
+    if (value !== this.fraction.tsRelativeCompleteOption) {
+      this.fraction.tsRelativeCompleteOption = value;
+      this.buildRelative();
+    }
+  }
+
+  relativeTsWhenOptionChange() {
+    let value = this.tsRelativeWhenForm.controls['tsRelativeWhenOption'].value;
+
+    if (value !== this.fraction.tsRelativeWhenOption) {
+      this.fraction.tsRelativeWhenOption = value;
       this.buildRelative();
     }
   }

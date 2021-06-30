@@ -207,7 +207,7 @@
     <form [formGroup]="relativeValueForm">
       <input
         data-cy="fractionTsRelativeValueInput"
-        class="w-24 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             relativeValueForm.controls['tsRelativeValue'].invalid &&
@@ -220,6 +220,54 @@
       <m-validation
         [control]="relativeValueForm.controls['tsRelativeValue']"
       ></m-validation>
+    </form>
+
+    <form [formGroup]="tsRelativeUnitForm">
+      <ng-select
+        #tsRelativeUnitSelect
+        data-cy="tsRelativeUnitSelect"
+        class="flex w-32 focus:outline-none"
+        [items]="fractionTsRelativeUnitsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="relativeTsUnitOptionChange()"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="tsRelativeUnit"
+      >
+      </ng-select>
+    </form>
+
+    <form [formGroup]="tsRelativeCompleteForm">
+      <ng-select
+        #tsRelativeCompleteOptionsSelect
+        data-cy="tsRelativeCompleteOptionsSelect"
+        class="flex w-32 focus:outline-none"
+        [items]="fractionTsRelativeCompleteOptionsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="relativeTsCompleteOptionChange()"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="tsRelativeCompleteOption"
+      >
+      </ng-select>
+    </form>
+
+    <form [formGroup]="tsRelativeWhenForm">
+      <ng-select
+        #tsRelativeWhenOptionsSelect
+        data-cy="tsRelativeWhenOptionsSelect"
+        class="flex w-32 focus:outline-none"
+        [items]="fractionTsRelativeWhenOptionsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="relativeTsWhenOptionChange()"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="tsRelativeWhenOption"
+      >
+      </ng-select>
     </form>
   </div>
 

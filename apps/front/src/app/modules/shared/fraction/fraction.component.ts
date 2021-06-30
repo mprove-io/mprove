@@ -32,6 +32,21 @@ export class FractionQuarterOfYearValueItem {
   value: common.FractionQuarterOfYearValueEnum;
 }
 
+export class FractionTsRelativeUnitItem {
+  label: string;
+  value: common.FractionTsRelativeUnitEnum;
+}
+
+export class FractionTsRelativeCompleteOptionItem {
+  label: string;
+  value: common.FractionTsRelativeCompleteOptionEnum;
+}
+
+export class FractionTsRelativeWhenOptionItem {
+  label: string;
+  value: common.FractionTsRelativeWhenOptionEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'
