@@ -15,7 +15,7 @@
     </ng-select>
   </form>
 
-  <!-- on -->
+  <!-- on year -->
   <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
     class="h-[36px]"
@@ -26,6 +26,7 @@
     (nzOnOpenChange)="yearOpenClose()"
   ></nz-date-picker>
 
+  <!-- on month -->
   <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
     class="h-[36px]"
@@ -36,6 +37,7 @@
     (nzOnOpenChange)="monthOpenClose()"
   ></nz-date-picker>
 
+  <!-- on day -->
   <nz-date-picker
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
     class="h-[36px]"
@@ -46,6 +48,7 @@
     (nzOnOpenChange)="dayOpenClose()"
   ></nz-date-picker>
 
+  <!-- on hour -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
     class="flex flex-row space-x-5"
@@ -72,6 +75,7 @@
     ></nz-time-picker>
   </div>
 
+  <!-- on minute -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
     class="flex flex-row space-x-5"
@@ -96,6 +100,7 @@
     ></nz-time-picker>
   </div>
 
+  <!-- in range -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsInRange"
     class="flex flex-row space-x-5"
@@ -138,6 +143,56 @@
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="dateTo"
       (nzOpenChange)="rangeToOpenClose()"
+    ></nz-time-picker>
+  </div>
+
+  <!-- is before -->
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsBeforeDate"
+    class="flex flex-row space-x-5"
+  >
+    <nz-date-picker
+      class="h-[36px]"
+      data-cy="fractionTsDate"
+      nzMode="date"
+      nzAllowClear="false"
+      [(ngModel)]="date"
+      (nzOnOpenChange)="beforeOpenClose()"
+    ></nz-date-picker>
+
+    <nz-time-picker
+      class="h-[36px]"
+      data-cy="fractionTsTime"
+      nzAllowEmpty="false"
+      [nzSecondStep]="nzSecondStep"
+      [nzDisabledSeconds]="disabledSeconds"
+      [(ngModel)]="date"
+      (nzOpenChange)="beforeOpenClose()"
+    ></nz-time-picker>
+  </div>
+
+  <!-- is after -->
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsAfterDate"
+    class="flex flex-row space-x-5"
+  >
+    <nz-date-picker
+      class="h-[36px]"
+      data-cy="fractionTsDate"
+      nzMode="date"
+      nzAllowClear="false"
+      [(ngModel)]="date"
+      (nzOnOpenChange)="afterOpenClose()"
+    ></nz-date-picker>
+
+    <nz-time-picker
+      class="h-[36px]"
+      data-cy="fractionTsTime"
+      nzAllowEmpty="false"
+      [nzSecondStep]="nzSecondStep"
+      [nzDisabledSeconds]="disabledSeconds"
+      [(ngModel)]="date"
+      (nzOpenChange)="afterOpenClose()"
     ></nz-time-picker>
   </div>
 </div>

@@ -346,6 +346,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
       }
 
       case this.fractionTypeEnum.TsIsBeforeDate: {
+        this.date = new Date();
+        this.date.setSeconds(0);
+
         this.buildFractionBeforeDate();
 
         if (
@@ -359,6 +362,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
       }
 
       case this.fractionTypeEnum.TsIsAfterDate: {
+        this.date = new Date();
+        this.date.setSeconds(0);
+
         this.buildFractionAfterDate();
 
         if (
@@ -574,15 +580,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
     let newTsForOption =
       this.fraction.tsForOption || common.FractionTsForOptionEnum.ForInfinity;
 
-    let newBrick =
-      newTsForOption === common.FractionTsForOptionEnum.ForInfinity
-        ? `before ${this.getMinuteString(this.date)}`
-        : `before ${this.getMinuteString(this.date)} for ${
-            this.fraction.tsForValue
-          } ${this.fraction.tsForUnit}`;
-
     this.fraction = {
-      brick: newBrick,
+      brick:
+        newTsForOption === common.FractionTsForOptionEnum.ForInfinity
+          ? `before ${this.getMinuteString(this.date)}`
+          : `before ${this.getMinuteString(this.date)} for ${
+              this.fraction.tsForValue
+            } ${this.fraction.tsForUnit}`,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsBeforeDate,
       tsDateYear: this.date.getFullYear(),
@@ -601,15 +605,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
     let newTsForOption =
       this.fraction.tsForOption || common.FractionTsForOptionEnum.ForInfinity;
 
-    let newBrick =
-      newTsForOption === common.FractionTsForOptionEnum.ForInfinity
-        ? `after ${this.getMinuteString(this.date)}`
-        : `after ${this.getMinuteString(this.date)} for ${
-            this.fraction.tsForValue
-          } ${this.fraction.tsForUnit}`;
-
     this.fraction = {
-      brick: newBrick,
+      brick:
+        newTsForOption === common.FractionTsForOptionEnum.ForInfinity
+          ? `after ${this.getMinuteString(this.date)}`
+          : `after ${this.getMinuteString(this.date)} for ${
+              this.fraction.tsForValue
+            } ${this.fraction.tsForUnit}`,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsAfterDate,
       tsDateYear: this.date.getFullYear(),
@@ -871,12 +873,38 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   disabledMinutes() {
     return [0];
-    // Array.from(Array(60).keys());
   }
 
   disabledSeconds() {
     return [0];
-    // Array.from(Array(60).keys());
+  }
+
+  beforeOpenClose() {
+    if (this.isDateNotEqualFractionDateZeroSeconds()) {
+      this.buildFractionBeforeDate();
+
+      if (
+        this.fraction.tsForOption ===
+          common.FractionTsForOptionEnum.ForInfinity ||
+        this.forValueForm.valid
+      ) {
+        this.emitFractionUpdate();
+      }
+    }
+  }
+
+  afterOpenClose() {
+    if (this.isDateNotEqualFractionDateZeroSeconds()) {
+      this.buildFractionAfterDate();
+
+      if (
+        this.fraction.tsForOption ===
+          common.FractionTsForOptionEnum.ForInfinity ||
+        this.forValueForm.valid
+      ) {
+        this.emitFractionUpdate();
+      }
+    }
   }
 
   emitFractionUpdate() {
