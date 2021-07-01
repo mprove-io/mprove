@@ -47,6 +47,16 @@ export class FractionTsRelativeWhenOptionItem {
   value: common.FractionTsRelativeWhenOptionEnum;
 }
 
+export class FractionTsForOptionItem {
+  label: string;
+  value: common.FractionTsForOptionEnum;
+}
+
+export class FractionTsForUnitItem {
+  label: string;
+  value: common.FractionTsForUnitEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'

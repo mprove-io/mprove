@@ -22,7 +22,7 @@ export class ValidationService {
       ],
       ['isNotNumberValues', 'Should be Numbers separated by comma'],
       ['isNotNumber', 'Is not a number'],
-      ['isNotInteger', 'Value must be integer'],
+      ['isNotInteger', 'Must be integer'],
       ['containsThreeUnderscores', 'File name can not contain "___"'],
       ['moreThenOneMB', 'Text must be < 1mb'],
       ['projectNameIsNotUnique', 'Project name already exists'],

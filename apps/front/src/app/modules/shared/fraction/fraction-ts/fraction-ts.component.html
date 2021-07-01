@@ -281,6 +281,61 @@
     "
     class="flex flex-row space-x-5"
   >
+    <form [formGroup]="tsForForm">
+      <ng-select
+        #tsForOptionsSelect
+        data-cy="tsForOptionsSelect"
+        class="flex w-32 focus:outline-none"
+        [items]="fractionTsForOptionsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="tsForOptionChange()"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="tsForOption"
+      >
+      </ng-select>
+    </form>
+
+    <form
+      *ngIf="fraction.tsForOption === fractionTsForOptionEnum.For"
+      [formGroup]="forValueForm"
+    >
+      <input
+        data-cy="fractionTsForValueInput"
+        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            forValueForm.controls['tsForValue'].invalid &&
+            forValueForm.controls['tsForValue'].touched
+        }"
+        formControlName="tsForValue"
+        (blur)="forValueBlur()"
+      />
+
+      <m-validation
+        [control]="forValueForm.controls['tsForValue']"
+      ></m-validation>
+    </form>
+
+    <form
+      *ngIf="fraction.tsForOption === fractionTsForOptionEnum.For"
+      [formGroup]="tsForUnitForm"
+    >
+      <ng-select
+        #tsForUnitsSelect
+        data-cy="tsForUnitsSelect"
+        class="flex w-32 focus:outline-none"
+        [items]="fractionTsForUnitsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="tsForUnitChange()"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="tsForUnit"
+      >
+      </ng-select>
+    </form>
   </div>
 
   <!-- in last -->
