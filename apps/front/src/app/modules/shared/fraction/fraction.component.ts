@@ -57,6 +57,16 @@ export class FractionTsForUnitItem {
   value: common.FractionTsForUnitEnum;
 }
 
+export class FractionTsLastUnitItem {
+  label: string;
+  value: common.FractionTsLastUnitEnum;
+}
+
+export class FractionTsLastCompleteOptionItem {
+  label: string;
+  value: common.FractionTsLastCompleteOptionEnum;
+}
+
 @Component({
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'

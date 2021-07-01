@@ -3,7 +3,7 @@
     <ng-select
       #fractionTsTypeSelect
       data-cy="fractionTsTypeSelect"
-      class="flex w-64 focus:outline-none"
+      class="flex w-48 focus:outline-none"
       [items]="fractionTsTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -204,21 +204,21 @@
     "
     class="flex flex-row space-x-5"
   >
-    <form [formGroup]="relativeValueForm">
+    <form [formGroup]="tsRelativeValueForm">
       <input
         data-cy="fractionTsRelativeValueInput"
         class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
-            relativeValueForm.controls['tsRelativeValue'].invalid &&
-            relativeValueForm.controls['tsRelativeValue'].touched
+            tsRelativeValueForm.controls['tsRelativeValue'].invalid &&
+            tsRelativeValueForm.controls['tsRelativeValue'].touched
         }"
         formControlName="tsRelativeValue"
         (blur)="relativeValueBlur()"
       />
 
       <m-validation
-        [control]="relativeValueForm.controls['tsRelativeValue']"
+        [control]="tsRelativeValueForm.controls['tsRelativeValue']"
       ></m-validation>
     </form>
 
@@ -299,22 +299,22 @@
 
     <form
       *ngIf="fraction.tsForOption === fractionTsForOptionEnum.For"
-      [formGroup]="forValueForm"
+      [formGroup]="tsForValueForm"
     >
       <input
         data-cy="fractionTsForValueInput"
         class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
-            forValueForm.controls['tsForValue'].invalid &&
-            forValueForm.controls['tsForValue'].touched
+            tsForValueForm.controls['tsForValue'].invalid &&
+            tsForValueForm.controls['tsForValue'].touched
         }"
         formControlName="tsForValue"
         (blur)="forValueBlur()"
       />
 
       <m-validation
-        [control]="forValueForm.controls['tsForValue']"
+        [control]="tsForValueForm.controls['tsForValue']"
       ></m-validation>
     </form>
 
@@ -343,5 +343,54 @@
     *ngIf="fraction.type === fractionTypeEnum.TsIsInLast"
     class="flex flex-row space-x-5"
   >
+    <form [formGroup]="tsLastValueForm">
+      <input
+        data-cy="fractionTsLastValueInput"
+        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            tsLastValueForm.controls['tsLastValue'].invalid &&
+            tsLastValueForm.controls['tsLastValue'].touched
+        }"
+        formControlName="tsLastValue"
+        (blur)="tsLastValueBlur()"
+      />
+
+      <m-validation
+        [control]="tsLastValueForm.controls['tsLastValue']"
+      ></m-validation>
+    </form>
+
+    <form [formGroup]="tsLastUnitForm">
+      <ng-select
+        #tsLastUnitsSelect
+        data-cy="tsLastUnitsSelect"
+        class="flex w-32 focus:outline-none"
+        [items]="fractionTsLastUnitsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="tsLastUnitChange()"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="tsLastUnit"
+      >
+      </ng-select>
+    </form>
+
+    <form [formGroup]="tsLastCompleteOptionForm">
+      <ng-select
+        #tsLastCompleteOptionsSelect
+        data-cy="tsLastCompleteOptionsSelect"
+        class="flex w-56 focus:outline-none"
+        [items]="fractionTsLastCompleteOptionsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="tsLastCompleteOptionChange()"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="tsLastCompleteOption"
+      >
+      </ng-select>
+    </form>
   </div>
 </div>
