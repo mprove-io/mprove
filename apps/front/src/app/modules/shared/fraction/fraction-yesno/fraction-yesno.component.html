@@ -3,11 +3,12 @@
     <ng-select
       #fractionYesnoTypeSelect
       data-cy="fractionYesnoTypeSelect"
-      class="flex w-48 focus:outline-none"
+      class="w-48 focus:outline-none"
       [items]="fractionYesnoTypesList"
       [clearable]="false"
       [searchable]="false"
       (change)="typeChange($event)"
+      appendTo="body"
       bindLabel="label"
       bindValue="value"
       formControlName="fractionType"
@@ -22,11 +23,12 @@
     <ng-select
       #fractionYesnoValueSelect
       data-cy="fractionYesnoValueSelect"
-      class="flex w-48 focus:outline-none h-[36px]"
+      class="w-48 focus:outline-none h-[36px]"
       [items]="fractionYesnoValuesList"
       [clearable]="false"
       [searchable]="false"
       (change)="yesnoChange($event)"
+      appendTo="body"
       bindLabel="label"
       bindValue="value"
       formControlName="yesnoValue"

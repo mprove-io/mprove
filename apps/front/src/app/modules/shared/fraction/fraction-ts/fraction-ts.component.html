@@ -3,11 +3,12 @@
     <ng-select
       #fractionTsTypeSelect
       data-cy="fractionTsTypeSelect"
-      class="flex w-48 focus:outline-none"
+      class="w-48 focus:outline-none"
       [items]="fractionTsTypesList"
       [clearable]="false"
       [searchable]="false"
       (change)="typeChange($event)"
+      appendTo="body"
       bindLabel="label"
       bindValue="value"
       formControlName="fractionType"
@@ -226,11 +227,12 @@
       <ng-select
         #tsRelativeUnitSelect
         data-cy="tsRelativeUnitSelect"
-        class="flex w-32 focus:outline-none"
+        class="w-32 focus:outline-none"
         [items]="fractionTsRelativeUnitsList"
         [clearable]="false"
         [searchable]="false"
         (change)="relativeTsUnitOptionChange()"
+        appendTo="body"
         bindLabel="label"
         bindValue="value"
         formControlName="tsRelativeUnit"
@@ -242,11 +244,12 @@
       <ng-select
         #tsRelativeCompleteOptionsSelect
         data-cy="tsRelativeCompleteOptionsSelect"
-        class="flex w-32 focus:outline-none"
+        class="w-32 focus:outline-none"
         [items]="fractionTsRelativeCompleteOptionsList"
         [clearable]="false"
         [searchable]="false"
         (change)="relativeTsCompleteOptionChange()"
+        appendTo="body"
         bindLabel="label"
         bindValue="value"
         formControlName="tsRelativeCompleteOption"
@@ -258,11 +261,12 @@
       <ng-select
         #tsRelativeWhenOptionsSelect
         data-cy="tsRelativeWhenOptionsSelect"
-        class="flex w-32 focus:outline-none"
+        class="w-32 focus:outline-none"
         [items]="fractionTsRelativeWhenOptionsList"
         [clearable]="false"
         [searchable]="false"
         (change)="relativeTsWhenOptionChange()"
+        appendTo="body"
         bindLabel="label"
         bindValue="value"
         formControlName="tsRelativeWhenOption"
@@ -285,11 +289,12 @@
       <ng-select
         #tsForOptionsSelect
         data-cy="tsForOptionsSelect"
-        class="flex w-32 focus:outline-none"
+        class="w-32 focus:outline-none"
         [items]="fractionTsForOptionsList"
         [clearable]="false"
         [searchable]="false"
         (change)="tsForOptionChange()"
+        appendTo="body"
         bindLabel="label"
         bindValue="value"
         formControlName="tsForOption"
@@ -325,11 +330,12 @@
       <ng-select
         #tsForUnitsSelect
         data-cy="tsForUnitsSelect"
-        class="flex w-32 focus:outline-none"
+        class="w-32 focus:outline-none"
         [items]="fractionTsForUnitsList"
         [clearable]="false"
         [searchable]="false"
         (change)="tsForUnitChange()"
+        appendTo="body"
         bindLabel="label"
         bindValue="value"
         formControlName="tsForUnit"
@@ -365,11 +371,12 @@
       <ng-select
         #tsLastUnitsSelect
         data-cy="tsLastUnitsSelect"
-        class="flex w-32 focus:outline-none"
+        class="w-32 focus:outline-none"
         [items]="fractionTsLastUnitsList"
         [clearable]="false"
         [searchable]="false"
         (change)="tsLastUnitChange()"
+        appendTo="body"
         bindLabel="label"
         bindValue="value"
         formControlName="tsLastUnit"
@@ -381,11 +388,12 @@
       <ng-select
         #tsLastCompleteOptionsSelect
         data-cy="tsLastCompleteOptionsSelect"
-        class="flex w-56 focus:outline-none"
+        class="w-56 focus:outline-none"
         [items]="fractionTsLastCompleteOptionsList"
         [clearable]="false"
         [searchable]="false"
         (change)="tsLastCompleteOptionChange()"
+        appendTo="body"
         bindLabel="label"
         bindValue="value"
         formControlName="tsLastCompleteOption"

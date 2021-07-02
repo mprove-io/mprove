@@ -3,11 +3,12 @@
     <ng-select
       #fractionNumberTypeSelect
       data-cy="fractionNumberTypeSelect"
-      class="flex w-64 focus:outline-none"
+      class="w-64 focus:outline-none"
       [items]="fractionNumberTypesList"
       [clearable]="false"
       [searchable]="false"
       (change)="typeChange($event)"
+      appendTo="body"
       bindLabel="label"
       bindValue="value"
       formControlName="fractionType"
@@ -74,11 +75,12 @@
     <ng-select
       #fractionBetweenOptionSelect
       data-cy="fractionBetweenOptionSelect"
-      class="flex w-48 focus:outline-none h-[36px]"
+      class="w-48 focus:outline-none h-[36px]"
       [items]="fractionNumberBetweenOptionsList"
       [clearable]="false"
       [searchable]="false"
       (change)="betweenOptionChange($event)"
+      appendTo="body"
       bindLabel="label"
       bindValue="value"
       formControlName="numberBetweenOption"

@@ -3,11 +3,12 @@
     <ng-select
       #fractionDayOfWeekTypeSelect
       data-cy="fractionDayOfWeekTypeSelect"
-      class="flex w-48 focus:outline-none"
+      class="w-48 focus:outline-none"
       [items]="fractionDayOfWeekTypesList"
       [clearable]="false"
       [searchable]="false"
       (change)="typeChange($event)"
+      appendTo="body"
       bindLabel="label"
       bindValue="value"
       formControlName="fractionType"
@@ -25,11 +26,12 @@
     <ng-select
       #fractionDayOfWeekValueSelect
       data-cy="fractionDayOfWeekValueSelect"
-      class="flex w-48 focus:outline-none h-[36px]"
+      class="w-48 focus:outline-none h-[36px]"
       [items]="fractionDayOfWeekValuesList"
       [clearable]="false"
       [searchable]="false"
       (change)="dayOfWeekValueChange($event)"
+      appendTo="body"
       bindLabel="label"
       bindValue="value"
       formControlName="dayOfWeekValue"
