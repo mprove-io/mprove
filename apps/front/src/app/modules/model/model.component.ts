@@ -289,4 +289,25 @@ export class ModelComponent implements OnInit, OnDestroy {
       )
       .subscribe();
   }
+
+  cancel() {
+    let payload: apiToBackend.ToBackendCancelQueriesRequestPayload = {
+      queryIds: [this.query.queryId]
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
+          let { queries } = resp.payload;
+          console.log(queries);
+          this.queryStore.update(queries[0]);
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 }

@@ -153,5 +153,5 @@ test('1', async t => {
 
   t.is(resp1.info.error, undefined);
   t.is(resp1.info.status, common.ResponseInfoStatusEnum.Ok);
-  t.is(resp1.payload.canceledQueries.length, 1);
+  t.is(resp1.payload.queries.length, 1);
 });

@@ -17,7 +17,7 @@ export class ToBackendCancelQueriesRequest extends ToBackendRequest {
 export class ToBackendCancelQueriesResponsePayload {
   @ValidateNested()
   @Type(() => common.Query)
-  canceledQueries: common.Query[];
+  queries: common.Query[];
 }
 
 export class ToBackendCancelQueriesResponse extends common.MyResponse {

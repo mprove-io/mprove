@@ -42,20 +42,27 @@
             >Canceled - {{ canceledTimeAgo$ | async }}</div
           >
 
-          <div *ngIf="query?.status === queryStatusEnum.Completed"
-            >Completed - {{ completedTimeAgo$ | async }}</div
+          <div *ngIf="query?.status === queryStatusEnum.Completed">
+            <span>Completed - {{ completedTimeAgo$ | async }}</span>
+            <span> - {{ query.lastCompleteDuration }}s</span>
+            <span> - {{ query.data.length }} rows</span>
+          </div>
+
+          <button
+            type="button"
+            *ngIf="query?.status === queryStatusEnum.Running"
+            data-cy="modelCancelButton"
+            class="w-24 py-2 text-white bg-blue3 rounded font-medium focus:outline-none"
+            (click)="cancel()"
+            >Cancel</button
           >
 
           <button
             type="button"
+            *ngIf="query?.status !== queryStatusEnum.Running"
             data-cy="modelRunButton"
-            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
-            [ngClass]="{
-              'bg-gray-400 cursor-default': false,
-              'bg-blue3': true
-            }"
+            class="w-24 py-2 text-white bg-blue3 rounded font-medium focus:outline-none"
             (click)="run()"
-            [disabled]="false"
             >Run</button
           >
         </div>

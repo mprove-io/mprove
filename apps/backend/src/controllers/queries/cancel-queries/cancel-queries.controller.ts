@@ -33,8 +33,7 @@ export class CancelQueriesController {
       queryIds.length === 0
         ? []
         : await this.queriesRepository.find({
-            query_id: In(queryIds),
-            status: common.QueryStatusEnum.Running
+            query_id: In(queryIds)
           });
 
     let projectIdsWithDuplicates = queries.map(q => q.project_id);
@@ -61,40 +60,46 @@ export class CancelQueriesController {
             connection_id: In(queries.map(q => q.connection_id))
           });
 
-    await asyncPool(8, queries, async (query: entities.QueryEntity) => {
-      let connection = projectConnections.find(
-        x => x.connection_id === query.connection_id
-      );
+    await asyncPool(
+      8,
+      queries.filter(q => q.status === common.QueryStatusEnum.Running),
+      async (query: entities.QueryEntity) => {
+        let connection = projectConnections.find(
+          x => x.connection_id === query.connection_id
+        );
 
-      if (common.isUndefined(connection)) {
-        throw new common.ServerError({
-          message: apiToBackend.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
-        });
-      }
+        if (common.isUndefined(connection)) {
+          throw new common.ServerError({
+            message: apiToBackend.ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+          });
+        }
 
-      if (connection.type === common.ConnectionTypeEnum.BigQuery) {
-        let bigquery = new BigQuery({
-          projectId: connection.project_id,
-          credentials: connection.bigquery_credentials
-        });
-
-        let bigqueryQueryJob = bigquery.job(query.bigquery_query_job_id);
-
-        // do not await
-        bigqueryQueryJob.cancel().catch((e: any) => {
-          let serverError = new common.ServerError({
-            message: apiToBackend.ErEnum.BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL,
-            originalError: e
+        if (connection.type === common.ConnectionTypeEnum.BigQuery) {
+          let bigquery = new BigQuery({
+            projectId: connection.project_id,
+            credentials: connection.bigquery_credentials
           });
 
-          common.logToConsole(serverError);
-        });
-      }
+          let bigqueryQueryJob = bigquery.job(query.bigquery_query_job_id);
 
-      query.status = common.QueryStatusEnum.Canceled;
-      query.last_cancel_ts = helper.makeTs();
-      query.postgres_query_job_id = null;
-    });
+          // do not await
+          bigqueryQueryJob.cancel().catch((e: any) => {
+            let serverError = new common.ServerError({
+              message:
+                apiToBackend.ErEnum.BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL,
+              originalError: e
+            });
+
+            common.logToConsole(serverError);
+          });
+        }
+
+        query.status = common.QueryStatusEnum.Canceled;
+        query.data = [];
+        query.last_cancel_ts = helper.makeTs();
+        query.postgres_query_job_id = null;
+      }
+    );
 
     await this.dbService.writeRecords({
       modify: true,
@@ -104,7 +109,7 @@ export class CancelQueriesController {
     });
 
     let payload: apiToBackend.ToBackendCancelQueriesResponsePayload = {
-      canceledQueries: queries.map(x => wrapper.wrapToApiQuery(x))
+      queries: queries.map(x => wrapper.wrapToApiQuery(x))
     };
 
     return payload;
