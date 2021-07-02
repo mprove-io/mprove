@@ -55,7 +55,7 @@ export class FractionNumberComponent implements OnInit {
       value: common.FractionTypeEnum.NumberIsGreaterThan
     },
     {
-      label: 'is greater than or equal to',
+      label: 'is greater or equal',
       value: common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo
     },
     {
@@ -63,7 +63,7 @@ export class FractionNumberComponent implements OnInit {
       value: common.FractionTypeEnum.NumberIsLessThan
     },
     {
-      label: 'is less than or equal to',
+      label: 'is less or equal',
       value: common.FractionTypeEnum.NumberIsLessThanOrEqualTo
     },
     {
