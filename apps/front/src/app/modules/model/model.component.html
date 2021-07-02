@@ -74,12 +74,18 @@
             }"
           >
             <div class="flex flex-col h-full">
-              <div class="flex h-16 items-center flex-shrink-0">
+              <div
+                class="flex min-h-[64px] flex-row items-center flex-shrink-0"
+              >
                 <m-panel-title
                   [title]="'Filters'"
                   [isExpanded]="filtersIsExpanded"
                   (toggleEvent)="toggleFiltersPanel()"
                 ></m-panel-title>
+
+                <m-model-bricks
+                  *ngIf="mconfig?.filters.length > 0"
+                ></m-model-bricks>
               </div>
 
               <div class="flex flex-grow mx-5 h-2" *ngIf="filtersIsExpanded">

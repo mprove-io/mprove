@@ -1,0 +1,53 @@
+<div
+  class="flex flex-col divide-y divide-gray-300 my-3 py-1 px-5 bg-gray-200 rounded"
+>
+  <div
+    *ngFor="let filter of extendedFilters; let filterIndex = index"
+    class="flex flex-row items-start justify-start py-1"
+  >
+    <div class="flex flex-row items-start justify-center">
+      <div class="flex flex-row justify-start items-center w-96">
+        <div class="font-normal text-sm">{{
+          filter.field.topLabel | capitalize
+        }}</div>
+
+        <div class="flex flex-row font-semibold text-left ml-2">
+          <div *ngIf="filter.field.groupLabel"
+            >{{ filter.field.groupLabel | capitalize }} -
+            {{ filter.field.label | capitalize }}</div
+          >
+
+          <div *ngIf="!filter.field.groupLabel" class="">{{
+            filter.field.label | capitalize
+          }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div
+        class="flex flex-row justify-start items-start group"
+        *ngFor="
+          let fraction of filter.fractions;
+          let isFirst = first;
+          let fractionIndex = index
+        "
+      >
+        <div class="flex w-10 items-center justify-start">
+          {{
+            !isFirst && fraction.operator === fractionOperatorEnum.Or
+              ? 'OR'
+              : !isFirst && fraction.operator === fractionOperatorEnum.And
+              ? 'AND'
+              : ''
+          }}
+        </div>
+        <div class="ml-1">
+          {{ fraction.brick }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="extendedFilters$ | async"></div>

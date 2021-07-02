@@ -6,6 +6,7 @@ import { TreeModule } from '@circlon/angular-tree-component';
 import { SharedModule } from '../shared/shared.module';
 import { MainTableComponent } from './main-table/main-table.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
+import { ModelBricksComponent } from './model-bricks/model-bricks.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
@@ -24,7 +25,8 @@ import { SqlComponent } from './sql/sql.component';
     SqlComponent,
     MainTableComponent,
     FieldOptionsComponent,
-    ModelFiltersComponent
+    ModelFiltersComponent,
+    ModelBricksComponent
   ],
   imports: [
     CommonModule,
