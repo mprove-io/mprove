@@ -132,7 +132,7 @@
             }"
           >
             <div class="flex flex-col h-full">
-              <div class="flex h-16 items-center flex-shrink-0">
+              <div class="flex flex-row h-20 items-center flex-shrink-0">
                 <m-panel-title
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
@@ -163,20 +163,7 @@
                   >SQL</button
                 >
 
-                <button
-                  *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 items-center text-lg select-none focus:outline-none"
-                  [ngClass]="{
-                    'text-blue-500': isFormat,
-                    'text-gray1': !isFormat,
-                    'text-gray-400 cursor-default':
-                      !dataIsExpanded || !resultsIsShow
-                  }"
-                  (click)="toggleFormat()"
-                  [disabled]="!dataIsExpanded || !resultsIsShow"
-                >
-                  <m-currency-dollar-icon></m-currency-dollar-icon
-                ></button>
+                <div class="flex-1"></div>
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
@@ -187,11 +174,12 @@
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="limitForm"
-                  class="flex items-center ml-5"
+                  class="flex flex-col items-start ml-5"
                 >
+                  <div class="h-6"></div>
                   <input
                     data-cy="modelLimitInput"
-                    class="w-24 form-input rounded border-gray3 focus:border-blue3"
+                    class="w-32 form-input rounded border-gray3 focus:border-blue3"
                     [ngClass]="{
                       'border-red-600':
                         limitForm.controls['limit'].invalid &&
@@ -204,6 +192,21 @@
                     [control]="limitForm.controls['limit']"
                   ></m-validation>
                 </div>
+
+                <button
+                  *ngIf="mconfig?.select.length > 0"
+                  class="ml-5 mr-5 items-center text-lg select-none focus:outline-none"
+                  [ngClass]="{
+                    'text-blue-500': isFormat,
+                    'text-gray1': !isFormat,
+                    'text-gray-400 cursor-default':
+                      !dataIsExpanded || !resultsIsShow
+                  }"
+                  (click)="toggleFormat()"
+                  [disabled]="!dataIsExpanded || !resultsIsShow"
+                >
+                  <m-currency-dollar-icon></m-currency-dollar-icon
+                ></button>
               </div>
 
               <div class="flex flex-grow mt-5 mx-5 h-2" *ngIf="dataIsExpanded">
