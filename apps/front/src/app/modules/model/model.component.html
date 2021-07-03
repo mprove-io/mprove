@@ -98,8 +98,8 @@
               <div class="flex flex-grow mx-5 h-2" *ngIf="filtersIsExpanded">
                 <div
                   *ngIf="mconfig?.filters.length === 0"
-                  class="flex items-center justify-center text-xl h-full w-full select-none"
-                  >Filter fields...</div
+                  class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                  >No filters</div
                 >
                 <div class="flex-1 w-2 overflow-auto">
                   <m-model-filters></m-model-filters>
@@ -132,7 +132,7 @@
             }"
           >
             <div class="flex flex-col h-full">
-              <div class="flex flex-row h-20 items-center flex-shrink-0">
+              <div class="flex flex-row h-20 items-center flex-shrink-0 mr-5">
                 <m-panel-title
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
@@ -165,6 +165,25 @@
 
                 <div class="flex-1"></div>
 
+                <form
+                  [formGroup]="timezoneForm"
+                  *ngIf="mconfig?.select.length > 0"
+                >
+                  <ng-select
+                    #timezoneSelect
+                    data-cy="timezoneSelect"
+                    class="w-80 focus:outline-none"
+                    [items]="timezones"
+                    [clearable]="false"
+                    (change)="timezoneChange()"
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="value"
+                    formControlName="timezone"
+                  >
+                  </ng-select>
+                </form>
+
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   class="ml-5 text-gray1 text-lg select-none"
@@ -179,7 +198,7 @@
                   <div class="h-6"></div>
                   <input
                     data-cy="modelLimitInput"
-                    class="w-32 form-input rounded border-gray3 focus:border-blue3"
+                    class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
                     [ngClass]="{
                       'border-red-600':
                         limitForm.controls['limit'].invalid &&
@@ -195,15 +214,12 @@
 
                 <button
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 mr-5 items-center text-lg select-none focus:outline-none"
+                  class="ml-5 items-center text-lg select-none focus:outline-none"
                   [ngClass]="{
                     'text-blue-500': isFormat,
-                    'text-gray1': !isFormat,
-                    'text-gray-400 cursor-default':
-                      !dataIsExpanded || !resultsIsShow
+                    'text-gray1': !isFormat
                   }"
                   (click)="toggleFormat()"
-                  [disabled]="!dataIsExpanded || !resultsIsShow"
                 >
                   <m-currency-dollar-icon></m-currency-dollar-icon
                 ></button>
@@ -212,8 +228,8 @@
               <div class="flex flex-grow mt-5 mx-5 h-2" *ngIf="dataIsExpanded">
                 <div
                   *ngIf="mconfig?.select.length === 0"
-                  class="flex items-center justify-center text-xl h-full w-full select-none"
-                  >Select fields...</div
+                  class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                  >No selected fields</div
                 >
 
                 <div

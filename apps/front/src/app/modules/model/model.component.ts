@@ -11,6 +11,7 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
+import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
@@ -62,11 +63,15 @@ export class ModelComponent implements OnInit, OnDestroy {
   mconfig$ = this.mconfigQuery.select().pipe(
     tap(x => {
       this.mconfig = x;
+
+      if (x.timezone) {
+        this.timezoneForm.controls['timezone'].setValue(x.timezone);
+      }
+
       if (x.limit) {
         this.limitForm.controls['limit'].setValue(x.limit);
       }
 
-      // console.log(this.mconfig.select);
       this.cd.detectChanges();
     })
   );
@@ -78,18 +83,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     })
   );
-
-  limitForm: FormGroup = this.fb.group({
-    limit: [
-      undefined,
-      [
-        Validators.required,
-        ValidationService.integerValidator,
-        Validators.min(1),
-        Validators.max(500)
-      ]
-    ]
-  });
 
   filtersIsExpanded = true;
   chartIsExpanded = false;
@@ -125,6 +118,22 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   checkRunning$: Subscription;
 
+  limitForm: FormGroup = this.fb.group({
+    limit: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(1),
+        Validators.max(500)
+      ]
+    ]
+  });
+
+  timezoneForm: FormGroup;
+
+  timezones = common.getTimezones();
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -143,10 +152,13 @@ export class ModelComponent implements OnInit, OnDestroy {
     private mconfigStore: MconfigStore,
     private queryStore: QueryStore,
     private structService: StructService,
-    private timeService: TimeService
+    private timeService: TimeService,
+    private mconfigService: MconfigService
   ) {}
 
   ngOnInit() {
+    this.buildTimezoneForm();
+
     this.checkRunning$ = interval(3000)
       .pipe(
         startWith(0),
@@ -177,6 +189,12 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.checkRunning$.unsubscribe();
+  }
+
+  buildTimezoneForm() {
+    this.timezoneForm = this.fb.group({
+      timezone: [this.mconfig?.timezone]
+    });
   }
 
   toggleFormat() {
@@ -243,31 +261,17 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.limit = Number(limit.value);
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
-      mconfig: newMconfig
-    };
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 
-    this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateTempMconfigAndQuery,
-        payload
-      )
-      .pipe(
-        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
-          let { mconfig, query } = resp.payload;
+  timezoneChange() {
+    let timezone = this.timezoneForm.controls['timezone'].value;
 
-          this.mconfigStore.update(mconfig);
-          this.queryStore.update(query);
+    let newMconfig = this.structService.makeMconfig();
 
-          this.navigateService.navigateMconfigQueryData({
-            mconfigId: mconfig.mconfigId,
-            queryId: mconfig.queryId
-          });
-        }),
-        take(1)
-      )
-      .subscribe();
+    newMconfig.timezone = timezone;
+
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   run() {
