@@ -8,6 +8,7 @@ import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { QueryQuery } from '~front/app/queries/query.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
@@ -21,7 +22,7 @@ import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { QueryState, QueryStore } from '~front/app/stores/query.store';
 import { RepoStore } from '~front/app/stores/repo.store';
-import { StructStore } from '~front/app/stores/struct.store';
+import { StructState, StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -130,6 +131,13 @@ export class ModelComponent implements OnInit, OnDestroy {
     ]
   });
 
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+    })
+  );
+
   timezoneForm: FormGroup;
 
   timezones = common.getTimezones();
@@ -153,7 +161,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     private queryStore: QueryStore,
     private structService: StructService,
     private timeService: TimeService,
-    private mconfigService: MconfigService
+    private mconfigService: MconfigService,
+    private structQuery: StructQuery
   ) {}
 
   ngOnInit() {
@@ -192,8 +201,23 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   buildTimezoneForm() {
+    this.structQuery
+      .select()
+      .pipe(
+        tap(x => {
+          this.struct = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     this.timezoneForm = this.fb.group({
-      timezone: [this.mconfig?.timezone]
+      timezone: [
+        {
+          value: this.mconfig?.timezone,
+          disabled: this.struct.allowTimezones === false
+        }
+      ]
     });
   }
 

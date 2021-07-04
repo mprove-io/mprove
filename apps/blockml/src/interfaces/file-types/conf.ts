@@ -8,6 +8,6 @@ export interface Conf extends FileBasic {
   default_timezone?: string;
   default_timezone_line_num?: number;
 
-  allow_timezones?: boolean;
+  allow_timezones?: string; // boolean
   allow_timezones_line_num?: number;
 }

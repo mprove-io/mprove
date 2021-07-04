@@ -181,6 +181,9 @@
                     bindValue="value"
                     formControlName="timezone"
                   >
+                    <ng-template ng-header-tmp>
+                      <div class="font-semibold text-sm"> Timezone </div>
+                    </ng-template>
                   </ng-select>
                 </form>
 
@@ -261,3 +264,4 @@
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mconfig$ | async"></div>
 <div *ngIf="query$ | async"></div>
+<div *ngIf="struct$ | async"></div>

@@ -50,7 +50,7 @@ export class RenameFileDialogComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  create() {
+  save() {
     this.renameFileForm.markAllAsTouched();
 
     if (!this.renameFileForm.valid) {

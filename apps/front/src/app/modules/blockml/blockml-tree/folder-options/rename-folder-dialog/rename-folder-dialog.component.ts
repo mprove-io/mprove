@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -17,8 +18,9 @@ export class RenameFolderDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
-    public structStore: StructStore,
-    private repoStore: RepoStore
+    private navigateService: NavigateService,
+    private repoStore: RepoStore,
+    public structStore: StructStore
   ) {}
 
   ngOnInit() {
@@ -30,7 +32,7 @@ export class RenameFolderDialogComponent implements OnInit {
     });
   }
 
-  create() {
+  save() {
     this.renameFolderForm.markAllAsTouched();
 
     if (!this.renameFolderForm.valid) {
@@ -57,6 +59,8 @@ export class RenameFolderDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
+
+          this.navigateService.navigateToBlockml();
         }),
         take(1)
       )

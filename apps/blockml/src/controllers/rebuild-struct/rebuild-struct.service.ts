@@ -7,6 +7,7 @@ import { barWrapper } from '~blockml/barrels/bar-wrapper';
 import { barYaml } from '~blockml/barrels/bar-yaml';
 import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
+import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
@@ -392,7 +393,7 @@ export class RebuildStructService {
       dashboards: dashboards,
       vizs: vizs,
       weekStart: projectConf.week_start,
-      allowTimezones: projectConf.allow_timezones,
+      allowTimezones: helper.toBoolean(projectConf.allow_timezones),
       defaultTimezone: projectConf.default_timezone
     };
   }

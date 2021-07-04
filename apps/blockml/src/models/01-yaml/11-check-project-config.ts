@@ -5,6 +5,7 @@ import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
+import { BoolEnum } from '~common/_index';
 
 let func = enums.FuncEnum.CheckProjectConfig;
 
@@ -126,7 +127,7 @@ export function checkProjectConfig(
   }
 
   let defaultConf: interfaces.Conf = {
-    allow_timezones: true,
+    allow_timezones: BoolEnum.TRUE,
     default_timezone: common.UTC,
     week_start: common.ProjectWeekStartEnum.Monday,
     fileName: undefined,

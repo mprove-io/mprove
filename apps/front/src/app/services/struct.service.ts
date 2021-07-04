@@ -65,7 +65,9 @@ export class StructService {
       sortings: [],
       sorts: null,
       timezone:
-        this.user.timezone === common.USE_PROJECT_TIMEZONE
+        this.struct.allowTimezones === false
+          ? this.struct.defaultTimezone
+          : this.user.timezone === common.USE_PROJECT_TIMEZONE
           ? this.struct.defaultTimezone
           : this.user.timezone,
       limit: 500,
