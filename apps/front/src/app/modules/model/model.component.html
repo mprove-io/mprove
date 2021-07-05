@@ -23,36 +23,40 @@
           <div class="flex-grow"></div>
 
           <div
-            *ngIf="query?.status === queryStatusEnum.Running"
-            class="flex flex-row"
+            class="flex flex-row items-center space-x-5 text-base text-gray1"
           >
-            <div>Running - seconds</div>
-            <div class="w-8 ml-1">{{ runSecondsAgo$ | async }}</div>
-          </div>
+            <div
+              *ngIf="query?.status === queryStatusEnum.Running"
+              class="flex flex-row"
+            >
+              <div>Running - seconds</div>
+              <div class="w-8 ml-1">{{ runSecondsAgo$ | async }}</div>
+            </div>
 
-          <div *ngIf="query?.status === queryStatusEnum.Error"
-            >Error - {{ errorTimeAgo$ | async }}</div
-          >
+            <div *ngIf="query?.status === queryStatusEnum.Error"
+              >Error - {{ errorTimeAgo$ | async }}</div
+            >
 
-          <div *ngIf="query?.status === queryStatusEnum.Error">{{
-            query?.lastErrorMessage
-          }}</div>
+            <div *ngIf="query?.status === queryStatusEnum.Error">{{
+              query?.lastErrorMessage
+            }}</div>
 
-          <div *ngIf="query?.status === queryStatusEnum.Canceled"
-            >Canceled - {{ canceledTimeAgo$ | async }}</div
-          >
+            <div *ngIf="query?.status === queryStatusEnum.Canceled"
+              >Canceled - {{ canceledTimeAgo$ | async }}</div
+            >
 
-          <div *ngIf="query?.status === queryStatusEnum.Completed">
-            <span>Completed - {{ completedTimeAgo$ | async }}</span>
-            <span> - {{ query.lastCompleteDuration }}s</span>
-            <span> - {{ query.data.length }} rows</span>
+            <div *ngIf="query?.status === queryStatusEnum.Completed">
+              <span>Completed - {{ completedTimeAgo$ | async }}</span>
+              <span> - {{ query.lastCompleteDuration }}s</span>
+              <span> - {{ query.data.length }} rows</span>
+            </div>
           </div>
 
           <button
             type="button"
             *ngIf="query?.status === queryStatusEnum.Running"
             data-cy="modelCancelButton"
-            class="w-24 py-2 text-white bg-blue3 rounded font-medium focus:outline-none"
+            class="w-24 py-2 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
             (click)="cancel()"
             >Cancel</button
           >
@@ -61,7 +65,7 @@
             type="button"
             *ngIf="query?.status !== queryStatusEnum.Running"
             data-cy="modelRunButton"
-            class="w-24 py-2 text-white bg-blue3 rounded font-medium focus:outline-none"
+            class="w-24 py-2 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
             (click)="run()"
             >Run</button
           >
@@ -132,7 +136,9 @@
             }"
           >
             <div class="flex flex-col h-full">
-              <div class="flex flex-row h-20 items-center flex-shrink-0 mr-5">
+              <div
+                class="flex flex-row h-20 items-center flex-shrink-0 mr-5 space-x-5"
+              >
                 <m-panel-title
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
@@ -140,7 +146,7 @@
                 ></m-panel-title>
 
                 <button
-                  class="w-24 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
+                  class="w-24 py-3 items-center text-lg text-gray1 select-none focus:outline-none"
                   [ngClass]="{
                     'font-semibold': resultsIsShow,
                     'text-gray-400 cursor-default':
@@ -152,7 +158,7 @@
                 >
 
                 <button
-                  class="w-16 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
+                  class="w-16 py-3 items-center text-lg text-gray1 select-none focus:outline-none"
                   [ngClass]="{
                     'font-semibold': sqlIsShow,
                     'text-gray-400 cursor-default':
@@ -164,6 +170,12 @@
                 >
 
                 <div class="flex-1"></div>
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="text-gray1 text-base select-none"
+                  >Timezone</div
+                >
 
                 <form
                   [formGroup]="timezoneForm"
@@ -181,22 +193,22 @@
                     bindValue="value"
                     formControlName="timezone"
                   >
-                    <ng-template ng-header-tmp>
+                    <!-- <ng-template ng-header-tmp>
                       <div class="font-semibold text-sm"> Timezone </div>
-                    </ng-template>
+                    </ng-template> -->
                   </ng-select>
                 </form>
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 text-gray1 text-lg select-none"
+                  class="text-gray1 text-base select-none"
                   >Limit</div
                 >
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="limitForm"
-                  class="flex flex-col items-start ml-5"
+                  class="flex flex-col items-start"
                 >
                   <div class="h-6"></div>
                   <input
@@ -217,7 +229,7 @@
 
                 <button
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5 items-center text-lg select-none focus:outline-none"
+                  class="items-center text-lg select-none focus:outline-none"
                   [ngClass]="{
                     'text-blue-500': isFormat,
                     'text-gray1': !isFormat

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { constants } from '~common/barrels/constants';
 import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -140,7 +141,9 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   timezoneForm: FormGroup;
 
-  timezones = common.getTimezones();
+  timezones = common
+    .getTimezones()
+    .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE);
 
   constructor(
     private router: Router,

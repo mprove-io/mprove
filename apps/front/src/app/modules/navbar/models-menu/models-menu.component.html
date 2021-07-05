@@ -14,7 +14,7 @@
       (openedMenuId && menuId !== openedMenuId)
     "
   >
-    <div class="flex justify-center"> Models </div>
+    <div class="flex justify-center text-base"> Models </div>
   </button>
 
   <button
@@ -24,7 +24,7 @@
   ></button>
 
   <div
-    class="absolute right-0 z-10 mt-1 w-48 bg-white rounded-md shadow-xl border-2 border-gray4"
+    class="absolute right-0 z-10 mt-1 w-56 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isModelsMenuOpen === true"
   >
     <div *ngIf="modelsListLoading === true">Loading ...</div>
@@ -35,7 +35,7 @@
       <div *ngIf="modelsListLength > 0">
         <button
           *ngFor="let item of modelsList"
-          class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+          class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
           [ngClass]="{
             'cursor-default': lastUrl === pathModelId,
             'text-red-800': lastUrl === pathModelId

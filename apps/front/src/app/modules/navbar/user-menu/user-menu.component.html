@@ -18,13 +18,13 @@
   ></button>
 
   <div
-    class="absolute right-0 z-10 mt-1 w-48 bg-white rounded-md shadow-xl border-2 border-gray4"
+    class="absolute right-0 z-10 mt-1 w-56 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isUserMenuOpen === true"
   >
     <div class="block mt-2 px-4 py-2 text-gray1 font-bold text-sm">User</div>
 
     <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-sm w-full text-left focus:outline-none"
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
       [ngClass]="{
         'cursor-default': lastUrl === pathProfile,
         'text-red-800': lastUrl === pathProfile
@@ -35,7 +35,7 @@
     >
 
     <button
-      class="block px-4 py-2 text-gray1 font-medium text-sm hover:bg-blue2 w-full text-left focus:outline-none"
+      class="block px-4 py-2 text-gray1 font-medium text-base hover:bg-blue2 w-full text-left focus:outline-none"
       (click)="logout()"
       >LogOut</button
     >
@@ -43,7 +43,7 @@
     <div class="block px-4 py-2 text-gray1 font-bold text-sm">Resources</div>
 
     <a
-      class="block mb-2 px-4 py-2 text-gray1 font-medium text-sm hover:bg-blue2"
+      class="block px-4 py-2 text-gray1 font-medium text-base hover:bg-blue2 hover:text-gray1"
       target="_blank"
       href="/docs"
       >Docs</a
