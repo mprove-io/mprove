@@ -2,29 +2,31 @@
   <div class="flex flex-row h-full">
     <div class="flex flex-col flex-grow mx-6 mb-6 mt-8">
       <div class="flex flex-row justify-between items-center h-11">
-        <div class="flex flex-row items-center space-x-5 w-full">
-          <div
-            data-cy="modelTitle"
-            class="flex font-semibold text-2xl text-gray1 items-center self-center"
-          >
-            Model
+        <div class="flex flex-row items-center w-full">
+          <div class="flex flex-row items-center space-x-5">
+            <div
+              data-cy="modelTitle"
+              class="flex font-semibold text-2xl text-gray1 items-center self-center"
+            >
+              Model
+            </div>
+
+            <div class="text-xl text-gray1">{{
+              model?.label | capitalize
+            }}</div>
+
+            <button
+              class="flex flex-row items-center text-blue-500 focus:outline-none"
+              (click)="goToFile()"
+            >
+              <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+              <div class="ml-2 text-xl">File</div>
+            </button>
           </div>
-
-          <div class="text-xl text-gray1">{{ model?.label | capitalize }}</div>
-
-          <button
-            class="flex flex-row items-center text-blue-500 focus:outline-none"
-            (click)="goToFile()"
-          >
-            <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
-            <div class="ml-2 text-xl">File</div>
-          </button>
 
           <div class="flex-grow"></div>
 
-          <div
-            class="flex flex-row items-center space-x-5 text-base text-gray1"
-          >
+          <div class="flex flex-row items-center text-base text-gray1">
             <div
               *ngIf="query?.status === queryStatusEnum.Running"
               class="flex flex-row"
@@ -50,28 +52,30 @@
               <span> - {{ query.lastCompleteDuration }}s</span>
               <span> - {{ query.data.length }} rows</span>
             </div>
+
+            <button
+              type="button"
+              *ngIf="query?.status === queryStatusEnum.Running"
+              data-cy="modelCancelButton"
+              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
+              (click)="cancel()"
+              >Cancel</button
+            >
+
+            <button
+              type="button"
+              *ngIf="query?.status !== queryStatusEnum.Running"
+              data-cy="modelRunButton"
+              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
+              (click)="run()"
+              >Run</button
+            >
+
+            <div class="relative ml-3">
+              <m-query-options></m-query-options>
+            </div>
           </div>
-
-          <button
-            type="button"
-            *ngIf="query?.status === queryStatusEnum.Running"
-            data-cy="modelCancelButton"
-            class="w-24 py-2 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
-            (click)="cancel()"
-            >Cancel</button
-          >
-
-          <button
-            type="button"
-            *ngIf="query?.status !== queryStatusEnum.Running"
-            data-cy="modelRunButton"
-            class="w-24 py-2 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
-            (click)="run()"
-            >Run</button
-          >
         </div>
-
-        <div class="flex flex-row space-x-3 items-center"> </div>
       </div>
 
       <div class="flex flex-row flex-grow mt-6">

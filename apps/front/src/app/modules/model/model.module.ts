@@ -13,6 +13,7 @@ import { FieldOptionsComponent } from './model-tree/field-options/field-options.
 import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
+import { QueryOptionsComponent } from './query-options/query-options.component';
 import { QueryComponent } from './query/query.component';
 import { SqlComponent } from './sql/sql.component';
 
@@ -27,7 +28,8 @@ import { SqlComponent } from './sql/sql.component';
     MainTableComponent,
     FieldOptionsComponent,
     ModelFiltersComponent,
-    ModelBricksComponent
+    ModelBricksComponent,
+    QueryOptionsComponent
   ],
   imports: [
     CommonModule,
