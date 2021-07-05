@@ -9,12 +9,13 @@
     (moveNode)="onMoveNode($event)"
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
-      <div class="flex flex-row w-full">
+      <div class="flex flex-row h-11 w-full">
         <div
           data-cy="blockmlTreeItem"
           class="group flex flex-row cursor-pointer hover:bg-blue2 px-5 py-1 w-full select-none"
           [ngClass]="{
-            'font-semibold': !!fileNodeId && node.data.id === fileNodeId
+            'font-semibold bg-gray-200':
+              !!fileNodeId && node.data.id === fileNodeId
           }"
           (click)="nodeOnClick(node)"
         >

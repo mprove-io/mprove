@@ -9,13 +9,13 @@
   <div class="flex flex-grow flex-col overflow-y-auto">
     <div *ngIf="errors" class="mt-5 space-y-5">
       <div *ngFor="let error of errors">
-        <div class="mx-6 text-red1">{{ error.title }}</div>
-        <div class="ml-10 mr-6 mt-2 mb-1 text-gray-500 text-lg">{{
+        <div class="mx-6 text-red1 text-base">{{ error.title }}</div>
+        <div class="ml-10 mr-6 mt-2 mb-1 text-gray-500 text-base">{{
           error.message | capitalize
         }}</div>
         <div
           *ngFor="let line of error.lines"
-          class="pl-10 pr-6 py-2 hover:bg-blue2 hover:cursor-pointer"
+          class="pl-10 pr-6 py-2 text-base hover:bg-blue2 hover:cursor-pointer"
           (click)="goToFileLine(line)"
         >
           <div *ngIf="line.lineNumber !== 0"

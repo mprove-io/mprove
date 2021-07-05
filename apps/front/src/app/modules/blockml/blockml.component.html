@@ -15,7 +15,7 @@
           <button
             type="button"
             data-cy="blockmlCommitButton"
-            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
+            class="py-2 px-5 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
                 repo.repoStatus !== repoStatusNeedCommit || needSave === true,
@@ -32,7 +32,7 @@
           <button
             type="button"
             data-cy="blockmlCommitButton"
-            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
+            class="py-2 px-5 text-white text-base rounded font-medium focus:outline-none"
             *ngIf="repo.repoStatus === repoStatusNeedPull"
             [ngClass]="{
               'bg-gray-400 cursor-default':
@@ -50,7 +50,7 @@
           <button
             type="button"
             data-cy="blockmlPushButton"
-            class="py-2 px-5 text-white rounded font-medium focus:outline-none"
+            class="py-2 px-5 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
                 repo.repoStatus !== repoStatusNeedPush || needSave === true,

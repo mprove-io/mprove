@@ -10,7 +10,7 @@
     <div *ngIf="repo?.conflicts" class="mt-5">
       <div
         *ngFor="let conflict of repo.conflicts"
-        class="px-6 py-2 hover:bg-blue2 hover:cursor-pointer"
+        class="px-6 py-2 text-base hover:bg-blue2 hover:cursor-pointer"
         (click)="goToFileLine(conflict)"
       >
         <div *ngIf="conflict.lineNumber !== 0"
