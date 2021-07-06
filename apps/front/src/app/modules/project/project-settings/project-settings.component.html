@@ -11,7 +11,7 @@
     <div class="flex-1 bg-white mt-6 rounded shadow-lg w-full h-2">
       <div class="w-full h-full overflow-auto">
         <div class="flex flex-row mt-16 ml-32">
-          <div class="flex flex-col">
+          <div class="flex flex-col text-base">
             <div class="h-16 flex items-center justify-end font-semibold"
               >Project Name</div
             >
@@ -21,13 +21,13 @@
           <div class="flex flex-col ml-6">
             <div
               data-cy="projectSettingsName"
-              class="h-16 flex items-center max-w-xl truncate"
-              >{{ project?.name }}</div
+              class="h-16 flex text-base items-center max-w-xl truncate"
+              >{{ project?.name | capitalize }}</div
             >
             <div class="flex items-center">
               <button
                 data-cy="projectSettingsDeleteProjectButton"
-                class="mt-7 px-5 py-3 mb-5 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+                class="mt-7 px-5 py-3 mb-5 text-base border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
                 [ngClass]="{
                   'border-gray3 text-gray3': isAdmin === false
                 }"
@@ -42,7 +42,7 @@
             <div class="h-16 flex items-center">
               <button
                 data-cy="projectSettingsEditNameButton"
-                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                class="py-2 px-3 text-base border border-gray3 rounded shadow-sm leading-3 font-medium text-gray1 focus:outline-none"
                 [ngClass]="{
                   'text-gray3': isAdmin === false
                 }"
