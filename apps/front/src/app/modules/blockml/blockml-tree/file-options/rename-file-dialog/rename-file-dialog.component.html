@@ -10,45 +10,53 @@
     [formGroup]="renameFileForm"
     (ngSubmit)="save()"
   >
-    <input
-      data-cy="renameFileDialogFileNameInput"
-      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
-      [ngClass]="{
-        'border-red-600':
-          renameFileForm.controls['fileName'].invalid &&
-          renameFileForm.controls['fileName'].touched
-      }"
-      formControlName="fileName"
-      placeholder="File Name"
-    />
-    <m-validation
-      [control]="renameFileForm.controls['fileName']"
-    ></m-validation>
+    <div class="flex flex-row mt-9 space-x-5">
+      <div>
+        <div class="text-base">Name</div>
+        <input
+          data-cy="renameFileDialogFileNameInput"
+          class="w-72 h-[36px] mt-2 form-input rounded border-gray3 focus:border-blue3"
+          [ngClass]="{
+            'border-red-600':
+              renameFileForm.controls['fileName'].invalid &&
+              renameFileForm.controls['fileName'].touched
+          }"
+          formControlName="fileName"
+          placeholder="File Name"
+        />
+        <m-validation
+          [control]="renameFileForm.controls['fileName']"
+        ></m-validation>
+      </div>
 
-    <div>Type:</div>
-    <ng-select
-      #typeSelect
-      data-cy="typeSelect"
-      class="mt-2 flex focus:outline-none w-80"
-      [items]="extList"
-      [clearable]="false"
-      [searchable]="false"
-      (change)="extChange($event)"
-      formControlName="fileExt"
-    >
-    </ng-select>
+      <div>
+        <div class="text-base">Type</div>
+        <ng-select
+          #typeSelect
+          data-cy="typeSelect"
+          class="w-44 mt-2 text-base focus:outline-none"
+          [items]="extList"
+          [clearable]="false"
+          [searchable]="false"
+          (change)="extChange($event)"
+          appendTo="body"
+          formControlName="fileExt"
+        >
+        </ng-select>
+      </div>
+    </div>
 
-    <div class="mt-72">
+    <div class="mt-9">
       <button
         data-cy="renameFileDialogSaveButton"
-        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
         data-cy="renameFileDialogCancelButton"
-        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

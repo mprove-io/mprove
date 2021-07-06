@@ -25,11 +25,11 @@
       [control]="createBranchForm.controls['branchId']"
     ></m-validation>
 
-    <div>Base on branch:</div>
+    <div class="text-base">Base on branch:</div>
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="mt-2 flex focus:outline-none w-80"
+      class="mt-2 flex text-base focus:outline-none w-80"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
@@ -43,21 +43,25 @@
         ng-header-tmp
         *ngIf="branchesList?.length > 0 && selectedBranchItem"
       >
-        <div class="font-semibold text-sm"> Repository - Branch </div>
+        <div
+          class="flex text-base text-gray-400 h-10 justify-center items-center select-none"
+        >
+          REPO - BRANCH
+        </div>
       </ng-template>
     </ng-select>
 
     <div class="mt-80">
       <button
         data-cy="createBranchDialogCreateButton"
-        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Create</button
       >
 
       <button
         data-cy="createBranchDialogCancelButton"
-        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

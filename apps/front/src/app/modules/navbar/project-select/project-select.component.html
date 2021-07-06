@@ -18,12 +18,16 @@
     ng-header-tmp
     *ngIf="projectsListLength > 0 && selectedProjectId"
   >
-    <div class="font-semibold text-sm"> Project </div>
+    <div
+      class="flex text-base text-gray-400 h-10 justify-center items-center select-none"
+    >
+      PROJECT
+    </div>
   </ng-template>
   <ng-template ng-footer-tmp>
     <button
       data-cy="projectSelectCreateProjectButton"
-      class="py-3 rounded text-blue3 hover:bg-blue2 w-full focus:outline-none"
+      class="py-3 rounded text-base text-blue3 hover:bg-blue2 w-full focus:outline-none"
       (click)="createNewProject(projectSelect)"
       >+ New Project</button
     >

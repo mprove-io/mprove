@@ -2,43 +2,54 @@
   <div
     data-cy="mergeDialogTitle"
     class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
-    >Merge</div
+    >Merge Branch</div
   >
 
-  <form class="flex flex-col w-80" [formGroup]="mergeForm" (ngSubmit)="merge()">
-    <div class="mt-9">Branch</div>
+  <form
+    class="flex mt-9 flex-col w-80"
+    [formGroup]="mergeForm"
+    (ngSubmit)="merge()"
+  >
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="mt-2 flex focus:outline-none w-80"
+      class="mt-2 flex text-base focus:outline-none w-80"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
       (change)="branchChange($event)"
       formControlName="branch"
-      placeholder="Branches"
+      placeholder="Branch"
       bindLabel="extraName"
       bindValue="extraId"
     >
       <ng-template ng-header-tmp>
-        <div class="font-semibold text-sm"> Repository - Branch </div>
+        <div
+          class="flex text-base text-gray-400 h-10 justify-center items-center select-none"
+        >
+          REPO - BRANCH
+        </div>
       </ng-template>
     </ng-select>
 
-    <div class="mt-72">To current branch:</div>
-    <div class="font-semibold">{{ ref.data.currentBranchExtraName }}</div>
+    <div class="mt-72 text-base flex flex-row justify-start items-center">
+      <div>To current branch</div>
+      <div class="ml-1 font-semibold">{{
+        ref.data.currentBranchExtraName
+      }}</div>
+    </div>
 
     <div class="mt-9">
       <button
         data-cy="mergeDialogMergeButton"
-        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Merge</button
       >
 
       <button
         data-cy="mergeDialogCancelButton"
-        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button
