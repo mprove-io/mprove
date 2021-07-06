@@ -40,7 +40,7 @@
               <td class="w-24">
                 <div class="flex">
                   <button
-                    class="ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-md tracking-wider focus:outline-none"
+                    class="ml-5 h-10 w-10 z-10 rounded-full bg-blue-200 text-base tracking-wider focus:outline-none"
                     [ngClass]="{
                       'cursor-default': !user.avatarSmall
                     }"
@@ -52,20 +52,20 @@
                 </div>
               </td>
 
-              <td class="w-64">{{ user.fullName }}</td>
+              <td class="w-64 text-base">{{ user.fullName }}</td>
 
-              <td data-cy="orgUsersUserEmailData" class="w-64">
+              <td data-cy="orgUsersUserEmailData" class="w-64 text-base">
                 {{ user.email }}
               </td>
 
-              <td class="w-48">{{ user.alias }}</td>
+              <td class="w-48 text-base">{{ user.alias }}</td>
               <td class="w-48">
                 <div class="flex flex-col my-3">
                   <div
                     *ngFor="let projectUserProject of user.projectUserProjects"
                   >
-                    <div class="flex flex-row items-center">
-                      <div>{{ projectUserProject }} </div>
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ projectUserProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td
@@ -77,8 +77,8 @@
                       let projectAdminProject of user.projectAdminProjects
                     "
                   >
-                    <div class="flex flex-row items-center">
-                      <div>{{ projectAdminProject }} </div>
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ projectAdminProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td
@@ -90,8 +90,8 @@
                       let blockmlEditorProject of user.blockmlEditorProjects
                     "
                   >
-                    <div class="flex flex-row items-center">
-                      <div>{{ blockmlEditorProject }} </div>
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ blockmlEditorProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td
@@ -103,8 +103,8 @@
                       let modelExplorerProject of user.modelExplorerProjects
                     "
                   >
-                    <div class="flex flex-row items-center">
-                      <div>{{ modelExplorerProject }} </div>
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ modelExplorerProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td
