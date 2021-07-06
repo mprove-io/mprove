@@ -13,11 +13,12 @@
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="mt-2 flex text-base focus:outline-none w-80"
+      class="mt-2 text-base focus:outline-none w-80"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
       (change)="branchChange($event)"
+      appendTo="body"
       formControlName="branch"
       placeholder="Branch"
       bindLabel="extraName"
@@ -32,7 +33,7 @@
       </ng-template>
     </ng-select>
 
-    <div class="mt-72 text-base flex flex-row justify-start items-center">
+    <div class="mt-5 text-base flex flex-row justify-start items-center">
       <div>To current branch</div>
       <div class="ml-1 font-semibold">{{
         ref.data.currentBranchExtraName

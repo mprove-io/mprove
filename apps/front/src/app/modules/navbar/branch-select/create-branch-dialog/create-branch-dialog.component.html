@@ -29,11 +29,12 @@
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="mt-2 flex text-base focus:outline-none w-80"
+      class="mt-2 text-base focus:outline-none w-80"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
       (change)="branchChange($event)"
+      appendTo="body"
       formControlName="fromBranch"
       placeholder="Branches"
       bindLabel="extraName"
@@ -51,7 +52,7 @@
       </ng-template>
     </ng-select>
 
-    <div class="mt-80">
+    <div class="mt-9">
       <button
         data-cy="createBranchDialogCreateButton"
         class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
