@@ -9,10 +9,11 @@
 
       <button
         data-cy="projectTeamInviteMemberButton"
-        class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="py-2 px-5 text-base text-white rounded font-medium focus:outline-none"
         type="submit"
         [ngClass]="{
-          'bg-gray-400': isAdmin === false
+          'bg-blue3': isAdmin === true,
+          'bg-gray-400 cursor-default': isAdmin === false
         }"
         (click)="inviteMember()"
         [disabled]="isAdmin === false"
@@ -67,45 +68,45 @@
                 </div>
               </td>
 
-              <td class="w-64">{{ member.fullName }}</td>
+              <td class="w-64 text-base">{{ member.fullName }}</td>
 
-              <td data-cy="projectTeamMemberEmailData" class="w-64">
+              <td data-cy="projectTeamMemberEmailData" class="w-64 text-base">
                 {{ member.email }}
               </td>
 
-              <td class="w-48">{{ member.alias }}</td>
+              <td class="w-48 text-base">{{ member.alias }}</td>
 
               <td class="w-48">
                 <div class="flex flex-row items-center">
                   <button
                     data-cy="projectTeamAddRoleButton"
-                    class="flex items-center justify-center h-10 w-10 text-blue3 rounded focus:outline-none"
+                    class="flex items-center justify-center h-8 w-8 rounded focus:outline-none"
+                    [ngClass]="{
+                      'text-gray-400 cursor-default': isAdmin === false,
+                      'text-blue3 hover:bg-blue2': isAdmin === true
+                    }"
                     (click)="addRole(member, i)"
                     [disabled]="isAdmin === false"
                   >
-                    <div
-                      [ngClass]="{
-                        'text-gray1': isAdmin === false
-                      }"
-                    >
+                    <div>
                       <m-add-icon></m-add-icon>
                     </div>
                   </button>
                   <div class="flex flex-col my-3 ml-2">
                     <div *ngFor="let role of member.roles; let n = index">
-                      <div class="flex flex-row items-center">
+                      <div class="flex flex-row items-center text-base">
                         <div>{{ role }} </div>
                         <button
                           data-cy="projectTeamRemoveRoleButton"
-                          class="flex items-center justify-center h-9 w-9 text-red1 rounded focus:outline-none"
+                          class="flex items-center justify-center h-8 w-8 ml-2 rounded focus:outline-none"
+                          [ngClass]="{
+                            'text-gray-400 cursor-default': isAdmin === false,
+                            'text-gray1 hover:bg-blue2': isAdmin === true
+                          }"
                           (click)="removeRole(member, i, n)"
                           [disabled]="isAdmin === false"
                         >
-                          <div
-                            [ngClass]="{
-                              'text-gray1': isAdmin === false
-                            }"
-                          >
+                          <div>
                             <m-delete-icon></m-delete-icon>
                           </div>
                         </button>
@@ -122,10 +123,10 @@
                     class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
                     [ngClass]="{
                       'bg-blue3 ': member.isAdmin === true && isAdmin === true,
-                      'bg-gray-400':
+                      'bg-gray-400 cursor-default':
                         member.isAdmin === true && isAdmin === false,
                       'border-blue3': isAdmin === true,
-                      'border-gray-400': isAdmin === false
+                      'border-gray-400 cursor-default': isAdmin === false
                     }"
                     (click)="isAdminChange($event, i)"
                     [disabled]="isAdmin === false"
@@ -142,10 +143,10 @@
                     class="flex items-center justify-center h-5 w-5 border-2 text-white rounded focus:outline-none"
                     [ngClass]="{
                       'bg-blue3 ': member.isEditor === true && isAdmin === true,
-                      'bg-gray-400':
+                      'bg-gray-400 cursor-default':
                         member.isEditor === true && isAdmin === false,
                       'border-blue3': isAdmin === true,
-                      'border-gray-400': isAdmin === false
+                      'border-gray-400 cursor-default': isAdmin === false
                     }"
                     (click)="isEditorChange($event, i)"
                     [disabled]="isAdmin === false"
@@ -163,10 +164,10 @@
                     [ngClass]="{
                       'bg-blue3 ':
                         member.isExplorer === true && isAdmin === true,
-                      'bg-gray-400':
+                      'bg-gray-400 cursor-default':
                         member.isExplorer === true && isAdmin === false,
                       'border-blue3': isAdmin === true,
-                      'border-gray-400': isAdmin === false
+                      'border-gray-400 cursor-default': isAdmin === false
                     }"
                     (click)="isExplorerChange($event, i)"
                     [disabled]="isAdmin === false"
@@ -179,14 +180,20 @@
               <td>
                 <button
                   data-cy="projectTeamRemoveMemberButton"
-                  class="h-10 w-10 rounded-full text-red1 focus:outline-none"
+                  class="h-9 w-9 rounded text-gray1 focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default':
+                      member.memberId === userId || isAdmin === false,
+                    'hover:bg-blue2':
+                      member.memberId !== userId && isAdmin !== false
+                  }"
                   [disabled]="member.memberId === userId || isAdmin === false"
                   (click)="removeMember(member)"
                 >
                   <div
                     class="flex justify-center"
                     [ngClass]="{
-                      'text-gray1':
+                      'text-gray-400 ':
                         member.memberId === userId || isAdmin === false
                     }"
                   >

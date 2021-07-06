@@ -9,10 +9,11 @@
 
       <button
         data-cy="projectConnectionsAddConnectionButton"
-        class="py-2 px-5 bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="py-2 px-5 text-base text-white rounded font-medium focus:outline-none"
         type="submit"
         [ngClass]="{
-          'bg-gray-400': isAdmin === false
+          'bg-blue3': isAdmin === true,
+          'bg-gray-400 cursor-default': isAdmin === false
         }"
         (click)="addConnection()"
         [disabled]="isAdmin === false"
@@ -38,7 +39,7 @@
             </tr>
           </thead>
 
-          <tbody class="divide-y divide-gray-300">
+          <tbody class="text-base divide-y divide-gray-300">
             <tr
               *ngFor="
                 let connection of connections
@@ -90,28 +91,32 @@
                 </div>
               </td>
 
-              <td>
+              <td class="w-32">
                 <button
                   data-cy="projectConnectionsEditButton"
                   (click)="editConnection(connection, i)"
-                  class="ml-5 py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                  class="ml-5 py-2 px-3 text-base border rounded shadow-sm leading-3 font-medium focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400': isAdmin === false,
+                    'text-gray1 border-gray3': isAdmin === true
+                  }"
+                  [disabled]="isAdmin === false"
                   >Edit</button
                 ></td
               >
 
-              <td class="w-48">
+              <td class="w-32">
                 <button
                   data-cy="projectConnectionsDeleteButton"
-                  class="ml-3 h-10 w-10 rounded-full text-red1 focus:outline-none"
+                  class="ml-3 h-9 w-9 rounded focus:outline-none"
+                  [ngClass]="{
+                    'cursor-default text-gray-400': isAdmin === false,
+                    'hover:bg-blue2': isAdmin !== false
+                  }"
                   [disabled]="isAdmin === false"
                   (click)="deleteConnection(connection)"
                 >
-                  <div
-                    class="flex justify-center"
-                    [ngClass]="{
-                      'text-gray1': isAdmin === false
-                    }"
-                  >
+                  <div class="flex justify-center">
                     <m-delete-icon></m-delete-icon>
                   </div>
                 </button>

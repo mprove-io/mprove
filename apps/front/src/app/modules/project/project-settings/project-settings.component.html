@@ -27,9 +27,10 @@
             <div class="flex items-center">
               <button
                 data-cy="projectSettingsDeleteProjectButton"
-                class="mt-7 px-5 py-3 mb-5 text-base border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+                class="mt-7 px-5 py-3 mb-5 text-base border shadow-sm rounded font-medium focus:outline-none"
                 [ngClass]="{
-                  'border-gray3 text-gray3': isAdmin === false
+                  'cursor-default text-gray-400': isAdmin === false,
+                  'border-red1 text-red1': isAdmin === true
                 }"
                 (click)="deleteProject()"
                 [disabled]="isAdmin === false"
@@ -42,9 +43,10 @@
             <div class="h-16 flex items-center">
               <button
                 data-cy="projectSettingsEditNameButton"
-                class="py-2 px-3 text-base border border-gray3 rounded shadow-sm leading-3 font-medium text-gray1 focus:outline-none"
+                class="py-2 px-3 text-base border rounded shadow-sm leading-3 font-medium focus:outline-none"
                 [ngClass]="{
-                  'text-gray3': isAdmin === false
+                  'cursor-default text-gray-400': isAdmin === false,
+                  'text-gray1 border-gray3': isAdmin === true
                 }"
                 [disabled]="isAdmin === false"
                 (click)="editName()"

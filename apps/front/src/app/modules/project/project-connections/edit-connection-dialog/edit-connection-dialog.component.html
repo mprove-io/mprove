@@ -6,19 +6,19 @@
   >
 
   <form
-    class="flex flex-col w-80"
+    class="flex flex-col w-80 text-base"
     [formGroup]="editConnectionForm"
     (ngSubmit)="save()"
   >
     <div class="mt-6">
-      <span class="font-semibold">name:</span>
+      <span class="font-semibold">Name:</span>
       <span class="ml-1">
         {{ this.ref.data.connection.connectionId }}
       </span>
     </div>
 
     <div class="mt-6">
-      <span class="font-semibold">type:</span>
+      <span class="font-semibold">Type:</span>
       <span class="ml-1">
         {{ this.ref.data.connection.type }}
       </span>
@@ -138,14 +138,14 @@
     <div class="mt-6">
       <button
         data-cy="editConnectionDialogSaveButton"
-        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
         data-cy="editConnectionDialogCancelButton"
-        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button
