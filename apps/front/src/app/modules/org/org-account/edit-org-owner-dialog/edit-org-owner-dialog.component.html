@@ -26,7 +26,7 @@
       [control]="editOrgOwnerForm.controls['ownerEmail']"
     ></m-validation>
 
-    <p
+    <p class="text-base text-gray1"
       >The new owner must be a registered Mprove user with a verified email
       address</p
     >
@@ -34,14 +34,14 @@
     <div class="mt-6">
       <button
         data-cy="editOrgOwnerDialogSaveButton"
-        class="py-3 w-28 bg-blue3 text-white rounded font-medium focus:outline-none"
+        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
         type="submit"
         >Save</button
       >
 
       <button
         data-cy="editOrgOwnerDialogCancelButton"
-        class="ml-3 py-3 w-28 rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

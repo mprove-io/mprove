@@ -9,7 +9,7 @@
     <div class="flex flex-1 bg-white mt-6 rounded shadow-lg w-full h-2">
       <div class="w-full h-full overflow-auto">
         <div class="flex flex-row mt-16 ml-32">
-          <div class="flex flex-col">
+          <div class="flex flex-col text-base">
             <div class="h-16 flex items-center justify-end font-semibold"
               >Organization Name</div
             >
@@ -25,7 +25,7 @@
             <div class="flex items-center justify-end font-semibold"></div>
           </div>
 
-          <div class="flex flex-col ml-6">
+          <div class="flex flex-col ml-6 text-base">
             <div
               data-cy="orgAccountName"
               class="h-16 flex items-center max-w-xl truncate"
@@ -49,9 +49,10 @@
             <div class="flex items-center">
               <button
                 data-cy="orgAccountDeleteOrgButton"
-                class="mt-7 px-5 mb-5 py-3 border border-red1 text-red1 shadow-sm rounded font-medium focus:outline-none"
+                class="mt-7 px-5 mb-5 py-3 text-base border shadow-sm rounded font-medium focus:outline-none"
                 [ngClass]="{
-                  'border-gray3 text-gray3': isOrgOwner === false
+                  'cursor-default text-gray-400': isOrgOwner === false,
+                  'border-red1 text-red1': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="deleteOrg()"
@@ -64,9 +65,10 @@
             <div class="h-16 flex items-center">
               <button
                 data-cy="orgAccountEditNameButton"
-                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
                 [ngClass]="{
-                  'text-gray3': isOrgOwner === false
+                  'cursor-default text-gray-400': isOrgOwner === false,
+                  'text-gray1 border-gray3': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editName()"
@@ -76,9 +78,10 @@
             <div class="h-16 flex items-center">
               <button
                 data-cy="orgAccountEditOwnerButton"
-                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
                 [ngClass]="{
-                  'text-gray3': isOrgOwner === false
+                  'cursor-default text-gray-400': isOrgOwner === false,
+                  'text-gray1 border-gray3': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editOwner()"
@@ -88,9 +91,10 @@
             <div class="h-16 flex items-center">
               <button
                 data-cy="orgAccountEditCompanySizeButton"
-                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
                 [ngClass]="{
-                  'text-gray3': isOrgOwner === false
+                  'cursor-default text-gray-400': isOrgOwner === false,
+                  'text-gray1 border-gray3': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editCompanySize()"
@@ -100,9 +104,10 @@
             <div class="h-16 flex items-center">
               <button
                 data-cy="orgAccountEditContactPhoneButton"
-                class="py-2 px-3 border border-gray3 rounded shadow-sm text-sm leading-3 font-medium text-gray1 focus:outline-none"
+                class="py-2 px-3 border rounded shadow-sm text-sm leading-3 font-medium focus:outline-none"
                 [ngClass]="{
-                  'text-gray3': isOrgOwner === false
+                  'cursor-default text-gray-400': isOrgOwner === false,
+                  'text-gray1 border-gray3': isOrgOwner === true
                 }"
                 [disabled]="isOrgOwner === false"
                 (click)="editContactPhone()"
