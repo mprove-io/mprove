@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center h-96 p-9 bg-white">
   <div class="text-2xl text-gray2 font-semibold mb-8">Error</div>
   <div class="flex-grow overflow-auto">
-    <div class="grid grid-cols-4 gap-4 text-gray1">
+    <div class="grid grid-cols-4 gap-4 text-base text-gray1">
       <div>Message</div>
       <div data-cy="errorDialogMessage" class="col-span-3">{{ message }}</div>
 
@@ -20,7 +20,7 @@
 
   <div class="mt-8">
     <button
-      class="w-28 py-3 bg-blue3 text-white rounded font-medium focus:outline-none"
+      class="w-28 py-3 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
       (click)="onOk()"
       >Ok</button
     >

@@ -56,9 +56,9 @@
 
               <div class="ml-2 text-base">
                 {{
-                  node.isRoot
+                  node.parent === null || node.parent.data.virtual
                     ? (projectName$ | async | capitalize)
-                    : node.data.name
+                    : node?.data.name
                 }}
               </div>
             </div>
