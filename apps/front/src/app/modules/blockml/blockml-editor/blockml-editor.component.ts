@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
@@ -25,7 +25,7 @@ import { common } from '~front/barrels/common';
 export class BlockmlEditorComponent implements OnDestroy {
   fileEditorTheme = 'vs-dark';
 
-  line: number;
+  line = 1;
 
   editor: monaco.editor.IStandaloneCodeEditor = null;
 
@@ -83,7 +83,14 @@ export class BlockmlEditorComponent implements OnDestroy {
   routeLine$ = this.route.queryParams.pipe(
     tap(params => {
       this.line = Number(params['line'] ? params['line'] : 1);
-      this.moveToLine();
+      this.moveToLine(this.line);
+    })
+  );
+
+  fileId$ = this.fileQuery.fileId$.pipe(
+    filter(v => !!v),
+    tap((fileId: string) => {
+      this.moveToLine(this.line);
     })
   );
 
@@ -237,11 +244,11 @@ export class BlockmlEditorComponent implements OnDestroy {
     );
   }
 
-  async moveToLine() {
+  async moveToLine(line: number) {
     setTimeout(() => {
       if (this.editor) {
-        this.editor.revealLineInCenter(this.line);
-        this.editor.setPosition({ column: 1, lineNumber: this.line });
+        this.editor.revealLineInCenter(line);
+        this.editor.setPosition({ column: 1, lineNumber: line });
       }
     }, 50);
   }
