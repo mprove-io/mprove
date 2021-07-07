@@ -334,7 +334,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       .pipe(
         map((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
           let { queries } = resp.payload;
-          console.log(queries);
+          // console.log(queries);
           this.queryStore.update(queries[0]);
         }),
         take(1)

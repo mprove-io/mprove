@@ -35,7 +35,7 @@ export class ModelFiltersComponent {
     filterIndex: number,
     eventFractionUpdate: any
   ) {
-    console.log(eventFractionUpdate);
+    // console.log(eventFractionUpdate);
 
     let newMconfig = this.structService.makeMconfig();
 

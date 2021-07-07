@@ -35,7 +35,7 @@ export class BlockmlTreeComponent implements OnDestroy {
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
       this.repo = x;
-      console.log(x);
+      // console.log(x);
       this.cd.detectChanges();
     })
   );
