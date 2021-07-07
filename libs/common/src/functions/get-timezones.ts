@@ -4,7 +4,7 @@ export function getTimezones() {
   let timezones: { value: string; label: string }[] = [
     {
       value: constants.USE_PROJECT_TIMEZONE,
-      label: constants.USE_PROJECT_TIMEZONE
+      label: 'USE PROJECT CONFIG TIMEZONE'
     },
     {
       value: 'UTC',

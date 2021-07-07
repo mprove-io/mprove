@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
+import { getTimezoneLabelByValue } from '~common/_index';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -14,13 +15,23 @@ import { common } from '~front/barrels/common';
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
+  userTimezoneLabel: string;
+
+  userTimezone$ = this.userQuery.timezone$.pipe(
+    tap(x => {
+      this.userTimezoneLabel = getTimezoneLabelByValue(x);
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public userQuery: UserQuery,
     public navQuery: NavQuery,
     private authService: AuthService,
     private apiService: ApiService,
     private router: Router,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
