@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { ProjectQuery } from '~front/app/queries/project.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -38,6 +39,8 @@ export class BlockmlTreeComponent implements OnDestroy {
       this.cd.detectChanges();
     })
   );
+
+  projectName$ = this.projectQuery.name$;
 
   actionMapping: IActionMapping = {
     mouse: {
@@ -109,6 +112,7 @@ export class BlockmlTreeComponent implements OnDestroy {
 
   constructor(
     public repoQuery: RepoQuery,
+    public projectQuery: ProjectQuery,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
