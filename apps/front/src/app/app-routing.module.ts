@@ -25,6 +25,7 @@ import { ProfileComponent } from './modules/profile/profile.component';
 import { ProjectConnectionsComponent } from './modules/project/project-connections/project-connections.component';
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
+import { NotFoundComponent } from './modules/special/not-found/not-found.component';
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
@@ -217,6 +218,10 @@ const routes: Routes = [
         ]
       }
     ]
+  },
+  {
+    component: NotFoundComponent,
+    path: '**'
   }
 ];
 
