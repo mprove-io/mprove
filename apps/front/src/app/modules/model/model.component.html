@@ -35,13 +35,18 @@
               <div class="w-8 ml-1">{{ runSecondsAgo$ | async }}</div>
             </div>
 
-            <div *ngIf="query?.status === queryStatusEnum.Error"
-              >Error - {{ errorTimeAgo$ | async }}</div
+            <div
+              *ngIf="query?.status === queryStatusEnum.Error"
+              class="max-w-2xl px-3 py-2 bg-red-100 text-red-700 truncate select-none"
+              nz-tooltip
+              [nzTooltipTitle]="query?.lastErrorMessage | capitalize"
+              nzTooltipPlacement="bottom"
+              >{{ query?.lastErrorMessage | capitalize }}</div
             >
 
-            <div *ngIf="query?.status === queryStatusEnum.Error">{{
-              query?.lastErrorMessage
-            }}</div>
+            <div *ngIf="query?.status === queryStatusEnum.Error" class="ml-5"
+              >Error - {{ errorTimeAgo$ | async }}</div
+            >
 
             <div *ngIf="query?.status === queryStatusEnum.Canceled"
               >Canceled - {{ canceledTimeAgo$ | async }}</div

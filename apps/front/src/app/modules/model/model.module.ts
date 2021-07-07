@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { SharedModule } from '../shared/shared.module';
 import { MainTableComponent } from './main-table/main-table.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
@@ -38,7 +39,8 @@ import { SqlComponent } from './sql/sql.component';
     SharedModule,
     RouterModule,
     TreeModule,
-    NgSelectModule
+    NgSelectModule,
+    NzToolTipModule
   ]
 })
 export class ModelModule {}
