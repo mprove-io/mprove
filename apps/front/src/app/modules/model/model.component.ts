@@ -12,6 +12,7 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
+import { DataSizeService } from '~front/app/services/data-size.service';
 import { FileService } from '~front/app/services/file.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -33,6 +34,7 @@ import { common } from '~front/barrels/common';
 })
 export class ModelComponent implements OnInit, OnDestroy {
   queryStatusEnum = common.QueryStatusEnum;
+  connectionTypeEnum = common.ConnectionTypeEnum;
 
   lastUrl: string;
 
@@ -82,6 +84,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   query$ = this.queryQuery.select().pipe(
     tap(x => {
       this.query = x;
+      this.dryQueryEstimate = undefined;
       this.cd.detectChanges();
     })
   );
@@ -105,6 +108,15 @@ export class ModelComponent implements OnInit, OnDestroy {
       // console.log(this.nav.serverTimeDiff);
       return s > 0 ? s : 0;
     })
+  );
+
+  dryTimeAgo$ = interval(1000).pipe(
+    startWith(0),
+    map(x =>
+      this.timeService.timeAgoFromNow(
+        this.dryQueryEstimate.lastRunDryTs + this.nav.serverTimeDiff
+      )
+    )
   );
 
   errorTimeAgo$ = interval(1000).pipe(
@@ -163,6 +175,14 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   timeDiff: number;
 
+  isRunningDry = false;
+  dryId: string;
+  dryQueryEstimate: common.QueryEstimate;
+  dryDataSize: string;
+
+  isRunning = false;
+  isCanceling = false;
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -183,7 +203,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     private structService: StructService,
     private timeService: TimeService,
     private mconfigService: MconfigService,
-    private structQuery: StructQuery
+    private structQuery: StructQuery,
+    private dataSizeService: DataSizeService
   ) {}
 
   ngOnInit() {
@@ -324,6 +345,9 @@ export class ModelComponent implements OnInit, OnDestroy {
       queryIds: [this.query.queryId]
     };
 
+    this.isRunning = true;
+    this.cd.detectChanges();
+
     this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
@@ -333,6 +357,41 @@ export class ModelComponent implements OnInit, OnDestroy {
         map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           let { runningQueries } = resp.payload;
           this.queryStore.update(runningQueries[0]);
+          this.isRunning = false;
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  runDry() {
+    this.dryId = common.makeId();
+
+    this.isRunningDry = true;
+
+    let payload: apiToBackend.ToBackendRunQueriesDryRequestPayload = {
+      queryIds: [this.query.queryId],
+      dryId: this.dryId
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendRunQueriesDryResponse) => {
+          let { validQueryEstimates, errorQueries } = resp.payload;
+
+          if (errorQueries.length > 0) {
+            this.queryStore.update(errorQueries[0]);
+          } else {
+            this.dryDataSize = this.dataSizeService.getSize(
+              validQueryEstimates[0].estimate
+            );
+            this.dryQueryEstimate = validQueryEstimates[0];
+          }
+          this.isRunningDry = false;
         }),
         take(1)
       )
@@ -344,6 +403,8 @@ export class ModelComponent implements OnInit, OnDestroy {
       queryIds: [this.query.queryId]
     };
 
+    this.isCanceling = true;
+
     this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
@@ -354,6 +415,7 @@ export class ModelComponent implements OnInit, OnDestroy {
           let { queries } = resp.payload;
           // console.log(queries);
           this.queryStore.update(queries[0]);
+          this.isCanceling = false;
         }),
         take(1)
       )

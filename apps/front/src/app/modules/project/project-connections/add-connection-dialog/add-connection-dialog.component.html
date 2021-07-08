@@ -42,7 +42,7 @@
       <textarea
         rows="9"
         data-cy="addConnectionDialogBigqueryCredentialsInput"
-        class="mt-6 w-80 form-input rounded border-gray3 focus:border-blue3 resize-none"
+        class="mt-6 w-96 form-input rounded border-gray3 focus:border-blue3 resize-none"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['bigqueryCredentials'].invalid &&
@@ -55,16 +55,16 @@
         [control]="addConnectionForm.controls['bigqueryCredentials']"
       ></m-validation>
 
+      <div class="text-base">Query Size Limit, gb (default: 1)</div>
       <input
         data-cy="addConnectionDialogBigqueryQuerySizeLimitGbInput"
-        class="w-80 form-input rounded border-gray3 focus:border-blue3"
+        class="w-80 mt-1 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             addConnectionForm.controls['bigqueryQuerySizeLimitGb'].invalid &&
             addConnectionForm.controls['bigqueryQuerySizeLimitGb'].touched
         }"
         formControlName="bigqueryQuerySizeLimitGb"
-        placeholder="Query Size Limit, gb (default: 1)"
       />
       <m-validation
         [control]="addConnectionForm.controls['bigqueryQuerySizeLimitGb']"

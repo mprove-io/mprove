@@ -10,7 +10,7 @@ let orgId = 't' + testId;
 let orgName = testId;
 
 let projectId = common.makeId();
-let projectName = 'p1';
+let projectName = testId;
 
 describe('front-e2e', () => {
   it(testId, () => {

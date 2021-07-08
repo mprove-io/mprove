@@ -27,8 +27,24 @@
           <div class="flex-grow"></div>
 
           <div class="flex flex-row items-center text-base text-gray1">
+            <div *ngIf="isRunningDry === true">Calculating ... </div>
+
+            <div *ngIf="isRunning === true">Running ... </div>
+
+            <div *ngIf="isCanceling === true">Canceling ... </div>
+
+            <div *ngIf="isRunningDry === false && !!dryQueryEstimate"
+              >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
+            </div>
+
             <div
-              *ngIf="query?.status === queryStatusEnum.Running"
+              *ngIf="
+                isRunningDry === false &&
+                isRunning === false &&
+                isCanceling === false &&
+                !dryQueryEstimate &&
+                query?.status === queryStatusEnum.Running
+              "
               class="flex flex-row"
             >
               <div>Running - seconds</div>
@@ -36,7 +52,13 @@
             </div>
 
             <div
-              *ngIf="query?.status === queryStatusEnum.Error"
+              *ngIf="
+                isRunningDry === false &&
+                isRunning === false &&
+                isCanceling === false &&
+                !dryQueryEstimate &&
+                query?.status === queryStatusEnum.Error
+              "
               class="max-w-2xl px-3 py-2 bg-red-100 text-red-700 truncate select-none"
               nz-tooltip
               [nzTooltipTitle]="query?.lastErrorMessage | capitalize"
@@ -44,15 +66,38 @@
               >{{ query?.lastErrorMessage | capitalize }}</div
             >
 
-            <div *ngIf="query?.status === queryStatusEnum.Error" class="ml-5"
+            <div
+              *ngIf="
+                isRunningDry === false &&
+                isRunning === false &&
+                isCanceling === false &&
+                !dryQueryEstimate &&
+                query?.status === queryStatusEnum.Error
+              "
+              class="ml-5"
               >Error - {{ errorTimeAgo$ | async }}</div
             >
 
-            <div *ngIf="query?.status === queryStatusEnum.Canceled"
+            <div
+              *ngIf="
+                isRunningDry === false &&
+                isRunning === false &&
+                isCanceling === false &&
+                !dryQueryEstimate &&
+                query?.status === queryStatusEnum.Canceled
+              "
               >Canceled - {{ canceledTimeAgo$ | async }}</div
             >
 
-            <div *ngIf="query?.status === queryStatusEnum.Completed">
+            <div
+              *ngIf="
+                isRunningDry === false &&
+                isRunning === false &&
+                isCanceling === false &&
+                !dryQueryEstimate &&
+                query?.status === queryStatusEnum.Completed
+              "
+            >
               <span>Completed - {{ completedTimeAgo$ | async }}</span>
               <span> - {{ query.lastCompleteDuration }}s</span>
               <span> - {{ query.data.length }} rows</span>
@@ -64,6 +109,7 @@
               data-cy="modelCancelButton"
               class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
               (click)="cancel()"
+              [disabled]="isCanceling === true"
               >Cancel</button
             >
 
@@ -71,13 +117,23 @@
               type="button"
               *ngIf="query?.status !== queryStatusEnum.Running"
               data-cy="modelRunButton"
-              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
+              class="w-24 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+              [ngClass]="{
+                'bg-blue3': mconfig?.select.length > 0,
+                'bg-gray-400 cursor-default': mconfig?.select.length === 0
+              }"
               (click)="run()"
+              [disabled]="mconfig?.select.length === 0 || isRunning === true"
               >Run</button
             >
 
             <div class="relative ml-3">
-              <m-query-options></m-query-options>
+              <m-query-options
+                [showRunDryButton]="
+                  query?.connectionType === connectionTypeEnum.BigQuery
+                "
+                (runDryEvent)="runDry()"
+              ></m-query-options>
             </div>
           </div>
         </div>

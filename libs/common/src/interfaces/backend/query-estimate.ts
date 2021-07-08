@@ -8,5 +8,5 @@ export class QueryEstimate {
   estimate: number;
 
   @IsString()
-  lastRunDryTs: string;
+  lastRunDryTs: number;
 }

@@ -8,7 +8,7 @@ let password = '123123';
 let orgId = 't' + testId;
 let orgName = testId;
 
-let projectName = 'p1';
+let projectName = testId;
 
 describe('front-e2e', () => {
   it(testId, () => {

@@ -17,7 +17,7 @@ let orgId = testId;
 let orgName = testId;
 
 let projectId = common.makeId();
-let projectName = 'p1';
+let projectName = testId;
 
 let memberUserId = common.makeId();
 let memberUserEmail = `2${testId}@example.com`;

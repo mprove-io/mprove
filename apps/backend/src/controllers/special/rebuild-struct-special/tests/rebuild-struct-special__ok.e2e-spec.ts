@@ -20,7 +20,7 @@ let orgName = testId;
 
 let testProjectId = 't1';
 let projectId = common.makeId();
-let projectName = 'p1';
+let projectName = testId;
 
 let devRepoId = userId;
 let userAlias = testId;

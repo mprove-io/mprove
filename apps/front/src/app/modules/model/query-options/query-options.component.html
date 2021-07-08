@@ -24,7 +24,15 @@
     data-cy="queryOptionsClearSelection"
     class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
     (click)="clearSelection($event)"
-    >Clear selection</button
+    >Clear Selection</button
+  >
+
+  <button
+    *ngIf="showRunDryButton === true"
+    data-cy="queryOptionsRunDry"
+    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+    (click)="runDry($event)"
+    >Run Dry</button
   >
 </div>
 

@@ -18,7 +18,7 @@ let orgName = testId;
 
 let testProjectId = 't1';
 let projectId = common.makeId();
-let projectName = 'p1';
+let projectName = testId;
 
 let branchId = common.BRANCH_MASTER;
 

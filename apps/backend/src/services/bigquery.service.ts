@@ -101,7 +101,7 @@ export class BigQueryService {
       validEstimate = {
         queryId: query.query_id,
         estimate: estimate,
-        lastRunDryTs: helper.makeTs()
+        lastRunDryTs: Number(helper.makeTs())
       };
     }
 

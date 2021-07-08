@@ -17,7 +17,7 @@ let orgId = testId;
 let orgName = testId;
 
 let projectId = common.makeId();
-let projectName = 'p1';
+let projectName = testId;
 
 let branchId = common.BRANCH_MASTER;
 let commitMessage = 'first';

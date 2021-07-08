@@ -1,5 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
-import { TreeNode } from '@circlon/angular-tree-component';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output
+} from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
 import { ModelQuery } from '~front/app/queries/model.query';
@@ -21,7 +27,10 @@ import { common } from '~front/barrels/common';
 })
 export class QueryOptionsComponent implements OnDestroy {
   @Input()
-  node: TreeNode;
+  showRunDryButton: boolean;
+
+  @Output()
+  runDryEvent = new EventEmitter();
 
   menuId = 'queryOptions';
 
@@ -82,6 +91,13 @@ export class QueryOptionsComponent implements OnDestroy {
     this.closeMenu();
 
     this.navigateService.navigateToModel(this.model.modelId);
+  }
+
+  runDry(event?: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    this.runDryEvent.emit();
   }
 
   ngOnDestroy() {
