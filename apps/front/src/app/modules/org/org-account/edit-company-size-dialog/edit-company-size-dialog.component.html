@@ -1,4 +1,4 @@
-<div class="flex flex-col p-9 bg-white h-[500px]">
+<div class="flex flex-col p-9 bg-white">
   <div
     data-cy="editCompanySizeDialogTitle"
     class="mt-5 text-2xl text-gray2 font-semibold text-left"
@@ -12,13 +12,13 @@
     [searchable]="false"
     [clearable]="false"
     [(ngModel)]="size"
+    appendTo="body"
     bindLabel="label"
     bindValue="value"
   >
   </ng-select>
-  <div class="flex-grow"></div>
 
-  <div class="mt-6">
+  <div class="mt-9">
     <button
       data-cy="editCompanySizeDialogSaveButton"
       class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"

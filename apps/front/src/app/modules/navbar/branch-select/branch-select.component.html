@@ -1,7 +1,7 @@
 <ng-select
   #branchSelect
   data-cy="branchSelect"
-  class="flex focus:outline-none w-64 ml-5 text-base"
+  class="w-64 text-base focus:outline-none"
   (open)="openBranchSelect()"
   [loading]="branchesListLoading"
   [items]="branchesList"
@@ -10,6 +10,7 @@
   [searchable]="false"
   [(ngModel)]="selectedBranchExtraId"
   (change)="branchChange()"
+  appendTo="body"
   placeholder="Repository - Branch"
   bindLabel="extraName"
   bindValue="extraId"

@@ -28,11 +28,12 @@
     <ng-select
       #typeSelect
       data-cy="addConnectionDialogTypeSelect"
-      class="flex text-base focus:outline-none w-80"
+      class="w-80 text-base focus:outline-none"
       [items]="connectionTypes"
       [clearable]="false"
       [searchable]="false"
       (change)="changeType($event)"
+      appendTo="body"
       formControlName="type"
     >
     </ng-select>
