@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsInt,
   IsOptional,
   IsString,
   ValidateNested
@@ -60,6 +61,9 @@ export class ToBackendGetNavResponsePayload {
   @ValidateNested()
   @Type(() => common.User)
   user: common.User;
+
+  @IsInt()
+  serverNowTs: number;
 }
 
 export class ToBackendGetNavResponse extends common.MyResponse {

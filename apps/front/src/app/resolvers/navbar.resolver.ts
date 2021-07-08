@@ -89,7 +89,8 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
             projectName,
             isRepoProd,
             branchId,
-            user
+            user,
+            serverNowTs
           } = resp.payload;
 
           let nav: NavState = {
@@ -100,7 +101,8 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
             projectId,
             projectName,
             isRepoProd,
-            branchId
+            branchId,
+            serverTimeDiff: Date.now() - serverNowTs
           };
 
           this.navStore.update(nav);

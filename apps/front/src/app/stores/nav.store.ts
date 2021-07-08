@@ -10,6 +10,7 @@ export class NavState {
   projectName: string;
   isRepoProd: boolean;
   branchId: string;
+  serverTimeDiff: number;
 }
 
 function createInitialState(): NavState {
@@ -21,7 +22,8 @@ function createInitialState(): NavState {
     projectId: undefined,
     projectName: undefined,
     isRepoProd: undefined,
-    branchId: undefined
+    branchId: undefined,
+    serverTimeDiff: undefined
   };
 }
 

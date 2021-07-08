@@ -117,7 +117,8 @@ export class GetNavController {
       projectName: resultProject?.name,
       isRepoProd: resultRepoId === common.PROD_REPO_ID,
       branchId: resultBranchId,
-      user: wrapper.wrapToApiUser(user)
+      user: wrapper.wrapToApiUser(user),
+      serverNowTs: Date.now()
     };
 
     return payload;

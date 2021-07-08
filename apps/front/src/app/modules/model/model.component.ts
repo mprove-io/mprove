@@ -98,24 +98,40 @@ export class ModelComponent implements OnInit, OnDestroy {
   runSecondsAgo$ = interval(1000).pipe(
     startWith(0),
     map(x => {
-      let s = this.timeService.secondsAgoFromNow(this.query.lastRunTs);
-      return s < 0 ? 0 : s;
+      let s = this.timeService.secondsAgoFromNow(
+        this.query.lastRunTs + this.nav.serverTimeDiff
+      );
+      // console.log(this.query.lastRunTs);
+      // console.log(this.nav.serverTimeDiff);
+      return s > 0 ? s : 0;
     })
   );
 
   errorTimeAgo$ = interval(1000).pipe(
     startWith(0),
-    map(x => this.timeService.timeAgoFromNow(this.query.lastErrorTs))
+    map(x =>
+      this.timeService.timeAgoFromNow(
+        this.query.lastErrorTs + this.nav.serverTimeDiff
+      )
+    )
   );
 
   canceledTimeAgo$ = interval(1000).pipe(
     startWith(0),
-    map(x => this.timeService.timeAgoFromNow(this.query.lastCancelTs))
+    map(x =>
+      this.timeService.timeAgoFromNow(
+        this.query.lastCancelTs + this.nav.serverTimeDiff
+      )
+    )
   );
 
   completedTimeAgo$ = interval(1000).pipe(
     startWith(0),
-    map(x => this.timeService.timeAgoFromNow(this.query.lastCompleteTs))
+    map(x =>
+      this.timeService.timeAgoFromNow(
+        this.query.lastCompleteTs + this.nav.serverTimeDiff
+      )
+    )
   );
 
   checkRunning$: Subscription;
@@ -144,6 +160,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   timezones = common
     .getTimezones()
     .filter(x => x.value !== constants.USE_PROJECT_TIMEZONE);
+
+  timeDiff: number;
 
   constructor(
     private router: Router,
