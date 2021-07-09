@@ -72,7 +72,12 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction,
     // model tree
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery
+    apiToBackend.ToBackendRequestInfoNameEnum
+      .ToBackendCreateTempMconfigAndQuery,
+    // model
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries
   ];
 
   constructor(

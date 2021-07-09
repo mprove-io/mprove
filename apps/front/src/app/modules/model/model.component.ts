@@ -175,13 +175,9 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   timeDiff: number;
 
-  isRunningDry = false;
   dryId: string;
   dryQueryEstimate: common.QueryEstimate;
   dryDataSize: string;
-
-  isRunning = false;
-  isCanceling = false;
 
   constructor(
     private router: Router,
@@ -345,7 +341,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       queryIds: [this.query.queryId]
     };
 
-    this.isRunning = true;
     this.cd.detectChanges();
 
     this.apiService
@@ -357,7 +352,6 @@ export class ModelComponent implements OnInit, OnDestroy {
         map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           let { runningQueries } = resp.payload;
           this.queryStore.update(runningQueries[0]);
-          this.isRunning = false;
         }),
         take(1)
       )
@@ -366,8 +360,6 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   runDry() {
     this.dryId = common.makeId();
-
-    this.isRunningDry = true;
 
     let payload: apiToBackend.ToBackendRunQueriesDryRequestPayload = {
       queryIds: [this.query.queryId],
@@ -391,7 +383,6 @@ export class ModelComponent implements OnInit, OnDestroy {
             );
             this.dryQueryEstimate = validQueryEstimates[0];
           }
-          this.isRunningDry = false;
         }),
         take(1)
       )
@@ -403,8 +394,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       queryIds: [this.query.queryId]
     };
 
-    this.isCanceling = true;
-
     this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
@@ -415,7 +404,6 @@ export class ModelComponent implements OnInit, OnDestroy {
           let { queries } = resp.payload;
           // console.log(queries);
           this.queryStore.update(queries[0]);
-          this.isCanceling = false;
         }),
         take(1)
       )

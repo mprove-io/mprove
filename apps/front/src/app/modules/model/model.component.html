@@ -27,23 +27,19 @@
           <div class="flex-grow"></div>
 
           <div class="flex flex-row items-center text-base text-gray1">
-            <div *ngIf="isRunningDry === true">Calculating ... </div>
+            <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
 
-            <div *ngIf="isRunning === true">Running ... </div>
+            <!-- <div *ngIf="isRunning === true">Running ... </div> -->
 
-            <div *ngIf="isCanceling === true">Canceling ... </div>
+            <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
 
-            <div *ngIf="isRunningDry === false && !!dryQueryEstimate"
+            <div *ngIf="!!dryQueryEstimate"
               >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
             </div>
 
             <div
               *ngIf="
-                isRunningDry === false &&
-                isRunning === false &&
-                isCanceling === false &&
-                !dryQueryEstimate &&
-                query?.status === queryStatusEnum.Running
+                !dryQueryEstimate && query?.status === queryStatusEnum.Running
               "
               class="flex flex-row"
             >
@@ -53,11 +49,7 @@
 
             <div
               *ngIf="
-                isRunningDry === false &&
-                isRunning === false &&
-                isCanceling === false &&
-                !dryQueryEstimate &&
-                query?.status === queryStatusEnum.Error
+                !dryQueryEstimate && query?.status === queryStatusEnum.Error
               "
               class="max-w-2xl px-3 py-2 bg-red-100 text-red-700 truncate select-none"
               nz-tooltip
@@ -68,11 +60,7 @@
 
             <div
               *ngIf="
-                isRunningDry === false &&
-                isRunning === false &&
-                isCanceling === false &&
-                !dryQueryEstimate &&
-                query?.status === queryStatusEnum.Error
+                !dryQueryEstimate && query?.status === queryStatusEnum.Error
               "
               class="ml-5"
               >Error - {{ errorTimeAgo$ | async }}</div
@@ -80,22 +68,14 @@
 
             <div
               *ngIf="
-                isRunningDry === false &&
-                isRunning === false &&
-                isCanceling === false &&
-                !dryQueryEstimate &&
-                query?.status === queryStatusEnum.Canceled
+                !dryQueryEstimate && query?.status === queryStatusEnum.Canceled
               "
               >Canceled - {{ canceledTimeAgo$ | async }}</div
             >
 
             <div
               *ngIf="
-                isRunningDry === false &&
-                isRunning === false &&
-                isCanceling === false &&
-                !dryQueryEstimate &&
-                query?.status === queryStatusEnum.Completed
+                !dryQueryEstimate && query?.status === queryStatusEnum.Completed
               "
             >
               <span>Completed - {{ completedTimeAgo$ | async }}</span>
@@ -109,7 +89,6 @@
               data-cy="modelCancelButton"
               class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
               (click)="cancel()"
-              [disabled]="isCanceling === true"
               >Cancel</button
             >
 
@@ -123,7 +102,7 @@
                 'bg-gray-400 cursor-default': mconfig?.select.length === 0
               }"
               (click)="run()"
-              [disabled]="mconfig?.select.length === 0 || isRunning === true"
+              [disabled]="mconfig?.select.length === 0"
               >Run</button
             >
 
