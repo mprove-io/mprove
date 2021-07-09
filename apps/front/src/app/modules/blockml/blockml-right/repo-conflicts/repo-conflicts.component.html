@@ -7,7 +7,7 @@
   </div>
 
   <div class="flex flex-grow flex-col overflow-y-auto">
-    <div *ngIf="repo?.conflicts" class="mt-5">
+    <div *ngIf="repo?.conflicts" class="mt-5 h-2">
       <div
         *ngFor="let conflict of repo.conflicts"
         class="px-6 py-2 text-base hover:bg-blue2 hover:cursor-pointer"

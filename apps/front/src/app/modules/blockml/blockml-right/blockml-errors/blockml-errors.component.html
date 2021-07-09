@@ -7,7 +7,7 @@
   </div>
 
   <div class="flex flex-grow flex-col overflow-y-auto">
-    <div *ngIf="errors" class="mt-5 space-y-5">
+    <div *ngIf="errors" class="mt-5 space-y-5 h-2">
       <div *ngFor="let error of errors">
         <div class="mx-6 text-red1 text-base">{{ error.title }}</div>
         <div class="ml-10 mr-6 mt-2 mb-1 text-gray-500 text-base">{{
