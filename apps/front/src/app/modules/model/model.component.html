@@ -162,13 +162,32 @@
               'flex-1': chartIsExpanded
             }"
           >
-            <div class="flex h-full">
+            <div class="flex flex-col h-full">
               <div class="flex h-16 items-center flex-shrink-0">
                 <m-panel-title
                   [title]="'Chart'"
                   [isExpanded]="chartIsExpanded"
                   (toggleEvent)="toggleChartPanel()"
                 ></m-panel-title>
+              </div>
+
+              <div class="flex flex-grow mt-5 mx-5 h-2" *ngIf="chartIsExpanded">
+                <div
+                  *ngIf="mconfig?.select.length === 0"
+                  class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                  >No selected fields</div
+                >
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="flex flex-row items-start justify-center space-x-5 w-full h-full"
+                >
+                  <div class="w-2/3 h-full"> chart-viewer </div>
+
+                  <div class="w-1/3 h-full border-l border-gray-300">
+                    chart-editor
+                  </div>
+                </div>
               </div>
             </div>
           </div>
