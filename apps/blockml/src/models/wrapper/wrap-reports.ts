@@ -26,10 +26,7 @@ export function wrapReports(item: {
       });
     });
 
-    let chartId = common.makeId();
-
     let chart: common.Chart = {
-      chartId: chartId,
       isValid: true,
       title: report.title,
       description: report.description,
@@ -208,7 +205,7 @@ export function wrapReports(item: {
       timezone: report.timezone,
       limit: report.limit ? Number(report.limit) : undefined,
       filters: filters,
-      charts: [chart],
+      chart: chart,
       temp: false,
       serverTs: 1
     };

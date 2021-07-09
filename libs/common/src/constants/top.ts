@@ -7,7 +7,8 @@ export const README_FILE_NAME = 'readme.md';
 
 export const TRIPLE_UNDERSCORE = '___';
 
-export const USE_PROJECT_TIMEZONE = 'USE_PROJECT_TIMEZONE';
+export const USE_PROJECT_TIMEZONE_VALUE = 'USE_PROJECT_TIMEZONE';
+export const USE_PROJECT_TIMEZONE_LABEL = 'USE PROJECT CONFIG TIMEZONE';
 export const UTC = 'UTC';
 
 export const BLOCKML_USERS_FOLDER = 'users';

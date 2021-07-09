@@ -22,7 +22,10 @@ export class MconfigStore extends Store<MconfigState> {
       timezone: undefined,
       limit: undefined,
       filters: [],
-      charts: [],
+      chart: {
+        isValid: true,
+        type: common.ChartTypeEnum.Table
+      },
       temp: true,
       serverTs: 1
     });

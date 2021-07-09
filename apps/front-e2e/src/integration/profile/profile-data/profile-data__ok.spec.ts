@@ -22,7 +22,7 @@ describe('front-e2e', () => {
     cy.get(`[data-cy=profileTitle]`);
     cy.get('[data-cy=profileTimezone]').should(
       'contain',
-      common.USE_PROJECT_TIMEZONE
+      common.USE_PROJECT_TIMEZONE_LABEL
     );
     cy.get('[data-cy=profileEmail]').should('contain', email);
   });

@@ -47,7 +47,7 @@ export class Mconfig {
 
   @ValidateNested()
   @Type(() => Chart)
-  charts: Chart[];
+  chart: Chart;
 
   @IsBoolean()
   temp: boolean;

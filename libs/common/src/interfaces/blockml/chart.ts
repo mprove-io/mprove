@@ -9,16 +9,6 @@ import {
 import { enums } from '~common/barrels/enums';
 
 export class Chart {
-  @IsString()
-  chartId: string;
-
-  @IsString()
-  title: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
   @IsBoolean()
   isValid: boolean;
 
@@ -27,11 +17,19 @@ export class Chart {
 
   @IsOptional()
   @IsString()
-  xField: string;
+  title?: string;
 
   @IsOptional()
   @IsString()
-  yField: string;
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  xField?: string;
+
+  @IsOptional()
+  @IsString()
+  yField?: string;
 
   @IsOptional()
   @IsString({ each: true })

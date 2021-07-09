@@ -13,7 +13,7 @@ export function wrapToEntityMconfig(x: common.Mconfig): entities.MconfigEntity {
     timezone: x.timezone,
     limit: x.limit,
     filters: x.filters,
-    charts: x.charts,
+    chart: x.chart,
     temp: common.booleanToEnum(x.temp),
     server_ts: x.serverTs.toString()
   };

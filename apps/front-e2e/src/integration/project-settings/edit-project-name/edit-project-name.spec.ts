@@ -65,6 +65,9 @@ describe('front-e2e', () => {
       .type(newProjectName);
     cy.get('[data-cy=editProjectNameDialogSaveButton]').click();
     cy.loading();
-    cy.get('[data-cy=projectSettingsName]').should('contain', newProjectName);
+    cy.get('[data-cy=projectSettingsName]').should(
+      'contain',
+      common.capitalizeFirstLetter(newProjectName)
+    );
   });
 });

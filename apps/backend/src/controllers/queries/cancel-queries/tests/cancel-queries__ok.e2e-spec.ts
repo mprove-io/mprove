@@ -44,7 +44,10 @@ test('1', async t => {
     timezone: common.UTC,
     limit: 500,
     filters: [],
-    charts: [],
+    chart: {
+      isValid: true,
+      type: common.ChartTypeEnum.Table
+    },
     temp: true,
     serverTs: 1
   };

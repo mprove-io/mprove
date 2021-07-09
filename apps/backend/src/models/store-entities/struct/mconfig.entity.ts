@@ -35,7 +35,7 @@ export class MconfigEntity {
   filters: common.Filter[];
 
   @Column({ type: constants.JSON })
-  charts: common.Chart[];
+  chart: common.Chart;
 
   @Column({ type: constants.VARCHAR })
   temp: common.BoolEnum;

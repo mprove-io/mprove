@@ -13,7 +13,7 @@ export function wrapToApiMconfig(x: entities.MconfigEntity): common.Mconfig {
     timezone: x.timezone,
     limit: x.limit,
     filters: x.filters,
-    charts: x.charts,
+    chart: x.chart,
     temp: common.enumToBoolean(x.temp),
     serverTs: Number(x.server_ts)
   };

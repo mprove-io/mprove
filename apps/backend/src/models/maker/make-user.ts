@@ -24,7 +24,7 @@ export function makeUser(item: {
     alias: item.alias,
     first_name: null,
     last_name: null,
-    timezone: common.USE_PROJECT_TIMEZONE,
+    timezone: common.USE_PROJECT_TIMEZONE_VALUE,
     server_ts: undefined
   };
   return userEntity;

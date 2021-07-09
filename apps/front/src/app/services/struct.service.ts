@@ -67,12 +67,15 @@ export class StructService {
       timezone:
         this.struct.allowTimezones === false
           ? this.struct.defaultTimezone
-          : this.user.timezone === common.USE_PROJECT_TIMEZONE
+          : this.user.timezone === common.USE_PROJECT_TIMEZONE_VALUE
           ? this.struct.defaultTimezone
           : this.user.timezone,
       limit: 500,
       filters: [],
-      charts: [],
+      chart: {
+        isValid: true,
+        type: common.ChartTypeEnum.Table
+      },
       temp: true,
       serverTs: 1
     };
