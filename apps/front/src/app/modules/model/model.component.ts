@@ -4,10 +4,10 @@ import { NavigationEnd, Router } from '@angular/router';
 import { interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
-import { MconfigQuery } from '~front/app/queries/mconfig.query';
+import { ColumnField, MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { QueryQuery } from '~front/app/queries/query.query';
+import { QueryQuery, RData } from '~front/app/queries/query.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -178,6 +178,22 @@ export class ModelComponent implements OnInit, OnDestroy {
   dryId: string;
   dryQueryEstimate: common.QueryEstimate;
   dryDataSize: string;
+
+  sortedColumns: ColumnField[];
+  mconfigSelectModelFields$ = this.mconfigQuery.selectModelFields$.pipe(
+    tap(x => {
+      this.sortedColumns = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  qData: RData[];
+  qData$ = this.queryQuery.qData$.pipe(
+    tap(x => {
+      this.qData = x;
+      this.cd.detectChanges();
+    })
+  );
 
   constructor(
     private router: Router,

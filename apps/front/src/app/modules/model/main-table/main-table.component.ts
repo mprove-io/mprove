@@ -18,13 +18,14 @@ export class MainTableComponent {
 
   fieldResultNumber = common.FieldResultEnum.Number;
 
+  @Input()
+  isFormat = true;
+
+  @Input()
   sortedColumns: ColumnField[];
-  mconfigSelectModelFields$ = this.mconfigQuery.selectModelFields$.pipe(
-    tap(x => {
-      this.sortedColumns = x;
-      this.cd.detectChanges();
-    })
-  );
+
+  @Input()
+  qData: RData[];
 
   mconfig: MconfigState;
   mconfig$ = this.mconfigQuery.select().pipe(
@@ -33,17 +34,6 @@ export class MainTableComponent {
       this.cd.detectChanges();
     })
   );
-
-  qData: RData[];
-  qData$ = this.queryQuery.qData$.pipe(
-    tap(x => {
-      this.qData = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  @Input()
-  isFormat = true;
 
   constructor(
     public mconfigQuery: MconfigQuery,

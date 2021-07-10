@@ -95,7 +95,7 @@
             'bg-green1': column.fieldClass === fieldClassCalculation
           }"
         >
-          <div class="flex flex-col justify-center items-start">
+          <div class="flex flex-col justify-center items-start select-none">
             <div class="font-normal text-sm truncate">{{
               column.topLabel | capitalize
             }}</div>
@@ -164,6 +164,4 @@
   </tbody>
 </table>
 
-<div *ngIf="mconfigSelectModelFields$ | async"></div>
 <div *ngIf="mconfig$ | async"></div>
-<div *ngIf="qData$ | async"></div>

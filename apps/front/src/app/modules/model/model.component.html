@@ -182,7 +182,12 @@
                   *ngIf="mconfig?.select.length > 0"
                   class="flex flex-row items-start justify-center space-x-5 w-full h-full"
                 >
-                  <div class="w-2/3 h-full"> chart-viewer </div>
+                  <m-chart
+                    class="w-2/3 h-full"
+                    [isFormat]="isFormat"
+                    [qData]="qData"
+                    [sortedColumns]="sortedColumns"
+                  ></m-chart>
 
                   <div class="w-1/3 h-full border-l border-gray-300">
                     chart-editor
@@ -318,7 +323,11 @@
                     *ngIf="resultsIsShow"
                     class="flex-1 h-full w-2 overflow-auto"
                   >
-                    <m-main-table [isFormat]="isFormat"></m-main-table>
+                    <m-main-table
+                      [isFormat]="isFormat"
+                      [qData]="qData"
+                      [sortedColumns]="sortedColumns"
+                    ></m-main-table>
                   </div>
 
                   <div *ngIf="sqlIsShow" class="flex-1 h-full w-2">
@@ -340,3 +349,5 @@
 <div *ngIf="mconfig$ | async"></div>
 <div *ngIf="query$ | async"></div>
 <div *ngIf="struct$ | async"></div>
+<div *ngIf="mconfigSelectModelFields$ | async"></div>
+<div *ngIf="qData$ | async"></div>

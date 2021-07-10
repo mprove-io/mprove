@@ -6,6 +6,8 @@ import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { AvatarComponent } from './avatar/avatar.component';
+import { ChartTableComponent } from './chart-table/chart-table.component';
+import { ChartComponent } from './chart/chart.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
 import { FractionMonthNameComponent } from './fraction/fraction-month-name/fraction-month-name.component';
@@ -80,7 +82,9 @@ let sharedComponents = [
   FractionDayOfWeekComponent,
   FractionQuarterOfYearComponent,
   FractionDayOfWeekIndexComponent,
-  FractionTsComponent
+  FractionTsComponent,
+  ChartTableComponent,
+  ChartComponent
 ];
 
 @NgModule({

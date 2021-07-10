@@ -452,9 +452,17 @@ export function transformTimes<T extends types.vmType>(
           unnest: field.unnest,
           unnest_line_num: 0,
 
-          // format_number: undefined,
-          // currency_prefix: undefined,
-          // currency_suffix: undefined,
+          format_number:
+            result === common.FieldResultEnum.Number ? ',' : undefined,
+          format_number_line_num: 0,
+
+          currency_prefix:
+            result === common.FieldResultEnum.Number ? '$' : undefined,
+          currency_prefix_line_num: 0,
+
+          currency_suffix:
+            result === common.FieldResultEnum.Number ? '' : undefined,
+          currency_suffix_line_num: 0,
 
           //
           group_label: groupLabel,
