@@ -5,7 +5,6 @@ import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { BoolEnum } from '~common/_index';
 
 let func = enums.FuncEnum.CheckProjectConfig;
 
@@ -23,10 +22,18 @@ export function checkProjectConfig(
 
   let errorsOnStart = item.errors.length;
 
-  let conf: interfaces.Conf;
+  let projectConfig: interfaces.Conf = {
+    allow_timezones: 'true',
+    default_timezone: common.UTC,
+    week_start: common.ProjectWeekStartEnum.Monday,
+    fileName: undefined,
+    fileExt: undefined,
+    filePath: undefined,
+    name: undefined
+  };
 
   if (item.confs.length === 1) {
-    conf = item.confs[0];
+    let conf = item.confs[0];
 
     Object.keys(conf)
       .filter(x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM()))
@@ -119,24 +126,14 @@ export function checkProjectConfig(
           return;
         }
       });
+
+    projectConfig = Object.assign(projectConfig, conf);
   } else if (item.confs.length === 0) {
     // do nothing
   } else {
     // item.confs.length > 1
     // already checked by "duplicate file names" and "wrong extension"
   }
-
-  let defaultConf: interfaces.Conf = {
-    allow_timezones: BoolEnum.TRUE,
-    default_timezone: common.UTC,
-    week_start: common.ProjectWeekStartEnum.Monday,
-    fileName: undefined,
-    fileExt: undefined,
-    filePath: undefined,
-    name: undefined
-  };
-
-  let projectConfig: interfaces.Conf = Object.assign(defaultConf, conf);
 
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Errors, item.errors);
   helper.log(
