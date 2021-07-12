@@ -179,7 +179,7 @@
                 <form
                   [formGroup]="chartTypeForm"
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-5"
+                  class="ml-3"
                 >
                   <ng-select
                     #chartTypeSelect
@@ -227,7 +227,7 @@
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="chartTitleForm"
-                  class="flex flex-col ml-5 items-start"
+                  class="flex flex-col ml-3 items-start"
                 >
                   <div class="h-6"></div>
                   <input
@@ -254,16 +254,18 @@
                   data-cy="modelSaveAsButton"
                   class="w-28 h-[36px] ml-5 text-white text-base rounded font-medium focus:outline-none"
                   [ngClass]="{
-                    'bg-blue3': mconfig?.select.length > 0,
-                    'bg-gray-400 cursor-default': mconfig?.select.length === 0
+                    'bg-blue3': chartTitleForm.valid === true,
+                    'bg-gray-400 cursor-default': chartTitleForm.valid === false
                   }"
                   (click)="saveAs()"
-                  [disabled]="mconfig?.select.length === 0"
+                  [disabled]="chartTitleForm.valid === false"
                   >Save As</button
                 >
 
                 <div *ngIf="mconfig?.select.length > 0" class="relative ml-3">
-                  <m-chart-options></m-chart-options>
+                  <m-chart-options
+                    [isDisabled]="chartTitleForm.valid === false"
+                  ></m-chart-options>
                 </div>
               </div>
 
@@ -299,9 +301,7 @@
             }"
           >
             <div class="flex flex-col h-full">
-              <div
-                class="flex flex-row h-20 items-center flex-shrink-0 mr-5 space-x-5"
-              >
+              <div class="flex flex-row h-20 items-center flex-shrink-0 mr-5">
                 <m-panel-title
                   [title]="'Data'"
                   [isExpanded]="dataIsExpanded"
@@ -309,7 +309,7 @@
                 ></m-panel-title>
 
                 <button
-                  class="w-24 py-3 items-center text-lg text-gray1 select-none focus:outline-none"
+                  class="w-24 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
                   [ngClass]="{
                     'font-semibold': resultsIsShow,
                     'text-gray-400 cursor-default':
@@ -321,7 +321,7 @@
                 >
 
                 <button
-                  class="w-16 py-3 items-center text-lg text-gray1 select-none focus:outline-none"
+                  class="w-16 py-3 ml-5 items-center text-lg text-gray1 select-none focus:outline-none"
                   [ngClass]="{
                     'font-semibold': sqlIsShow,
                     'text-gray-400 cursor-default':
@@ -336,11 +336,12 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 text-base select-none"
+                  class="ml-5 text-gray1 text-base select-none"
                   >Timezone</div
                 >
 
                 <form
+                  class="ml-3"
                   [formGroup]="timezoneForm"
                   *ngIf="mconfig?.select.length > 0"
                 >
@@ -364,14 +365,14 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 text-base select-none"
+                  class="ml-5 text-gray1 text-base select-none"
                   >Limit</div
                 >
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="limitForm"
-                  class="flex flex-col items-start"
+                  class="flex flex-col ml-3 items-start"
                 >
                   <div class="h-6"></div>
                   <input
@@ -392,7 +393,7 @@
 
                 <button
                   *ngIf="mconfig?.select.length > 0"
-                  class="items-center text-lg select-none focus:outline-none"
+                  class="items-center ml-5 text-lg select-none focus:outline-none"
                   [ngClass]="{
                     'text-blue-500': isFormat,
                     'text-gray1': !isFormat

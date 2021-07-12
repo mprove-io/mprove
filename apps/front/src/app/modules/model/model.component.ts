@@ -541,13 +541,28 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   chartTypeChange() {
-    // let timezone = this.timezoneForm.controls['timezone'].value;
-    // let newMconfig = this.structService.makeMconfig();
-    // newMconfig.timezone = timezone;
-    // this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    let chartType = this.chartTypeForm.controls['chartType'].value;
+
+    let newMconfig = this.structService.makeMconfig();
+
+    newMconfig.chart.type = chartType;
+
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   saveAs() {}
 
-  chartTitleBlur() {}
+  chartTitleBlur() {
+    let chartTitle = this.chartTitleForm.controls['chartTitle'].value;
+
+    let newMconfig = this.structService.makeMconfig();
+
+    if (!this.chartTitleForm.valid) {
+      return;
+    }
+
+    newMconfig.chart.title = chartTitle;
+
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }

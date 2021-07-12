@@ -1,11 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { RepoStore } from '~front/app/stores/repo.store';
@@ -18,10 +11,7 @@ import { common } from '~front/barrels/common';
 })
 export class ChartOptionsComponent implements OnDestroy {
   @Input()
-  showRunDryButton: boolean;
-
-  @Output()
-  runDryEvent = new EventEmitter();
+  isDisabled: boolean;
 
   menuId = 'chartOptions';
 

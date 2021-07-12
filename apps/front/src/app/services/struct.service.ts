@@ -74,7 +74,8 @@ export class StructService {
       filters: [],
       chart: {
         isValid: true,
-        type: common.ChartTypeEnum.Table
+        type: common.ChartTypeEnum.Table,
+        title: 'Title'
       },
       temp: true,
       serverTs: 1

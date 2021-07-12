@@ -1,11 +1,14 @@
 <button
   data-cy="chartOptionsMenuButton"
-  class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
+  class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center"
   [ngClass]="{
-    'cursor-default text-gray-400': openedMenuId && menuId !== openedMenuId
+    'hover:bg-blue-200':
+      (!openedMenuId || menuId === openedMenuId) && isDisabled === false,
+    'cursor-default text-gray-400':
+      (openedMenuId && menuId !== openedMenuId) || isDisabled === true
   }"
   (click)="toggleMenu($event)"
-  [disabled]="openedMenuId && menuId !== openedMenuId"
+  [disabled]="(openedMenuId && menuId !== openedMenuId) || isDisabled === true"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
