@@ -284,10 +284,11 @@
                     class="w-2/3 h-full"
                     [qData]="qData"
                     [sortedColumns]="sortedColumns"
+                    [chart]="mconfig.chart"
                   ></m-chart-view>
 
                   <div class="w-1/3 h-full border-l border-gray-300">
-                    chart-editor
+                    <m-chart-editor [chart]="mconfig.chart"></m-chart-editor>
                   </div>
                 </div>
               </div>

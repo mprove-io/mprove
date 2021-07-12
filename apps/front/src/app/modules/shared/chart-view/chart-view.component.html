@@ -1,7 +1,9 @@
 <div class="h-full w-full overflow-auto">
   <m-chart-table
+    *ngIf="chart.type === chartTypeEnum.Table"
     [isFormat]="true"
     [qData]="qData"
     [sortedColumns]="sortedColumns"
+    [pageSize]="chart.pageSize"
   ></m-chart-table>
 </div>

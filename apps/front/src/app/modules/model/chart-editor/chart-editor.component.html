@@ -1,0 +1,35 @@
+<div class="mx-5 mt-2">
+  <div class="text-xl text-gray1 font-semibold mb-5">Options</div>
+
+  <div class="flex flex-row items-start">
+    <div class="flex flex-col">
+      <div
+        *ngIf="chart.type === chartTypeEnum.Table"
+        class="flex h-[36px] text-gray1 text-base items-center select-none"
+        >Page Size</div
+      >
+      <div class="h-6"></div>
+    </div>
+
+    <div
+      *ngIf="chart.type === chartTypeEnum.Table"
+      [formGroup]="pageSizeForm"
+      class="flex flex-col ml-3 items-start"
+    >
+      <input
+        data-cy="chartPageSizeInput"
+        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            pageSizeForm.controls['pageSize'].invalid &&
+            pageSizeForm.controls['pageSize'].touched
+        }"
+        formControlName="pageSize"
+        (blur)="pageSizeBlur()"
+      />
+      <m-validation
+        [control]="pageSizeForm.controls['pageSize']"
+      ></m-validation>
+    </div>
+  </div>
+</div>

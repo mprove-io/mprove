@@ -36,27 +36,25 @@
   </thead>
 
   <tbody class="">
-    <tr
-      class=""
-      data-cy="mainTableRow"
-      *ngFor="let row of qData; let i = index"
-    >
-      <td
-        style="min-width: 200px; max-width: 350px"
-        data-cy="mainTableCell"
-        *ngFor="let column of sortedColumns"
-        class="px-5 truncate"
-        [ngClass]="{
-          'bg-gray-100': (i + 1) % 2 === 0,
-          'text-right': column.result === fieldResultNumber
-        }"
-      >
-        {{
-          isFormat === true
-            ? row[column.sqlName]?.fValue
-            : row[column.sqlName]?.value
-        }}
-      </td>
-    </tr>
+    <ng-container *ngFor="let row of qData; let i = index">
+      <tr class="" data-cy="chartTableRow" *ngIf="i < pageSize">
+        <td
+          style="min-width: 200px; max-width: 350px"
+          data-cy="chartTableCell"
+          *ngFor="let column of sortedColumns"
+          class="px-5 truncate"
+          [ngClass]="{
+            'bg-gray-100': (i + 1) % 2 === 0,
+            'text-right': column.result === fieldResultNumber
+          }"
+        >
+          {{
+            isFormat === true
+              ? row[column.sqlName]?.fValue
+              : row[column.sqlName]?.value
+          }}
+        </td>
+      </tr>
+    </ng-container>
   </tbody>
 </table>

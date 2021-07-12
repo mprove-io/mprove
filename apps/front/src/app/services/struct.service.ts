@@ -75,7 +75,8 @@ export class StructService {
       chart: {
         isValid: true,
         type: common.ChartTypeEnum.Table,
-        title: 'Title'
+        title: 'Title',
+        pageSize: 10
       },
       temp: true,
       serverTs: 1

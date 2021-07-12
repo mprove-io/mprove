@@ -15,13 +15,16 @@ export class ChartTableComponent {
   fieldResultNumber = common.FieldResultEnum.Number;
 
   @Input()
-  isFormat = true;
+  isFormat: boolean;
 
   @Input()
   sortedColumns: ColumnField[];
 
   @Input()
   qData: RData[];
+
+  @Input()
+  pageSize: number;
 
   constructor() {}
 }
