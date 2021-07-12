@@ -3,13 +3,10 @@ import { ColumnField } from '~front/app/queries/mconfig.query';
 import { RData } from '~front/app/services/query.service';
 
 @Component({
-  selector: 'm-chart',
-  templateUrl: './chart.component.html'
+  selector: 'm-chart-view',
+  templateUrl: './chart-view.component.html'
 })
-export class ChartComponent {
-  @Input()
-  isFormat = true;
-
+export class ChartViewComponent {
   @Input()
   sortedColumns: ColumnField[];
 

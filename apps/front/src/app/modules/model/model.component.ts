@@ -24,9 +24,15 @@ import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { QueryState, QueryStore } from '~front/app/stores/query.store';
 import { RepoStore } from '~front/app/stores/repo.store';
-import { StructState, StructStore } from '~front/app/stores/struct.store';
+import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+
+export class ChartTypeItem {
+  label: string;
+  value: common.ChartTypeEnum;
+  iconPath: string;
+}
 
 @Component({
   selector: 'm-model',
@@ -35,6 +41,7 @@ import { common } from '~front/barrels/common';
 export class ModelComponent implements OnInit, OnDestroy {
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
+  chartTypeEnum = common.ChartTypeEnum;
 
   lastUrl: string;
 
@@ -74,6 +81,11 @@ export class ModelComponent implements OnInit, OnDestroy {
 
       if (x.limit) {
         this.limitForm.controls['limit'].setValue(x.limit);
+      }
+
+      if (x.chart) {
+        this.chartTypeForm.controls['chartType'].setValue(x.chart.type);
+        this.chartTitleForm.controls['chartTitle'].setValue(x.chart.title);
       }
 
       this.cd.detectChanges();
@@ -148,26 +160,23 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   checkRunning$: Subscription;
 
-  limitForm: FormGroup = this.fb.group({
-    limit: [
-      undefined,
-      [
-        Validators.required,
-        ValidationService.integerValidator,
-        Validators.min(1),
-        Validators.max(500)
-      ]
-    ]
-  });
-
-  struct: StructState;
   struct$ = this.structQuery.select().pipe(
     tap(x => {
-      this.struct = x;
+      if (x.allowTimezones === false) {
+        this.timezoneForm.controls['timezone'].disable();
+      } else {
+        this.timezoneForm.controls['timezone'].enable();
+      }
     })
   );
 
-  timezoneForm: FormGroup;
+  timezoneForm = this.fb.group({
+    timezone: [
+      {
+        value: undefined
+      }
+    ]
+  });
 
   timezones = common
     .getTimezones()
@@ -195,6 +204,134 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
+  limitForm: FormGroup = this.fb.group({
+    limit: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(1),
+        Validators.max(500)
+      ]
+    ]
+  });
+
+  chartTypeForm: FormGroup = this.fb.group({
+    chartType: [undefined]
+  });
+
+  chartTitleForm: FormGroup = this.fb.group({
+    chartTitle: [undefined, [Validators.required, Validators.maxLength(255)]]
+  });
+
+  chartTypesList: ChartTypeItem[] = [
+    {
+      label: 'Table',
+      value: common.ChartTypeEnum.Table,
+      iconPath: 'assets/charts/table.svg'
+    },
+    {
+      label: 'Bar Vertical',
+      value: common.ChartTypeEnum.BarVertical,
+      iconPath: 'assets/charts/bar_vertical.svg'
+    },
+    {
+      label: 'Bar Vertical Grouped',
+      value: common.ChartTypeEnum.BarVerticalGrouped,
+      iconPath: 'assets/charts/bar_vertical_grouped.svg'
+    },
+    {
+      label: 'Bar Vertical Stacked',
+      value: common.ChartTypeEnum.BarVerticalStacked,
+      iconPath: 'assets/charts/bar_vertical_stacked.svg'
+    },
+    {
+      label: 'Bar Vertical Normalized',
+      value: common.ChartTypeEnum.BarVerticalNormalized,
+      iconPath: 'assets/charts/bar_vertical_normalized.svg'
+    },
+    {
+      label: 'Bar Horizontal',
+      value: common.ChartTypeEnum.BarHorizontal,
+      iconPath: 'assets/charts/bar_horizontal.svg'
+    },
+    {
+      label: 'Bar Horizontal Grouped',
+      value: common.ChartTypeEnum.BarHorizontalGrouped,
+      iconPath: 'assets/charts/bar_horizontal_grouped.svg'
+    },
+    {
+      label: 'Bar Horizontal Stacked',
+      value: common.ChartTypeEnum.BarHorizontalStacked,
+      iconPath: 'assets/charts/bar_horizontal_stacked.svg'
+    },
+    {
+      label: 'Bar Horizontal Normalized',
+      value: common.ChartTypeEnum.BarHorizontalNormalized,
+      iconPath: 'assets/charts/bar_horizontal_normalized.svg'
+    },
+    {
+      label: 'Pie',
+      value: common.ChartTypeEnum.Pie,
+      iconPath: 'assets/charts/pie.svg'
+    },
+    {
+      label: 'Pie Advanced',
+      value: common.ChartTypeEnum.PieAdvanced,
+      iconPath: 'assets/charts/pie_advanced.svg'
+    },
+    {
+      label: 'Pie Grid',
+      value: common.ChartTypeEnum.PieGrid,
+      iconPath: 'assets/charts/pie_grid.svg'
+    },
+    {
+      label: 'Line',
+      value: common.ChartTypeEnum.Line,
+      iconPath: 'assets/charts/line.svg'
+    },
+    {
+      label: 'Area',
+      value: common.ChartTypeEnum.Area,
+      iconPath: 'assets/charts/area.svg'
+    },
+    {
+      label: 'Area Stacked',
+      value: common.ChartTypeEnum.AreaStacked,
+      iconPath: 'assets/charts/area_stacked.svg'
+    },
+    {
+      label: 'Area Normalized',
+      value: common.ChartTypeEnum.AreaNormalized,
+      iconPath: 'assets/charts/area_normalized.svg'
+    },
+    {
+      label: 'Heat Map',
+      value: common.ChartTypeEnum.HeatMap,
+      iconPath: 'assets/charts/heat_map.svg'
+    },
+    {
+      label: 'Tree Map',
+      value: common.ChartTypeEnum.TreeMap,
+      iconPath: 'assets/charts/tree_map.svg'
+    },
+    {
+      label: 'Number Card',
+      value: common.ChartTypeEnum.NumberCard,
+      iconPath: 'assets/charts/number_card.svg'
+    },
+    {
+      label: 'Gauge',
+      value: common.ChartTypeEnum.Gauge,
+      iconPath: 'assets/charts/gauge.svg'
+    },
+    {
+      label: 'Gauge Linear',
+      value: common.ChartTypeEnum.GaugeLinear,
+      iconPath: 'assets/charts/gauge_linear.svg'
+    }
+  ];
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -220,8 +357,6 @@ export class ModelComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.buildTimezoneForm();
-
     this.checkRunning$ = interval(3000)
       .pipe(
         startWith(0),
@@ -252,27 +387,6 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.checkRunning$.unsubscribe();
-  }
-
-  buildTimezoneForm() {
-    this.structQuery
-      .select()
-      .pipe(
-        tap(x => {
-          this.struct = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
-    this.timezoneForm = this.fb.group({
-      timezone: [
-        {
-          value: this.mconfig?.timezone,
-          disabled: this.struct.allowTimezones === false
-        }
-      ]
-    });
   }
 
   toggleFormat() {
@@ -425,4 +539,15 @@ export class ModelComponent implements OnInit, OnDestroy {
       )
       .subscribe();
   }
+
+  chartTypeChange() {
+    // let timezone = this.timezoneForm.controls['timezone'].value;
+    // let newMconfig = this.structService.makeMconfig();
+    // newMconfig.timezone = timezone;
+    // this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  saveAs() {}
+
+  chartTitleBlur() {}
 }

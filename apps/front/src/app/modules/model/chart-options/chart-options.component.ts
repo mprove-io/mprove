@@ -7,51 +7,40 @@ import {
   Output
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { ModelQuery } from '~front/app/queries/model.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { ModelState } from '~front/app/stores/model.store';
+import { RepoStore } from '~front/app/stores/repo.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-query-options',
-  templateUrl: './query-options.component.html'
+  selector: 'm-chart-options',
+  templateUrl: './chart-options.component.html'
 })
-export class QueryOptionsComponent implements OnDestroy {
+export class ChartOptionsComponent implements OnDestroy {
   @Input()
   showRunDryButton: boolean;
 
   @Output()
   runDryEvent = new EventEmitter();
 
-  menuId = 'queryOptions';
+  menuId = 'chartOptions';
 
   openedMenuId: string;
   openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
     tap(x => (this.openedMenuId = x))
   );
 
-  isQueryOptionsMenuOpen = false;
-
-  model: ModelState;
-  model$ = this.modelQuery.select().pipe(
-    tap(x => {
-      this.model = x;
-      this.cd.detectChanges();
-    })
-  );
+  isChartOptionsMenuOpen = false;
 
   constructor(
     public uiQuery: UiQuery,
-    public modelQuery: ModelQuery,
     public uiStore: UiStore,
-    private navigateService: NavigateService,
+    public repoStore: RepoStore,
     private cd: ChangeDetectorRef
   ) {}
 
   openMenu() {
-    this.isQueryOptionsMenuOpen = true;
+    this.isChartOptionsMenuOpen = true;
     this.uiStore.update({ openedMenuId: this.menuId });
   }
 
@@ -59,31 +48,24 @@ export class QueryOptionsComponent implements OnDestroy {
     if (common.isDefined(event)) {
       event.stopPropagation();
     }
-    this.isQueryOptionsMenuOpen = false;
+    this.isChartOptionsMenuOpen = false;
     this.uiStore.update({ openedMenuId: undefined });
   }
 
   toggleMenu(event?: MouseEvent) {
     event.stopPropagation();
-    if (this.isQueryOptionsMenuOpen === true) {
+    if (this.isChartOptionsMenuOpen === true) {
       this.closeMenu();
     } else {
       this.openMenu();
     }
   }
 
-  clearSelection(event?: MouseEvent) {
+  viewBlockML(event?: MouseEvent) {
     event.stopPropagation();
     this.closeMenu();
 
-    this.navigateService.navigateToModel(this.model.modelId);
-  }
-
-  runDry(event?: MouseEvent) {
-    event.stopPropagation();
-    this.closeMenu();
-
-    this.runDryEvent.emit();
+    // this.navigateService.navigateToModel(this.model.modelId);
   }
 
   ngOnDestroy() {

@@ -6,6 +6,7 @@ import { TreeModule } from '@circlon/angular-tree-component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { SharedModule } from '../shared/shared.module';
+import { ChartOptionsComponent } from './chart-options/chart-options.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
 import { ModelBricksComponent } from './model-bricks/model-bricks.component';
@@ -30,7 +31,8 @@ import { SqlComponent } from './sql/sql.component';
     FieldOptionsComponent,
     ModelFiltersComponent,
     ModelBricksComponent,
-    QueryOptionsComponent
+    QueryOptionsComponent,
+    ChartOptionsComponent
   ],
   imports: [
     CommonModule,
