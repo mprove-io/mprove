@@ -9,6 +9,7 @@ import { common } from '~front/barrels/common';
 })
 export class ChartViewComponent {
   chartTypeEnum = common.ChartTypeEnum;
+  queryStatusEnum = common.QueryStatusEnum;
 
   @Input()
   sortedColumns: ColumnField[];
@@ -19,5 +20,10 @@ export class ChartViewComponent {
   @Input()
   chart: common.Chart;
 
+  @Input()
+  queryStatus: common.QueryStatusEnum;
+
   constructor() {}
+
+  onSelect(event: any) {}
 }

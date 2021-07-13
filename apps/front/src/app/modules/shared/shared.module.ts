@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { AvatarComponent } from './avatar/avatar.component';
@@ -97,7 +98,8 @@ let sharedComponents = [
     FormsModule,
     NgSelectModule,
     NzDatePickerModule,
-    NzTimePickerModule
+    NzTimePickerModule,
+    NgxChartsModule
   ],
   exports: [...sharedComponents, ...pipesArray, MonacoEditorModule]
 })

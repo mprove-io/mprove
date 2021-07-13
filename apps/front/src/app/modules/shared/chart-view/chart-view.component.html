@@ -1,10 +1,80 @@
 <div class="h-full w-full overflow-auto">
+  <div
+    *ngIf="chart.isValid === false"
+    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    >Not valid</div
+  >
+
+  <div
+    *ngIf="
+      chart.isValid === true &&
+      qData.length === 0 &&
+      queryStatus !== queryStatusEnum.Completed
+    "
+    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    >Run query to get data</div
+  >
+
+  <div
+    *ngIf="
+      chart.isValid === true &&
+      qData.length === 0 &&
+      queryStatus === queryStatusEnum.Completed
+    "
+    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    >Query result is empty</div
+  >
+
   <m-chart-table
-    *ngIf="chart.type === chartTypeEnum.Table"
+    *ngIf="
+      chart.type === chartTypeEnum.Table &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
     [isFormat]="true"
     [qData]="qData"
     [sortedColumns]="sortedColumns"
     [hideColumns]="chart.hideColumns"
     [pageSize]="chart.pageSize"
   ></m-chart-table>
+
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+
+  <!-- custom_colors -->
+  <ngx-charts-bar-vertical
+    *ngIf="
+      chart.type === chartTypeEnum.BarVertical &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+  >
+  </ngx-charts-bar-vertical>
+
+  <!-- <ngx-charts-bar-vertical
+    [view]="view"
+    [scheme]="scheme"
+    [schemeType]="schemeType"
+    [results]="single"
+    [animations]="animations"
+    [gradient]="gradient"
+    [xAxis]="xAxis"
+    [yAxis]="yAxis"
+    [legend]="legend"
+    [legendTitle]="legendTitle"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [tooltipDisabled]="tooltipDisabled"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [showGridLines]="showGridLines"
+    [barPadding]="barPadding"
+    [roundDomains]="roundDomains"
+    [roundEdges]="roundEdges"
+    [yScaleMax]="yScaleMax"
+  >
+  </ngx-charts-bar-vertical>   -->
 </div>

@@ -291,18 +291,12 @@
                   *ngIf="mconfig?.select.length > 0"
                   class="flex flex-row items-start justify-center space-x-5 w-full h-full"
                 >
-                  <div
-                    *ngIf="mconfig.chart.isValid === false"
-                    class="w-2/3 h-full flex items-center justify-center text-xl select-none text-gray1"
-                    >Not valid</div
-                  >
-
                   <m-chart-view
-                    *ngIf="mconfig.chart.isValid === true"
                     class="w-2/3 h-full"
                     [qData]="qData"
                     [sortedColumns]="sortedColumns"
                     [chart]="mconfig.chart"
+                    [queryStatus]="query.status"
                   ></m-chart-view>
 
                   <div
