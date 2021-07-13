@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ColumnField } from '~front/app/queries/mconfig.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -14,6 +15,9 @@ export class ChartEditorComponent implements OnChanges {
 
   @Input()
   chart: common.Chart;
+
+  @Input()
+  sortedColumns: ColumnField[];
 
   pageSizeForm: FormGroup = this.fb.group({
     pageSize: [
@@ -60,7 +64,29 @@ export class ChartEditorComponent implements OnChanges {
     }
 
     let newMconfig = this.structService.makeMconfig();
+
     newMconfig.chart.pageSize = pageSize;
+
+    this.updateMconfig(newMconfig);
+  }
+
+  hideColumnsIsChecked(id: string) {
+    return this.chart.hideColumns.findIndex(x => x === id) > -1;
+  }
+
+  hideColumnsOnClick(id: string) {
+    let index = this.chart.hideColumns.findIndex(x => x === id);
+
+    let newMconfig = this.structService.makeMconfig();
+
+    newMconfig.chart.hideColumns =
+      index > -1
+        ? [
+            ...this.chart.hideColumns.slice(0, index),
+            ...this.chart.hideColumns.slice(index + 1)
+          ]
+        : [...this.chart.hideColumns, id];
+
     this.updateMconfig(newMconfig);
   }
 }

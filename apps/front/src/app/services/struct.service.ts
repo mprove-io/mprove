@@ -76,7 +76,8 @@ export class StructService {
         isValid: true,
         type: common.ChartTypeEnum.Table,
         title: 'Title',
-        pageSize: 10
+        pageSize: 5,
+        hideColumns: []
       },
       temp: true,
       serverTs: 1

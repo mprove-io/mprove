@@ -21,6 +21,9 @@ export class ChartTableComponent {
   sortedColumns: ColumnField[];
 
   @Input()
+  hideColumns: string[];
+
+  @Input()
   qData: RData[];
 
   @Input()

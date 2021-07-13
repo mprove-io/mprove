@@ -9,6 +9,7 @@ import { ModelQuery } from './model.query';
 export class ColumnField extends common.ModelField {
   sorting: common.Sorting;
   sortingNumber: number;
+  isHideColumn: boolean;
 }
 
 export class FilterExtended extends common.Filter {
@@ -21,17 +22,20 @@ export class MconfigQuery extends Query<MconfigState> {
   select$ = this.select(state => state.select);
   filters$ = this.select(state => state.filters);
   sortings$ = this.select(state => state.sortings);
+  chart$ = this.select(state => state.chart);
 
   selectModelFields$ = combineLatest([
     this.modelQuery.fields$,
     this.select$,
-    this.sortings$
+    this.sortings$,
+    this.chart$
   ]).pipe(
     map(
-      ([fields, select, sortings]: [
+      ([fields, select, sortings, chart]: [
         common.ModelField[],
         string[],
-        common.Sorting[]
+        common.Sorting[],
+        common.Chart
       ]) => {
         let selectFields: ColumnField[] = [];
 
@@ -42,9 +46,10 @@ export class MconfigQuery extends Query<MconfigState> {
 
           select.forEach((fieldId: string) => {
             let field = fields.find(f => f.id === fieldId);
-            let f: ColumnField = Object.assign({}, field, {
+            let f: ColumnField = Object.assign({}, field, <ColumnField>{
               sorting: sortings.find(x => x.fieldId === fieldId),
-              sortingNumber: sortings.findIndex(s => s.fieldId === fieldId)
+              sortingNumber: sortings.findIndex(s => s.fieldId === fieldId),
+              isHideColumn: chart.hideColumns.indexOf(field.id) > -1
             });
 
             if (field.fieldClass === common.FieldClassEnum.Dimension) {

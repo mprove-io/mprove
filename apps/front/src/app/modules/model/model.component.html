@@ -312,7 +312,10 @@
                       'border-red-600': mconfig.chart.isValid === false
                     }"
                   >
-                    <m-chart-editor [chart]="mconfig.chart"></m-chart-editor>
+                    <m-chart-editor
+                      [chart]="mconfig.chart"
+                      [sortedColumns]="sortedColumns"
+                    ></m-chart-editor>
                   </div>
                 </div>
               </div>

@@ -4,10 +4,14 @@
       <th
         style="min-width: 200px; max-width: 350px"
         class="group align-top"
-        *ngFor="let column of sortedColumns; let columnIndex = index"
+        *ngFor="
+          let column of sortedColumns | hideColumns: hideColumns;
+          let columnIndex = index
+        "
       >
         <div
           class="flex flex-col px-5 py-2 justify-center items-start overflow-clip overflow-hidden"
+          *ngIf="column.isHideColumn === false"
           [ngClass]="{
             'bg-blue5': column.fieldClass === fieldClassDimension,
             'bg-purple-300': column.fieldClass === fieldClassMeasure,
@@ -41,7 +45,7 @@
         <td
           style="min-width: 200px; max-width: 350px"
           data-cy="chartTableCell"
-          *ngFor="let column of sortedColumns"
+          *ngFor="let column of sortedColumns | hideColumns: hideColumns"
           class="px-5 truncate"
           [ngClass]="{
             'bg-gray-100': (i + 1) % 2 === 0,
