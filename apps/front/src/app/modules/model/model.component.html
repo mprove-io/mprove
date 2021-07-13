@@ -254,17 +254,27 @@
                   data-cy="modelSaveAsButton"
                   class="w-28 h-[36px] ml-5 text-white text-base rounded font-medium focus:outline-none"
                   [ngClass]="{
-                    'bg-blue3': chartTitleForm.valid === true,
-                    'bg-gray-400 cursor-default': chartTitleForm.valid === false
+                    'bg-blue3':
+                      mconfig.chart.isValid === true &&
+                      chartTitleForm.valid === true,
+                    'bg-gray-400 cursor-default':
+                      mconfig.chart.isValid === false ||
+                      chartTitleForm.valid === false
                   }"
                   (click)="saveAs()"
-                  [disabled]="chartTitleForm.valid === false"
+                  [disabled]="
+                    mconfig.chart.isValid === false ||
+                    chartTitleForm.valid === false
+                  "
                   >Save As</button
                 >
 
                 <div *ngIf="mconfig?.select.length > 0" class="relative ml-3">
                   <m-chart-options
-                    [isDisabled]="chartTitleForm.valid === false"
+                    [isDisabled]="
+                      mconfig.chart.isValid === false ||
+                      chartTitleForm.valid === false
+                    "
                   ></m-chart-options>
                 </div>
               </div>
@@ -280,14 +290,27 @@
                   *ngIf="mconfig?.select.length > 0"
                   class="flex flex-row items-start justify-center space-x-5 w-full h-full"
                 >
+                  <div
+                    *ngIf="mconfig.chart.isValid === false"
+                    class="w-2/3 h-full flex items-center justify-center text-xl select-none text-gray1"
+                    >Not valid</div
+                  >
+
                   <m-chart-view
+                    *ngIf="mconfig.chart.isValid === true"
                     class="w-2/3 h-full"
                     [qData]="qData"
                     [sortedColumns]="sortedColumns"
                     [chart]="mconfig.chart"
                   ></m-chart-view>
 
-                  <div class="w-1/3 h-full border-l border-gray-300">
+                  <div
+                    class="w-1/3 h-full border-l"
+                    [ngClass]="{
+                      'border-gray-300': mconfig.chart.isValid === true,
+                      'border-red-600': mconfig.chart.isValid === false
+                    }"
+                  >
                     <m-chart-editor [chart]="mconfig.chart"></m-chart-editor>
                   </div>
                 </div>
