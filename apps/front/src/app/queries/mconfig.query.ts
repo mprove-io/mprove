@@ -49,7 +49,7 @@ export class MconfigQuery extends Query<MconfigState> {
             let f: ColumnField = Object.assign({}, field, <ColumnField>{
               sorting: sortings.find(x => x.fieldId === fieldId),
               sortingNumber: sortings.findIndex(s => s.fieldId === fieldId),
-              isHideColumn: chart.hideColumns.indexOf(field.id) > -1
+              isHideColumn: chart?.hideColumns.indexOf(field.id) > -1
             });
 
             if (field.fieldClass === common.FieldClassEnum.Dimension) {
