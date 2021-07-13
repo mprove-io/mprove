@@ -170,16 +170,16 @@
                   (toggleEvent)="toggleChartPanel()"
                 ></m-panel-title>
 
-                <div
+                <!-- <div
                   *ngIf="mconfig?.select.length > 0"
                   class="ml-5 text-gray1 text-base select-none"
                   >Type</div
-                >
+                > -->
 
                 <form
                   [formGroup]="chartTypeForm"
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-3"
+                  class="ml-5"
                 >
                   <ng-select
                     #chartTypeSelect
@@ -218,16 +218,16 @@
                   </ng-select>
                 </form>
 
-                <div
+                <!-- <div
                   *ngIf="mconfig?.select.length > 0"
                   class="ml-5 text-gray1 text-base select-none"
                   >Title</div
-                >
+                > -->
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="chartTitleForm"
-                  class="flex flex-col ml-3 items-start"
+                  class="flex flex-col ml-5 items-start"
                 >
                   <div class="h-6"></div>
                   <input
@@ -239,6 +239,7 @@
                         chartTitleForm.controls['chartTitle'].touched
                     }"
                     formControlName="chartTitle"
+                    placeholder="Title"
                     (blur)="chartTitleBlur()"
                   />
                   <m-validation

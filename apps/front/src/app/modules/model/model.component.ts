@@ -10,7 +10,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { QueryQuery, RData } from '~front/app/queries/query.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
 import { FileService } from '~front/app/services/file.service';
@@ -19,7 +18,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
+import { MconfigState } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { QueryState, QueryStore } from '~front/app/stores/query.store';
@@ -338,7 +337,6 @@ export class ModelComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
     private queryQuery: QueryQuery,
-    private uiQuery: UiQuery,
     private modelQuery: ModelQuery,
     public repoQuery: RepoQuery,
     public mconfigQuery: MconfigQuery,
@@ -347,7 +345,6 @@ export class ModelComponent implements OnInit, OnDestroy {
     public structStore: StructStore,
     public fileService: FileService,
     public navigateService: NavigateService,
-    private mconfigStore: MconfigStore,
     private queryStore: QueryStore,
     private structService: StructService,
     private timeService: TimeService,

@@ -53,12 +53,14 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   pageSizeBlur() {
+    let pageSize = Number(this.pageSizeForm.controls['pageSize'].value);
+
+    if (pageSize === this.chart.pageSize) {
+      return;
+    }
+
     let newMconfig = this.structService.makeMconfig();
-
-    newMconfig.chart.pageSize = Number(
-      this.pageSizeForm.controls['pageSize'].value
-    );
-
+    newMconfig.chart.pageSize = pageSize;
     this.updateMconfig(newMconfig);
   }
 }
