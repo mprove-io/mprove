@@ -66,7 +66,7 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetQueryResponse) => {
-          this.queryStore.update(resp.payload.query);
+          this.queryStore.update({ query: resp.payload.query });
           return true;
         })
       );

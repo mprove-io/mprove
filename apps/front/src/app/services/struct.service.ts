@@ -74,17 +74,76 @@ export class StructService {
       filters: [],
       chart: {
         isValid: true,
-        type: common.ChartTypeEnum.Table,
+        type: common.ChartTypeEnum.BarVertical,
         title: 'Title',
+
+        xField: null,
+        yField: null,
+        yFields: [],
+        hideColumns: [],
+        multiField: null,
+        valueField: null,
+        previousValueField: null,
+
+        xAxis: true,
+        showXAxisLabel: false,
+        xAxisLabel: 'x axis label',
+        yAxis: true,
+        showYAxisLabel: false,
+        yAxisLabel: 'y axis label',
+        showAxis: true,
+
+        animations: false,
+        gradient: false,
+        legend: false,
+        legendTitle: 'Legend title',
+        tooltipDisabled: false,
+        roundEdges: true,
+        roundDomains: false,
+        showGridLines: true,
+        timeline: false,
+        interpolation: common.ChartInterpolationEnum.Linear,
+        autoScale: true,
+        doughnut: false,
+        explodeSlices: false,
+        labels: false,
+        colorScheme: common.ChartColorSchemeEnum.Cool,
+        schemeType: common.ChartSchemeTypeEnum.Ordinal,
         pageSize: 5,
-        hideColumns: []
+        arcWidth: 0.25,
+        barPadding: 8,
+        groupPadding: 16,
+        innerPadding: 8,
+        rangeFillOpacity: 0.15,
+        angleSpan: 240,
+        startAngle: -120,
+        bigSegments: 10,
+        smallSegments: 5,
+        min: 0,
+        max: 100,
+        units: null,
+        yScaleMin: null,
+        yScaleMax: null,
+        xScaleMax: null,
+        bandColor: null,
+        cardColor: null,
+        textColor: null,
+        emptyColor: null,
+
+        tileWidth: common.ChartTileWidthEnum._6,
+        tileHeight: common.ChartTileHeightEnum._500,
+        viewSize: common.ChartViewSizeEnum.Auto,
+        viewWidth: 600,
+        viewHeight: 200
       },
       temp: true,
       serverTs: 1
     };
 
+    let mconfigCopy = common.makeCopy(this.mconfig);
+
     return common.isDefined(this.mconfig.structId)
-      ? Object.assign({}, this.mconfig, <common.Mconfig>{
+      ? Object.assign(mconfigCopy, <common.Mconfig>{
           mconfigId: newMconfigId,
           queryId: newQueryId,
           temp: true,

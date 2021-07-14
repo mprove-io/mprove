@@ -51,14 +51,14 @@
       qData.length > 0
     "
     (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [schemeType]="chart.schemeType"
+    [results]="single"
   >
   </ngx-charts-bar-vertical>
 
   <!-- <ngx-charts-bar-vertical
-    [view]="view"
-    [scheme]="scheme"
-    [schemeType]="schemeType"
-    [results]="single"
     [animations]="animations"
     [gradient]="gradient"
     [xAxis]="xAxis"

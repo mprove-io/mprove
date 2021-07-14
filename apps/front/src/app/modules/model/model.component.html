@@ -292,11 +292,12 @@
                   class="flex flex-row items-start justify-center space-x-5 w-full h-full"
                 >
                   <m-chart-view
+                    *ngIf="mconfigChart"
                     class="w-2/3 h-full"
-                    [qData]="qData"
                     [sortedColumns]="sortedColumns"
-                    [chart]="mconfig.chart"
-                    [queryStatus]="query.status"
+                    [qData]="qData"
+                    [chart]="mconfigChart"
+                    [queryStatus]="queryStatus"
                   ></m-chart-view>
 
                   <div
@@ -467,5 +468,4 @@
 <div *ngIf="mconfig$ | async"></div>
 <div *ngIf="query$ | async"></div>
 <div *ngIf="struct$ | async"></div>
-<div *ngIf="mconfigSelectModelFields$ | async"></div>
-<div *ngIf="qData$ | async"></div>
+<div *ngIf="modelMconfigQueryLatest$ | async"></div>

@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { interval, of, Subscription } from 'rxjs';
+import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { ColumnField, MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { QueryQuery, RData } from '~front/app/queries/query.query';
+import { QueryQuery } from '~front/app/queries/query.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -15,13 +15,14 @@ import { DataSizeService } from '~front/app/services/data-size.service';
 import { FileService } from '~front/app/services/file.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { QueryService, RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { MconfigState } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
 import { NavState } from '~front/app/stores/nav.store';
-import { QueryState, QueryStore } from '~front/app/stores/query.store';
+import { QueryStore } from '~front/app/stores/query.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -91,8 +92,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
-  query: QueryState;
-  query$ = this.queryQuery.select().pipe(
+  query: common.Query;
+  query$ = this.queryQuery.query$.pipe(
     tap(x => {
       this.query = x;
       this.dryQueryEstimate = undefined;
@@ -188,19 +189,73 @@ export class ModelComponent implements OnInit, OnDestroy {
   dryDataSize: string;
 
   sortedColumns: ColumnField[];
-  mconfigSelectModelFields$ = this.mconfigQuery.selectModelFields$.pipe(
-    tap(x => {
-      this.sortedColumns = x;
-      this.cd.detectChanges();
-    })
-  );
-
   qData: RData[];
-  qData$ = this.queryQuery.qData$.pipe(
-    tap(x => {
-      this.qData = x;
-      this.cd.detectChanges();
-    })
+  queryStatus: common.QueryStatusEnum;
+  mconfigChart: common.Chart;
+
+  modelMconfigQueryLatest$ = combineLatest([
+    this.modelQuery.fields$,
+    this.mconfigQuery.select(),
+    this.queryQuery.query$
+  ]).pipe(
+    tap(
+      ([fields, mconfig, query]: [
+        common.ModelField[],
+        common.Mconfig,
+        common.Query
+      ]) => {
+        let { select, sortings, chart } = mconfig;
+
+        if (select && fields) {
+          let selectDimensions: ColumnField[] = [];
+          let selectMeasures: ColumnField[] = [];
+          let selectCalculations: ColumnField[] = [];
+
+          select.forEach((fieldId: string) => {
+            let field = fields.find(f => f.id === fieldId);
+            let f: ColumnField = Object.assign({}, field, <ColumnField>{
+              sorting: sortings.find(x => x.fieldId === fieldId),
+              sortingNumber: sortings.findIndex(s => s.fieldId === fieldId),
+              isHideColumn: chart?.hideColumns.indexOf(field.id) > -1
+            });
+
+            if (field.fieldClass === common.FieldClassEnum.Dimension) {
+              selectDimensions.push(f);
+            } else if (field.fieldClass === common.FieldClassEnum.Measure) {
+              selectMeasures.push(f);
+            } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
+              selectCalculations.push(f);
+            }
+          });
+
+          let selectFields: ColumnField[] = [
+            ...selectDimensions,
+            ...selectMeasures,
+            ...selectCalculations
+          ];
+
+          this.sortedColumns = selectFields;
+
+          console.log('query');
+          console.log(query);
+          console.log('mconfig');
+          console.log(mconfig);
+
+          this.qData =
+            mconfig.queryId === query.queryId
+              ? this.queryService.makeQData({
+                  data: query.data,
+                  columns: selectFields
+                })
+              : [];
+
+          this.queryStatus = query.status;
+          this.mconfigChart = mconfig.chart;
+
+          this.cd.detectChanges();
+        }
+      }
+    )
   );
 
   limitForm: FormGroup = this.fb.group({
@@ -350,7 +405,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     private timeService: TimeService,
     private mconfigService: MconfigService,
     private structQuery: StructQuery,
-    private dataSizeService: DataSizeService
+    private dataSizeService: DataSizeService,
+    private queryService: QueryService
   ) {}
 
   ngOnInit() {
@@ -371,7 +427,7 @@ export class ModelComponent implements OnInit, OnDestroy {
               )
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  this.queryStore.update(resp.payload.query);
+                  this.queryStore.update({ query: resp.payload.query });
                 })
               );
           } else {
@@ -478,7 +534,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       .pipe(
         map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           let { runningQueries } = resp.payload;
-          this.queryStore.update(runningQueries[0]);
+          this.queryStore.update({ query: runningQueries[0] });
         }),
         take(1)
       )
@@ -503,7 +559,7 @@ export class ModelComponent implements OnInit, OnDestroy {
           let { validQueryEstimates, errorQueries } = resp.payload;
 
           if (errorQueries.length > 0) {
-            this.queryStore.update(errorQueries[0]);
+            this.queryStore.update({ query: errorQueries[0] });
           } else {
             this.dryDataSize = this.dataSizeService.getSize(
               validQueryEstimates[0].estimate
@@ -530,7 +586,7 @@ export class ModelComponent implements OnInit, OnDestroy {
         map((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
           let { queries } = resp.payload;
           // console.log(queries);
-          this.queryStore.update(queries[0]);
+          this.queryStore.update({ query: queries[0] });
         }),
         take(1)
       )

@@ -25,10 +25,7 @@ export class MconfigService {
 
     newMconfig = this.removeFieldFromSelect({ newMconfig, fieldId });
     newMconfig = this.removeFieldFromSortings({ newMconfig, fieldId });
-
-    // newMconfig.charts = newMconfig.charts.map(chart =>
-    //   this.removeFieldFromChart(chart, fieldId)
-    // );
+    newMconfig = this.removeFieldFromChart({ newMconfig, fieldId });
 
     return newMconfig;
   }
@@ -78,6 +75,56 @@ export class MconfigService {
     return newMconfig;
   }
 
+  removeFieldFromChart(item: { newMconfig: common.Mconfig; fieldId: string }) {
+    let { newMconfig, fieldId } = item;
+
+    if (newMconfig.chart.xField === fieldId) {
+      newMconfig.chart.xField = null;
+    }
+
+    if (newMconfig.chart.yField === fieldId) {
+      newMconfig.chart.yField = null;
+    }
+
+    if (newMconfig.chart.multiField === fieldId) {
+      newMconfig.chart.multiField = null;
+    }
+
+    if (newMconfig.chart.valueField === fieldId) {
+      newMconfig.chart.valueField = null;
+    }
+
+    if (newMconfig.chart.previousValueField === fieldId) {
+      newMconfig.chart.previousValueField = null;
+    }
+
+    if (newMconfig.chart.yFields.length > 0) {
+      let index = newMconfig.chart.yFields.findIndex(yId => yId === fieldId);
+
+      if (index > -1) {
+        newMconfig.chart.yFields = [
+          ...newMconfig.chart.yFields.slice(0, index),
+          ...newMconfig.chart.yFields.slice(index + 1)
+        ];
+      }
+    }
+
+    if (newMconfig.chart.hideColumns.length > 0) {
+      let index = newMconfig.chart.hideColumns.findIndex(
+        hId => hId === fieldId
+      );
+
+      if (index > -1) {
+        newMconfig.chart.hideColumns = [
+          ...newMconfig.chart.hideColumns.slice(0, index),
+          ...newMconfig.chart.hideColumns.slice(index + 1)
+        ];
+      }
+    }
+
+    return newMconfig;
+  }
+
   navCreateMconfigAndQuery(newMconfig: common.Mconfig) {
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
       mconfig: newMconfig
@@ -94,7 +141,8 @@ export class MconfigService {
           let { mconfig, query } = resp.payload;
 
           this.mconfigStore.update(mconfig);
-          this.queryStore.update(query);
+          // query.data = common.isDefined(query.data) ? query.data : [];
+          this.queryStore.update({ query: query });
 
           this.navigateService.navigateMconfigQueryData({
             mconfigId: mconfig.mconfigId,

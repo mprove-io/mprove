@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { QueryQuery } from '~front/app/queries/query.query';
-import { QueryState } from '~front/app/stores/query.store';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-sql',
@@ -23,8 +23,8 @@ export class SqlComponent {
 
   content: string;
 
-  query: QueryState;
-  query$ = this.queryQuery.select().pipe(
+  query: common.Query;
+  query$ = this.queryQuery.query$.pipe(
     tap(x => {
       this.query = x;
       this.content = x.sql;

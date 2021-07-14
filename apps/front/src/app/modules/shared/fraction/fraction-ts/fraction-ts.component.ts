@@ -305,11 +305,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.tsRelativeValueForm = this.fb.group({
       tsRelativeValue: [
         this.fraction.tsRelativeValue,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.integerValidator,
           Validators.min(0)
-        ])
+        ]
       ]
     });
   }
@@ -342,11 +342,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.tsForValueForm = this.fb.group({
       tsForValue: [
         this.fraction.tsForValue,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.integerValidator,
           Validators.min(0)
-        ])
+        ]
       ]
     });
   }
@@ -361,11 +361,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.tsLastValueForm = this.fb.group({
       tsLastValue: [
         this.fraction.tsLastValue,
-        Validators.compose([
+        [
           Validators.required,
           ValidationService.integerValidator,
           Validators.min(0)
-        ])
+        ]
       ]
     });
   }

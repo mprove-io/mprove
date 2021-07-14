@@ -4,7 +4,7 @@ import {
   TreeComponent,
   TreeNode
 } from '@circlon/angular-tree-component';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
 import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
@@ -170,6 +170,68 @@ export class ModelTreeComponent {
       });
     } else {
       newMconfig.select = [...newMconfig.select, node.data.id];
+    }
+
+    if (newMconfig.select.length > 0) {
+      let fields: common.ModelField[];
+      this.modelQuery.fields$
+        .pipe(
+          tap(x => (fields = x)),
+          take(1)
+        )
+        .subscribe();
+
+      let selectDimensions: string[] = [];
+      let selectMeasures: string[] = [];
+      let selectCalculations: string[] = [];
+
+      newMconfig.select.forEach((fieldId: string) => {
+        let field = fields.find(f => f.id === fieldId);
+
+        if (field.fieldClass === common.FieldClassEnum.Dimension) {
+          selectDimensions.push(field.id);
+        } else if (field.fieldClass === common.FieldClassEnum.Measure) {
+          selectMeasures.push(field.id);
+        } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
+          selectCalculations.push(field.id);
+        }
+      });
+
+      let sortedSelect: string[] = [
+        ...selectDimensions,
+        ...selectMeasures,
+        ...selectCalculations
+      ];
+
+      newMconfig.chart = Object.assign({}, newMconfig.chart, <common.Chart>{
+        xField:
+          sortedSelect.length === 1
+            ? sortedSelect[0]
+            : sortedSelect.length === 2
+            ? sortedSelect[0]
+            : newMconfig.chart.xField,
+        yField:
+          sortedSelect.length === 1
+            ? sortedSelect[0]
+            : sortedSelect.length === 2
+            ? sortedSelect[1]
+            : newMconfig.chart.yField || sortedSelect[sortedSelect.length - 1],
+        // yFields: newMconfig.chart.yFields,
+        // multiField: newMconfig.chart.multiField,
+        valueField:
+          sortedSelect.length === 1
+            ? sortedSelect[0]
+            : sortedSelect.length === 2
+            ? sortedSelect[0]
+            : newMconfig.chart.valueField,
+        previousValueField:
+          sortedSelect.length === 1
+            ? sortedSelect[0]
+            : sortedSelect.length === 2
+            ? sortedSelect[1]
+            : newMconfig.chart.previousValueField ||
+              sortedSelect[sortedSelect.length - 1]
+      });
     }
 
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
