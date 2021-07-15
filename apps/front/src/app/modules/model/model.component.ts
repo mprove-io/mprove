@@ -4,10 +4,9 @@ import { NavigationEnd, Router } from '@angular/router';
 import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
-import { ColumnField, MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
+import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { QueryQuery } from '~front/app/queries/query.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -19,10 +18,9 @@ import { QueryService, RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { MconfigState } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
+import { MqState, MqStore } from '~front/app/stores/mq.store';
 import { NavState } from '~front/app/stores/nav.store';
-import { QueryStore } from '~front/app/stores/query.store';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -70,8 +68,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
-  mconfig: MconfigState;
-  mconfig$ = this.mconfigQuery.select().pipe(
+  mconfig: common.Mconfig;
+  mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {
       this.mconfig = x;
 
@@ -93,7 +91,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   );
 
   query: common.Query;
-  query$ = this.queryQuery.query$.pipe(
+  query$ = this.mqQuery.query$.pipe(
     tap(x => {
       this.query = x;
       this.dryQueryEstimate = undefined;
@@ -195,8 +193,8 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   modelMconfigQueryLatest$ = combineLatest([
     this.modelQuery.fields$,
-    this.mconfigQuery.select(),
-    this.queryQuery.query$
+    this.mqQuery.mconfig$,
+    this.mqQuery.query$
   ]).pipe(
     tap(
       ([fields, mconfig, query]: [
@@ -236,10 +234,10 @@ export class ModelComponent implements OnInit, OnDestroy {
 
           this.sortedColumns = selectFields;
 
-          console.log('query');
-          console.log(query);
-          console.log('mconfig');
-          console.log(mconfig);
+          // console.log('query');
+          // console.log(query);
+          // console.log('mconfig');
+          // console.log(mconfig);
 
           this.qData =
             mconfig.queryId === query.queryId
@@ -391,16 +389,15 @@ export class ModelComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
-    private queryQuery: QueryQuery,
     private modelQuery: ModelQuery,
+    private mqQuery: MqQuery,
     public repoQuery: RepoQuery,
-    public mconfigQuery: MconfigQuery,
     public repoStore: RepoStore,
     private apiService: ApiService,
     public structStore: StructStore,
     public fileService: FileService,
     public navigateService: NavigateService,
-    private queryStore: QueryStore,
+    private mqStore: MqStore,
     private structService: StructService,
     private timeService: TimeService,
     private mconfigService: MconfigService,
@@ -427,7 +424,9 @@ export class ModelComponent implements OnInit, OnDestroy {
               )
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  this.queryStore.update({ query: resp.payload.query });
+                  this.mqStore.update((state: MqState) =>
+                    Object.assign({}, state, { query: resp.payload.query })
+                  );
                 })
               );
           } else {
@@ -534,7 +533,10 @@ export class ModelComponent implements OnInit, OnDestroy {
       .pipe(
         map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           let { runningQueries } = resp.payload;
-          this.queryStore.update({ query: runningQueries[0] });
+
+          this.mqStore.update((state: MqState) =>
+            Object.assign({}, state, { query: runningQueries[0] })
+          );
         }),
         take(1)
       )
@@ -559,7 +561,9 @@ export class ModelComponent implements OnInit, OnDestroy {
           let { validQueryEstimates, errorQueries } = resp.payload;
 
           if (errorQueries.length > 0) {
-            this.queryStore.update({ query: errorQueries[0] });
+            this.mqStore.update((state: MqState) =>
+              Object.assign({}, state, { query: errorQueries[0] })
+            );
           } else {
             this.dryDataSize = this.dataSizeService.getSize(
               validQueryEstimates[0].estimate
@@ -586,7 +590,10 @@ export class ModelComponent implements OnInit, OnDestroy {
         map((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
           let { queries } = resp.payload;
           // console.log(queries);
-          this.queryStore.update({ query: queries[0] });
+
+          this.mqStore.update((state: MqState) =>
+            Object.assign({}, state, { query: queries[0] })
+          );
         }),
         take(1)
       )

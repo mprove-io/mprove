@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { QueryQuery } from '~front/app/queries/query.query';
+import { MqQuery } from '~front/app/queries/mq.query';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -24,7 +24,7 @@ export class SqlComponent {
   content: string;
 
   query: common.Query;
-  query$ = this.queryQuery.query$.pipe(
+  query$ = this.mqQuery.query$.pipe(
     tap(x => {
       this.query = x;
       this.content = x.sql;
@@ -32,7 +32,7 @@ export class SqlComponent {
     })
   );
 
-  constructor(private cd: ChangeDetectorRef, private queryQuery: QueryQuery) {}
+  constructor(private cd: ChangeDetectorRef, private mqQuery: MqQuery) {}
 
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;

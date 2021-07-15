@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
-import { MconfigQuery } from '../queries/mconfig.query';
 import { ModelQuery } from '../queries/model.query';
+import { MqQuery } from '../queries/mq.query';
 import { StructQuery } from '../queries/struct.query';
 import { UserQuery } from '../queries/user.query';
-import { MconfigState } from '../stores/mconfig.store';
 import { ModelState } from '../stores/model.store';
 import { StructState } from '../stores/struct.store';
 import { UserState } from '../stores/user.store';
@@ -33,8 +32,8 @@ export class StructService {
     })
   );
 
-  mconfig: MconfigState;
-  mconfig$ = this.mconfigQuery.select().pipe(
+  mconfig: common.Mconfig;
+  mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {
       this.mconfig = x;
     })
@@ -44,7 +43,7 @@ export class StructService {
     private userQuery: UserQuery,
     public structQuery: StructQuery,
     private modelQuery: ModelQuery,
-    private mconfigQuery: MconfigQuery
+    private mqQuery: MqQuery
   ) {
     this.user$.subscribe();
     this.struct$.subscribe();

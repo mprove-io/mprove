@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { isNumeric } from 'rxjs/internal/util/isNumeric';
 import { common } from '~front/barrels/common';
-import { ColumnField } from '../queries/mconfig.query';
+import { ColumnField } from '../queries/mq.query';
 import { RData } from './query.service';
 
 @Injectable({ providedIn: 'root' })
@@ -82,6 +82,8 @@ export class DataService {
           ? raw[yName].value
           : 0
     }));
+
+    // console.log(singleData);
 
     return singleData;
   }

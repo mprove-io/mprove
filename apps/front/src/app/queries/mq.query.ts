@@ -3,7 +3,7 @@ import { Query } from '@datorama/akita';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
-import { MconfigState, MconfigStore } from '../stores/mconfig.store';
+import { MqState, MqStore } from '../stores/mq.store';
 import { ModelQuery } from './model.query';
 
 export class ColumnField extends common.ModelField {
@@ -18,12 +18,15 @@ export class FilterExtended extends common.Filter {
 }
 
 @Injectable({ providedIn: 'root' })
-export class MconfigQuery extends Query<MconfigState> {
-  filters$ = this.select(state => state.filters);
+export class MqQuery extends Query<MqState> {
+  query$ = this.select(state => state.query);
+  mconfig$ = this.select(state => state.mconfig);
+
+  filters$ = this.select(state => state.mconfig.filters);
 
   extendedFilters$ = combineLatest([
     this.modelQuery.fields$,
-    this.select()
+    this.mconfig$
   ]).pipe(
     map(([fields, mconfig]: [common.ModelField[], common.Mconfig]) => {
       let extendedFilters: FilterExtended[] = [];
@@ -49,7 +52,7 @@ export class MconfigQuery extends Query<MconfigState> {
     })
   );
 
-  constructor(protected store: MconfigStore, private modelQuery: ModelQuery) {
+  constructor(protected store: MqStore, private modelQuery: ModelQuery) {
     super(store);
   }
 }

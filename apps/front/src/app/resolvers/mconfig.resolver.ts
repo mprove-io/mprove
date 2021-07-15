@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { MconfigStore } from '../stores/mconfig.store';
+import { emptyMconfig, MqStore } from '../stores/mq.store';
 import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +18,7 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
-    private mconfigStore: MconfigStore
+    private mqStore: MqStore
   ) {}
 
   resolve(
@@ -28,7 +28,9 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
     let mconfigId = route.params[common.PARAMETER_MCONFIG_ID];
 
     if (mconfigId === common.EMPTY) {
-      this.mconfigStore.reset();
+      this.mqStore.update(state =>
+        Object.assign({}, state, { mconfig: emptyMconfig })
+      );
       return of(true);
     }
 
@@ -54,7 +56,9 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
-          this.mconfigStore.update(resp.payload.mconfig);
+          this.mqStore.update(state =>
+            Object.assign({}, state, { mconfig: resp.payload.mconfig })
+          );
           return true;
         })
       );

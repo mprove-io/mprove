@@ -6,15 +6,13 @@ import {
 } from '@circlon/angular-tree-component';
 import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
-import { MconfigQuery } from '~front/app/queries/mconfig.query';
 import { ModelQuery } from '~front/app/queries/model.query';
-import { ApiService } from '~front/app/services/api.service';
+import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
-import { MconfigState, MconfigStore } from '~front/app/stores/mconfig.store';
 import { ModelState } from '~front/app/stores/model.store';
-import { QueryStore } from '~front/app/stores/query.store';
+import { MqStore } from '~front/app/stores/mq.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { common } from '~front/barrels/common';
 
@@ -47,8 +45,8 @@ export class ModelTreeComponent {
     })
   );
 
-  mconfig: MconfigState;
-  mconfig$ = this.mconfigQuery.select().pipe(
+  mconfig: common.Mconfig;
+  mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {
       this.mconfig = x;
 
@@ -93,12 +91,10 @@ export class ModelTreeComponent {
   constructor(
     public modelQuery: ModelQuery,
     private cd: ChangeDetectorRef,
-    private mconfigQuery: MconfigQuery,
-    private apiService: ApiService,
+    private mqQuery: MqQuery,
     private structService: StructService,
-    private mconfigStore: MconfigStore,
     private mconfigService: MconfigService,
-    private queryStore: QueryStore,
+    private mqStore: MqStore,
     public structStore: StructStore,
     private navigateService: NavigateService
   ) {}

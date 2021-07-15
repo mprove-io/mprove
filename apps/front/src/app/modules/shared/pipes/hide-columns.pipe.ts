@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ColumnField } from '~front/app/queries/mconfig.query';
+import { ColumnField } from '~front/app/queries/mq.query';
 
 @Pipe({ name: 'hideColumns' })
 export class HideColumnsPipe implements PipeTransform {

@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
-import { ColumnField } from '~front/app/queries/mconfig.query';
+import { ColumnField } from '~front/app/queries/mq.query';
 import { DataService } from '~front/app/services/data.service';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';

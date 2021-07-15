@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ColumnField } from '~front/app/queries/mconfig.query';
+import { ColumnField } from '~front/app/queries/mq.query';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 

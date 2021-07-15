@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ColumnField } from '~front/app/queries/mconfig.query';
+import { ColumnField } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';

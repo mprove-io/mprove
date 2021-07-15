@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { format, formatDefaultLocale } from 'd3-format';
 import { common } from '~front/barrels/common';
-import { ColumnField } from '../queries/mconfig.query';
+import { ColumnField } from '../queries/mq.query';
 
 export class RData {
   [k: string]: Cell;

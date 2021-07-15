@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { FilterExtended, MconfigQuery } from '~front/app/queries/mconfig.query';
+import { FilterExtended, MqQuery } from '~front/app/queries/mq.query';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -9,7 +9,7 @@ import { common } from '~front/barrels/common';
 })
 export class ModelBricksComponent {
   extendedFilters: FilterExtended[];
-  extendedFilters$ = this.mconfigQuery.extendedFilters$.pipe(
+  extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
     tap(x => {
       this.extendedFilters = x;
       this.cd.detectChanges();
@@ -18,8 +18,5 @@ export class ModelBricksComponent {
 
   fractionOperatorEnum = common.FractionOperatorEnum;
 
-  constructor(
-    private mconfigQuery: MconfigQuery,
-    private cd: ChangeDetectorRef
-  ) {}
+  constructor(private mqQuery: MqQuery, private cd: ChangeDetectorRef) {}
 }

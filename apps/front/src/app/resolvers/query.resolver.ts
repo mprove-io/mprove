@@ -8,20 +8,16 @@ import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { MconfigQuery } from '../queries/mconfig.query';
-import { NavQuery } from '../queries/nav.query';
+import { MqQuery } from '../queries/mq.query';
 import { ApiService } from '../services/api.service';
-import { MconfigState } from '../stores/mconfig.store';
-import { NavState } from '../stores/nav.store';
-import { QueryStore } from '../stores/query.store';
+import { emptyQuery, MqStore } from '../stores/mq.store';
 
 @Injectable({ providedIn: 'root' })
 export class QueryResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
-    private navQuery: NavQuery,
-    private mconfigQuery: MconfigQuery,
-    private queryStore: QueryStore
+    private mqQuery: MqQuery,
+    private mqStore: MqStore
   ) {}
 
   resolve(
@@ -31,24 +27,15 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
     let queryId = route.params[common.PARAMETER_QUERY_ID];
 
     if (queryId === common.EMPTY) {
-      this.queryStore.reset();
+      this.mqStore.update(state =>
+        Object.assign({}, state, { query: emptyQuery })
+      );
+
       return of(true);
     }
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
-    let mconfig: MconfigState;
-    this.mconfigQuery
-      .select()
+    let mconfig: common.Mconfig;
+    this.mqQuery.mconfig$
       .pipe(
         tap(x => {
           mconfig = x;
@@ -66,7 +53,10 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetQueryResponse) => {
-          this.queryStore.update({ query: resp.payload.query });
+          this.mqStore.update(state =>
+            Object.assign({}, state, { query: resp.payload.query })
+          );
+
           return true;
         })
       );

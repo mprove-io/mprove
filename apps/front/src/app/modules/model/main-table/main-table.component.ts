@@ -1,11 +1,9 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { ColumnField, MconfigQuery } from '~front/app/queries/mconfig.query';
-import { QueryQuery } from '~front/app/queries/query.query';
+import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
-import { MconfigState } from '~front/app/stores/mconfig.store';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -28,8 +26,8 @@ export class MainTableComponent {
   @Input()
   qData: RData[];
 
-  mconfig: MconfigState;
-  mconfig$ = this.mconfigQuery.select().pipe(
+  mconfig: common.Mconfig;
+  mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {
       this.mconfig = x;
       this.cd.detectChanges();
@@ -37,9 +35,8 @@ export class MainTableComponent {
   );
 
   constructor(
-    public mconfigQuery: MconfigQuery,
+    public mqQuery: MqQuery,
     public mconfigService: MconfigService,
-    public queryQuery: QueryQuery,
     private structService: StructService,
     private cd: ChangeDetectorRef
   ) {}

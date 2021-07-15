@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { FilterExtended, MconfigQuery } from '~front/app/queries/mconfig.query';
+import { FilterExtended, MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
@@ -16,7 +16,7 @@ export class EventFractionUpdate {
 })
 export class ModelFiltersComponent {
   extendedFilters: FilterExtended[];
-  extendedFilters$ = this.mconfigQuery.extendedFilters$.pipe(
+  extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
     tap(x => {
       this.extendedFilters = x;
       this.cd.detectChanges();
@@ -24,7 +24,7 @@ export class ModelFiltersComponent {
   );
 
   constructor(
-    private mconfigQuery: MconfigQuery,
+    private mqQuery: MqQuery,
     private cd: ChangeDetectorRef,
     private structService: StructService,
     private mconfigService: MconfigService

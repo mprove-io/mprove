@@ -3,8 +3,7 @@ import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { ModelQuery } from '../queries/model.query';
-import { MconfigStore } from '../stores/mconfig.store';
-import { QueryStore } from '../stores/query.store';
+import { MqStore } from '../stores/mq.store';
 import { StructStore } from '../stores/struct.store';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -14,8 +13,7 @@ export class MconfigService {
   constructor(
     public modelQuery: ModelQuery,
     private apiService: ApiService,
-    private mconfigStore: MconfigStore,
-    private queryStore: QueryStore,
+    private mqStore: MqStore,
     public structStore: StructStore,
     private navigateService: NavigateService
   ) {}
@@ -140,9 +138,7 @@ export class MconfigService {
         map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
           let { mconfig, query } = resp.payload;
 
-          this.mconfigStore.update(mconfig);
-          // query.data = common.isDefined(query.data) ? query.data : [];
-          this.queryStore.update({ query: query });
+          this.mqStore.update({ mconfig: mconfig, query: query });
 
           this.navigateService.navigateMconfigQueryData({
             mconfigId: mconfig.mconfigId,
