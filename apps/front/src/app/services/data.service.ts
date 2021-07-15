@@ -141,7 +141,7 @@ export class DataService {
     xFieldId: string;
     yFieldsIds: string[];
   }) {
-    console.log(item);
+    // console.log(item);
 
     let xField = item.selectFields.find(f => f.id === item.xFieldId);
 

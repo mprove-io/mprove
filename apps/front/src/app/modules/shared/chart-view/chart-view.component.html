@@ -321,4 +321,32 @@
     [roundDomains]="chart.roundDomains"
   >
   </ngx-charts-bar-horizontal-normalized>
+
+  <!-- custom_colors -->
+  <!-- label_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- tooltip_text -->
+
+  <ngx-charts-pie-chart
+    *ngIf="
+      chart.type === chartTypeEnum.Pie &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="single"
+    [animations]="chart.animations"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [explodeSlices]="chart.explodeSlices"
+    [labels]="chart.labels"
+    [doughnut]="chart.doughnut"
+    [arcWidth]="chart.arcWidth"
+    [gradient]="chart.gradient"
+    [tooltipDisabled]="chart.tooltipDisabled"
+  >
+  </ngx-charts-pie-chart>
 </div>
