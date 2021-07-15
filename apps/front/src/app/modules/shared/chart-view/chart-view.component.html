@@ -42,8 +42,8 @@
   <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
-
   <!-- custom_colors -->
+
   <ngx-charts-bar-vertical
     *ngIf="
       chart.type === chartTypeEnum.BarVertical &&
@@ -53,28 +53,134 @@
     (select)="onSelect($event)"
     [view]="null"
     [scheme]="scheme"
-    [schemeType]="chart.schemeType"
     [results]="single"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+    [roundEdges]="chart.roundEdges"
+    [yScaleMax]="chart.yScaleMax"
   >
   </ngx-charts-bar-vertical>
 
-  <!-- <ngx-charts-bar-vertical
-    [animations]="animations"
-    [gradient]="gradient"
-    [xAxis]="xAxis"
-    [yAxis]="yAxis"
-    [legend]="legend"
-    [legendTitle]="legendTitle"
-    [showXAxisLabel]="showXAxisLabel"
-    [showYAxisLabel]="showYAxisLabel"
-    [tooltipDisabled]="tooltipDisabled"
-    [xAxisLabel]="xAxisLabel"
-    [yAxisLabel]="yAxisLabel"
-    [showGridLines]="showGridLines"
-    [barPadding]="barPadding"
-    [roundDomains]="roundDomains"
-    [roundEdges]="roundEdges"
-    [yScaleMax]="yScaleMax"
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- custom_colors -->
+
+  <ngx-charts-bar-horizontal
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontal &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="single"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+    [roundEdges]="chart.roundEdges"
+    [xScaleMax]="chart.xScaleMax"
   >
-  </ngx-charts-bar-vertical>   -->
+  </ngx-charts-bar-horizontal>
+
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- custom_colors-->
+
+  <ngx-charts-bar-vertical-2d
+    *ngIf="
+      chart.type === chartTypeEnum.BarVerticalGrouped &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="multi"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+    [roundEdges]="chart.roundEdges"
+    [roundEdges]="chart.roundEdges"
+    [yScaleMax]="chart.yScaleMax"
+  >
+  </ngx-charts-bar-vertical-2d>
+
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- custom_colors-->
+
+  <ngx-charts-bar-horizontal-2d
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontalGrouped &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="multi"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+    [roundEdges]="chart.roundEdges"
+    [roundEdges]="chart.roundEdges"
+    [xScaleMax]="chart.xScaleMax"
+  >
+  </ngx-charts-bar-horizontal-2d>
 </div>

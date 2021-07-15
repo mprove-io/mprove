@@ -212,8 +212,22 @@ export class ModelTreeComponent {
             : sortedSelect.length === 2
             ? sortedSelect[1]
             : newMconfig.chart.yField || sortedSelect[sortedSelect.length - 1],
-        // yFields: newMconfig.chart.yFields,
-        // multiField: newMconfig.chart.multiField,
+        yFields:
+          sortedSelect.length === 1
+            ? [sortedSelect[0]]
+            : sortedSelect.length === 2
+            ? [sortedSelect[1]]
+            : newMconfig.chart.yFields.length > 0
+            ? newMconfig.chart.yFields
+            : [sortedSelect[sortedSelect.length - 1]],
+        multiField:
+          sortedSelect.length === 1
+            ? sortedSelect[0]
+            : sortedSelect.length === 2
+            ? sortedSelect[0]
+            : sortedSelect.length === 3
+            ? sortedSelect[1]
+            : newMconfig.chart.multiField,
         valueField:
           sortedSelect.length === 1
             ? sortedSelect[0]

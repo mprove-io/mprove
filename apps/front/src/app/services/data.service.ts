@@ -134,108 +134,99 @@ export class DataService {
     }
   }
 
-  getMultiData(
-    selectFields: ColumnField[],
-    data: any[],
-    multiFieldId: string,
-    xFieldId: string,
-    yFieldsIds: string[]
-  ) {
-    if (
-      selectFields &&
-      data &&
-      data.length > 0 &&
-      xFieldId &&
-      yFieldsIds.length > 0
-    ) {
-      let xField = selectFields.find(f => f.id === xFieldId);
+  getMultiData(item: {
+    selectFields: ColumnField[];
+    data: any[];
+    multiFieldId: string;
+    xFieldId: string;
+    yFieldsIds: string[];
+  }) {
+    console.log(item);
 
-      if (!xField) {
-        return [];
-      }
+    let xField = item.selectFields.find(f => f.id === item.xFieldId);
 
-      let yFields: ColumnField[] = [];
-
-      yFieldsIds.forEach(yFieldId => {
-        let yField = selectFields.find(f => f.id === yFieldId);
-
-        if (!yField) {
-          return [];
-        }
-
-        yFields.push(yField);
-      });
-
-      let xName = xField.sqlName;
-      let xValue = this.getValue(xName);
-
-      if (xField.result === common.FieldResultEnum.Number) {
-        xValue = Number(xValue);
-      }
-
-      let multiField = multiFieldId
-        ? selectFields.find(f => f.id === multiFieldId)
-        : undefined;
-
-      if (multiFieldId && !multiField) {
-        return [];
-      }
-
-      let multiName = multiField ? multiField.sqlName : undefined;
-
-      let prepareData: any = {};
-
-      data.forEach((raw: any) => {
-        yFields.forEach(yField => {
-          let yName = yField.sqlName;
-
-          let key: string;
-
-          if (multiName) {
-            if (yFields.length > 1) {
-              key = raw[multiName]
-                ? raw[multiName] + ' ' + yField.label
-                : 'null' + ' ' + yField.label;
-            } else {
-              key = raw[multiName] ? raw[multiName] : 'null';
-            }
-          } else {
-            key = yField.label;
-          }
-
-          // x null check
-          if (raw[xName]) {
-            let element = {
-              name: xValue(raw, xName),
-              value:
-                isNumeric(raw[yName]) &&
-                yField.result === common.FieldResultEnum.Number
-                  ? Number(raw[yName])
-                  : isNumeric(raw[yName])
-                  ? raw[yName]
-                  : 0
-            };
-
-            if (prepareData[key]) {
-              prepareData[key].push(element);
-            } else {
-              prepareData[key] = [element];
-            }
-          }
-        });
-      });
-
-      let multiData: any[] = Object.keys(prepareData).map(x =>
-        Object.assign({
-          name: x,
-          series: prepareData[x]
-        })
-      );
-
-      return multiData;
-    } else {
+    if (!xField) {
       return [];
     }
+
+    let yFields: ColumnField[] = [];
+
+    item.yFieldsIds.forEach(yFieldId => {
+      let yField = item.selectFields.find(f => f.id === yFieldId);
+
+      if (!yField) {
+        return [];
+      }
+
+      yFields.push(yField);
+    });
+
+    let xName = xField.sqlName;
+    let xValue = this.getValue(xName);
+
+    let multiField = item.multiFieldId
+      ? item.selectFields.find(f => f.id === item.multiFieldId)
+      : undefined;
+
+    if (item.multiFieldId && !multiField) {
+      return [];
+    }
+
+    let multiName = multiField ? multiField.sqlName : undefined;
+
+    let prepareData: any = {};
+
+    item.data.forEach((raw: RData) => {
+      yFields.forEach(yField => {
+        let yName = yField.sqlName;
+
+        let key: string;
+
+        if (multiName) {
+          if (yFields.length > 1) {
+            key = raw[multiName].value
+              ? raw[multiName].value + ' ' + yField.label
+              : 'null' + ' ' + yField.label;
+          } else {
+            key = raw[multiName].value ? raw[multiName].value : 'null';
+          }
+        } else {
+          key = yField.label;
+        }
+
+        // x null check
+        if (raw[xName]) {
+          let element = {
+            name:
+              xField.result === common.FieldResultEnum.Number
+                ? Number(xValue(raw, xName))
+                : xValue(raw, xName),
+            value:
+              isNumeric(raw[yName].value) &&
+              yField.result === common.FieldResultEnum.Number
+                ? Number(raw[yName].value)
+                : isNumeric(raw[yName].value)
+                ? raw[yName].value
+                : 0
+          };
+
+          if (prepareData[key]) {
+            prepareData[key].push(element);
+          } else {
+            prepareData[key] = [element];
+          }
+        }
+      });
+    });
+
+    let multiData: any[] = Object.keys(prepareData).map(x =>
+      Object.assign({
+        name: x,
+        series: prepareData[x]
+      })
+    );
+
+    return multiData;
   }
 
   private getValue(fieldName: string) {
@@ -289,7 +280,7 @@ export class DataService {
   }
 
   private getDateFromDate(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)$/g;
 
@@ -305,7 +296,7 @@ export class DataService {
   }
 
   private getDateFromHour(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)$/g;
 
@@ -322,7 +313,7 @@ export class DataService {
   }
 
   private getDateFromMinute(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)$/g;
 
@@ -340,7 +331,7 @@ export class DataService {
   }
 
   private getDateFromMonth(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)$/g;
 
@@ -352,7 +343,7 @@ export class DataService {
   }
 
   private getDateFromQuarter(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)$/g;
 
@@ -364,7 +355,7 @@ export class DataService {
   }
 
   private getDateFromTime(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)[:](\d\d)$/g;
 
@@ -383,7 +374,7 @@ export class DataService {
   }
 
   private getDateFromWeek(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)$/g;
 
@@ -399,7 +390,7 @@ export class DataService {
   }
 
   private getDateFromYear(raw: any, fieldName: string) {
-    let data = raw[fieldName];
+    let data = raw[fieldName].value;
 
     let regEx = /(\d\d\d\d)$/g;
 
@@ -411,6 +402,6 @@ export class DataService {
   }
 
   private getRawValue(raw: any, fieldName: string) {
-    return raw[fieldName];
+    return raw[fieldName].value;
   }
 }
