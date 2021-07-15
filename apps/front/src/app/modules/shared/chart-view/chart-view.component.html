@@ -140,8 +140,8 @@
     [yAxisLabel]="chart.yAxisLabel"
     [showGridLines]="chart.showGridLines"
     [barPadding]="chart.barPadding"
+    [groupPadding]="chart.groupPadding"
     [roundDomains]="chart.roundDomains"
-    [roundEdges]="chart.roundEdges"
     [roundEdges]="chart.roundEdges"
     [yScaleMax]="chart.yScaleMax"
   >
@@ -177,10 +177,148 @@
     [yAxisLabel]="chart.yAxisLabel"
     [showGridLines]="chart.showGridLines"
     [barPadding]="chart.barPadding"
+    [groupPadding]="chart.groupPadding"
     [roundDomains]="chart.roundDomains"
-    [roundEdges]="chart.roundEdges"
     [roundEdges]="chart.roundEdges"
     [xScaleMax]="chart.xScaleMax"
   >
   </ngx-charts-bar-horizontal-2d>
+
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- custom_colors-->
+
+  <ngx-charts-bar-vertical-stacked
+    *ngIf="
+      chart.type === chartTypeEnum.BarVerticalStacked &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="multi"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+    [yScaleMax]="chart.yScaleMax"
+  >
+  </ngx-charts-bar-vertical-stacked>
+
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- custom_colors-->
+
+  <ngx-charts-bar-horizontal-stacked
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontalStacked &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="multi"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+    [xScaleMax]="chart.xScaleMax"
+  >
+  </ngx-charts-bar-horizontal-stacked>
+
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- custom_colors-->
+
+  <ngx-charts-bar-vertical-normalized
+    *ngIf="
+      chart.type === chartTypeEnum.BarVerticalNormalized &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="multi"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+  >
+  </ngx-charts-bar-vertical-normalized>
+
+  <!-- x_axis_tick_formatting -->
+  <!-- y_axis_tick_formatting -->
+  <!-- active_entries -->
+  <!-- tooltip_template -->
+  <!-- custom_colors-->
+
+  <ngx-charts-bar-horizontal-normalized
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontalNormalized &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [scheme]="scheme"
+    [results]="multi"
+    [schemeType]="chart.schemeType"
+    [animations]="chart.animations"
+    [gradient]="chart.gradient"
+    [xAxis]="chart.xAxis"
+    [yAxis]="chart.yAxis"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [showXAxisLabel]="chart.showXAxisLabel"
+    [showYAxisLabel]="chart.showYAxisLabel"
+    [tooltipDisabled]="chart.tooltipDisabled"
+    [xAxisLabel]="chart.xAxisLabel"
+    [yAxisLabel]="chart.yAxisLabel"
+    [showGridLines]="chart.showGridLines"
+    [barPadding]="chart.barPadding"
+    [roundDomains]="chart.roundDomains"
+  >
+  </ngx-charts-bar-horizontal-normalized>
 </div>
