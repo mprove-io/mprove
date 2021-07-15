@@ -31,26 +31,14 @@ export class ChartViewComponent implements OnChanges {
   value: number;
   previousValue: number;
 
-  // colorScheme: common.ChartColorSchemeEnum;
-  // interpolation: common.ChartInterpolationEnum;
   scheme: any;
-  // schemeType: common.ChartSchemeTypeEnum;
   curve: any;
 
   constructor(private dataService: DataService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(this.chart?.xField);
-    // console.log(this.chart?.yField);
-    // console.log(this.qData);
-    // console.log(changes);
-
-    // this.schemeType = this.chart.schemeType || common.ChartSchemeTypeEnum.Ordinal;
-
-    // this.colorScheme = this.chart.colorScheme || common.ChartColorSchemeEnum.Cool;
     this.scheme = getChartScheme(this.chart.colorScheme);
 
-    // this.interpolation = this.chart.interpolation || common.ChartInterpolationEnum.Linear;
     this.curve = getChartCurve(this.chart.interpolation);
 
     if (
