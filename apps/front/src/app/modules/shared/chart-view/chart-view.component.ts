@@ -61,6 +61,10 @@ export class ChartViewComponent implements OnChanges {
               data: this.qData
             })
           : [];
+    } else if (this.chart.type === common.ChartTypeEnum.NumberCard) {
+      // this.singleForNumberCard =
+    } else if (this.chart.type === common.ChartTypeEnum.GaugeLinear) {
+      // this.value =
     } else if (
       this.chart.type === common.ChartTypeEnum.BarVerticalGrouped ||
       this.chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||
