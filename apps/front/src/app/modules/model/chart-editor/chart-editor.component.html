@@ -44,6 +44,60 @@
   </div>
 
   <div
+    *ngIf="
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.HeatMap
+    "
+    class="mb-5 flex flex-row items-start"
+  >
+    <div class="flex h-[36px] text-gray1 text-base items-center select-none"
+      >yFields</div
+    >
+
+    <div class="flex flex-col ml-3 mt-2 items-start space-y-2">
+      <div
+        *ngFor="let column of sortedColumns"
+        class="flex flex-row items-center"
+      >
+        <button
+          data-cy="chartEditorHideColumnsCheckbox"
+          class="flex items-center justify-center h-5 w-5 border-2 border-blue3 text-white rounded focus:outline-none"
+          [ngClass]="{
+            'bg-blue3 ': yFieldsIsChecked(column.id)
+          }"
+          (click)="yFieldsOnClick(column.id)"
+        >
+          <m-check-icon *ngIf="yFieldsIsChecked(column.id)"></m-check-icon>
+        </button>
+
+        <div class="ml-3 flex flex-row items-center select-none">
+          <div class="text-sm truncate">{{ column.topLabel | capitalize }}</div>
+
+          <div class="ml-2 flex flex-row items-center font-semibold text-left">
+            <div *ngIf="column.groupLabel"
+              >{{ column.groupLabel | capitalize }} -
+              {{ column.label | capitalize }}</div
+            >
+
+            <div *ngIf="!column.groupLabel">{{
+              column.label | capitalize
+            }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
     class="text-xl text-gray1 font-semibold mb-5"
     *ngIf="chart.type !== chartTypeEnum.Table"
     >Axis</div

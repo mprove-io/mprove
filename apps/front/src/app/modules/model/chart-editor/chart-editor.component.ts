@@ -46,6 +46,8 @@ export class ChartEditorComponent implements OnChanges {
 
     if (this.chart.type === common.ChartTypeEnum.Table) {
       isChartValid = this.pageSizeForm.controls['pageSize'].valid;
+    } else {
+      isChartValid = true;
     }
 
     return isChartValid;
@@ -86,6 +88,26 @@ export class ChartEditorComponent implements OnChanges {
             ...this.chart.hideColumns.slice(index + 1)
           ]
         : [...this.chart.hideColumns, id];
+
+    this.updateMconfig(newMconfig);
+  }
+
+  yFieldsIsChecked(id: string) {
+    return this.chart.yFields.findIndex(x => x === id) > -1;
+  }
+
+  yFieldsOnClick(id: string) {
+    let index = this.chart.yFields.findIndex(x => x === id);
+
+    let newMconfig = this.structService.makeMconfig();
+
+    newMconfig.chart.yFields =
+      index > -1
+        ? [
+            ...this.chart.yFields.slice(0, index),
+            ...this.chart.yFields.slice(index + 1)
+          ]
+        : [...this.chart.yFields, id];
 
     this.updateMconfig(newMconfig);
   }
