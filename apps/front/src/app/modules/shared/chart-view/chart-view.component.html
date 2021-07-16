@@ -615,4 +615,82 @@
     [tooltipDisabled]="chart.tooltipDisabled"
   >
   </ngx-charts-tree-map>
+
+  <!-- custom_colors -->
+
+  <!-- label_formatting -->
+  <!-- value_formatting -->
+
+  <ngx-charts-number-card
+    *ngIf="
+      chart.type === chartTypeEnum.NumberCard &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [results]="singleForNumberCard"
+    [scheme]="scheme"
+    [animations]="chart.animations"
+    [innerPadding]="chart.innerPadding"
+    [cardColor]="chart.cardColor"
+    [emptyColor]="chart.emptyColor"
+    [bandColor]="chart.bandColor"
+    [textColor]="chart.textColor"
+  >
+  </ngx-charts-number-card>
+
+  <!-- custom_colors -->
+  <!-- axisTickFormatting -->
+  <!-- valueFormatting -->
+
+  <!-- tooltip_template -->
+  <!-- margin -->
+  <!-- text_value -->
+
+  <ngx-charts-gauge
+    *ngIf="
+      chart.type === chartTypeEnum.Gauge &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [results]="single"
+    [scheme]="scheme"
+    [animations]="chart.animations"
+    [legend]="chart.legend"
+    [legendTitle]="chart.legendTitle"
+    [min]="chart.min"
+    [max]="chart.max"
+    [units]="chart.units"
+    [angleSpan]="chart.angleSpan"
+    [startAngle]="chart.startAngle"
+    [showAxis]="chart.showAxis"
+    [bigSegments]="chart.bigSegments"
+    [smallSegments]="chart.smallSegments"
+    [tooltipDisabled]="chart.tooltipDisabled"
+  >
+  </ngx-charts-gauge>
+
+  <!-- custom_colors -->
+  <!-- value_formatting -->
+
+  <ngx-charts-linear-gauge
+    *ngIf="
+      chart.type === chartTypeEnum.GaugeLinear &&
+      chart.isValid === true &&
+      qData.length > 0
+    "
+    (select)="onSelect($event)"
+    [view]="null"
+    [value]="value"
+    [previousValue]="previousValue"
+    [scheme]="scheme"
+    [animations]="chart.animations"
+    [min]="chart.min"
+    [max]="chart.max"
+    [units]="chart.units"
+  >
+  </ngx-charts-linear-gauge>
 </div>

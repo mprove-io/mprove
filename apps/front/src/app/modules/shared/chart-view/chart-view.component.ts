@@ -27,6 +27,7 @@ export class ChartViewComponent implements OnChanges {
   queryStatus: common.QueryStatusEnum;
 
   single: any[] = [];
+  singleForNumberCard: any[] = [];
   multi: any[] = [];
   value: number;
   previousValue: number;
@@ -38,7 +39,6 @@ export class ChartViewComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.scheme = getChartScheme(this.chart.colorScheme);
-
     this.curve = getChartCurve(this.chart.interpolation);
 
     if (
@@ -62,9 +62,25 @@ export class ChartViewComponent implements OnChanges {
             })
           : [];
     } else if (this.chart.type === common.ChartTypeEnum.NumberCard) {
-      // this.singleForNumberCard =
+      this.singleForNumberCard =
+        this.qData.length > 0 && common.isDefined(this.chart.yField)
+          ? this.dataService.getSingleDataForNumberCard({
+              selectFields: this.sortedColumns,
+              xFieldId: this.chart.xField,
+              yFieldId: this.chart.yField,
+              data: this.qData
+            })
+          : [];
     } else if (this.chart.type === common.ChartTypeEnum.GaugeLinear) {
-      // this.value =
+      [this.value, this.previousValue] =
+        this.qData.length > 0 && common.isDefined(this.chart.valueField)
+          ? this.dataService.getValueData({
+              columnFields: this.sortedColumns,
+              data: this.qData,
+              currentValueFieldId: this.chart.valueField,
+              previousValueFieldId: this.chart.previousValueField
+            })
+          : [0, 0];
     } else if (
       this.chart.type === common.ChartTypeEnum.BarVerticalGrouped ||
       this.chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||

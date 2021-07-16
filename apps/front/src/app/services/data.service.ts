@@ -8,54 +8,44 @@ import { RData } from './query.service';
 export class DataService {
   constructor() {}
 
-  getValueData(
-    columnFields: ColumnField[],
-    data: any[],
-    currentValueFieldId: string,
-    previousValueFieldId: string
-  ) {
-    if (columnFields && data && data.length > 0 && currentValueFieldId) {
-      let currentValueField = columnFields.find(
-        f => f.id === currentValueFieldId
-      );
+  getValueData(item: {
+    columnFields: ColumnField[];
+    data: RData[];
+    currentValueFieldId: string;
+    previousValueFieldId: string;
+  }) {
+    let {
+      columnFields,
+      data,
+      currentValueFieldId,
+      previousValueFieldId
+    } = item;
 
-      if (!currentValueField) {
-        return [0, 0];
-      }
+    let currentValueField = columnFields.find(
+      f => f.id === currentValueFieldId
+    );
 
-      let currentValueName = currentValueField.sqlName;
-      let currentValue = isNumeric(data[0][currentValueName])
-        ? data[0][currentValueName]
-        : 0;
+    let currentValueName = currentValueField.sqlName;
 
-      if (currentValueField.result === common.FieldResultEnum.Number) {
-        currentValue = Number(currentValue);
-      }
+    let currentValue = isNumeric(data[0][currentValueName].value)
+      ? Number(data[0][currentValueName].value)
+      : 0;
 
-      let previousValueField;
+    let previousValueField;
 
-      previousValueField = columnFields.find(
-        f => f.id === previousValueFieldId
-      );
+    previousValueField = columnFields.find(f => f.id === previousValueFieldId);
 
-      if (!previousValueField) {
-        return [currentValue, 0];
-      }
-
-      let previousValueName = previousValueField.sqlName;
-
-      let previousValue = isNumeric(data[0][previousValueName])
-        ? data[0][previousValueName]
-        : 0;
-
-      if (currentValueField.result === common.FieldResultEnum.Number) {
-        previousValue = Number(previousValue);
-      }
-
-      return [currentValue, previousValue];
-    } else {
-      return [0, 0];
+    if (!previousValueField) {
+      return [currentValue, 0];
     }
+
+    let previousValueName = previousValueField.sqlName;
+
+    let previousValue = isNumeric(data[0][previousValueName].value)
+      ? Number(data[0][previousValueName].value)
+      : 0;
+
+    return [currentValue, previousValue];
   }
 
   getSingleData(item: {
@@ -94,44 +84,37 @@ export class DataService {
     xFieldId: string;
     yFieldId: string;
   }) {
-    if (
-      item.selectFields &&
-      item.data &&
-      item.data.length > 0 &&
-      item.yFieldId
-    ) {
-      let xField = item.xFieldId
-        ? item.selectFields.find(f => f.id === item.xFieldId)
-        : undefined;
+    let { selectFields, data, xFieldId, yFieldId } = item;
 
-      let yField = item.selectFields.find(f => f.id === item.yFieldId);
+    let xField = xFieldId
+      ? selectFields.find(f => f.id === xFieldId)
+      : undefined;
 
-      if (!yField) {
-        return [];
-      }
+    let yField = selectFields.find(f => f.id === yFieldId);
 
-      let xName = xField ? xField.sqlName : undefined;
-      let yName = yField.sqlName;
-
-      let singleData = item.data
-        ? item.data.map((raw: any) =>
-            Object.assign({
-              name: !xName ? ' ' : raw[xName] ? raw[xName] : 'null',
-              value:
-                isNumeric(raw[yName]) &&
-                yField.result === common.FieldResultEnum.Number
-                  ? Number(raw[yName])
-                  : isNumeric(raw[yName])
-                  ? raw[yName]
-                  : 0
-            })
-          )
-        : [];
-
-      return singleData;
-    } else {
+    if (!yField) {
       return [];
     }
+
+    let xName = xField ? xField.sqlName : undefined;
+    let yName = yField.sqlName;
+
+    let singleData = data
+      ? data.map((raw: RData) =>
+          Object.assign({
+            name: !xName ? ' ' : raw[xName].value ? raw[xName].value : 'null',
+            value:
+              isNumeric(raw[yName].value) &&
+              yField.result === common.FieldResultEnum.Number
+                ? Number(raw[yName].value)
+                : isNumeric(raw[yName].value)
+                ? raw[yName].value
+                : 0
+          })
+        )
+      : [];
+
+    return singleData;
   }
 
   getMultiData(item: {
