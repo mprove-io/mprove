@@ -1,0 +1,12 @@
+<div class="flex flex-row items-center select-none">
+  <div class="truncate">{{ column.topLabel | capitalize }}</div>
+
+  <div class="ml-2 flex flex-row items-center font-semibold text-left">
+    <div *ngIf="column.groupLabel"
+      >{{ column.groupLabel | capitalize }} -
+      {{ column.label | capitalize }}</div
+    >
+
+    <div *ngIf="!column.groupLabel">{{ column.label | capitalize }}</div>
+  </div>
+</div>

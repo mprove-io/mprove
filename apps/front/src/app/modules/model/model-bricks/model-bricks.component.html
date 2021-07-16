@@ -6,22 +6,10 @@
     class="flex flex-row items-start justify-start py-1"
   >
     <div class="flex flex-row items-start justify-center">
-      <div class="flex flex-row justify-start items-center w-96">
-        <div class="font-normal text-sm">{{
-          filter.field.topLabel | capitalize
-        }}</div>
-
-        <div class="flex flex-row font-semibold text-left ml-2">
-          <div *ngIf="filter.field.groupLabel"
-            >{{ filter.field.groupLabel | capitalize }} -
-            {{ filter.field.label | capitalize }}</div
-          >
-
-          <div *ngIf="!filter.field.groupLabel" class="">{{
-            filter.field.label | capitalize
-          }}</div>
-        </div>
-      </div>
+      <m-field-label
+        [column]="filter.field"
+        class="text-sm w-96"
+      ></m-field-label>
     </div>
 
     <div>

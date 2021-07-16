@@ -30,6 +30,10 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  xFieldForm: FormGroup = this.fb.group({
+    xField: [undefined]
+  });
+
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
@@ -39,6 +43,9 @@ export class ChartEditorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.pageSizeForm.controls['pageSize'].setValue(this.chart.pageSize);
     this.pageSizeForm.controls['pageSize'].markAsTouched();
+
+    this.xFieldForm.controls['xField'].setValue(this.chart.xField);
+    this.xFieldForm.controls['xField'].markAsTouched();
   }
 
   getIsValid() {
@@ -110,5 +117,15 @@ export class ChartEditorComponent implements OnChanges {
         : [...this.chart.yFields, id];
 
     this.updateMconfig(newMconfig);
+  }
+
+  xFieldChange() {
+    let xField = this.xFieldForm.controls['xField'].value;
+
+    let newMconfig = this.structService.makeMconfig();
+
+    newMconfig.chart.xField = xField;
+
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }
