@@ -99,6 +99,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
+  isShow = true;
+
   filtersIsExpanded = false;
   chartIsExpanded = true;
   dataIsExpanded = true;
@@ -465,24 +467,26 @@ export class ModelComponent implements OnInit, OnDestroy {
     }
   }
 
+  refreshShow() {
+    this.isShow = false;
+    setTimeout(() => {
+      this.isShow = true;
+    });
+  }
+
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
-    if (this.dataIsExpanded && this.sqlIsShow) {
-      this.dataIsExpanded = false;
-      setTimeout(() => (this.dataIsExpanded = true));
-    }
+    this.refreshShow();
   }
 
   toggleChartPanel() {
     this.chartIsExpanded = !this.chartIsExpanded;
-    if (this.dataIsExpanded && this.sqlIsShow) {
-      this.dataIsExpanded = false;
-      setTimeout(() => (this.dataIsExpanded = true));
-    }
+    this.refreshShow();
   }
 
   toggleDataPanel() {
     this.dataIsExpanded = !this.dataIsExpanded;
+    this.refreshShow();
   }
 
   goToFile() {

@@ -121,7 +121,10 @@
       <div class="flex flex-row flex-grow mt-6">
         <m-model-tree class="flex w-1/4"></m-model-tree>
 
-        <div class="flex flex-col flex-grow ml-6 space-y-6">
+        <div
+          class="flex flex-col flex-grow ml-6 space-y-6"
+          *ngIf="isShow === true"
+        >
           <div
             class="bg-white rounded shadow-md w-full"
             [ngClass]="{
