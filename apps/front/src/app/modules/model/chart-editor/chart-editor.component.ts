@@ -44,6 +44,14 @@ export class ChartEditorComponent implements OnChanges {
     multiField: [undefined]
   });
 
+  valueFieldForm: FormGroup = this.fb.group({
+    valueField: [undefined]
+  });
+
+  previousValueFieldForm: FormGroup = this.fb.group({
+    previousValueField: [undefined]
+  });
+
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
@@ -89,6 +97,14 @@ export class ChartEditorComponent implements OnChanges {
 
     this.multiFieldForm.controls['multiField'].setValue(this.chart.multiField);
     this.multiFieldForm.controls['multiField'].markAsTouched();
+
+    this.valueFieldForm.controls['valueField'].setValue(this.chart.valueField);
+    this.valueFieldForm.controls['valueField'].markAsTouched();
+
+    this.previousValueFieldForm.controls['previousValueField'].setValue(
+      this.chart.previousValueField
+    );
+    this.previousValueFieldForm.controls['previousValueField'].markAsTouched();
   }
 
   getIsValid() {
@@ -178,6 +194,22 @@ export class ChartEditorComponent implements OnChanges {
     let multiField = this.multiFieldForm.controls['multiField'].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.multiField = multiField;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  valueFieldChange() {
+    let valueField = this.valueFieldForm.controls['valueField'].value;
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.valueField = valueField;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  previousValueFieldChange() {
+    let previousValueField = this.previousValueFieldForm.controls[
+      'previousValueField'
+    ].value;
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.previousValueField = previousValueField;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }

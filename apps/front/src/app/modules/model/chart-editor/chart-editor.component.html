@@ -3,6 +3,34 @@
 
   <div
     *ngIf="chart.type === chartTypeEnum.Table"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-[36px] text-gray1 text-base items-center select-none"
+        >Page Size (visible rows)</div
+      >
+    </div>
+
+    <div [formGroup]="pageSizeForm" class="flex flex-col ml-3 items-start">
+      <input
+        data-cy="chartEditorPageSizeInput"
+        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            pageSizeForm.controls['pageSize'].invalid &&
+            pageSizeForm.controls['pageSize'].touched
+        }"
+        formControlName="pageSize"
+        (blur)="pageSizeBlur()"
+      />
+      <m-validation
+        [control]="pageSizeForm.controls['pageSize']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Table"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex h-[36px] text-gray1 text-base items-center select-none"
@@ -66,7 +94,11 @@
         #xFieldSelect
         data-cy="xFieldSelect"
         class="w-72 text-base focus:outline-none"
-        [items]="sortedColumns"
+        [items]="
+          chart.type === chartTypeEnum.NumberCard
+            ? sortedColumnsPlusEmpty
+            : sortedColumns
+        "
         [clearable]="false"
         [searchable]="false"
         (change)="xFieldChange()"
@@ -126,6 +158,86 @@
         bindLabel="label"
         bindValue="id"
         formControlName="multiField"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-field-label [column]="item" class="text-sm"></m-field-label>
+        </ng-template>
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <m-field-label [column]="item" class="text-sm"></m-field-label>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.GaugeLinear"
+    class="flex flex-row items-start mb-5"
+  >
+    <div class="flex flex-col">
+      <div
+        class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+        >Value Field</div
+      >
+    </div>
+
+    <form [formGroup]="valueFieldForm" class="ml-5">
+      <ng-select
+        #valueFieldSelect
+        data-cy="valueFieldSelect"
+        class="w-72 text-base focus:outline-none"
+        [items]="sortedColumns"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="valueFieldChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="valueField"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-field-label [column]="item" class="text-sm"></m-field-label>
+        </ng-template>
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <m-field-label [column]="item" class="text-sm"></m-field-label>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.GaugeLinear"
+    class="flex flex-row items-start mb-5"
+  >
+    <div class="flex flex-col">
+      <div
+        class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+        >Previous Value Field</div
+      >
+    </div>
+
+    <form [formGroup]="previousValueFieldForm" class="ml-5">
+      <ng-select
+        #previousValueFieldSelect
+        data-cy="previousValueFieldSelect"
+        class="w-72 text-base focus:outline-none"
+        [items]="sortedColumnsPlusEmpty"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="previousValueFieldChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="previousValueField"
       >
         <ng-template ng-label-tmp let-item="item">
           <m-field-label [column]="item" class="text-sm"></m-field-label>
@@ -240,32 +352,4 @@
   > -->
 
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Options</div> -->
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Table"
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-[36px] text-gray1 text-base items-center select-none"
-        >Page Size (visible rows)</div
-      >
-    </div>
-
-    <div [formGroup]="pageSizeForm" class="flex flex-col ml-3 items-start">
-      <input
-        data-cy="chartEditorPageSizeInput"
-        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            pageSizeForm.controls['pageSize'].invalid &&
-            pageSizeForm.controls['pageSize'].touched
-        }"
-        formControlName="pageSize"
-        (blur)="pageSizeBlur()"
-      />
-      <m-validation
-        [control]="pageSizeForm.controls['pageSize']"
-      ></m-validation>
-    </div>
-  </div>
 </div>
