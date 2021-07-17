@@ -19,6 +19,8 @@ export class ChartEditorComponent implements OnChanges {
   @Input()
   sortedColumns: ColumnField[];
 
+  sortedColumnsPlusEmpty: ColumnField[];
+
   pageSizeForm: FormGroup = this.fb.group({
     pageSize: [
       undefined,
@@ -50,6 +52,31 @@ export class ChartEditorComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes);
+
+    this.sortedColumnsPlusEmpty = [
+      ...this.sortedColumns,
+      {
+        id: undefined,
+        hidden: undefined,
+        label: undefined,
+        fieldClass: undefined,
+        result: undefined,
+        sqlName: undefined,
+        topId: undefined,
+        topLabel: 'Empty',
+        description: undefined,
+        type: undefined,
+        groupId: undefined,
+        groupLabel: undefined,
+        groupDescription: undefined,
+        formatNumber: undefined,
+        currencyPrefix: undefined,
+        currencySuffix: undefined,
+        sorting: undefined,
+        sortingNumber: undefined,
+        isHideColumn: undefined
+      }
+    ];
 
     this.pageSizeForm.controls['pageSize'].setValue(this.chart.pageSize);
     this.pageSizeForm.controls['pageSize'].markAsTouched();

@@ -118,7 +118,7 @@
         #multiFieldSelect
         data-cy="multiFieldSelect"
         class="w-72 text-base focus:outline-none"
-        [items]="sortedColumns"
+        [items]="sortedColumnsPlusEmpty"
         [clearable]="false"
         [searchable]="false"
         (change)="multiFieldChange()"
