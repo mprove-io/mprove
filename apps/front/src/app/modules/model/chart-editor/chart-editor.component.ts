@@ -34,6 +34,10 @@ export class ChartEditorComponent implements OnChanges {
     xField: [undefined]
   });
 
+  yFieldForm: FormGroup = this.fb.group({
+    yField: [undefined]
+  });
+
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
@@ -46,6 +50,9 @@ export class ChartEditorComponent implements OnChanges {
 
     this.xFieldForm.controls['xField'].setValue(this.chart.xField);
     this.xFieldForm.controls['xField'].markAsTouched();
+
+    this.yFieldForm.controls['yField'].setValue(this.chart.yField);
+    this.yFieldForm.controls['yField'].markAsTouched();
   }
 
   getIsValid() {
@@ -125,6 +132,16 @@ export class ChartEditorComponent implements OnChanges {
     let newMconfig = this.structService.makeMconfig();
 
     newMconfig.chart.xField = xField;
+
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  yFieldChange() {
+    let yField = this.yFieldForm.controls['yField'].value;
+
+    let newMconfig = this.structService.makeMconfig();
+
+    newMconfig.chart.yField = yField;
 
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
