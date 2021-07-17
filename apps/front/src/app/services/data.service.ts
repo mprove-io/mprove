@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { isNumeric } from 'rxjs/internal/util/isNumeric';
+import { capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
 import { ColumnField } from '../queries/mq.query';
 import { RData } from './query.service';
@@ -165,16 +166,23 @@ export class DataService {
 
         let key: string;
 
+        let yLabel =
+          yField.topLabel +
+          (common.isDefined(yField.groupLabel)
+            ? ` ${capitalizeFirstLetter(yField.groupLabel)}`
+            : '') +
+          ` ${capitalizeFirstLetter(yField.label)}`;
+
         if (multiName) {
           if (yFields.length > 1) {
             key = raw[multiName].value
-              ? raw[multiName].value + ' ' + yField.label
-              : 'null' + ' ' + yField.label;
+              ? raw[multiName].value + ' ' + yLabel
+              : 'null' + ' ' + yLabel;
           } else {
             key = raw[multiName].value ? raw[multiName].value : 'null';
           }
         } else {
-          key = yField.label;
+          key = yLabel;
         }
 
         // x null check

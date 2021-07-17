@@ -94,6 +94,7 @@ export class ChartViewComponent implements OnChanges {
       this.chart.type === common.ChartTypeEnum.AreaNormalized ||
       this.chart.type === common.ChartTypeEnum.HeatMap
     ) {
+      // console.log(this.qData);
       this.multi =
         this.qData.length > 0 &&
         common.isDefined(this.chart.xField) &&
@@ -107,6 +108,7 @@ export class ChartViewComponent implements OnChanges {
               data: this.qData
             })
           : [];
+      // console.log(this.multi);
     }
   }
 

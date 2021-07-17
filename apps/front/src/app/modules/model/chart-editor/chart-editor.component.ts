@@ -38,6 +38,10 @@ export class ChartEditorComponent implements OnChanges {
     yField: [undefined]
   });
 
+  multiFieldForm: FormGroup = this.fb.group({
+    multiField: [undefined]
+  });
+
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
@@ -45,6 +49,8 @@ export class ChartEditorComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    // console.log(changes);
+
     this.pageSizeForm.controls['pageSize'].setValue(this.chart.pageSize);
     this.pageSizeForm.controls['pageSize'].markAsTouched();
 
@@ -53,6 +59,9 @@ export class ChartEditorComponent implements OnChanges {
 
     this.yFieldForm.controls['yField'].setValue(this.chart.yField);
     this.yFieldForm.controls['yField'].markAsTouched();
+
+    this.multiFieldForm.controls['multiField'].setValue(this.chart.multiField);
+    this.multiFieldForm.controls['multiField'].markAsTouched();
   }
 
   getIsValid() {
@@ -80,9 +89,7 @@ export class ChartEditorComponent implements OnChanges {
     }
 
     let newMconfig = this.structService.makeMconfig();
-
     newMconfig.chart.pageSize = pageSize;
-
     this.updateMconfig(newMconfig);
   }
 
@@ -128,21 +135,22 @@ export class ChartEditorComponent implements OnChanges {
 
   xFieldChange() {
     let xField = this.xFieldForm.controls['xField'].value;
-
     let newMconfig = this.structService.makeMconfig();
-
     newMconfig.chart.xField = xField;
-
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
   yFieldChange() {
     let yField = this.yFieldForm.controls['yField'].value;
-
     let newMconfig = this.structService.makeMconfig();
-
     newMconfig.chart.yField = yField;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 
+  multiFieldChange() {
+    let multiField = this.multiFieldForm.controls['multiField'].value;
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.multiField = multiField;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }
