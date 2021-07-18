@@ -84,7 +84,7 @@
   >
     <div class="flex flex-col">
       <div
-        class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
         >xField</div
       >
     </div>
@@ -140,7 +140,7 @@
   >
     <div class="flex flex-col">
       <div
-        class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
         >multiField</div
       >
     </div>
@@ -180,7 +180,7 @@
   >
     <div class="flex flex-col">
       <div
-        class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
         >Value Field</div
       >
     </div>
@@ -220,7 +220,7 @@
   >
     <div class="flex flex-col">
       <div
-        class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
         >Previous Value Field</div
       >
     </div>
@@ -269,7 +269,7 @@
   >
     <div class="flex flex-col">
       <div
-        class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
         >yField</div
       >
     </div>
@@ -320,7 +320,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div
-      class="flex h-[36px] w-24 text-gray1 text-base items-center select-none"
+      class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
       >yFields</div
     >
 
@@ -352,4 +352,163 @@
   > -->
 
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Options</div> -->
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.GaugeLinear ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.NumberCard ||
+      chart.type === chartTypeEnum.Pie ||
+      chart.type === chartTypeEnum.PieAdvanced ||
+      chart.type === chartTypeEnum.PieGrid ||
+      chart.type === chartTypeEnum.TreeMap
+    "
+    class="flex flex-row items-start mb-5"
+  >
+    <div class="flex flex-col">
+      <div
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+        >Color Scheme</div
+      >
+    </div>
+
+    <form [formGroup]="colorSchemeForm" class="ml-5">
+      <ng-select
+        #colorSchemeSelect
+        data-cy="colorSchemeSelect"
+        class="w-72 text-base focus:outline-none"
+        [items]="colorSchemesList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="colorSchemeChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="colorScheme"
+      >
+        <!-- <ng-template ng-label-tmp let-item="item">
+        <m-field-label [column]="item" class="text-sm"></m-field-label>
+      </ng-template>
+      <ng-template
+        ng-option-tmp
+        let-item="item"
+        let-index="index"
+        let-search="searchTerm"
+      >
+        <m-field-label [column]="item" class="text-sm"></m-field-label>
+      </ng-template> -->
+      </ng-select>
+    </form>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start mb-5"
+  >
+    <div class="flex flex-col">
+      <div
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+        >Scheme Type</div
+      >
+    </div>
+
+    <form [formGroup]="schemeTypeForm" class="ml-5">
+      <ng-select
+        #schemeTypeSelect
+        data-cy="schemeTypeSelect"
+        class="w-72 text-base focus:outline-none"
+        [items]="schemeTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="schemeTypeChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="schemeType"
+      >
+        <!-- <ng-template ng-label-tmp let-item="item">
+        <m-field-label [column]="item" class="text-sm"></m-field-label>
+      </ng-template>
+      <ng-template
+        ng-option-tmp
+        let-item="item"
+        let-index="index"
+        let-search="searchTerm"
+      >
+        <m-field-label [column]="item" class="text-sm"></m-field-label>
+      </ng-template> -->
+      </ng-select>
+    </form>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start mb-5"
+  >
+    <div class="flex flex-col">
+      <div
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+        >Interpolation</div
+      >
+    </div>
+
+    <form [formGroup]="interpolationForm" class="ml-5">
+      <ng-select
+        #interpolationSelect
+        data-cy="interpolationSelect"
+        class="w-72 text-base focus:outline-none"
+        [items]="interpolationsList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="interpolationChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="interpolation"
+      >
+        <!-- <ng-template ng-label-tmp let-item="item">
+        <m-field-label [column]="item" class="text-sm"></m-field-label>
+      </ng-template>
+      <ng-template
+        ng-option-tmp
+        let-item="item"
+        let-index="index"
+        let-search="searchTerm"
+      >
+        <m-field-label [column]="item" class="text-sm"></m-field-label>
+      </ng-template> -->
+      </ng-select>
+    </form>
+  </div>
 </div>

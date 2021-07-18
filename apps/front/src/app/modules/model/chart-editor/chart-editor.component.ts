@@ -1,10 +1,30 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
+
+export class ColorSchemeItem {
+  label: string;
+  value: common.ChartColorSchemeEnum;
+}
+
+export class SchemeTypeItem {
+  label: string;
+  value: common.ChartSchemeTypeEnum;
+}
+
+export class InterpolationItem {
+  label: string;
+  value: common.ChartInterpolationEnum;
+}
 
 @Component({
   selector: 'm-chart-editor',
@@ -52,6 +72,155 @@ export class ChartEditorComponent implements OnChanges {
     previousValueField: [undefined]
   });
 
+  colorSchemeForm: FormGroup = this.fb.group({
+    colorScheme: [undefined]
+  });
+
+  schemeTypeForm: FormGroup = this.fb.group({
+    schemeType: [undefined]
+  });
+
+  interpolationForm: FormGroup = this.fb.group({
+    interpolation: [undefined]
+  });
+
+  colorSchemesList: ColorSchemeItem[] = [
+    {
+      label: 'Vivid (ordinal)',
+      value: common.ChartColorSchemeEnum.Vivid
+    },
+    {
+      label: 'Natural (ordinal)',
+      value: common.ChartColorSchemeEnum.Natural
+    },
+    {
+      label: 'Cool (ordinal)',
+      value: common.ChartColorSchemeEnum.Cool
+    },
+    {
+      label: 'Fire (ordinal)',
+      value: common.ChartColorSchemeEnum.Fire
+    },
+    {
+      label: 'Solar (continuous)',
+      value: common.ChartColorSchemeEnum.Solar
+    },
+    {
+      label: 'Air (continuous)',
+      value: common.ChartColorSchemeEnum.Air
+    },
+    {
+      label: 'Aqua (continuous)',
+      value: common.ChartColorSchemeEnum.Aqua
+    },
+    {
+      label: 'Flame (ordinal)',
+      value: common.ChartColorSchemeEnum.Flame
+    },
+    {
+      label: 'Ocean (ordinal)',
+      value: common.ChartColorSchemeEnum.Ocean
+    },
+    {
+      label: 'Forest (ordinal)',
+      value: common.ChartColorSchemeEnum.Forest
+    },
+    {
+      label: 'Horizon (ordinal)',
+      value: common.ChartColorSchemeEnum.Horizon
+    },
+    {
+      label: 'Neons (ordinal)',
+      value: common.ChartColorSchemeEnum.Neons
+    },
+    {
+      label: 'Picnic (ordinal)',
+      value: common.ChartColorSchemeEnum.Picnic
+    },
+    {
+      label: 'Night (ordinal)',
+      value: common.ChartColorSchemeEnum.Night
+    },
+    {
+      label: 'NightLights (ordinal)',
+      value: common.ChartColorSchemeEnum.NightLights
+    }
+  ];
+
+  schemeTypesList: SchemeTypeItem[] = [
+    {
+      label: 'Ordinal',
+      value: common.ChartSchemeTypeEnum.Ordinal
+    },
+    {
+      label: 'Linear',
+      value: common.ChartSchemeTypeEnum.Linear
+    }
+  ];
+
+  interpolationsList: InterpolationItem[] = [
+    {
+      label: 'Basis',
+      value: common.ChartInterpolationEnum.Basis
+    },
+    {
+      label: 'Basis closed',
+      value: common.ChartInterpolationEnum.BasisClosed
+    },
+    {
+      label: 'Bundle',
+      value: common.ChartInterpolationEnum.Bundle
+    },
+    {
+      label: 'Cardinal',
+      value: common.ChartInterpolationEnum.Cardinal
+    },
+    {
+      label: 'Cardinal closed',
+      value: common.ChartInterpolationEnum.CardinalClosed
+    },
+    {
+      label: 'Catmull rom',
+      value: common.ChartInterpolationEnum.CatmullRom
+    },
+    {
+      label: 'Catmull rom closed',
+      value: common.ChartInterpolationEnum.CatmullRomClosed
+    },
+    {
+      label: 'Linear',
+      value: common.ChartInterpolationEnum.Linear
+    },
+    {
+      label: 'Linear closed',
+      value: common.ChartInterpolationEnum.LinearClosed
+    },
+    {
+      label: 'Monotone X',
+      value: common.ChartInterpolationEnum.MonotoneX
+    },
+    {
+      label: 'Monotone Y',
+      value: common.ChartInterpolationEnum.MonotoneY
+    },
+    {
+      label: 'Natural',
+      value: common.ChartInterpolationEnum.Natural
+    },
+    {
+      label: 'Step',
+      value: common.ChartInterpolationEnum.Step
+    },
+    {
+      label: 'Step after',
+      value: common.ChartInterpolationEnum.StepAfter
+    },
+    {
+      label: 'Step before',
+      value: common.ChartInterpolationEnum.StepBefore
+    }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
@@ -86,25 +255,57 @@ export class ChartEditorComponent implements OnChanges {
       }
     ];
 
-    this.pageSizeForm.controls['pageSize'].setValue(this.chart.pageSize);
-    this.pageSizeForm.controls['pageSize'].markAsTouched();
+    this.setValueAndMark({
+      control: this.pageSizeForm.controls['pageSize'],
+      value: this.chart.pageSize
+    });
 
-    this.xFieldForm.controls['xField'].setValue(this.chart.xField);
-    this.xFieldForm.controls['xField'].markAsTouched();
+    this.setValueAndMark({
+      control: this.xFieldForm.controls['xField'],
+      value: this.chart.xField
+    });
 
-    this.yFieldForm.controls['yField'].setValue(this.chart.yField);
-    this.yFieldForm.controls['yField'].markAsTouched();
+    this.setValueAndMark({
+      control: this.yFieldForm.controls['yField'],
+      value: this.chart.yField
+    });
 
-    this.multiFieldForm.controls['multiField'].setValue(this.chart.multiField);
-    this.multiFieldForm.controls['multiField'].markAsTouched();
+    this.setValueAndMark({
+      control: this.multiFieldForm.controls['multiField'],
+      value: this.chart.multiField
+    });
 
-    this.valueFieldForm.controls['valueField'].setValue(this.chart.valueField);
-    this.valueFieldForm.controls['valueField'].markAsTouched();
+    this.setValueAndMark({
+      control: this.valueFieldForm.controls['valueField'],
+      value: this.chart.valueField
+    });
 
-    this.previousValueFieldForm.controls['previousValueField'].setValue(
-      this.chart.previousValueField
-    );
-    this.previousValueFieldForm.controls['previousValueField'].markAsTouched();
+    this.setValueAndMark({
+      control: this.previousValueFieldForm.controls['previousValueField'],
+      value: this.chart.previousValueField
+    });
+
+    this.setValueAndMark({
+      control: this.colorSchemeForm.controls['colorScheme'],
+      value: this.chart.colorScheme
+    });
+
+    this.setValueAndMark({
+      control: this.schemeTypeForm.controls['schemeType'],
+      value: this.chart.schemeType
+    });
+
+    this.setValueAndMark({
+      control: this.interpolationForm.controls['interpolation'],
+      value: this.chart.interpolation
+    });
+  }
+
+  setValueAndMark(item: { control: AbstractControl; value: any }) {
+    let { control, value } = item;
+
+    control.setValue(value);
+    control.markAsTouched();
   }
 
   getIsValid() {
@@ -210,6 +411,27 @@ export class ChartEditorComponent implements OnChanges {
     ].value;
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.previousValueField = previousValueField;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  colorSchemeChange() {
+    let colorScheme = this.colorSchemeForm.controls['colorScheme'].value;
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.colorScheme = colorScheme;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  schemeTypeChange() {
+    let schemeType = this.schemeTypeForm.controls['schemeType'].value;
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.schemeType = schemeType;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  interpolationChange() {
+    let interpolation = this.interpolationForm.controls['interpolation'].value;
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.interpolation = interpolation;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }
