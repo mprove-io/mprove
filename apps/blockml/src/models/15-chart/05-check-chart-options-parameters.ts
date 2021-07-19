@@ -430,10 +430,10 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             ].indexOf(parameter) > -1 &&
             !(report.options[
               parameter as keyof interfaces.ChartOptions
-            ] as any).match(common.MyRegex.CAPTURE_RGB_G()) &&
+            ] as any).match(common.MyRegex.CAPTURE_RGB_SPLIT_G()) &&
             !(report.options[
               parameter as keyof interfaces.ChartOptions
-            ] as any).match(common.MyRegex.CAPTURE_RGBA_G())
+            ] as any).match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())
           ) {
             item.errors.push(
               new BmError({

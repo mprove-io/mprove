@@ -112,14 +112,23 @@ export class MyRegex {
   static CAPTURE_MINUS_DIGITS_START_TO_END_G(): RegExp {
     return cloneRegexp(/^([-]?\d+)$/g);
   }
-  static CAPTURE_RGB_G(): RegExp {
-    return cloneRegexp(/^((?:rgb)\(\d+\,\s?\d+\,\s?\d+\))$/g);
+  // static CAPTURE_RGB_G(): RegExp {
+  //   return cloneRegexp(/^((?:rgb)\(\d+\,\s?\d+\,\s?\d+\))$/g);
+  // }
+  // static CAPTURE_RGBA_G(): RegExp {
+  //   return cloneRegexp(
+  //     /^((?:rgba)\(\d+\,\s?\d+\,\s?\d+\,\s?\d+(?:[.]\d+)?\))$/g
+  //   );
+  // }
+  static CAPTURE_RGB_SPLIT_G(): RegExp {
+    return cloneRegexp(/^((?:rgb)\((\d+)\,\s?(\d+)\,\s?(\d+)\))$/g);
   }
-  static CAPTURE_RGBA_G(): RegExp {
+  static CAPTURE_RGBA_SPLIT_G(): RegExp {
     return cloneRegexp(
-      /^((?:rgba)\(\d+\,\s?\d+\,\s?\d+\,\s?\d+(?:[.]\d+)?\))$/g
+      /^((?:rgba)\((\d+)\,\s?(\d+)\,\s?(\d+)\,\s?(\d+(?:[.]\d+)?)\))$/g
     );
   }
+
   static CAPTURE_FLOAT_START_TO_END_G(): RegExp {
     return cloneRegexp(/^(\d+[.]\d+)$/g);
   }

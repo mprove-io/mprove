@@ -8,6 +8,7 @@
     (click)="toggleMenu()"
     [disabled]="openedMenuId && menuId !== openedMenuId"
   >
+    <div *ngIf="!color">U</div>
   </button>
 
   <button
@@ -17,7 +18,7 @@
   ></button>
 
   <div
-    class="absolute right-0 mt-1 w-56 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
+    class="absolute left-0 mt-1 w-56 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isColorMenuOpen === true"
   >
     <color-sketch
@@ -25,11 +26,25 @@
       (onChangeComplete)="onChangeComplete($event)"
     ></color-sketch>
 
-    <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
-      (click)="apply()"
-      >Apply</button
-    >
+    <div class="flex flex-row justify-between bg-white">
+      <button
+        class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
+        (click)="save()"
+        >Save</button
+      >
+
+      <button
+        class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
+        (click)="cancel()"
+        >Cancel</button
+      >
+
+      <button
+        class="block px-3 py-2 bg-blue3 rounded text-white font-medium text-sm focus:outline-none"
+        (click)="clear()"
+        >Undef</button
+      >
+    </div>
   </div>
 </div>
 

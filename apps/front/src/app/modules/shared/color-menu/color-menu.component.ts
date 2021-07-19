@@ -52,29 +52,33 @@ export class ColorMenuComponent implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit() {
-    let r = 0;
-    let g = 0;
-    let b = 0;
-    let a = 0;
+    let r = 255;
+    let g = 255;
+    let b = 255;
+    let a = 1;
+
+    // console.log('this.color');
+    // console.log(this.color);
 
     if (common.isDefined(this.color)) {
-      if (this.color.match(common.MyRegex.CAPTURE_RGB_G())) {
-        let rgbR = common.MyRegex.CAPTURE_RGB_G().exec(this.color);
+      if (this.color.match(common.MyRegex.CAPTURE_RGB_SPLIT_G())) {
+        let rgbR = common.MyRegex.CAPTURE_RGB_SPLIT_G().exec(this.color);
 
-        r = Number(rgbR[1]);
-        g = Number(rgbR[2]);
-        b = Number(rgbR[3]);
-      } else if (this.color.match(common.MyRegex.CAPTURE_RGBA_G())) {
-        let rgbaR = common.MyRegex.CAPTURE_RGBA_G().exec(this.color);
+        r = Number(rgbR[2]);
+        g = Number(rgbR[3]);
+        b = Number(rgbR[4]);
+      } else if (this.color.match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())) {
+        let rgbaR = common.MyRegex.CAPTURE_RGBA_SPLIT_G().exec(this.color);
 
-        r = Number(rgbaR[1]);
-        g = Number(rgbaR[2]);
-        b = Number(rgbaR[3]);
-        a = Number(rgbaR[4]);
+        r = Number(rgbaR[2]);
+        g = Number(rgbaR[3]);
+        b = Number(rgbaR[4]);
+        a = Number(rgbaR[5]);
       }
     }
 
     this.rgbaColor = { r: r, g: g, b: b, a: a };
+    // console.log(this.rgbaColor);
   }
 
   openMenu() {
@@ -105,9 +109,24 @@ export class ColorMenuComponent implements OnDestroy, OnInit {
     this.rgbaColor = $event.color.rgb;
   }
 
-  apply() {
+  save() {
     this.closeMenu();
+
+    // console.log('save');
+    // console.log(this.rgbaColor);
+
     let str = `rgba(${this.rgbaColor.r}, ${this.rgbaColor.g}, ${this.rgbaColor.b}, ${this.rgbaColor.a})`;
+    // console.log(str);
     this.colorChange.emit({ color: str });
+  }
+
+  cancel() {
+    this.closeMenu();
+    // this.colorChange.emit({ color: this.color });
+  }
+
+  clear() {
+    this.closeMenu();
+    this.colorChange.emit({ color: undefined });
   }
 }
