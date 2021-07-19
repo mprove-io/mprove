@@ -1,0 +1,36 @@
+<div class="relative">
+  <button
+    class="ml-2 h-10 w-10 z-10 rounded-full focus:outline-none"
+    [ngClass]="{
+      'cursor-default': openedMenuId && menuId !== openedMenuId
+    }"
+    (click)="toggleMenu()"
+    [disabled]="openedMenuId && menuId !== openedMenuId"
+  >
+    <div class="flex justify-center bg-yellow-300 h-5 w-5"> </div>
+  </button>
+
+  <button
+    class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
+    *ngIf="isColorMenuOpen === true"
+    (click)="closeMenu()"
+  ></button>
+
+  <div
+    class="absolute left-0 mt-1 w-56 z-10 bg-white rounded-md shadow-xl border-2 border-gray4"
+    *ngIf="isColorMenuOpen === true"
+  >
+    <color-sketch
+      [color]="rgbaColor"
+      (onChangeComplete)="onChangeComplete($event)"
+    ></color-sketch>
+
+    <button
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+      (click)="apply()"
+      >Apply</button
+    >
+  </div>
+</div>
+
+<div *ngIf="openedMenuId$ | async"></div>

@@ -434,4 +434,9 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.interpolation = interpolation;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  bandColorChange($event: any): void {
+    console.log($event.color);
+    console.log($event.color.rgb);
+  }
 }

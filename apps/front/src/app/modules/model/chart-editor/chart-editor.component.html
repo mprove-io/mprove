@@ -511,4 +511,22 @@
       </ng-select>
     </form>
   </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.NumberCard"
+    class="flex flex-row items-start mb-5"
+  >
+    <div class="flex flex-col">
+      <div
+        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+        >Band Color</div
+      >
+    </div>
+
+    <m-color-menu
+      class="ml-5"
+      [color]="chart.bandColor"
+      (colorChange)="bandColorChange($event)"
+    ></m-color-menu>
+  </div>
 </div>

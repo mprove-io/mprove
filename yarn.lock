@@ -1329,7 +1329,7 @@
   dependencies:
     arrify "^1.0.1"
 
-"@ctrl/tinycolor@^3.3.1":
+"@ctrl/tinycolor@^3.1.6", "@ctrl/tinycolor@^3.3.1":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.4.0.tgz#c3c5ae543c897caa9c2a68630bed355be5f9990f"
   integrity sha512-JZButFdZ1+/xAfpguQHoabIXkcqRRKpMrWKBkpEZZyxfY9C1DpADFB8PEqGSTeFr135SaTRfKqGKx5xSCLI7ZQ==
@@ -10569,6 +10569,11 @@ matcher@^3.0.0:
   dependencies:
     escape-string-regexp "^4.0.0"
 
+material-colors@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/material-colors/-/material-colors-1.2.6.tgz#6d1958871126992ceecc72f4bcc4d8f010865f46"
+  integrity sha512-6qE4B9deFBIa9YSpOc9O0Sgc43zTeVYbgDT5veRKSlB2+ZuHNoVVxA1L/ckMUayV9Ay9y7Z/SZCLcGteW9i7bg==
+
 md5-hex@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/md5-hex/-/md5-hex-3.0.1.tgz#be3741b510591434b2784d79e556eefc2c9a8e5c"
@@ -11082,6 +11087,15 @@ ng-zorro-antd@^11.4.2:
     "@ant-design/icons-angular" "^11.0.1"
     date-fns "^2.10.0"
     resize-observer-polyfill "^1.5.1"
+    tslib "^2.0.0"
+
+ngx-color@6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/ngx-color/-/ngx-color-6.2.0.tgz#4a1e8be13e5df3acbc92e9cb9b8a05d318c0a0a3"
+  integrity sha512-n04tcMnCpOgmI24egST94YwHmnSoAxK8O1T2t3nGrTwWbvw5XBRJvImNFnoNrriBXzc4Gx4hFehH5MU8CZxp1w==
+  dependencies:
+    "@ctrl/tinycolor" "^3.1.6"
+    material-colors "^1.2.6"
     tslib "^2.0.0"
 
 ngx-image-compress@^11.0.3:

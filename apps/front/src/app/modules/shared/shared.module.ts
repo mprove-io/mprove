@@ -6,9 +6,11 @@ import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { ColorSketchModule } from 'ngx-color/sketch';
 import { AvatarComponent } from './avatar/avatar.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
+import { ColorMenuComponent } from './color-menu/color-menu.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
@@ -88,7 +90,8 @@ let sharedComponents = [
   FractionTsComponent,
   ChartTableComponent,
   ChartViewComponent,
-  FieldLabelComponent
+  FieldLabelComponent,
+  ColorMenuComponent
 ];
 
 @NgModule({
@@ -101,7 +104,8 @@ let sharedComponents = [
     NgSelectModule,
     NzDatePickerModule,
     NzTimePickerModule,
-    NgxChartsModule
+    NgxChartsModule,
+    ColorSketchModule
   ],
   exports: [...sharedComponents, ...pipesArray, MonacoEditorModule]
 })
