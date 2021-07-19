@@ -3,8 +3,8 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnDestroy,
+  OnInit,
   Output
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
@@ -27,7 +27,7 @@ export class ColorChange {
   selector: 'm-color-menu',
   templateUrl: './color-menu.component.html'
 })
-export class ColorMenuComponent implements OnDestroy, OnChanges {
+export class ColorMenuComponent implements OnDestroy, OnInit {
   menuId = 'colorMenu';
 
   openedMenuId: string;
@@ -51,10 +51,30 @@ export class ColorMenuComponent implements OnDestroy, OnChanges {
     private cd: ChangeDetectorRef
   ) {}
 
-  ngOnChanges() {
-    this.rgbaColor = common.isDefined(this.color)
-      ? { r: 0, g: 0, b: 0, a: 0 }
-      : { r: 0, g: 0, b: 0, a: 0 };
+  ngOnInit() {
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let a = 0;
+
+    if (common.isDefined(this.color)) {
+      if (this.color.match(common.MyRegex.CAPTURE_RGB_G())) {
+        let rgbR = common.MyRegex.CAPTURE_RGB_G().exec(this.color);
+
+        r = Number(rgbR[1]);
+        g = Number(rgbR[2]);
+        b = Number(rgbR[3]);
+      } else if (this.color.match(common.MyRegex.CAPTURE_RGBA_G())) {
+        let rgbaR = common.MyRegex.CAPTURE_RGBA_G().exec(this.color);
+
+        r = Number(rgbaR[1]);
+        g = Number(rgbaR[2]);
+        b = Number(rgbaR[3]);
+        a = Number(rgbaR[4]);
+      }
+    }
+
+    this.rgbaColor = { r: r, g: g, b: b, a: a };
   }
 
   openMenu() {
@@ -81,14 +101,13 @@ export class ColorMenuComponent implements OnDestroy, OnChanges {
   }
 
   onChangeComplete($event: any): void {
-    console.log($event.color);
-    console.log($event.color.rgb);
+    // console.log($event.color);
+    this.rgbaColor = $event.color.rgb;
   }
 
   apply() {
     this.closeMenu();
-    this.colorChange.emit({
-      color: this.color
-    });
+    let str = `rgba(${this.rgbaColor.r}, ${this.rgbaColor.g}, ${this.rgbaColor.b}, ${this.rgbaColor.a})`;
+    this.colorChange.emit({ color: str });
   }
 }

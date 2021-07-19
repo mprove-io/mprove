@@ -1,13 +1,13 @@
 <div class="relative">
   <button
-    class="ml-2 h-10 w-10 z-10 rounded-full focus:outline-none"
+    class="h-7 w-7 z-10 border-2 border-gray-500 rounded focus:outline-none align-middle"
+    [ngStyle]="{ 'background-color': color }"
     [ngClass]="{
       'cursor-default': openedMenuId && menuId !== openedMenuId
     }"
     (click)="toggleMenu()"
     [disabled]="openedMenuId && menuId !== openedMenuId"
   >
-    <div class="flex justify-center bg-yellow-300 h-5 w-5"> </div>
   </button>
 
   <button

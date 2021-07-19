@@ -435,8 +435,27 @@ export class ChartEditorComponent implements OnChanges {
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
-  bandColorChange($event: any): void {
-    console.log($event.color);
-    console.log($event.color.rgb);
+  bandColorChange($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.bandColor = $event.color;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  cardColorChange($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.cardColor = $event.color;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  textColorChange($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.textColor = $event.color;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  emptyColorChange($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.emptyColor = $event.color;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }
