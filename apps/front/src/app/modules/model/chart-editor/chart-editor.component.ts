@@ -41,17 +41,6 @@ export class ChartEditorComponent implements OnChanges {
 
   sortedColumnsPlusEmpty: ColumnField[];
 
-  pageSizeForm: FormGroup = this.fb.group({
-    pageSize: [
-      undefined,
-      [
-        ValidationService.integerValidator,
-        Validators.min(1),
-        Validators.maxLength(255)
-      ]
-    ]
-  });
-
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
   });
@@ -82,6 +71,21 @@ export class ChartEditorComponent implements OnChanges {
 
   interpolationForm: FormGroup = this.fb.group({
     interpolation: [undefined]
+  });
+
+  pageSizeForm: FormGroup = this.fb.group({
+    pageSize: [
+      undefined,
+      [
+        ValidationService.integerValidator,
+        Validators.min(1),
+        Validators.maxLength(255)
+      ]
+    ]
+  });
+
+  unitsForm: FormGroup = this.fb.group({
+    units: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
 
   colorSchemesList: ColorSchemeItem[] = [
@@ -256,11 +260,6 @@ export class ChartEditorComponent implements OnChanges {
     ];
 
     this.setValueAndMark({
-      control: this.pageSizeForm.controls['pageSize'],
-      value: this.chart.pageSize
-    });
-
-    this.setValueAndMark({
       control: this.xFieldForm.controls['xField'],
       value: this.chart.xField
     });
@@ -299,6 +298,16 @@ export class ChartEditorComponent implements OnChanges {
       control: this.interpolationForm.controls['interpolation'],
       value: this.chart.interpolation
     });
+
+    this.setValueAndMark({
+      control: this.pageSizeForm.controls['pageSize'],
+      value: this.chart.pageSize
+    });
+
+    this.setValueAndMark({
+      control: this.unitsForm.controls['units'],
+      value: this.chart.units
+    });
   }
 
   setValueAndMark(item: { control: AbstractControl; value: any }) {
@@ -312,7 +321,9 @@ export class ChartEditorComponent implements OnChanges {
     let isChartValid = false;
 
     if (this.chart.type === common.ChartTypeEnum.Table) {
-      isChartValid = this.pageSizeForm.controls['pageSize'].valid;
+      isChartValid =
+        this.pageSizeForm.controls['pageSize'].valid &&
+        this.unitsForm.controls['units'].valid;
     } else {
       isChartValid = true;
     }
@@ -334,6 +345,18 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.pageSize = pageSize;
+    this.updateMconfig(newMconfig);
+  }
+
+  unitsBlur() {
+    let units = this.unitsForm.controls['units'].value;
+
+    if (units === this.chart.units) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.units = units;
     this.updateMconfig(newMconfig);
   }
 

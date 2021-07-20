@@ -120,7 +120,7 @@ export class StructService {
         smallSegments: 5,
         min: 0,
         max: 100,
-        units: '',
+        units: 'Units',
         yScaleMin: null,
         yScaleMax: null,
         xScaleMax: null,

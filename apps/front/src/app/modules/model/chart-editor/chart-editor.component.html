@@ -619,4 +619,33 @@
       (colorChange)="textColorChange($event)"
     ></m-color-menu>
   </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.GaugeLinear
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-[36px] text-gray1 text-base items-center select-none"
+        >Units</div
+      >
+    </div>
+
+    <div [formGroup]="unitsForm" class="flex flex-col ml-3 items-start">
+      <input
+        data-cy="chartEditorUnitsInput"
+        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            unitsForm.controls['units'].invalid &&
+            unitsForm.controls['units'].touched
+        }"
+        formControlName="units"
+        (blur)="unitsBlur()"
+      />
+      <m-validation [control]="unitsForm.controls['units']"></m-validation>
+    </div>
+  </div>
 </div>
