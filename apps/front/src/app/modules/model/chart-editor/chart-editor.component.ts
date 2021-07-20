@@ -88,6 +88,14 @@ export class ChartEditorComponent implements OnChanges {
     units: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
 
+  xAxisLabelForm: FormGroup = this.fb.group({
+    xAxisLabel: [undefined, [Validators.required, Validators.maxLength(255)]]
+  });
+
+  yAxisLabelForm: FormGroup = this.fb.group({
+    yAxisLabel: [undefined, [Validators.required, Validators.maxLength(255)]]
+  });
+
   colorSchemesList: ColorSchemeItem[] = [
     {
       label: 'Vivid (ordinal)',
@@ -308,6 +316,16 @@ export class ChartEditorComponent implements OnChanges {
       control: this.unitsForm.controls['units'],
       value: this.chart.units
     });
+
+    this.setValueAndMark({
+      control: this.xAxisLabelForm.controls['xAxisLabel'],
+      value: this.chart.xAxisLabel
+    });
+
+    this.setValueAndMark({
+      control: this.yAxisLabelForm.controls['yAxisLabel'],
+      value: this.chart.yAxisLabel
+    });
   }
 
   setValueAndMark(item: { control: AbstractControl; value: any }) {
@@ -323,7 +341,9 @@ export class ChartEditorComponent implements OnChanges {
     if (this.chart.type === common.ChartTypeEnum.Table) {
       isChartValid =
         this.pageSizeForm.controls['pageSize'].valid &&
-        this.unitsForm.controls['units'].valid;
+        this.unitsForm.controls['units'].valid &&
+        this.xAxisLabelForm.controls['xAxisLabel'].valid &&
+        this.yAxisLabelForm.controls['yAxisLabel'].valid;
     } else {
       isChartValid = true;
     }
@@ -357,6 +377,30 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.units = units;
+    this.updateMconfig(newMconfig);
+  }
+
+  xAxisLabelBlur() {
+    let xAxisLabel = this.xAxisLabelForm.controls['xAxisLabel'].value;
+
+    if (xAxisLabel === this.chart.xAxisLabel) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.xAxisLabel = xAxisLabel;
+    this.updateMconfig(newMconfig);
+  }
+
+  yAxisLabelBlur() {
+    let yAxisLabel = this.yAxisLabelForm.controls['yAxisLabel'].value;
+
+    if (yAxisLabel === this.chart.yAxisLabel) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.yAxisLabel = yAxisLabel;
     this.updateMconfig(newMconfig);
   }
 
