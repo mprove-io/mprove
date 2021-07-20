@@ -392,17 +392,6 @@
         bindValue="value"
         formControlName="colorScheme"
       >
-        <!-- <ng-template ng-label-tmp let-item="item">
-        <m-field-label [column]="item" class="text-sm"></m-field-label>
-      </ng-template>
-      <ng-template
-        ng-option-tmp
-        let-item="item"
-        let-index="index"
-        let-search="searchTerm"
-      >
-        <m-field-label [column]="item" class="text-sm"></m-field-label>
-      </ng-template> -->
       </ng-select>
     </form>
   </div>
@@ -444,17 +433,6 @@
         bindValue="value"
         formControlName="schemeType"
       >
-        <!-- <ng-template ng-label-tmp let-item="item">
-        <m-field-label [column]="item" class="text-sm"></m-field-label>
-      </ng-template>
-      <ng-template
-        ng-option-tmp
-        let-item="item"
-        let-index="index"
-        let-search="searchTerm"
-      >
-        <m-field-label [column]="item" class="text-sm"></m-field-label>
-      </ng-template> -->
       </ng-select>
     </form>
   </div>
@@ -488,56 +466,9 @@
         bindValue="value"
         formControlName="interpolation"
       >
-        <!-- <ng-template ng-label-tmp let-item="item">
-        <m-field-label [column]="item" class="text-sm"></m-field-label>
-      </ng-template>
-      <ng-template
-        ng-option-tmp
-        let-item="item"
-        let-index="index"
-        let-search="searchTerm"
-      >
-        <m-field-label [column]="item" class="text-sm"></m-field-label>
-      </ng-template> -->
       </ng-select>
     </form>
   </div>
-
-  <!-- <div
-    *ngIf="chart.type === chartTypeEnum.NumberCard"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex flex-col">
-      <div
-        class="flex h-9 w-60 text-gray1 text-base items-center select-none"
-        >Band - Card - Text - Empty</div
-      >
-    </div>
-
-    <m-color-menu
-      class="ml-5"
-      [color]="chart.bandColor"
-      (colorChange)="bandColorChange($event)"
-    ></m-color-menu>
-
-    <m-color-menu
-      class="ml-5"
-      [color]="chart.cardColor"
-      (colorChange)="cardColorChange($event)"
-    ></m-color-menu>
-
-    <m-color-menu
-      class="ml-5"
-      [color]="chart.textColor"
-      (colorChange)="textColorChange($event)"
-    ></m-color-menu>
-
-    <m-color-menu
-      class="ml-5"
-      [color]="chart.emptyColor"
-      (colorChange)="emptyColorChange($event)"
-    ></m-color-menu>
-  </div> -->
 
   <div
     *ngIf="chart.type === chartTypeEnum.NumberCard"
@@ -688,6 +619,43 @@
       />
       <m-validation
         [control]="arcWidthForm.controls['arcWidth']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Bar Padding</div
+      >
+    </div>
+
+    <div [formGroup]="barPaddingForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorBarPaddingInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            barPaddingForm.controls['barPadding'].invalid &&
+            barPaddingForm.controls['barPadding'].touched
+        }"
+        formControlName="barPadding"
+        (blur)="barPaddingBlur()"
+      />
+      <m-validation
+        [control]="barPaddingForm.controls['barPadding']"
       ></m-validation>
     </div>
   </div>

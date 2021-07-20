@@ -110,6 +110,17 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  barPaddingForm: FormGroup = this.fb.group({
+    barPadding: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(0)
+      ]
+    ]
+  });
+
   xAxisLabelForm: FormGroup = this.fb.group({
     xAxisLabel: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
@@ -350,6 +361,11 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.barPaddingForm.controls['barPadding'],
+      value: this.chart.barPadding
+    });
+
+    this.setValueAndMark({
       control: this.xAxisLabelForm.controls['xAxisLabel'],
       value: this.chart.xAxisLabel
     });
@@ -376,6 +392,7 @@ export class ChartEditorComponent implements OnChanges {
         this.unitsForm.controls['units'].valid &&
         this.angleSpanForm.controls['angleSpan'].valid &&
         this.arcWidthForm.controls['arcWidth'].valid &&
+        this.barPaddingForm.controls['barPadding'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
         this.yAxisLabelForm.controls['yAxisLabel'].valid;
     } else {
@@ -435,6 +452,18 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.arcWidth = arcWidth;
+    this.updateMconfig(newMconfig);
+  }
+
+  barPaddingBlur() {
+    let barPadding = Number(this.barPaddingForm.controls['barPadding'].value);
+
+    if (barPadding === this.chart.barPadding) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.barPadding = barPadding;
     this.updateMconfig(newMconfig);
   }
 
