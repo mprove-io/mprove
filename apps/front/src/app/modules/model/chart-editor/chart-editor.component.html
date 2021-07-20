@@ -663,7 +663,7 @@
     <div [formGroup]="xAxisLabelForm" class="flex flex-col ml-5 items-start">
       <input
         data-cy="chartEditorXAxisLabelInput"
-        class="w-64 h-9 form-input rounded border-gray3 focus:border-blue3"
+        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             xAxisLabelForm.controls['xAxisLabel'].invalid &&
@@ -705,7 +705,7 @@
     <div [formGroup]="yAxisLabelForm" class="flex flex-col ml-5 items-start">
       <input
         data-cy="chartEditorYAxisLabelInput"
-        class="w-64 h-9 form-input rounded border-gray3 focus:border-blue3"
+        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             yAxisLabelForm.controls['yAxisLabel'].invalid &&
