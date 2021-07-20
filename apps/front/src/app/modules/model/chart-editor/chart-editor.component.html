@@ -711,6 +711,105 @@
     *ngIf="
       chart.type === chartTypeEnum.BarHorizontal ||
       chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalStacked
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >X Scale Max</div
+      >
+    </div>
+
+    <div [formGroup]="xScaleMaxForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorXScaleMaxInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            xScaleMaxForm.controls['xScaleMax'].invalid &&
+            xScaleMaxForm.controls['xScaleMax'].touched
+        }"
+        formControlName="xScaleMax"
+        (blur)="xScaleMaxBlur()"
+      />
+      <m-validation
+        [control]="xScaleMaxForm.controls['xScaleMax']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Y Scale Min</div
+      >
+    </div>
+
+    <div [formGroup]="yScaleMinForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorYScaleMinInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            yScaleMinForm.controls['yScaleMin'].invalid &&
+            yScaleMinForm.controls['yScaleMin'].touched
+        }"
+        formControlName="yScaleMin"
+        (blur)="yScaleMinBlur()"
+      />
+      <m-validation
+        [control]="yScaleMinForm.controls['yScaleMin']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Y Scale Max</div
+      >
+    </div>
+
+    <div [formGroup]="yScaleMaxForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorYScaleMaxInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            yScaleMaxForm.controls['yScaleMax'].invalid &&
+            yScaleMaxForm.controls['yScaleMax'].touched
+        }"
+        formControlName="yScaleMax"
+        (blur)="yScaleMaxBlur()"
+      />
+      <m-validation
+        [control]="yScaleMaxForm.controls['yScaleMax']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
       chart.type === chartTypeEnum.BarHorizontalNormalized ||
       chart.type === chartTypeEnum.BarHorizontalStacked ||
       chart.type === chartTypeEnum.BarVertical ||

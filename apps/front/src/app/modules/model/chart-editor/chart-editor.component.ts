@@ -125,6 +125,18 @@ export class ChartEditorComponent implements OnChanges {
     max: [undefined, [Validators.required, ValidationService.integerValidator]]
   });
 
+  xScaleMaxForm: FormGroup = this.fb.group({
+    xScaleMax: [undefined, [ValidationService.numberValidator]]
+  });
+
+  yScaleMinForm: FormGroup = this.fb.group({
+    yScaleMin: [undefined, [ValidationService.numberValidator]]
+  });
+
+  yScaleMaxForm: FormGroup = this.fb.group({
+    yScaleMax: [undefined, [ValidationService.numberValidator]]
+  });
+
   barPaddingForm: FormGroup = this.fb.group({
     barPadding: [
       undefined,
@@ -439,6 +451,21 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.xScaleMaxForm.controls['xScaleMax'],
+      value: this.chart.xScaleMax
+    });
+
+    this.setValueAndMark({
+      control: this.yScaleMinForm.controls['yScaleMin'],
+      value: this.chart.yScaleMin
+    });
+
+    this.setValueAndMark({
+      control: this.yScaleMaxForm.controls['yScaleMax'],
+      value: this.chart.yScaleMax
+    });
+
+    this.setValueAndMark({
       control: this.barPaddingForm.controls['barPadding'],
       value: this.chart.barPadding
     });
@@ -498,6 +525,9 @@ export class ChartEditorComponent implements OnChanges {
       // this.arcWidthForm.controls['arcWidth'].valid &&
       // this.minForm.controls['min'].valid &&
       // this.maxForm.controls['max'].valid &&
+      // this.xScaleMaxForm.controls['xScaleMax'].valid &&
+      // this.yScaleMinForm.controls['yScaleMin'].valid &&
+      // this.yScaleMaxForm.controls['yScaleMax'].valid &&
       // this.barPaddingForm.controls['barPadding'].valid &&
       // this.bigSegmentsForm.controls['bigSegments'].valid &&
       // this.smallSegmentsForm.controls['smallSegments'].valid &&
@@ -599,6 +629,42 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.max = max;
+    this.updateMconfig(newMconfig);
+  }
+
+  xScaleMaxBlur() {
+    let xScaleMax = Number(this.xScaleMaxForm.controls['xScaleMax'].value);
+
+    if (xScaleMax === this.chart.xScaleMax) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.xScaleMax = xScaleMax;
+    this.updateMconfig(newMconfig);
+  }
+
+  yScaleMinBlur() {
+    let yScaleMin = Number(this.yScaleMinForm.controls['yScaleMin'].value);
+
+    if (yScaleMin === this.chart.yScaleMin) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.yScaleMin = yScaleMin;
+    this.updateMconfig(newMconfig);
+  }
+
+  yScaleMaxBlur() {
+    let yScaleMax = Number(this.yScaleMaxForm.controls['yScaleMax'].value);
+
+    if (yScaleMax === this.chart.yScaleMax) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.yScaleMax = yScaleMax;
     this.updateMconfig(newMconfig);
   }
 
