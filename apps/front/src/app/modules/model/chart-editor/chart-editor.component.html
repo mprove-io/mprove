@@ -665,6 +665,34 @@
   </div>
 
   <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Arc Width</div
+      >
+    </div>
+
+    <div [formGroup]="arcWidthForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorArcWidthInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            arcWidthForm.controls['arcWidth'].invalid &&
+            arcWidthForm.controls['arcWidth'].touched
+        }"
+        formControlName="arcWidth"
+        (blur)="arcWidthBlur()"
+      />
+      <m-validation
+        [control]="arcWidthForm.controls['arcWidth']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
     *ngIf="
       chart.type === chartTypeEnum.Area ||
       chart.type === chartTypeEnum.AreaNormalized ||
