@@ -121,6 +121,28 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  bigSegmentsForm: FormGroup = this.fb.group({
+    bigSegments: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(1)
+      ]
+    ]
+  });
+
+  groupPaddingForm: FormGroup = this.fb.group({
+    groupPadding: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(0)
+      ]
+    ]
+  });
+
   xAxisLabelForm: FormGroup = this.fb.group({
     xAxisLabel: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
@@ -366,6 +388,16 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.bigSegmentsForm.controls['bigSegments'],
+      value: this.chart.bigSegments
+    });
+
+    this.setValueAndMark({
+      control: this.groupPaddingForm.controls['groupPadding'],
+      value: this.chart.groupPadding
+    });
+
+    this.setValueAndMark({
       control: this.xAxisLabelForm.controls['xAxisLabel'],
       value: this.chart.xAxisLabel
     });
@@ -387,14 +419,16 @@ export class ChartEditorComponent implements OnChanges {
     let isChartValid = false;
 
     if (this.chart.type === common.ChartTypeEnum.Table) {
-      isChartValid =
-        this.pageSizeForm.controls['pageSize'].valid &&
-        this.unitsForm.controls['units'].valid &&
-        this.angleSpanForm.controls['angleSpan'].valid &&
-        this.arcWidthForm.controls['arcWidth'].valid &&
-        this.barPaddingForm.controls['barPadding'].valid &&
-        this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+      isChartValid = this.pageSizeForm.controls['pageSize'].valid;
+      //  &&
+      // this.unitsForm.controls['units'].valid &&
+      // this.angleSpanForm.controls['angleSpan'].valid &&
+      // this.arcWidthForm.controls['arcWidth'].valid &&
+      // this.barPaddingForm.controls['barPadding'].valid &&
+      // this.bigSegmentsForm.controls['bigSegments'].valid &&
+      // this.groupPaddingForm.controls['groupPadding'].valid &&
+      // this.xAxisLabelForm.controls['xAxisLabel'].valid &&
+      // this.yAxisLabelForm.controls['yAxisLabel'].valid
     } else {
       isChartValid = true;
     }
@@ -464,6 +498,34 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.barPadding = barPadding;
+    this.updateMconfig(newMconfig);
+  }
+
+  bigSegmentsBlur() {
+    let bigSegments = Number(
+      this.bigSegmentsForm.controls['bigSegments'].value
+    );
+
+    if (bigSegments === this.chart.bigSegments) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.bigSegments = bigSegments;
+    this.updateMconfig(newMconfig);
+  }
+
+  groupPaddingBlur() {
+    let groupPadding = Number(
+      this.groupPaddingForm.controls['groupPadding'].value
+    );
+
+    if (groupPadding === this.chart.groupPadding) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.groupPadding = groupPadding;
     this.updateMconfig(newMconfig);
   }
 
