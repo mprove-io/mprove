@@ -625,6 +625,62 @@
 
   <div
     *ngIf="
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.GaugeLinear
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Min</div
+      >
+    </div>
+
+    <div [formGroup]="minForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorMinInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            minForm.controls['min'].invalid && minForm.controls['min'].touched
+        }"
+        formControlName="min"
+        (blur)="minBlur()"
+      />
+      <m-validation [control]="minForm.controls['min']"></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.GaugeLinear
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Max</div
+      >
+    </div>
+
+    <div [formGroup]="maxForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorMaxInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            maxForm.controls['max'].invalid && maxForm.controls['max'].touched
+        }"
+        formControlName="max"
+        (blur)="maxBlur()"
+      />
+      <m-validation [control]="maxForm.controls['max']"></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
       chart.type === chartTypeEnum.BarHorizontal ||
       chart.type === chartTypeEnum.BarHorizontalGrouped ||
       chart.type === chartTypeEnum.BarHorizontalNormalized ||

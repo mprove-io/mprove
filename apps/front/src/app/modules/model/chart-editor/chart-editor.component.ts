@@ -110,6 +110,14 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  minForm: FormGroup = this.fb.group({
+    min: [undefined, [Validators.required, ValidationService.integerValidator]]
+  });
+
+  maxForm: FormGroup = this.fb.group({
+    max: [undefined, [Validators.required, ValidationService.integerValidator]]
+  });
+
   barPaddingForm: FormGroup = this.fb.group({
     barPadding: [
       undefined,
@@ -398,6 +406,16 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.minForm.controls['min'],
+      value: this.chart.min
+    });
+
+    this.setValueAndMark({
+      control: this.maxForm.controls['max'],
+      value: this.chart.max
+    });
+
+    this.setValueAndMark({
       control: this.barPaddingForm.controls['barPadding'],
       value: this.chart.barPadding
     });
@@ -449,6 +467,8 @@ export class ChartEditorComponent implements OnChanges {
       // this.unitsForm.controls['units'].valid &&
       // this.angleSpanForm.controls['angleSpan'].valid &&
       // this.arcWidthForm.controls['arcWidth'].valid &&
+      // this.minForm.controls['min'].valid &&
+      // this.maxForm.controls['max'].valid &&
       // this.barPaddingForm.controls['barPadding'].valid &&
       // this.bigSegmentsForm.controls['bigSegments'].valid &&
       // this.groupPaddingForm.controls['groupPadding'].valid &&
@@ -513,6 +533,30 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.arcWidth = arcWidth;
+    this.updateMconfig(newMconfig);
+  }
+
+  minBlur() {
+    let min = Number(this.minForm.controls['min'].value);
+
+    if (min === this.chart.min) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.min = min;
+    this.updateMconfig(newMconfig);
+  }
+
+  maxBlur() {
+    let max = Number(this.maxForm.controls['max'].value);
+
+    if (max === this.chart.max) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.max = max;
     this.updateMconfig(newMconfig);
   }
 
