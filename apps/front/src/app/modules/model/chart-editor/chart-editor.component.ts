@@ -99,6 +99,13 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  startAngleForm: FormGroup = this.fb.group({
+    startAngle: [
+      undefined,
+      [Validators.required, ValidationService.integerValidator]
+    ]
+  });
+
   arcWidthForm: FormGroup = this.fb.group({
     arcWidth: [
       undefined,
@@ -412,6 +419,11 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.startAngleForm.controls['startAngle'],
+      value: this.chart.startAngle
+    });
+
+    this.setValueAndMark({
       control: this.arcWidthForm.controls['arcWidth'],
       value: this.chart.arcWidth
     });
@@ -482,6 +494,7 @@ export class ChartEditorComponent implements OnChanges {
       //  &&
       // this.unitsForm.controls['units'].valid &&
       // this.angleSpanForm.controls['angleSpan'].valid &&
+      // this.startAngleForm.controls['startAngle'].valid &&
       // this.arcWidthForm.controls['arcWidth'].valid &&
       // this.minForm.controls['min'].valid &&
       // this.maxForm.controls['max'].valid &&
@@ -538,6 +551,18 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.angleSpan = angleSpan;
+    this.updateMconfig(newMconfig);
+  }
+
+  startAngleBlur() {
+    let startAngle = Number(this.startAngleForm.controls['startAngle'].value);
+
+    if (startAngle === this.chart.startAngle) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.startAngle = startAngle;
     this.updateMconfig(newMconfig);
   }
 

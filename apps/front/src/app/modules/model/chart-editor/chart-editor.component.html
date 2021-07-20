@@ -596,6 +596,34 @@
   </div>
 
   <div
+    *ngIf="chart.type === chartTypeEnum.Gauge"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Start Angle</div
+      >
+    </div>
+
+    <div [formGroup]="startAngleForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorStartAngleInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            startAngleForm.controls['startAngle'].invalid &&
+            startAngleForm.controls['startAngle'].touched
+        }"
+        formControlName="startAngle"
+        (blur)="startAngleBlur()"
+      />
+      <m-validation
+        [control]="startAngleForm.controls['startAngle']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
     *ngIf="chart.type === chartTypeEnum.Pie"
     class="flex flex-row items-start"
   >
