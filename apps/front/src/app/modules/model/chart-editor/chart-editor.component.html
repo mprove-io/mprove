@@ -720,6 +720,34 @@
   </div>
 
   <div
+    *ngIf="chart.type === chartTypeEnum.HeatMap"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Inner Padding</div
+      >
+    </div>
+
+    <div [formGroup]="innerPaddingForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorInnerPaddingInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            innerPaddingForm.controls['innerPadding'].invalid &&
+            innerPaddingForm.controls['innerPadding'].touched
+        }"
+        formControlName="innerPadding"
+        (blur)="innerPaddingBlur()"
+      />
+      <m-validation
+        [control]="innerPaddingForm.controls['innerPadding']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
     *ngIf="
       chart.type === chartTypeEnum.Area ||
       chart.type === chartTypeEnum.AreaNormalized ||

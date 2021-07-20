@@ -143,6 +143,17 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  innerPaddingForm: FormGroup = this.fb.group({
+    innerPadding: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(0)
+      ]
+    ]
+  });
+
   xAxisLabelForm: FormGroup = this.fb.group({
     xAxisLabel: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
@@ -398,6 +409,11 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.innerPaddingForm.controls['innerPadding'],
+      value: this.chart.innerPadding
+    });
+
+    this.setValueAndMark({
       control: this.xAxisLabelForm.controls['xAxisLabel'],
       value: this.chart.xAxisLabel
     });
@@ -427,6 +443,7 @@ export class ChartEditorComponent implements OnChanges {
       // this.barPaddingForm.controls['barPadding'].valid &&
       // this.bigSegmentsForm.controls['bigSegments'].valid &&
       // this.groupPaddingForm.controls['groupPadding'].valid &&
+      // this.innerPaddingForm.controls['innerPadding'].valid &&
       // this.xAxisLabelForm.controls['xAxisLabel'].valid &&
       // this.yAxisLabelForm.controls['yAxisLabel'].valid
     } else {
@@ -526,6 +543,20 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.groupPadding = groupPadding;
+    this.updateMconfig(newMconfig);
+  }
+
+  innerPaddingBlur() {
+    let innerPadding = Number(
+      this.innerPaddingForm.controls['innerPadding'].value
+    );
+
+    if (innerPadding === this.chart.innerPadding) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.innerPadding = innerPadding;
     this.updateMconfig(newMconfig);
   }
 
