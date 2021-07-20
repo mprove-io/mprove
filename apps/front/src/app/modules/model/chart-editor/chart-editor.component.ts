@@ -88,6 +88,17 @@ export class ChartEditorComponent implements OnChanges {
     units: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
 
+  angleSpanForm: FormGroup = this.fb.group({
+    angleSpan: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(0)
+      ]
+    ]
+  });
+
   xAxisLabelForm: FormGroup = this.fb.group({
     xAxisLabel: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
@@ -318,6 +329,11 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.angleSpanForm.controls['angleSpan'],
+      value: this.chart.angleSpan
+    });
+
+    this.setValueAndMark({
       control: this.xAxisLabelForm.controls['xAxisLabel'],
       value: this.chart.xAxisLabel
     });
@@ -342,6 +358,7 @@ export class ChartEditorComponent implements OnChanges {
       isChartValid =
         this.pageSizeForm.controls['pageSize'].valid &&
         this.unitsForm.controls['units'].valid &&
+        this.angleSpanForm.controls['angleSpan'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
         this.yAxisLabelForm.controls['yAxisLabel'].valid;
     } else {
@@ -377,6 +394,18 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.units = units;
+    this.updateMconfig(newMconfig);
+  }
+
+  angleSpanBlur() {
+    let angleSpan = Number(this.angleSpanForm.controls['angleSpan'].value);
+
+    if (angleSpan === this.chart.angleSpan) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.angleSpan = angleSpan;
     this.updateMconfig(newMconfig);
   }
 
