@@ -745,6 +745,34 @@
   </div>
 
   <div
+    *ngIf="chart.type === chartTypeEnum.Gauge"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Small Segments</div
+      >
+    </div>
+
+    <div [formGroup]="smallSegmentsForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorSmallSegmentsInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            smallSegmentsForm.controls['smallSegments'].invalid &&
+            smallSegmentsForm.controls['smallSegments'].touched
+        }"
+        formControlName="smallSegments"
+        (blur)="smallSegmentsBlur()"
+      />
+      <m-validation
+        [control]="smallSegmentsForm.controls['smallSegments']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
     *ngIf="
       chart.type === chartTypeEnum.BarHorizontalGrouped ||
       chart.type === chartTypeEnum.BarVerticalGrouped

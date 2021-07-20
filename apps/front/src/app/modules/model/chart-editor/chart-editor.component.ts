@@ -140,6 +140,17 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  smallSegmentsForm: FormGroup = this.fb.group({
+    smallSegments: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.integerValidator,
+        Validators.min(0)
+      ]
+    ]
+  });
+
   groupPaddingForm: FormGroup = this.fb.group({
     groupPadding: [
       undefined,
@@ -426,6 +437,11 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     this.setValueAndMark({
+      control: this.smallSegmentsForm.controls['smallSegments'],
+      value: this.chart.smallSegments
+    });
+
+    this.setValueAndMark({
       control: this.groupPaddingForm.controls['groupPadding'],
       value: this.chart.groupPadding
     });
@@ -471,6 +487,7 @@ export class ChartEditorComponent implements OnChanges {
       // this.maxForm.controls['max'].valid &&
       // this.barPaddingForm.controls['barPadding'].valid &&
       // this.bigSegmentsForm.controls['bigSegments'].valid &&
+      // this.smallSegmentsForm.controls['smallSegments'].valid &&
       // this.groupPaddingForm.controls['groupPadding'].valid &&
       // this.innerPaddingForm.controls['innerPadding'].valid &&
       // this.legendTitleForm.controls['legendTitle'].valid &&
@@ -583,6 +600,20 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.bigSegments = bigSegments;
+    this.updateMconfig(newMconfig);
+  }
+
+  smallSegmentsBlur() {
+    let smallSegments = Number(
+      this.smallSegmentsForm.controls['smallSegments'].value
+    );
+
+    if (smallSegments === this.chart.smallSegments) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.smallSegments = smallSegments;
     this.updateMconfig(newMconfig);
   }
 
