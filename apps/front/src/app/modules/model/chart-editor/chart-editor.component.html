@@ -6,15 +6,15 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-[36px] text-gray1 text-base items-center select-none"
+      <div class="flex h-9 text-gray1 text-base items-center select-none"
         >Page Size (visible rows)</div
       >
     </div>
 
-    <div [formGroup]="pageSizeForm" class="flex flex-col ml-3 items-start">
+    <div [formGroup]="pageSizeForm" class="flex flex-col ml-5 items-start">
       <input
         data-cy="chartEditorPageSizeInput"
-        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             pageSizeForm.controls['pageSize'].invalid &&
@@ -33,7 +33,7 @@
     *ngIf="chart.type === chartTypeEnum.Table"
     class="mb-5 flex flex-row items-start"
   >
-    <div class="flex h-[36px] text-gray1 text-base items-center select-none"
+    <div class="flex h-9 text-gray1 text-base items-center select-none"
       >Hide Columns</div
     >
 
@@ -83,8 +83,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >xField</div
       >
     </div>
@@ -139,8 +138,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >multiField</div
       >
     </div>
@@ -179,8 +177,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Value Field</div
       >
     </div>
@@ -219,8 +216,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Previous Value Field</div
       >
     </div>
@@ -268,8 +264,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >yField</div
       >
     </div>
@@ -319,8 +314,7 @@
     "
     class="mb-5 flex flex-row items-start"
   >
-    <div
-      class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
       >yFields</div
     >
 
@@ -379,8 +373,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Color Scheme</div
       >
     </div>
@@ -432,8 +425,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Scheme Type</div
       >
     </div>
@@ -477,8 +469,7 @@
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Interpolation</div
       >
     </div>
@@ -518,7 +509,7 @@
   >
     <div class="flex flex-col">
       <div
-        class="flex h-[36px] w-60 text-gray1 text-base items-center select-none"
+        class="flex h-9 w-60 text-gray1 text-base items-center select-none"
         >Band - Card - Text - Empty</div
       >
     </div>
@@ -553,8 +544,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Card Color</div
       >
     </div>
@@ -571,8 +561,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Empty Card Color</div
       >
     </div>
@@ -589,8 +578,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Band Color</div
       >
     </div>
@@ -607,8 +595,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div
-        class="flex h-[36px] w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Text Color</div
       >
     </div>
@@ -628,15 +615,15 @@
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="flex h-[36px] text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
         >Units</div
       >
     </div>
 
-    <div [formGroup]="unitsForm" class="flex flex-col ml-3 items-start">
+    <div [formGroup]="unitsForm" class="flex flex-col ml-5 items-start">
       <input
         data-cy="chartEditorUnitsInput"
-        class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
             unitsForm.controls['units'].invalid &&
