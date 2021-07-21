@@ -1215,4 +1215,40 @@
       (change)="toggleShowAxis($event)"
     ></ui-switch>
   </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.GaugeLinear ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.NumberCard ||
+      chart.type === chartTypeEnum.Pie ||
+      chart.type === chartTypeEnum.PieAdvanced ||
+      chart.type === chartTypeEnum.PieGrid ||
+      chart.type === chartTypeEnum.TreeMap
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      >Animations</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.animations"
+      (change)="toggleAnimations($event)"
+    ></ui-switch>
+  </div>
 </div>

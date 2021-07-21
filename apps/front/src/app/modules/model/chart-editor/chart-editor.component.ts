@@ -922,4 +922,10 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.showAxis = $event;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  toggleAnimations($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.animations = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }
