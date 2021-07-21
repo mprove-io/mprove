@@ -1101,18 +1101,118 @@
       chart.type === chartTypeEnum.HeatMap ||
       chart.type === chartTypeEnum.Line
     "
-    class="flex flex-row items-start"
+    class="flex flex-row items-center mb-5"
   >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >X Axis</div
-      >
-    </div>
+    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      >X Axis</div
+    >
 
     <ui-switch
-      class="ml-5 outline-none"
+      class="ml-5"
       [checked]="chart.xAxis"
       (change)="toggleXAxis($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      >Y Axis</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.yAxis"
+      (change)="toggleYAxis($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      >Show X Label</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.showXAxisLabel"
+      (change)="toggleShowXAxisLabel($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      >Show Y Label</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.showYAxisLabel"
+      (change)="toggleShowYAxisLabel($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Gauge"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      >Show Axis</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.showAxis"
+      (change)="toggleShowAxis($event)"
     ></ui-switch>
   </div>
 </div>

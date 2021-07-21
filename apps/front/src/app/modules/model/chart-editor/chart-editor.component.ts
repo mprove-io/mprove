@@ -898,4 +898,28 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.xAxis = $event;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  toggleYAxis($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.yAxis = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleShowXAxisLabel($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.showXAxisLabel = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleShowYAxisLabel($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.showYAxisLabel = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleShowAxis($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.showAxis = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }
