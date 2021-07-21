@@ -3,6 +3,12 @@
 // @import '~ng-zorro-antd/time-picker/style/index.min.css';
 @import '~ng-zorro-antd/ng-zorro-antd.min.css';
 
+@import '~ngx-ui-switch/ui-switch.component.scss';
+
+.switch:focus {
+  outline: none;
+}
+
 /* You can add global styles to this file, and also import other style files */
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';

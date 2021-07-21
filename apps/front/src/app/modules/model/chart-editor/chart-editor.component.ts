@@ -892,4 +892,10 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.emptyColor = $event.color;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  toggleXAxis($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.xAxis = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }

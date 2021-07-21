@@ -11124,6 +11124,11 @@ ngx-spinner@^11.0.1:
   dependencies:
     tslib "^2.0.0"
 
+ngx-ui-switch@^12.0.1:
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-ui-switch/-/ngx-ui-switch-12.0.1.tgz#6830bc848f49aa2b4839f49057f330992eefa076"
+  integrity sha512-CJ9RnovZL9Vd8cK43N2yNV2H4mHxjF9cO+BGhkiJN2wLOUXNV06pFJo4Kies+QjQWhyu3HokzqJCa3SneNNZug==
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
