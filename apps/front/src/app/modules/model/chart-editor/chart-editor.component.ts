@@ -934,4 +934,64 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.gradient = $event;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  toggleLegend($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.legend = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleTooltipDisabled($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.tooltipDisabled = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleRoundEdges($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.roundEdges = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleRoundDomains($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.roundDomains = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleShowGridLines($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.showGridLines = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleTimeline($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.timeline = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleAutoScale($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.autoScale = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleDoughnut($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.doughnut = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleExplodeSlices($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.explodeSlices = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleLabels($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.labels = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }
