@@ -928,4 +928,10 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.animations = $event;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  toggleGradient($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.gradient = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }
