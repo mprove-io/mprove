@@ -64,14 +64,8 @@ export class DataService {
     let yName = yField.sqlName;
 
     let singleData = data.map((raw: RData) => ({
-      name: raw[xName].value ? raw[xName].value : 'null',
-      value:
-        isNumeric(raw[yName].value) &&
-        yField.result === common.FieldResultEnum.Number
-          ? Number(raw[yName].value)
-          : isNumeric(raw[yName].value)
-          ? raw[yName].value
-          : 0
+      name: common.isDefined(raw[xName].value) ? raw[xName].value : 'null',
+      value: isNumeric(raw[yName].value) ? Number(raw[yName].value) : 0
     }));
 
     // console.log(singleData);
@@ -93,24 +87,14 @@ export class DataService {
 
     let yField = selectFields.find(f => f.id === yFieldId);
 
-    if (!yField) {
-      return [];
-    }
-
-    let xName = xField ? xField.sqlName : undefined;
+    let xName = common.isDefined(xField) ? xField.sqlName : undefined;
     let yName = yField.sqlName;
 
     let singleData = data
       ? data.map((raw: RData) =>
           Object.assign({
-            name: !xName ? ' ' : raw[xName].value ? raw[xName].value : 'null',
-            value:
-              isNumeric(raw[yName].value) &&
-              yField.result === common.FieldResultEnum.Number
-                ? Number(raw[yName].value)
-                : isNumeric(raw[yName].value)
-                ? raw[yName].value
-                : 0
+            name: common.isDefined(xField) ? raw[xName].value || 'null' : ' ',
+            value: isNumeric(raw[yName].value) ? Number(raw[yName].value) : 0
           })
         )
       : [];

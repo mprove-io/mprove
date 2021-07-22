@@ -103,7 +103,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   filtersIsExpanded = false;
   chartIsExpanded = true;
-  dataIsExpanded = false;
+  dataIsExpanded = true;
 
   isFormat = true;
 
