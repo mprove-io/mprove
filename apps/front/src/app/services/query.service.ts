@@ -35,14 +35,16 @@ export class QueryService {
 
         let cell: Cell = {
           id: key,
-          value: value,
-          fValue: this.formatValue({
-            value: value,
-            formatNumber: column?.formatNumber,
-            fieldResult: column?.result,
-            currencyPrefix: column?.currencyPrefix,
-            currencySuffix: column?.currencySuffix
-          })
+          value: common.isDefined(value) ? value : 'NULL',
+          fValue: common.isDefined(value)
+            ? this.formatValue({
+                value: value,
+                formatNumber: column?.formatNumber,
+                fieldResult: column?.result,
+                currencyPrefix: column?.currencyPrefix,
+                currencySuffix: column?.currencySuffix
+              })
+            : 'NULL'
         };
 
         r[key] = cell;
