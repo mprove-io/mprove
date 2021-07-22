@@ -568,6 +568,133 @@
   </div>
 
   <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.Pie
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Legend Title</div
+      >
+    </div>
+
+    <div [formGroup]="legendTitleForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorLegendTitleInput"
+        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            legendTitleForm.controls['legendTitle'].invalid &&
+            legendTitleForm.controls['legendTitle'].touched
+        }"
+        formControlName="legendTitle"
+        (blur)="legendTitleBlur()"
+      />
+      <m-validation
+        [control]="legendTitleForm.controls['legendTitle']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >X Axis Label</div
+      >
+    </div>
+
+    <div [formGroup]="xAxisLabelForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorXAxisLabelInput"
+        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            xAxisLabelForm.controls['xAxisLabel'].invalid &&
+            xAxisLabelForm.controls['xAxisLabel'].touched
+        }"
+        formControlName="xAxisLabel"
+        (blur)="xAxisLabelBlur()"
+      />
+      <m-validation
+        [control]="xAxisLabelForm.controls['xAxisLabel']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Y Axis Label</div
+      >
+    </div>
+
+    <div [formGroup]="yAxisLabelForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorYAxisLabelInput"
+        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            yAxisLabelForm.controls['yAxisLabel'].invalid &&
+            yAxisLabelForm.controls['yAxisLabel'].touched
+        }"
+        formControlName="yAxisLabel"
+        (blur)="yAxisLabelBlur()"
+      />
+      <m-validation
+        [control]="yAxisLabelForm.controls['yAxisLabel']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
     *ngIf="chart.type === chartTypeEnum.Gauge"
     class="flex flex-row items-start"
   >
@@ -954,133 +1081,6 @@
       />
       <m-validation
         [control]="innerPaddingForm.controls['innerPadding']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Legend Title</div
-      >
-    </div>
-
-    <div [formGroup]="legendTitleForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorLegendTitleInput"
-        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            legendTitleForm.controls['legendTitle'].invalid &&
-            legendTitleForm.controls['legendTitle'].touched
-        }"
-        formControlName="legendTitle"
-        (blur)="legendTitleBlur()"
-      />
-      <m-validation
-        [control]="legendTitleForm.controls['legendTitle']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >X Axis Label</div
-      >
-    </div>
-
-    <div [formGroup]="xAxisLabelForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorXAxisLabelInput"
-        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            xAxisLabelForm.controls['xAxisLabel'].invalid &&
-            xAxisLabelForm.controls['xAxisLabel'].touched
-        }"
-        formControlName="xAxisLabel"
-        (blur)="xAxisLabelBlur()"
-      />
-      <m-validation
-        [control]="xAxisLabelForm.controls['xAxisLabel']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Y Axis Label</div
-      >
-    </div>
-
-    <div [formGroup]="yAxisLabelForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorYAxisLabelInput"
-        class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            yAxisLabelForm.controls['yAxisLabel'].invalid &&
-            yAxisLabelForm.controls['yAxisLabel'].touched
-        }"
-        formControlName="yAxisLabel"
-        (blur)="yAxisLabelBlur()"
-      />
-      <m-validation
-        [control]="yAxisLabelForm.controls['yAxisLabel']"
       ></m-validation>
     </div>
   </div>
