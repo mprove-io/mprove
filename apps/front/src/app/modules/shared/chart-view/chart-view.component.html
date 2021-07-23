@@ -1,12 +1,19 @@
 <div class="h-full w-full overflow-auto">
   <div
-    *ngIf="chart.isValid === false"
+    *ngIf="isSelectValid === false"
+    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    >{{ errorMessage }}</div
+  >
+
+  <div
+    *ngIf="isSelectValid === true && chart.isValid === false"
     class="h-full flex items-center justify-center text-xl select-none text-red1"
     >Not valid</div
   >
 
   <div
     *ngIf="
+      isSelectValid === true &&
       chart.isValid === true &&
       qData.length === 0 &&
       queryStatus !== queryStatusEnum.Completed
@@ -17,6 +24,7 @@
 
   <div
     *ngIf="
+      isSelectValid === true &&
       chart.isValid === true &&
       qData.length === 0 &&
       queryStatus === queryStatusEnum.Completed
@@ -27,6 +35,7 @@
 
   <m-chart-table
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.Table &&
       chart.isValid === true &&
       qData.length > 0
@@ -47,6 +56,7 @@
 
   <ngx-charts-bar-vertical
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarVertical &&
       chart.isValid === true &&
       qData.length > 0
@@ -84,6 +94,7 @@
 
   <ngx-charts-bar-horizontal
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarHorizontal &&
       chart.isValid === true &&
       qData.length > 0
@@ -120,6 +131,7 @@
 
   <ngx-charts-bar-vertical-2d
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarVerticalGrouped &&
       chart.isValid === true &&
       qData.length > 0
@@ -157,6 +169,7 @@
 
   <ngx-charts-bar-horizontal-2d
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarHorizontalGrouped &&
       chart.isValid === true &&
       qData.length > 0
@@ -194,6 +207,7 @@
 
   <ngx-charts-bar-vertical-stacked
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarVerticalStacked &&
       chart.isValid === true &&
       qData.length > 0
@@ -229,6 +243,7 @@
 
   <ngx-charts-bar-horizontal-stacked
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarHorizontalStacked &&
       chart.isValid === true &&
       qData.length > 0
@@ -264,6 +279,7 @@
 
   <ngx-charts-bar-vertical-normalized
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarVerticalNormalized &&
       chart.isValid === true &&
       qData.length > 0
@@ -298,6 +314,7 @@
 
   <ngx-charts-bar-horizontal-normalized
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.BarHorizontalNormalized &&
       chart.isValid === true &&
       qData.length > 0
@@ -333,6 +350,7 @@
 
   <ngx-charts-pie-chart
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.Pie &&
       chart.isValid === true &&
       qData.length > 0
@@ -361,6 +379,7 @@
 
   <ngx-charts-advanced-pie-chart
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.PieAdvanced &&
       chart.isValid === true &&
       qData.length > 0
@@ -383,6 +402,7 @@
 
   <ngx-charts-pie-grid
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.PieGrid &&
       chart.isValid === true &&
       qData.length > 0
@@ -411,6 +431,7 @@
 
   <ngx-charts-line-chart
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.Line &&
       chart.isValid === true &&
       qData.length > 0
@@ -454,6 +475,7 @@
 
   <ngx-charts-area-chart
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.Area &&
       chart.isValid === true &&
       qData.length > 0
@@ -497,6 +519,7 @@
 
   <ngx-charts-area-chart-stacked
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.AreaStacked &&
       chart.isValid === true &&
       qData.length > 0
@@ -536,6 +559,7 @@
 
   <ngx-charts-area-chart-normalized
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.AreaNormalized &&
       chart.isValid === true &&
       qData.length > 0
@@ -572,6 +596,7 @@
 
   <ngx-charts-heat-map
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.HeatMap &&
       chart.isValid === true &&
       qData.length > 0
@@ -602,6 +627,7 @@
 
   <ngx-charts-tree-map
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.TreeMap &&
       chart.isValid === true &&
       qData.length > 0
@@ -623,6 +649,7 @@
 
   <ngx-charts-number-card
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.NumberCard &&
       chart.isValid === true &&
       qData.length > 0
@@ -650,6 +677,7 @@
 
   <ngx-charts-gauge
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.Gauge &&
       chart.isValid === true &&
       qData.length > 0
@@ -678,6 +706,7 @@
 
   <ngx-charts-linear-gauge
     *ngIf="
+      isSelectValid === true &&
       chart.type === chartTypeEnum.GaugeLinear &&
       chart.isValid === true &&
       qData.length > 0

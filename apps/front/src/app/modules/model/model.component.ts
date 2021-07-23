@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
+import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -193,6 +194,9 @@ export class ModelComponent implements OnInit, OnDestroy {
   queryStatus: common.QueryStatusEnum;
   mconfigChart: common.Chart;
 
+  isSelectValid = false;
+  errorMessage = '';
+
   modelMconfigQueryLatest$ = combineLatest([
     this.modelQuery.fields$,
     this.mqQuery.mconfig$,
@@ -251,6 +255,14 @@ export class ModelComponent implements OnInit, OnDestroy {
 
           this.queryStatus = query.status;
           this.mconfigChart = mconfig.chart;
+
+          let checkSelectResult = getSelectValid({
+            chartType: chart.type,
+            sortedColumns: this.sortedColumns
+          });
+
+          this.isSelectValid = checkSelectResult.isSelectValid;
+          this.errorMessage = checkSelectResult.errorMessage;
 
           this.cd.detectChanges();
         }

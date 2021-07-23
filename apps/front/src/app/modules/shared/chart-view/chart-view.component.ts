@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
+import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { DataService } from '~front/app/services/data.service';
 import { RData } from '~front/app/services/query.service';
@@ -35,9 +36,20 @@ export class ChartViewComponent implements OnChanges {
   scheme: any;
   curve: any;
 
+  isSelectValid = false;
+  errorMessage = '';
+
   constructor(private dataService: DataService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    let checkSelectResult = getSelectValid({
+      chartType: this.chart.type,
+      sortedColumns: this.sortedColumns
+    });
+
+    this.isSelectValid = checkSelectResult.isSelectValid;
+    this.errorMessage = checkSelectResult.errorMessage;
+
     this.scheme = getChartScheme(this.chart.colorScheme);
     this.curve = getChartCurve(this.chart.interpolation);
 
