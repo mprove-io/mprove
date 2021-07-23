@@ -193,55 +193,35 @@ export class ModelTreeComponent {
         }
       });
 
-      let sortedSelect: string[] = [
-        ...selectDimensions,
+      let selectMeasuresAndCalculations = [
         ...selectMeasures,
         ...selectCalculations
       ];
 
+      let sortedSelect: string[] = [
+        ...selectDimensions,
+        ...selectMeasuresAndCalculations
+      ];
+
       newMconfig.chart = Object.assign({}, newMconfig.chart, <common.Chart>{
-        xField:
-          sortedSelect.length === 1
-            ? sortedSelect[0]
-            : sortedSelect.length === 2
-            ? sortedSelect[0]
-            : newMconfig.chart.xField,
+        xField: selectDimensions.length > 0 ? selectDimensions[0] : undefined,
         yField:
-          sortedSelect.length === 1
-            ? sortedSelect[0]
-            : sortedSelect.length === 2
-            ? sortedSelect[1]
-            : newMconfig.chart.yField || sortedSelect[sortedSelect.length - 1],
+          selectMeasuresAndCalculations.length > 0
+            ? newMconfig.chart.yField || selectMeasuresAndCalculations[0]
+            : undefined,
         yFields:
-          sortedSelect.length === 1
-            ? [sortedSelect[0]]
-            : sortedSelect.length === 2
-            ? [sortedSelect[1]]
+          selectMeasuresAndCalculations.length === 0
+            ? []
             : newMconfig.chart.yFields.length > 0
             ? newMconfig.chart.yFields
-            : [sortedSelect[sortedSelect.length - 1]],
+            : [...selectMeasuresAndCalculations],
         multiField:
-          // sortedSelect.length === 1
-          //   ? sortedSelect[0]
-          //   : sortedSelect.length === 2
-          //   ? sortedSelect[0]
-          //   : sortedSelect.length === 3
-          //   ? sortedSelect[1]
-          //   :
-          newMconfig.chart.multiField,
+          selectDimensions.length === 2 ? selectDimensions[1] : undefined,
         valueField:
-          sortedSelect.length === 1
-            ? sortedSelect[0]
-            : sortedSelect.length === 2
-            ? sortedSelect[0]
-            : newMconfig.chart.valueField,
-        previousValueField:
-          sortedSelect.length === 1
-            ? sortedSelect[0]
-            : sortedSelect.length === 2
-            ? sortedSelect[1]
-            : newMconfig.chart.previousValueField ||
-              sortedSelect[sortedSelect.length - 1]
+          selectMeasuresAndCalculations.length > 0
+            ? newMconfig.chart.valueField || selectMeasuresAndCalculations[0]
+            : undefined,
+        previousValueField: newMconfig.chart.previousValueField
       });
     }
 

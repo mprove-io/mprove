@@ -95,8 +95,8 @@
         class="w-72 text-base focus:outline-none"
         [items]="
           chart.type === chartTypeEnum.NumberCard
-            ? sortedColumnsPlusEmpty
-            : sortedColumns
+            ? sortedDimensionsPlusEmpty
+            : sortedDimensions
         "
         [clearable]="false"
         [searchable]="false"
@@ -148,7 +148,7 @@
         #multiFieldSelect
         data-cy="multiFieldSelect"
         class="w-72 text-base focus:outline-none"
-        [items]="sortedColumnsPlusEmpty"
+        [items]="sortedDimensionsPlusEmpty"
         [clearable]="false"
         [searchable]="false"
         (change)="multiFieldChange()"
@@ -187,7 +187,7 @@
         #valueFieldSelect
         data-cy="valueFieldSelect"
         class="w-72 text-base focus:outline-none"
-        [items]="sortedColumns"
+        [items]="sortedMeasuresAndCalculations"
         [clearable]="false"
         [searchable]="false"
         (change)="valueFieldChange()"
@@ -226,7 +226,7 @@
         #previousValueFieldSelect
         data-cy="previousValueFieldSelect"
         class="w-72 text-base focus:outline-none"
-        [items]="sortedColumnsPlusEmpty"
+        [items]="sortedMeasuresAndCalculationsPlusEmpty"
         [clearable]="false"
         [searchable]="false"
         (change)="previousValueFieldChange()"
@@ -274,7 +274,7 @@
         #yFieldSelect
         data-cy="yFieldSelect"
         class="w-72 text-base focus:outline-none"
-        [items]="sortedColumns"
+        [items]="sortedMeasuresAndCalculations"
         [clearable]="false"
         [searchable]="false"
         (change)="yFieldChange()"
@@ -320,7 +320,7 @@
 
     <div class="flex flex-col ml-5 mt-2 items-start space-y-4">
       <div
-        *ngFor="let column of sortedColumns"
+        *ngFor="let column of sortedMeasuresAndCalculations"
         class="flex flex-row items-center"
       >
         <button

@@ -38,8 +38,13 @@ export class ChartEditorComponent implements OnChanges {
 
   @Input()
   sortedColumns: ColumnField[];
-
   sortedColumnsPlusEmpty: ColumnField[];
+
+  sortedDimensions: ColumnField[];
+  sortedDimensionsPlusEmpty: ColumnField[];
+
+  sortedMeasuresAndCalculations: ColumnField[];
+  sortedMeasuresAndCalculationsPlusEmpty: ColumnField[];
 
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
@@ -350,29 +355,45 @@ export class ChartEditorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes);
 
-    this.sortedColumnsPlusEmpty = [
-      ...this.sortedColumns,
-      {
-        id: undefined,
-        hidden: undefined,
-        label: undefined,
-        fieldClass: undefined,
-        result: undefined,
-        sqlName: undefined,
-        topId: undefined,
-        topLabel: 'Empty',
-        description: undefined,
-        type: undefined,
-        groupId: undefined,
-        groupLabel: undefined,
-        groupDescription: undefined,
-        formatNumber: undefined,
-        currencyPrefix: undefined,
-        currencySuffix: undefined,
-        sorting: undefined,
-        sortingNumber: undefined,
-        isHideColumn: undefined
-      }
+    let emptyColumn: ColumnField = {
+      id: undefined,
+      hidden: undefined,
+      label: undefined,
+      fieldClass: undefined,
+      result: undefined,
+      sqlName: undefined,
+      topId: undefined,
+      topLabel: 'Empty',
+      description: undefined,
+      type: undefined,
+      groupId: undefined,
+      groupLabel: undefined,
+      groupDescription: undefined,
+      formatNumber: undefined,
+      currencyPrefix: undefined,
+      currencySuffix: undefined,
+      sorting: undefined,
+      sortingNumber: undefined,
+      isHideColumn: undefined
+    };
+
+    this.sortedColumnsPlusEmpty = [...this.sortedColumns, emptyColumn];
+
+    this.sortedDimensions = this.sortedColumns.filter(
+      x => x.fieldClass === common.FieldClassEnum.Dimension
+    );
+
+    this.sortedDimensionsPlusEmpty = [...this.sortedDimensions, emptyColumn];
+
+    this.sortedMeasuresAndCalculations = this.sortedColumns.filter(
+      x =>
+        x.fieldClass === common.FieldClassEnum.Measure ||
+        x.fieldClass === common.FieldClassEnum.Calculation
+    );
+
+    this.sortedMeasuresAndCalculationsPlusEmpty = [
+      ...this.sortedMeasuresAndCalculations,
+      emptyColumn
     ];
 
     this.setValueAndMark({
