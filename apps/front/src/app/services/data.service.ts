@@ -171,18 +171,12 @@ export class DataService {
 
         // x null check
         if (raw[xName]) {
+          let xV = xValue(raw, xName);
+          let yV = raw[yName].value;
+
           let element = {
-            name:
-              xField.result === common.FieldResultEnum.Number
-                ? Number(xValue(raw, xName))
-                : xValue(raw, xName),
-            value:
-              isNumeric(raw[yName].value) &&
-              yField.result === common.FieldResultEnum.Number
-                ? Number(raw[yName].value)
-                : isNumeric(raw[yName].value)
-                ? raw[yName].value
-                : 0
+            name: isNumeric(xV) ? Number(xV) : xV,
+            value: isNumeric(yV) ? Number(yV) : 0
           };
 
           if (prepareData[key]) {
