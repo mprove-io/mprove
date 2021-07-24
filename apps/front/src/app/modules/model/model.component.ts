@@ -208,6 +208,10 @@ export class ModelComponent implements OnInit, OnDestroy {
         common.Mconfig,
         common.Query
       ]) => {
+        if (common.isUndefined(mconfig.mconfigId)) {
+          return;
+        }
+
         let { select, sortings, chart } = mconfig;
 
         if (select && fields) {

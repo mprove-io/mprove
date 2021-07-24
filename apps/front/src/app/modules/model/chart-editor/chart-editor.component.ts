@@ -949,8 +949,19 @@ export class ChartEditorComponent implements OnChanges {
 
   multiFieldChange() {
     let multiField = this.multiFieldForm.controls['multiField'].value;
+
+    let newXFieldValue = this.sortedDimensions.filter(
+      x => x.id !== multiField
+    )[0].id;
+
+    this.setValueAndMark({
+      control: this.xFieldForm.controls['xField'],
+      value: newXFieldValue
+    });
+
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.multiField = multiField;
+    newMconfig.chart.xField = newXFieldValue;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
