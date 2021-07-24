@@ -39,6 +39,7 @@ import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-i
 import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
+import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { LogoComponent } from './logo/logo.component';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
@@ -91,7 +92,8 @@ let sharedComponents = [
   ChartTableComponent,
   ChartViewComponent,
   FieldLabelComponent,
-  ColorMenuComponent
+  ColorMenuComponent,
+  MinusSmIconComponent
 ];
 
 @NgModule({

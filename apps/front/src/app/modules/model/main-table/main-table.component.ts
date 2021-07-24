@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
+import { selectChartFields } from '~front/app/functions/select-chart-select';
+import { ModelQuery } from '~front/app/queries/model.query';
 import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { RData } from '~front/app/services/query.service';
@@ -36,6 +38,7 @@ export class MainTableComponent {
 
   constructor(
     public mqQuery: MqQuery,
+    public modelQuery: ModelQuery,
     public mconfigService: MconfigService,
     private structService: StructService,
     private cd: ChangeDetectorRef
@@ -111,6 +114,19 @@ export class MainTableComponent {
     newMconfig = this.mconfigService.removeField({
       newMconfig,
       fieldId: columnId
+    });
+
+    let fields: common.ModelField[];
+    this.modelQuery.fields$
+      .pipe(
+        tap(x => (fields = x)),
+        take(1)
+      )
+      .subscribe();
+
+    newMconfig = selectChartFields({
+      newMconfig: newMconfig,
+      fields: fields
     });
 
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
