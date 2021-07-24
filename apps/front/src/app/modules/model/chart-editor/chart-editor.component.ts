@@ -211,64 +211,65 @@ export class ChartEditorComponent implements OnChanges {
 
   colorSchemesList: ColorSchemeItem[] = [
     {
-      label: 'Vivid (ordinal)',
+      label: 'Vivid',
       value: common.ChartColorSchemeEnum.Vivid
     },
     {
-      label: 'Natural (ordinal)',
+      label: 'Natural',
       value: common.ChartColorSchemeEnum.Natural
     },
     {
-      label: 'Cool (ordinal)',
+      label: 'Cool',
       value: common.ChartColorSchemeEnum.Cool
     },
     {
-      label: 'Fire (ordinal)',
+      label: 'Fire',
       value: common.ChartColorSchemeEnum.Fire
     },
+
     {
-      label: 'Solar (continuous)',
-      value: common.ChartColorSchemeEnum.Solar
-    },
-    {
-      label: 'Air (continuous)',
-      value: common.ChartColorSchemeEnum.Air
-    },
-    {
-      label: 'Aqua (continuous)',
-      value: common.ChartColorSchemeEnum.Aqua
-    },
-    {
-      label: 'Flame (ordinal)',
+      label: 'Flame',
       value: common.ChartColorSchemeEnum.Flame
     },
     {
-      label: 'Ocean (ordinal)',
+      label: 'Ocean',
       value: common.ChartColorSchemeEnum.Ocean
     },
     {
-      label: 'Forest (ordinal)',
+      label: 'Forest',
       value: common.ChartColorSchemeEnum.Forest
     },
     {
-      label: 'Horizon (ordinal)',
+      label: 'Horizon',
       value: common.ChartColorSchemeEnum.Horizon
     },
     {
-      label: 'Neons (ordinal)',
+      label: 'Neons',
       value: common.ChartColorSchemeEnum.Neons
     },
     {
-      label: 'Picnic (ordinal)',
+      label: 'Picnic',
       value: common.ChartColorSchemeEnum.Picnic
     },
     {
-      label: 'Night (ordinal)',
+      label: 'Night',
       value: common.ChartColorSchemeEnum.Night
     },
     {
-      label: 'NightLights (ordinal)',
+      label: 'NightLights',
       value: common.ChartColorSchemeEnum.NightLights
+    },
+    {
+      label: 'Solar (linear)',
+      value: common.ChartColorSchemeEnum.Solar
+    },
+    {
+      label: 'Air (linear)',
+      value: common.ChartColorSchemeEnum.Air
+    },
+    {
+      label: 'Aqua (linear)',
+      value: common.ChartColorSchemeEnum.Aqua
     }
   ];
 
@@ -983,8 +984,24 @@ export class ChartEditorComponent implements OnChanges {
 
   colorSchemeChange() {
     let colorScheme = this.colorSchemeForm.controls['colorScheme'].value;
+
+    let newSchemeTypeValue: common.ChartSchemeTypeEnum =
+      [
+        common.ChartColorSchemeEnum.Solar,
+        common.ChartColorSchemeEnum.Air,
+        common.ChartColorSchemeEnum.Aqua
+      ].indexOf(colorScheme) > -1
+        ? common.ChartSchemeTypeEnum.Linear
+        : common.ChartSchemeTypeEnum.Ordinal;
+
+    this.setValueAndMark({
+      control: this.schemeTypeForm.controls['schemeType'],
+      value: newSchemeTypeValue
+    });
+
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.colorScheme = colorScheme;
+    newMconfig.chart.schemeType = newSchemeTypeValue;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
