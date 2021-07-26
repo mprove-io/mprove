@@ -602,7 +602,11 @@
       >
     </div>
 
-    <div [formGroup]="legendTitleForm" class="flex flex-col ml-5 items-start">
+    <div
+      *ngIf="chart.legend === true"
+      [formGroup]="legendTitleForm"
+      class="flex flex-col ml-5 items-start"
+    >
       <input
         data-cy="chartEditorLegendTitleInput"
         class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
@@ -618,6 +622,12 @@
         [control]="legendTitleForm.controls['legendTitle']"
       ></m-validation>
     </div>
+
+    <div
+      *ngIf="chart.legend === false"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -644,7 +654,11 @@
       >
     </div>
 
-    <div [formGroup]="xAxisLabelForm" class="flex flex-col ml-5 items-start">
+    <div
+      *ngIf="chart.showXAxisLabel === true && chart.xAxis === true"
+      [formGroup]="xAxisLabelForm"
+      class="flex flex-col ml-5 items-start"
+    >
       <input
         data-cy="chartEditorXAxisLabelInput"
         class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
@@ -660,6 +674,12 @@
         [control]="xAxisLabelForm.controls['xAxisLabel']"
       ></m-validation>
     </div>
+
+    <div
+      *ngIf="chart.showXAxisLabel === false || chart.xAxis === false"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -686,7 +706,11 @@
       >
     </div>
 
-    <div [formGroup]="yAxisLabelForm" class="flex flex-col ml-5 items-start">
+    <div
+      *ngIf="chart.showYAxisLabel === true && chart.yAxis === true"
+      [formGroup]="yAxisLabelForm"
+      class="flex flex-col ml-5 items-start"
+    >
       <input
         data-cy="chartEditorYAxisLabelInput"
         class="w-56 h-9 form-input rounded border-gray3 focus:border-blue3"
@@ -702,6 +726,12 @@
         [control]="yAxisLabelForm.controls['yAxisLabel']"
       ></m-validation>
     </div>
+
+    <div
+      *ngIf="chart.showYAxisLabel === false || chart.yAxis === false"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -766,11 +796,15 @@
   >
     <div class="flex flex-col">
       <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Arc Width</div
+        >Arc Width (doughnut on)</div
       >
     </div>
 
-    <div [formGroup]="arcWidthForm" class="flex flex-col ml-5 items-start">
+    <div
+      *ngIf="chart.doughnut === true"
+      [formGroup]="arcWidthForm"
+      class="flex flex-col ml-5 items-start"
+    >
       <input
         data-cy="chartEditorArcWidthInput"
         class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
@@ -786,6 +820,12 @@
         [control]="arcWidthForm.controls['arcWidth']"
       ></m-validation>
     </div>
+
+    <div
+      *ngIf="chart.doughnut === false"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -1096,6 +1136,89 @@
   </div>
 
   <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Labels</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.labels"
+      (change)="toggleLabels($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.Pie
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Legend</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.legend"
+      (change)="toggleLegend($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Doughnut</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.doughnut"
+      (change)="toggleDoughnut($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Explode Slices (doughnut off)</div
+    >
+
+    <ui-switch
+      *ngIf="chart.doughnut === false"
+      class="ml-5"
+      [checked]="chart.explodeSlices"
+      (change)="toggleExplodeSlices($event)"
+    ></ui-switch>
+
+    <div
+      *ngIf="chart.doughnut === true"
+      class="ml-5 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
+  </div>
+
+  <div
     *ngIf="
       chart.type === chartTypeEnum.Area ||
       chart.type === chartTypeEnum.AreaNormalized ||
@@ -1176,10 +1299,17 @@
     >
 
     <ui-switch
+      *ngIf="chart.xAxis === true"
       class="ml-5"
       [checked]="chart.showXAxisLabel"
       (change)="toggleShowXAxisLabel($event)"
     ></ui-switch>
+
+    <div
+      *ngIf="chart.xAxis === false"
+      class="ml-5 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -1205,10 +1335,17 @@
     >
 
     <ui-switch
+      *ngIf="chart.yAxis === true"
       class="ml-5"
       [checked]="chart.showYAxisLabel"
       (change)="toggleShowYAxisLabel($event)"
     ></ui-switch>
+
+    <div
+      *ngIf="chart.yAxis === false"
+      class="ml-5 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -1223,37 +1360,6 @@
       class="ml-5"
       [checked]="chart.showAxis"
       (change)="toggleShowAxis($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Legend</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.legend"
-      (change)="toggleLegend($event)"
     ></ui-switch>
   </div>
 
@@ -1347,51 +1453,6 @@
       class="ml-5"
       [checked]="chart.autoScale"
       (change)="toggleAutoScale($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Doughnut</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.doughnut"
-      (change)="toggleDoughnut($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Explode Slices</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.explodeSlices"
-      (change)="toggleExplodeSlices($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Labels</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.labels"
-      (change)="toggleLabels($event)"
     ></ui-switch>
   </div>
 
