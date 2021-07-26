@@ -131,7 +131,7 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   xScaleMaxForm: FormGroup = this.fb.group({
-    xScaleMax: [undefined, [ValidationService.numberValidator]]
+    xScaleMax: [undefined, [ValidationService.numberOrEmptyValidator]]
   });
 
   yScaleMinForm: FormGroup = this.fb.group({
@@ -139,7 +139,7 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   yScaleMaxForm: FormGroup = this.fb.group({
-    yScaleMax: [undefined, [ValidationService.numberValidator]]
+    yScaleMax: [undefined, [ValidationService.numberOrEmptyValidator]]
   });
 
   barPaddingForm: FormGroup = this.fb.group({
@@ -756,7 +756,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   xScaleMaxBlur() {
-    let xScaleMax = Number(this.xScaleMaxForm.controls['xScaleMax'].value);
+    let value = this.xScaleMaxForm.controls['xScaleMax'].value;
+
+    let xScaleMax = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(xScaleMax) &&
+      common.isUndefined(this.chart.xScaleMax)
+    ) {
+      return;
+    }
 
     if (xScaleMax === this.chart.xScaleMax) {
       return;
@@ -780,7 +791,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   yScaleMaxBlur() {
-    let yScaleMax = Number(this.yScaleMaxForm.controls['yScaleMax'].value);
+    let value = this.yScaleMaxForm.controls['yScaleMax'].value;
+
+    let yScaleMax = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(yScaleMax) &&
+      common.isUndefined(this.chart.yScaleMax)
+    ) {
+      return;
+    }
 
     if (yScaleMax === this.chart.yScaleMax) {
       return;

@@ -958,7 +958,7 @@
   >
     <div class="flex flex-col">
       <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Bar Padding</div
+        >Padding between bars</div
       >
     </div>
 
@@ -1113,7 +1113,7 @@
     "
     class="flex flex-row items-center mb-5"
   >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
       >X Axis</div
     >
 
@@ -1142,7 +1142,7 @@
     "
     class="flex flex-row items-center mb-5"
   >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
       >Y Axis</div
     >
 
@@ -1171,8 +1171,8 @@
     "
     class="flex flex-row items-center mb-5"
   >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Show X Label</div
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Show X Axis Label</div
     >
 
     <ui-switch
@@ -1200,8 +1200,8 @@
     "
     class="flex flex-row items-center mb-5"
   >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Show Y Label</div
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Show Y Axis Label</div
     >
 
     <ui-switch
@@ -1215,7 +1215,7 @@
     *ngIf="chart.type === chartTypeEnum.Gauge"
     class="flex flex-row items-center mb-5"
   >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
       >Show Axis</div
     >
 
@@ -1223,6 +1223,261 @@
       class="ml-5"
       [checked]="chart.showAxis"
       (change)="toggleShowAxis($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.Pie
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Legend</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.legend"
+      (change)="toggleLegend($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Round Domains</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.roundDomains"
+      (change)="toggleRoundDomains($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Show Grid Lines</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.showGridLines"
+      (change)="toggleShowGridLines($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Timeline</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.timeline"
+      (change)="toggleTimeline($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area || chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Auto Scale</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.autoScale"
+      (change)="toggleAutoScale($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Doughnut</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.doughnut"
+      (change)="toggleDoughnut($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Explode Slices</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.explodeSlices"
+      (change)="toggleExplodeSlices($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Labels</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.labels"
+      (change)="toggleLabels($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Round Bar Edges</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.roundEdges"
+      (change)="toggleRoundEdges($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.Pie ||
+      chart.type === chartTypeEnum.PieAdvanced ||
+      chart.type === chartTypeEnum.PieGrid ||
+      chart.type === chartTypeEnum.TreeMap
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Disable Tooltip</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.tooltipDisabled"
+      (change)="toggleTooltipDisabled($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaNormalized ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.HeatMap ||
+      chart.type === chartTypeEnum.Line ||
+      chart.type === chartTypeEnum.Pie ||
+      chart.type === chartTypeEnum.PieAdvanced ||
+      chart.type === chartTypeEnum.TreeMap
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Gradient</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.gradient"
+      (change)="toggleGradient($event)"
     ></ui-switch>
   </div>
 
@@ -1251,7 +1506,7 @@
     "
     class="flex flex-row items-center mb-5"
   >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
       >Animations</div
     >
 
@@ -1259,261 +1514,6 @@
       class="ml-5"
       [checked]="chart.animations"
       (change)="toggleAnimations($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie ||
-      chart.type === chartTypeEnum.PieAdvanced ||
-      chart.type === chartTypeEnum.TreeMap
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Gradient</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.gradient"
-      (change)="toggleGradient($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Legend</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.legend"
-      (change)="toggleLegend($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie ||
-      chart.type === chartTypeEnum.PieAdvanced ||
-      chart.type === chartTypeEnum.PieGrid ||
-      chart.type === chartTypeEnum.TreeMap
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Tooltip Disabled</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.tooltipDisabled"
-      (change)="toggleTooltipDisabled($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Round Edges</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.roundEdges"
-      (change)="toggleRoundEdges($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Round Domains</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.roundDomains"
-      (change)="toggleRoundDomains($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Show Grid Lines</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.showGridLines"
-      (change)="toggleShowGridLines($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Timeline</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.timeline"
-      (change)="toggleTimeline($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area || chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Auto Scale</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.autoScale"
-      (change)="toggleAutoScale($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Doughnut</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.doughnut"
-      (change)="toggleDoughnut($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Explode Slices</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.explodeSlices"
-      (change)="toggleExplodeSlices($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-      >Labels</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.labels"
-      (change)="toggleLabels($event)"
     ></ui-switch>
   </div>
 </div>

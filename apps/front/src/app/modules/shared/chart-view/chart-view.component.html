@@ -47,12 +47,19 @@
     [pageSize]="chart.pageSize"
   ></m-chart-table>
 
+  <!-- [customColors]="customColors" -->
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
+
   <!-- x_axis_tick_formatting -->
   <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
-
-  <!-- custom_colors -->
 
   <ngx-charts-bar-vertical
     *ngIf="
@@ -82,15 +89,23 @@
     [roundDomains]="chart.roundDomains"
     [roundEdges]="chart.roundEdges"
     [yScaleMax]="chart.yScaleMax"
+    [showDataLabel]="showDataLabel"
   >
   </ngx-charts-bar-vertical>
+
+  <!-- [customColors]="customColors" -->
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- x_axis_tick_formatting -->
   <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
-
-  <!-- custom_colors -->
 
   <ngx-charts-bar-horizontal
     *ngIf="
@@ -120,8 +135,17 @@
     [roundDomains]="chart.roundDomains"
     [roundEdges]="chart.roundEdges"
     [xScaleMax]="chart.xScaleMax"
+    [showDataLabel]="showDataLabel"
   >
   </ngx-charts-bar-horizontal>
+
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
   <!-- x_axis_tick_formatting -->
@@ -158,8 +182,17 @@
     [roundDomains]="chart.roundDomains"
     [roundEdges]="chart.roundEdges"
     [yScaleMax]="chart.yScaleMax"
+    [showDataLabel]="showDataLabel"
   >
   </ngx-charts-bar-vertical-2d>
+
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
   <!-- x_axis_tick_formatting -->
@@ -196,8 +229,17 @@
     [roundDomains]="chart.roundDomains"
     [roundEdges]="chart.roundEdges"
     [xScaleMax]="chart.xScaleMax"
+    [showDataLabel]="showDataLabel"
   >
   </ngx-charts-bar-horizontal-2d>
+
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
   <!-- x_axis_tick_formatting -->
@@ -232,8 +274,17 @@
     [barPadding]="chart.barPadding"
     [roundDomains]="chart.roundDomains"
     [yScaleMax]="chart.yScaleMax"
+    [showDataLabel]="showDataLabel"
   >
   </ngx-charts-bar-vertical-stacked>
+
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
   <!-- x_axis_tick_formatting -->
@@ -268,8 +319,17 @@
     [barPadding]="chart.barPadding"
     [roundDomains]="chart.roundDomains"
     [xScaleMax]="chart.xScaleMax"
+    [showDataLabel]="showDataLabel"
   >
   </ngx-charts-bar-horizontal-stacked>
+
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
   <!-- x_axis_tick_formatting -->
@@ -305,6 +365,14 @@
     [roundDomains]="chart.roundDomains"
   >
   </ngx-charts-bar-vertical-normalized>
+
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [noBarWhenZero]="noBarWhenZero" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
   <!-- x_axis_tick_formatting -->

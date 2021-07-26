@@ -79,6 +79,18 @@ export class ValidationService {
     }
   }
 
+  static numberOrEmptyValidator(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    if (control.value.toString().match(common.MyRegex.IS_NUMBER())) {
+      return null;
+    } else {
+      return { isNotNumber: true };
+    }
+  }
+
   static integerValidator(control: FormControl) {
     if (control.value === null) {
       return null;

@@ -39,6 +39,8 @@ export class ChartViewComponent implements OnChanges {
   isSelectValid = false;
   errorMessage = '';
 
+  showDataLabel = false;
+
   constructor(private dataService: DataService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
