@@ -129,7 +129,7 @@ export class FractionNumberComponent implements OnInit {
         this.fraction.numberValues,
         Validators.compose([
           Validators.required,
-          ValidationService.numberValuesValidator,
+          ValidationService.numberValuesOrEmptyValidator,
           Validators.maxLength(255)
         ])
       ]
@@ -142,7 +142,7 @@ export class FractionNumberComponent implements OnInit {
         this.fraction.numberValue1,
         Validators.compose([
           Validators.required,
-          ValidationService.numberValidator,
+          ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
         ])
       ]
@@ -155,7 +155,7 @@ export class FractionNumberComponent implements OnInit {
         this.fraction.numberValue1,
         Validators.compose([
           Validators.required,
-          ValidationService.numberValidator,
+          ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
         ])
       ],
@@ -163,7 +163,7 @@ export class FractionNumberComponent implements OnInit {
         this.fraction.numberValue2,
         Validators.compose([
           Validators.required,
-          ValidationService.numberValidator,
+          ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
         ])
       ]

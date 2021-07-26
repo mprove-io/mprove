@@ -82,7 +82,7 @@ export class ChartEditorComponent implements OnChanges {
     pageSize: [
       undefined,
       [
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(1),
         Validators.maxLength(255)
       ]
@@ -98,7 +98,7 @@ export class ChartEditorComponent implements OnChanges {
       undefined,
       [
         Validators.required,
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(0)
       ]
     ]
@@ -107,7 +107,7 @@ export class ChartEditorComponent implements OnChanges {
   startAngleForm: FormGroup = this.fb.group({
     startAngle: [
       undefined,
-      [Validators.required, ValidationService.integerValidator]
+      [Validators.required, ValidationService.integerOrEmptyValidator]
     ]
   });
 
@@ -116,18 +116,24 @@ export class ChartEditorComponent implements OnChanges {
       undefined,
       [
         Validators.required,
-        ValidationService.numberValidator,
+        ValidationService.numberOrEmptyValidator,
         Validators.min(0)
       ]
     ]
   });
 
   minForm: FormGroup = this.fb.group({
-    min: [undefined, [Validators.required, ValidationService.integerValidator]]
+    min: [
+      undefined,
+      [Validators.required, ValidationService.integerOrEmptyValidator]
+    ]
   });
 
   maxForm: FormGroup = this.fb.group({
-    max: [undefined, [Validators.required, ValidationService.integerValidator]]
+    max: [
+      undefined,
+      [Validators.required, ValidationService.integerOrEmptyValidator]
+    ]
   });
 
   xScaleMaxForm: FormGroup = this.fb.group({
@@ -135,7 +141,13 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   yScaleMinForm: FormGroup = this.fb.group({
-    yScaleMin: [undefined, [ValidationService.numberValidator]]
+    yScaleMin: [
+      undefined,
+      [
+        ValidationService.numberOrEmptyValidator,
+        ValidationService.notZeroOrEmptyValidator
+      ]
+    ]
   });
 
   yScaleMaxForm: FormGroup = this.fb.group({
@@ -147,7 +159,7 @@ export class ChartEditorComponent implements OnChanges {
       undefined,
       [
         Validators.required,
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(0)
       ]
     ]
@@ -158,7 +170,7 @@ export class ChartEditorComponent implements OnChanges {
       undefined,
       [
         Validators.required,
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(1)
       ]
     ]
@@ -169,7 +181,7 @@ export class ChartEditorComponent implements OnChanges {
       undefined,
       [
         Validators.required,
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(0)
       ]
     ]
@@ -180,7 +192,7 @@ export class ChartEditorComponent implements OnChanges {
       undefined,
       [
         Validators.required,
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(0)
       ]
     ]
@@ -191,7 +203,7 @@ export class ChartEditorComponent implements OnChanges {
       undefined,
       [
         Validators.required,
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(0)
       ]
     ]
@@ -779,7 +791,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   yScaleMinBlur() {
-    let yScaleMin = Number(this.yScaleMinForm.controls['yScaleMin'].value);
+    let value = this.yScaleMinForm.controls['yScaleMin'].value;
+
+    let yScaleMin = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(yScaleMin) &&
+      common.isUndefined(this.chart.yScaleMin)
+    ) {
+      return;
+    }
 
     if (yScaleMin === this.chart.yScaleMin) {
       return;
@@ -1169,8 +1192,20 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   toggleAutoScale($event: any) {
+    this.setValueAndMark({
+      control: this.yScaleMinForm.controls['yScaleMin'],
+      value: null
+    });
+
+    this.setValueAndMark({
+      control: this.yScaleMaxForm.controls['yScaleMax'],
+      value: null
+    });
+
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.autoScale = $event;
+    newMconfig.chart.yScaleMin = null;
+    newMconfig.chart.yScaleMax = null;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 

@@ -440,11 +440,12 @@
   >
   </ngx-charts-pie-chart>
 
+  <!-- [tooltipText]="pieTooltipText" -->
+  <!-- [valueFormatting]="valueFormatting" -->
+
   <!-- custom_colors -->
   <!-- active_entries -->
   <!-- tooltip_template -->
-
-  <!-- tooltip_text -->
 
   <ngx-charts-advanced-pie-chart
     *ngIf="
@@ -463,11 +464,11 @@
   >
   </ngx-charts-advanced-pie-chart>
 
+  <!-- [tooltipText]="pieTooltipText" -->
+
   <!-- custom_colors -->
   <!-- tooltip_template -->
   <!-- designated_total -->
-
-  <!-- tooltip_text -->
 
   <ngx-charts-pie-grid
     *ngIf="
@@ -485,8 +486,15 @@
   >
   </ngx-charts-pie-grid>
 
-  <!-- -x_scale_min -->
-  <!-- -x_scale_max -->
+  <!-- [gradient]="gradient" -->
+  <!-- [xScaleMax]="chart.xScaleMax" -->
+  <!-- [xScaleMin]="chart.xScaleMin" -->
+  <!-- [legendPosition]="legendPosition" -->
+  <!-- [trimXAxisTicks]="false" -->
+  <!-- [trimYAxisTicks]="false" -->
+  <!-- [rotateXAxisTicks]="rotateXAxisTicks" -->
+  <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
+  <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors -->
   <!-- x_axis_tick_formatting -->
@@ -512,7 +520,6 @@
     [scheme]="scheme"
     [schemeType]="chart.schemeType"
     [animations]="chart.animations"
-    [gradient]="chart.gradient"
     [xAxis]="chart.xAxis"
     [yAxis]="chart.yAxis"
     [legend]="chart.legend"
@@ -527,7 +534,7 @@
     [autoScale]="chart.autoScale"
     [yScaleMin]="chart.yScaleMin"
     [yScaleMax]="chart.yScaleMax"
-    [timeline]="chart.timeline"
+    [timeline]="timeline"
     [rangeFillOpacity]="chart.rangeFillOpacity"
   >
   </ngx-charts-line-chart>
@@ -568,7 +575,7 @@
     [autoScale]="chart.autoScale"
     [yScaleMin]="chart.yScaleMin"
     [yScaleMax]="chart.yScaleMax"
-    [timeline]="chart.timeline"
+    [timeline]="timeline"
     [showGridLines]="chart.showGridLines"
     [roundDomains]="chart.roundDomains"
     [tooltipDisabled]="chart.tooltipDisabled"
@@ -609,7 +616,7 @@
     [showYAxisLabel]="chart.showYAxisLabel"
     [xAxisLabel]="chart.xAxisLabel"
     [yAxisLabel]="chart.yAxisLabel"
-    [timeline]="chart.timeline"
+    [timeline]="timeline"
     [yScaleMin]="chart.yScaleMin"
     [yScaleMax]="chart.yScaleMax"
     [showGridLines]="chart.showGridLines"
@@ -649,7 +656,7 @@
     [showYAxisLabel]="chart.showYAxisLabel"
     [xAxisLabel]="chart.xAxisLabel"
     [yAxisLabel]="chart.yAxisLabel"
-    [timeline]="chart.timeline"
+    [timeline]="timeline"
     [showGridLines]="chart.showGridLines"
     [roundDomains]="chart.roundDomains"
     [tooltipDisabled]="chart.tooltipDisabled"

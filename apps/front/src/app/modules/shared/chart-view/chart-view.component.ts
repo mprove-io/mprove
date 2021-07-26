@@ -40,6 +40,7 @@ export class ChartViewComponent implements OnChanges {
   errorMessage = '';
 
   showDataLabel = false;
+  timeline = false;
 
   constructor(private dataService: DataService) {}
 

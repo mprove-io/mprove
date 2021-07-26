@@ -23,6 +23,7 @@ export class ValidationService {
       ['isNotNumberValues', 'Should be Numbers separated by comma'],
       ['isNotNumber', 'Is not a number'],
       ['isNotInteger', 'Must be integer'],
+      ['isNotZero', 'Can not be 0'],
       ['containsThreeUnderscores', 'File name can not contain "___"'],
       ['moreThenOneMB', 'Text must be < 1mb'],
       ['projectNameIsNotUnique', 'Project name already exists'],
@@ -44,7 +45,7 @@ export class ValidationService {
   }
 
   static dayOfWeekIndexValuesValidator(control: FormControl) {
-    if (control.value === null) {
+    if (common.isUndefined(control.value) || control.value === '') {
       return null;
     }
 
@@ -55,8 +56,8 @@ export class ValidationService {
     }
   }
 
-  static numberValuesValidator(control: FormControl) {
-    if (control.value === null) {
+  static numberValuesOrEmptyValidator(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
       return null;
     }
 
@@ -64,18 +65,6 @@ export class ValidationService {
       return null;
     } else {
       return { isNotNumberValues: true };
-    }
-  }
-
-  static numberValidator(control: FormControl) {
-    if (control.value === null) {
-      return null;
-    }
-
-    if (control.value.toString().match(common.MyRegex.IS_NUMBER())) {
-      return null;
-    } else {
-      return { isNotNumber: true };
     }
   }
 
@@ -91,8 +80,8 @@ export class ValidationService {
     }
   }
 
-  static integerValidator(control: FormControl) {
-    if (control.value === null) {
+  static integerOrEmptyValidator(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
       return null;
     }
 
@@ -100,6 +89,18 @@ export class ValidationService {
       return null;
     } else {
       return { isNotInteger: true };
+    }
+  }
+
+  static notZeroOrEmptyValidator(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    if (control.value !== 0 && control.value !== '0') {
+      return null;
+    } else {
+      return { isNotZero: true };
     }
   }
 
@@ -116,7 +117,7 @@ export class ValidationService {
   // }
 
   static checkTextSize(control: FormControl) {
-    if (control.value === null) {
+    if (common.isUndefined(control.value) || control.value === '') {
       return null;
     }
 

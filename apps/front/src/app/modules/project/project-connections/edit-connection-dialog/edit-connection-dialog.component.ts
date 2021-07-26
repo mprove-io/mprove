@@ -51,7 +51,7 @@ export class EditConnectionDialogComponent implements OnInit {
       bigqueryQuerySizeLimitGb: [
         this.ref.data.connection.bigqueryQuerySizeLimitGb,
         [
-          ValidationService.integerValidator,
+          ValidationService.integerOrEmptyValidator,
           conditionalValidator(
             () =>
               this.editConnectionForm.get('type').value ===

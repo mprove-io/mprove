@@ -930,7 +930,11 @@
       >
     </div>
 
-    <div [formGroup]="yScaleMinForm" class="flex flex-col ml-5 items-start">
+    <div
+      *ngIf="chart.autoScale === false"
+      [formGroup]="yScaleMinForm"
+      class="flex flex-col ml-5 items-start"
+    >
       <input
         data-cy="chartEditorYScaleMinInput"
         class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
@@ -946,6 +950,12 @@
         [control]="yScaleMinForm.controls['yScaleMin']"
       ></m-validation>
     </div>
+
+    <div
+      *ngIf="chart.autoScale === true"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -965,7 +975,11 @@
       >
     </div>
 
-    <div [formGroup]="yScaleMaxForm" class="flex flex-col ml-5 items-start">
+    <div
+      *ngIf="chart.autoScale === false"
+      [formGroup]="yScaleMaxForm"
+      class="flex flex-col ml-5 items-start"
+    >
       <input
         data-cy="chartEditorYScaleMaxInput"
         class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
@@ -981,6 +995,12 @@
         [control]="yScaleMaxForm.controls['yScaleMax']"
       ></m-validation>
     </div>
+
+    <div
+      *ngIf="chart.autoScale === true"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div
@@ -1147,6 +1167,23 @@
       class="ml-5"
       [checked]="chart.labels"
       (change)="toggleLabels($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area || chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Auto Scale</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.autoScale"
+      (change)="toggleAutoScale($event)"
     ></ui-switch>
   </div>
 
@@ -1419,7 +1456,7 @@
     ></ui-switch>
   </div>
 
-  <div
+  <!-- <div
     *ngIf="
       chart.type === chartTypeEnum.Area ||
       chart.type === chartTypeEnum.AreaNormalized ||
@@ -1437,24 +1474,7 @@
       [checked]="chart.timeline"
       (change)="toggleTimeline($event)"
     ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area || chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Auto Scale</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.autoScale"
-      (change)="toggleAutoScale($event)"
-    ></ui-switch>
-  </div>
+  </div> -->
 
   <div
     *ngIf="
@@ -1524,7 +1544,6 @@
       chart.type === chartTypeEnum.BarVerticalNormalized ||
       chart.type === chartTypeEnum.BarVerticalStacked ||
       chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
       chart.type === chartTypeEnum.Pie ||
       chart.type === chartTypeEnum.PieAdvanced ||
       chart.type === chartTypeEnum.TreeMap

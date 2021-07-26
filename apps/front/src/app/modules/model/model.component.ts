@@ -279,7 +279,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       undefined,
       [
         Validators.required,
-        ValidationService.integerValidator,
+        ValidationService.integerOrEmptyValidator,
         Validators.min(1),
         Validators.max(500)
       ]

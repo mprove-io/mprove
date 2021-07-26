@@ -73,7 +73,7 @@ export class StructService {
       filters: [],
       chart: {
         isValid: true,
-        type: common.ChartTypeEnum.BarVertical,
+        type: common.ChartTypeEnum.Line,
         title: 'Title',
 
         xField: null,
@@ -115,11 +115,11 @@ export class StructService {
         xScaleMax: null,
 
         timeline: false,
-        autoScale: true,
         showAxis: true,
 
         labels: true,
-        legend: false,
+        autoScale: false,
+        legend: true,
         doughnut: false,
         explodeSlices: false,
         xAxis: true,

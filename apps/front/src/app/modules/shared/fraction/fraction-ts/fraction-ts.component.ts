@@ -307,7 +307,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsRelativeValue,
         [
           Validators.required,
-          ValidationService.integerValidator,
+          ValidationService.integerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
@@ -344,7 +344,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsForValue,
         [
           Validators.required,
-          ValidationService.integerValidator,
+          ValidationService.integerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
@@ -363,7 +363,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsLastValue,
         [
           Validators.required,
-          ValidationService.integerValidator,
+          ValidationService.integerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
