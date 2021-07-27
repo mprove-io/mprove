@@ -82,6 +82,7 @@ export class ChartEditorComponent implements OnChanges {
     pageSize: [
       undefined,
       [
+        Validators.required,
         ValidationService.integerOrEmptyValidator,
         Validators.min(1),
         Validators.maxLength(255)

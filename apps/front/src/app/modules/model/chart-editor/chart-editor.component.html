@@ -485,7 +485,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
         >Card Color</div
       >
     </div>
@@ -502,7 +502,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
         >Empty Card Color</div
       >
     </div>
@@ -519,7 +519,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
         >Band Color</div
       >
     </div>
@@ -536,7 +536,7 @@
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
         >Text Color</div
       >
     </div>
@@ -735,427 +735,6 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Angle Span</div
-      >
-    </div>
-
-    <div [formGroup]="angleSpanForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorAngleSpanInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            angleSpanForm.controls['angleSpan'].invalid &&
-            angleSpanForm.controls['angleSpan'].touched
-        }"
-        formControlName="angleSpan"
-        (blur)="angleSpanBlur()"
-      />
-      <m-validation
-        [control]="angleSpanForm.controls['angleSpan']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Start Angle</div
-      >
-    </div>
-
-    <div [formGroup]="startAngleForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorStartAngleInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            startAngleForm.controls['startAngle'].invalid &&
-            startAngleForm.controls['startAngle'].touched
-        }"
-        formControlName="startAngle"
-        (blur)="startAngleBlur()"
-      />
-      <m-validation
-        [control]="startAngleForm.controls['startAngle']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Arc Width (doughnut on)</div
-      >
-    </div>
-
-    <div
-      *ngIf="chart.doughnut === true"
-      [formGroup]="arcWidthForm"
-      class="flex flex-col ml-5 items-start"
-    >
-      <input
-        data-cy="chartEditorArcWidthInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            arcWidthForm.controls['arcWidth'].invalid &&
-            arcWidthForm.controls['arcWidth'].touched
-        }"
-        formControlName="arcWidth"
-        (blur)="arcWidthBlur()"
-      />
-      <m-validation
-        [control]="arcWidthForm.controls['arcWidth']"
-      ></m-validation>
-    </div>
-
-    <div
-      *ngIf="chart.doughnut === false"
-      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
-      ><m-minus-sm-icon></m-minus-sm-icon
-    ></div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.GaugeLinear
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Min</div
-      >
-    </div>
-
-    <div [formGroup]="minForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorMinInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            minForm.controls['min'].invalid && minForm.controls['min'].touched
-        }"
-        formControlName="min"
-        (blur)="minBlur()"
-      />
-      <m-validation [control]="minForm.controls['min']"></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.GaugeLinear
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Max</div
-      >
-    </div>
-
-    <div [formGroup]="maxForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorMaxInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            maxForm.controls['max'].invalid && maxForm.controls['max'].touched
-        }"
-        formControlName="max"
-        (blur)="maxBlur()"
-      />
-      <m-validation [control]="maxForm.controls['max']"></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalStacked
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >X Scale Max</div
-      >
-    </div>
-
-    <div [formGroup]="xScaleMaxForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorXScaleMaxInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            xScaleMaxForm.controls['xScaleMax'].invalid &&
-            xScaleMaxForm.controls['xScaleMax'].touched
-        }"
-        formControlName="xScaleMax"
-        (blur)="xScaleMaxBlur()"
-      />
-      <m-validation
-        [control]="xScaleMaxForm.controls['xScaleMax']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Y Scale Min</div
-      >
-    </div>
-
-    <div
-      *ngIf="chart.autoScale === false"
-      [formGroup]="yScaleMinForm"
-      class="flex flex-col ml-5 items-start"
-    >
-      <input
-        data-cy="chartEditorYScaleMinInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            yScaleMinForm.controls['yScaleMin'].invalid &&
-            yScaleMinForm.controls['yScaleMin'].touched
-        }"
-        formControlName="yScaleMin"
-        (blur)="yScaleMinBlur()"
-      />
-      <m-validation
-        [control]="yScaleMinForm.controls['yScaleMin']"
-      ></m-validation>
-    </div>
-
-    <div
-      *ngIf="chart.autoScale === true"
-      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
-      ><m-minus-sm-icon></m-minus-sm-icon
-    ></div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Y Scale Max</div
-      >
-    </div>
-
-    <div
-      *ngIf="chart.autoScale === false"
-      [formGroup]="yScaleMaxForm"
-      class="flex flex-col ml-5 items-start"
-    >
-      <input
-        data-cy="chartEditorYScaleMaxInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            yScaleMaxForm.controls['yScaleMax'].invalid &&
-            yScaleMaxForm.controls['yScaleMax'].touched
-        }"
-        formControlName="yScaleMax"
-        (blur)="yScaleMaxBlur()"
-      />
-      <m-validation
-        [control]="yScaleMaxForm.controls['yScaleMax']"
-      ></m-validation>
-    </div>
-
-    <div
-      *ngIf="chart.autoScale === true"
-      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
-      ><m-minus-sm-icon></m-minus-sm-icon
-    ></div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Padding between bars</div
-      >
-    </div>
-
-    <div [formGroup]="barPaddingForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorBarPaddingInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            barPaddingForm.controls['barPadding'].invalid &&
-            barPaddingForm.controls['barPadding'].touched
-        }"
-        formControlName="barPadding"
-        (blur)="barPaddingBlur()"
-      />
-      <m-validation
-        [control]="barPaddingForm.controls['barPadding']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Big Segments</div
-      >
-    </div>
-
-    <div [formGroup]="bigSegmentsForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorBigSegmentsInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            bigSegmentsForm.controls['bigSegments'].invalid &&
-            bigSegmentsForm.controls['bigSegments'].touched
-        }"
-        formControlName="bigSegments"
-        (blur)="bigSegmentsBlur()"
-      />
-      <m-validation
-        [control]="bigSegmentsForm.controls['bigSegments']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Small Segments</div
-      >
-    </div>
-
-    <div [formGroup]="smallSegmentsForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorSmallSegmentsInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            smallSegmentsForm.controls['smallSegments'].invalid &&
-            smallSegmentsForm.controls['smallSegments'].touched
-        }"
-        formControlName="smallSegments"
-        (blur)="smallSegmentsBlur()"
-      />
-      <m-validation
-        [control]="smallSegmentsForm.controls['smallSegments']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalGrouped
-    "
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Group Padding</div
-      >
-    </div>
-
-    <div [formGroup]="groupPaddingForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorGroupPaddingInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            groupPaddingForm.controls['groupPadding'].invalid &&
-            groupPaddingForm.controls['groupPadding'].touched
-        }"
-        formControlName="groupPadding"
-        (blur)="groupPaddingBlur()"
-      />
-      <m-validation
-        [control]="groupPaddingForm.controls['groupPadding']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
-    *ngIf="chart.type === chartTypeEnum.HeatMap"
-    class="flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Inner Padding</div
-      >
-    </div>
-
-    <div [formGroup]="innerPaddingForm" class="flex flex-col ml-5 items-start">
-      <input
-        data-cy="chartEditorInnerPaddingInput"
-        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            innerPaddingForm.controls['innerPadding'].invalid &&
-            innerPaddingForm.controls['innerPadding'].touched
-        }"
-        formControlName="innerPadding"
-        (blur)="innerPaddingBlur()"
-      />
-      <m-validation
-        [control]="innerPaddingForm.controls['innerPadding']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
     *ngIf="chart.type === chartTypeEnum.Pie"
     class="flex flex-row items-center mb-5"
   >
@@ -1167,23 +746,6 @@
       class="ml-5"
       [checked]="chart.labels"
       (change)="toggleLabels($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area || chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Auto Scale</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.autoScale"
-      (change)="toggleAutoScale($event)"
     ></ui-switch>
   </div>
 
@@ -1456,24 +1018,24 @@
   </div>
 
   <!-- <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.Line
-    "
-    class="flex flex-row items-center mb-5"
+  *ngIf="
+    chart.type === chartTypeEnum.Area ||
+    chart.type === chartTypeEnum.AreaNormalized ||
+    chart.type === chartTypeEnum.AreaStacked ||
+    chart.type === chartTypeEnum.Line
+  "
+  class="flex flex-row items-center mb-5"
+>
+  <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+    >Timeline</div
   >
-    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Timeline</div
-    >
 
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.timeline"
-      (change)="toggleTimeline($event)"
-    ></ui-switch>
-  </div> -->
+  <ui-switch
+    class="ml-5"
+    [checked]="chart.timeline"
+    (change)="toggleTimeline($event)"
+  ></ui-switch>
+</div> -->
 
   <div
     *ngIf="
@@ -1594,5 +1156,443 @@
       [checked]="chart.animations"
       (change)="toggleAnimations($event)"
     ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area || chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Auto Scale</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.autoScale"
+      (change)="toggleAutoScale($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Gauge"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Angle Span</div
+      >
+    </div>
+
+    <div [formGroup]="angleSpanForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorAngleSpanInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            angleSpanForm.controls['angleSpan'].invalid &&
+            angleSpanForm.controls['angleSpan'].touched
+        }"
+        formControlName="angleSpan"
+        (blur)="angleSpanBlur()"
+      />
+      <m-validation
+        [control]="angleSpanForm.controls['angleSpan']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Gauge"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Start Angle</div
+      >
+    </div>
+
+    <div [formGroup]="startAngleForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorStartAngleInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            startAngleForm.controls['startAngle'].invalid &&
+            startAngleForm.controls['startAngle'].touched
+        }"
+        formControlName="startAngle"
+        (blur)="startAngleBlur()"
+      />
+      <m-validation
+        [control]="startAngleForm.controls['startAngle']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Pie"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Arc Width (doughnut)</div
+      >
+    </div>
+
+    <div
+      *ngIf="chart.doughnut === true"
+      [formGroup]="arcWidthForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        data-cy="chartEditorArcWidthInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            arcWidthForm.controls['arcWidth'].invalid &&
+            arcWidthForm.controls['arcWidth'].touched
+        }"
+        formControlName="arcWidth"
+        (blur)="arcWidthBlur()"
+      />
+      <m-validation
+        [control]="arcWidthForm.controls['arcWidth']"
+      ></m-validation>
+    </div>
+
+    <div
+      *ngIf="chart.doughnut === false"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.GaugeLinear
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Min</div
+      >
+    </div>
+
+    <div [formGroup]="minForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorMinInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            minForm.controls['min'].invalid && minForm.controls['min'].touched
+        }"
+        formControlName="min"
+        (blur)="minBlur()"
+      />
+      <m-validation [control]="minForm.controls['min']"></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Gauge ||
+      chart.type === chartTypeEnum.GaugeLinear
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Max</div
+      >
+    </div>
+
+    <div [formGroup]="maxForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorMaxInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            maxForm.controls['max'].invalid && maxForm.controls['max'].touched
+        }"
+        formControlName="max"
+        (blur)="maxBlur()"
+      />
+      <m-validation [control]="maxForm.controls['max']"></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalStacked
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >X Scale Max</div
+      >
+    </div>
+
+    <div [formGroup]="xScaleMaxForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorXScaleMaxInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            xScaleMaxForm.controls['xScaleMax'].invalid &&
+            xScaleMaxForm.controls['xScaleMax'].touched
+        }"
+        formControlName="xScaleMax"
+        (blur)="xScaleMaxBlur()"
+      />
+      <m-validation
+        [control]="xScaleMaxForm.controls['xScaleMax']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Y Scale Min</div
+      >
+    </div>
+
+    <div
+      *ngIf="chart.autoScale === false"
+      [formGroup]="yScaleMinForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        data-cy="chartEditorYScaleMinInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            yScaleMinForm.controls['yScaleMin'].invalid &&
+            yScaleMinForm.controls['yScaleMin'].touched
+        }"
+        formControlName="yScaleMin"
+        (blur)="yScaleMinBlur()"
+      />
+      <m-validation
+        [control]="yScaleMinForm.controls['yScaleMin']"
+      ></m-validation>
+    </div>
+
+    <div
+      *ngIf="chart.autoScale === true"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.Area ||
+      chart.type === chartTypeEnum.AreaStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalStacked ||
+      chart.type === chartTypeEnum.Line
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Y Scale Max</div
+      >
+    </div>
+
+    <div
+      *ngIf="chart.autoScale === false"
+      [formGroup]="yScaleMaxForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        data-cy="chartEditorYScaleMaxInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            yScaleMaxForm.controls['yScaleMax'].invalid &&
+            yScaleMaxForm.controls['yScaleMax'].touched
+        }"
+        formControlName="yScaleMax"
+        (blur)="yScaleMaxBlur()"
+      />
+      <m-validation
+        [control]="yScaleMaxForm.controls['yScaleMax']"
+      ></m-validation>
+    </div>
+
+    <div
+      *ngIf="chart.autoScale === true"
+      class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalNormalized ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalNormalized ||
+      chart.type === chartTypeEnum.BarVerticalStacked
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Padding between bars</div
+      >
+    </div>
+
+    <div [formGroup]="barPaddingForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorBarPaddingInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            barPaddingForm.controls['barPadding'].invalid &&
+            barPaddingForm.controls['barPadding'].touched
+        }"
+        formControlName="barPadding"
+        (blur)="barPaddingBlur()"
+      />
+      <m-validation
+        [control]="barPaddingForm.controls['barPadding']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Gauge"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Big Segments</div
+      >
+    </div>
+
+    <div [formGroup]="bigSegmentsForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorBigSegmentsInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            bigSegmentsForm.controls['bigSegments'].invalid &&
+            bigSegmentsForm.controls['bigSegments'].touched
+        }"
+        formControlName="bigSegments"
+        (blur)="bigSegmentsBlur()"
+      />
+      <m-validation
+        [control]="bigSegmentsForm.controls['bigSegments']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.Gauge"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Small Segments</div
+      >
+    </div>
+
+    <div [formGroup]="smallSegmentsForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorSmallSegmentsInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            smallSegmentsForm.controls['smallSegments'].invalid &&
+            smallSegmentsForm.controls['smallSegments'].touched
+        }"
+        formControlName="smallSegments"
+        (blur)="smallSegmentsBlur()"
+      />
+      <m-validation
+        [control]="smallSegmentsForm.controls['smallSegments']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalGrouped
+    "
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Group Padding</div
+      >
+    </div>
+
+    <div [formGroup]="groupPaddingForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorGroupPaddingInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            groupPaddingForm.controls['groupPadding'].invalid &&
+            groupPaddingForm.controls['groupPadding'].touched
+        }"
+        formControlName="groupPadding"
+        (blur)="groupPaddingBlur()"
+      />
+      <m-validation
+        [control]="groupPaddingForm.controls['groupPadding']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="chart.type === chartTypeEnum.HeatMap"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+        >Inner Padding</div
+      >
+    </div>
+
+    <div [formGroup]="innerPaddingForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartEditorInnerPaddingInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            innerPaddingForm.controls['innerPadding'].invalid &&
+            innerPaddingForm.controls['innerPadding'].touched
+        }"
+        formControlName="innerPadding"
+        (blur)="innerPaddingBlur()"
+      />
+      <m-validation
+        [control]="innerPaddingForm.controls['innerPadding']"
+      ></m-validation>
+    </div>
   </div>
 </div>
