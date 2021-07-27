@@ -88,10 +88,10 @@ export class StructService {
         colorScheme: common.ChartColorSchemeEnum.Cool,
         schemeType: common.ChartSchemeTypeEnum.Ordinal,
 
-        bandColor: null,
-        cardColor: null,
+        cardColor: 'rgba(255, 255, 255, 100)',
+        emptyColor: 'rgba(255, 255, 255, 100)',
+        bandColor: 'rgba(255, 255, 255, 100)',
         textColor: null,
-        emptyColor: null,
 
         xAxisLabel: 'X axis label',
         yAxisLabel: 'Y axis label',
@@ -109,7 +109,7 @@ export class StructService {
         bigSegments: 10,
         smallSegments: 5,
         min: 0,
-        max: 100,
+        max: null,
         yScaleMin: null,
         yScaleMax: null,
         xScaleMax: null,

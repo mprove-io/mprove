@@ -130,10 +130,7 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   maxForm: FormGroup = this.fb.group({
-    max: [
-      undefined,
-      [Validators.required, ValidationService.integerOrEmptyValidator]
-    ]
+    max: [undefined, [ValidationService.integerOrEmptyValidator]]
   });
 
   xScaleMaxForm: FormGroup = this.fb.group({
@@ -683,18 +680,6 @@ export class ChartEditorComponent implements OnChanges {
     }
   }
 
-  pageSizeBlur() {
-    let pageSize = Number(this.pageSizeForm.controls['pageSize'].value);
-
-    if (pageSize === this.chart.pageSize) {
-      return;
-    }
-
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.pageSize = pageSize;
-    this.updateMconfig(newMconfig);
-  }
-
   unitsBlur() {
     let units = this.unitsForm.controls['units'].value;
 
@@ -707,8 +692,40 @@ export class ChartEditorComponent implements OnChanges {
     this.updateMconfig(newMconfig);
   }
 
+  pageSizeBlur() {
+    let value = this.pageSizeForm.controls['pageSize'].value;
+
+    let pageSize = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+
+    if (
+      common.isUndefined(pageSize) &&
+      common.isUndefined(this.chart.pageSize)
+    ) {
+      return;
+    }
+
+    if (pageSize === this.chart.pageSize) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.pageSize = pageSize;
+    this.updateMconfig(newMconfig);
+  }
+
   angleSpanBlur() {
-    let angleSpan = Number(this.angleSpanForm.controls['angleSpan'].value);
+    let value = this.angleSpanForm.controls['angleSpan'].value;
+
+    let angleSpan = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(angleSpan) &&
+      common.isUndefined(this.chart.angleSpan)
+    ) {
+      return;
+    }
 
     if (angleSpan === this.chart.angleSpan) {
       return;
@@ -720,7 +737,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   startAngleBlur() {
-    let startAngle = Number(this.startAngleForm.controls['startAngle'].value);
+    let value = this.startAngleForm.controls['startAngle'].value;
+
+    let startAngle = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(startAngle) &&
+      common.isUndefined(this.chart.startAngle)
+    ) {
+      return;
+    }
 
     if (startAngle === this.chart.startAngle) {
       return;
@@ -732,7 +760,16 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   arcWidthBlur() {
-    let arcWidth = Number(this.arcWidthForm.controls['arcWidth'].value);
+    let value = this.arcWidthForm.controls['arcWidth'].value;
+
+    let arcWidth = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+
+    if (
+      common.isUndefined(arcWidth) &&
+      common.isUndefined(this.chart.arcWidth)
+    ) {
+      return;
+    }
 
     if (arcWidth === this.chart.arcWidth) {
       return;
@@ -744,7 +781,13 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   minBlur() {
-    let min = Number(this.minForm.controls['min'].value);
+    let value = this.minForm.controls['min'].value;
+
+    let min = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+
+    if (common.isUndefined(min) && common.isUndefined(this.chart.min)) {
+      return;
+    }
 
     if (min === this.chart.min) {
       return;
@@ -756,7 +799,13 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   maxBlur() {
-    let max = Number(this.maxForm.controls['max'].value);
+    let value = this.maxForm.controls['max'].value;
+
+    let max = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+
+    if (common.isUndefined(max) && common.isUndefined(this.chart.max)) {
+      return;
+    }
 
     if (max === this.chart.max) {
       return;
@@ -837,7 +886,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   barPaddingBlur() {
-    let barPadding = Number(this.barPaddingForm.controls['barPadding'].value);
+    let value = this.barPaddingForm.controls['barPadding'].value;
+
+    let barPadding = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(barPadding) &&
+      common.isUndefined(this.chart.barPadding)
+    ) {
+      return;
+    }
 
     if (barPadding === this.chart.barPadding) {
       return;
@@ -849,9 +909,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   bigSegmentsBlur() {
-    let bigSegments = Number(
-      this.bigSegmentsForm.controls['bigSegments'].value
-    );
+    let value = this.bigSegmentsForm.controls['bigSegments'].value;
+
+    let bigSegments = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(bigSegments) &&
+      common.isUndefined(this.chart.bigSegments)
+    ) {
+      return;
+    }
 
     if (bigSegments === this.chart.bigSegments) {
       return;
@@ -863,9 +932,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   smallSegmentsBlur() {
-    let smallSegments = Number(
-      this.smallSegmentsForm.controls['smallSegments'].value
-    );
+    let value = this.smallSegmentsForm.controls['smallSegments'].value;
+
+    let smallSegments = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(smallSegments) &&
+      common.isUndefined(this.chart.smallSegments)
+    ) {
+      return;
+    }
 
     if (smallSegments === this.chart.smallSegments) {
       return;
@@ -877,9 +955,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   groupPaddingBlur() {
-    let groupPadding = Number(
-      this.groupPaddingForm.controls['groupPadding'].value
-    );
+    let value = this.groupPaddingForm.controls['groupPadding'].value;
+
+    let groupPadding = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(groupPadding) &&
+      common.isUndefined(this.chart.groupPadding)
+    ) {
+      return;
+    }
 
     if (groupPadding === this.chart.groupPadding) {
       return;
@@ -891,9 +978,18 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   innerPaddingBlur() {
-    let innerPadding = Number(
-      this.innerPaddingForm.controls['innerPadding'].value
-    );
+    let value = this.innerPaddingForm.controls['innerPadding'].value;
+
+    let innerPadding = common.isUndefinedOrEmpty(value)
+      ? undefined
+      : Number(value);
+
+    if (
+      common.isUndefined(innerPadding) &&
+      common.isUndefined(this.chart.innerPadding)
+    ) {
+      return;
+    }
 
     if (innerPadding === this.chart.innerPadding) {
       return;

@@ -39,12 +39,7 @@ export function selectChartFields(item: {
         selectMeasuresAndCalculations.length > 0
           ? newMconfig.chart.yField || selectMeasuresAndCalculations[0]
           : undefined,
-      yFields:
-        selectMeasuresAndCalculations.length === 0
-          ? []
-          : newMconfig.chart.yFields.length > 0
-          ? newMconfig.chart.yFields
-          : [...selectMeasuresAndCalculations],
+      yFields: selectMeasuresAndCalculations,
       multiField:
         selectDimensions.length === 2 ? selectDimensions[1] : undefined,
       valueField:
