@@ -39,10 +39,10 @@ export class ChartViewComponent implements OnChanges {
   isSelectValid = false;
   errorMessage = '';
 
-  showDataLabel = false;
   timeline = false;
-  legendPosition = 'right';
   legendForHeatMap = false;
+  showDataLabel = true;
+  legendPosition = 'right';
 
   constructor(private dataService: DataService) {}
 
