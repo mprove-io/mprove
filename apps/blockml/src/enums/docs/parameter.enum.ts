@@ -84,6 +84,7 @@ export enum ParameterEnum {
   YAxisLabel = 'y_axis_label',
   ShowAxis = 'show_axis',
   // chart options
+  ShowDataLabels = 'show_data_labels',
   Gradient = 'gradient',
   Legend = 'legend',
   TooltipDisabled = 'tooltip_disabled',

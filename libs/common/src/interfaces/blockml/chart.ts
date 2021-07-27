@@ -85,6 +85,10 @@ export class Chart {
 
   @IsOptional()
   @IsBoolean()
+  showDataLabels?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   gradient?: boolean;
 
   @IsOptional()

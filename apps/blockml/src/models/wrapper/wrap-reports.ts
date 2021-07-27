@@ -42,7 +42,9 @@ export function wrapReports(item: {
       previousValueField: report.data?.previous_value_field,
 
       // axis
-      xAxis: helper.toBoolean(report.axis?.x_axis),
+      xAxis: common.isDefined(report.axis?.x_axis)
+        ? helper.toBoolean(report.axis?.x_axis)
+        : common.CHART_DEFAULT_X_AXIS,
       showXAxisLabel: helper.toBoolean(report.axis?.show_x_axis_label),
       xAxisLabel: report.axis?.x_axis_label || constants.X_AXIS_LABEL,
 
@@ -54,6 +56,7 @@ export function wrapReports(item: {
 
       // options
       animations: helper.toBoolean(report.options?.animations),
+      showDataLabels: helper.toBoolean(report.options?.show_data_labels),
       gradient: helper.toBoolean(report.options?.gradient),
       legend: helper.toBoolean(report.options?.legend),
 

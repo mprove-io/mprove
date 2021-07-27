@@ -36,6 +36,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
         .forEach(parameter => {
           if (
             [
+              enums.ParameterEnum.ShowDataLabels.toString(),
               enums.ParameterEnum.Gradient.toString(),
               enums.ParameterEnum.Legend.toString(),
               enums.ParameterEnum.TooltipDisabled.toString(),
@@ -146,6 +147,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
             [
               enums.ParameterEnum.Animations.toString(),
               enums.ParameterEnum.RoundEdges.toString(),
+              enums.ParameterEnum.ShowDataLabels.toString(),
               enums.ParameterEnum.Gradient.toString(),
               enums.ParameterEnum.Legend.toString(),
               enums.ParameterEnum.TooltipDisabled.toString(),
