@@ -35,9 +35,9 @@ export const CHART_DEFAULT_BIG_SEGMENTS = 10;
 export const CHART_DEFAULT_SMALL_SEGMENTS = 5;
 export const CHART_DEFAULT_MIN = 0;
 export const CHART_DEFAULT_MAX: number = null;
+export const CHART_DEFAULT_X_SCALE_MAX: number = null;
 export const CHART_DEFAULT_Y_SCALE_MIN: number = null;
 export const CHART_DEFAULT_Y_SCALE_MAX: number = null;
-export const CHART_DEFAULT_X_SCALE_MAX: number = null;
 
 export const CHART_DEFAULT_TIMELINE = false;
 export const CHART_DEFAULT_SHOW_AXIS = true;

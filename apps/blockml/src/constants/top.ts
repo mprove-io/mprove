@@ -49,8 +49,3 @@ export const MF = 'mf';
 export const LIMIT_500 = '500';
 
 export const STANDARD_SQL = '#standardSQL';
-
-export const X_AXIS_LABEL = 'x axis label';
-export const Y_AXIS_LABEL = 'y axis label';
-export const LEGEND = 'legend';
-export const RGBA_0 = 'rgba(0, 0, 0, 0)';
