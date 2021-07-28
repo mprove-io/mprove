@@ -1323,4 +1323,10 @@ export class ChartEditorComponent implements OnChanges {
     newMconfig.chart.labels = $event;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
+
+  toggleShowDataLabel($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.showDataLabel = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
 }

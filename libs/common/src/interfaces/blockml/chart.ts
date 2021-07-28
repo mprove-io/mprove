@@ -85,7 +85,7 @@ export class Chart {
 
   @IsOptional()
   @IsBoolean()
-  showDataLabels?: boolean;
+  showDataLabel?: boolean;
 
   @IsOptional()
   @IsBoolean()

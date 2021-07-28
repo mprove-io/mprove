@@ -72,9 +72,9 @@ export function wrapReports(item: {
         ? helper.toBoolean(report.options?.animations)
         : common.CHART_DEFAULT_ANIMATIONS,
 
-      showDataLabels: common.isDefined(report.options?.show_data_labels)
-        ? helper.toBoolean(report.options?.show_data_labels)
-        : common.CHART_DEFAULT_SHOW_DATA_LABELS,
+      showDataLabel: common.isDefined(report.options?.show_data_label)
+        ? helper.toBoolean(report.options?.show_data_label)
+        : common.CHART_DEFAULT_SHOW_DATA_LABEL,
 
       gradient: common.isDefined(report.options?.gradient)
         ? helper.toBoolean(report.options?.gradient)

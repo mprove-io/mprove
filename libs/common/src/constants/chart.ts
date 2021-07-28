@@ -43,7 +43,7 @@ export const CHART_DEFAULT_TIMELINE = false;
 export const CHART_DEFAULT_SHOW_AXIS = true;
 
 export const CHART_DEFAULT_LABELS = true;
-export const CHART_DEFAULT_SHOW_DATA_LABELS = true;
+export const CHART_DEFAULT_SHOW_DATA_LABEL = true;
 export const CHART_DEFAULT_AUTO_SCALE = false;
 export const CHART_DEFAULT_LEGEND = true;
 export const CHART_DEFAULT_DOUGHNUT = false;

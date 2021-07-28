@@ -751,6 +751,28 @@
 
   <div
     *ngIf="
+      chart.type === chartTypeEnum.BarHorizontal ||
+      chart.type === chartTypeEnum.BarHorizontalGrouped ||
+      chart.type === chartTypeEnum.BarHorizontalStacked ||
+      chart.type === chartTypeEnum.BarVertical ||
+      chart.type === chartTypeEnum.BarVerticalGrouped ||
+      chart.type === chartTypeEnum.BarVerticalStacked
+    "
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Show Data Labels</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.showDataLabel"
+      (change)="toggleShowDataLabel($event)"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="
       chart.type === chartTypeEnum.Area ||
       chart.type === chartTypeEnum.AreaNormalized ||
       chart.type === chartTypeEnum.AreaStacked ||

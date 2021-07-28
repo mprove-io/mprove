@@ -41,7 +41,6 @@ export class ChartViewComponent implements OnChanges {
 
   timeline = false;
   legendForHeatMap = false;
-  showDataLabel = true;
   legendPosition = 'right';
 
   constructor(private dataService: DataService) {}
