@@ -64,7 +64,7 @@ export class DataService {
     let yName = yField.sqlName;
 
     let singleData = data.map((raw: RData) => ({
-      name: common.isDefined(raw[xName].value) ? raw[xName].value : 'null',
+      name: common.isDefined(raw[xName].value) ? `${raw[xName].value}` : 'null',
       value: isNumeric(raw[yName].value) ? Number(raw[yName].value) : 0
     }));
 
