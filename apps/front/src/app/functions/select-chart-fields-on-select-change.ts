@@ -1,6 +1,6 @@
 import { common } from '~front/barrels/common';
 
-export function selectChartFields(item: {
+export function selectChartFieldsOnSelectChange(item: {
   newMconfig: common.Mconfig;
   fields: common.ModelField[];
 }) {
@@ -28,10 +28,10 @@ export function selectChartFields(item: {
       ...selectCalculations
     ];
 
-    let sortedSelect: string[] = [
-      ...selectDimensions,
-      ...selectMeasuresAndCalculations
-    ];
+    // let sortedSelect: string[] = [
+    //   ...selectDimensions,
+    //   ...selectMeasuresAndCalculations
+    // ];
 
     newMconfig.chart = Object.assign({}, newMconfig.chart, <common.Chart>{
       xField: selectDimensions.length > 0 ? selectDimensions[0] : undefined,

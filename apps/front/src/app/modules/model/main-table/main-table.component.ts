@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
-import { selectChartFields } from '~front/app/functions/select-chart-select';
+import { selectChartFieldsOnSelectChange } from '~front/app/functions/select-chart-fields-on-select-change';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
@@ -124,7 +124,7 @@ export class MainTableComponent {
       )
       .subscribe();
 
-    newMconfig = selectChartFields({
+    newMconfig = selectChartFieldsOnSelectChange({
       newMconfig: newMconfig,
       fields: fields
     });

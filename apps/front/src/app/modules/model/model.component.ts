@@ -5,6 +5,7 @@ import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
+import { selectChartFieldsOnChartTypeChange } from '~front/app/functions/select-chart-fields-on-chart-type-change';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -624,6 +625,19 @@ export class ModelComponent implements OnInit, OnDestroy {
     let chartType = this.chartTypeForm.controls['chartType'].value;
 
     let newMconfig = this.structService.makeMconfig();
+
+    let fields: common.ModelField[];
+    this.modelQuery.fields$
+      .pipe(
+        tap(x => (fields = x)),
+        take(1)
+      )
+      .subscribe();
+
+    newMconfig = selectChartFieldsOnChartTypeChange({
+      newMconfig: newMconfig,
+      fields: fields
+    });
 
     newMconfig.chart.type = chartType;
 
