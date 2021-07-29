@@ -8,6 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildChart<T extends types.dzType>(
   item: {
     entities: T[];
+    models: interfaces.Model[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
@@ -39,6 +40,7 @@ export function buildChart<T extends types.dzType>(
   entities = barChart.checkChartDataParameters(
     {
       entities: entities,
+      models: item.models,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

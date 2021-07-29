@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
+import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -11,13 +12,14 @@ let func = enums.FuncEnum.CheckChartDataParameters;
 export function checkChartDataParameters<T extends types.dzType>(
   item: {
     entities: T[];
+    models: interfaces.Model[];
     errors: BmError[];
     structId: string;
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, models } = item;
   helper.log(cs, caller, func, structId, enums.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -26,6 +28,8 @@ export function checkChartDataParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.reports.forEach(report => {
+      let model = item.models.find(m => m.name === report.model);
+
       if (
         [
           common.ChartTypeEnum.BarVertical,
@@ -158,11 +162,12 @@ export function checkChartDataParameters<T extends types.dzType>(
         return;
       }
 
-      if (common.isDefined(report.data)) {
-        if (
-          common.isDefined(report.data.x_field) &&
-          report.select.indexOf(report.data.x_field) < 0
-        ) {
+      if (common.isUndefined(report.data)) {
+        return;
+      }
+
+      if (common.isDefined(report.data.x_field)) {
+        if (report.select.indexOf(report.data.x_field) < 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_DATA_WRONG_X_FIELD,
@@ -179,12 +184,33 @@ export function checkChartDataParameters<T extends types.dzType>(
             })
           );
           return;
-        }
+        } else {
+          let field = getField({
+            model: model,
+            fieldId: report.data.x_field
+          });
 
-        if (
-          common.isDefined(report.data.y_field) &&
-          report.select.indexOf(report.data.y_field) < 0
-        ) {
+          if (field.fieldClass !== common.FieldClassEnum.Dimension) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_WRONG_X_FIELD_CLASS,
+                message: `"${enums.ParameterEnum.XField}" must be a Dimension`,
+                lines: [
+                  {
+                    line: report.data.x_field_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        }
+      }
+
+      if (common.isDefined(report.data.y_field)) {
+        if (report.select.indexOf(report.data.y_field) < 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELD,
@@ -201,12 +227,36 @@ export function checkChartDataParameters<T extends types.dzType>(
             })
           );
           return;
-        }
+        } else {
+          let field = getField({
+            model: model,
+            fieldId: report.data.y_field
+          });
 
-        if (
-          common.isDefined(report.data.multi_field) &&
-          report.select.indexOf(report.data.multi_field) < 0
-        ) {
+          if (
+            field.fieldClass !== common.FieldClassEnum.Measure &&
+            field.fieldClass !== common.FieldClassEnum.Calculation
+          ) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELD_CLASS,
+                message: `"${enums.ParameterEnum.YField}" must be a Measure or Calculation`,
+                lines: [
+                  {
+                    line: report.data.y_field_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        }
+      }
+
+      if (common.isDefined(report.data.multi_field)) {
+        if (report.select.indexOf(report.data.multi_field) < 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_DATA_WRONG_MULTI_FIELD,
@@ -223,12 +273,33 @@ export function checkChartDataParameters<T extends types.dzType>(
             })
           );
           return;
-        }
+        } else {
+          let field = getField({
+            model: model,
+            fieldId: report.data.multi_field
+          });
 
-        if (
-          common.isDefined(report.data.value_field) &&
-          report.select.indexOf(report.data.value_field) < 0
-        ) {
+          if (field.fieldClass !== common.FieldClassEnum.Dimension) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_WRONG_MULTI_FIELD_CLASS,
+                message: `"${enums.ParameterEnum.MultiField}" must be a Dimension`,
+                lines: [
+                  {
+                    line: report.data.multi_field_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        }
+      }
+
+      if (common.isDefined(report.data.value_field)) {
+        if (report.select.indexOf(report.data.value_field) < 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_DATA_WRONG_VALUE_FIELD,
@@ -245,12 +316,36 @@ export function checkChartDataParameters<T extends types.dzType>(
             })
           );
           return;
-        }
+        } else {
+          let field = getField({
+            model: model,
+            fieldId: report.data.value_field
+          });
 
-        if (
-          common.isDefined(report.data.previous_value_field) &&
-          report.select.indexOf(report.data.previous_value_field) < 0
-        ) {
+          if (
+            field.fieldClass !== common.FieldClassEnum.Measure &&
+            field.fieldClass !== common.FieldClassEnum.Calculation
+          ) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_WRONG_VALUE_FIELD_CLASS,
+                message: `"${enums.ParameterEnum.ValueField}" must be a Measure or Calculation`,
+                lines: [
+                  {
+                    line: report.data.value_field_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        }
+      }
+
+      if (common.isDefined(report.data.previous_value_field)) {
+        if (report.select.indexOf(report.data.previous_value_field) < 0) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.REPORT_DATA_WRONG_PREVIOUS_VALUE_FIELD,
@@ -267,14 +362,62 @@ export function checkChartDataParameters<T extends types.dzType>(
             })
           );
           return;
-        }
+        } else {
+          let field = getField({
+            model: model,
+            fieldId: report.data.previous_value_field
+          });
 
-        if (common.isDefined(report.data.y_fields)) {
-          if (!Array.isArray(report.data.y_fields)) {
+          if (
+            field.fieldClass !== common.FieldClassEnum.Measure &&
+            field.fieldClass !== common.FieldClassEnum.Calculation
+          ) {
             item.errors.push(
               new BmError({
-                title: enums.ErTitleEnum.REPORT_DATA_Y_FIELDS_MUST_BE_A_LIST,
-                message: `parameter "${enums.ParameterEnum.YFields}" must be a list`,
+                title:
+                  enums.ErTitleEnum
+                    .REPORT_DATA_WRONG_PREVIOUS_VALUE_FIELD_CLASS,
+                message: `"${enums.ParameterEnum.PreviousValueField}" must be a Measure or Calculation`,
+                lines: [
+                  {
+                    line: report.data.previous_value_field_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        }
+      }
+
+      if (common.isDefined(report.data.y_fields)) {
+        if (!Array.isArray(report.data.y_fields)) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.REPORT_DATA_Y_FIELDS_MUST_BE_A_LIST,
+              message: `parameter "${enums.ParameterEnum.YFields}" must be a list`,
+              lines: [
+                {
+                  line: report.data.y_fields_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        report.data.y_fields.forEach(element => {
+          if (report.select.indexOf(element) < 0) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELDS_ELEMENT,
+                message:
+                  `found element "${element}" that is not ` +
+                  `listed in "${enums.ParameterEnum.Select}"`,
                 lines: [
                   {
                     line: report.data.y_fields_line_num,
@@ -285,16 +428,22 @@ export function checkChartDataParameters<T extends types.dzType>(
               })
             );
             return;
-          }
+          } else {
+            let field = getField({
+              model: model,
+              fieldId: element
+            });
 
-          report.data.y_fields.forEach(element => {
-            if (report.select.indexOf(element) < 0) {
+            if (
+              field.fieldClass !== common.FieldClassEnum.Measure &&
+              field.fieldClass !== common.FieldClassEnum.Calculation
+            ) {
               item.errors.push(
                 new BmError({
-                  title: enums.ErTitleEnum.REPORT_DATA_WRONG_Y_FIELDS_ELEMENT,
-                  message:
-                    `found element "${element}" that is not ` +
-                    `listed in "${enums.ParameterEnum.Select}"`,
+                  title:
+                    enums.ErTitleEnum
+                      .REPORT_DATA_WRONG_Y_FIELDS_ELEMENT_FIELD_CLASS,
+                  message: `"${enums.ParameterEnum.YFields}" element must be a Measure or Calculation`,
                   lines: [
                     {
                       line: report.data.y_fields_line_num,
@@ -306,16 +455,36 @@ export function checkChartDataParameters<T extends types.dzType>(
               );
               return;
             }
-          });
+          }
+        });
+      }
+
+      if (common.isDefined(report.data.hide_columns)) {
+        if (!Array.isArray(report.data.hide_columns)) {
+          item.errors.push(
+            new BmError({
+              title: enums.ErTitleEnum.REPORT_DATA_HIDE_COLUMNS_MUST_BE_A_LIST,
+              message: `parameter "${enums.ParameterEnum.HideColumns}" must be a list`,
+              lines: [
+                {
+                  line: report.data.hide_columns_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
         }
 
-        if (common.isDefined(report.data.hide_columns)) {
-          if (!Array.isArray(report.data.hide_columns)) {
+        report.data.hide_columns.forEach(element => {
+          if (report.select.indexOf(element) < 0) {
             item.errors.push(
               new BmError({
-                title:
-                  enums.ErTitleEnum.REPORT_DATA_HIDE_COLUMNS_MUST_BE_A_LIST,
-                message: `parameter "${enums.ParameterEnum.HideColumns}" must be a list`,
+                title: enums.ErTitleEnum.REPORT_DATA_WRONG_HIDE_COLUMNS_ELEMENT,
+                message:
+                  `found element "${element}" that is not ` +
+                  `listed in "${enums.ParameterEnum.Select}"`,
                 lines: [
                   {
                     line: report.data.hide_columns_line_num,
@@ -327,29 +496,7 @@ export function checkChartDataParameters<T extends types.dzType>(
             );
             return;
           }
-
-          report.data.hide_columns.forEach(element => {
-            if (report.select.indexOf(element) < 0) {
-              item.errors.push(
-                new BmError({
-                  title:
-                    enums.ErTitleEnum.REPORT_DATA_WRONG_HIDE_COLUMNS_ELEMENT,
-                  message:
-                    `found element "${element}" that is not ` +
-                    `listed in "${enums.ParameterEnum.Select}"`,
-                  lines: [
-                    {
-                      line: report.data.hide_columns_line_num,
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-          });
-        }
+        });
       }
     });
 
@@ -369,4 +516,22 @@ export function checkChartDataParameters<T extends types.dzType>(
   );
 
   return newEntities;
+}
+
+function getField(item: { model: interfaces.Model; fieldId: string }) {
+  let { model, fieldId } = item;
+
+  let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+  let r = reg.exec(fieldId);
+
+  let asName = r[1];
+  let fieldName = r[2];
+  let field =
+    asName === constants.MF
+      ? model.fields.find(mField => mField.name === fieldName)
+      : model.joins
+          .find(j => j.as === asName)
+          .view.fields.find(f => f.name === fieldName);
+
+  return field;
 }

@@ -354,6 +354,7 @@ export class RebuildStructService {
     dashboards = barBuilder.buildChart(
       {
         entities: dashboards,
+        models: models,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildDashboardChart
@@ -364,6 +365,7 @@ export class RebuildStructService {
     vizs = barBuilder.buildChart(
       {
         entities: vizs,
+        models: models,
         structId: item.structId,
         errors: errors,
         caller: enums.CallerEnum.BuildVizChart
