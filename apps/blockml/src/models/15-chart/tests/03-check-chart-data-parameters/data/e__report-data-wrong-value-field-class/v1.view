@@ -5,9 +5,6 @@ fields:
 - dimension: dim1
   sql: d1
 
-- measure: mea1
-  type: min
-  sql: ${dim1}
 
 
 

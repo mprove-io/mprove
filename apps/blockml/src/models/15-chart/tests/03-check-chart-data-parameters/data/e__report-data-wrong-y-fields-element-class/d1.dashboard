@@ -5,9 +5,8 @@ reports:
   select: 
   - a.dim1
   - a.mea1
-  type: bar_vertical_grouped
+  type: line
   data:
     x_field: a.dim1
-    y_fields:
-    - a.mea1
-    multi_field: unk 
+    y_fields:       
+    - a.dim1

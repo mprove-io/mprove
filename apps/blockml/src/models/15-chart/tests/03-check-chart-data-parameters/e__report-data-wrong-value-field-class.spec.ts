@@ -9,7 +9,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = enums.CallerEnum.BuildDashboardChart;
 let func = enums.FuncEnum.CheckChartDataParameters;
-let testId = 'e__report-data-wrong-multi-field';
+let testId = 'e__report-data-wrong-value-field-class';
 
 test('1', async t => {
   let errors: BmError[];
@@ -49,6 +49,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, enums.ErTitleEnum.REPORT_DATA_WRONG_MULTI_FIELD);
-  t.is(errors[0].lines[0].line, 13);
+  t.is(errors[0].title, enums.ErTitleEnum.REPORT_DATA_WRONG_VALUE_FIELD_CLASS);
+  t.is(errors[0].lines[0].line, 9);
 });

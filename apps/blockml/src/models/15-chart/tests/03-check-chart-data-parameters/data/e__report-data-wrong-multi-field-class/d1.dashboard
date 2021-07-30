@@ -10,4 +10,4 @@ reports:
     x_field: a.dim1
     y_fields:
     - a.mea1
-    multi_field: unk 
+    multi_field: a.mea1 
