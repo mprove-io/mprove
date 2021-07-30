@@ -53,5 +53,5 @@ test('1', async t => {
     errors[0].title,
     enums.ErTitleEnum.REPORT_DATA_HIDE_COLUMNS_MUST_BE_A_LIST
   );
-  t.is(errors[0].lines[0].line, 10);
+  t.is(errors[0].lines[0].line, 11);
 });

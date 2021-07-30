@@ -4,9 +4,10 @@ reports:
   model: m1
   select: 
   - a.dim1
+  - a.mea1 
   type: line
   data:
     x_field: a.dim1
     hide_columns: a.dim1  
     y_fields: 
-    - a.dim1
+    - a.mea1

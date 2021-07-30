@@ -3,10 +3,10 @@ reports:
 - title: t1
   model: m1
   select: 
-  - a.dim1
+  - a.mea1
   type: gauge_linear
   data:
-    value_field: a.dim1
+    value_field: a.mea1
   options:
     gradient:        
     - 5
