@@ -53,6 +53,7 @@ export function wrapField(item: {
     children: [],
     fieldFileName: fileName,
     fieldFilePath: filePath,
+    fieldResult: field.result,
     fieldLineNum: field.name_line_num,
     nodeClass: field.fieldClass
   };

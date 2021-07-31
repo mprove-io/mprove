@@ -39,6 +39,10 @@ export class ModelNode {
   fieldFilePath?: string;
 
   @IsOptional()
+  @IsEnum(enums.FieldResultEnum)
+  fieldResult?: enums.FieldResultEnum;
+
+  @IsOptional()
   @IsInt()
   fieldLineNum?: number;
 

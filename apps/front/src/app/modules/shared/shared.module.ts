@@ -45,12 +45,13 @@ import { LogoComponent } from './logo/logo.component';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
+import { ResultPipe } from './pipes/result.pipe';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
 import { DocumentRingComponent } from './rings/document-ring/document-ring.component';
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
 import { ValidationComponent } from './validation/validation.component';
 
-let pipesArray = [ExtensionPipe, CapitalizePipe, HideColumnsPipe];
+let pipesArray = [ExtensionPipe, CapitalizePipe, HideColumnsPipe, ResultPipe];
 
 let sharedComponents = [
   LogoComponent,

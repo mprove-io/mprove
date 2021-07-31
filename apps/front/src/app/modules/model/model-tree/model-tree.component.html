@@ -104,6 +104,10 @@
 
             <div class="flex flex-grow"></div>
 
+            <div class="w-[72px] text-gray-400 text-sm">{{
+              node.data.fieldResult | result
+            }}</div>
+
             <button
               *ngIf="node.data.isField === true"
               type="button"
