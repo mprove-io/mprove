@@ -134,7 +134,7 @@ export class ApiService {
 
     if (this.showSpinner.includes(pathInfoName)) {
       // spinnerStartedTs = Date.now();
-      this.spinner.show();
+      this.spinner.show(constants.APP_SPINNER_NAME);
     }
 
     return combineLatest([
@@ -165,12 +165,12 @@ export class ApiService {
           // console.log('time:', time);
 
           // if (time > 0) {
-          //   setTimeout(() => this.spinner.hide(), time);
+          //   setTimeout(() => this.spinner.hide(constants.APP_SPINNER_NAME), time);
           // } else {
-          //   this.spinner.hide();
+          //   this.spinner.hide(constants.APP_SPINNER_NAME);
           // }
 
-          this.spinner.hide();
+          this.spinner.hide(constants.APP_SPINNER_NAME);
         }
       })
     );

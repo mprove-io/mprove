@@ -25,3 +25,5 @@ export const EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.Conf,
   common.FileExtensionEnum.Md
 ];
+
+export const APP_SPINNER_NAME = 'app';

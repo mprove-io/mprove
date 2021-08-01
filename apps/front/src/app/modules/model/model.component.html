@@ -41,10 +41,25 @@
               *ngIf="
                 !dryQueryEstimate && query?.status === queryStatusEnum.Running
               "
-              class="flex flex-row"
+              class="flex flex-row items-center"
             >
               <div>Running - seconds</div>
+
               <div class="w-8 ml-1">{{ runSecondsAgo$ | async }}</div>
+
+              <div class="w-9 h-9 bg-yellow-200 relative">
+                <ngx-spinner
+                  [name]="spinnerName"
+                  color="rgba(54, 94, 224, 100)"
+                  bdColor="rgba(242, 245, 250, 100)"
+                  size="default"
+                  type="ball-clip-rotate"
+                  [fullScreen]="false"
+                  [disableAnimation]="true"
+                  [zIndex]="99998"
+                >
+                </ngx-spinner>
+              </div>
             </div>
 
             <div
@@ -74,13 +89,16 @@
             >
 
             <div
+              class="flex flex-row items-center"
               *ngIf="
                 !dryQueryEstimate && query?.status === queryStatusEnum.Completed
               "
             >
-              <span>Completed - {{ completedTimeAgo$ | async }}</span>
-              <span> - {{ query.lastCompleteDuration }}s</span>
-              <span> - {{ query.data.length }} rows</span>
+              <div class="ml-5"
+                >Completed - {{ completedTimeAgo$ | async }} -
+                {{ query.lastCompleteDuration }}s -
+                {{ query.data.length }} rows</div
+              >
             </div>
 
             <button

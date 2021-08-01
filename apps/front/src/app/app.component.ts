@@ -18,6 +18,8 @@ import { AuthService } from './services/auth.service';
 export class AppComponent implements OnInit {
   title = 'front';
 
+  appSpinnerName = constants.APP_SPINNER_NAME;
+
   spinnerStartedTs: number;
 
   routerEvents$ = this.router.events.pipe(
@@ -26,7 +28,7 @@ export class AppComponent implements OnInit {
         case x instanceof NavigationStart: {
           // console.log('NavigationStart', x.url);
           this.spinnerStartedTs = Date.now();
-          this.spinner.show();
+          this.spinner.show(constants.APP_SPINNER_NAME);
           break;
         }
 
@@ -44,7 +46,10 @@ export class AppComponent implements OnInit {
           // console.log('time:', time);
 
           if (time > 0) {
-            setTimeout(() => this.spinner.hide(), time);
+            setTimeout(
+              () => this.spinner.hide(constants.APP_SPINNER_NAME),
+              time
+            );
           } else {
             this.spinner.hide();
           }
@@ -58,9 +63,8 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private spinner: NgxSpinnerService,
-    private router: Router
-  ) // ,
-  // private myDialogService: MyDialogService,
+    private router: Router // ,
+  ) // private myDialogService: MyDialogService,
   // private apiService: ApiService
   {}
 

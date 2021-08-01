@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
@@ -42,6 +43,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
+
+  spinnerName = 'running';
 
   lastUrl: string;
 
@@ -97,6 +100,13 @@ export class ModelComponent implements OnInit, OnDestroy {
     tap(x => {
       this.query = x;
       this.dryQueryEstimate = undefined;
+
+      if (this.query.status === common.QueryStatusEnum.Running) {
+        this.spinner.show(this.spinnerName);
+      } else {
+        this.spinner.hide(this.spinnerName);
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -422,7 +432,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     private mconfigService: MconfigService,
     private structQuery: StructQuery,
     private dataSizeService: DataSizeService,
-    private queryService: QueryService
+    private queryService: QueryService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {
