@@ -8,17 +8,17 @@ import { common } from '~front/barrels/common';
   templateUrl: './sql.component.html'
 })
 export class SqlComponent {
-  fileEditorTheme = 'vs';
-  sqlEditorLanguage = 'sql';
+  editorTheme = 'vs';
+  editorLanguage = 'sql';
 
   editor: monaco.editor.IStandaloneCodeEditor = null;
 
   editorOptions = {
     // automaticLayout: true,
     readOnly: true,
-    theme: this.fileEditorTheme,
+    theme: this.editorTheme,
     fontSize: 16,
-    language: this.sqlEditorLanguage
+    language: this.editorLanguage
   };
 
   content: string;
@@ -36,7 +36,7 @@ export class SqlComponent {
 
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;
-    // monaco.editor.setTheme(this.fileEditorTheme);
-    // monaco.editor.setModelLanguage(editor.getModel(), this.sqlEditorLanguage);
+    // monaco.editor.setTheme(this.editorTheme);
+    // monaco.editor.setModelLanguage(editor.getModel(), this.editorLanguage);
   }
 }

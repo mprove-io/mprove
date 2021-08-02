@@ -5,6 +5,7 @@ import { CreateFileDialogComponent } from './modules/blockml/blockml-tree/folder
 import { CreateFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
 import { DeleteFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import { RenameFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
+import { ViewBlockmlDialogComponent } from './modules/model/view-blockml-dialog/view-blockml-dialog.component';
 import { CreateBranchDialogComponent } from './modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import { DeleteBranchDialogComponent } from './modules/navbar/branch-select/delete-branch-dialog/delete-branch-dialog.component';
 import { MergeBranchDialogComponent } from './modules/navbar/branch-select/merge-branch-dialog/merge-branch-dialog.component';
@@ -66,5 +67,7 @@ export const appDialogs = [
   DeleteFileDialogComponent,
   RenameFileDialogComponent,
   // blockml
-  MergeBranchDialogComponent
+  MergeBranchDialogComponent,
+  //
+  ViewBlockmlDialogComponent
 ];

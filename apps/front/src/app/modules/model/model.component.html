@@ -296,6 +296,7 @@
 
                 <div *ngIf="mconfig?.select.length > 0" class="relative ml-3">
                   <m-chart-options
+                    [mconfig]="mconfig"
                     [isDisabled]="
                       mconfig.chart.isValid === false ||
                       chartTitleForm.valid === false

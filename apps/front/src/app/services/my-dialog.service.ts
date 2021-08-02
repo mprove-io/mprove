@@ -11,6 +11,7 @@ import { CreateFileDialogComponent } from '../modules/blockml/blockml-tree/folde
 import { CreateFolderDialogComponent } from '../modules/blockml/blockml-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
 import { DeleteFolderDialogComponent } from '../modules/blockml/blockml-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import { RenameFolderDialogComponent } from '../modules/blockml/blockml-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
+import { ViewBlockmlDialogComponent } from '../modules/model/view-blockml-dialog/view-blockml-dialog.component';
 import { CreateBranchDialogComponent } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
 import { DeleteBranchDialogComponent } from '../modules/navbar/branch-select/delete-branch-dialog/delete-branch-dialog.component';
 import { MergeBranchDialogComponent } from '../modules/navbar/branch-select/merge-branch-dialog/merge-branch-dialog.component';
@@ -122,6 +123,17 @@ export class MyDialogService {
     this.dialogService.open(CreateBranchDialogComponent, {
       enableClose: false,
       data: item
+    });
+  }
+
+  showViewBlockml(item: {
+    apiService: ApiService;
+    mconfig: common.Mconfig;
+  }): void {
+    this.dialogService.open(ViewBlockmlDialogComponent, {
+      enableClose: true,
+      data: item,
+      width: 1024
     });
   }
 

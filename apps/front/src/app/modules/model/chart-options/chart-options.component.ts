@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { RepoStore } from '~front/app/stores/repo.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
@@ -12,6 +14,9 @@ import { common } from '~front/barrels/common';
 export class ChartOptionsComponent implements OnDestroy {
   @Input()
   isDisabled: boolean;
+
+  @Input()
+  mconfig: common.Mconfig;
 
   menuId = 'chartOptions';
 
@@ -26,6 +31,8 @@ export class ChartOptionsComponent implements OnDestroy {
     public uiQuery: UiQuery,
     public uiStore: UiStore,
     public repoStore: RepoStore,
+    public myDialogService: MyDialogService,
+    private apiService: ApiService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -55,7 +62,10 @@ export class ChartOptionsComponent implements OnDestroy {
     event.stopPropagation();
     this.closeMenu();
 
-    // this.navigateService.navigateToModel(this.model.modelId);
+    this.myDialogService.showViewBlockml({
+      apiService: this.apiService,
+      mconfig: this.mconfig
+    });
   }
 
   ngOnDestroy() {

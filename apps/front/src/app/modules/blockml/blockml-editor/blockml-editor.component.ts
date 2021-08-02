@@ -23,7 +23,7 @@ import { common } from '~front/barrels/common';
   styleUrls: ['blockml-editor.component.scss']
 })
 export class BlockmlEditorComponent implements OnDestroy {
-  fileEditorTheme = 'vs-dark';
+  editorTheme = 'vs-dark';
 
   line = 1;
 
@@ -31,7 +31,7 @@ export class BlockmlEditorComponent implements OnDestroy {
 
   editorOptions = {
     // automaticLayout: true,
-    theme: this.fileEditorTheme,
+    theme: this.editorTheme,
     fontSize: 16,
     language: 'yaml'
   };
@@ -114,7 +114,7 @@ export class BlockmlEditorComponent implements OnDestroy {
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;
 
-    monaco.editor.setTheme(this.fileEditorTheme);
+    monaco.editor.setTheme(this.editorTheme);
 
     this.editor.updateOptions({ readOnly: this.nav.isRepoProd });
 
