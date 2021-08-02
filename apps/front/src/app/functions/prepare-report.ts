@@ -1,11 +1,12 @@
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export function prepareReport(mconfig: common.Mconfig) {
   let chart = mconfig.chart;
 
   let defaultFilters: any;
 
-  if (mconfig.filters && mconfig.filters.length > 0) {
+  if (common.isDefined(mconfig.filters) && mconfig.filters.length > 0) {
     defaultFilters = {};
 
     mconfig.filters.forEach(x => {
@@ -31,7 +32,17 @@ export function prepareReport(mconfig: common.Mconfig) {
         ? mconfig.limit
         : undefined,
     default_filters: defaultFilters,
-    type: chart.type
+    type: chart.type,
+    data: {
+      x_field:
+        constants.xFieldChartTypes.indexOf(chart.type) > -1
+          ? chart.xField
+          : undefined,
+      y_field:
+        constants.yFieldChartTypes.indexOf(chart.type) > -1
+          ? chart.yField
+          : undefined
+    }
   };
 
   return rep;

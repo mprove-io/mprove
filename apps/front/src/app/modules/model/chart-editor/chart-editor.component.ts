@@ -10,6 +10,7 @@ import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export class ColorSchemeItem {
   label: string;
@@ -32,6 +33,9 @@ export class InterpolationItem {
 })
 export class ChartEditorComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
+
+  xFieldChartTypes = constants.xFieldChartTypes;
+  yFieldChartTypes = constants.yFieldChartTypes;
 
   @Input()
   chart: common.Chart;
