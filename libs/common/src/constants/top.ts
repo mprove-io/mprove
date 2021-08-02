@@ -11,6 +11,8 @@ export const USE_PROJECT_TIMEZONE_VALUE = 'USE_PROJECT_TIMEZONE';
 export const USE_PROJECT_TIMEZONE_LABEL = 'USE PROJECT CONFIG TIMEZONE';
 export const UTC = 'UTC';
 
+export const DEFAULT_LIMIT = '500';
+
 export const BLOCKML_USERS_FOLDER = 'users';
 
 export const PATH_REGISTER = 'register';

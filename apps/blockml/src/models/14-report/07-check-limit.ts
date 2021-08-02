@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -28,7 +27,7 @@ export function checkLimit<T extends types.dzType>(
 
     x.reports.forEach(report => {
       if (!report.limit) {
-        report.limit = constants.LIMIT_500;
+        report.limit = common.DEFAULT_LIMIT;
         return;
       }
 
@@ -55,7 +54,9 @@ export function checkLimit<T extends types.dzType>(
       let limitNumber = Number(r[1]);
 
       report.limit =
-        limitNumber > 500 ? constants.LIMIT_500 : limitNumber.toString();
+        limitNumber > Number(common.DEFAULT_LIMIT)
+          ? common.DEFAULT_LIMIT
+          : limitNumber.toString();
     });
 
     if (errorsOnStart === item.errors.length) {

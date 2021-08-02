@@ -46,6 +46,4 @@ export const UNKNOWN_JOIN_TYPE = 'unknown_join_type';
 
 export const MF = 'mf';
 
-export const LIMIT_500 = '500';
-
 export const STANDARD_SQL = '#standardSQL';
