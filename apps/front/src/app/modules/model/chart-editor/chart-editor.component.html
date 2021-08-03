@@ -30,7 +30,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Table"
+    *ngIf="hideColumnsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex h-9 text-gray1 text-base items-center select-none"
@@ -102,19 +102,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line
-    "
+    *ngIf="multiFieldChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
@@ -163,7 +151,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.GaugeLinear"
+    *ngIf="valueFieldChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
@@ -202,7 +190,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.GaugeLinear"
+    *ngIf="previousValueFieldChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
@@ -280,19 +268,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.HeatMap
-    "
+    *ngIf="yFieldsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"

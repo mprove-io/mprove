@@ -41,9 +41,43 @@ export function prepareReport(mconfig: common.Mconfig) {
       y_field:
         constants.yFieldChartTypes.indexOf(chart.type) > -1
           ? chart.yField
+          : undefined,
+      y_fields:
+        constants.yFieldsChartTypes.indexOf(chart.type) > -1 &&
+        common.isDefined(chart.yFields) &&
+        chart.yFields.length > 0
+          ? chart.yFields
+          : undefined,
+      hide_columns:
+        constants.hideColumnsChartTypes.indexOf(chart.type) > -1 &&
+        common.isDefined(chart.hideColumns) &&
+        chart.hideColumns.length > 0
+          ? chart.hideColumns
+          : undefined,
+      multi_field:
+        constants.multiFieldChartTypes.indexOf(chart.type) > -1
+          ? chart.multiField
+          : undefined,
+      value_field:
+        constants.valueFieldChartTypes.indexOf(chart.type) > -1
+          ? chart.valueField
+          : undefined,
+      previous_value_field:
+        constants.previousValueFieldChartTypes.indexOf(chart.type) > -1
+          ? chart.previousValueField
           : undefined
     }
   };
+
+  let keepData = false;
+  Object.keys(rep.data).forEach((x: any) => {
+    if (common.isDefined((<any>rep.data)[x])) {
+      keepData = true;
+    }
+  });
+  if (keepData === false) {
+    delete rep.data;
+  }
 
   return rep;
 }

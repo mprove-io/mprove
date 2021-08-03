@@ -34,8 +34,13 @@ export class InterpolationItem {
 export class ChartEditorComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
 
+  hideColumnsChartTypes = constants.hideColumnsChartTypes;
   xFieldChartTypes = constants.xFieldChartTypes;
   yFieldChartTypes = constants.yFieldChartTypes;
+  yFieldsChartTypes = constants.yFieldsChartTypes;
+  multiFieldChartTypes = constants.multiFieldChartTypes;
+  valueFieldChartTypes = constants.valueFieldChartTypes;
+  previousValueFieldChartTypes = constants.previousValueFieldChartTypes;
 
   @Input()
   chart: common.Chart;
