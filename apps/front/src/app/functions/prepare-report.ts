@@ -103,6 +103,28 @@ export function prepareReport(mconfig: common.Mconfig) {
         chart.showAxis !== common.CHART_DEFAULT_SHOW_AXIS
           ? chart.showAxis
           : undefined
+    },
+    tile: {
+      tile_width:
+        chart.tileWidth !== common.CHART_DEFAULT_TILE_WIDTH
+          ? chart.tileWidth
+          : undefined,
+      tile_height:
+        chart.tileHeight !== common.CHART_DEFAULT_TILE_HEIGHT
+          ? chart.tileHeight
+          : undefined,
+      view_size:
+        chart.viewSize !== common.CHART_DEFAULT_VIEW_SIZE
+          ? chart.viewSize
+          : undefined,
+      view_width:
+        chart.viewWidth !== common.CHART_DEFAULT_VIEW_WIDTH
+          ? chart.viewWidth
+          : undefined,
+      view_height:
+        chart.viewHeight !== common.CHART_DEFAULT_VIEW_HEIGHT
+          ? chart.viewHeight
+          : undefined
     }
   };
 
@@ -124,6 +146,16 @@ export function prepareReport(mconfig: common.Mconfig) {
   });
   if (keepAxis === false) {
     delete rep.axis;
+  }
+
+  let keepTile = false;
+  Object.keys(rep.tile).forEach((x: any) => {
+    if (common.isDefined((<any>rep.tile)[x])) {
+      keepTile = true;
+    }
+  });
+  if (keepTile === false) {
+    delete rep.tile;
   }
 
   return rep;
