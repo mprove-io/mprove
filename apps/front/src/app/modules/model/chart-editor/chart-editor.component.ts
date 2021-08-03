@@ -50,6 +50,44 @@ export class ChartEditorComponent implements OnChanges {
   yAxisChartTypes = constants.yAxisChartTypes;
   showAxisChartTypes = constants.showAxisChartTypes;
 
+  angleSpanChartTypes = constants.angleSpanChartTypes;
+  animationsChartTypes = constants.animationsChartTypes;
+  arcWidthChartTypes = constants.arcWidthChartTypes;
+  autoScaleChartTypes = constants.autoScaleChartTypes;
+  bandColorChartTypes = constants.bandColorChartTypes;
+  barPaddingChartTypes = constants.barPaddingChartTypes;
+  bigSegmentsChartTypes = constants.bigSegmentsChartTypes;
+  cardColorChartTypes = constants.cardColorChartTypes;
+  colorSchemeChartTypes = constants.colorSchemeChartTypes;
+  doughnutChartTypes = constants.doughnutChartTypes;
+  emptyColorChartTypes = constants.emptyColorChartTypes;
+  explodeSlicesChartTypes = constants.explodeSlicesChartTypes;
+  gradientChartTypes = constants.gradientChartTypes;
+  groupPaddingChartTypes = constants.groupPaddingChartTypes;
+  innerPaddingChartTypes = constants.innerPaddingChartTypes;
+  interpolationChartTypes = constants.interpolationChartTypes;
+  labelsChartTypes = constants.labelsChartTypes;
+  legendChartTypes = constants.legendChartTypes;
+  legendTitleChartTypes = constants.legendTitleChartTypes;
+  maxChartTypes = constants.maxChartTypes;
+  minChartTypes = constants.minChartTypes;
+  pageSizeChartTypes = constants.pageSizeChartTypes;
+  rangeFillOpacityChartTypes = constants.rangeFillOpacityChartTypes;
+  roundDomainsChartTypes = constants.roundDomainsChartTypes;
+  roundEdgesChartTypes = constants.roundEdgesChartTypes;
+  schemeTypeChartTypes = constants.schemeTypeChartTypes;
+  showDataLabelChartTypes = constants.showDataLabelChartTypes;
+  showGridLinesChartTypes = constants.showGridLinesChartTypes;
+  smallSegmentsChartTypes = constants.smallSegmentsChartTypes;
+  startAngleChartTypes = constants.startAngleChartTypes;
+  textColorChartTypes = constants.textColorChartTypes;
+  timelineChartTypes = constants.timelineChartTypes;
+  tooltipDisabledChartTypes = constants.tooltipDisabledChartTypes;
+  unitsChartTypes = constants.unitsChartTypes;
+  xScaleMaxChartTypes = constants.xScaleMaxChartTypes;
+  yScaleMaxChartTypes = constants.yScaleMaxChartTypes;
+  yScaleMinChartTypes = constants.yScaleMinChartTypes;
+
   @Input()
   chart: common.Chart;
 

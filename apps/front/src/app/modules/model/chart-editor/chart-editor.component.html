@@ -2,7 +2,7 @@
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Table"
+    *ngIf="pageSizeChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -305,28 +305,7 @@
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Options</div> -->
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.GaugeLinear ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.NumberCard ||
-      chart.type === chartTypeEnum.Pie ||
-      chart.type === chartTypeEnum.PieAdvanced ||
-      chart.type === chartTypeEnum.PieGrid ||
-      chart.type === chartTypeEnum.TreeMap
-    "
+    *ngIf="colorSchemeChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
@@ -354,20 +333,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Line
-    "
+    *ngIf="schemeTypeChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
@@ -395,12 +361,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.Line
-    "
+    *ngIf="interpolationChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start mb-5"
   >
     <div class="flex flex-col">
@@ -428,7 +389,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.NumberCard"
+    *ngIf="cardColorChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
@@ -445,7 +406,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.NumberCard"
+    *ngIf="emptyColorChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
@@ -462,7 +423,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.NumberCard"
+    *ngIf="bandColorChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
@@ -479,7 +440,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.NumberCard"
+    *ngIf="textColorChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex flex-col">
@@ -496,10 +457,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.GaugeLinear
-    "
+    *ngIf="unitsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -525,22 +483,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie
-    "
+    *ngIf="legendTitleChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -654,7 +597,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
+    *ngIf="labelsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -669,18 +612,11 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalStacked
-    "
+    *ngIf="showDataLabelChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
-      >Show Data Labels</div
+      >Show Data Label</div
     >
 
     <ui-switch
@@ -691,22 +627,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie
-    "
+    *ngIf="legendChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -721,7 +642,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
+    *ngIf="doughnutChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -736,7 +657,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
+    *ngIf="explodeSlicesChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -847,20 +768,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Line
-    "
+    *ngIf="roundDomainsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -875,20 +783,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Line
-    "
+    *ngIf="showGridLinesChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -903,12 +798,7 @@
   </div>
 
   <!-- <div
-  *ngIf="
-    chart.type === chartTypeEnum.Area ||
-    chart.type === chartTypeEnum.AreaNormalized ||
-    chart.type === chartTypeEnum.AreaStacked ||
-    chart.type === chartTypeEnum.Line
-  "
+  *ngIf="timelineChartTypes.indexOf(chart.type) > -1"
   class="flex flex-row items-center mb-5"
 >
   <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -923,12 +813,7 @@
 </div> -->
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped
-    "
+    *ngIf="roundEdgesChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -943,26 +828,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.Pie ||
-      chart.type === chartTypeEnum.PieAdvanced ||
-      chart.type === chartTypeEnum.PieGrid ||
-      chart.type === chartTypeEnum.TreeMap
-    "
+    *ngIf="tooltipDisabledChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -977,23 +843,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Pie ||
-      chart.type === chartTypeEnum.PieAdvanced ||
-      chart.type === chartTypeEnum.TreeMap
-    "
+    *ngIf="gradientChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -1008,28 +858,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaNormalized ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.GaugeLinear ||
-      chart.type === chartTypeEnum.HeatMap ||
-      chart.type === chartTypeEnum.Line ||
-      chart.type === chartTypeEnum.NumberCard ||
-      chart.type === chartTypeEnum.Pie ||
-      chart.type === chartTypeEnum.PieAdvanced ||
-      chart.type === chartTypeEnum.PieGrid ||
-      chart.type === chartTypeEnum.TreeMap
-    "
+    *ngIf="animationsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -1044,9 +873,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area || chart.type === chartTypeEnum.Line
-    "
+    *ngIf="autoScaleChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >
     <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
@@ -1061,7 +888,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
+    *ngIf="angleSpanChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1089,7 +916,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
+    *ngIf="startAngleChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1117,7 +944,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Pie"
+    *ngIf="arcWidthChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1155,10 +982,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.GaugeLinear
-    "
+    *ngIf="minChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1183,10 +1007,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Gauge ||
-      chart.type === chartTypeEnum.GaugeLinear
-    "
+    *ngIf="maxChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1211,11 +1032,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalStacked
-    "
+    *ngIf="xScaleMaxChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1243,11 +1060,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.Line
-    "
+    *ngIf="yScaleMinChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1285,14 +1098,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.Area ||
-      chart.type === chartTypeEnum.AreaStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalStacked ||
-      chart.type === chartTypeEnum.Line
-    "
+    *ngIf="yScaleMaxChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1330,16 +1136,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontal ||
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarHorizontalNormalized ||
-      chart.type === chartTypeEnum.BarHorizontalStacked ||
-      chart.type === chartTypeEnum.BarVertical ||
-      chart.type === chartTypeEnum.BarVerticalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalNormalized ||
-      chart.type === chartTypeEnum.BarVerticalStacked
-    "
+    *ngIf="barPaddingChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1367,7 +1164,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
+    *ngIf="bigSegmentsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1395,7 +1192,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.Gauge"
+    *ngIf="smallSegmentsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1423,10 +1220,7 @@
   </div>
 
   <div
-    *ngIf="
-      chart.type === chartTypeEnum.BarHorizontalGrouped ||
-      chart.type === chartTypeEnum.BarVerticalGrouped
-    "
+    *ngIf="groupPaddingChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
@@ -1454,7 +1248,7 @@
   </div>
 
   <div
-    *ngIf="chart.type === chartTypeEnum.HeatMap"
+    *ngIf="innerPaddingChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
     <div class="flex flex-col">
