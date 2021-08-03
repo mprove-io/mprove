@@ -42,6 +42,14 @@ export class ChartEditorComponent implements OnChanges {
   valueFieldChartTypes = constants.valueFieldChartTypes;
   previousValueFieldChartTypes = constants.previousValueFieldChartTypes;
 
+  xAxisLabelChartTypes = constants.xAxisLabelChartTypes;
+  yAxisLabelChartTypes = constants.yAxisLabelChartTypes;
+  showXAxisLabelChartTypes = constants.showXAxisLabelChartTypes;
+  showYAxisLabelChartTypes = constants.showYAxisLabelChartTypes;
+  xAxisChartTypes = constants.xAxisChartTypes;
+  yAxisChartTypes = constants.yAxisChartTypes;
+  showAxisChartTypes = constants.showAxisChartTypes;
+
   @Input()
   chart: common.Chart;
 
