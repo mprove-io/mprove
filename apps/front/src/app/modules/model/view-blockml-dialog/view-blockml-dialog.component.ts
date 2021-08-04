@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { dump } from 'js-yaml';
 import { prepareReport } from '~front/app/functions/prepare-report';
+import { toYaml } from '~front/app/functions/to-yaml';
 import { UserQuery } from '~front/app/queries/user.query';
 
 @Component({
@@ -37,17 +37,7 @@ export class ViewBlockmlDialogComponent implements OnInit {
   ngOnInit() {
     let rep = prepareReport(this.ref.data.mconfig);
 
-    this.reportYaml = dump({ reports: [rep] })
-      .split('\n')
-      .map(s =>
-        s
-          .replace(/^\s\s/g, '')
-          .replace(/^\s\s\s\s[-]/g, '  -')
-          .replace(/^\s\s\s\s\s\s[-]/g, '    -')
-          .replace(/'''/g, `'`)
-      )
-      .slice(1)
-      .join('\n');
+    this.reportYaml = toYaml({ reports: [rep] });
   }
 
   async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {

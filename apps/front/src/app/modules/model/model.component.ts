@@ -16,6 +16,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
 import { FileService } from '~front/app/services/file.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
@@ -433,7 +434,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     private structQuery: StructQuery,
     private dataSizeService: DataSizeService,
     private queryService: QueryService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    public myDialogService: MyDialogService
   ) {}
 
   ngOnInit() {
@@ -655,7 +657,15 @@ export class ModelComponent implements OnInit, OnDestroy {
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
-  saveAs() {}
+  saveAs() {
+    this.myDialogService.showChartSaveAs({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      mconfig: this.mconfig
+    });
+  }
 
   chartTitleBlur() {
     let chartTitle = this.chartTitleForm.controls['chartTitle'].value;
