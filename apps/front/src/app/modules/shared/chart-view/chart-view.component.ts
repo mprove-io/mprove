@@ -39,7 +39,8 @@ export class ChartViewComponent implements OnChanges {
   isSelectValid = false;
   errorMessage = '';
 
-  timeline = false;
+  timeline = common.CHART_DEFAULT_TIMELINE;
+  rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
   legendForHeatMap = false;
   legendPosition = 'right';
 
