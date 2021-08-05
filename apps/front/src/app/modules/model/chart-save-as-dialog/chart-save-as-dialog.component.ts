@@ -13,10 +13,10 @@ import { common } from '~front/barrels/common';
 
 enum ChartSaveAsEnum {
   NEW_VIZ = 'NEW_VIZ',
-  MODIFY_EXISTING_VIZ = 'MODIFY_EXISTING_VIZ',
+  REPLACE_EXISTING_VIZ = 'REPLACE_EXISTING_VIZ',
   NEW_REPORT_OF_NEW_DASHBOARD = 'NEW_REPORT_OF_NEW_DASHBOARD',
   NEW_REPORT_OF_EXISTING_DASHBOARD = 'NEW_REPORT_OF_EXISTING_DASHBOARD',
-  MODIFY_REPORT_OF_EXISTING_DASHBOARD = 'MODIFY_REPORT_OF_EXISTING_DASHBOARD'
+  REPLACE_REPORT_OF_EXISTING_DASHBOARD = 'REPLACE_REPORT_OF_EXISTING_DASHBOARD'
 }
 
 @Component({
@@ -43,6 +43,16 @@ export class ChartSaveAsDialogComponent implements OnInit {
   });
 
   saveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_VIZ;
+
+  vizId = common.makeId();
+
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
 
   constructor(
     public ref: DialogRef,
@@ -94,14 +104,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }) {
     let { newTitle, group, roles, users } = item;
 
-    let vizId = common.makeId();
-
     let rep = prepareReport(this.ref.data.mconfig);
 
     rep.title = newTitle.trim();
 
     let vizFileText = toYaml({
-      viz: vizId,
+      viz: this.vizId,
       group: common.isDefined(group) ? group.trim() : undefined,
       access_roles: common.isDefined(roles)
         ? roles.split(',').map(x => x.trim())
@@ -116,7 +124,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       projectId: this.ref.data.projectId,
       isRepoProd: this.ref.data.isRepoProd,
       branchId: this.ref.data.branchId,
-      vizId: vizId,
+      vizId: this.vizId,
       vizFileText: vizFileText
     };
 
