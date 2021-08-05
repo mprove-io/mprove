@@ -1,9 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { prepareReport } from '~front/app/functions/prepare-report';
+import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { toYaml } from '~front/app/functions/to-yaml';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -23,12 +24,23 @@ enum ChartSaveAsEnum {
   templateUrl: './chart-save-as-dialog.component.html'
 })
 export class ChartSaveAsDialogComponent implements OnInit {
-  // createBranchForm: FormGroup;
+  chartSaveAsEnum = ChartSaveAsEnum;
 
-  // branchesList: interfaces.BranchItem[] = this.ref.data.branchesList;
+  titleForm: FormGroup = this.fb.group({
+    title: [undefined, [Validators.required, Validators.maxLength(255)]]
+  });
 
-  // selectedBranchItem: interfaces.BranchItem = this.ref.data.selectedBranchItem;
-  // selectedBranchExtraId: string = this.ref.data.selectedBranchExtraId;
+  groupForm: FormGroup = this.fb.group({
+    group: [undefined, [Validators.maxLength(255)]]
+  });
+
+  rolesForm: FormGroup = this.fb.group({
+    roles: [undefined, [Validators.maxLength(255)]]
+  });
+
+  usersForm: FormGroup = this.fb.group({
+    users: [undefined, [Validators.maxLength(255)]]
+  });
 
   saveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_VIZ;
 
@@ -41,35 +53,62 @@ export class ChartSaveAsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let branchId: string;
-
-    // this.createBranchForm = this.fb.group({
-    //   branchId: [branchId, [Validators.maxLength(255)]],
-    //   fromBranch: [this.selectedBranchExtraId]
-    // });
+    setValueAndMark({
+      control: this.titleForm.controls['title'],
+      value: this.ref.data.mconfig.chart.title
+    });
   }
 
   save() {
-    // this.createBranchForm.markAllAsTouched();
+    if (
+      this.saveAs === ChartSaveAsEnum.NEW_VIZ &&
+      this.titleForm.controls['title'].valid &&
+      this.groupForm.controls['group'].valid &&
+      this.rolesForm.controls['roles'].valid &&
+      this.usersForm.controls['users'].valid
+    ) {
+      let newTitle = this.titleForm.controls['title'].value;
+      let group = this.groupForm.controls['group'].value;
+      let roles = this.rolesForm.controls['roles'].value;
+      let users = this.usersForm.controls['users'].value;
 
-    // if (!this.createBranchForm.valid) {
-    //   return;
-    // }
-
-    if (this.saveAs === ChartSaveAsEnum.NEW_VIZ) {
-      this.saveAsNewViz();
+      this.saveAsNewViz({
+        newTitle: newTitle,
+        group: group,
+        roles: roles,
+        users: users
+      });
+      this.ref.close();
     }
-
-    this.ref.close();
   }
 
-  saveAsNewViz() {
+  newVizOnClick() {
+    this.saveAs = ChartSaveAsEnum.NEW_VIZ;
+  }
+
+  saveAsNewViz(item: {
+    newTitle: string;
+    group: string;
+    roles: string;
+    users: string;
+  }) {
+    let { newTitle, group, roles, users } = item;
+
     let vizId = common.makeId();
 
     let rep = prepareReport(this.ref.data.mconfig);
 
+    rep.title = newTitle.trim();
+
     let vizFileText = toYaml({
       viz: vizId,
+      group: common.isDefined(group) ? group.trim() : undefined,
+      access_roles: common.isDefined(roles)
+        ? roles.split(',').map(x => x.trim())
+        : undefined,
+      access_users: common.isDefined(users)
+        ? users.split(',').map(x => x.trim())
+        : undefined,
       reports: [rep]
     });
 
@@ -94,14 +133,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
       )
       .subscribe();
   }
-
-  // branchChange(branchItem: interfaces.BranchItem) {
-  //   this.selectedBranchItem = this.branchesList.find(
-  //     x => x.extraId === branchItem.extraId
-  //   );
-
-  //   this.cd.detectChanges();
-  // }
 
   cancel() {
     this.ref.close();

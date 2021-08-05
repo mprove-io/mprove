@@ -77,7 +77,8 @@ export class ApiService {
     // model
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz
   ];
 
   constructor(

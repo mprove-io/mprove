@@ -147,7 +147,8 @@ export class MyDialogService {
   }): void {
     this.dialogService.open(ChartSaveAsDialogComponent, {
       enableClose: false,
-      data: item
+      data: item,
+      width: 640
     });
   }
 

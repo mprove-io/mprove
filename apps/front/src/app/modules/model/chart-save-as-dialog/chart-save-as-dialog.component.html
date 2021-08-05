@@ -1,57 +1,114 @@
 <div class="flex flex-col p-9 bg-white">
   <div
     data-cy="createBranchDialogTitle"
-    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    class="flex-grow mt-5 mb-9 text-2xl text-gray2 font-semibold text-left"
     >Save As</div
   >
 
-  <!-- <form
-    class="flex flex-col w-80"
-    [formGroup]="createBranchForm"
-    (ngSubmit)="save()"
-  >
-    <input
-      data-cy="createBranchDialogBranchIdInput"
-      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+  <div class="flex flex-row items-center">
+    <button
+      data-cy="chartSaveAsDialogNewVizCheckbox"
+      class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
       [ngClass]="{
-        'border-red-600':
-          createBranchForm.controls['branchId'].invalid &&
-          createBranchForm.controls['branchId'].touched
+        'bg-blue3 ': saveAs === chartSaveAsEnum.NEW_VIZ
       }"
-      formControlName="branchId"
-      placeholder="Branch Name"
-    />
-    <m-validation
-      [control]="createBranchForm.controls['branchId']"
-    ></m-validation>
-
-    <div class="text-base">Base on branch:</div>
-    <ng-select
-      #branchSelect
-      data-cy="branchSelect"
-      class="mt-2 text-base focus:outline-none w-80"
-      [items]="branchesList"
-      [clearable]="false"
-      [searchable]="false"
-      (change)="branchChange($event)"
-      appendTo="body"
-      formControlName="fromBranch"
-      placeholder="Branches"
-      bindLabel="extraName"
-      bindValue="extraId"
+      (click)="newVizOnClick()"
     >
-      <ng-template
-        ng-header-tmp
-        *ngIf="branchesList?.length > 0 && selectedBranchItem"
+      <m-check-icon *ngIf="saveAs === chartSaveAsEnum.NEW_VIZ"></m-check-icon>
+    </button>
+
+    <div class="ml-5 text-base">New Visualization</div>
+  </div>
+
+  <div class="mt-9 flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Report Title</div
       >
-        <div
-          class="flex text-base text-gray-400 h-10 justify-center items-center select-none"
-        >
-          REPO - BRANCH
-        </div>
-      </ng-template>
-    </ng-select>
-  </form> -->
+    </div>
+
+    <div [formGroup]="titleForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartSaveAsDialogTitleInput"
+        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            titleForm.controls['title'].invalid &&
+            titleForm.controls['title'].touched
+        }"
+        formControlName="title"
+      />
+      <m-validation [control]="titleForm.controls['title']"></m-validation>
+    </div>
+  </div>
+
+  <div class="text-base font-semibold mt-5 mb-5">Visualization Info</div>
+
+  <div class="flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Group</div
+      >
+    </div>
+
+    <div [formGroup]="groupForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartSaveAsDialogGroupInput"
+        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            groupForm.controls['group'].invalid &&
+            groupForm.controls['group'].touched
+        }"
+        formControlName="group"
+      />
+      <m-validation [control]="groupForm.controls['group']"></m-validation>
+    </div>
+  </div>
+
+  <div class="flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Access Roles</div
+      >
+    </div>
+
+    <div [formGroup]="rolesForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartSaveAsDialogRolesInput"
+        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            rolesForm.controls['roles'].invalid &&
+            rolesForm.controls['roles'].touched
+        }"
+        formControlName="roles"
+      />
+      <m-validation [control]="rolesForm.controls['roles']"></m-validation>
+    </div>
+  </div>
+
+  <div class="flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+        >Access Users</div
+      >
+    </div>
+
+    <div [formGroup]="usersForm" class="flex flex-col ml-5 items-start">
+      <input
+        data-cy="chartSaveAsDialogUsersInput"
+        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            usersForm.controls['users'].invalid &&
+            usersForm.controls['users'].touched
+        }"
+        formControlName="users"
+      />
+      <m-validation [control]="usersForm.controls['users']"></m-validation>
+    </div>
+  </div>
 
   <div class="mt-9">
     <button

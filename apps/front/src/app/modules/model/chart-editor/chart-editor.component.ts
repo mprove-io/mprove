@@ -1,10 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
@@ -462,142 +458,135 @@ export class ChartEditorComponent implements OnChanges {
       emptyColumn
     ];
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.xFieldForm.controls['xField'],
       value: this.chart.xField
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.yFieldForm.controls['yField'],
       value: this.chart.yField
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.multiFieldForm.controls['multiField'],
       value: this.chart.multiField
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.valueFieldForm.controls['valueField'],
       value: this.chart.valueField
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.previousValueFieldForm.controls['previousValueField'],
       value: this.chart.previousValueField
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.colorSchemeForm.controls['colorScheme'],
       value: this.chart.colorScheme
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.schemeTypeForm.controls['schemeType'],
       value: this.chart.schemeType
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.interpolationForm.controls['interpolation'],
       value: this.chart.interpolation
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.pageSizeForm.controls['pageSize'],
       value: this.chart.pageSize
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.unitsForm.controls['units'],
       value: this.chart.units
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.angleSpanForm.controls['angleSpan'],
       value: this.chart.angleSpan
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.startAngleForm.controls['startAngle'],
       value: this.chart.startAngle
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.arcWidthForm.controls['arcWidth'],
       value: this.chart.arcWidth
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.minForm.controls['min'],
       value: this.chart.min
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.maxForm.controls['max'],
       value: this.chart.max
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.xScaleMaxForm.controls['xScaleMax'],
       value: this.chart.xScaleMax
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.yScaleMinForm.controls['yScaleMin'],
       value: this.chart.yScaleMin
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.yScaleMaxForm.controls['yScaleMax'],
       value: this.chart.yScaleMax
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.barPaddingForm.controls['barPadding'],
       value: this.chart.barPadding
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.bigSegmentsForm.controls['bigSegments'],
       value: this.chart.bigSegments
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.smallSegmentsForm.controls['smallSegments'],
       value: this.chart.smallSegments
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.groupPaddingForm.controls['groupPadding'],
       value: this.chart.groupPadding
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.innerPaddingForm.controls['innerPadding'],
       value: this.chart.innerPadding
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.legendTitleForm.controls['legendTitle'],
       value: this.chart.legendTitle
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.xAxisLabelForm.controls['xAxisLabel'],
       value: this.chart.xAxisLabel
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.yAxisLabelForm.controls['yAxisLabel'],
       value: this.chart.yAxisLabel
     });
-  }
-
-  setValueAndMark(item: { control: AbstractControl; value: any }) {
-    let { control, value } = item;
-
-    control.setValue(value);
-    control.markAsTouched();
   }
 
   getIsValid() {
@@ -1152,7 +1141,7 @@ export class ChartEditorComponent implements OnChanges {
       let newMultiFieldValue = this.sortedDimensions.filter(
         x => x.id !== xField
       )[0].id;
-      this.setValueAndMark({
+      setValueAndMark({
         control: this.multiFieldForm.controls['multiField'],
         value: newMultiFieldValue
       });
@@ -1177,7 +1166,7 @@ export class ChartEditorComponent implements OnChanges {
       x => x.id !== multiField
     )[0].id;
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.xFieldForm.controls['xField'],
       value: newXFieldValue
     });
@@ -1216,7 +1205,7 @@ export class ChartEditorComponent implements OnChanges {
         ? common.ChartSchemeTypeEnum.Linear
         : common.ChartSchemeTypeEnum.Ordinal;
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.schemeTypeForm.controls['schemeType'],
       value: newSchemeTypeValue
     });
@@ -1344,12 +1333,12 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   toggleAutoScale($event: any) {
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.yScaleMinForm.controls['yScaleMin'],
       value: null
     });
 
-    this.setValueAndMark({
+    setValueAndMark({
       control: this.yScaleMaxForm.controls['yScaleMax'],
       value: null
     });
