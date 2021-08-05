@@ -277,12 +277,12 @@
                   type="button"
                   *ngIf="mconfig?.select.length > 0"
                   data-cy="modelSaveAsButton"
-                  class="w-28 h-[36px] ml-5 text-white text-base rounded font-medium focus:outline-none"
+                  class="w-28 py-2 ml-5 text-base rounded font-medium focus:outline-none"
                   [ngClass]="{
-                    'bg-blue3':
+                    'bg-white text-blue3 border-2':
                       mconfig.chart.isValid === true &&
                       chartTitleForm.valid === true,
-                    'bg-gray-400 cursor-default':
+                    'bg-gray-400 cursor-default text-white':
                       mconfig.chart.isValid === false ||
                       chartTitleForm.valid === false
                   }"
