@@ -47,6 +47,7 @@ import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoResolver } from './resolvers/repo.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
+import { VizsResolver } from './resolvers/vizs.resolver';
 
 const routes: Routes = [
   {
@@ -189,8 +190,8 @@ const routes: Routes = [
                       },
                       {
                         component: VisualizationsComponent,
-                        path: common.PATH_VISUALIZATIONS
-                        // resolve: [],
+                        path: common.PATH_VISUALIZATIONS,
+                        resolve: [VizsResolver]
                         // children: []
                       },
                       {
