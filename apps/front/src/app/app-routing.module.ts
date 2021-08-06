@@ -175,6 +175,7 @@ const routes: Routes = [
                       {
                         component: BlockmlComponent,
                         path: common.PATH_BLOCKML,
+                        resolve: [RepoStructResolver],
                         children: [
                           {
                             component: BlockmlEditorComponent,
