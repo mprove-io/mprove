@@ -31,6 +31,7 @@ export function wrapVizs(item: {
     apiVizs.push({
       structId: structId,
       vizId: x.name,
+      title: x.reports[0].title,
       filePath: x.filePath,
       accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],

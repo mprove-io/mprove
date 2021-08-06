@@ -23,6 +23,7 @@ import { ProfileModule } from './modules/profile/profile.module';
 import { ProjectModule } from './modules/project/project.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { SpecialModule } from './modules/special/special.module';
+import { VisualizationsModule } from './modules/visualizations/visualizations.module';
 import { ErrorHandlerService } from './services/error-handler.service';
 
 registerLocaleData(en);
@@ -50,7 +51,8 @@ registerLocaleData(en);
     ReactiveFormsModule,
     FormsModule,
     NgSelectModule,
-    ImageCropperModule
+    ImageCropperModule,
+    VisualizationsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

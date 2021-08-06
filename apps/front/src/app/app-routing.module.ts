@@ -29,6 +29,7 @@ import { NotFoundComponent } from './modules/special/not-found/not-found.compone
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
+import { VisualizationsComponent } from './modules/visualizations/visualizations.component';
 import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { FileResolver } from './resolvers/file.resolver';
@@ -184,6 +185,12 @@ const routes: Routes = [
                             resolve: [FileResolver]
                           }
                         ]
+                      },
+                      {
+                        component: VisualizationsComponent,
+                        path: common.PATH_VISUALIZATIONS
+                        // resolve: [],
+                        // children: []
                       },
                       {
                         component: ModelComponent,

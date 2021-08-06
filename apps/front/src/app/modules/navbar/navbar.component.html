@@ -18,6 +18,15 @@
         [disabled]="!nav || !nav.projectId"
         >BlockML</button
       >
+      <button
+        class="block px-5 text-gray1 w-full text-left text-base focus:outline-none"
+        [ngClass]="{
+          'text-gray-400': !nav || !nav.projectId
+        }"
+        (click)="navigateVisualizations()"
+        [disabled]="!nav || !nav.projectId"
+        >Visualizations</button
+      >
       <m-models-menu></m-models-menu>
     </div>
 

@@ -10,6 +10,9 @@ export class VizEntity {
   @PrimaryColumn({ type: constants.VISUALIZATION_ID_VARCHAR })
   viz_id: string; // name
 
+  @Column({ type: constants.VIZ_TITLE_VARCHAR })
+  title: string;
+
   @Column({ type: constants.TEXT, nullable: true })
   file_path: string;
 
