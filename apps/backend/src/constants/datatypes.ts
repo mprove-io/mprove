@@ -21,8 +21,6 @@ export const USER_FIRST_NAME_VARCHAR = 'varchar';
 export const USER_LAST_NAME_VARCHAR = 'varchar';
 export const USER_STATUS_VARCHAR = 'varchar';
 
-export const VIZ_TITLE_VARCHAR = 'varchar';
-
 export const AVATAR_SMALL_MEDIUMTEXT = 'mediumtext';
 export const AVATAR_BIG_MEDIUMTEXT = 'mediumtext';
 

@@ -19,6 +19,12 @@ export class Viz {
   title: string;
 
   @IsString()
+  modelId: string;
+
+  @IsString()
+  modelLabel: string;
+
+  @IsString()
   filePath: string;
 
   @IsString({ each: true })

@@ -6,6 +6,8 @@ export function wrapToEntityViz(x: common.Viz): entities.VizEntity {
     struct_id: x.structId,
     viz_id: x.vizId,
     title: x.title,
+    model_id: x.modelId,
+    model_label: x.modelLabel,
     file_path: x.filePath,
     access_users: x.accessUsers,
     access_roles: x.accessRoles,

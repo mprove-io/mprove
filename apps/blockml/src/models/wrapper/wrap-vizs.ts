@@ -28,10 +28,14 @@ export function wrapVizs(item: {
     vizMconfigs = [...vizMconfigs, ...mconfigs];
     vizQueries = [...vizQueries, ...queries];
 
+    let model = models.find(m => m.name === vizMconfigs[0].modelId);
+
     apiVizs.push({
       structId: structId,
       vizId: x.name,
       title: x.reports[0].title,
+      modelId: model.name,
+      modelLabel: model.label,
       filePath: x.filePath,
       accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],
