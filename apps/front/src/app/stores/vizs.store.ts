@@ -4,11 +4,13 @@ import { common } from '~front/barrels/common';
 
 export class VizsState {
   vizs: common.Viz[];
+  modelsList: common.ModelsItem[];
 }
 
 function createInitialState(): VizsState {
   return {
-    vizs: []
+    vizs: [],
+    modelsList: []
   };
 }
 

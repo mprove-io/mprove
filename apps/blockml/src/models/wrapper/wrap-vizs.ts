@@ -28,7 +28,7 @@ export function wrapVizs(item: {
     vizMconfigs = [...vizMconfigs, ...mconfigs];
     vizQueries = [...vizQueries, ...queries];
 
-    let model = models.find(m => m.name === vizMconfigs[0].modelId);
+    let model = models.find(m => m.name === x.reports[0].model);
 
     apiVizs.push({
       structId: structId,

@@ -12,10 +12,10 @@
       <div class="flex flex-row h-11 w-full">
         <div
           data-cy="blockmlTreeItem"
-          class="group flex flex-row cursor-pointer hover:bg-blue2 px-5 py-1 w-full select-none"
+          class="group flex flex-row cursor-pointer px-5 py-1 w-full select-none"
           [ngClass]="{
-            'font-semibold bg-gray-200':
-              !!fileNodeId && node.data.id === fileNodeId
+            'bg-yellow-200': !!fileNodeId && node.data.id === fileNodeId,
+            'hover:bg-blue2': !fileNodeId || node.data.id !== fileNodeId
           }"
           (click)="nodeOnClick(node)"
         >

@@ -12,15 +12,37 @@
       <div class="flex flex-row flex-grow mt-6">
         <div class="flex w-1/5">
           <div class="bg-white rounded shadow-lg w-full">
-            <div class="flex flex-col">
+            <!-- <div class="flex flex-col">
               <div *ngFor="let group of groups">{{ group }}</div>
+            </div> -->
+            <div class="flex flex-col text-base ml-5 mr-5 mt-5">
+              <div
+                class="hover:cursor-pointer py-2 px-4 rounded"
+                [ngClass]="{
+                  'bg-yellow-200': !modelId,
+                  'hover:bg-blue2': !!modelId
+                }"
+                (click)="allModelsOnClick()"
+                >All Models</div
+              >
+
+              <div
+                *ngFor="let modelsItem of modelsList"
+                class="hover:cursor-pointer py-2 px-4 rounded"
+                [ngClass]="{
+                  'bg-yellow-200': modelId === modelsItem.modelId,
+                  'hover:bg-blue2': modelId !== modelsItem.modelId
+                }"
+                (click)="modelOnClick(modelsItem.modelId)"
+                >{{ modelsItem.label | capitalize }}</div
+              >
             </div>
           </div>
         </div>
 
         <div class="flex flex-grow ml-6">
           <div class="bg-white rounded shadow-lg w-full">
-            <div *ngFor="let v of vizs">
+            <div *ngFor="let v of filteredVizs">
               {{ v.title }}
             </div>
           </div>
