@@ -61,4 +61,8 @@ export class VisualizationsComponent {
       ? this.vizs.filter(v => v.modelId === this.modelId)
       : this.vizs;
   }
+
+  trackByFn(index: number, item: common.Viz) {
+    return item.vizId;
+  }
 }

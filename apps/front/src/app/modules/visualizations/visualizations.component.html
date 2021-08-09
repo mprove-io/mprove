@@ -52,7 +52,7 @@
               class="w-full h-full"
             >
               <div
-                *ngFor="let item of scroll.viewPortItems"
+                *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
                 class="inline-block w-[49.5%] h-2/5"
               >
                 <div class="ml-5 flex flex-col h-full">
