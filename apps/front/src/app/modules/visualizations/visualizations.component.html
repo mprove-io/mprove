@@ -15,7 +15,7 @@
             <!-- <div class="flex flex-col">
               <div *ngFor="let group of groups">{{ group }}</div>
             </div> -->
-            <div class="flex flex-col text-base ml-5 mr-5 mt-5">
+            <div class="flex flex-col text-base text-gray1 ml-5 mr-5 mt-5">
               <div
                 class="hover:cursor-pointer py-2 px-4 rounded"
                 [ngClass]="{
@@ -42,9 +42,32 @@
 
         <div class="flex flex-grow ml-6">
           <div class="bg-white rounded shadow-lg w-full">
-            <div *ngFor="let v of filteredVizs">
+            <!-- <div *ngFor="let v of filteredVizs">
               {{ v.title }}
-            </div>
+            </div> -->
+
+            <virtual-scroller
+              #scroll
+              [items]="filteredVizs"
+              class="w-full h-full"
+            >
+              <div
+                *ngFor="let item of scroll.viewPortItems"
+                class="inline-block w-[33%] h-2/5"
+              >
+                <div class="ml-5 flex flex-col h-full">
+                  <div class="my-5 text-base text-gray1">
+                    {{ item.title }}
+                  </div>
+                  <div class="flex flex-grow border border-gray3 rounded">
+                    <m-chart-wrapper
+                      [report]="item.reports[0]"
+                    ></m-chart-wrapper>
+                  </div>
+                  <div class="h-9"></div>
+                </div>
+              </div>
+            </virtual-scroller>
           </div>
         </div>
       </div>

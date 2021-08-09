@@ -2230,6 +2230,11 @@
     "@angular/cdk" "~11.2.5"
     "@schematics/angular" "^11.0.0"
 
+"@tweenjs/tween.js@17.4.0":
+  version "17.4.0"
+  resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-17.4.0.tgz#2e9ab3f2111906b30dfe1ef3259a9781dd211d35"
+  integrity sha512-J3fzl1F6wvh8KXVVcIuHN12xi1ZDcPA/0Vix+ZcJYwZWVHUwfIqfvzYXXEw7ybeev6477KCTt9fKydU+ajUqcg==
+
 "@types/babel-types@*", "@types/babel-types@^7.0.0":
   version "7.0.9"
   resolved "https://registry.yarnpkg.com/@types/babel-types/-/babel-types-7.0.9.tgz#01d7b86949f455402a94c788883fe4ba574cad41"
@@ -2640,6 +2645,11 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/tiny-async-pool/-/tiny-async-pool-1.0.0.tgz#9a88f701b736ab440c968b723456604cdcedbaed"
   integrity sha512-d8RK1jg/piCgv5/jD8ta8uJOE10tU8MWExzL1Kf1kOjMaTuL5cW0eZ9ax001SSYa4Ecg6xzZBh/jM4GB7+5OAg==
+
+"@types/tween.js@17.2.0":
+  version "17.2.0"
+  resolved "https://registry.yarnpkg.com/@types/tween.js/-/tween.js-17.2.0.tgz#25f98311daecb165ab91ee2cd7f17a9b1e6cc30c"
+  integrity sha512-mOsqurEtFEzwgkVc/jDVE2XrjZBYTbrmDUyCr9GXmnfc6q5otokxFtKvSY/B21zgz9LVRIvRTawKczjKi57wrA==
 
 "@types/validator@13.0.0":
   version "13.0.0"
@@ -11128,6 +11138,14 @@ ngx-ui-switch@^12.0.1:
   version "12.0.1"
   resolved "https://registry.yarnpkg.com/ngx-ui-switch/-/ngx-ui-switch-12.0.1.tgz#6830bc848f49aa2b4839f49057f330992eefa076"
   integrity sha512-CJ9RnovZL9Vd8cK43N2yNV2H4mHxjF9cO+BGhkiJN2wLOUXNV06pFJo4Kies+QjQWhyu3HokzqJCa3SneNNZug==
+
+ngx-virtual-scroller@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/ngx-virtual-scroller/-/ngx-virtual-scroller-4.0.3.tgz#2d2ce26dbdbfd89507cca7f58c5e4e9cc1285f48"
+  integrity sha512-JBqUJ/f7GRCZDnI/JeiFoTmYR8rC/Hyv8L5I7ImePM6f/hwiFNRsrK8Abdd0E3TwklwgmZAK875te9XQJrgsyQ==
+  dependencies:
+    "@tweenjs/tween.js" "17.4.0"
+    "@types/tween.js" "17.2.0"
 
 nice-try@^1.0.4:
   version "1.0.5"

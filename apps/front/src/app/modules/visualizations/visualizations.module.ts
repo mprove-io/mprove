@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@circlon/angular-tree-component';
+import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { SharedModule } from '../shared/shared.module';
 import { VisualizationsComponent } from './visualizations.component';
 
@@ -14,7 +15,8 @@ import { VisualizationsComponent } from './visualizations.component';
     ReactiveFormsModule,
     SharedModule,
     RouterModule,
-    TreeModule
+    TreeModule,
+    VirtualScrollerModule
   ]
 })
 export class VisualizationsModule {}
