@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
+import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { selectChartFieldsOnChartTypeChange } from '~front/app/functions/select-chart-fields-on-chart-type-change';
 import { ModelQuery } from '~front/app/queries/model.query';
@@ -224,48 +225,19 @@ export class ModelComponent implements OnInit, OnDestroy {
           return;
         }
 
-        let { select, sortings, chart } = mconfig;
+        let { select, chart } = mconfig;
 
         if (select && fields) {
-          let selectDimensions: ColumnField[] = [];
-          let selectMeasures: ColumnField[] = [];
-          let selectCalculations: ColumnField[] = [];
-
-          select.forEach((fieldId: string) => {
-            let field = fields.find(f => f.id === fieldId);
-            let f: ColumnField = Object.assign({}, field, <ColumnField>{
-              sorting: sortings.find(x => x.fieldId === fieldId),
-              sortingNumber: sortings.findIndex(s => s.fieldId === fieldId),
-              isHideColumn: chart?.hideColumns.indexOf(field.id) > -1
-            });
-
-            if (field.fieldClass === common.FieldClassEnum.Dimension) {
-              selectDimensions.push(f);
-            } else if (field.fieldClass === common.FieldClassEnum.Measure) {
-              selectMeasures.push(f);
-            } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
-              selectCalculations.push(f);
-            }
+          this.sortedColumns = getColumnFields({
+            mconfig: mconfig,
+            fields: fields
           });
-
-          let selectFields: ColumnField[] = [
-            ...selectDimensions,
-            ...selectMeasures,
-            ...selectCalculations
-          ];
-
-          this.sortedColumns = selectFields;
-
-          // console.log('query');
-          // console.log(query);
-          // console.log('mconfig');
-          // console.log(mconfig);
 
           this.qData =
             mconfig.queryId === query.queryId
               ? this.queryService.makeQData({
                   data: query.data,
-                  columns: selectFields
+                  columns: this.sortedColumns
                 })
               : [];
 

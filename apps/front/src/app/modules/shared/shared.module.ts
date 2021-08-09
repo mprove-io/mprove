@@ -10,6 +10,7 @@ import { ColorSketchModule } from 'ngx-color/sketch';
 import { AvatarComponent } from './avatar/avatar.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
+import { ChartVizComponent } from './chart-viz/chart-viz.component';
 import { ChartWrapperComponent } from './chart-wrapper/chart-wrapper.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
@@ -94,6 +95,7 @@ let sharedComponents = [
   ChartTableComponent,
   ChartViewComponent,
   ChartWrapperComponent,
+  ChartVizComponent,
   FieldLabelComponent,
   ColorMenuComponent,
   MinusSmIconComponent
