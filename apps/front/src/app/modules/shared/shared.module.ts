@@ -11,7 +11,6 @@ import { AvatarComponent } from './avatar/avatar.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
 import { ChartVizComponent } from './chart-viz/chart-viz.component';
-import { ChartWrapperComponent } from './chart-wrapper/chart-wrapper.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
@@ -94,7 +93,6 @@ let sharedComponents = [
   FractionTsComponent,
   ChartTableComponent,
   ChartViewComponent,
-  ChartWrapperComponent,
   ChartVizComponent,
   FieldLabelComponent,
   ColorMenuComponent,

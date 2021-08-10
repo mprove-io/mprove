@@ -1,4 +1,16 @@
-<div class="flex flex-col w-full">
-  <m-chart-wrapper class="flex flex-grow" [report]="report"></m-chart-wrapper>
+<div class="flex flex-col h-full w-full">
+  <div class="my-5 text-base text-gray1">
+    {{ title }}
+  </div>
+
+  <m-chart-view
+    *ngIf="mconfig?.chart"
+    class="w-full p-5 flex flex-grow border border-gray3 rounded"
+    [sortedColumns]="sortedColumns"
+    [qData]="qData"
+    [chart]="mconfig?.chart"
+    [queryStatus]="query?.status"
+  ></m-chart-view>
+
   <div class="h-9"></div>
 </div>
