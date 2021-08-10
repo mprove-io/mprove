@@ -50,14 +50,12 @@
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
-                class="inline-block w-[49.5%] h-2/5"
+                class="inline-block w-1/2 h-2/5"
               >
-                <div class="ml-5 h-full">
-                  <m-chart-viz
-                    [title]="item.title"
-                    [report]="item.reports[0]"
-                  ></m-chart-viz>
-                </div>
+                <m-chart-viz
+                  [title]="item.title"
+                  [report]="item.reports[0]"
+                ></m-chart-viz>
               </div>
             </virtual-scroller>
           </div>

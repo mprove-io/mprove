@@ -72,8 +72,12 @@ export class NavigateService {
   //   }
   // }
 
-  navigateMconfigQueryData(item: { mconfigId: string; queryId: string }) {
-    let { mconfigId, queryId } = item;
+  navigateMconfigQueryData(item: {
+    mconfigId: string;
+    queryId: string;
+    modelId?: string;
+  }) {
+    let { mconfigId, queryId, modelId } = item;
 
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
@@ -88,7 +92,7 @@ export class NavigateService {
       common.PATH_BRANCH,
       this.nav.branchId,
       common.PATH_MODEL,
-      this.model.modelId,
+      common.isDefined(modelId) ? modelId : this.model.modelId,
       common.PATH_MCONFIG,
       mconfigId,
       common.PATH_QUERY,

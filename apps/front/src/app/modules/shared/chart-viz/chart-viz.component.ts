@@ -4,6 +4,7 @@ import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -29,6 +30,7 @@ export class ChartVizComponent implements OnInit {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private queryService: QueryService,
+    private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -114,5 +116,13 @@ export class ChartVizComponent implements OnInit {
     this.mconfig = mconfig;
 
     this.cd.detectChanges();
+  }
+
+  navMconfig() {
+    this.navigateService.navigateMconfigQueryData({
+      modelId: this.report.modelId,
+      mconfigId: this.report.mconfigId,
+      queryId: this.report.queryId
+    });
   }
 }
