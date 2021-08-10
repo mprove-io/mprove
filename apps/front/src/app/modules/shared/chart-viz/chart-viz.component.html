@@ -1,10 +1,10 @@
-<div class="h-full w-full hover:bg-blue2">
+<div class="group h-full w-full hover:bg-blue2">
   <div class="mx-5 h-full">
     <div
       class="flex flex-col h-full w-full cursor-pointer"
       (click)="navMconfig()"
     >
-      <div class="my-5 text-base text-gray1">
+      <div class="flex flex-row justify-center my-5 text-xl text-gray1">
         {{ title }}
       </div>
 
@@ -17,7 +17,11 @@
         [queryStatus]="query?.status"
       ></m-chart-view>
 
-      <div class="h-9"></div>
+      <div
+        class="flex flex-row justify-center items-center h-12 invisible group-hover:visible text-gray-400"
+      >
+        <m-query-status *ngIf="!!query" [query]="query"></m-query-status>
+      </div>
     </div>
   </div>
 </div>

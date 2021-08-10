@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
@@ -45,8 +44,6 @@ export class ModelComponent implements OnInit, OnDestroy {
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
-
-  spinnerName = 'running';
 
   lastUrl: string;
 
@@ -103,12 +100,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       this.query = x;
       this.dryQueryEstimate = undefined;
 
-      if (this.query.status === common.QueryStatusEnum.Running) {
-        this.spinner.show(this.spinnerName);
-      } else {
-        this.spinner.hide(this.spinnerName);
-      }
-
       this.cd.detectChanges();
     })
   );
@@ -124,50 +115,11 @@ export class ModelComponent implements OnInit, OnDestroy {
   sqlIsShow = false;
   resultsIsShow = true;
 
-  runSecondsAgo$ = interval(1000).pipe(
-    startWith(0),
-    map(x => {
-      let s = this.timeService.secondsAgoFromNow(
-        this.query.lastRunTs + this.nav.serverTimeDiff
-      );
-      // console.log(this.query.lastRunTs);
-      // console.log(this.nav.serverTimeDiff);
-      return s > 0 ? s : 0;
-    })
-  );
-
   dryTimeAgo$ = interval(1000).pipe(
     startWith(0),
     map(x =>
       this.timeService.timeAgoFromNow(
         this.dryQueryEstimate.lastRunDryTs + this.nav.serverTimeDiff
-      )
-    )
-  );
-
-  errorTimeAgo$ = interval(1000).pipe(
-    startWith(0),
-    map(x =>
-      this.timeService.timeAgoFromNow(
-        this.query.lastErrorTs + this.nav.serverTimeDiff
-      )
-    )
-  );
-
-  canceledTimeAgo$ = interval(1000).pipe(
-    startWith(0),
-    map(x =>
-      this.timeService.timeAgoFromNow(
-        this.query.lastCancelTs + this.nav.serverTimeDiff
-      )
-    )
-  );
-
-  completedTimeAgo$ = interval(1000).pipe(
-    startWith(0),
-    map(x =>
-      this.timeService.timeAgoFromNow(
-        this.query.lastCompleteTs + this.nav.serverTimeDiff
       )
     )
   );
@@ -406,7 +358,6 @@ export class ModelComponent implements OnInit, OnDestroy {
     private structQuery: StructQuery,
     private dataSizeService: DataSizeService,
     private queryService: QueryService,
-    private spinner: NgxSpinnerService,
     public myDialogService: MyDialogService
   ) {}
 

@@ -1,0 +1,54 @@
+<div class="flex flex-row items-center text-base">
+  <div
+    *ngIf="query?.status === queryStatusEnum.Running"
+    class="flex flex-row items-center"
+  >
+    <div>Running - seconds</div>
+
+    <div class="w-8 ml-1">{{ runSecondsAgo }}</div>
+
+    <div class="w-9 h-9 relative">
+      <ngx-spinner
+        [name]="spinnerName"
+        color="rgba(54, 94, 224, 100)"
+        bdColor="rgba(242, 245, 250, 100)"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+  </div>
+
+  <div
+    *ngIf="query?.status === queryStatusEnum.Error"
+    class="max-w-2xl px-3 py-2 bg-red-100 text-red-700 truncate select-none"
+    nz-tooltip
+    [nzTooltipTitle]="query?.lastErrorMessage | capitalize"
+    nzTooltipPlacement="bottom"
+    >{{ query?.lastErrorMessage | capitalize }}</div
+  >
+
+  <div *ngIf="query?.status === queryStatusEnum.Error" class="ml-5"
+    >Error - {{ errorTimeAgo }}</div
+  >
+
+  <div *ngIf="query?.status === queryStatusEnum.Canceled"
+    >Canceled - {{ canceledTimeAgo }}</div
+  >
+
+  <div
+    class="flex flex-row items-center"
+    *ngIf="query?.status === queryStatusEnum.Completed"
+  >
+    <div class="ml-5"
+      >Completed - {{ completedTimeAgo }} - {{ query.lastCompleteDuration }}s -
+      {{ query.data.length }} rows</div
+    >
+  </div>
+</div>
+
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="interval$ | async"></div>

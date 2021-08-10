@@ -28,78 +28,17 @@
 
           <div class="flex flex-row items-center text-base text-gray1">
             <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
-
             <!-- <div *ngIf="isRunning === true">Running ... </div> -->
-
             <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
 
             <div *ngIf="!!dryQueryEstimate"
               >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
             </div>
 
-            <div
-              *ngIf="
-                !dryQueryEstimate && query?.status === queryStatusEnum.Running
-              "
-              class="flex flex-row items-center"
-            >
-              <div>Running - seconds</div>
-
-              <div class="w-8 ml-1">{{ runSecondsAgo$ | async }}</div>
-
-              <div class="w-9 h-9 relative">
-                <ngx-spinner
-                  [name]="spinnerName"
-                  color="rgba(54, 94, 224, 100)"
-                  bdColor="rgba(242, 245, 250, 100)"
-                  size="default"
-                  type="ball-clip-rotate"
-                  [fullScreen]="false"
-                  [disableAnimation]="true"
-                  [zIndex]="99998"
-                >
-                </ngx-spinner>
-              </div>
-            </div>
-
-            <div
-              *ngIf="
-                !dryQueryEstimate && query?.status === queryStatusEnum.Error
-              "
-              class="max-w-2xl px-3 py-2 bg-red-100 text-red-700 truncate select-none"
-              nz-tooltip
-              [nzTooltipTitle]="query?.lastErrorMessage | capitalize"
-              nzTooltipPlacement="bottom"
-              >{{ query?.lastErrorMessage | capitalize }}</div
-            >
-
-            <div
-              *ngIf="
-                !dryQueryEstimate && query?.status === queryStatusEnum.Error
-              "
-              class="ml-5"
-              >Error - {{ errorTimeAgo$ | async }}</div
-            >
-
-            <div
-              *ngIf="
-                !dryQueryEstimate && query?.status === queryStatusEnum.Canceled
-              "
-              >Canceled - {{ canceledTimeAgo$ | async }}</div
-            >
-
-            <div
-              class="flex flex-row items-center"
-              *ngIf="
-                !dryQueryEstimate && query?.status === queryStatusEnum.Completed
-              "
-            >
-              <div class="ml-5"
-                >Completed - {{ completedTimeAgo$ | async }} -
-                {{ query.lastCompleteDuration }}s -
-                {{ query.data.length }} rows</div
-              >
-            </div>
+            <m-query-status
+              *ngIf="!dryQueryEstimate"
+              [query]="query"
+            ></m-query-status>
 
             <button
               type="button"

@@ -6,7 +6,9 @@ import { MonacoEditorModule } from '@sentinel-one/ngx-monaco-editor';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ColorSketchModule } from 'ngx-color/sketch';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
@@ -47,6 +49,7 @@ import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
 import { ResultPipe } from './pipes/result.pipe';
+import { QueryStatusComponent } from './query-status/query-status.component';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
 import { DocumentRingComponent } from './rings/document-ring/document-ring.component';
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
@@ -96,7 +99,8 @@ let sharedComponents = [
   ChartVizComponent,
   FieldLabelComponent,
   ColorMenuComponent,
-  MinusSmIconComponent
+  MinusSmIconComponent,
+  QueryStatusComponent
 ];
 
 @NgModule({
@@ -110,7 +114,9 @@ let sharedComponents = [
     NzDatePickerModule,
     NzTimePickerModule,
     NgxChartsModule,
-    ColorSketchModule
+    ColorSketchModule,
+    NzToolTipModule,
+    NgxSpinnerModule
   ],
   exports: [...sharedComponents, ...pipesArray, MonacoEditorModule]
 })
