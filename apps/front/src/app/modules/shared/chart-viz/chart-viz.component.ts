@@ -23,6 +23,8 @@ import { common } from '~front/barrels/common';
   templateUrl: './chart-viz.component.html'
 })
 export class ChartVizComponent implements OnInit, OnDestroy {
+  queryStatusEnum = common.QueryStatusEnum;
+
   @Input()
   report: common.Report;
 

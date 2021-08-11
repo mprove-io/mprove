@@ -57,7 +57,13 @@
       ></m-chart-view>
 
       <div
-        class="flex flex-row justify-center items-center h-12 invisible group-hover:visible text-gray-400"
+        class="flex flex-row justify-center items-center h-12 text-gray-400"
+        [ngClass]="{
+          'invisible group-hover:visible':
+            !!query &&
+            query.status !== queryStatusEnum.Error &&
+            query.status !== queryStatusEnum.Running
+        }"
       >
         <m-query-status *ngIf="!!query" [query]="query"></m-query-status>
       </div>
