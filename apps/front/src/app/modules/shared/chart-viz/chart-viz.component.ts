@@ -1,12 +1,20 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { map, take, tap } from 'rxjs/operators';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { NavState } from '~front/app/stores/nav.store';
+import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -14,7 +22,7 @@ import { common } from '~front/barrels/common';
   selector: 'm-chart-viz',
   templateUrl: './chart-viz.component.html'
 })
-export class ChartVizComponent implements OnInit {
+export class ChartVizComponent implements OnInit, OnDestroy {
   @Input()
   report: common.Report;
 
@@ -26,12 +34,23 @@ export class ChartVizComponent implements OnInit {
   query: common.Query;
   mconfig: common.Mconfig;
 
+  menuId = common.makeId();
+
+  openedMenuId: string;
+  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
+    tap(x => (this.openedMenuId = x))
+  );
+
+  isVizOptionsMenuOpen = false;
+
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
     private queryService: QueryService,
     private navigateService: NavigateService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    public uiQuery: UiQuery,
+    public uiStore: UiStore
   ) {}
 
   async ngOnInit() {
@@ -124,5 +143,39 @@ export class ChartVizComponent implements OnInit {
       mconfigId: this.report.mconfigId,
       queryId: this.report.queryId
     });
+  }
+
+  openMenu() {
+    this.isVizOptionsMenuOpen = true;
+    this.uiStore.update({ openedMenuId: this.menuId });
+  }
+
+  closeMenu(event?: MouseEvent) {
+    if (common.isDefined(event)) {
+      event.stopPropagation();
+    }
+    this.isVizOptionsMenuOpen = false;
+    this.uiStore.update({ openedMenuId: undefined });
+  }
+
+  toggleMenu(event?: MouseEvent) {
+    event.stopPropagation();
+    if (this.isVizOptionsMenuOpen === true) {
+      this.closeMenu();
+    } else {
+      this.openMenu();
+    }
+  }
+
+  run(event?: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    // this.navigateService.navigateToModel(this.model.modelId);
+  }
+
+  ngOnDestroy() {
+    if (this.menuId === this.openedMenuId)
+      this.uiStore.update({ openedMenuId: undefined });
   }
 }
