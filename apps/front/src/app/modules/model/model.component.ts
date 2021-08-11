@@ -480,8 +480,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       queryIds: [this.query.queryId]
     };
 
-    this.cd.detectChanges();
-
     this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,

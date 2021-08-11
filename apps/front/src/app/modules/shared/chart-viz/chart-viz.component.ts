@@ -171,7 +171,24 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.closeMenu();
 
-    // this.navigateService.navigateToModel(this.model.modelId);
+    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      queryIds: [this.query.queryId]
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          let { runningQueries } = resp.payload;
+
+          this.query = runningQueries[0];
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
