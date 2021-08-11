@@ -129,7 +129,7 @@
     "@tailwindcss/aspect-ratio": "latest",
     "@tailwindcss/forms": "latest",
     "@tailwindcss/jit": "^0.1.7",
-    "@tailwindcss/line-clamp": "latest",
+    "@tailwindcss/line-clamp": "^0.2.1",
     "@tailwindcss/typography": "latest",
     "@tryharddood/ngx-tailwind": "2.2.0",
     "@types/bcrypt": "^3.0.0",

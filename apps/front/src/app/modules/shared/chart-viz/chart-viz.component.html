@@ -4,8 +4,16 @@
       class="flex flex-col h-full w-full cursor-pointer"
       (click)="navMconfig()"
     >
-      <div class="flex flex-row justify-center my-5 text-xl text-gray1">
-        {{ title }}
+      <div
+        class="flex flex-row h-20 text-xl text-gray1 justify-center items-center"
+      >
+        <div class="w-6"></div>
+
+        <div class="line-clamp-2">
+          {{ title }}
+        </div>
+
+        <div class="w-6"></div>
       </div>
 
       <m-chart-view
