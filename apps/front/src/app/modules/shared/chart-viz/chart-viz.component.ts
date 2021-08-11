@@ -5,7 +5,8 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { map, take, tap } from 'rxjs/operators';
+import { interval, of, Subscription } from 'rxjs';
+import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -44,6 +45,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   );
 
   isVizOptionsMenuOpen = false;
+
+  checkRunning$: Subscription;
 
   constructor(
     private apiService: ApiService,
@@ -136,6 +139,34 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     this.query = query;
     this.mconfig = mconfig;
 
+    this.checkRunning$ = interval(3000)
+      .pipe(
+        startWith(0),
+        switchMap(() => {
+          if (this.query?.status === common.QueryStatusEnum.Running) {
+            let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+              mconfigId: this.mconfig.mconfigId,
+              queryId: this.query.queryId
+            };
+
+            return this.apiService
+              .req(
+                apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                payload
+              )
+              .pipe(
+                tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
+                  this.query = resp.payload.query;
+                  this.cd.detectChanges();
+                })
+              );
+          } else {
+            return of(1);
+          }
+        })
+      )
+      .subscribe();
+
     this.cd.detectChanges();
   }
 
@@ -194,6 +225,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.checkRunning$.unsubscribe();
+
     if (this.menuId === this.openedMenuId)
       this.uiStore.update({ openedMenuId: undefined });
   }
