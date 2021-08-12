@@ -55,6 +55,8 @@
                 <m-chart-viz
                   [title]="item.title"
                   [report]="item.reports[0]"
+                  [viz]="item"
+                  (vizDeleted)="vizDeleted($event)"
                 ></m-chart-viz>
               </div>
             </virtual-scroller>

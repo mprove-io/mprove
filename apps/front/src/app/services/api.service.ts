@@ -78,7 +78,8 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz
   ];
 
   constructor(

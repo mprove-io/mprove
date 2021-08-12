@@ -62,6 +62,11 @@ export class VisualizationsComponent {
       : this.vizs;
   }
 
+  vizDeleted(deletedVizId: string) {
+    this.vizs = this.vizs.filter(x => x.vizId !== deletedVizId);
+    this.makeFilteredVizs();
+  }
+
   trackByFn(index: number, item: common.Viz) {
     return item.vizId;
   }

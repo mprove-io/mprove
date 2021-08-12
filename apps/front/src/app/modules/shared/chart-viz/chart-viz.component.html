@@ -43,6 +43,13 @@
               (click)="run($event)"
               >Run</button
             >
+
+            <button
+              data-cy="queryOptionsRun"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+              (click)="deleteViz($event)"
+              >Delete</button
+            >
           </div>
         </div>
       </div>
@@ -72,3 +79,4 @@
 </div>
 
 <div *ngIf="openedMenuId$ | async"></div>
+<div *ngIf="nav$ | async"></div>

@@ -1,9 +1,11 @@
 import {
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnDestroy,
-  OnInit
+  OnInit,
+  Output
 } from '@angular/core';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
@@ -32,6 +34,11 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   @Input()
   title: string;
 
+  @Input()
+  viz: common.Viz;
+
+  @Output() vizDeleted = new EventEmitter<string>();
+
   sortedColumns: ColumnField[];
   qData: RData[];
   query: common.Query;
@@ -47,6 +54,13 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   isVizOptionsMenuOpen = false;
 
   checkRunning$: Subscription;
+
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+    })
+  );
 
   constructor(
     private apiService: ApiService,
@@ -218,6 +232,31 @@ export class ChartVizComponent implements OnInit, OnDestroy {
           let { runningQueries } = resp.payload;
 
           this.query = runningQueries[0];
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  deleteViz(event?: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    let payload: apiToBackend.ToBackendDeleteVizRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      vizId: this.viz.vizId
+    };
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {
+          this.vizDeleted.emit(this.viz.vizId);
         }),
         take(1)
       )
