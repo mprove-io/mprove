@@ -35,10 +35,13 @@ import { EditProjectNameDialogComponent } from '../modules/project/project-setti
 import { AddRoleDialogComponent } from '../modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from '../modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
 import { RemoveMemberDialogComponent } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
+import { ChartDialogComponent } from '../modules/shared/chart-dialog/chart-dialog.component';
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
+import { ColumnField } from '../queries/mq.query';
 import { ApiService } from './api.service';
 import { FileService } from './file.service';
+import { RData } from './query.service';
 
 @Injectable({ providedIn: 'root' })
 export class MyDialogService {
@@ -135,6 +138,21 @@ export class MyDialogService {
       enableClose: true,
       data: item,
       width: 1024
+    });
+  }
+
+  showChart(item: {
+    title: string;
+    mconfig: common.Mconfig;
+    query: common.Query;
+    qData: RData[];
+    sortedColumns: ColumnField[];
+  }): void {
+    this.dialogService.open(ChartDialogComponent, {
+      enableClose: true,
+      data: item,
+      width: '80vw',
+      height: '80vh'
     });
   }
 

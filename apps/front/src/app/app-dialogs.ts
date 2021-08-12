@@ -27,6 +27,7 @@ import { EditConnectionDialogComponent } from './modules/project/project-connect
 import { EditProjectNameDialogComponent } from './modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
 import { AddRoleDialogComponent } from './modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from './modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
+import { ChartDialogComponent } from './modules/shared/chart-dialog/chart-dialog.component';
 import { PhotoDialogComponent } from './modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from './modules/special/error-dialog/error-dialog.component';
 
@@ -71,5 +72,7 @@ export const appDialogs = [
   MergeBranchDialogComponent,
   // model
   ViewBlockmlDialogComponent,
-  ChartSaveAsDialogComponent
+  ChartSaveAsDialogComponent,
+  //
+  ChartDialogComponent
 ];

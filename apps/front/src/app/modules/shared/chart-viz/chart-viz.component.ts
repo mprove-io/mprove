@@ -14,6 +14,7 @@ import { ColumnField } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { NavState } from '~front/app/stores/nav.store';
@@ -68,6 +69,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     private queryService: QueryService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
+    private myDialogService: MyDialogService,
     public uiQuery: UiQuery,
     public uiStore: UiStore
   ) {}
@@ -261,6 +263,18 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+  }
+
+  showChart(event?: MouseEvent) {
+    event.stopPropagation();
+
+    this.myDialogService.showChart({
+      title: this.title,
+      mconfig: this.mconfig,
+      query: this.query,
+      qData: this.qData,
+      sortedColumns: this.sortedColumns
+    });
   }
 
   ngOnDestroy() {

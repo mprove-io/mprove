@@ -7,7 +7,13 @@
       <div
         class="flex flex-row h-20 text-xl text-gray1 justify-center items-center"
       >
-        <div class="h-9 w-9 mr-5"></div>
+        <button
+          data-cy="vizShowChartButton"
+          class="flex flex-shrink-0 h-9 w-9 mr-5 focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+          (click)="showChart($event)"
+        >
+          <m-dots-vertical-icon></m-dots-vertical-icon>
+        </button>
 
         <div class="flex flex-grow line-clamp-2 text-center">
           {{ title }}
