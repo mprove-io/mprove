@@ -7,19 +7,19 @@
       <div
         class="flex flex-row h-20 text-xl text-gray1 justify-center items-center"
       >
-        <button
-          data-cy="vizShowChartButton"
-          class="flex flex-shrink-0 h-9 w-9 mr-5 focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
-          (click)="showChart($event)"
-        >
-          <m-dots-vertical-icon></m-dots-vertical-icon>
-        </button>
-
-        <div class="flex flex-grow line-clamp-2 text-center">
+        <div class="flex flex-grow ml-[104px] line-clamp-2 text-center">
           {{ title }}
         </div>
 
-        <div class="relative ml-5">
+        <button
+          data-cy="vizShowChartButton"
+          class="flex flex-shrink-0 h-9 w-9 ml-5 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+          (click)="showChart($event)"
+        >
+          <m-full-screen-icon></m-full-screen-icon>
+        </button>
+
+        <div class="relative ml-3">
           <button
             data-cy="vizOptionsMenuButton"
             class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
