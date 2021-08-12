@@ -269,7 +269,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     event.stopPropagation();
 
     this.myDialogService.showChart({
-      title: this.title,
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,

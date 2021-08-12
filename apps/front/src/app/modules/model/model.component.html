@@ -233,6 +233,14 @@
                   >Save As</button
                 >
 
+                <button
+                  data-cy="modelShowChartButton"
+                  class="flex flex-shrink-0 h-9 w-9 ml-5 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
+                  (click)="showChart($event)"
+                >
+                  <m-full-screen-icon></m-full-screen-icon>
+                </button>
+
                 <div *ngIf="mconfig?.select.length > 0" class="relative ml-3">
                   <m-chart-options
                     [mconfig]="mconfig"

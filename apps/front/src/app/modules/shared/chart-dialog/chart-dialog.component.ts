@@ -9,7 +9,6 @@ import { common } from '~front/barrels/common';
   templateUrl: './chart-dialog.component.html'
 })
 export class ChartDialogComponent implements OnInit {
-  title: string;
   sortedColumns: ColumnField[];
   qData: RData[];
   query: common.Query;
@@ -18,7 +17,6 @@ export class ChartDialogComponent implements OnInit {
   constructor(public ref: DialogRef) {}
 
   ngOnInit() {
-    this.title = this.ref.data.title;
     this.sortedColumns = this.ref.data.sortedColumns;
     this.qData = this.ref.data.qData;
     this.mconfig = this.ref.data.mconfig;

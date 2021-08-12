@@ -142,7 +142,6 @@ export class MyDialogService {
   }
 
   showChart(item: {
-    title: string;
     mconfig: common.Mconfig;
     query: common.Query;
     qData: RData[];

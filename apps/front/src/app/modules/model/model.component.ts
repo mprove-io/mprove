@@ -588,6 +588,17 @@ export class ModelComponent implements OnInit, OnDestroy {
     });
   }
 
+  showChart(event?: MouseEvent) {
+    event.stopPropagation();
+
+    this.myDialogService.showChart({
+      mconfig: this.mconfig,
+      query: this.query,
+      qData: this.qData,
+      sortedColumns: this.sortedColumns
+    });
+  }
+
   chartTitleBlur() {
     let chartTitle = this.chartTitleForm.controls['chartTitle'].value;
 
