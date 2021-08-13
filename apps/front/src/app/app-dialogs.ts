@@ -30,6 +30,7 @@ import { InviteMemberDialogComponent } from './modules/project/project-team/invi
 import { ChartDialogComponent } from './modules/shared/chart-dialog/chart-dialog.component';
 import { PhotoDialogComponent } from './modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from './modules/special/error-dialog/error-dialog.component';
+import { DeleteVizDialogComponent } from './modules/visualizations/delete-viz-dialog/delete-viz-dialog.component';
 
 export const appDialogs = [
   ErrorDialogComponent,
@@ -73,6 +74,8 @@ export const appDialogs = [
   // model
   ViewBlockmlDialogComponent,
   ChartSaveAsDialogComponent,
-  //
+  // visualizations
+  DeleteVizDialogComponent,
+  // shared
   ChartDialogComponent
 ];

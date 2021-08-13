@@ -244,25 +244,14 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.closeMenu();
 
-    let payload: apiToBackend.ToBackendDeleteVizRequestPayload = {
+    this.myDialogService.showDeleteViz({
+      viz: this.viz,
+      apiService: this.apiService,
+      vizDeleted: this.vizDeleted,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd,
-      vizId: this.viz.vizId
-    };
-
-    this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
-        payload
-      )
-      .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {
-          this.vizDeleted.emit(this.viz.vizId);
-        }),
-        take(1)
-      )
-      .subscribe();
+      isRepoProd: this.nav.isRepoProd
+    });
   }
 
   showChart(event?: MouseEvent) {

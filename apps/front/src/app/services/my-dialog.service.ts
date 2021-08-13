@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -38,6 +38,7 @@ import { RemoveMemberDialogComponent } from '../modules/project/project-team/rem
 import { ChartDialogComponent } from '../modules/shared/chart-dialog/chart-dialog.component';
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
+import { DeleteVizDialogComponent } from '../modules/visualizations/delete-viz-dialog/delete-viz-dialog.component';
 import { ColumnField } from '../queries/mq.query';
 import { ApiService } from './api.service';
 import { FileService } from './file.service';
@@ -166,6 +167,20 @@ export class MyDialogService {
       enableClose: false,
       data: item,
       width: 640
+    });
+  }
+
+  showDeleteViz(item: {
+    apiService: ApiService;
+    vizDeleted: EventEmitter<string>;
+    viz: common.Viz;
+    projectId: string;
+    branchId: string;
+    isRepoProd: boolean;
+  }): void {
+    this.dialogService.open(DeleteVizDialogComponent, {
+      enableClose: true,
+      data: item
     });
   }
 

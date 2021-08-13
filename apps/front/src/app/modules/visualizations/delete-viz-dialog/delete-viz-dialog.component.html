@@ -1,0 +1,29 @@
+<div class="flex flex-col p-9 bg-white">
+  <div
+    data-cy="deleteUserDialogTitle"
+    class="flex-grow mt-5 text-2xl text-gray2 font-semibold text-left"
+    >Delete Visualization</div
+  >
+
+  <div class="mt-6 text-gray1 text-lg"
+    >Are you sure you want to delete
+    <b>{{ ref.data.viz.title }}</b> visualization?</div
+  >
+
+  <div class="mt-6">
+    <button
+      data-cy="deleteUserDialogDeleteButton"
+      class="py-3 w-28 border bg-red1 text-base text-white rounded font-medium focus:outline-none"
+      (click)="delete()"
+      >Delete</button
+    >
+
+    <button
+      data-cy="deleteUserDialogCancelButton"
+      class="ml-3 py-3 w-28 rounded border text-base text-blue3 border-blue3 font-medium focus:outline-none"
+      type="button"
+      (click)="cancel()"
+      >Cancel</button
+    >
+  </div>
+</div>
