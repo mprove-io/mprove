@@ -1,14 +1,21 @@
-<div class="group h-full w-full hover:bg-blue2">
+<div class="group h-full w-full bg-white rounded shadow-md hover:bg-blue2">
   <div class="mx-5 h-full">
     <div
       class="flex flex-col h-full w-full cursor-pointer"
       (click)="navMconfig()"
     >
       <div
-        class="flex flex-row h-20 text-xl text-gray1 justify-center items-center"
+        class="flex flex-row text-xl text-gray1 justify-center items-start flex-shrink-0 mt-10"
       >
-        <div class="flex flex-grow ml-[104px] line-clamp-2 text-center">
-          {{ title }}
+        <div
+          class="flex flex-col flex-grow ml-[104px] h-[60px] justify-start items-center"
+        >
+          <div
+            class="flex flex-col items-center h-[30px] mt-[2px] text-center"
+            style="max-height: 60px"
+          >
+            {{ title }}
+          </div>
         </div>
 
         <button
