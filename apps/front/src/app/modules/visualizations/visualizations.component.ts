@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { VizsQuery } from '~front/app/queries/vizs.query';
@@ -8,7 +8,7 @@ import { common } from '~front/barrels/common';
   selector: 'm-visualizations',
   templateUrl: './visualizations.component.html'
 })
-export class VisualizationsComponent {
+export class VisualizationsComponent implements OnDestroy {
   groups: string[];
 
   modelsList: common.ModelsItem[];
@@ -33,6 +33,8 @@ export class VisualizationsComponent {
   modelId: string;
 
   word: string;
+
+  private timer: any;
 
   constructor(
     private router: Router,
@@ -82,7 +84,19 @@ export class VisualizationsComponent {
   }
 
   searchWordChange() {
-    this.makeFilteredVizs();
-    this.cd.detectChanges();
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    this.timer = setTimeout(() => {
+      this.makeFilteredVizs();
+      this.cd.detectChanges();
+    }, 600);
+  }
+
+  ngOnDestroy() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
   }
 }
