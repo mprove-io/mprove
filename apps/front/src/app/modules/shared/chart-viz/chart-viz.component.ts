@@ -266,7 +266,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.checkRunning$.unsubscribe();
+    if (common.isDefined(this.checkRunning$)) {
+      this.checkRunning$?.unsubscribe();
+    }
 
     if (this.menuId === this.openedMenuId)
       this.uiStore.update({ openedMenuId: undefined });

@@ -32,6 +32,8 @@ export class VisualizationsComponent {
 
   modelId: string;
 
+  word: string;
+
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
@@ -57,9 +59,17 @@ export class VisualizationsComponent {
   }
 
   makeFilteredVizs() {
-    this.filteredVizs = common.isDefined(this.modelId)
+    let vizsFilteredByModel = common.isDefined(this.modelId)
       ? this.vizs.filter(v => v.modelId === this.modelId)
       : this.vizs;
+
+    let vizsFilteredByModelAndKeyword = common.isDefined(this.word)
+      ? vizsFilteredByModel.filter(v =>
+          v.title.toUpperCase().includes(this.word.toUpperCase())
+        )
+      : vizsFilteredByModel;
+
+    this.filteredVizs = vizsFilteredByModelAndKeyword;
   }
 
   vizDeleted(deletedVizId: string) {
@@ -69,5 +79,10 @@ export class VisualizationsComponent {
 
   trackByFn(index: number, item: common.Viz) {
     return item.vizId;
+  }
+
+  searchWordChange() {
+    this.makeFilteredVizs();
+    this.cd.detectChanges();
   }
 }
