@@ -27,6 +27,10 @@ export class ToDiskRevertRepoToProductionResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogFile)
+  files: common.DiskCatalogFile[];
 }
 
 export class ToDiskRevertRepoToProductionResponse extends common.MyResponse {

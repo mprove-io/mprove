@@ -86,7 +86,7 @@ export class RevertRepoToProductionService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: true
     });
 
     let payload: apiToDisk.ToDiskRevertRepoToProductionResponsePayload = {
@@ -98,7 +98,8 @@ export class RevertRepoToProductionService {
         currentBranchId: currentBranch,
         conflicts: conflicts,
         nodes: itemCatalog.nodes
-      }
+      },
+      files: itemCatalog.files
     };
 
     return payload;

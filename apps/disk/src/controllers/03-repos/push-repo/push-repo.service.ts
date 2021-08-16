@@ -114,7 +114,7 @@ export class PushRepoService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
-      readFiles: false
+      readFiles: true
     });
 
     let payload: apiToDisk.ToDiskPushRepoResponsePayload = {
@@ -126,7 +126,8 @@ export class PushRepoService {
         currentBranchId: currentBranch,
         conflicts: conflicts,
         nodes: itemCatalog.nodes
-      }
+      },
+      files: itemCatalog.files
     };
 
     return payload;

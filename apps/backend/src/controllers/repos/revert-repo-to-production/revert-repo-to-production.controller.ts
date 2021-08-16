@@ -6,6 +6,7 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
@@ -21,7 +22,8 @@ export class RevertRepoToProductionController {
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
-    private branchesService: BranchesService
+    private branchesService: BranchesService,
+    private blockmlService: BlockmlService
   ) {}
 
   @Post(
@@ -32,6 +34,7 @@ export class RevertRepoToProductionController {
     @ValidateRequest(apiToBackend.ToBackendRevertRepoToProductionRequest)
     reqValid: apiToBackend.ToBackendRevertRepoToProductionRequest
   ) {
+    let { traceId } = reqValid.info;
     let { projectId, branchId } = reqValid.payload;
 
     let repoId = user.user_id;
@@ -75,13 +78,17 @@ export class RevertRepoToProductionController {
       }
     );
 
-    let prodBranch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: common.PROD_REPO_ID,
-      branchId: branchId
+    let structId = common.makeId();
+
+    await this.blockmlService.rebuildStruct({
+      traceId,
+      orgId: project.org_id,
+      projectId,
+      structId,
+      diskFiles: diskResponse.payload.files
     });
 
-    devBranch.struct_id = prodBranch.struct_id;
+    devBranch.struct_id = structId;
 
     await this.dbService.writeRecords({
       modify: true,
@@ -91,7 +98,7 @@ export class RevertRepoToProductionController {
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: devBranch.struct_id
+      structId: structId
     });
 
     let payload: apiToBackend.ToBackendRevertRepoToProductionResponsePayload = {

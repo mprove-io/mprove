@@ -30,6 +30,10 @@ export class ToDiskPushRepoResponsePayload {
   @ValidateNested()
   @Type(() => common.Repo)
   repo: common.Repo;
+
+  @ValidateNested()
+  @Type(() => common.DiskCatalogFile)
+  files: common.DiskCatalogFile[];
 }
 
 export class ToDiskPushRepoResponse extends common.MyResponse {

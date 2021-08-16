@@ -7,6 +7,7 @@ import { helper } from '~backend/barrels/helper';
 import { maker } from '~backend/barrels/maker';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
@@ -22,7 +23,8 @@ export class PushRepoController {
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
-    private branchesService: BranchesService
+    private branchesService: BranchesService,
+    private blockmlService: BlockmlService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo)
@@ -31,6 +33,7 @@ export class PushRepoController {
     @ValidateRequest(apiToBackend.ToBackendPushRepoRequest)
     reqValid: apiToBackend.ToBackendPushRepoRequest
   ) {
+    let { traceId } = reqValid.info;
     let { projectId, branchId } = reqValid.payload;
 
     let repoId = user.user_id;
@@ -75,14 +78,22 @@ export class PushRepoController {
       }
     );
 
+    let structId = common.makeId();
+
+    await this.blockmlService.rebuildStruct({
+      traceId,
+      orgId: project.org_id,
+      projectId,
+      structId,
+      diskFiles: diskResponse.payload.files
+    });
+
     let prodBranch = maker.makeBranch({
-      structId: devBranch.struct_id,
+      structId: structId,
       projectId: projectId,
       repoId: common.PROD_REPO_ID,
       branchId: branchId
     });
-
-    prodBranch.struct_id = devBranch.struct_id;
 
     await this.dbService.writeRecords({
       modify: true,
@@ -92,7 +103,7 @@ export class PushRepoController {
     });
 
     let struct = await this.structsService.getStructCheckExists({
-      structId: devBranch.struct_id
+      structId: structId
     });
 
     let payload: apiToBackend.ToBackendPushRepoResponsePayload = {

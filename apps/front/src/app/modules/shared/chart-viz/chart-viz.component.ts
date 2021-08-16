@@ -265,6 +265,17 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     });
   }
 
+  goToFile(event?: MouseEvent) {
+    event.stopPropagation();
+
+    let fileIdAr = this.viz.filePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
+
   ngOnDestroy() {
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();

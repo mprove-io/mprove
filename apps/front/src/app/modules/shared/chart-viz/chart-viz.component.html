@@ -51,14 +51,21 @@
             *ngIf="isVizOptionsMenuOpen === true"
           >
             <button
-              data-cy="queryOptionsRun"
+              data-cy="vizOptionsRun"
               class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
               (click)="run($event)"
               >Run</button
             >
 
             <button
-              data-cy="queryOptionsRun"
+              data-cy="vizOptionsGoToFile"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+              (click)="goToFile($event)"
+              >Go to file</button
+            >
+
+            <button
+              data-cy="vizOptionsDelete"
               class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
               (click)="deleteViz($event)"
               >Delete</button
