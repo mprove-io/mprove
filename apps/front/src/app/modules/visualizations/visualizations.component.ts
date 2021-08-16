@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { VizsQuery } from '~front/app/queries/vizs.query';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -39,7 +40,8 @@ export class VisualizationsComponent implements OnDestroy {
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
-    private vizsQuery: VizsQuery
+    private vizsQuery: VizsQuery,
+    private myDialogService: MyDialogService
   ) {}
 
   modelOnClick(modelId: string) {
@@ -92,6 +94,12 @@ export class VisualizationsComponent implements OnDestroy {
       this.makeFilteredVizs();
       this.cd.detectChanges();
     }, 600);
+  }
+
+  newViz() {
+    this.myDialogService.showNewViz({
+      modelsList: this.modelsList
+    });
   }
 
   ngOnDestroy() {

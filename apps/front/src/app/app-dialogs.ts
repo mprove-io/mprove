@@ -31,6 +31,7 @@ import { ChartDialogComponent } from './modules/shared/chart-dialog/chart-dialog
 import { PhotoDialogComponent } from './modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from './modules/special/error-dialog/error-dialog.component';
 import { DeleteVizDialogComponent } from './modules/visualizations/delete-viz-dialog/delete-viz-dialog.component';
+import { NewVizDialogComponent } from './modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 
 export const appDialogs = [
   ErrorDialogComponent,
@@ -76,6 +77,7 @@ export const appDialogs = [
   ChartSaveAsDialogComponent,
   // visualizations
   DeleteVizDialogComponent,
+  NewVizDialogComponent,
   // shared
   ChartDialogComponent
 ];

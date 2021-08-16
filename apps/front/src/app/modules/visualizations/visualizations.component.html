@@ -1,11 +1,23 @@
 <div class="flex flex-col h-full bg-blue1">
   <div class="flex flex-row h-full mx-6 mt-8">
     <div class="flex flex-col flex-grow">
-      <div class="flex flex-row justify-between items-center h-11">
+      <div class="flex flex-row items-center h-11">
         <div
           data-cy="vizsTitle"
           class="flex font-semibold text-2xl text-gray1 items-center self-center"
           >Visualizations
+        </div>
+
+        <div class="flex-grow"></div>
+
+        <div class="flex flex-row items-center text-base text-gray1">
+          <button
+            type="button"
+            data-cy="vizsNewButton"
+            class="w-24 py-2 ml-5 mr-9 bg-blue3 text-white text-base rounded font-medium focus:outline-none"
+            (click)="newViz()"
+            >New</button
+          >
         </div>
       </div>
 

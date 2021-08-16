@@ -39,6 +39,7 @@ import { ChartDialogComponent } from '../modules/shared/chart-dialog/chart-dialo
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import { DeleteVizDialogComponent } from '../modules/visualizations/delete-viz-dialog/delete-viz-dialog.component';
+import { NewVizDialogComponent } from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 import { ColumnField } from '../queries/mq.query';
 import { ApiService } from './api.service';
 import { FileService } from './file.service';
@@ -167,6 +168,13 @@ export class MyDialogService {
       enableClose: false,
       data: item,
       width: 640
+    });
+  }
+
+  showNewViz(item: { modelsList: common.ModelsItem[] }): void {
+    this.dialogService.open(NewVizDialogComponent, {
+      enableClose: true,
+      data: item
     });
   }
 
