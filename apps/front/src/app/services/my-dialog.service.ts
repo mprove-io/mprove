@@ -164,6 +164,7 @@ export class MyDialogService {
     isRepoProd: boolean;
     branchId: string;
     mconfig: common.Mconfig;
+    model: common.Model;
   }): void {
     this.dialogService.open(ChartSaveAsDialogComponent, {
       enableClose: false,

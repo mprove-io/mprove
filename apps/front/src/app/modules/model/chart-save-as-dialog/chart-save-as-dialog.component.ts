@@ -67,6 +67,14 @@ export class ChartSaveAsDialogComponent implements OnInit {
       control: this.titleForm.controls['title'],
       value: this.ref.data.mconfig.chart.title
     });
+    setValueAndMark({
+      control: this.rolesForm.controls['roles'],
+      value: this.ref.data.model.accessRoles?.join(', ')
+    });
+    setValueAndMark({
+      control: this.usersForm.controls['users'],
+      value: this.ref.data.model.accessUsers?.join(', ')
+    });
   }
 
   save() {

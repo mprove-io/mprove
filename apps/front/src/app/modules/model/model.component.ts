@@ -584,7 +584,8 @@ export class ModelComponent implements OnInit, OnDestroy {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       isRepoProd: this.nav.isRepoProd,
-      mconfig: this.mconfig
+      mconfig: this.mconfig,
+      model: this.model
     });
   }
 
