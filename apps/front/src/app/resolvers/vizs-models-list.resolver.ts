@@ -13,7 +13,7 @@ import { NavState } from '../stores/nav.store';
 import { VizsStore } from '../stores/vizs.store';
 
 @Injectable({ providedIn: 'root' })
-export class ModelsResolver implements Resolve<Observable<boolean>> {
+export class VizsModelsListResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
@@ -49,7 +49,8 @@ export class ModelsResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetModelsListResponse) => {
           this.vizsStore.update({
-            modelsList: resp.payload.modelsList
+            modelsList: resp.payload.modelsList,
+            allModelsList: resp.payload.allModelsList
           });
           return true;
         })

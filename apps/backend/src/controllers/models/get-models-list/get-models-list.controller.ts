@@ -65,7 +65,8 @@ export class GetModelsListController {
     );
 
     let payload: apiToBackend.ToBackendGetModelsListResponsePayload = {
-      modelsList: modelsGrantedAccess.map(x => wrapper.wrapToApiModelsItem(x))
+      modelsList: modelsGrantedAccess.map(x => wrapper.wrapToApiModelsItem(x)),
+      allModelsList: models.map(x => wrapper.wrapToApiModelsItem(x))
     };
 
     return payload;

@@ -13,6 +13,7 @@ export class VisualizationsComponent implements OnDestroy {
   groups: string[];
 
   modelsList: common.ModelsItem[];
+  vizsModelsList: common.ModelsItem[];
   vizs: common.Viz[];
   filteredVizs: common.Viz[];
 
@@ -20,6 +21,10 @@ export class VisualizationsComponent implements OnDestroy {
     tap(x => {
       this.vizs = x.vizs;
       this.modelsList = x.modelsList;
+      this.vizsModelsList = x.allModelsList.filter(
+        listItem =>
+          this.vizs.filter(v => v.modelId === listItem.modelId).length > 0
+      );
 
       let allGroups = this.vizs.map(z => z.gr);
       let definedGroups = allGroups.filter(y => common.isDefined(y));

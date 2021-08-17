@@ -36,7 +36,6 @@ import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
 import { ModelResolver } from './resolvers/model.resolver';
-import { ModelsResolver } from './resolvers/models.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
@@ -48,6 +47,7 @@ import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoResolver } from './resolvers/repo.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
+import { VizsModelsListResolver } from './resolvers/vizs-models-list.resolver';
 import { VizsResolver } from './resolvers/vizs.resolver';
 
 const routes: Routes = [
@@ -192,7 +192,7 @@ const routes: Routes = [
                       {
                         component: VisualizationsComponent,
                         path: common.PATH_VISUALIZATIONS,
-                        resolve: [ModelsResolver, VizsResolver]
+                        resolve: [VizsModelsListResolver, VizsResolver]
                         // children: []
                       },
                       {

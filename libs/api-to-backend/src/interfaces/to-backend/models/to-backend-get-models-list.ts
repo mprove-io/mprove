@@ -24,6 +24,10 @@ export class ToBackendGetModelsListResponsePayload {
   @ValidateNested()
   @Type(() => common.ModelsItem)
   modelsList: common.ModelsItem[];
+
+  @ValidateNested()
+  @Type(() => common.ModelsItem)
+  allModelsList: common.ModelsItem[];
 }
 
 export class ToBackendGetModelsListResponse extends common.MyResponse {
