@@ -5,7 +5,32 @@
       (click)="navMconfig()"
     >
       <div
-        class="flex flex-row text-xl text-gray1 justify-center items-start flex-shrink-0 mt-10"
+        class="h-10 flex flex-row justify-start items-center text-base text-gray-400 invisible group-hover:visible"
+      >
+        <div class=" ">Model:</div>
+        <div class="ml-2 font-semibold">{{ viz?.modelLabel | capitalize }}</div>
+
+        <div class="ml-10">Access:</div>
+
+        <div
+          class="ml-2 font-semibold"
+          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 0"
+          >Public</div
+        >
+        <div
+          class="ml-2 font-semibold"
+          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 1"
+          >Private</div
+        >
+        <div
+          class="ml-2 font-semibold"
+          *ngIf="viz?.accessRoles.length > 0 || viz?.accessUsers.length > 1"
+          >Specified</div
+        >
+      </div>
+
+      <div
+        class="flex flex-row text-xl text-gray1 justify-center items-start flex-shrink-0"
       >
         <div
           class="flex flex-col flex-grow ml-[104px] h-[60px] justify-start items-center"
