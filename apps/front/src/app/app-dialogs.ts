@@ -28,9 +28,10 @@ import { EditProjectNameDialogComponent } from './modules/project/project-settin
 import { AddRoleDialogComponent } from './modules/project/project-team/add-role-dialog/add-role-dialog.component';
 import { InviteMemberDialogComponent } from './modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
 import { ChartDialogComponent } from './modules/shared/chart-dialog/chart-dialog.component';
+import { DeleteVizDialogComponent } from './modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
+import { EditVizInfoDialogComponent } from './modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
 import { PhotoDialogComponent } from './modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from './modules/special/error-dialog/error-dialog.component';
-import { DeleteVizDialogComponent } from './modules/visualizations/delete-viz-dialog/delete-viz-dialog.component';
 import { NewVizDialogComponent } from './modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 
 export const appDialogs = [
@@ -78,6 +79,7 @@ export const appDialogs = [
   // visualizations
   DeleteVizDialogComponent,
   NewVizDialogComponent,
+  EditVizInfoDialogComponent,
   // shared
   ChartDialogComponent
 ];

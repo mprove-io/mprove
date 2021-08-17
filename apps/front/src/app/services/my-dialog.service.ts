@@ -36,9 +36,10 @@ import { AddRoleDialogComponent } from '../modules/project/project-team/add-role
 import { InviteMemberDialogComponent } from '../modules/project/project-team/invite-member-dialog/invite-member-dialog.component';
 import { RemoveMemberDialogComponent } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
 import { ChartDialogComponent } from '../modules/shared/chart-dialog/chart-dialog.component';
+import { DeleteVizDialogComponent } from '../modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
+import { EditVizInfoDialogComponent } from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
-import { DeleteVizDialogComponent } from '../modules/visualizations/delete-viz-dialog/delete-viz-dialog.component';
 import { NewVizDialogComponent } from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 import { ColumnField } from '../queries/mq.query';
 import { ApiService } from './api.service';
@@ -165,6 +166,21 @@ export class MyDialogService {
     mconfig: common.Mconfig;
   }): void {
     this.dialogService.open(ChartSaveAsDialogComponent, {
+      enableClose: false,
+      data: item,
+      width: 640
+    });
+  }
+
+  showEditVizInfo(item: {
+    apiService: ApiService;
+    projectId: string;
+    isRepoProd: boolean;
+    branchId: string;
+    mconfig: common.Mconfig;
+    viz: common.Viz;
+  }): void {
+    this.dialogService.open(EditVizInfoDialogComponent, {
       enableClose: false,
       data: item,
       width: 640

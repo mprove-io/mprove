@@ -77,6 +77,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
       this.rolesForm.controls['roles'].valid &&
       this.usersForm.controls['users'].valid
     ) {
+      this.ref.close();
+
       let newTitle = this.titleForm.controls['title'].value;
       let group = this.groupForm.controls['group'].value;
       let roles = this.rolesForm.controls['roles'].value;
@@ -88,7 +90,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
         roles: roles,
         users: users
       });
-      this.ref.close();
     }
   }
 

@@ -265,6 +265,20 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     });
   }
 
+  editVizInfo(event?: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    this.myDialogService.showEditVizInfo({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      viz: this.viz,
+      mconfig: this.mconfig
+    });
+  }
+
   goToFile(event?: MouseEvent) {
     event.stopPropagation();
 

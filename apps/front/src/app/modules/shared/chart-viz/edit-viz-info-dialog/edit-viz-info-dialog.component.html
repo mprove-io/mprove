@@ -2,26 +2,11 @@
   <div
     data-cy="createBranchDialogTitle"
     class="flex-grow mt-5 mb-9 text-2xl text-gray2 font-semibold text-left"
-    >Save As</div
+    >Edit Visualization</div
   >
 
-  <div class="flex flex-row items-center">
-    <button
-      data-cy="chartSaveAsDialogNewVizCheckbox"
-      class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
-      [ngClass]="{
-        'bg-blue3 ': saveAs === chartSaveAsEnum.NEW_VIZ
-      }"
-      (click)="newVizOnClick()"
-    >
-      <m-check-icon *ngIf="saveAs === chartSaveAsEnum.NEW_VIZ"></m-check-icon>
-    </button>
-
-    <div class="ml-5 text-base">New Visualization</div>
-  </div>
-
-  <div class="mt-9 text-gray-400 text-base"
-    >Users / {{ alias }} / {{ vizId }}.viz</div
+  <div class="text-gray-400 text-base"
+    >Users / {{ alias }} / {{ ref.data.viz.vizId }}.viz</div
   >
 
   <div class="mt-9 flex flex-row items-start">
@@ -33,7 +18,7 @@
 
     <div [formGroup]="titleForm" class="flex flex-col ml-5 items-start">
       <input
-        data-cy="chartSaveAsDialogTitleInput"
+        data-cy="editVizInfoDialogTitleInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -57,7 +42,7 @@
 
     <div [formGroup]="groupForm" class="flex flex-col ml-5 items-start">
       <input
-        data-cy="chartSaveAsDialogGroupInput"
+        data-cy="editVizInfoDialogGroupInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -79,7 +64,7 @@
 
     <div [formGroup]="rolesForm" class="flex flex-col ml-5 items-start">
       <input
-        data-cy="chartSaveAsDialogRolesInput"
+        data-cy="editVizInfoDialogRolesInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
@@ -101,7 +86,7 @@
 
     <div [formGroup]="usersForm" class="flex flex-col ml-5 items-start">
       <input
-        data-cy="chartSaveAsDialogUsersInput"
+        data-cy="editVizInfoDialogUsersInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
           'border-red-600':
