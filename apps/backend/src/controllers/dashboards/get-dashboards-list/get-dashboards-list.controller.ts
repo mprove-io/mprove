@@ -59,7 +59,7 @@ export class GetDashboardsListController {
     let dashboardsGrantedAccess = dashboards.filter(x =>
       helper.checkAccess({
         userAlias: user.alias,
-        memberRoles: member.roles,
+        member: member,
         vmd: x
       })
     );

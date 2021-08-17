@@ -51,7 +51,7 @@ export class GetVizsController {
     let vizsGrantedAccess = vizs.filter(x =>
       helper.checkAccess({
         userAlias: user.alias,
-        memberRoles: member.roles,
+        member: member,
         vmd: x
       })
     );

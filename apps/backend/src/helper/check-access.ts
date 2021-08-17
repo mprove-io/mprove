@@ -1,11 +1,20 @@
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { MemberEntity } from '~backend/models/store-entities/_index';
 
 export function checkAccess(item: {
   userAlias: string;
-  memberRoles: string[];
+  member: MemberEntity;
   vmd: entities.VizEntity | entities.ModelEntity | entities.DashboardEntity;
 }): boolean {
-  let { userAlias, memberRoles, vmd } = item;
+  let { userAlias, member, vmd } = item;
+
+  if (
+    member.is_admin === common.BoolEnum.TRUE ||
+    member.is_editor === common.BoolEnum.TRUE
+  ) {
+    return true;
+  }
 
   if (vmd.access_roles.length === 0 && vmd.access_users.length === 0) {
     return true;
@@ -13,7 +22,7 @@ export function checkAccess(item: {
 
   if (
     vmd.access_users.indexOf(userAlias) < 0 &&
-    !vmd.access_roles.some(x => memberRoles.includes(x))
+    !vmd.access_roles.some(x => member.roles.includes(x))
   ) {
     return false;
   }

@@ -69,7 +69,7 @@ export class CreateTempDashboardController {
 
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
-      memberRoles: member.roles,
+      member: member,
       vmd: oldDashboard
     });
 

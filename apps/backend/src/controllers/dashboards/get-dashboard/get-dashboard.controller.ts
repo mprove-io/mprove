@@ -55,7 +55,7 @@ export class GetDashboardController {
 
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
-      memberRoles: member.roles,
+      member: member,
       vmd: dashboard
     });
 
