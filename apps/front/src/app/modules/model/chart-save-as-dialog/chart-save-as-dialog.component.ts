@@ -119,13 +119,18 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let vizFileText = toYaml({
       viz: this.vizId,
-      group: common.isDefined(group) ? group.trim() : undefined,
-      access_roles: common.isDefined(roles)
-        ? roles.split(',').map(x => x.trim())
-        : undefined,
-      access_users: common.isDefined(users)
-        ? users.split(',').map(x => x.trim())
-        : undefined,
+      group:
+        common.isDefined(group) && group.trim().length > 0
+          ? group.trim()
+          : undefined,
+      access_roles:
+        common.isDefined(roles) && roles.trim().length > 0
+          ? roles.split(',').map(x => x.trim())
+          : undefined,
+      access_users:
+        common.isDefined(users) && users.trim().length > 0
+          ? users.split(',').map(x => x.trim())
+          : undefined,
       reports: [rep]
     });
 

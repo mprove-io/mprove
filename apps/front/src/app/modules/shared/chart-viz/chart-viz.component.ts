@@ -38,6 +38,12 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   @Input()
   viz: common.Viz;
 
+  accessRolesString: string;
+  accessUsersString: string;
+  accessString: string;
+
+  author: string;
+
   @Output() vizDeleted = new EventEmitter<string>();
 
   sortedColumns: ColumnField[];
@@ -75,6 +81,26 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
+
+    this.accessUsersString = 'Users - ' + this.viz.accessUsers.join(', ');
+
+    this.accessString =
+      this.viz.accessRoles.length > 0 && this.viz.accessUsers.length > 0
+        ? this.accessRolesString + '; ' + this.accessUsersString
+        : this.viz.accessRoles.length > 0
+        ? this.accessRolesString
+        : this.viz.accessUsers.length > 0
+        ? this.accessUsersString
+        : '';
+
+    let vizFilePathArray = this.viz.filePath.split('/');
+
+    this.author =
+      vizFilePathArray.length > 1 && vizFilePathArray[1] === 'users'
+        ? vizFilePathArray[2]
+        : undefined;
+
     let nav: NavState;
     this.navQuery
       .select()

@@ -18,10 +18,12 @@ export function prepareReport(mconfig: common.Mconfig) {
 
   let rep = {
     title: chart.title,
-    description: chart.description,
+    description: common.isDefined(chart.description)
+      ? chart.description
+      : undefined,
     model: mconfig.modelId,
     select: mconfig.select,
-    sorts: mconfig.sorts,
+    sorts: common.isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
     timezone:
       common.isDefined(mconfig.timezone) && mconfig.timezone !== common.UTC
         ? mconfig.timezone

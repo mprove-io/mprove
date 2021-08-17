@@ -10,6 +10,9 @@
         <div class=" ">Model:</div>
         <div class="ml-2 font-semibold">{{ viz?.modelLabel | capitalize }}</div>
 
+        <div class="ml-10">Author:</div>
+        <div class="ml-2 font-semibold">{{ author ? author : 'team' }}</div>
+
         <div class="ml-10">Access:</div>
 
         <div
@@ -20,12 +23,15 @@
         <div
           class="ml-2 font-semibold"
           *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 1"
-          >Private</div
+          >Private - {{ viz?.accessUsers[0] }}</div
         >
         <div
-          class="ml-2 font-semibold"
+          class="ml-2 font-semibold truncate max-w-sm"
           *ngIf="viz?.accessRoles.length > 0 || viz?.accessUsers.length > 1"
-          >Specified</div
+          nz-tooltip
+          [nzTooltipTitle]="accessString"
+          nzTooltipPlacement="bottom"
+          >Special</div
         >
       </div>
 
