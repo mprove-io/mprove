@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { filter, take, tap } from 'rxjs/operators';
 import { FileQuery } from '~front/app/queries/file.query';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -94,12 +95,21 @@ export class BlockmlEditorComponent implements OnDestroy {
     })
   );
 
+  member: common.Member;
+  member$ = this.memberQuery.select().pipe(
+    tap(x => {
+      this.member = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public fileQuery: FileQuery,
     public structQuery: StructQuery,
     public uiQuery: UiQuery,
     public navQuery: NavQuery,
     public repoQuery: RepoQuery,
+    public memberQuery: MemberQuery,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private confirmService: ConfirmService,

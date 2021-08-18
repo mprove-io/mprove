@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { NavState } from '~front/app/stores/nav.store';
@@ -19,10 +20,19 @@ export class NavbarComponent {
     })
   );
 
+  member: common.Member;
+  member$ = this.memberQuery.select().pipe(
+    tap(x => {
+      this.member = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private router: Router,
     public navQuery: NavQuery,
     public userQuery: UserQuery,
+    public memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
   ) {}
 
