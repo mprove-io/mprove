@@ -10,6 +10,7 @@ export * from './color-scheme-chart-types';
 export * from './doughnut-chart-types';
 export * from './empty-color-chart-types';
 export * from './explode-slices-chart-types';
+export * from './format-chart-types';
 export * from './gradient-chart-types';
 export * from './group-padding-chart-types';
 export * from './inner-padding-chart-types';

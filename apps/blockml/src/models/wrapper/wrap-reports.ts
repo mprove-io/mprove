@@ -76,6 +76,10 @@ export function wrapReports(item: {
         ? helper.toBoolean(report.options?.show_data_label)
         : common.CHART_DEFAULT_SHOW_DATA_LABEL,
 
+      format: common.isDefined(report.options?.format)
+        ? helper.toBoolean(report.options?.format)
+        : common.CHART_DEFAULT_FORMAT,
+
       gradient: common.isDefined(report.options?.gradient)
         ? helper.toBoolean(report.options?.gradient)
         : common.CHART_DEFAULT_GRADIENT,

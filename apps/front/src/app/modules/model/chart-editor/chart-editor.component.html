@@ -627,6 +627,21 @@
   </div>
 
   <div
+    *ngIf="formatChartTypes.indexOf(chart.type) > -1"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 w-48 text-gray1 text-base items-center select-none"
+      >Format</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.format"
+      (change)="toggleFormat($event)"
+    ></ui-switch>
+  </div>
+
+  <div
     *ngIf="legendChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-center mb-5"
   >

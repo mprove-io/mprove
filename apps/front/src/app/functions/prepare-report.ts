@@ -167,6 +167,11 @@ export function prepareReport(mconfig: common.Mconfig) {
         chart.showDataLabel !== common.CHART_DEFAULT_SHOW_DATA_LABEL
           ? chart.showDataLabel
           : undefined,
+      format:
+        constants.formatChartTypes.indexOf(chart.type) > -1 &&
+        chart.format !== common.CHART_DEFAULT_FORMAT
+          ? chart.format
+          : undefined,
       tooltip_disabled:
         constants.tooltipDisabledChartTypes.indexOf(chart.type) > -1 &&
         chart.tooltipDisabled !== common.CHART_DEFAULT_TOOLTIP_DISABLED

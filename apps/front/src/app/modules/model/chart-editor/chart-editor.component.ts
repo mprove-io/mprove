@@ -73,6 +73,7 @@ export class ChartEditorComponent implements OnChanges {
   roundEdgesChartTypes = constants.roundEdgesChartTypes;
   schemeTypeChartTypes = constants.schemeTypeChartTypes;
   showDataLabelChartTypes = constants.showDataLabelChartTypes;
+  formatChartTypes = constants.formatChartTypes;
   showGridLinesChartTypes = constants.showGridLinesChartTypes;
   smallSegmentsChartTypes = constants.smallSegmentsChartTypes;
   startAngleChartTypes = constants.startAngleChartTypes;
@@ -1371,6 +1372,12 @@ export class ChartEditorComponent implements OnChanges {
   toggleShowDataLabel($event: any) {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.showDataLabel = $event;
+    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  toggleFormat($event: any) {
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.format = $event;
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }

@@ -7,6 +7,9 @@ export interface ChartOptions {
   show_data_label: string; // boolean
   show_data_label_line_num: number;
 
+  format: string; // boolean
+  format_line_num: number;
+
   gradient: string; // boolean
   gradient_line_num: number;
 

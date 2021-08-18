@@ -40,7 +40,7 @@
       chart.isValid === true &&
       qData.length > 0
     "
-    [isFormat]="true"
+    [isFormat]="chart.format === false ? false : true"
     [qData]="qData"
     [sortedColumns]="sortedColumns"
     [hideColumns]="chart.hideColumns"

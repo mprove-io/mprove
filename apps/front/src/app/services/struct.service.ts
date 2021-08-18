@@ -119,6 +119,7 @@ export class StructService {
 
         labels: common.CHART_DEFAULT_LABELS,
         showDataLabel: common.CHART_DEFAULT_SHOW_DATA_LABEL,
+        format: common.CHART_DEFAULT_FORMAT,
         autoScale: common.CHART_DEFAULT_AUTO_SCALE,
         legend: common.CHART_DEFAULT_LEGEND,
         doughnut: common.CHART_DEFAULT_DOUGHNUT,

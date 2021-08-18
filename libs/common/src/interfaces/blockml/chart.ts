@@ -89,6 +89,10 @@ export class Chart {
 
   @IsOptional()
   @IsBoolean()
+  format?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   gradient?: boolean;
 
   @IsOptional()
