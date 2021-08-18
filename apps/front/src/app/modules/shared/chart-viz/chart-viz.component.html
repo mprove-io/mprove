@@ -60,7 +60,11 @@
             <button
               data-cy="vizOptionsEditInfo"
               class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+              [ngClass]="{
+                'cursor-default text-gray-400': canEditOrDelete === false
+              }"
               (click)="editVizInfo($event)"
+              [disabled]="canEditOrDelete === false"
               >Edit Info</button
             >
 
@@ -74,7 +78,11 @@
             <button
               data-cy="vizOptionsDelete"
               class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+              [ngClass]="{
+                'cursor-default text-gray-400': canEditOrDelete === false
+              }"
               (click)="deleteViz($event)"
+              [disabled]="canEditOrDelete === false"
               >Delete</button
             >
           </div>

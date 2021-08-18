@@ -10,6 +10,7 @@ import {
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -69,9 +70,12 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     })
   );
 
+  canEditOrDelete = false;
+
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
+    private memberQuery: MemberQuery,
     private queryService: QueryService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
@@ -101,6 +105,16 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
         ? vizFilePathArray[2]
         : undefined;
+
+    this.memberQuery
+      .select()
+      .pipe(
+        tap(x => {
+          this.canEditOrDelete =
+            x.isEditor || x.isAdmin || this.author === x.alias;
+        })
+      )
+      .subscribe();
 
     let nav: NavState;
     this.navQuery
