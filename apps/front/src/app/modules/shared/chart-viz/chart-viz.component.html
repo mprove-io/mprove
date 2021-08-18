@@ -1,9 +1,13 @@
-<div class="group h-full w-full bg-white rounded shadow-md hover:bg-blue2">
+<div
+  class="group h-full w-full bg-white rounded shadow-md"
+  [ngClass]="{
+    'hover:bg-blue2 cursor-pointer': canAccessModel === true,
+    'hover:bg-yellow-100': canAccessModel === false
+  }"
+  (click)="navMconfig()"
+>
   <div class="mx-5 h-full">
-    <div
-      class="flex flex-col h-full w-full cursor-pointer"
-      (click)="navMconfig()"
-    >
+    <div class="flex flex-col h-full w-full">
       <div
         class="mt-8 flex flex-row text-xl text-gray1 justify-center items-start flex-shrink-0"
       >
@@ -61,10 +65,10 @@
               data-cy="vizOptionsEditInfo"
               class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
               [ngClass]="{
-                'cursor-default text-gray-400': canEditOrDelete === false
+                'cursor-default text-gray-400': canEditOrDeleteViz === false
               }"
               (click)="editVizInfo($event)"
-              [disabled]="canEditOrDelete === false"
+              [disabled]="canEditOrDeleteViz === false"
               >Edit Info</button
             >
 
@@ -79,10 +83,10 @@
               data-cy="vizOptionsDelete"
               class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
               [ngClass]="{
-                'cursor-default text-gray-400': canEditOrDelete === false
+                'cursor-default text-gray-400': canEditOrDeleteViz === false
               }"
               (click)="deleteViz($event)"
-              [disabled]="canEditOrDelete === false"
+              [disabled]="canEditOrDeleteViz === false"
               >Delete</button
             >
           </div>

@@ -70,7 +70,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     })
   );
 
-  canEditOrDelete = false;
+  canEditOrDeleteViz = false;
+  canAccessModel = false;
 
   constructor(
     private apiService: ApiService,
@@ -106,12 +107,12 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         ? vizFilePathArray[2]
         : undefined;
 
+    let member: common.Member;
     this.memberQuery
       .select()
       .pipe(
         tap(x => {
-          this.canEditOrDelete =
-            x.isEditor || x.isAdmin || this.author === x.alias;
+          member = x;
         })
       )
       .subscribe();
@@ -224,15 +225,28 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
+    this.canEditOrDeleteViz =
+      member.isEditor || member.isAdmin || this.author === member.alias;
+
+    this.canAccessModel =
+      member.isExplorer === false
+        ? false
+        : member.isAdmin === true || member.isEditor === true
+        ? true
+        : model.accessUsers.indexOf(member.alias) > -1 ||
+          model.accessRoles.some(x => member.roles.includes(x));
+
     this.cd.detectChanges();
   }
 
   navMconfig() {
-    this.navigateService.navigateMconfigQueryData({
-      modelId: this.report.modelId,
-      mconfigId: this.report.mconfigId,
-      queryId: this.report.queryId
-    });
+    if (this.canAccessModel === true) {
+      this.navigateService.navigateMconfigQueryData({
+        modelId: this.report.modelId,
+        mconfigId: this.report.mconfigId,
+        queryId: this.report.queryId
+      });
+    }
   }
 
   openMenu() {
