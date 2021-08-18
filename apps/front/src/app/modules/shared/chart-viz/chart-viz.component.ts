@@ -97,7 +97,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     let vizFilePathArray = this.viz.filePath.split('/');
 
     this.author =
-      vizFilePathArray.length > 1 && vizFilePathArray[1] === 'users'
+      vizFilePathArray.length > 1 &&
+      vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
         ? vizFilePathArray[2]
         : undefined;
 

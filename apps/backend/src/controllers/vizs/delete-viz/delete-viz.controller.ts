@@ -58,7 +58,10 @@ export class DeleteVizController {
       vizId: vizId
     });
 
-    if (member.is_editor === common.BoolEnum.FALSE) {
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      member.is_editor === common.BoolEnum.FALSE
+    ) {
       this.vizsService.checkVizPath({
         userAlias: user.alias,
         filePath: existingViz.file_path

@@ -39,6 +39,17 @@
             ],
             "parallel": false
           }
+        },
+        "steps-short": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx affected --target=build",
+              "nx pj top",
+              "nx affected --target=up"
+            ],
+            "parallel": false
+          }
         }
       }
     },

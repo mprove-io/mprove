@@ -60,7 +60,10 @@ export class DeleteDashboardController {
       }
     );
 
-    if (member.is_editor === common.BoolEnum.FALSE) {
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      member.is_editor === common.BoolEnum.FALSE
+    ) {
       this.dashboardsService.checkDashboardPath({
         userAlias: user.alias,
         filePath: existingDashboard.file_path

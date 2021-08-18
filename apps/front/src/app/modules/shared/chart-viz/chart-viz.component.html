@@ -5,38 +5,7 @@
       (click)="navMconfig()"
     >
       <div
-        class="h-10 flex flex-row justify-start items-center text-base text-gray-400 invisible group-hover:visible"
-      >
-        <div class=" ">Model:</div>
-        <div class="ml-2 font-semibold">{{ viz?.modelLabel | capitalize }}</div>
-
-        <div class="ml-10">Author:</div>
-        <div class="ml-2 font-semibold">{{ author ? author : 'team' }}</div>
-
-        <div class="ml-10">Access:</div>
-
-        <div
-          class="ml-2 font-semibold"
-          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 0"
-          >Public</div
-        >
-        <div
-          class="ml-2 font-semibold"
-          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 1"
-          >Private - {{ viz?.accessUsers[0] }}</div
-        >
-        <div
-          class="ml-2 font-semibold truncate max-w-sm"
-          *ngIf="viz?.accessRoles.length > 0 || viz?.accessUsers.length > 1"
-          nz-tooltip
-          [nzTooltipTitle]="accessString"
-          nzTooltipPlacement="bottom"
-          >Special</div
-        >
-      </div>
-
-      <div
-        class="flex flex-row text-xl text-gray1 justify-center items-start flex-shrink-0"
+        class="mt-8 flex flex-row text-xl text-gray1 justify-center items-start flex-shrink-0"
       >
         <div
           class="flex flex-col flex-grow ml-[104px] h-[60px] justify-start items-center"
@@ -113,7 +82,7 @@
       </div>
 
       <m-chart-view
-        *ngIf="mconfig?.chart"
+        *ngIf="!!mconfig?.chart"
         class="w-full p-5 flex flex-grow border border-gray3 rounded bg-white"
         [sortedColumns]="sortedColumns"
         [qData]="qData"
@@ -131,6 +100,37 @@
         }"
       >
         <m-query-status *ngIf="!!query" [query]="query"></m-query-status>
+      </div>
+
+      <div
+        class="mb-1 h-8 flex flex-row justify-center items-center text-base text-gray-400 invisible group-hover:visible"
+      >
+        <div class=" ">Model:</div>
+        <div class="ml-2 font-semibold">{{ viz?.modelLabel | capitalize }}</div>
+
+        <div class="ml-10">Author:</div>
+        <div class="ml-2 font-semibold">{{ author ? author : 'team' }}</div>
+
+        <div class="ml-10">Access:</div>
+
+        <div
+          class="ml-2 font-semibold"
+          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 0"
+          >Public</div
+        >
+        <div
+          class="ml-2 font-semibold"
+          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 1"
+          >Private - {{ viz?.accessUsers[0] }}</div
+        >
+        <div
+          class="ml-2 font-semibold truncate max-w-sm"
+          *ngIf="viz?.accessRoles.length > 0 || viz?.accessUsers.length > 1"
+          nz-tooltip
+          [nzTooltipTitle]="accessString"
+          nzTooltipPlacement="bottom"
+          >Special</div
+        >
       </div>
     </div>
   </div>

@@ -25,7 +25,10 @@ export class VizsService {
   }
 
   checkVizPath(item: { filePath: string; userAlias: string }) {
-    if (item.filePath.split('/')[2] !== item.userAlias) {
+    if (
+      item.filePath.split('/')[1] !== common.BLOCKML_USERS_FOLDER ||
+      item.filePath.split('/')[2] !== item.userAlias
+    ) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_VIZ_PATH
       });
