@@ -139,8 +139,22 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   vizDeleted(deletedVizId: string) {
+    let deletedVizModelId = this.vizs.find(viz => viz.vizId === deletedVizId)
+      ?.modelId;
+
     this.vizs = this.vizs.filter(x => x.vizId !== deletedVizId);
+
+    if (common.isDefined(deletedVizModelId)) {
+      let modelItemExtended = this.vizsModelsList.find(
+        x => x.modelId === deletedVizModelId
+      );
+      if (common.isDefined(modelItemExtended)) {
+        modelItemExtended.totalVizs = modelItemExtended.totalVizs - 1;
+      }
+    }
+
     this.makeFilteredVizs();
+    this.cd.detectChanges();
   }
 
   trackByFn(index: number, item: common.Viz) {
