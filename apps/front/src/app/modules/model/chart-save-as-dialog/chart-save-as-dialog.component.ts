@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { prepareReport } from '~front/app/functions/prepare-report';
@@ -8,6 +7,7 @@ import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { toYaml } from '~front/app/functions/to-yaml';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -57,8 +57,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
-    private router: Router,
     private userQuery: UserQuery,
+    private navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -150,7 +150,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
         payload
       )
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateVizResponse) => {}),
+        tap((resp: apiToBackend.ToBackendCreateVizResponse) => {
+          this.navigateService.navigateToVizs({
+            queryParams: { searchTitle: rep.title }
+          });
+        }),
         take(1)
       )
       .subscribe();

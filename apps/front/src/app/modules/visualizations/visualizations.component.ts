@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { VizsQuery } from '~front/app/queries/vizs.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -9,7 +10,7 @@ import { common } from '~front/barrels/common';
   selector: 'm-visualizations',
   templateUrl: './visualizations.component.html'
 })
-export class VisualizationsComponent implements OnDestroy {
+export class VisualizationsComponent implements OnInit, OnDestroy {
   groups: string[];
 
   modelsList: common.ModelsItem[];
@@ -44,10 +45,25 @@ export class VisualizationsComponent implements OnDestroy {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private vizsQuery: VizsQuery,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    private location: Location
   ) {}
+
+  ngOnInit() {
+    this.word = this.route.snapshot.queryParamMap.get('searchTitle');
+    this.searchWordChange();
+
+    if (this.word) {
+      const url = this.router
+        .createUrlTree([], { relativeTo: this.route, queryParams: {} })
+        .toString();
+
+      this.location.go(url);
+    }
+  }
 
   modelOnClick(modelId: string) {
     if (this.modelId === modelId) {
@@ -99,6 +115,12 @@ export class VisualizationsComponent implements OnDestroy {
       this.makeFilteredVizs();
       this.cd.detectChanges();
     }, 600);
+  }
+
+  resetSearch() {
+    this.word = undefined;
+    this.makeFilteredVizs();
+    this.cd.detectChanges();
   }
 
   newViz() {

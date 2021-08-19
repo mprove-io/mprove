@@ -35,6 +35,14 @@
                   [(ngModel)]="word"
                   (ngModelChange)="searchWordChange()"
                 />
+
+                <m-delete-icon
+                  class="flex ml-3 text-gray1 h-8 w-8 rounded focus:outline-none items-center justify-center flex-shrink-0"
+                  [ngClass]="{
+                    'cursor-pointer bg-blue-100 hover:bg-blue-200': !!word
+                  }"
+                  (click)="resetSearch()"
+                ></m-delete-icon>
               </div>
 
               <div class="w-full flex flex-col text-gray-300">

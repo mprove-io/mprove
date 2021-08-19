@@ -247,11 +247,11 @@ export class NavigateService {
     ]);
   }
 
-  navigateToVizs() {
+  navigateToVizs(extra?: any) {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
-    this.router.navigate([
+    let nav = [
       common.PATH_ORG,
       this.nav.orgId,
       common.PATH_PROJECT,
@@ -261,7 +261,13 @@ export class NavigateService {
       common.PATH_BRANCH,
       this.nav.branchId,
       common.PATH_VISUALIZATIONS
-    ]);
+    ];
+
+    if (common.isDefined(extra)) {
+      this.router.navigate(nav, extra);
+    } else {
+      this.router.navigate(nav);
+    }
   }
 
   reloadVizs() {
