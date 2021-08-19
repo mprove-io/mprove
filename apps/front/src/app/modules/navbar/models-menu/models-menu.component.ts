@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -17,12 +17,14 @@ import { common } from '~front/barrels/common';
   templateUrl: './models-menu.component.html'
 })
 export class ModelsMenuComponent implements OnInit, OnDestroy {
+  isExplorer: boolean;
+
   pathModelId = '';
 
   menuId = 'modelsMenu';
 
   modelsList: common.ModelsItem[] = [];
-  modelsListLoading = false;
+  isLoading = false;
   modelsListLength = 0;
 
   openedMenuId: string;
@@ -90,7 +92,7 @@ export class ModelsMenuComponent implements OnInit, OnDestroy {
     this.isModelsMenuOpen = true;
     this.uiStore.update({ openedMenuId: this.menuId });
 
-    this.modelsListLoading = true;
+    this.isLoading = true;
 
     let payload: apiToBackend.ToBackendGetModelsListRequestPayload = {
       projectId: this.nav.projectId,
@@ -104,14 +106,12 @@ export class ModelsMenuComponent implements OnInit, OnDestroy {
         payload
       )
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetModelsListResponse) =>
-            resp.payload.modelsList
-        ),
-        tap(x => {
-          this.modelsList = x;
-          this.modelsListLoading = false;
-          this.modelsListLength = x.length;
+        tap((resp: apiToBackend.ToBackendGetModelsListResponse) => {
+          this.modelsList = resp.payload.modelsList;
+          this.isExplorer = resp.payload.memberIsExplorer;
+          this.modelsListLength = resp.payload.modelsList.length;
+          this.isLoading = false;
+          this.cd.detectChanges();
         }),
         take(1)
       )

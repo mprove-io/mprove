@@ -27,12 +27,21 @@
     class="absolute left-0 z-10 mt-1 w-56 bg-white rounded-md shadow-xl border-2 border-gray4"
     *ngIf="isModelsMenuOpen === true"
   >
-    <div *ngIf="modelsListLoading === true">Loading ...</div>
+    <div *ngIf="isLoading === true" class="text-base p-5">Loading ...</div>
 
-    <div *ngIf="modelsListLoading === false">
-      <div *ngIf="modelsListLength === 0"> 0 valid models </div>
+    <div *ngIf="isLoading === false">
+      <div *ngIf="isExplorer === false" class="text-base p-5"
+        >Role
+        <span class="font-semibold"> Model Explorer </span>
 
-      <div *ngIf="modelsListLength > 0">
+        is required to see models</div
+      >
+
+      <div *ngIf="isExplorer === true && modelsListLength === 0">
+        0 valid models
+      </div>
+
+      <div *ngIf="isExplorer === true && modelsListLength > 0">
         <button
           *ngFor="let item of modelsList"
           class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"

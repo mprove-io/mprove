@@ -28,6 +28,9 @@ export class ToBackendGetModelsListResponsePayload {
   @ValidateNested()
   @Type(() => common.ModelsItem)
   allModelsList: common.ModelsItem[];
+
+  @IsBoolean()
+  memberIsExplorer: boolean;
 }
 
 export class ToBackendGetModelsListResponse extends common.MyResponse {
