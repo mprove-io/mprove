@@ -233,6 +233,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         ? false
         : member.isAdmin === true || member.isEditor === true
         ? true
+        : model.accessRoles.length === 0 && model.accessUsers.length === 0
+        ? true
         : model.accessUsers.indexOf(member.alias) > -1 ||
           model.accessRoles.some(x => member.roles.includes(x));
 

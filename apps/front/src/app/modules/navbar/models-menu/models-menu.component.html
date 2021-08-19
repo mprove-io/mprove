@@ -37,8 +37,11 @@
         is required to see models</div
       >
 
-      <div *ngIf="isExplorer === true && modelsListLength === 0">
-        0 valid models
+      <div
+        *ngIf="isExplorer === true && modelsListLength === 0"
+        class="text-base p-5"
+      >
+        No models available
       </div>
 
       <div *ngIf="isExplorer === true && modelsListLength > 0">

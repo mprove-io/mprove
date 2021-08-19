@@ -2,7 +2,6 @@ import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MconfigsService } from '~backend/services/mconfigs.service';
@@ -53,17 +52,19 @@ export class GetQueryController {
       modelId: mconfig.model_id
     });
 
-    let isAccessGranted = helper.checkAccess({
-      userAlias: user.alias,
-      member: member,
-      vmd: model
-    });
+    // allow access to get data on visualizations
 
-    if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
-      });
-    }
+    // let isAccessGranted = helper.checkAccess({
+    //   userAlias: user.alias,
+    //   member: member,
+    //   vmd: model
+    // });
+
+    // if (isAccessGranted === false) {
+    //   throw new common.ServerError({
+    //     message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+    //   });
+    // }
 
     let query = await this.queriesService.getQueryCheckExists({
       queryId: queryId

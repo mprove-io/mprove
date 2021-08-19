@@ -2,9 +2,15 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
+
+class ModelsItemExtended extends common.ModelsItem {
+  totalVizs: number;
+  hasAccess: boolean;
+}
 
 @Component({
   selector: 'm-visualizations',
@@ -14,18 +20,52 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   groups: string[];
 
   modelsList: common.ModelsItem[];
-  vizsModelsList: common.ModelsItem[];
+  vizsModelsList: ModelsItemExtended[];
+
   vizs: common.Viz[];
   filteredVizs: common.Viz[];
+
+  hasAccessModelsList: ModelsItemExtended[] = [];
+  hasNoAccessModelsList: ModelsItemExtended[] = [];
+
+  isExplorer = false;
+  isExplorer$ = this.memberQuery.isExplorer$.pipe(
+    tap(x => {
+      this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
 
   vizs$ = this.vizsQuery.select().pipe(
     tap(x => {
       this.vizs = x.vizs;
+
       this.modelsList = x.modelsList;
-      this.vizsModelsList = x.allModelsList.filter(
-        listItem =>
-          this.vizs.filter(v => v.modelId === listItem.modelId).length > 0
+
+      this.hasAccessModelsList = this.modelsList.map(z =>
+        Object.assign({}, z, {
+          totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length,
+          hasAccess: true
+        })
       );
+
+      this.hasNoAccessModelsList = x.allModelsList
+        .filter(
+          c => this.modelsList.findIndex(b => b.modelId === c.modelId) < 0
+        )
+        .map(z =>
+          Object.assign({}, z, {
+            totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length,
+            hasAccess: false
+          })
+        );
+
+      this.vizsModelsList = [
+        ...this.hasAccessModelsList,
+        ...this.hasNoAccessModelsList
+      ].sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
+
+      console.log(this.hasNoAccessModelsList.length);
 
       let allGroups = this.vizs.map(z => z.gr);
       let definedGroups = allGroups.filter(y => common.isDefined(y));
@@ -48,6 +88,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private vizsQuery: VizsQuery,
+    private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
     private location: Location
   ) {}
@@ -124,6 +165,14 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   newViz() {
+    if (
+      this.isExplorer === false ||
+      !this.modelsList ||
+      this.modelsList.length === 0
+    ) {
+      return;
+    }
+
     this.myDialogService.showNewViz({
       modelsList: this.modelsList
     });

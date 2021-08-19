@@ -14,10 +14,35 @@
           <button
             type="button"
             data-cy="vizsNewButton"
-            class="w-24 py-2 ml-5 mr-9 bg-blue3 text-white text-base rounded font-medium focus:outline-none"
+            class="w-24 py-2 ml-5 mr-9 text-white text-base rounded font-medium focus:outline-none"
+            [ngClass]="{
+              'bg-blue3 cursor-pointer':
+                isExplorer === true && modelsList?.length > 0,
+              'bg-gray-400 cursor-default':
+                isExplorer === false || !modelsList || modelsList.length === 0
+            }"
             (click)="newViz()"
-            >New</button
           >
+            <div *ngIf="isExplorer === true && modelsList?.length > 0">New</div>
+
+            <div
+              *ngIf="isExplorer === false"
+              nz-tooltip
+              [nzTooltipTitle]="'Role Model Explorer is required'"
+              nzTooltipPlacement="left"
+              >New</div
+            >
+
+            <div
+              *ngIf="
+                isExplorer === true && (!modelsList || modelsList.length === 0)
+              "
+              nz-tooltip
+              [nzTooltipTitle]="'No models available'"
+              nzTooltipPlacement="left"
+              >New</div
+            >
+          </button>
         </div>
       </div>
 
@@ -51,25 +76,48 @@
               </div>
 
               <div
-                class="hover:cursor-pointer py-2 px-4 rounded mt-5"
+                class="flex flex-row justify-between hover:cursor-pointer py-2 px-4 rounded mt-5"
                 [ngClass]="{
                   'bg-blue-100': !modelId,
                   'hover:bg-blue2': !!modelId
                 }"
                 (click)="allModelsOnClick()"
-                >All Models</div
               >
+                <div> All Models </div>
+                <div class="flex justify-end ml-3 w-12">
+                  {{ vizs?.length }}
+                </div>
+              </div>
 
               <div
                 *ngFor="let modelsItem of vizsModelsList"
-                class="hover:cursor-pointer py-2 px-4 rounded"
+                class="flex flex-row hover:cursor-pointer py-2 px-4 rounded"
                 [ngClass]="{
                   'bg-blue-100': modelId === modelsItem.modelId,
                   'hover:bg-blue2': modelId !== modelsItem.modelId
                 }"
                 (click)="modelOnClick(modelsItem.modelId)"
-                >{{ modelsItem.label | capitalize }}</div
               >
+                <div>
+                  {{ modelsItem.label | capitalize }}
+                </div>
+
+                <div class="flex flex-grow"></div>
+
+                <div class="ml-5 w-6">
+                  <m-lock-closed-icon
+                    class="text-gray-400"
+                    *ngIf="modelsItem.hasAccess === false"
+                    nz-tooltip
+                    [nzTooltipTitle]="'No access to model'"
+                    nzTooltipPlacement="bottom"
+                  ></m-lock-closed-icon>
+                </div>
+
+                <div class="flex justify-end ml-3 w-12">
+                  {{ modelsItem.totalVizs }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -77,6 +125,7 @@
         <div class="flex flex-grow ml-6">
           <div class="w-full">
             <virtual-scroller
+              *ngIf="filteredVizs?.length > 0"
               #scroll
               [items]="filteredVizs"
               class="w-full h-full"
@@ -95,6 +144,12 @@
                 </div>
               </div>
             </virtual-scroller>
+
+            <div
+              class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+              *ngIf="filteredVizs?.length === 0"
+              >No visualizations</div
+            >
           </div>
         </div>
       </div>
@@ -103,3 +158,4 @@
 </div>
 
 <div *ngIf="vizs$ | async"></div>
+<div *ngIf="isExplorer$ | async"></div>

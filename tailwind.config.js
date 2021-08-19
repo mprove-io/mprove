@@ -64,6 +64,7 @@ module.exports = {
     }),
     borderColor: theme => ({
       ...theme('colors'),
+      blue2,
       blue3,
       gray3,
       gray4,

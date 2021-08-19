@@ -1,8 +1,8 @@
 <div
-  class="group h-full w-full bg-white rounded shadow-md"
+  class="group h-full w-full bg-white border border-white rounded shadow-md"
   [ngClass]="{
-    'hover:bg-blue2 cursor-pointer': canAccessModel === true,
-    'hover:bg-yellow-100': canAccessModel === false
+    'hover:bg-blue2 hover:border-blue2 cursor-pointer': canAccessModel === true,
+    'hover:bg-gray-100 hover:border-gray-200': canAccessModel === false
   }"
   (click)="navMconfig()"
 >
@@ -117,6 +117,13 @@
       <div
         class="mb-1 h-8 flex flex-row justify-center items-center text-base text-gray-400 invisible group-hover:visible"
       >
+        <m-lock-closed-icon
+          class="mb-1 mr-2 text-gray-400"
+          *ngIf="canAccessModel === false"
+          nz-tooltip
+          [nzTooltipTitle]="'No access to model'"
+          nzTooltipPlacement="bottom"
+        ></m-lock-closed-icon>
         <div class=" ">Model:</div>
         <div class="ml-2 font-semibold">{{ viz?.modelLabel | capitalize }}</div>
 
