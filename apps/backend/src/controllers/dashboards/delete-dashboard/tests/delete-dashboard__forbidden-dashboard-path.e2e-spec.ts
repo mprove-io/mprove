@@ -66,7 +66,7 @@ test('1', async t => {
             memberId: userId,
             email,
             projectId,
-            isAdmin: common.BoolEnum.TRUE,
+            isAdmin: common.BoolEnum.FALSE,
             isEditor: common.BoolEnum.FALSE,
             isExplorer: common.BoolEnum.TRUE
           }
