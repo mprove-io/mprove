@@ -8,6 +8,7 @@ import {
 } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
+import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { AuthService } from './services/auth.service';
 
@@ -23,7 +24,9 @@ export class AppComponent implements OnInit {
   routerEvents$ = this.router.events.pipe(
     tap((x: any) => {
       switch (true) {
-        case x instanceof NavigationStart: {
+        case x instanceof NavigationStart &&
+          // x.url !== `/${common.PATH_LOGIN_SUCCESS}` &&
+          x.url !== `/${common.PATH_LOGIN}`: {
           // console.log('NavigationStart', x.url);
           this.spinnerStartedTs = Date.now();
           this.spinner.show(constants.APP_SPINNER_NAME);
