@@ -57,7 +57,7 @@ export class ConfirmEmailComponent implements OnInit {
             this.userStore.update(user);
             this.authService.stopWatch();
             localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
-            this.router.navigate([common.PATH_PROFILE]);
+            this.router.navigate([common.PATH_LOGIN_SUCCESS]);
           } else {
             // email was verified already
             this.router.navigate([common.PATH_EMAIL_CONFIRMED]);

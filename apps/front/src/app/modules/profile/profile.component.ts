@@ -41,8 +41,6 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
-
-    this.authService.startWatch();
   }
 
   changePassword() {

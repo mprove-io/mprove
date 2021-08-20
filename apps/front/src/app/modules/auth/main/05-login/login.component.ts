@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
           if (user.isEmailVerified === true) {
             this.authService.stopWatch();
             localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
-            this.router.navigate([common.PATH_PROFILE]);
+            this.router.navigate([common.PATH_LOGIN_SUCCESS]);
           } else {
             this.router.navigate([common.PATH_VERIFY_EMAIL]);
           }

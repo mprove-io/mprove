@@ -25,6 +25,7 @@ import { ProfileComponent } from './modules/profile/profile.component';
 import { ProjectConnectionsComponent } from './modules/project/project-connections/project-connections.component';
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
+import { LoginSuccessComponent } from './modules/special/login-success/login-success.component';
 import { NotFoundComponent } from './modules/special/not-found/not-found.component';
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
@@ -80,6 +81,7 @@ const routes: Routes = [
         component: LoginComponent,
         path: common.PATH_LOGIN
       },
+
       {
         component: ForgotPasswordComponent,
         path: common.PATH_FORGOT_PASSWORD
@@ -107,6 +109,10 @@ const routes: Routes = [
     path: '',
     resolve: [NavBarResolver],
     children: [
+      {
+        component: LoginSuccessComponent,
+        path: common.PATH_LOGIN_SUCCESS
+      },
       {
         component: PasswordResetSentComponent,
         path: common.PATH_PASSWORD_RESET_SENT_AUTH

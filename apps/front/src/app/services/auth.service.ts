@@ -63,7 +63,7 @@ export class AuthService {
         [common.PATH_PROFILE].indexOf(firstPath) > -1 &&
         !this.authenticated()
       ) {
-        console.log('[WatchAuthenticationService] logout');
+        // console.log('[WatchAuthenticationService] logout');
         this.logout();
       } else if (
         // for other tabs
@@ -74,8 +74,8 @@ export class AuthService {
         ].indexOf(firstPath) > -1 &&
         this.authenticated()
       ) {
-        console.log('[WatchAuthenticationService] profile');
-        this.router.navigate([common.PATH_PROFILE]);
+        // console.log('[WatchAuthenticationService] login success');
+        this.router.navigate([common.PATH_LOGIN_SUCCESS]);
       }
     });
   }

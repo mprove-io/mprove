@@ -1,4 +1,5 @@
 export const LOG_IN_PAGE_TITLE = 'Log In';
+export const LOGIN_SUCCESS_PAGE_TITLE = 'Login Success!';
 export const SIGN_UP_PAGE_TITLE = 'Sign Up';
 export const VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE = 'Verify your email address';
 export const EMAIL_CONFIRMATION_PAGE_TITLE = 'Email confirmation';

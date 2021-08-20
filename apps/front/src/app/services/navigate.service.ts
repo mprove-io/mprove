@@ -42,6 +42,10 @@ export class NavigateService {
     this.userId$.subscribe();
   }
 
+  navigateToProfile() {
+    this.router.navigate([common.PATH_PROFILE]);
+  }
+
   // navigateSwitch(newMconfigId: string, newQueryId: string) {
   //   let pathArray: string[] = this.router.url.split('/');
 
@@ -247,26 +251,30 @@ export class NavigateService {
     ]);
   }
 
-  navigateToVizs(extra?: any) {
+  navigateToVizs(item?: { navParts?: string[]; extra?: any }) {
+    let { navParts, extra } = item;
+
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
-    let nav = [
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_VISUALIZATIONS
-    ];
+    let navTo = common.isDefined(navParts)
+      ? navParts
+      : [
+          common.PATH_ORG,
+          this.nav.orgId,
+          common.PATH_PROJECT,
+          this.nav.projectId,
+          common.PATH_REPO,
+          repoId,
+          common.PATH_BRANCH,
+          this.nav.branchId,
+          common.PATH_VISUALIZATIONS
+        ];
 
     if (common.isDefined(extra)) {
-      this.router.navigate(nav, extra);
+      this.router.navigate(navTo, extra);
     } else {
-      this.router.navigate(nav);
+      this.router.navigate(navTo);
     }
   }
 

@@ -69,8 +69,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
         ...this.hasNoAccessModelsList
       ].sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
 
-      console.log(this.hasNoAccessModelsList.length);
-
       let allGroups = this.vizs.map(z => z.gr);
       let definedGroups = allGroups.filter(y => common.isDefined(y));
       this.groups = [...new Set(definedGroups)];
