@@ -8,10 +8,11 @@
       <button
         class="block px-5 text-gray1 w-full text-left text-base focus:outline-none"
         [ngClass]="{
-          'text-gray-400': !nav || !nav.projectId
+          'cursor-default text-gray-400':
+            !nav || !nav.projectId || needSave === true
         }"
         (click)="navigateBlockml()"
-        [disabled]="!nav || !nav.projectId"
+        [disabled]="!nav || !nav.projectId || needSave === true"
         >BlockML</button
       >
       <m-branch-select class="ml-3"></m-branch-select>
@@ -21,10 +22,11 @@
       <button
         class="block px-5 text-gray1 w-full text-left text-base focus:outline-none"
         [ngClass]="{
-          'text-gray-400': !nav || !nav.projectId
+          'cursor-default text-gray-400':
+            !nav || !nav.projectId || needSave === true
         }"
         (click)="navigateVisualizations()"
-        [disabled]="!nav || !nav.projectId"
+        [disabled]="!nav || !nav.projectId || needSave === true"
         >Visualizations</button
       >
 
@@ -48,3 +50,4 @@
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="member$ | async"></div>
+<div *ngIf="needSave$ | async"></div>

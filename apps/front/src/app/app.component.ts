@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
               time
             );
           } else {
-            this.spinner.hide();
+            this.spinner.hide(constants.APP_SPINNER_NAME);
           }
 
           break;
@@ -61,9 +61,8 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private spinner: NgxSpinnerService,
-    private router: Router // , // private myDialogService: MyDialogService,
-  ) // private apiService: ApiService
-  {}
+    private router: Router // , // private myDialogService: MyDialogService, // private apiService: ApiService
+  ) {}
 
   ngOnInit() {
     this.authService.startWatch();

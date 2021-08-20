@@ -2,14 +2,16 @@
   <button
     class="relative block h-10 z-10 rounded-full text-gray1 tracking-wider focus:outline-none"
     [ngClass]="{
-      'cursor-default':
-        nav?.orgId === undefined ||
+      'cursor-default text-gray-400':
+        !nav ||
+        !nav.projectId ||
         needSave === true ||
         (openedMenuId && menuId !== openedMenuId)
     }"
     (click)="toggleMenu()"
     [disabled]="
-      nav?.orgId === undefined ||
+      !nav ||
+      !nav.projectId ||
       needSave === true ||
       (openedMenuId && menuId !== openedMenuId)
     "

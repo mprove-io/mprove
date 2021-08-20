@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
@@ -28,9 +29,13 @@ export class NavbarComponent {
     })
   );
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   constructor(
     private router: Router,
     public navQuery: NavQuery,
+    public uiQuery: UiQuery,
     public userQuery: UserQuery,
     public memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
