@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import en from '@angular/common/locales/en';
 import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogModule } from '@ngneat/dialog';
@@ -60,7 +60,8 @@ registerLocaleData(en);
       provide: ErrorHandler,
       useClass: ErrorHandlerService
     },
-    NgxImageCompressService
+    NgxImageCompressService,
+    Title
   ],
   bootstrap: [AppComponent]
 })

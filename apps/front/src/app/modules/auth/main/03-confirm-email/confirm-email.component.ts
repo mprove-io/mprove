@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
@@ -14,6 +15,8 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './confirm-email.component.html'
 })
 export class ConfirmEmailComponent implements OnInit {
+  pageTitle = constants.EMAIL_CONFIRMATION_PAGE_TITLE;
+
   emailConfirmationToken: string;
 
   constructor(
@@ -22,10 +25,13 @@ export class ConfirmEmailComponent implements OnInit {
     private userStore: UserStore,
     private authService: AuthService,
     private router: Router,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     this.authService.clearLocalStorage();
     this.authService.stopWatch();
 

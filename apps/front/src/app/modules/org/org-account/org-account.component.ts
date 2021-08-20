@@ -1,16 +1,20 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-org-account',
   templateUrl: './org-account.component.html'
 })
-export class OrgAccountComponent {
+export class OrgAccountComponent implements OnInit {
+  pageTitle = constants.ORGANIZATION_ACCOUNT_PAGE_TITLE;
+
   org: common.Org;
   org$ = this.orgQuery.select().pipe(
     tap(x => {
@@ -32,8 +36,13 @@ export class OrgAccountComponent {
     public navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private title: Title
   ) {}
+
+  ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+  }
 
   deleteOrg() {
     this.myDialogService.showDeleteOrg({

@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { map, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -16,7 +17,9 @@ import { constants } from '~front/barrels/constants';
   selector: 'm-project-team',
   templateUrl: './project-team.component.html'
 })
-export class ProjectTeamComponent {
+export class ProjectTeamComponent implements OnInit {
+  pageTitle = constants.PROJECT_TEAM_PAGE_TITLE;
+
   currentPage: any = 1;
   perPage = constants.MEMBERS_PER_PAGE;
 
@@ -69,8 +72,13 @@ export class ProjectTeamComponent {
     public userQuery: UserQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private title: Title
   ) {}
+
+  ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+  }
 
   getMembers(pageNum: number) {
     let payload: apiToBackend.ToBackendGetMembersRequestPayload = {

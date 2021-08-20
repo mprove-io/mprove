@@ -1,6 +1,8 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { map, take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { OrgQuery } from '~front/app/queries/org.query';
 import { UsersQuery } from '~front/app/queries/users.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -12,7 +14,9 @@ import { constants } from '~front/barrels/constants';
   selector: 'm-org-users',
   templateUrl: './org-users.component.html'
 })
-export class OrgUsersComponent {
+export class OrgUsersComponent implements OnInit {
+  pageTitle = constants.ORGANIZATION_USERS_PAGE_TITLE;
+
   currentPage: any = 1;
   perPage = constants.USERS_PER_PAGE;
 
@@ -44,10 +48,16 @@ export class OrgUsersComponent {
     public usersQuery: UsersQuery,
     public usersStore: UsersStore,
     public navQuery: NavQuery,
+    public orgQuery: OrgQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private title: Title
   ) {}
+
+  ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+  }
 
   getUsers(pageNum: number) {
     let payload: apiToBackend.ToBackendGetOrgUsersRequestPayload = {

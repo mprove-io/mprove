@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
@@ -14,6 +15,8 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
+  pageTitle = constants.LOG_IN_PAGE_TITLE;
+
   loginForm: FormGroup = this.fb.group({
     email: [
       '',
@@ -30,10 +33,13 @@ export class LoginComponent implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private userStore: UserStore,
-    private authService: AuthService
+    private authService: AuthService,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     this.userStore.reset();
     this.authService.startWatch();
   }

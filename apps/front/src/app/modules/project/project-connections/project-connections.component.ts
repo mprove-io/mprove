@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { map, take, tap } from 'rxjs/operators';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -15,7 +16,9 @@ import { constants } from '~front/barrels/constants';
   selector: 'm-project-connections',
   templateUrl: './project-connections.component.html'
 })
-export class ProjectConnectionsComponent {
+export class ProjectConnectionsComponent implements OnInit {
+  pageTitle = constants.PROJECT_CONNECTIONS_PAGE_TITLE;
+
   currentPage: any = 1;
   perPage = constants.CONNECTIONS_PER_PAGE;
 
@@ -59,8 +62,13 @@ export class ProjectConnectionsComponent {
     public userQuery: UserQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private title: Title
   ) {}
+
+  ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+  }
 
   getConnections(pageNum: number) {
     let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {

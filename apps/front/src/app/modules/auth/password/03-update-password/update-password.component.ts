@@ -1,18 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-update-password',
   templateUrl: './update-password.component.html'
 })
 export class UpdatePasswordComponent implements OnInit {
+  pageTitle = constants.SET_NEW_PASSWORD_PAGE_TITLE;
+
   passwordResetToken: string;
 
   setPasswordForm: FormGroup = this.fb.group(
@@ -36,11 +39,13 @@ export class UpdatePasswordComponent implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiService,
     private router: Router,
-    private userStore: UserStore,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     this.passwordResetToken = this.route.snapshot.queryParamMap.get('token');
   }
 

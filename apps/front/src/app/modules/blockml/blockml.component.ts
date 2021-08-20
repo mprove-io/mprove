@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { filter, switchMap, take, tap } from 'rxjs/operators';
@@ -14,12 +15,15 @@ import { RepoState, RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-blockml',
   templateUrl: './blockml.component.html'
 })
 export class BlockmlComponent implements OnInit {
+  pageTitle = constants.BLOCKML_PAGE_TITLE;
+
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
   repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
   repoStatusNeedPull = common.RepoStatusEnum.NeedPull;
@@ -74,10 +78,13 @@ export class BlockmlComponent implements OnInit {
     public repoStore: RepoStore,
     private apiService: ApiService,
     public structStore: StructStore,
-    public fileService: FileService
+    public fileService: FileService,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     let ar = this.router.url.split('/');
     this.lastUrl = ar[ar.length - 1];
   }

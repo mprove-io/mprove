@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
 import { UserStore } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-register',
   templateUrl: './register.component.html'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
+  pageTitle = constants.SIGN_UP_PAGE_TITLE;
+
   registerForm: FormGroup = this.fb.group({
     email: [
       '',
@@ -27,8 +31,13 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private apiService: ApiService,
     private router: Router,
-    private userStore: UserStore
+    private userStore: UserStore,
+    private title: Title
   ) {}
+
+  ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+  }
 
   register() {
     this.registerForm.markAllAsTouched();

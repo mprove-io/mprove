@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
 import { getTimezoneLabelByValue } from '~common/_index';
@@ -9,12 +10,15 @@ import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-profile',
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
+  pageTitle = constants.PROFILE_PAGE_TITLE;
+
   userTimezoneLabel: string;
 
   userTimezone$ = this.userQuery.timezone$.pipe(
@@ -31,10 +35,13 @@ export class ProfileComponent implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private myDialogService: MyDialogService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     this.authService.startWatch();
   }
 

@@ -1,11 +1,13 @@
 import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 class ModelsItemExtended extends common.ModelsItem {
   totalVizs: number;
@@ -17,6 +19,8 @@ class ModelsItemExtended extends common.ModelsItem {
   templateUrl: './visualizations.component.html'
 })
 export class VisualizationsComponent implements OnInit, OnDestroy {
+  pageTitle = constants.VISUALIZATIONS_PAGE_TITLE;
+
   groups: string[];
 
   modelsList: common.ModelsItem[];
@@ -90,10 +94,13 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private vizsQuery: VizsQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
-    private location: Location
+    private location: Location,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     this.word = this.route.snapshot.queryParamMap.get('searchTitle');
     this.searchWordChange();
 

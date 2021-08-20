@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
@@ -29,6 +30,7 @@ import { RepoStore } from '~front/app/stores/repo.store';
 import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants as frontConstants } from '~front/barrels/constants';
 
 export class ChartTypeItem {
   label: string;
@@ -41,6 +43,8 @@ export class ChartTypeItem {
   templateUrl: './model.component.html'
 })
 export class ModelComponent implements OnInit, OnDestroy {
+  pageTitle = frontConstants.MODEL_PAGE_TITLE;
+
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
@@ -51,6 +55,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.model = x;
+      this.title.setTitle(`${this.pageTitle} - ${this.model?.label}`);
       this.cd.detectChanges();
     })
   );
@@ -358,10 +363,13 @@ export class ModelComponent implements OnInit, OnDestroy {
     private structQuery: StructQuery,
     private dataSizeService: DataSizeService,
     private queryService: QueryService,
-    public myDialogService: MyDialogService
+    public myDialogService: MyDialogService,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     this.checkRunning$ = interval(3000)
       .pipe(
         startWith(0),

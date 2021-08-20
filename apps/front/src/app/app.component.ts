@@ -16,8 +16,6 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
-  title = 'front';
-
   appSpinnerName = constants.APP_SPINNER_NAME;
 
   spinnerStartedTs: number;
@@ -63,9 +61,8 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private spinner: NgxSpinnerService,
-    private router: Router // ,
-  ) // private myDialogService: MyDialogService,
-  // private apiService: ApiService
+    private router: Router // , // private myDialogService: MyDialogService,
+  ) // private apiService: ApiService
   {}
 
   ngOnInit() {

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { from, of, Subscription } from 'rxjs';
 import { concatMap, delay, map, startWith, take, tap } from 'rxjs/operators';
@@ -7,12 +8,15 @@ import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-verify-email',
   templateUrl: './verify-email.component.html'
 })
 export class VerifyEmailComponent implements OnInit, OnDestroy {
+  pageTitle = constants.VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE;
+
   userId: string;
 
   email$ = this.userQuery.select().pipe(
@@ -36,10 +40,13 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     private userQuery: UserQuery,
     private authService: AuthService,
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private title: Title
   ) {}
 
   ngOnInit() {
+    this.title.setTitle(this.pageTitle);
+
     this.authService.clearLocalStorage();
     this.authService.startWatch();
   }
