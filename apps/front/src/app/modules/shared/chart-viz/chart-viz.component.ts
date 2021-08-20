@@ -166,7 +166,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       mconfigId: this.report.mconfigId,
-      queryId: this.report.queryId
+      queryId: this.report.queryId,
+      vizId: this.viz.vizId
     };
 
     let query: common.Query = await this.apiService
@@ -204,7 +205,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               mconfigId: this.mconfig.mconfigId,
-              queryId: this.query.queryId
+              queryId: this.query.queryId,
+              vizId: this.viz.vizId
             };
 
             return this.apiService

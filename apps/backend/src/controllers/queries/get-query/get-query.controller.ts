@@ -2,19 +2,24 @@ import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { DashboardsService } from '~backend/services/dashboards.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
+import { VizsService } from '~backend/services/vizs.service';
 
 @Controller()
 export class GetQueryController {
   constructor(
     private queriesService: QueriesService,
     private modelsService: ModelsService,
+    private vizsService: VizsService,
+    private dashboardsService: DashboardsService,
     private membersService: MembersService,
     private structsService: StructsService,
     private mconfigsService: MconfigsService
@@ -26,7 +31,7 @@ export class GetQueryController {
     @ValidateRequest(apiToBackend.ToBackendGetQueryRequest)
     reqValid: apiToBackend.ToBackendGetQueryRequest
   ) {
-    let { queryId, mconfigId } = reqValid.payload;
+    let { queryId, mconfigId, vizId, dashboardId } = reqValid.payload;
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
       mconfigId: mconfigId
@@ -52,19 +57,49 @@ export class GetQueryController {
       modelId: mconfig.model_id
     });
 
-    // allow access to get data on visualizations
+    let viz;
+    if (common.isDefined(vizId)) {
+      viz = await this.vizsService.getVizCheckExists({
+        structId: mconfig.struct_id,
+        vizId: vizId
+      });
+    }
 
-    // let isAccessGranted = helper.checkAccess({
-    //   userAlias: user.alias,
-    //   member: member,
-    //   vmd: model
-    // });
+    let dashboard;
+    if (common.isDefined(dashboardId)) {
+      viz = await this.dashboardsService.getDashboardCheckExists({
+        structId: mconfig.struct_id,
+        dashboardId: dashboardId
+      });
+    }
 
-    // if (isAccessGranted === false) {
-    //   throw new common.ServerError({
-    //     message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
-    //   });
-    // }
+    let isAccessGranted = common.isDefined(viz)
+      ? helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: viz
+        })
+      : common.isDefined(dashboard)
+      ? helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: dashboard
+        })
+      : helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: model
+        });
+
+    if (isAccessGranted === false) {
+      throw new common.ServerError({
+        message: common.isDefined(viz)
+          ? apiToBackend.ErEnum.BACKEND_FORBIDDEN_VIZ
+          : common.isDefined(dashboard)
+          ? apiToBackend.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+          : apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
+      });
+    }
 
     let query = await this.queriesService.getQueryCheckExists({
       queryId: queryId
