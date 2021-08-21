@@ -3,10 +3,7 @@
     class="relative block h-10 z-10 rounded-full text-gray1 tracking-wider focus:outline-none"
     [ngClass]="{
       'cursor-default text-gray-400':
-        !nav ||
-        !nav.projectId ||
-        needSave === true ||
-        (openedMenuId && menuId !== openedMenuId)
+        !nav || !nav.projectId || needSave === true
     }"
     (click)="toggleMenu()"
     [disabled]="
