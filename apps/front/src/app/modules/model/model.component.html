@@ -390,17 +390,16 @@
                   ></m-validation>
                 </div>
 
-                <button
-                  *ngIf="mconfig?.select.length > 0"
-                  class="items-center ml-5 text-lg select-none focus:outline-none"
-                  [ngClass]="{
-                    'text-blue-500': isFormat,
-                    'text-gray1': !isFormat
-                  }"
-                  (click)="toggleFormat()"
+                <div
+                  class="flex ml-5 h-9 text-gray1 text-base items-center select-none"
+                  >Format</div
                 >
-                  <m-currency-dollar-icon></m-currency-dollar-icon
-                ></button>
+
+                <ui-switch
+                  class="ml-5"
+                  [checked]="isFormat"
+                  (change)="toggleFormat()"
+                ></ui-switch>
               </div>
 
               <div
