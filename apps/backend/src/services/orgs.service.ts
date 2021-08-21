@@ -36,7 +36,7 @@ export class OrgsService {
 
     if (org.owner_id !== userId) {
       throw new common.ServerError({
-        message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_ORG
+        message: apiToBackend.ErEnum.BACKEND_ONLY_ORG_OWNER_CAN_ACCESS
       });
     }
 
