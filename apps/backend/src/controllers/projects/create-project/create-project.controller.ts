@@ -33,6 +33,11 @@ export class CreateProjectController {
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
+    await this.orgsService.checkUserIsOrgOwner({
+      org: org,
+      userId: user.user_id
+    });
+
     let project = await this.projectsRepository.findOne({
       org_id: orgId,
       name: name
