@@ -1,6 +1,5 @@
 dashboard: ec_d2
 access_roles: ['marketing']
-group: Ecommerce
 fields:
 - filter: order_date
   result: ts 

@@ -1,6 +1,5 @@
 dashboard: ec_d3
 access_users: ['backend-get-dashboard__ok-access-users']
-group: Ecommerce
 fields:
 - filter: order_date
   result: ts 

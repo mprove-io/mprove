@@ -1,5 +1,4 @@
 viz: ec_z1
-group: Ecommerce
 reports:
 - title: Average sale price by category
   model: ec_m1

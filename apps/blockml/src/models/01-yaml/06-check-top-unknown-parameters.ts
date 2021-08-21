@@ -104,9 +104,9 @@ export function checkTopUnknownParameters(
               [
                 enums.ParameterEnum.Model.toString(),
                 enums.ParameterEnum.Connection.toString(),
-                enums.ParameterEnum.Hidden.toString(),
                 enums.ParameterEnum.Label.toString(),
-                enums.ParameterEnum.Group.toString(),
+                // enums.ParameterEnum.Group.toString(),
+                // enums.ParameterEnum.Hidden.toString(),
                 enums.ParameterEnum.Description.toString(),
                 enums.ParameterEnum.AccessUsers.toString(),
                 enums.ParameterEnum.AccessRoles.toString(),
@@ -143,8 +143,8 @@ export function checkTopUnknownParameters(
               [
                 enums.ParameterEnum.Dashboard.toString(),
                 enums.ParameterEnum.Title.toString(),
-                enums.ParameterEnum.Group.toString(),
-                enums.ParameterEnum.Hidden.toString(),
+                // enums.ParameterEnum.Group.toString(),
+                // enums.ParameterEnum.Hidden.toString(),
                 enums.ParameterEnum.Description.toString(),
                 enums.ParameterEnum.AccessUsers.toString(),
                 enums.ParameterEnum.AccessRoles.toString(),
@@ -176,8 +176,8 @@ export function checkTopUnknownParameters(
             if (
               [
                 enums.ParameterEnum.Viz.toString(),
-                enums.ParameterEnum.Group.toString(),
-                enums.ParameterEnum.Hidden.toString(),
+                // enums.ParameterEnum.Group.toString(),
+                // enums.ParameterEnum.Hidden.toString(),
                 enums.ParameterEnum.AccessUsers.toString(),
                 enums.ParameterEnum.AccessRoles.toString(),
                 enums.ParameterEnum.Reports.toString()

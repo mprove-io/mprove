@@ -1,5 +1,4 @@
 dashboard: ec_d4
-group: Ecommerce
 fields:
 - filter: order_date
   result: ts 

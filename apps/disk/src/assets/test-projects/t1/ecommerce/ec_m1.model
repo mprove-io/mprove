@@ -1,6 +1,5 @@
 model: ec_m1
 connection: c1
-group: Ecommerce 
 joins:
 - from_view: ec_order_items
   as: a
