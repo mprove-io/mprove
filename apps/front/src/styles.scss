@@ -92,7 +92,6 @@
 // @import '~@circlon/angular-tree-component/css/angular-tree-component.css';
 @import './tree.css';
 
-// .ng-select .ng-select-container  {
-//   min-height: 0px;
-//   border-radius: 0;
-// }
+.ng-select.custom .ng-select-container {
+  cursor: pointer;
+}
