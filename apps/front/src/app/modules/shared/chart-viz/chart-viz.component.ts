@@ -217,6 +217,15 @@ export class ChartVizComponent implements OnInit, OnDestroy {
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   this.query = resp.payload.query;
+
+                  this.qData =
+                    mconfig.queryId === this.query.queryId
+                      ? this.queryService.makeQData({
+                          data: this.query.data,
+                          columns: this.sortedColumns
+                        })
+                      : [];
+
                   this.cd.detectChanges();
                 })
               );
