@@ -10,6 +10,7 @@ import * as mg from 'nodemailer-mailgun-transport';
 import { Connection } from 'typeorm';
 import { appControllers } from './app-controllers';
 import { appEntities } from './app-entities';
+import { appMigrations } from './app-migrations';
 import { appProviders } from './app-providers';
 import { appRepositories } from './app-repositories';
 import { common } from './barrels/common';
@@ -72,15 +73,13 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
 let typeormRootModule = TypeOrmModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => ({
     type: 'mysql',
-    host: 'db',
-    port: 3306,
-    username: 'root',
-    password: cs.get<interfaces.Config['mysqlRootPassword']>(
-      'mysqlRootPassword'
-    ),
+    host: cs.get<interfaces.Config['mysqlHost']>('mysqlHost'),
+    port: cs.get<interfaces.Config['mysqlPort']>('mysqlPort'),
+    username: cs.get<interfaces.Config['mysqlUsername']>('mysqlUsername'),
+    password: cs.get<interfaces.Config['mysqlPassword']>('mysqlPassword'),
     database: cs.get<interfaces.Config['mysqlDatabase']>('mysqlDatabase'),
     entities: appEntities,
-    migrations: [__dirname + '/migrations/**/*{.ts,.js}']
+    migrations: appMigrations
   }),
   inject: [ConfigService]
 });
@@ -172,7 +171,18 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     try {
       if (helper.isScheduler(this.cs)) {
-        await this.connection.runMigrations();
+        const migrationsPending = await this.connection.showMigrations();
+
+        if (migrationsPending) {
+          const migrations = await this.connection.runMigrations({
+            transaction: 'all'
+          });
+          migrations.forEach(migration => {
+            common.logToConsole(`Migration ${migration.name} success`);
+          });
+        } else {
+          common.logToConsole('No migrations pending');
+        }
 
         let email = this.cs.get<interfaces.Config['firstUserEmail']>(
           'firstUserEmail'

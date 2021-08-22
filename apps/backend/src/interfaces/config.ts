@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 import { common } from '~backend/barrels/common';
 import { enums } from '~backend/barrels/enums';
 
@@ -80,7 +80,16 @@ export class Config extends common.Config {
   rabbitmqDefaultPass?: string;
 
   @IsString()
-  mysqlRootPassword?: string;
+  mysqlHost?: string;
+
+  @IsNumber()
+  mysqlPort?: number;
+
+  @IsString()
+  mysqlUsername?: string;
+
+  @IsString()
+  mysqlPassword?: string;
 
   @IsString()
   mysqlDatabase?: string;

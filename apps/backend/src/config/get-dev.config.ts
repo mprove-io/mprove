@@ -42,7 +42,10 @@ export function getDevConfig(envFilePath: any) {
     rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
     rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
 
-    mysqlRootPassword: envFile.MYSQL_ROOT_PASSWORD,
+    mysqlHost: envFile.MYSQL_HOST,
+    mysqlPort: Number(envFile.MYSQL_PORT),
+    mysqlUsername: envFile.MYSQL_USERNAME,
+    mysqlPassword: envFile.MYSQL_PASSWORD,
     mysqlDatabase: envFile.MYSQL_DATABASE
   });
   return devConfig;
