@@ -3,7 +3,7 @@
     <ng-select
       #fractionQuarterOfYearTypeSelect
       data-cy="fractionQuarterOfYearTypeSelect"
-      class="w-48 focus:outline-none"
+      class="custom w-48 focus:outline-none"
       [items]="fractionQuarterOfYearTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -13,6 +13,13 @@
       bindValue="value"
       formControlName="fractionType"
     >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
     </ng-select>
   </form>
 
@@ -26,7 +33,7 @@
     <ng-select
       #fractionQuarterOfYearValueSelect
       data-cy="fractionQuarterOfYearValueSelect"
-      class="w-48 focus:outline-none h-[36px]"
+      class="custom w-48 focus:outline-none"
       [items]="fractionQuarterOfYearValuesList"
       [clearable]="false"
       [searchable]="false"
@@ -36,6 +43,13 @@
       bindValue="value"
       formControlName="quarterOfYearValue"
     >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
     </ng-select>
   </form>
 </div>

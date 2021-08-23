@@ -147,7 +147,7 @@
                   <ng-select
                     #chartTypeSelect
                     data-cy="chartTypeSelect"
-                    class="w-96 text-base focus:outline-none"
+                    class="custom w-96 text-base focus:outline-none"
                     [items]="chartTypesList"
                     [clearable]="false"
                     [searchable]="false"
@@ -159,7 +159,7 @@
                   >
                     <ng-template ng-label-tmp let-item="item">
                       <div
-                        class="flex flex-row space-x-2 justify-start items-center"
+                        class="flex ml-1 flex-row space-x-2 justify-start items-center"
                       >
                         <img class="h-6 w-6" [src]="item.iconPath" />
                         <div> {{ item.label }} </div>
@@ -172,7 +172,7 @@
                       let-search="searchTerm"
                     >
                       <div
-                        class="flex flex-row space-x-2 justify-start items-center"
+                        class="flex ml-1 flex-row space-x-2 justify-start items-center"
                       >
                         <img class="h-6 w-6" [src]="item.iconPath" />
                         <div> {{ item.label }} </div>
@@ -347,7 +347,7 @@
                   <ng-select
                     #timezoneSelect
                     data-cy="timezoneSelect"
-                    class="w-96 text-base focus:outline-none"
+                    class="custom w-96 text-base focus:outline-none"
                     [items]="timezones"
                     [clearable]="false"
                     (change)="timezoneChange()"
@@ -359,6 +359,13 @@
                     <!-- <ng-template ng-header-tmp>
                       <div class="flex text-base text-gray-400 h-10 justify-center items-center select-none"> TIMEZONE </div>
                     </ng-template> -->
+                    <ng-template ng-label-tmp let-item="item">
+                      <div>{{ item.label }}</div>
+                    </ng-template>
+
+                    <ng-template ng-option-tmp let-item="item">
+                      <div>{{ item.label }}</div>
+                    </ng-template>
                   </ng-select>
                 </form>
 

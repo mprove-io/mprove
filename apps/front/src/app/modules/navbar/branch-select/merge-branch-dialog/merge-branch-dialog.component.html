@@ -13,7 +13,7 @@
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="mt-2 text-base focus:outline-none w-80"
+      class="custom mt-2 text-base focus:outline-none w-80"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
@@ -24,12 +24,12 @@
       bindLabel="extraName"
       bindValue="extraId"
     >
-      <ng-template ng-header-tmp>
-        <div
-          class="flex text-base text-gray-400 h-10 justify-center items-center select-none"
-        >
-          REPO - BRANCH
-        </div>
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex ml-1">{{ item.extraName }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex ml-1">{{ item.extraName }}</div>
       </ng-template>
     </ng-select>
 

@@ -3,7 +3,7 @@
     <ng-select
       #fractionTsTypeSelect
       data-cy="fractionTsTypeSelect"
-      class="w-48 focus:outline-none"
+      class="custom w-48 focus:outline-none"
       [items]="fractionTsTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -13,6 +13,13 @@
       bindValue="value"
       formControlName="fractionType"
     >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
     </ng-select>
   </form>
 
@@ -227,7 +234,7 @@
       <ng-select
         #tsRelativeUnitSelect
         data-cy="tsRelativeUnitSelect"
-        class="w-32 focus:outline-none"
+        class="custom w-32 focus:outline-none"
         [items]="fractionTsRelativeUnitsList"
         [clearable]="false"
         [searchable]="false"
@@ -237,6 +244,13 @@
         bindValue="value"
         formControlName="tsRelativeUnit"
       >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
       </ng-select>
     </form>
 
@@ -244,7 +258,7 @@
       <ng-select
         #tsRelativeCompleteOptionsSelect
         data-cy="tsRelativeCompleteOptionsSelect"
-        class="w-32 focus:outline-none"
+        class="custom w-32 focus:outline-none"
         [items]="fractionTsRelativeCompleteOptionsList"
         [clearable]="false"
         [searchable]="false"
@@ -254,6 +268,13 @@
         bindValue="value"
         formControlName="tsRelativeCompleteOption"
       >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
       </ng-select>
     </form>
 
@@ -261,7 +282,7 @@
       <ng-select
         #tsRelativeWhenOptionsSelect
         data-cy="tsRelativeWhenOptionsSelect"
-        class="w-32 focus:outline-none"
+        class="custom w-32 focus:outline-none"
         [items]="fractionTsRelativeWhenOptionsList"
         [clearable]="false"
         [searchable]="false"
@@ -271,6 +292,13 @@
         bindValue="value"
         formControlName="tsRelativeWhenOption"
       >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
       </ng-select>
     </form>
   </div>
@@ -289,7 +317,7 @@
       <ng-select
         #tsForOptionsSelect
         data-cy="tsForOptionsSelect"
-        class="w-32 focus:outline-none"
+        class="custom w-32 focus:outline-none"
         [items]="fractionTsForOptionsList"
         [clearable]="false"
         [searchable]="false"
@@ -299,6 +327,13 @@
         bindValue="value"
         formControlName="tsForOption"
       >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
       </ng-select>
     </form>
 
@@ -330,7 +365,7 @@
       <ng-select
         #tsForUnitsSelect
         data-cy="tsForUnitsSelect"
-        class="w-32 focus:outline-none"
+        class="custom w-32 focus:outline-none"
         [items]="fractionTsForUnitsList"
         [clearable]="false"
         [searchable]="false"
@@ -340,6 +375,13 @@
         bindValue="value"
         formControlName="tsForUnit"
       >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
       </ng-select>
     </form>
   </div>
@@ -371,7 +413,7 @@
       <ng-select
         #tsLastUnitsSelect
         data-cy="tsLastUnitsSelect"
-        class="w-32 focus:outline-none"
+        class="custom w-32 focus:outline-none"
         [items]="fractionTsLastUnitsList"
         [clearable]="false"
         [searchable]="false"
@@ -381,6 +423,13 @@
         bindValue="value"
         formControlName="tsLastUnit"
       >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
       </ng-select>
     </form>
 
@@ -388,7 +437,7 @@
       <ng-select
         #tsLastCompleteOptionsSelect
         data-cy="tsLastCompleteOptionsSelect"
-        class="w-56 focus:outline-none"
+        class="custom w-56 focus:outline-none"
         [items]="fractionTsLastCompleteOptionsList"
         [clearable]="false"
         [searchable]="false"
@@ -398,6 +447,13 @@
         bindValue="value"
         formControlName="tsLastCompleteOption"
       >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex ml-1">{{ item.label }}</div>
+        </ng-template>
       </ng-select>
     </form>
   </div>

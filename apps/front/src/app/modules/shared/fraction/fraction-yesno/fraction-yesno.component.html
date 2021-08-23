@@ -3,7 +3,7 @@
     <ng-select
       #fractionYesnoTypeSelect
       data-cy="fractionYesnoTypeSelect"
-      class="w-48 focus:outline-none"
+      class="custom w-48 focus:outline-none"
       [items]="fractionYesnoTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -13,6 +13,13 @@
       bindValue="value"
       formControlName="fractionType"
     >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
     </ng-select>
   </form>
 
@@ -23,7 +30,7 @@
     <ng-select
       #fractionYesnoValueSelect
       data-cy="fractionYesnoValueSelect"
-      class="w-48 focus:outline-none h-[36px]"
+      class="custom w-48 focus:outline-none"
       [items]="fractionYesnoValuesList"
       [clearable]="false"
       [searchable]="false"
@@ -33,6 +40,13 @@
       bindValue="value"
       formControlName="yesnoValue"
     >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex ml-1">{{ item.label }}</div>
+      </ng-template>
     </ng-select>
   </form>
 </div>

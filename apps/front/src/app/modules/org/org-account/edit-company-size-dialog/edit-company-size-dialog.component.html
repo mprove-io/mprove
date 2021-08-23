@@ -7,15 +7,20 @@
 
   <ng-select
     data-cy="editCompanySizeDialogTimezoneSelect"
-    class="mt-6 w-64 text-base focus:outline-none"
+    class="custom mt-6 w-64 text-base focus:outline-none"
     [items]="sizes"
     [searchable]="false"
     [clearable]="false"
     [(ngModel)]="size"
     appendTo="body"
-    bindLabel="label"
-    bindValue="value"
   >
+    <ng-template ng-label-tmp let-item="item">
+      <div class="flex ml-1">{{ item }}</div>
+    </ng-template>
+
+    <ng-template ng-option-tmp let-item="item">
+      <div class="flex ml-1">{{ item }}</div>
+    </ng-template>
   </ng-select>
 
   <div class="mt-9">

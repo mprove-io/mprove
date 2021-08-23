@@ -28,7 +28,7 @@
     <ng-select
       #typeSelect
       data-cy="addConnectionDialogTypeSelect"
-      class="w-80 text-base focus:outline-none"
+      class="custom w-80 text-base focus:outline-none"
       [items]="connectionTypes"
       [clearable]="false"
       [searchable]="false"
@@ -36,6 +36,13 @@
       appendTo="body"
       formControlName="type"
     >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="flex ml-1">{{ item }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex ml-1">{{ item }}</div>
+      </ng-template>
     </ng-select>
 
     <div *ngIf="addConnectionForm.controls['type'].value === typeBigquery">
