@@ -29,6 +29,7 @@ export class InterpolationItem {
 })
 export class ChartEditorComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
+  chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
 
   hideColumnsChartTypes = constants.hideColumnsChartTypes;
   xFieldChartTypes = constants.xFieldChartTypes;

@@ -545,7 +545,9 @@
     </div>
 
     <div
-      *ngIf="chart.legend === true"
+      *ngIf="
+        chart.legend === true && chart.schemeType !== chartSchemeTypeEnum.Linear
+      "
       [formGroup]="legendTitleForm"
       class="flex flex-col ml-5 items-start"
     >
@@ -566,7 +568,10 @@
     </div>
 
     <div
-      *ngIf="chart.legend === false"
+      *ngIf="
+        chart.legend === false ||
+        chart.schemeType === chartSchemeTypeEnum.Linear
+      "
       class="ml-5 mb-6 flex h-9 text-gray1 text-base items-center select-none"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
@@ -702,10 +707,17 @@
     >
 
     <ui-switch
+      *ngIf="chart.schemeType !== chartSchemeTypeEnum.Linear"
       class="ml-5"
       [checked]="chart.legend"
       (change)="toggleLegend($event)"
     ></ui-switch>
+
+    <div
+      *ngIf="chart.schemeType === chartSchemeTypeEnum.Linear"
+      class="ml-5 flex h-9 text-gray1 text-base items-center select-none"
+      ><m-minus-sm-icon></m-minus-sm-icon
+    ></div>
   </div>
 
   <div

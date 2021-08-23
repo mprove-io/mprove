@@ -13,6 +13,7 @@ import { common } from '~front/barrels/common';
 })
 export class ChartViewComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
+  chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
   queryStatusEnum = common.QueryStatusEnum;
 
   @Input()
