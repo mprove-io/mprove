@@ -57,14 +57,18 @@
                   data-cy="vizsSearchInput"
                   class="w-full ml-3 h-10 form-input rounded border-gray3 focus:border-blue3"
                   placeholder="Search by Title"
+                  [ngClass]="{
+                    'bg-blue-100': !!word
+                  }"
                   [(ngModel)]="word"
                   (ngModelChange)="searchWordChange()"
                 />
 
                 <m-delete-icon
+                  *ngIf="!!word"
                   class="flex ml-3 text-gray1 h-8 w-8 rounded focus:outline-none items-center justify-center flex-shrink-0"
                   [ngClass]="{
-                    'cursor-pointer bg-blue-100 hover:bg-blue-200': !!word
+                    'cursor-pointer hover:bg-blue2': !!word
                   }"
                   (click)="resetSearch()"
                 ></m-delete-icon>
