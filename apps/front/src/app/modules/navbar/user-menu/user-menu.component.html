@@ -24,7 +24,7 @@
     <div class="block mt-2 px-4 py-2 text-gray1 font-bold text-sm">User</div>
 
     <button
-      class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+      class="block px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
       [ngClass]="{
         'cursor-default': lastUrl === pathProfile,
         'text-red-800': lastUrl === pathProfile
@@ -35,7 +35,7 @@
     >
 
     <button
-      class="block px-4 py-2 text-gray1 font-medium text-base hover:bg-blue2 w-full text-left focus:outline-none"
+      class="block px-4 py-2 text-gray1 text-base hover:bg-blue2 w-full text-left focus:outline-none"
       (click)="logout()"
       >LogOut</button
     >
@@ -43,7 +43,7 @@
     <div class="block px-4 py-2 text-gray1 font-bold text-sm">Resources</div>
 
     <a
-      class="block px-4 py-2 text-gray1 font-medium text-base hover:bg-blue2 hover:text-gray1"
+      class="block px-4 py-2 text-gray1 text-base hover:bg-blue2 hover:text-gray1"
       target="_blank"
       href="/docs"
       >Docs</a

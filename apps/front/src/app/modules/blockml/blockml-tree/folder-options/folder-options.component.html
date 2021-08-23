@@ -22,14 +22,14 @@
 >
   <button
     data-cy="folderOptionsNewFolderButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
     (click)="newFolder(node, $event)"
     >New Folder</button
   >
 
   <button
     data-cy="folderOptionsNewFileButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
     (click)="newFile(node, $event)"
     >New File</button
   >
@@ -37,7 +37,7 @@
   <button
     *ngIf="!(node.parent === null || node.parent.data.virtual)"
     data-cy="folderOptionsDeleteFolderButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
     (click)="deleteFolder(node, $event)"
     >Delete Folder</button
   >
@@ -45,7 +45,7 @@
   <button
     *ngIf="!(node.parent === null || node.parent.data.virtual)"
     data-cy="folderOptionsRenameFolderButton"
-    class="px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
     (click)="renameFolder(node, $event)"
     >Rename Folder</button
   >

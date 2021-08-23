@@ -46,7 +46,7 @@
       <div *ngIf="isExplorer === true && modelsListLength > 0">
         <button
           *ngFor="let item of modelsList"
-          class="block px-4 py-2 text-gray1 hover:bg-blue2 font-medium text-base w-full text-left focus:outline-none"
+          class="block px-4 py-2 text-gray1 hover:bg-blue2 font-normal text-base w-full text-left focus:outline-none"
           [ngClass]="{
             'cursor-default': lastUrl === pathModelId,
             'text-red-800': lastUrl === pathModelId
