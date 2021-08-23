@@ -31,4 +31,4 @@ export const PROJECT_DELETED_PAGE_TITLE = 'Project Deleted';
 
 // dynamic
 
-export const MODEL_PAGE_TITLE = 'Model';
+export const MODEL_PAGE_TITLE = 'Explore model';
