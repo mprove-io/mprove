@@ -6,13 +6,13 @@
   >
 
   <form
-    class="flex flex-col w-80"
+    class="flex flex-col"
     [formGroup]="createBranchForm"
     (ngSubmit)="create()"
   >
     <input
       data-cy="createBranchDialogBranchIdInput"
-      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      class="mt-9 w-72 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
           createBranchForm.controls['branchId'].invalid &&
@@ -29,7 +29,7 @@
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="custom mt-2 text-base focus:outline-none w-80"
+      class="custom mt-2 text-base focus:outline-none w-96"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"

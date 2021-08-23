@@ -40,6 +40,10 @@ export class MergeBranchDialogComponent implements OnInit {
         // this.selectedBranchExtraId
       ]
     });
+
+    this.branchesList = this.branchesList.filter(
+      x => x.extraName !== this.ref.data.currentBranchExtraName
+    );
   }
 
   merge() {

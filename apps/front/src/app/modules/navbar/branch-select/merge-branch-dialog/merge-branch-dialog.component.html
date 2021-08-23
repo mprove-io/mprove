@@ -5,15 +5,11 @@
     >Merge Branch</div
   >
 
-  <form
-    class="flex mt-9 flex-col w-80"
-    [formGroup]="mergeForm"
-    (ngSubmit)="merge()"
-  >
+  <form class="flex mt-9 flex-col" [formGroup]="mergeForm" (ngSubmit)="merge()">
     <ng-select
       #branchSelect
       data-cy="branchSelect"
-      class="custom mt-2 text-base focus:outline-none w-80"
+      class="custom mt-2 text-base focus:outline-none w-96"
       [items]="branchesList"
       [clearable]="false"
       [searchable]="false"
@@ -33,11 +29,11 @@
       </ng-template>
     </ng-select>
 
-    <div class="mt-5 text-base flex flex-row justify-start items-center">
-      <div>To current branch</div>
-      <div class="ml-1 font-semibold">{{
+    <div class="mt-5 text-base flex justify-start items-center">
+      <span>To the current branch</span>
+      <span class="ml-2 font-semibold">{{
         ref.data.currentBranchExtraName
-      }}</div>
+      }}</span>
     </div>
 
     <div class="mt-9">
