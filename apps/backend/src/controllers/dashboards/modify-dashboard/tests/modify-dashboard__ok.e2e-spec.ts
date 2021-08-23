@@ -95,7 +95,7 @@ test('1', async t => {
         branchId: common.BRANCH_MASTER,
         dashboardId: dashboardId,
         dashboardFileText: `dashboard: ${dashboardId}
-group: Ecommerce
+title: 'd1'
 `
       }
     };

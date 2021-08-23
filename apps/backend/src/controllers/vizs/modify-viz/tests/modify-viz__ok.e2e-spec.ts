@@ -94,7 +94,6 @@ test('1', async t => {
         branchId: common.BRANCH_MASTER,
         vizId: vizId,
         vizFileText: `viz: ${vizId}
-group: Ecommerce
 reports:
 - title: Average sale price by category
   model: ec_m1
