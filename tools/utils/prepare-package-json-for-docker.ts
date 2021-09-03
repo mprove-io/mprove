@@ -27,7 +27,7 @@ function updateTarget(tPath: string, s: any, t: any) {
   let allowed = [
     // 'name',
     // 'version',
-    'license',
+    // 'license',
     'dependencies'
   ];
 
