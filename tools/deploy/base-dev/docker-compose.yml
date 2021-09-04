@@ -183,3 +183,12 @@ services:
     #     fluentd-address: 0.0.0.0:24224
     #     fluentd-async-connect: "true"
     #     tag: disk
+
+  front:
+    build:
+      context: ../../../
+      dockerfile: tools/docker/front.dev.Dockerfile
+    image: mprove/mprove-base-m-front:$MPROVE_BASE_RELEASE_TAG
+    # container_name: front
+    ports:
+      - 3003:80

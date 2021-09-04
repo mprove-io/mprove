@@ -577,6 +577,37 @@
               "apps/front/src/**/*.html"
             ]
           }
+        },
+        "format": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "prettier \"apps/front/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.yaml"
+            ],
+            "parallel": false
+          }
+        },
+        "circular": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["madge --circular apps/front"],
+            "parallel": false
+          }
+        },
+        "build-docker": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "cwd": "tools/deploy/base-dev",
+            "commands": ["docker-compose up --detach --build front"],
+            "parallel": false
+          }
+        },
+        "up": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["nx build-docker front"],
+            "parallel": false
+          }
         }
       }
     },
