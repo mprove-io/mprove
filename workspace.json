@@ -18,7 +18,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx affected --target=build",
+              "nx affected --target=build --configuration=production",
               "nx affected --target=test",
               "nx pj top",
               "nx affected --target=up",
@@ -31,7 +31,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx affected --target=build",
+              "nx affected --target=build --configuration=production",
               "nx pj top",
               "nx affected --target=up"
             ],
@@ -42,7 +42,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run-many --target=build --all",
+              "nx run-many --target=build --configuration=production --all",
               "nx run-many --target=test --all",
               "nx pj top",
               "nx run-many --target=up --all",
@@ -55,7 +55,7 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run-many --target=build --all",
+              "nx run-many --target=build --configuration=production --all",
               "nx pj top",
               "nx run-many --target=up --all"
             ],
