@@ -42,8 +42,6 @@ import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialo
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import { NewVizDialogComponent } from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
 import { ColumnField } from '../queries/mq.query';
-import { ApiService } from './api.service';
-import { FileService } from './file.service';
 import { RData } from './query.service';
 
 @Injectable({ providedIn: 'root' })
@@ -69,7 +67,7 @@ export class MyDialogService {
     });
   }
 
-  showPhoto(item: { apiService: ApiService; avatarBig: string }): void {
+  showPhoto(item: { apiService: any; avatarBig: string }): void {
     this.dialogService.open(PhotoDialogComponent, {
       enableClose: true,
       closeButton: true,
@@ -77,42 +75,42 @@ export class MyDialogService {
     });
   }
 
-  showEditPhoto(item: { apiService: ApiService }): void {
+  showEditPhoto(item: { apiService: any }): void {
     this.dialogService.open(EditPhotoDialogComponent, {
       enableClose: false,
       data: item
     });
   }
 
-  showEditName(item: { apiService: ApiService }): void {
+  showEditName(item: { apiService: any }): void {
     this.dialogService.open(EditNameDialogComponent, {
       enableClose: false,
       data: item
     });
   }
 
-  showEditTimezone(item: { apiService: ApiService }): void {
+  showEditTimezone(item: { apiService: any }): void {
     this.dialogService.open(EditTimezoneDialogComponent, {
       enableClose: false,
       data: item
     });
   }
 
-  showDeleteUser(item: { apiService: ApiService }): void {
+  showDeleteUser(item: { apiService: any }): void {
     this.dialogService.open(DeleteUserDialogComponent, {
       enableClose: false,
       data: item
     });
   }
 
-  showCreateOrg(item: { apiService: ApiService }): void {
+  showCreateOrg(item: { apiService: any }): void {
     this.dialogService.open(CreateOrgDialogComponent, {
       enableClose: false,
       data: item
     });
   }
 
-  showCreateProject(item: { apiService: ApiService; orgId: string }): void {
+  showCreateProject(item: { apiService: any; orgId: string }): void {
     this.dialogService.open(CreateProjectDialogComponent, {
       enableClose: false,
       data: item
@@ -120,7 +118,7 @@ export class MyDialogService {
   }
 
   showCreateBranch(item: {
-    apiService: ApiService;
+    apiService: any;
     orgId: string;
     projectId: string;
     branchesList: BranchItem[];
@@ -133,10 +131,7 @@ export class MyDialogService {
     });
   }
 
-  showViewBlockml(item: {
-    apiService: ApiService;
-    mconfig: common.Mconfig;
-  }): void {
+  showViewBlockml(item: { apiService: any; mconfig: common.Mconfig }): void {
     this.dialogService.open(ViewBlockmlDialogComponent, {
       enableClose: true,
       data: item,
@@ -159,7 +154,7 @@ export class MyDialogService {
   }
 
   showChartSaveAs(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     isRepoProd: boolean;
     branchId: string;
@@ -174,7 +169,7 @@ export class MyDialogService {
   }
 
   showEditVizInfo(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     isRepoProd: boolean;
     branchId: string;
@@ -196,7 +191,7 @@ export class MyDialogService {
   }
 
   showDeleteViz(item: {
-    apiService: ApiService;
+    apiService: any;
     vizDeleted: EventEmitter<string>;
     viz: common.Viz;
     projectId: string;
@@ -210,8 +205,8 @@ export class MyDialogService {
   }
 
   showMergeBranch(item: {
-    apiService: ApiService;
-    fileService: FileService;
+    apiService: any;
+    fileService: any;
     projectId: string;
     fileId: string;
     currentBranchId: string;
@@ -225,7 +220,7 @@ export class MyDialogService {
   }
 
   showDeleteBranch(item: {
-    apiService: ApiService;
+    apiService: any;
     orgId: string;
     projectId: string;
     branchId: string;
@@ -239,7 +234,7 @@ export class MyDialogService {
   }
 
   showEditOrgName(item: {
-    apiService: ApiService;
+    apiService: any;
     orgId: string;
     orgName: string;
   }): void {
@@ -250,7 +245,7 @@ export class MyDialogService {
   }
 
   showEditOrgOwner(item: {
-    apiService: ApiService;
+    apiService: any;
     orgId: string;
     ownerEmail: string;
   }): void {
@@ -261,7 +256,7 @@ export class MyDialogService {
   }
 
   showEditCompanySize(item: {
-    apiService: ApiService;
+    apiService: any;
     orgId: string;
     companySize: string;
   }): void {
@@ -272,7 +267,7 @@ export class MyDialogService {
   }
 
   showEditPhoneNumber(item: {
-    apiService: ApiService;
+    apiService: any;
     orgId: string;
     contactPhone: string;
   }): void {
@@ -283,7 +278,7 @@ export class MyDialogService {
   }
 
   showDeleteOrg(item: {
-    apiService: ApiService;
+    apiService: any;
     orgId: string;
     orgName: string;
   }): void {
@@ -294,7 +289,7 @@ export class MyDialogService {
   }
 
   showEditProjectName(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     projectName: string;
   }): void {
@@ -305,7 +300,7 @@ export class MyDialogService {
   }
 
   showDeleteProject(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     projectName: string;
   }): void {
@@ -315,7 +310,7 @@ export class MyDialogService {
     });
   }
 
-  showInviteMember(item: { apiService: ApiService; projectId: string }): void {
+  showInviteMember(item: { apiService: any; projectId: string }): void {
     this.dialogService.open(InviteMemberDialogComponent, {
       enableClose: false,
       data: item
@@ -323,7 +318,7 @@ export class MyDialogService {
   }
 
   showRemoveMember(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     memberId: string;
     email: string;
@@ -335,7 +330,7 @@ export class MyDialogService {
   }
 
   showAddRole(item: {
-    apiService: ApiService;
+    apiService: any;
     member: common.Member;
     i: number;
   }): void {
@@ -345,7 +340,7 @@ export class MyDialogService {
     });
   }
 
-  showAddConnection(item: { apiService: ApiService; projectId: string }): void {
+  showAddConnection(item: { apiService: any; projectId: string }): void {
     this.dialogService.open(AddConnectionDialogComponent, {
       enableClose: false,
       data: item
@@ -353,7 +348,7 @@ export class MyDialogService {
   }
 
   showDeleteConnection(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     connectionId: string;
   }): void {
@@ -364,7 +359,7 @@ export class MyDialogService {
   }
 
   showEditConnection(item: {
-    apiService: ApiService;
+    apiService: any;
     connection: common.Connection;
     i: number;
   }): void {
@@ -375,7 +370,7 @@ export class MyDialogService {
   }
 
   showCreateFolder(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     branchId: string;
     parentNodeId: string;
@@ -387,7 +382,7 @@ export class MyDialogService {
   }
 
   showCreateFile(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     branchId: string;
     parentNodeId: string;
@@ -399,7 +394,7 @@ export class MyDialogService {
   }
 
   showDeleteFolder(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     branchId: string;
     folderNodeId: string;
@@ -412,7 +407,7 @@ export class MyDialogService {
   }
 
   showRenameFolder(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     branchId: string;
     nodeId: string;
@@ -425,7 +420,7 @@ export class MyDialogService {
   }
 
   showRenameFile(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     branchId: string;
     nodeId: string;
@@ -438,7 +433,7 @@ export class MyDialogService {
   }
 
   showDeleteFile(item: {
-    apiService: ApiService;
+    apiService: any;
     projectId: string;
     branchId: string;
     fileNodeId: string;
