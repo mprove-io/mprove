@@ -26,9 +26,10 @@
     "pj": "nx pj top",
     "up": "nx run-many --target=up --all",
     "e2e": "nx run-many --target=e2e --all",
-    "steps": "nx steps top",
+    "steps-aff": "nx steps-aff top",
+    "steps-aff-short": "nx steps-aff-short top",
     "steps-all": "nx steps-all top",
-    "steps-short": "nx steps-short top",
+    "steps-all-short": "nx steps-all-short top",
     "postinstall": "ngcc --properties es2015 browser module main && node ./scripts/ngx-tailwind-jit-transform.js",
     "start:dev": "cross-env TAILWIND_MODE=watch nx serve front"
   },

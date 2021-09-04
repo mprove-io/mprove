@@ -14,7 +14,7 @@
             "outputPath": "package.docker.json"
           }
         },
-        "steps": {
+        "steps-af": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
@@ -23,6 +23,17 @@
               "nx pj top",
               "nx affected --target=up",
               "nx affected --target=e2e"
+            ],
+            "parallel": false
+          }
+        },
+        "steps-af-short": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx affected --target=build",
+              "nx pj top",
+              "nx affected --target=up"
             ],
             "parallel": false
           }
@@ -40,13 +51,13 @@
             "parallel": false
           }
         },
-        "steps-short": {
+        "steps-all-short": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx affected --target=build",
+              "nx run-many --target=build --all",
               "nx pj top",
-              "nx affected --target=up"
+              "nx run-many --target=up --all"
             ],
             "parallel": false
           }
