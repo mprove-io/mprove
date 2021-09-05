@@ -116,7 +116,7 @@ export class ApiService {
           : ''
     });
 
-    let url = environment.httpUrl + '/' + pathInfoName;
+    let url = environment.httpUrl + '/api/' + pathInfoName;
 
     let body: apiToBackend.ToBackendRequest = {
       info: {
