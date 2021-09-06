@@ -14,26 +14,26 @@
             "outputPath": "package.docker.json"
           }
         },
-        "steps-af": {
+        "steps": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
               "nx affected --target=build --configuration=production",
               "nx affected --target=test",
               "nx pj top",
-              "nx affected --target=up",
+              "nx affected --target=compose-up-build",
               "nx affected --target=e2e"
             ],
             "parallel": false
           }
         },
-        "steps-af-short": {
+        "steps-short": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
               "nx affected --target=build --configuration=production",
               "nx pj top",
-              "nx affected --target=up"
+              "nx affected --target=compose-up-build"
             ],
             "parallel": false
           }
@@ -45,7 +45,7 @@
               "nx run-many --target=build --configuration=production --all",
               "nx run-many --target=test --all",
               "nx pj top",
-              "nx run-many --target=up --all",
+              "nx run-many --target=compose-up-build --all",
               "nx run-many --target=e2e --all"
             ],
             "parallel": false
@@ -57,7 +57,7 @@
             "commands": [
               "nx run-many --target=build --configuration=production --all",
               "nx pj top",
-              "nx run-many --target=up --all"
+              "nx run-many --target=compose-up-build --all"
             ],
             "parallel": false
           }
@@ -136,7 +136,7 @@
             "parallel": false
           }
         },
-        "build-docker": {
+        "compose-up-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "cwd": "tools/deploy/base-dev",
@@ -144,10 +144,11 @@
             "parallel": false
           }
         },
-        "up": {
+        "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["nx pj top", "nx build-docker disk"],
+            "cwd": "tools/deploy/base-dev",
+            "commands": ["docker-compose build disk"],
             "parallel": false
           }
         }
@@ -233,7 +234,7 @@
             "parallel": false
           }
         },
-        "build-docker": {
+        "compose-up-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "cwd": "tools/deploy/base-dev",
@@ -244,10 +245,11 @@
             "parallel": false
           }
         },
-        "up": {
+        "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["nx pj top", "nx build-docker blockml"],
+            "cwd": "tools/deploy/base-dev",
+            "commands": ["docker-compose build blockml-main"],
             "parallel": false
           }
         }
@@ -325,7 +327,7 @@
             "parallel": false
           }
         },
-        "build-docker": {
+        "compose-up-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "cwd": "tools/deploy/base-dev",
@@ -336,10 +338,11 @@
             "parallel": false
           }
         },
-        "up": {
+        "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["nx pj top", "nx build-docker backend"],
+            "cwd": "tools/deploy/base-dev",
+            "commands": ["docker-compose build backend"],
             "parallel": false
           }
         }
@@ -551,8 +554,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "6mb",
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -605,7 +608,7 @@
             "parallel": false
           }
         },
-        "build-docker": {
+        "compose-up-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
             "cwd": "tools/deploy/base-dev",
@@ -613,10 +616,11 @@
             "parallel": false
           }
         },
-        "up": {
+        "compose-build": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["nx build-docker front"],
+            "cwd": "tools/deploy/base-dev",
+            "commands": ["docker-compose build front"],
             "parallel": false
           }
         }
