@@ -14,8 +14,10 @@ export function getDevConfig(envFilePath: any) {
   >{
     diskEnv: <enums.DiskEnvEnum>envFile.DISK_ENV,
 
-    rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
-    rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
+    rabbitUser: envFile.RABBIT_USER,
+    rabbitPass: envFile.RABBIT_PASS,
+    rabbitPort: envFile.RABBIT_PORT,
+    rabbitProtocol: envFile.RABBIT_PROTOCOL,
 
     mDataOrgPath: envFile.M_DATA_ORG_PATH
   });

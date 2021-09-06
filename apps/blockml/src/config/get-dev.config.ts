@@ -22,8 +22,10 @@ export function getDevConfig(envFilePath: any) {
     isWorker: <common.BoolEnum>envFile.BLOCKML_IS_WORKER,
     concurrencyLimit: Number(envFile.BLOCKML_CONCURRENCY_LIMIT),
 
-    rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
-    rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS
+    rabbitUser: envFile.RABBIT_USER,
+    rabbitPass: envFile.RABBIT_PASS,
+    rabbitPort: envFile.RABBIT_PORT,
+    rabbitProtocol: envFile.RABBIT_PROTOCOL
   });
   return devConfig;
 }

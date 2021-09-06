@@ -7,10 +7,16 @@ export class Config extends common.Config {
   diskEnv?: enums.DiskEnvEnum;
 
   @IsString()
-  rabbitmqDefaultUser?: string;
+  rabbitUser?: string;
 
   @IsString()
-  rabbitmqDefaultPass?: string;
+  rabbitPass?: string;
+
+  @IsString()
+  rabbitProtocol?: string;
+
+  @IsString()
+  rabbitPort?: string;
 
   @IsString()
   mDataOrgPath?: string;

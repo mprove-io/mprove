@@ -39,8 +39,10 @@ export function getDevConfig(envFilePath: any) {
     smtpAuthUser: envFile.BACKEND_SMTP_AUTH_USER,
     smtpAuthPassword: envFile.BACKEND_SMTP_AUTH_PASSWORD,
     //
-    rabbitmqDefaultUser: envFile.RABBITMQ_DEFAULT_USER,
-    rabbitmqDefaultPass: envFile.RABBITMQ_DEFAULT_PASS,
+    rabbitUser: envFile.RABBIT_USER,
+    rabbitPass: envFile.RABBIT_PASS,
+    rabbitPort: envFile.RABBIT_PORT,
+    rabbitProtocol: envFile.RABBIT_PROTOCOL,
 
     mysqlHost: envFile.MYSQL_HOST,
     mysqlPort: Number(envFile.MYSQL_PORT),

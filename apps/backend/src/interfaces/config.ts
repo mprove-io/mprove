@@ -74,10 +74,16 @@ export class Config extends common.Config {
 
   //
   @IsString()
-  rabbitmqDefaultUser?: string;
+  rabbitUser?: string;
 
   @IsString()
-  rabbitmqDefaultPass?: string;
+  rabbitPass?: string;
+
+  @IsString()
+  rabbitProtocol?: string;
+
+  @IsString()
+  rabbitPort?: string;
 
   @IsString()
   mysqlHost?: string;

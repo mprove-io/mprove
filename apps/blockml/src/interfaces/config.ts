@@ -31,8 +31,14 @@ export class Config extends common.Config {
   concurrencyLimit?: number;
 
   @IsString()
-  rabbitmqDefaultUser?: string;
+  rabbitUser?: string;
 
   @IsString()
-  rabbitmqDefaultPass?: string;
+  rabbitPass?: string;
+
+  @IsString()
+  rabbitProtocol?: string;
+
+  @IsString()
+  rabbitPort?: string;
 }
