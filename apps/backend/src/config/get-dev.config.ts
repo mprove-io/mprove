@@ -43,6 +43,7 @@ export function getDevConfig(envFilePath: any) {
     //
     rabbitUser: env.RABBIT_USER,
     rabbitPass: env.RABBIT_PASS,
+    rabbitHost: env.RABBIT_HOST,
     rabbitPort: env.RABBIT_PORT,
     rabbitProtocol: env.RABBIT_PROTOCOL,
 

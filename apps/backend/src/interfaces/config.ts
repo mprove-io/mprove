@@ -83,6 +83,9 @@ export class Config extends common.Config {
   rabbitProtocol?: string;
 
   @IsString()
+  rabbitHost?: string;
+
+  @IsString()
   rabbitPort?: string;
 
   @IsString()

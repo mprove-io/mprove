@@ -20,6 +20,7 @@ import { getConfig } from './config/get.config';
         let rabbitUser = cs.get<interfaces.Config['rabbitUser']>('rabbitUser');
         let rabbitPass = cs.get<interfaces.Config['rabbitPass']>('rabbitPass');
         let rabbitPort = cs.get<interfaces.Config['rabbitPort']>('rabbitPort');
+        let rabbitHost = cs.get<interfaces.Config['rabbitHost']>('rabbitHost');
         let rabbitProtocol = cs.get<interfaces.Config['rabbitProtocol']>(
           'rabbitProtocol'
         );
@@ -38,13 +39,16 @@ import { getConfig } from './config/get.config';
             }
           ],
           uri: [
-            `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@rabbit:${rabbitPort}`
+            `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
           ],
           connectionInitOptions: {
             // wait for connection on startup, but do not recover when connection lost
             wait: blockmlEnv !== enums.BlockmlEnvEnum.PROD,
             timeout:
               blockmlEnv !== enums.BlockmlEnvEnum.PROD ? 75000 : undefined
+          },
+          connectionManagerOptions: {
+            connectionOptions: { rejectUnauthorized: false }
           }
         };
       },

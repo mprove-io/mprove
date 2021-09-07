@@ -40,6 +40,7 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
   useFactory: (cs: ConfigService<interfaces.Config>) => {
     let rabbitUser = cs.get<interfaces.Config['rabbitUser']>('rabbitUser');
     let rabbitPass = cs.get<interfaces.Config['rabbitPass']>('rabbitPass');
+    let rabbitHost = cs.get<interfaces.Config['rabbitHost']>('rabbitHost');
     let rabbitPort = cs.get<interfaces.Config['rabbitPort']>('rabbitPort');
     let rabbitProtocol = cs.get<interfaces.Config['rabbitProtocol']>(
       'rabbitProtocol'
@@ -59,12 +60,15 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
         }
       ],
       uri: [
-        `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@rabbit:${rabbitPort}`
+        `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
       ],
       connectionInitOptions: {
         // wait for connection on startup, but do not recover when connection lost
         wait: backendEnv !== enums.BackendEnvEnum.PROD,
         timeout: backendEnv !== enums.BackendEnvEnum.PROD ? 75000 : undefined
+      },
+      connectionManagerOptions: {
+        connectionOptions: { rejectUnauthorized: false }
       }
     };
   },
