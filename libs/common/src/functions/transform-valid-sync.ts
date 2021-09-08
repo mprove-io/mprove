@@ -16,9 +16,25 @@ export function transformValidSync<T extends object>(item: {
   try {
     valid = transformAndValidateSync(item.classType, item.object, item.options);
   } catch (e) {
+    if (Array.isArray(e)) {
+      let newValidationErrors: any = [];
+
+      e.forEach(validationError => {
+        let validationErrorWithoutTarget = {
+          value: validationError.value,
+          property: validationError.property,
+          children: validationError.children,
+          constraints: validationError.constraints
+        };
+        newValidationErrors.push(validationErrorWithoutTarget);
+      });
+
+      console.log(newValidationErrors);
+    }
+
     throw new ServerError({
       message: item.errorMessage,
-      data: e,
+      data: null,
       originalError: null
     });
   }
