@@ -264,11 +264,11 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="flex flex-row items-start justify-center space-x-5 w-full h-full"
+                  class="flex flex-1 flex-row items-start justify-center space-x-5 w-2 h-full"
                 >
                   <m-chart-view
                     *ngIf="mconfigChart"
-                    class="w-2/3 h-full flex-shrink-0"
+                    class="w-2/3 h-full overflow-auto flex-shrink-0"
                     [sortedColumns]="sortedColumns"
                     [qData]="qData"
                     [chart]="mconfigChart"

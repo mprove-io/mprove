@@ -74,6 +74,8 @@ export class MembersService {
         message: apiToBackend.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
       });
     }
+
+    return member;
   }
 
   async getMemberCheckExists(item: { memberId: string; projectId: string }) {

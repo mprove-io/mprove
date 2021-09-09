@@ -3,7 +3,12 @@
     <tr class="">
       <th
         style="min-width: 200px; max-width: 350px"
-        class="group align-top"
+        class="group align-top border-white border-4 p-0"
+        [ngClass]="{
+          'bg-blue5': column.fieldClass === fieldClassDimension,
+          'bg-purple-300': column.fieldClass === fieldClassMeasure,
+          'bg-green1': column.fieldClass === fieldClassCalculation
+        }"
         *ngFor="
           let column of sortedColumns | hideColumns: hideColumns;
           let columnIndex = index
@@ -12,11 +17,6 @@
         <div
           class="flex flex-col px-5 py-2 justify-center items-start overflow-clip overflow-hidden"
           *ngIf="column.isHideColumn === false"
-          [ngClass]="{
-            'bg-blue5': column.fieldClass === fieldClassDimension,
-            'bg-purple-300': column.fieldClass === fieldClassMeasure,
-            'bg-green1': column.fieldClass === fieldClassCalculation
-          }"
         >
           <div class="flex flex-col justify-center items-start select-none">
             <div class="font-normal text-sm truncate">{{

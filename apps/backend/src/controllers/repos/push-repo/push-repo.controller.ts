@@ -1,9 +1,11 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { maker } from '~backend/barrels/maker';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -24,7 +26,8 @@ export class PushRepoController {
     private rabbitService: RabbitService,
     private structsService: StructsService,
     private branchesService: BranchesService,
-    private blockmlService: BlockmlService
+    private blockmlService: BlockmlService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo)
@@ -42,7 +45,7 @@ export class PushRepoController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsEditor({
+    let member = await this.membersService.checkMemberIsEditor({
       projectId: projectId,
       memberId: user.user_id
     });
@@ -52,6 +55,19 @@ export class PushRepoController {
       repoId: user.user_id,
       branchId: branchId
     });
+
+    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
+      'firstProjectId'
+    );
+
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      projectId === firstProjectId
+    ) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
+      });
+    }
 
     let toDiskPushRepoRequest: apiToDisk.ToDiskPushRepoRequest = {
       info: {

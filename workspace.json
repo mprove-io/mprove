@@ -14,6 +14,16 @@
             "outputPath": "package.docker.json"
           }
         },
+        "test-plus-e2e": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run-many --target=test --all",
+              "nx run-many --target=e2e --all"
+            ],
+            "parallel": false
+          }
+        },
         "steps": {
           "executor": "@nrwl/workspace:run-commands",
           "options": {

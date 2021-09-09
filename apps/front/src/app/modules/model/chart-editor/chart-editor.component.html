@@ -2,6 +2,21 @@
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
+    *ngIf="formatChartTypes.indexOf(chart.type) > -1"
+    class="flex flex-row items-center mb-5"
+  >
+    <div class="flex h-9 text-gray1 text-base items-center select-none"
+      >Format</div
+    >
+
+    <ui-switch
+      class="ml-5"
+      [checked]="chart.format"
+      (change)="toggleFormat($event)"
+    ></ui-switch>
+  </div>
+
+  <div
     *ngIf="pageSizeChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -44,7 +59,7 @@
       >
         <button
           data-cy="chartEditorHideColumnsCheckbox"
-          class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded focus:outline-none"
+          class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded focus:outline-none flex-shrink-0"
           [ngClass]="{
             'bg-blue3 ': hideColumnsIsChecked(column.id)
           }"
@@ -313,7 +328,7 @@
       >
         <button
           data-cy="chartEditorYFieldsCheckbox"
-          class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded focus:outline-none"
+          class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded focus:outline-none flex-shrink-0"
           [ngClass]="{
             'bg-blue3 ': yFieldsIsChecked(column.id)
           }"
@@ -680,21 +695,6 @@
       class="ml-5"
       [checked]="chart.showDataLabel"
       (change)="toggleShowDataLabel($event)"
-    ></ui-switch>
-  </div>
-
-  <div
-    *ngIf="formatChartTypes.indexOf(chart.type) > -1"
-    class="flex flex-row items-center mb-5"
-  >
-    <div class="flex h-9 text-gray1 text-base items-center select-none"
-      >Format</div
-    >
-
-    <ui-switch
-      class="ml-5"
-      [checked]="chart.format"
-      (change)="toggleFormat($event)"
     ></ui-switch>
   </div>
 
