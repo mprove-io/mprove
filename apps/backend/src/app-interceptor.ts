@@ -33,15 +33,17 @@ export class AppInterceptor implements NestInterceptor {
     let req: apiToBackend.ToBackendRequest = request.body;
     let user: entities.UserEntity = request.user;
 
-    let iKey = req.info.idempotencyKey;
+    let iKey = req?.info?.idempotencyKey;
     let userId = common.isDefined(user?.user_id)
       ? user.user_id
       : constants.UNK_USER_ID;
 
-    let idemp = await this.idempsRepository.findOne({
-      idempotency_key: iKey,
-      user_id: userId
-    });
+    let idemp = common.isUndefined(iKey)
+      ? undefined
+      : await this.idempsRepository.findOne({
+          idempotency_key: iKey,
+          user_id: userId
+        });
 
     if (common.isUndefined(idemp)) {
       let idempEntity: entities.IdempEntity = {
