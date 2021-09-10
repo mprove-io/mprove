@@ -98,5 +98,7 @@ export const appControllers = [
   controllers.CreateVizController,
   controllers.DeleteVizController,
   controllers.GetVizsController,
-  controllers.ModifyVizController
+  controllers.ModifyVizController,
+
+  controllers.CheckController
 ];

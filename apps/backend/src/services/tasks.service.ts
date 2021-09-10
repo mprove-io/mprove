@@ -21,10 +21,10 @@ export class TasksService {
     private idempsRepository: repositories.IdempsRepository
   ) {}
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  handleCron() {
-    common.logToConsole('Called every 10 seconds');
-  }
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+  // handleCron() {
+  //   common.logToConsole('Called every 10 seconds');
+  // }
 
   @Cron('*/3 * * * * *')
   async loopCheckQueries() {

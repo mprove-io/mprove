@@ -1,3 +1,4 @@
+// export const API_PATH = 'api';
 export const PROD_REPO_ID = 'prod';
 export const BRANCH_MASTER = 'master';
 export const FIRST_ORG_NAME = 'demo';

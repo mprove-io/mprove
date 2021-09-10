@@ -45,7 +45,7 @@ export class AppInterceptor implements NestInterceptor {
           user_id: userId
         });
 
-    if (common.isUndefined(idemp)) {
+    if (common.isUndefined(idemp) && common.isDefined(iKey)) {
       let idempEntity: entities.IdempEntity = {
         idempotency_key: iKey,
         user_id: userId,
@@ -118,15 +118,17 @@ export class AppInterceptor implements NestInterceptor {
               req: req
             });
 
-            let idempEntity: entities.IdempEntity = {
-              idempotency_key: iKey,
-              user_id: userId,
-              req: req,
-              resp: resp,
-              server_ts: helper.makeTs()
-            };
+            if (common.isDefined(iKey)) {
+              let idempEntity: entities.IdempEntity = {
+                idempotency_key: iKey,
+                user_id: userId,
+                req: req,
+                resp: resp,
+                server_ts: helper.makeTs()
+              };
 
-            await this.idempsRepository.save(idempEntity);
+              await this.idempsRepository.save(idempEntity);
+            }
 
             return resp;
           })

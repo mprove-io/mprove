@@ -30,7 +30,8 @@ Cypress.Commands.add(
 
     cy.request({
       url:
-        'localhost:3000/api/' +
+        'localhost:3000/' +
+        // + commonConstants.API_PATH + '/'
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
       method: constants.POST,
       body: body
@@ -52,7 +53,8 @@ Cypress.Commands.add(
 
     cy.request({
       url:
-        'localhost:3000/api/' +
+        'localhost:3000/' +
+        // + commonConstants.API_PATH + '/'
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
       method: constants.POST,
       body: body
@@ -74,7 +76,8 @@ Cypress.Commands.add(
 
     cy.request({
       url:
-        'localhost:3000/api/' +
+        'localhost:3000/' +
+        // + commonConstants.API_PATH + '/'
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       method: constants.POST,
       body: body
