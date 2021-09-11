@@ -24,7 +24,7 @@ export class ProcessQueryService {
       });
     }
 
-    let reqValid = await common.transformValid({
+    let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlProcessQueryRequest,
       object: request,
       errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS

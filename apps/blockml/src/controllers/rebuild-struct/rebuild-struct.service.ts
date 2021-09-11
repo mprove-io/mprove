@@ -29,7 +29,7 @@ export class RebuildStructService {
       });
     }
 
-    let reqValid = await common.transformValid({
+    let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlRebuildStructRequest,
       object: request,
       errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS

@@ -14,7 +14,7 @@ export class IsProjectExistService {
       'mDataOrgPath'
     );
 
-    let requestValid = await common.transformValid({
+    let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskIsProjectExistRequest,
       object: request,
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS

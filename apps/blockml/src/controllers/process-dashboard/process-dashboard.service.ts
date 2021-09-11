@@ -25,7 +25,7 @@ export class ProcessDashboardService {
       });
     }
 
-    let reqValid = await common.transformValid({
+    let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlProcessDashboardRequest,
       object: request,
       errorMessage: apiToBlockml.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS

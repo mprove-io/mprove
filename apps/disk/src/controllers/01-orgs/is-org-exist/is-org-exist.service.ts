@@ -14,7 +14,7 @@ export class IsOrgExistService {
       'mDataOrgPath'
     );
 
-    let requestValid = await common.transformValid({
+    let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskIsOrgExistRequest,
       object: request,
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS

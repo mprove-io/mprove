@@ -15,7 +15,7 @@ export class DeleteBranchService {
       'mDataOrgPath'
     );
 
-    let requestValid = await common.transformValid({
+    let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskDeleteBranchRequest,
       object: request,
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS

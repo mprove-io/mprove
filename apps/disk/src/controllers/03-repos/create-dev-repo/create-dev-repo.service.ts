@@ -15,7 +15,7 @@ export class CreateDevRepoService {
       'mDataOrgPath'
     );
 
-    let requestValid = await common.transformValid({
+    let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskCreateDevRepoRequest,
       object: request,
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS

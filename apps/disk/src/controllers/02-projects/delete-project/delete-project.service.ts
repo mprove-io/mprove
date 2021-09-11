@@ -14,7 +14,7 @@ export class DeleteProjectService {
       'mDataOrgPath'
     );
 
-    let requestValid = await common.transformValid({
+    let requestValid = common.transformValidSync({
       classType: apiToDisk.ToDiskDeleteProjectRequest,
       object: request,
       errorMessage: apiToDisk.ErEnum.DISK_WRONG_REQUEST_PARAMS

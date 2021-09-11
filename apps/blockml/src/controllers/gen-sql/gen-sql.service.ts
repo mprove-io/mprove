@@ -15,7 +15,7 @@ export class GenSqlService {
       });
     }
 
-    let reqValid = await common.transformValid({
+    let reqValid = common.transformValidSync({
       classType: apiToBlockml.ToBlockmlWorkerGenSqlRequest,
       object: request,
       errorMessage: apiToBlockml.ErEnum.BLOCKML_WORKER_WRONG_REQUEST_PARAMS
