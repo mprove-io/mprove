@@ -19,6 +19,8 @@
     </div>
 
     <div class="flex flex-row items-center">
+      <m-models-menu></m-models-menu>
+
       <button
         class="block px-5 text-gray1 w-full text-left text-base focus:outline-none"
         [ngClass]="{
@@ -29,8 +31,6 @@
         [disabled]="!nav || !nav.projectId || needSave === true"
         >Visualizations</button
       >
-
-      <m-models-menu></m-models-menu>
     </div>
 
     <div class="flex flex-row items-center">
