@@ -53,7 +53,8 @@ export class MyDialogService {
 
     this.dialogService.open(ErrorDialogComponent, {
       enableClose: false,
-      data: errorData
+      data: errorData,
+      width: 650
     });
 
     if (isThrow === true) {

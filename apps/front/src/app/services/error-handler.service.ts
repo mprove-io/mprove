@@ -22,7 +22,8 @@ export class ErrorHandlerService extends ErrorHandler {
 
         dialogService.open(ErrorDialogComponent, {
           data: errorData,
-          enableClose: false
+          enableClose: false,
+          width: 650
         });
       });
     }

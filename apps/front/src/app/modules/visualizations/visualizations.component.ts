@@ -27,6 +27,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   vizsModelsList: ModelsItemExtended[];
 
   vizs: common.Viz[];
+  vizsFilteredByWord: common.Viz[];
   filteredVizs: common.Viz[];
 
   hasAccessModelsList: ModelsItemExtended[] = [];
@@ -130,21 +131,20 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredVizs() {
-    let vizsFilteredByModel = common.isDefined(this.modelId)
-      ? this.vizs.filter(v => v.modelId === this.modelId)
-      : this.vizs;
-
-    let vizsFilteredByModelAndKeyword = common.isDefined(this.word)
-      ? vizsFilteredByModel.filter(v =>
+    this.vizsFilteredByWord = common.isDefined(this.word)
+      ? this.vizs.filter(v =>
           v.title.toUpperCase().includes(this.word.toUpperCase())
         )
-      : vizsFilteredByModel;
+      : this.vizs;
 
-    this.filteredVizs = vizsFilteredByModelAndKeyword;
+    this.filteredVizs = common.isDefined(this.modelId)
+      ? this.vizsFilteredByWord.filter(v => v.modelId === this.modelId)
+      : this.vizsFilteredByWord;
 
     this.vizsModelsList = this.vizsModelsList.map(z =>
       Object.assign({}, z, {
-        totalVizs: this.filteredVizs.filter(v => v.modelId === z.modelId).length
+        totalVizs: this.vizsFilteredByWord.filter(v => v.modelId === z.modelId)
+          .length
       })
     );
   }
