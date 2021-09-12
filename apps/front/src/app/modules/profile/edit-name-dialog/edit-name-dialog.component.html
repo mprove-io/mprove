@@ -11,6 +11,7 @@
     (ngSubmit)="save()"
   >
     <input
+      spellcheck="false"
       data-cy="editNameDialogFirstNameInput"
       class="mt-9 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
@@ -24,6 +25,7 @@
     <m-validation [control]="editNameForm.controls['firstName']"></m-validation>
 
     <input
+      spellcheck="false"
       data-cy="editNameDialogLastNameInput"
       class="mt-1 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{

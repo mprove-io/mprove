@@ -54,11 +54,12 @@
                 <m-search-icon class="text-gray1"></m-search-icon>
 
                 <input
+                  spellcheck="false"
                   data-cy="vizsSearchInput"
                   class="w-full ml-3 h-10 form-input rounded border-gray3 focus:border-blue3"
                   placeholder="Search by Title"
                   [ngClass]="{
-                    'bg-blue-100': !!word
+                    'bg-purple-200': !!word
                   }"
                   [(ngModel)]="word"
                   (ngModelChange)="searchWordChange()"
@@ -68,7 +69,7 @@
                   *ngIf="!!word"
                   class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
                   [ngClass]="{
-                    'cursor-pointer hover:bg-blue2': !!word
+                    'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
                   }"
                   (click)="resetSearch()"
                 ></m-delete-icon>
@@ -89,7 +90,7 @@
               >
                 <div> All Models </div>
                 <div class="flex justify-end ml-3 w-12">
-                  {{ vizs?.length }}
+                  {{ filteredVizs?.length }}
                 </div>
               </div>
 

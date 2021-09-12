@@ -11,6 +11,7 @@
     (ngSubmit)="add()"
   >
     <input
+      spellcheck="false"
       data-cy="addConnectionDialogConnectionIdInput"
       class="mt-9 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
@@ -64,6 +65,7 @@
 
       <div class="text-base">Query Size Limit, gb (default: 1)</div>
       <input
+        spellcheck="false"
         data-cy="addConnectionDialogBigqueryQuerySizeLimitGbInput"
         class="w-80 mt-1 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -80,6 +82,7 @@
 
     <div *ngIf="addConnectionForm.controls['type'].value === typePostgreSql">
       <input
+        spellcheck="false"
         data-cy="addConnectionDialogPostgresHostInput"
         class="w-80 mt-6 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -95,6 +98,7 @@
       ></m-validation>
 
       <input
+        spellcheck="false"
         data-cy="addConnectionDialogPostgresPortInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -110,6 +114,7 @@
       ></m-validation>
 
       <input
+        spellcheck="false"
         data-cy="addConnectionDialogPostgresDatabaseInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -125,6 +130,7 @@
       ></m-validation>
 
       <input
+        spellcheck="false"
         data-cy="addConnectionDialogPostgresUserInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -140,6 +146,7 @@
       ></m-validation>
 
       <input
+        spellcheck="false"
         data-cy="addConnectionDialogPostgresPasswordInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{

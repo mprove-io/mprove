@@ -21,7 +21,7 @@ class ModelsItemExtended extends common.ModelsItem {
 export class VisualizationsComponent implements OnInit, OnDestroy {
   pageTitle = constants.VISUALIZATIONS_PAGE_TITLE;
 
-  groups: string[];
+  // groups: string[];
 
   modelsList: common.ModelsItem[];
   vizsModelsList: ModelsItemExtended[];
@@ -69,9 +69,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
         ...this.hasNoAccessModelsList
       ].sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
 
-      let allGroups = this.vizs.map(z => z.gr);
-      let definedGroups = allGroups.filter(y => common.isDefined(y));
-      this.groups = [...new Set(definedGroups)];
+      // let allGroups = this.vizs.map(z => z.gr);
+      // let definedGroups = allGroups.filter(y => common.isDefined(y));
+      // this.groups = [...new Set(definedGroups)];
 
       this.makeFilteredVizs();
 
@@ -141,6 +141,12 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       : vizsFilteredByModel;
 
     this.filteredVizs = vizsFilteredByModelAndKeyword;
+
+    this.vizsModelsList = this.vizsModelsList.map(z =>
+      Object.assign({}, z, {
+        totalVizs: this.filteredVizs.filter(v => v.modelId === z.modelId).length
+      })
+    );
   }
 
   vizDeleted(deletedVizId: string) {

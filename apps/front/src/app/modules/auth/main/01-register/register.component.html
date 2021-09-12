@@ -11,6 +11,7 @@
     >
 
     <input
+      spellcheck="false"
       data-cy="registerEmailInput"
       class="mt-9 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
@@ -25,6 +26,7 @@
     <m-validation [control]="registerForm.controls['email']"></m-validation>
 
     <input
+      spellcheck="false"
       data-cy="registerPasswordInput"
       class="mt-1 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{

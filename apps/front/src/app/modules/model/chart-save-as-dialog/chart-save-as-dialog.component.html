@@ -33,6 +33,7 @@
 
     <div [formGroup]="titleForm" class="flex flex-col ml-5 items-start">
       <input
+        spellcheck="false"
         data-cy="chartSaveAsDialogTitleInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -56,7 +57,7 @@
     </div>
 
     <div [formGroup]="groupForm" class="flex flex-col ml-5 items-start">
-      <input
+      <input spellcheck="false" 
         data-cy="chartSaveAsDialogGroupInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -79,6 +80,7 @@
 
     <div [formGroup]="rolesForm" class="flex flex-col ml-5 items-start">
       <input
+        spellcheck="false"
         data-cy="chartSaveAsDialogRolesInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{
@@ -101,6 +103,7 @@
 
     <div [formGroup]="usersForm" class="flex flex-col ml-5 items-start">
       <input
+        spellcheck="false"
         data-cy="chartSaveAsDialogUsersInput"
         class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
         [ngClass]="{

@@ -194,6 +194,7 @@
                 >
                   <div class="h-6"></div>
                   <input
+                    spellcheck="false"
                     data-cy="modelChartTitleInput"
                     class="w-96 h-[36px] form-input rounded border-gray3 focus:border-blue3"
                     [ngClass]="{
@@ -234,6 +235,7 @@
                 >
 
                 <button
+                  *ngIf="mconfig?.select.length > 0"
                   data-cy="modelShowChartButton"
                   class="flex flex-shrink-0 h-9 w-9 ml-5 rounded focus:outline-none items-center justify-center hover:bg-blue-200"
                   (click)="showChart($event)"
@@ -382,6 +384,7 @@
                 >
                   <div class="h-6"></div>
                   <input
+                    spellcheck="false"
                     data-cy="modelLimitInput"
                     class="w-32 h-[36px] form-input rounded border-gray3 focus:border-blue3"
                     [ngClass]="{

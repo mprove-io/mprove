@@ -6,6 +6,7 @@
       >{{ pageTitle }}</div
     >
     <input
+      spellcheck="false"
       data-cy="loginEmailInput"
       class="mt-9 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
@@ -20,6 +21,7 @@
     <m-validation [control]="loginForm.controls['email']"></m-validation>
 
     <input
+      spellcheck="false"
       data-cy="loginPasswordInput"
       class="mt-1 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
