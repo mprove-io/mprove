@@ -26,7 +26,12 @@ export function setImplicitLabel<T extends types.vmdType>(
         common.isUndefined(field.label) &&
         field.fieldClass !== common.FieldClassEnum.Time
       ) {
-        field.label = field.name;
+        field.label = common.MyRegex.replaceUnderscoresWithSpaces(field.name);
+        field.label = field.label
+          .split(' ')
+          .map(word => common.capitalizeFirstLetter(word))
+          .join(' ');
+
         field.label_line_num = 0;
       }
     });

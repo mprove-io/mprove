@@ -78,14 +78,12 @@ export function checkProjectConfig(
           [
             common.ProjectWeekStartEnum.Sunday.toString(),
             common.ProjectWeekStartEnum.Monday.toString()
-          ].indexOf(
-            conf[parameter as keyof interfaces.Conf].toString().toLowerCase()
-          ) < 0
+          ].indexOf(conf[parameter as keyof interfaces.Conf].toString()) < 0
         ) {
           item.errors.push(
             new BmError({
               title: enums.ErTitleEnum.WRONG_WEEK_START,
-              message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
+              message: `parameter "${parameter}:" must be "sunday" or "monday" if specified`,
               lines: [
                 {
                   line: conf[

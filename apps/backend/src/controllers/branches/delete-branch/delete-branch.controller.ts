@@ -1,9 +1,11 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MembersService } from '~backend/services/members.service';
@@ -16,7 +18,8 @@ export class DeleteBranchController {
     private projectsService: ProjectsService,
     private branchesRepository: repositories.BranchesRepository,
     private rabbitService: RabbitService,
-    private membersService: MembersService
+    private membersService: MembersService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch)
@@ -33,7 +36,7 @@ export class DeleteBranchController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsEditor({
+    let member = await this.membersService.checkMemberIsEditor({
       memberId: user.user_id,
       projectId: projectId
     });
@@ -41,6 +44,20 @@ export class DeleteBranchController {
     if (branchId === common.BRANCH_MASTER) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_BRANCH_MASTER_CAN_NOT_BE_DELETED
+      });
+    }
+
+    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
+      'firstProjectId'
+    );
+
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      projectId === firstProjectId &&
+      repoId === common.PROD_REPO_ID
+    ) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 

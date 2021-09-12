@@ -48,6 +48,10 @@ export class MyRegex {
 
   // BLOCKML
 
+  static replaceUnderscoresWithSpaces(input: string): string {
+    return input.split('_').join(' ');
+  }
+
   static CONTAINS_BLOCKML_REF(): RegExp {
     return cloneRegexp(/\$\{.+\}/);
   }

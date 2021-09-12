@@ -67,7 +67,15 @@ export function transformTimes<T extends types.vmType>(
         field.timeframes_line_num = 0;
       }
 
-      let groupLabel = field.group_label ? field.group_label : field.name;
+      let groupLabel = field.group_label;
+
+      if (common.isUndefined(groupLabel)) {
+        groupLabel = common.MyRegex.replaceUnderscoresWithSpaces(field.name);
+        groupLabel = groupLabel
+          .split(' ')
+          .map(word => common.capitalizeFirstLetter(word))
+          .join(' ');
+      }
 
       let groupDescription = field.group_description;
 
