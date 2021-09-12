@@ -83,6 +83,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   modelId: string;
 
   word: string;
+  fileName: string;
 
   private timer: any;
 
@@ -100,10 +101,19 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
+    let searchFileName = this.route.snapshot.queryParamMap.get(
+      'searchFileName'
+    );
+    if (common.isDefined(searchFileName)) {
+      let fileNameAr = searchFileName.split('.');
+      fileNameAr.pop();
+      this.fileName = fileNameAr.join('.');
+    }
+
     this.word = this.route.snapshot.queryParamMap.get('searchTitle');
     this.searchWordChange();
 
-    if (this.word) {
+    if (common.isDefined(this.word) || common.isDefined(this.fileName)) {
       const url = this.router
         .createUrlTree([], { relativeTo: this.route, queryParams: {} })
         .toString();
@@ -131,6 +141,12 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredVizs() {
+    if (common.isDefined(this.fileName)) {
+      let fileVizs = this.vizs.filter(x => x.vizId === this.fileName);
+      this.word = fileVizs.length > 0 ? fileVizs[0].title : this.word;
+      this.fileName = undefined;
+    }
+
     this.vizsFilteredByWord = common.isDefined(this.word)
       ? this.vizs.filter(v =>
           v.title.toUpperCase().includes(this.word.toUpperCase())

@@ -8,6 +8,31 @@
           >{{ pageTitle }}
         </div>
 
+        <!-- <div class="flex-grow"></div> -->
+
+        <m-search-icon class="ml-6 text-gray1"></m-search-icon>
+
+        <input
+          spellcheck="false"
+          data-cy="vizsSearchInput"
+          class="w-[400px] ml-3 h-10 form-input rounded bg-blue1 border-gray-400 focus:border-blue3"
+          placeholder="Search by Title"
+          [ngClass]="{
+            'bg-purple-200': !!word
+          }"
+          [(ngModel)]="word"
+          (ngModelChange)="searchWordChange()"
+        />
+
+        <m-delete-icon
+          *ngIf="!!word"
+          class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
+          [ngClass]="{
+            'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+          }"
+          (click)="resetSearch()"
+        ></m-delete-icon>
+
         <div class="flex-grow"></div>
 
         <div class="flex flex-row items-center text-base text-gray1">
@@ -49,39 +74,14 @@
       <div class="flex flex-row flex-grow mt-6">
         <div class="flex w-1/6 mb-6">
           <div class="bg-white rounded shadow-lg w-full">
-            <div class="flex flex-col text-base text-gray1 ml-5 mr-5 mt-5">
-              <div class="mb-5 flex flex-row items-center">
-                <m-search-icon class="text-gray1"></m-search-icon>
-
-                <input
-                  spellcheck="false"
-                  data-cy="vizsSearchInput"
-                  class="w-full ml-3 h-10 form-input rounded border-gray3 focus:border-blue3"
-                  placeholder="Search by Title"
-                  [ngClass]="{
-                    'bg-purple-200': !!word
-                  }"
-                  [(ngModel)]="word"
-                  (ngModelChange)="searchWordChange()"
-                />
-
-                <m-delete-icon
-                  *ngIf="!!word"
-                  class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
-                  [ngClass]="{
-                    'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
-                  }"
-                  (click)="resetSearch()"
-                ></m-delete-icon>
-              </div>
-
-              <div class="w-full flex flex-col text-gray-300">
+            <div class="flex flex-col text-base text-gray1 ml-5 mr-5 mt-6">
+              <!-- <div class="w-full flex flex-col text-gray-300">
                 <div></div>
                 <div></div>
-              </div>
+              </div> -->
 
               <div
-                class="flex flex-row justify-between hover:cursor-pointer py-2 px-4 rounded mt-5"
+                class="flex flex-row justify-between hover:cursor-pointer py-2 px-4 rounded"
                 [ngClass]="{
                   'bg-blue-100': !modelId,
                   'hover:bg-blue2': !!modelId

@@ -285,8 +285,16 @@ export class BlockmlEditorComponent implements OnDestroy {
     let ar = this.file.name.split('.');
     let ext = ar[ar.length - 1];
 
-    if (`.${ext}` === common.FileExtensionEnum.Model) {
+    let dotExt = `.${ext}`;
+
+    if (dotExt === common.FileExtensionEnum.Model) {
       this.navigateService.navigateToModel(ar[0]);
+    } else if (dotExt === common.FileExtensionEnum.Viz) {
+      this.navigateService.navigateToVizs({
+        extra: {
+          queryParams: { searchFileName: this.file.name }
+        }
+      });
     }
   }
 
