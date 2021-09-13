@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ViewChild
+} from '@angular/core';
 import {
   IActionMapping,
   TreeComponent,
@@ -29,7 +34,7 @@ export class ModelNodeExtra extends common.ModelNode {
   styleUrls: ['model-tree.component.scss']
 })
 // implements OnDestroy
-export class ModelTreeComponent {
+export class ModelTreeComponent implements AfterViewInit {
   nodeClassInfo = common.FieldClassEnum.Info;
   nodeClassDimension = common.FieldClassEnum.Dimension;
   nodeClassMeasure = common.FieldClassEnum.Measure;
@@ -100,6 +105,12 @@ export class ModelTreeComponent {
     public structStore: StructStore,
     private navigateService: NavigateService
   ) {}
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.filterHidden();
+    }, 0);
+  }
 
   treeOnInitialized() {
     if (this.model.nodes.length === 0) {
@@ -260,6 +271,21 @@ export class ModelTreeComponent {
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE),
       lineNumber: fieldLineNumber
+    });
+  }
+
+  filterHidden() {
+    this.itemsTree.treeModel.doForAll((node: TreeNode) => {
+      let isHidden =
+        node.parent && node.parent.parent
+          ? node.parent.parent.data.hidden ||
+            node.parent.data.hidden ||
+            node.data.hidden
+          : node.parent
+          ? node.parent.data.hidden || node.data.hidden
+          : node.data.hidden;
+
+      node.setIsHidden(isHidden);
     });
   }
 
