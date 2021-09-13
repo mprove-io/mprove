@@ -73,32 +73,34 @@ export function checkProjectConfig(
           return;
         }
 
-        if (
-          parameter === enums.ParameterEnum.WeekStart.toString() &&
-          [
-            common.ProjectWeekStartEnum.Sunday.toString(),
-            common.ProjectWeekStartEnum.Monday.toString()
-          ].indexOf(conf[parameter as keyof interfaces.Conf].toString()) < 0
-        ) {
-          item.errors.push(
-            new BmError({
-              title: enums.ErTitleEnum.WRONG_WEEK_START,
-              message: `parameter "${parameter}:" must be "sunday" or "monday" if specified`,
-              lines: [
-                {
-                  line: conf[
-                    (parameter + constants.LINE_NUM) as keyof interfaces.Conf
-                  ] as number,
-                  name: conf.fileName,
-                  path: conf.filePath
-                }
-              ]
-            })
-          );
+        if (parameter === enums.ParameterEnum.WeekStart.toString()) {
+          (<any>conf).week_start = conf.week_start.toLowerCase();
 
-          return;
+          if (
+            [
+              common.ProjectWeekStartEnum.Sunday.toString(),
+              common.ProjectWeekStartEnum.Monday.toString()
+            ].indexOf(conf[parameter as keyof interfaces.Conf].toString()) < 0
+          ) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.WRONG_WEEK_START,
+                message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
+                lines: [
+                  {
+                    line: conf[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                    ] as number,
+                    name: conf.fileName,
+                    path: conf.filePath
+                  }
+                ]
+              })
+            );
+
+            return;
+          }
         }
-
         if (
           parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
           helper.isTimezoneValid(
