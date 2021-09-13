@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { format, formatDefaultLocale } from 'd3-format';
+import { formatLocale } from 'd3-format';
 import { common } from '~front/barrels/common';
 import { ColumnField } from '../queries/mq.query';
 
@@ -76,14 +76,14 @@ export class QueryService {
       fieldResult === common.FieldResultEnum.Number &&
       formatNumber !== null
     ) {
-      formatDefaultLocale({
+      let locale = formatLocale({
         decimal: '.',
         thousands: ' ',
         grouping: [3],
         currency: [currencyPrefix, currencySuffix]
       });
 
-      return format(formatNumber)(Number(value));
+      return locale.format(formatNumber)(Number(value));
     } else {
       return value;
     }

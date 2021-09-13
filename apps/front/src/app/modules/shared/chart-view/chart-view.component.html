@@ -55,8 +55,6 @@
   <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -92,6 +90,9 @@
     [roundEdges]="chart.roundEdges"
     [yScaleMax]="chart.yScaleMax"
     [showDataLabel]="chart.showDataLabel"
+    [dataLabelFormatting]="dataLabelFormattingFn"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical>
 
@@ -103,8 +104,6 @@
   <!-- [maxXAxisTickLength]="maxXAxisTickLength" -->
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -140,6 +139,9 @@
     [roundEdges]="chart.roundEdges"
     [xScaleMax]="chart.xScaleMax"
     [showDataLabel]="chart.showDataLabel"
+    [dataLabelFormatting]="dataLabelFormattingFn"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal>
 
@@ -151,8 +153,6 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -189,6 +189,9 @@
     [roundEdges]="chart.roundEdges"
     [yScaleMax]="chart.yScaleMax"
     [showDataLabel]="chart.showDataLabel"
+    [dataLabelFormatting]="dataLabelFormattingFn"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical-2d>
 
@@ -200,8 +203,6 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -238,6 +239,9 @@
     [roundEdges]="chart.roundEdges"
     [xScaleMax]="chart.xScaleMax"
     [showDataLabel]="chart.showDataLabel"
+    [dataLabelFormatting]="dataLabelFormattingFn"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal-2d>
 
@@ -249,8 +253,6 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -285,6 +287,9 @@
     [roundDomains]="chart.roundDomains"
     [yScaleMax]="chart.yScaleMax"
     [showDataLabel]="chart.showDataLabel"
+    [dataLabelFormatting]="dataLabelFormattingFn"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical-stacked>
 
@@ -296,8 +301,6 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -332,6 +335,9 @@
     [roundDomains]="chart.roundDomains"
     [xScaleMax]="chart.xScaleMax"
     [showDataLabel]="chart.showDataLabel"
+    [dataLabelFormatting]="dataLabelFormattingFn"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal-stacked>
 
@@ -343,8 +349,6 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -377,6 +381,8 @@
     [showGridLines]="chart.showGridLines"
     [barPadding]="chart.barPadding"
     [roundDomains]="chart.roundDomains"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical-normalized>
 
@@ -388,8 +394,6 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors-->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -422,6 +426,8 @@
     [showGridLines]="chart.showGridLines"
     [barPadding]="chart.barPadding"
     [roundDomains]="chart.roundDomains"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
+    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal-normalized>
 
@@ -457,7 +463,6 @@
   </ngx-charts-pie-chart>
 
   <!-- [tooltipText]="pieTooltipText" -->
-  <!-- [valueFormatting]="valueFormatting" -->
 
   <!-- custom_colors -->
   <!-- active_entries -->
@@ -477,6 +482,7 @@
     [animations]="chart.animations"
     [gradient]="chart.gradient"
     [tooltipDisabled]="chart.tooltipDisabled"
+    [valueFormatting]="valueFormattingFn"
   >
   </ngx-charts-advanced-pie-chart>
 
@@ -512,14 +518,14 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors -->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
   <!-- series_tooltip_template -->
   <!-- reference_lines -->
   <!-- show_ref_lines -->
   <!-- show_ref_labels -->
+
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingForLinearFn" -->
 
   <ngx-charts-line-chart
     *ngIf="
@@ -554,6 +560,7 @@
     [yScaleMax]="chart.yScaleMax"
     [timeline]="timeline"
     [rangeFillOpacity]="rangeFillOpacity"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
   >
   </ngx-charts-line-chart>
 
@@ -566,11 +573,11 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors -->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
   <!-- series_tooltip_template -->
+
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingForLinearFn" -->
 
   <ngx-charts-area-chart
     *ngIf="
@@ -605,6 +612,7 @@
     [showGridLines]="chart.showGridLines"
     [roundDomains]="chart.roundDomains"
     [tooltipDisabled]="chart.tooltipDisabled"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
   >
   </ngx-charts-area-chart>
 
@@ -617,11 +625,11 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors -->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
   <!-- series_tooltip_template -->
+
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingForLinearFn" -->
 
   <ngx-charts-area-chart-stacked
     *ngIf="
@@ -655,6 +663,7 @@
     [showGridLines]="chart.showGridLines"
     [roundDomains]="chart.roundDomains"
     [tooltipDisabled]="chart.tooltipDisabled"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
   >
   </ngx-charts-area-chart-stacked>
 
@@ -665,11 +674,11 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- custom_colors -->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
   <!-- series_tooltip_template -->
+
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingForLinearFn" -->
 
   <ngx-charts-area-chart-normalized
     *ngIf="
@@ -701,6 +710,7 @@
     [showGridLines]="chart.showGridLines"
     [roundDomains]="chart.roundDomains"
     [tooltipDisabled]="chart.tooltipDisabled"
+    [yAxisTickFormatting]="yAxisTickFormattingFn"
   >
   </ngx-charts-area-chart-normalized>
 
@@ -711,10 +721,11 @@
   <!-- [maxYAxisTickLength]="maxYAxisTickLength" -->
 
   <!-- -legend_title -->
-  <!-- x_axis_tick_formatting -->
-  <!-- y_axis_tick_formatting -->
   <!-- tooltip_text -->
   <!-- tooltip_template -->
+
+  <!-- [yAxisTickFormatting]="yAxisTickFormattingFn"
+  [xAxisTickFormatting]="xAxisTickFormattingFn" -->
 
   <ngx-charts-heat-map
     *ngIf="
@@ -742,7 +753,6 @@
   </ngx-charts-heat-map>
 
   <!-- [labelFormatting]="gdpLabelFormatting" -->
-  <!-- [valueFormatting]="currencyFormatting" -->
 
   <!-- custom_colors -->
   <!-- tooltip_template -->
@@ -761,13 +771,12 @@
     [animations]="chart.animations"
     [gradient]="chart.gradient"
     [tooltipDisabled]="chart.tooltipDisabled"
+    [valueFormatting]="valueFormattingFn"
   >
   </ngx-charts-tree-map>
 
-  <!-- [valueFormatting]="statusValueFormat" -->
-  <!-- [labelFormatting]="statusLabelFormat" -->
-
   <!-- custom_colors -->
+  <!-- [labelFormatting]="statusLabelFormat" -->
 
   <ngx-charts-number-card
     *ngIf="
@@ -786,6 +795,7 @@
     [emptyColor]="chart.emptyColor"
     [bandColor]="chart.bandColor"
     [textColor]="chart.textColor"
+    [valueFormatting]="valueFormattingFn"
   >
   </ngx-charts-number-card>
 
@@ -794,8 +804,6 @@
   <!-- [margin]="margin ? [marginTop, marginRight, marginBottom, marginLeft] : null" -->
 
   <!-- custom_colors -->
-  <!-- axisTickFormatting -->
-  <!-- valueFormatting -->
   <!-- tooltip_template -->
 
   <ngx-charts-gauge
@@ -822,11 +830,12 @@
     [bigSegments]="chart.bigSegments"
     [smallSegments]="chart.smallSegments"
     [tooltipDisabled]="chart.tooltipDisabled"
+    [valueFormatting]="valueFormattingFn"
+    [axisTickFormatting]="axisTickFormattingFn"
   >
   </ngx-charts-gauge>
 
   <!-- custom_colors -->
-  <!-- value_formatting -->
 
   <ngx-charts-linear-gauge
     *ngIf="
@@ -844,6 +853,7 @@
     [min]="chart.min"
     [max]="chart.max"
     [units]="chart.units"
+    [valueFormatting]="valueFormattingFn"
   >
   </ngx-charts-linear-gauge>
 </div>

@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -44,6 +45,20 @@ export class ChartViewComponent implements OnChanges {
   rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
   legendForHeatMap = false;
   legendPosition = 'right';
+
+  dataLabelFormattingFn = this.dataLabelFormatting.bind(this);
+  valueFormattingFn = this.valueFormatting.bind(this);
+  axisTickFormattingFn = this.axisTickFormatting.bind(this);
+  yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
+  xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
+  // xAxisTickFormattingForLinearFn = this.xAxisTickFormattingForLinear.bind(this);
+
+  // dataLabelFormattingFn = (value: any) => this.dataLabelFormatting(value);
+  // valueFormattingFn = (value: any) => this.valueFormatting(value);
+  // axisTickFormattingFn = (value: any) => this.axisTickFormatting(value);
+  // yAxisTickFormattingFn = (value: any) => this.yAxisTickFormatting(value);
+  // xAxisTickFormattingFn = (value: any) => this.xAxisTickFormatting(value);
+  // xAxisTickFormattingForLinearFn = (value: any) => this.xAxisTickFormattingForLinear(value);
 
   constructor(private dataService: DataService) {}
 
@@ -131,4 +146,149 @@ export class ChartViewComponent implements OnChanges {
   }
 
   onSelect(event: any) {}
+
+  dataLabelFormatting(value: any) {
+    let currencyPrefix = 'DDD';
+    let currencySuffix = 'LLL';
+    let formatNumber = '$,.0f';
+
+    let locale = formatLocale({
+      decimal: '.',
+      thousands: ' ',
+      grouping: [3],
+      currency: [currencyPrefix, currencySuffix]
+    });
+
+    //
+    if (common.isDefined(value.value)) {
+      value = value.value;
+    }
+
+    if (isNaN(value)) {
+      value = value.split(',').join('');
+    }
+
+    return locale.format(formatNumber)(Number(value));
+  }
+
+  valueFormatting(value: any) {
+    let currencyPrefix = 'VVV';
+    let currencySuffix = 'FFF';
+    let formatNumber = '$,.0f';
+
+    let locale = formatLocale({
+      decimal: '.',
+      thousands: ' ',
+      grouping: [3],
+      currency: [currencyPrefix, currencySuffix]
+    });
+
+    // ngx-charts-number-card passes data instead of value
+    if (common.isDefined(value.value)) {
+      value = value.value;
+    }
+
+    if (isNaN(value)) {
+      value = value.split(',').join('');
+    }
+
+    return locale.format(formatNumber)(Number(value));
+  }
+
+  axisTickFormatting(value: any) {
+    let currencyPrefix = 'AAA';
+    let currencySuffix = 'TTT';
+    let formatNumber = '$,.0f';
+
+    let locale = formatLocale({
+      decimal: '.',
+      thousands: ' ',
+      grouping: [3],
+      currency: [currencyPrefix, currencySuffix]
+    });
+
+    // ngx-charts-gauge passes string with commas instead of number
+    if (isNaN(value)) {
+      value = value.split(',').join('');
+    }
+
+    return locale.format(formatNumber)(Number(value));
+  }
+
+  yAxisTickFormatting(value: any) {
+    let currencyPrefix = 'YYY';
+    let currencySuffix = 'TTT';
+    let formatNumber = '$,.0f';
+
+    let locale = formatLocale({
+      decimal: '.',
+      thousands: ' ',
+      grouping: [3],
+      currency: [currencyPrefix, currencySuffix]
+    });
+
+    // ngx charts horizontal passes data instead of value
+    if (common.isDefined(value.value)) {
+      value = value.value;
+    }
+
+    if (isNaN(value) === false) {
+      value = locale.format(formatNumber)(Number(value));
+    }
+
+    return value;
+  }
+
+  xAxisTickFormatting(value: any) {
+    let currencyPrefix = 'XXX';
+    let currencySuffix = 'TTT';
+    let formatNumber = '$,.0f';
+
+    let locale = formatLocale({
+      decimal: '.',
+      thousands: ' ',
+      grouping: [3],
+      currency: [currencyPrefix, currencySuffix]
+    });
+
+    // console.log(value);
+
+    //
+    if (common.isDefined(value.value)) {
+      value = value.value;
+    }
+
+    // if number
+    if (isNaN(value) === false) {
+      value = locale.format(formatNumber)(Number(value));
+    }
+
+    return value;
+  }
+
+  xAxisTickFormattingForLinear(value: any) {
+    // let currencyPrefix = 'XXX';
+    // let currencySuffix = 'TTT';
+    // let formatNumber = '$,.0f';
+
+    // let locale = formatLocale({
+    //   decimal: '.',
+    //   thousands: ' ',
+    //   grouping: [3],
+    //   currency: [currencyPrefix, currencySuffix]
+    // });
+
+    // //
+    // if (common.isDefined(value.value)) {
+    //   value = value.value;
+    // }
+
+    // // if number
+    // if (isNaN(value) === false) {
+    //   value = locale.format(formatNumber)(Number(value));
+    // }
+
+    // console.log(value);
+    return value;
+  }
 }
