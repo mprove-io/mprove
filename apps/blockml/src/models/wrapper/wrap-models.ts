@@ -50,7 +50,7 @@ export function wrapModels(item: {
     x.joins.forEach(join => {
       // join fields scope
       let children: common.ModelNode[] = [];
-      let joinHidden = helper.toBoolean(join.hidden);
+      let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
 
       let node: common.ModelNode = {
         id: join.as,
@@ -224,7 +224,7 @@ export function wrapModels(item: {
         label: x.label,
         description: x.description,
         gr: x.group,
-        hidden: helper.toBoolean(x.hidden),
+        hidden: helper.toBooleanFromLowercaseString(x.hidden),
         fields: apiFields,
         nodes: sortedNodes,
         serverTs: 1

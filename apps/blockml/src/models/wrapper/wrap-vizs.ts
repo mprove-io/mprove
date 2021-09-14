@@ -40,7 +40,7 @@ export function wrapVizs(item: {
       accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],
       gr: x.group,
-      hidden: helper.toBoolean(x.hidden),
+      hidden: helper.toBooleanFromLowercaseString(x.hidden),
       reports: apiReports,
       serverTs: 1
     });

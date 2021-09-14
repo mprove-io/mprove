@@ -19,6 +19,15 @@ export class StructEntity {
   @Column({ type: constants.TIMEZONE_VARCHAR })
   default_timezone: string;
 
+  @Column({ type: constants.VARCHAR, nullable: true })
+  format_number: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  currency_prefix: string;
+
+  @Column({ type: constants.VARCHAR, nullable: true })
+  currency_suffix: string;
+
   @Column({ type: constants.JSON })
   errors: common.BmlError[];
 

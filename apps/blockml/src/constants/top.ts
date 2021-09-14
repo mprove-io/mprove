@@ -1,3 +1,5 @@
+import { common } from '~blockml/barrels/common';
+
 export const SRC_PATH = `apps/blockml/src`;
 
 export const PROJECT = 'project';
@@ -47,3 +49,10 @@ export const UNKNOWN_JOIN_TYPE = 'unknown_join_type';
 export const MF = 'mf';
 
 export const STANDARD_SQL = '#standardSQL';
+
+export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
+export const PROJECT_CONFIG_DEFAULT_TIMEZONE = common.UTC;
+export const PROJECT_CONFIG_WEEK_START = common.ProjectWeekStartEnum.Monday;
+export const PROJECT_CONFIG_CURRENCY_PREFIX = '$';
+export const PROJECT_CONFIG_CURRENCY_SUFFIX = '';
+export const PROJECT_CONFIG_FORMAT_NUMBER = ',.0f';

@@ -7,6 +7,9 @@ export function makeStruct(item: {
   weekStart: common.ProjectWeekStartEnum;
   allowTimezones: common.BoolEnum;
   defaultTimezone: string;
+  formatNumber: string;
+  currencyPrefix: string;
+  currencySuffix: string;
   errors: common.BmlError[];
   views: common.View[];
   udfsDict: common.UdfsDict;
@@ -17,6 +20,9 @@ export function makeStruct(item: {
     week_start: item.weekStart,
     allow_timezones: item.allowTimezones,
     default_timezone: item.defaultTimezone,
+    format_number: item.formatNumber,
+    currency_prefix: item.currencyPrefix,
+    currency_suffix: item.currencySuffix,
     errors: item.errors,
     views: item.views,
     udfs_dict: item.udfsDict,

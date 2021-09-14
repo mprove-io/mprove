@@ -27,6 +27,15 @@ export class Struct {
   @IsString()
   defaultTimezone: string;
 
+  @IsString()
+  formatNumber: string;
+
+  @IsString()
+  currencyPrefix: string;
+
+  @IsString()
+  currencySuffix: string;
+
   @ValidateNested()
   @Type(() => BmlError)
   errors: BmlError[];

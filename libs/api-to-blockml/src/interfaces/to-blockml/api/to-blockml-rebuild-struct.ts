@@ -38,6 +38,15 @@ export class ToBlockmlRebuildStructResponsePayload {
   @IsBoolean()
   allowTimezones: boolean;
 
+  @IsString()
+  formatNumber: string;
+
+  @IsString()
+  currencyPrefix: string;
+
+  @IsString()
+  currencySuffix: string;
+
   @ValidateNested()
   @Type(() => common.BmlError)
   errors: common.BmlError[];

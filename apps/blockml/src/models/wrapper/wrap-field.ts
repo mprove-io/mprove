@@ -21,7 +21,7 @@ export function wrapField(item: {
     node
   } = item;
 
-  let fieldHidden = helper.toBoolean(field.hidden);
+  let fieldHidden = helper.toBooleanFromLowercaseString(field.hidden);
 
   let modelField: common.ModelField = {
     id: `${alias}.${field.name}`,

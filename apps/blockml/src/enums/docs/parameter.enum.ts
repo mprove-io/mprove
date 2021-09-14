@@ -122,6 +122,11 @@ export enum ParameterEnum {
   XScaleMax = 'x_scale_max',
   YScaleMin = 'y_scale_min',
   YScaleMax = 'y_scale_max',
+  FormatNumberDataLabel = 'format_number_data_label',
+  FormatNumberValue = 'format_number_value',
+  FormatNumberAxisTick = 'format_number_axis_tick',
+  FormatNumberYAxisTick = 'format_number_y_axis_tick',
+  FormatNumberXAxisTick = 'format_number_x_axis_tick',
   // chart tile
   TileWidth = 'tile_width',
   TileHeight = 'tile_height',

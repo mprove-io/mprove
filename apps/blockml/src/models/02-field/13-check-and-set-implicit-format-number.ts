@@ -14,6 +14,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
     entities: T[];
     errors: BmError[];
     structId: string;
+    projectConfig: interfaces.Conf;
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
@@ -33,7 +34,7 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
 
       if (field.result === common.FieldResultEnum.Number) {
         if (common.isUndefined(field.format_number)) {
-          field.format_number = ',';
+          field.format_number = item.projectConfig.format_number;
           field.format_number_line_num = 0;
         } else {
           try {
@@ -57,12 +58,12 @@ export function checkAndSetImplicitFormatNumber<T extends types.vmdType>(
         }
 
         if (common.isUndefined(field.currency_prefix)) {
-          field.currency_prefix = '$';
+          field.currency_prefix = item.projectConfig.currency_prefix;
           field.currency_prefix_line_num = 0;
         }
 
         if (common.isUndefined(field.currency_suffix)) {
-          field.currency_suffix = '';
+          field.currency_suffix = item.projectConfig.currency_suffix;
           field.currency_suffix_line_num = 0;
         }
       } else {

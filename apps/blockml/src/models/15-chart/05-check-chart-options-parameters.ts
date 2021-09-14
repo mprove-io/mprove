@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { formatSpecifier } from 'd3-format';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -73,7 +74,12 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               enums.ParameterEnum.Interpolation.toString(),
               enums.ParameterEnum.XScaleMax.toString(),
               enums.ParameterEnum.YScaleMin.toString(),
-              enums.ParameterEnum.YScaleMax.toString()
+              enums.ParameterEnum.YScaleMax.toString(),
+              enums.ParameterEnum.FormatNumberDataLabel.toString(),
+              enums.ParameterEnum.FormatNumberValue.toString(),
+              enums.ParameterEnum.FormatNumberAxisTick.toString(),
+              enums.ParameterEnum.FormatNumberYAxisTick.toString(),
+              enums.ParameterEnum.FormatNumberXAxisTick.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
@@ -461,6 +467,41 @@ export function checkChartOptionsParameters<T extends types.dzType>(
               })
             );
             return;
+          }
+
+          if (
+            [
+              enums.ParameterEnum.FormatNumberDataLabel.toString(),
+              enums.ParameterEnum.FormatNumberValue.toString(),
+              enums.ParameterEnum.FormatNumberAxisTick.toString(),
+              enums.ParameterEnum.FormatNumberYAxisTick.toString(),
+              enums.ParameterEnum.FormatNumberXAxisTick.toString()
+            ].indexOf(parameter) > -1
+          ) {
+            let value = report.options[
+              parameter as keyof interfaces.ChartOptions
+            ] as any;
+            try {
+              formatSpecifier(value);
+            } catch (e) {
+              item.errors.push(
+                new BmError({
+                  title: enums.ErTitleEnum.WRONG_FORMAT_NUMBER,
+                  message: ` ${parameter} value "${value}" is not valid`,
+                  lines: [
+                    {
+                      line: report.options[
+                        (parameter +
+                          constants.LINE_NUM) as keyof interfaces.ChartOptions
+                      ] as number,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
           }
         });
     });

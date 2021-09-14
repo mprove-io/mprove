@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { formatSpecifier } from 'd3-format';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { enums } from '~blockml/barrels/enums';
@@ -23,9 +24,12 @@ export function checkProjectConfig(
   let errorsOnStart = item.errors.length;
 
   let projectConfig: interfaces.Conf = {
-    allow_timezones: 'true',
-    default_timezone: common.UTC,
-    week_start: common.ProjectWeekStartEnum.Monday,
+    allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
+    default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
+    week_start: constants.PROJECT_CONFIG_WEEK_START,
+    currency_prefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
+    currency_suffix: constants.PROJECT_CONFIG_CURRENCY_SUFFIX,
+    format_number: constants.PROJECT_CONFIG_FORMAT_NUMBER,
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
@@ -101,6 +105,7 @@ export function checkProjectConfig(
             return;
           }
         }
+
         if (
           parameter === enums.ParameterEnum.DefaultTimezone.toString() &&
           helper.isTimezoneValid(
@@ -124,6 +129,30 @@ export function checkProjectConfig(
           );
 
           return;
+        }
+
+        if (parameter === enums.ParameterEnum.FormatNumber.toString()) {
+          let value = conf[parameter as keyof interfaces.Conf].toString();
+          try {
+            formatSpecifier(value);
+          } catch (e) {
+            item.errors.push(
+              new BmError({
+                title: enums.ErTitleEnum.WRONG_FORMAT_NUMBER,
+                message: ` ${enums.ParameterEnum.FormatNumber} value "${value}" is not valid`,
+                lines: [
+                  {
+                    line: conf[
+                      (parameter + constants.LINE_NUM) as keyof interfaces.Conf
+                    ] as number,
+                    name: conf.fileName,
+                    path: conf.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
         }
       });
 

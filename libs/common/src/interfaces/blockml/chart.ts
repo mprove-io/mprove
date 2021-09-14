@@ -232,6 +232,26 @@ export class Chart {
   emptyColor?: string;
 
   @IsOptional()
+  @IsString()
+  formatNumberDataLabel?: string;
+
+  @IsOptional()
+  @IsString()
+  formatNumberValue?: string;
+
+  @IsOptional()
+  @IsString()
+  formatNumberAxisTick?: string;
+
+  @IsOptional()
+  @IsString()
+  formatNumberYAxisTick?: string;
+
+  @IsOptional()
+  @IsString()
+  formatNumberXAxisTick?: string;
+
+  @IsOptional()
   @IsEnum(enums.ChartTileWidthEnum)
   tileWidth?: enums.ChartTileWidthEnum;
 

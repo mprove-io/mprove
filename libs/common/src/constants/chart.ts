@@ -60,6 +60,12 @@ export const CHART_DEFAULT_TOOLTIP_DISABLED = false;
 export const CHART_DEFAULT_GRADIENT = false;
 export const CHART_DEFAULT_ANIMATIONS = false;
 
+export const CHART_DEFAULT_FORMAT_NUMBER_DATA_LABEL: string = null;
+export const CHART_DEFAULT_FORMAT_NUMBER_VALUE: string = null;
+export const CHART_DEFAULT_FORMAT_AXIS_TICK: string = null;
+export const CHART_DEFAULT_FORMAT_Y_AXIS_TICK: string = null;
+export const CHART_DEFAULT_FORMAT_X_AXIS_TICK: string = null;
+
 export const CHART_DEFAULT_TILE_WIDTH = ChartTileWidthEnum._6;
 export const CHART_DEFAULT_TILE_HEIGHT = ChartTileHeightEnum._500;
 export const CHART_DEFAULT_VIEW_SIZE = ChartViewSizeEnum.Auto;

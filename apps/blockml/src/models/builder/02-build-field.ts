@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { barField } from '~blockml/barrels/bar-field';
-import { common } from '~blockml/barrels/common';
 import { enums } from '~blockml/barrels/enums';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
@@ -9,9 +8,9 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildField<T extends types.vmdType>(
   item: {
     entities: T[];
+    projectConfig: interfaces.Conf;
     errors: BmError[];
     structId: string;
-    weekStart: common.ProjectWeekStartEnum;
     caller: enums.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
@@ -141,6 +140,7 @@ export function buildField<T extends types.vmdType>(
   entities = barField.checkAndSetImplicitFormatNumber(
     {
       entities: entities,
+      projectConfig: item.projectConfig,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -150,7 +150,7 @@ export function buildField<T extends types.vmdType>(
 
   entities = barField.transformTimes(
     {
-      weekStart: item.weekStart,
+      weekStart: item.projectConfig.week_start,
       entities: entities,
       structId: item.structId,
       errors: item.errors,

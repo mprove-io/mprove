@@ -208,7 +208,10 @@ export function checkTopUnknownParameters(
               [
                 enums.ParameterEnum.WeekStart.toString(),
                 enums.ParameterEnum.DefaultTimezone.toString(),
-                enums.ParameterEnum.AllowTimezones.toString()
+                enums.ParameterEnum.AllowTimezones.toString(),
+                enums.ParameterEnum.FormatNumber.toString(),
+                enums.ParameterEnum.CurrencyPrefix.toString(),
+                enums.ParameterEnum.CurrencySuffix.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(

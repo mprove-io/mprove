@@ -10,6 +10,21 @@ export interface ChartOptions {
   format: string; // boolean
   format_line_num: number;
 
+  format_number_data_label: string;
+  format_number_data_label_line_num: number;
+
+  format_number_value: string;
+  format_number_value_line_num: number;
+
+  format_number_axis_tick: string;
+  format_number_axis_tick_line_num: number;
+
+  format_number_y_axis_tick: string;
+  format_number_y_axis_tick_line_num: number;
+
+  format_number_x_axis_tick: string;
+  format_number_x_axis_tick_line_num: number;
+
   gradient: string; // boolean
   gradient_line_num: number;
 

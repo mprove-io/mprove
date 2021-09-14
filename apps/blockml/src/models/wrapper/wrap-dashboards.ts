@@ -22,7 +22,7 @@ export function wrapDashboards(item: {
     x.fields.forEach(field => {
       dashFields.push({
         id: field.name,
-        hidden: helper.toBoolean(field.hidden),
+        hidden: helper.toBooleanFromLowercaseString(field.hidden),
         label: field.label,
         result: field.result,
         fractions: field.fractions,
@@ -51,7 +51,7 @@ export function wrapDashboards(item: {
       title: x.title,
       description: x.description,
       gr: x.group,
-      hidden: helper.toBoolean(x.hidden),
+      hidden: helper.toBooleanFromLowercaseString(x.hidden),
       fields: dashFields,
       reports: apiReports,
       temp: false,
