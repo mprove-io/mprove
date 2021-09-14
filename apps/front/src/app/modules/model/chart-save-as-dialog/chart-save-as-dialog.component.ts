@@ -153,7 +153,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendCreateVizResponse) => {
           this.navigateService.navigateToVizs({
             extra: {
-              queryParams: { searchTitle: rep.title }
+              queryParams: { search: rep.title }
             }
           });
         }),

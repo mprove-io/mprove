@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import FuzzySearch from 'fuzzy-search';
 import { tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
@@ -83,7 +84,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   modelId: string;
 
   word: string;
-  fileName: string;
+  // fileName: string;
 
   private timer: any;
 
@@ -101,19 +102,22 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    let searchFileName = this.route.snapshot.queryParamMap.get(
-      'searchFileName'
-    );
-    if (common.isDefined(searchFileName)) {
-      let fileNameAr = searchFileName.split('.');
-      fileNameAr.pop();
-      this.fileName = fileNameAr.join('.');
-    }
+    // let searchFileName = this.route.snapshot.queryParamMap.get(
+    //   'searchFileName'
+    // );
+    // if (common.isDefined(searchFileName)) {
+    //   let fileNameAr = searchFileName.split('.');
+    //   fileNameAr.pop();
+    //   this.fileName = fileNameAr.join('.');
+    // }
 
-    this.word = this.route.snapshot.queryParamMap.get('searchTitle');
+    this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
 
-    if (common.isDefined(this.word) || common.isDefined(this.fileName)) {
+    if (
+      common.isDefined(this.word)
+      // || common.isDefined(this.fileName)
+    ) {
       const url = this.router
         .createUrlTree([], { relativeTo: this.route, queryParams: {} })
         .toString();
@@ -141,28 +145,31 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredVizs() {
-    if (common.isDefined(this.fileName)) {
-      let fileVizs = this.vizs.filter(x => x.vizId === this.fileName);
-      this.word = fileVizs.length > 0 ? fileVizs[0].title : this.word;
-      this.fileName = undefined;
-    }
+    const searcher = new FuzzySearch(this.vizs, ['title', 'vizId'], {
+      caseSensitive: false
+    });
 
     this.vizsFilteredByWord = common.isDefined(this.word)
-      ? this.vizs.filter(v =>
-          v.title.toUpperCase().includes(this.word.toUpperCase())
-        )
+      ? searcher.search(this.word)
       : this.vizs;
 
     this.filteredVizs = common.isDefined(this.modelId)
       ? this.vizsFilteredByWord.filter(v => v.modelId === this.modelId)
       : this.vizsFilteredByWord;
 
-    this.vizsModelsList = this.vizsModelsList.map(z =>
-      Object.assign({}, z, {
-        totalVizs: this.vizsFilteredByWord.filter(v => v.modelId === z.modelId)
-          .length
-      })
+    this.filteredVizs = this.filteredVizs.sort((a, b) =>
+      a.title > b.title ? 1 : b.title > a.title ? -1 : 0
     );
+
+    this.vizsModelsList = this.vizsModelsList
+      .map(z =>
+        Object.assign({}, z, {
+          totalVizs: this.vizsFilteredByWord.filter(
+            v => v.modelId === z.modelId
+          ).length
+        })
+      )
+      .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
   }
 
   vizDeleted(deletedVizId: string) {
