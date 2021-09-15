@@ -1,9 +1,11 @@
 <div class="h-full w-full overflow-auto">
   <div
     *ngIf="isSelectValid === false"
-    class="h-full flex items-center justify-center text-xl select-none text-gray1"
-    >{{ errorMessage }}</div
-  >
+    class="flex flex-row h-full w-full items-center justify-center text-xl select-none text-gray1"
+    ><div class="w-3/5 text-center">
+      {{ errorMessage }}
+    </div>
+  </div>
 
   <div
     *ngIf="isSelectValid === true && chart.isValid === false"

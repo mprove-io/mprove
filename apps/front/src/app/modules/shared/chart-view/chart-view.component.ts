@@ -70,7 +70,7 @@ export class ChartViewComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     let checkSelectResult = getSelectValid({
-      chartType: this.chart.type,
+      chart: this.chart,
       sortedColumns: this.sortedColumns
     });
 

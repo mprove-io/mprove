@@ -202,7 +202,7 @@ export class ModelComponent implements OnInit, OnDestroy {
           this.mconfigChart = mconfig.chart;
 
           let checkSelectResult = getSelectValid({
-            chartType: chart.type,
+            chart: chart,
             sortedColumns: this.sortedColumns
           });
 
