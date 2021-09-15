@@ -48,6 +48,7 @@ export class ChartViewComponent implements OnChanges {
   legendForHeatMap = false;
   legendPosition = 'right';
 
+  labelFormattingFn = this.labelFormatting.bind(this);
   dataLabelFormattingFn = this.dataLabelFormatting.bind(this);
   valueFormattingFn = this.valueFormatting.bind(this);
   axisTickFormattingFn = this.axisTickFormatting.bind(this);
@@ -173,11 +174,52 @@ export class ChartViewComponent implements OnChanges {
       value = value.value;
     }
 
-    if (isNaN(value)) {
+    if (isNaN(value) === true) {
       value = value.split(',').join('');
     }
 
-    return locale.format(formatNumber)(Number(value));
+    if (isNaN(value) === false && common.isDefined(formatNumber)) {
+      value = locale.format(formatNumber)(Number(value));
+    }
+
+    return value;
+  }
+
+  labelFormatting(value: any) {
+    // let {
+    //   field,
+    //   formatNumber
+    // } = this.formatNumberService.getFormatNumberDataLabel({
+    //   chart: this.chart,
+    //   sortedColumns: this.sortedColumns
+    // });
+
+    // let locale = formatLocale({
+    //   decimal: constants.FORMAT_NUMBER_DECIMAL,
+    //   thousands: constants.FORMAT_NUMBER_THOUSANDS,
+    //   grouping: constants.FORMAT_NUMBER_GROUPING,
+    //   currency: [field.currencyPrefix, field.currencySuffix]
+    // });
+
+    //
+    if (common.isDefined(value.label)) {
+      let num = value.label.split(',').join('');
+      if (isNaN(num) === false) {
+        value = num;
+      } else {
+        value = value.label;
+      }
+    }
+
+    // if (isNaN(value) === true) {
+    //   value = value.split(',').join('');
+    // }
+
+    // if (isNaN(value) === false && common.isDefined(formatNumber)) {
+    //   value = locale.format(formatNumber)(Number(value));
+    // }
+
+    return value;
   }
 
   valueFormatting(value: any) {
@@ -200,11 +242,15 @@ export class ChartViewComponent implements OnChanges {
       value = value.value;
     }
 
-    if (isNaN(value)) {
+    if (isNaN(value) === true) {
       value = value.split(',').join('');
     }
 
-    return locale.format(formatNumber)(Number(value));
+    if (isNaN(value) === false && common.isDefined(formatNumber)) {
+      value = locale.format(formatNumber)(Number(value));
+    }
+
+    return value;
   }
 
   axisTickFormatting(value: any) {
@@ -224,11 +270,15 @@ export class ChartViewComponent implements OnChanges {
     });
 
     // ngx-charts-gauge passes string with commas instead of number
-    if (isNaN(value)) {
+    if (isNaN(value) === true) {
       value = value.split(',').join('');
     }
 
-    return locale.format(formatNumber)(Number(value));
+    if (isNaN(value) === false && common.isDefined(formatNumber)) {
+      value = locale.format(formatNumber)(Number(value));
+    }
+
+    return value;
   }
 
   yAxisTickFormatting(value: any) {
@@ -252,7 +302,7 @@ export class ChartViewComponent implements OnChanges {
       value = value.value;
     }
 
-    if (isNaN(value) === false) {
+    if (isNaN(value) === false && common.isDefined(formatNumber)) {
       value = locale.format(formatNumber)(Number(value));
     }
 
@@ -275,41 +325,16 @@ export class ChartViewComponent implements OnChanges {
       currency: [field.currencyPrefix, field.currencySuffix]
     });
 
-    //
     if (common.isDefined(value.value)) {
       value = value.value;
     }
 
-    // if number
-    if (isNaN(value) === false) {
+    if (isNaN(value) === false && common.isDefined(formatNumber)) {
       value = locale.format(formatNumber)(Number(value));
     }
 
     return value;
   }
 
-  xAxisTickFormattingForLinear(value: any) {
-    // let {
-    //   field,
-    //   formatNumber
-    // } = this.formatNumberService.getFormatNumberXAxisTick({
-    //   chart: this.chart,
-    //   sortedColumns: this.sortedColumns
-    // });
-    // let locale = formatLocale({
-    //   decimal: constants.FORMAT_NUMBER_DECIMAL,
-    //   thousands: constants.FORMAT_NUMBER_THOUSANDS,
-    //   grouping: constants.FORMAT_NUMBER_GROUPING,
-    //   currency: [field.currencyPrefix, field.currencySuffix]
-    // });
-    // //
-    // if (common.isDefined(value.value)) {
-    //   value = value.value;
-    // }
-    // // if number
-    // if (isNaN(value) === false) {
-    //   value = locale.format(formatNumber)(Number(value));
-    // }
-    // return value;
-  }
+  // xAxisTickFormattingForLinear(value: any) {}
 }

@@ -58,6 +58,8 @@
   <!-- active_entries -->
   <!-- tooltip_template -->
 
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingFn" -->
+
   <ngx-charts-bar-vertical
     *ngIf="
       isSelectValid === true &&
@@ -92,7 +94,6 @@
     [showDataLabel]="chart.showDataLabel"
     [dataLabelFormatting]="dataLabelFormattingFn"
     [yAxisTickFormatting]="yAxisTickFormattingFn"
-    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical>
 
@@ -106,6 +107,8 @@
 
   <!-- active_entries -->
   <!-- tooltip_template -->
+
+  <!-- [yAxisTickFormatting]="yAxisTickFormattingFn" -->
 
   <ngx-charts-bar-horizontal
     *ngIf="
@@ -140,7 +143,6 @@
     [xScaleMax]="chart.xScaleMax"
     [showDataLabel]="chart.showDataLabel"
     [dataLabelFormatting]="dataLabelFormattingFn"
-    [yAxisTickFormatting]="yAxisTickFormattingFn"
     [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal>
@@ -155,6 +157,8 @@
   <!-- custom_colors-->
   <!-- active_entries -->
   <!-- tooltip_template -->
+
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingFn" -->
 
   <ngx-charts-bar-vertical-2d
     *ngIf="
@@ -191,7 +195,6 @@
     [showDataLabel]="chart.showDataLabel"
     [dataLabelFormatting]="dataLabelFormattingFn"
     [yAxisTickFormatting]="yAxisTickFormattingFn"
-    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical-2d>
 
@@ -205,6 +208,8 @@
   <!-- custom_colors-->
   <!-- active_entries -->
   <!-- tooltip_template -->
+
+  <!-- [yAxisTickFormatting]="yAxisTickFormattingFn" -->
 
   <ngx-charts-bar-horizontal-2d
     *ngIf="
@@ -240,7 +245,6 @@
     [xScaleMax]="chart.xScaleMax"
     [showDataLabel]="chart.showDataLabel"
     [dataLabelFormatting]="dataLabelFormattingFn"
-    [yAxisTickFormatting]="yAxisTickFormattingFn"
     [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal-2d>
@@ -255,6 +259,8 @@
   <!-- custom_colors-->
   <!-- active_entries -->
   <!-- tooltip_template -->
+
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingFn" -->
 
   <ngx-charts-bar-vertical-stacked
     *ngIf="
@@ -289,7 +295,6 @@
     [showDataLabel]="chart.showDataLabel"
     [dataLabelFormatting]="dataLabelFormattingFn"
     [yAxisTickFormatting]="yAxisTickFormattingFn"
-    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical-stacked>
 
@@ -303,6 +308,8 @@
   <!-- custom_colors-->
   <!-- active_entries -->
   <!-- tooltip_template -->
+
+  <!-- [yAxisTickFormatting]="yAxisTickFormattingFn" -->
 
   <ngx-charts-bar-horizontal-stacked
     *ngIf="
@@ -336,7 +343,6 @@
     [xScaleMax]="chart.xScaleMax"
     [showDataLabel]="chart.showDataLabel"
     [dataLabelFormatting]="dataLabelFormattingFn"
-    [yAxisTickFormatting]="yAxisTickFormattingFn"
     [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal-stacked>
@@ -351,6 +357,8 @@
   <!-- custom_colors-->
   <!-- active_entries -->
   <!-- tooltip_template -->
+
+  <!-- [xAxisTickFormatting]="xAxisTickFormattingFn" -->
 
   <ngx-charts-bar-vertical-normalized
     *ngIf="
@@ -382,7 +390,6 @@
     [barPadding]="chart.barPadding"
     [roundDomains]="chart.roundDomains"
     [yAxisTickFormatting]="yAxisTickFormattingFn"
-    [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-vertical-normalized>
 
@@ -396,6 +403,8 @@
   <!-- custom_colors-->
   <!-- active_entries -->
   <!-- tooltip_template -->
+
+  <!-- [yAxisTickFormatting]="yAxisTickFormattingFn" -->
 
   <ngx-charts-bar-horizontal-normalized
     *ngIf="
@@ -426,7 +435,6 @@
     [showGridLines]="chart.showGridLines"
     [barPadding]="chart.barPadding"
     [roundDomains]="chart.roundDomains"
-    [yAxisTickFormatting]="yAxisTickFormattingFn"
     [xAxisTickFormatting]="xAxisTickFormattingFn"
   >
   </ngx-charts-bar-horizontal-normalized>
@@ -434,7 +442,6 @@
   <!-- [tooltipText]="pieTooltipText" -->
 
   <!-- custom_colors -->
-  <!-- label_formatting -->
   <!-- active_entries -->
   <!-- tooltip_template -->
 
@@ -459,6 +466,7 @@
     [arcWidth]="chart.arcWidth"
     [gradient]="chart.gradient"
     [tooltipDisabled]="chart.tooltipDisabled"
+    [labelFormatting]="labelFormattingFn"
   >
   </ngx-charts-pie-chart>
 
@@ -752,8 +760,6 @@
   >
   </ngx-charts-heat-map>
 
-  <!-- [labelFormatting]="gdpLabelFormatting" -->
-
   <!-- custom_colors -->
   <!-- tooltip_template -->
 
@@ -772,11 +778,11 @@
     [gradient]="chart.gradient"
     [tooltipDisabled]="chart.tooltipDisabled"
     [valueFormatting]="valueFormattingFn"
+    [labelFormatting]="labelFormattingFn"
   >
   </ngx-charts-tree-map>
 
   <!-- custom_colors -->
-  <!-- [labelFormatting]="statusLabelFormat" -->
 
   <ngx-charts-number-card
     *ngIf="
@@ -796,6 +802,7 @@
     [bandColor]="chart.bandColor"
     [textColor]="chart.textColor"
     [valueFormatting]="valueFormattingFn"
+    [labelFormatting]="labelFormattingFn"
   >
   </ngx-charts-number-card>
 

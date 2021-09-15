@@ -43,7 +43,7 @@ export class FormatNumberService {
   }) {
     let { chart, sortedColumns } = item;
 
-    let field = sortedColumns.find(f => f.id === chart.xField);
+    let field = sortedColumns.find(f => f.id === chart.yField);
 
     let formatNumber = chart.formatNumberAxisTick || field?.formatNumber;
 
@@ -62,6 +62,9 @@ export class FormatNumberService {
 
     let formatNumber = chart.formatNumberYAxisTick || field?.formatNumber;
 
+    // console.log('getFormatNumberYAxisTick');
+    // console.log(formatNumber);
+
     return { field: field, formatNumber: formatNumber };
   }
 
@@ -71,9 +74,24 @@ export class FormatNumberService {
   }) {
     let { chart, sortedColumns } = item;
 
-    let field = sortedColumns.find(f => f.id === chart.xField);
+    // console.log('getFormatNumberXAxisTick - sortedColumns');
+    // console.log(sortedColumns);
+
+    let field =
+      chart.type === common.ChartTypeEnum.BarHorizontal ||
+      chart.type === common.ChartTypeEnum.BarHorizontalGrouped ||
+      chart.type === common.ChartTypeEnum.BarHorizontalStacked ||
+      chart.type === common.ChartTypeEnum.BarHorizontalNormalized
+        ? sortedColumns.find(f => f.id === chart.yField)
+        : sortedColumns.find(f => f.id === chart.xField);
+
+    // console.log('getFormatNumberXAxisTick - field');
+    // console.log(field);
 
     let formatNumber = chart.formatNumberXAxisTick || field?.formatNumber;
+
+    // console.log('getFormatNumberXAxisTick - formatNumber');
+    // console.log(formatNumber);
 
     return { field: field, formatNumber: formatNumber };
   }
