@@ -1371,4 +1371,167 @@
       ></m-validation>
     </div>
   </div>
+
+  <div
+    *ngIf="formatNumberDataLabelChartTypes.indexOf(chart.type) > -1"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-64 text-gray1 text-base items-center select-none"
+        >Format Number Data Label</div
+      >
+    </div>
+
+    <div
+      [formGroup]="formatNumberDataLabelForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        spellcheck="false"
+        data-cy="chartEditorFormatNumberDataLabelInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            formatNumberDataLabelForm.controls['formatNumberDataLabel']
+              .invalid &&
+            formatNumberDataLabelForm.controls['formatNumberDataLabel'].touched
+        }"
+        formControlName="formatNumberDataLabel"
+        (blur)="formatNumberDataLabelBlur()"
+      />
+      <m-validation
+        [control]="formatNumberDataLabelForm.controls['formatNumberDataLabel']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="formatNumberValueChartTypes.indexOf(chart.type) > -1"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-64 text-gray1 text-base items-center select-none"
+        >Format Number Value</div
+      >
+    </div>
+
+    <div
+      [formGroup]="formatNumberValueForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        spellcheck="false"
+        data-cy="chartEditorFormatNumberValueInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            formatNumberValueForm.controls['formatNumberValue'].invalid &&
+            formatNumberValueForm.controls['formatNumberValue'].touched
+        }"
+        formControlName="formatNumberValue"
+        (blur)="formatNumberValueBlur()"
+      />
+      <m-validation
+        [control]="formatNumberValueForm.controls['formatNumberValue']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="formatNumberAxisTickChartTypes.indexOf(chart.type) > -1"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-64 text-gray1 text-base items-center select-none"
+        >Format Number Axis Tick</div
+      >
+    </div>
+
+    <div
+      [formGroup]="formatNumberAxisTickForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        spellcheck="false"
+        data-cy="chartEditorFormatNumberAxisTickInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            formatNumberAxisTickForm.controls['formatNumberAxisTick'].invalid &&
+            formatNumberAxisTickForm.controls['formatNumberAxisTick'].touched
+        }"
+        formControlName="formatNumberAxisTick"
+        (blur)="formatNumberAxisTickBlur()"
+      />
+      <m-validation
+        [control]="formatNumberAxisTickForm.controls['formatNumberAxisTick']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="formatNumberXAxisTickChartTypes.indexOf(chart.type) > -1"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-64 text-gray1 text-base items-center select-none"
+        >Format Number X Axis Tick</div
+      >
+    </div>
+
+    <div
+      [formGroup]="formatNumberXAxisTickForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        spellcheck="false"
+        data-cy="chartEditorFormatNumberXAxisTickInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            formatNumberXAxisTickForm.controls['formatNumberXAxisTick']
+              .invalid &&
+            formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].touched
+        }"
+        formControlName="formatNumberXAxisTick"
+        (blur)="formatNumberXAxisTickBlur()"
+      />
+      <m-validation
+        [control]="formatNumberXAxisTickForm.controls['formatNumberXAxisTick']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
+    *ngIf="formatNumberYAxisTickChartTypes.indexOf(chart.type) > -1"
+    class="flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div class="flex h-9 w-64 text-gray1 text-base items-center select-none"
+        >Format Number Y Axis Tick</div
+      >
+    </div>
+
+    <div
+      [formGroup]="formatNumberYAxisTickForm"
+      class="flex flex-col ml-5 items-start"
+    >
+      <input
+        spellcheck="false"
+        data-cy="chartEditorFormatNumberYAxisTickInput"
+        class="w-32 h-9 form-input rounded border-gray3 focus:border-blue3"
+        [ngClass]="{
+          'border-red-600':
+            formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+              .invalid &&
+            formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].touched
+        }"
+        formControlName="formatNumberYAxisTick"
+        (blur)="formatNumberYAxisTickBlur()"
+      />
+      <m-validation
+        [control]="formatNumberYAxisTickForm.controls['formatNumberYAxisTick']"
+      ></m-validation>
+    </div>
+  </div>
 </div>

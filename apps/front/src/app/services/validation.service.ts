@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
+import { formatSpecifier } from 'd3-format';
 import { common } from '~front/barrels/common';
 
 @Injectable({ providedIn: 'root' })
@@ -27,7 +28,8 @@ export class ValidationService {
       ['containsThreeUnderscores', 'File name can not contain "___"'],
       ['moreThenOneMB', 'Text must be < 1mb'],
       ['projectNameIsNotUnique', 'Project name already exists'],
-      ['projectNameIsNotValid', 'Project name is not valid']
+      ['projectNameIsNotValid', 'Project name is not valid'],
+      ['wrongFormatNumber', 'Wrong format number']
     ]);
 
     return config.get(validatorName);
@@ -66,6 +68,15 @@ export class ValidationService {
     } else {
       return { isNotNumberValues: true };
     }
+  }
+
+  static formatNumberValidator(control: FormControl) {
+    try {
+      formatSpecifier(control.value);
+    } catch (e) {
+      return { wrongFormatNumber: true };
+    }
+    return null;
   }
 
   static numberOrEmptyValidator(control: FormControl) {

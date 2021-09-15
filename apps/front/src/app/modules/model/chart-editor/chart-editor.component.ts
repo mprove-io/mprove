@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { ColumnField } from '~front/app/queries/mq.query';
+import { FormatNumberService } from '~front/app/services/format-number.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -85,6 +86,11 @@ export class ChartEditorComponent implements OnChanges {
   xScaleMaxChartTypes = constants.xScaleMaxChartTypes;
   yScaleMaxChartTypes = constants.yScaleMaxChartTypes;
   yScaleMinChartTypes = constants.yScaleMinChartTypes;
+  formatNumberDataLabelChartTypes = constants.formatNumberDataLabelChartTypes;
+  formatNumberValueChartTypes = constants.formatNumberValueChartTypes;
+  formatNumberAxisTickChartTypes = constants.formatNumberAxisTickChartTypes;
+  formatNumberXAxisTickChartTypes = constants.formatNumberXAxisTickChartTypes;
+  formatNumberYAxisTickChartTypes = constants.formatNumberYAxisTickChartTypes;
 
   @Input()
   chart: common.Chart;
@@ -145,6 +151,61 @@ export class ChartEditorComponent implements OnChanges {
 
   unitsForm: FormGroup = this.fb.group({
     units: [undefined, [Validators.required, Validators.maxLength(255)]]
+  });
+
+  formatNumberDataLabelForm: FormGroup = this.fb.group({
+    formatNumberDataLabel: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.formatNumberValidator,
+        Validators.maxLength(255)
+      ]
+    ]
+  });
+
+  formatNumberValueForm: FormGroup = this.fb.group({
+    formatNumberValue: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.formatNumberValidator,
+        Validators.maxLength(255)
+      ]
+    ]
+  });
+
+  formatNumberAxisTickForm: FormGroup = this.fb.group({
+    formatNumberAxisTick: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.formatNumberValidator,
+        Validators.maxLength(255)
+      ]
+    ]
+  });
+
+  formatNumberYAxisTickForm: FormGroup = this.fb.group({
+    formatNumberYAxisTick: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.formatNumberValidator,
+        Validators.maxLength(255)
+      ]
+    ]
+  });
+
+  formatNumberXAxisTickForm: FormGroup = this.fb.group({
+    formatNumberXAxisTick: [
+      undefined,
+      [
+        Validators.required,
+        ValidationService.formatNumberValidator,
+        Validators.maxLength(255)
+      ]
+    ]
   });
 
   angleSpanForm: FormGroup = this.fb.group({
@@ -413,7 +474,8 @@ export class ChartEditorComponent implements OnChanges {
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
-    private mconfigService: MconfigService
+    private mconfigService: MconfigService,
+    private formatNumberService: FormatNumberService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -511,6 +573,46 @@ export class ChartEditorComponent implements OnChanges {
     });
 
     setValueAndMark({
+      control: this.formatNumberDataLabelForm.controls['formatNumberDataLabel'],
+      value: this.formatNumberService.getFormatNumberDataLabel({
+        chart: this.chart,
+        sortedColumns: this.sortedColumns
+      }).formatNumber
+    });
+
+    setValueAndMark({
+      control: this.formatNumberValueForm.controls['formatNumberValue'],
+      value: this.formatNumberService.getFormatNumberValue({
+        chart: this.chart,
+        sortedColumns: this.sortedColumns
+      }).formatNumber
+    });
+
+    setValueAndMark({
+      control: this.formatNumberAxisTickForm.controls['formatNumberAxisTick'],
+      value: this.formatNumberService.getFormatNumberAxisTick({
+        chart: this.chart,
+        sortedColumns: this.sortedColumns
+      }).formatNumber
+    });
+
+    setValueAndMark({
+      control: this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'],
+      value: this.formatNumberService.getFormatNumberYAxisTick({
+        chart: this.chart,
+        sortedColumns: this.sortedColumns
+      }).formatNumber
+    });
+
+    setValueAndMark({
+      control: this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'],
+      value: this.formatNumberService.getFormatNumberXAxisTick({
+        chart: this.chart,
+        sortedColumns: this.sortedColumns
+      }).formatNumber
+    });
+
+    setValueAndMark({
       control: this.angleSpanForm.controls['angleSpan'],
       value: this.chart.angleSpan
     });
@@ -602,7 +704,12 @@ export class ChartEditorComponent implements OnChanges {
         this.barPaddingForm.controls['barPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+          .valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.BarVerticalGrouped) {
       isChartValid =
         this.yScaleMaxForm.controls['yScaleMax'].valid &&
@@ -610,27 +717,45 @@ export class ChartEditorComponent implements OnChanges {
         this.groupPaddingForm.controls['groupPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+          .valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.BarVerticalStacked) {
       isChartValid =
         this.yScaleMaxForm.controls['yScaleMax'].valid &&
         this.barPaddingForm.controls['barPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+          .valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.BarVerticalNormalized) {
       isChartValid =
         this.barPaddingForm.controls['barPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.BarHorizontal) {
       isChartValid =
         this.xScaleMaxForm.controls['xScaleMax'].valid &&
         this.barPaddingForm.controls['barPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+          .valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.BarHorizontalGrouped) {
       isChartValid =
         this.xScaleMaxForm.controls['xScaleMax'].valid &&
@@ -638,14 +763,24 @@ export class ChartEditorComponent implements OnChanges {
         this.groupPaddingForm.controls['groupPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+          .valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.BarHorizontalStacked) {
       isChartValid =
         this.xScaleMaxForm.controls['xScaleMax'].valid &&
         this.barPaddingForm.controls['barPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberDataLabelForm.controls['formatNumberDataLabel']
+          .valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (
       this.chart.type === common.ChartTypeEnum.BarHorizontalNormalized
     ) {
@@ -653,13 +788,17 @@ export class ChartEditorComponent implements OnChanges {
         this.barPaddingForm.controls['barPadding'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick']
+          .valid &&
+        this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.Pie) {
       isChartValid =
         this.arcWidthForm.controls['arcWidth'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.PieAdvanced) {
-      isChartValid = true;
+      isChartValid =
+        true && this.formatNumberValueForm.controls['formatNumberValue'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.PieGrid) {
       isChartValid = true;
     } else if (this.chart.type === common.ChartTypeEnum.Line) {
@@ -668,35 +807,41 @@ export class ChartEditorComponent implements OnChanges {
         this.yScaleMaxForm.controls['yScaleMax'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.Area) {
       isChartValid =
         this.yScaleMinForm.controls['yScaleMin'].valid &&
         this.yScaleMaxForm.controls['yScaleMax'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.AreaStacked) {
       isChartValid =
         this.yScaleMinForm.controls['yScaleMin'].valid &&
         this.yScaleMaxForm.controls['yScaleMax'].valid &&
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.AreaNormalized) {
       isChartValid =
         this.legendTitleForm.controls['legendTitle'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
-        this.yAxisLabelForm.controls['yAxisLabel'].valid;
+        this.yAxisLabelForm.controls['yAxisLabel'].valid &&
+        this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.HeatMap) {
       isChartValid =
         this.innerPaddingForm.controls['innerPadding'].valid &&
         this.xAxisLabelForm.controls['xAxisLabel'].valid &&
         this.yAxisLabelForm.controls['yAxisLabel'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.TreeMap) {
-      isChartValid = true;
+      isChartValid = this.formatNumberValueForm.controls['formatNumberValue']
+        .valid;
     } else if (this.chart.type === common.ChartTypeEnum.NumberCard) {
-      isChartValid = true;
+      isChartValid = this.formatNumberValueForm.controls['formatNumberValue']
+        .valid;
     } else if (this.chart.type === common.ChartTypeEnum.Gauge) {
       isChartValid =
         this.unitsForm.controls['units'].valid &&
@@ -706,12 +851,15 @@ export class ChartEditorComponent implements OnChanges {
         this.maxForm.controls['max'].valid &&
         this.bigSegmentsForm.controls['bigSegments'].valid &&
         this.smallSegmentsForm.controls['smallSegments'].valid &&
-        this.legendTitleForm.controls['legendTitle'].valid;
+        this.legendTitleForm.controls['legendTitle'].valid &&
+        this.formatNumberValueForm.controls['formatNumberValue'].valid &&
+        this.formatNumberAxisTickForm.controls['formatNumberAxisTick'].valid;
     } else if (this.chart.type === common.ChartTypeEnum.GaugeLinear) {
       isChartValid =
         this.unitsForm.controls['units'].valid &&
         this.minForm.controls['min'].valid &&
-        this.maxForm.controls['max'].valid;
+        this.maxForm.controls['max'].valid &&
+        this.formatNumberValueForm.controls['formatNumberValue'].valid;
     } else {
       isChartValid = true;
     }
@@ -736,6 +884,76 @@ export class ChartEditorComponent implements OnChanges {
 
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.units = units;
+    this.updateMconfig(newMconfig);
+  }
+
+  formatNumberDataLabelBlur() {
+    let formatNumberDataLabel = this.formatNumberDataLabelForm.controls[
+      'formatNumberDataLabel'
+    ].value;
+
+    if (formatNumberDataLabel === this.chart.formatNumberDataLabel) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.formatNumberDataLabel = formatNumberDataLabel;
+    this.updateMconfig(newMconfig);
+  }
+
+  formatNumberValueBlur() {
+    let formatNumberValue = this.formatNumberValueForm.controls[
+      'formatNumberValue'
+    ].value;
+
+    if (formatNumberValue === this.chart.formatNumberValue) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.formatNumberValue = formatNumberValue;
+    this.updateMconfig(newMconfig);
+  }
+
+  formatNumberAxisTickBlur() {
+    let formatNumberAxisTick = this.formatNumberAxisTickForm.controls[
+      'formatNumberAxisTick'
+    ].value;
+
+    if (formatNumberAxisTick === this.chart.formatNumberAxisTick) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.formatNumberAxisTick = formatNumberAxisTick;
+    this.updateMconfig(newMconfig);
+  }
+
+  formatNumberYAxisTickBlur() {
+    let formatNumberYAxisTick = this.formatNumberYAxisTickForm.controls[
+      'formatNumberYAxisTick'
+    ].value;
+
+    if (formatNumberYAxisTick === this.chart.formatNumberYAxisTick) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.formatNumberYAxisTick = formatNumberYAxisTick;
+    this.updateMconfig(newMconfig);
+  }
+
+  formatNumberXAxisTickBlur() {
+    let formatNumberXAxisTick = this.formatNumberXAxisTickForm.controls[
+      'formatNumberXAxisTick'
+    ].value;
+
+    if (formatNumberXAxisTick === this.chart.formatNumberXAxisTick) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.formatNumberXAxisTick = formatNumberXAxisTick;
     this.updateMconfig(newMconfig);
   }
 

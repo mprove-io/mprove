@@ -5,8 +5,10 @@ import { getChartScheme } from '~front/app/functions/get-chart-scheme';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ColumnField } from '~front/app/queries/mq.query';
 import { DataService } from '~front/app/services/data.service';
+import { FormatNumberService } from '~front/app/services/format-number.service';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-chart-view',
@@ -60,7 +62,10 @@ export class ChartViewComponent implements OnChanges {
   // xAxisTickFormattingFn = (value: any) => this.xAxisTickFormatting(value);
   // xAxisTickFormattingForLinearFn = (value: any) => this.xAxisTickFormattingForLinear(value);
 
-  constructor(private dataService: DataService) {}
+  constructor(
+    private dataService: DataService,
+    private formatNumberService: FormatNumberService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     let checkSelectResult = getSelectValid({
@@ -148,15 +153,19 @@ export class ChartViewComponent implements OnChanges {
   onSelect(event: any) {}
 
   dataLabelFormatting(value: any) {
-    let currencyPrefix = 'DDD';
-    let currencySuffix = 'LLL';
-    let formatNumber = '$,.0f';
+    let {
+      field,
+      formatNumber
+    } = this.formatNumberService.getFormatNumberDataLabel({
+      chart: this.chart,
+      sortedColumns: this.sortedColumns
+    });
 
     let locale = formatLocale({
-      decimal: '.',
-      thousands: ' ',
-      grouping: [3],
-      currency: [currencyPrefix, currencySuffix]
+      decimal: constants.FORMAT_NUMBER_DECIMAL,
+      thousands: constants.FORMAT_NUMBER_THOUSANDS,
+      grouping: constants.FORMAT_NUMBER_GROUPING,
+      currency: [field.currencyPrefix, field.currencySuffix]
     });
 
     //
@@ -172,15 +181,18 @@ export class ChartViewComponent implements OnChanges {
   }
 
   valueFormatting(value: any) {
-    let currencyPrefix = 'VVV';
-    let currencySuffix = 'FFF';
-    let formatNumber = '$,.0f';
+    let { field, formatNumber } = this.formatNumberService.getFormatNumberValue(
+      {
+        chart: this.chart,
+        sortedColumns: this.sortedColumns
+      }
+    );
 
     let locale = formatLocale({
-      decimal: '.',
-      thousands: ' ',
-      grouping: [3],
-      currency: [currencyPrefix, currencySuffix]
+      decimal: constants.FORMAT_NUMBER_DECIMAL,
+      thousands: constants.FORMAT_NUMBER_THOUSANDS,
+      grouping: constants.FORMAT_NUMBER_GROUPING,
+      currency: [field.currencyPrefix, field.currencySuffix]
     });
 
     // ngx-charts-number-card passes data instead of value
@@ -196,15 +208,19 @@ export class ChartViewComponent implements OnChanges {
   }
 
   axisTickFormatting(value: any) {
-    let currencyPrefix = 'AAA';
-    let currencySuffix = 'TTT';
-    let formatNumber = '$,.0f';
+    let {
+      field,
+      formatNumber
+    } = this.formatNumberService.getFormatNumberAxisTick({
+      chart: this.chart,
+      sortedColumns: this.sortedColumns
+    });
 
     let locale = formatLocale({
-      decimal: '.',
-      thousands: ' ',
-      grouping: [3],
-      currency: [currencyPrefix, currencySuffix]
+      decimal: constants.FORMAT_NUMBER_DECIMAL,
+      thousands: constants.FORMAT_NUMBER_THOUSANDS,
+      grouping: constants.FORMAT_NUMBER_GROUPING,
+      currency: [field.currencyPrefix, field.currencySuffix]
     });
 
     // ngx-charts-gauge passes string with commas instead of number
@@ -216,15 +232,19 @@ export class ChartViewComponent implements OnChanges {
   }
 
   yAxisTickFormatting(value: any) {
-    let currencyPrefix = 'YYY';
-    let currencySuffix = 'TTT';
-    let formatNumber = '$,.0f';
+    let {
+      field,
+      formatNumber
+    } = this.formatNumberService.getFormatNumberYAxisTick({
+      chart: this.chart,
+      sortedColumns: this.sortedColumns
+    });
 
     let locale = formatLocale({
-      decimal: '.',
-      thousands: ' ',
-      grouping: [3],
-      currency: [currencyPrefix, currencySuffix]
+      decimal: constants.FORMAT_NUMBER_DECIMAL,
+      thousands: constants.FORMAT_NUMBER_THOUSANDS,
+      grouping: constants.FORMAT_NUMBER_GROUPING,
+      currency: [field.currencyPrefix, field.currencySuffix]
     });
 
     // ngx charts horizontal passes data instead of value
@@ -240,18 +260,20 @@ export class ChartViewComponent implements OnChanges {
   }
 
   xAxisTickFormatting(value: any) {
-    let currencyPrefix = 'XXX';
-    let currencySuffix = 'TTT';
-    let formatNumber = '$,.0f';
-
-    let locale = formatLocale({
-      decimal: '.',
-      thousands: ' ',
-      grouping: [3],
-      currency: [currencyPrefix, currencySuffix]
+    let {
+      field,
+      formatNumber
+    } = this.formatNumberService.getFormatNumberXAxisTick({
+      chart: this.chart,
+      sortedColumns: this.sortedColumns
     });
 
-    // console.log(value);
+    let locale = formatLocale({
+      decimal: constants.FORMAT_NUMBER_DECIMAL,
+      thousands: constants.FORMAT_NUMBER_THOUSANDS,
+      grouping: constants.FORMAT_NUMBER_GROUPING,
+      currency: [field.currencyPrefix, field.currencySuffix]
+    });
 
     //
     if (common.isDefined(value.value)) {
@@ -267,28 +289,27 @@ export class ChartViewComponent implements OnChanges {
   }
 
   xAxisTickFormattingForLinear(value: any) {
-    // let currencyPrefix = 'XXX';
-    // let currencySuffix = 'TTT';
-    // let formatNumber = '$,.0f';
-
-    // let locale = formatLocale({
-    //   decimal: '.',
-    //   thousands: ' ',
-    //   grouping: [3],
-    //   currency: [currencyPrefix, currencySuffix]
+    // let {
+    //   field,
+    //   formatNumber
+    // } = this.formatNumberService.getFormatNumberXAxisTick({
+    //   chart: this.chart,
+    //   sortedColumns: this.sortedColumns
     // });
-
+    // let locale = formatLocale({
+    //   decimal: constants.FORMAT_NUMBER_DECIMAL,
+    //   thousands: constants.FORMAT_NUMBER_THOUSANDS,
+    //   grouping: constants.FORMAT_NUMBER_GROUPING,
+    //   currency: [field.currencyPrefix, field.currencySuffix]
+    // });
     // //
     // if (common.isDefined(value.value)) {
     //   value = value.value;
     // }
-
     // // if number
     // if (isNaN(value) === false) {
     //   value = locale.format(formatNumber)(Number(value));
     // }
-
-    // console.log(value);
-    return value;
+    // return value;
   }
 }

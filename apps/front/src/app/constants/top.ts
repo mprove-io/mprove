@@ -27,3 +27,7 @@ export const EXT_LIST: common.FileExtensionEnum[] = [
 ];
 
 export const APP_SPINNER_NAME = 'app';
+
+export const FORMAT_NUMBER_DECIMAL = '.';
+export const FORMAT_NUMBER_THOUSANDS = ' ';
+export const FORMAT_NUMBER_GROUPING = [3];

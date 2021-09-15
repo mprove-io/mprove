@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { formatLocale } from 'd3-format';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 import { ColumnField } from '../queries/mq.query';
 
 export class RData {
@@ -77,9 +78,9 @@ export class QueryService {
       formatNumber !== null
     ) {
       let locale = formatLocale({
-        decimal: '.',
-        thousands: ' ',
-        grouping: [3],
+        decimal: constants.FORMAT_NUMBER_DECIMAL,
+        thousands: constants.FORMAT_NUMBER_THOUSANDS,
+        grouping: constants.FORMAT_NUMBER_GROUPING,
         currency: [currencyPrefix, currencySuffix]
       });
 

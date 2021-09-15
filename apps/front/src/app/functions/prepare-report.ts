@@ -287,7 +287,33 @@ export function prepareReport(mconfig: common.Mconfig) {
         constants.xScaleMaxChartTypes.indexOf(chart.type) > -1 &&
         chart.xScaleMax !== common.CHART_DEFAULT_X_SCALE_MAX
           ? chart.xScaleMax
+          : undefined,
+
+      format_number_data_label:
+        constants.formatNumberDataLabelChartTypes.indexOf(chart.type) > -1
+          ? chart.formatNumberDataLabel
+          : undefined,
+
+      format_number_value:
+        constants.formatNumberValueChartTypes.indexOf(chart.type) > -1
+          ? chart.formatNumberValue
+          : undefined,
+
+      format_number_axis_tick:
+        constants.formatNumberAxisTickChartTypes.indexOf(chart.type) > -1
+          ? chart.formatNumberAxisTick
+          : undefined,
+
+      format_number_y_axis_tick:
+        constants.formatNumberYAxisTickChartTypes.indexOf(chart.type) > -1
+          ? chart.formatNumberYAxisTick
+          : undefined,
+
+      format_number_x_axis_tick:
+        constants.formatNumberXAxisTickChartTypes.indexOf(chart.type) > -1
+          ? chart.formatNumberXAxisTick
           : undefined
+
       // timeline:
       //   constants.timelineChartTypes.indexOf(chart.type) > -1 &&
       //   chart.timeline !== common.CHART_DEFAULT_TIMELINE
