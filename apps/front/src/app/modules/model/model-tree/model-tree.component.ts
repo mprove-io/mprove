@@ -39,6 +39,7 @@ export class ModelTreeComponent implements AfterViewInit {
   nodeClassDimension = common.FieldClassEnum.Dimension;
   nodeClassMeasure = common.FieldClassEnum.Measure;
   nodeClassCalculation = common.FieldClassEnum.Calculation;
+  fieldResultTs = common.FieldResultEnum.Ts;
 
   nodesExtra: ModelNodeExtra[] = [];
 

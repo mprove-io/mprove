@@ -89,6 +89,7 @@
                   class="truncate text-base"
                   *ngIf="node.data.nodeClass !== nodeClassInfo"
                   [ngClass]="{
+                    ' font-semibold': node.data.fieldResult === fieldResultTs,
                     'ml-3':
                       node.hasChildren &&
                       node.data.nodeClass !== nodeClassDimension,

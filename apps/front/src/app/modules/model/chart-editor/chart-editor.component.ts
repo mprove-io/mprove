@@ -481,6 +481,10 @@ export class ChartEditorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes);
 
+    if (common.isUndefined(this.sortedColumns)) {
+      return;
+    }
+
     let emptyColumn: ColumnField = {
       id: undefined,
       hidden: undefined,
