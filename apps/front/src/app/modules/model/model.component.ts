@@ -613,7 +613,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (!this.chartTitleForm.valid) {
+    if (!this.chartTitleForm.valid || chartTitle === newMconfig.chart.title) {
       return;
     }
 

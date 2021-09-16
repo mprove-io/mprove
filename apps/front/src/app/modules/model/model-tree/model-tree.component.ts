@@ -12,6 +12,7 @@ import {
 import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
 import { selectChartFieldsOnSelectChange } from '~front/app/functions/select-chart-fields-on-select-change';
+import { setChartTitleOnSelectChange } from '~front/app/functions/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '~front/app/functions/sort-chart-fields-on-select-change';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
@@ -188,6 +189,11 @@ export class ModelTreeComponent implements AfterViewInit {
         take(1)
       )
       .subscribe();
+
+    newMconfig = setChartTitleOnSelectChange({
+      newMconfig: newMconfig,
+      fields: fields
+    });
 
     newMconfig = selectChartFieldsOnSelectChange({
       newMconfig: newMconfig,

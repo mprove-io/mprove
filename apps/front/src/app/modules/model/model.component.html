@@ -191,13 +191,13 @@
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="chartTitleForm"
-                  class="flex flex-col ml-5 items-start"
+                  class="flex flex-col ml-5 items-start w-full"
                 >
                   <div class="h-6"></div>
                   <input
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="w-96 h-[36px] form-input rounded border-gray3 focus:border-blue3"
+                    class="w-full h-[36px] form-input rounded border-gray3 focus:border-blue3"
                     [ngClass]="{
                       'border-red-600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -218,7 +218,7 @@
                   type="button"
                   *ngIf="mconfig?.select.length > 0"
                   data-cy="modelSaveAsButton"
-                  class="w-28 py-2 ml-5 text-base rounded font-medium focus:outline-none"
+                  class="w-28 py-2 ml-[138px] text-base rounded font-medium focus:outline-none flex-shrink-0"
                   [ngClass]="{
                     'bg-white text-blue3 border-2':
                       mconfig.chart.isValid === true &&
