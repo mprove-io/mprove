@@ -26,6 +26,14 @@ export class ToBackendCreateVizRequest extends ToBackendRequest {
   payload: ToBackendCreateVizRequestPayload;
 }
 
+export class ToBackendCreateVizResponsePayload {
+  @ValidateNested()
+  @Type(() => common.Viz)
+  viz: common.Viz;
+}
+
 export class ToBackendCreateVizResponse extends common.MyResponse {
-  payload: { [k in any]: never };
+  @ValidateNested()
+  @Type(() => ToBackendCreateVizResponsePayload)
+  payload: ToBackendCreateVizResponsePayload;
 }

@@ -156,55 +156,35 @@ export class ChartEditorComponent implements OnChanges {
   formatNumberDataLabelForm: FormGroup = this.fb.group({
     formatNumberDataLabel: [
       undefined,
-      [
-        Validators.required,
-        ValidationService.formatNumberValidator,
-        Validators.maxLength(255)
-      ]
+      [ValidationService.formatNumberValidator, Validators.maxLength(255)]
     ]
   });
 
   formatNumberValueForm: FormGroup = this.fb.group({
     formatNumberValue: [
       undefined,
-      [
-        Validators.required,
-        ValidationService.formatNumberValidator,
-        Validators.maxLength(255)
-      ]
+      [ValidationService.formatNumberValidator, Validators.maxLength(255)]
     ]
   });
 
   formatNumberAxisTickForm: FormGroup = this.fb.group({
     formatNumberAxisTick: [
       undefined,
-      [
-        Validators.required,
-        ValidationService.formatNumberValidator,
-        Validators.maxLength(255)
-      ]
+      [ValidationService.formatNumberValidator, Validators.maxLength(255)]
     ]
   });
 
   formatNumberYAxisTickForm: FormGroup = this.fb.group({
     formatNumberYAxisTick: [
       undefined,
-      [
-        Validators.required,
-        ValidationService.formatNumberValidator,
-        Validators.maxLength(255)
-      ]
+      [ValidationService.formatNumberValidator, Validators.maxLength(255)]
     ]
   });
 
   formatNumberXAxisTickForm: FormGroup = this.fb.group({
     formatNumberXAxisTick: [
       undefined,
-      [
-        Validators.required,
-        ValidationService.formatNumberValidator,
-        Validators.maxLength(255)
-      ]
+      [ValidationService.formatNumberValidator, Validators.maxLength(255)]
     ]
   });
 

@@ -7,7 +7,7 @@ import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { selectChartFieldsOnChartTypeChange } from '~front/app/functions/select-chart-fields-on-chart-type-change';
+import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -576,7 +576,7 @@ export class ModelComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    newMconfig = selectChartFieldsOnChartTypeChange({
+    newMconfig = setChartFields({
       newMconfig: newMconfig,
       fields: fields
     });

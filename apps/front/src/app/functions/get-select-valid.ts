@@ -9,6 +9,26 @@ export function getSelectValid(item: {
 
   let xField = sortedColumns.find(f => f.id === chart.xField);
 
+  let yField = sortedColumns.find(f => f.id === chart.yField);
+
+  let yFieldsIsOk = true;
+
+  if (common.isDefined(chart.yFields)) {
+    let yFields = sortedColumns.filter(f => chart.yFields.indexOf(f.id) > -1);
+    let yFieldsResultIsNumber = yFields.filter(
+      f => f.result === common.FieldResultEnum.Number
+    );
+    if (yFields.length !== yFieldsResultIsNumber.length) {
+      yFieldsIsOk = false;
+    }
+  }
+
+  let valueField = sortedColumns.find(f => f.id === chart.valueField);
+
+  let previousValueField = sortedColumns.find(
+    f => f.id === chart.previousValueField
+  );
+
   let isSelectValid = true;
   let errorMessage;
 
@@ -116,6 +136,31 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage =
         'Measure or Calculation field must be selected for this chart type';
+    } else if (
+      common.isDefined(yField) &&
+      yField.result !== common.FieldResultEnum.Number
+    ) {
+      isSelectValid = false;
+      errorMessage =
+        'yField for this chart type must have result type "number"';
+    } else if (
+      common.isDefined(valueField) &&
+      valueField.result !== common.FieldResultEnum.Number
+    ) {
+      isSelectValid = false;
+      errorMessage =
+        'valueField for this chart type must have result type "number"';
+    } else if (
+      common.isDefined(previousValueField) &&
+      previousValueField.result !== common.FieldResultEnum.Number
+    ) {
+      isSelectValid = false;
+      errorMessage =
+        'previousValueField for this chart type must have result type "number"';
+    } else if (yFieldsIsOk === false) {
+      isSelectValid = false;
+      errorMessage =
+        'Each yFields element for this chart type must have result type "number"';
     }
   }
 

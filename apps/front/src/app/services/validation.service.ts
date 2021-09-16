@@ -71,6 +71,10 @@ export class ValidationService {
   }
 
   static formatNumberValidator(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
     try {
       formatSpecifier(control.value);
     } catch (e) {

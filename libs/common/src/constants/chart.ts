@@ -16,7 +16,7 @@ export const CHART_DEFAULT_SCHEME_TYPE = ChartSchemeTypeEnum.Ordinal;
 export const CHART_DEFAULT_CARD_COLOR = 'rgba(255, 255, 255, 100)';
 export const CHART_DEFAULT_EMPTY_COLOR = 'rgba(255, 255, 255, 100)';
 export const CHART_DEFAULT_BAND_COLOR = 'rgba(255, 255, 255, 100)';
-export const CHART_DEFAULT_TEXT_COLOR: string = null;
+export const CHART_DEFAULT_TEXT_COLOR: string = undefined;
 
 export const CHART_DEFAULT_X_AXIS_LABEL = 'X axis label';
 export const CHART_DEFAULT_Y_AXIS_LABEL = 'Y axis label';
@@ -34,10 +34,10 @@ export const CHART_DEFAULT_START_ANGLE = -120;
 export const CHART_DEFAULT_BIG_SEGMENTS = 10;
 export const CHART_DEFAULT_SMALL_SEGMENTS = 5;
 export const CHART_DEFAULT_MIN = 0;
-export const CHART_DEFAULT_MAX: number = null;
-export const CHART_DEFAULT_X_SCALE_MAX: number = null;
-export const CHART_DEFAULT_Y_SCALE_MIN: number = null;
-export const CHART_DEFAULT_Y_SCALE_MAX: number = null;
+export const CHART_DEFAULT_MAX: number = undefined;
+export const CHART_DEFAULT_X_SCALE_MAX: number = undefined;
+export const CHART_DEFAULT_Y_SCALE_MIN: number = undefined;
+export const CHART_DEFAULT_Y_SCALE_MAX: number = undefined;
 
 export const CHART_DEFAULT_TIMELINE = false;
 export const CHART_DEFAULT_SHOW_AXIS = true;
@@ -60,11 +60,11 @@ export const CHART_DEFAULT_TOOLTIP_DISABLED = false;
 export const CHART_DEFAULT_GRADIENT = false;
 export const CHART_DEFAULT_ANIMATIONS = false;
 
-export const CHART_DEFAULT_FORMAT_NUMBER_DATA_LABEL: string = null;
-export const CHART_DEFAULT_FORMAT_NUMBER_VALUE: string = null;
-export const CHART_DEFAULT_FORMAT_AXIS_TICK: string = null;
-export const CHART_DEFAULT_FORMAT_Y_AXIS_TICK: string = null;
-export const CHART_DEFAULT_FORMAT_X_AXIS_TICK: string = null;
+export const CHART_DEFAULT_FORMAT_NUMBER_DATA_LABEL: string = undefined;
+export const CHART_DEFAULT_FORMAT_NUMBER_VALUE: string = undefined;
+export const CHART_DEFAULT_FORMAT_AXIS_TICK: string = undefined;
+export const CHART_DEFAULT_FORMAT_Y_AXIS_TICK: string = undefined;
+export const CHART_DEFAULT_FORMAT_X_AXIS_TICK: string = undefined;
 
 export const CHART_DEFAULT_TILE_WIDTH = ChartTileWidthEnum._6;
 export const CHART_DEFAULT_TILE_HEIGHT = ChartTileHeightEnum._500;

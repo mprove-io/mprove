@@ -221,14 +221,17 @@
                   class="w-28 py-2 ml-[138px] text-base rounded font-medium focus:outline-none flex-shrink-0"
                   [ngClass]="{
                     'bg-white text-blue3 border-2':
+                      isSelectValid === true &&
                       mconfig.chart.isValid === true &&
                       chartTitleForm.valid === true,
                     'bg-gray-400 cursor-default text-white':
+                      isSelectValid === false ||
                       mconfig.chart.isValid === false ||
                       chartTitleForm.valid === false
                   }"
                   (click)="saveAs()"
                   [disabled]="
+                    isSelectValid === false ||
                     mconfig.chart.isValid === false ||
                     chartTitleForm.valid === false
                   "
@@ -248,6 +251,7 @@
                   <m-chart-options
                     [mconfig]="mconfig"
                     [isDisabled]="
+                      isSelectValid === false ||
                       mconfig.chart.isValid === false ||
                       chartTitleForm.valid === false
                     "

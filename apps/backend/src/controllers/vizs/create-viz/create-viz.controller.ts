@@ -100,11 +100,18 @@ export class CreateVizController {
     });
 
     let viz = vizs.find(x => x.vizId === vizId);
+
+    if (common.isUndefined(viz)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_CHECK_BLOCKML_ERRORS
+      });
+    }
+
     let vizReport = viz.reports[0];
     let vizMconfig = mconfigs.find(x => x.mconfigId === vizReport.mconfigId);
     let vizQuery = queries.find(x => x.queryId === vizReport.queryId);
 
-    await this.dbService.writeRecords({
+    let records = await this.dbService.writeRecords({
       modify: false,
       records: {
         vizs: [wrapper.wrapToEntityViz(viz)],
@@ -113,7 +120,9 @@ export class CreateVizController {
       }
     });
 
-    let payload = {};
+    let payload: apiToBackend.ToBackendCreateVizResponsePayload = {
+      viz: wrapper.wrapToApiViz(records.vizs[0])
+    };
 
     return payload;
   }

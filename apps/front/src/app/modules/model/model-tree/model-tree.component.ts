@@ -11,7 +11,7 @@ import {
 } from '@circlon/angular-tree-component';
 import { take, tap } from 'rxjs/operators';
 import { ModelNode } from '~common/_index';
-import { selectChartFieldsOnSelectChange } from '~front/app/functions/select-chart-fields-on-select-change';
+import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { setChartTitleOnSelectChange } from '~front/app/functions/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '~front/app/functions/sort-chart-fields-on-select-change';
 import { ModelQuery } from '~front/app/queries/model.query';
@@ -195,7 +195,7 @@ export class ModelTreeComponent implements AfterViewInit {
       fields: fields
     });
 
-    newMconfig = selectChartFieldsOnSelectChange({
+    newMconfig = setChartFields({
       newMconfig: newMconfig,
       fields: fields
     });
