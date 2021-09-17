@@ -1,9 +1,5 @@
 <div
-  class="group h-full w-full bg-white border border-white rounded shadow-md"
-  [ngClass]="{
-    'hover:bg-blue2 hover:border-blue2 cursor-pointer': canAccessModel === true,
-    'hover:bg-gray-100 hover:border-gray-200': canAccessModel === false
-  }"
+  class="group h-full w-full bg-white border border-white rounded shadow-md hover:bg-blue2 hover:border-blue2 cursor-pointer"
   (click)="showChart()"
 >
   <div class="mx-5 h-full">
@@ -24,10 +20,23 @@
 
         <button
           data-cy="vizExploreButton"
-          class="w-24 h-9 text-lg rounded focus:outline-none hover:bg-blue-200 invisible group-hover:visible"
+          class="w-24 h-9 text-lg rounded focus:outline-none invisible group-hover:visible"
+          [ngClass]="{
+            'hover:bg-blue-200': canAccessModel === true,
+            'text-gray-400': canAccessModel === false
+          }"
+          [disabled]="canAccessModel === false"
           (click)="navMconfig($event)"
         >
-          Explore
+          <div *ngIf="canAccessModel === true"> Explore </div>
+          <div
+            *ngIf="canAccessModel === false"
+            nz-tooltip
+            [nzTooltipTitle]="'No access to model'"
+            nzTooltipPlacement="bottom"
+          >
+            Explore
+          </div>
         </button>
 
         <div class="relative ml-3">
@@ -94,7 +103,7 @@
       </div>
 
       <m-bricks
-        class="flex flex-row mb-5 max-h-24 items-start justify-center overflow-auto"
+        class="flex flex-row mb-5 max-h-[132px] items-start justify-start overflow-auto"
         *ngIf="mconfig?.filters.length > 0"
         [extendedFilters]="extendedFilters"
       ></m-bricks>
@@ -108,7 +117,9 @@
         [queryStatus]="query?.status"
       ></m-chart-view>
 
-      <div class="flex flex-row justify-center items-center h-12 text-gray-400">
+      <div
+        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400"
+      >
         <m-lock-closed-icon
           class="mb-1 mr-2 text-gray-400"
           *ngIf="canAccessModel === false"
@@ -116,7 +127,7 @@
           [nzTooltipTitle]="'No access to model'"
           nzTooltipPlacement="bottom"
         ></m-lock-closed-icon>
-        <div class="ml-5 text-base">Model:</div>
+        <div class="text-base">Model:</div>
         <div class="ml-2 text-base font-semibold">{{
           viz?.modelLabel | capitalize
         }}</div>
