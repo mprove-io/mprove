@@ -1,13 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { ColumnField } from '~front/app/queries/mq.query';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { interfaces } from '~front/barrels/interfaces';
 
 export class ColorSchemeItem {
   label: string;
@@ -96,14 +96,14 @@ export class ChartEditorComponent implements OnChanges {
   chart: common.Chart;
 
   @Input()
-  sortedColumns: ColumnField[];
-  sortedColumnsPlusEmpty: ColumnField[];
+  sortedColumns: interfaces.ColumnField[];
+  sortedColumnsPlusEmpty: interfaces.ColumnField[];
 
-  sortedDimensions: ColumnField[];
-  sortedDimensionsPlusEmpty: ColumnField[];
+  sortedDimensions: interfaces.ColumnField[];
+  sortedDimensionsPlusEmpty: interfaces.ColumnField[];
 
-  sortedMeasuresAndCalculations: ColumnField[];
-  sortedMeasuresAndCalculationsPlusEmpty: ColumnField[];
+  sortedMeasuresAndCalculations: interfaces.ColumnField[];
+  sortedMeasuresAndCalculationsPlusEmpty: interfaces.ColumnField[];
 
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
@@ -465,7 +465,7 @@ export class ChartEditorComponent implements OnChanges {
       return;
     }
 
-    let emptyColumn: ColumnField = {
+    let emptyColumn: interfaces.ColumnField = {
       id: undefined,
       hidden: undefined,
       label: undefined,

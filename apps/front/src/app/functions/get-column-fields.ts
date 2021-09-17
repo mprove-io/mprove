@@ -1,6 +1,6 @@
 import { ModelField } from '~common/_index';
 import { common } from '~front/barrels/common';
-import { ColumnField } from '../queries/mq.query';
+import { interfaces } from '~front/barrels/interfaces';
 
 export function getColumnFields(item: {
   mconfig: common.Mconfig;
@@ -9,13 +9,15 @@ export function getColumnFields(item: {
   let { select, sortings, chart } = item.mconfig;
   let fields = item.fields;
 
-  let selectDimensions: ColumnField[] = [];
-  let selectMeasures: ColumnField[] = [];
-  let selectCalculations: ColumnField[] = [];
+  let selectDimensions: interfaces.ColumnField[] = [];
+  let selectMeasures: interfaces.ColumnField[] = [];
+  let selectCalculations: interfaces.ColumnField[] = [];
 
   select.forEach((fieldId: string) => {
     let field = fields.find(f => f.id === fieldId);
-    let f: ColumnField = Object.assign({}, field, <ColumnField>{
+    let f: interfaces.ColumnField = Object.assign({}, field, <
+      interfaces.ColumnField
+    >{
       sorting: sortings.find(x => x.fieldId === fieldId),
       sortingNumber: sortings.findIndex(s => s.fieldId === fieldId),
       isHideColumn: chart?.hideColumns.indexOf(field.id) > -1
@@ -30,7 +32,7 @@ export function getColumnFields(item: {
     }
   });
 
-  let selectFields: ColumnField[] = [
+  let selectFields: interfaces.ColumnField[] = [
     ...selectDimensions,
     ...selectMeasures,
     ...selectCalculations

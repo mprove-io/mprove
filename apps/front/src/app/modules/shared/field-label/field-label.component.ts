@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ColumnField } from '~front/app/queries/mq.query';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-field-label',
@@ -7,7 +7,7 @@ import { ColumnField } from '~front/app/queries/mq.query';
 })
 export class FieldLabelComponent {
   @Input()
-  column: ColumnField;
+  column: interfaces.ColumnField;
 
   constructor() {}
 }

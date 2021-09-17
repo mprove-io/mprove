@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { ColumnField } from '~front/app/queries/mq.query';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-dialog',
   templateUrl: './chart-dialog.component.html'
 })
 export class ChartDialogComponent implements OnInit {
-  sortedColumns: ColumnField[];
+  sortedColumns: interfaces.ColumnField[];
   qData: RData[];
   query: common.Query;
   mconfig: common.Mconfig;

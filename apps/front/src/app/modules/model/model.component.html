@@ -98,10 +98,11 @@
                   (toggleEvent)="toggleFiltersPanel()"
                 ></m-panel-title>
 
-                <m-model-bricks
-                  class="mr-5"
+                <m-bricks
+                  class="mr-5 my-3"
                   *ngIf="mconfig?.filters.length > 0"
-                ></m-model-bricks>
+                  [extendedFilters]="extendedFilters"
+                ></m-bricks>
               </div>
 
               <div
@@ -454,6 +455,7 @@
   </div>
 </div>
 
+<div *ngIf="extendedFilters$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="model$ | async"></div>

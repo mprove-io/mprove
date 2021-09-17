@@ -9,7 +9,7 @@ import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { ModelQuery } from '~front/app/queries/model.query';
-import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
+import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -31,6 +31,7 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
+import { interfaces } from '~front/barrels/interfaces';
 
 export class ChartTypeItem {
   label: string;
@@ -109,6 +110,14 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
+  extendedFilters: interfaces.FilterExtended[];
+  extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
+    tap(x => {
+      this.extendedFilters = x;
+      this.cd.detectChanges();
+    })
+  );
+
   isShow = true;
 
   filtersIsExpanded = false;
@@ -159,7 +168,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   dryQueryEstimate: common.QueryEstimate;
   dryDataSize: string;
 
-  sortedColumns: ColumnField[];
+  sortedColumns: interfaces.ColumnField[];
   qData: RData[];
   queryStatus: common.QueryStatusEnum;
   mconfigChart: common.Chart;

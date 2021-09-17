@@ -10,8 +10,8 @@ import {
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
+import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { ColumnField } from '~front/app/queries/mq.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -22,6 +22,7 @@ import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-viz',
@@ -47,7 +48,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   @Output() vizDeleted = new EventEmitter<string>();
 
-  sortedColumns: ColumnField[];
+  sortedColumns: interfaces.ColumnField[];
   qData: RData[];
   query: common.Query;
   mconfig: common.Mconfig;
@@ -69,6 +70,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       this.nav = x;
     })
   );
+
+  extendedFilters: interfaces.FilterExtended[];
 
   canEditOrDeleteViz = false;
   canAccessModel = false;
@@ -164,6 +167,11 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
+    this.extendedFilters = getExtendedFilters({
+      fields: model.fields,
+      mconfig: mconfig
+    });
+
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       mconfigId: this.report.mconfigId,
       queryId: this.report.queryId,
@@ -252,7 +260,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  navMconfig() {
+  navMconfig(event?: MouseEvent) {
+    event.stopPropagation();
+
     if (this.canAccessModel === true) {
       this.navigateService.navigateMconfigQueryData({
         modelId: this.report.modelId,
@@ -322,9 +332,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     });
   }
 
-  showChart(event?: MouseEvent) {
-    event.stopPropagation();
-
+  showChart() {
     this.myDialogService.showChart({
       mconfig: this.mconfig,
       query: this.query,

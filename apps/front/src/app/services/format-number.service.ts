@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { common } from '~front/barrels/common';
-import { ColumnField } from '../queries/mq.query';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class FormatNumberService {
@@ -8,7 +8,7 @@ export class FormatNumberService {
 
   getFormatNumberDataLabel(item: {
     chart: common.Chart;
-    sortedColumns: ColumnField[];
+    sortedColumns: interfaces.ColumnField[];
   }) {
     let { chart, sortedColumns } = item;
 
@@ -23,7 +23,7 @@ export class FormatNumberService {
 
   getFormatNumberValue(item: {
     chart: common.Chart;
-    sortedColumns: ColumnField[];
+    sortedColumns: interfaces.ColumnField[];
   }) {
     let { chart, sortedColumns } = item;
 
@@ -39,7 +39,7 @@ export class FormatNumberService {
 
   getFormatNumberAxisTick(item: {
     chart: common.Chart;
-    sortedColumns: ColumnField[];
+    sortedColumns: interfaces.ColumnField[];
   }) {
     let { chart, sortedColumns } = item;
 
@@ -52,7 +52,7 @@ export class FormatNumberService {
 
   getFormatNumberYAxisTick(item: {
     chart: common.Chart;
-    sortedColumns: ColumnField[];
+    sortedColumns: interfaces.ColumnField[];
   }) {
     let { chart, sortedColumns } = item;
 
@@ -67,7 +67,7 @@ export class FormatNumberService {
 
   getFormatNumberXAxisTick(item: {
     chart: common.Chart;
-    sortedColumns: ColumnField[];
+    sortedColumns: interfaces.ColumnField[];
   }) {
     let { chart, sortedColumns } = item;
 

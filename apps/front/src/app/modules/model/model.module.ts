@@ -12,7 +12,6 @@ import { ChartEditorComponent } from './chart-editor/chart-editor.component';
 import { ChartOptionsComponent } from './chart-options/chart-options.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
-import { ModelBricksComponent } from './model-bricks/model-bricks.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
@@ -33,7 +32,6 @@ import { SqlComponent } from './sql/sql.component';
     MainTableComponent,
     FieldOptionsComponent,
     ModelFiltersComponent,
-    ModelBricksComponent,
     QueryOptionsComponent,
     ChartOptionsComponent,
     ChartEditorComponent

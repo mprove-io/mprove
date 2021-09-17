@@ -1,9 +1,9 @@
 import { common } from '~front/barrels/common';
-import { ColumnField } from '../queries/mq.query';
+import { interfaces } from '~front/barrels/interfaces';
 
 export function getSelectValid(item: {
   chart: common.Chart;
-  sortedColumns: ColumnField[];
+  sortedColumns: interfaces.ColumnField[];
 }) {
   let { chart, sortedColumns } = item;
 

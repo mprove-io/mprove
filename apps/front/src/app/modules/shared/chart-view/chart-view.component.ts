@@ -3,12 +3,12 @@ import { formatLocale } from 'd3-format';
 import { getChartCurve } from '~front/app/functions/get-chart-curve';
 import { getChartScheme } from '~front/app/functions/get-chart-scheme';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { ColumnField } from '~front/app/queries/mq.query';
 import { DataService } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-view',
@@ -20,7 +20,7 @@ export class ChartViewComponent implements OnChanges {
   queryStatusEnum = common.QueryStatusEnum;
 
   @Input()
-  sortedColumns: ColumnField[];
+  sortedColumns: interfaces.ColumnField[];
 
   @Input()
   qData: RData[];

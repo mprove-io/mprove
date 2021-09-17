@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { isNumeric } from 'rxjs/internal/util/isNumeric';
 import { capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
-import { ColumnField } from '../queries/mq.query';
+import { interfaces } from '~front/barrels/interfaces';
 import { RData } from './query.service';
 
 @Injectable({ providedIn: 'root' })
@@ -10,7 +10,7 @@ export class DataService {
   constructor() {}
 
   getValueData(item: {
-    columnFields: ColumnField[];
+    columnFields: interfaces.ColumnField[];
     data: RData[];
     currentValueFieldId: string;
     previousValueFieldId: string;
@@ -50,7 +50,7 @@ export class DataService {
   }
 
   getSingleData(item: {
-    selectFields: ColumnField[];
+    selectFields: interfaces.ColumnField[];
     data: RData[];
     xFieldId: string;
     yFieldId: string;
@@ -74,7 +74,7 @@ export class DataService {
   }
 
   getSingleDataForNumberCard(item: {
-    selectFields: ColumnField[];
+    selectFields: interfaces.ColumnField[];
     data: any[];
     xFieldId: string;
     yFieldId: string;
@@ -103,7 +103,7 @@ export class DataService {
   }
 
   getMultiData(item: {
-    selectFields: ColumnField[];
+    selectFields: interfaces.ColumnField[];
     data: any[];
     multiFieldId: string;
     xFieldId: string;
@@ -117,7 +117,7 @@ export class DataService {
       return [];
     }
 
-    let yFields: ColumnField[] = [];
+    let yFields: interfaces.ColumnField[] = [];
 
     item.yFieldsIds.forEach(yFieldId => {
       let yField = item.selectFields.find(f => f.id === yFieldId);

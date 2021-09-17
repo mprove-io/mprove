@@ -4,7 +4,7 @@
     'hover:bg-blue2 hover:border-blue2 cursor-pointer': canAccessModel === true,
     'hover:bg-gray-100 hover:border-gray-200': canAccessModel === false
   }"
-  (click)="navMconfig()"
+  (click)="showChart()"
 >
   <div class="mx-5 h-full">
     <div class="flex flex-col h-full w-full">
@@ -23,11 +23,11 @@
         </div>
 
         <button
-          data-cy="vizShowChartButton"
-          class="flex flex-shrink-0 h-9 w-9 ml-5 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
-          (click)="showChart($event)"
+          data-cy="vizExploreButton"
+          class="w-24 h-9 text-lg rounded focus:outline-none hover:bg-blue-200 invisible group-hover:visible"
+          (click)="navMconfig($event)"
         >
-          <m-full-screen-icon></m-full-screen-icon>
+          Explore
         </button>
 
         <div class="relative ml-3">
@@ -93,6 +93,12 @@
         </div>
       </div>
 
+      <m-bricks
+        class="flex flex-row mb-5 max-h-24 items-start justify-center overflow-auto"
+        *ngIf="mconfig?.filters.length > 0"
+        [extendedFilters]="extendedFilters"
+      ></m-bricks>
+
       <m-chart-view
         *ngIf="!!mconfig?.chart"
         class="w-full p-5 flex flex-grow border border-gray3 rounded bg-white"
@@ -102,19 +108,29 @@
         [queryStatus]="query?.status"
       ></m-chart-view>
 
-      <div
-        class="flex flex-row justify-center items-center h-12 text-gray-400"
-        [ngClass]="{
-          'invisible group-hover:visible':
-            !!query &&
-            query.status !== queryStatusEnum.Error &&
-            query.status !== queryStatusEnum.Running
-        }"
-      >
-        <m-query-status *ngIf="!!query" [query]="query"></m-query-status>
+      <div class="flex flex-row justify-center items-center h-12 text-gray-400">
+        <m-lock-closed-icon
+          class="mb-1 mr-2 text-gray-400"
+          *ngIf="canAccessModel === false"
+          nz-tooltip
+          [nzTooltipTitle]="'No access to model'"
+          nzTooltipPlacement="bottom"
+        ></m-lock-closed-icon>
+        <div class="ml-5 text-base">Model:</div>
+        <div class="ml-2 text-base font-semibold">{{
+          viz?.modelLabel | capitalize
+        }}</div>
+
+        <div class="flex flex-grow"></div>
+
+        <m-query-status
+          class="mr-5"
+          *ngIf="!!query"
+          [query]="query"
+        ></m-query-status>
       </div>
 
-      <div
+      <!-- <div
         class="mb-1 h-8 flex flex-row justify-center items-center text-base text-gray-400 invisible group-hover:visible"
       >
         <m-lock-closed-icon
@@ -150,7 +166,7 @@
           nzTooltipPlacement="bottom"
           >Special</div
         >
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

@@ -41,7 +41,6 @@ import { EditVizInfoDialogComponent } from '../modules/shared/chart-viz/edit-viz
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import { NewVizDialogComponent } from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
-import { ColumnField } from '../queries/mq.query';
 import { RData } from './query.service';
 
 @Injectable({ providedIn: 'root' })
@@ -144,7 +143,7 @@ export class MyDialogService {
     mconfig: common.Mconfig;
     query: common.Query;
     qData: RData[];
-    sortedColumns: ColumnField[];
+    sortedColumns: interfaces.ColumnField[];
   }): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: true,

@@ -1,9 +1,10 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { FilterExtended, MqQuery } from '~front/app/queries/mq.query';
+import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 
 export class EventFractionUpdate {
   fraction: common.Fraction;
@@ -15,7 +16,7 @@ export class EventFractionUpdate {
   templateUrl: './model-filters.component.html'
 })
 export class ModelFiltersComponent {
-  extendedFilters: FilterExtended[];
+  extendedFilters: interfaces.FilterExtended[];
   extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
     tap(x => {
       this.extendedFilters = x;
@@ -31,7 +32,7 @@ export class ModelFiltersComponent {
   ) {}
 
   fractionUpdate(
-    filterExtended: FilterExtended,
+    filterExtended: interfaces.FilterExtended,
     filterIndex: number,
     eventFractionUpdate: any
   ) {
@@ -60,7 +61,7 @@ export class ModelFiltersComponent {
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
-  addFraction(filterExtended: FilterExtended, filterIndex: number) {
+  addFraction(filterExtended: interfaces.FilterExtended, filterIndex: number) {
     let newMconfig = this.structService.makeMconfig();
 
     let fractions = filterExtended.fractions;
@@ -87,7 +88,7 @@ export class ModelFiltersComponent {
   }
 
   deleteFraction(
-    filterExtended: FilterExtended,
+    filterExtended: interfaces.FilterExtended,
     filterIndex: number,
     fractionIndex: number
   ) {

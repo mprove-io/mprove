@@ -1,0 +1,46 @@
+<div class="py-1 px-5 bg-gray-200 rounded">
+  <table>
+    <tbody class="divide-y divide-gray-300">
+      <tr *ngFor="let filter of extendedFilters; let filterIndex = index">
+        <td class="align-top py-1">
+          <div class="flex flex-col items-start justify-start">
+            <m-field-label
+              [column]="filter.field"
+              class="flex text-sm"
+            ></m-field-label> </div
+        ></td>
+
+        <td class="align-top py-1">
+          <div class="ml-5 w-[68px] text-gray1 text-sm">{{
+            filter.field.result | result
+          }}</div></td
+        >
+
+        <td class="align-top py-1">
+          <div
+            class="flex flex-row ml-5 justify-start items-start"
+            *ngFor="
+              let fraction of filter.fractions;
+              let isFirst = first;
+              let fractionIndex = index
+            "
+          >
+            <div class="flex w-9 flex-shrink-0">
+              <div *ngIf="isFirst === true"> - </div>
+              <div *ngIf="isFirst === false">
+                {{
+                  fraction.operator === fractionOperatorEnum.Or
+                    ? 'OR'
+                    : !isFirst && fraction.operator === fractionOperatorEnum.And
+                    ? 'AND'
+                    : ''
+                }}
+              </div>
+            </div>
+            <div class="flex ml-5">{{ fraction.brick }}</div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

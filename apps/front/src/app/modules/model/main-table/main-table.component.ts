@@ -4,11 +4,12 @@ import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { setChartTitleOnSelectChange } from '~front/app/functions/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '~front/app/functions/sort-chart-fields-on-select-change';
 import { ModelQuery } from '~front/app/queries/model.query';
-import { ColumnField, MqQuery } from '~front/app/queries/mq.query';
+import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-main-table',
@@ -25,7 +26,7 @@ export class MainTableComponent {
   isFormat = true;
 
   @Input()
-  sortedColumns: ColumnField[];
+  sortedColumns: interfaces.ColumnField[];
 
   @Input()
   qData: RData[];
