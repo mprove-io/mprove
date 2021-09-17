@@ -19,14 +19,6 @@
     <div class="flex ml-1">{{ item.name }}</div>
   </ng-template>
 
-  <!-- <ng-template ng-header-tmp>
-    <div
-      class="flex ml-3 h-8 justify-left items-center text-gray1 font-semibold text-base select-none"
-    >
-      project
-    </div>
-  </ng-template> -->
-
   <ng-template ng-option-tmp let-item="item">
     <div class="flex ml-1">{{ item.name }}</div>
   </ng-template>
@@ -36,7 +28,7 @@
       data-cy="projectSelectCreateProjectButton"
       class="py-3 rounded text-base text-blue3 hover:bg-blue2 w-full focus:outline-none"
       (click)="createNewProject(projectSelect)"
-      >+ New Project</button
+      >New Project</button
     >
   </ng-template>
 </ng-select>

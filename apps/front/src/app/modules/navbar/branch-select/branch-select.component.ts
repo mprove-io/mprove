@@ -6,6 +6,7 @@ import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name
 import { FileQuery } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -14,6 +15,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { FileState } from '~front/app/stores/file.store';
 import { MemberStore } from '~front/app/stores/member.store';
 import { NavState, NavStore } from '~front/app/stores/nav.store';
+import { RepoState } from '~front/app/stores/repo.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -25,6 +27,17 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 export class BranchSelectComponent {
   branchMaster = common.BRANCH_MASTER;
+  prodRepoID = common.PROD_REPO_ID;
+
+  repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
+
+  repo: RepoState;
+  repo$ = this.repoQuery.select().pipe(
+    tap(x => {
+      this.repo = x;
+      this.cd.detectChanges();
+    })
+  );
 
   isEditor: boolean;
   isEditor$ = this.memberQuery.isEditor$.pipe(
@@ -100,6 +113,7 @@ export class BranchSelectComponent {
     private memberStore: MemberStore,
     private navQuery: NavQuery,
     private fileQuery: FileQuery,
+    private repoQuery: RepoQuery,
     private apiService: ApiService,
     private fileService: FileService,
     private myDialogService: MyDialogService,

@@ -16,36 +16,70 @@
   bindValue="extraId"
 >
   <ng-template ng-label-tmp let-item="item">
-    <div class="flex ml-1">{{ item.extraName }}</div>
-  </ng-template>
-
-  <!-- <ng-template ng-header-tmp>
     <div
-      class="flex ml-3 h-8 justify-left items-center text-gray1 font-semibold text-base select-none"
+      class="flex ml-1"
+      [ngClass]="{
+        'bg-green1 rounded py-[1px] px-[8px]': repo.repoId !== prodRepoID
+      }"
+      >{{ item.extraName }}</div
     >
-      repository - branch
-    </div>
-  </ng-template> -->
+  </ng-template>
 
   <ng-template ng-option-tmp let-item="item">
     <div class="flex ml-1">{{ item.extraName }}</div>
   </ng-template>
 
   <ng-template ng-footer-tmp *ngIf="isEditor === true">
+    <div class="p-3 text-gray-400" *ngIf="repo.conflicts.length > 0">
+      Resolve conflicts to be able to switch, merge, delete or create local
+      branches
+    </div>
+
+    <div
+      class="p-3 text-gray-400"
+      *ngIf="
+        repo.conflicts.length === 0 && repo.repoStatus === repoStatusNeedCommit
+      "
+    >
+      Commit changes to be able to switch, merge, delete or create local
+      branches
+    </div>
+
     <button
+      *ngIf="
+        repo.conflicts.length === 0 && repo.repoStatus !== repoStatusNeedCommit
+      "
       data-cy="branchSelectDeleteBranchButton"
       class="py-3 rounded w-full text-base focus:outline-none"
       [ngClass]="{
         'text-gray-400 cursor-default':
           selectedBranchItem.branchId === branchMaster,
-        'text-red1 hover:bg-blue2': selectedBranchItem.branchId !== branchMaster
+        'text-blue3 hover:bg-blue2':
+          selectedBranchItem.branchId !== branchMaster
       }"
       (click)="deleteBranch(branchSelect, $event)"
       [disabled]="selectedBranchItem.branchId === branchMaster"
       >Delete Branch</button
     >
 
+    <div
+      class="p-3 text-gray-400"
+      *ngIf="
+        repo.conflicts.length === 0 &&
+        repo.repoStatus !== repoStatusNeedCommit &&
+        repo.repoId === prodRepoID
+      "
+    >
+      Switch to local branch to be able to merge, delete or create local
+      branches
+    </div>
+
     <button
+      *ngIf="
+        repo.conflicts.length === 0 &&
+        repo.repoStatus !== repoStatusNeedCommit &&
+        repo.repoId !== prodRepoID
+      "
       data-cy="branchSelectMergeBranchButton"
       class="py-3 rounded w-full text-base focus:outline-none"
       [ngClass]="{
@@ -58,14 +92,20 @@
     >
 
     <button
+      *ngIf="
+        repo.conflicts.length === 0 &&
+        repo.repoStatus !== repoStatusNeedCommit &&
+        repo.repoId !== prodRepoID
+      "
       data-cy="branchSelectCreateBranchButton"
       class="py-3 rounded text-base text-blue3 hover:bg-blue2 w-full focus:outline-none"
       (click)="createNewBranch(branchSelect, $event)"
-      >+ New Local Branch</button
+      >New Local Branch</button
     >
   </ng-template>
 </ng-select>
 
+<div *ngIf="repo$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="file$ | async"></div>
