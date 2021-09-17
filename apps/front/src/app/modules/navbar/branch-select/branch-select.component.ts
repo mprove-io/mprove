@@ -13,6 +13,7 @@ import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { FileState } from '~front/app/stores/file.store';
 import { MemberStore } from '~front/app/stores/member.store';
+import { NavState, NavStore } from '~front/app/stores/nav.store';
 import { UserState } from '~front/app/stores/user.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -42,10 +43,11 @@ export class BranchSelectComponent {
   selectedBranchItem: interfaces.BranchItem;
   selectedBranchExtraId: string;
 
+  prevBranchItem: interfaces.BranchItem;
+  prevBranchExtraId: string;
+
   nav$ = this.navQuery.select().pipe(
     tap(x => {
-      // console.log('branch-select:',x.branchId);
-
       let user: UserState;
       this.userQuery
         .select()
@@ -74,6 +76,8 @@ export class BranchSelectComponent {
         ? [this.selectedBranchItem]
         : [];
 
+      this.prevBranchItem = this.selectedBranchItem;
+
       this.cd.detectChanges();
     })
   );
@@ -100,7 +104,8 @@ export class BranchSelectComponent {
     private fileService: FileService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private navStore: NavStore
   ) {}
 
   openBranchSelect() {
@@ -245,7 +250,7 @@ export class BranchSelectComponent {
   }
 
   branchChange() {
-    this.selectedBranchItem = this.branchesList.find(
+    let newSelectedBranchItem = this.branchesList.find(
       x => x.extraId === this.selectedBranchExtraId
     );
 
@@ -258,9 +263,7 @@ export class BranchSelectComponent {
       .subscribe();
 
     let repoId =
-      this.selectedBranchItem.isRepoProd === true
-        ? common.PROD_REPO_ID
-        : userId;
+      newSelectedBranchItem.isRepoProd === true ? common.PROD_REPO_ID : userId;
 
     this.router.navigate([
       common.PATH_ORG,
@@ -270,9 +273,15 @@ export class BranchSelectComponent {
       common.PATH_REPO,
       repoId,
       common.PATH_BRANCH,
-      this.selectedBranchItem.branchId,
+      newSelectedBranchItem.branchId,
       common.PATH_BLOCKML
     ]);
+
+    this.navStore.update(state =>
+      Object.assign({}, state, <NavState>{
+        branchId: this.prevBranchItem.branchId
+      })
+    );
   }
 
   makeBranchItem(item: {

@@ -224,13 +224,11 @@ export class ApiService {
         errorData.response.body.info.error.originalError?.message ===
           apiToDisk.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
       ) {
-        let branchId =
+        let currentBranchId =
           errorData.response.body.info.error.originalError.data.currentBranch;
 
-        // console.log('api-service:', branchId);
-
         setTimeout(() => {
-          this.navigateService.navigateToBlockml(branchId);
+          this.navigateService.navigateToBlockml(currentBranchId);
 
           this.myDialogService.showError({
             errorData: {
@@ -244,9 +242,9 @@ export class ApiService {
       } else {
         this.myDialogService.showError({ errorData, isThrow: true });
       }
-    }
 
-    // throw new Error('apiService mapRes');
+      return { errorData: errorData };
+    }
 
     return res.body;
   }

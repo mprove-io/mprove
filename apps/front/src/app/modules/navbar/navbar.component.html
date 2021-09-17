@@ -5,8 +5,10 @@
     <m-logo></m-logo>
 
     <div class="flex flex-row items-center">
+      <m-branch-select></m-branch-select>
+
       <button
-        class="block px-5 text-gray1 w-full text-left text-base focus:outline-none"
+        class="block ml-3 px-5 text-gray1 w-full text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true
@@ -15,7 +17,6 @@
         [disabled]="!nav || !nav.projectId || needSave === true"
         >BlockML</button
       >
-      <m-branch-select class="ml-3"></m-branch-select>
     </div>
 
     <div class="flex flex-row items-center">

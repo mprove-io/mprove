@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { NavState } from '../stores/nav.store';
+import { NavState, NavStore } from '../stores/nav.store';
 import { RepoStore } from '../stores/repo.store';
 import { StructStore } from '../stores/struct.store';
 
@@ -20,7 +20,8 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private repoStore: RepoStore,
     private structStore: StructStore,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private navStore: NavStore
   ) {}
 
   resolve(
@@ -47,9 +48,21 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
+          if (
+            common.isUndefined(resp?.payload?.repo) ||
+            common.isUndefined(resp?.payload?.struct)
+          ) {
+            return false;
+          }
+
+          this.navStore.update(state =>
+            Object.assign({}, state, <NavState>{
+              branchId: branchId
+            })
+          );
+
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
-          // console.log(resp.payload.struct);
 
           return true;
         })
