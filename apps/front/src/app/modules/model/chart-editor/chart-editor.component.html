@@ -1,4 +1,4 @@
-<div class="mx-5 mt-2 flex-shrink-0" *ngIf="sortedColumns?.length > 0">
+<div class="mx-5 mt-2" *ngIf="sortedColumns?.length > 0">
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
@@ -84,7 +84,7 @@
       >
     </div>
 
-    <form [formGroup]="xFieldForm" class="flex-grow ml-5">
+    <form [formGroup]="xFieldForm" class="flex-grow min-w-[2px] ml-5">
       <ng-select
         #xFieldSelect
         data-cy="xFieldSelect"
@@ -136,7 +136,7 @@
 
     <form
       [formGroup]="multiFieldForm"
-      class="flex-grow ml-5"
+      class="flex-grow min-w-[2px] ml-5"
       *ngIf="sortedDimensions.length > 1"
     >
       <ng-select
@@ -189,7 +189,7 @@
       >
     </div>
 
-    <form [formGroup]="valueFieldForm" class="flex-grow ml-5">
+    <form [formGroup]="valueFieldForm" class="flex-grow min-w-[2px] ml-5">
       <ng-select
         #valueFieldSelect
         data-cy="valueFieldSelect"
@@ -234,7 +234,10 @@
       >
     </div>
 
-    <form [formGroup]="previousValueFieldForm" class="flex-grow ml-5">
+    <form
+      [formGroup]="previousValueFieldForm"
+      class="flex-grow min-w-[2px] ml-5"
+    >
       <ng-select
         #previousValueFieldSelect
         data-cy="previousValueFieldSelect"
@@ -279,7 +282,7 @@
       >
     </div>
 
-    <form [formGroup]="yFieldForm" class="flex-grow ml-5">
+    <form [formGroup]="yFieldForm" class="flex-grow min-w-[2px] ml-5">
       <ng-select
         #yFieldSelect
         data-cy="yFieldSelect"
@@ -361,7 +364,7 @@
       >
     </div>
 
-    <form [formGroup]="colorSchemeForm" class="flex-grow ml-5">
+    <form [formGroup]="colorSchemeForm" class="flex-grow min-w-[2px] ml-5">
       <ng-select
         #colorSchemeSelect
         data-cy="colorSchemeSelect"
@@ -396,7 +399,7 @@
       >
     </div>
 
-    <form [formGroup]="schemeTypeForm" class="flex-grow ml-5">
+    <form [formGroup]="schemeTypeForm" class="flex-grow min-w-[2px] ml-5">
       <ng-select
         #schemeTypeSelect
         data-cy="schemeTypeSelect"
@@ -431,7 +434,7 @@
       >
     </div>
 
-    <form [formGroup]="interpolationForm" class="flex-grow ml-5">
+    <form [formGroup]="interpolationForm" class="flex-grow min-w-[2px] ml-5">
       <ng-select
         #interpolationSelect
         data-cy="interpolationSelect"
