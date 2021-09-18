@@ -25,8 +25,8 @@
           data-cy="vizExploreButton"
           class="w-24 ml-5 h-9 text-lg rounded border focus:outline-none invisible group-hover:visible flex-shrink-0"
           [ngClass]="{
-            'hover:bg-blue-200': canAccessModel === true,
-            'text-gray-400': canAccessModel === false
+            'border-gray-400 hover:bg-blue-200': canAccessModel === true,
+            'border-gray-300 text-gray-400': canAccessModel === false
           }"
           [disabled]="canAccessModel === false"
           (click)="navMconfig($event)"
@@ -121,7 +121,7 @@
       ></m-chart-view>
 
       <div
-        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400"
+        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400 invisible group-hover:visible"
       >
         <m-lock-closed-icon
           class="mb-1 mr-2 text-gray-400"
