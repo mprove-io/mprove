@@ -10,11 +10,11 @@
             ></m-field-label> </div
         ></td>
 
-        <td class="align-top py-1">
+        <!-- <td class="align-top py-1">
           <div class="ml-5 w-[68px] text-gray1 text-sm">{{
             filter.field.result | result
           }}</div></td
-        >
+        > -->
 
         <td class="align-top py-1">
           <div
@@ -26,7 +26,7 @@
             "
           >
             <div class="flex w-9 flex-shrink-0">
-              <div *ngIf="isFirst === true"> - </div>
+              <div *ngIf="isFirst === true"></div>
               <div *ngIf="isFirst === false">
                 {{
                   fraction.operator === fractionOperatorEnum.Or
