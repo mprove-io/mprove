@@ -34,7 +34,7 @@
           (click)="nodeOnClick(node)"
         >
           <div class="relative flex flex-row items-center w-full">
-            <div class="flex flex-row items-center">
+            <div class="flex flex-row items-center min-w-[2px]">
               <div
                 *ngIf="
                   !node.data.isField && node.data.nodeClass !== nodeClassInfo
@@ -61,7 +61,7 @@
 
               <div
                 *ngIf="node.data.isField === true"
-                class="flex items-center h-2 w-2 mr-3"
+                class="flex items-center h-2 mr-3"
                 [ngClass]="{
                   'ml-4':
                     !node.hasChildren &&
@@ -76,16 +76,16 @@
                 ></div>
               </div>
 
-              <div class="text-gray1 ml-0 truncate">
-                <div
+              <div class="flex-grow text-gray1 ml-0 truncate">
+                <span
                   class="truncate"
                   *ngIf="node.data.nodeClass === nodeClassInfo"
                   class="ml-9 font-semibold"
                 >
                   {{ node.data.label | uppercase }}
-                </div>
+                </span>
 
-                <div
+                <span
                   class="truncate text-base"
                   *ngIf="node.data.nodeClass !== nodeClassInfo"
                   [ngClass]="{
@@ -99,14 +99,14 @@
                   }"
                 >
                   {{ node.data.label | capitalize }}
-                </div>
+                </span>
               </div>
             </div>
 
             <div class="flex flex-grow"></div>
 
             <div
-              class="w-[72px] ml-3 text-gray-400 text-sm invisible group-scope-hover:visible"
+              class="w-[72px] ml-3 text-gray-400 text-sm invisible group-scope-hover:visible flex-shrink-0"
               >{{ node.data.fieldResult | result }}</div
             >
 
