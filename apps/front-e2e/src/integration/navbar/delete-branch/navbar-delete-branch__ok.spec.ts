@@ -58,7 +58,7 @@ describe('front-e2e', () => {
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_SETTINGS}`
+      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_BLOCKML}`
     );
     cy.get('[data-cy=branchSelect]').click();
     cy.get('[data-cy=branchSelectCreateBranchButton]').click();
