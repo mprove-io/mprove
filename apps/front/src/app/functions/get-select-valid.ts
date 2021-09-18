@@ -122,6 +122,7 @@ export function getSelectValid(item: {
       errorMessage =
         'At least one of the selected dimensions for this chart type must have result type "number" or "ts"';
     } else if (
+      common.isDefined(xField) &&
       xField.result !== common.FieldResultEnum.Ts &&
       xField.result !== common.FieldResultEnum.Number &&
       (chart.type === common.ChartTypeEnum.Line ||
@@ -132,6 +133,16 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage =
         'xField for this chart type must have result type "number" or "ts"';
+    } else if (
+      selectedDimensions.length === 2 &&
+      selectedDimensions[0].topId === selectedDimensions[1].topId &&
+      selectedDimensions[0].groupId === selectedDimensions[1].groupId &&
+      selectedDimensions[0].result === common.FieldResultEnum.Ts &&
+      selectedDimensions[1].result === common.FieldResultEnum.Ts
+    ) {
+      isSelectValid = false;
+      errorMessage =
+        'Two dimensions with result type TS from the same time group can be selected simultaneously only for the table chart';
     } else if (selectedMeasuresAndCalculations.length === 0) {
       isSelectValid = false;
       errorMessage =
