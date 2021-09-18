@@ -13,10 +13,25 @@
         class="px-6 py-2 text-base hover:bg-blue2 hover:cursor-pointer"
         (click)="goToFileLine(conflict)"
       >
-        <div *ngIf="conflict.lineNumber !== 0"
-          >{{ conflict.fileName }} - {{ conflict.lineNumber }}</div
+        <div *ngIf="conflict.lineNumber !== 0" class="flex flex-row w-full">
+          <div class="truncate max-w-[80%]">{{ conflict.fileName }}</div>
+
+          <div class="flex ml-5 font-semibold"
+            >line: {{ conflict.lineNumber }}</div
+          >
+        </div>
+
+        <div class="font-semibold" *ngIf="conflict.lineNumber === 0"
+          >line: {{ conflict.fileName }}</div
         >
-        <div *ngIf="conflict.lineNumber === 0">{{ conflict.fileName }}</div>
+
+        <!-- <div *ngIf="conflict.lineNumber !== 0" class="flex flex-row w-full">
+          <div class="truncate max-w-[90%]">{{ conflict.fileName }}</div>
+
+          <div class="flex ml-5"> - {{ conflict.lineNumber }}</div>
+        </div>
+
+        <div *ngIf="conflict.lineNumber === 0">{{ conflict.fileName }}</div> -->
       </div>
     </div>
   </div>

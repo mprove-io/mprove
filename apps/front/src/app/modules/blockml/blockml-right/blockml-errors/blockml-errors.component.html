@@ -18,10 +18,17 @@
           class="pl-10 pr-6 py-2 text-base hover:bg-blue2 hover:cursor-pointer"
           (click)="goToFileLine(line)"
         >
-          <div *ngIf="line.lineNumber !== 0"
-            >{{ line.fileName }} - {{ line.lineNumber }}</div
+          <div *ngIf="line.lineNumber !== 0" class="flex flex-row w-full">
+            <div class="truncate max-w-[80%]">{{ line.fileName }}</div>
+
+            <div class="flex ml-5 font-semibold"
+              >line: {{ line.lineNumber }}</div
+            >
+          </div>
+
+          <div class="font-semibold" *ngIf="line.lineNumber === 0"
+            >line: {{ line.fileName }}</div
           >
-          <div *ngIf="line.lineNumber === 0">{{ line.fileName }}</div>
         </div>
       </div>
     </div>
