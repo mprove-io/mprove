@@ -5,13 +5,16 @@
   <div class="mx-5 h-full">
     <div class="flex flex-col h-full w-full">
       <div
-        class="mt-8 flex flex-row text-xl text-gray1 justify-center items-start flex-shrink-0"
+        class="mt-8 mb-5 flex flex-row text-lg text-gray1 justify-center items-start flex-shrink-0"
       >
+        <div class="w-9 mr-3"></div>
+        <div class="w-24 mr-5"></div>
+
         <div
-          class="flex flex-col flex-grow ml-[104px] h-[60px] justify-start items-center"
+          class="flex flex-col flex-grow max-h-[60px] justify-start items-center"
         >
           <div
-            class="flex flex-col items-center h-[30px] mt-[2px] text-center"
+            class="flex flex-col items-center max-h-[30px] mt-[2px] text-center"
             style="max-height: 60px"
           >
             {{ title }}
@@ -20,7 +23,7 @@
 
         <button
           data-cy="vizExploreButton"
-          class="w-24 h-9 text-lg rounded focus:outline-none invisible group-hover:visible flex-shrink-0"
+          class="w-24 ml-5 h-9 text-lg rounded border focus:outline-none invisible group-hover:visible flex-shrink-0"
           [ngClass]="{
             'hover:bg-blue-200': canAccessModel === true,
             'text-gray-400': canAccessModel === false
@@ -103,7 +106,7 @@
       </div>
 
       <m-bricks
-        class="flex flex-row mb-5 max-h-[132px] items-start justify-start overflow-auto"
+        class="flex flex-row mb-5 max-h-[120px] items-start justify-start overflow-auto max-w-max"
         *ngIf="mconfig?.filters.length > 0"
         [extendedFilters]="extendedFilters"
       ></m-bricks>

@@ -7,6 +7,12 @@
     </div>
   </div>
 
+  <m-bricks
+    class="flex flex-row mb-5 max-h-[50%] items-start justify-start overflow-auto max-w-max"
+    *ngIf="mconfig?.filters.length > 0"
+    [extendedFilters]="extendedFilters"
+  ></m-bricks>
+
   <m-chart-view
     class="flex flex-grow"
     [sortedColumns]="sortedColumns"

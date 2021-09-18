@@ -144,6 +144,7 @@ export class MyDialogService {
     query: common.Query;
     qData: RData[];
     sortedColumns: interfaces.ColumnField[];
+    model: common.Model;
   }): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: true,

@@ -1,6 +1,6 @@
 <div class="bg-blue1 flex flex-col h-full">
   <div class="flex flex-row h-full">
-    <div class="flex flex-col flex-grow mx-6 mb-6 mt-8">
+    <div class="flex flex-col flex-grow mx-6 mb-6 mt-8 min-w-[2px]">
       <div class="flex flex-row justify-between items-center h-11">
         <div class="flex flex-row items-center w-full">
           <div class="flex flex-row items-center space-x-5">
@@ -90,7 +90,7 @@
         <m-model-tree class="flex w-1/4 flex-shrink-0"></m-model-tree>
 
         <div
-          class="flex flex-col flex-grow ml-6 space-y-6"
+          class="flex flex-col flex-grow ml-6 space-y-6 min-w-[2px]"
           *ngIf="isShow === true"
         >
           <div
@@ -110,7 +110,7 @@
                 ></m-panel-title>
 
                 <m-bricks
-                  class="mr-5 my-3"
+                  class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
                   *ngIf="mconfig?.filters.length > 0"
                   [extendedFilters]="extendedFilters"
                 ></m-bricks>

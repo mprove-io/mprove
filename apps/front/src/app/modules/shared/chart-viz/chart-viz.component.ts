@@ -52,6 +52,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   qData: RData[];
   query: common.Query;
   mconfig: common.Mconfig;
+  model: common.Model;
 
   menuId = common.makeId();
 
@@ -205,6 +206,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
     this.query = query;
     this.mconfig = mconfig;
+    this.model = model;
 
     this.checkRunning$ = interval(3000)
       .pipe(
@@ -337,7 +339,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      sortedColumns: this.sortedColumns
+      sortedColumns: this.sortedColumns,
+      model: this.model
     });
   }
 
