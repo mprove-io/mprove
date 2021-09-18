@@ -10,7 +10,7 @@
   <div
     *ngIf="isSelectValid === true && chart.isValid === false"
     class="h-full flex items-center justify-center text-xl select-none text-red1"
-    >Not valid</div
+    >Chart parameters are not valid</div
   >
 
   <div
@@ -18,7 +18,8 @@
       isSelectValid === true &&
       chart.isValid === true &&
       qData.length === 0 &&
-      queryStatus !== queryStatusEnum.Completed
+      (queryStatus === queryStatusEnum.New ||
+        queryStatus === queryStatusEnum.Canceled)
     "
     class="h-full flex items-center justify-center text-xl select-none text-gray1"
     >Run query to get data</div
@@ -29,10 +30,31 @@
       isSelectValid === true &&
       chart.isValid === true &&
       qData.length === 0 &&
+      queryStatus === queryStatusEnum.Running
+    "
+    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    >Query is Running</div
+  >
+
+  <div
+    *ngIf="
+      isSelectValid === true &&
+      chart.isValid === true &&
+      qData.length === 0 &&
       queryStatus === queryStatusEnum.Completed
     "
     class="h-full flex items-center justify-center text-xl select-none text-gray1"
-    >Query result is empty</div
+    >Query returned zero rows</div
+  >
+
+  <div
+    *ngIf="
+      isSelectValid === true &&
+      chart.isValid === true &&
+      queryStatus === queryStatusEnum.Error
+    "
+    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    >Query error</div
   >
 
   <m-chart-table

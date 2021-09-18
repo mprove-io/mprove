@@ -79,32 +79,42 @@ export class ModelComponent implements OnInit, OnDestroy {
   );
 
   mconfig: common.Mconfig;
-  mconfig$ = this.mqQuery.mconfig$.pipe(
-    tap(x => {
-      this.mconfig = x;
-
-      if (x.timezone) {
-        this.timezoneForm.controls['timezone'].setValue(x.timezone);
-      }
-
-      if (x.limit) {
-        this.limitForm.controls['limit'].setValue(x.limit);
-      }
-
-      if (x.chart) {
-        this.chartTypeForm.controls['chartType'].setValue(x.chart.type);
-        this.chartTitleForm.controls['chartTitle'].setValue(x.chart.title);
-      }
-
-      this.cd.detectChanges();
-    })
-  );
-
   query: common.Query;
-  query$ = this.mqQuery.query$.pipe(
+
+  mq$ = this.mqQuery.select().pipe(
     tap(x => {
-      this.query = x;
+      this.mconfig = x.mconfig;
+
+      if (this.mconfig.timezone) {
+        this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
+      }
+
+      if (this.mconfig.limit) {
+        this.limitForm.controls['limit'].setValue(this.mconfig.limit);
+      }
+
+      if (this.mconfig.chart) {
+        this.chartTypeForm.controls['chartType'].setValue(
+          this.mconfig.chart.type
+        );
+        this.chartTitleForm.controls['chartTitle'].setValue(
+          this.mconfig.chart.title
+        );
+      }
+
+      let previousQueryId = this.query?.queryId;
+      this.query = x.query;
       this.dryQueryEstimate = undefined;
+
+      if (
+        common.isDefined(previousQueryId) &&
+        this.query.status === common.QueryStatusEnum.New &&
+        this.isAutoRun === true
+      ) {
+        setTimeout(() => {
+          this.run();
+        }, 0);
+      }
 
       this.cd.detectChanges();
     })
@@ -124,6 +134,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   chartIsExpanded = true;
   dataIsExpanded = true;
 
+  isAutoRun = true;
   isFormat = true;
 
   sqlIsShow = false;
@@ -411,6 +422,10 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.checkRunning$.unsubscribe();
+  }
+
+  toggleAutoRun() {
+    this.isAutoRun = !this.isAutoRun;
   }
 
   toggleFormat() {

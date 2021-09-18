@@ -40,6 +40,17 @@
               [query]="query"
             ></m-query-status>
 
+            <ui-switch
+              class="ml-5"
+              [checked]="isAutoRun"
+              (change)="toggleAutoRun()"
+            ></ui-switch>
+
+            <div
+              class="flex ml-5 h-9 text-gray1 text-base items-center select-none"
+              >Auto Run</div
+            >
+
             <button
               type="button"
               *ngIf="query?.status === queryStatusEnum.Running"
@@ -459,7 +470,6 @@
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="model$ | async"></div>
-<div *ngIf="mconfig$ | async"></div>
-<div *ngIf="query$ | async"></div>
+<div *ngIf="mq$ | async"></div>
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="modelMconfigQueryLatest$ | async"></div>
