@@ -9,7 +9,7 @@
     (moveNode)="onMoveNode($event)"
   >
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
-      <div class="flex flex-row h-11 w-full">
+      <div class="flex flex-row h-11 w-[95%]">
         <div
           data-cy="blockmlTreeItem"
           class="group flex flex-row cursor-pointer px-5 py-1 w-full select-none"
@@ -26,8 +26,11 @@
               'ml-3': node.data.isFolder
             }"
           >
-            <div class="flex flex-grow flex-row items-center">
-              <div *ngIf="node.data.isFolder" class="flex flex-row space-x-1">
+            <div class="flex items-center min-w-[2px]">
+              <div
+                *ngIf="node.data.isFolder"
+                class="flex flex-row space-x-1 flex-shrink-0"
+              >
                 <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
                 <m-chevron-right-icon
                   *ngIf="!node.isExpanded && node.hasChildren"
@@ -46,7 +49,7 @@
 
               <div
                 *ngIf="!node.data.isFolder"
-                class="font-bold w-7 text-center"
+                class="font-bold w-7 text-center flex-shrink-0"
                 [ngClass]="{
                   'text-[#5dd0a8]': true
                 }"
@@ -54,7 +57,7 @@
                 {{ node.data.fileId | extension: true | capitalize }}
               </div>
 
-              <div class="ml-2 text-base">
+              <div class="ml-2 text-base min-w-[2px] truncate">
                 {{
                   node.parent === null || node.parent.data.virtual
                     ? (projectName$ | async | capitalize)
@@ -63,13 +66,16 @@
               </div>
             </div>
 
+            <div class="flex-grow"></div>
+
             <div
-              class="h-9 w-9"
+              class="h-9 w-9 flex-shrink-0"
               *ngIf="nav.isRepoProd === true || needSave === true"
             ></div>
+
             <div
               *ngIf="nav.isRepoProd === false && needSave === false"
-              class="flex invisible group-hover:visible"
+              class="flex invisible group-hover:visible flex-shrink-0"
             >
               <m-folder-options
                 *ngIf="node.data.isFolder"

@@ -1,10 +1,12 @@
 <div class="flex flex-col h-full">
   <div class="flex flex-row justify-between items-center px-5 py-5">
-    <div class="flex flex-row items-center space-x-5">
-      <div class="text-lg text-gray1">{{ file?.name }}</div>
+    <div class="flex flex-row items-center space-x-5 min-w-[2px]">
+      <div class="flex-grow text-lg text-gray1 truncate min-w-[2px]">{{
+        file?.name
+      }}</div>
 
       <button
-        class="flex flex-row items-center text-blue-500 focus:outline-none"
+        class="flex flex-row items-center text-blue-500 focus:outline-none flex-shrink-0"
         (click)="goTo()"
         *ngIf="
           ((file?.name | extension) === 'model' &&
@@ -19,7 +21,7 @@
       </button>
     </div>
 
-    <div *ngIf="nav?.isRepoProd === false" class="space-x-3">
+    <div *ngIf="nav?.isRepoProd === false" class="space-x-3 flex-shrink-0">
       <button
         type="button"
         data-cy="blockmlEditorSaveButton"
