@@ -21,7 +21,7 @@
     selectedBranchItem.branchId !== branchMaster -->
 
     <div
-      class="ml-1 py-[1px] px-[8px] rounded truncate"
+      class="ml-1 truncate py-[1px] px-[8px] rounded"
       [ngClass]="{
         'bg-green1': !!repo && repo.repoId !== prodRepoID,
         'bg-blue5': !!repo && repo.repoId === prodRepoID
@@ -36,7 +36,7 @@
     'bg-blue5': item.isRepoProd === true && item.branchId !== branchMaster
   }" -->
 
-    <div class="ml-1 px-[8px] rounded truncate">{{ item.extraName }}</div>
+    <div class="ml-1 truncate px-[8px] rounded">{{ item.extraName }}</div>
   </ng-template>
 
   <ng-template ng-footer-tmp *ngIf="isEditor === true">
