@@ -74,6 +74,11 @@
                   data-cy="blockmlTreeSelectedSymbol"
                   class="rounded-full focus:outline-none bg-blue3 text-white h-2 w-2"
                 ></div>
+
+                <div
+                  *ngIf="node.data.isSelected === false"
+                  class="h-2 w-2"
+                ></div>
               </div>
 
               <div class="flex-grow text-gray1 ml-0 truncate">
