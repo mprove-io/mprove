@@ -28,11 +28,12 @@
   ></m-bricks>
 
   <div
-    *ngIf="isShow === true"
+    *ngIf="isShow === true && sortedColumns?.length > 0"
     class="flex overflow-auto"
     [ngClass]="{
       'flex-grow': mconfig?.chart.type !== chartTypeEnumTable,
-      'h-[400px] max-w-max w-full': mconfig?.chart.type === chartTypeEnumTable
+      'w-full max-w-max ': mconfig?.chart.type === chartTypeEnumTable,
+      'h-[400px]': isData === true
     }"
   >
     <m-chart-view
@@ -45,7 +46,7 @@
   </div>
 
   <div
-    *ngIf="isShow === true && isData === true"
+    *ngIf="isShow === true && isData === true && sortedColumns?.length > 0"
     class="flex flex-row mb-3 mt-10"
   >
     <div class="flex h-9 text-gray1 text-base items-center select-none"
