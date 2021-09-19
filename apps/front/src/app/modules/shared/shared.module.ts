@@ -50,6 +50,7 @@ import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.compon
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { LogoComponent } from './logo/logo.component';
+import { MainTableComponent } from './main-table/main-table.component';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
@@ -67,6 +68,7 @@ let sharedComponents = [
   ValidationComponent,
   AvatarComponent,
   BricksComponent,
+  MainTableComponent,
   //
   CompletedRingComponent,
   EmailRingComponent,

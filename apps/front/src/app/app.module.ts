@@ -10,6 +10,7 @@ import { DialogModule } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { UiSwitchModule } from 'ngx-ui-switch';
 import { appDialogs } from './app-dialogs';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -52,7 +53,8 @@ registerLocaleData(en);
     FormsModule,
     NgSelectModule,
     ImageCropperModule,
-    VisualizationsModule
+    VisualizationsModule,
+    UiSwitchModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

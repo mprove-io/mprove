@@ -1,6 +1,6 @@
-<table class="">
-  <thead class="">
-    <tr class="">
+<table>
+  <thead>
+    <tr>
       <th
         style="min-width: 200px; max-width: 350px"
         class="group align-top border-white border-4 p-0"
@@ -29,7 +29,7 @@
                 {{ column.label | capitalize }}</div
               >
 
-              <div *ngIf="!column.groupLabel" class="">{{
+              <div *ngIf="!column.groupLabel">{{
                 column.label | capitalize
               }}</div>
             </div>
@@ -39,9 +39,9 @@
     </tr>
   </thead>
 
-  <tbody class="">
+  <tbody>
     <ng-container *ngFor="let row of qData; let i = index">
-      <tr class="" data-cy="chartTableRow" *ngIf="i < pageSize">
+      <tr data-cy="chartTableRow" *ngIf="i < pageSize">
         <td
           style="min-width: 200px; max-width: 350px"
           data-cy="chartTableCell"

@@ -14,7 +14,7 @@
           class="flex flex-col flex-grow max-h-[60px] justify-start items-center"
         >
           <div
-            class="flex flex-col items-center max-h-[30px] mt-[2px] text-center"
+            class="flex flex-col items-center max-h-[30px] mt-[2px] text-center line-clamp-2"
             style="max-height: 60px"
           >
             {{ title }}
@@ -106,23 +106,30 @@
       </div>
 
       <m-bricks
-        class="flex flex-row mb-5 max-h-[120px] items-start justify-start overflow-auto max-w-max"
+        class="flex flex-row mb-5 max-h-[120px] items-start justify-start overflow-auto max-w-max flex-shrink-0"
         *ngIf="mconfig?.filters.length > 0"
         [extendedFilters]="extendedFilters"
       ></m-bricks>
 
-      <m-chart-view
-        *ngIf="!!mconfig?.chart"
-        class="w-full p-5 flex flex-grow border border-gray3 rounded bg-white cursor-default"
-        [sortedColumns]="sortedColumns"
-        [qData]="qData"
-        [chart]="mconfig?.chart"
-        [queryStatus]="query?.status"
+      <div
+        class="flex flex-grow w-full p-5 border border-gray3 rounded bg-white cursor-default overflow-auto"
         (click)="stopClick($event)"
-      ></m-chart-view>
+      >
+        <m-chart-view
+          *ngIf="!!mconfig?.chart"
+          [ngClass]="{
+            'max-w-max': mconfig?.chart.type === chartTypeEnumTable
+          }"
+          class="w-full h-full"
+          [sortedColumns]="sortedColumns"
+          [qData]="qData"
+          [chart]="mconfig?.chart"
+          [queryStatus]="query?.status"
+        ></m-chart-view>
+      </div>
 
       <div
-        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400 invisible group-hover:visible"
+        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400 invisible group-hover:visible flex-shrink-0"
       >
         <m-lock-closed-icon
           class="mb-1 mr-2 text-gray-400"

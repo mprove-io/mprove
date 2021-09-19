@@ -1,23 +1,74 @@
 <div class="flex flex-col w-[80vw] h-[80vh] p-10">
   <div
-    class="flex flex-row h-20 text-xl text-gray1 justify-center items-center"
+    class="flex flex-row mb-10 text-xl text-gray1 justify-start items-center"
   >
-    <div class="line-clamp-2 text-center">
+    <div class="w-[120px] flex flex-row items-center">
+      <div class="flex h-9 text-gray1 text-base items-center select-none"
+        >Data</div
+      >
+
+      <ui-switch
+        class="mb-1 ml-5"
+        [checked]="isData"
+        (change)="toggleData()"
+      ></ui-switch>
+    </div>
+
+    <div class="flex flex-grow mx-5 line-clamp-2 text-center">
       {{ mconfig?.chart?.title }}
     </div>
+
+    <div class="w-[120px]"></div>
   </div>
 
   <m-bricks
-    class="flex flex-row mb-5 max-h-[50%] items-start justify-start overflow-auto max-w-max"
-    *ngIf="mconfig?.filters.length > 0"
+    class="flex mb-10 max-h-[20%] max-w-max"
+    *ngIf="isShow === true && mconfig?.filters.length > 0"
     [extendedFilters]="extendedFilters"
   ></m-bricks>
 
-  <m-chart-view
-    class="flex flex-grow"
-    [sortedColumns]="sortedColumns"
-    [qData]="qData"
-    [chart]="mconfig?.chart"
-    [queryStatus]="query?.status"
-  ></m-chart-view>
+  <div
+    *ngIf="isShow === true"
+    class="flex overflow-auto"
+    [ngClass]="{
+      'flex-grow': mconfig?.chart.type !== chartTypeEnumTable,
+      'h-[400px] max-w-max w-full': mconfig?.chart.type === chartTypeEnumTable
+    }"
+  >
+    <m-chart-view
+      class="w-full h-full overflow-auto"
+      [sortedColumns]="sortedColumns"
+      [qData]="qData"
+      [chart]="mconfig?.chart"
+      [queryStatus]="query?.status"
+    ></m-chart-view>
+  </div>
+
+  <div
+    *ngIf="isShow === true && isData === true"
+    class="flex flex-row mb-3 mt-10"
+  >
+    <div class="flex h-9 text-gray1 text-base items-center select-none"
+      >Format</div
+    >
+
+    <ui-switch
+      class="mb-1 ml-5"
+      [checked]="isFormat"
+      (change)="toggleFormat()"
+    ></ui-switch>
+  </div>
+
+  <div
+    *ngIf="isShow === true && isData === true && sortedColumns?.length > 0"
+    class="flex h-1/3 overflow-auto max-w-max w-full"
+  >
+    <m-main-table
+      [isEdit]="false"
+      [isFormat]="isFormat"
+      [mconfig]="mconfig"
+      [qData]="qData"
+      [sortedColumns]="sortedColumns"
+    ></m-main-table>
+  </div>
 </div>

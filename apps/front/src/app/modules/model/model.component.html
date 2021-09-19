@@ -447,7 +447,9 @@
                     class="flex-1 h-full w-2 overflow-auto"
                   >
                     <m-main-table
+                      [isEdit]="true"
                       [isFormat]="isFormat"
+                      [mconfig]="mconfig"
                       [qData]="qData"
                       [sortedColumns]="sortedColumns"
                     ></m-main-table>

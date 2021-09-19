@@ -31,13 +31,18 @@ export class MainTableComponent {
   @Input()
   qData: RData[];
 
+  @Input()
   mconfig: common.Mconfig;
-  mconfig$ = this.mqQuery.mconfig$.pipe(
-    tap(x => {
-      this.mconfig = x;
-      this.cd.detectChanges();
-    })
-  );
+
+  @Input()
+  isEdit: boolean;
+
+  // mconfig$ = this.mqQuery.mconfig$.pipe(
+  //   tap(x => {
+  //     this.mconfig = x;
+  //     this.cd.detectChanges();
+  //   })
+  // );
 
   constructor(
     public mqQuery: MqQuery,

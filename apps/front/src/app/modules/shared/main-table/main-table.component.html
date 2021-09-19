@@ -1,6 +1,6 @@
-<table class="">
-  <thead class="">
-    <tr class="">
+<table>
+  <thead>
+    <tr>
       <th
         style="min-width: 200px; max-width: 350px"
         class="group align-top border-white border-4 p-0"
@@ -12,6 +12,7 @@
         *ngFor="let column of sortedColumns; let columnIndex = index"
       >
         <div
+          *ngIf="isEdit === true"
           class="pr-5 h-12 flex items-center justify-start space-x-3 bg-white"
         >
           <div class="flex items-center justify-start">
@@ -108,7 +109,7 @@
                 {{ column.label | capitalize }}</div
               >
 
-              <div *ngIf="!column.groupLabel" class="">{{
+              <div *ngIf="!column.groupLabel">{{
                 column.label | capitalize
               }}</div>
             </div>
@@ -118,12 +119,8 @@
     </tr>
   </thead>
 
-  <tbody class="">
-    <tr
-      class=""
-      data-cy="mainTableRow"
-      *ngFor="let row of qData; let i = index"
-    >
+  <tbody>
+    <tr data-cy="mainTableRow" *ngFor="let row of qData; let i = index">
       <td
         style="min-width: 200px; max-width: 350px"
         data-cy="mainTableCell"
@@ -166,4 +163,4 @@
   </tbody>
 </table>
 
-<div *ngIf="mconfig$ | async"></div>
+<!-- <div *ngIf="mconfig$ | async"></div> -->
