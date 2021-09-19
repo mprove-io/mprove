@@ -13,7 +13,10 @@
       (openedMenuId && menuId !== openedMenuId)
     "
   >
-    <div class="flex justify-center text-base"> Explore </div>
+    <div class="flex flex-row items-center">
+      <div class="flex justify-center text-base"> Explore </div>
+      <m-arrow-drop-down-icon></m-arrow-drop-down-icon>
+    </div>
   </button>
 
   <button
@@ -46,7 +49,7 @@
       <div *ngIf="isExplorer === true && modelsListLength > 0">
         <button
           *ngFor="let item of modelsList"
-          class="block px-4 py-2 text-gray1 hover:bg-blue2 font-normal text-base w-full text-left focus:outline-none"
+          class="block px-4 py-2 text-gray1 hover:bg-blue2 font-normal text-base w-full text-left focus:outline-none truncate"
           [ngClass]="{
             'cursor-default': lastUrl === pathModelId,
             'text-red-800': lastUrl === pathModelId

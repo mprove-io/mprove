@@ -26,6 +26,7 @@ import { FractionTsComponent } from './fraction/fraction-ts/fraction-ts.componen
 import { FractionYesnoComponent } from './fraction/fraction-yesno/fraction-yesno.component';
 import { FractionComponent } from './fraction/fraction.component';
 import { AddIconComponent } from './icons/add-icon /add-icon.component';
+import { ArrowDropDownIconComponent } from './icons/arrow-drop-down-icon/arrow-drop-down-icon.component';
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
@@ -108,7 +109,8 @@ let sharedComponents = [
   QueryStatusComponent,
   FullScreenIconComponent,
   SearchIconComponent,
-  LockClosedIconComponent
+  LockClosedIconComponent,
+  ArrowDropDownIconComponent
 ];
 
 @NgModule({
