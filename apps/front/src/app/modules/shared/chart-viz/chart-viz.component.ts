@@ -263,8 +263,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  navMconfig(event?: MouseEvent) {
+  explore(event?: MouseEvent) {
     event.stopPropagation();
+    // this.closeMenu();
 
     if (this.canAccessModel === true) {
       this.navigateService.navigateMconfigQueryData({
@@ -341,7 +342,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       query: this.query,
       qData: this.qData,
       sortedColumns: this.sortedColumns,
-      model: this.model
+      model: this.model,
+      canAccessModel: this.canAccessModel,
+      showNav: true
     });
   }
 

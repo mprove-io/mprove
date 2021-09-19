@@ -145,12 +145,15 @@ export class MyDialogService {
     qData: RData[];
     sortedColumns: interfaces.ColumnField[];
     model: common.Model;
+    canAccessModel: boolean;
+    showNav: boolean;
   }): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: true,
       data: item,
       width: '80vw',
-      height: '80vh'
+      height: '80vh',
+      closeButton: false
     });
   }
 

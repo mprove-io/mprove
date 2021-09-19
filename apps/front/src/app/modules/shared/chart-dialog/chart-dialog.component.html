@@ -2,7 +2,23 @@
   <div
     class="flex flex-row mb-10 text-xl text-gray1 justify-start items-center"
   >
-    <div class="w-[120px] flex flex-row items-center">
+    <div *ngIf="showNav === true">
+      <div class="w-28 mr-5"> </div>
+
+      <div class="w-[111px]"></div>
+    </div>
+
+    <div class="flex-grow"></div>
+
+    <div
+      class="flex max-w-prose flex-grow mx-5 text-gray1 line-clamp-2 text-center flex-wrap"
+    >
+      {{ mconfig?.chart?.title }}
+    </div>
+
+    <div class="flex-grow"></div>
+
+    <div *ngIf="showNav === true" class="flex flex-row items-center">
       <div class="flex h-9 text-gray1 text-base items-center select-none"
         >Data</div
       >
@@ -14,11 +30,27 @@
       ></ui-switch>
     </div>
 
-    <div class="flex flex-grow mx-5 line-clamp-2 text-center">
-      {{ mconfig?.chart?.title }}
-    </div>
-
-    <div class="w-[120px]"></div>
+    <button
+      *ngIf="showNav === true"
+      data-cy="chartDialogExploreButton"
+      class="w-28 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+      [ngClass]="{
+        'bg-blue3 cursor-pointer': canAccessModel === true,
+        'bg-gray-400 cursor-default': canAccessModel !== true
+      }"
+      [disabled]="canAccessModel === false"
+      (click)="explore($event)"
+    >
+      <div *ngIf="canAccessModel === true"> Explore </div>
+      <div
+        *ngIf="canAccessModel === false"
+        nz-tooltip
+        [nzTooltipTitle]="'No access to model'"
+        nzTooltipPlacement="bottom"
+      >
+        Explore
+      </div>
+    </button>
   </div>
 
   <m-bricks

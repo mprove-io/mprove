@@ -629,7 +629,9 @@ export class ModelComponent implements OnInit, OnDestroy {
       query: this.query,
       qData: this.qData,
       sortedColumns: this.sortedColumns,
-      model: this.model
+      model: this.model,
+      canAccessModel: true,
+      showNav: false
     });
   }
 

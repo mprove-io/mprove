@@ -8,20 +8,20 @@
         class="mt-8 mb-5 flex flex-row text-lg text-gray1 justify-center items-start flex-shrink-0"
       >
         <div class="w-9 mr-3"></div>
-        <div class="w-24 mr-5"></div>
+        <!-- <div class="w-24 mr-5"></div> -->
 
         <div
           class="flex flex-col flex-grow max-h-[60px] justify-start items-center"
         >
           <div
-            class="flex flex-col items-center max-h-[30px] mt-[2px] text-center line-clamp-2"
+            class="flex flex-col items-center text-gray1 max-h-[30px] mt-[2px] text-center line-clamp-2"
             style="max-height: 60px"
           >
             {{ title }}
           </div>
         </div>
 
-        <button
+        <!-- <button
           data-cy="vizExploreButton"
           class="w-24 ml-5 h-9 text-lg rounded border focus:outline-none invisible group-hover:visible flex-shrink-0"
           [ngClass]="{
@@ -29,7 +29,7 @@
             'border-gray-300 text-gray-400': canAccessModel === false
           }"
           [disabled]="canAccessModel === false"
-          (click)="navMconfig($event)"
+          (click)="explore($event)"
         >
           <div *ngIf="canAccessModel === true"> Explore </div>
           <div
@@ -40,7 +40,7 @@
           >
             Explore
           </div>
-        </button>
+        </button> -->
 
         <div class="relative ml-3">
           <button
@@ -71,6 +71,16 @@
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
               (click)="run($event)"
               >Run</button
+            >
+
+            <button
+              data-cy="vizOptionsExplore"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              [ngClass]="{
+                'text-gray-300': canAccessModel === false
+              }"
+              (click)="explore($event)"
+              >Explore</button
             >
 
             <button

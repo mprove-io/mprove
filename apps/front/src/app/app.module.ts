@@ -7,6 +7,7 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogModule } from '@ngneat/dialog';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -54,7 +55,8 @@ registerLocaleData(en);
     NgSelectModule,
     ImageCropperModule,
     VisualizationsModule,
-    UiSwitchModule
+    UiSwitchModule,
+    NzToolTipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

@@ -88,7 +88,7 @@
                 }"
                 (click)="allModelsOnClick()"
               >
-                <div> All Models </div>
+                <div class="text-gray1"> All Models </div>
                 <div class="flex justify-end ml-3 w-12">
                   {{ vizsFilteredByWord?.length }}
                 </div>
@@ -103,7 +103,7 @@
                 }"
                 (click)="modelOnClick(modelsItem.modelId)"
               >
-                <div class="truncate">
+                <div class="text-gray1 truncate">
                   {{ modelsItem.label | capitalize }}
                 </div>
 
