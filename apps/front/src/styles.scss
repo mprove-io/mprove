@@ -95,3 +95,7 @@
 .ng-select.custom .ng-select-container {
   cursor: pointer;
 }
+
+.ng-dropdown-panel.select-chart-type .scroll-host {
+  max-height: 45vh;
+}
