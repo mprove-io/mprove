@@ -99,3 +99,33 @@
 .ng-dropdown-panel.select-chart-type .scroll-host {
   max-height: 45vh;
 }
+
+// .ngx-charts .tooltip-area {
+//   cursor: default !important;
+// }
+
+.ngx-charts .circle {
+  &:hover {
+    cursor: default !important;
+  }
+}
+
+.ngx-charts .arc {
+  cursor: default !important;
+}
+
+.advanced-pie-legend .legend-item {
+  cursor: default !important;
+}
+
+.chart-legend .legend-label {
+  cursor: default !important;
+}
+
+.linear-gauge {
+  cursor: default !important;
+}
+
+ngx-charts-number-card .card-band {
+  cursor: default !important;
+}

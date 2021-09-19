@@ -344,6 +344,10 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     });
   }
 
+  stopClick(event?: MouseEvent) {
+    event.stopPropagation();
+  }
+
   editVizInfo(event?: MouseEvent) {
     event.stopPropagation();
     this.closeMenu();

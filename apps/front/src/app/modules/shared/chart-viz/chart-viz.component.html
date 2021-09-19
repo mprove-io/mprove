@@ -113,11 +113,12 @@
 
       <m-chart-view
         *ngIf="!!mconfig?.chart"
-        class="w-full p-5 flex flex-grow border border-gray3 rounded bg-white"
+        class="w-full p-5 flex flex-grow border border-gray3 rounded bg-white cursor-default"
         [sortedColumns]="sortedColumns"
         [qData]="qData"
         [chart]="mconfig?.chart"
         [queryStatus]="query?.status"
+        (click)="stopClick($event)"
       ></m-chart-view>
 
       <div
