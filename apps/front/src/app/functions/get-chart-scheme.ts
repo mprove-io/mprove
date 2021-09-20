@@ -207,16 +207,16 @@ export function getChartScheme(colorScheme: common.ChartColorSchemeEnum) {
     case common.ChartColorSchemeEnum.Neons: {
       scheme = {
         domain: [
-          '#2597FB',
-          '#65EBFD',
-          '#99FDD0',
-          '#FCEE4B',
-          '#FEFCFA',
-          '#FDD6E3',
-          '#FCB1A8',
-          '#EF6F7B',
-          '#CB96E8',
-          '#EFDEE0'
+          '#FF3333',
+          '#FF33FF',
+          '#CC33FF',
+          '#0000FF',
+          '#33CCFF',
+          '#33FFFF',
+          '#33FF66',
+          '#CCFF33',
+          '#FFCC00',
+          '#FF6600'
         ]
       };
       break;

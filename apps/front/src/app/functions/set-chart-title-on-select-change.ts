@@ -22,30 +22,43 @@ export function setChartTitleOnSelectChange(item: {
 
     let newTitle = '';
 
-    fieldsSelectedMeasuresAndCalculations.forEach(
-      x =>
-        (newTitle =
-          newTitle === ''
-            ? `${x.topLabel} ${x.label}`
-            : `${newTitle}, ${x.topLabel} ${x.label}`)
-    );
+    fieldsSelectedMeasuresAndCalculations.forEach(x => {
+      let topLabelPrefix = getTopLabelPrefix(x);
+
+      newTitle =
+        newTitle === ''
+          ? `${topLabelPrefix}${x.label}`
+          : `${newTitle}, ${topLabelPrefix}${x.label}`;
+    });
 
     if (newTitle === '') {
-      fieldsSelectedDimensions.forEach(
-        x =>
-          (newTitle =
-            newTitle === ''
-              ? `${x.topLabel} ${x.label}`
-              : `${newTitle}, ${x.topLabel} ${x.label}`)
-      );
+      fieldsSelectedDimensions.forEach(x => {
+        let topLabelPrefix = getTopLabelPrefix(x);
+
+        newTitle =
+          newTitle === ''
+            ? `${topLabelPrefix}${x.label}`
+            : `${newTitle}, ${topLabelPrefix}${x.label}`;
+      });
     } else {
-      fieldsSelectedDimensions.forEach(
-        x => (newTitle = `${newTitle} by ${x.topLabel} ${x.label}`)
-      );
+      fieldsSelectedDimensions.forEach(x => {
+        let topLabelPrefix = getTopLabelPrefix(x);
+
+        newTitle = `${newTitle} by ${topLabelPrefix}${x.label}`;
+      });
     }
 
     newMconfig.chart.title = newTitle;
   }
 
   return newMconfig;
+}
+
+function getTopLabelPrefix(x: common.ModelField) {
+  let topLabelPrefix =
+    x.topLabel === common.ModelNodeLabelEnum.ModelFields
+      ? ''
+      : `${x.topLabel} `;
+
+  return topLabelPrefix;
 }
