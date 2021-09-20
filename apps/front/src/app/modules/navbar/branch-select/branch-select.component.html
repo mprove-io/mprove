@@ -23,8 +23,8 @@
     <div
       class="ml-1 truncate py-[1px] px-[8px] rounded"
       [ngClass]="{
-        'bg-green1': !!repo && repo.repoId !== prodRepoID,
-        'bg-blue5': !!repo && repo.repoId === prodRepoID
+        'bg-green1': !!repo.repoId && repo.repoId !== prodRepoID,
+        'bg-blue5': !repo.repoId || repo.repoId === prodRepoID
       }"
       >{{ item.extraName }}</div
     >
@@ -40,7 +40,15 @@
   </ng-template>
 
   <ng-template ng-footer-tmp *ngIf="isEditor === true">
-    <div class="p-3 text-gray-400" *ngIf="repo.conflicts.length > 0">
+    <!-- <div class="p-3 text-gray-400" *ngIf="!repo.repoId">
+      Branch buttons are not available on the current page. Open BlockML page
+      and click on the branch selector again to see available buttons.
+    </div> -->
+
+    <div
+      class="p-3 text-gray-400"
+      *ngIf="!!repo.repoId && repo.conflicts.length > 0"
+    >
       Resolve conflicts to be able to switch, merge, delete or create local
       branches
     </div>
@@ -48,7 +56,9 @@
     <div
       class="p-3 text-gray-400"
       *ngIf="
-        repo.conflicts.length === 0 && repo.repoStatus === repoStatusNeedCommit
+        !!repo.repoId &&
+        repo.conflicts.length === 0 &&
+        repo.repoStatus === repoStatusNeedCommit
       "
     >
       Commit changes to be able to switch, merge, delete or create local
@@ -57,7 +67,9 @@
 
     <button
       *ngIf="
-        repo.conflicts.length === 0 && repo.repoStatus !== repoStatusNeedCommit
+        !repo.repoId ||
+        (repo.conflicts.length === 0 &&
+          repo.repoStatus !== repoStatusNeedCommit)
       "
       data-cy="branchSelectDeleteBranchButton"
       class="py-3 rounded w-full text-base focus:outline-none"
@@ -75,9 +87,10 @@
     <div
       class="p-3 text-gray-400"
       *ngIf="
-        repo.conflicts.length === 0 &&
-        repo.repoStatus !== repoStatusNeedCommit &&
-        repo.repoId === prodRepoID
+        !repo.repoId ||
+        (repo.conflicts.length === 0 &&
+          repo.repoStatus !== repoStatusNeedCommit &&
+          repo.repoId === prodRepoID)
       "
     >
       Switch to local branch to be able to merge, delete or create local
@@ -86,6 +99,7 @@
 
     <button
       *ngIf="
+        !!repo.repoId &&
         repo.conflicts.length === 0 &&
         repo.repoStatus !== repoStatusNeedCommit &&
         repo.repoId !== prodRepoID
@@ -103,6 +117,7 @@
 
     <button
       *ngIf="
+        !!repo.repoId &&
         repo.conflicts.length === 0 &&
         repo.repoStatus !== repoStatusNeedCommit &&
         repo.repoId !== prodRepoID
