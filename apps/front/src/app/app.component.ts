@@ -23,10 +23,13 @@ export class AppComponent implements OnInit {
 
   routerEvents$ = this.router.events.pipe(
     tap((x: any) => {
+      // console.log(x);
       switch (true) {
         case x instanceof NavigationStart &&
           // x.url !== `/${common.PATH_LOGIN_SUCCESS}` &&
-          x.url !== `/${common.PATH_LOGIN}`: {
+          x.url !== `/${common.PATH_LOGIN}` &&
+          (x.url.split('/').indexOf(common.EMPTY) > -1 ||
+            x.url.split('/').indexOf(common.PATH_MODEL) < 0): {
           // console.log('NavigationStart', x.url);
           this.spinnerStartedTs = Date.now();
           this.spinner.show(constants.APP_SPINNER_NAME);

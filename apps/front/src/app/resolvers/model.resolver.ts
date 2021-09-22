@@ -4,10 +4,11 @@ import {
   Resolve,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { ModelQuery } from '../queries/model.query';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ModelStore } from '../stores/model.store';
@@ -18,6 +19,7 @@ export class ModelResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
+    private modelQuery: ModelQuery,
     private modelStore: ModelStore
   ) {}
 
@@ -25,7 +27,18 @@ export class ModelResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let modelId = route.params[common.PARAMETER_MODEL_ID];
+    let parametersModelId = route.params[common.PARAMETER_MODEL_ID];
+
+    let model: common.Model;
+    this.modelQuery
+      .select()
+      .pipe(
+        tap(x => {
+          model = x;
+        }),
+        take(1)
+      )
+      .subscribe();
 
     let nav: NavState;
     this.navQuery
@@ -42,16 +55,25 @@ export class ModelResolver implements Resolve<Observable<boolean>> {
       projectId: nav.projectId,
       branchId: nav.branchId,
       isRepoProd: nav.isRepoProd,
-      modelId: modelId
+      modelId: parametersModelId
     };
 
-    return this.apiService
-      .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel, payload)
-      .pipe(
-        map((resp: apiToBackend.ToBackendGetModelResponse) => {
-          this.modelStore.update(resp.payload.model);
-          return true;
-        })
-      );
+    if (model.modelId === parametersModelId) {
+      return of(true);
+    } else {
+      return this.apiService
+        .req(
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+          payload
+        )
+        .pipe(
+          map((resp: apiToBackend.ToBackendGetModelResponse) => {
+            if (model.serverTs !== resp.payload.model.serverTs) {
+              this.modelStore.update(resp.payload.model);
+            }
+            return true;
+          })
+        );
+    }
   }
 }

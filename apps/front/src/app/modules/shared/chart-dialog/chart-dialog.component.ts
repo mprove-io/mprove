@@ -3,6 +3,8 @@ import { DialogRef } from '@ngneat/dialog';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { RData } from '~front/app/services/query.service';
+import { ModelStore } from '~front/app/stores/model.store';
+import { MqStore } from '~front/app/stores/mq.store';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
@@ -29,7 +31,9 @@ export class ChartDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private cd: ChangeDetectorRef,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private mqStore: MqStore,
+    private modelStore: ModelStore
   ) {}
 
   ngOnInit() {
@@ -68,6 +72,12 @@ export class ChartDialogComponent implements OnInit {
 
   explore(event?: MouseEvent) {
     this.ref.close();
+
+    this.modelStore.update(this.model);
+
+    this.mqStore.update(state =>
+      Object.assign({}, state, { mconfig: this.mconfig, query: this.query })
+    );
 
     if (this.canAccessModel === true) {
       this.navigateService.navigateMconfigQuery({

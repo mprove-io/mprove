@@ -57,18 +57,27 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
       mconfigId: parametersMconfigId
     };
 
-    return this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payload
-      )
-      .pipe(
-        map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
-          this.mqStore.update(state =>
-            Object.assign({}, state, { mconfig: resp.payload.mconfig })
-          );
-          return true;
-        })
-      );
+    if (mconfig.mconfigId === parametersMconfigId) {
+      return of(true);
+    } else {
+      return this.apiService
+        .req(
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+          payload
+        )
+        .pipe(
+          map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
+            if (
+              // mconfig.mconfigId !== resp.payload.mconfig.mconfigId ||
+              mconfig.serverTs !== resp.payload.mconfig.serverTs
+            ) {
+              this.mqStore.update(state =>
+                Object.assign({}, state, { mconfig: resp.payload.mconfig })
+              );
+              return true;
+            }
+          })
+        );
+    }
   }
 }

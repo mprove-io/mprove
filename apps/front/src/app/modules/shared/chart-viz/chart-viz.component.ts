@@ -18,6 +18,8 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
+import { ModelStore } from '~front/app/stores/model.store';
+import { MqStore } from '~front/app/stores/mq.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -87,7 +89,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
     public uiQuery: UiQuery,
-    public uiStore: UiStore
+    public uiStore: UiStore,
+    private mqStore: MqStore,
+    private modelStore: ModelStore
   ) {}
 
   async ngOnInit() {
@@ -266,6 +270,12 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   explore(event?: MouseEvent) {
     event.stopPropagation();
     // this.closeMenu();
+
+    this.modelStore.update(this.model);
+
+    this.mqStore.update(state =>
+      Object.assign({}, state, { mconfig: this.mconfig, query: this.query })
+    );
 
     if (this.canAccessModel === true) {
       this.navigateService.navigateMconfigQuery({

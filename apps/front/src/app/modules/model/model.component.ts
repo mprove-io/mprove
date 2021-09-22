@@ -386,7 +386,8 @@ export class ModelComponent implements OnInit {
     private dataSizeService: DataSizeService,
     private queryService: QueryService,
     public myDialogService: MyDialogService,
-    private title: Title
+    private title: Title,
+    private modelStore: MqStore
   ) {}
 
   ngOnInit() {
@@ -677,6 +678,7 @@ export class ModelComponent implements OnInit {
     // console.log('canDeactivateModel')
     this.checkRunning$.unsubscribe();
     this.mqStore.reset();
+    this.modelStore.reset();
     return true;
   }
 }
