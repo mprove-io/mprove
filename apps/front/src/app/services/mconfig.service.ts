@@ -3,7 +3,7 @@ import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { ModelQuery } from '../queries/model.query';
-import { MqStore } from '../stores/mq.store';
+import { MqState, MqStore } from '../stores/mq.store';
 import { StructStore } from '../stores/struct.store';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -144,6 +144,53 @@ export class MconfigService {
             mconfigId: mconfig.mconfigId,
             queryId: mconfig.queryId
           });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  optimisticNavCreateMconfigAndQuery(item: {
+    newMconfig: common.Mconfig;
+    queryId: string;
+  }) {
+    let { newMconfig, queryId } = item;
+
+    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
+      mconfig: newMconfig
+    };
+
+    let optMconfig = common.makeCopy(newMconfig);
+
+    optMconfig.queryId = queryId;
+
+    this.mqStore.update((state: MqState) =>
+      Object.assign({}, state, {
+        mconfig: optMconfig,
+        query: state.query
+      })
+    );
+
+    this.navigateService.navigateMconfigQuery({
+      mconfigId: optMconfig.mconfigId,
+      queryId: queryId
+    });
+
+    this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendCreateTempMconfigAndQuery,
+        payload,
+        true
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
+          // let { mconfig, query } = resp.payload;
+          // this.mqStore.update({ mconfig: mconfig, query: query });
+          // this.navigateService.navigateMconfigQuery({
+          //   mconfigId: mconfig.mconfigId,
+          //   queryId: mconfig.queryId
+          // });
         }),
         take(1)
       )

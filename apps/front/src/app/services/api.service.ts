@@ -71,10 +71,9 @@ export class ApiService {
     // blockml repo options
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction,
-    // model tree
+    // model
     apiToBackend.ToBackendRequestInfoNameEnum
       .ToBackendCreateTempMconfigAndQuery,
-    // model
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
     // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
     // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
@@ -94,7 +93,8 @@ export class ApiService {
 
   req(
     pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum,
-    payload: any
+    payload: any,
+    skipSpinner?: boolean
   ): Observable<any> {
     let bypassAuth = [
       apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser
@@ -140,7 +140,7 @@ export class ApiService {
 
     // let spinnerStartedTs: number;
 
-    if (this.showSpinner.includes(pathInfoName)) {
+    if (skipSpinner !== true && this.showSpinner.includes(pathInfoName)) {
       // spinnerStartedTs = Date.now();
       this.spinner.show(constants.APP_SPINNER_NAME);
     }

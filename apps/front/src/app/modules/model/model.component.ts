@@ -83,7 +83,7 @@ export class ModelComponent implements OnInit {
 
   mq$ = this.mqQuery.select().pipe(
     tap(x => {
-      console.log('this.mqQuery.select().pipe(');
+      // console.log('this.mqQuery.select().pipe(');
       this.dryQueryEstimate = undefined;
 
       this.mconfig = x.mconfig;
@@ -113,7 +113,7 @@ export class ModelComponent implements OnInit {
         this.isAutoRun === true
       ) {
         setTimeout(() => {
-          console.log('auto run');
+          // console.log('auto run');
           this.run();
         }, 0);
       }
@@ -614,7 +614,10 @@ export class ModelComponent implements OnInit {
 
     newMconfig.chart.type = chartType;
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.optimisticNavCreateMconfigAndQuery({
+      newMconfig: newMconfig,
+      queryId: this.query.queryId
+    });
   }
 
   saveAs() {
