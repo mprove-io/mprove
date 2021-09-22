@@ -102,16 +102,17 @@ export class ModelComponent implements OnInit, OnDestroy {
         );
       }
 
-      let previousQueryId = this.query?.queryId;
       this.query = x.query;
       this.dryQueryEstimate = undefined;
 
       if (
-        common.isDefined(previousQueryId) &&
+        common.isDefined(this.query.queryId) &&
+        this.query.queryId !== common.EMPTY &&
         this.query.status === common.QueryStatusEnum.New &&
         this.isAutoRun === true
       ) {
         setTimeout(() => {
+          // console.log('auto run');
           this.run();
         }, 0);
       }
@@ -198,7 +199,7 @@ export class ModelComponent implements OnInit, OnDestroy {
         common.Mconfig,
         common.Query
       ]) => {
-        if (common.isUndefined(mconfig.mconfigId)) {
+        if (mconfig.mconfigId === common.EMPTY) {
           return;
         }
 
@@ -647,5 +648,10 @@ export class ModelComponent implements OnInit, OnDestroy {
     newMconfig.chart.title = chartTitle;
 
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  canDeactivate(): Promise<boolean> | boolean {
+    this.mqStore.reset();
+    return true;
   }
 }

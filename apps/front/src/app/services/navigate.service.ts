@@ -61,7 +61,7 @@ export class NavigateService {
   //     }
 
   //     case 'data': {
-  //       this.navigateMconfigQueryData(newMconfigId, newQueryId);
+  //       this.navigateMconfigQuery(newMconfigId, newQueryId);
   //       break;
   //     }
 
@@ -71,12 +71,12 @@ export class NavigateService {
   //     }
 
   //     default: {
-  //       this.navigateMconfigQueryData(newMconfigId, newQueryId);
+  //       this.navigateMconfigQuery(newMconfigId, newQueryId);
   //     }
   //   }
   // }
 
-  navigateMconfigQueryData(item: {
+  navigateMconfigQuery(item: {
     mconfigId: string;
     queryId: string;
     modelId?: string;

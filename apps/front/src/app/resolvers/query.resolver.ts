@@ -24,29 +24,38 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let queryId = route.params[common.PARAMETER_QUERY_ID];
-
-    if (queryId === common.EMPTY) {
-      this.mqStore.update(state =>
-        Object.assign({}, state, { query: emptyQuery })
-      );
-
-      return of(true);
-    }
+    let parametersQueryId = route.params[common.PARAMETER_QUERY_ID];
 
     let mconfig: common.Mconfig;
-    this.mqQuery.mconfig$
+    let query: common.Query;
+    this.mqQuery
+      .select()
       .pipe(
         tap(x => {
-          mconfig = x;
+          mconfig = x.mconfig;
+          query = x.query;
         }),
         take(1)
       )
       .subscribe();
 
+    if (query.queryId === parametersQueryId) {
+      return of(true);
+    }
+
+    if (parametersQueryId === common.EMPTY) {
+      if (query.queryId !== common.EMPTY) {
+        this.mqStore.update(state =>
+          Object.assign({}, state, { query: emptyQuery })
+        );
+      }
+
+      return of(true);
+    }
+
     let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
       mconfigId: mconfig.mconfigId,
-      queryId: queryId
+      queryId: parametersQueryId
     };
 
     return this.apiService

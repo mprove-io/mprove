@@ -9,7 +9,7 @@ export class MqState {
 
 export const emptyMconfig: common.Mconfig = {
   structId: undefined,
-  mconfigId: undefined,
+  mconfigId: common.EMPTY,
   queryId: undefined,
   modelId: undefined,
   select: [],
@@ -27,7 +27,7 @@ export const emptyQuery: common.Query = {
   projectId: undefined,
   connectionId: undefined,
   connectionType: undefined,
-  queryId: undefined,
+  queryId: common.EMPTY,
   sql: undefined,
   status: common.QueryStatusEnum.New,
   data: [],

@@ -70,7 +70,7 @@ export class ChartDialogComponent implements OnInit {
     this.ref.close();
 
     if (this.canAccessModel === true) {
-      this.navigateService.navigateMconfigQueryData({
+      this.navigateService.navigateMconfigQuery({
         modelId: this.model.modelId,
         mconfigId: this.mconfig.mconfigId,
         queryId: this.query.queryId

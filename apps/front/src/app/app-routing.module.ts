@@ -203,6 +203,7 @@ const routes: Routes = [
                       },
                       {
                         component: ModelComponent,
+                        canDeactivate: [DeactivateGuard],
                         path:
                           common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
                         resolve: [ModelResolver],

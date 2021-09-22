@@ -268,7 +268,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     // this.closeMenu();
 
     if (this.canAccessModel === true) {
-      this.navigateService.navigateMconfigQueryData({
+      this.navigateService.navigateMconfigQuery({
         modelId: this.report.modelId,
         mconfigId: this.report.mconfigId,
         queryId: this.report.queryId

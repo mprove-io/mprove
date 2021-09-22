@@ -133,7 +133,6 @@ export class ModelsMenuComponent implements OnInit, OnDestroy {
 
   goToModel(modelId: string) {
     this.closeMenu();
-    this.mqStore.reset();
     this.navigateService.navigateToModel(modelId);
   }
 
