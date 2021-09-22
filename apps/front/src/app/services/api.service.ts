@@ -75,8 +75,8 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum
       .ToBackendCreateTempMconfigAndQuery,
     // model
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
     // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-    // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
     // apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
     // visualizations

@@ -83,7 +83,11 @@ export class ModelComponent implements OnInit {
 
   mq$ = this.mqQuery.select().pipe(
     tap(x => {
+      console.log('this.mqQuery.select().pipe(');
+      this.dryQueryEstimate = undefined;
+
       this.mconfig = x.mconfig;
+      this.query = x.query;
 
       if (this.mconfig.timezone) {
         this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
@@ -102,9 +106,6 @@ export class ModelComponent implements OnInit {
         );
       }
 
-      this.query = x.query;
-      this.dryQueryEstimate = undefined;
-
       if (
         common.isDefined(this.query.queryId) &&
         this.query.queryId !== common.EMPTY &&
@@ -112,7 +113,7 @@ export class ModelComponent implements OnInit {
         this.isAutoRun === true
       ) {
         setTimeout(() => {
-          // console.log('auto run');
+          console.log('auto run');
           this.run();
         }, 0);
       }
@@ -408,9 +409,13 @@ export class ModelComponent implements OnInit {
               )
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  this.mqStore.update((state: MqState) =>
-                    Object.assign({}, state, { query: resp.payload.query })
-                  );
+                  if (
+                    this.isQueryIdTheSameAndServerTsChanged(resp.payload.query)
+                  ) {
+                    this.mqStore.update((state: MqState) =>
+                      Object.assign({}, state, { query: resp.payload.query })
+                    );
+                  }
                 })
               );
           } else {
@@ -518,9 +523,11 @@ export class ModelComponent implements OnInit {
         map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
           let { runningQueries } = resp.payload;
 
-          this.mqStore.update((state: MqState) =>
-            Object.assign({}, state, { query: runningQueries[0] })
-          );
+          if (this.isQueryIdTheSameAndServerTsChanged(runningQueries[0])) {
+            this.mqStore.update((state: MqState) =>
+              Object.assign({}, state, { query: runningQueries[0] })
+            );
+          }
         }),
         take(1)
       )
@@ -545,9 +552,11 @@ export class ModelComponent implements OnInit {
           let { validQueryEstimates, errorQueries } = resp.payload;
 
           if (errorQueries.length > 0) {
-            this.mqStore.update((state: MqState) =>
-              Object.assign({}, state, { query: errorQueries[0] })
-            );
+            if (this.isQueryIdTheSameAndServerTsChanged(errorQueries[0])) {
+              this.mqStore.update((state: MqState) =>
+                Object.assign({}, state, { query: errorQueries[0] })
+              );
+            }
           } else {
             this.dryDataSize = this.dataSizeService.getSize(
               validQueryEstimates[0].estimate
@@ -573,11 +582,11 @@ export class ModelComponent implements OnInit {
       .pipe(
         map((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
           let { queries } = resp.payload;
-          // console.log(queries);
-
-          this.mqStore.update((state: MqState) =>
-            Object.assign({}, state, { query: queries[0] })
-          );
+          if (this.isQueryIdTheSameAndServerTsChanged(queries[0])) {
+            this.mqStore.update((state: MqState) =>
+              Object.assign({}, state, { query: queries[0] })
+            );
+          }
         }),
         take(1)
       )
@@ -644,6 +653,24 @@ export class ModelComponent implements OnInit {
     newMconfig.chart.title = chartTitle;
 
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+  }
+
+  isQueryIdTheSameAndServerTsChanged(respQuery: common.Query) {
+    let query: common.Query;
+    this.mqQuery
+      .select()
+      .pipe(
+        tap(x => {
+          query = x.query;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    return (
+      respQuery.queryId === query.queryId &&
+      respQuery.serverTs !== query.serverTs
+    );
   }
 
   canDeactivate(): Promise<boolean> | boolean {
