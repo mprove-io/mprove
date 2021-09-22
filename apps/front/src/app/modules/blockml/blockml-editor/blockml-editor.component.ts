@@ -263,24 +263,6 @@ export class BlockmlEditorComponent implements OnDestroy {
     }, 50);
   }
 
-  canDeactivate(): Promise<boolean> | boolean {
-    if (this.needSave === false) {
-      return true;
-    }
-
-    return this.confirmService.confirm('Discard changes?').then(answer => {
-      if (answer === true) {
-        this.uiStore.update(state =>
-          Object.assign({}, state, <UiState>{ needSave: false })
-        );
-
-        return true;
-      } else {
-        return false;
-      }
-    });
-  }
-
   goTo() {
     let ar = this.file.name.split('.');
     let ext = ar.pop();
@@ -298,7 +280,27 @@ export class BlockmlEditorComponent implements OnDestroy {
     }
   }
 
+  canDeactivate(): Promise<boolean> | boolean {
+    // console.log('canDeactivateBlockmlEditor');
+    if (this.needSave === false) {
+      return true;
+    }
+
+    return this.confirmService.confirm('Discard changes?').then(answer => {
+      if (answer === true) {
+        this.uiStore.update(state =>
+          Object.assign({}, state, <UiState>{ needSave: false })
+        );
+
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
+
   ngOnDestroy() {
+    // console.log('ngOnDestroyBlockmlEditor');
     this.fileStore.reset();
   }
 }

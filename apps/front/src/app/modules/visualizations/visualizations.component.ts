@@ -227,6 +227,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // console.log('ngOnDestroyVizs')
     if (this.timer) {
       clearTimeout(this.timer);
     }

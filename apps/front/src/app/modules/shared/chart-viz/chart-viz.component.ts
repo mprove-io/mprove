@@ -378,6 +378,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // console.log('ngOnDestroyChartViz')
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }

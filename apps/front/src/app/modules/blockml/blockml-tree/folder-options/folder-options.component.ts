@@ -116,6 +116,7 @@ export class FolderOptionsComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    // console.log('ngOnDestroyRepoOptions');
     if (this.menuId === this.openedMenuId)
       this.uiStore.update({ openedMenuId: undefined });
   }

@@ -226,6 +226,7 @@ export class BlockmlTreeComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    // console.log('ngOnDestroyBlockmlTree');
     this.expandLevel$.unsubscribe();
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
@@ -43,7 +43,7 @@ export class ChartTypeItem {
   selector: 'm-model',
   templateUrl: './model.component.html'
 })
-export class ModelComponent implements OnInit, OnDestroy {
+export class ModelComponent implements OnInit {
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
 
   queryStatusEnum = common.QueryStatusEnum;
@@ -421,10 +421,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  ngOnDestroy() {
-    this.checkRunning$.unsubscribe();
-  }
-
   toggleAutoRun() {
     this.isAutoRun = !this.isAutoRun;
   }
@@ -651,6 +647,8 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   canDeactivate(): Promise<boolean> | boolean {
+    // console.log('canDeactivateModel')
+    this.checkRunning$.unsubscribe();
     this.mqStore.reset();
     return true;
   }

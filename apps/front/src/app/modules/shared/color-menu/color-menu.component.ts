@@ -99,11 +99,6 @@ export class ColorMenuComponent implements OnDestroy, OnInit {
     }
   }
 
-  ngOnDestroy() {
-    if (this.menuId === this.openedMenuId)
-      this.uiStore.update({ openedMenuId: undefined });
-  }
-
   onChangeComplete($event: any): void {
     // console.log($event.color);
     this.rgbaColor = $event.color.rgb;
@@ -128,5 +123,10 @@ export class ColorMenuComponent implements OnDestroy, OnInit {
   clear() {
     this.closeMenu();
     this.colorChange.emit({ color: undefined });
+  }
+
+  ngOnDestroy() {
+    if (this.menuId === this.openedMenuId)
+      this.uiStore.update({ openedMenuId: undefined });
   }
 }
