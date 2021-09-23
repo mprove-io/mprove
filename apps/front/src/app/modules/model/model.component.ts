@@ -616,7 +616,7 @@ export class ModelComponent implements OnInit {
 
     this.mconfigService.optimisticNavCreateMconfigAndQuery({
       newMconfig: newMconfig,
-      queryId: this.query.queryId
+      queryId: this.mconfig.queryId
     });
   }
 
@@ -656,7 +656,10 @@ export class ModelComponent implements OnInit {
 
     newMconfig.chart.title = chartTitle;
 
-    this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    this.mconfigService.optimisticNavCreateMconfigAndQuery({
+      newMconfig: newMconfig,
+      queryId: this.mconfig.queryId
+    });
   }
 
   isQueryIdTheSameAndServerTsChanged(respQuery: common.Query) {

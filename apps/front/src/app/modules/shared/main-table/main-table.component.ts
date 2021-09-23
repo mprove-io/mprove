@@ -164,6 +164,7 @@ export class MainTableComponent {
     newColumnsOrder[toIndex] = columnId;
 
     newMconfig.select = newColumnsOrder;
+
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
@@ -181,6 +182,7 @@ export class MainTableComponent {
     newColumnsOrder[toIndex] = columnId;
 
     newMconfig.select = newColumnsOrder;
+
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 }
