@@ -72,18 +72,5 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.authService.startWatch();
-
-    // throw new Error('appComponent ngOnInit');
-
-    // this.myDialogService.showEditPhoto({ apiService: this.apiService });
-    // this.myDialogService.showEmailConfirmed();
-    // this.myDialogService.showPasswordResetSent('test123123@example.com');
-
-    // this.myDialogService.showError({
-    //   errorData: {
-    //     message: '8j2jf3894fj598324fj5983724f5893j24f598j739284f57j398f'
-    //   },
-    //   isThrow: false
-    // });
   }
 }

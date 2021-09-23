@@ -68,7 +68,10 @@ export class GetOrgUsersController {
     let members =
       userIds.length === 0
         ? []
-        : await this.membersRepository.find({ member_id: In(userIds) });
+        : await this.membersRepository.find({
+            member_id: In(userIds),
+            project_id: In(projectIds)
+          });
 
     let orgUsers: apiToBackend.OrgUsersItem[] = [];
 
