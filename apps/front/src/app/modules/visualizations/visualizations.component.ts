@@ -1,5 +1,11 @@
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
@@ -86,6 +92,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   word: string;
   // fileName: string;
 
+  screenAspectRatio: number;
+
   private timer: any;
 
   constructor(
@@ -99,7 +107,21 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private title: Title
   ) {}
 
+  calculateAspectRatio() {
+    this.screenAspectRatio = window.innerWidth / window.innerHeight;
+
+    // console.log('screenAspectRatio');
+    // console.log(this.screenAspectRatio);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.calculateAspectRatio();
+  }
+
   ngOnInit() {
+    this.calculateAspectRatio();
+
     this.title.setTitle(this.pageTitle);
 
     // let searchFileName = this.route.snapshot.queryParamMap.get(
