@@ -110,11 +110,6 @@
 
             <div class="flex flex-grow"></div>
 
-            <div
-              class="w-[72px] ml-3 text-gray-400 text-sm invisible group-scope-hover:visible flex-shrink-0"
-              >{{ node.data.fieldResult | result }}</div
-            >
-
             <button
               *ngIf="node.data.isField === true"
               type="button"
@@ -127,13 +122,17 @@
               (click)="filterField(node, $event)"
             >
               <div
-                class="flex px-2 h-8 flex-row space-x-2 items-center justify-center rounded group-hover:bg-white"
+                class="flex px-3 h-8 flex-row space-x-2 items-center justify-start rounded group-hover:bg-white"
               >
-                <div class="w-16">
-                  <div class="text-lg invisible group-hover:visible"
-                    >Filter</div
-                  >
-                </div>
+                <div
+                  class="w-[76px] flex justify-start invisible group-scope-hover:visible text-sm flex-shrink-0"
+                  [ngClass]="{
+                    'text-blue3': node.data.isFiltered === true,
+                    'text-gray-400': node.data.isFiltered === false
+                  }"
+                  >{{ node.data.fieldResult | result }}</div
+                >
+
                 <m-filter-icon
                   [ngClass]="{
                     visible: node.data.isFiltered === true
