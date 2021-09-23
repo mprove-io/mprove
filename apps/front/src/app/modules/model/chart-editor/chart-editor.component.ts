@@ -318,6 +318,10 @@ export class ChartEditorComponent implements OnChanges {
 
   colorSchemesList: ColorSchemeItem[] = [
     {
+      label: 'Soft',
+      value: common.ChartColorSchemeEnum.Soft
+    },
+    {
       label: 'Vivid',
       value: common.ChartColorSchemeEnum.Vivid
     },

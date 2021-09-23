@@ -10,7 +10,7 @@ export const CHART_DEFAULT_TYPE = ChartTypeEnum.Line;
 export const CHART_DEFAULT_TITLE = 'Title';
 
 export const CHART_DEFAULT_INTERPOLATION = ChartInterpolationEnum.Linear;
-export const CHART_DEFAULT_COLOR_SCHEME = ChartColorSchemeEnum.Cool;
+export const CHART_DEFAULT_COLOR_SCHEME = ChartColorSchemeEnum.Soft;
 export const CHART_DEFAULT_SCHEME_TYPE = ChartSchemeTypeEnum.Ordinal;
 
 export const CHART_DEFAULT_CARD_COLOR = 'rgba(255, 255, 255, 100)';

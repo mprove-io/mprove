@@ -1,4 +1,5 @@
 export enum ChartColorSchemeEnum {
+  Soft = 'soft',
   Vivid = 'vivid',
   Natural = 'natural',
   Cool = 'cool',

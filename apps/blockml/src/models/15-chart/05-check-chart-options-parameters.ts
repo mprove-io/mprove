@@ -241,6 +241,7 @@ export function checkChartOptionsParameters<T extends types.dzType>(
           if (
             parameter === enums.ParameterEnum.ColorScheme &&
             [
+              common.ChartColorSchemeEnum.Soft,
               common.ChartColorSchemeEnum.Air,
               common.ChartColorSchemeEnum.Aqua,
               common.ChartColorSchemeEnum.Cool,

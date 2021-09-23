@@ -8,6 +8,26 @@ export function getChartScheme(colorScheme: common.ChartColorSchemeEnum) {
   let scheme;
 
   switch (colorScheme) {
+    case common.ChartColorSchemeEnum.Soft: {
+      scheme = {
+        domain: [
+          '#6786E8',
+          '#8FD299',
+          '#C3DCF3',
+          // '#E0E4F0',
+          '#A597E8',
+          '#E294A4',
+          '#F8BA93',
+          '#FBE681',
+          '#8C729E',
+          '#78CFCE',
+          '#A0DCF3'
+          // '#E8CFE4'
+        ]
+      };
+      break;
+    }
+
     case common.ChartColorSchemeEnum.Vivid: {
       scheme = {
         domain: [
