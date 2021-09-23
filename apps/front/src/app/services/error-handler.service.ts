@@ -20,11 +20,13 @@ export class ErrorHandlerService extends ErrorHandler {
           skipLogToConsole: true
         };
 
-        dialogService.open(ErrorDialogComponent, {
-          data: errorData,
-          enableClose: false,
-          width: 650
-        });
+        if (dialogService.dialogs.length < 2) {
+          dialogService.open(ErrorDialogComponent, {
+            data: errorData,
+            enableClose: false,
+            width: 650
+          });
+        }
       });
     }
 

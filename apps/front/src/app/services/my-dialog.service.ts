@@ -50,11 +50,13 @@ export class MyDialogService {
   showError(item: { errorData: interfaces.ErrorData; isThrow: boolean }): void {
     let { errorData, isThrow } = item;
 
-    this.dialogService.open(ErrorDialogComponent, {
-      enableClose: false,
-      data: errorData,
-      width: 650
-    });
+    if (this.dialogService.dialogs.length < 2) {
+      this.dialogService.open(ErrorDialogComponent, {
+        enableClose: false,
+        data: errorData,
+        width: 650
+      });
+    }
 
     if (isThrow === true) {
       throw new Error(constants.SPECIAL_ERROR);
