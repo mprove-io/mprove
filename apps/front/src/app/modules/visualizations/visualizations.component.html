@@ -169,3 +169,33 @@
 
 <div *ngIf="vizs$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+
+<!-- <div class="flex w-5/6 ml-6 flex-shrink-0">
+  <div class="w-full bg-yellow-200">
+    <div class="flex flex-col h-full">
+      <div class="flex flex-grow flex-col overflow-y-auto">
+        <div *ngIf="filteredVizs?.length > 0" class="h-2">
+          <div
+            *ngFor="let item of filteredVizs"
+            class="inline-block w-1/2 h-[600px] bg-red-200"
+          >
+            <div class="pb-6 pr-5 w-full h-full bg-green-100 overflow-auto">
+              <m-chart-viz
+                [title]="item.title"
+                [report]="item.reports[0]"
+                [viz]="item"
+                (vizDeleted)="vizDeleted($event)"
+              ></m-chart-viz>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+        *ngIf="filteredVizs?.length === 0"
+        >No visualizations</div
+      >
+    </div>
+  </div>
+</div> -->
