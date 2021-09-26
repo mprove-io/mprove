@@ -68,9 +68,7 @@ export class ModelResolver implements Resolve<Observable<boolean>> {
         )
         .pipe(
           map((resp: apiToBackend.ToBackendGetModelResponse) => {
-            if (model.serverTs !== resp.payload.model.serverTs) {
-              this.modelStore.update(resp.payload.model);
-            }
+            this.modelStore.update(resp.payload.model);
             return true;
           })
         );

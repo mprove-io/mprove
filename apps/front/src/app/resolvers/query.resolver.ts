@@ -68,15 +68,9 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
         )
         .pipe(
           map((resp: apiToBackend.ToBackendGetQueryResponse) => {
-            if (
-              // query.queryId !== resp.payload.query.queryId ||
-              query.serverTs !== resp.payload.query.serverTs
-            ) {
-              this.mqStore.update(state =>
-                Object.assign({}, state, { query: resp.payload.query })
-              );
-            }
-
+            this.mqStore.update(state =>
+              Object.assign({}, state, { query: resp.payload.query })
+            );
             return true;
           })
         );
