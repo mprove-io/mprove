@@ -81,9 +81,10 @@ export class RenameFileDialogComponent implements OnInit {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
 
-          let fId = this.ref.data.parentNodeId + '/' + newName;
-          let fIdAr = fId.split('/');
+          let fIdAr = this.ref.data.nodeId.split('/');
           fIdAr.shift();
+          fIdAr.pop();
+          fIdAr.push(newName);
           let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
           this.navigateService.navigateToFileLine({
