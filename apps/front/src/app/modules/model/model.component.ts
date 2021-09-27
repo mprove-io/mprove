@@ -23,7 +23,7 @@ import { QueryService, RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { ModelState } from '~front/app/stores/model.store';
+import { ModelState, ModelStore } from '~front/app/stores/model.store';
 import { MqState, MqStore } from '~front/app/stores/mq.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { RepoStore } from '~front/app/stores/repo.store';
@@ -387,7 +387,7 @@ export class ModelComponent implements OnInit {
     private queryService: QueryService,
     public myDialogService: MyDialogService,
     private title: Title,
-    private modelStore: MqStore
+    private modelStore: ModelStore
   ) {}
 
   ngOnInit() {
