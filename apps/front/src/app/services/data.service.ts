@@ -195,6 +195,9 @@ export class DataService {
       })
     );
 
+    // console.log('multiData');
+    // console.log(multiData);
+
     return multiData;
   }
 

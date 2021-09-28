@@ -23,28 +23,20 @@ export function setChartTitleOnSelectChange(item: {
     let newTitle = '';
 
     fieldsSelectedMeasuresAndCalculations.forEach(x => {
-      let topLabelPrefix = getTopLabelPrefix(x);
-
-      newTitle =
-        newTitle === ''
-          ? `${topLabelPrefix}${x.label}`
-          : `${newTitle}, ${topLabelPrefix}${x.label}`;
+      let compLabel = getCompLabel(x);
+      newTitle = newTitle === '' ? `${compLabel}` : `${newTitle}, ${compLabel}`;
     });
 
     if (newTitle === '') {
       fieldsSelectedDimensions.forEach(x => {
-        let topLabelPrefix = getTopLabelPrefix(x);
-
+        let compLabel = getCompLabel(x);
         newTitle =
-          newTitle === ''
-            ? `${topLabelPrefix}${x.label}`
-            : `${newTitle}, ${topLabelPrefix}${x.label}`;
+          newTitle === '' ? `${compLabel}` : `${newTitle}, ${compLabel}`;
       });
     } else {
       fieldsSelectedDimensions.forEach(x => {
-        let topLabelPrefix = getTopLabelPrefix(x);
-
-        newTitle = `${newTitle} by ${topLabelPrefix}${x.label}`;
+        let compLabel = getCompLabel(x);
+        newTitle = `${newTitle} by ${compLabel}`;
       });
     }
 
@@ -54,11 +46,15 @@ export function setChartTitleOnSelectChange(item: {
   return newMconfig;
 }
 
-function getTopLabelPrefix(x: common.ModelField) {
+function getCompLabel(x: common.ModelField) {
   let topLabelPrefix =
     x.topLabel === common.ModelNodeLabelEnum.ModelFields
       ? ''
       : `${x.topLabel} `;
 
-  return topLabelPrefix;
+  let groupLabel = common.isDefined(x.groupLabel) ? `${x.groupLabel} ` : '';
+
+  let compLabel = `${topLabelPrefix}${groupLabel}${x.label}`;
+
+  return compLabel;
 }
