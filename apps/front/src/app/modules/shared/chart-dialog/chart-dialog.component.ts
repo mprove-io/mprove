@@ -27,6 +27,7 @@ export class ChartDialogComponent implements OnInit {
   mconfig: common.Mconfig;
   model: common.Model;
   extendedFilters: interfaces.FilterExtended[];
+  isSelectValid = false;
 
   constructor(
     public ref: DialogRef,
@@ -44,6 +45,7 @@ export class ChartDialogComponent implements OnInit {
     this.model = this.ref.data.model;
     this.canAccessModel = this.ref.data.canAccessModel;
     this.showNav = this.ref.data.showNav;
+    this.isSelectValid = this.ref.data.isSelectValid;
 
     this.extendedFilters = getExtendedFilters({
       fields: this.model.fields,

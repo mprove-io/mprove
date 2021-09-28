@@ -11,6 +11,7 @@ import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
+import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -79,6 +80,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   canEditOrDeleteViz = false;
   canAccessModel = false;
+
+  isSelectValid = false;
 
   constructor(
     private apiService: ApiService,
@@ -264,6 +267,14 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         : model.accessUsers.indexOf(member.alias) > -1 ||
           model.accessRoles.some(x => member.roles.includes(x));
 
+    let checkSelectResult = getSelectValid({
+      chart: mconfig.chart,
+      sortedColumns: this.sortedColumns
+    });
+
+    this.isSelectValid = checkSelectResult.isSelectValid;
+    // this.errorMessage = checkSelectResult.errorMessage;
+
     this.cd.detectChanges();
   }
 
@@ -354,7 +365,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       sortedColumns: this.sortedColumns,
       model: this.model,
       canAccessModel: this.canAccessModel,
-      showNav: true
+      showNav: true,
+      isSelectValid: this.isSelectValid
     });
   }
 

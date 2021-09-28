@@ -149,6 +149,7 @@ export class MyDialogService {
     model: common.Model;
     canAccessModel: boolean;
     showNav: boolean;
+    isSelectValid: boolean;
   }): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: true,

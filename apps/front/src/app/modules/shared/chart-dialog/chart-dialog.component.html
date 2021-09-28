@@ -64,8 +64,13 @@
     class="flex overflow-auto"
     [ngClass]="{
       'flex-grow': mconfig?.chart.type !== chartTypeEnumTable,
-      'w-full max-w-max ': mconfig?.chart.type === chartTypeEnumTable,
-      'h-[400px]': isData === true
+      'w-full max-w-max':
+        mconfig?.chart.type === chartTypeEnumTable &&
+        isSelectValid === true &&
+        mconfig?.chart.isValid === true &&
+        qData?.length > 0,
+      'h-[400px]': isData === true,
+      'h-full': isData === false
     }"
   >
     <m-chart-view

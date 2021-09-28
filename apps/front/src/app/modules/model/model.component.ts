@@ -641,7 +641,8 @@ export class ModelComponent implements OnInit {
       sortedColumns: this.sortedColumns,
       model: this.model,
       canAccessModel: true,
-      showNav: false
+      showNav: false,
+      isSelectValid: this.isSelectValid
     });
   }
 
