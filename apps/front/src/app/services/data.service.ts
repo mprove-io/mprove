@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { isNumeric } from 'rxjs/internal/util/isNumeric';
 import { capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -28,9 +27,7 @@ export class DataService {
 
     let currentValueName = currentValueField.sqlName;
 
-    let currentValue = isNumeric(data[0][currentValueName].value)
-      ? Number(data[0][currentValueName].value)
-      : 0;
+    let currentValue = convertToNumberOrZero(data[0][currentValueName].value);
 
     let previousValueField;
 
@@ -42,9 +39,7 @@ export class DataService {
 
     let previousValueName = previousValueField.sqlName;
 
-    let previousValue = isNumeric(data[0][previousValueName].value)
-      ? Number(data[0][previousValueName].value)
-      : 0;
+    let previousValue = convertToNumberOrZero(data[0][previousValueName].value);
 
     return [currentValue, previousValue];
   }
@@ -64,8 +59,8 @@ export class DataService {
     let yName = yField.sqlName;
 
     let singleData = data.map((raw: RData) => ({
-      name: common.isDefined(raw[xName].value) ? `${raw[xName].value}` : 'null',
-      value: isNumeric(raw[yName].value) ? Number(raw[yName].value) : 0
+      name: common.isDefined(raw[xName].value) ? `${raw[xName].value}` : 'NULL',
+      value: convertToNumberOrZero(raw[yName].value)
     }));
 
     // console.log(singleData);
@@ -93,8 +88,8 @@ export class DataService {
     let singleData = data
       ? data.map((raw: RData) =>
           Object.assign({
-            name: common.isDefined(xField) ? raw[xName].value || 'null' : ' ',
-            value: isNumeric(raw[yName].value) ? Number(raw[yName].value) : 0
+            name: common.isDefined(xField) ? raw[xName].value || 'NULL' : ' ',
+            value: convertToNumberOrZero(raw[yName].value)
           })
         )
       : [];
@@ -174,9 +169,9 @@ export class DataService {
           if (yFields.length > 1) {
             key = raw[multiName].value
               ? raw[multiName].value + ' ' + yLabel
-              : 'null' + ' ' + yLabel;
+              : 'NULL' + ' ' + yLabel;
           } else {
-            key = raw[multiName].value ? raw[multiName].value : 'null';
+            key = raw[multiName].value ? raw[multiName].value : 'NULL';
           }
         } else {
           key = yLabel;
@@ -197,12 +192,12 @@ export class DataService {
             common.isDefined(xV)
           ) {
             let element = {
-              name: isNumeric(xV)
-                ? Number(xV)
-                : common.isUndefined(xV)
-                ? 'null'
+              name: common.isUndefined(xV)
+                ? 'NULL'
+                : xField.result === common.FieldResultEnum.Number
+                ? convertToNumberOrZero(xV)
                 : xV,
-              value: isNumeric(yV) ? Number(yV) : 0
+              value: convertToNumberOrZero(yV)
             };
 
             if (prepareData[key]) {
@@ -449,4 +444,10 @@ export class DataService {
 
     return date;
   }
+}
+
+function convertToNumberOrZero(x: any) {
+  let xNum = common.isDefined(x) ? Number(x) : 0;
+  let z = Number.isNaN(xNum) === false ? xNum : 0;
+  return z;
 }
