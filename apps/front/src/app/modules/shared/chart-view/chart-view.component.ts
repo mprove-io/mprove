@@ -144,7 +144,8 @@ export class ChartViewComponent implements OnChanges {
               xFieldId: this.chart.xField,
               yFieldsIds: this.chart.yFields,
               multiFieldId: this.chart.multiField,
-              data: this.qData
+              data: this.qData,
+              chartType: this.chart.type
             })
           : [];
       // console.log(this.multi);

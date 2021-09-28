@@ -108,10 +108,20 @@ export class DataService {
     multiFieldId: string;
     xFieldId: string;
     yFieldsIds: string[];
+    chartType: common.ChartTypeEnum;
   }) {
     // console.log(item);
 
-    let xField = item.selectFields.find(f => f.id === item.xFieldId);
+    let {
+      selectFields,
+      data,
+      multiFieldId,
+      xFieldId,
+      yFieldsIds,
+      chartType
+    } = item;
+
+    let xField = selectFields.find(f => f.id === xFieldId);
 
     if (!xField) {
       return [];
@@ -119,8 +129,8 @@ export class DataService {
 
     let yFields: interfaces.ColumnField[] = [];
 
-    item.yFieldsIds.forEach(yFieldId => {
-      let yField = item.selectFields.find(f => f.id === yFieldId);
+    yFieldsIds.forEach(yFieldId => {
+      let yField = selectFields.find(f => f.id === yFieldId);
 
       if (!yField) {
         return [];
@@ -130,13 +140,16 @@ export class DataService {
     });
 
     let xName = xField.sqlName;
-    let xValue = this.getValue(xName);
+    let xValueFn =
+      xField.result === common.FieldResultEnum.Ts
+        ? this.getTsValueFn(xName)
+        : this.getRawValue;
 
-    let multiField = item.multiFieldId
-      ? item.selectFields.find(f => f.id === item.multiFieldId)
+    let multiField = multiFieldId
+      ? selectFields.find(f => f.id === multiFieldId)
       : undefined;
 
-    if (item.multiFieldId && !multiField) {
+    if (multiFieldId && !multiField) {
       return [];
     }
 
@@ -144,7 +157,7 @@ export class DataService {
 
     let prepareData: any = {};
 
-    item.data.forEach((raw: RData) => {
+    data.forEach((raw: RData) => {
       yFields.forEach(yField => {
         let yName = yField.sqlName;
 
@@ -171,18 +184,32 @@ export class DataService {
 
         // x null check
         if (raw[xName]) {
-          let xV = xValue(raw, xName);
+          let xV = xValueFn(raw, xName);
           let yV = raw[yName].value;
 
-          let element = {
-            name: isNumeric(xV) ? Number(xV) : xV,
-            value: isNumeric(yV) ? Number(yV) : 0
-          };
+          if (
+            [
+              common.ChartTypeEnum.Line,
+              common.ChartTypeEnum.Area,
+              common.ChartTypeEnum.AreaNormalized,
+              common.ChartTypeEnum.AreaStacked
+            ].indexOf(chartType) < 0 ||
+            common.isDefined(xV)
+          ) {
+            let element = {
+              name: isNumeric(xV)
+                ? Number(xV)
+                : common.isUndefined(xV)
+                ? 'null'
+                : xV,
+              value: isNumeric(yV) ? Number(yV) : 0
+            };
 
-          if (prepareData[key]) {
-            prepareData[key].push(element);
-          } else {
-            prepareData[key] = [element];
+            if (prepareData[key]) {
+              prepareData[key].push(element);
+            } else {
+              prepareData[key] = [element];
+            }
           }
         }
       });
@@ -201,7 +228,11 @@ export class DataService {
     return multiData;
   }
 
-  private getValue(fieldName: string) {
+  private getRawValue(raw: any, fieldName: string) {
+    return raw[fieldName].value;
+  }
+
+  private getTsValueFn(fieldName: string) {
     let fieldValue: any;
 
     if (fieldName.match(/(?:___date)$/g)) {
@@ -244,8 +275,6 @@ export class DataService {
       fieldValue = this.getDateFromWeek;
     } else if (fieldName.match(/(?:___year)$/g)) {
       fieldValue = this.getDateFromYear;
-    } else {
-      fieldValue = this.getRawValue;
     }
 
     return fieldValue;
@@ -256,7 +285,13 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)$/g;
 
-    let [full, year, month, day] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month, day] = r;
 
     let date = new Date(
       parseInt(year, 10),
@@ -272,7 +307,13 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)$/g;
 
-    let [full, year, month, day, hour] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month, day, hour] = r;
 
     let date = new Date(
       parseInt(year, 10),
@@ -289,7 +330,13 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)$/g;
 
-    let [full, year, month, day, hour, minute] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month, day, hour, minute] = r;
 
     let date = new Date(
       parseInt(year, 10),
@@ -307,7 +354,13 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)[-](\d\d)$/g;
 
-    let [full, year, month] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month] = r;
 
     let date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
 
@@ -319,7 +372,13 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)[-](\d\d)$/g;
 
-    let [full, year, month] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month] = r;
 
     let date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
 
@@ -331,7 +390,13 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)\s(\d\d)[:](\d\d)[:](\d\d)$/g;
 
-    let [full, year, month, day, hour, minute, second] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month, day, hour, minute, second] = r;
 
     let date = new Date(
       parseInt(year, 10),
@@ -350,7 +415,13 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)$/g;
 
-    let [full, year, month, day] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month, day] = r;
 
     let date = new Date(
       parseInt(year, 10),
@@ -366,14 +437,16 @@ export class DataService {
 
     let regEx = /(\d\d\d\d)$/g;
 
-    let [full, year] = regEx.exec(data);
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year] = r;
 
     let date = new Date(parseInt(year, 10), 0, 1);
 
     return date;
-  }
-
-  private getRawValue(raw: any, fieldName: string) {
-    return raw[fieldName].value;
   }
 }
