@@ -1,7 +1,7 @@
 <div class="h-full w-full overflow-auto">
   <div
     *ngIf="isSelectValid === false"
-    class="flex flex-row h-full w-full items-center justify-center text-xl select-none text-gray1"
+    class="flex flex-row h-full w-full items-center justify-center text-lg select-none text-gray1"
     ><div class="w-3/5 text-center">
       {{ errorMessage }}
     </div>
@@ -9,7 +9,7 @@
 
   <div
     *ngIf="isSelectValid === true && chart.isValid === false"
-    class="h-full flex items-center justify-center text-xl select-none text-red1"
+    class="h-full flex items-center justify-center text-lg select-none text-red1"
     >Chart parameters are not valid</div
   >
 
@@ -21,7 +21,7 @@
       (queryStatus === queryStatusEnum.New ||
         queryStatus === queryStatusEnum.Canceled)
     "
-    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    class="h-full flex items-center justify-center text-lg select-none text-gray1"
     >Run query to get data</div
   >
 
@@ -32,7 +32,7 @@
       qData.length === 0 &&
       queryStatus === queryStatusEnum.Running
     "
-    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    class="h-full flex items-center justify-center text-lg select-none text-gray1"
     >Query is Running</div
   >
 
@@ -43,7 +43,7 @@
       qData.length === 0 &&
       queryStatus === queryStatusEnum.Completed
     "
-    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    class="h-full flex items-center justify-center text-lg select-none text-gray1"
     >Query returned zero rows</div
   >
 
@@ -53,7 +53,7 @@
       chart.isValid === true &&
       queryStatus === queryStatusEnum.Error
     "
-    class="h-full flex items-center justify-center text-xl select-none text-gray1"
+    class="h-full flex items-center justify-center text-lg select-none text-gray1"
     >Query error</div
   >
 
