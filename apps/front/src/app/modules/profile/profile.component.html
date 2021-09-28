@@ -64,10 +64,15 @@
                   [disabled]="!(navQuery.avatarBig$ | async)"
                   (click)="showPhoto()"
                 >
-                  <m-avatar [avatar]="navQuery.avatarBig$ | async"></m-avatar>
+                  <m-avatar
+                    [avatar]="navQuery.avatarBig$ | async"
+                    [initials]="userQuery.initials$ | async"
+                  ></m-avatar>
                 </button>
                 <!-- <div class="ml-5 h-20 w-20">
-              <m-avatar [avatar]="navQuery.avatarSmall$ | async"></m-avatar>
+              <m-avatar [avatar]="navQuery.avatarSmall$ | async"
+                        [initials]="userQuery.initials$ | async"
+              ></m-avatar>
             </div> -->
               </div>
             </div>

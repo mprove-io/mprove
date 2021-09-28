@@ -76,9 +76,18 @@ export class ProfileComponent implements OnInit {
       )
       .subscribe();
 
+    let initials: string;
+    this.userQuery.initials$
+      .pipe(
+        tap(x => (initials = x)),
+        take(1)
+      )
+      .subscribe();
+
     this.myDialogService.showPhoto({
       apiService: this.apiService,
-      avatarBig: avatarBig
+      avatarBig: avatarBig,
+      initials: initials
     });
   }
 

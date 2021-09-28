@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { map, take, tap } from 'rxjs/operators';
+import { makeInitials } from '~front/app/functions/make-initials';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UsersQuery } from '~front/app/queries/users.query';
@@ -9,6 +10,10 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { UsersStore } from '~front/app/stores/users.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { constants } from '~front/barrels/constants';
+
+class OrgUserItemExtended extends apiToBackend.OrgUsersItem {
+  initials: string;
+}
 
 @Component({
   selector: 'm-org-users',
@@ -28,10 +33,18 @@ export class OrgUsersComponent implements OnInit {
     })
   );
 
-  users: apiToBackend.OrgUsersItem[] = [];
+  users: OrgUserItemExtended[] = [];
   users$ = this.usersQuery.users$.pipe(
     tap(x => {
-      this.users = x;
+      this.users = x.map(user =>
+        Object.assign(user, {
+          initials: makeInitials({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            alias: user.alias
+          })
+        })
+      );
       this.cd.detectChanges();
     })
   );
@@ -83,7 +96,18 @@ export class OrgUsersComponent implements OnInit {
       .subscribe();
   }
 
-  showPhoto(memberId: string) {
+  showPhoto(
+    memberId: string,
+    firstName: string,
+    lastName: string,
+    alias: string
+  ) {
+    let initials = makeInitials({
+      firstName: firstName,
+      lastName: lastName,
+      alias: alias
+    });
+
     let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
       avatarUserId: memberId
     };
@@ -97,7 +121,8 @@ export class OrgUsersComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
           this.myDialogService.showPhoto({
             apiService: this.apiService,
-            avatarBig: resp.payload.avatarBig
+            avatarBig: resp.payload.avatarBig,
+            initials: initials
           });
         }),
         take(1)

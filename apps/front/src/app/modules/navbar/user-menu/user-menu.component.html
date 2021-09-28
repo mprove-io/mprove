@@ -8,7 +8,10 @@
     (click)="toggleMenu()"
     [disabled]="needSave === true || (openedMenuId && menuId !== openedMenuId)"
   >
-    <m-avatar [avatar]="navQuery.avatarBig$ | async"></m-avatar>
+    <m-avatar
+      [avatar]="navQuery.avatarBig$ | async"
+      [initials]="userQuery.initials$ | async"
+    ></m-avatar>
   </button>
 
   <button

@@ -60,10 +60,20 @@
                     [ngClass]="{
                       'cursor-default': !member.avatarSmall
                     }"
-                    (click)="showPhoto(member.memberId)"
+                    (click)="
+                      showPhoto(
+                        member.memberId,
+                        member.firstName,
+                        member.lastName,
+                        member.alias
+                      )
+                    "
                     [disabled]="!member.avatarSmall"
                   >
-                    <m-avatar [avatar]="member.avatarSmall"></m-avatar>
+                    <m-avatar
+                      [avatar]="member.avatarSmall"
+                      [initials]="member.initials"
+                    ></m-avatar>
                   </button>
                 </div>
               </td>

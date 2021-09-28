@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { map, take, tap } from 'rxjs/operators';
+import { makeInitials } from '~front/app/functions/make-initials';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { TeamQuery } from '~front/app/queries/team.query';
@@ -12,6 +13,10 @@ import { TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+
+class MemberExtended extends common.Member {
+  initials: string;
+}
 
 @Component({
   selector: 'm-project-team',
@@ -47,10 +52,18 @@ export class ProjectTeamComponent implements OnInit {
     })
   );
 
-  members: common.Member[] = [];
+  members: MemberExtended[] = [];
   members$ = this.teamQuery.members$.pipe(
     tap(x => {
-      this.members = x;
+      this.members = x.map(member =>
+        Object.assign(member, {
+          initials: makeInitials({
+            firstName: member.firstName,
+            lastName: member.lastName,
+            alias: member.alias
+          })
+        })
+      );
       this.cd.detectChanges();
     })
   );
@@ -102,7 +115,18 @@ export class ProjectTeamComponent implements OnInit {
       .subscribe();
   }
 
-  showPhoto(memberId: string) {
+  showPhoto(
+    memberId: string,
+    firstName: string,
+    lastName: string,
+    alias: string
+  ) {
+    let initials = makeInitials({
+      firstName: firstName,
+      lastName: lastName,
+      alias: alias
+    });
+
     let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
       avatarUserId: memberId
     };
@@ -116,7 +140,8 @@ export class ProjectTeamComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
           this.myDialogService.showPhoto({
             apiService: this.apiService,
-            avatarBig: resp.payload.avatarBig
+            avatarBig: resp.payload.avatarBig,
+            initials: initials
           });
         }),
         take(1)

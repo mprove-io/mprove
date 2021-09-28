@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { AuthService } from '~front/app/services/auth.service';
 import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
@@ -36,11 +37,12 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
   constructor(
+    private authService: AuthService,
+    private router: Router,
     public uiQuery: UiQuery,
     public uiStore: UiStore,
     public navQuery: NavQuery,
-    private authService: AuthService,
-    private router: Router
+    public userQuery: UserQuery
   ) {}
 
   ngOnInit() {

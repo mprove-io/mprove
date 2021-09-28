@@ -69,7 +69,11 @@ export class MyDialogService {
     });
   }
 
-  showPhoto(item: { apiService: any; avatarBig: string }): void {
+  showPhoto(item: {
+    apiService: any;
+    avatarBig: string;
+    initials: string;
+  }): void {
     this.dialogService.open(PhotoDialogComponent, {
       enableClose: true,
       closeButton: true,
