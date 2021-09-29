@@ -63,7 +63,7 @@ export class RenameCatalogNodeController {
         repoId: repoId,
         branch: branchId,
         nodeId: nodeId,
-        newName: newName
+        newName: newName.toLowerCase()
       }
     };
 

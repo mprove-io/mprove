@@ -57,7 +57,7 @@ export class CreateFolderController {
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
-        folderName: folderName
+        folderName: folderName.toLowerCase()
       }
     };
 

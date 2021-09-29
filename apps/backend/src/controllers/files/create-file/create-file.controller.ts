@@ -51,7 +51,7 @@ export class CreateFileController {
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
-        fileName: fileName,
+        fileName: fileName.toLowerCase(),
         userAlias: user.alias
       }
     };

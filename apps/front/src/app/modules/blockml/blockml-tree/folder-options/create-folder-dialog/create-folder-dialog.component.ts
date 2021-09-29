@@ -38,11 +38,13 @@ export class CreateFolderDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let folderName = this.createFolderForm.value.folderName.toLowerCase();
+
     let payload: apiToBackend.ToBackendCreateFolderRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
       parentNodeId: this.ref.data.parentNodeId,
-      folderName: this.createFolderForm.value.folderName
+      folderName: folderName
     };
 
     let apiService: ApiService = this.ref.data.apiService;

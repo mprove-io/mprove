@@ -61,6 +61,7 @@ export class RenameFileDialogComponent implements OnInit {
 
     let newName =
       this.renameFileForm.value.fileName + this.renameFileForm.value.fileExt;
+    newName = newName.toLowerCase();
 
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,

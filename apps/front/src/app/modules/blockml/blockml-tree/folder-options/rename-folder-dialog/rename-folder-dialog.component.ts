@@ -41,11 +41,13 @@ export class RenameFolderDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let newName = this.renameFolderForm.value.folderName.toLowerCase();
+
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
       nodeId: this.ref.data.nodeId,
-      newName: this.renameFolderForm.value.folderName
+      newName: newName
     };
 
     let apiService: ApiService = this.ref.data.apiService;

@@ -55,6 +55,7 @@ export class CreateFileDialogComponent implements OnInit {
 
     let fileName =
       this.createFileForm.value.fileName + this.createFileForm.value.fileExt;
+    fileName = fileName.toLowerCase();
 
     let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
       projectId: this.ref.data.projectId,
