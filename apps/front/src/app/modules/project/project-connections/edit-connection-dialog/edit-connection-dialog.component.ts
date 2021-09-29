@@ -187,8 +187,6 @@ export class EditConnectionDialogComponent implements OnInit {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendEditConnectionResponse) => {
-          let connection = resp.payload.connection;
-
           this.connectionsStore.update(state => {
             state.connections[this.ref.data.i] = resp.payload.connection;
 

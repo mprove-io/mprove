@@ -9,7 +9,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { MemberStore } from '~front/app/stores/member.store';
-import { TeamStore } from '~front/app/stores/team.store';
+import { TeamState, TeamStore } from '~front/app/stores/team.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -64,6 +64,7 @@ export class ProjectTeamComponent implements OnInit {
           })
         })
       );
+      console.log(this.members);
       this.cd.detectChanges();
     })
   );
@@ -208,7 +209,11 @@ export class ProjectTeamComponent implements OnInit {
         map((resp: apiToBackend.ToBackendEditMemberResponse) => {
           this.teamStore.update(state => {
             state.members[i] = resp.payload.member;
-            return state;
+
+            return <TeamState>{
+              members: [...state.members],
+              total: state.total
+            };
           });
 
           if (resp.payload.member.memberId === this.userId) {
@@ -250,7 +255,11 @@ export class ProjectTeamComponent implements OnInit {
         map((resp: apiToBackend.ToBackendEditMemberResponse) => {
           this.teamStore.update(state => {
             state.members[i] = resp.payload.member;
-            return state;
+
+            return <TeamState>{
+              members: [...state.members],
+              total: state.total
+            };
           });
         }),
         take(1)
