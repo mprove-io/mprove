@@ -1,9 +1,11 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -21,7 +23,8 @@ export class CreateVizController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
-    private dbService: DbService
+    private dbService: DbService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz)
@@ -55,6 +58,21 @@ export class CreateVizController {
       repoId: repoId,
       branchId: branchId
     });
+
+    let firstProjectId = this.cs.get<interfaces.Config['firstProjectId']>(
+      'firstProjectId'
+    );
+
+    if (
+      member.is_admin === common.BoolEnum.FALSE &&
+      projectId === firstProjectId &&
+      repoId === common.PROD_REPO_ID &&
+      branchId === common.BRANCH_MASTER
+    ) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_RESTRICTED_PROJECT
+      });
+    }
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
