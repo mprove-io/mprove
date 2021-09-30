@@ -50,6 +50,7 @@ export class Config extends common.Config {
   @IsEnum(enums.EmailTransportEnum)
   emailTransport?: enums.EmailTransportEnum;
 
+  //
   @IsString()
   mailgunActiveApiKey?: string;
 

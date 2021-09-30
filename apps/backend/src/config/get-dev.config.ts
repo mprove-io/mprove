@@ -32,6 +32,7 @@ export function getDevConfig(envFilePath: any) {
     sendEmailFromName: env.BACKEND_SEND_EMAIL_FROM_NAME,
     sendEmailFromAddress: env.BACKEND_SEND_EMAIL_FROM_ADDRESS,
     emailTransport: <enums.EmailTransportEnum>env.BACKEND_EMAIL_TRANSPORT,
+    //
     mailgunActiveApiKey: env.BACKEND_MAILGUN_ACTIVE_API_KEY,
     mailgunDomain: env.BACKEND_MAILGUN_DOMAIN,
     //

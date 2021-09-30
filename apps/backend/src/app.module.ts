@@ -93,34 +93,38 @@ let typeormFeatureModule = TypeOrmModule.forFeature([...appRepositories]);
 
 let mailerModule = MailerModule.forRootAsync({
   useFactory: (cs: ConfigService<interfaces.Config>) => {
-    let mgTransport = mg({
-      auth: {
-        api_key: cs.get<interfaces.Config['mailgunActiveApiKey']>(
-          'mailgunActiveApiKey'
-        ),
-        domain: cs.get<interfaces.Config['mailgunDomain']>('mailgunDomain')
-      }
-    });
+    let transport;
 
-    let smtpConfig = {
-      host: cs.get<interfaces.Config['smtpHost']>('smtpHost'),
-      port: cs.get<interfaces.Config['smtpPort']>('smtpPort'),
-      secure:
-        cs.get<interfaces.Config['smtpSecure']>('smtpSecure') ===
-        common.BoolEnum.TRUE
-          ? true
-          : false,
-      auth: {
-        user: cs.get<interfaces.Config['smtpAuthUser']>('smtpAuthUser'),
-        pass: cs.get<interfaces.Config['smtpAuthPassword']>('smtpAuthPassword')
-      }
-    };
+    let emailTransport = cs.get<interfaces.Config['emailTransport']>(
+      'emailTransport'
+    );
 
-    let transport =
-      cs.get<interfaces.Config['emailTransport']>('emailTransport') ===
-      enums.EmailTransportEnum.MAILGUN
-        ? mgTransport
-        : smtpConfig;
+    if (emailTransport === enums.EmailTransportEnum.MAILGUN) {
+      transport = mg({
+        auth: {
+          api_key: cs.get<interfaces.Config['mailgunActiveApiKey']>(
+            'mailgunActiveApiKey'
+          ),
+          domain: cs.get<interfaces.Config['mailgunDomain']>('mailgunDomain')
+        }
+      });
+    } else {
+      transport = {
+        host: cs.get<interfaces.Config['smtpHost']>('smtpHost'),
+        port: cs.get<interfaces.Config['smtpPort']>('smtpPort'),
+        secure:
+          cs.get<interfaces.Config['smtpSecure']>('smtpSecure') ===
+          common.BoolEnum.TRUE
+            ? true
+            : false,
+        auth: {
+          user: cs.get<interfaces.Config['smtpAuthUser']>('smtpAuthUser'),
+          pass: cs.get<interfaces.Config['smtpAuthPassword']>(
+            'smtpAuthPassword'
+          )
+        }
+      };
+    }
 
     let fromName = cs.get<interfaces.Config['sendEmailFromName']>(
       'sendEmailFromName'

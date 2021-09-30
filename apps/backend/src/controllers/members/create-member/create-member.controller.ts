@@ -130,6 +130,7 @@ export class CreateMemberController {
     });
 
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
+
     let link = `${hostUrl}/org/${project.org_id}/project/${projectId}/team`;
 
     await this.mailerService.sendMail({
