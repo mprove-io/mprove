@@ -10,8 +10,8 @@ export class TestRoutesGuard implements CanActivate {
 
   canActivate(context: ExecutionContext) {
     if (
-      this.cs.get<interfaces.Config['allowTestRoutes']>('allowTestRoutes') ===
-      common.BoolEnum.FALSE
+      this.cs.get<interfaces.Config['allowTestRoutes']>('allowTestRoutes') !==
+      common.BoolEnum.TRUE
     ) {
       throw new common.ServerError({
         message: apiToBackend.ErEnum.BACKEND_TEST_ROUTES_FORBIDDEN

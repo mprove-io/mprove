@@ -5,6 +5,7 @@ export const VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE = 'Verify your email address';
 export const EMAIL_CONFIRMATION_PAGE_TITLE = 'Email confirmation';
 export const EMAIL_IS_CONFIRMED_PAGE_TITLE = 'Email is confirmed!';
 export const USER_DELETED_PAGE_TITLE = 'User Deleted';
+export const COMPLETE_REGISTRATION_PAGE_TITLE = 'Set password to SignUp';
 
 export const FORGOT_YOUR_PASSWORD_PAGE_TITLE = 'Forgot your password?';
 export const PASSWORD_RESET_EMAIL_SENT_PAGE_TITLE = 'Password Reset Email Sent';

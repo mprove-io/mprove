@@ -16,6 +16,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
+import { constants } from '~common/barrels/constants';
 
 @Controller()
 export class CreateMemberController {
@@ -131,13 +132,43 @@ export class CreateMemberController {
 
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 
-    let link = `${hostUrl}/org/${project.org_id}/project/${projectId}/team`;
+    if (
+      common.isDefined(invitedUser) &&
+      invitedUser.is_email_verified === common.BoolEnum.TRUE
+    ) {
+      let urlProjectVizs = [
+        hostUrl,
+        constants.PATH_ORG,
+        project.org_id,
+        constants.PATH_PROJECT,
+        projectId,
+        constants.PATH_REPO,
+        constants.PROD_REPO_ID,
+        constants.PATH_BRANCH,
+        constants.BRANCH_MASTER,
+        constants.PATH_VISUALIZATIONS
+      ].join('/');
 
-    await this.mailerService.sendMail({
-      to: email,
-      subject: `[Mprove] ${user.alias} added you to ${project.name} project team`,
-      text: `Project url: ${link}`
-    });
+      await this.mailerService.sendMail({
+        to: email,
+        subject: `[Mprove] ${user.alias} added you to ${project.name} project team`,
+        text: `Project visualizations: ${urlProjectVizs}`
+      });
+    } else {
+      let emailVerificationToken = common.isDefined(invitedUser)
+        ? invitedUser.email_verification_token
+        : newUser.email_verification_token;
+
+      let emailBase64 = btoa(email);
+
+      let urlCompleteRegistration = `${hostUrl}/${common.PATH_COMPLETE_REGISTRATION}?token=${emailVerificationToken}&b=${emailBase64}`;
+
+      await this.mailerService.sendMail({
+        to: email,
+        subject: `[Mprove] ${user.alias} invited you to ${project.name} project team`,
+        text: `Click the link to complete registration: ${urlCompleteRegistration}`
+      });
+    }
 
     let apiMember = wrapper.wrapToApiMember(newMember);
 

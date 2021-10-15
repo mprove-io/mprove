@@ -47,12 +47,12 @@ export class ResetUserPasswordController {
 
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 
-    let link = `${hostUrl}/update-password?token=${user.password_reset_token}`;
+    let urlUpdatePassword = `${hostUrl}/${common.PATH_UPDATE_PASSWORD}?token=${user.password_reset_token}`;
 
     await this.mailerService.sendMail({
       to: user.email,
       subject: '[Mprove] Reset your password',
-      text: `You requested password change. Click the link to set a new password: ${link}`
+      text: `You requested password change. Click the link to set a new password: ${urlUpdatePassword}`
     });
 
     let payload = {};

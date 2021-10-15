@@ -19,6 +19,7 @@ export const BLOCKML_USERS_FOLDER = 'users';
 export const PATH_REGISTER = 'register';
 export const PATH_VERIFY_EMAIL = 'verify-email';
 export const PATH_CONFIRM_EMAIL = 'confirm-email';
+export const PATH_COMPLETE_REGISTRATION = 'complete-registration';
 export const PATH_EMAIL_CONFIRMED = 'email-confirmed';
 export const PATH_LOGIN = 'login';
 export const PATH_LOGIN_SUCCESS = 'login-success';

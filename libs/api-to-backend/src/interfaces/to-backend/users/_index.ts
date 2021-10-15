@@ -1,3 +1,4 @@
+export * from './to-backend-complete-user-registration';
 export * from './to-backend-confirm-user-email';
 export * from './to-backend-delete-user';
 export * from './to-backend-get-user-profile';

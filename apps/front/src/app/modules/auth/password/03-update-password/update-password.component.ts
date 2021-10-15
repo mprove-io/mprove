@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
+import { AuthService } from '~front/app/services/auth.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -38,6 +39,7 @@ export class UpdatePasswordComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
+    private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private title: Title
@@ -45,6 +47,9 @@ export class UpdatePasswordComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+
+    this.authService.clearLocalStorage();
+    this.authService.stopWatch();
 
     this.passwordResetToken = this.route.snapshot.queryParamMap.get('token');
   }

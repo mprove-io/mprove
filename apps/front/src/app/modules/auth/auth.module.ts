@@ -8,6 +8,7 @@ import { ConfirmEmailComponent } from './main/03-confirm-email/confirm-email.com
 import { EmailConfirmedComponent } from './main/04-email-confirmed/email-confirmed.component';
 import { LoginComponent } from './main/05-login/login.component';
 import { UserDeletedComponent } from './main/06-user-deleted/user-deleted.component';
+import { CompleteRegistrationComponent } from './main/07-complete-registration/complete-registration.component';
 import { ForgotPasswordComponent } from './password/01-forgot-password/forgot-password.component';
 import { PasswordResetSentComponent } from './password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './password/03-update-password/update-password.component';
@@ -22,6 +23,7 @@ import { NewPasswordWasSetComponent } from './password/04-new-password-was-set/n
     EmailConfirmedComponent,
     LoginComponent,
     UserDeletedComponent,
+    CompleteRegistrationComponent,
     // password
     ForgotPasswordComponent,
     PasswordResetSentComponent,

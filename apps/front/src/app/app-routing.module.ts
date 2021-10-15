@@ -8,6 +8,7 @@ import { ConfirmEmailComponent } from './modules/auth/main/03-confirm-email/conf
 import { EmailConfirmedComponent } from './modules/auth/main/04-email-confirmed/email-confirmed.component';
 import { LoginComponent } from './modules/auth/main/05-login/login.component';
 import { UserDeletedComponent } from './modules/auth/main/06-user-deleted/user-deleted.component';
+import { CompleteRegistrationComponent } from './modules/auth/main/07-complete-registration/complete-registration.component';
 import { ForgotPasswordComponent } from './modules/auth/password/01-forgot-password/forgot-password.component';
 import { PasswordResetSentComponent } from './modules/auth/password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
@@ -72,6 +73,10 @@ const routes: Routes = [
       {
         component: ConfirmEmailComponent,
         path: common.PATH_CONFIRM_EMAIL
+      },
+      {
+        component: CompleteRegistrationComponent,
+        path: common.PATH_COMPLETE_REGISTRATION
       },
       {
         component: EmailConfirmedComponent,

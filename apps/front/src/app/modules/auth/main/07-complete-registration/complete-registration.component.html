@@ -1,0 +1,53 @@
+<div class="flex flex-col bg-blue1 justify-center items-center h-full">
+  <div class="flex text-gray2 max-w-sm text-2xl text-center font-semibold">{{
+    pageTitle
+  }}</div>
+
+  <div class="flex text-gray2 mt-5 text-xl text-center">{{ email }}</div>
+  <form
+    class="flex flex-col w-96"
+    [formGroup]="setPasswordForm"
+    (ngSubmit)="setPassword()"
+  >
+    <input
+      spellcheck="false"
+      data-cy="updatePasswordNewPasswordInput"
+      class="mt-9 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          setPasswordForm.controls['newPassword'].invalid &&
+          setPasswordForm.controls['newPassword'].touched
+      }"
+      type="password"
+      formControlName="newPassword"
+      placeholder="Password"
+    />
+    <m-validation
+      [control]="setPasswordForm.controls['newPassword']"
+    ></m-validation>
+
+    <!-- <input
+      spellcheck="false"
+      data-cy="updatePasswordConfirmPasswordInput"
+      class="mt-1 form-input rounded border-gray3 focus:border-blue3"
+      [ngClass]="{
+        'border-red-600':
+          setPasswordForm.controls['confirmPassword'].invalid &&
+          setPasswordForm.controls['confirmPassword'].touched
+      }"
+      type="password"
+      formControlName="confirmPassword"
+      placeholder="Confirm Password"
+    />
+    <m-validation
+      [control]="setPasswordForm.controls['confirmPassword']"
+    ></m-validation> -->
+
+    <button
+      data-cy="updatePasswordSetPasswordButton"
+      class="mt-1 py-3 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+      type="submit"
+      >SignUp</button
+    >
+  </form>
+</div>
