@@ -159,7 +159,7 @@ export class CreateMemberController {
         ? invitedUser.email_verification_token
         : newUser.email_verification_token;
 
-      let emailBase64 = btoa(email);
+      let emailBase64 = Buffer.from(email).toString('base64');
 
       let urlCompleteRegistration = `${hostUrl}/${common.PATH_COMPLETE_REGISTRATION}?token=${emailVerificationToken}&b=${emailBase64}`;
 
