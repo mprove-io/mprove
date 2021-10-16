@@ -252,19 +252,24 @@ export class NavigateService {
   }
 
   navigateToProdMasterVizs() {
-    let navTo = [
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      common.PROD_REPO_ID,
-      common.PATH_BRANCH,
-      common.BRANCH_MASTER,
-      common.PATH_VISUALIZATIONS
-    ];
+    if (
+      common.isDefined(this.nav.orgId) &&
+      common.isDefined(this.nav.projectId)
+    ) {
+      let navTo = [
+        common.PATH_ORG,
+        this.nav.orgId,
+        common.PATH_PROJECT,
+        this.nav.projectId,
+        common.PATH_REPO,
+        common.PROD_REPO_ID,
+        common.PATH_BRANCH,
+        common.BRANCH_MASTER,
+        common.PATH_VISUALIZATIONS
+      ];
 
-    this.router.navigate(navTo);
+      this.router.navigate(navTo);
+    }
   }
 
   navigateToVizs(item?: { navParts?: string[]; extra?: any }) {
