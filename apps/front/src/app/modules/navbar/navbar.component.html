@@ -4,7 +4,7 @@
   >
     <m-logo></m-logo>
 
-    <div class="flex flex-row items-center">
+    <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
       <m-branch-select></m-branch-select>
 
       <button
@@ -19,7 +19,7 @@
       >
     </div>
 
-    <div class="flex flex-row items-center">
+    <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
       <m-models-menu></m-models-menu>
 
       <button
