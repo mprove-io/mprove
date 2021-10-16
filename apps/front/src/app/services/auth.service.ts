@@ -60,7 +60,7 @@ export class AuthService {
       let firstPath = pathArray[1];
 
       if (
-        [common.PATH_PROFILE].indexOf(firstPath) > -1 &&
+        [common.PATH_PROFILE, common.PATH_ORG].indexOf(firstPath) > -1 &&
         !this.authenticated()
       ) {
         // console.log('[WatchAuthenticationService] logout');

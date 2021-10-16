@@ -49,7 +49,7 @@ export class CompleteUserRegistrationController {
       });
     }
 
-    this.membersService.addMemberToFirstProject({
+    await this.membersService.addMemberToFirstProject({
       traceId: traceId,
       user: user
     });

@@ -24,7 +24,6 @@ describe('front-e2e', () => {
     cy.loading();
     cy.url().should('include', common.PATH_USER_DELETED);
     cy.get('[data-cy=userDeletedCreateNewAccountButton]').click();
-    cy.loading();
     cy.url().should('include', common.PATH_REGISTER);
   });
 });

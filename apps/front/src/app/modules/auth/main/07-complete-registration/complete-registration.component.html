@@ -11,7 +11,7 @@
   >
     <input
       spellcheck="false"
-      data-cy="updatePasswordNewPasswordInput"
+      data-cy="completeRegistrationPasswordInput"
       class="mt-9 form-input rounded border-gray3 focus:border-blue3"
       [ngClass]="{
         'border-red-600':
@@ -26,25 +26,8 @@
       [control]="setPasswordForm.controls['newPassword']"
     ></m-validation>
 
-    <!-- <input
-      spellcheck="false"
-      data-cy="updatePasswordConfirmPasswordInput"
-      class="mt-1 form-input rounded border-gray3 focus:border-blue3"
-      [ngClass]="{
-        'border-red-600':
-          setPasswordForm.controls['confirmPassword'].invalid &&
-          setPasswordForm.controls['confirmPassword'].touched
-      }"
-      type="password"
-      formControlName="confirmPassword"
-      placeholder="Confirm Password"
-    />
-    <m-validation
-      [control]="setPasswordForm.controls['confirmPassword']"
-    ></m-validation> -->
-
     <button
-      data-cy="updatePasswordSetPasswordButton"
+      data-cy="completeRegistrationSignUpButton"
       class="mt-1 py-3 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
       type="submit"
       >SignUp</button

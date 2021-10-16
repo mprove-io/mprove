@@ -21,6 +21,7 @@ import { NavigateService } from './navigate.service';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   showSpinner: apiToBackend.ToBackendRequestInfoNameEnum[] = [
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,

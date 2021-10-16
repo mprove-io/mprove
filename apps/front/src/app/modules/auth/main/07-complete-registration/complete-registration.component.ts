@@ -97,13 +97,6 @@ export class CompleteRegistrationComponent implements OnInit {
             this.authService.stopWatch();
             localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
             this.router.navigate([common.PATH_LOGIN_SUCCESS]);
-          } else {
-            this.myDialogService.showError({
-              errorData: {
-                message: 'Unk Error'
-              },
-              isThrow: false
-            });
           }
         }),
         take(1)

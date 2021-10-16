@@ -36,7 +36,13 @@ export class ConfirmUserEmailController {
       });
     }
 
-    this.membersService.addMemberToFirstProject({
+    if (common.isUndefined(user.hash)) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+      });
+    }
+
+    await this.membersService.addMemberToFirstProject({
       traceId: traceId,
       user: user
     });
