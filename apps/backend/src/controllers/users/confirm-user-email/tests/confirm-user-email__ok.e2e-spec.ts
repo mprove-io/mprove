@@ -11,6 +11,7 @@ let traceId = testId;
 
 let email = `${testId}@example.com`;
 let emailToken = common.makeId();
+let password = '123';
 
 let prep: interfaces.Prep;
 
@@ -28,6 +29,7 @@ test('1', async t => {
         users: [
           {
             email: email,
+            password: password,
             isEmailVerified: common.BoolEnum.FALSE,
             emailVerificationToken: emailToken
           }
