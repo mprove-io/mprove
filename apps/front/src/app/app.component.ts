@@ -25,14 +25,32 @@ export class AppComponent implements OnInit {
     tap((x: any) => {
       // console.log(x);
       switch (true) {
-        case x instanceof NavigationStart &&
-          // x.url !== `/${common.PATH_LOGIN_SUCCESS}` &&
-          x.url !== `/${common.PATH_LOGIN}` &&
-          (x.url.split('/').indexOf(common.EMPTY) > -1 ||
-            x.url.split('/').indexOf(common.PATH_MODEL) < 0): {
-          // console.log('NavigationStart', x.url);
-          this.spinnerStartedTs = Date.now();
-          this.spinner.show(constants.APP_SPINNER_NAME);
+        case x instanceof NavigationStart: {
+          let urlPart = x.url.split('?')[0];
+          let urlPartArray = urlPart.split('/');
+
+          if (
+            urlPartArray.indexOf(common.PATH_REGISTER) !== 1 &&
+            urlPartArray.indexOf(common.PATH_VERIFY_EMAIL) !== 1 &&
+            urlPartArray.indexOf(common.PATH_CONFIRM_EMAIL) !== 1 &&
+            urlPartArray.indexOf(common.PATH_EMAIL_CONFIRMED) !== 1 &&
+            urlPartArray.indexOf(common.PATH_COMPLETE_REGISTRATION) !== 1 &&
+            urlPartArray.indexOf(common.PATH_LOGIN) !== 1 &&
+            urlPartArray.indexOf(common.PATH_USER_DELETED) !== 1 &&
+            urlPartArray.indexOf(common.PATH_FORGOT_PASSWORD) !== 1 &&
+            urlPartArray.indexOf(common.PATH_PASSWORD_RESET_SENT) !== 1 &&
+            urlPartArray.indexOf(common.PATH_UPDATE_PASSWORD) !== 1 &&
+            urlPartArray.indexOf(common.PATH_NEW_PASSWORD_WAS_SET) !== 1 &&
+            //
+            // urlPartArray.indexOf(common.PATH_LOGIN_SUCCESS) !== 1 &&
+            // urlPartArray.indexOf(common.PATH_PASSWORD_RESET_SENT_AUTH) !== 1 &&
+            (urlPartArray.indexOf(common.EMPTY) > -1 ||
+              urlPartArray.indexOf(common.PATH_MODEL) < 0)
+          ) {
+            // console.log('NavigationStart', x.url);
+            this.spinnerStartedTs = Date.now();
+            this.spinner.show(constants.APP_SPINNER_NAME);
+          }
           break;
         }
 

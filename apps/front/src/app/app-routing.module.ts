@@ -75,18 +75,21 @@ const routes: Routes = [
         path: common.PATH_CONFIRM_EMAIL
       },
       {
-        component: CompleteRegistrationComponent,
-        path: common.PATH_COMPLETE_REGISTRATION
-      },
-      {
         component: EmailConfirmedComponent,
         path: common.PATH_EMAIL_CONFIRMED
+      },
+      {
+        component: CompleteRegistrationComponent,
+        path: common.PATH_COMPLETE_REGISTRATION
       },
       {
         component: LoginComponent,
         path: common.PATH_LOGIN
       },
-
+      {
+        component: UserDeletedComponent,
+        path: common.PATH_USER_DELETED
+      },
       {
         component: ForgotPasswordComponent,
         path: common.PATH_FORGOT_PASSWORD
@@ -102,10 +105,6 @@ const routes: Routes = [
       {
         component: NewPasswordWasSetComponent,
         path: common.PATH_NEW_PASSWORD_WAS_SET
-      },
-      {
-        component: UserDeletedComponent,
-        path: common.PATH_USER_DELETED
       }
     ]
   },
