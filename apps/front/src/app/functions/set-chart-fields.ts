@@ -75,7 +75,8 @@ export function setChartFields(item: {
 
     let multiField =
       common.isDefined(newMconfig.chart.multiField) &&
-      newMconfig.select.indexOf(newMconfig.chart.multiField) > -1
+      newMconfig.select.indexOf(newMconfig.chart.multiField) > -1 &&
+      newMconfig.chart.multiField !== xField
         ? newMconfig.chart.multiField
         : selectedDimensions.length === 2
         ? selectedDimensions.filter(x => x !== xField)[0]
