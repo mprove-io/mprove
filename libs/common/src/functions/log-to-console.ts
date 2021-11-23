@@ -11,9 +11,29 @@ export function logToConsole(object: any, cs?: ConfigService<Config>) {
 
   let isColor: boolean = enumToBoolean(mproveLogIsColor);
 
+  // let lg = util.inspect(object, false, null, isColor);
+
   if (isColor) {
-    console.log(util.inspect(object, false, null, true));
+    console.log(
+      util.inspect(object, {
+        showHidden: false,
+        depth: null,
+        colors: true,
+        breakLength: Infinity,
+        compact: false
+      })
+    );
   } else {
-    console.log(JSON.stringify(util.inspect(object, false, null, false)));
+    console.log(
+      JSON.stringify(
+        util.inspect(object, {
+          showHidden: false,
+          depth: null,
+          colors: false,
+          breakLength: Infinity,
+          compact: true
+        })
+      )
+    );
   }
 }
