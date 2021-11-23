@@ -95,7 +95,7 @@ export class AppInterceptor implements NestInterceptor {
           originalError: e
         });
 
-        respX = common.makeErrorResponse({ e: err, cs: this.cs, req: request });
+        respX = common.makeErrorResponse({ e: err, cs: this.cs, req: req });
 
         let idempEntity: entities.IdempEntity = {
           idempotency_key: iKey,

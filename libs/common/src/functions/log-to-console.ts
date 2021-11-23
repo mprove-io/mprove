@@ -11,5 +11,9 @@ export function logToConsole(object: any, cs?: ConfigService<Config>) {
 
   let isColor: boolean = enumToBoolean(mproveLogIsColor);
 
-  console.log(util.inspect(object, false, null, isColor));
+  if (isColor) {
+    console.log(util.inspect(object, false, null, true));
+  } else {
+    console.log(JSON.stringify(util.inspect(object, false, null, false)));
+  }
 }

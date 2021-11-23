@@ -39,10 +39,10 @@ export class AppFilter implements ExceptionFilter {
             })
           : exception;
 
-      let resp = common.makeErrorResponse({ e: e, cs: this.cs, req: request });
-
       let req: apiToBackend.ToBackendRequest = request.body;
       let user: entities.UserEntity = request.user;
+
+      let resp = common.makeErrorResponse({ e: e, cs: this.cs, req: req });
 
       let iKey = req?.info?.idempotencyKey;
 
