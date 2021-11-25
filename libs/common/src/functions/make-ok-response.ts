@@ -4,15 +4,18 @@ import { Config, MyResponse } from '~common/interfaces/_index';
 import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {
-  req: any;
+  request?: any;
+  body: any;
   payload: any;
   cs: ConfigService<Config>;
 }) {
-  let { req, payload, cs } = item;
+  let { body, payload, cs, request } = item;
 
   let response: MyResponse = {
     info: {
-      traceId: req.info?.traceId,
+      path: request?.url,
+      method: request?.method,
+      traceId: body.info?.traceId,
       status: enums.ResponseInfoStatusEnum.Ok
     },
     payload: payload

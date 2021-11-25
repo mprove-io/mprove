@@ -25,9 +25,9 @@ export class ConsumerMainService {
     try {
       let payload = await this.processDashboardService.process(request);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, body: request });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, body: request });
     }
   }
 
@@ -40,9 +40,9 @@ export class ConsumerMainService {
     try {
       let payload = await this.queryService.process(request);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, body: request });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, body: request });
     }
   }
 
@@ -55,9 +55,9 @@ export class ConsumerMainService {
     try {
       let payload = await this.structService.rebuild(request);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, body: request });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, body: request });
     }
   }
 }

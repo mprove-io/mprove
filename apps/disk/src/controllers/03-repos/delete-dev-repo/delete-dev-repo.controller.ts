@@ -17,9 +17,9 @@ export class DeleteDevRepoController {
     try {
       let payload = await this.deleteDevRepoService.process(body);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: body });
+      return common.makeOkResponse({ payload, cs: this.cs, body: body });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, body: body });
     }
   }
 }

@@ -17,9 +17,9 @@ export class GenSqlController {
     try {
       let payload = await this.genSqlService.gen(body);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: body });
+      return common.makeOkResponse({ payload, cs: this.cs, body: body });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, body: body });
     }
   }
 }

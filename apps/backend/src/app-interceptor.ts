@@ -95,7 +95,12 @@ export class AppInterceptor implements NestInterceptor {
           originalError: e
         });
 
-        respX = common.makeErrorResponse({ e: err, cs: this.cs, req: req });
+        respX = common.makeErrorResponse({
+          e: err,
+          cs: this.cs,
+          body: req,
+          request: request
+        });
 
         let idempEntity: entities.IdempEntity = {
           idempotency_key: iKey,
@@ -115,7 +120,7 @@ export class AppInterceptor implements NestInterceptor {
             let resp = common.makeOkResponse({
               payload: payload,
               cs: this.cs,
-              req: req
+              body: req
             });
 
             if (common.isDefined(iKey)) {

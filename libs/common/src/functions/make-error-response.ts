@@ -5,15 +5,18 @@ import { logToConsole } from './log-to-console';
 import { wrapError } from './wrap-error';
 
 export function makeErrorResponse(item: {
-  req: any;
+  request?: any;
+  body: any;
   e: any;
   cs: ConfigService<Config>;
 }) {
-  let { req, e, cs } = item;
+  let { body, e, cs, request } = item;
 
   let response: MyResponse = {
     info: {
-      traceId: req.info?.traceId,
+      path: request?.url,
+      method: request?.method,
+      traceId: body.info?.traceId,
       status: enums.ResponseInfoStatusEnum.Error,
       error: wrapError(e)
     },

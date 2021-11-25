@@ -21,9 +21,9 @@ export class ConsumerWorkerService {
     try {
       let payload = await this.genSqlService.gen(request);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, body: request });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, body: request });
     }
   }
 }

@@ -17,9 +17,9 @@ export class CommitRepoController {
     try {
       let payload = await this.commitRepoService.process(body);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: body });
+      return common.makeOkResponse({ payload, cs: this.cs, body: body });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: body });
+      return common.makeErrorResponse({ e, cs: this.cs, body: body });
     }
   }
 }

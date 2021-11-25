@@ -78,9 +78,9 @@ export class MessageService {
     try {
       let payload = await this.processSwitch(request);
 
-      return common.makeOkResponse({ payload, cs: this.cs, req: request });
+      return common.makeOkResponse({ payload, cs: this.cs, body: request });
     } catch (e) {
-      return common.makeErrorResponse({ e, cs: this.cs, req: request });
+      return common.makeErrorResponse({ e, cs: this.cs, body: request });
     }
   }
 
