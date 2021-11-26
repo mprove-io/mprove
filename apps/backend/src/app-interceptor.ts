@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Observable, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
@@ -29,6 +29,8 @@ export class AppInterceptor implements NestInterceptor {
     next: CallHandler
   ): Promise<Observable<common.MyResponse>> {
     let request = context.switchToHttp().getRequest();
+
+    request.start_ts = Date.now();
 
     let req: apiToBackend.ToBackendRequest = request.body;
     let user: entities.UserEntity = request.user;
@@ -135,11 +137,23 @@ export class AppInterceptor implements NestInterceptor {
               await this.idempsRepository.save(idempEntity);
             }
 
+            resp.info.duration = Date.now() - request.start_ts;
+
             return resp;
           })
         )
       : common.isDefined(idemp.resp)
-      ? of(idemp.resp)
-      : of(respX);
+      ? of(idemp.resp).pipe(
+          map(x => {
+            x.info.duration = Date.now() - request.start_ts;
+            return x;
+          })
+        )
+      : of(respX).pipe(
+          map(x => {
+            x.info.duration = Date.now() - request.start_ts;
+            return x;
+          })
+        );
   }
 }

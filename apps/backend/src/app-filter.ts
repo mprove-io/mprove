@@ -46,7 +46,8 @@ export class AppFilter implements ExceptionFilter {
         e: e,
         cs: this.cs,
         body: req,
-        request: request
+        request: request,
+        duration: Date.now() - request.start_ts
       });
 
       let iKey = req?.info?.idempotencyKey;

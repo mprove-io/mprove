@@ -6,16 +6,20 @@ import { wrapError } from './wrap-error';
 
 export function makeErrorResponse(item: {
   request?: any;
+  path?: any;
+  method?: any;
+  duration?: number;
   body: any;
   e: any;
   cs: ConfigService<Config>;
 }) {
-  let { body, e, cs, request } = item;
+  let { body, e, cs, request, path, method, duration } = item;
 
   let response: MyResponse = {
     info: {
-      path: request?.url,
-      method: request?.method,
+      path: request?.url || path,
+      method: request?.method || method,
+      duration: duration,
       traceId: body.info?.traceId,
       status: enums.ResponseInfoStatusEnum.Error,
       error: wrapError(e)

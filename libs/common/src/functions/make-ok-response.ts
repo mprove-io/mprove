@@ -5,16 +5,20 @@ import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {
   request?: any;
+  path?: any;
+  method?: any;
+  duration?: number;
   body: any;
   payload: any;
   cs: ConfigService<Config>;
 }) {
-  let { body, payload, cs, request } = item;
+  let { body, payload, cs, request, path, method, duration } = item;
 
   let response: MyResponse = {
     info: {
-      path: request?.url,
-      method: request?.method,
+      path: request?.url || path,
+      method: request?.method || method,
+      duration: duration,
       traceId: body.info?.traceId,
       status: enums.ResponseInfoStatusEnum.Ok
     },

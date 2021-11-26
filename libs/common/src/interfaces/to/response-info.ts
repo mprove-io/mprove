@@ -5,11 +5,15 @@ import { ServerError } from '~common/models/server-error';
 export class ResponseInfo {
   @IsOptional()
   @IsString()
-  path: string;
+  path?: string;
 
   @IsOptional()
   @IsString()
-  method: string;
+  method?: string;
+
+  @IsOptional()
+  @IsString()
+  duration?: number;
 
   @IsEnum(enums.ResponseInfoStatusEnum)
   status: enums.ResponseInfoStatusEnum;
