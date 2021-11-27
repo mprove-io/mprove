@@ -12,8 +12,9 @@ export function makeErrorResponse(item: {
   body: any;
   e: any;
   cs: ConfigService<Config>;
+  skipLog?: boolean;
 }) {
-  let { body, e, cs, request, path, method, duration } = item;
+  let { body, e, cs, request, path, method, duration, skipLog } = item;
 
   let response: MyResponse = {
     info: {
@@ -31,9 +32,11 @@ export function makeErrorResponse(item: {
     cs.get<Config['mproveLogOnResponser']>('mproveLogOnResponser') ===
       enums.BoolEnum.TRUE &&
     cs.get<Config['mproveLogResponseError']>('mproveLogResponseError') ===
-      enums.BoolEnum.TRUE
+      enums.BoolEnum.TRUE &&
+    skipLog !== true
   ) {
-    logToConsole(response, cs);
+    let part = Object.assign({}, response, { payload: undefined });
+    logToConsole(part, cs);
   }
 
   return response;

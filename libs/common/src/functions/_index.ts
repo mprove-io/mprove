@@ -9,6 +9,7 @@ export * from './is-defined';
 export * from './is-undefined';
 export * from './is-undefined-or-empty';
 export * from './listen-process-events';
+export * from './log-response';
 export * from './log-to-console';
 export * from './make-copy';
 export * from './make-error-response';

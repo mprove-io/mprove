@@ -47,7 +47,8 @@ export class AppFilter implements ExceptionFilter {
         cs: this.cs,
         body: req,
         request: request,
-        duration: Date.now() - request.start_ts
+        duration: Date.now() - request.start_ts,
+        skipLog: true
       });
 
       let iKey = req?.info?.idempotencyKey;
@@ -74,6 +75,11 @@ export class AppFilter implements ExceptionFilter {
           );
         }
       }
+
+      common.logResponse({
+        cs: this.cs,
+        response: resp
+      });
 
       response.status(HttpStatus.CREATED).json(resp);
     } catch (err) {

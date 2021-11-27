@@ -11,8 +11,9 @@ export function makeOkResponse(item: {
   body: any;
   payload: any;
   cs: ConfigService<Config>;
+  skipLog?: boolean;
 }) {
-  let { body, payload, cs, request, path, method, duration } = item;
+  let { body, payload, cs, request, path, method, duration, skipLog } = item;
 
   let response: MyResponse = {
     info: {
@@ -29,9 +30,11 @@ export function makeOkResponse(item: {
     cs.get<Config['mproveLogOnResponser']>('mproveLogOnResponser') ===
       enums.BoolEnum.TRUE &&
     cs.get<Config['mproveLogResponseOk']>('mproveLogResponseOk') ===
-      enums.BoolEnum.TRUE
+      enums.BoolEnum.TRUE &&
+    skipLog !== true
   ) {
-    logToConsole(response, cs);
+    let part = Object.assign({}, response, { payload: undefined });
+    logToConsole(part, cs);
   }
 
   return response;

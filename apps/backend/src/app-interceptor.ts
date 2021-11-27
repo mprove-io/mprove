@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { apiToBackend } from './barrels/api-to-backend';
 import { common } from './barrels/common';
 import { constants } from './barrels/constants';
@@ -101,7 +101,8 @@ export class AppInterceptor implements NestInterceptor {
           e: err,
           cs: this.cs,
           body: req,
-          request: request
+          request: request,
+          skipLog: true
         });
 
         let idempEntity: entities.IdempEntity = {
@@ -122,7 +123,9 @@ export class AppInterceptor implements NestInterceptor {
             let resp = common.makeOkResponse({
               payload: payload,
               cs: this.cs,
-              body: req
+              request: request,
+              body: req,
+              skipLog: true
             });
 
             if (common.isDefined(iKey)) {
@@ -140,20 +143,38 @@ export class AppInterceptor implements NestInterceptor {
             resp.info.duration = Date.now() - request.start_ts;
 
             return resp;
-          })
+          }),
+          tap(x =>
+            common.logResponse({
+              cs: this.cs,
+              response: x
+            })
+          )
         )
       : common.isDefined(idemp.resp)
       ? of(idemp.resp).pipe(
           map(x => {
             x.info.duration = Date.now() - request.start_ts;
             return x;
-          })
+          }),
+          tap(x =>
+            common.logResponse({
+              cs: this.cs,
+              response: x
+            })
+          )
         )
       : of(respX).pipe(
           map(x => {
             x.info.duration = Date.now() - request.start_ts;
             return x;
-          })
+          }),
+          tap(x =>
+            common.logResponse({
+              cs: this.cs,
+              response: x
+            })
+          )
         );
   }
 }
