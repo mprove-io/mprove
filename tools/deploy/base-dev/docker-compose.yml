@@ -16,7 +16,7 @@ services:
         - 8124:80 
 
   mprove-dwh-postgres-nodeport-service:
-    image: postgres
+    image: postgres:13.5
     env_file:
       - $PG_ENV_FILE_PATH
     ports:
