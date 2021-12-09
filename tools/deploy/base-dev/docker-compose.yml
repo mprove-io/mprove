@@ -1,5 +1,20 @@
 version: '3.7'
 services:
+  mprove-dwh-clickhouse-nodeport-service:
+    image: yandex/clickhouse-server:latest
+    ports:
+      - 8123:8123
+      - 9000:9000
+    volumes:
+      - type: bind
+        source: $M_DATA_CLICKHOUSE_PATH
+        target: /var/lib/clickhouse
+
+  tabix:
+      image: spoonest/clickhouse-tabix-web-client
+      ports:
+        - 8124:80 
+
   mprove-dwh-postgres-nodeport-service:
     image: postgres
     env_file:
