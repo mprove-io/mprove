@@ -55,6 +55,8 @@ export class EditConnectionController {
     connection.postgres_user = postgresUser;
     connection.postgres_password = postgresPassword;
     connection.bigquery_credentials = bigqueryCredentials;
+    connection.bigquery_project = bigqueryCredentials?.project_id;
+    connection.bigquery_client_email = bigqueryCredentials?.client_email;
     connection.bigquery_query_size_limit_gb = bigqueryQuerySizeLimitGb;
 
     await this.dbService.writeRecords({

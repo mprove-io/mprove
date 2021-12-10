@@ -11,8 +11,7 @@ export class ToBackendEditConnectionRequestPayload {
   connectionId: string;
 
   @IsOptional()
-  @IsString()
-  bigqueryCredentials?: string;
+  bigqueryCredentials?: any;
 
   @IsOptional()
   @IsInt()
