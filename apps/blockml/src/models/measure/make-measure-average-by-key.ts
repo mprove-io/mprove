@@ -27,6 +27,7 @@ export function makeMeasureAverageByKey(item: {
         ' IS NOT NULL THEN ' +
         sqlKeyFinal +
         ' ELSE NULL END) AS FLOAT64), 0.0)';
+
       break;
     }
 
@@ -55,10 +56,11 @@ export function makeMeasureAverageByKey(item: {
         sqlKeyFinal +
         ' ELSE NULL END), 0)';
 
-      sqlSelect = `(${numerator} / ${denominator})`;
       break;
     }
   }
+
+  sqlSelect = `(${numerator} / ${denominator})`;
 
   return sqlSelect;
 }
