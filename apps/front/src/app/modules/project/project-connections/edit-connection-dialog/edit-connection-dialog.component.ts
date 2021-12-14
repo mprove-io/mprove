@@ -21,11 +21,13 @@ export class EditConnectionDialogComponent implements OnInit {
 
   connectionTypes = [
     common.ConnectionTypeEnum.PostgreSQL,
-    common.ConnectionTypeEnum.BigQuery
+    common.ConnectionTypeEnum.BigQuery,
+    common.ConnectionTypeEnum.ClickHouse
   ];
 
-  typePostgreSql = common.ConnectionTypeEnum.PostgreSQL;
-  typeBigquery = common.ConnectionTypeEnum.BigQuery;
+  typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
+  typeBigQuery = common.ConnectionTypeEnum.BigQuery;
+  typeClickHouse = common.ConnectionTypeEnum.ClickHouse;
 
   constructor(
     public ref: DialogRef,
@@ -65,8 +67,10 @@ export class EditConnectionDialogComponent implements OnInit {
         [
           conditionalValidator(
             () =>
-              this.editConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.PostgreSQL,
+              [
+                common.ConnectionTypeEnum.PostgreSQL,
+                common.ConnectionTypeEnum.ClickHouse
+              ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
@@ -76,8 +80,10 @@ export class EditConnectionDialogComponent implements OnInit {
         [
           conditionalValidator(
             () =>
-              this.editConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.PostgreSQL,
+              [
+                common.ConnectionTypeEnum.PostgreSQL,
+                common.ConnectionTypeEnum.ClickHouse
+              ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
@@ -87,8 +93,10 @@ export class EditConnectionDialogComponent implements OnInit {
         [
           conditionalValidator(
             () =>
-              this.editConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.PostgreSQL,
+              [
+                common.ConnectionTypeEnum.PostgreSQL,
+                common.ConnectionTypeEnum.ClickHouse
+              ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
@@ -98,8 +106,10 @@ export class EditConnectionDialogComponent implements OnInit {
         [
           conditionalValidator(
             () =>
-              this.editConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.PostgreSQL,
+              [
+                common.ConnectionTypeEnum.PostgreSQL,
+                common.ConnectionTypeEnum.ClickHouse
+              ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
@@ -109,8 +119,10 @@ export class EditConnectionDialogComponent implements OnInit {
         [
           conditionalValidator(
             () =>
-              this.editConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.PostgreSQL,
+              [
+                common.ConnectionTypeEnum.PostgreSQL,
+                common.ConnectionTypeEnum.ClickHouse
+              ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
@@ -138,7 +150,12 @@ export class EditConnectionDialogComponent implements OnInit {
       this.editConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
-    if (ev !== common.ConnectionTypeEnum.PostgreSQL) {
+    if (
+      [
+        common.ConnectionTypeEnum.PostgreSQL,
+        common.ConnectionTypeEnum.ClickHouse
+      ].indexOf(ev) < 0
+    ) {
       this.editConnectionForm.controls['postgresHost'].reset();
       this.editConnectionForm.controls['postgresPort'].reset();
       this.editConnectionForm.controls['postgresDatabase'].reset();

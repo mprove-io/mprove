@@ -46,7 +46,7 @@
       </ng-template>
     </ng-select>
 
-    <div *ngIf="addConnectionForm.controls['type'].value === typeBigquery">
+    <div *ngIf="addConnectionForm.controls['type'].value === typeBigQuery">
       <textarea
         rows="9"
         data-cy="addConnectionDialogBigqueryCredentialsInput"
@@ -80,7 +80,12 @@
       ></m-validation>
     </div>
 
-    <div *ngIf="addConnectionForm.controls['type'].value === typePostgreSql">
+    <div
+      *ngIf="
+        addConnectionForm.controls['type'].value === typePostgreSQL ||
+        addConnectionForm.controls['type'].value === typeClickHouse
+      "
+    >
       <input
         spellcheck="false"
         data-cy="addConnectionDialogPostgresHostInput"

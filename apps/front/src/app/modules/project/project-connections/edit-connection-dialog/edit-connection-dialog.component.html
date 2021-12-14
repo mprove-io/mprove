@@ -24,7 +24,7 @@
       </span>
     </div>
 
-    <div *ngIf="editConnectionForm.controls['type'].value === typeBigquery">
+    <div *ngIf="editConnectionForm.controls['type'].value === typeBigQuery">
       <textarea
         rows="9"
         data-cy="editConnectionDialogBigqueryCredentialsInput"
@@ -58,7 +58,12 @@
       ></m-validation>
     </div>
 
-    <div *ngIf="editConnectionForm.controls['type'].value === typePostgreSql">
+    <div
+      *ngIf="
+        editConnectionForm.controls['type'].value === typePostgreSQL ||
+        editConnectionForm.controls['type'].value === typeClickHouse
+      "
+    >
       <input
         spellcheck="false"
         data-cy="editConnectionDialogPostgresHostInput"
