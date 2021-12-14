@@ -1,7 +1,9 @@
 version: '3.7'
 services:
   mprove-dwh-clickhouse-nodeport-service:
-    image: yandex/clickhouse-server:21.11
+    image: yandex/clickhouse-server:21.10.5.3
+    env_file:
+      - $CLICKHOUSE_ENV_FILE_PATH    
     ports:
       - 8123:8123
       - 9000:9000

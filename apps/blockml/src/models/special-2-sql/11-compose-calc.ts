@@ -131,7 +131,12 @@ export function composeCalc(item: {
         let index = select.findIndex(e => e === sorter);
         let n = index + 1;
 
-        let eString = desc ? `${n} ${constants.DESC}` : `${n}`;
+        let sortName =
+          model.connection.type === common.ConnectionTypeEnum.ClickHouse
+            ? sorter.split('.').join('_')
+            : n;
+
+        let eString = desc ? `${sortName} ${constants.DESC}` : `${sortName}`;
 
         orderBy.push(eString);
       }

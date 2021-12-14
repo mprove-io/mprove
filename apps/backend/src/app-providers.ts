@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
+import { ClickHouseService } from './services/clickhouse.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
 import { DbService } from './services/db.service';
@@ -42,6 +43,7 @@ export const appProviders = [
   ModelsService,
   MconfigsService,
   PgService,
+  ClickHouseService,
   BigQueryService,
   RunService,
   StructsService,

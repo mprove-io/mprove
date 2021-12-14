@@ -97,6 +97,7 @@
       ></m-validation>
 
       <input
+        *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
         spellcheck="false"
         data-cy="editConnectionDialogPostgresDatabaseInput"
         class="w-80 form-input rounded border-gray3 focus:border-blue3"
@@ -109,6 +110,7 @@
         placeholder="Database"
       />
       <m-validation
+        *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
         [control]="editConnectionForm.controls['postgresDatabase']"
       ></m-validation>
 

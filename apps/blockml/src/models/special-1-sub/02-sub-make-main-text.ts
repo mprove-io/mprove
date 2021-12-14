@@ -52,7 +52,11 @@ export function subMakeMainText(item: {
 
       sqlSelect = fieldName;
 
-      groupMainBy.push(`${i}`); // toString
+      if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
+        groupMainBy.push(fieldName);
+      } else {
+        groupMainBy.push(`${i}`); // toString
+      }
     } else if (field.fieldClass === common.FieldClassEnum.Measure) {
       i++;
 

@@ -23,6 +23,8 @@ export function makeMainText(item: {
     varsSqlSteps
   } = item;
 
+  let connection = model.connection;
+
   let varsInput = common.makeCopy<interfaces.VarsSql>({
     select,
     filters,
@@ -112,7 +114,11 @@ export function makeMainText(item: {
       }
 
       if (selected[element]) {
-        groupMainBy.push(`${i}`); // toString
+        if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
+          groupMainBy.push(`${asName}_${fieldName}`);
+        } else {
+          groupMainBy.push(`${i}`); // toString
+        }
       }
     } else if (field.fieldClass === common.FieldClassEnum.Measure) {
       i++;

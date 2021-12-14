@@ -44,6 +44,7 @@
     "@angular/platform-browser": "11.2.7",
     "@angular/platform-browser-dynamic": "11.2.7",
     "@angular/router": "11.2.7",
+    "@apla/clickhouse": "^1.6.4",
     "@auth0/angular-jwt": "^5.0.2",
     "@circlon/angular-tree-component": "^11.0.4",
     "@datorama/akita": "^6.1.3",

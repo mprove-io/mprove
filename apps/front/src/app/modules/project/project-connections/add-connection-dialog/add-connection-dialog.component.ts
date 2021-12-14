@@ -97,8 +97,9 @@ export class AddConnectionDialogComponent implements OnInit {
           conditionalValidator(
             () =>
               [
-                common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse
+                common.ConnectionTypeEnum.PostgreSQL
+                // ,
+                // common.ConnectionTypeEnum.ClickHouse
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )

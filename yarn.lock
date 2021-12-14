@@ -306,6 +306,11 @@
     "@ant-design/colors" "^5.0.0"
     tslib "^2.0.0"
 
+"@apla/clickhouse@^1.6.4":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@apla/clickhouse/-/clickhouse-1.6.4.tgz#d0afcc2e9b88ad8a4d6053970247a5d26549d797"
+  integrity sha512-zOLL/lOaXrk+l8XS8eDGZfqOy1yKwYQirQtHtyrLxAHlJMNRKBosjK2gVUyCZ94fAIpE8lLUZRxFDid2Vmqxnw==
+
 "@auth0/angular-jwt@^5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@auth0/angular-jwt/-/angular-jwt-5.0.2.tgz#0a23f240e8c6ed37c5c7a354ad79a755a217936e"

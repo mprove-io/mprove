@@ -73,7 +73,10 @@ export function makeWith(item: {
         if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
           sourceTable = '`' + join.view.table + '`';
         } else if (
-          model.connection.type === common.ConnectionTypeEnum.PostgreSQL
+          [
+            common.ConnectionTypeEnum.PostgreSQL,
+            common.ConnectionTypeEnum.ClickHouse
+          ].indexOf(model.connection.type) > -1
         ) {
           sourceTable = join.view.table;
         }
