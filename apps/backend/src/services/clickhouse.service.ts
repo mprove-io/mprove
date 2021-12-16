@@ -1,11 +1,16 @@
+import {
+  ClickHouseClient,
+  ClickHouseClientOptions,
+  ClickHouseConnectionProtocol
+} from '@depyronick/clickhouse-client';
+// const ClickHouse = require('@apla/clickhouse');
+// const { ClickHouse } = require('clickhouse');
 import { Injectable } from '@nestjs/common';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { DbService } from '~backend/services/db.service';
-const ClickHouse = require('@apla/clickhouse');
-// const { ClickHouse } = require('clickhouse');
 
 @Injectable()
 export class ClickHouseService {
@@ -35,13 +40,20 @@ export class ClickHouseService {
       }
     });
 
-    let options: any = {
+    //
+    // depyronick
+    //
+
+    let options: ClickHouseClientOptions = {
+      protocol:
+        connection.is_ssl === common.BoolEnum.TRUE
+          ? ClickHouseConnectionProtocol.HTTPS
+          : ClickHouseConnectionProtocol.HTTP,
       host: connection.postgres_host,
       port: connection.postgres_port,
-      user: connection.postgres_user,
-      password: connection.postgres_password,
-      readonly: true,
-      protocol: connection.is_ssl === common.BoolEnum.TRUE ? 'https:' : 'http:'
+      // database: connection.postgres_database,
+      username: connection.postgres_user,
+      password: connection.postgres_password
     };
 
     // let database = connection.postgres_database;
@@ -51,13 +63,133 @@ export class ClickHouseService {
     //     database: database
     //   };
     // }
-    const ch = new ClickHouse(options);
 
-    ch.querying(query.sql, { dataObjects: true })
-      .then(async (result: any) => {
-        // common.logToConsole('result');
-        // common.logToConsole(result);
+    let clickhouse = new ClickHouseClient(options);
 
+    this.runQ({
+      clickhouse: clickhouse,
+      query: query,
+      postgresQueryJobId: postgresQueryJobId
+    });
+
+    // '@apla/clickhouse' (quering issue)
+
+    // let options: any = {
+    //   host: connection.postgres_host,
+    //   port: connection.postgres_port,
+    //   user: connection.postgres_user,
+    //   password: connection.postgres_password,
+    //   readonly: true,
+    //   protocol: connection.is_ssl === common.BoolEnum.TRUE ? 'https:' : 'http:'
+    // };
+
+    // const ch = new ClickHouse(options);
+
+    // ch.querying(query.sql, { dataObjects: true })
+    //   .then(async (result: any) => {
+    //     // common.logToConsole('result');
+    //     // common.logToConsole(result);
+
+    //     let q = await this.queriesRepository.findOne({
+    //       query_id: query.query_id,
+    //       postgres_query_job_id: postgresQueryJobId
+    //     });
+
+    //     if (common.isDefined(q)) {
+    //       q.status = common.QueryStatusEnum.Completed;
+    //       q.postgres_query_job_id = null;
+    //       q.data = result.data;
+    //       q.last_complete_ts = helper.makeTs();
+    //       q.last_complete_duration = Math.floor(
+    //         (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
+    //       ).toString();
+
+    //       await this.dbService.writeRecords({
+    //         modify: true,
+    //         records: {
+    //           queries: [q]
+    //         }
+    //       });
+    //     }
+    //   })
+    //   .catch(async (e: any) => {
+    //     // common.logToConsole('error');
+    //     // common.logToConsole(e);
+
+    //     let q = await this.queriesRepository.findOne({
+    //       query_id: query.query_id,
+    //       postgres_query_job_id: postgresQueryJobId
+    //     });
+
+    //     if (common.isDefined(q)) {
+    //       q.status = common.QueryStatusEnum.Error;
+    //       q.postgres_query_job_id = null;
+    //       q.last_error_message = e.message
+    //         ? e.message
+    //         : JSON.stringify(e, Object.getOwnPropertyNames(e));
+    //       q.last_error_ts = helper.makeTs();
+
+    //       await this.dbService.writeRecords({
+    //         modify: true,
+    //         records: {
+    //           queries: [q]
+    //         }
+    //       });
+    //     }
+    //   });
+
+    //
+    // TimonKK (json response issue)
+    //
+
+    // let clickhouse = new ClickHouse({
+    //   url:
+    //     connection.is_ssl === common.BoolEnum.TRUE
+    //       ? `https://${connection.postgres_host}`
+    //       : `http://${connection.postgres_host}`,
+    //   port: connection.postgres_port,
+    //   debug: true,
+    //   basicAuth: {
+    //     username: connection.postgres_user,
+    //     password: connection.postgres_password
+    //   },
+    //   isUseGzip: false,
+    //   format: 'json', // "json" || "csv" || "tsv"
+    //   raw: false,
+    //   config: {
+    //     // session_id: 'session_id if neeed',
+    //     // session_timeout: 60,
+    //     output_format_json_quote_64bit_integers: 0,
+    //     // enable_http_compression: 0,
+    //     database: 'c_db'
+    //   }
+    //   // ,
+
+    //   // This object merge with request params (see request lib docs)
+    //   // reqParams: {}
+    // });
+
+    // this.runQ2(clickhouse, query, postgresQueryJobId);
+
+    return query;
+  }
+
+  private async runQ(item: {
+    clickhouse: ClickHouseClient;
+    query: entities.QueryEntity;
+    postgresQueryJobId: string;
+  }) {
+    let { clickhouse, query, postgresQueryJobId } = item;
+
+    let data: any = [];
+
+    clickhouse.query(query.sql).subscribe({
+      next: (row: any) => {
+        // called for each row
+
+        data.push(row);
+      },
+      complete: async () => {
         let q = await this.queriesRepository.findOne({
           query_id: query.query_id,
           postgres_query_job_id: postgresQueryJobId
@@ -66,7 +198,7 @@ export class ClickHouseService {
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Completed;
           q.postgres_query_job_id = null;
-          q.data = result.data;
+          q.data = data;
           q.last_complete_ts = helper.makeTs();
           q.last_complete_duration = Math.floor(
             (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
@@ -79,8 +211,8 @@ export class ClickHouseService {
             }
           });
         }
-      })
-      .catch(async (e: any) => {
+      },
+      error: async (e: any) => {
         // common.logToConsole('error');
         // common.logToConsole(e);
 
@@ -104,81 +236,63 @@ export class ClickHouseService {
             }
           });
         }
-      });
-
-    // let options: ClickHouseClientOptions = {
-    //   host: connection.postgres_host,
-    //   port: connection.postgres_port,
-    //   database: connection.postgres_database,
-    //   username: connection.postgres_user,
-    //   password: connection.postgres_password
-    // };
-
-    // let clickHouse = new ClickHouseClient(options);
-
-    // clickHouse
-    //   .query(query.sql)
-    //   .pipe(
-    //     tap(async data => {
-    //       let q = await this.queriesRepository.findOne({
-    //         query_id: query.query_id,
-    //         postgres_query_job_id: postgresQueryJobId
-    //       });
-
-    //       if (common.isDefined(q)) {
-    //         q.status = common.QueryStatusEnum.Completed;
-    //         q.postgres_query_job_id = null;
-    //         q.data = data;
-    //         q.last_complete_ts = helper.makeTs();
-    //         q.last_complete_duration = Math.floor(
-    //           (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
-    //         ).toString();
-
-    //         await this.dbService.writeRecords({
-    //           modify: true,
-    //           records: {
-    //             queries: [q]
-    //           }
-    //         });
-    //       }
-    //     })
-    //   )
-    //   .subscribe({
-    //     // next: row => {
-    //     //   // called for each row
-    //     // },
-    //     // complete: async () => {
-    //     //   // called when stream is completed
-    //     // },
-    //     error: async e => {
-    //       // called when an error occurred during query
-
-    //       // common.logToConsole('error');
-    //       // common.logToConsole(e);
-
-    //       let q = await this.queriesRepository.findOne({
-    //         query_id: query.query_id,
-    //         postgres_query_job_id: postgresQueryJobId
-    //       });
-
-    //       if (common.isDefined(q)) {
-    //         q.status = common.QueryStatusEnum.Error;
-    //         q.postgres_query_job_id = null;
-    //         q.last_error_message = e.message
-    //           ? e.message
-    //           : JSON.stringify(e, Object.getOwnPropertyNames(e));
-    //         q.last_error_ts = helper.makeTs();
-
-    //         await this.dbService.writeRecords({
-    //           modify: true,
-    //           records: {
-    //             queries: [q]
-    //           }
-    //         });
-    //       }
-    //     }
-    //   });
-
-    return query;
+      }
+    });
   }
+
+  // private async runQ2(clickhouse: any, query: any, postgresQueryJobId: any) {
+  //   let data = await clickhouse
+  //     .query(query.sql)
+  //     .toPromise()
+  //     .catch(async (e: any) => {
+  //       common.logToConsole('error');
+  //       common.logToConsole(e);
+
+  //       let q = await this.queriesRepository.findOne({
+  //         query_id: query.query_id,
+  //         postgres_query_job_id: postgresQueryJobId
+  //       });
+
+  //       if (common.isDefined(q)) {
+  //         q.status = common.QueryStatusEnum.Error;
+  //         q.postgres_query_job_id = null;
+  //         q.last_error_message = e.message
+  //           ? e.message
+  //           : JSON.stringify(e, Object.getOwnPropertyNames(e));
+  //         q.last_error_ts = helper.makeTs();
+
+  //         await this.dbService.writeRecords({
+  //           modify: true,
+  //           records: {
+  //             queries: [q]
+  //           }
+  //         });
+  //       }
+  //     });
+
+  //   common.logToConsole('data');
+  //   common.logToConsole(data);
+
+  //   let q = await this.queriesRepository.findOne({
+  //     query_id: query.query_id,
+  //     postgres_query_job_id: postgresQueryJobId
+  //   });
+
+  //   if (common.isDefined(q)) {
+  //     q.status = common.QueryStatusEnum.Completed;
+  //     q.postgres_query_job_id = null;
+  //     q.data = data;
+  //     q.last_complete_ts = helper.makeTs();
+  //     q.last_complete_duration = Math.floor(
+  //       (Number(q.last_complete_ts) - Number(q.last_run_ts)) / 1000
+  //     ).toString();
+
+  //     await this.dbService.writeRecords({
+  //       modify: true,
+  //       records: {
+  //         queries: [q]
+  //       }
+  //     });
+  //   }
+  // }
 }

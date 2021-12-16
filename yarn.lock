@@ -306,11 +306,6 @@
     "@ant-design/colors" "^5.0.0"
     tslib "^2.0.0"
 
-"@apla/clickhouse@^1.6.4":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@apla/clickhouse/-/clickhouse-1.6.4.tgz#d0afcc2e9b88ad8a4d6053970247a5d26549d797"
-  integrity sha512-zOLL/lOaXrk+l8XS8eDGZfqOy1yKwYQirQtHtyrLxAHlJMNRKBosjK2gVUyCZ94fAIpE8lLUZRxFDid2Vmqxnw==
-
 "@auth0/angular-jwt@^5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@auth0/angular-jwt/-/angular-jwt-5.0.2.tgz#0a23f240e8c6ed37c5c7a354ad79a755a217936e"
@@ -1401,6 +1396,17 @@
   integrity sha512-bruAfUxwLh/lYVwe8iErNwhTr1/Qf4B5VitR+RgeMNVzWx+9/N15+5/9hFVT5yCYMr5Iw8XBFG3cAb+tBm3NVg==
   dependencies:
     schematics-utilities "^1.1.1"
+
+"@depyronick/clickhouse-client@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@depyronick/clickhouse-client/-/clickhouse-client-1.0.5.tgz#55d6eb52be85605078c6519bdd427f8383d214f4"
+  integrity sha512-tIP3Di8+sTOZ+qpuA60dc8asa5jJYEP6ZUxytfn66G/lEpRV6ZpOHamlXjn6NMjBHbS6akEsuRFbybisPZW1cA==
+  dependencies:
+    axios "^0.24.0"
+    reflect-metadata "^0.1.13"
+    rimraf "^3.0.2"
+    rxjs "^7.2.0"
+    stream-json "^1.7.3"
 
 "@discoveryjs/json-ext@0.5.2":
   version "0.5.2"
@@ -3784,6 +3790,13 @@ axios@0.21.1:
   integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
+
+axios@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
+  integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
+  dependencies:
+    follow-redirects "^1.14.4"
 
 axobject-query@^2.2.0:
   version "2.2.0"
@@ -7485,6 +7498,11 @@ follow-redirects@^1.0.0, follow-redirects@^1.10.0:
   version "1.13.3"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.3.tgz#e5598ad50174c1bc4e872301e82ac2cd97f90267"
   integrity sha512-DUgl6+HDzB0iEptNQEXLx/KhTmDb8tZUHSeLqpnjpknR70H0nC2t9N73BK6fN4hOvJ84pKlIQVQ4k5FFlBedKA==
+
+follow-redirects@^1.14.4:
+  version "1.14.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.6.tgz#8cfb281bbc035b3c067d6cd975b0f6ade6e855cd"
+  integrity sha512-fhUl5EwSJbbl8AR+uYL2KQDxLkdSjZGR36xy46AO7cOMTrCMON6Sa28FmAnC2tRTDbd/Uuzz3aJBv7EBN7JH8A==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -13904,6 +13922,13 @@ rxjs@^6.3.3, rxjs@^6.4.0, rxjs@^6.5.4, rxjs@^6.6.0, rxjs@~6.6.3:
   dependencies:
     tslib "^1.9.0"
 
+rxjs@^7.2.0:
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.4.0.tgz#a12a44d7eebf016f5ff2441b87f28c9a51cebc68"
+  integrity sha512-7SQDi7xeTMCJpqViXh8gL/lebcwlp3d831F05+9B44A4B0WfsEwUQHR64gsH1kvJ+Ep/J9K2+n1hVl1CsGN23w==
+  dependencies:
+    tslib "~2.1.0"
+
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1, safe-buffer@~5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
@@ -14649,6 +14674,11 @@ stream-browserify@^2.0.1:
     inherits "~2.0.1"
     readable-stream "^2.0.2"
 
+stream-chain@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/stream-chain/-/stream-chain-2.2.4.tgz#2e5e9858e00d25ebaf7e4339e8328ddcab5facad"
+  integrity sha512-9lsl3YM53V5N/I1C2uJtc3Kavyi3kNYN83VkKb/bMWRk7D9imiFyUPYa0PoZbLohSVOX1mYE9YsmwObZUsth6Q==
+
 stream-each@^1.1.0:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/stream-each/-/stream-each-1.2.3.tgz#ebe27a0c389b04fbcc233642952e10731afa9bae"
@@ -14674,6 +14704,13 @@ stream-http@^2.7.2:
     readable-stream "^2.3.6"
     to-arraybuffer "^1.0.0"
     xtend "^4.0.0"
+
+stream-json@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/stream-json/-/stream-json-1.7.3.tgz#8a2abe8b51a2e84ffbc8d09bca9d01dc70facae3"
+  integrity sha512-Y6dXn9KKWSwxOqnvHGcdZy1PK+J+7alBwHCeU3W9oRqm4ilLRA0XSPmd1tWwhg7tv9EIxJTMWh7KF15tYelKJg==
+  dependencies:
+    stream-chain "^2.2.4"
 
 stream-shift@^1.0.0:
   version "1.0.1"
@@ -15536,7 +15573,7 @@ tsconfig-paths@^3.4.0, tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
-tslib@2.1.0, tslib@>=1.9.0, tslib@^2.0.0, tslib@^2.0.1:
+tslib@2.1.0, tslib@>=1.9.0, tslib@^2.0.0, tslib@^2.0.1, tslib@~2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==

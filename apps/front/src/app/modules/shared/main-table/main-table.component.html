@@ -50,13 +50,6 @@
           </div>
 
           <button
-            class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 focus:outline-none invisible group-hover:visible"
-            (click)="remove(column.id)"
-          >
-            <m-delete-icon></m-delete-icon>
-          </button>
-
-          <button
             class="h-8 w-8 flex items-center justify-center rounded focus:outline-none invisible group-hover:visible"
             [ngClass]="{
               'cursor-default text-gray-400':
@@ -92,6 +85,13 @@
             "
           >
             <m-arrow-right-icon></m-arrow-right-icon>
+          </button>
+
+          <button
+            class="h-8 w-8 flex items-center justify-center rounded hover:bg-blue2 focus:outline-none invisible group-hover:visible"
+            (click)="remove(column.id)"
+          >
+            <m-delete-icon></m-delete-icon>
           </button>
         </div>
 
