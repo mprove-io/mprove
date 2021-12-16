@@ -10,7 +10,10 @@ services:
     volumes:
       - type: bind
         source: $M_DATA_CLICKHOUSE_PATH
-        target: /var/lib/clickhouse
+        target: /var/lib/clickhouse      
+      - type: bind
+        source: $M_DATA_CLICKHOUSE_LOG_PATH
+        target: /var/log/clickhouse-server
 
   tabix:
       image: spoonest/clickhouse-tabix-web-client
