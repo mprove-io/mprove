@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsEnum,
   IsInt,
   IsObject,
@@ -132,6 +133,10 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   @IsOptional()
   @IsString()
   postgresPassword?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isSSL: boolean;
 }
 
 export class ToBackendSeedRecordsRequestPayload {

@@ -28,6 +28,7 @@
             <tr class="text-sm h-12">
               <th class="text-left">Name</th>
               <th class="text-left">Type</th>
+              <th class="text-left">SSL (https)</th>
               <th class="text-left">Host</th>
               <th class="text-left">Port</th>
               <th class="text-left">Database</th>
@@ -57,6 +58,8 @@
               <td class="w-48">{{ connection.connectionId }}</td>
 
               <td class="w-48">{{ connection.type }} </td>
+
+              <td class="w-48">{{ connection.isSSL }} </td>
 
               <td data-cy="projectConnectionsHost" class="w-48"
                 >{{ connection.postgresHost }}

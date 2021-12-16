@@ -13,6 +13,7 @@ export function makeConnection(item: {
   postgresPassword: string;
   bigqueryCredentials: any;
   bigqueryQuerySizeLimitGb: number;
+  isSSL: boolean;
 }) {
   let connectionEntity: entities.ConnectionEntity = {
     project_id: item.projectId,
@@ -33,6 +34,7 @@ export function makeConnection(item: {
     postgres_database: item.postgresDatabase,
     postgres_user: item.postgresUser,
     postgres_password: item.postgresPassword,
+    is_ssl: common.booleanToEnum(item.isSSL),
     server_ts: undefined
   };
   return connectionEntity;

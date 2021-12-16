@@ -44,6 +44,9 @@ export class ConnectionEntity {
   @Column({ type: constants.VARCHAR, nullable: true })
   postgres_password: string;
 
+  @Column({ type: constants.VARCHAR, nullable: true })
+  is_ssl: common.BoolEnum;
+
   //
 
   @Column({ type: constants.BIGINT })

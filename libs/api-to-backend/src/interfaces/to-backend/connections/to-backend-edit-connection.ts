@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -36,6 +42,10 @@ export class ToBackendEditConnectionRequestPayload {
   @IsOptional()
   @IsString()
   postgresPassword?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isSSL: boolean;
 }
 
 export class ToBackendEditConnectionRequest extends ToBackendRequest {

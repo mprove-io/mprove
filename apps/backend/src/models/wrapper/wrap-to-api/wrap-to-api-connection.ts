@@ -15,6 +15,7 @@ export function wrapToApiConnection(
     postgresPort: x.postgres_port,
     postgresDatabase: x.postgres_database,
     postgresUser: x.postgres_user,
+    isSSL: common.enumToBoolean(x.is_ssl),
     serverTs: Number(x.server_ts)
   };
 }

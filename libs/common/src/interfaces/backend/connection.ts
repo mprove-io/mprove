@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class Connection {
@@ -31,6 +31,9 @@ export class Connection {
 
   @IsString()
   postgresUser: string;
+
+  @IsBoolean()
+  isSSL: boolean;
 
   @IsInt()
   serverTs: number;

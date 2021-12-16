@@ -40,16 +40,17 @@ export class ClickHouseService {
       port: connection.postgres_port,
       user: connection.postgres_user,
       password: connection.postgres_password,
-      readonly: true
+      readonly: true,
+      protocol: connection.is_ssl === common.BoolEnum.TRUE ? 'https:' : 'http:'
     };
 
-    let database = connection.postgres_database;
+    // let database = connection.postgres_database;
 
-    if (common.isDefined(database) && database.length > 0) {
-      options.queryOptions = {
-        database: database
-      };
-    }
+    // if (common.isDefined(database) && database.length > 0) {
+    //   options.queryOptions = {
+    //     database: database
+    //   };
+    // }
     const ch = new ClickHouse(options);
 
     ch.querying(query.sql, { dataObjects: true })

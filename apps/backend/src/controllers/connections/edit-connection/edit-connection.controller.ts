@@ -1,5 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
@@ -32,7 +33,8 @@ export class EditConnectionController {
       postgresPort,
       postgresDatabase,
       postgresUser,
-      postgresPassword
+      postgresPassword,
+      isSSL
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -58,6 +60,7 @@ export class EditConnectionController {
     connection.bigquery_project = bigqueryCredentials?.project_id;
     connection.bigquery_client_email = bigqueryCredentials?.client_email;
     connection.bigquery_query_size_limit_gb = bigqueryQuerySizeLimitGb;
+    connection.is_ssl = common.booleanToEnum(isSSL);
 
     await this.dbService.writeRecords({
       modify: true,

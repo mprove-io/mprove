@@ -19,6 +19,8 @@ import { common } from '~front/barrels/common';
 export class AddConnectionDialogComponent implements OnInit {
   addConnectionForm: FormGroup;
 
+  isSSL = true;
+
   connectionTypes = [
     common.ConnectionTypeEnum.PostgreSQL,
     common.ConnectionTypeEnum.BigQuery,
@@ -168,6 +170,10 @@ export class AddConnectionDialogComponent implements OnInit {
     }
   }
 
+  toggleSSL($event: any) {
+    this.isSSL = $event;
+  }
+
   add() {
     this.addConnectionForm.markAllAsTouched();
 
@@ -197,7 +203,8 @@ export class AddConnectionDialogComponent implements OnInit {
         : undefined,
       postgresDatabase: this.addConnectionForm.value.postgresDatabase,
       postgresUser: this.addConnectionForm.value.postgresUser,
-      postgresPassword: this.addConnectionForm.value.postgresPassword
+      postgresPassword: this.addConnectionForm.value.postgresPassword,
+      isSSL: this.isSSL
     };
 
     let apiService: ApiService = this.ref.data.apiService;

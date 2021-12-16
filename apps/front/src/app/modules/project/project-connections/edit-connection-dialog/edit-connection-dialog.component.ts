@@ -19,6 +19,8 @@ import { common } from '~front/barrels/common';
 export class EditConnectionDialogComponent implements OnInit {
   editConnectionForm: FormGroup;
 
+  isSSL = true;
+
   connectionTypes = [
     common.ConnectionTypeEnum.PostgreSQL,
     common.ConnectionTypeEnum.BigQuery,
@@ -36,6 +38,8 @@ export class EditConnectionDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.isSSL = this.ref.data.connection.isSSL === true ? true : false;
+
     this.editConnectionForm = this.fb.group({
       connectionId: [this.ref.data.connection.connectionId],
       type: [this.ref.data.connection.type],
@@ -165,6 +169,10 @@ export class EditConnectionDialogComponent implements OnInit {
     }
   }
 
+  toggleSSL($event: any) {
+    this.isSSL = $event;
+  }
+
   save() {
     this.editConnectionForm.markAllAsTouched();
 
@@ -193,7 +201,8 @@ export class EditConnectionDialogComponent implements OnInit {
         : undefined,
       postgresDatabase: this.editConnectionForm.value.postgresDatabase,
       postgresUser: this.editConnectionForm.value.postgresUser,
-      postgresPassword: this.editConnectionForm.value.postgresPassword
+      postgresPassword: this.editConnectionForm.value.postgresPassword,
+      isSSL: this.isSSL
     };
 
     let apiService: ApiService = this.ref.data.apiService;

@@ -34,7 +34,8 @@ export class CreateConnectionController {
       postgresPort,
       postgresDatabase,
       postgresUser,
-      postgresPassword
+      postgresPassword,
+      isSSL
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -61,7 +62,8 @@ export class CreateConnectionController {
       postgresUser: postgresUser,
       postgresPassword: postgresPassword,
       bigqueryCredentials: bigqueryCredentials,
-      bigqueryQuerySizeLimitGb: bigqueryQuerySizeLimitGb
+      bigqueryQuerySizeLimitGb: bigqueryQuerySizeLimitGb,
+      isSSL: isSSL
     });
 
     await this.dbService.writeRecords({

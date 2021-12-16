@@ -136,7 +136,8 @@ export class SeedRecordsController {
           postgresUser: x.postgresUser,
           postgresPassword: x.postgresPassword,
           bigqueryCredentials: x.bigqueryCredentials,
-          bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb
+          bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,
+          isSSL: x.isSSL
         });
 
         connections.push(newConnection);
