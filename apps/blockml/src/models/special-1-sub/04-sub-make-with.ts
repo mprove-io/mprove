@@ -22,7 +22,12 @@ export function subMakeWith(item: {
   if (common.isDefined(view.table)) {
     if (connection.type === common.ConnectionTypeEnum.BigQuery) {
       table = '`' + view.table + '`';
-    } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
+    } else if (
+      [
+        common.ConnectionTypeEnum.PostgreSQL,
+        common.ConnectionTypeEnum.ClickHouse
+      ].indexOf(connection.type) > -1
+    ) {
       table = view.table;
     }
   } else {

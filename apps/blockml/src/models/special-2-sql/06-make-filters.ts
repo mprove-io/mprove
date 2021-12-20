@@ -110,7 +110,10 @@ export function makeFilters(item: {
       if (model.connection.type === common.ConnectionTypeEnum.BigQuery) {
         proc = `${asName}_${fieldName}`;
       } else if (
-        model.connection.type === common.ConnectionTypeEnum.PostgreSQL
+        [
+          common.ConnectionTypeEnum.PostgreSQL,
+          common.ConnectionTypeEnum.ClickHouse
+        ].indexOf(model.connection.type) > -1
       ) {
         proc = processedFields[element];
       }
