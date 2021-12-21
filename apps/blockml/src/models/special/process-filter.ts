@@ -499,6 +499,8 @@ export function processFilter(item: {
           condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS STRING)) = 0)`;
         } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
           condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS TEXT)) = 0)`;
+        } else if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
+          condition = `(${proc} IS NULL OR LENGTH(CAST(${proc} AS String)) = 0)`;
         }
 
         if (not) {
