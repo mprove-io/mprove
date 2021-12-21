@@ -18,6 +18,11 @@ export function makeTsFromSourceYYYYMMDD(item: {
       ts = `TO_DATE(${sql}::VARCHAR, 'YYYYMMDD')::TIMESTAMP`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      ts = `CAST(parseDateTimeBestEffort(${sql}) as TIMESTAMP)`;
+      break;
+    }
   }
 
   return ts;

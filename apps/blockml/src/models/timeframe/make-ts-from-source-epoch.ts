@@ -18,6 +18,11 @@ export function makeTsFromSourceEpoch(item: {
       ts = `TIMESTAMP 'epoch' + (${sql}) * INTERVAL '1 second'`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      ts = `CAST(${sql} as TIMESTAMP)`;
+      break;
+    }
   }
 
   return ts;
