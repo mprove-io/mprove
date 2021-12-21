@@ -31,6 +31,17 @@ export function makeTimeframeDayOfWeekIndex(item: {
       END`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql =
+        weekStart === common.ProjectWeekStartEnum.Sunday
+          ? `toDayOfWeek(${sqlTimestamp}) + 1`
+          : `CASE
+      WHEN toDayOfWeek(${sqlTimestamp}) + 1 = 1 THEN 7
+      ELSE toDayOfWeek(${sqlTimestamp}) + 1 - 1
+      END`;
+      break;
+    }
   }
 
   return sql;

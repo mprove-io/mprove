@@ -21,6 +21,11 @@ export function makeTimeframeHourNum(item: {
       sql = `TO_CHAR(DATE_TRUNC('hour', DATE_TRUNC('hour', ${sqlTimestamp} - (DATE_PART('hour', ${sqlTimestamp})::INT % ${num} || 'HOURS')::INTERVAL)), 'YYYY-MM-DD HH24')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `formatDateTime(toStartOfHour(toDateTime(subtractHours(toDateTime(${sqlTimestamp}), toHour(toDateTime(${sqlTimestamp})) % ${num}))), '%Y-%m-%d %H')`;
+      break;
+    }
   }
 
   return sql;

@@ -18,6 +18,11 @@ export function makeTimeframeDayOfYear(item: {
       sql = `EXTRACT(DOY FROM ${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `toDayOfYear(${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

@@ -18,6 +18,11 @@ export function makeTimeframeDate(item: {
       sql = `SUBSTRING((${sqlTimestamp})::TEXT FROM 1 FOR 10)`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `toDate(${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

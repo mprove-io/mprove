@@ -18,6 +18,11 @@ export function makeTimeframeDayOfMonth(item: {
       sql = `EXTRACT(DAY FROM ${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `toDayOfMonth(${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

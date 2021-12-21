@@ -33,7 +33,14 @@ END`;
 
     case common.ConnectionTypeEnum.PostgreSQL: {
       sql = `TO_CHAR(DATE_TRUNC('week', ${sqlTimestamp}), 'YYYY-MM-DD')`;
+      break;
+    }
 
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql =
+        weekStart === common.ProjectWeekStartEnum.Sunday
+          ? `toString(toDate(toStartOfWeek(${sqlTimestamp}, 6)))`
+          : `toString(toDate(toStartOfWeek(${sqlTimestamp}, 3)))`;
       break;
     }
   }

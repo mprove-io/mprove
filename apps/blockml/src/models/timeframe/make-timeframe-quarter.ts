@@ -18,6 +18,11 @@ export function makeTimeframeQuarter(item: {
       sql = `TO_CHAR(DATE_TRUNC('month', DATE_TRUNC('quarter', ${sqlTimestamp})), 'YYYY-MM')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `formatDateTime(toStartOfQuarter(${sqlTimestamp}), '%Y-%m')`;
+      break;
+    }
   }
 
   return sql;

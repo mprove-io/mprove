@@ -18,6 +18,11 @@ export function makeTimeframeMinute(item: {
       sql = `TO_CHAR(DATE_TRUNC('minute', ${sqlTimestamp}), 'YYYY-MM-DD HH24:MI')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `formatDateTime(${sqlTimestamp}, '%Y-%m-%d %H:%M')`;
+      break;
+    }
   }
 
   return sql;

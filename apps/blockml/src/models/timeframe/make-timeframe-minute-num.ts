@@ -19,6 +19,11 @@ export function makeTimeframeMinuteNum(item: {
       sql = `TO_CHAR(DATE_TRUNC('minute', DATE_TRUNC('minute', (timestamp 'epoch' + (DATE_PART('epoch', ${sqlTimestamp})::bigint - (DATE_PART('epoch', ${sqlTimestamp})::bigint % (60*${num}))) * interval '1 second'))), 'YYYY-MM-DD HH24:MI')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `formatDateTime(toStartOfMinute(toDateTime(toDateTime(toUnixTimestamp(${sqlTimestamp} + interval 0 second) - (toUnixTimestamp(${sqlTimestamp} + interval 0 second) % (60*${num}))))), '%Y-%m-%d %H:%M')`;
+      break;
+    }
   }
 
   return sql;

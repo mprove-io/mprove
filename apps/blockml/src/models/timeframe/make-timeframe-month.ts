@@ -18,6 +18,11 @@ export function makeTimeframeMonth(item: {
       sql = `TO_CHAR(DATE_TRUNC('month', ${sqlTimestamp}), 'YYYY-MM')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `formatDateTime(${sqlTimestamp}, '%Y-%m')`;
+      break;
+    }
   }
 
   return sql;

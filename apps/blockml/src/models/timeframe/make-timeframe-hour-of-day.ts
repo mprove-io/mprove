@@ -18,6 +18,11 @@ export function makeTimeframeHourOfDay(item: {
       sql = `EXTRACT(HOUR FROM ${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `toHour(toDateTime(${sqlTimestamp}))`;
+      break;
+    }
   }
 
   return sql;

@@ -18,6 +18,11 @@ export function makeTimeframeTimeOfDay(item: {
       sql = `TO_CHAR(${sqlTimestamp}, 'HH24:MI')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `formatDateTime(${sqlTimestamp}, '%H:%M')`;
+      break;
+    }
   }
 
   return sql;

@@ -18,6 +18,11 @@ export function makeTimeframeYear(item: {
       sql = `DATE_PART('year', ${sqlTimestamp})::INTEGER`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `toYear(${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

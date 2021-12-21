@@ -30,6 +30,14 @@ END`;
       sql = `EXTRACT(WEEK from ${sqlTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql =
+        weekStart === common.ProjectWeekStartEnum.Sunday
+          ? `toWeek(${sqlTimestamp}, 6)`
+          : `toWeek(${sqlTimestamp}, 3)`;
+      break;
+    }
   }
 
   return sql;

@@ -18,6 +18,11 @@ export function makeTimeframeMonthNum(item: {
       sql = `DATE_PART('month', ${sqlTimestamp})::INTEGER`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `toMonth(${sqlTimestamp})`;
+      break;
+    }
   }
 
   return sql;

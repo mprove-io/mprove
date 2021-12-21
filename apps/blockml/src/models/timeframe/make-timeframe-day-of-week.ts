@@ -18,6 +18,11 @@ export function makeTimeframeDayOfWeek(item: {
       sql = `TO_CHAR(${sqlTimestamp}, 'Day')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `arrayElement(array('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'), toDayOfWeek(${sqlTimestamp}))`;
+      break;
+    }
   }
 
   return sql;

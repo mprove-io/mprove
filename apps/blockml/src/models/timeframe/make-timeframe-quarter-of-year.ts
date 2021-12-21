@@ -18,6 +18,11 @@ export function makeTimeframeQuarterOfYear(item: {
       sql = `CAST('Q' AS VARCHAR) || CAST(EXTRACT(QUARTER FROM ${sqlTimestamp})::integer AS VARCHAR)`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `CONCAT(toString('Q'), toString(toQuarter(${sqlTimestamp})))`;
+      break;
+    }
   }
 
   return sql;

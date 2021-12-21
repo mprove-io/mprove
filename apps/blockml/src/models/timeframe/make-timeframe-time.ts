@@ -18,6 +18,11 @@ export function makeTimeframeTime(item: {
       sql = `TO_CHAR(${sqlTimestamp}, 'YYYY-MM-DD HH24:MI:SS')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = `CAST(${sqlTimestamp} AS String)`;
+      break;
+    }
   }
 
   return sql;
