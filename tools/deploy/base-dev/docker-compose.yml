@@ -1,19 +1,19 @@
 version: '3.7'
 services:
-  mprove-dwh-clickhouse-nodeport-service:
-    image: yandex/clickhouse-server:21.11.7.9
-    env_file:
-      - $CLICKHOUSE_ENV_FILE_PATH    
-    ports:
-      - 8123:8123
-      - 9000:9000
-    volumes:
-      - type: bind
-        source: $M_DATA_CLICKHOUSE_PATH
-        target: /var/lib/clickhouse      
-      - type: bind
-        source: $M_DATA_CLICKHOUSE_LOG_PATH
-        target: /var/log/clickhouse-server
+  # mprove-dwh-clickhouse-nodeport-service:
+  #   image: yandex/clickhouse-server:21.11.7.9
+  #   env_file:
+  #     - $CLICKHOUSE_ENV_FILE_PATH    
+  #   ports:
+  #     - 8123:8123
+  #     - 9000:9000
+  #   volumes:
+  #     - type: bind
+  #       source: $M_DATA_CLICKHOUSE_PATH
+  #       target: /var/lib/clickhouse      
+  #     - type: bind
+  #       source: $M_DATA_CLICKHOUSE_LOG_PATH
+  #       target: /var/log/clickhouse-server
 
   tabix:
       image: spoonest/clickhouse-tabix-web-client

@@ -30,7 +30,16 @@ export function transformYesNoDimensions<T extends types.vmType>(
         field.fieldClass === common.FieldClassEnum.Dimension &&
         field.type === common.FieldTypeEnum.YesnoIsTrue
       ) {
-        field.sql = `CASE WHEN (${field.sql}) IS TRUE THEN 'Yes' ELSE 'No' END`;
+        if (
+          [
+            common.ConnectionTypeEnum.BigQuery,
+            common.ConnectionTypeEnum.PostgreSQL
+          ].indexOf(x.connection.type) > -1
+        ) {
+          field.sql = `CASE WHEN (${field.sql}) IS TRUE THEN 'Yes' ELSE 'No' END`;
+        } else if (x.connection.type === common.ConnectionTypeEnum.ClickHouse) {
+          field.sql = `CASE WHEN (${field.sql}) THEN 'Yes' ELSE 'No' END`;
+        }
       }
     });
   });
