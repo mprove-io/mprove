@@ -49,6 +49,21 @@ export function makeTimestampCloseBetween(item: {
         : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = minute
+        ? `addMinutes(${open}, 1)`
+        : hour
+        ? `addHours(${open}, 1)`
+        : day
+        ? `addDays(${open}, 1)`
+        : month
+        ? `addMonth(${open}, 1)`
+        : year
+        ? `addYear(${open}, 1)`
+        : undefined;
+      break;
+    }
   }
 
   return sql;

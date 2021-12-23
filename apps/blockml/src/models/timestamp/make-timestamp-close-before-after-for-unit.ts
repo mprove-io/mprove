@@ -51,6 +51,26 @@ export function makeTimestampCloseBeforeAfterForUnit(item: {
           : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql =
+        forUnit === enums.FractionUnitEnum.Minutes
+          ? `addMinutes(${open}, ${sInteger})`
+          : forUnit === enums.FractionUnitEnum.Hours
+          ? `addHours(${open}, ${sInteger})`
+          : forUnit === enums.FractionUnitEnum.Days
+          ? `addDays(${open}, ${sInteger})`
+          : forUnit === enums.FractionUnitEnum.Weeks
+          ? `addDays(${open}, ${sInteger * 7})`
+          : forUnit === enums.FractionUnitEnum.Months
+          ? `addMonths(${open}, ${sInteger})`
+          : forUnit === enums.FractionUnitEnum.Quarters
+          ? `addMonths(${open}, ${sInteger * 3})`
+          : forUnit === enums.FractionUnitEnum.Years
+          ? `addYears(${open}, ${sInteger})`
+          : undefined;
+      break;
+    }
   }
 
   return sql;

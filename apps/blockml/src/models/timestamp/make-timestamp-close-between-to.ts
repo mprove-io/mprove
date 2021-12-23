@@ -48,6 +48,21 @@ export function makeTimestampCloseBetweenTo(item: {
         : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = toMinute
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00')`
+        : toHour
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
+        : toDay
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay}')`
+        : toMonth
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-01')`
+        : toYear
+        ? `parseDateTimeBestEffort('${toYear}-01-01')`
+        : undefined;
+      break;
+    }
   }
 
   return sql;

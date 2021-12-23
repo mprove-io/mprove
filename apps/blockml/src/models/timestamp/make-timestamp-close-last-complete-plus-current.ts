@@ -66,6 +66,26 @@ export function makeTimestampCloseLastCompletePlusCurrent(item: {
           : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql =
+        unit === enums.FractionUnitEnum.Minutes
+          ? `addMinutes(${currentMinuteTs}, 1)`
+          : unit === enums.FractionUnitEnum.Hours
+          ? `addHours(${currentHourTs}, 1)`
+          : unit === enums.FractionUnitEnum.Days
+          ? `addDays(${currentDateTs}, 1)`
+          : unit === enums.FractionUnitEnum.Weeks
+          ? `addDays(${currentWeekStartTs}, ${1 * 7})`
+          : unit === enums.FractionUnitEnum.Months
+          ? `addMonths(${currentMonthTs}, 1)`
+          : unit === enums.FractionUnitEnum.Quarters
+          ? `addMonths(${currentQuarterTs}, ${1 * 3})`
+          : unit === enums.FractionUnitEnum.Years
+          ? `addYears(${currentYearTs}, 1)`
+          : undefined;
+      break;
+    }
   }
 
   return sql;
