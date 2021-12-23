@@ -58,6 +58,24 @@ export function makeTimestampsCurrent(item: {
       currentYearTimestamp = `DATE_TRUNC('year', ${currentTimestamp})`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      currentTimestamp = timezone === common.UTC ? 'now()' : `now(${timezone})`;
+
+      currentMinuteTimestamp = `toStartOfMinute(${currentTimestamp})`;
+      currentHourTimestamp = `toStartOfHour(${currentTimestamp})`;
+      currentDateTimestamp = `toStartOfDay(${currentTimestamp})`;
+
+      currentWeekStartTimestamp =
+        weekStart === common.ProjectWeekStartEnum.Sunday
+          ? `toStartOfWeek(${currentTimestamp}, 6)`
+          : `toStartOfWeek(${currentTimestamp}, 3)`;
+
+      currentMonthTimestamp = `toStartOfMonth(${currentTimestamp})`;
+      currentQuarterTimestamp = `toStartOfQuarter(${currentTimestamp})`;
+      currentYearTimestamp = `toStartOfYear(${currentTimestamp})`;
+      break;
+    }
   }
 
   return {
