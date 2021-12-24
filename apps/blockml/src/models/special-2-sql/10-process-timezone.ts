@@ -39,6 +39,11 @@ export function processTimezone(item: {
             two = `TIMEZONE('${timezone}', ${two}::TIMESTAMPTZ)`;
             break;
           }
+
+          case common.ConnectionTypeEnum.ClickHouse: {
+            two = `toTimezone(${two}, '${timezone}')`;
+            break;
+          }
         }
       }
       x = one + two + three;
