@@ -58,9 +58,9 @@ export function makeTimestampCloseBetween(item: {
         : day
         ? `addDays(${open}, 1)`
         : month
-        ? `addMonth(${open}, 1)`
+        ? `addMonths(${open}, 1)`
         : year
-        ? `addYear(${open}, 1)`
+        ? `addYears(${open}, 1)`
         : undefined;
       break;
     }
