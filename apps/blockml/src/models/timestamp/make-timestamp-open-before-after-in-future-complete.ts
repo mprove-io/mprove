@@ -71,6 +71,26 @@ export function makeTimestampOpenBeforeAfterInFutureComplete(item: {
           : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql =
+        unit === enums.FractionUnitEnum.Minutes
+          ? `addMinutes(${currentMinuteTs}, ${integer + 1})`
+          : unit === enums.FractionUnitEnum.Hours
+          ? `addHours(${currentHourTs}, ${integer + 1})`
+          : unit === enums.FractionUnitEnum.Days
+          ? `addDays(${currentDateTs}, ${integer + 1})`
+          : unit === enums.FractionUnitEnum.Weeks
+          ? `addDays(${currentWeekStartTs}, ${integer * 7 + 1 * 7})`
+          : unit === enums.FractionUnitEnum.Months
+          ? `addMonths(${currentMonthTs}, ${integer + 1})`
+          : unit === enums.FractionUnitEnum.Quarters
+          ? `addMonths(${currentQuarterTs}, ${integer * 3 + 1 * 3})`
+          : unit === enums.FractionUnitEnum.Years
+          ? `addYears(${currentYearTs}, ${integer + 1})`
+          : undefined;
+      break;
+    }
   }
 
   return sql;

@@ -48,6 +48,21 @@ export function makeTimestampOpenFromDateParts(item: {
         : undefined;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sql = minute
+        ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:${minute}:00')`
+        : hour
+        ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:00:00')`
+        : day
+        ? `parseDateTimeBestEffort('${year}-${month}-${day}')`
+        : month
+        ? `parseDateTimeBestEffort('${year}-${month}-01')`
+        : year
+        ? `parseDateTimeBestEffort('${year}-01-01')`
+        : undefined;
+      break;
+    }
   }
 
   return sql;
