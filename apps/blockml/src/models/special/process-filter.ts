@@ -649,7 +649,8 @@ export function processFilter(item: {
             day: day,
             hour: hour,
             minute: minute,
-            connection: connection
+            connection: connection,
+            timezone: timezone
           });
 
           switch (true) {
@@ -904,7 +905,8 @@ export function processFilter(item: {
           day: day,
           hour: hour,
           minute: minute,
-          connection: connection
+          connection: connection,
+          timezone: timezone
         });
 
         if (common.isUndefined(toYear)) {
@@ -925,7 +927,8 @@ export function processFilter(item: {
             toDay: toDay,
             toHour: toHour,
             toMinute: toMinute,
-            connection: connection
+            connection: connection,
+            timezone: timezone
           });
         }
 

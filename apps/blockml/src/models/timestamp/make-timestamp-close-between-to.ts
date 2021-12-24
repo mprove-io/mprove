@@ -7,8 +7,9 @@ export function makeTimestampCloseBetweenTo(item: {
   toDay: string;
   toHour: string;
   toMinute: string;
+  timezone: any;
 }) {
-  let { connection, toYear, toMonth, toDay, toHour, toMinute } = item;
+  let { connection, toYear, toMonth, toDay, toHour, toMinute, timezone } = item;
 
   // 2016/10/05 21:07:15 to 2017
   // 2016/10/05 21:07:15 to 2017/11
@@ -51,15 +52,15 @@ export function makeTimestampCloseBetweenTo(item: {
 
     case common.ConnectionTypeEnum.ClickHouse: {
       sql = toMinute
-        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00')`
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00', '${timezone}')`
         : toHour
-        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:00:00', '${timezone}')`
         : toDay
-        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay}')`
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay}', '${timezone}')`
         : toMonth
-        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-01')`
+        ? `parseDateTimeBestEffort('${toYear}-${toMonth}-01', '${timezone}')`
         : toYear
-        ? `parseDateTimeBestEffort('${toYear}-01-01')`
+        ? `parseDateTimeBestEffort('${toYear}-01-01', '${timezone}')`
         : undefined;
       break;
     }

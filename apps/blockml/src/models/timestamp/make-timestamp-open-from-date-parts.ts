@@ -7,8 +7,9 @@ export function makeTimestampOpenFromDateParts(item: {
   day: string;
   hour: string;
   minute: string;
+  timezone: any;
 }) {
-  let { connection, year, month, day, hour, minute } = item;
+  let { connection, year, month, day, hour, minute, timezone } = item;
 
   // 2016
   // 2016/10
@@ -51,15 +52,15 @@ export function makeTimestampOpenFromDateParts(item: {
 
     case common.ConnectionTypeEnum.ClickHouse: {
       sql = minute
-        ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:${minute}:00')`
+        ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:${minute}:00', '${timezone}')`
         : hour
-        ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:00:00')`
+        ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:00:00', '${timezone}')`
         : day
-        ? `parseDateTimeBestEffort('${year}-${month}-${day}')`
+        ? `parseDateTimeBestEffort('${year}-${month}-${day}', '${timezone}')`
         : month
-        ? `parseDateTimeBestEffort('${year}-${month}-01')`
+        ? `parseDateTimeBestEffort('${year}-${month}-01', '${timezone}')`
         : year
-        ? `parseDateTimeBestEffort('${year}-01-01')`
+        ? `parseDateTimeBestEffort('${year}-01-01', '${timezone}')`
         : undefined;
       break;
     }
