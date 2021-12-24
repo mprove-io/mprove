@@ -60,7 +60,8 @@ export function makeTimestampsCurrent(item: {
     }
 
     case common.ConnectionTypeEnum.ClickHouse: {
-      currentTimestamp = timezone === common.UTC ? 'now()' : `now(${timezone})`;
+      currentTimestamp =
+        timezone === common.UTC ? 'now()' : `now('${timezone}')`;
 
       currentMinuteTimestamp = `toStartOfMinute(${currentTimestamp})`;
       currentHourTimestamp = `toStartOfHour(${currentTimestamp})`;
