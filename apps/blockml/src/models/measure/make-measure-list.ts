@@ -18,6 +18,11 @@ export function makeMeasureList(item: {
       sqlSelect = `STRING_AGG(DISTINCT CAST(${sqlFinal} AS TEXT), ', ')`;
       break;
     }
+
+    case common.ConnectionTypeEnum.ClickHouse: {
+      sqlSelect = `arrayStringConcat(arrayDistinct(groupArray(toString(${sqlFinal}))), ', ')`;
+      break;
+    }
   }
 
   return sqlSelect;
