@@ -76,6 +76,15 @@ export function subMakeMainText(item: {
       }
 
       switch (true) {
+        case field.type === common.FieldTypeEnum.Sum: {
+          sqlSelect = barMeasure.makeMeasureSum({
+            sqlFinal: sqlFinal,
+            connection: connection
+          });
+
+          break;
+        }
+
         case field.type === common.FieldTypeEnum.SumByKey: {
           if (connection.type === common.ConnectionTypeEnum.BigQuery) {
             extraUdfs[constants.UDF_MPROVE_ARRAY_SUM] = 1;
@@ -83,6 +92,15 @@ export function subMakeMainText(item: {
 
           sqlSelect = barMeasure.makeMeasureSumByKey({
             sqlKeyFinal: sqlKeyFinal,
+            sqlFinal: sqlFinal,
+            connection: connection
+          });
+
+          break;
+        }
+
+        case field.type === common.FieldTypeEnum.Average: {
+          sqlSelect = barMeasure.makeMeasureAverage({
             sqlFinal: sqlFinal,
             connection: connection
           });
