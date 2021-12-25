@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -7,10 +8,12 @@ import {
   OnChanges,
   OnInit,
   Output,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { en_US, NzI18nService } from 'ng-zorro-antd/i18n';
+import { NzTimePickerComponent } from 'ng-zorro-antd/time-picker';
 import { EventFractionUpdate } from '~front/app/modules/model/model-filters/model-filters.component';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
@@ -30,7 +33,7 @@ import {
   templateUrl: 'fraction-ts.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionTsComponent implements OnInit, OnChanges {
+export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   fractionTypeEnum = common.FractionTypeEnum;
   fractionTsForOptionEnum = common.FractionTsForOptionEnum;
 
@@ -39,6 +42,15 @@ export class FractionTsComponent implements OnInit, OnChanges {
   @Input() isFirst: boolean;
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
+
+  @ViewChild('timePickerOnHour') timePickerOnHour: NzTimePickerComponent;
+  @ViewChild('timePickerOnMinute') timePickerOnMinute: NzTimePickerComponent;
+  @ViewChild('timePickerInRangeFrom')
+  timePickerInRangeFrom: NzTimePickerComponent;
+  @ViewChild('timePickerInRangeTo') timePickerInRangeTo: NzTimePickerComponent;
+  @ViewChild('timePickerBeforeDate')
+  timePickerBeforeDate: NzTimePickerComponent;
+  @ViewChild('timePickerAfterDate') timePickerAfterDate: NzTimePickerComponent;
 
   date: Date;
   dateTo: Date;
@@ -268,6 +280,25 @@ export class FractionTsComponent implements OnInit, OnChanges {
     private cd: ChangeDetectorRef
   ) {}
 
+  ngAfterViewInit(): void {
+    this.makeTimepickerReadonly();
+  }
+
+  makeTimepickerReadonly() {
+    [
+      this.timePickerOnHour,
+      this.timePickerOnMinute,
+      this.timePickerInRangeFrom,
+      this.timePickerInRangeTo,
+      this.timePickerBeforeDate,
+      this.timePickerAfterDate
+    ]
+      .filter(x => common.isDefined(x))
+      .forEach(x => {
+        x.inputRef.nativeElement.setAttribute('readonly', 'true');
+      });
+  }
+
   ngOnInit() {
     this.i18n.setLocale(en_US);
 
@@ -288,11 +319,14 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.buildTsLastValueForm();
     this.buildTsLastUnitForm();
     this.buildTsLastCompleteOptionForm();
+
+    this.makeTimepickerReadonly();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.resetDateUsingFraction();
     this.resetDateToUsingFraction();
+    this.makeTimepickerReadonly();
   }
 
   buildFractionTypeForm() {

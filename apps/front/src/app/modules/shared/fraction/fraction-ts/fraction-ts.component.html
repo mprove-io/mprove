@@ -30,6 +30,7 @@
     data-cy="fractionTsDate"
     nzMode="year"
     nzAllowClear="false"
+    nzInputReadOnly="true"
     [(ngModel)]="date"
     (nzOnOpenChange)="yearOpenClose()"
   ></nz-date-picker>
@@ -41,6 +42,7 @@
     data-cy="fractionTsDate"
     nzMode="month"
     nzAllowClear="false"
+    nzInputReadOnly="true"
     [(ngModel)]="date"
     (nzOnOpenChange)="monthOpenClose()"
   ></nz-date-picker>
@@ -52,6 +54,7 @@
     data-cy="fractionTsDate"
     nzMode="date"
     nzAllowClear="false"
+    nzInputReadOnly="true"
     [(ngModel)]="date"
     (nzOnOpenChange)="dayOpenClose()"
   ></nz-date-picker>
@@ -66,11 +69,13 @@
       data-cy="fractionTsDate"
       nzMode="date"
       nzAllowClear="false"
+      nzInputReadOnly="true"
       [(ngModel)]="date"
       (nzOnOpenChange)="hourOpenClose()"
     ></nz-date-picker>
 
     <nz-time-picker
+      #timePickerOnHour
       class="h-[36px]"
       data-cy="fractionTsTime"
       nzAllowEmpty="false"
@@ -79,7 +84,7 @@
       [nzDisabledMinutes]="disabledMinutes"
       [nzDisabledSeconds]="disabledSeconds"
       [(ngModel)]="date"
-      (nzOpenChange)="hourOpenClose()"
+      (ngModelChange)="hourOpenClose()"
     ></nz-time-picker>
   </div>
 
@@ -93,11 +98,13 @@
       data-cy="fractionTsDate"
       nzMode="date"
       nzAllowClear="false"
+      nzInputReadOnly="true"
       [(ngModel)]="date"
       (nzOnOpenChange)="minuteOpenClose()"
     ></nz-date-picker>
 
     <nz-time-picker
+      #timePickerOnMinute
       class="h-[36px]"
       data-cy="fractionTsTime"
       nzAllowEmpty="false"
@@ -118,11 +125,13 @@
       data-cy="fractionTsDate"
       nzMode="date"
       nzAllowClear="false"
+      nzInputReadOnly="true"
       [(ngModel)]="date"
       (nzOnOpenChange)="rangeFromOpenClose()"
     ></nz-date-picker>
 
     <nz-time-picker
+      #timePickerInRangeFrom
       class="h-[36px]"
       data-cy="fractionTsTime"
       nzAllowEmpty="false"
@@ -139,11 +148,13 @@
       data-cy="fractionTsDateTo"
       nzMode="date"
       nzAllowClear="false"
+      nzInputReadOnly="true"
       [(ngModel)]="dateTo"
       (nzOnOpenChange)="rangeToOpenClose()"
     ></nz-date-picker>
 
     <nz-time-picker
+      #timePickerInRangeTo
       class="h-[36px]"
       data-cy="fractionTsTimeTo"
       nzAllowEmpty="false"
@@ -164,11 +175,13 @@
       data-cy="fractionTsDate"
       nzMode="date"
       nzAllowClear="false"
+      nzInputReadOnly="true"
       [(ngModel)]="date"
       (nzOnOpenChange)="beforeOpenClose()"
     ></nz-date-picker>
 
     <nz-time-picker
+      #timePickerBeforeDate
       class="h-[36px]"
       data-cy="fractionTsTime"
       nzAllowEmpty="false"
@@ -189,11 +202,13 @@
       data-cy="fractionTsDate"
       nzMode="date"
       nzAllowClear="false"
+      nzInputReadOnly="true"
       [(ngModel)]="date"
       (nzOnOpenChange)="afterOpenClose()"
     ></nz-date-picker>
 
     <nz-time-picker
+      #timePickerAfterDate
       class="h-[36px]"
       data-cy="fractionTsTime"
       nzAllowEmpty="false"
