@@ -1,7 +1,12 @@
 export enum FieldTypeEnum {
   CountDistinct = 'count_distinct', // measure
+
+  Sum = 'sum', // measure
   SumByKey = 'sum_by_key', // measure
+
+  Average = 'average', // measure
   AverageByKey = 'average_by_key', // measure
+
   MedianByKey = 'median_by_key', // measure
   PercentileByKey = 'percentile_by_key', // measure
   Min = 'min', // measure

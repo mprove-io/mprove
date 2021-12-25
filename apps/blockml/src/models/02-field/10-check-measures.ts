@@ -53,7 +53,9 @@ export function checkMeasures<T extends types.vmType>(
       } else if (
         [
           common.FieldTypeEnum.CountDistinct,
+          common.FieldTypeEnum.Sum,
           common.FieldTypeEnum.SumByKey,
+          common.FieldTypeEnum.Average,
           common.FieldTypeEnum.AverageByKey,
           common.FieldTypeEnum.MedianByKey,
           common.FieldTypeEnum.PercentileByKey,
