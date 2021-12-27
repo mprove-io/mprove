@@ -136,7 +136,7 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
 
   @IsOptional()
   @IsBoolean()
-  isSSL: boolean;
+  isSSL?: boolean;
 }
 
 export class ToBackendSeedRecordsRequestPayload {

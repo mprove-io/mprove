@@ -45,7 +45,7 @@ export class ToBackendEditConnectionRequestPayload {
 
   @IsOptional()
   @IsBoolean()
-  isSSL: boolean;
+  isSSL?: boolean;
 }
 
 export class ToBackendEditConnectionRequest extends ToBackendRequest {

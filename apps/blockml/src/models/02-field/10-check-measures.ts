@@ -104,47 +104,81 @@ export function checkMeasures<T extends types.vmType>(
         return;
       }
 
-      if ([common.ConnectionTypeEnum.BigQuery].indexOf(x.connection.type) < 0) {
-        if (
-          field.type === common.FieldTypeEnum.MedianByKey ||
-          field.type === common.FieldTypeEnum.PercentileByKey
-        ) {
-          item.errors.push(
-            new BmError({
-              title:
-                enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message:
-                `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
-                `"${x.connection.type}". Consider using a "${common.FieldTypeEnum.Custom}" type.`,
-              lines: [
-                {
-                  line: field.type_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
+      if (
+        x.connection.type === common.ConnectionTypeEnum.ClickHouse &&
+        [
+          common.FieldTypeEnum.SumByKey,
+          common.FieldTypeEnum.AverageByKey,
+          common.FieldTypeEnum.MedianByKey,
+          common.FieldTypeEnum.PercentileByKey
+        ].indexOf(field.type) > -1
+      ) {
+        item.errors.push(
+          new BmError({
+            title:
+              enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
+            message:
+              `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
+              `"${x.connection.type}". Consider using a "${common.FieldTypeEnum.Custom}" type.`,
+            lines: [
+              {
+                line: field.type_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
 
-        if (common.isDefined(field.percentile)) {
-          item.errors.push(
-            new BmError({
-              title:
-                enums.ErTitleEnum.PERCENTILE_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `consider using a "${common.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
-              lines: [
-                {
-                  line: field.percentile_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
+      if (
+        x.connection.type === common.ConnectionTypeEnum.PostgreSQL &&
+        [
+          common.FieldTypeEnum.MedianByKey,
+          common.FieldTypeEnum.PercentileByKey
+        ].indexOf(field.type) > -1
+      ) {
+        item.errors.push(
+          new BmError({
+            title:
+              enums.ErTitleEnum.MEASURE_TYPE_IS_NOT_SUPPORTED_FOR_CONNECTION,
+            message:
+              `${enums.ParameterEnum.Measure} type "${field.type}" is not supported for ` +
+              `"${x.connection.type}". Consider using a "${common.FieldTypeEnum.Custom}" type.`,
+            lines: [
+              {
+                line: field.type_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        common.isDefined(field.percentile) &&
+        [
+          common.ConnectionTypeEnum.ClickHouse,
+          common.ConnectionTypeEnum.PostgreSQL
+        ].indexOf(x.connection.type) > -1
+      ) {
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.PERCENTILE_IS_NOT_SUPPORTED_FOR_CONNECTION,
+            message: `consider using a "${common.FieldTypeEnum.Custom}" type for ${enums.ParameterEnum.Measure}`,
+            lines: [
+              {
+                line: field.percentile_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
       }
 
       if (field.type === common.FieldTypeEnum.PercentileByKey) {

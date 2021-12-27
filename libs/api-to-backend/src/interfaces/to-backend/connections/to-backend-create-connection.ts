@@ -49,7 +49,7 @@ export class ToBackendCreateConnectionRequestPayload {
 
   @IsOptional()
   @IsBoolean()
-  isSSL: boolean;
+  isSSL?: boolean;
 }
 
 export class ToBackendCreateConnectionRequest extends ToBackendRequest {
