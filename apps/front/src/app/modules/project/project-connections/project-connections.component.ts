@@ -19,6 +19,8 @@ import { constants } from '~front/barrels/constants';
 export class ProjectConnectionsComponent implements OnInit {
   pageTitle = constants.PROJECT_CONNECTIONS_PAGE_TITLE;
 
+  connectionTypeClickhouse = common.ConnectionTypeEnum.ClickHouse;
+
   currentPage: any = 1;
   perPage = constants.CONNECTIONS_PER_PAGE;
 
