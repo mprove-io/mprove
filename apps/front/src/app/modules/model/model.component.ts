@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
@@ -43,7 +43,7 @@ export class ChartTypeItem {
   selector: 'm-model',
   templateUrl: './model.component.html'
 })
-export class ModelComponent implements OnInit {
+export class ModelComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
 
   queryStatusEnum = common.QueryStatusEnum;
@@ -396,6 +396,7 @@ export class ModelComponent implements OnInit {
     this.checkRunning$ = interval(3000)
       .pipe(
         startWith(0),
+        // tap(x => console.log(x)),
         switchMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
@@ -683,9 +684,15 @@ export class ModelComponent implements OnInit {
 
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateModel')
-    this.checkRunning$.unsubscribe();
     this.mqStore.reset();
     this.modelStore.reset();
     return true;
+  }
+
+  ngOnDestroy() {
+    // console.log('ngOnDestroyModel')
+    if (common.isDefined(this.checkRunning$)) {
+      this.checkRunning$?.unsubscribe();
+    }
   }
 }
