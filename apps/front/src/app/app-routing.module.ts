@@ -15,6 +15,7 @@ import { UpdatePasswordComponent } from './modules/auth/password/03-update-passw
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { BlockmlEditorComponent } from './modules/blockml/blockml-editor/blockml-editor.component';
 import { BlockmlComponent } from './modules/blockml/blockml.component';
+import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
@@ -34,6 +35,7 @@ import { ProjectDeletedComponent } from './modules/special/project-deleted/proje
 import { VisualizationsComponent } from './modules/visualizations/visualizations.component';
 import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
+import { DashboardResolver } from './resolvers/dashboard.resolver';
 import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
@@ -229,6 +231,15 @@ const routes: Routes = [
                             ]
                           }
                         ]
+                      },
+                      {
+                        component: DashboardComponent,
+                        canDeactivate: [DeactivateGuard],
+                        path:
+                          common.PATH_DASHBOARD +
+                          `/:${common.PARAMETER_DASHBOARD_ID}`,
+                        resolve: [DashboardResolver],
+                        children: []
                       }
                     ]
                   }

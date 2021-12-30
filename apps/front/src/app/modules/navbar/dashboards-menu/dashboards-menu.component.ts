@@ -107,8 +107,6 @@ export class DashboardsMenuComponent implements OnInit, OnDestroy {
         tap((resp: apiToBackend.ToBackendGetDashboardsListResponse) => {
           this.dashboardsList = resp.payload.dashboardsList;
 
-          console.log(this.dashboardsList);
-
           this.dashboardsListLength = resp.payload.dashboardsList.length;
           this.isLoading = false;
           this.cd.detectChanges();

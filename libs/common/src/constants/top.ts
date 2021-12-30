@@ -54,6 +54,7 @@ export const PARAMETER_REPO_ID = 'repoId';
 export const PARAMETER_BRANCH_ID = 'branchId';
 export const PARAMETER_FILE_ID = 'fileId';
 export const PARAMETER_MODEL_ID = 'modelId';
+export const PARAMETER_DASHBOARD_ID = 'dashboardId';
 export const PARAMETER_MCONFIG_ID = 'mconfigId';
 export const PARAMETER_QUERY_ID = 'queryId';
 

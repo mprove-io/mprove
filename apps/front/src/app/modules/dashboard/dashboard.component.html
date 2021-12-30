@@ -1,0 +1,91 @@
+<div class="bg-blue1 flex flex-col h-full">
+  <div class="flex flex-row h-full">
+    <div class="flex flex-col flex-grow mx-6 mb-6 mt-8 min-w-[2px]">
+      <div class="flex flex-row justify-between items-center h-11">
+        <div class="flex flex-row items-center w-full">
+          <div class="flex flex-row items-center space-x-5">
+            <div
+              data-cy="modelTitle"
+              class="flex font-semibold text-2xl text-gray1 items-center self-center"
+            >
+              {{ pageTitle }}
+            </div>
+
+            <div class="text-xl text-gray1">{{
+              (dashboard?.title ? dashboard?.title : dashboard?.dashboardId)
+                | capitalize
+            }}</div>
+
+            <!-- <button
+              class="flex flex-row items-center text-blue-500 focus:outline-none"
+              (click)="goToFile()"
+            >
+              <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+              <div class="ml-2 text-xl">File</div>
+            </button> -->
+          </div>
+
+          <div class="flex-grow"></div>
+
+          <!-- <div class="flex flex-row items-center text-base text-gray1">
+            <div *ngIf="!!dryQueryEstimate"
+              >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
+            </div>
+
+            <m-query-status
+              *ngIf="!dryQueryEstimate"
+              [query]="query"
+            ></m-query-status>
+
+            <ui-switch
+              class="ml-5"
+              [checked]="isAutoRun"
+              (change)="toggleAutoRun()"
+            ></ui-switch>
+
+            <div
+              class="flex ml-5 h-9 text-gray1 text-base items-center select-none"
+              >Auto Run</div
+            >
+
+            <button
+              type="button"
+              *ngIf="query?.status === queryStatusEnum.Running"
+              data-cy="modelCancelButton"
+              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
+              (click)="cancel()"
+              >Cancel</button
+            >
+
+            <button
+              type="button"
+              *ngIf="query?.status !== queryStatusEnum.Running"
+              data-cy="modelRunButton"
+              class="w-24 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+              [ngClass]="{
+                'bg-blue3': mconfig?.select.length > 0,
+                'bg-gray-400 cursor-default': mconfig?.select.length === 0
+              }"
+              (click)="run()"
+              [disabled]="mconfig?.select.length === 0"
+              >Run</button
+            >
+
+            <div class="relative ml-3">
+              <m-query-options
+                [showRunDryButton]="
+                  query?.connectionType === connectionTypeEnum.BigQuery
+                "
+                (runDryEvent)="runDry()"
+              ></m-query-options>
+            </div>
+          </div> -->
+        </div>
+      </div>
+
+      <div class="flex flex-row flex-grow mt-6"> </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="dashboard$ | async"></div>

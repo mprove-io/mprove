@@ -17,6 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './modules/auth/auth.module';
 import { BlockmlModule } from './modules/blockml/blockml.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { ModelModule } from './modules/model/model.module';
 import { NavModule } from './modules/nav/nav.module';
 import { NavbarModule } from './modules/navbar/navbar.module';
@@ -45,6 +46,7 @@ registerLocaleData(en);
     ProjectModule,
     BlockmlModule,
     ModelModule,
+    DashboardModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
     DialogModule.forRoot(),

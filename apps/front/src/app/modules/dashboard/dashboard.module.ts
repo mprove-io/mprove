@@ -1,0 +1,26 @@
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { UiSwitchModule } from 'ngx-ui-switch';
+import { SharedModule } from '../shared/shared.module';
+import { DashboardComponent } from './dashboard.component';
+
+@NgModule({
+  declarations: [DashboardComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SharedModule,
+    RouterModule,
+    NgSelectModule,
+    NzToolTipModule,
+    UiSwitchModule,
+    NgxSpinnerModule
+  ]
+})
+export class DashboardModule {}
