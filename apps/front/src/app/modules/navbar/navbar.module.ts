@@ -6,6 +6,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { BranchSelectComponent } from './branch-select/branch-select.component';
+import { DashboardsMenuComponent } from './dashboards-menu/dashboards-menu.component';
 import { ModelsMenuComponent } from './models-menu/models-menu.component';
 import { NavbarComponent } from './navbar.component';
 import { OrgMenuComponent } from './org-menu/org-menu.component';
@@ -23,7 +24,8 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
     OrgMenuComponent,
     ProjectSelectComponent,
     ProjectMenuComponent,
-    ModelsMenuComponent
+    ModelsMenuComponent,
+    DashboardsMenuComponent
   ],
   imports: [
     CommonModule,

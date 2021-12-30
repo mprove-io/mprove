@@ -234,6 +234,24 @@ export class NavigateService {
     ]);
   }
 
+  navigateToDashboard(dashboardId: string) {
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_DASHBOARD,
+      dashboardId
+    ]);
+  }
+
   navigateToBlockml(branchId?: string) {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;

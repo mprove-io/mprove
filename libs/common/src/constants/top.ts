@@ -35,6 +35,7 @@ export const PATH_BLOCKML = 'blockml';
 export const PATH_VISUALIZATIONS = 'visualizations';
 export const PATH_FILE = 'file';
 export const PATH_MODEL = 'model';
+export const PATH_DASHBOARD = 'dashboard';
 export const PATH_MCONFIG = 'mconfig';
 export const PATH_QUERY = 'query';
 
