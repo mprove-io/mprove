@@ -5,7 +5,7 @@
         <div class="flex flex-row items-center w-full">
           <div class="flex flex-row items-center space-x-5">
             <div
-              data-cy="modelTitle"
+              data-cy="dashboardTitle"
               class="flex font-semibold text-2xl text-gray1 items-center self-center"
             >
               {{ pageTitle }}
@@ -83,7 +83,17 @@
         </div>
       </div>
 
-      <div class="flex flex-row flex-grow mt-6"> </div>
+      <div class="flex flex-row flex-grow mt-6 overflow-auto h-2">
+        <ktd-grid
+          [cols]="cols"
+          [rowHeight]="rowHeight"
+          [layout]="layout"
+          (layoutUpdated)="onLayoutUpdated($event)"
+        >
+          <ktd-grid-item *ngFor="let item of layout" [id]="item.id">
+          </ktd-grid-item>
+        </ktd-grid>
+      </div>
     </div>
   </div>
 </div>

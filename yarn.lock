@@ -1732,6 +1732,13 @@
     merge-source-map "^1.1.0"
     schema-utils "^2.7.0"
 
+"@katoid/angular-grid-layout@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@katoid/angular-grid-layout/-/angular-grid-layout-0.2.0.tgz#628e9edd493e1e7df566f220cca4575706614f8d"
+  integrity sha512-7XqM+tkkTF/qB/7WMnGV6KJqcszuB19j3EoiZioO/IyXWgrY86mpMbkgxlkDGK1BcUlf1e99QaZ35hRxohkMJw==
+  dependencies:
+    tslib "^2.0.0"
+
 "@mapbox/node-pre-gyp@^1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.1.tgz#1b23a8decb5e6356b04770d586067d2bff2703dd"

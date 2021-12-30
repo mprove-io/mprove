@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { KtdGridModule } from '@katoid/angular-grid-layout';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -20,7 +21,8 @@ import { DashboardComponent } from './dashboard.component';
     NgSelectModule,
     NzToolTipModule,
     UiSwitchModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    KtdGridModule
   ]
 })
 export class DashboardModule {}
