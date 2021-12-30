@@ -27,7 +27,7 @@ export class DashboardComponent {
   );
 
   cols = 12;
-  rowHeight = 300;
+  rowHeight = 50;
   layout: KtdGridLayout = [
     // {id: '0', x: 0, y: 0, w: 3, h: 3},
     // {id: '1', x: 3, y: 0, w: 3, h: 3},
