@@ -14,6 +14,7 @@
     "@depyronick/clickhouse-client": "^1.0.5",
     "@golevelup/nestjs-rabbitmq": "^1.15.2",
     "@google-cloud/bigquery": "^5.5.0",
+    "@katoid/angular-grid-layout": "^0.2.0",
     "@nestjs-modules/mailer": "^1.5.1",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.6.1",

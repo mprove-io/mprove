@@ -1,0 +1,211 @@
+<div
+  class="group h-full w-full bg-white border border-white rounded shadow-md hover:bg-blue2 hover:border-blue2 cursor-pointer"
+  (click)="showChart()"
+>
+  <div class="mx-5 h-full">
+    <div class="flex flex-col h-full w-full">
+      <div
+        class="mt-8 mb-5 flex flex-row text-lg text-gray1 justify-center items-start flex-shrink-0"
+      >
+        <div class="w-9 mr-3"></div>
+        <!-- <div class="w-24 mr-5"></div> -->
+
+        <div
+          class="flex flex-col flex-grow max-h-[60px] justify-start items-center"
+        >
+          <div
+            class="flex flex-col items-center text-gray1 max-h-[30px] mt-[2px] text-center line-clamp-2"
+            style="max-height: 60px"
+          >
+            {{ title }}
+          </div>
+        </div>
+
+        <!-- <button
+          data-cy="repExploreButton"
+          class="w-24 ml-5 h-9 text-lg rounded border focus:outline-none invisible group-hover:visible flex-shrink-0"
+          [ngClass]="{
+            'border-gray-400 hover:bg-blue-200': canAccessModel === true,
+            'border-gray-300 text-gray-400': canAccessModel === false
+          }"
+          [disabled]="canAccessModel === false"
+          (click)="explore($event)"
+        >
+          <div *ngIf="canAccessModel === true"> Explore </div>
+          <div
+            *ngIf="canAccessModel === false"
+            nz-tooltip
+            [nzTooltipTitle]="'No access to model'"
+            nzTooltipPlacement="bottom"
+          >
+            Explore
+          </div>
+        </button> -->
+
+        <div class="relative ml-3">
+          <button
+            data-cy="repOptionsMenuButton"
+            class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+            [ngClass]="{
+              'cursor-default text-gray-400':
+                openedMenuId && menuId !== openedMenuId
+            }"
+            (click)="toggleMenu($event)"
+            [disabled]="openedMenuId && menuId !== openedMenuId"
+          >
+            <m-dots-vertical-icon></m-dots-vertical-icon>
+          </button>
+
+          <button
+            class="fixed inset-0 z-9 w-full h-full cursor-default focus:outline-none"
+            *ngIf="isRepOptionsMenuOpen === true"
+            (click)="closeMenu($event)"
+          ></button>
+
+          <div
+            class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
+            *ngIf="isRepOptionsMenuOpen === true"
+          >
+            <button
+              data-cy="repOptionsRun"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              (click)="run($event)"
+              >Run</button
+            >
+
+            <button
+              data-cy="repOptionsExplore"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              [ngClass]="{
+                'text-gray-300': canAccessModel === false
+              }"
+              (click)="explore($event)"
+              >Explore</button
+            >
+
+            <!-- <button
+              data-cy="repOptionsEditInfo"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              [ngClass]="{
+                'cursor-default text-gray-400': canEditOrDeleteRep === false
+              }"
+              (click)="editVizInfo($event)"
+              [disabled]="canEditOrDeleteRep === false"
+              >Edit Info</button
+            > -->
+
+            <!-- <button
+              data-cy="repOptionsGoToFile"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              (click)="goToFile($event)"
+              >Go to file</button
+            > -->
+
+            <!-- <button
+              data-cy="repOptionsDelete"
+              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+              [ngClass]="{
+                'cursor-default text-gray-400': canEditOrDeleteRep === false
+              }"
+              (click)="deleteViz($event)"
+              [disabled]="canEditOrDeleteRep === false"
+              >Delete</button
+            > -->
+          </div>
+        </div>
+      </div>
+
+      <m-bricks
+        class="flex flex-row mb-5 max-h-[120px] items-start justify-start overflow-auto max-w-max flex-shrink-0"
+        *ngIf="mconfig?.filters.length > 0"
+        [extendedFilters]="extendedFilters"
+      ></m-bricks>
+
+      <div
+        class="flex flex-grow w-full p-5 border border-gray3 rounded bg-white cursor-default overflow-auto"
+        (click)="stopClick($event)"
+      >
+        <m-chart-view
+          *ngIf="!!mconfig?.chart"
+          [ngClass]="{
+            'max-w-max':
+              mconfig?.chart.type === chartTypeEnumTable &&
+              isSelectValid === true &&
+              mconfig?.chart.isValid === true &&
+              qData?.length > 0
+          }"
+          class="w-full h-full"
+          [sortedColumns]="sortedColumns"
+          [qData]="qData"
+          [chart]="mconfig?.chart"
+          [queryStatus]="query?.status"
+        ></m-chart-view>
+      </div>
+
+      <div
+        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400 invisible group-hover:visible flex-shrink-0"
+      >
+        <m-lock-closed-icon
+          class="mb-1 mr-2 text-gray-400"
+          *ngIf="canAccessModel === false"
+          nz-tooltip
+          [nzTooltipTitle]="'No access to model'"
+          nzTooltipPlacement="bottom"
+        ></m-lock-closed-icon>
+        <div class="text-base">Model:</div>
+        <div class="ml-2 text-base font-semibold">{{
+          model?.label | capitalize
+        }}</div>
+
+        <div class="flex flex-grow"></div>
+
+        <m-query-status
+          class="mr-5"
+          *ngIf="!!query"
+          [query]="query"
+        ></m-query-status>
+      </div>
+
+      <!-- <div
+        class="mb-1 h-8 flex flex-row justify-center items-center text-base text-gray-400 invisible group-hover:visible"
+      >
+        <m-lock-closed-icon
+          class="mb-1 mr-2 text-gray-400"
+          *ngIf="canAccessModel === false"
+          nz-tooltip
+          [nzTooltipTitle]="'No access to model'"
+          nzTooltipPlacement="bottom"
+        ></m-lock-closed-icon>
+        <div class=" ">Model:</div>
+        <div class="ml-2 font-semibold">{{ viz?.modelLabel | capitalize }}</div>
+
+        <div class="ml-10">Author:</div>
+        <div class="ml-2 font-semibold">{{ author ? author : 'team' }}</div>
+
+        <div class="ml-10">Access:</div>
+
+        <div
+          class="ml-2 font-semibold"
+          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 0"
+          >Public</div
+        >
+        <div
+          class="ml-2 font-semibold"
+          *ngIf="viz?.accessRoles.length === 0 && viz?.accessUsers.length === 1"
+          >Private - {{ viz?.accessUsers[0] }}</div
+        >
+        <div
+          class="ml-2 font-semibold truncate max-w-sm"
+          *ngIf="viz?.accessRoles.length > 0 || viz?.accessUsers.length > 1"
+          nz-tooltip
+          [nzTooltipTitle]="accessString"
+          nzTooltipPlacement="bottom"
+          >Special</div
+        >
+      </div> -->
+    </div>
+  </div>
+</div>
+
+<div *ngIf="openedMenuId$ | async"></div>
+<div *ngIf="nav$ | async"></div>

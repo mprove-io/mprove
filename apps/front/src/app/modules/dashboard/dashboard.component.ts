@@ -22,6 +22,16 @@ export class DashboardComponent {
           this.dashboard?.title || this.dashboard?.dashboardId
         }`
       );
+
+      this.layout = this.dashboard.reports.map(report => ({
+        id: report.mconfigId,
+        x: 0,
+        y: 0,
+        w: 3,
+        h: 3,
+        report: report
+      }));
+
       this.cd.detectChanges();
     })
   );
@@ -33,10 +43,10 @@ export class DashboardComponent {
     // {id: '1', x: 3, y: 0, w: 3, h: 3},
     // {id: '2', x: 0, y: 3, w: 3, h: 3},
     // {id: '3', x: 3, y: 3, w: 3, h: 3},
-    { id: '0', x: 0, y: 0, w: 3, h: 3 },
-    { id: '1', x: 0, y: 0, w: 3, h: 3 },
-    { id: '2', x: 0, y: 0, w: 3, h: 3 },
-    { id: '3', x: 0, y: 0, w: 3, h: 3 }
+    // { id: '0', x: 0, y: 0, w: 3, h: 3 },
+    // { id: '1', x: 0, y: 0, w: 3, h: 3 },
+    // { id: '2', x: 0, y: 0, w: 3, h: 3 },
+    // { id: '3', x: 0, y: 0, w: 3, h: 3 }
   ];
   trackById = 'id';
 

@@ -85,12 +85,23 @@
 
       <div class="flex flex-row flex-grow mt-6 overflow-auto h-2">
         <ktd-grid
+          *ngIf="dashboard?.reports"
           [cols]="cols"
           [rowHeight]="rowHeight"
           [layout]="layout"
           (layoutUpdated)="onLayoutUpdated($event)"
         >
-          <ktd-grid-item *ngFor="let item of layout" [id]="item.id">
+          <ktd-grid-item
+            *ngFor="let item of dashboard.reports"
+            [id]="item.mconfigId"
+          >
+            <div class="pb-6 pr-5 w-full h-full">
+              <m-chart-rep
+                [title]="'abc'"
+                [report]="item"
+                [dashboard]="dashboard"
+              ></m-chart-rep>
+            </div>
           </ktd-grid-item>
         </ktd-grid>
       </div>

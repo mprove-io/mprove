@@ -11,6 +11,7 @@ import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
+import { ChartRepComponent } from './chart-rep/chart-rep.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
 import { ChartVizComponent } from './chart-viz/chart-viz.component';
@@ -105,6 +106,7 @@ let sharedComponents = [
   ChartTableComponent,
   ChartViewComponent,
   ChartVizComponent,
+  ChartRepComponent,
   FieldLabelComponent,
   ColorMenuComponent,
   MinusSmIconComponent,
