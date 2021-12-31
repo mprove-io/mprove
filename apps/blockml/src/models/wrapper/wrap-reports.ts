@@ -228,19 +228,21 @@ export function wrapReports(item: {
         common.CHART_DEFAULT_FORMAT_X_AXIS_TICK,
 
       // tile
-      tileWidth: report.tile?.tile_width || common.CHART_DEFAULT_TILE_WIDTH,
+      tileWidth: common.isDefined(report.tile?.tile_width)
+        ? Number(report.tile.tile_width)
+        : common.CHART_DEFAULT_TILE_WIDTH,
 
-      tileHeight: report.tile?.tile_height || common.CHART_DEFAULT_TILE_HEIGHT,
+      tileHeight: common.isDefined(report.tile?.tile_height)
+        ? Number(report.tile.tile_height)
+        : common.CHART_DEFAULT_TILE_HEIGHT,
 
-      viewSize: report.tile?.view_size || common.CHART_DEFAULT_VIEW_SIZE,
+      tileX: common.isDefined(report.tile?.tile_x)
+        ? Number(report.tile.tile_x)
+        : common.CHART_DEFAULT_TILE_X,
 
-      viewWidth: common.isDefined(report.tile?.view_width)
-        ? Number(report.tile.view_width)
-        : common.CHART_DEFAULT_VIEW_WIDTH,
-
-      viewHeight: common.isDefined(report.tile?.view_height)
-        ? Number(report.tile.view_height)
-        : common.CHART_DEFAULT_VIEW_HEIGHT
+      tileY: common.isDefined(report.tile?.tile_y)
+        ? Number(report.tile.tile_y)
+        : common.CHART_DEFAULT_TILE_Y
     };
 
     let model = models.find(m => m.name === report.model);
@@ -300,7 +302,11 @@ export function wrapReports(item: {
     apiReports.push({
       modelId: model.name,
       mconfigId: mconfigId,
-      queryId: queryId
+      queryId: queryId,
+      tileWidth: chart.tileWidth,
+      tileHeight: chart.tileHeight,
+      tileX: chart.tileX,
+      tileY: chart.tileY
     });
   });
 

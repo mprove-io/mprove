@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { DashboardState } from '~front/app/stores/dashboard.store';
@@ -25,10 +24,10 @@ export class DashboardComponent {
 
       this.layout = this.dashboard.reports.map(report => ({
         id: report.mconfigId,
-        x: 0,
-        y: 0,
-        w: 3,
-        h: 3,
+        x: report.tileX || 0,
+        y: report.tileY || 0,
+        w: report.tileWidth || 8,
+        h: report.tileHeight || 8,
         report: report
       }));
 
@@ -36,9 +35,9 @@ export class DashboardComponent {
     })
   );
 
-  cols = 12;
+  cols = 24;
   rowHeight = 50;
-  layout: KtdGridLayout = [
+  layout: any = [
     // {id: '0', x: 0, y: 0, w: 3, h: 3},
     // {id: '1', x: 3, y: 0, w: 3, h: 3},
     // {id: '2', x: 0, y: 3, w: 3, h: 3},
@@ -57,6 +56,10 @@ export class DashboardComponent {
   ) {}
 
   onLayoutUpdated(x: any) {}
+
+  trackByFn(index: number, item: any) {
+    return item.report.mconfigId;
+  }
 
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')

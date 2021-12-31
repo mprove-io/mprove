@@ -252,22 +252,18 @@ export class Chart {
   formatNumberXAxisTick?: string;
 
   @IsOptional()
-  @IsEnum(enums.ChartTileWidthEnum)
-  tileWidth?: enums.ChartTileWidthEnum;
-
-  @IsOptional()
-  @IsEnum(enums.ChartTileHeightEnum)
-  tileHeight?: enums.ChartTileHeightEnum;
-
-  @IsOptional()
-  @IsEnum(enums.ChartViewSizeEnum)
-  viewSize?: enums.ChartViewSizeEnum;
+  @IsInt()
+  tileWidth?: number;
 
   @IsOptional()
   @IsInt()
-  viewWidth?: number;
+  tileHeight?: number;
 
   @IsOptional()
   @IsInt()
-  viewHeight?: number;
+  tileX?: number;
+
+  @IsOptional()
+  @IsInt()
+  tileY?: number;
 }

@@ -38,10 +38,8 @@ export function checkChartTileParameters<T extends types.dzType>(
             [
               enums.ParameterEnum.TileWidth.toString(),
               enums.ParameterEnum.TileHeight.toString(),
-              enums.ParameterEnum.TileSize.toString(),
-              enums.ParameterEnum.ViewWidth.toString(),
-              enums.ParameterEnum.ViewHeight.toString(),
-              enums.ParameterEnum.ViewSize.toString()
+              enums.ParameterEnum.TileX.toString(),
+              enums.ParameterEnum.TileY.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
@@ -113,127 +111,11 @@ export function checkChartTileParameters<T extends types.dzType>(
           }
 
           if (
-            parameter === enums.ParameterEnum.TileWidth &&
             [
-              common.ChartTileWidthEnum._1,
-              common.ChartTileWidthEnum._2,
-              common.ChartTileWidthEnum._3,
-              common.ChartTileWidthEnum._4,
-              common.ChartTileWidthEnum._5,
-              common.ChartTileWidthEnum._6,
-              common.ChartTileWidthEnum._7,
-              common.ChartTileWidthEnum._8,
-              common.ChartTileWidthEnum._9,
-              common.ChartTileWidthEnum._10,
-              common.ChartTileWidthEnum._11,
-              common.ChartTileWidthEnum._12
-            ].indexOf(
-              report.tile[parameter as keyof interfaces.ChartTile] as any
-            ) < 0
-          ) {
-            item.errors.push(
-              new BmError({
-                title: enums.ErTitleEnum.REPORT_TILE_WRONG_TILE_WIDTH,
-                message:
-                  `"${
-                    report.tile[parameter as keyof interfaces.ChartTile] as any
-                  }" is not valid ` + `${parameter} value`,
-                lines: [
-                  {
-                    line: report.tile[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartTile
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            parameter === enums.ParameterEnum.TileHeight &&
-            [
-              common.ChartTileHeightEnum._300,
-              common.ChartTileHeightEnum._400,
-              common.ChartTileHeightEnum._500,
-              common.ChartTileHeightEnum._600,
-              common.ChartTileHeightEnum._700,
-              common.ChartTileHeightEnum._800,
-              common.ChartTileHeightEnum._900,
-              common.ChartTileHeightEnum._1000,
-              common.ChartTileHeightEnum._1100,
-              common.ChartTileHeightEnum._1200,
-              common.ChartTileHeightEnum._1300,
-              common.ChartTileHeightEnum._1400,
-              common.ChartTileHeightEnum._1500,
-              common.ChartTileHeightEnum._1600,
-              common.ChartTileHeightEnum._1700,
-              common.ChartTileHeightEnum._1800,
-              common.ChartTileHeightEnum._1900
-            ].indexOf(
-              report.tile[parameter as keyof interfaces.ChartTile] as any
-            ) < 0
-          ) {
-            item.errors.push(
-              new BmError({
-                title: enums.ErTitleEnum.REPORT_TILE_WRONG_TILE_HEIGHT,
-                message:
-                  `"${
-                    report.tile[parameter as keyof interfaces.ChartTile] as any
-                  }" is not valid ` + `${parameter} value`,
-                lines: [
-                  {
-                    line: report.tile[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartTile
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            parameter === enums.ParameterEnum.ViewSize &&
-            [
-              common.ChartViewSizeEnum.Auto,
-              common.ChartViewSizeEnum.Manual
-            ].indexOf(
-              report.tile[parameter as keyof interfaces.ChartTile] as any
-            ) < 0
-          ) {
-            item.errors.push(
-              new BmError({
-                title: enums.ErTitleEnum.REPORT_TILE_WRONG_VIEW_SIZE,
-                message:
-                  `"${
-                    report.tile[parameter as keyof interfaces.ChartTile] as any
-                  }" is not valid ` + `${parameter} value`,
-                lines: [
-                  {
-                    line: report.tile[
-                      (parameter +
-                        constants.LINE_NUM) as keyof interfaces.ChartTile
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            [
-              enums.ParameterEnum.ViewWidth.toString(),
-              enums.ParameterEnum.ViewHeight.toString()
+              enums.ParameterEnum.TileWidth.toString(),
+              enums.ParameterEnum.TileHeight.toString(),
+              enums.ParameterEnum.TileX.toString(),
+              enums.ParameterEnum.TileY.toString()
             ].indexOf(parameter) > -1 &&
             !(report.tile[
               parameter as keyof interfaces.ChartTile

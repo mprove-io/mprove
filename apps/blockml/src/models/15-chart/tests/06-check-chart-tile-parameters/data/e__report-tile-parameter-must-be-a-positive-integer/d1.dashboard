@@ -8,6 +8,5 @@ reports:
   data:
     value_field: a.mea1
   tile:
-    view_size: manual
-    view_width: unk        
-    view_height: 300
+    tile_x: 0
+    tile_y: unk        

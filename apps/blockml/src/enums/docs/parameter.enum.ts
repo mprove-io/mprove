@@ -130,8 +130,6 @@ export enum ParameterEnum {
   // chart tile
   TileWidth = 'tile_width',
   TileHeight = 'tile_height',
-  TileSize = 'view_size',
-  ViewWidth = 'view_width',
-  ViewHeight = 'view_height',
-  ViewSize = 'view_size'
+  TileX = 'tile_x',
+  TileY = 'tile_y'
 }

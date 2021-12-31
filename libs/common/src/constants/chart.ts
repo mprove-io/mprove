@@ -1,10 +1,7 @@
 import { ChartColorSchemeEnum } from '~common/enums/chart/chart-color-scheme.enum';
 import { ChartInterpolationEnum } from '~common/enums/chart/chart-interpolation.enum';
 import { ChartSchemeTypeEnum } from '~common/enums/chart/chart-scheme-type.enum';
-import { ChartTileHeightEnum } from '~common/enums/chart/chart-tile-height.enum';
-import { ChartTileWidthEnum } from '~common/enums/chart/chart-tile-width.enum';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { ChartViewSizeEnum } from '~common/enums/chart/chart-view-size.enum';
 
 export const CHART_DEFAULT_TYPE = ChartTypeEnum.Line;
 export const CHART_DEFAULT_TITLE = 'Title';
@@ -66,8 +63,7 @@ export const CHART_DEFAULT_FORMAT_AXIS_TICK: string = undefined;
 export const CHART_DEFAULT_FORMAT_Y_AXIS_TICK: string = undefined;
 export const CHART_DEFAULT_FORMAT_X_AXIS_TICK: string = undefined;
 
-export const CHART_DEFAULT_TILE_WIDTH = ChartTileWidthEnum._6;
-export const CHART_DEFAULT_TILE_HEIGHT = ChartTileHeightEnum._500;
-export const CHART_DEFAULT_VIEW_SIZE = ChartViewSizeEnum.Auto;
-export const CHART_DEFAULT_VIEW_WIDTH = 600;
-export const CHART_DEFAULT_VIEW_HEIGHT = 200;
+export const CHART_DEFAULT_TILE_WIDTH = 8;
+export const CHART_DEFAULT_TILE_HEIGHT = 8;
+export const CHART_DEFAULT_TILE_X = 0;
+export const CHART_DEFAULT_TILE_Y = 0;

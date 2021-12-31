@@ -386,25 +386,23 @@ export function prepareReport(mconfig: common.Mconfig) {
         common.isDefined(chart.tileWidth)
           ? chart.tileWidth
           : undefined,
+
       tile_height:
         chart.tileHeight !== common.CHART_DEFAULT_TILE_HEIGHT &&
         common.isDefined(chart.tileHeight)
           ? chart.tileHeight
           : undefined,
-      view_size:
-        chart.viewSize !== common.CHART_DEFAULT_VIEW_SIZE &&
-        common.isDefined(chart.viewSize)
-          ? chart.viewSize
+
+      tile_x:
+        chart.tileX !== common.CHART_DEFAULT_TILE_X &&
+        common.isDefined(chart.tileX)
+          ? chart.tileX
           : undefined,
-      view_width:
-        chart.viewWidth !== common.CHART_DEFAULT_VIEW_WIDTH &&
-        common.isDefined(chart.viewWidth)
-          ? chart.viewWidth
-          : undefined,
-      view_height:
-        chart.viewHeight !== common.CHART_DEFAULT_VIEW_HEIGHT &&
-        common.isDefined(chart.viewHeight)
-          ? chart.viewHeight
+
+      tile_y:
+        chart.tileY !== common.CHART_DEFAULT_TILE_Y &&
+        common.isDefined(chart.tileY)
+          ? chart.tileY
           : undefined
     }
   };

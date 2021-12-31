@@ -143,9 +143,8 @@ export class StructService {
 
         tileWidth: common.CHART_DEFAULT_TILE_WIDTH,
         tileHeight: common.CHART_DEFAULT_TILE_HEIGHT,
-        viewSize: common.CHART_DEFAULT_VIEW_SIZE,
-        viewWidth: common.CHART_DEFAULT_VIEW_WIDTH,
-        viewHeight: common.CHART_DEFAULT_VIEW_HEIGHT
+        tileX: common.CHART_DEFAULT_TILE_X,
+        tileY: common.CHART_DEFAULT_TILE_Y
       },
       temp: true,
       serverTs: 1
