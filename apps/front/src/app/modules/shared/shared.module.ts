@@ -41,6 +41,7 @@ import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/curren
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
+import { DragIconComponent } from './icons/drag-icon/drag-icon.component';
 import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-icon.component';
 import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
@@ -114,7 +115,8 @@ let sharedComponents = [
   FullScreenIconComponent,
   SearchIconComponent,
   LockClosedIconComponent,
-  ArrowDropDownIconComponent
+  ArrowDropDownIconComponent,
+  DragIconComponent
 ];
 
 @NgModule({

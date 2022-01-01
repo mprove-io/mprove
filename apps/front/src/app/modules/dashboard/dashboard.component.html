@@ -95,6 +95,9 @@
             *ngFor="let item of layout; trackBy: trackByFn"
             [id]="item.id"
           >
+            <div ktdGridDragHandle class="handle-1"
+              ><m-drag-icon></m-drag-icon
+            ></div>
             <div class="pb-6 pr-5 w-full h-full">
               <m-chart-rep
                 [title]="item.report.title"
