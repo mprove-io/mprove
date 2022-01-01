@@ -64,6 +64,6 @@ export const CHART_DEFAULT_FORMAT_Y_AXIS_TICK: string = undefined;
 export const CHART_DEFAULT_FORMAT_X_AXIS_TICK: string = undefined;
 
 export const CHART_DEFAULT_TILE_WIDTH = 8;
-export const CHART_DEFAULT_TILE_HEIGHT = 8;
+export const CHART_DEFAULT_TILE_HEIGHT = 12;
 export const CHART_DEFAULT_TILE_X = 0;
 export const CHART_DEFAULT_TILE_Y = 0;

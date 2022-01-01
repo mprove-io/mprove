@@ -30,12 +30,14 @@
   // }
 
   ktd-grid-item {
-    .handle-1 {
+    .drag-handle {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      // border: 1px solid #121212;
-      // border-radius: 2px;
+      top: -8px;
+      left: -8px;
+      width: 64px;
+      height: 64px;
+      // background-color: #ffa726;
+      transform: rotate(45deg);
       color: #121212;
       cursor: grab;
     }
@@ -48,19 +50,19 @@
     // }
 
     &.ktd-grid-item-dragging {
-      .handle-1 {
+      .drag-handle {
         cursor: grabbing;
       }
     }
 
-    .resize-handle-1 {
+    .resize-handle {
       position: absolute;
-      right: 4px;
-      bottom: 4px;
-      width: 24px;
-      height: 24px;
+      right: 18px;
+      bottom: 24px;
+      width: 48px;
+      height: 48px;
+      // background-color: #ffa726;
       cursor: se-resize;
-      border: 1px solid #121212;
       color: #121212;
       transform: rotate(90deg);
     }

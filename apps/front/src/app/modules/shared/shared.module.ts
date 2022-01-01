@@ -49,6 +49,7 @@ import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-ic
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
+import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { LogoComponent } from './logo/logo.component';
@@ -116,7 +117,8 @@ let sharedComponents = [
   SearchIconComponent,
   LockClosedIconComponent,
   ArrowDropDownIconComponent,
-  DragIconComponent
+  DragIconComponent,
+  ResizeIconComponent
 ];
 
 @NgModule({
