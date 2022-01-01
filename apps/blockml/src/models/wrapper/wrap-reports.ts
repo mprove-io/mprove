@@ -303,6 +303,7 @@ export function wrapReports(item: {
       modelId: model.name,
       mconfigId: mconfigId,
       queryId: queryId,
+      title: chart.title,
       tileWidth: chart.tileWidth,
       tileHeight: chart.tileHeight,
       tileX: chart.tileX,

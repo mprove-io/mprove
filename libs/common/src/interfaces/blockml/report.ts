@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class Report {
   @IsString()
@@ -10,19 +10,18 @@ export class Report {
   @IsString()
   queryId: string;
 
-  @IsOptional()
+  @IsString()
+  title: string;
+
   @IsNumber()
   tileWidth: number;
 
-  @IsOptional()
   @IsNumber()
   tileHeight: number;
 
-  @IsOptional()
   @IsNumber()
   tileX: number;
 
-  @IsOptional()
   @IsNumber()
   tileY: number;
 }

@@ -26,8 +26,8 @@ export class DashboardComponent {
         id: report.mconfigId,
         x: report.tileX || 0,
         y: report.tileY || 0,
-        w: report.tileWidth || 8,
-        h: report.tileHeight || 8,
+        w: report.tileWidth || 3,
+        h: report.tileHeight || 3,
         report: report
       }));
 
