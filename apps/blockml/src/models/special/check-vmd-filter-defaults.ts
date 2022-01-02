@@ -58,9 +58,12 @@ export function checkVmdFilterDefaults<T extends types.vmdType>(
       if (common.isUndefined(field.default)) {
         x.filters[field.name] = [];
       } else {
+        field.fractions = [];
+
         let p = processFilter({
           filterBricks: field.default,
-          result: field.result
+          result: field.result,
+          fractions: field.fractions
         });
 
         if (p.valid === 0) {

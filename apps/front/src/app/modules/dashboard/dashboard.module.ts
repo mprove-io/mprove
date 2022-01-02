@@ -8,10 +8,11 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
+import { DashboardFiltersComponent } from './dashboard-filters/dashboard-filters.component';
 import { DashboardComponent } from './dashboard.component';
 
 @NgModule({
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, DashboardFiltersComponent],
   imports: [
     CommonModule,
     FormsModule,

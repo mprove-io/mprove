@@ -1,0 +1,48 @@
+<div class="flex flex-col divide-y divide-gray-300">
+  <div
+    *ngFor="let filter of dashboard.fields; let filterIndex = index"
+    class="flex flex-row items-start justify-start pt-6"
+  >
+    <div class="flex flex-row items-start justify-center">
+      <button
+        class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 focus:outline-none"
+        (click)="addFraction(filter, filterIndex)"
+      >
+        <m-add-icon></m-add-icon>
+      </button>
+
+      <div class="flex flex-col justify-start items-start w-36 ml-3 mb-5">
+        <div class="font-semibold text-left">{{
+          filter.label | capitalize
+        }}</div>
+      </div>
+    </div>
+
+    <div>
+      <div
+        class="flex flex-row justify-start items-start group"
+        *ngFor="
+          let fraction of filter.fractions;
+          let isFirst = first;
+          let fractionIndex = index
+        "
+      >
+        <m-fraction
+          [fieldResult]="filter.result"
+          [fraction]="fraction"
+          [fractionIndex]="fractionIndex"
+          [isFirst]="isFirst"
+          (fractionUpdate)="fractionUpdate(filter, filterIndex, $event)"
+        >
+        </m-fraction>
+
+        <button
+          class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue2 ml-5 invisible group-hover:visible focus:outline-none"
+          (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+        >
+          <m-delete-icon></m-delete-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

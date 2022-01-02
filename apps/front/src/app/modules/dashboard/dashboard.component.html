@@ -83,39 +83,86 @@
         </div>
       </div>
 
-      <div class="flex flex-row flex-grow mt-6 overflow-auto h-2">
-        <ktd-grid
-          *ngIf="dashboard?.reports"
-          [cols]="cols"
-          [rowHeight]="rowHeight"
-          [layout]="layout"
-          (layoutUpdated)="onLayoutUpdated($event)"
+      <div class="flex flex-col flex-grow space-y-6 min-w-[2px] mt-6">
+        <div
+          class="bg-white rounded shadow-md w-full"
+          [ngClass]="{
+            ' h-1/3': filtersIsExpanded
+          }"
         >
-          <ktd-grid-item
-            *ngFor="let item of layout; trackBy: trackByFn"
-            [id]="item.id"
-          >
-            <div
-              ktdGridDragHandle
-              class="flex drag-handle justify-center items-center"
-              ><m-drag-icon></m-drag-icon
-            ></div>
-            <div class="pb-6 pr-5 w-full h-full">
-              <m-chart-rep
-                [title]="item.report.title"
-                [report]="item.report"
-                [dashboard]="dashboard"
-              ></m-chart-rep>
+          <div class="flex flex-col h-full">
+            <div class="flex min-h-[80px] flex-row items-center flex-shrink-0">
+              <div
+                (click)="toggleFiltersPanel()"
+                class="flex flex-row space-x-2 py-3 px-5 items-center cursor-pointer font-semibold text-2xl text-gray1 select-none"
+              >
+                <div> Filters </div>
+                <m-chevron-right-icon
+                  *ngIf="!filtersIsExpanded"
+                ></m-chevron-right-icon>
+                <m-chevron-down-icon
+                  *ngIf="filtersIsExpanded"
+                ></m-chevron-down-icon>
+              </div>
+
+              <m-bricks
+                class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
+                *ngIf="dashboard?.fields.length > 0"
+                [extendedFilters]="extendedFilters"
+              ></m-bricks>
             </div>
-            <m-resize-icon
-              ktdGridResizeHandle
-              class="flex resize-handle justify-center items-center"
-            ></m-resize-icon>
-          </ktd-grid-item>
-        </ktd-grid>
+
+            <div class="flex flex-grow mx-5 mb-5 h-2" *ngIf="filtersIsExpanded">
+              <div
+                *ngIf="dashboard?.fields.length === 0"
+                class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                >No filters</div
+              >
+              <div class="flex-1 w-2 overflow-auto">
+                <m-dashboard-filters
+                  [dashboard]="dashboard"
+                  [extendedFilters]="extendedFilters"
+                ></m-dashboard-filters>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-row flex-grow mt-6 overflow-auto h-2">
+          <ktd-grid
+            *ngIf="dashboard?.reports"
+            [cols]="cols"
+            [rowHeight]="rowHeight"
+            [layout]="layout"
+            (layoutUpdated)="onLayoutUpdated($event)"
+          >
+            <ktd-grid-item
+              *ngFor="let item of layout; trackBy: trackByFn"
+              [id]="item.id"
+            >
+              <div
+                ktdGridDragHandle
+                class="flex drag-handle justify-center items-center"
+                ><m-drag-icon></m-drag-icon
+              ></div>
+              <div class="pb-6 pr-5 w-full h-full">
+                <m-chart-rep
+                  [title]="item.report.title"
+                  [report]="item.report"
+                  [dashboard]="dashboard"
+                ></m-chart-rep>
+              </div>
+              <m-resize-icon
+                ktdGridResizeHandle
+                class="flex resize-handle justify-center items-center"
+              ></m-resize-icon>
+            </ktd-grid-item>
+          </ktd-grid>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <div *ngIf="dashboard$ | async"></div>
+<div *ngIf="extendedFilters$ | async"></div>

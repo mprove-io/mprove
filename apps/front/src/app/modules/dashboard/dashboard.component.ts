@@ -4,6 +4,7 @@ import { tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { DashboardState } from '~front/app/stores/dashboard.store';
 import { constants as frontConstants } from '~front/barrels/constants';
+import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-dashboard',
@@ -12,6 +13,8 @@ import { constants as frontConstants } from '~front/barrels/constants';
 })
 export class DashboardComponent {
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
+
+  filtersIsExpanded = false;
 
   dashboard: DashboardState;
   dashboard$ = this.dashboardQuery.select().pipe(
@@ -36,6 +39,14 @@ export class DashboardComponent {
     })
   );
 
+  extendedFilters: interfaces.FilterExtended[];
+  extendedFilters$ = this.dashboardQuery.extendedFilters$.pipe(
+    tap(x => {
+      this.extendedFilters = x;
+      this.cd.detectChanges();
+    })
+  );
+
   cols = 24;
   rowHeight = 50;
   layout: any = [
@@ -55,6 +66,10 @@ export class DashboardComponent {
     private title: Title,
     private cd: ChangeDetectorRef
   ) {}
+
+  toggleFiltersPanel() {
+    this.filtersIsExpanded = !this.filtersIsExpanded;
+  }
 
   onLayoutUpdated(x: any) {}
 

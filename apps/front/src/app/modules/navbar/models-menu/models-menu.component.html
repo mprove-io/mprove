@@ -1,6 +1,6 @@
-<div class="block relative px-5">
+<div class="block relative">
   <button
-    class="relative block h-10 z-10 rounded-full text-gray1 tracking-wider focus:outline-none"
+    class="relative block h-10 z-10 rounded-full text-gray1 tracking-wider focus:outline-none px-5"
     [ngClass]="{
       'cursor-default text-gray-400':
         !nav || !nav.projectId || needSave === true
@@ -14,13 +14,13 @@
     "
   >
     <div class="flex flex-row items-center">
-      <div class="flex justify-center text-base"> Explore </div>
+      <div class="flex justify-center text-base"> Explore models </div>
       <m-arrow-drop-down-icon></m-arrow-drop-down-icon>
     </div>
   </button>
 
   <button
-    class="fixed inset-0 z-10 w-full h-full cursor-default focus:outline-none"
+    class="fixed inset-0 z-10 h-full cursor-default focus:outline-none px-5"
     *ngIf="isModelsMenuOpen === true"
     (click)="closeMenu()"
   ></button>
