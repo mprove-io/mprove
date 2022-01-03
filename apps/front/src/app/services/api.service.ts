@@ -81,7 +81,9 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateViz,
     // visualizations
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteViz,
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyViz,
+    // dashboards
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard
   ];
 
   constructor(

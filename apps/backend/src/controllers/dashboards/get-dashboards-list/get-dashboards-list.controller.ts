@@ -53,7 +53,7 @@ export class GetDashboardsListController {
         'access_roles',
         'access_users'
       ],
-      where: { struct_id: branch.struct_id }
+      where: { struct_id: branch.struct_id, temp: common.BoolEnum.FALSE }
     });
 
     let dashboardsGrantedAccess = dashboards.filter(x =>
