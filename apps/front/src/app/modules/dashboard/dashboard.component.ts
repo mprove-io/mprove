@@ -2,7 +2,9 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { DashboardState } from '~front/app/stores/dashboard.store';
+import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 
@@ -64,6 +66,7 @@ export class DashboardComponent {
   constructor(
     private dashboardQuery: DashboardQuery,
     private title: Title,
+    public navigateService: NavigateService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -75,6 +78,15 @@ export class DashboardComponent {
 
   trackByFn(index: number, item: any) {
     return item.report.mconfigId;
+  }
+
+  goToFile() {
+    let fileIdAr = this.dashboard.filePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
   }
 
   canDeactivate(): Promise<boolean> | boolean {

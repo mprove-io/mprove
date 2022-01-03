@@ -17,10 +17,11 @@
 
             <button
               class="flex flex-row items-center text-blue-500 focus:outline-none"
+              *ngIf="model?.modelId"
               (click)="goToFile()"
             >
               <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
-              <div class="ml-2 text-xl">File</div>
+              <div class="ml-2 text-xl">{{ model.modelId }}.model</div>
             </button>
           </div>
 

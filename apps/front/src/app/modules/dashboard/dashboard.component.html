@@ -16,13 +16,16 @@
                 | capitalize
             }}</div>
 
-            <!-- <button
+            <button
               class="flex flex-row items-center text-blue-500 focus:outline-none"
+              *ngIf="dashboard?.dashboardId"
               (click)="goToFile()"
             >
               <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
-              <div class="ml-2 text-xl">File</div>
-            </button> -->
+              <div class="ml-2 text-xl"
+                >{{ dashboard.dashboardId }}.dashboard</div
+              >
+            </button>
           </div>
 
           <div class="flex-grow"></div>

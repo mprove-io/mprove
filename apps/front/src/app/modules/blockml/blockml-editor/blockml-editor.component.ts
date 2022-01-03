@@ -271,6 +271,9 @@ export class BlockmlEditorComponent implements OnDestroy {
 
     if (dotExt === common.FileExtensionEnum.Model) {
       this.navigateService.navigateToModel(id);
+    }
+    if (dotExt === common.FileExtensionEnum.Dashboard) {
+      this.navigateService.navigateToDashboard(id);
     } else if (dotExt === common.FileExtensionEnum.Viz) {
       this.navigateService.navigateToVizs({
         extra: {
