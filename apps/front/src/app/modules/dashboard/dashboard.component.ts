@@ -20,6 +20,8 @@ export class DashboardComponent {
 
   showBricks = false;
 
+  isShow = true;
+
   dashboard: DashboardState;
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
@@ -91,8 +93,16 @@ export class DashboardComponent {
     });
   }
 
+  refreshShow() {
+    this.isShow = false;
+    setTimeout(() => {
+      this.isShow = true;
+    });
+  }
+
   toggleShowReportFilters() {
     this.showBricks = !this.showBricks;
+    this.refreshShow();
   }
 
   canDeactivate(): Promise<boolean> | boolean {

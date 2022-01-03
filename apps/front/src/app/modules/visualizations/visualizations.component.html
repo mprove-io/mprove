@@ -158,6 +158,7 @@
               >
                 <div class="pb-6 pr-5 w-full h-full">
                   <m-chart-viz
+                    *ngIf="isShow === true"
                     [title]="item.title"
                     [report]="item.reports[0]"
                     [viz]="item"
