@@ -44,6 +44,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   @Input()
   viz: common.Viz;
 
+  @Input()
+  showBricks: boolean;
+
   accessRolesString: string;
   accessUsersString: string;
   accessString: string;

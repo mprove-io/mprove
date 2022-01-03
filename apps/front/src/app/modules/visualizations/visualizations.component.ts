@@ -30,6 +30,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
+  showBricks = true;
+
   modelsList: common.ModelsItem[];
   vizsModelsList: ModelsItemExtended[];
 
@@ -246,6 +248,10 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.myDialogService.showNewViz({
       modelsList: this.modelsList
     });
+  }
+
+  toggleShowFilters() {
+    this.showBricks = !this.showBricks;
   }
 
   ngOnDestroy() {

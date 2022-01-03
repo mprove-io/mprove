@@ -18,6 +18,8 @@ export class DashboardComponent {
 
   filtersIsExpanded = false;
 
+  showBricks = false;
+
   dashboard: DashboardState;
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
@@ -87,6 +89,10 @@ export class DashboardComponent {
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
+  }
+
+  toggleShowReportFilters() {
+    this.showBricks = !this.showBricks;
   }
 
   canDeactivate(): Promise<boolean> | boolean {

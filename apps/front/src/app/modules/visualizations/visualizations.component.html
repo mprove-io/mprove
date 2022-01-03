@@ -33,6 +33,18 @@
           (click)="resetSearch()"
         ></m-delete-icon>
 
+        <div class="flex flex-row items-center space-x-5">
+          <ui-switch
+            class="ml-5"
+            [checked]="showBricks"
+            (change)="toggleShowFilters()"
+          ></ui-switch>
+
+          <div class="flex h-9 text-gray1 text-base items-center select-none"
+            >Show Filters</div
+          >
+        </div>
+
         <div class="flex-grow"></div>
 
         <div class="flex flex-row items-center text-base text-gray1">
@@ -149,6 +161,7 @@
                     [title]="item.title"
                     [report]="item.reports[0]"
                     [viz]="item"
+                    [showBricks]="showBricks"
                     (vizDeleted)="vizDeleted($event)"
                   ></m-chart-viz>
                 </div>

@@ -28,6 +28,18 @@
             </button>
           </div>
 
+          <div class="flex flex-row items-center space-x-5">
+            <ui-switch
+              class="ml-5"
+              [checked]="showBricks"
+              (change)="toggleShowReportFilters()"
+            ></ui-switch>
+
+            <div class="flex h-9 text-gray1 text-base items-center select-none"
+              >Show Report Filters</div
+            >
+          </div>
+
           <div class="flex-grow"></div>
 
           <!-- <div class="flex flex-row items-center text-base text-gray1">
@@ -153,6 +165,7 @@
                   [title]="item.report.title"
                   [report]="item.report"
                   [dashboard]="dashboard"
+                  [showBricks]="showBricks"
                 ></m-chart-rep>
               </div>
               <m-resize-icon

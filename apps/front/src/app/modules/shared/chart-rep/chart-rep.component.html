@@ -117,7 +117,7 @@
 
       <m-bricks
         class="flex flex-row mb-5 max-h-[120px] items-start justify-start overflow-auto max-w-max flex-shrink-0"
-        *ngIf="mconfig?.filters.length > 0"
+        *ngIf="showBricks === true && mconfig?.filters.length > 0"
         [extendedFilters]="extendedFilters"
       ></m-bricks>
 
