@@ -6,11 +6,6 @@ import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
-export class EventFractionUpdate {
-  fraction: common.Fraction;
-  fractionIndex: number;
-}
-
 @Component({
   selector: 'm-model-filters',
   templateUrl: './model-filters.component.html'
@@ -34,10 +29,8 @@ export class ModelFiltersComponent {
   fractionUpdate(
     filterExtended: interfaces.FilterExtended,
     filterIndex: number,
-    eventFractionUpdate: any
+    eventFractionUpdate: interfaces.EventFractionUpdate
   ) {
-    // console.log(eventFractionUpdate);
-
     let newMconfig = this.structService.makeMconfig();
 
     let fractions = filterExtended.fractions;

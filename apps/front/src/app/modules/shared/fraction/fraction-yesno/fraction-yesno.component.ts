@@ -7,8 +7,8 @@ import {
   Output
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { EventFractionUpdate } from '~front/app/modules/model/model-filters/model-filters.component';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 import {
   FractionTypeItem,
   FractionYesnoValueItem
@@ -26,7 +26,7 @@ export class FractionYesnoComponent implements OnInit {
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
-  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
   fractionTypeForm: FormGroup;
   fractionForm: FormGroup;

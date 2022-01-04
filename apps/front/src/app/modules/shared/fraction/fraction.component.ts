@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { common } from '~front/barrels/common';
-import { EventFractionUpdate } from '../../model/model-filters/model-filters.component';
+import { interfaces } from '~front/barrels/interfaces';
 
 export class FractionTypeItem {
   label: string;
@@ -82,7 +82,7 @@ export class FractionComponent {
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
 
-  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
   constructor() {}
 }

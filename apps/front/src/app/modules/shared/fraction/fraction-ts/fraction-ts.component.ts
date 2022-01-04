@@ -14,9 +14,9 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { en_US, NzI18nService } from 'ng-zorro-antd/i18n';
 import { NzTimePickerComponent } from 'ng-zorro-antd/time-picker';
-import { EventFractionUpdate } from '~front/app/modules/model/model-filters/model-filters.component';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 import {
   FractionTsForOptionItem,
   FractionTsForUnitItem,
@@ -41,7 +41,7 @@ export class FractionTsComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
-  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
   @ViewChild('timePickerOnHour') timePickerOnHour: NzTimePickerComponent;
   @ViewChild('timePickerOnMinute') timePickerOnMinute: NzTimePickerComponent;

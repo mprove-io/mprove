@@ -1,15 +1,7 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { MqQuery } from '~front/app/queries/mq.query';
+import { Component, Input } from '@angular/core';
 import { DashboardService } from '~front/app/services/dashboard.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
-import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
-
-export class EventFractionUpdate {
-  fraction: common.Fraction;
-  fractionIndex: number;
-}
 
 @Component({
   selector: 'm-dashboard-filters',
@@ -22,36 +14,36 @@ export class DashboardFiltersComponent {
   @Input()
   extendedFilters: interfaces.FilterExtended[];
 
-  constructor(
-    private mqQuery: MqQuery,
-    private cd: ChangeDetectorRef,
-    private structService: StructService,
-    private mconfigService: MconfigService,
-    private dashboardService: DashboardService
-  ) {}
+  constructor(private dashboardService: DashboardService) {}
 
   fractionUpdate(
-    filterExtended: any,
-    filterIndex: number,
-    eventFractionUpdate: any
+    dashboardField: common.DashboardField,
+    fieldIndex: number,
+    eventFractionUpdate: interfaces.EventFractionUpdate
   ) {
-    // // console.log(eventFractionUpdate);
-    // let newMconfig = this.structService.makeMconfig();
-    // let fractions = filterExtended.fractions;
-    // let newFractions = [
-    //   ...fractions.slice(0, eventFractionUpdate.fractionIndex),
-    //   eventFractionUpdate.fraction,
-    //   ...fractions.slice(eventFractionUpdate.fractionIndex + 1)
-    // ];
-    // let newFilter = Object.assign({}, filterExtended, {
-    //   fractions: newFractions
-    // });
-    // newMconfig.filters = [
-    //   ...newMconfig.filters.slice(0, filterIndex),
-    //   newFilter,
-    //   ...newMconfig.filters.slice(filterIndex + 1)
-    // ];
-    // this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    let fractions = dashboardField.fractions;
+
+    let newFractions = [
+      ...fractions.slice(0, eventFractionUpdate.fractionIndex),
+      eventFractionUpdate.fraction,
+      ...fractions.slice(eventFractionUpdate.fractionIndex + 1)
+    ];
+
+    let newField = Object.assign({}, dashboardField, {
+      fractions: newFractions
+    });
+
+    let newDashboardFields = [
+      ...this.dashboard.fields.slice(0, fieldIndex),
+      newField,
+      ...this.dashboard.fields.slice(fieldIndex + 1)
+    ];
+
+    this.dashboardService.navCreateTempDashboard({
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: newDashboardFields
+    });
   }
 
   addFraction(dashboardField: common.DashboardField, fieldIndex: number) {
@@ -119,13 +111,13 @@ export class DashboardFiltersComponent {
         ...fractions.slice(fractionIndex + 1)
       ];
 
-      let newDashboardField = Object.assign({}, dashboardField, {
+      let newField = Object.assign({}, dashboardField, {
         fractions: newFractions
       });
 
       newDashboardFields = [
         ...this.dashboard.fields.slice(0, fieldIndex),
-        newDashboardField,
+        newField,
         ...this.dashboard.fields.slice(fieldIndex + 1)
       ];
     }

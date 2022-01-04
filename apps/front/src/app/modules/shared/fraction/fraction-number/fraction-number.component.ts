@@ -7,9 +7,9 @@ import {
   Output
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EventFractionUpdate } from '~front/app/modules/model/model-filters/model-filters.component';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 import {
   FractionNumberBetweenOptionItem,
   FractionTypeItem
@@ -31,7 +31,7 @@ export class FractionNumberComponent implements OnInit {
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
-  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
   fractionTypeForm: FormGroup;
 
