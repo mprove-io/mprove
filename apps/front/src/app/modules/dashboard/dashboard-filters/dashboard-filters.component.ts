@@ -55,7 +55,6 @@ export class DashboardFiltersComponent {
   }
 
   addFraction(dashboardField: common.DashboardField, fieldIndex: number) {
-    // let newMconfig = this.structService.makeMconfig();
     let fractions = dashboardField.fractions;
 
     let fraction: common.Fraction = {
@@ -101,31 +100,40 @@ export class DashboardFiltersComponent {
   }
 
   deleteFraction(
-    filterExtended: any,
-    filterIndex: number,
+    dashboardField: common.DashboardField,
+    fieldIndex: number,
     fractionIndex: number
   ) {
-    // let newMconfig = this.structService.makeMconfig();
-    // let fractions = filterExtended.fractions;
-    // if (fractions.length === 1) {
-    //   newMconfig.filters = [
-    //     ...newMconfig.filters.slice(0, filterIndex),
-    //     ...newMconfig.filters.slice(filterIndex + 1)
-    //   ];
-    // } else {
-    //   let newFractions = [
-    //     ...fractions.slice(0, fractionIndex),
-    //     ...fractions.slice(fractionIndex + 1)
-    //   ];
-    //   let newFilter = Object.assign({}, filterExtended, {
-    //     fractions: newFractions
-    //   });
-    //   newMconfig.filters = [
-    //     ...newMconfig.filters.slice(0, filterIndex),
-    //     newFilter,
-    //     ...newMconfig.filters.slice(filterIndex + 1)
-    //   ];
-    // }
-    // this.mconfigService.navCreateMconfigAndQuery(newMconfig);
+    let fractions = dashboardField.fractions;
+
+    let newDashboardFields: common.DashboardField[];
+
+    if (fractions.length === 1) {
+      newDashboardFields = [
+        ...this.dashboard.fields.slice(0, fieldIndex),
+        ...this.dashboard.fields.slice(fieldIndex + 1)
+      ];
+    } else {
+      let newFractions = [
+        ...fractions.slice(0, fractionIndex),
+        ...fractions.slice(fractionIndex + 1)
+      ];
+
+      let newDashboardField = Object.assign({}, dashboardField, {
+        fractions: newFractions
+      });
+
+      newDashboardFields = [
+        ...this.dashboard.fields.slice(0, fieldIndex),
+        newDashboardField,
+        ...this.dashboard.fields.slice(fieldIndex + 1)
+      ];
+    }
+
+    this.dashboardService.navCreateTempDashboard({
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: newDashboardFields
+    });
   }
 }
