@@ -9,7 +9,7 @@ export class DashboardQuery extends Query<DashboardState> {
   reports$ = this.select(state => state.reports);
 
   extendedFilters$ = this.select(dashboard => {
-    console.log(dashboard);
+    // console.log(dashboard);
 
     let extendedFilters: interfaces.FilterExtended[] = dashboard.fields.map(
       field => {

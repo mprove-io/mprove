@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { tap } from 'rxjs/operators';
+import { fromEvent, merge, Subscription } from 'rxjs';
+import { debounceTime, tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { DashboardState } from '~front/app/stores/dashboard.store';
@@ -13,13 +14,14 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
 
   filtersIsExpanded = false;
 
   showBricks = false;
 
+  isShowGrid = true;
   isShow = true;
 
   dashboard: DashboardState;
@@ -53,6 +55,8 @@ export class DashboardComponent {
     })
   );
 
+  compactType: any = 'free';
+  preventCollision = false;
   cols = 24;
   rowHeight = 50;
   layout: any = [
@@ -65,14 +69,30 @@ export class DashboardComponent {
     // { id: '2', x: 0, y: 0, w: 3, h: 3 },
     // { id: '3', x: 0, y: 0, w: 3, h: 3 }
   ];
-  trackById = 'id';
+
+  private resizeSubscription: Subscription;
 
   constructor(
     private dashboardQuery: DashboardQuery,
     private title: Title,
     public navigateService: NavigateService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef // @Inject(DOCUMENT) public document: Document // [scrollableParent]="document"
   ) {}
+
+  ngOnInit() {
+    this.resizeSubscription = merge(
+      fromEvent(window, 'resize'),
+      fromEvent(window, 'orientationchange')
+    )
+      .pipe(debounceTime(500))
+      .subscribe(() => {
+        this.refreshShowGrid();
+      });
+  }
+
+  ngOnDestroy() {
+    this.resizeSubscription.unsubscribe();
+  }
 
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
@@ -93,6 +113,13 @@ export class DashboardComponent {
     });
   }
 
+  refreshShowGrid() {
+    this.isShowGrid = false;
+    setTimeout(() => {
+      this.isShowGrid = true;
+    });
+  }
+
   refreshShow() {
     this.isShow = false;
     setTimeout(() => {
@@ -102,6 +129,19 @@ export class DashboardComponent {
 
   toggleShowReportFilters() {
     this.showBricks = !this.showBricks;
+    this.refreshShow();
+  }
+
+  onResizeEnded(event: any) {
+    this.refreshShow();
+  }
+
+  onDragStarted(event: any) {
+    this.preventCollision = true;
+  }
+
+  onDragEnded(event: any) {
+    this.preventCollision = false;
     this.refreshShow();
   }
 

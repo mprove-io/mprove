@@ -145,11 +145,16 @@
 
         <div class="flex flex-row flex-grow mt-6 overflow-auto h-2">
           <ktd-grid
-            *ngIf="dashboard?.reports"
+            *ngIf="isShowGrid === true && dashboard?.reports"
+            [compactType]="compactType"
+            [preventCollision]="preventCollision"
             [cols]="cols"
             [rowHeight]="rowHeight"
             [layout]="layout"
             (layoutUpdated)="onLayoutUpdated($event)"
+            (resizeEnded)="onResizeEnded($event)"
+            (dragStarted)="onDragStarted($event)"
+            (dragEnded)="onDragEnded($event)"
           >
             <ktd-grid-item
               *ngFor="let item of layout; trackBy: trackByFn"
