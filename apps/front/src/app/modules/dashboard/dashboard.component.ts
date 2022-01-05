@@ -145,6 +145,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
+  run() {}
+
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')
     // this.mqStore.reset();

@@ -42,59 +42,58 @@
 
           <div class="flex-grow"></div>
 
-          <!-- <div class="flex flex-row items-center text-base text-gray1">
-            <div *ngIf="!!dryQueryEstimate"
+          <div class="flex flex-row items-center text-base text-gray1">
+            <!-- <div *ngIf="!!dryQueryEstimate"
               >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
-            </div>
+            </div> -->
 
-            <m-query-status
+            <!-- <m-query-status
               *ngIf="!dryQueryEstimate"
               [query]="query"
-            ></m-query-status>
+            ></m-query-status> -->
 
-            <ui-switch
+            <!-- <ui-switch
               class="ml-5"
               [checked]="isAutoRun"
               (change)="toggleAutoRun()"
-            ></ui-switch>
+            ></ui-switch> -->
 
-            <div
+            <!-- <div
               class="flex ml-5 h-9 text-gray1 text-base items-center select-none"
               >Auto Run</div
-            >
+            > -->
 
-            <button
+            <!-- <button
               type="button"
               *ngIf="query?.status === queryStatusEnum.Running"
               data-cy="modelCancelButton"
               class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
               (click)="cancel()"
               >Cancel</button
-            >
+            > -->
 
             <button
               type="button"
-              *ngIf="query?.status !== queryStatusEnum.Running"
-              data-cy="modelRunButton"
+              data-cy="dashboardRunButton"
               class="w-24 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
               [ngClass]="{
-                'bg-blue3': mconfig?.select.length > 0,
-                'bg-gray-400 cursor-default': mconfig?.select.length === 0
+                'bg-blue3': dashboard?.reports.length > 0,
+                'bg-gray-400 cursor-default': dashboard?.reports.length === 0
               }"
               (click)="run()"
-              [disabled]="mconfig?.select.length === 0"
+              [disabled]="dashboard?.reports.length === 0"
               >Run</button
             >
 
-            <div class="relative ml-3">
+            <!-- <div class="relative ml-3">
               <m-query-options
                 [showRunDryButton]="
                   query?.connectionType === connectionTypeEnum.BigQuery
                 "
                 (runDryEvent)="runDry()"
               ></m-query-options>
-            </div>
-          </div> -->
+            </div> -->
+          </div>
         </div>
       </div>
 

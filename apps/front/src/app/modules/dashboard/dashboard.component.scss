@@ -32,13 +32,13 @@
   ktd-grid-item {
     .drag-handle {
       position: absolute;
-      top: -8px;
-      left: -8px;
+      top: 14px;
+      left: 14px;
       width: 64px;
       height: 64px;
       // background-color: #ffa726;
       transform: rotate(45deg);
-      color: #121212;
+      color: #4b5563;
       cursor: grab;
     }
 
@@ -63,7 +63,7 @@
       height: 48px;
       // background-color: #ffa726;
       cursor: se-resize;
-      color: #121212;
+      color: #4b5563;
       transform: rotate(90deg);
     }
   }
