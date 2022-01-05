@@ -1,9 +1,11 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
   QueryList,
+  ViewChild,
   ViewChildren
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
@@ -22,10 +24,17 @@ import { ChartRepComponent } from '../shared/chart-rep/chart-rep.component';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
 
+  @ViewChild('scrollable') scrollable: any;
+
   @ViewChildren('chartRep') chartRepComponents: QueryList<ChartRepComponent>;
+
+  // @ViewChildren('chartRep', { read: ElementRef })
+  // myItemElementRefs: QueryList<ElementRef>;
+
+  scrollSpeed = 8;
 
   filtersIsExpanded = false;
 
@@ -33,6 +42,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   isShowGrid = true;
   isShow = true;
+  isHidden = false;
 
   dashboard: DashboardState;
   dashboard$ = this.dashboardQuery.select().pipe(
@@ -81,12 +91,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ];
 
   private resizeSubscription: Subscription;
+  private scrollSubscription: Subscription;
 
   constructor(
     private dashboardQuery: DashboardQuery,
     private title: Title,
     public navigateService: NavigateService,
-    private cd: ChangeDetectorRef // @Inject(DOCUMENT) public document: Document // [scrollableParent]="document"
+    private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
   ) {}
 
   ngOnInit() {
@@ -100,8 +111,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
-    this.resizeSubscription.unsubscribe();
+  ngAfterViewInit() {
+    this.scrollSubscription = merge(
+      fromEvent(this.scrollable.nativeElement, 'scroll')
+    )
+      .pipe(debounceTime(500))
+      .subscribe((event: any) => {
+        // let elem = event.target;
+
+        // if (elem.offsetHeight + elem.scrollTop >= elem.scrollHeight) {
+        //   // console.log('bottom');
+        //   this.refreshHidden();
+        //   this.cd.detectChanges();
+        // }
+
+        // if (elem.scrollTop === 0) {
+        //   //  console.log('top')
+        //   this.refreshHidden();
+        //   this.cd.detectChanges();
+        // }
+
+        this.refreshHidden();
+      });
   }
 
   toggleFiltersPanel() {
@@ -137,6 +168,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  refreshHidden() {
+    this.isHidden = true;
+    this.cd.detectChanges();
+    setTimeout(() => {
+      this.isHidden = false;
+      this.cd.detectChanges();
+    });
+  }
+
   toggleShowReportFilters() {
     this.showBricks = !this.showBricks;
     this.refreshShow();
@@ -161,10 +201,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  saveAs() {}
+
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')
     // this.mqStore.reset();
     // this.modelStore.reset();
     return true;
+  }
+
+  ngOnDestroy() {
+    this.resizeSubscription.unsubscribe();
+    this.scrollSubscription.unsubscribe();
   }
 }

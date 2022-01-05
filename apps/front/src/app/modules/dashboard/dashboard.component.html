@@ -17,8 +17,17 @@
             }}</div>
 
             <button
+              type="button"
+              data-cy="dashboardSaveAsButton"
+              class="w-24 py-2 ml-5 text-white bg-pink-500 text-base rounded font-medium focus:outline-none"
+              *ngIf="dashboard?.dashboardId && dashboard.temp === true"
+              (click)="saveAs()"
+              >Save As</button
+            >
+
+            <button
               class="flex flex-row items-center text-blue-500 focus:outline-none"
-              *ngIf="dashboard?.dashboardId"
+              *ngIf="dashboard?.dashboardId && dashboard.temp === false"
               (click)="goToFile()"
             >
               <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
@@ -142,7 +151,7 @@
           </div>
         </div>
 
-        <div class="flex flex-row flex-grow mt-6 overflow-auto h-2">
+        <div #scrollable class="flex flex-row flex-grow mt-6 overflow-auto h-2">
           <ktd-grid
             *ngIf="isShowGrid === true && dashboard?.reports"
             [compactType]="compactType"
@@ -150,6 +159,8 @@
             [cols]="cols"
             [rowHeight]="rowHeight"
             [layout]="layout"
+            [scrollableParent]="scrollable"
+            [scrollSpeed]="scrollSpeed"
             (layoutUpdated)="onLayoutUpdated($event)"
             (resizeEnded)="onResizeEnded($event)"
             (dragStarted)="onDragStarted($event)"
@@ -169,6 +180,7 @@
                 <m-chart-rep
                   #chartRep
                   *ngIf="isShow === true"
+                  [hidden]="isHidden"
                   [title]="item.report.title"
                   [report]="item.report"
                   [dashboard]="dashboard"
