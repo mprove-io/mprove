@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -8,6 +15,7 @@ import { DashboardState } from '~front/app/stores/dashboard.store';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
+import { ChartRepComponent } from '../shared/chart-rep/chart-rep.component';
 
 @Component({
   selector: 'm-dashboard',
@@ -16,6 +24,8 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
+
+  @ViewChildren('chartRep') chartRepComponents: QueryList<ChartRepComponent>;
 
   filtersIsExpanded = false;
 
@@ -145,7 +155,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
-  run() {}
+  run() {
+    this.chartRepComponents.forEach(x => {
+      x.run();
+    });
+  }
 
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')

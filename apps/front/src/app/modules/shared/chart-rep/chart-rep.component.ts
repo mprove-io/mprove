@@ -325,8 +325,10 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   }
 
   run(event?: MouseEvent) {
-    event.stopPropagation();
-    this.closeMenu();
+    if (common.isDefined(event)) {
+      event.stopPropagation();
+      this.closeMenu();
+    }
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       queryIds: [this.query.queryId]
