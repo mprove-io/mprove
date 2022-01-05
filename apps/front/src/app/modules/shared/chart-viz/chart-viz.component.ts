@@ -34,6 +34,7 @@ import { interfaces } from '~front/barrels/interfaces';
 export class ChartVizComponent implements OnInit, OnDestroy {
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   queryStatusEnum = common.QueryStatusEnum;
+  queryStatusRunning = common.QueryStatusEnum.Running;
 
   @Input()
   report: common.Report;

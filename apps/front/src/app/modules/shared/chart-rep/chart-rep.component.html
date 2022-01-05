@@ -143,24 +143,29 @@
       </div>
 
       <div
-        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400 invisible group-hover:visible flex-shrink-0"
+        class="flex flex-row ml-5 justify-center items-center h-12 text-gray-400 flex-shrink-0"
       >
-        <m-lock-closed-icon
-          class="mb-1 mr-2 text-gray-400"
-          *ngIf="canAccessModel === false"
-          nz-tooltip
-          [nzTooltipTitle]="'No access to model'"
-          nzTooltipPlacement="bottom"
-        ></m-lock-closed-icon>
-        <div class="text-base">Model:</div>
-        <div class="ml-2 text-base font-semibold">{{
-          model?.label | capitalize
-        }}</div>
+        <div class="flex flex-row invisible group-hover:visible">
+          <m-lock-closed-icon
+            class="mb-1 mr-2 text-gray-400"
+            *ngIf="canAccessModel === false"
+            nz-tooltip
+            [nzTooltipTitle]="'No access to model'"
+            nzTooltipPlacement="bottom"
+          ></m-lock-closed-icon>
+          <div class="text-base">Model:</div>
+          <div class="ml-2 text-base font-semibold">{{
+            model?.label | capitalize
+          }}</div>
+        </div>
 
         <div class="flex flex-grow"></div>
 
         <m-query-status
           class="mr-5"
+          [ngClass]="{
+            'invisible group-hover:visible': query.status !== queryStatusRunning
+          }"
           *ngIf="!!query"
           [query]="query"
         ></m-query-status>
