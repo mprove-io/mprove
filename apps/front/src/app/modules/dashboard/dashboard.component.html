@@ -157,12 +157,13 @@
             (dragEnded)="onDragEnded($event)"
           >
             <ktd-grid-item
+              class="group"
               *ngFor="let item of layout; trackBy: trackByFn"
               [id]="item.id"
             >
               <div
                 ktdGridDragHandle
-                class="flex drag-handle justify-center items-center"
+                class="flex drag-handle justify-center items-center invisible group-hover:visible"
                 ><m-drag-icon></m-drag-icon
               ></div>
               <div class="pb-6 pr-5 w-full h-full">
@@ -176,7 +177,7 @@
               </div>
               <m-resize-icon
                 ktdGridResizeHandle
-                class="flex resize-handle justify-center items-center"
+                class="flex resize-handle justify-center items-center invisible group-hover:visible"
               ></m-resize-icon>
             </ktd-grid-item>
           </ktd-grid>
