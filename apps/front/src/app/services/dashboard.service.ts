@@ -3,7 +3,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
-import { DashboardStore } from '../stores/dashboard.store';
+import { DashboardState, DashboardStore } from '../stores/dashboard.store';
 import { NavState } from '../stores/nav.store';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -51,7 +51,16 @@ export class DashboardService {
         map((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
           let { dashboard, dashboardMconfigs, dashboardQueries } = resp.payload;
 
-          this.dashboardStore.update(dashboard);
+          let dashboardState: DashboardState = dashboard;
+
+          dashboardState.reports.forEach(x => {
+            x.mconfig = dashboardMconfigs.find(
+              m => m.mconfigId === x.mconfigId
+            );
+            x.query = dashboardQueries.find(q => q.queryId === x.queryId);
+          });
+
+          this.dashboardStore.update(dashboardState);
           this.navigateService.navigateToDashboard(dashboard.dashboardId);
         }),
         take(1)

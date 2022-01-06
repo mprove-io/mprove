@@ -11,7 +11,7 @@ import { common } from '~front/barrels/common';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { DashboardStore } from '../stores/dashboard.store';
+import { DashboardState, DashboardStore } from '../stores/dashboard.store';
 import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
@@ -68,7 +68,18 @@ export class DashboardResolver implements Resolve<Observable<boolean>> {
         )
         .pipe(
           map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
-            this.dashboardStore.update(resp.payload.dashboard);
+            let dashboardState: DashboardState = resp.payload.dashboard;
+
+            dashboardState.reports.forEach(x => {
+              x.mconfig = resp.payload.dashboardMconfigs.find(
+                m => m.mconfigId === x.mconfigId
+              );
+              x.query = resp.payload.dashboardQueries.find(
+                q => q.queryId === x.queryId
+              );
+            });
+
+            this.dashboardStore.update(dashboardState);
             return true;
           })
         );

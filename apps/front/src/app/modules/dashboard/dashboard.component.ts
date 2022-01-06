@@ -12,8 +12,12 @@ import { Title } from '@angular/platform-browser';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { DashboardState } from '~front/app/stores/dashboard.store';
+import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
@@ -34,6 +38,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // @ViewChildren('chartRep', { read: ElementRef })
   // myItemElementRefs: QueryList<ElementRef>;
 
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
   scrollSpeed = 8;
 
   filtersIsExpanded = false;
@@ -48,6 +60,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
       this.dashboard = x;
+
       this.title.setTitle(
         `${this.pageTitle} - ${
           this.dashboard?.title || this.dashboard?.dashboardId
@@ -97,6 +110,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private dashboardQuery: DashboardQuery,
     private title: Title,
     public navigateService: NavigateService,
+    public myDialogService: MyDialogService,
+    private apiService: ApiService,
+    private navQuery: NavQuery,
     private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
   ) {}
 
@@ -198,7 +214,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  saveAs() {}
+  saveAs() {
+    this.myDialogService.showDashboardSaveAs({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      dashboard: this.dashboard
+    });
+  }
 
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')

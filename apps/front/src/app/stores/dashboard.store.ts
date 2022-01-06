@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
 
-export class DashboardState extends common.Dashboard {}
+export class ReportWithMconfigAndQuery extends common.Report {
+  mconfig?: common.Mconfig;
+  query?: common.Query;
+}
+
+export class DashboardState extends common.Dashboard {
+  reports: ReportWithMconfigAndQuery[];
+}
 
 @Injectable({ providedIn: 'root' })
 @StoreConfig({

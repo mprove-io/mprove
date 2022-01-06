@@ -126,7 +126,7 @@
         (click)="stopClick($event)"
       >
         <m-chart-view
-          *ngIf="!!mconfig?.chart"
+          *ngIf="!!model"
           [ngClass]="{
             'max-w-max':
               mconfig?.chart.type === chartTypeEnumTable &&

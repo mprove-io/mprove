@@ -46,6 +46,12 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   dashboard: common.Dashboard;
 
   @Input()
+  mconfig: common.Mconfig;
+
+  @Input()
+  query: common.Query;
+
+  @Input()
   showBricks: boolean;
 
   accessRolesString: string;
@@ -58,8 +64,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   sortedColumns: interfaces.ColumnField[];
   qData: RData[];
-  query: common.Query;
-  mconfig: common.Mconfig;
   model: common.Model;
 
   menuId = common.makeId();
@@ -164,61 +168,24 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
-      mconfigId: this.report.mconfigId
-    };
-
-    let mconfig: common.Mconfig = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payloadGetMconfig
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetMconfigResponse) =>
-            resp.payload.mconfig
-        )
-      )
-      .toPromise();
-
     this.extendedFilters = getExtendedFilters({
       fields: model.fields,
-      mconfig: mconfig
+      mconfig: this.mconfig
     });
 
-    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
-      mconfigId: this.report.mconfigId,
-      queryId: this.report.queryId,
-      dashboardId: this.dashboard.dashboardId
-    };
-
-    let query: common.Query = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payloadGetQuery
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetQueryResponse) => resp.payload.query
-        )
-      )
-      .toPromise();
-
     this.sortedColumns = getColumnFields({
-      mconfig: mconfig,
+      mconfig: this.mconfig,
       fields: model.fields
     });
 
     this.qData =
-      mconfig.queryId === query.queryId
+      this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
-            data: query.data,
+            data: this.query.data,
             columns: this.sortedColumns
           })
         : [];
 
-    this.query = query;
-    this.mconfig = mconfig;
     this.model = model;
 
     this.checkRunning$ = interval(3000)
@@ -242,7 +209,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
                   this.query = resp.payload.query;
 
                   this.qData =
-                    mconfig.queryId === this.query.queryId
+                    this.mconfig.queryId === this.query.queryId
                       ? this.queryService.makeQData({
                           data: this.query.data,
                           columns: this.sortedColumns
@@ -273,7 +240,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
           model.accessRoles.some(x => member.roles.includes(x));
 
     let checkSelectResult = getSelectValid({
-      chart: mconfig.chart,
+      chart: this.mconfig.chart,
       sortedColumns: this.sortedColumns
     });
 
