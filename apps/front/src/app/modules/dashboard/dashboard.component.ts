@@ -128,7 +128,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         //   this.refreshHidden();
         //   this.cd.detectChanges();
         // }
-        // this.refreshHidden();
+        this.refreshHidden();
       });
   }
 
