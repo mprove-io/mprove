@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
-  compactType: any = 'free';
+  compactType: any = 'vertical';
   preventCollision = false;
   cols = 24;
   rowHeight = 50;
@@ -118,20 +118,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(debounceTime(500))
       .subscribe((event: any) => {
         // let elem = event.target;
-
         // if (elem.offsetHeight + elem.scrollTop >= elem.scrollHeight) {
         //   // console.log('bottom');
         //   this.refreshHidden();
         //   this.cd.detectChanges();
         // }
-
         // if (elem.scrollTop === 0) {
         //   //  console.log('top')
         //   this.refreshHidden();
         //   this.cd.detectChanges();
         // }
-
-        this.refreshHidden();
+        // this.refreshHidden();
       });
   }
 
@@ -187,11 +184,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onDragStarted(event: any) {
-    this.preventCollision = true;
+    // this.preventCollision = true;
   }
 
   onDragEnded(event: any) {
-    this.preventCollision = false;
+    // this.preventCollision = false;
     this.refreshShow();
   }
 
