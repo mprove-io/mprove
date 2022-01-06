@@ -49,9 +49,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   mconfig: common.Mconfig;
 
   @Input()
-  query: common.Query;
-
-  @Input()
   showBricks: boolean;
 
   accessRolesString: string;
@@ -64,6 +61,8 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   sortedColumns: interfaces.ColumnField[];
   qData: RData[];
+  query: common.Query;
+
   model: common.Model;
 
   menuId = common.makeId();
@@ -173,19 +172,38 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig
     });
 
+    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
+      mconfigId: this.report.mconfigId,
+      queryId: this.report.queryId,
+      dashboardId: this.dashboard.dashboardId
+    };
+
+    let query: common.Query = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+        payloadGetQuery
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetQueryResponse) => resp.payload.query
+        )
+      )
+      .toPromise();
+
     this.sortedColumns = getColumnFields({
       mconfig: this.mconfig,
       fields: model.fields
     });
 
     this.qData =
-      this.mconfig.queryId === this.query.queryId
+      this.mconfig.queryId === query.queryId
         ? this.queryService.makeQData({
-            data: this.query.data,
+            data: query.data,
             columns: this.sortedColumns
           })
         : [];
 
+    this.query = query;
     this.model = model;
 
     this.checkRunning$ = interval(3000)
