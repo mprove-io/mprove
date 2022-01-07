@@ -2,10 +2,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { prepareDashboardField } from '~front/app/functions/prepare-dashboard-field';
-import { prepareReport } from '~front/app/functions/prepare-report';
+import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { toYaml } from '~front/app/functions/to-yaml';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -45,7 +43,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   saveAs: DashboardSaveAsEnum = DashboardSaveAsEnum.NEW_DASHBOARD;
 
-  dashboardId = common.makeId();
+  newDashboardId = common.makeId();
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -116,46 +114,20 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }) {
     let { newTitle, group, roles, users } = item;
 
-    let fields = this.dashboard.fields.map(x =>
-      prepareDashboardField({
-        field: x
-      })
-    );
-
-    let reps = this.dashboard.reports.map(x =>
-      prepareReport({
-        isForDashboard: true,
-        mconfig: x.mconfig
-      })
-    );
-
-    let dashboardFileText = toYaml({
-      dashboard: this.dashboardId,
-      title: newTitle.trim(),
-      description: common.isDefined(this.dashboard.description)
-        ? this.dashboard.description
-        : undefined,
-      group:
-        common.isDefined(group) && group.trim().length > 0
-          ? group.trim()
-          : undefined,
-      access_roles:
-        common.isDefined(roles) && roles.trim().length > 0
-          ? roles.split(',').map(x => x.trim())
-          : undefined,
-      access_users:
-        common.isDefined(users) && users.trim().length > 0
-          ? users.split(',').map(x => x.trim())
-          : undefined,
-      fields: fields,
-      reports: reps
+    let dashboardFileText = makeDashboardFileText({
+      dashboard: this.dashboard,
+      newDashboardId: this.newDashboardId,
+      newTitle: newTitle,
+      group: group,
+      roles: roles,
+      users: users
     });
 
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
       projectId: this.ref.data.projectId,
       isRepoProd: this.ref.data.isRepoProd,
       branchId: this.ref.data.branchId,
-      dashboardId: this.dashboardId,
+      dashboardId: this.newDashboardId,
       dashboardFileText: dashboardFileText
     };
 
@@ -168,7 +140,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
-          this.navigateService.navigateToDashboard(this.dashboardId);
+          this.navigateService.navigateToDashboard(this.newDashboardId);
         }),
         take(1)
       )
