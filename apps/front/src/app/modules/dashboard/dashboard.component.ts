@@ -49,6 +49,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
+  randomId = common.makeId();
+
   scrollSpeed = 8;
 
   filtersIsExpanded = false;
@@ -57,7 +59,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isShowGrid = true;
   isShow = true;
-  isHidden = false;
 
   dashboard: DashboardState;
   dashboard$ = this.dashboardQuery.select().pipe(
@@ -136,20 +137,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.scrollSubscription = merge(
       fromEvent(this.scrollable.nativeElement, 'scroll')
     )
-      .pipe(debounceTime(500))
+      .pipe(debounceTime(100))
       .subscribe((event: any) => {
-        // let elem = event.target;
-        // if (elem.offsetHeight + elem.scrollTop >= elem.scrollHeight) {
-        //   // console.log('bottom');
-        //   this.refreshHidden();
-        //   this.cd.detectChanges();
-        // }
-        // if (elem.scrollTop === 0) {
-        //   //  console.log('top')
-        //   this.refreshHidden();
-        //   this.cd.detectChanges();
-        // }
-        this.refreshHidden();
+        this.randomId = common.makeId();
+        this.cd.detectChanges();
       });
   }
 
@@ -183,15 +174,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isShow = false;
     setTimeout(() => {
       this.isShow = true;
-    });
-  }
-
-  refreshHidden() {
-    this.isHidden = true;
-    this.cd.detectChanges();
-    setTimeout(() => {
-      this.isHidden = false;
-      this.cd.detectChanges();
     });
   }
 

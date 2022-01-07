@@ -16,6 +16,10 @@
                 | capitalize
             }}</div>
 
+            <div class="text-xl text-gray1" *ngIf="dashboard?.temp === true"
+              >(modified)</div
+            >
+
             <button
               type="button"
               data-cy="dashboardSaveAsButton"
@@ -180,10 +184,10 @@
                 <m-chart-rep
                   #chartRep
                   *ngIf="isShow === true"
-                  [hidden]="isHidden"
                   [title]="item.report.title"
                   [report]="item.report"
                   [dashboard]="dashboard"
+                  [randomId]="randomId"
                   [mconfig]="item.report.mconfig"
                   [showBricks]="showBricks"
                 ></m-chart-rep>

@@ -46,6 +46,9 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   dashboard: common.Dashboard;
 
   @Input()
+  randomId: string;
+
+  @Input()
   mconfig: common.Mconfig;
 
   @Input()

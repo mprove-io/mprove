@@ -25,12 +25,22 @@ export function makeDashboardFileText(item: {
         : undefined
   }));
 
-  let reps = dashboard.reports.map(x =>
-    prepareReport({
+  let reps = dashboard.reports.map(x => {
+    let newMconfig = common.makeCopy(x.mconfig);
+
+    Object.keys(newMconfig.listen).forEach(z => {
+      let dashboardFieldName = newMconfig.listen[z];
+
+      if (fields.findIndex(f => f.filter === dashboardFieldName) < 0) {
+        delete newMconfig.listen[z];
+      }
+    });
+
+    return prepareReport({
       isForDashboard: true,
-      mconfig: x.mconfig
-    })
-  );
+      mconfig: newMconfig
+    });
+  });
 
   let dashboardFileText = toYaml({
     dashboard: newDashboardId,
@@ -50,8 +60,8 @@ export function makeDashboardFileText(item: {
       common.isDefined(users) && users.trim().length > 0
         ? users.split(',').map(x => x.trim())
         : undefined,
-    fields: fields,
-    reports: reps
+    fields: common.isDefined(fields) && fields.length > 0 ? fields : undefined,
+    reports: common.isDefined(reps) && reps.length > 0 ? reps : undefined
   });
 
   return dashboardFileText;
