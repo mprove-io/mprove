@@ -35,7 +35,10 @@ export class ViewBlockmlDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let rep = prepareReport(this.ref.data.mconfig);
+    let rep = prepareReport({
+      isForDashboard: false,
+      mconfig: this.ref.data.mconfig
+    });
 
     this.reportYaml = toYaml({ reports: [rep] });
   }

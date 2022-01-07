@@ -291,6 +291,7 @@ export function wrapReports(item: {
       sorts: report.sorts,
       timezone: report.timezone,
       limit: report.limit ? Number(report.limit) : undefined,
+      listen: report.listen,
       filters: filters,
       chart: chart,
       temp: false,

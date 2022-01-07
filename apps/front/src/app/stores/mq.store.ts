@@ -17,6 +17,7 @@ export const emptyMconfig: common.Mconfig = {
   sorts: undefined,
   timezone: undefined,
   limit: undefined,
+  listen: undefined,
   filters: [],
   chart: undefined,
   temp: true,

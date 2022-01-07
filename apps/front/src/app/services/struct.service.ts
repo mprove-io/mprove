@@ -70,6 +70,7 @@ export class StructService {
           ? this.struct.defaultTimezone
           : this.user.timezone,
       limit: 500,
+      listen: undefined,
       filters: [],
       chart: {
         isValid: true,

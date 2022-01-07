@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { prepareDashboardField } from '~front/app/functions/prepare-dashboard-field';
 import { prepareReport } from '~front/app/functions/prepare-report';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { toYaml } from '~front/app/functions/to-yaml';
@@ -115,7 +116,18 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }) {
     let { newTitle, group, roles, users } = item;
 
-    let reps = this.dashboard.reports.map(x => prepareReport(x.mconfig));
+    let fields = this.dashboard.fields.map(x =>
+      prepareDashboardField({
+        field: x
+      })
+    );
+
+    let reps = this.dashboard.reports.map(x =>
+      prepareReport({
+        isForDashboard: true,
+        mconfig: x.mconfig
+      })
+    );
 
     let dashboardFileText = toYaml({
       dashboard: this.dashboardId,
@@ -135,6 +147,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         common.isDefined(users) && users.trim().length > 0
           ? users.split(',').map(x => x.trim())
           : undefined,
+      fields: fields,
       reports: reps
     });
 

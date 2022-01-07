@@ -29,8 +29,4 @@ export class DashboardField {
   @IsOptional()
   @IsString()
   description?: string;
-
-  @IsOptional()
-  @IsString()
-  fromField?: string;
 }

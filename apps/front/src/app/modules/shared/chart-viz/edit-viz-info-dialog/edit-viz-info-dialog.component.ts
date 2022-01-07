@@ -83,7 +83,10 @@ export class EditVizInfoDialogComponent implements OnInit {
       let roles: string = this.rolesForm.controls['roles'].value;
       let users: string = this.usersForm.controls['users'].value;
 
-      let rep = prepareReport(this.ref.data.mconfig);
+      let rep = prepareReport({
+        isForDashboard: false,
+        mconfig: this.ref.data.mconfig
+      });
 
       rep.title = newTitle.trim();
 

@@ -16,7 +16,10 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { DashboardState } from '~front/app/stores/dashboard.store';
+import {
+  DashboardState,
+  DashboardStore
+} from '~front/app/stores/dashboard.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
@@ -60,6 +63,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
       this.dashboard = x;
+      console.log(x);
 
       this.title.setTitle(
         `${this.pageTitle} - ${
@@ -113,6 +117,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public myDialogService: MyDialogService,
     private apiService: ApiService,
     private navQuery: NavQuery,
+    private dashboardStore: DashboardStore,
     private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
   ) {}
 
@@ -226,8 +231,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   canDeactivate(): Promise<boolean> | boolean {
     // console.log('canDeactivateDashboard')
-    // this.mqStore.reset();
-    // this.modelStore.reset();
+    this.dashboardStore.reset();
     return true;
   }
 

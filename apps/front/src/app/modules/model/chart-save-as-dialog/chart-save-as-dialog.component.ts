@@ -113,7 +113,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }) {
     let { newTitle, group, roles, users } = item;
 
-    let rep = prepareReport(this.ref.data.mconfig);
+    let rep = prepareReport({
+      isForDashboard: false,
+      mconfig: this.ref.data.mconfig
+    });
 
     rep.title = newTitle.trim();
 

@@ -1,18 +1,45 @@
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export function prepareReport(mconfig: common.Mconfig) {
+export function prepareReport(item: {
+  mconfig: common.Mconfig;
+  isForDashboard: boolean;
+}) {
+  let { mconfig, isForDashboard } = item;
+
   let chart = mconfig.chart;
 
-  let defaultFilters: any;
+  let defaultFilters: any = {};
 
   if (common.isDefined(mconfig.filters) && mconfig.filters.length > 0) {
-    defaultFilters = {};
-
     mconfig.filters.forEach(x => {
       let bricks: string[] = [];
       x.fractions.forEach(z => bricks.push(z.brick));
       defaultFilters[x.fieldId] = bricks;
+    });
+  }
+
+  let listenFilters: { [a: string]: string } = {};
+
+  if (
+    isForDashboard === true &&
+    common.isDefined(mconfig.listen) &&
+    Object.keys(mconfig.listen).length > 0
+  ) {
+    Object.keys(mconfig.listen).forEach(x => {
+      let dashboardFieldName = mconfig.listen[x];
+
+      if (common.isDefined(listenFilters[dashboardFieldName])) {
+        listenFilters[dashboardFieldName].concat(`, ${x}`);
+      } else {
+        listenFilters[dashboardFieldName] = x;
+      }
+    });
+
+    Object.keys(defaultFilters).forEach(z => {
+      if (common.isDefined(mconfig.listen[z])) {
+        delete defaultFilters[z];
+      }
     });
   }
 
@@ -33,7 +60,12 @@ export function prepareReport(mconfig: common.Mconfig) {
       mconfig.limit !== Number(common.DEFAULT_LIMIT)
         ? mconfig.limit
         : undefined,
-    default_filters: defaultFilters,
+    default_filters:
+      Object.keys(defaultFilters).length > 0 ? defaultFilters : undefined,
+    listen_filters:
+      isForDashboard === true && Object.keys(listenFilters).length > 0
+        ? listenFilters
+        : undefined,
     type: chart.type,
     data: {
       x_field:
