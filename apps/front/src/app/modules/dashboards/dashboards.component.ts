@@ -8,6 +8,7 @@ import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -112,6 +113,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private modelsListQuery: ModelsListQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
+    private navigateService: NavigateService,
     private location: Location,
     private title: Title
   ) {}
@@ -257,6 +259,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   //   this.showBricks = !this.showBricks;
   //   this.refreshShow();
   // }
+
+  navigateToDashboard(dashboardId: string) {
+    this.navigateService.navigateToDashboard(dashboardId);
+  }
 
   ngOnDestroy() {
     // console.log('ngOnDestroyDashboards')

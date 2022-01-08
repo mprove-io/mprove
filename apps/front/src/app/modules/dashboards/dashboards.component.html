@@ -145,7 +145,11 @@
               *ngFor="let item of filteredDashboards"
               class="flex flex-row space-x-5"
             >
-              <div>{{ item.title }}</div>
+              <div
+                (click)="navigateToDashboard(item.dashboardId)"
+                class="cursor-pointer"
+                >{{ item.title }}</div
+              >
               <div>|</div>
               <div>{{ item.dashboardId }}</div>
             </div>
