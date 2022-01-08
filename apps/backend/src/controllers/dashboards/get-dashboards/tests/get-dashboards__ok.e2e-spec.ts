@@ -5,7 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-get-dashboards-list__ok';
+let testId = 'backend-get-dashboards__ok';
 
 let traceId = testId;
 
@@ -23,7 +23,7 @@ let projectName = testId;
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetDashboardsListResponse;
+  let resp: apiToBackend.ToBackendGetDashboardsResponse;
 
   try {
     prep = await prepareTest({
@@ -80,10 +80,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetDashboardsListRequest = {
+    let req: apiToBackend.ToBackendGetDashboardsRequest = {
       info: {
-        name:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardsList,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -94,7 +93,7 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardsListResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendGetDashboardsResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,

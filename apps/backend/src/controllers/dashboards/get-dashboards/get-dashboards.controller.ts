@@ -11,7 +11,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
-export class GetDashboardsListController {
+export class GetDashboardsController {
   constructor(
     private branchesService: BranchesService,
     private membersService: MembersService,
@@ -19,11 +19,11 @@ export class GetDashboardsListController {
     private dashboardsRepository: repositories.DashboardsRepository
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboardsList)
-  async getDashboardsList(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards)
+  async getDashboards(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetDashboardsListRequest)
-    reqValid: apiToBackend.ToBackendGetDashboardsListRequest
+    @ValidateRequest(apiToBackend.ToBackendGetDashboardsRequest)
+    reqValid: apiToBackend.ToBackendGetDashboardsRequest
   ) {
     let { projectId, isRepoProd, branchId } = reqValid.payload;
 
@@ -47,11 +47,15 @@ export class GetDashboardsListController {
     let dashboards = await this.dashboardsRepository.find({
       select: [
         'dashboard_id',
+        'file_path',
+        'access_users',
+        'access_roles',
         'title',
         'gr',
         'hidden',
-        'access_roles',
-        'access_users'
+        'fields',
+        'reports',
+        'description'
       ],
       where: { struct_id: branch.struct_id, temp: common.BoolEnum.FALSE }
     });
@@ -64,9 +68,9 @@ export class GetDashboardsListController {
       })
     );
 
-    let payload: apiToBackend.ToBackendGetDashboardsListResponsePayload = {
-      dashboardsList: dashboardsGrantedAccess.map(x =>
-        wrapper.wrapToApiDashboardsItem(x)
+    let payload: apiToBackend.ToBackendGetDashboardsResponsePayload = {
+      dashboards: dashboardsGrantedAccess.map(x =>
+        wrapper.wrapToApiDashboard(x)
       )
     };
 

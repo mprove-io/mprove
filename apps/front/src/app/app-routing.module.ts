@@ -16,6 +16,7 @@ import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-passw
 import { BlockmlEditorComponent } from './modules/blockml/blockml-editor/blockml-editor.component';
 import { BlockmlComponent } from './modules/blockml/blockml.component';
 import { DashboardComponent } from './modules/dashboard/dashboard.component';
+import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
@@ -36,10 +37,12 @@ import { VisualizationsComponent } from './modules/visualizations/visualizations
 import { BranchResolver } from './resolvers/branch.resolver';
 import { ConnectionsResolver } from './resolvers/connections.resolver';
 import { DashboardResolver } from './resolvers/dashboard.resolver';
+import { DashboardsResolver } from './resolvers/dashboards.resolver';
 import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
 import { ModelResolver } from './resolvers/model.resolver';
+import { ModelsListResolver } from './resolvers/models-list.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
@@ -51,7 +54,6 @@ import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoResolver } from './resolvers/repo.resolver';
 import { TeamResolver } from './resolvers/team.resolver';
 import { UsersResolver } from './resolvers/users.resolver';
-import { VizsModelsListResolver } from './resolvers/vizs-models-list.resolver';
 import { VizsResolver } from './resolvers/vizs.resolver';
 
 const routes: Routes = [
@@ -204,7 +206,13 @@ const routes: Routes = [
                       {
                         component: VisualizationsComponent,
                         path: common.PATH_VISUALIZATIONS,
-                        resolve: [VizsModelsListResolver, VizsResolver]
+                        resolve: [ModelsListResolver, VizsResolver]
+                        // children: []
+                      },
+                      {
+                        component: DashboardsComponent,
+                        path: common.PATH_DASHBOARDS,
+                        resolve: [ModelsListResolver, DashboardsResolver]
                         // children: []
                       },
                       {

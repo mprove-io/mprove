@@ -18,6 +18,7 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './modules/auth/auth.module';
 import { BlockmlModule } from './modules/blockml/blockml.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { DashboardsModule } from './modules/dashboards/dashboards.module';
 import { ModelModule } from './modules/model/model.module';
 import { NavModule } from './modules/nav/nav.module';
 import { NavbarModule } from './modules/navbar/navbar.module';
@@ -57,6 +58,7 @@ registerLocaleData(en);
     NgSelectModule,
     ImageCropperModule,
     VisualizationsModule,
+    DashboardsModule,
     UiSwitchModule,
     NzToolTipModule
   ],

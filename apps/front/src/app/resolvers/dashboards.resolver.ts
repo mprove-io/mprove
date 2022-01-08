@@ -9,15 +9,15 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
+import { DashboardsStore } from '../stores/dashboards.store';
 import { NavState } from '../stores/nav.store';
-import { VizsStore } from '../stores/vizs.store';
 
 @Injectable({ providedIn: 'root' })
-export class VizsModelsListResolver implements Resolve<Observable<boolean>> {
+export class DashboardsResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private vizsStore: VizsStore
+    private dashboardsStore: DashboardsStore
   ) {}
 
   resolve(
@@ -35,22 +35,21 @@ export class VizsModelsListResolver implements Resolve<Observable<boolean>> {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetModelsListRequestPayload = {
+    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
-      branchId: nav.branchId
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd
     };
 
     return this.apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModelsList,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetModelsListResponse) => {
-          this.vizsStore.update({
-            modelsList: resp.payload.modelsList,
-            allModelsList: resp.payload.allModelsList
+        map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
+          this.dashboardsStore.update({
+            dashboards: resp.payload.dashboards
           });
           return true;
         })

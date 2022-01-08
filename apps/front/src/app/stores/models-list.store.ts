@@ -2,22 +2,24 @@ import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
 
-export class VizsState {
-  vizs: common.Viz[];
+export class ModelsListState {
+  modelsList: common.ModelsItem[];
+  allModelsList: common.ModelsItem[];
 }
 
-function createInitialState(): VizsState {
+function createInitialState(): ModelsListState {
   return {
-    vizs: []
+    modelsList: [],
+    allModelsList: []
   };
 }
 
 @Injectable({ providedIn: 'root' })
 @StoreConfig({
-  name: 'vizs',
+  name: 'modelsList',
   resettable: true
 })
-export class VizsStore extends Store<VizsState> {
+export class ModelsListStore extends Store<ModelsListState> {
   constructor() {
     super(createInitialState());
   }

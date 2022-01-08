@@ -23,6 +23,7 @@ export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
 
 export const BLOCKML_PAGE_TITLE = 'BlockML';
 export const VISUALIZATIONS_PAGE_TITLE = 'Visualizations';
+export const DASHBOARDS_PAGE_TITLE = 'Dashboards';
 
 export const PAGE_NOT_FOUND_PAGE_TITLE = 'Page Not Found';
 export const ORGANIZATION_DELETED_PAGE_TITLE = 'Organization Deleted';

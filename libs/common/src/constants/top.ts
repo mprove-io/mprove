@@ -33,6 +33,7 @@ export const PATH_PASSWORD_RESET_SENT_AUTH = 'password-reset-sent-auth';
 export const PATH_PROFILE = 'profile';
 export const PATH_BLOCKML = 'blockml';
 export const PATH_VISUALIZATIONS = 'visualizations';
+export const PATH_DASHBOARDS = 'dashboards';
 export const PATH_FILE = 'file';
 export const PATH_MODEL = 'model';
 export const PATH_DASHBOARD = 'dashboard';

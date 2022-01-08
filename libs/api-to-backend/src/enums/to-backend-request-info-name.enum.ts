@@ -78,7 +78,7 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetViews = 'api/ToBackendGetViews',
   //
-  ToBackendGetDashboardsList = 'api/ToBackendGetDashboardsList',
+  ToBackendGetDashboards = 'api/ToBackendGetDashboards',
   ToBackendGetDashboard = 'api/ToBackendGetDashboard',
   ToBackendCreateTempDashboard = 'api/ToBackendCreateTempDashboard',
   ToBackendCreateDashboard = 'api/ToBackendCreateDashboard',

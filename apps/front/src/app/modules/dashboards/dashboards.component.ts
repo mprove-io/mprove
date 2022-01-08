@@ -1,49 +1,43 @@
 import { Location } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  HostListener,
-  OnDestroy,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
 import { take, tap } from 'rxjs/operators';
+import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
-import { VizsQuery } from '~front/app/queries/vizs.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-class VizsModelsItemExtended extends common.ModelsItem {
-  totalVizs: number;
+class DashboardsModelsItemExtended extends common.ModelsItem {
+  totalDashboards: number;
   hasAccess: boolean;
 }
 
 @Component({
-  selector: 'm-visualizations',
-  templateUrl: './visualizations.component.html'
+  selector: 'm-dashboards',
+  templateUrl: './dashboards.component.html'
 })
-export class VisualizationsComponent implements OnInit, OnDestroy {
-  pageTitle = constants.VISUALIZATIONS_PAGE_TITLE;
+export class DashboardsComponent implements OnInit, OnDestroy {
+  pageTitle = constants.DASHBOARDS_PAGE_TITLE;
 
   // groups: string[];
 
-  showBricks = false;
+  // showBricks = false;
 
-  isShow = true;
+  // isShow = true;
 
   modelsList: common.ModelsItem[];
-  vizsModelsList: VizsModelsItemExtended[];
+  dashboardsModelsList: DashboardsModelsItemExtended[];
 
-  vizs: common.Viz[];
-  vizsFilteredByWord: common.Viz[];
-  filteredVizs: common.Viz[];
+  dashboards: common.Dashboard[];
+  dashboardsFilteredByWord: common.Dashboard[];
+  filteredDashboards: common.Dashboard[];
 
-  hasAccessModelsList: VizsModelsItemExtended[] = [];
-  hasNoAccessModelsList: VizsModelsItemExtended[] = [];
+  hasAccessModelsList: DashboardsModelsItemExtended[] = [];
+  hasNoAccessModelsList: DashboardsModelsItemExtended[] = [];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -53,9 +47,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     })
   );
 
-  vizs$ = this.vizsQuery.select().pipe(
+  dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
-      this.vizs = x.vizs;
+      this.dashboards = x.dashboards;
 
       this.modelsListQuery
         .select()
@@ -64,8 +58,10 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
           this.modelsList = ml.modelsList;
 
           this.hasAccessModelsList = this.modelsList.map(z =>
-            Object.assign({}, z, <VizsModelsItemExtended>{
-              totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length,
+            Object.assign({}, z, <DashboardsModelsItemExtended>{
+              totalDashboards: this.dashboards.filter(
+                v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
+              ).length,
               hasAccess: true
             })
           );
@@ -75,14 +71,15 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
               c => this.modelsList.findIndex(b => b.modelId === c.modelId) < 0
             )
             .map(z =>
-              Object.assign({}, z, <VizsModelsItemExtended>{
-                totalVizs: this.vizs.filter(v => v.modelId === z.modelId)
-                  .length,
+              Object.assign({}, z, <DashboardsModelsItemExtended>{
+                totalDashboards: this.dashboards.filter(
+                  v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
+                ).length,
                 hasAccess: false
               })
             );
 
-          this.vizsModelsList = [
+          this.dashboardsModelsList = [
             ...this.hasAccessModelsList,
             ...this.hasNoAccessModelsList
           ].sort((a, b) =>
@@ -93,7 +90,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
           // let definedGroups = allGroups.filter(y => common.isDefined(y));
           // this.groups = [...new Set(definedGroups)];
 
-          this.makeFilteredVizs();
+          this.makeFilteredDashboards();
 
           this.cd.detectChanges();
         });
@@ -105,37 +102,21 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   word: string;
   // fileName: string;
 
-  screenAspectRatio: number;
-
   private timer: any;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
+    private dashboardsQuery: DashboardsQuery,
     private modelsListQuery: ModelsListQuery,
-    private vizsQuery: VizsQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
     private location: Location,
     private title: Title
   ) {}
 
-  calculateAspectRatio() {
-    this.screenAspectRatio = window.innerWidth / window.innerHeight;
-
-    // console.log('screenAspectRatio');
-    // console.log(this.screenAspectRatio);
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    this.calculateAspectRatio();
-  }
-
   ngOnInit() {
-    this.calculateAspectRatio();
-
     this.title.setTitle(this.pageTitle);
 
     // let searchFileName = this.route.snapshot.queryParamMap.get(
@@ -166,70 +147,74 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     if (this.modelId === modelId) {
       return;
     }
-
     this.modelId = modelId;
-    this.makeFilteredVizs();
+    this.makeFilteredDashboards();
   }
 
   allModelsOnClick() {
     if (common.isUndefined(this.modelId)) {
       return;
     }
-
     this.modelId = undefined;
-    this.makeFilteredVizs();
+    this.makeFilteredDashboards();
   }
 
-  makeFilteredVizs() {
-    const searcher = new FuzzySearch(this.vizs, ['title', 'vizId'], {
-      caseSensitive: false
-    });
+  makeFilteredDashboards() {
+    const searcher = new FuzzySearch(
+      this.dashboards,
+      ['title', 'dashboardId'],
+      {
+        caseSensitive: false
+      }
+    );
 
-    this.vizsFilteredByWord = common.isDefined(this.word)
+    this.dashboardsFilteredByWord = common.isDefined(this.word)
       ? searcher.search(this.word)
-      : this.vizs;
+      : this.dashboards;
 
-    this.filteredVizs = common.isDefined(this.modelId)
-      ? this.vizsFilteredByWord.filter(v => v.modelId === this.modelId)
-      : this.vizsFilteredByWord;
+    this.filteredDashboards = common.isDefined(this.modelId)
+      ? this.dashboardsFilteredByWord.filter(
+          d => d.reports.map(rp => rp.modelId).indexOf(this.modelId) > -1
+        )
+      : this.dashboardsFilteredByWord;
 
-    this.filteredVizs = this.filteredVizs.sort((a, b) =>
+    this.filteredDashboards = this.filteredDashboards.sort((a, b) =>
       a.title > b.title ? 1 : b.title > a.title ? -1 : 0
     );
 
-    this.vizsModelsList = this.vizsModelsList
+    this.dashboardsModelsList = this.dashboardsModelsList
       .map(z =>
         Object.assign({}, z, {
-          totalVizs: this.vizsFilteredByWord.filter(
-            v => v.modelId === z.modelId
+          totalDashboards: this.dashboardsFilteredByWord.filter(
+            d => d.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
           ).length
         })
       )
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
   }
 
-  vizDeleted(deletedVizId: string) {
-    let deletedVizModelId = this.vizs.find(viz => viz.vizId === deletedVizId)
-      ?.modelId;
+  // dashboardDeleted(deletedVizId: string) {
+  //   let deletedVizModelId = this.dashboardsList.find(viz => viz.vizId === deletedVizId)
+  //     ?.modelId;
 
-    this.vizs = this.vizs.filter(x => x.vizId !== deletedVizId);
+  //   this.dashboardsList = this.dashboardsList.filter(x => x.vizId !== deletedVizId);
 
-    if (common.isDefined(deletedVizModelId)) {
-      let modelItemExtended = this.vizsModelsList.find(
-        x => x.modelId === deletedVizModelId
-      );
-      if (common.isDefined(modelItemExtended)) {
-        modelItemExtended.totalVizs = modelItemExtended.totalVizs - 1;
-      }
-    }
+  //   if (common.isDefined(deletedVizModelId)) {
+  //     let modelItemExtended = this.vizsModelsList.find(
+  //       x => x.modelId === deletedVizModelId
+  //     );
+  //     if (common.isDefined(modelItemExtended)) {
+  //       modelItemExtended.totalVizs = modelItemExtended.totalVizs - 1;
+  //     }
+  //   }
 
-    this.makeFilteredVizs();
-    this.cd.detectChanges();
-  }
+  //   this.makeFilteredVizs();
+  //   this.cd.detectChanges();
+  // }
 
-  trackByFn(index: number, item: common.Viz) {
-    return item.vizId;
-  }
+  // trackByFn(index: number, item: common.Viz) {
+  //   return item.vizId;
+  // }
 
   searchWordChange() {
     if (this.timer) {
@@ -237,45 +222,44 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     }
 
     this.timer = setTimeout(() => {
-      this.makeFilteredVizs();
+      this.makeFilteredDashboards();
       this.cd.detectChanges();
     }, 600);
   }
 
   resetSearch() {
     this.word = undefined;
-    this.makeFilteredVizs();
+    this.makeFilteredDashboards();
     this.cd.detectChanges();
   }
 
-  newViz() {
-    if (
-      this.isExplorer === false ||
-      !this.modelsList ||
-      this.modelsList.length === 0
-    ) {
-      return;
-    }
-
-    this.myDialogService.showNewViz({
-      modelsList: this.modelsList
-    });
+  newDashboard() {
+    // if (
+    //   this.isExplorer === false ||
+    //   !this.modelsList ||
+    //   this.modelsList.length === 0
+    // ) {
+    //   return;
+    // }
+    // this.myDialogService.showNewViz({
+    //   modelsList: this.modelsList
+    // });
   }
 
-  refreshShow() {
-    this.isShow = false;
-    setTimeout(() => {
-      this.isShow = true;
-    });
-  }
+  // refreshShow() {
+  //   this.isShow = false;
+  //   setTimeout(() => {
+  //     this.isShow = true;
+  //   });
+  // }
 
-  toggleShowFilters() {
-    this.showBricks = !this.showBricks;
-    this.refreshShow();
-  }
+  // toggleShowFilters() {
+  //   this.showBricks = !this.showBricks;
+  //   this.refreshShow();
+  // }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyVizs')
+    // console.log('ngOnDestroyDashboards')
     if (this.timer) {
       clearTimeout(this.timer);
     }
