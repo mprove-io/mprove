@@ -43,6 +43,7 @@ test('1', async t => {
     sorts: undefined,
     timezone: common.UTC,
     limit: 500,
+    listen: undefined,
     filters: [],
     chart: {
       isValid: true,
