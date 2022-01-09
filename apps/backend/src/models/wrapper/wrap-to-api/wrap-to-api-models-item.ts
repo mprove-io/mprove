@@ -6,6 +6,7 @@ export function wrapToApiModelsItem(
 ): common.ModelsItem {
   return {
     modelId: model.model_id,
+    filePath: model.file_path,
     label: model.label,
     gr: model.gr,
     hidden: common.enumToBoolean(model.hidden)

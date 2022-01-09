@@ -7,6 +7,9 @@ export class ModelsItem {
   @IsString()
   label: string;
 
+  @IsString()
+  filePath: string;
+
   @IsOptional()
   @IsString()
   gr?: string;

@@ -9,6 +9,7 @@ import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { DashboardWithExtendedFilters } from '~front/app/stores/dashboards.store';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -26,16 +27,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
-  // showBricks = false;
+  showBricks = true;
+  showReports = true;
+  showModels = true;
 
-  // isShow = true;
+  isShow = true;
+
+  bufferAmount = 10;
+  enableUnequalChildrenSizes = true;
 
   modelsList: common.ModelsItem[];
   dashboardsModelsList: DashboardsModelsItemExtended[];
 
-  dashboards: common.Dashboard[];
-  dashboardsFilteredByWord: common.Dashboard[];
-  filteredDashboards: common.Dashboard[];
+  dashboards: DashboardWithExtendedFilters[];
+  dashboardsFilteredByWord: DashboardWithExtendedFilters[];
+  filteredDashboards: DashboardWithExtendedFilters[];
 
   hasAccessModelsList: DashboardsModelsItemExtended[] = [];
   hasNoAccessModelsList: DashboardsModelsItemExtended[] = [];
@@ -47,6 +53,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     })
   );
+
+  allModelsList: common.ModelsItem[] = [];
 
   dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
@@ -67,7 +75,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
             })
           );
 
-          this.hasNoAccessModelsList = ml.allModelsList
+          this.allModelsList = ml.allModelsList;
+
+          this.hasNoAccessModelsList = this.allModelsList
             .filter(
               c => this.modelsList.findIndex(b => b.modelId === c.modelId) < 0
             )
@@ -214,9 +224,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   //   this.cd.detectChanges();
   // }
 
-  // trackByFn(index: number, item: common.Viz) {
-  //   return item.vizId;
-  // }
+  trackByFn(index: number, item: DashboardWithExtendedFilters) {
+    return item.dashboardId;
+  }
 
   searchWordChange() {
     if (this.timer) {
@@ -248,17 +258,58 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     // });
   }
 
-  // refreshShow() {
-  //   this.isShow = false;
-  //   setTimeout(() => {
-  //     this.isShow = true;
-  //   });
-  // }
+  goToDashboardFile(event: any, dashboard: DashboardWithExtendedFilters) {
+    event.stopPropagation();
 
-  // toggleShowFilters() {
-  //   this.showBricks = !this.showBricks;
-  //   this.refreshShow();
-  // }
+    let fileIdAr = dashboard.filePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
+
+  goToModelFile(modelId: string) {
+    let model = this.allModelsList.find(x => x.modelId === modelId);
+
+    let fileIdAr = model.filePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
+
+  goToDashboard(dashboard: DashboardWithExtendedFilters) {
+    let fileIdAr = dashboard.filePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
+
+  refreshShow() {
+    this.isShow = false;
+    setTimeout(() => {
+      this.isShow = true;
+    });
+  }
+
+  toggleShowFilters() {
+    this.showBricks = !this.showBricks;
+    this.refreshShow();
+  }
+
+  toggleShowReports() {
+    this.showReports = !this.showReports;
+    this.refreshShow();
+  }
+
+  toggleShowModels() {
+    this.showModels = !this.showModels;
+    // this.refreshShow();
+  }
 
   navigateToDashboard(dashboardId: string) {
     this.navigateService.navigateToDashboard(dashboardId);

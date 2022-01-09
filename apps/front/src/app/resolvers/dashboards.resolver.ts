@@ -7,9 +7,13 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { makeExtendedFilters } from '../functions/make-extended-filters';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { DashboardsStore } from '../stores/dashboards.store';
+import {
+  DashboardsStore,
+  DashboardWithExtendedFilters
+} from '../stores/dashboards.store';
 import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
@@ -49,7 +53,12 @@ export class DashboardsResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           this.dashboardsStore.update({
-            dashboards: resp.payload.dashboards
+            dashboards: resp.payload.dashboards.map(x => {
+              let z: DashboardWithExtendedFilters = Object.assign({}, x, {
+                extendedFilters: makeExtendedFilters(x)
+              });
+              return z;
+            })
           });
           return true;
         })

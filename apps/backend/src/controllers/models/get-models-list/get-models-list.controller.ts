@@ -47,6 +47,7 @@ export class GetModelsListController {
     let models = await this.modelsRepository.find({
       select: [
         'model_id',
+        'file_path',
         'label',
         'gr',
         'hidden',
