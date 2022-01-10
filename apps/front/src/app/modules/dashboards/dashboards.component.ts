@@ -27,9 +27,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
-  showBricks = true;
-  showReports = true;
-  showModels = true;
+  showBricks = false;
+  showReports = false;
+  showModels = false;
 
   isShow = true;
 
@@ -269,14 +269,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToModelFile(modelId: string) {
-    let model = this.allModelsList.find(x => x.modelId === modelId);
-
-    let fileIdAr = model.filePath.split('/');
-    fileIdAr.shift();
-
-    this.navigateService.navigateToFileLine({
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+  goToMconfig(report: common.Report) {
+    this.navigateService.navigateMconfigQuery({
+      modelId: report.modelId,
+      mconfigId: report.mconfigId,
+      queryId: report.queryId
     });
   }
 

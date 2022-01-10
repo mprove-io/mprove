@@ -24,18 +24,19 @@
           (ngModelChange)="searchWordChange()"
         />
 
-        <m-delete-icon
-          *ngIf="!!word"
-          class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
-          [ngClass]="{
-            'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
-          }"
-          (click)="resetSearch()"
-        ></m-delete-icon>
+        <div class="h-9 w-9">
+          <m-delete-icon
+            *ngIf="!!word"
+            class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
+            [ngClass]="{
+              'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+            }"
+            (click)="resetSearch()"
+          ></m-delete-icon>
+        </div>
 
-        <div class="flex flex-row items-center space-x-5">
+        <div class="flex flex-row ml-10 items-center space-x-5">
           <ui-switch
-            class="ml-5"
             [checked]="showBricks"
             (change)="toggleShowFilters()"
           ></ui-switch>

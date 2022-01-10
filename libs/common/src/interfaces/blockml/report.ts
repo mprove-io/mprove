@@ -5,6 +5,9 @@ export class Report {
   modelId: string;
 
   @IsString()
+  modelLabel: string;
+
+  @IsString()
   mconfigId: string;
 
   @IsString()

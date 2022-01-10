@@ -24,18 +24,19 @@
           (ngModelChange)="searchWordChange()"
         />
 
-        <m-delete-icon
-          *ngIf="!!word"
-          class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
-          [ngClass]="{
-            'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
-          }"
-          (click)="resetSearch()"
-        ></m-delete-icon>
+        <div class="h-9 w-9">
+          <m-delete-icon
+            *ngIf="!!word"
+            class="flex ml-3 text-gray1 h-9 w-9 rounded focus:outline-none items-center justify-center flex-shrink-0"
+            [ngClass]="{
+              'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+            }"
+            (click)="resetSearch()"
+          ></m-delete-icon>
+        </div>
 
-        <div class="flex flex-row items-center space-x-5">
+        <div class="flex flex-row ml-10 items-center space-x-5">
           <ui-switch
-            class="ml-5"
             [checked]="showBricks"
             (change)="toggleShowFilters()"
           ></ui-switch>
@@ -164,14 +165,18 @@
         </div>
 
         <div class="flex flex-grow ml-6 mb-6 bg-white rounded shadow-md">
-          <div class="ml-5 mt-5 w-full">
-            <div class="flex flex-row">
-              <div class="flex flex-1">Dashboard</div>
-              <!-- <div class="flex flex-1">File</div> -->
-              <!-- <div class="flex flex-1">Description</div> -->
-              <div class="flex flex-1">Access Roles</div>
-              <div class="flex flex-1">Access Users</div>
+          <div class="ml-5 mt-10 w-full flex flex-col divide-y divide-gray-500">
+            <div
+              class="flex flex-row px-5 mb-3 mr-9 text-base font-semibold text-gray1"
+            >
+              <div class="flex w-2/5">Dashboard</div>
+              <div class="flex flex-1 flex-row">
+                <div class="flex flex-1">File</div>
+                <div class="flex flex-1">Access Roles</div>
+                <div class="flex flex-1">Access Users</div>
+              </div>
             </div>
+
             <virtual-scroller
               [enableUnequalChildrenSizes]="enableUnequalChildrenSizes"
               [bufferAmount]="bufferAmount"
@@ -186,26 +191,46 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row px-5 py-5 cursor-pointer bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
-                    (click)="navigateToDashboard(item.dashboardId)"
+                    class="flex flex-row mr-5 px-5 bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
-                      class="flex flex-row items-center text-lg text-gray1 focus:outline-none"
+                      class="flex flex-row w-full items-center text-lg text-gray1 focus:outline-none"
                     >
-                      <div>{{
-                        item.title || item.dashboardId | capitalize
-                      }}</div>
-                    </div>
-
-                    <button
-                      class="flex flex-row ml-5 items-center text-gray1 hover:text-blue-500 focus:outline-none"
-                      (click)="goToDashboardFile($event, item)"
-                    >
-                      <!-- <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon> -->
-                      <div class="text-base"
-                        >{{ item.dashboardId }}.dashboard</div
+                      <div
+                        class="flex w-2/5 h-full py-3 cursor-pointer hover:text-blue-500"
+                        (click)="navigateToDashboard(item.dashboardId)"
+                        >{{ item.title || item.dashboardId | capitalize }}</div
                       >
-                    </button>
+
+                      <div class="flex flex-1 flex-row text-base">
+                        <div
+                          class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                          (click)="goToDashboardFile($event, item)"
+                        >
+                          {{ item.dashboardId }}
+                        </div>
+
+                        <div
+                          class="flex flex-1 flex-col py-3 space-y-3 text-base"
+                        >
+                          <div
+                            *ngFor="let role of item.accessRoles; let n = index"
+                          >
+                            <div>{{ role }} </div>
+                          </div>
+                        </div>
+
+                        <div
+                          class="flex flex-1 flex-col py-3 space-y-3 text-base"
+                        >
+                          <div
+                            *ngFor="let user of item.accessUsers; let n = index"
+                          >
+                            <div>{{ user }} </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <m-bricks
@@ -222,17 +247,25 @@
                       *ngFor="let report of item.reports"
                       class="flex flex-row text-base"
                     >
-                      <div>{{ report.title }}</div>
-                      <!-- <div class="flex flex-1"></div> -->
+                      <div
+                        (click)="goToMconfig(report)"
+                        class="text-gray1 hover:text-blue-500 cursor-pointer"
+                        >{{ report.title }}</div
+                      >
 
-                      <button
+                      <div
+                        *ngIf="showModels === true"
+                        class="ml-5 font-semibold text-gray-400"
+                        >{{ report.modelLabel }}</div
+                      >
+
+                      <!-- <button
                         *ngIf="showModels === true"
                         class="flex flex-row ml-5 items-center text-gray1 hover:text-blue-500 focus:outline-none"
                         (click)="goToModelFile(report.modelId)"
                       >
-                        <!-- <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon> -->
-                        <div class="text-base">{{ report.modelId }}.model</div>
-                      </button>
+                        <div class="text-base">{{ report.modelLabel }}</div>
+                      </button> -->
                     </div>
                   </div>
                 </div>

@@ -302,6 +302,7 @@ export function wrapReports(item: {
     queries.push(query);
     apiReports.push({
       modelId: model.name,
+      modelLabel: model.label,
       mconfigId: mconfigId,
       queryId: queryId,
       title: chart.title,
