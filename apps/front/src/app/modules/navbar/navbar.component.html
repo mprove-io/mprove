@@ -42,7 +42,16 @@
         >Dashboards</button
       >
 
-      <m-models-menu></m-models-menu>
+      <button
+        class="block px-5 h-10 text-gray1 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'cursor-default text-gray-400':
+            !nav || !nav.projectId || needSave === true
+        }"
+        (click)="navigateModels()"
+        [disabled]="!nav || !nav.projectId || needSave === true"
+        >Models</button
+      >
     </div>
 
     <div class="flex flex-row items-center">

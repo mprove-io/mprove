@@ -15,7 +15,6 @@ import { constants } from '~front/barrels/constants';
 
 class DashboardsModelsItemExtended extends common.ModelsItem {
   totalDashboards: number;
-  hasAccess: boolean;
 }
 
 @Component({
@@ -36,15 +35,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
 
-  modelsList: common.ModelsItem[];
   dashboardsModelsList: DashboardsModelsItemExtended[];
+  hasAccessModelsList: common.ModelsItem[];
 
   dashboards: DashboardWithExtendedFilters[];
   dashboardsFilteredByWord: DashboardWithExtendedFilters[];
   filteredDashboards: DashboardWithExtendedFilters[];
-
-  hasAccessModelsList: DashboardsModelsItemExtended[] = [];
-  hasNoAccessModelsList: DashboardsModelsItemExtended[] = [];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -54,8 +50,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  allModelsList: common.ModelsItem[] = [];
-
   dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
       this.dashboards = x.dashboards;
@@ -64,37 +58,16 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         .select()
         .pipe(take(1))
         .subscribe(ml => {
-          this.modelsList = ml.modelsList;
+          this.hasAccessModelsList = ml.allModelsList.filter(
+            m => m.hasAccess === true
+          );
 
-          this.hasAccessModelsList = this.modelsList.map(z =>
+          this.dashboardsModelsList = ml.allModelsList.map(z =>
             Object.assign({}, z, <DashboardsModelsItemExtended>{
               totalDashboards: this.dashboards.filter(
                 v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
-              ).length,
-              hasAccess: true
+              ).length
             })
-          );
-
-          this.allModelsList = ml.allModelsList;
-
-          this.hasNoAccessModelsList = this.allModelsList
-            .filter(
-              c => this.modelsList.findIndex(b => b.modelId === c.modelId) < 0
-            )
-            .map(z =>
-              Object.assign({}, z, <DashboardsModelsItemExtended>{
-                totalDashboards: this.dashboards.filter(
-                  v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
-                ).length,
-                hasAccess: false
-              })
-            );
-
-          this.dashboardsModelsList = [
-            ...this.hasAccessModelsList,
-            ...this.hasNoAccessModelsList
-          ].sort((a, b) =>
-            a.label > b.label ? 1 : b.label > a.label ? -1 : 0
           );
 
           // let allGroups = this.vizs.map(z => z.gr);
@@ -245,18 +218,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  newDashboard() {
-    // if (
-    //   this.isExplorer === false ||
-    //   !this.modelsList ||
-    //   this.modelsList.length === 0
-    // ) {
-    //   return;
-    // }
-    // this.myDialogService.showNewViz({
-    //   modelsList: this.modelsList
-    // });
-  }
+  newDashboard() {}
 
   goToDashboardFile(event: any, dashboard: DashboardWithExtendedFilters) {
     event.stopPropagation();
@@ -274,15 +236,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       modelId: report.modelId,
       mconfigId: report.mconfigId,
       queryId: report.queryId
-    });
-  }
-
-  goToDashboard(dashboard: DashboardWithExtendedFilters) {
-    let fileIdAr = dashboard.filePath.split('/');
-    fileIdAr.shift();
-
-    this.navigateService.navigateToFileLine({
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }
 

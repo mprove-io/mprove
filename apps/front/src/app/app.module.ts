@@ -20,6 +20,7 @@ import { BlockmlModule } from './modules/blockml/blockml.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
 import { ModelModule } from './modules/model/model.module';
+import { ModelsModule } from './modules/models/models.module';
 import { NavModule } from './modules/nav/nav.module';
 import { NavbarModule } from './modules/navbar/navbar.module';
 import { OrgModule } from './modules/org/org.module';
@@ -59,6 +60,7 @@ registerLocaleData(en);
     ImageCropperModule,
     VisualizationsModule,
     DashboardsModule,
+    ModelsModule,
     UiSwitchModule,
     NzToolTipModule
   ],

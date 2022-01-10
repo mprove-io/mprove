@@ -36,6 +36,10 @@ export class ModelNode {
 
   @IsOptional()
   @IsString()
+  viewFilePath?: string;
+
+  @IsOptional()
+  @IsString()
   fieldFilePath?: string;
 
   @IsOptional()

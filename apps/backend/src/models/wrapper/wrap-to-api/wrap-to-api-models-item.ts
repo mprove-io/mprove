@@ -1,14 +1,14 @@
 import { common } from '~backend/barrels/common';
-import { entities } from '~backend/barrels/entities';
 
-export function wrapToApiModelsItem(
-  model: entities.ModelEntity
-): common.ModelsItem {
-  return {
-    modelId: model.model_id,
-    filePath: model.file_path,
-    label: model.label,
-    gr: model.gr,
-    hidden: common.enumToBoolean(model.hidden)
-  };
+export function wrapToApiModelsItem(item: {
+  model: common.Model;
+  hasAccess: boolean;
+}): common.ModelsItem {
+  let { model, hasAccess } = item;
+
+  let modelsItem: common.ModelsItem = Object.assign({}, model, <
+    common.ModelsItem
+  >{ hasAccess: hasAccess });
+
+  return modelsItem;
 }

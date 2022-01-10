@@ -1,19 +1,7 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean } from 'class-validator';
+import { Model } from '../blockml/model';
 
-export class ModelsItem {
-  @IsString()
-  modelId: string;
-
-  @IsString()
-  label: string;
-
-  @IsString()
-  filePath: string;
-
-  @IsOptional()
-  @IsString()
-  gr?: string;
-
+export class ModelsItem extends Model {
   @IsBoolean()
-  hidden: boolean;
+  hasAccess: boolean;
 }

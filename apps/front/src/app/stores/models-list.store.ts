@@ -3,13 +3,11 @@ import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
 
 export class ModelsListState {
-  modelsList: common.ModelsItem[];
   allModelsList: common.ModelsItem[];
 }
 
 function createInitialState(): ModelsListState {
   return {
-    modelsList: [],
     allModelsList: []
   };
 }

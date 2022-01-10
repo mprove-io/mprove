@@ -79,13 +79,17 @@
             class="w-24 py-2 ml-5 mr-9 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-blue3 cursor-pointer':
-                isExplorer === true && modelsList?.length > 0,
+                isExplorer === true && hasAccessModelsList?.length > 0,
               'bg-gray-400 cursor-default':
-                isExplorer === false || !modelsList || modelsList.length === 0
+                isExplorer === false ||
+                !hasAccessModelsList ||
+                hasAccessModelsList.length === 0
             }"
             (click)="newDashboard()"
           >
-            <div *ngIf="isExplorer === true && modelsList?.length > 0">New</div>
+            <div *ngIf="isExplorer === true && hasAccessModelsList?.length > 0"
+              >New</div
+            >
 
             <div
               *ngIf="isExplorer === false"
@@ -97,7 +101,8 @@
 
             <div
               *ngIf="
-                isExplorer === true && (!modelsList || modelsList.length === 0)
+                isExplorer === true &&
+                (!hasAccessModelsList || hasAccessModelsList.length === 0)
               "
               nz-tooltip
               [nzTooltipTitle]="'No models available'"
@@ -191,43 +196,39 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="flex flex-row mr-5 px-5 w-full items-center text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
-                      class="flex flex-row w-full items-center text-lg text-gray1 focus:outline-none"
+                      class="flex w-2/5 h-full py-3 cursor-pointer hover:text-blue-500"
+                      (click)="navigateToDashboard(item.dashboardId)"
+                      >{{ item.title || item.dashboardId | capitalize }}</div
                     >
+
+                    <div class="flex flex-1 flex-row text-base">
                       <div
-                        class="flex w-2/5 h-full py-3 cursor-pointer hover:text-blue-500"
-                        (click)="navigateToDashboard(item.dashboardId)"
-                        >{{ item.title || item.dashboardId | capitalize }}</div
+                        class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                        (click)="goToDashboardFile($event, item)"
                       >
+                        {{ item.dashboardId }}
+                      </div>
 
-                      <div class="flex flex-1 flex-row text-base">
+                      <div
+                        class="flex flex-1 flex-col py-3 space-y-3 text-base"
+                      >
                         <div
-                          class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
-                          (click)="goToDashboardFile($event, item)"
+                          *ngFor="let role of item.accessRoles; let n = index"
                         >
-                          {{ item.dashboardId }}
+                          <div>{{ role }} </div>
                         </div>
+                      </div>
 
+                      <div
+                        class="flex flex-1 flex-col py-3 space-y-3 text-base"
+                      >
                         <div
-                          class="flex flex-1 flex-col py-3 space-y-3 text-base"
+                          *ngFor="let user of item.accessUsers; let n = index"
                         >
-                          <div
-                            *ngFor="let role of item.accessRoles; let n = index"
-                          >
-                            <div>{{ role }} </div>
-                          </div>
-                        </div>
-
-                        <div
-                          class="flex flex-1 flex-col py-3 space-y-3 text-base"
-                        >
-                          <div
-                            *ngFor="let user of item.accessUsers; let n = index"
-                          >
-                            <div>{{ user }} </div>
-                          </div>
+                          <div>{{ user }} </div>
                         </div>
                       </div>
                     </div>

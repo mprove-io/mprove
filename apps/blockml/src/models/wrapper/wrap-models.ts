@@ -95,6 +95,7 @@ export function wrapModels(item: {
         isField: false,
         children: children,
         nodeClass: common.FieldClassEnum.Join,
+        viewFilePath: join.view.filePath,
         viewName: join.view.name
       };
 

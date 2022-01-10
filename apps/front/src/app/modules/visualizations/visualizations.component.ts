@@ -19,7 +19,6 @@ import { constants } from '~front/barrels/constants';
 
 class VizsModelsItemExtended extends common.ModelsItem {
   totalVizs: number;
-  hasAccess: boolean;
 }
 
 @Component({
@@ -35,15 +34,12 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  modelsList: common.ModelsItem[];
   vizsModelsList: VizsModelsItemExtended[];
+  hasAccessModelsList: common.ModelsItem[] = [];
 
   vizs: common.Viz[];
   vizsFilteredByWord: common.Viz[];
   filteredVizs: common.Viz[];
-
-  hasAccessModelsList: VizsModelsItemExtended[] = [];
-  hasNoAccessModelsList: VizsModelsItemExtended[] = [];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -60,33 +56,15 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       this.modelsListQuery
         .select()
         .pipe(take(1))
-        .subscribe(ml => {
-          this.modelsList = ml.modelsList;
-
-          this.hasAccessModelsList = this.modelsList.map(z =>
-            Object.assign({}, z, <VizsModelsItemExtended>{
-              totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length,
-              hasAccess: true
-            })
+        .subscribe(y => {
+          this.hasAccessModelsList = y.allModelsList.filter(
+            m => m.hasAccess === true
           );
 
-          this.hasNoAccessModelsList = ml.allModelsList
-            .filter(
-              c => this.modelsList.findIndex(b => b.modelId === c.modelId) < 0
-            )
-            .map(z =>
-              Object.assign({}, z, <VizsModelsItemExtended>{
-                totalVizs: this.vizs.filter(v => v.modelId === z.modelId)
-                  .length,
-                hasAccess: false
-              })
-            );
-
-          this.vizsModelsList = [
-            ...this.hasAccessModelsList,
-            ...this.hasNoAccessModelsList
-          ].sort((a, b) =>
-            a.label > b.label ? 1 : b.label > a.label ? -1 : 0
+          this.vizsModelsList = y.allModelsList.map(z =>
+            Object.assign({}, z, <VizsModelsItemExtended>{
+              totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length
+            })
           );
 
           // let allGroups = this.vizs.map(z => z.gr);
@@ -251,14 +229,14 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   newViz() {
     if (
       this.isExplorer === false ||
-      !this.modelsList ||
-      this.modelsList.length === 0
+      !this.hasAccessModelsList ||
+      this.hasAccessModelsList.length === 0
     ) {
       return;
     }
 
     this.myDialogService.showNewViz({
-      modelsList: this.modelsList
+      modelsList: this.hasAccessModelsList
     });
   }
 

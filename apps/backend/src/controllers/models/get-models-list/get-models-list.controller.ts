@@ -6,6 +6,7 @@ import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { wrapToApiModel } from '~backend/models/wrapper/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -46,28 +47,33 @@ export class GetModelsListController {
 
     let models = await this.modelsRepository.find({
       select: [
+        'struct_id',
         'model_id',
         'file_path',
+        'access_users',
+        'access_roles',
         'label',
         'gr',
         'hidden',
-        'access_roles',
-        'access_users'
+        'nodes',
+        'description'
       ],
       where: { struct_id: branch.struct_id }
     });
 
-    let modelsGrantedAccess = models.filter(x =>
-      helper.checkAccess({
-        userAlias: user.alias,
-        member: member,
-        vmd: x
-      })
-    );
-
     let payload: apiToBackend.ToBackendGetModelsListResponsePayload = {
-      modelsList: modelsGrantedAccess.map(x => wrapper.wrapToApiModelsItem(x)),
-      allModelsList: models.map(x => wrapper.wrapToApiModelsItem(x)),
+      allModelsList: models
+        .map(x =>
+          wrapper.wrapToApiModelsItem({
+            model: wrapToApiModel(x),
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: member,
+              vmd: x
+            })
+          })
+        )
+        .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0)),
       memberIsExplorer: common.enumToBoolean(member.is_explorer)
     };
 

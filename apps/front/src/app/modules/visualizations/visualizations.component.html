@@ -55,13 +55,17 @@
             class="w-24 py-2 ml-5 mr-9 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-blue3 cursor-pointer':
-                isExplorer === true && modelsList?.length > 0,
+                isExplorer === true && hasAccessModelsList?.length > 0,
               'bg-gray-400 cursor-default':
-                isExplorer === false || !modelsList || modelsList.length === 0
+                isExplorer === false ||
+                !hasAccessModelsList ||
+                hasAccessModelsList.length === 0
             }"
             (click)="newViz()"
           >
-            <div *ngIf="isExplorer === true && modelsList?.length > 0">New</div>
+            <div *ngIf="isExplorer === true && hasAccessModelsList?.length > 0"
+              >New</div
+            >
 
             <div
               *ngIf="isExplorer === false"
@@ -73,7 +77,8 @@
 
             <div
               *ngIf="
-                isExplorer === true && (!modelsList || modelsList.length === 0)
+                isExplorer === true &&
+                (!hasAccessModelsList || hasAccessModelsList.length === 0)
               "
               nz-tooltip
               [nzTooltipTitle]="'No models available'"

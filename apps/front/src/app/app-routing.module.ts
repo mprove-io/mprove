@@ -20,6 +20,7 @@ import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
+import { ModelsComponent } from './modules/models/models.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
@@ -213,6 +214,12 @@ const routes: Routes = [
                         component: DashboardsComponent,
                         path: common.PATH_DASHBOARDS,
                         resolve: [ModelsListResolver, DashboardsResolver]
+                        // children: []
+                      },
+                      {
+                        component: ModelsComponent,
+                        path: common.PATH_MODELS,
+                        resolve: [ModelsListResolver]
                         // children: []
                       },
                       {

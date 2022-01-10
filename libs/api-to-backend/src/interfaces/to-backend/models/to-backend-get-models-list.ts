@@ -23,10 +23,6 @@ export class ToBackendGetModelsListRequest extends ToBackendRequest {
 export class ToBackendGetModelsListResponsePayload {
   @ValidateNested()
   @Type(() => common.ModelsItem)
-  modelsList: common.ModelsItem[];
-
-  @ValidateNested()
-  @Type(() => common.ModelsItem)
   allModelsList: common.ModelsItem[];
 
   @IsBoolean()

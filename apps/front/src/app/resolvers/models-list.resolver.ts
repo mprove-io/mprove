@@ -51,7 +51,6 @@ export class ModelsListResolver implements Resolve<Observable<boolean>> {
       .pipe(
         map((resp: apiToBackend.ToBackendGetModelsListResponse) => {
           this.modelsListStore.update({
-            modelsList: resp.payload.modelsList,
             allModelsList: resp.payload.allModelsList
           });
 
