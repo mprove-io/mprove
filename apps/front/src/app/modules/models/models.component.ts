@@ -22,7 +22,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   // groups: string[];
 
   // showBricks = false;
-  showViews = true;
+  showViews = false;
   // showModels = false;
 
   isShow = true;
