@@ -8,8 +8,6 @@
           >{{ pageTitle }}
         </div>
 
-        <!-- <div class="flex-grow"></div> -->
-
         <m-search-icon class="ml-6 text-gray1"></m-search-icon>
 
         <input
@@ -52,9 +50,11 @@
 
       <div class="flex flex-row flex-grow mt-6">
         <div class="flex flex-grow mb-6 bg-white rounded shadow-md">
-          <div class="ml-5 mt-10 w-full flex flex-col divide-y divide-gray-500">
+          <div
+            class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
+          >
             <div
-              class="flex flex-row px-5 mb-3 mr-9 text-base font-semibold text-gray1"
+              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1"
             >
               <div class="flex w-1/3">Model</div>
               <div class="flex flex-1 flex-row">
@@ -74,17 +74,21 @@
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
-                class="flex flex-row"
+                class="flex flex-row border-b-2 border-gray-300"
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 w-full items-center text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="flex flex-row mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
-                      class="flex w-1/3 h-full py-3 cursor-pointer hover:text-blue-500"
+                      class="flex w-1/3 py-3 h-full cursor-pointer hover:text-blue-500"
                       (click)="navigateToModel(item.modelId)"
-                      >{{ item.label || item.modelId | capitalize }}</div
+                      [ngClass]="{
+                        'font-semibold': showViews === true
+                      }"
                     >
+                      {{ item.label || item.modelId | capitalize }}
+                    </div>
 
                     <div class="flex flex-1 flex-row text-base">
                       <div
@@ -117,7 +121,7 @@
                   </div>
 
                   <div
-                    class="flex flex-col mr-5 px-5 py-2 w-full items-center text-base space-y-2 text-gray1 focus:outline-none"
+                    class="flex flex-col mr-5 px-5 py-2 w-full items-center text-base space-y-2 focus:outline-none"
                     *ngIf="showViews === true"
                   >
                     <div
@@ -127,14 +131,14 @@
                       <div class="flex w-1/3 pl-5 cursor-default">{{
                         node.label
                       }}</div>
-                      <div class="flex-1 flex-row">
+                      <div class="flex flex-1 flex-row">
                         <div
-                          class="flex flex-1 pl-5 cursor-pointer items-start hover:text-blue-500 focus:outline-none"
+                          class="flex flex-1 cursor-pointer items-start hover:text-blue-500 focus:outline-none"
                           (click)="goToFile($event, node, item)"
                           >{{ node.viewName || item.modelId }}</div
                         >
-                        <div class="flex flex-1"></div>
-                        <div class="flex flex-1"></div>
+                        <div class="flex flex-1 cursor-default"></div>
+                        <div class="flex flex-1 cursor-default"></div>
                       </div>
                     </div>
                   </div>

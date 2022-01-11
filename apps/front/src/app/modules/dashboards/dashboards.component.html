@@ -8,8 +8,6 @@
           >{{ pageTitle }}
         </div>
 
-        <!-- <div class="flex-grow"></div> -->
-
         <m-search-icon class="ml-6 text-gray1"></m-search-icon>
 
         <input
@@ -58,7 +56,10 @@
           >
         </div>
 
-        <div class="flex flex-row items-center space-x-5">
+        <div
+          class="flex flex-row items-center space-x-5"
+          *ngIf="showReports === true"
+        >
           <ui-switch
             class="ml-5"
             [checked]="showModels"
@@ -117,11 +118,6 @@
         <div class="flex w-1/6 mb-6">
           <div class="bg-white rounded shadow-lg w-full">
             <div class="flex flex-col text-base text-gray1 ml-5 mr-5 mt-6">
-              <!-- <div class="w-full flex flex-col text-gray-300">
-                <div></div>
-                <div></div>
-              </div> -->
-
               <div
                 class="flex flex-row justify-between hover:cursor-pointer py-2 px-4 rounded"
                 [ngClass]="{
@@ -170,9 +166,11 @@
         </div>
 
         <div class="flex flex-grow ml-6 mb-6 bg-white rounded shadow-md">
-          <div class="ml-5 mt-10 w-full flex flex-col divide-y divide-gray-500">
+          <div
+            class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
+          >
             <div
-              class="flex flex-row px-5 mb-3 mr-9 text-base font-semibold text-gray1"
+              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1"
             >
               <div class="flex w-2/5">Dashboard</div>
               <div class="flex flex-1 flex-row">
@@ -192,14 +190,17 @@
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
-                class="flex flex-row"
+                class="flex flex-row border-b-2 border-gray-300"
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 w-full items-center text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="flex flex-row mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
                       class="flex w-2/5 h-full py-3 cursor-pointer hover:text-blue-500"
+                      [ngClass]="{
+                        'font-semibold': showReports === true
+                      }"
                       (click)="navigateToDashboard(item.dashboardId)"
                       >{{ item.title || item.dashboardId | capitalize }}</div
                     >
@@ -259,19 +260,9 @@
                         class="ml-5 font-semibold text-gray-400"
                         >{{ report.modelLabel }}</div
                       >
-
-                      <!-- <button
-                        *ngIf="showModels === true"
-                        class="flex flex-row ml-5 items-center text-gray1 hover:text-blue-500 focus:outline-none"
-                        (click)="goToModelFile(report.modelId)"
-                      >
-                        <div class="text-base">{{ report.modelLabel }}</div>
-                      </button> -->
                     </div>
                   </div>
                 </div>
-                <!-- <div class="flex-1">
-                </div> -->
               </div>
             </virtual-scroller>
 
