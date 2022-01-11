@@ -30,9 +30,13 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
+  showList = false;
   showBricks = false;
 
   isShow = true;
+
+  bufferAmount = 10;
+  enableUnequalChildrenSizes = true;
 
   vizsModelsList: VizsModelsItemExtended[];
   hasAccessModelsList: common.ModelsItem[] = [];
@@ -247,10 +251,19 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleShowList() {
+    this.showList = !this.showList;
+    this.refreshShow();
+  }
+
   toggleShowFilters() {
     this.showBricks = !this.showBricks;
     this.refreshShow();
   }
+
+  navigateToViz(vizId: string) {}
+
+  goToVizFile(event: any, vizId: string) {}
 
   ngOnDestroy() {
     // console.log('ngOnDestroyVizs')

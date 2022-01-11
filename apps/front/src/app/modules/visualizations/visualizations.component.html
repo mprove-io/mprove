@@ -8,8 +8,6 @@
           >{{ pageTitle }}
         </div>
 
-        <!-- <div class="flex-grow"></div> -->
-
         <m-search-icon class="ml-6 text-gray1"></m-search-icon>
 
         <input
@@ -36,6 +34,20 @@
         </div>
 
         <div class="flex flex-row ml-10 items-center space-x-5">
+          <ui-switch
+            [checked]="showList"
+            (change)="toggleShowList()"
+          ></ui-switch>
+
+          <div class="flex h-9 text-gray1 text-base items-center select-none"
+            >Show List</div
+          >
+        </div>
+
+        <div
+          class="flex flex-row ml-10 items-center space-x-5"
+          *ngIf="showList === false"
+        >
           <ui-switch
             [checked]="showBricks"
             (change)="toggleShowFilters()"
@@ -145,10 +157,91 @@
           </div>
         </div>
 
-        <div class="flex flex-grow ml-6">
-          <div class="w-full">
+        <div
+          class="flex flex-grow ml-6 mb-6 bg-white rounded shadow-md"
+          *ngIf="showList === true"
+        >
+          <div
+            class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
+          >
+            <div
+              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1"
+            >
+              <div class="flex w-2/5">Visualization</div>
+              <div class="flex flex-1 flex-row">
+                <div class="flex flex-1">File</div>
+                <div class="flex flex-1">Access Roles</div>
+                <div class="flex flex-1">Access Users</div>
+              </div>
+            </div>
+
             <virtual-scroller
-              *ngIf="filteredVizs?.length > 0"
+              [enableUnequalChildrenSizes]="enableUnequalChildrenSizes"
+              [bufferAmount]="bufferAmount"
+              *ngIf="isShow === true && filteredVizs?.length > 0"
+              #scroll
+              [items]="filteredVizs"
+              class="w-full h-full"
+            >
+              <div
+                *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
+                class="flex flex-row border-b-2 border-gray-300"
+              >
+                <div class="flex-grow flex-col">
+                  <div
+                    class="flex flex-row mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                  >
+                    <div
+                      class="flex w-2/5 h-full py-3 cursor-pointer hover:text-blue-500"
+                      (click)="navigateToViz(item.vizId)"
+                      >{{ item.title || item.vizId | capitalize }}</div
+                    >
+
+                    <div class="flex flex-1 flex-row text-base">
+                      <div
+                        class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                        (click)="goToVizFile($event, item.vizId)"
+                      >
+                        {{ item.vizId }}
+                      </div>
+
+                      <div
+                        class="flex flex-1 flex-col py-3 space-y-3 text-base"
+                      >
+                        <div
+                          *ngFor="let role of item.accessRoles; let n = index"
+                        >
+                          <div>{{ role }} </div>
+                        </div>
+                      </div>
+
+                      <div
+                        class="flex flex-1 flex-col py-3 space-y-3 text-base"
+                      >
+                        <div
+                          *ngFor="let user of item.accessUsers; let n = index"
+                        >
+                          <div>{{ user }} </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </virtual-scroller>
+
+            <div
+              class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+              *ngIf="filteredVizs?.length === 0"
+              >No visualizations</div
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-grow ml-6" *ngIf="showList === false">
+          <div class="w-full h-full">
+            <virtual-scroller
+              *ngIf="showList === false && filteredVizs?.length > 0"
               #scroll
               [items]="filteredVizs"
               class="w-full h-full"
@@ -189,33 +282,3 @@
 
 <div *ngIf="vizs$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
-
-<!-- <div class="flex w-5/6 ml-6 flex-shrink-0">
-  <div class="w-full bg-yellow-200">
-    <div class="flex flex-col h-full">
-      <div class="flex flex-grow flex-col overflow-y-auto">
-        <div *ngIf="filteredVizs?.length > 0" class="h-2">
-          <div
-            *ngFor="let item of filteredVizs"
-            class="inline-block w-1/2 h-[600px] bg-red-200"
-          >
-            <div class="pb-6 pr-5 w-full h-full bg-green-100 overflow-auto">
-              <m-chart-viz
-                [title]="item.title"
-                [report]="item.reports[0]"
-                [viz]="item"
-                (vizDeleted)="vizDeleted($event)"
-              ></m-chart-viz>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
-        *ngIf="filteredVizs?.length === 0"
-        >No visualizations</div
-      >
-    </div>
-  </div>
-</div> -->
