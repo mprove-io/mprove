@@ -247,7 +247,7 @@
 
                   <div
                     *ngIf="showReports === true"
-                    class="flex-1 flex-col ml-10 mt-3 mb-3 space-y-3"
+                    class="flex-1 flex-col ml-10 mt-3 mb-5 space-y-3"
                   >
                     <div
                       *ngFor="let report of item.reports"
@@ -255,9 +255,24 @@
                     >
                       <div
                         (click)="showChart(report, item.dashboardId)"
-                        class="text-gray1 hover:text-blue-500 cursor-pointer"
-                        >{{ report.title }}</div
+                        class="flex flex-row items-center text-gray1 hover:text-blue-500 cursor-pointer"
                       >
+                        <div class="flex flex-wrap">{{
+                          report.title | capitalize
+                        }}</div>
+                        <div class="flex w-9 h-2 mx-5 relative flex-shrink-0">
+                          <ngx-spinner
+                            [name]="report.mconfigId"
+                            color="rgba(54, 94, 224, 100)"
+                            bdColor="rgba(0, 0, 0, 0)"
+                            size="default"
+                            type="ball-clip-rotate"
+                            [fullScreen]="false"
+                            [disableAnimation]="true"
+                            [zIndex]="99998"
+                          >
+                          </ngx-spinner> </div
+                      ></div>
 
                       <div
                         *ngIf="showModels === true"

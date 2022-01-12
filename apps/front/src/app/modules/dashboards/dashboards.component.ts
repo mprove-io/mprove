@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { getCanAccessModel } from '~front/app/functions/get-can-access-model';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
@@ -121,6 +122,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private queryService: QueryService,
     private dashboardsQuery: DashboardsQuery,
+    private spinner: NgxSpinnerService,
     private modelsListQuery: ModelsListQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
@@ -268,7 +270,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   async showChart(item: common.Report, dashboardId: string) {
-    // this.spinner.show(item.vizId);
+    this.spinner.show(item.mconfigId);
 
     // this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
 
@@ -387,7 +389,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       isSelectValid: isSelectValid
     });
 
-    // this.spinner.hide(item.vizId);
+    this.spinner.hide(item.mconfigId);
   }
 
   refreshShow() {
