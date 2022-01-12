@@ -37,7 +37,7 @@
           <m-view-list-icon
             class="cursor-pointer"
             [ngClass]="{
-              'text-red1': showList === true
+              'text-blue-500': showList === true
             }"
             (click)="setShowListTrue()"
           ></m-view-list-icon>
@@ -45,7 +45,7 @@
           <m-view-grid-icon
             class="cursor-pointer"
             [ngClass]="{
-              'text-red1': showList === false
+              'text-blue-500': showList === false
             }"
             (click)="setShowListFalse()"
           ></m-view-grid-icon>
@@ -273,7 +273,7 @@
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
-                class="inline-block w-1/2 h-[500px]"
+                class="inline-block w-1/2 h-[590px]"
               >
                 <div class="pb-6 pr-5 w-full h-full">
                   <m-chart-viz
