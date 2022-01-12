@@ -38,7 +38,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   showBricks = false;
   showReports = false;
-  showModels = false;
 
   isShow = true;
 
@@ -392,6 +391,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.mconfigId);
   }
 
+  goToModel(modelId: string) {
+    this.navigateService.navigateToModel(modelId);
+  }
+
   refreshShow() {
     this.isShow = false;
     setTimeout(() => {
@@ -407,11 +410,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   toggleShowReports() {
     this.showReports = !this.showReports;
     this.refreshShow();
-  }
-
-  toggleShowModels() {
-    this.showModels = !this.showModels;
-    // this.refreshShow();
   }
 
   navigateToDashboard(dashboardId: string) {

@@ -431,6 +431,10 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.vizId);
   }
 
+  hasAccessToModel(modelId: string) {
+    return this.hasAccessModelsList.map(x => x.modelId).indexOf(modelId) > -1;
+  }
+
   goToVizFile(event: any, item: common.Viz) {
     event.stopPropagation();
 
@@ -440,6 +444,10 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
+  }
+
+  goToModel(modelId: string) {
+    this.navigateService.navigateToModel(modelId);
   }
 
   ngOnDestroy() {
