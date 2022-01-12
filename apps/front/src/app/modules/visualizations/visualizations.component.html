@@ -34,14 +34,21 @@
         </div>
 
         <div class="flex flex-row ml-10 items-center space-x-5">
-          <ui-switch
-            [checked]="showList"
-            (change)="toggleShowList()"
-          ></ui-switch>
+          <m-view-list-icon
+            class="cursor-pointer"
+            [ngClass]="{
+              'text-red1': showList === true
+            }"
+            (click)="setShowListTrue()"
+          ></m-view-list-icon>
 
-          <div class="flex h-9 text-gray1 text-base items-center select-none"
-            >Show List</div
-          >
+          <m-view-grid-icon
+            class="cursor-pointer"
+            [ngClass]="{
+              'text-red1': showList === false
+            }"
+            (click)="setShowListFalse()"
+          ></m-view-grid-icon>
         </div>
 
         <div
@@ -250,12 +257,7 @@
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
-                class="inline-block w-1/2"
-                [ngClass]="{
-                  'h-1/2': screenAspectRatio >= 1.5,
-                  'h-2/5': screenAspectRatio >= 1.2 && screenAspectRatio < 1.5,
-                  'h-1/3': screenAspectRatio < 1.2
-                }"
+                class="inline-block w-1/2 h-[500px]"
               >
                 <div class="pb-6 pr-5 w-full h-full">
                   <m-chart-viz
@@ -284,3 +286,9 @@
 
 <div *ngIf="vizs$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+
+<!-- [ngClass]="{
+  'h-1/2': screenAspectRatio >= 1.5,
+  'h-2/5': screenAspectRatio >= 1.2 && screenAspectRatio < 1.5,
+  'h-1/3': screenAspectRatio < 1.2
+}" -->

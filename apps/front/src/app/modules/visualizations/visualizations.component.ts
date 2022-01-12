@@ -253,8 +253,21 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleShowList() {
-    this.showList = !this.showList;
+  setShowListTrue() {
+    if (this.showList === true) {
+      return;
+    }
+
+    this.showList = true;
+    this.refreshShow();
+  }
+
+  setShowListFalse() {
+    if (this.showList === false) {
+      return;
+    }
+
+    this.showList = false;
     this.refreshShow();
   }
 

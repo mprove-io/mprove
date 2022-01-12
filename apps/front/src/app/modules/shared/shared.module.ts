@@ -52,6 +52,8 @@ import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.compon
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
+import { ViewGridIconComponent } from './icons/view-grid-icon/view-grid-icon.component';
+import { ViewListIconComponent } from './icons/view-list-icon/view-list-icon.component';
 import { LogoComponent } from './logo/logo.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
@@ -118,7 +120,9 @@ let sharedComponents = [
   LockClosedIconComponent,
   ArrowDropDownIconComponent,
   DragIconComponent,
-  ResizeIconComponent
+  ResizeIconComponent,
+  ViewGridIconComponent,
+  ViewListIconComponent
 ];
 
 @NgModule({
