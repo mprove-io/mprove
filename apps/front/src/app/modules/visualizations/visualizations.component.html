@@ -203,10 +203,26 @@
                     class="flex flex-row mr-5 px-5 w-full items-start text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
-                      class="flex w-2/5 h-full py-3 cursor-pointer text-lg hover:text-blue-500"
-                      (click)="navigateToViz(item.vizId)"
-                      >{{ item.title || item.vizId | capitalize }}</div
+                      class="flex flex-row w-2/5 h-full py-3 cursor-pointer text-lg hover:text-blue-500"
+                      (click)="showChart(item)"
                     >
+                      <div class="flex">{{
+                        item.title || item.vizId | capitalize
+                      }}</div>
+                      <div class="flex w-9 h-9 mx-5 relative flex-shrink-0">
+                        <ngx-spinner
+                          [name]="item.vizId"
+                          color="rgba(54, 94, 224, 100)"
+                          bdColor="rgba(0, 0, 0, 0)"
+                          size="default"
+                          type="ball-clip-rotate"
+                          [fullScreen]="false"
+                          [disableAnimation]="true"
+                          [zIndex]="99998"
+                        >
+                        </ngx-spinner>
+                      </div>
+                    </div>
 
                     <div class="flex flex-1 flex-row text-base">
                       <div
@@ -286,6 +302,8 @@
 
 <div *ngIf="vizs$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="member$ | async"></div>
 
 <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,

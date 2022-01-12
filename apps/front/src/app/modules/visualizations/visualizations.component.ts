@@ -9,12 +9,22 @@ import {
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
-import { take, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { map, take, tap } from 'rxjs/operators';
+import { getCanAccessModel } from '~front/app/functions/get-can-access-model';
+import { getColumnFields } from '~front/app/functions/get-column-fields';
+import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
+import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
+import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { QueryService } from '~front/app/services/query.service';
+import { NavState } from '~front/app/stores/nav.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -50,6 +60,22 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
     tap(x => {
       this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  member: common.Member;
+  member$ = this.memberQuery.select().pipe(
+    tap(x => {
+      this.member = x;
       this.cd.detectChanges();
     })
   );
@@ -99,7 +125,11 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private modelsListQuery: ModelsListQuery,
     private vizsQuery: VizsQuery,
     private memberQuery: MemberQuery,
+    private apiService: ApiService,
+    private navQuery: NavQuery,
+    private queryService: QueryService,
     private myDialogService: MyDialogService,
+    private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private location: Location,
     private title: Title
@@ -277,6 +307,129 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   navigateToViz(vizId: string) {}
+
+  async showChart(item: common.Viz) {
+    this.spinner.show(item.vizId);
+
+    // this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
+
+    // this.accessUsersString = 'Users - ' + this.viz.accessUsers.join(', ');
+
+    // this.accessString =
+    //   this.viz.accessRoles.length > 0 && this.viz.accessUsers.length > 0
+    //     ? this.accessRolesString + '; ' + this.accessUsersString
+    //     : this.viz.accessRoles.length > 0
+    //     ? this.accessRolesString
+    //     : this.viz.accessUsers.length > 0
+    //     ? this.accessUsersString
+    //     : '';
+
+    // let vizFilePathArray = this.viz.filePath.split('/');
+
+    // this.author =
+    //   vizFilePathArray.length > 1 &&
+    //   vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
+    //     ? vizFilePathArray[2]
+    //     : undefined;
+
+    let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      modelId: item.modelId
+    };
+
+    let model: common.Model = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        payloadGetModel
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
+        )
+      )
+      .toPromise();
+
+    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      mconfigId: item.reports[0].mconfigId
+    };
+
+    let mconfig: common.Mconfig = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+        payloadGetMconfig
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetMconfigResponse) =>
+            resp.payload.mconfig
+        )
+      )
+      .toPromise();
+
+    let extendedFilters = getExtendedFilters({
+      fields: model.fields,
+      mconfig: mconfig
+    });
+
+    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
+      mconfigId: item.reports[0].mconfigId,
+      queryId: item.reports[0].queryId,
+      vizId: item.vizId
+    };
+
+    let query: common.Query = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+        payloadGetQuery
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetQueryResponse) => resp.payload.query
+        )
+      )
+      .toPromise();
+
+    let sortedColumns = getColumnFields({
+      mconfig: mconfig,
+      fields: model.fields
+    });
+
+    let qData =
+      mconfig.queryId === query.queryId
+        ? this.queryService.makeQData({
+            data: query.data,
+            columns: sortedColumns
+          })
+        : [];
+
+    let canAccessModel = getCanAccessModel({
+      model: model,
+      member: this.member
+    });
+
+    let checkSelectResult = getSelectValid({
+      chart: mconfig.chart,
+      sortedColumns: sortedColumns
+    });
+
+    let isSelectValid = checkSelectResult.isSelectValid;
+    // let errorMessage = checkSelectResult.errorMessage;
+
+    this.myDialogService.showChart({
+      mconfig: mconfig,
+      query: query,
+      qData: qData,
+      sortedColumns: sortedColumns,
+      model: model,
+      canAccessModel: canAccessModel,
+      showNav: true,
+      isSelectValid: isSelectValid
+    });
+
+    this.spinner.hide(item.vizId);
+  }
 
   goToVizFile(event: any, item: common.Viz) {
     event.stopPropagation();

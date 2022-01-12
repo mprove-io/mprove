@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { getCanAccessModel } from '~front/app/functions/get-can-access-model';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -261,15 +262,10 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     this.canEditOrDeleteViz =
       member.isEditor || member.isAdmin || this.author === member.alias;
 
-    this.canAccessModel =
-      member.isExplorer === false
-        ? false
-        : member.isAdmin === true || member.isEditor === true
-        ? true
-        : model.accessRoles.length === 0 && model.accessUsers.length === 0
-        ? true
-        : model.accessUsers.indexOf(member.alias) > -1 ||
-          model.accessRoles.some(x => member.roles.includes(x));
+    this.canAccessModel = getCanAccessModel({
+      model: model,
+      member: member
+    });
 
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
