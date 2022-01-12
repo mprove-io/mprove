@@ -138,6 +138,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   calculateAspectRatio() {
     this.screenAspectRatio = window.innerWidth / window.innerHeight;
     // console.log('screenAspectRatio');
+
     // console.log(this.screenAspectRatio);
   }
 
