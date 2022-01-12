@@ -193,10 +193,10 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="flex flex-row mr-5 px-5 w-full items-start text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
-                      class="flex w-2/5 h-full py-3 cursor-pointer hover:text-blue-500"
+                      class="flex w-2/5 h-full py-3 cursor-pointer text-lg hover:text-blue-500"
                       (click)="navigateToViz(item.vizId)"
                       >{{ item.title || item.vizId | capitalize }}</div
                     >
@@ -204,7 +204,7 @@
                     <div class="flex flex-1 flex-row text-base">
                       <div
                         class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
-                        (click)="goToVizFile($event, item.vizId)"
+                        (click)="goToVizFile($event, item)"
                       >
                         {{ item.vizId }}
                       </div>

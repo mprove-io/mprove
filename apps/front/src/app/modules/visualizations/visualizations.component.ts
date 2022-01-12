@@ -14,6 +14,7 @@ import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -99,6 +100,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private vizsQuery: VizsQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
+    private navigateService: NavigateService,
     private location: Location,
     private title: Title
   ) {}
@@ -263,7 +265,16 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   navigateToViz(vizId: string) {}
 
-  goToVizFile(event: any, vizId: string) {}
+  goToVizFile(event: any, item: common.Viz) {
+    event.stopPropagation();
+
+    let fileIdAr = item.filePath.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
 
   ngOnDestroy() {
     // console.log('ngOnDestroyVizs')
