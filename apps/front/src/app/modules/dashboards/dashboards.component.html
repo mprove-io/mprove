@@ -254,7 +254,7 @@
                       class="flex flex-row text-base"
                     >
                       <div
-                        (click)="goToMconfig(report)"
+                        (click)="showChart(report, item.dashboardId)"
                         class="text-gray1 hover:text-blue-500 cursor-pointer"
                         >{{ report.title }}</div
                       >
@@ -283,6 +283,8 @@
 </div>
 
 <div *ngIf="dashboards$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
 
 <!-- [ngClass]="{
