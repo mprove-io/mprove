@@ -49,6 +49,7 @@ export class GetModelsListController {
       select: [
         'struct_id',
         'model_id',
+        'connection_id',
         'file_path',
         'access_users',
         'access_roles',

@@ -269,6 +269,7 @@ export function wrapModels(item: {
       apiModels.push({
         structId: structId,
         modelId: x.name,
+        connectionId: x.connection.connectionId,
         filePath: x.filePath,
         content: x,
         accessUsers: x.access_users || [],

@@ -17,6 +17,9 @@ export class Model {
   modelId: string;
 
   @IsString()
+  connectionId: string;
+
+  @IsString()
   filePath: string;
 
   content: any;

@@ -5,6 +5,7 @@ export function wrapToEntityModel(x: common.Model): entities.ModelEntity {
   return {
     struct_id: x.structId,
     model_id: x.modelId,
+    connection_id: x.connectionId,
     file_path: x.filePath,
     content: x.content,
     access_users: x.accessUsers,

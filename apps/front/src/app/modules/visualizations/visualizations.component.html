@@ -185,7 +185,11 @@
             >
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
-                class="flex flex-row border-b-2 border-gray-300"
+                class="flex flex-row"
+                [ngClass]="{
+                  'border-b-2 border-gray-300':
+                    item.vizId !== filteredVizs[filteredVizs.length - 1].vizId
+                }"
               >
                 <div class="flex-grow flex-col">
                   <div
@@ -205,24 +209,22 @@
                         {{ item.vizId }}
                       </div>
 
-                      <div
-                        class="flex flex-1 flex-col py-3 space-y-3 text-base"
-                      >
-                        <div
-                          *ngFor="let role of item.accessRoles; let n = index"
+                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                        <span
+                          *ngFor="let role of item.accessRoles"
+                          class="mr-2"
                         >
-                          <div>{{ role }} </div>
-                        </div>
+                          {{ role }}
+                        </span>
                       </div>
 
-                      <div
-                        class="flex flex-1 flex-col py-3 space-y-3 text-base"
-                      >
-                        <div
-                          *ngFor="let user of item.accessUsers; let n = index"
+                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                        <span
+                          *ngFor="let user of item.accessUsers"
+                          class="mr-2"
                         >
-                          <div>{{ user }} </div>
-                        </div>
+                          {{ user }}
+                        </span>
                       </div>
                     </div>
                   </div>
