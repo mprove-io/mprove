@@ -64,7 +64,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
       this.dashboard = x;
-      console.log(x);
+      // console.log(x);
 
       this.title.setTitle(
         `${this.pageTitle} - ${

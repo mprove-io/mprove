@@ -320,8 +320,10 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   }
 
   run(event?: MouseEvent) {
-    event.stopPropagation();
-    this.closeMenu();
+    if (common.isDefined(event)) {
+      event.stopPropagation();
+      this.closeMenu();
+    }
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       queryIds: [this.query.queryId]
@@ -359,6 +361,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   showChart() {
     this.myDialogService.showChart({
+      runFn: this.run.bind(this),
       apiService: this.apiService,
       mconfig: this.mconfig,
       query: this.query,

@@ -350,6 +350,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   showChart() {
     this.myDialogService.showChart({
+      runFn: this.run.bind(this),
       apiService: this.apiService,
       mconfig: this.mconfig,
       query: this.query,

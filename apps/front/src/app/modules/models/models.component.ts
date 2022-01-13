@@ -21,9 +21,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
-  // showBricks = false;
-  showViews = false;
-  // showModels = false;
+  showViews = true;
 
   isShow = true;
 
@@ -59,62 +57,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  // dashboards$ = this.dashboardsQuery.select().pipe(
-  //   tap(x => {
-  //     this.dashboards = x.dashboards;
-
-  //     this.modelsListQuery
-  //       .select()
-  //       .pipe(take(1))
-  //       .subscribe(ml => {
-  //         this.modelsList = ml.modelsList;
-
-  //         this.hasAccessModelsList = this.modelsList.map(z =>
-  //           Object.assign({}, z, <ModelsItemExtended>{
-  //             totalDashboards: this.dashboards.filter(
-  //               v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
-  //             ).length,
-  //             hasAccess: true
-  //           })
-  //         );
-
-  //         this.allModelsList = ml.allModelsList;
-
-  //         this.hasNoAccessModelsList = this.allModelsList
-  //           .filter(
-  //             c => this.modelsList.findIndex(b => b.modelId === c.modelId) < 0
-  //           )
-  //           .map(z =>
-  //             Object.assign({}, z, <ModelsItemExtended>{
-  //               totalDashboards: this.dashboards.filter(
-  //                 v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
-  //               ).length,
-  //               hasAccess: false
-  //             })
-  //           );
-
-  //         this.dashboardsModelsList = [
-  //           ...this.hasAccessModelsList,
-  //           ...this.hasNoAccessModelsList
-  //         ].sort((a, b) =>
-  //           a.label > b.label ? 1 : b.label > a.label ? -1 : 0
-  //         );
-
-  //         // let allGroups = this.vizs.map(z => z.gr);
-  //         // let definedGroups = allGroups.filter(y => common.isDefined(y));
-  //         // this.groups = [...new Set(definedGroups)];
-
-  //         this.makeFilteredDashboards();
-
-  //         this.cd.detectChanges();
-  //       });
-  //   })
-  // );
-
-  // modelId: string;
-
   word: string;
-  // fileName: string;
 
   private timer: any;
 
@@ -134,45 +77,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    // let searchFileName = this.route.snapshot.queryParamMap.get(
-    //   'searchFileName'
-    // );
-    // if (common.isDefined(searchFileName)) {
-    //   let fileNameAr = searchFileName.split('.');
-    //   fileNameAr.pop();
-    //   this.fileName = fileNameAr.join('.');
-    // }
-
-    this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
-
-    if (
-      common.isDefined(this.word)
-      // || common.isDefined(this.fileName)
-    ) {
-      const url = this.router
-        .createUrlTree([], { relativeTo: this.route, queryParams: {} })
-        .toString();
-
-      this.location.go(url);
-    }
   }
-
-  // modelOnClick(modelId: string) {
-  //   if (this.modelId === modelId) {
-  //     return;
-  //   }
-  //   this.modelId = modelId;
-  //   this.makeFilteredModels();
-  // }
-
-  // allModelsOnClick() {
-  //   if (common.isUndefined(this.modelId)) {
-  //     return;
-  //   }
-  //   this.modelId = undefined;
-  //   this.makeFilteredModels();
-  // }
 
   makeFilteredModels() {
     const searcher = new FuzzySearch(this.models, ['label', 'modelId'], {
@@ -195,25 +101,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       a.label > b.label ? 1 : b.label > a.label ? -1 : 0
     );
   }
-
-  // dashboardDeleted(deletedVizId: string) {
-  //   let deletedVizModelId = this.dashboardsList.find(viz => viz.vizId === deletedVizId)
-  //     ?.modelId;
-
-  //   this.dashboardsList = this.dashboardsList.filter(x => x.vizId !== deletedVizId);
-
-  //   if (common.isDefined(deletedVizModelId)) {
-  //     let modelItemExtended = this.vizsModelsList.find(
-  //       x => x.modelId === deletedVizModelId
-  //     );
-  //     if (common.isDefined(modelItemExtended)) {
-  //       modelItemExtended.totalVizs = modelItemExtended.totalVizs - 1;
-  //     }
-  //   }
-
-  //   this.makeFilteredVizs();
-  //   this.cd.detectChanges();
-  // }
 
   trackByFn(index: number, item: common.ModelsItem) {
     return item.modelId;
@@ -267,27 +154,17 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // toggleShowFilters() {
-  //   this.showBricks = !this.showBricks;
-  //   this.refreshShow();
-  // }
-
   toggleShowViews() {
     this.showViews = !this.showViews;
     this.refreshShow();
   }
-
-  // toggleShowModels() {
-  //   this.showModels = !this.showModels;
-  //   // this.refreshShow();
-  // }
 
   navigateToModel(modelId: string) {
     this.navigateService.navigateToModel(modelId);
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyDashboards')
+    // console.log('ngOnDestroyModels')
     if (this.timer) {
       clearTimeout(this.timer);
     }

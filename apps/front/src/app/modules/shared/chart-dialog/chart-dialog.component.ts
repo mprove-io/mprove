@@ -154,10 +154,14 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+
+    if (common.isDefined(this.ref.data.runFn)) {
+      this.ref.data.runFn();
+    }
   }
 
   ngOnDestroy() {
-    console.log('ngOnDestroyChartDialog');
+    // console.log('ngOnDestroyChartDialog');
     if (common.isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }
