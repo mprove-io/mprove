@@ -418,6 +418,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     // let errorMessage = checkSelectResult.errorMessage;
 
     this.myDialogService.showChart({
+      apiService: this.apiService,
       mconfig: mconfig,
       query: query,
       qData: qData,

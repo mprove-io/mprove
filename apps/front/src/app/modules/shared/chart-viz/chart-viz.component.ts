@@ -359,6 +359,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   showChart() {
     this.myDialogService.showChart({
+      apiService: this.apiService,
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,

@@ -636,6 +636,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     event.stopPropagation();
 
     this.myDialogService.showChart({
+      apiService: this.apiService,
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,

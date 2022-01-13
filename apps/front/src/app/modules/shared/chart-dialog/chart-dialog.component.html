@@ -2,55 +2,61 @@
   <div
     class="flex flex-row mb-10 text-xl text-gray1 justify-start items-center"
   >
-    <div *ngIf="showNav === true">
-      <div class="w-28 mr-5"> </div>
-
-      <div class="w-[111px]"></div>
-    </div>
-
-    <div class="flex-grow"></div>
-
-    <div
-      class="flex max-w-prose flex-grow mx-5 text-gray1 line-clamp-2 text-center flex-wrap"
-    >
-      {{ mconfig?.chart?.title }}
-    </div>
-
-    <div class="flex-grow"></div>
-
-    <div *ngIf="showNav === true" class="flex flex-row items-center">
-      <div class="flex h-9 text-gray1 text-base items-center select-none"
-        >Data</div
-      >
-
-      <ui-switch
-        class="mb-1 ml-5"
-        [checked]="isData"
-        (change)="toggleData()"
-      ></ui-switch>
-    </div>
-
-    <button
-      *ngIf="showNav === true"
-      data-cy="chartDialogExploreButton"
-      class="w-28 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
-      [ngClass]="{
-        'bg-blue3 cursor-pointer': canAccessModel === true,
-        'bg-gray-400 cursor-default': canAccessModel !== true
-      }"
-      [disabled]="canAccessModel === false"
-      (click)="explore($event)"
-    >
-      <div *ngIf="canAccessModel === true"> Explore </div>
+    <div class="flex flex-1 flex-row justify-center">
       <div
-        *ngIf="canAccessModel === false"
-        nz-tooltip
-        [nzTooltipTitle]="'No access to model'"
-        nzTooltipPlacement="bottom"
-      >
-        Explore
+        class="flex flex-1 flex-row max-w-prose flex-grow mx-5 text-gray1 line-clamp-2 text-center flex-wrap"
+        >{{ mconfig?.chart?.title }}
       </div>
-    </button>
+    </div>
+
+    <div class="flex flex-1 flex-row" *ngIf="showNav === true">
+      <div class="flex-grow"></div>
+
+      <div class="flex items-center">
+        <m-query-status [query]="query"></m-query-status>
+      </div>
+
+      <button
+        data-cy="chartDialogRunButton"
+        class="px-6 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none bg-blue3 cursor-pointer"
+        (click)="run()"
+      >
+        Run
+      </button>
+
+      <button
+        data-cy="chartDialogExploreButton"
+        class="px-6 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+        [ngClass]="{
+          'bg-blue3 cursor-pointer': canAccessModel === true,
+          'bg-gray-400 cursor-default': canAccessModel !== true
+        }"
+        [disabled]="canAccessModel === false"
+        (click)="explore($event)"
+      >
+        <div *ngIf="canAccessModel === true"> Explore </div>
+        <div
+          *ngIf="canAccessModel === false"
+          nz-tooltip
+          [nzTooltipTitle]="'No access to model'"
+          nzTooltipPlacement="bottom"
+        >
+          Explore
+        </div>
+      </button>
+
+      <div class="ml-5 flex flex-row items-center">
+        <ui-switch
+          class="mb-1"
+          [checked]="isData"
+          (change)="toggleData()"
+        ></ui-switch>
+
+        <div class="flex h-9 ml-5 text-gray1 text-base items-center select-none"
+          >Data</div
+        >
+      </div>
+    </div>
   </div>
 
   <m-bricks

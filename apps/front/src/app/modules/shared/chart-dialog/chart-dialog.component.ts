@@ -1,10 +1,13 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { interval, of, Subscription } from 'rxjs';
+import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { RData } from '~front/app/services/query.service';
+import { QueryService, RData } from '~front/app/services/query.service';
 import { ModelStore } from '~front/app/stores/model.store';
 import { MqStore } from '~front/app/stores/mq.store';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
@@ -12,13 +15,15 @@ import { interfaces } from '~front/barrels/interfaces';
   selector: 'm-chart-dialog',
   templateUrl: './chart-dialog.component.html'
 })
-export class ChartDialogComponent implements OnInit {
+export class ChartDialogComponent implements OnInit, OnDestroy {
   chartTypeEnumTable = common.ChartTypeEnum.Table;
 
   isShow = true;
   isData = false;
   isFormat = true;
   showNav = false;
+
+  checkRunning$: Subscription;
 
   sortedColumns: interfaces.ColumnField[];
   canAccessModel: boolean;
@@ -32,6 +37,7 @@ export class ChartDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef,
     private cd: ChangeDetectorRef,
+    private queryService: QueryService,
     private navigateService: NavigateService,
     private mqStore: MqStore,
     private modelStore: ModelStore
@@ -54,6 +60,45 @@ export class ChartDialogComponent implements OnInit {
 
     // removes scroll for gauge chart
     this.refreshShow();
+
+    this.checkRunning$ = interval(3000)
+      .pipe(
+        startWith(0),
+        switchMap(() => {
+          if (this.query?.status === common.QueryStatusEnum.Running) {
+            let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+              mconfigId: this.mconfig.mconfigId,
+              queryId: this.query.queryId,
+              vizId: this.ref.data.vizId,
+              dashboardId: this.ref.data.dashboardId
+            };
+
+            return this.ref.data.apiService
+              .req(
+                apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                payload
+              )
+              .pipe(
+                tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
+                  this.query = resp.payload.query;
+
+                  this.qData =
+                    this.mconfig.queryId === this.query.queryId
+                      ? this.queryService.makeQData({
+                          data: this.query.data,
+                          columns: this.sortedColumns
+                        })
+                      : [];
+
+                  this.cd.detectChanges();
+                })
+              );
+          } else {
+            return of(1);
+          }
+        })
+      )
+      .subscribe();
   }
 
   toggleData() {
@@ -87,6 +132,34 @@ export class ChartDialogComponent implements OnInit {
         mconfigId: this.mconfig.mconfigId,
         queryId: this.query.queryId
       });
+    }
+  }
+
+  run() {
+    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      queryIds: [this.query.queryId]
+    };
+
+    this.ref.data.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload
+      )
+      .pipe(
+        map((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          let { runningQueries } = resp.payload;
+
+          this.query = runningQueries[0];
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy() {
+    console.log('ngOnDestroyChartDialog');
+    if (common.isDefined(this.checkRunning$)) {
+      this.checkRunning$?.unsubscribe();
     }
   }
 }

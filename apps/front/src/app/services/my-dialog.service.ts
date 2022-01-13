@@ -147,6 +147,7 @@ export class MyDialogService {
   }
 
   showChart(item: {
+    apiService: any;
     mconfig: common.Mconfig;
     query: common.Query;
     qData: RData[];
@@ -155,6 +156,9 @@ export class MyDialogService {
     canAccessModel: boolean;
     showNav: boolean;
     isSelectValid: boolean;
+    vizId?: string;
+    dashboardId?: string;
+    runFn?: any;
   }): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: true,
