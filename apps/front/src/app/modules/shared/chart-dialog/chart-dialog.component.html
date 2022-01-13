@@ -1,19 +1,33 @@
-<div class="flex flex-col w-[80vw] h-[80vh] p-10">
-  <div
-    class="flex flex-row mb-10 text-xl text-gray1 justify-start items-center"
-  >
-    <div class="flex flex-1 flex-row justify-center">
-      <div
-        class="flex flex-1 flex-row max-w-prose flex-grow mx-5 text-gray1 line-clamp-2 text-center flex-wrap"
-        >{{ mconfig?.chart?.title }}
-      </div>
+<div class="flex flex-col w-[80vw] h-[80vh] p-10" [hidden]="isShow === false">
+  <div class="flex flex-1 flex-row justify-center mb-5 text-xl min-h-9">
+    <div class="flex-1 flex flex-row w-1/4 tems-center justify-start"> </div>
+
+    <div
+      class="flex flex-row max-w-prose flex-grow mx-5 text-gray1 line-clamp-2 text-center flex-wrap"
+      >{{ mconfig?.chart?.title }}
     </div>
 
+    <div class="flex-1 flex flex-row w-1/4 items-center justify-end"> </div>
+  </div>
+
+  <div class="flex flex-row mb-5 text-xl text-gray1 justify-start items-center">
     <div class="flex flex-1 flex-row" *ngIf="showNav === true">
       <div class="flex-grow"></div>
 
-      <div class="flex items-center">
+      <div class="flex-1 flex flex-row items-center justify-end">
         <m-query-status [query]="query"></m-query-status>
+      </div>
+
+      <div class="flex ml-5 flex-row justify-start items-center">
+        <ui-switch
+          class="mb-1"
+          [checked]="isData"
+          (change)="toggleData()"
+        ></ui-switch>
+
+        <div class="flex h-9 ml-5 text-gray1 text-base items-center select-none"
+          >Show Data</div
+        >
       </div>
 
       <button
@@ -44,18 +58,6 @@
           Explore
         </div>
       </button>
-
-      <div class="ml-5 flex flex-row items-center">
-        <ui-switch
-          class="mb-1"
-          [checked]="isData"
-          (change)="toggleData()"
-        ></ui-switch>
-
-        <div class="flex h-9 ml-5 text-gray1 text-base items-center select-none"
-          >Data</div
-        >
-      </div>
     </div>
   </div>
 
@@ -114,5 +116,22 @@
       [qData]="qData"
       [sortedColumns]="sortedColumns"
     ></m-main-table>
+  </div>
+
+  <div
+    class="flex flex-row mt-7 items-center justify-start"
+    *ngIf="showNav === true"
+  >
+    <m-lock-closed-icon
+      class="mb-1 mr-2 text-gray-400"
+      *ngIf="canAccessModel === false"
+      nz-tooltip
+      [nzTooltipTitle]="'No access to model'"
+      nzTooltipPlacement="bottom"
+    ></m-lock-closed-icon>
+    <div class="text-base font-semibold text-gray-400">Model:</div>
+    <div class="ml-2 text-base font-semibold">{{
+      model?.label | capitalize
+    }}</div>
   </div>
 </div>
