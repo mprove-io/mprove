@@ -12,13 +12,7 @@
 
   <div class="flex flex-row mb-5 text-xl text-gray1 justify-start items-center">
     <div class="flex flex-1 flex-row" *ngIf="showNav === true">
-      <div class="flex-grow"></div>
-
-      <div class="flex-1 flex flex-row items-center justify-end">
-        <m-query-status [query]="query"></m-query-status>
-      </div>
-
-      <div class="flex ml-5 flex-row justify-start items-center">
+      <div class="flex flex-row justify-start items-center">
         <ui-switch
           class="mb-1"
           [checked]="isData"
@@ -28,6 +22,12 @@
         <div class="flex h-9 ml-5 text-gray1 text-base items-center select-none"
           >Show Data</div
         >
+      </div>
+
+      <div class="flex-grow"></div>
+
+      <div class="flex-1 flex flex-row items-center justify-end">
+        <m-query-status [query]="query"></m-query-status>
       </div>
 
       <button
@@ -94,15 +94,15 @@
     *ngIf="isShow === true && isData === true && sortedColumns?.length > 0"
     class="flex flex-row mb-3 mt-10"
   >
-    <div class="flex h-9 text-gray1 text-base items-center select-none"
-      >Format</div
-    >
-
     <ui-switch
-      class="mb-1 ml-5"
+      class="mb-1"
       [checked]="isFormat"
       (change)="toggleFormat()"
     ></ui-switch>
+
+    <div class="flex h-9 ml-5 text-gray1 text-base items-center select-none"
+      >Format Numbers</div
+    >
   </div>
 
   <div
