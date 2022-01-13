@@ -160,6 +160,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  goToModel(modelId: string) {
+    this.ref.close();
+    this.navigateService.navigateToModel(modelId);
+  }
+
   ngOnDestroy() {
     // console.log('ngOnDestroyChartDialog');
     if (common.isDefined(this.checkRunning$)) {

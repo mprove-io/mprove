@@ -130,8 +130,10 @@
       nzTooltipPlacement="bottom"
     ></m-lock-closed-icon>
     <div class="text-base font-semibold text-gray-400">Model:</div>
-    <div class="ml-2 text-base font-semibold">{{
-      model?.label | capitalize
-    }}</div>
+    <div
+      (click)="goToModel(model.modelId)"
+      class="ml-2 text-base font-semibold cursor-pointer hover:text-blue-500 focus:outline-none"
+      >{{ model?.label | capitalize }}</div
+    >
   </div>
 </div>
