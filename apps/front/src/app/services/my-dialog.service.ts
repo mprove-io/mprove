@@ -158,7 +158,7 @@ export class MyDialogService {
     isSelectValid: boolean;
     vizId?: string;
     dashboardId?: string;
-    runFn?: any;
+    updateQueryFn?: any;
   }): void {
     this.dialogService.open(ChartDialogComponent, {
       enableClose: true,

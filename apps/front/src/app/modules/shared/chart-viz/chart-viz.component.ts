@@ -241,21 +241,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
               )
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  this.query = resp.payload.query;
-
-                  if (this.query.status !== common.QueryStatusEnum.Running) {
-                    this.spinner.hide(this.viz.vizId);
-                  }
-
-                  this.qData =
-                    mconfig.queryId === this.query.queryId
-                      ? this.queryService.makeQData({
-                          data: this.query.data,
-                          columns: this.sortedColumns
-                        })
-                      : [];
-
-                  this.cd.detectChanges();
+                  this.updateQuery(resp.payload.query);
                 })
               );
           } else {
@@ -369,7 +355,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   showChart() {
     this.myDialogService.showChart({
-      runFn: this.run.bind(this),
+      updateQueryFn: this.updateQuery.bind(this),
       apiService: this.apiService,
       mconfig: this.mconfig,
       query: this.query,
@@ -409,6 +395,24 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
+  }
+
+  updateQuery(query: common.Query) {
+    this.query = query;
+
+    if (this.query.status !== common.QueryStatusEnum.Running) {
+      this.spinner.hide(this.viz.vizId);
+    }
+
+    this.qData =
+      this.mconfig.queryId === this.query.queryId
+        ? this.queryService.makeQData({
+            data: this.query.data,
+            columns: this.sortedColumns
+          })
+        : [];
+
+    this.cd.detectChanges();
   }
 
   ngOnDestroy() {

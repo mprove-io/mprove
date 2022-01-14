@@ -91,6 +91,13 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                       : [];
 
                   this.cd.detectChanges();
+
+                  if (
+                    common.isDefined(this.ref.data.updateQueryFn) &&
+                    resp.payload.query.status !== common.QueryStatusEnum.Running
+                  ) {
+                    this.ref.data.updateQueryFn(resp.payload.query);
+                  }
                 })
               );
           } else {
@@ -156,10 +163,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
-
-    if (common.isDefined(this.ref.data.runFn)) {
-      this.ref.data.runFn();
-    }
   }
 
   goToModel(modelId: string, canAccessModel: boolean) {
