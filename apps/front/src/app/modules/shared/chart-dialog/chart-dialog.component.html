@@ -122,18 +122,20 @@
     class="flex flex-row mt-7 items-center justify-start"
     *ngIf="showNav === true"
   >
-    <m-lock-closed-icon
-      class="mb-1 mr-2 text-gray-400"
-      *ngIf="canAccessModel === false"
-      nz-tooltip
-      [nzTooltipTitle]="'No access to model'"
-      nzTooltipPlacement="bottom"
-    ></m-lock-closed-icon>
     <div class="text-base font-semibold text-gray-400">Model:</div>
+
     <div
       (click)="goToModel(model.modelId)"
       class="ml-2 text-base font-semibold cursor-pointer hover:text-blue-500 focus:outline-none"
       >{{ model?.label | capitalize }}</div
     >
+
+    <m-lock-closed-icon
+      class="mb-1 ml-2 text-gray-400"
+      *ngIf="canAccessModel === false"
+      nz-tooltip
+      [nzTooltipTitle]="'No access to model'"
+      nzTooltipPlacement="bottom"
+    ></m-lock-closed-icon>
   </div>
 </div>

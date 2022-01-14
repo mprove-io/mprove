@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
-import { getCanAccessModel } from '~front/app/functions/get-can-access-model';
+import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -364,7 +364,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           })
         : [];
 
-    let canAccessModel = getCanAccessModel({
+    let canAccessModel = checkAccessModel({
       model: model,
       member: this.member
     });

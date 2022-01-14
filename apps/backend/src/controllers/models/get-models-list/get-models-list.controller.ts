@@ -70,7 +70,8 @@ export class GetModelsListController {
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
               member: member,
-              vmd: x
+              vmd: x,
+              checkExplorer: true
             })
           })
         )

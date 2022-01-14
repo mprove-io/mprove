@@ -6,8 +6,13 @@ export function checkAccess(item: {
   userAlias: string;
   member: MemberEntity;
   vmd: entities.VizEntity | entities.ModelEntity | entities.DashboardEntity;
+  checkExplorer?: boolean;
 }): boolean {
-  let { userAlias, member, vmd } = item;
+  let { userAlias, member, vmd, checkExplorer } = item;
+
+  if (checkExplorer === true && member.is_explorer === common.BoolEnum.FALSE) {
+    return false;
+  }
 
   if (
     member.is_admin === common.BoolEnum.TRUE ||

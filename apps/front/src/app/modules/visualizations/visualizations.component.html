@@ -146,16 +146,6 @@
 
                 <div class="flex flex-grow"></div>
 
-                <div class="ml-5 w-6">
-                  <m-lock-closed-icon
-                    class="text-gray-400"
-                    *ngIf="modelsItem.hasAccess === false"
-                    nz-tooltip
-                    [nzTooltipTitle]="'No access to model'"
-                    nzTooltipPlacement="bottom"
-                  ></m-lock-closed-icon>
-                </div>
-
                 <div class="flex justify-end ml-3 w-12">
                   {{ modelsItem.totalVizs }}
                 </div>

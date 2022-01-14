@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
-import { getCanAccessModel } from '~front/app/functions/get-can-access-model';
+import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -251,7 +251,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     this.canEditOrDeleteRep =
       member.isEditor || member.isAdmin || this.author === member.alias;
 
-    this.canAccessModel = getCanAccessModel({
+    this.canAccessModel = checkAccessModel({
       model: model,
       member: member
     });

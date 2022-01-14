@@ -48,20 +48,6 @@ export class GetModelController {
       modelId: modelId
     });
 
-    // allow access to get model fields on visualizations
-
-    // let isAccessGranted = helper.checkAccess({
-    //   userAlias: user.alias,
-    //   member: member,
-    //   vmd: model
-    // });
-
-    // if (isAccessGranted === false) {
-    //   throw new common.ServerError({
-    //     message: apiToBackend.ErEnum.BACKEND_FORBIDDEN_MODEL
-    //   });
-    // }
-
     let payload: apiToBackend.ToBackendGetModelResponsePayload = {
       model: wrapper.wrapToApiModel(model)
     };
