@@ -27,6 +27,14 @@ class DashboardsModelsItemExtended extends common.ModelsItem {
   totalDashboards: number;
 }
 
+class ExtendedReport extends common.Report {
+  hasAccessToModel?: boolean;
+}
+
+class DashboardWithExtendedReports extends DashboardWithExtendedFilters {
+  reports: ExtendedReport[];
+}
+
 @Component({
   selector: 'm-dashboards',
   templateUrl: './dashboards.component.html'
@@ -47,9 +55,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   dashboardsModelsList: DashboardsModelsItemExtended[];
   hasAccessModelsList: common.ModelsItem[];
 
-  dashboards: DashboardWithExtendedFilters[];
-  dashboardsFilteredByWord: DashboardWithExtendedFilters[];
-  filteredDashboards: DashboardWithExtendedFilters[];
+  dashboards: DashboardWithExtendedReports[];
+  dashboardsFilteredByWord: DashboardWithExtendedReports[];
+  filteredDashboards: DashboardWithExtendedReports[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -79,6 +87,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.dashboards = x.dashboards;
 
+      let member: common.Member;
+      this.memberQuery
+        .select()
+        .pipe()
+        .subscribe(y => {
+          member = y;
+        });
+
       this.modelsListQuery
         .select()
         .pipe(take(1))
@@ -94,6 +110,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
               ).length
             })
           );
+
+          this.dashboards.forEach(dashboard => {
+            dashboard.reports.forEach(report => {
+              (report as any).hasAccessToModel = checkAccessModel({
+                member: member,
+                model: this.dashboardsModelsList.find(
+                  m => m.modelId === report.modelId
+                )
+              });
+            });
+          });
 
           // let allGroups = this.vizs.map(z => z.gr);
           // let definedGroups = allGroups.filter(y => common.isDefined(y));
@@ -226,7 +253,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   //   this.cd.detectChanges();
   // }
 
-  trackByFn(index: number, item: DashboardWithExtendedFilters) {
+  trackByFn(index: number, item: DashboardWithExtendedReports) {
     return item.dashboardId;
   }
 
@@ -249,7 +276,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   newDashboard() {}
 
-  goToDashboardFile(event: any, dashboard: DashboardWithExtendedFilters) {
+  goToDashboardFile(event: any, dashboard: DashboardWithExtendedReports) {
     event.stopPropagation();
 
     let fileIdAr = dashboard.filePath.split('/');
