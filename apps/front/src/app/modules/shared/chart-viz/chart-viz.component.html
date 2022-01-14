@@ -17,27 +17,6 @@
           </div>
         </div>
 
-        <!-- <button
-          data-cy="vizExploreButton"
-          class="w-24 ml-5 h-9 text-lg rounded border focus:outline-none invisible group-hover:visible flex-shrink-0"
-          [ngClass]="{
-            'border-gray-400 hover:bg-blue-200': canAccessModel === true,
-            'border-gray-300 text-gray-400': canAccessModel === false
-          }"
-          [disabled]="canAccessModel === false"
-          (click)="explore($event)"
-        >
-          <div *ngIf="canAccessModel === true"> Explore </div>
-          <div
-            *ngIf="canAccessModel === false"
-            nz-tooltip
-            [nzTooltipTitle]="'No access to model'"
-            nzTooltipPlacement="bottom"
-          >
-            Explore
-          </div>
-        </button> -->
-
         <div class="relative ml-3">
           <button
             data-cy="vizOptionsMenuButton"
@@ -73,9 +52,10 @@
               data-cy="vizOptionsExplore"
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
               [ngClass]="{
-                'text-gray-300': canAccessModel === false
+                'cursor-default text-gray-400': canAccessModel === false
               }"
               (click)="explore($event)"
+              [disabled]="canAccessModel === false"
               >Explore</button
             >
 
