@@ -17,6 +17,20 @@
           </div>
         </div>
 
+        <div class="flex w-9 h-9 relative flex-shrink-0">
+          <ngx-spinner
+            [name]="report.mconfigId"
+            color="rgba(54, 94, 224, 100)"
+            bdColor="rgba(0, 0, 0, 0)"
+            size="default"
+            type="ball-clip-rotate"
+            [fullScreen]="false"
+            [disableAnimation]="true"
+            [zIndex]="99998"
+          >
+          </ngx-spinner>
+        </div>
+
         <div class="relative ml-3">
           <button
             data-cy="repOptionsMenuButton"
@@ -120,7 +134,7 @@
     </div>
   </div>
 </div>
-<div class="text-blue1">{{ randomId }}</div>
+<div class="text-blue1 cursor-default invisible">{{ randomId }}</div>
 
 <div *ngIf="openedMenuId$ | async"></div>
 <div *ngIf="nav$ | async"></div>

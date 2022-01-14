@@ -6,6 +6,8 @@
       >
         <div class="w-9 mr-3"></div>
 
+        <div class="flex w-9 mx-5 flex-shrink-0"></div>
+
         <div
           class="flex flex-col flex-grow max-h-[60px] text-gray1 hover:text-blue-500 justify-start items-center cursor-pointer"
           (click)="showChart()"
@@ -15,6 +17,20 @@
           >
             {{ title }}
           </div>
+        </div>
+
+        <div class="flex w-9 h-9 mx-5 relative flex-shrink-0">
+          <ngx-spinner
+            [name]="viz.vizId"
+            color="rgba(54, 94, 224, 100)"
+            bdColor="rgba(0, 0, 0, 0)"
+            size="default"
+            type="ball-clip-rotate"
+            [fullScreen]="false"
+            [disableAnimation]="true"
+            [zIndex]="99998"
+          >
+          </ngx-spinner>
         </div>
 
         <div class="relative ml-3">

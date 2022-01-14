@@ -7,6 +7,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
@@ -96,6 +97,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
+    private spinner: NgxSpinnerService,
     public uiQuery: UiQuery,
     public uiStore: UiStore,
     private mqStore: MqStore,
@@ -241,6 +243,10 @@ export class ChartVizComponent implements OnInit, OnDestroy {
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   this.query = resp.payload.query;
 
+                  if (this.query.status !== common.QueryStatusEnum.Running) {
+                    this.spinner.hide(this.viz.vizId);
+                  }
+
                   this.qData =
                     mconfig.queryId === this.query.queryId
                       ? this.queryService.makeQData({
@@ -324,6 +330,8 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       event.stopPropagation();
       this.closeMenu();
     }
+
+    this.spinner.show(this.viz.vizId);
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       queryIds: [this.query.queryId]

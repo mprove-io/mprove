@@ -7,6 +7,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
@@ -102,6 +103,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
+    private spinner: NgxSpinnerService,
     public uiQuery: UiQuery,
     public uiStore: UiStore,
     private mqStore: MqStore,
@@ -230,6 +232,10 @@ export class ChartRepComponent implements OnInit, OnDestroy {
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   this.query = resp.payload.query;
 
+                  if (this.query.status !== common.QueryStatusEnum.Running) {
+                    this.spinner.hide(this.report.mconfigId);
+                  }
+
                   this.qData =
                     this.mconfig.queryId === this.query.queryId
                       ? this.queryService.makeQData({
@@ -313,6 +319,8 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       event.stopPropagation();
       this.closeMenu();
     }
+
+    this.spinner.show(this.report.mconfigId);
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       queryIds: [this.query.queryId]
