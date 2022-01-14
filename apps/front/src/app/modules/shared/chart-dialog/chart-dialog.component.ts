@@ -118,6 +118,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   explore(event?: MouseEvent) {
+    if (this.canAccessModel === false) {
+      return;
+    }
+
     this.ref.close();
 
     this.modelStore.update(this.model);
@@ -126,13 +130,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       Object.assign({}, state, { mconfig: this.mconfig, query: this.query })
     );
 
-    if (this.canAccessModel === true) {
-      this.navigateService.navigateMconfigQuery({
-        modelId: this.model.modelId,
-        mconfigId: this.mconfig.mconfigId,
-        queryId: this.query.queryId
-      });
-    }
+    this.navigateService.navigateMconfigQuery({
+      modelId: this.model.modelId,
+      mconfigId: this.mconfig.mconfigId,
+      queryId: this.query.queryId
+    });
   }
 
   run() {
@@ -160,7 +162,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToModel(modelId: string) {
+  goToModel(modelId: string, canAccessModel: boolean) {
+    if (canAccessModel === false) {
+      return;
+    }
+
     this.ref.close();
     this.navigateService.navigateToModel(modelId);
   }

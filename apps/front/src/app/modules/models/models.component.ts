@@ -159,8 +159,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
-  navigateToModel(modelId: string) {
-    this.navigateService.navigateToModel(modelId);
+  navigateToModel(item: common.ModelsItem) {
+    if (item.hasAccess === false) {
+      return;
+    }
+
+    this.navigateService.navigateToModel(item.modelId);
   }
 
   ngOnDestroy() {
