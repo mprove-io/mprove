@@ -18,18 +18,25 @@ import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
 import { NavState } from '~front/app/stores/nav.store';
+import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 class VizsModelsItemExtended extends common.ModelsItem {
   totalVizs: number;
+}
+
+export class VizExtended extends common.Viz {
+  author: string;
+  canEditOrDeleteViz: boolean;
 }
 
 @Component({
@@ -39,12 +46,21 @@ class VizsModelsItemExtended extends common.ModelsItem {
 export class VisualizationsComponent implements OnInit, OnDestroy {
   pageTitle = constants.VISUALIZATIONS_PAGE_TITLE;
 
+  vizDeletedFnBindThis = this.vizDeletedFn.bind(this);
+
   // groups: string[];
 
-  showList = false;
+  showList = true;
   showBricks = false;
 
   isShow = true;
+
+  openedMenuId: string;
+  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
+    tap(x => (this.openedMenuId = x))
+  );
+
+  isVizOptionsMenuOpen = false;
 
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
@@ -52,9 +68,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   vizsModelsList: VizsModelsItemExtended[];
   hasAccessModelsList: common.ModelsItem[] = [];
 
-  vizs: common.Viz[];
-  vizsFilteredByWord: common.Viz[];
-  filteredVizs: common.Viz[];
+  vizs: VizExtended[];
+  vizsFilteredByWord: VizExtended[];
+  filteredVizs: VizExtended[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -82,7 +98,33 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   vizs$ = this.vizsQuery.select().pipe(
     tap(x => {
-      this.vizs = x.vizs;
+      let member: common.Member;
+      this.memberQuery
+        .select()
+        .pipe(
+          tap(z => {
+            member = z;
+          })
+        )
+        .subscribe();
+
+      this.vizs = x.vizs.map(v => {
+        let vizFilePathArray = v.filePath.split('/');
+
+        let author =
+          vizFilePathArray.length > 1 &&
+          vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
+            ? vizFilePathArray[2]
+            : undefined;
+
+        let vizExtended: VizExtended = Object.assign({}, v, <VizExtended>{
+          author: author,
+          canEditOrDeleteViz:
+            member.isEditor || member.isAdmin || author === member.alias
+        });
+
+        return vizExtended;
+      });
 
       this.modelsListQuery
         .select()
@@ -127,6 +169,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private memberQuery: MemberQuery,
     private apiService: ApiService,
     private navQuery: NavQuery,
+    public uiStore: UiStore,
+    public uiQuery: UiQuery,
     private queryService: QueryService,
     private myDialogService: MyDialogService,
     private spinner: NgxSpinnerService,
@@ -222,7 +266,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
   }
 
-  vizDeleted(deletedVizId: string) {
+  vizDeletedFn(deletedVizId: string) {
     let deletedVizModelId = this.vizs.find(viz => viz.vizId === deletedVizId)
       ?.modelId;
 
@@ -241,7 +285,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  trackByFn(index: number, item: common.Viz) {
+  trackByFn(index: number, item: VizExtended) {
     return item.vizId;
   }
 
@@ -308,7 +352,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   navigateToViz(vizId: string) {}
 
-  async showChart(item: common.Viz) {
+  async showChart(item: VizExtended) {
     this.spinner.show(item.vizId);
 
     // this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
@@ -436,7 +480,29 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     return this.hasAccessModelsList.map(x => x.modelId).indexOf(modelId) > -1;
   }
 
-  goToVizFile(event: any, item: common.Viz) {
+  openMenu(item: VizExtended) {
+    this.isVizOptionsMenuOpen = true;
+    this.uiStore.update({ openedMenuId: item.vizId });
+  }
+
+  closeMenu(event?: MouseEvent) {
+    if (common.isDefined(event)) {
+      event.stopPropagation();
+    }
+    this.isVizOptionsMenuOpen = false;
+    this.uiStore.update({ openedMenuId: undefined });
+  }
+
+  toggleMenu(event: MouseEvent, item: VizExtended) {
+    event.stopPropagation();
+    if (this.isVizOptionsMenuOpen === true) {
+      this.closeMenu();
+    } else {
+      this.openMenu(item);
+    }
+  }
+
+  goToVizFile(event: any, item: VizExtended) {
     event.stopPropagation();
 
     let fileIdAr = item.filePath.split('/');
@@ -444,6 +510,20 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
+
+  deleteViz(event: MouseEvent, item: VizExtended) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    this.myDialogService.showDeleteViz({
+      viz: item,
+      apiService: this.apiService,
+      vizDeletedFnBindThis: this.vizDeletedFnBindThis,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd
     });
   }
 
@@ -456,5 +536,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     if (this.timer) {
       clearTimeout(this.timer);
     }
+
+    if (common.isDefined(this.openedMenuId))
+      this.uiStore.update({ openedMenuId: undefined });
   }
 }

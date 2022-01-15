@@ -170,6 +170,8 @@
                 <div class="flex flex-1">File</div>
                 <div class="flex flex-1">Access Roles</div>
                 <div class="flex flex-1">Access Users</div>
+                <div class="flex flex-1">Author</div>
+                <div class="flex w-24"></div>
               </div>
             </div>
 
@@ -191,7 +193,7 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 w-full items-start text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="group flex flex-row mr-5 px-5 w-full items-start text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
                       class="flex flex-row w-2/5 h-full py-3 cursor-pointer text-base hover:text-blue-500"
@@ -218,20 +220,22 @@
                     <div class="flex flex-1 flex-row text-base cursor-default">
                       <div class="flex flex-1 flex-row">
                         <div
-                          class="flex cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                          class="flex cursor-pointer truncate items-start py-3 hover:text-blue-500 focus:outline-none"
                           (click)="goToModel(item.reports[0].modelId)"
                         >
                           {{ item.reports[0].modelLabel | capitalize }}
                         </div>
                       </div>
                       <div
-                        class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                        class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToVizFile($event, item)"
                       >
                         {{ item.vizId }}
                       </div>
 
-                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                      <div
+                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                      >
                         <span
                           *ngFor="let role of item.accessRoles"
                           class="mr-2"
@@ -240,13 +244,105 @@
                         </span>
                       </div>
 
-                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                      <div
+                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                      >
                         <span
                           *ngFor="let user of item.accessUsers"
                           class="mr-2"
                         >
                           {{ user }}
                         </span>
+                      </div>
+
+                      <div
+                        class="flex flex-1 truncate items-start py-3 focus:outline-none"
+                      >
+                        {{ item.author }}
+                      </div>
+
+                      <div class="flex w-24 pt-1">
+                        <div class="relative ml-3">
+                          <button
+                            data-cy="vizOptionsMenuButton"
+                            class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+                            [ngClass]="{
+                              'cursor-default text-gray-400':
+                                openedMenuId && item.vizId !== openedMenuId
+                            }"
+                            (click)="toggleMenu($event, item)"
+                            [disabled]="
+                              openedMenuId && item.vizId !== openedMenuId
+                            "
+                          >
+                            <m-dots-vertical-icon></m-dots-vertical-icon>
+                          </button>
+
+                          <button
+                            class="fixed inset-0 z-9 w-10 h-10 cursor-default focus:outline-none"
+                            *ngIf="
+                              isVizOptionsMenuOpen === true &&
+                              item.vizId === openedMenuId
+                            "
+                            (click)="closeMenu($event)"
+                          ></button>
+
+                          <div
+                            class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
+                            *ngIf="
+                              isVizOptionsMenuOpen === true &&
+                              item.vizId === openedMenuId
+                            "
+                          >
+                            <!-- <button
+                            data-cy="vizOptionsRun"
+                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                            (click)="run($event)"
+                            >Run</button
+                          > -->
+
+                            <!-- <button
+                            data-cy="vizOptionsExplore"
+                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                            [ngClass]="{
+                              'cursor-default text-gray-400': canAccessModel === false
+                            }"
+                            (click)="explore($event)"
+                            [disabled]="canAccessModel === false"
+                            >Explore</button
+                          > -->
+
+                            <!-- <button
+                            data-cy="vizOptionsEditInfo"
+                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                            [ngClass]="{
+                              'cursor-default text-gray-400': canEditOrDeleteViz === false
+                            }"
+                            (click)="editVizInfo($event)"
+                            [disabled]="canEditOrDeleteViz === false"
+                            >Edit Info</button
+                          > -->
+
+                            <button
+                              data-cy="vizOptionsGoToFile"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              (click)="goToVizFile($event, item)"
+                              >Go to file</button
+                            >
+
+                            <button
+                              data-cy="vizOptionsDelete"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
+                                  item.canEditOrDeleteViz === false
+                              }"
+                              (click)="deleteViz($event, item)"
+                              [disabled]="item.canEditOrDeleteViz === false"
+                              >Delete</button
+                            >
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -281,7 +377,7 @@
                     [report]="item.reports[0]"
                     [viz]="item"
                     [showBricks]="showBricks"
-                    (vizDeleted)="vizDeleted($event)"
+                    [vizDeletedFnBindThis]="vizDeletedFnBindThis"
                   ></m-chart-viz>
                 </div>
               </div>
@@ -303,6 +399,7 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="openedMenuId$ | async"></div>
 
 <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,

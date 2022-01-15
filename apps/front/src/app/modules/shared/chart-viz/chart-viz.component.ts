@@ -1,11 +1,9 @@
 import {
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnDestroy,
-  OnInit,
-  Output
+  OnInit
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
@@ -28,6 +26,7 @@ import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
+import { VizExtended } from '../../visualizations/visualizations.component';
 
 @Component({
   selector: 'm-chart-viz',
@@ -45,18 +44,19 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   title: string;
 
   @Input()
-  viz: common.Viz;
+  viz: VizExtended;
 
   @Input()
   showBricks: boolean;
+
+  @Input()
+  vizDeletedFnBindThis: any;
 
   accessRolesString: string;
   accessUsersString: string;
   accessString: string;
 
   author: string;
-
-  @Output() vizDeleted = new EventEmitter<string>();
 
   sortedColumns: interfaces.ColumnField[];
   qData: RData[];
@@ -84,7 +84,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   extendedFilters: interfaces.FilterExtended[];
 
-  canEditOrDeleteViz = false;
   canAccessModel = false;
 
   isSelectValid = false;
@@ -105,27 +104,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
-
-    this.accessUsersString = 'Users - ' + this.viz.accessUsers.join(', ');
-
-    this.accessString =
-      this.viz.accessRoles.length > 0 && this.viz.accessUsers.length > 0
-        ? this.accessRolesString + '; ' + this.accessUsersString
-        : this.viz.accessRoles.length > 0
-        ? this.accessRolesString
-        : this.viz.accessUsers.length > 0
-        ? this.accessUsersString
-        : '';
-
-    let vizFilePathArray = this.viz.filePath.split('/');
-
-    this.author =
-      vizFilePathArray.length > 1 &&
-      vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-        ? vizFilePathArray[2]
-        : undefined;
-
     let member: common.Member;
     this.memberQuery
       .select()
@@ -251,9 +229,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.canEditOrDeleteViz =
-      member.isEditor || member.isAdmin || this.author === member.alias;
-
     this.canAccessModel = checkAccessModel({
       model: model,
       member: member
@@ -346,7 +321,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     this.myDialogService.showDeleteViz({
       viz: this.viz,
       apiService: this.apiService,
-      vizDeleted: this.vizDeleted,
+      vizDeletedFnBindThis: this.vizDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       isRepoProd: this.nav.isRepoProd

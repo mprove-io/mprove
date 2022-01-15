@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -222,7 +222,7 @@ export class MyDialogService {
 
   showDeleteViz(item: {
     apiService: any;
-    vizDeleted: EventEmitter<string>;
+    vizDeletedFnBindThis: any;
     viz: common.Viz;
     projectId: string;
     branchId: string;

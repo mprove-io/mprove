@@ -194,13 +194,15 @@
                       </div>
 
                       <div
-                        class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                        class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToDashboardFile($event, item)"
                       >
                         {{ item.dashboardId }}
                       </div>
 
-                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                      <div
+                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                      >
                         <span
                           *ngFor="let role of item.accessRoles"
                           class="mr-2"
@@ -209,7 +211,9 @@
                         </span>
                       </div>
 
-                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                      <div
+                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                      >
                         <span
                           *ngFor="let user of item.accessUsers"
                           class="mr-2"
@@ -259,7 +263,7 @@
                       <div class="flex flex-1 flex-row">
                         <button
                           *ngIf="showReports === true"
-                          class="flex items-start focus:outline-none cursor-default"
+                          class="flex items-start truncate focus:outline-none cursor-default"
                           [ngClass]="{
                             'cursor-pointer hover:text-blue-500':
                               report.hasAccessToModel === true,

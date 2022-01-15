@@ -111,17 +111,19 @@
 
                     <div class="flex flex-1 flex-row text-base cursor-default">
                       <div
-                        class="flex flex-1 cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
+                        class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToModelFile($event, item)"
                       >
                         {{ item.modelId }}
                       </div>
 
-                      <div class="flex flex-1 items-start py-3">
+                      <div class="flex flex-1 items-start py-3 truncate">
                         {{ item.connectionId }}
                       </div>
 
-                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                      <div
+                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                      >
                         <span
                           *ngFor="let role of item.accessRoles"
                           class="mr-2"
@@ -130,7 +132,9 @@
                         </span>
                       </div>
 
-                      <div class="flex flex-1 py-3 text-base flex-wrap">
+                      <div
+                        class="flex flex-1 py-3 text-base flex-wrap truncate"
+                      >
                         <span
                           *ngFor="let user of item.accessUsers"
                           class="mr-2"

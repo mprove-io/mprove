@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
@@ -19,7 +19,6 @@ export class DeleteVizDialogComponent {
     let { projectId, branchId, isRepoProd } = this.ref.data;
 
     let viz: common.Viz = this.ref.data.viz;
-    let vizDeleted: EventEmitter<string> = this.ref.data.vizDeleted;
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: apiToBackend.ToBackendDeleteVizRequestPayload = {
@@ -36,7 +35,7 @@ export class DeleteVizDialogComponent {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteVizResponse) => {
-          vizDeleted.emit(viz.vizId);
+          this.ref.data.vizDeletedFnBindThis(viz.vizId);
         }),
         take(1)
       )
