@@ -145,10 +145,10 @@
             class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
           >
             <div
-              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1"
+              class="flex flex-row space-x-5 px-5 mb-3 mr-4 text-base font-semibold text-gray1"
             >
               <div class="flex w-2/5">Dashboard</div>
-              <div class="flex flex-1 flex-row">
+              <div class="flex flex-1 flex-row space-x-5">
                 <div class="flex flex-1" *ngIf="showReports === true"
                   >Model</div
                 >
@@ -178,18 +178,23 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="flex flex-row space-x-5 mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
-                      class="flex w-2/5 h-full py-3 cursor-pointer hover:text-blue-500"
+                      class="flex w-2/5 truncate h-full py-3 cursor-pointer hover:text-blue-500"
                       [ngClass]="{
                         'font-semibold': showReports === true
                       }"
                       (click)="navigateToDashboard(item.dashboardId)"
-                      >{{ item.title || item.dashboardId | capitalize }}</div
                     >
+                      <span class="truncate">
+                        {{ item.title || item.dashboardId | capitalize }}
+                      </span>
+                    </div>
 
-                    <div class="flex flex-1 flex-row text-base cursor-default">
+                    <div
+                      class="flex flex-1 flex-row space-x-5 text-base cursor-default"
+                    >
                       <div class="flex flex-1" *ngIf="showReports === true">
                       </div>
 
@@ -197,7 +202,9 @@
                         class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToDashboardFile($event, item)"
                       >
-                        {{ item.dashboardId }}
+                        <span class="truncate">
+                          {{ item.dashboardId }}
+                        </span>
                       </div>
 
                       <div
@@ -205,7 +212,7 @@
                       >
                         <span
                           *ngFor="let role of item.accessRoles"
-                          class="mr-2"
+                          class="mr-2 truncate"
                         >
                           {{ role }}
                         </span>
@@ -216,7 +223,7 @@
                       >
                         <span
                           *ngFor="let user of item.accessUsers"
-                          class="mr-2"
+                          class="mr-2 truncate"
                         >
                           {{ user }}
                         </span>
@@ -236,15 +243,17 @@
                   >
                     <div
                       *ngFor="let report of item.reports"
-                      class="flex flex-row text-base"
+                      class="flex flex-row space-x-5 text-base"
                     >
                       <div
                         (click)="showChart(report, item.dashboardId)"
                         class="flex w-2/5 flex-row items-center text-gray1 hover:text-blue-500 cursor-pointer"
                       >
-                        <div class="flex flex-wrap ml-10">{{
-                          report.title | capitalize
-                        }}</div>
+                        <div class="flex flex-wrap truncate ml-10">
+                          <span class="truncate">
+                            {{ report.title | capitalize }}
+                          </span>
+                        </div>
 
                         <div class="flex w-9 h-2 mx-5 relative flex-shrink-0">
                           <ngx-spinner
@@ -260,28 +269,35 @@
                           </ngx-spinner> </div
                       ></div>
 
-                      <div class="flex flex-1 flex-row">
-                        <button
-                          *ngIf="showReports === true"
-                          class="flex items-start truncate focus:outline-none cursor-default"
-                          [ngClass]="{
-                            'cursor-pointer hover:text-blue-500':
-                              report.hasAccessToModel === true,
-                            'cursor-default': report.hasAccessToModel === false
-                          }"
-                          (click)="goToModel(report.modelId)"
-                          [disabled]="!report.hasAccessToModel"
-                        >
-                          {{ report.modelLabel | capitalize }}
-                        </button>
+                      <div class="flex flex-1 flex-row space-x-5">
+                        <div class="flex flex-1 flex-row">
+                          <button
+                            class="flex items-start truncate focus:outline-none cursor-default"
+                            [ngClass]="{
+                              'cursor-pointer hover:text-blue-500':
+                                report.hasAccessToModel === true,
+                              'cursor-default':
+                                report.hasAccessToModel === false
+                            }"
+                            (click)="goToModel(report.modelId)"
+                            [disabled]="!report.hasAccessToModel"
+                          >
+                            <span class="truncate">
+                              {{ report.modelLabel | capitalize }}
+                            </span>
+                          </button>
 
-                        <m-lock-closed-icon
-                          class="mb-1 ml-2 text-gray-400"
-                          *ngIf="report.hasAccessToModel === false"
-                          nz-tooltip
-                          [nzTooltipTitle]="'No access to model'"
-                          nzTooltipPlacement="bottom"
-                        ></m-lock-closed-icon>
+                          <m-lock-closed-icon
+                            class="mb-1 ml-2 text-gray-400"
+                            *ngIf="report.hasAccessToModel === false"
+                            nz-tooltip
+                            [nzTooltipTitle]="'No access to model'"
+                            nzTooltipPlacement="bottom"
+                          ></m-lock-closed-icon>
+                        </div>
+                        <div class="flex flex-1 cursor-default"></div>
+                        <div class="flex flex-1 cursor-default"></div>
+                        <div class="flex flex-1 cursor-default"></div>
                       </div>
                     </div>
                   </div>

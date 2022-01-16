@@ -34,9 +34,14 @@ class VizsModelsItemExtended extends common.ModelsItem {
   totalVizs: number;
 }
 
+class ExtendedReport extends common.Report {
+  hasAccessToModel?: boolean;
+}
+
 export class VizExtended extends common.Viz {
-  author: string;
-  canEditOrDeleteViz: boolean;
+  author?: string;
+  canEditOrDeleteViz?: boolean;
+  reports: ExtendedReport[];
 }
 
 @Component({
@@ -98,6 +103,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   vizs$ = this.vizsQuery.select().pipe(
     tap(x => {
+      this.vizs = x.vizs;
+
       let member: common.Member;
       this.memberQuery
         .select()
@@ -107,24 +114,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe();
-
-      this.vizs = x.vizs.map(v => {
-        let vizFilePathArray = v.filePath.split('/');
-
-        let author =
-          vizFilePathArray.length > 1 &&
-          vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-            ? vizFilePathArray[2]
-            : undefined;
-
-        let vizExtended: VizExtended = Object.assign({}, v, <VizExtended>{
-          author: author,
-          canEditOrDeleteViz:
-            member.isEditor || member.isAdmin || author === member.alias
-        });
-
-        return vizExtended;
-      });
 
       this.modelsListQuery
         .select()
@@ -139,6 +128,37 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
               totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length
             })
           );
+
+          this.vizs = x.vizs.map(v => {
+            let vizFilePathArray = v.filePath.split('/');
+
+            let author =
+              vizFilePathArray.length > 1 &&
+              vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
+                ? vizFilePathArray[2]
+                : undefined;
+
+            let vizExtended: VizExtended = Object.assign({}, v, <VizExtended>{
+              author: author,
+              canEditOrDeleteViz:
+                member.isEditor || member.isAdmin || author === member.alias,
+              reports: v.reports.map(report => {
+                let extendedReport: ExtendedReport = Object.assign({}, report, <
+                  ExtendedReport
+                >{
+                  hasAccessToModel: checkAccessModel({
+                    member: member,
+                    model: this.vizsModelsList.find(
+                      m => m.modelId === report.modelId
+                    )
+                  })
+                });
+                return extendedReport;
+              })
+            });
+
+            return vizExtended;
+          });
 
           // let allGroups = this.vizs.map(z => z.gr);
           // let definedGroups = allGroups.filter(y => common.isDefined(y));

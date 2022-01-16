@@ -45,7 +45,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   // groups: string[];
 
   showBricks = false;
-  showReports = false;
+  showReports = true;
 
   isShow = true;
 

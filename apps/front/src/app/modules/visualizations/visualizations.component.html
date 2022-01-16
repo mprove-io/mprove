@@ -162,10 +162,10 @@
             class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
           >
             <div
-              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1"
+              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1 space-x-5"
             >
               <div class="flex w-2/5">Visualization</div>
-              <div class="flex flex-1 flex-row">
+              <div class="flex flex-1 flex-row space-x-5">
                 <div class="flex flex-1">Model</div>
                 <div class="flex flex-1">File</div>
                 <div class="flex flex-1">Access Roles</div>
@@ -193,7 +193,7 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="group flex flex-row mr-5 px-5 w-full items-start text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="group flex flex-row space-x-5 mr-5 px-5 w-full items-start text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
                       class="flex flex-row w-2/5 h-full py-3 cursor-pointer text-base hover:text-blue-500"
@@ -217,20 +217,41 @@
                       </div>
                     </div>
 
-                    <div class="flex flex-1 flex-row text-base cursor-default">
-                      <div class="flex flex-1 flex-row">
-                        <div
-                          class="flex cursor-pointer truncate items-start py-3 hover:text-blue-500 focus:outline-none"
+                    <div
+                      class="flex flex-1 flex-row text-base cursor-default space-x-5"
+                    >
+                      <div class="flex flex-1 flex-row py-3">
+                        <button
+                          class="flex items-start truncate focus:outline-none cursor-default"
+                          [ngClass]="{
+                            'cursor-pointer hover:text-blue-500':
+                              item.reports[0].hasAccessToModel === true,
+                            'cursor-default':
+                              item.reports[0].hasAccessToModel === false
+                          }"
                           (click)="goToModel(item.reports[0].modelId)"
+                          [disabled]="!item.reports[0].hasAccessToModel"
                         >
-                          {{ item.reports[0].modelLabel | capitalize }}
-                        </div>
+                          <span class="truncate">
+                            {{ item.reports[0].modelLabel | capitalize }}
+                          </span>
+                        </button>
+
+                        <m-lock-closed-icon
+                          class="mb-1 ml-2 text-gray-400"
+                          *ngIf="item.reports[0].hasAccessToModel === false"
+                          nz-tooltip
+                          [nzTooltipTitle]="'No access to model'"
+                          nzTooltipPlacement="bottom"
+                        ></m-lock-closed-icon>
                       </div>
                       <div
                         class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToVizFile($event, item)"
                       >
-                        {{ item.vizId }}
+                        <span class="truncate">
+                          {{ item.vizId }}
+                        </span>
                       </div>
 
                       <div
@@ -238,7 +259,7 @@
                       >
                         <span
                           *ngFor="let role of item.accessRoles"
-                          class="mr-2"
+                          class="mr-2 truncate"
                         >
                           {{ role }}
                         </span>
@@ -249,7 +270,7 @@
                       >
                         <span
                           *ngFor="let user of item.accessUsers"
-                          class="mr-2"
+                          class="mr-2 truncate"
                         >
                           {{ user }}
                         </span>
@@ -258,7 +279,9 @@
                       <div
                         class="flex flex-1 truncate items-start py-3 focus:outline-none"
                       >
-                        {{ item.author }}
+                        <span>
+                          {{ item.author }}
+                        </span>
                       </div>
 
                       <div class="flex w-24 pt-1">
@@ -266,6 +289,10 @@
                           <button
                             data-cy="vizOptionsMenuButton"
                             class="flex relative z-9 h-9 w-9 rounded focus:outline-none items-center justify-center hover:bg-blue-200 invisible group-hover:visible"
+                            *ngIf="
+                              isVizOptionsMenuOpen === false ||
+                              item.vizId === openedMenuId
+                            "
                             [ngClass]="{
                               'cursor-default text-gray-400':
                                 openedMenuId && item.vizId !== openedMenuId

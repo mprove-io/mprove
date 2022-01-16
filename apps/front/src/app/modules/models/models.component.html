@@ -54,10 +54,10 @@
             class="ml-5 mr-5 mt-10 w-full flex flex-col divide-y divide-gray-500"
           >
             <div
-              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1"
+              class="flex flex-row px-5 mb-3 mr-4 text-base font-semibold text-gray1 space-x-5"
             >
               <div class="flex w-1/3">Model</div>
-              <div class="flex flex-1 flex-row">
+              <div class="flex flex-1 flex-row space-x-5">
                 <div class="flex flex-1">File</div>
                 <div class="flex flex-1">Connection</div>
                 <div class="flex flex-1">Access Roles</div>
@@ -84,7 +84,7 @@
               >
                 <div class="flex-grow flex-col">
                   <div
-                    class="flex flex-row mr-5 px-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
+                    class="flex flex-row mr-5 px-5 space-x-5 w-full items-start text-lg text-gray1 focus:outline-none bg-white border border-white rounded hover:bg-blue2 hover:border-blue2"
                   >
                     <div
                       class="flex flex-row w-1/3 py-3 h-full"
@@ -96,9 +96,9 @@
                         'cursor-default': item.hasAccess === false
                       }"
                     >
-                      <div>
+                      <span class="truncate">
                         {{ item.label || item.modelId | capitalize }}
-                      </div>
+                      </span>
 
                       <m-lock-closed-icon
                         class="mb-1 ml-2 mr-5 text-gray-400"
@@ -109,16 +109,22 @@
                       ></m-lock-closed-icon>
                     </div>
 
-                    <div class="flex flex-1 flex-row text-base cursor-default">
+                    <div
+                      class="flex flex-1 flex-row space-x-5 text-base cursor-default"
+                    >
                       <div
                         class="flex flex-1 truncate cursor-pointer items-start py-3 hover:text-blue-500 focus:outline-none"
                         (click)="goToModelFile($event, item)"
                       >
-                        {{ item.modelId }}
+                        <span class="truncate">
+                          {{ item.modelId }}
+                        </span>
                       </div>
 
                       <div class="flex flex-1 items-start py-3 truncate">
-                        {{ item.connectionId }}
+                        <span class="truncate">
+                          {{ item.connectionId }}
+                        </span>
                       </div>
 
                       <div
@@ -126,7 +132,7 @@
                       >
                         <span
                           *ngFor="let role of item.accessRoles"
-                          class="mr-2"
+                          class="mr-2 truncate"
                         >
                           {{ role }}
                         </span>
@@ -137,7 +143,7 @@
                       >
                         <span
                           *ngFor="let user of item.accessUsers"
-                          class="mr-2"
+                          class="mr-2 truncate"
                         >
                           {{ user }}
                         </span>
@@ -150,18 +156,24 @@
                     *ngIf="showViews === true"
                   >
                     <div
-                      class="flex flex-row w-full"
+                      class="flex flex-row space-x-5 w-full"
                       *ngFor="let node of item.nodes"
                     >
-                      <div class="flex w-1/3 pl-5 cursor-default">{{
-                        node.label
-                      }}</div>
+                      <div class="flex w-1/3 truncate pl-5 cursor-default">
+                        <span class="truncate">
+                          {{ node.label }}
+                        </span>
+                      </div>
                       <div class="flex flex-1 flex-row">
                         <div
-                          class="flex flex-1 cursor-pointer items-start hover:text-blue-500 focus:outline-none"
+                          class="flex flex-1 truncate cursor-pointer items-start hover:text-blue-500 focus:outline-none"
                           (click)="goToFile($event, node, item)"
-                          >{{ node.viewName || item.modelId }}</div
                         >
+                          <span class="truncate">
+                            {{ node.viewName || item.modelId }}
+                          </span>
+                        </div>
+                        <div class="flex flex-1 cursor-default"></div>
                         <div class="flex flex-1 cursor-default"></div>
                         <div class="flex flex-1 cursor-default"></div>
                       </div>
