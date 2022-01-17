@@ -336,27 +336,31 @@
                             >Run</button
                           > -->
 
-                            <!-- <button
-                            data-cy="vizOptionsExplore"
-                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                            [ngClass]="{
-                              'cursor-default text-gray-400': canAccessModel === false
-                            }"
-                            (click)="explore($event)"
-                            [disabled]="canAccessModel === false"
-                            >Explore</button
-                          > -->
+                            <button
+                              data-cy="vizOptionsExplore"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
+                                  item.reports[0].hasAccessToModel === false
+                              }"
+                              (click)="explore($event, item)"
+                              [disabled]="
+                                item.reports[0].hasAccessToModel === false
+                              "
+                              >Explore</button
+                            >
 
-                            <!-- <button
-                            data-cy="vizOptionsEditInfo"
-                            class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-                            [ngClass]="{
-                              'cursor-default text-gray-400': canEditOrDeleteViz === false
-                            }"
-                            (click)="editVizInfo($event)"
-                            [disabled]="canEditOrDeleteViz === false"
-                            >Edit Info</button
-                          > -->
+                            <button
+                              data-cy="vizOptionsEditInfo"
+                              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+                              [ngClass]="{
+                                'cursor-default text-gray-400':
+                                  item.canEditOrDeleteViz === false
+                              }"
+                              (click)="editVizInfo($event, item)"
+                              [disabled]="item.canEditOrDeleteViz === false"
+                              >Edit Info</button
+                            >
 
                             <button
                               data-cy="vizOptionsGoToFile"

@@ -13,7 +13,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
-import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
@@ -24,6 +23,8 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
+import { ModelStore } from '~front/app/stores/model.store';
+import { MqStore } from '~front/app/stores/mq.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -196,7 +197,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private location: Location,
-    private title: Title
+    private title: Title,
+    private mqStore: MqStore,
+    private modelStore: ModelStore
   ) {}
 
   calculateAspectRatio() {
@@ -360,29 +363,11 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   navigateToViz(vizId: string) {}
 
-  async showChart(item: VizExtended) {
+  async explore(event: any, item: VizExtended) {
+    event.stopPropagation();
+    this.closeMenu();
+
     this.spinner.show(item.vizId);
-
-    // this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
-
-    // this.accessUsersString = 'Users - ' + this.viz.accessUsers.join(', ');
-
-    // this.accessString =
-    //   this.viz.accessRoles.length > 0 && this.viz.accessUsers.length > 0
-    //     ? this.accessRolesString + '; ' + this.accessUsersString
-    //     : this.viz.accessRoles.length > 0
-    //     ? this.accessRolesString
-    //     : this.viz.accessUsers.length > 0
-    //     ? this.accessUsersString
-    //     : '';
-
-    // let vizFilePathArray = this.viz.filePath.split('/');
-
-    // this.author =
-    //   vizFilePathArray.length > 1 &&
-    //   vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-    //     ? vizFilePathArray[2]
-    //     : undefined;
 
     let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
       projectId: this.nav.projectId,
@@ -420,10 +405,77 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    let extendedFilters = getExtendedFilters({
-      fields: model.fields,
-      mconfig: mconfig
+    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
+      mconfigId: item.reports[0].mconfigId,
+      queryId: item.reports[0].queryId,
+      vizId: item.vizId
+    };
+
+    let query: common.Query = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+        payloadGetQuery
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetQueryResponse) => resp.payload.query
+        )
+      )
+      .toPromise();
+
+    this.modelStore.update(model);
+
+    this.mqStore.update(state =>
+      Object.assign({}, state, { mconfig: mconfig, query: query })
+    );
+
+    this.navigateService.navigateMconfigQuery({
+      modelId: model.modelId,
+      mconfigId: mconfig.mconfigId,
+      queryId: query.queryId
     });
+
+    this.spinner.hide(item.vizId);
+  }
+
+  async showChart(item: VizExtended) {
+    this.spinner.show(item.vizId);
+
+    let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      modelId: item.modelId
+    };
+
+    let model: common.Model = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        payloadGetModel
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
+        )
+      )
+      .toPromise();
+
+    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      mconfigId: item.reports[0].mconfigId
+    };
+
+    let mconfig: common.Mconfig = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+        payloadGetMconfig
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetMconfigResponse) =>
+            resp.payload.mconfig
+        )
+      )
+      .toPromise();
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       mconfigId: item.reports[0].mconfigId,
@@ -506,14 +558,46 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToVizFile(event: any, item: VizExtended) {
+  goToVizFile(event: MouseEvent, item: VizExtended) {
     event.stopPropagation();
+    this.closeMenu();
 
     let fileIdAr = item.filePath.split('/');
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
+  }
+
+  async editVizInfo(event: MouseEvent, item: VizExtended) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      mconfigId: item.reports[0].mconfigId
+    };
+
+    let mconfig: common.Mconfig = await this.apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+        payloadGetMconfig
+      )
+      .pipe(
+        map(
+          (resp: apiToBackend.ToBackendGetMconfigResponse) =>
+            resp.payload.mconfig
+        )
+      )
+      .toPromise();
+
+    this.myDialogService.showEditVizInfo({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      viz: item,
+      mconfig: mconfig
     });
   }
 

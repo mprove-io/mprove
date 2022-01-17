@@ -7,7 +7,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
-import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -381,11 +380,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         )
       )
       .toPromise();
-
-    let extendedFilters = getExtendedFilters({
-      fields: model.fields,
-      mconfig: mconfig
-    });
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       mconfigId: item.mconfigId,
