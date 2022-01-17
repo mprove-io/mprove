@@ -496,10 +496,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.vizId);
   }
 
-  hasAccessToModel(modelId: string) {
-    return this.hasAccessModelsList.map(x => x.modelId).indexOf(modelId) > -1;
-  }
-
   openMenu(item: VizExtended) {
     this.isVizOptionsMenuOpen = true;
     this.uiStore.update({ openedMenuId: item.vizId });

@@ -13,12 +13,14 @@ import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
 import { DashboardWithExtendedFilters } from '~front/app/stores/dashboards.store';
 import { NavState } from '~front/app/stores/nav.store';
+import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -50,6 +52,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   showReports = false;
 
   isShow = true;
+
+  openedMenuId: string;
+  openedMenuId$ = this.uiQuery.openedMenuId$.pipe(
+    tap(x => (this.openedMenuId = x))
+  );
+
+  isDashboardOptionsMenuOpen = false;
 
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
@@ -175,6 +184,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private modelsListQuery: ModelsListQuery,
     private memberQuery: MemberQuery,
+    public uiStore: UiStore,
+    public uiQuery: UiQuery,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private location: Location,
@@ -443,6 +454,42 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.mconfigId);
   }
 
+  openMenu(item: DashboardExtended) {
+    this.isDashboardOptionsMenuOpen = true;
+    this.uiStore.update({ openedMenuId: item.dashboardId });
+  }
+
+  closeMenu(event?: MouseEvent) {
+    if (common.isDefined(event)) {
+      event.stopPropagation();
+    }
+    this.isDashboardOptionsMenuOpen = false;
+    this.uiStore.update({ openedMenuId: undefined });
+  }
+
+  toggleMenu(event: MouseEvent, item: DashboardExtended) {
+    event.stopPropagation();
+    if (this.isDashboardOptionsMenuOpen === true) {
+      this.closeMenu();
+    } else {
+      this.openMenu(item);
+    }
+  }
+
+  deleteDashboard(event: MouseEvent, item: DashboardExtended) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    // this.myDialogService.showDeleteViz({
+    //   viz: item,
+    //   apiService: this.apiService,
+    //   vizDeletedFnBindThis: this.vizDeletedFnBindThis,
+    //   projectId: this.nav.projectId,
+    //   branchId: this.nav.branchId,
+    //   isRepoProd: this.nav.isRepoProd
+    // });
+  }
+
   goToModel(modelId: string) {
     this.navigateService.navigateToModel(modelId);
   }
@@ -473,5 +520,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     if (this.timer) {
       clearTimeout(this.timer);
     }
+
+    if (common.isDefined(this.openedMenuId))
+      this.uiStore.update({ openedMenuId: undefined });
   }
 }
