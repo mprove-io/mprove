@@ -39,6 +39,7 @@ import { RemoveMemberDialogComponent } from '../modules/project/project-team/rem
 import { ChartDialogComponent } from '../modules/shared/chart-dialog/chart-dialog.component';
 import { DeleteVizDialogComponent } from '../modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
 import { EditVizInfoDialogComponent } from '../modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
+import { DeleteDashboardDialogComponent } from '../modules/shared/delete-dashboard-dialog/delete-dashboard-dialog.component';
 import { PhotoDialogComponent } from '../modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 import { NewVizDialogComponent } from '../modules/visualizations/new-viz-dialog/new-viz-dialog.component';
@@ -229,6 +230,20 @@ export class MyDialogService {
     isRepoProd: boolean;
   }): void {
     this.dialogService.open(DeleteVizDialogComponent, {
+      enableClose: true,
+      data: item
+    });
+  }
+
+  showDeleteDashboard(item: {
+    apiService: any;
+    dashboardDeletedFnBindThis: any;
+    dashboard: common.Dashboard;
+    projectId: string;
+    branchId: string;
+    isRepoProd: boolean;
+  }): void {
+    this.dialogService.open(DeleteDashboardDialogComponent, {
       enableClose: true,
       data: item
     });

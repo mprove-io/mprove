@@ -46,6 +46,8 @@ export class DashboardExtended extends DashboardWithExtendedFilters {
 export class DashboardsComponent implements OnInit, OnDestroy {
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
 
+  dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
+
   // groups: string[];
 
   showBricks = false;
@@ -269,24 +271,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
   }
 
-  // dashboardDeleted(deletedVizId: string) {
-  //   let deletedVizModelId = this.dashboardsList.find(viz => viz.vizId === deletedVizId)
-  //     ?.modelId;
+  dashboardDeletedFn(deletedDashboardId: string) {
+    this.dashboards = this.dashboards.filter(
+      x => x.dashboardId !== deletedDashboardId
+    );
 
-  //   this.dashboardsList = this.dashboardsList.filter(x => x.vizId !== deletedVizId);
-
-  //   if (common.isDefined(deletedVizModelId)) {
-  //     let modelItemExtended = this.vizsModelsList.find(
-  //       x => x.modelId === deletedVizModelId
-  //     );
-  //     if (common.isDefined(modelItemExtended)) {
-  //       modelItemExtended.totalVizs = modelItemExtended.totalVizs - 1;
-  //     }
-  //   }
-
-  //   this.makeFilteredVizs();
-  //   this.cd.detectChanges();
-  // }
+    this.makeFilteredDashboards();
+    this.cd.detectChanges();
+  }
 
   trackByFn(index: number, item: DashboardExtended) {
     return item.dashboardId;
@@ -480,14 +472,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.closeMenu();
 
-    // this.myDialogService.showDeleteViz({
-    //   viz: item,
-    //   apiService: this.apiService,
-    //   vizDeletedFnBindThis: this.vizDeletedFnBindThis,
-    //   projectId: this.nav.projectId,
-    //   branchId: this.nav.branchId,
-    //   isRepoProd: this.nav.isRepoProd
-    // });
+    this.myDialogService.showDeleteDashboard({
+      dashboard: item,
+      apiService: this.apiService,
+      dashboardDeletedFnBindThis: this.dashboardDeletedFnBindThis,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd
+    });
   }
 
   goToModel(modelId: string) {

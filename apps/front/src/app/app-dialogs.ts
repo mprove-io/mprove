@@ -31,6 +31,7 @@ import { InviteMemberDialogComponent } from './modules/project/project-team/invi
 import { ChartDialogComponent } from './modules/shared/chart-dialog/chart-dialog.component';
 import { DeleteVizDialogComponent } from './modules/shared/chart-viz/delete-viz-dialog/delete-viz-dialog.component';
 import { EditVizInfoDialogComponent } from './modules/shared/chart-viz/edit-viz-info-dialog/edit-viz-info-dialog.component';
+import { DeleteDashboardDialogComponent } from './modules/shared/delete-dashboard-dialog/delete-dashboard-dialog.component';
 import { PhotoDialogComponent } from './modules/shared/photo-dialog/photo-dialog.component';
 import { ErrorDialogComponent } from './modules/special/error-dialog/error-dialog.component';
 import { NewVizDialogComponent } from './modules/visualizations/new-viz-dialog/new-viz-dialog.component';
@@ -84,5 +85,6 @@ export const appDialogs = [
   // dashboard
   DashboardSaveAsDialogComponent,
   // shared
-  ChartDialogComponent
+  ChartDialogComponent,
+  DeleteDashboardDialogComponent
 ];
