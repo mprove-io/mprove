@@ -72,6 +72,11 @@
                 hasAccessModelsList.length === 0
             }"
             (click)="newDashboard()"
+            [disabled]="
+              isExplorer === false ||
+              !hasAccessModelsList ||
+              hasAccessModelsList.length === 0
+            "
           >
             <div *ngIf="isExplorer === true && hasAccessModelsList?.length > 0"
               >New</div

@@ -6,6 +6,7 @@ import { CreateFolderDialogComponent } from './modules/blockml/blockml-tree/fold
 import { DeleteFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import { RenameFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import { DashboardSaveAsDialogComponent } from './modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
+import { DashboardsNewDialogComponent } from './modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
 import { ChartSaveAsDialogComponent } from './modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
 import { ViewBlockmlDialogComponent } from './modules/model/view-blockml-dialog/view-blockml-dialog.component';
 import { CreateBranchDialogComponent } from './modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
@@ -84,6 +85,8 @@ export const appDialogs = [
   EditVizInfoDialogComponent,
   // dashboard
   DashboardSaveAsDialogComponent,
+  // dashboards
+  DashboardsNewDialogComponent,
   // shared
   ChartDialogComponent,
   DeleteDashboardDialogComponent

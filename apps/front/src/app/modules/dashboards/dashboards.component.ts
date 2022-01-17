@@ -255,9 +255,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         )
       : this.dashboardsFilteredByWord;
 
-    this.filteredDashboards = this.filteredDashboards.sort((a, b) =>
-      a.title > b.title ? 1 : b.title > a.title ? -1 : 0
-    );
+    this.filteredDashboards = this.filteredDashboards.sort((a, b) => {
+      let aTitle = a.title || a.dashboardId;
+      let bTitle = b.title || b.dashboardId;
+
+      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+    });
 
     this.dashboardsModelsList = this.dashboardsModelsList
       .map(z =>
@@ -300,7 +303,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  newDashboard() {}
+  newDashboard() {
+    this.myDialogService.showDashboardsNew({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd
+    });
+  }
 
   goToDashboardFile(event: any, dashboard: DashboardExtended) {
     event.stopPropagation();

@@ -97,9 +97,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
       //   :
       this.modelsFilteredByWord;
 
-    this.filteredModels = this.filteredModels.sort((a, b) =>
-      a.label > b.label ? 1 : b.label > a.label ? -1 : 0
-    );
+    this.filteredModels = this.filteredModels.sort((a, b) => {
+      let aLabel = a.label || a.modelId;
+      let bLabel = b.label || b.modelId;
+
+      return aLabel > bLabel ? 1 : bLabel > aLabel ? -1 : 0;
+    });
   }
 
   trackByFn(index: number, item: common.ModelsItem) {

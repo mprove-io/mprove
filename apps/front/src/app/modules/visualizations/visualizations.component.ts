@@ -274,9 +274,12 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       ? this.vizsFilteredByWord.filter(v => v.modelId === this.modelId)
       : this.vizsFilteredByWord;
 
-    this.filteredVizs = this.filteredVizs.sort((a, b) =>
-      a.title > b.title ? 1 : b.title > a.title ? -1 : 0
-    );
+    this.filteredVizs = this.filteredVizs.sort((a, b) => {
+      let aTitle = a.title || a.vizId;
+      let bTitle = b.title || b.vizId;
+
+      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+    });
 
     this.vizsModelsList = this.vizsModelsList
       .map(z =>
@@ -318,14 +321,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   }
 
   newViz() {
-    if (
-      this.isExplorer === false ||
-      !this.hasAccessModelsList ||
-      this.hasAccessModelsList.length === 0
-    ) {
-      return;
-    }
-
     this.myDialogService.showNewViz({
       modelsList: this.hasAccessModelsList
     });
