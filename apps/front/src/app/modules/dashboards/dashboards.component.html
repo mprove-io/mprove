@@ -155,6 +155,7 @@
                 <div class="flex flex-1">File</div>
                 <div class="flex flex-1">Access Roles</div>
                 <div class="flex flex-1">Access Users</div>
+                <div class="flex flex-1">Author</div>
               </div>
             </div>
 
@@ -169,8 +170,15 @@
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
                 class="flex flex-row"
+                [ngStyle]="
+                  item.dashboardId !==
+                    filteredDashboards[filteredDashboards.length - 1]
+                      .dashboardId && {
+                    'border-bottom-width': '1px'
+                  }
+                "
                 [ngClass]="{
-                  'border-b-2 border-gray-300':
+                  'border-gray-300':
                     item.dashboardId !==
                     filteredDashboards[filteredDashboards.length - 1]
                       .dashboardId
@@ -226,6 +234,14 @@
                           class="mr-2 truncate"
                         >
                           {{ user }}
+                        </span>
+                      </div>
+
+                      <div
+                        class="flex flex-1 truncate items-start py-3 focus:outline-none"
+                      >
+                        <span>
+                          {{ item.author }}
                         </span>
                       </div>
                     </div>

@@ -31,7 +31,9 @@ class ExtendedReport extends common.Report {
   hasAccessToModel?: boolean;
 }
 
-class DashboardWithExtendedReports extends DashboardWithExtendedFilters {
+export class DashboardExtended extends DashboardWithExtendedFilters {
+  author?: string;
+  canEditOrDeleteDashboard?: boolean;
   reports: ExtendedReport[];
 }
 
@@ -45,7 +47,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   // groups: string[];
 
   showBricks = false;
-  showReports = true;
+  showReports = false;
 
   isShow = true;
 
@@ -55,9 +57,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   dashboardsModelsList: DashboardsModelsItemExtended[];
   hasAccessModelsList: common.ModelsItem[];
 
-  dashboards: DashboardWithExtendedReports[];
-  dashboardsFilteredByWord: DashboardWithExtendedReports[];
-  filteredDashboards: DashboardWithExtendedReports[];
+  dashboards: DashboardExtended[];
+  dashboardsFilteredByWord: DashboardExtended[];
+  filteredDashboards: DashboardExtended[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -111,15 +113,37 @@ export class DashboardsComponent implements OnInit, OnDestroy {
             })
           );
 
-          this.dashboards.forEach(dashboard => {
-            dashboard.reports.forEach(report => {
-              (report as any).hasAccessToModel = checkAccessModel({
-                member: member,
-                model: this.dashboardsModelsList.find(
-                  m => m.modelId === report.modelId
-                )
-              });
+          this.dashboards = this.dashboards.map(d => {
+            let dashboardFilePathArray = d.filePath.split('/');
+
+            let author =
+              dashboardFilePathArray.length > 1 &&
+              dashboardFilePathArray[1] === common.BLOCKML_USERS_FOLDER
+                ? dashboardFilePathArray[2]
+                : undefined;
+
+            let dashboardExtended: DashboardExtended = Object.assign({}, d, <
+              DashboardExtended
+            >{
+              author: author,
+              canEditOrDeleteDashboard:
+                member.isEditor || member.isAdmin || author === member.alias,
+              reports: d.reports.map(report => {
+                let extendedReport: ExtendedReport = Object.assign({}, report, <
+                  ExtendedReport
+                >{
+                  hasAccessToModel: checkAccessModel({
+                    member: member,
+                    model: this.dashboardsModelsList.find(
+                      m => m.modelId === report.modelId
+                    )
+                  })
+                });
+                return extendedReport;
+              })
             });
+
+            return dashboardExtended;
           });
 
           // let allGroups = this.vizs.map(z => z.gr);
@@ -253,7 +277,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   //   this.cd.detectChanges();
   // }
 
-  trackByFn(index: number, item: DashboardWithExtendedReports) {
+  trackByFn(index: number, item: DashboardExtended) {
     return item.dashboardId;
   }
 
@@ -276,7 +300,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   newDashboard() {}
 
-  goToDashboardFile(event: any, dashboard: DashboardWithExtendedReports) {
+  goToDashboardFile(event: any, dashboard: DashboardExtended) {
     event.stopPropagation();
 
     let fileIdAr = dashboard.filePath.split('/');

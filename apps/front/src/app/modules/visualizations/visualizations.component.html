@@ -186,8 +186,14 @@
               <div
                 *ngFor="let item of scroll.viewPortItems; trackBy: trackByFn"
                 class="flex flex-row"
+                [ngStyle]="
+                  item.vizId !==
+                    filteredVizs[filteredVizs.length - 1].vizId && {
+                    'border-bottom-width': '1px'
+                  }
+                "
                 [ngClass]="{
-                  'border-b-2 border-gray-300':
+                  'border-gray-300':
                     item.vizId !== filteredVizs[filteredVizs.length - 1].vizId
                 }"
               >
