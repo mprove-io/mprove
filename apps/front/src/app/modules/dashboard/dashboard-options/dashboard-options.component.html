@@ -21,6 +21,13 @@
   *ngIf="isDashboardOptionsMenuOpen === true"
 >
   <button
+    data-cy="dashboardOptionsSaveAs"
+    class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+    (click)="saveAs($event)"
+    >Save As</button
+  >
+
+  <button
     data-cy="dashboardOptionsGoToFile"
     class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
     (click)="goToFile($event)"

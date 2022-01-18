@@ -72,6 +72,19 @@ export class DashboardOptionsComponent implements OnDestroy {
     }
   }
 
+  saveAs(event: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    this.myDialogService.showDashboardSaveAs({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
+      dashboard: this.dashboard
+    });
+  }
+
   goToFile(event?: MouseEvent) {
     event.stopPropagation();
     this.closeMenu();
@@ -100,13 +113,6 @@ export class DashboardOptionsComponent implements OnDestroy {
 
   dashboardDeletedFn(deletedDashboardId: string) {
     this.navigateService.navigateToDashboards();
-  }
-
-  runDry(event?: MouseEvent) {
-    event.stopPropagation();
-    this.closeMenu();
-
-    // this.runDryEvent.emit();
   }
 
   ngOnDestroy() {
