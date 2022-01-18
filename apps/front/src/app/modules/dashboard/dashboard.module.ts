@@ -9,10 +9,15 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { DashboardFiltersComponent } from './dashboard-filters/dashboard-filters.component';
+import { DashboardOptionsComponent } from './dashboard-options/dashboard-options.component';
 import { DashboardComponent } from './dashboard.component';
 
 @NgModule({
-  declarations: [DashboardComponent, DashboardFiltersComponent],
+  declarations: [
+    DashboardComponent,
+    DashboardFiltersComponent,
+    DashboardOptionsComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,

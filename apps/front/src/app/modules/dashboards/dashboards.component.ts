@@ -24,7 +24,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-class DashboardsModelsItemExtended extends common.ModelsItem {
+class ModelsItemExtendedForDashboards extends common.ModelsItem {
   totalDashboards: number;
 }
 
@@ -64,7 +64,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
 
-  dashboardsModelsList: DashboardsModelsItemExtended[];
+  dashboardsModelsList: ModelsItemExtendedForDashboards[];
   hasAccessModelsList: common.ModelsItem[];
 
   dashboards: DashboardExtended[];
@@ -116,7 +116,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           );
 
           this.dashboardsModelsList = ml.allModelsList.map(z =>
-            Object.assign({}, z, <DashboardsModelsItemExtended>{
+            Object.assign({}, z, <ModelsItemExtendedForDashboards>{
               totalDashboards: this.dashboards.filter(
                 v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
               ).length

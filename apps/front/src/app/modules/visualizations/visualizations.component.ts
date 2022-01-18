@@ -31,7 +31,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-class VizsModelsItemExtended extends common.ModelsItem {
+class ModelsItemExtendedForVizs extends common.ModelsItem {
   totalVizs: number;
 }
 
@@ -71,7 +71,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
 
-  vizsModelsList: VizsModelsItemExtended[];
+  vizsModelsList: ModelsItemExtendedForVizs[];
   hasAccessModelsList: common.ModelsItem[] = [];
 
   vizs: VizExtended[];
@@ -125,7 +125,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
           );
 
           this.vizsModelsList = y.allModelsList.map(z =>
-            Object.assign({}, z, <VizsModelsItemExtended>{
+            Object.assign({}, z, <ModelsItemExtendedForVizs>{
               totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length
             })
           );

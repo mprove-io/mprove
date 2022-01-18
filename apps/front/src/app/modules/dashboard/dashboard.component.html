@@ -16,20 +16,11 @@
                 | capitalize
             }}</div>
 
-            <div class="text-xl text-gray1" *ngIf="dashboard?.temp === true"
+            <!-- <div class="text-xl text-gray1" *ngIf="dashboard?.temp === true"
               >(modified)</div
-            >
+            > -->
 
-            <button
-              type="button"
-              data-cy="dashboardSaveAsButton"
-              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
-              *ngIf="dashboard?.dashboardId && dashboard.temp === true"
-              (click)="saveAs()"
-              >Save As</button
-            >
-
-            <button
+            <!-- <button
               class="flex flex-row items-center text-blue-500 focus:outline-none"
               *ngIf="dashboard?.dashboardId && dashboard.temp === false"
               (click)="goToFile()"
@@ -38,7 +29,7 @@
               <div class="ml-2 text-xl"
                 >{{ dashboard.dashboardId }}.dashboard</div
               >
-            </button>
+            </button> -->
           </div>
 
           <div class="flex flex-row items-center space-x-5">
@@ -87,6 +78,15 @@
 
             <button
               type="button"
+              data-cy="dashboardSaveAsButton"
+              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
+              *ngIf="dashboard?.dashboardId && dashboard.temp === true"
+              (click)="saveAs()"
+              >Save As</button
+            >
+
+            <button
+              type="button"
               data-cy="dashboardRunButton"
               class="w-24 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
               [ngClass]="{
@@ -98,14 +98,11 @@
               >Run</button
             >
 
-            <!-- <div class="relative ml-3">
-              <m-query-options
-                [showRunDryButton]="
-                  query?.connectionType === connectionTypeEnum.BigQuery
-                "
-                (runDryEvent)="runDry()"
-              ></m-query-options>
-            </div> -->
+            <div class="relative ml-3">
+              <m-dashboard-options
+                [dashboard]="dashboard"
+              ></m-dashboard-options>
+            </div>
           </div>
         </div>
       </div>
