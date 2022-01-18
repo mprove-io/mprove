@@ -7,7 +7,7 @@
 
   <div
     data-cy="dashboardSaveAsDialogNewDashboardCheckbox"
-    class="flex flex-row items-center cursor-pointer"
+    class="flex flex-row h-9 items-center cursor-pointer"
     (click)="newDashboardOnClick()"
   >
     <div
@@ -26,7 +26,7 @@
 
   <div
     data-cy="dashboardSaveAsDialogExistingDashboardCheckbox"
-    class="flex mt-5 flex-row items-center cursor-pointer"
+    class="flex mt-5 h-9 flex-row items-center cursor-pointer"
     (click)="existingDashboardOnClick()"
   >
     <button
@@ -40,20 +40,86 @@
       ></m-check-icon>
     </button>
 
-    <div class="ml-5 text-base">Replace Existing Dashboard</div>
+    <div class="flex flex-row items-center">
+      <div class="flex ml-5 mr-5 text-base flex-shrink-0"
+        >Replace Existing Dashboard</div
+      >
+      <ng-select
+        data-cy="dashboardSaveAsDialogExistingDashboardSelect"
+        *ngIf="saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD"
+        class="custom w-[500px] text-base focus:outline-none flex-shrink-0"
+        [items]="dashboards"
+        [searchable]="false"
+        [clearable]="false"
+        (change)="selectedChange()"
+        [(ngModel)]="selectedDashboardId"
+        appendTo="body"
+        bindLabel="title"
+        bindValue="dashboardId"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.title || item.dashboardId }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.title || item.dashboardId }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
   </div>
 
-  <div
-    class="mt-9 text-gray-400 text-base"
-    *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
-    >Users / {{ alias }} / {{ newDashboardId }}.dashboard</div
+  <!-- <ng-select
+    #branchSelect
+    data-cy="branchSelect"
+    class="custom w-72 text-base focus:outline-none"
+    (open)="openBranchSelect()"
+    [loading]="branchesListLoading"
+    [items]="branchesList"
+    [clearable]="false"
+    [disabled]="selectedProjectId === undefined || needSave === true"
+    [searchable]="false"
+    [(ngModel)]="selectedBranchExtraId"
+    (change)="branchChange()"
+    appendTo="body"
+    placeholder="Repository - Branch"
+    bindLabel="extraName"
+    bindValue="extraId"
   >
+    <ng-template ng-label-tmp let-item="item">
+      <div
+        class="ml-1 truncate py-[1px] px-[8px] rounded"
+        [ngClass]="{
+          'bg-green1': !!repo.repoId && repo.repoId !== prodRepoID,
+          'bg-blue5': !repo.repoId || repo.repoId === prodRepoID
+        }"
+        >{{ item.extraName }}</div
+      >
+    </ng-template>
 
-  <div
-    class="mt-9 text-gray-400 text-base"
-    *ngIf="saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD"
-    >... / {{ dashboard.dashboardId }}.dashboard</div
-  >
+    <ng-template ng-option-tmp let-item="item">
+      <div class="ml-1 truncate px-[8px] rounded">{{ item.extraName }}</div>
+    </ng-template>
+  </ng-select> -->
+  <div class="mt-9 h-7 text-gray-400 text-base">
+    <div *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
+      >Users / {{ alias }} / {{ newDashboardId }}.dashboard</div
+    >
+
+    <div
+      *ngIf="
+        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
+        !!selectedDashboardId
+      "
+      >{{ selectedDashboardPath | capitalize }}</div
+    >
+
+    <div
+      *ngIf="
+        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
+        !selectedDashboardId
+      "
+    ></div>
+  </div>
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
@@ -153,7 +219,18 @@
       data-cy="createBranchDialogCreateButton"
       class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
       type="button"
+      [ngClass]="{
+        'bg-blue3':
+          saveAs === dashboardSaveAsEnum.NEW_DASHBOARD || !!selectedDashboardId,
+        'bg-gray-400 cursor-default':
+          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
+          selectedDashboardId === undefined
+      }"
       (click)="save()"
+      [disabled]="
+        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
+        selectedDashboardId === undefined
+      "
       >Save</button
     >
 
@@ -168,3 +245,4 @@
 </div>
 
 <div *ngIf="alias$ | async"></div>
+<div *ngIf="dashboards$ | async"></div>

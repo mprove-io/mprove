@@ -20,17 +20,21 @@
   class="absolute right-0 mt-1 w-64 z-9 bg-white rounded-md shadow-xl border-2 border-gray4"
   *ngIf="isDashboardOptionsMenuOpen === true"
 >
-  <button
+  <!-- <button
     data-cy="dashboardOptionsSaveAs"
     class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
     (click)="saveAs($event)"
     >Save As</button
-  >
+  > -->
 
   <button
     data-cy="dashboardOptionsGoToFile"
     class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
+    [ngClass]="{
+      'cursor-default text-gray-400': dashboard.temp === true
+    }"
     (click)="goToFile($event)"
+    [disabled]="dashboard.temp === true"
     >Go to file</button
   >
 
@@ -39,10 +43,12 @@
     class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
     [ngClass]="{
       'cursor-default text-gray-400':
-        dashboard.canEditOrDeleteDashboard === false
+        dashboard.temp === true || dashboard.canEditOrDeleteDashboard === false
     }"
     (click)="deleteDashboard($event)"
-    [disabled]="dashboard.canEditOrDeleteDashboard === false"
+    [disabled]="
+      dashboard.temp === true || dashboard.canEditOrDeleteDashboard === false
+    "
     >Delete</button
   >
 </div>

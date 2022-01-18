@@ -318,8 +318,6 @@ export class NavigateService {
   }
 
   navigateToDashboards(item?: { extra?: any }) {
-    let { extra } = item;
-
     let userId;
     this.userQuery.userId$
       .pipe(
@@ -342,8 +340,8 @@ export class NavigateService {
       common.PATH_DASHBOARDS
     ];
 
-    if (common.isDefined(extra)) {
-      this.router.navigate(navTo, extra);
+    if (common.isDefined(item?.extra)) {
+      this.router.navigate(navTo, item?.extra);
     } else {
       this.router.navigate(navTo);
     }
