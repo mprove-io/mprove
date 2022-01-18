@@ -5,25 +5,54 @@
     >Save As</div
   >
 
-  <div class="flex flex-row items-center">
-    <button
-      data-cy="dashboardSaveAsDialogNewDashboardCheckbox"
+  <div
+    data-cy="dashboardSaveAsDialogNewDashboardCheckbox"
+    class="flex flex-row items-center cursor-pointer"
+    (click)="newDashboardOnClick()"
+  >
+    <div
       class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
       [ngClass]="{
         'bg-blue3 ': saveAs === dashboardSaveAsEnum.NEW_DASHBOARD
       }"
-      (click)="newDashboardOnClick()"
     >
       <m-check-icon
         *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
       ></m-check-icon>
-    </button>
+    </div>
 
     <div class="ml-5 text-base">New Dashboard</div>
   </div>
 
-  <div class="mt-9 text-gray-400 text-base"
+  <div
+    data-cy="dashboardSaveAsDialogExistingDashboardCheckbox"
+    class="flex mt-5 flex-row items-center cursor-pointer"
+    (click)="existingDashboardOnClick()"
+  >
+    <button
+      class="flex items-center justify-center h-6 w-6 border-2 border-blue3 text-white rounded-full focus:outline-none"
+      [ngClass]="{
+        'bg-blue3 ': saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+      }"
+    >
+      <m-check-icon
+        *ngIf="saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD"
+      ></m-check-icon>
+    </button>
+
+    <div class="ml-5 text-base">Replace Existing Dashboard</div>
+  </div>
+
+  <div
+    class="mt-9 text-gray-400 text-base"
+    *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
     >Users / {{ alias }} / {{ newDashboardId }}.dashboard</div
+  >
+
+  <div
+    class="mt-9 text-gray-400 text-base"
+    *ngIf="saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD"
+    >... / {{ dashboard.dashboardId }}.dashboard</div
   >
 
   <div class="mt-9 flex flex-row items-start">

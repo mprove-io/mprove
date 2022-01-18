@@ -85,6 +85,7 @@ export class ApiService {
     // dashboards
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard
   ];
 

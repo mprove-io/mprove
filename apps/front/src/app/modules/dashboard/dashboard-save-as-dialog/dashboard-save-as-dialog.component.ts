@@ -13,8 +13,8 @@ import { common } from '~front/barrels/common';
 import { DashboardExtended } from '../../dashboards/dashboards.component';
 
 enum DashboardSaveAsEnum {
-  NEW_DASHBOARD = 'NEW_DASHBOARD'
-  // REPLACE_EXISTING_DASHBOARD = 'REPLACE_EXISTING_DASHBOARD',
+  NEW_DASHBOARD = 'NEW_DASHBOARD',
+  REPLACE_EXISTING_DASHBOARD = 'REPLACE_EXISTING_DASHBOARD'
 }
 
 @Component({
@@ -81,7 +81,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   save() {
     if (
-      this.saveAs === DashboardSaveAsEnum.NEW_DASHBOARD &&
       this.titleForm.controls['title'].valid &&
       this.groupForm.controls['group'].valid &&
       this.rolesForm.controls['roles'].valid &&
@@ -94,17 +93,32 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       let roles = this.rolesForm.controls['roles'].value;
       let users = this.usersForm.controls['users'].value;
 
-      this.saveAsNewDashboard({
-        newTitle: newTitle,
-        group: group,
-        roles: roles,
-        users: users
-      });
+      if (this.saveAs === DashboardSaveAsEnum.NEW_DASHBOARD) {
+        this.saveAsNewDashboard({
+          newTitle: newTitle,
+          group: group,
+          roles: roles,
+          users: users
+        });
+      } else if (
+        this.saveAs === DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+      ) {
+        this.saveAsExistingDashboard({
+          newTitle: newTitle,
+          group: group,
+          roles: roles,
+          users: users
+        });
+      }
     }
   }
 
   newDashboardOnClick() {
     this.saveAs = DashboardSaveAsEnum.NEW_DASHBOARD;
+  }
+
+  existingDashboardOnClick() {
+    this.saveAs = DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD;
   }
 
   saveAsNewDashboard(item: {
@@ -141,7 +155,56 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       )
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
-          this.navigateService.navigateToDashboard(this.newDashboardId);
+          this.navigateService.navigateToDashboards({
+            extra: {
+              queryParams: { search: this.newDashboardId }
+            }
+          });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  saveAsExistingDashboard(item: {
+    newTitle: string;
+    group: string;
+    roles: string;
+    users: string;
+  }) {
+    let { newTitle, group, roles, users } = item;
+
+    let dashboardFileText = makeDashboardFileText({
+      dashboard: this.dashboard,
+      newDashboardId: this.dashboard.dashboardId,
+      newTitle: newTitle,
+      group: group,
+      roles: roles,
+      users: users
+    });
+
+    let payload: apiToBackend.ToBackendModifyDashboardRequestPayload = {
+      projectId: this.ref.data.projectId,
+      isRepoProd: this.ref.data.isRepoProd,
+      branchId: this.ref.data.branchId,
+      dashboardId: this.dashboard.dashboardId,
+      dashboardFileText: dashboardFileText
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
+          this.navigateService.navigateToDashboards({
+            extra: {
+              queryParams: { search: this.dashboard.dashboardId }
+            }
+          });
         }),
         take(1)
       )

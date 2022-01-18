@@ -317,7 +317,9 @@ export class NavigateService {
     }
   }
 
-  navigateToDashboards() {
+  navigateToDashboards(item?: { extra?: any }) {
+    let { extra } = item;
+
     let userId;
     this.userQuery.userId$
       .pipe(
@@ -328,7 +330,7 @@ export class NavigateService {
 
     let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
 
-    this.router.navigate([
+    let navTo = [
       common.PATH_ORG,
       this.nav.orgId,
       common.PATH_PROJECT,
@@ -338,7 +340,13 @@ export class NavigateService {
       common.PATH_BRANCH,
       this.nav.branchId,
       common.PATH_DASHBOARDS
-    ]);
+    ];
+
+    if (common.isDefined(extra)) {
+      this.router.navigate(navTo, extra);
+    } else {
+      this.router.navigate(navTo);
+    }
   }
 
   reloadVizs() {
