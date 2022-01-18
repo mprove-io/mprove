@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
+import { DashboardExtended } from '../../dashboards/dashboards.component';
 
 @Component({
   selector: 'm-dashboard-filters',
@@ -9,10 +10,7 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 export class DashboardFiltersComponent {
   @Input()
-  dashboard: common.Dashboard;
-
-  @Input()
-  extendedFilters: interfaces.FilterExtended[];
+  dashboard: DashboardExtended;
 
   constructor(private dashboardService: DashboardService) {}
 

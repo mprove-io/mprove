@@ -10,6 +10,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { DashboardState } from '~front/app/stores/dashboard.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { DashboardExtended } from '../../dashboards/dashboards.component';
 
 enum DashboardSaveAsEnum {
   NEW_DASHBOARD = 'NEW_DASHBOARD'
@@ -62,7 +63,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.dashboard = this.ref.data.dashboard as common.Dashboard;
+    this.dashboard = this.ref.data.dashboard as DashboardExtended;
 
     setValueAndMark({
       control: this.titleForm.controls['title'],

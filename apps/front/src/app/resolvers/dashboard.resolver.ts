@@ -8,10 +8,12 @@ import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { makeExtendedFilters } from '../functions/make-extended-filters';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { DashboardState, DashboardStore } from '../stores/dashboard.store';
+import { DashboardWithExtendedFilters } from '../stores/dashboards.store';
 import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
@@ -68,7 +70,15 @@ export class DashboardResolver implements Resolve<Observable<boolean>> {
         )
         .pipe(
           map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
-            let dashboardState: DashboardState = resp.payload.dashboard;
+            let z: DashboardWithExtendedFilters = Object.assign(
+              {},
+              resp.payload.dashboard,
+              {
+                extendedFilters: makeExtendedFilters(resp.payload.dashboard)
+              }
+            );
+
+            let dashboardState: DashboardState = z;
 
             dashboardState.reports.forEach(x => {
               x.mconfig = resp.payload.dashboardMconfigs.find(

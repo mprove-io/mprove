@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { makeExtendedFilters } from '../functions/make-extended-filters';
 import { NavQuery } from '../queries/nav.query';
 import { DashboardState, DashboardStore } from '../stores/dashboard.store';
+import { DashboardWithExtendedFilters } from '../stores/dashboards.store';
 import { NavState } from '../stores/nav.store';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -49,19 +51,27 @@ export class DashboardService {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
-          let { dashboard, dashboardMconfigs, dashboardQueries } = resp.payload;
+          let z: DashboardWithExtendedFilters = Object.assign(
+            {},
+            resp.payload.dashboard,
+            {
+              extendedFilters: makeExtendedFilters(resp.payload.dashboard)
+            }
+          );
 
-          let dashboardState: DashboardState = dashboard;
+          let dashboardState: DashboardState = z;
 
           dashboardState.reports.forEach(x => {
-            x.mconfig = dashboardMconfigs.find(
+            x.mconfig = resp.payload.dashboardMconfigs.find(
               m => m.mconfigId === x.mconfigId
             );
-            x.query = dashboardQueries.find(q => q.queryId === x.queryId);
+            x.query = resp.payload.dashboardQueries.find(
+              q => q.queryId === x.queryId
+            );
           });
 
           this.dashboardStore.update(dashboardState);
-          this.navigateService.navigateToDashboard(dashboard.dashboardId);
+          this.navigateService.navigateToDashboard(dashboardState.dashboardId);
         }),
         take(1)
       )

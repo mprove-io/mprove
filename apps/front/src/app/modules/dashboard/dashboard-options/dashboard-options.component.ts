@@ -6,6 +6,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { ModelState } from '~front/app/stores/model.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
+import { DashboardExtended } from '../../dashboards/dashboards.component';
 
 @Component({
   selector: 'm-dashboard-options',
@@ -13,7 +14,7 @@ import { common } from '~front/barrels/common';
 })
 export class DashboardOptionsComponent implements OnDestroy {
   @Input()
-  dashboard: common.Dashboard;
+  dashboard: DashboardExtended;
 
   // @Output()
   // runDryEvent = new EventEmitter();

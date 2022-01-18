@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
+import { DashboardWithExtendedFilters } from './dashboards.store';
 
 export class ReportWithMconfigAndQuery extends common.Report {
   mconfig?: common.Mconfig;
   query?: common.Query;
 }
 
-export class DashboardState extends common.Dashboard {
+export class DashboardState extends DashboardWithExtendedFilters {
   reports: ReportWithMconfigAndQuery[];
 }
 
@@ -29,6 +30,7 @@ export class DashboardStore extends Store<DashboardState> {
       gr: undefined,
       temp: true,
       hidden: false,
+      extendedFilters: [],
       fields: [],
       reports: [],
       description: undefined,

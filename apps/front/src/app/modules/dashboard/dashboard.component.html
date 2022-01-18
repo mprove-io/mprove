@@ -132,7 +132,7 @@
               <m-bricks
                 class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
                 *ngIf="dashboard?.fields.length > 0"
-                [extendedFilters]="extendedFilters"
+                [extendedFilters]="dashboard.extendedFilters"
               ></m-bricks>
             </div>
 
@@ -145,7 +145,6 @@
               <div class="flex-1 w-2 overflow-auto">
                 <m-dashboard-filters
                   [dashboard]="dashboard"
-                  [extendedFilters]="extendedFilters"
                 ></m-dashboard-filters>
               </div>
             </div>

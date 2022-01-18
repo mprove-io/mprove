@@ -24,11 +24,11 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-class ModelsItemExtendedForDashboards extends common.ModelsItem {
+export class ModelsItemExtendedForDashboards extends common.ModelsItem {
   totalDashboards: number;
 }
 
-class ExtendedReport extends common.Report {
+export class ExtendedReport extends common.Report {
   hasAccessToModel?: boolean;
 }
 
