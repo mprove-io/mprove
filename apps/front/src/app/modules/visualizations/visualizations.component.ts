@@ -235,6 +235,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       common.isDefined(this.word)
       // || common.isDefined(this.fileName)
     ) {
+      this.showList = false;
+
       const url = this.router
         .createUrlTree([], { relativeTo: this.route, queryParams: {} })
         .toString();
