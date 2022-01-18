@@ -1,9 +1,11 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { ModelQuery } from '~front/app/queries/model.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { ModelState } from '~front/app/stores/model.store';
+import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
 import { DashboardExtended } from '../../dashboards/dashboards.component';
@@ -16,8 +18,18 @@ export class DashboardOptionsComponent implements OnDestroy {
   @Input()
   dashboard: DashboardExtended;
 
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
   // @Output()
   // runDryEvent = new EventEmitter();
+
+  dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
 
   menuId = 'dashboardOptions';
 
@@ -26,26 +38,20 @@ export class DashboardOptionsComponent implements OnDestroy {
     tap(x => (this.openedMenuId = x))
   );
 
-  isQueryOptionsMenuOpen = false;
-
-  model: ModelState;
-  model$ = this.modelQuery.select().pipe(
-    tap(x => {
-      this.model = x;
-      this.cd.detectChanges();
-    })
-  );
+  isDashboardOptionsMenuOpen = false;
 
   constructor(
     public uiQuery: UiQuery,
-    public modelQuery: ModelQuery,
     public uiStore: UiStore,
+    private myDialogService: MyDialogService,
     private navigateService: NavigateService,
+    private navQuery: NavQuery,
+    private apiService: ApiService,
     private cd: ChangeDetectorRef
   ) {}
 
   openMenu() {
-    this.isQueryOptionsMenuOpen = true;
+    this.isDashboardOptionsMenuOpen = true;
     this.uiStore.update({ openedMenuId: this.menuId });
   }
 
@@ -53,13 +59,13 @@ export class DashboardOptionsComponent implements OnDestroy {
     if (common.isDefined(event)) {
       event.stopPropagation();
     }
-    this.isQueryOptionsMenuOpen = false;
+    this.isDashboardOptionsMenuOpen = false;
     this.uiStore.update({ openedMenuId: undefined });
   }
 
   toggleMenu(event?: MouseEvent) {
     event.stopPropagation();
-    if (this.isQueryOptionsMenuOpen === true) {
+    if (this.isDashboardOptionsMenuOpen === true) {
       this.closeMenu();
     } else {
       this.openMenu();
@@ -76,6 +82,24 @@ export class DashboardOptionsComponent implements OnDestroy {
     this.navigateService.navigateToFileLine({
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
+  }
+
+  deleteDashboard(event: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
+
+    this.myDialogService.showDeleteDashboard({
+      dashboard: this.dashboard,
+      apiService: this.apiService,
+      dashboardDeletedFnBindThis: this.dashboardDeletedFnBindThis,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd
+    });
+  }
+
+  dashboardDeletedFn(deletedDashboardId: string) {
+    this.navigateService.navigateToDashboards();
   }
 
   runDry(event?: MouseEvent) {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
 import { ModelQuery } from '../queries/model.query';
 import { NavQuery } from '../queries/nav.query';
@@ -315,6 +315,30 @@ export class NavigateService {
     } else {
       this.router.navigate(navTo);
     }
+  }
+
+  navigateToDashboards() {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_DASHBOARDS
+    ]);
   }
 
   reloadVizs() {

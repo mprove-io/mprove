@@ -98,7 +98,7 @@
               >Run</button
             >
 
-            <div class="relative ml-3">
+            <div class="relative ml-5">
               <m-dashboard-options
                 [dashboard]="dashboard"
               ></m-dashboard-options>
@@ -201,5 +201,4 @@
 </div>
 
 <div *ngIf="dashboard$ | async"></div>
-<div *ngIf="extendedFilters$ | async"></div>
 <div *ngIf="nav$ | async"></div>

@@ -10,12 +10,12 @@
 
         <div
           *ngIf="nav?.isRepoProd === false"
-          class="flex flex-row space-x-3 items-center"
+          class="flex flex-row items-center"
         >
           <button
             type="button"
             data-cy="blockmlCommitButton"
-            class="py-2 px-5 text-white text-base rounded font-medium focus:outline-none"
+            class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
                 repo.repoStatus !== repoStatusNeedCommit || needSave === true,
@@ -32,7 +32,7 @@
           <button
             type="button"
             data-cy="blockmlCommitButton"
-            class="py-2 px-5 text-white text-base rounded font-medium focus:outline-none"
+            class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
             *ngIf="repo.repoStatus === repoStatusNeedPull"
             [ngClass]="{
               'bg-gray-400 cursor-default':
@@ -50,7 +50,7 @@
           <button
             type="button"
             data-cy="blockmlPushButton"
-            class="py-2 px-5 text-white text-base rounded font-medium focus:outline-none"
+            class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
                 repo.repoStatus !== repoStatusNeedPush || needSave === true,
@@ -64,7 +64,7 @@
             >Push to Production</button
           >
 
-          <div class="relative">
+          <div class="relative ml-5">
             <m-repo-options></m-repo-options>
           </div>
         </div>
