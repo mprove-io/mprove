@@ -28,6 +28,11 @@ export function makeDashboardFileText(item: {
   let reps = dashboard.reports.map(x => {
     let newMconfig = common.makeCopy(x.mconfig);
 
+    newMconfig.chart.tileX = x.tileX;
+    newMconfig.chart.tileY = x.tileY;
+    newMconfig.chart.tileHeight = x.tileHeight;
+    newMconfig.chart.tileWidth = x.tileWidth;
+
     Object.keys(newMconfig.listen).forEach(z => {
       let dashboardFieldName = newMconfig.listen[z];
 

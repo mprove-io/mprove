@@ -9,6 +9,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, filter, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
@@ -19,15 +20,28 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { DashboardStore } from '~front/app/stores/dashboard.store';
+import {
+  DashboardStore,
+  ReportWithMconfigAndQuery
+} from '~front/app/stores/dashboard.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
-import {
-  DashboardExtended,
-  ExtendedReport
-} from '../dashboards/dashboards.component';
+import { DashboardExtended } from '../dashboards/dashboards.component';
 import { ChartRepComponent } from '../shared/chart-rep/chart-rep.component';
+
+class LayoutItem {
+  id: string;
+  w: number;
+  h: number;
+  x: number;
+  y: number;
+  report: ExtendedReportExtra;
+}
+
+export class ExtendedReportExtra extends ReportWithMconfigAndQuery {
+  hasAccessToModel?: boolean;
+}
 
 @Component({
   selector: 'm-dashboard',
@@ -97,16 +111,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             canEditOrDeleteDashboard:
               member.isEditor || member.isAdmin || author === member.alias,
             reports: x.reports.map(report => {
-              let extendedReport: ExtendedReport = Object.assign({}, report, <
-                ExtendedReport
-              >{
-                hasAccessToModel: checkAccessModel({
-                  member: member,
-                  model: ml.allModelsList.find(
-                    m => m.modelId === report.modelId
-                  )
-                })
-              });
+              let extendedReport: ExtendedReportExtra = Object.assign(
+                {},
+                report,
+                <ExtendedReportExtra>{
+                  hasAccessToModel: checkAccessModel({
+                    member: member,
+                    model: ml.allModelsList.find(
+                      m => m.modelId === report.modelId
+                    )
+                  })
+                }
+              );
               return extendedReport;
             })
           });
@@ -122,14 +138,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }`
       );
 
-      this.layout = this.dashboard.reports.map(report => ({
-        id: report.mconfigId,
-        x: report.tileX || 0,
-        y: report.tileY || 0,
-        w: report.tileWidth || 3,
-        h: report.tileHeight || 3,
-        report: report
-      }));
+      this.layout = this.dashboard.reports.map(
+        report =>
+          <LayoutItem>{
+            id: report.mconfigId,
+            x: report.tileX || common.CHART_DEFAULT_TILE_X,
+            y: report.tileY || common.CHART_DEFAULT_TILE_Y,
+            w: report.tileWidth || common.CHART_DEFAULT_TILE_WIDTH,
+            h: report.tileHeight || common.CHART_DEFAULT_TILE_HEIGHT,
+            report: report
+          }
+      );
 
       this.cd.detectChanges();
     })
@@ -139,16 +158,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   preventCollision = false;
   cols = 24;
   rowHeight = 50;
-  layout: any = [
-    // {id: '0', x: 0, y: 0, w: 3, h: 3},
-    // {id: '1', x: 3, y: 0, w: 3, h: 3},
-    // {id: '2', x: 0, y: 3, w: 3, h: 3},
-    // {id: '3', x: 3, y: 3, w: 3, h: 3},
-    // { id: '0', x: 0, y: 0, w: 3, h: 3 },
-    // { id: '1', x: 0, y: 0, w: 3, h: 3 },
-    // { id: '2', x: 0, y: 0, w: 3, h: 3 },
-    // { id: '3', x: 0, y: 0, w: 3, h: 3 }
-  ];
+  layout: LayoutItem[] = [];
 
   private resizeSubscription: Subscription;
   private scrollSubscription: Subscription;
@@ -175,6 +185,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(() => {
         this.refreshShowGrid();
       });
+
+    // prevent horizontal scroll
+    setTimeout(() => {
+      this.layout = [...this.layout];
+    });
+
+    setTimeout(() => {
+      this.refreshShow();
+    });
+    //
   }
 
   ngAfterViewInit() {
@@ -191,8 +211,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
   }
-
-  onLayoutUpdated(x: any) {}
 
   trackByFn(index: number, item: any) {
     return item.report.mconfigId;
@@ -227,7 +245,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onResizeEnded(event: any) {
-    this.refreshShow();
+    // this.refreshShow();
   }
 
   onDragStarted(event: any) {
@@ -236,6 +254,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onDragEnded(event: any) {
     // this.preventCollision = false;
+    // this.refreshShow();
+  }
+
+  onLayoutUpdated(layout: KtdGridLayout) {
+    // console.log('onLayoutUpdated', layout);
+
+    let newDashboard = Object.assign({}, this.dashboard, {
+      reports: this.dashboard.reports.map((report, i: number) => {
+        report.tileX = layout[i].x;
+        report.tileY = layout[i].y;
+        report.tileWidth = layout[i].w;
+        report.tileHeight = layout[i].h;
+
+        return report;
+      })
+    });
+
+    this.dashboardStore.update(newDashboard);
+
     this.refreshShow();
   }
 
