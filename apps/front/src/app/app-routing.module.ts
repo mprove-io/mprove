@@ -227,7 +227,11 @@ const routes: Routes = [
                         canDeactivate: [DeactivateGuard],
                         path:
                           common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
-                        resolve: [ModelResolver],
+                        resolve: [
+                          ModelsListResolver,
+                          DashboardsResolver,
+                          ModelResolver
+                        ],
                         children: [
                           {
                             component: MconfigComponent,
