@@ -33,13 +33,15 @@ export function makeDashboardFileText(item: {
     newMconfig.chart.tileHeight = x.tileHeight;
     newMconfig.chart.tileWidth = x.tileWidth;
 
-    Object.keys(newMconfig.listen).forEach(z => {
-      let dashboardFieldName = newMconfig.listen[z];
+    if (common.isDefined(newMconfig.listen)) {
+      Object.keys(newMconfig.listen).forEach(z => {
+        let dashboardFieldName = newMconfig.listen[z];
 
-      if (fields.findIndex(f => f.filter === dashboardFieldName) < 0) {
-        delete newMconfig.listen[z];
-      }
-    });
+        if (fields.findIndex(f => f.filter === dashboardFieldName) < 0) {
+          delete newMconfig.listen[z];
+        }
+      });
+    }
 
     return prepareReport({
       isForDashboard: true,

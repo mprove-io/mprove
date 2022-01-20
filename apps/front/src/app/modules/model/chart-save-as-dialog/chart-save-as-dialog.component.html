@@ -273,15 +273,21 @@
       [ngClass]="{
         'bg-blue3':
           chartSaveAs === chartSaveAsEnum.NEW_VIZ ||
-          (!!selectedDashboardId && !!selectedMconfigId),
+          (!!selectedDashboardId &&
+            (reportSaveAs === reportSaveAsEnum.NEW_REPORT ||
+              !!selectedMconfigId)),
         'bg-gray-400 cursor-default':
           chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
-          (selectedDashboardId === undefined || selectedMconfigId === undefined)
+          (selectedDashboardId === undefined ||
+            (reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
+              selectedMconfigId === undefined))
       }"
       (click)="save()"
       [disabled]="
         chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
-        (selectedDashboardId === undefined || selectedMconfigId === undefined)
+        (selectedDashboardId === undefined ||
+          (reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
+            selectedMconfigId === undefined))
       "
       >Save</button
     >
