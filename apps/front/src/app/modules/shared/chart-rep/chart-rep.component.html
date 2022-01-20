@@ -91,16 +91,12 @@
               >Go to file</button
             > -->
 
-            <!-- <button
+            <button
               data-cy="repOptionsDelete"
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-              [ngClass]="{
-                'cursor-default text-gray-400': canEditOrDeleteRep === false
-              }"
-              (click)="deleteViz($event)"
-              [disabled]="canEditOrDeleteRep === false"
+              (click)="deleteReport($event)"
               >Delete</button
-            > -->
+            >
           </div>
         </div>
       </div>

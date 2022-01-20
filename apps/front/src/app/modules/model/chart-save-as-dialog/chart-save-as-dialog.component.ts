@@ -369,7 +369,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let tileY = 0;
 
     dashboard.reports.forEach(report => {
-      tileY = tileY + report.tileY;
+      tileY = tileY + report.tileHeight;
     });
 
     let newReport: ReportWithMconfigAndQuery = {

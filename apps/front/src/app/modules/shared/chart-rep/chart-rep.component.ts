@@ -21,6 +21,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
+import { DashboardStore } from '~front/app/stores/dashboard.store';
 import { ModelStore } from '~front/app/stores/model.store';
 import { MqStore } from '~front/app/stores/mq.store';
 import { NavState } from '~front/app/stores/nav.store';
@@ -104,6 +105,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
     private spinner: NgxSpinnerService,
+    private dashboardStore: DashboardStore,
     public uiQuery: UiQuery,
     public uiStore: UiStore,
     private mqStore: MqStore,
@@ -328,19 +330,25 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  // deleteViz(event?: MouseEvent) {
-  //   event.stopPropagation();
-  //   this.closeMenu();
+  deleteReport(event: MouseEvent) {
+    event.stopPropagation();
+    this.closeMenu();
 
-  //   this.myDialogService.showDeleteViz({
-  //     viz: this.viz,
-  //     apiService: this.apiService,
-  //     vizDeleted: this.vizDeleted,
-  //     projectId: this.nav.projectId,
-  //     branchId: this.nav.branchId,
-  //     isRepoProd: this.nav.isRepoProd
-  //   });
-  // }
+    let deleteReportIndex = this.dashboard.reports.findIndex(
+      x => x.mconfigId === this.mconfig.mconfigId
+    );
+
+    let newReports = [
+      ...this.dashboard.reports.slice(0, deleteReportIndex),
+      ...this.dashboard.reports.slice(deleteReportIndex + 1)
+    ];
+
+    this.dashboardStore.update(
+      Object.assign({}, this.dashboard, {
+        reports: newReports
+      })
+    );
+  }
 
   showChart() {
     this.myDialogService.showChart({
