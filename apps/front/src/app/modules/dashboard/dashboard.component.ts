@@ -141,7 +141,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.layout = this.dashboard.reports.map(
         report =>
           <LayoutItem>{
-            id: report.mconfigId,
+            id: report.title,
             x: report.tileX || common.CHART_DEFAULT_TILE_X,
             y: report.tileY || common.CHART_DEFAULT_TILE_Y,
             w: report.tileWidth || common.CHART_DEFAULT_TILE_WIDTH,

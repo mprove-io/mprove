@@ -42,7 +42,8 @@ export class CreateTempDashboardController {
       branchId,
       oldDashboardId,
       newDashboardId,
-      newDashboardFields
+      newDashboardFields,
+      reports
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
@@ -82,6 +83,34 @@ export class CreateTempDashboardController {
     let struct = await this.structsService.getStructCheckExists({
       structId: branch.struct_id
     });
+
+    //
+
+    oldDashboard.content.reports = oldDashboard.content.reports.filter(
+      (x: any) => reports.findIndex(y => y.title === x.title) > -1
+    );
+
+    oldDashboard.content.reports.forEach((x: any) => {
+      let freshReport = reports.find(y => x.title === y.title);
+      x.tile = {};
+      x.tile.tile_x = `${freshReport.tileX}`;
+      x.tile.tile_y = `${freshReport.tileY}`;
+      x.tile.tile_width = `${freshReport.tileWidth}`;
+      x.tile.tile_height = `${freshReport.tileHeight}`;
+    });
+
+    let oldReports: any[] = [];
+
+    reports.forEach(z => {
+      let oldReport = oldDashboard.content.reports.find(
+        (y: any) => z.title === y.title
+      );
+      oldReports.push(oldReport);
+    });
+
+    oldDashboard.content.reports = oldReports;
+
+    //
 
     let modelIds = oldDashboard.reports.map(x => x.modelId);
     let models =

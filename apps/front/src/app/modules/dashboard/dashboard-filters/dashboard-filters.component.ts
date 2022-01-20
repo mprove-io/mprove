@@ -38,6 +38,7 @@ export class DashboardFiltersComponent {
     ];
 
     this.dashboardService.navCreateTempDashboard({
+      dashboard: this.dashboard,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields
@@ -83,6 +84,7 @@ export class DashboardFiltersComponent {
     ];
 
     this.dashboardService.navCreateTempDashboard({
+      dashboard: this.dashboard,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields
@@ -121,6 +123,7 @@ export class DashboardFiltersComponent {
     }
 
     this.dashboardService.navCreateTempDashboard({
+      dashboard: this.dashboard,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields

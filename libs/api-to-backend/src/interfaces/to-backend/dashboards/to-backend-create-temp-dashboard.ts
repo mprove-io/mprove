@@ -22,6 +22,10 @@ export class ToBackendCreateTempDashboardRequestPayload {
   @ValidateNested()
   @Type(() => common.DashboardField)
   newDashboardFields: common.DashboardField[];
+
+  @ValidateNested()
+  @Type(() => common.Report)
+  reports: common.Report[];
 }
 
 export class ToBackendCreateTempDashboardRequest extends ToBackendRequest {

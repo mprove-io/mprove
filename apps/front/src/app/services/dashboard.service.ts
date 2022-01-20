@@ -3,6 +3,10 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { makeExtendedFilters } from '../functions/make-extended-filters';
+import {
+  DashboardExtended,
+  ExtendedReport
+} from '../modules/dashboards/dashboards.component';
 import { NavQuery } from '../queries/nav.query';
 import { DashboardState, DashboardStore } from '../stores/dashboard.store';
 import { DashboardWithExtendedFilters } from '../stores/dashboards.store';
@@ -29,11 +33,26 @@ export class DashboardService {
   }
 
   navCreateTempDashboard(item: {
+    dashboard: DashboardExtended;
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
   }) {
-    let { oldDashboardId, newDashboardId, newDashboardFields } = item;
+    let {
+      dashboard,
+      oldDashboardId,
+      newDashboardId,
+      newDashboardFields
+    } = item;
+
+    let reports: ExtendedReport[] = [];
+
+    dashboard.reports.forEach(x => {
+      let z: any = common.makeCopy(x);
+      delete z.query;
+      delete z.mconfig;
+      reports.push(z);
+    });
 
     let payload: apiToBackend.ToBackendCreateTempDashboardRequestPayload = {
       projectId: this.nav.projectId,
@@ -41,7 +60,8 @@ export class DashboardService {
       branchId: this.nav.branchId,
       oldDashboardId: oldDashboardId,
       newDashboardId: newDashboardId,
-      newDashboardFields: newDashboardFields
+      newDashboardFields: newDashboardFields,
+      reports: reports
     };
 
     this.apiService
