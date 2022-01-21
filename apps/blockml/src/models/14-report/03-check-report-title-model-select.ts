@@ -26,6 +26,8 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
+    let titles: { [title: string]: number[] } = {};
+
     x.reports.forEach(report => {
       if (common.isUndefined(report.title)) {
         let lineNums: number[] = [];
@@ -50,6 +52,10 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
           })
         );
         return;
+      } else if (common.isDefined(titles[report.title])) {
+        titles[report.title].push(report.title_line_num);
+      } else {
+        titles[report.title] = [report.title_line_num];
       }
 
       if (common.isUndefined(report.model)) {
@@ -103,6 +109,26 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
           })
         );
         return;
+      }
+    });
+
+    Object.keys(titles).forEach(title => {
+      if (titles[title].length > 1) {
+        let lines: interfaces.BmErrorLine[] = titles[title].map(lineNum => ({
+          line: lineNum,
+          name: x.fileName,
+          path: x.filePath
+        }));
+
+        item.errors.push(
+          new BmError({
+            title: enums.ErTitleEnum.DUPLICATE_REPORT_TITLE,
+            message:
+              'Report titles must be unique for dashboard. ' +
+              `Found duplicate "${title}" title`,
+            lines: lines
+          })
+        );
       }
     });
 
