@@ -52,10 +52,10 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
           })
         );
         return;
-      } else if (common.isDefined(titles[report.title])) {
-        titles[report.title].push(report.title_line_num);
+      } else if (common.isDefined(titles[report.title.toUpperCase()])) {
+        titles[report.title.toUpperCase()].push(report.title_line_num);
       } else {
-        titles[report.title] = [report.title_line_num];
+        titles[report.title.toUpperCase()] = [report.title_line_num];
       }
 
       if (common.isUndefined(report.model)) {
@@ -125,7 +125,7 @@ export function checkReportTitleModelSelect<T extends types.dzType>(
             title: enums.ErTitleEnum.DUPLICATE_REPORT_TITLE,
             message:
               'Report titles must be unique for dashboard. ' +
-              `Found duplicate "${title}" title`,
+              `Found duplicate "${title.toLocaleLowerCase()}" title`,
             lines: lines
           })
         );

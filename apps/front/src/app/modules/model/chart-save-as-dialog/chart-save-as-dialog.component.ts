@@ -1,5 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
@@ -45,9 +51,14 @@ export class ChartSaveAsDialogComponent implements OnInit {
   chartSaveAsEnum = ChartSaveAsEnum;
   reportSaveAsEnum = ReportSaveAsEnum;
 
-  titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.required, Validators.maxLength(255)]]
-  });
+  titleForm: FormGroup = this.fb.group(
+    {
+      title: [undefined, [Validators.required, Validators.maxLength(255)]]
+    },
+    {
+      validator: this.titleValidator.bind(this)
+    }
+  );
 
   groupForm: FormGroup = this.fb.group({
     group: [undefined, [Validators.maxLength(255)]]
@@ -78,7 +89,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   selectedDashboardPath: string;
   selectedDashboard: DashboardExtended;
 
-  selectedMconfigId: string;
+  selectedReportTitle: string;
 
   dashboards: DashboardExtended[];
   dashboards$ = this.dashboardsQuery.select().pipe(
@@ -172,6 +183,40 @@ export class ChartSaveAsDialogComponent implements OnInit {
     });
   }
 
+  titleValidator(group: AbstractControl): ValidationErrors | null {
+    if (common.isUndefined(this.titleForm)) {
+      return null;
+    }
+
+    let title: string = this.titleForm.controls['title'].value.toUpperCase();
+
+    if (
+      this.chartSaveAs === this.chartSaveAsEnum.REPORT_OF_DASHBOARD &&
+      common.isDefined(this.selectedDashboard)
+    ) {
+      let titles = this.selectedDashboard.reports.map(x =>
+        x.title.toUpperCase()
+      );
+
+      if (
+        this.reportSaveAs === this.reportSaveAsEnum.NEW_REPORT &&
+        titles.indexOf(title) > -1
+      ) {
+        this.titleForm.controls['title'].setErrors({ titleIsNotUnique: true });
+      }
+
+      if (
+        this.reportSaveAs === this.reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
+        titles.indexOf(title) > -1 &&
+        title !== this.selectedReportTitle?.toUpperCase()
+      ) {
+        this.titleForm.controls['title'].setErrors({ titleIsNotUnique: true });
+      }
+    }
+
+    return null;
+  }
+
   save() {
     if (this.titleForm.controls['title'].valid) {
       let newTitle = this.titleForm.controls['title'].value;
@@ -202,27 +247,34 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   newVizOnClick() {
     this.chartSaveAs = ChartSaveAsEnum.NEW_VIZ;
+    this.titleForm.get('title').updateValueAndValidity();
   }
 
   reportOfDashboardOnClick() {
     this.chartSaveAs = ChartSaveAsEnum.REPORT_OF_DASHBOARD;
+    this.titleForm.get('title').updateValueAndValidity();
   }
 
   newReportOnClick() {
     this.reportSaveAs = ReportSaveAsEnum.NEW_REPORT;
+    this.titleForm.get('title').updateValueAndValidity();
   }
 
   replaceExistingReportOnClick() {
     this.reportSaveAs = ReportSaveAsEnum.REPLACE_EXISTING_REPORT;
+    this.titleForm.get('title').updateValueAndValidity();
   }
 
   selectedDashboardChange() {
-    this.selectedMconfigId = undefined;
+    this.selectedReportTitle = undefined;
     this.setSelectedDashboard();
     this.makePath();
+    this.titleForm.get('title').updateValueAndValidity();
   }
 
-  selectedReportChange() {}
+  selectedReportChange() {
+    this.titleForm.get('title').updateValueAndValidity();
+  }
 
   setSelectedDashboard() {
     if (
@@ -391,7 +443,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     if (this.reportSaveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT) {
       let oldReportIndex = dashboard.reports.findIndex(
-        x => x.mconfigId === this.selectedMconfigId
+        x => x.title === this.selectedReportTitle
       );
 
       let oldReport = dashboard.reports[oldReportIndex];

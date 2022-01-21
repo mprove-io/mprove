@@ -126,10 +126,10 @@
           [searchable]="false"
           [clearable]="false"
           (change)="selectedReportChange()"
-          [(ngModel)]="selectedMconfigId"
+          [(ngModel)]="selectedReportTitle"
           appendTo="body"
           bindLabel="title"
-          bindValue="mconfigId"
+          bindValue="title"
         >
           <ng-template ng-label-tmp let-item="item">
             <div class="ml-1 truncate">{{ item.title }}</div>
@@ -275,19 +275,19 @@
           chartSaveAs === chartSaveAsEnum.NEW_VIZ ||
           (!!selectedDashboardId &&
             (reportSaveAs === reportSaveAsEnum.NEW_REPORT ||
-              !!selectedMconfigId)),
+              !!selectedReportTitle)),
         'bg-gray-400 cursor-default':
           chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
           (selectedDashboardId === undefined ||
             (reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
-              selectedMconfigId === undefined))
+              selectedReportTitle === undefined))
       }"
       (click)="save()"
       [disabled]="
         chartSaveAs === chartSaveAsEnum.REPORT_OF_DASHBOARD &&
         (selectedDashboardId === undefined ||
           (reportSaveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
-            selectedMconfigId === undefined))
+            selectedReportTitle === undefined))
       "
       >Save</button
     >

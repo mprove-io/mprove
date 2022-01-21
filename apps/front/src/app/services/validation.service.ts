@@ -29,7 +29,8 @@ export class ValidationService {
       ['moreThenOneMB', 'Text must be < 1mb'],
       ['projectNameIsNotUnique', 'Project name already exists'],
       ['projectNameIsNotValid', 'Project name is not valid'],
-      ['wrongFormatNumber', 'Wrong format number']
+      ['wrongFormatNumber', 'Wrong format number'],
+      ['titleIsNotUnique', 'Report title must be unique for dashboard']
     ]);
 
     return config.get(validatorName);
