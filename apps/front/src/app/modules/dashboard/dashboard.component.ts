@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   scrollSpeed = 8;
 
-  filtersIsExpanded = false;
+  filtersIsExpanded = true;
 
   showBricks = false;
 

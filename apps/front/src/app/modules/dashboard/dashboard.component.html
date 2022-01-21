@@ -107,41 +107,42 @@
       </div>
 
       <div class="flex flex-col flex-grow space-y-6 min-w-[2px] mt-6">
-        <div
-          class="bg-white rounded shadow-md w-full"
-          [ngClass]="{
-            'h-2/5': filtersIsExpanded
-          }"
-        >
-          <div class="flex flex-col h-full">
-            <div class="flex min-h-[80px] flex-row items-center flex-shrink-0">
+        <div class="bg-white rounded shadow-md w-full">
+          <div class="flex flex-col">
+            <div
+              class="flex flex-row flex-grow mr-5 min-h-[95px] flex-shrink-0"
+            >
               <div
                 (click)="toggleFiltersPanel()"
-                class="flex flex-row space-x-2 py-3 px-5 items-center cursor-pointer font-semibold text-2xl text-gray1 select-none"
+                class="flex flex-row space-x-2 mt-5 py-3 px-5 items-start cursor-pointer font-semibold text-2xl text-gray1 select-none"
               >
-                <div> Filters </div>
-                <m-chevron-right-icon
-                  *ngIf="!filtersIsExpanded"
-                ></m-chevron-right-icon>
-                <m-chevron-down-icon
-                  *ngIf="filtersIsExpanded"
-                ></m-chevron-down-icon>
+                <div class="flex flex-row items-center space-x-2">
+                  <div> Filters </div>
+                  <m-chevron-right-icon
+                    *ngIf="!filtersIsExpanded"
+                  ></m-chevron-right-icon>
+                  <m-chevron-down-icon
+                    *ngIf="filtersIsExpanded"
+                  ></m-chevron-down-icon>
+                </div>
               </div>
 
               <m-bricks
                 class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
-                *ngIf="dashboard?.fields.length > 0"
+                *ngIf="!filtersIsExpanded && dashboard?.fields.length > 0"
                 [extendedFilters]="dashboard.extendedFilters"
               ></m-bricks>
-            </div>
 
-            <div class="flex flex-grow mx-5 mb-5 h-2" *ngIf="filtersIsExpanded">
               <div
-                *ngIf="dashboard?.fields.length === 0"
-                class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                *ngIf="filtersIsExpanded && dashboard?.fields.length === 0"
+                class="flex items-center justify-center text-xl mt-9 h-full w-full select-none text-gray1"
                 >No filters</div
               >
-              <div class="flex-1 w-2 overflow-auto">
+
+              <div
+                class="flex-1 w-2 mt-2 max-h-96 overflow-auto"
+                *ngIf="filtersIsExpanded && dashboard?.fields.length > 0"
+              >
                 <m-dashboard-filters
                   [dashboard]="dashboard"
                 ></m-dashboard-filters>
