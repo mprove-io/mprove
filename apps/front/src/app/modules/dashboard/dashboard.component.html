@@ -127,11 +127,17 @@
                 </div>
               </div>
 
-              <m-bricks
-                class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
-                *ngIf="!filtersIsExpanded && dashboard?.fields.length > 0"
-                [extendedFilters]="dashboard.extendedFilters"
-              ></m-bricks>
+              <div
+                [ngClass]="{
+                  'mt-4': dashboard?.extendedFilters.length === 1
+                }"
+              >
+                <m-bricks
+                  class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
+                  *ngIf="!filtersIsExpanded && dashboard?.fields.length > 0"
+                  [extendedFilters]="dashboard.extendedFilters"
+                ></m-bricks>
+              </div>
 
               <div
                 *ngIf="filtersIsExpanded && dashboard?.fields.length === 0"

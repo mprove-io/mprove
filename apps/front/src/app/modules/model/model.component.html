@@ -94,39 +94,48 @@
           class="flex flex-col flex-grow ml-6 space-y-6 min-w-[2px]"
           *ngIf="isShow === true"
         >
-          <div
-            class="bg-white rounded shadow-md w-full"
-            [ngClass]="{
-              'flex-1': filtersIsExpanded
-            }"
-          >
-            <div class="flex flex-col h-full">
+          <div class="bg-white rounded shadow-md w-full">
+            <div class="flex flex-col">
               <div
-                class="flex min-h-[80px] flex-row items-center flex-shrink-0"
-              >
-                <m-panel-title
-                  [title]="'Filters'"
-                  [isExpanded]="filtersIsExpanded"
-                  (toggleEvent)="toggleFiltersPanel()"
-                ></m-panel-title>
-
-                <m-bricks
-                  class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
-                  *ngIf="mconfig?.filters.length > 0"
-                  [extendedFilters]="extendedFilters"
-                ></m-bricks>
-              </div>
-
-              <div
-                class="flex flex-grow mx-5 mb-5 h-2"
-                *ngIf="filtersIsExpanded"
+                class="flex flex-row flex-grow mr-5 min-h-[95px] flex-shrink-0"
               >
                 <div
-                  *ngIf="mconfig?.filters.length === 0"
-                  class="flex items-center justify-center text-xl h-full w-full select-none text-gray1"
+                  (click)="toggleFiltersPanel()"
+                  class="flex flex-row space-x-2 mt-5 py-3 px-5 items-start cursor-pointer font-semibold text-2xl text-gray1 select-none"
+                >
+                  <div class="flex flex-row items-center space-x-2">
+                    <div> Filters </div>
+                    <m-chevron-right-icon
+                      *ngIf="!filtersIsExpanded"
+                    ></m-chevron-right-icon>
+                    <m-chevron-down-icon
+                      *ngIf="filtersIsExpanded"
+                    ></m-chevron-down-icon>
+                  </div>
+                </div>
+
+                <div
+                  [ngClass]="{
+                    'mt-4': extendedFilters.length === 1
+                  }"
+                >
+                  <m-bricks
+                    class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
+                    *ngIf="!filtersIsExpanded && mconfig?.filters.length > 0"
+                    [extendedFilters]="extendedFilters"
+                  ></m-bricks>
+                </div>
+
+                <div
+                  class="flex items-center justify-center text-xl mt-9 mr-36 h-full w-full select-none text-gray1"
+                  *ngIf="filtersIsExpanded && mconfig?.filters.length === 0"
                   >No filters</div
                 >
-                <div class="flex-1 w-2 overflow-auto">
+
+                <div
+                  class="flex-1 w-2 mt-2 max-h-96 overflow-auto"
+                  *ngIf="filtersIsExpanded && mconfig?.filters.length > 0"
+                >
                   <m-model-filters></m-model-filters>
                 </div>
               </div>
