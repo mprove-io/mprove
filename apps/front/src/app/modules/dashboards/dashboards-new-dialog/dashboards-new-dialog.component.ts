@@ -6,17 +6,15 @@ import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { DashboardState } from '~front/app/stores/dashboard.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { DashboardExtended } from '../dashboards.component';
 
 @Component({
   selector: 'm-dashboards-new-dialog',
   templateUrl: './dashboards-new-dialog.component.html'
 })
 export class DashboardsNewDialogComponent {
-  dashboard: DashboardState;
+  dashboard: common.DashboardX;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -89,7 +87,7 @@ export class DashboardsNewDialogComponent {
   }) {
     let { newTitle, group, roles, users } = item;
 
-    let newDashboard: DashboardExtended = {
+    let newDashboard: common.DashboardX = {
       structId: undefined,
       dashboardId: this.newDashboardId,
       filePath: undefined,

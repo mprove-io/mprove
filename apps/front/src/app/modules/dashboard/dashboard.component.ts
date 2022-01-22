@@ -11,8 +11,7 @@ import {
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
-import { debounceTime, filter, take, tap } from 'rxjs/operators';
-import { checkAccessModel } from '~front/app/functions/check-access-model';
+import { debounceTime, filter, tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsListQuery } from '~front/app/queries/models-list.query';
@@ -20,14 +19,10 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import {
-  DashboardStore,
-  ReportWithMconfigAndQuery
-} from '~front/app/stores/dashboard.store';
+import { DashboardStore } from '~front/app/stores/dashboard.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
-import { DashboardExtended } from '../dashboards/dashboards.component';
 import { ChartRepComponent } from '../shared/chart-rep/chart-rep.component';
 
 class LayoutItem {
@@ -36,12 +31,12 @@ class LayoutItem {
   h: number;
   x: number;
   y: number;
-  report: ExtendedReportExtra;
+  report: common.ReportX; // ExtendedReportExtra;
 }
 
-export class ExtendedReportExtra extends ReportWithMconfigAndQuery {
-  hasAccessToModel?: boolean;
-}
+// export class ExtendedReportExtra extends ReportWithMconfigAndQuery {
+//   hasAccessToModel?: boolean;
+// }
 
 @Component({
   selector: 'm-dashboard',
@@ -77,60 +72,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isShowGrid = true;
   isShow = true;
 
-  dashboard: DashboardExtended;
+  dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     filter(z => common.isDefined(z.dashboardId)),
     tap(x => {
-      // this.dashboard = x;
-      // console.log(x);
-
-      let member: common.Member;
-      this.memberQuery
-        .select()
-        .pipe()
-        .subscribe(y => {
-          member = y;
-        });
-
-      this.modelsListQuery
-        .select()
-        .pipe(take(1))
-        .subscribe(ml => {
-          let dashboardFilePathArray = x.filePath.split('/');
-
-          let author =
-            dashboardFilePathArray.length > 1 &&
-            dashboardFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-              ? dashboardFilePathArray[2]
-              : undefined;
-
-          let dashboardExtended: DashboardExtended = Object.assign({}, x, <
-            DashboardExtended
-          >{
-            author: author,
-            canEditOrDeleteDashboard:
-              member.isEditor || member.isAdmin || author === member.alias,
-            reports: x.reports.map(report => {
-              let extendedReport: ExtendedReportExtra = Object.assign(
-                {},
-                report,
-                <ExtendedReportExtra>{
-                  hasAccessToModel: checkAccessModel({
-                    member: member,
-                    model: ml.allModelsList.find(
-                      m => m.modelId === report.modelId
-                    )
-                  })
-                }
-              );
-              return extendedReport;
-            })
-          });
-
-          this.dashboard = dashboardExtended;
-
-          this.cd.detectChanges();
-        });
+      this.dashboard = x;
 
       this.title.setTitle(
         `${this.pageTitle} - ${

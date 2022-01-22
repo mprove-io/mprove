@@ -25,16 +25,8 @@ export class ToBackendGetDashboardRequest extends ToBackendRequest {
 
 export class ToBackendGetDashboardResponsePayload {
   @ValidateNested()
-  @Type(() => common.Dashboard)
-  dashboard: common.Dashboard;
-
-  @ValidateNested()
-  @Type(() => common.Mconfig)
-  dashboardMconfigs: common.Mconfig[];
-
-  @ValidateNested()
-  @Type(() => common.Query)
-  dashboardQueries: common.Query[];
+  @Type(() => common.DashboardX)
+  dashboard: common.DashboardX;
 }
 
 export class ToBackendGetDashboardResponse extends common.MyResponse {

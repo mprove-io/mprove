@@ -82,7 +82,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     })
   );
 
-  extendedFilters: interfaces.FilterExtended[];
+  extendedFilters: common.FilterX[];
 
   canAccessModel = false;
 

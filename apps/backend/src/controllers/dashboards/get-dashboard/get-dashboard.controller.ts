@@ -20,7 +20,8 @@ export class GetDashboardController {
     private projectsService: ProjectsService,
     private queriesRepository: repositories.QueriesRepository,
     private mconfigsRepository: repositories.MconfigsRepository,
-    private dashboardsService: DashboardsService
+    private dashboardsService: DashboardsService,
+    private modelsRepository: repositories.ModelsRepository
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
@@ -81,10 +82,44 @@ export class GetDashboardController {
             query_id: In(queryIds)
           });
 
+    let models = await this.modelsRepository.find({
+      select: [
+        'struct_id',
+        'model_id',
+        'connection_id',
+        'file_path',
+        'access_users',
+        'access_roles',
+        'label',
+        'gr',
+        'hidden',
+        'nodes',
+        'description'
+      ],
+      where: { struct_id: branch.struct_id }
+    });
+
+    let modelsList: common.ModelsItem[] = models.map(x =>
+      wrapper.wrapToApiModelsItem({
+        model: wrapper.wrapToApiModel(x),
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: x,
+          checkExplorer: true
+        })
+      })
+    );
+
     let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
-      dashboard: wrapper.wrapToApiDashboard(dashboard),
-      dashboardMconfigs: mconfigs.map(x => wrapper.wrapToApiMconfig(x)),
-      dashboardQueries: queries.map(x => wrapper.wrapToApiQuery(x))
+      dashboard: wrapper.wrapToApiDashboard({
+        dashboard: dashboard,
+        mconfigs: mconfigs.map(x => wrapper.wrapToApiMconfig(x)),
+        queries: queries.map(x => wrapper.wrapToApiQuery(x)),
+        member: wrapper.wrapToApiMember(member),
+        modelsList: modelsList,
+        isAddMconfigAndQuery: true
+      })
     };
 
     return payload;

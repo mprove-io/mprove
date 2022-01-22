@@ -8,7 +8,6 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { common } from '~front/barrels/common';
-import { DashboardExtended } from '../../dashboards/dashboards.component';
 
 @Component({
   selector: 'm-dashboard-options',
@@ -16,7 +15,7 @@ import { DashboardExtended } from '../../dashboards/dashboards.component';
 })
 export class DashboardOptionsComponent implements OnDestroy {
   @Input()
-  dashboard: DashboardExtended;
+  dashboard: common.DashboardX;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(

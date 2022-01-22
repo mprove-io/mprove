@@ -6,7 +6,6 @@ import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
-import { wrapToApiModel } from '~backend/models/wrapper/_index';
 import { BranchesService } from '~backend/services/branches.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -66,7 +65,7 @@ export class GetModelsListController {
       allModelsList: models
         .map(x =>
           wrapper.wrapToApiModelsItem({
-            model: wrapToApiModel(x),
+            model: wrapper.wrapToApiModel(x),
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
               member: member,

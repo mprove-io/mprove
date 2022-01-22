@@ -89,7 +89,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
     })
   );
 
-  extendedFilters: interfaces.FilterExtended[];
+  extendedFilters: common.FilterX[];
 
   canEditOrDeleteRep = false;
   canAccessModel = false;

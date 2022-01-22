@@ -31,7 +31,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   query: common.Query;
   mconfig: common.Mconfig;
   model: common.Model;
-  extendedFilters: interfaces.FilterExtended[];
+  extendedFilters: common.FilterX[];
   isSelectValid = false;
 
   constructor(

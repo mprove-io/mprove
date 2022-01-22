@@ -17,7 +17,6 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService } from '~front/app/services/query.service';
-import { DashboardWithExtendedFilters } from '~front/app/stores/dashboards.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -26,16 +25,6 @@ import { constants } from '~front/barrels/constants';
 
 export class ModelsItemExtendedForDashboards extends common.ModelsItem {
   totalDashboards: number;
-}
-
-export class ExtendedReport extends common.Report {
-  hasAccessToModel?: boolean;
-}
-
-export class DashboardExtended extends DashboardWithExtendedFilters {
-  author?: string;
-  canEditOrDeleteDashboard?: boolean;
-  reports: ExtendedReport[];
 }
 
 @Component({
@@ -67,9 +56,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   dashboardsModelsList: ModelsItemExtendedForDashboards[];
   hasAccessModelsList: common.ModelsItem[];
 
-  dashboards: DashboardExtended[];
-  dashboardsFilteredByWord: DashboardExtended[];
-  filteredDashboards: DashboardExtended[];
+  dashboards: common.DashboardX[];
+  dashboardsFilteredByWord: common.DashboardX[];
+  filteredDashboards: common.DashboardX[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -122,39 +111,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
               ).length
             })
           );
-
-          this.dashboards = this.dashboards.map(d => {
-            let dashboardFilePathArray = d.filePath.split('/');
-
-            let author =
-              dashboardFilePathArray.length > 1 &&
-              dashboardFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-                ? dashboardFilePathArray[2]
-                : undefined;
-
-            let dashboardExtended: DashboardExtended = Object.assign({}, d, <
-              DashboardExtended
-            >{
-              author: author,
-              canEditOrDeleteDashboard:
-                member.isEditor || member.isAdmin || author === member.alias,
-              reports: d.reports.map(report => {
-                let extendedReport: ExtendedReport = Object.assign({}, report, <
-                  ExtendedReport
-                >{
-                  hasAccessToModel: checkAccessModel({
-                    member: member,
-                    model: this.dashboardsModelsList.find(
-                      m => m.modelId === report.modelId
-                    )
-                  })
-                });
-                return extendedReport;
-              })
-            });
-
-            return dashboardExtended;
-          });
 
           // let allGroups = this.vizs.map(z => z.gr);
           // let definedGroups = allGroups.filter(y => common.isDefined(y));
@@ -282,7 +238,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  trackByFn(index: number, item: DashboardExtended) {
+  trackByFn(index: number, item: common.DashboardX) {
     return item.dashboardId;
   }
 
@@ -312,7 +268,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToDashboardFile(event: any, dashboard: DashboardExtended) {
+  goToDashboardFile(event: any, dashboard: common.DashboardX) {
     event.stopPropagation();
 
     let fileIdAr = dashboard.filePath.split('/');
@@ -450,7 +406,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.mconfigId);
   }
 
-  openMenu(item: DashboardExtended) {
+  openMenu(item: common.DashboardX) {
     this.isDashboardOptionsMenuOpen = true;
     this.uiStore.update({ openedMenuId: item.dashboardId });
   }
@@ -463,7 +419,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.uiStore.update({ openedMenuId: undefined });
   }
 
-  toggleMenu(event: MouseEvent, item: DashboardExtended) {
+  toggleMenu(event: MouseEvent, item: common.DashboardX) {
     event.stopPropagation();
     if (this.isDashboardOptionsMenuOpen === true) {
       this.closeMenu();
@@ -472,7 +428,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteDashboard(event: MouseEvent, item: DashboardExtended) {
+  deleteDashboard(event: MouseEvent, item: common.DashboardX) {
     event.stopPropagation();
     this.closeMenu();
 

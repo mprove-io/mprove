@@ -122,7 +122,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
-  extendedFilters: interfaces.FilterExtended[];
+  extendedFilters: common.FilterX[];
   extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
     tap(x => {
       this.extendedFilters = x;

@@ -1,5 +1,4 @@
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 export function getExtendedFilters(item: {
   fields: common.ModelField[];
@@ -7,11 +6,11 @@ export function getExtendedFilters(item: {
 }) {
   let { fields, mconfig } = item;
 
-  let extendedFilters: interfaces.FilterExtended[] = [];
+  let extendedFilters: common.FilterX[] = [];
 
   if (fields && mconfig.filters) {
     extendedFilters = mconfig.filters.map(filter =>
-      Object.assign({}, filter, <interfaces.FilterExtended>{
+      Object.assign({}, filter, <common.FilterX>{
         field: fields.find(x => x.id === filter.fieldId),
         fractions: [
           ...filter.fractions.filter(

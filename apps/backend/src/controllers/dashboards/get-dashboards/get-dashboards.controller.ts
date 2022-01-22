@@ -16,6 +16,7 @@ export class GetDashboardsController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private modelsRepository: repositories.ModelsRepository,
     private dashboardsRepository: repositories.DashboardsRepository
   ) {}
 
@@ -68,9 +69,45 @@ export class GetDashboardsController {
       })
     );
 
+    let models = await this.modelsRepository.find({
+      select: [
+        'struct_id',
+        'model_id',
+        'connection_id',
+        'file_path',
+        'access_users',
+        'access_roles',
+        'label',
+        'gr',
+        'hidden',
+        'nodes',
+        'description'
+      ],
+      where: { struct_id: branch.struct_id }
+    });
+
+    let modelsList: common.ModelsItem[] = models.map(x =>
+      wrapper.wrapToApiModelsItem({
+        model: wrapper.wrapToApiModel(x),
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: x,
+          checkExplorer: true
+        })
+      })
+    );
+
     let payload: apiToBackend.ToBackendGetDashboardsResponsePayload = {
       dashboards: dashboardsGrantedAccess.map(x =>
-        wrapper.wrapToApiDashboard(x)
+        wrapper.wrapToApiDashboard({
+          dashboard: x,
+          mconfigs: [],
+          queries: [],
+          member: wrapper.wrapToApiMember(member),
+          modelsList: modelsList,
+          isAddMconfigAndQuery: false
+        })
       )
     };
 

@@ -2,14 +2,8 @@ import { Injectable } from '@angular/core';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { makeExtendedFilters } from '../functions/make-extended-filters';
-import {
-  DashboardExtended,
-  ExtendedReport
-} from '../modules/dashboards/dashboards.component';
 import { NavQuery } from '../queries/nav.query';
-import { DashboardState, DashboardStore } from '../stores/dashboard.store';
-import { DashboardWithExtendedFilters } from '../stores/dashboards.store';
+import { DashboardStore } from '../stores/dashboard.store';
 import { NavState } from '../stores/nav.store';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -33,7 +27,7 @@ export class DashboardService {
   }
 
   navCreateTempDashboard(item: {
-    dashboard: DashboardExtended;
+    dashboard: common.DashboardX;
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
@@ -45,7 +39,7 @@ export class DashboardService {
       newDashboardFields
     } = item;
 
-    let reports: ExtendedReport[] = [];
+    let reports: common.ReportX[] = [];
 
     dashboard.reports.forEach(x => {
       let z: any = common.makeCopy(x);
@@ -71,27 +65,10 @@ export class DashboardService {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
-          let z: DashboardWithExtendedFilters = Object.assign(
-            {},
-            resp.payload.dashboard,
-            {
-              extendedFilters: makeExtendedFilters(resp.payload.dashboard)
-            }
+          this.dashboardStore.update(resp.payload.dashboard);
+          this.navigateService.navigateToDashboard(
+            resp.payload.dashboard.dashboardId
           );
-
-          let dashboardState: DashboardState = z;
-
-          dashboardState.reports.forEach(x => {
-            x.mconfig = resp.payload.dashboardMconfigs.find(
-              m => m.mconfigId === x.mconfigId
-            );
-            x.query = resp.payload.dashboardQueries.find(
-              q => q.queryId === x.queryId
-            );
-          });
-
-          this.dashboardStore.update(dashboardState);
-          this.navigateService.navigateToDashboard(dashboardState.dashboardId);
         }),
         take(1)
       )

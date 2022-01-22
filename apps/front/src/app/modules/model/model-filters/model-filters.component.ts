@@ -11,7 +11,7 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './model-filters.component.html'
 })
 export class ModelFiltersComponent {
-  extendedFilters: interfaces.FilterExtended[];
+  extendedFilters: common.FilterX[];
   extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
     tap(x => {
       this.extendedFilters = x;
@@ -27,7 +27,7 @@ export class ModelFiltersComponent {
   ) {}
 
   fractionUpdate(
-    filterExtended: interfaces.FilterExtended,
+    filterExtended: common.FilterX,
     filterIndex: number,
     eventFractionUpdate: interfaces.EventFractionUpdate
   ) {
@@ -54,7 +54,7 @@ export class ModelFiltersComponent {
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);
   }
 
-  addFraction(filterExtended: interfaces.FilterExtended, filterIndex: number) {
+  addFraction(filterExtended: common.FilterX, filterIndex: number) {
     let newMconfig = this.structService.makeMconfig();
 
     let fractions = filterExtended.fractions;
@@ -81,7 +81,7 @@ export class ModelFiltersComponent {
   }
 
   deleteFraction(
-    filterExtended: interfaces.FilterExtended,
+    filterExtended: common.FilterX,
     filterIndex: number,
     fractionIndex: number
   ) {

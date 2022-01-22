@@ -8,30 +8,18 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
-import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
-import { makeExtendedFilters } from '~front/app/functions/make-extended-filters';
 import { prepareReport } from '~front/app/functions/prepare-report';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { toYaml } from '~front/app/functions/to-yaml';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import {
-  DashboardState,
-  ReportWithMconfigAndQuery
-} from '~front/app/stores/dashboard.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import {
-  DashboardExtended,
-  ExtendedReport
-} from '../../dashboards/dashboards.component';
 
 enum ChartSaveAsEnum {
   NEW_VIZ = 'NEW_VIZ',
@@ -87,72 +75,24 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   selectedDashboardId: string;
   selectedDashboardPath: string;
-  selectedDashboard: DashboardExtended;
+  selectedDashboard: common.DashboardX;
 
   selectedReportTitle: string;
 
-  dashboards: DashboardExtended[];
+  dashboards: common.DashboardX[];
   dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
-      this.dashboards = x.dashboards;
+      this.dashboards = x.dashboards.filter(
+        z => z.canEditOrDeleteDashboard === true
+      );
 
-      let member: common.Member;
-      this.memberQuery
-        .select()
-        .pipe()
-        .subscribe(y => {
-          member = y;
-        });
+      this.makePath();
 
-      this.modelsListQuery
-        .select()
-        .pipe(take(1))
-        .subscribe(ml => {
-          this.dashboards = this.dashboards.map(d => {
-            let dashboardFilePathArray = d.filePath.split('/');
+      // let allGroups = this.vizs.map(z => z.gr);
+      // let definedGroups = allGroups.filter(y => common.isDefined(y));
+      // this.groups = [...new Set(definedGroups)];
 
-            let author =
-              dashboardFilePathArray.length > 1 &&
-              dashboardFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-                ? dashboardFilePathArray[2]
-                : undefined;
-
-            let dashboardExtended: DashboardExtended = Object.assign({}, d, <
-              DashboardExtended
-            >{
-              author: author,
-              canEditOrDeleteDashboard:
-                member.isEditor || member.isAdmin || author === member.alias,
-              reports: d.reports.map(report => {
-                let extendedReport: ExtendedReport = Object.assign({}, report, <
-                  ExtendedReport
-                >{
-                  hasAccessToModel: checkAccessModel({
-                    member: member,
-                    model: ml.allModelsList.find(
-                      m => m.modelId === report.modelId
-                    )
-                  })
-                });
-                return extendedReport;
-              })
-            });
-
-            return dashboardExtended;
-          });
-
-          this.dashboards = this.dashboards.filter(
-            z => z.canEditOrDeleteDashboard === true
-          );
-
-          this.makePath();
-
-          // let allGroups = this.vizs.map(z => z.gr);
-          // let definedGroups = allGroups.filter(y => common.isDefined(y));
-          // this.groups = [...new Set(definedGroups)];
-
-          this.cd.detectChanges();
-        });
+      this.cd.detectChanges();
     })
   );
 
@@ -162,9 +102,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     private userQuery: UserQuery,
     private navigateService: NavigateService,
     private dashboardsQuery: DashboardsQuery,
-    private modelsListQuery: ModelsListQuery,
     private navQuery: NavQuery,
-    private memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -393,28 +331,16 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let dashboard: DashboardState = await apiService
+    let dashboard: common.DashboardX = await apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         payloadGetDashboard
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
-          let z: DashboardState = Object.assign({}, resp.payload.dashboard, {
-            extendedFilters: makeExtendedFilters(resp.payload.dashboard)
-          });
-
-          z.reports.forEach(x => {
-            x.mconfig = resp.payload.dashboardMconfigs.find(
-              m => m.mconfigId === x.mconfigId
-            );
-            x.query = resp.payload.dashboardQueries.find(
-              q => q.queryId === x.queryId
-            );
-          });
-
-          return z;
-        })
+        map(
+          (resp: apiToBackend.ToBackendGetDashboardResponse) =>
+            resp.payload.dashboard
+        )
       )
       .toPromise();
 
@@ -424,7 +350,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       tileY = tileY + report.tileHeight;
     });
 
-    let newReport: ReportWithMconfigAndQuery = {
+    let newReport: common.ReportX = {
       mconfig: this.ref.data.mconfig,
       query: this.ref.data.query,
       modelId: this.ref.data.mconfig.modelId,

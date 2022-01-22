@@ -1,10 +1,9 @@
 import { common } from '~front/barrels/common';
-import { DashboardState } from '../stores/dashboard.store';
 import { prepareReport } from './prepare-report';
 import { toYaml } from './to-yaml';
 
 export function makeDashboardFileText(item: {
-  dashboard: DashboardState;
+  dashboard: common.DashboardX;
   newDashboardId: string;
   newTitle: string;
   group: string;

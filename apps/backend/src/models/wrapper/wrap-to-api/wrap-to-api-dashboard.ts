@@ -1,23 +1,58 @@
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { makeFiltersX } from '~backend/functions/make-filters-x';
+import { makeReportsX } from '~backend/functions/make-reports-x';
 
-export function wrapToApiDashboard(
-  x: entities.DashboardEntity
-): common.Dashboard {
+export function wrapToApiDashboard(item: {
+  dashboard: entities.DashboardEntity;
+  mconfigs: common.Mconfig[];
+  queries: common.Query[];
+  member: common.Member;
+  isAddMconfigAndQuery: boolean;
+  modelsList: common.ModelsItem[];
+}): common.DashboardX {
+  let {
+    dashboard,
+    mconfigs,
+    queries,
+    isAddMconfigAndQuery,
+    member,
+    modelsList
+  } = item;
+
+  let filePathArray = dashboard.file_path.split('/');
+
+  let author =
+    filePathArray.length > 1 && filePathArray[1] === common.BLOCKML_USERS_FOLDER
+      ? filePathArray[2]
+      : undefined;
+
+  let canEditOrDeleteDashboard =
+    member.isEditor || member.isAdmin || author === member.alias;
+
   return {
-    structId: x.struct_id,
-    dashboardId: x.dashboard_id,
-    filePath: x.file_path,
-    content: x.content,
-    accessUsers: x.access_users,
-    accessRoles: x.access_roles,
-    title: x.title,
-    gr: x.gr,
-    hidden: common.enumToBoolean(x.hidden),
-    fields: x.fields,
-    description: x.description,
-    reports: x.reports,
-    temp: common.enumToBoolean(x.temp),
-    serverTs: Number(x.server_ts)
+    structId: dashboard.struct_id,
+    dashboardId: dashboard.dashboard_id,
+    author: author,
+    canEditOrDeleteDashboard: canEditOrDeleteDashboard,
+    filePath: dashboard.file_path,
+    content: dashboard.content,
+    accessUsers: dashboard.access_users,
+    accessRoles: dashboard.access_roles,
+    title: dashboard.title,
+    gr: dashboard.gr,
+    hidden: common.enumToBoolean(dashboard.hidden),
+    fields: dashboard.fields,
+    extendedFilters: makeFiltersX(dashboard),
+    description: dashboard.description,
+    reports: makeReportsX({
+      reports: dashboard.reports,
+      mconfigs: mconfigs,
+      queries: queries,
+      isAddMconfigAndQuery: isAddMconfigAndQuery,
+      modelsList: modelsList
+    }),
+    temp: common.enumToBoolean(dashboard.temp),
+    serverTs: Number(dashboard.server_ts)
   };
 }

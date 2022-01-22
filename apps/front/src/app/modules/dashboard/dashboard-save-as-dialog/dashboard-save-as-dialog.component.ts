@@ -2,22 +2,14 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { DashboardState } from '~front/app/stores/dashboard.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import {
-  DashboardExtended,
-  ExtendedReport
-} from '../../dashboards/dashboards.component';
 
 enum DashboardSaveAsEnum {
   NEW_DASHBOARD = 'NEW_DASHBOARD',
@@ -31,7 +23,7 @@ enum DashboardSaveAsEnum {
 export class DashboardSaveAsDialogComponent implements OnInit {
   dashboardSaveAsEnum = DashboardSaveAsEnum;
 
-  dashboard: DashboardState;
+  dashboard: common.DashboardX;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -64,68 +56,18 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   selectedDashboardId: string;
   selectedDashboardPath: string;
 
-  dashboards: DashboardExtended[];
+  dashboards: common.DashboardX[];
   dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
-      this.dashboards = x.dashboards;
+      this.dashboards = x.dashboards.filter(
+        z => z.canEditOrDeleteDashboard === true
+      );
 
-      let member: common.Member;
-      this.memberQuery
-        .select()
-        .pipe()
-        .subscribe(y => {
-          member = y;
-        });
+      this.makePath();
 
-      this.modelsListQuery
-        .select()
-        .pipe(take(1))
-        .subscribe(ml => {
-          this.dashboards = this.dashboards.map(d => {
-            let dashboardFilePathArray = d.filePath.split('/');
-
-            let author =
-              dashboardFilePathArray.length > 1 &&
-              dashboardFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-                ? dashboardFilePathArray[2]
-                : undefined;
-
-            let dashboardExtended: DashboardExtended = Object.assign({}, d, <
-              DashboardExtended
-            >{
-              author: author,
-              canEditOrDeleteDashboard:
-                member.isEditor || member.isAdmin || author === member.alias,
-              reports: d.reports.map(report => {
-                let extendedReport: ExtendedReport = Object.assign({}, report, <
-                  ExtendedReport
-                >{
-                  hasAccessToModel: checkAccessModel({
-                    member: member,
-                    model: ml.allModelsList.find(
-                      m => m.modelId === report.modelId
-                    )
-                  })
-                });
-                return extendedReport;
-              })
-            });
-
-            return dashboardExtended;
-          });
-
-          this.dashboards = this.dashboards.filter(
-            z => z.canEditOrDeleteDashboard === true
-          );
-
-          this.makePath();
-
-          // let allGroups = this.vizs.map(z => z.gr);
-          // let definedGroups = allGroups.filter(y => common.isDefined(y));
-          // this.groups = [...new Set(definedGroups)];
-
-          this.cd.detectChanges();
-        });
+      // let allGroups = this.vizs.map(z => z.gr);
+      // let definedGroups = allGroups.filter(y => common.isDefined(y));
+      // this.groups = [...new Set(definedGroups)];
     })
   );
 
@@ -135,13 +77,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     private userQuery: UserQuery,
     private navigateService: NavigateService,
     private dashboardsQuery: DashboardsQuery,
-    private modelsListQuery: ModelsListQuery,
-    private memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.dashboard = this.ref.data.dashboard as DashboardExtended;
+    this.dashboard = this.ref.data.dashboard as common.DashboardX;
 
     this.selectedDashboardId =
       this.dashboard.temp === false ? this.dashboard.dashboardId : undefined;
