@@ -414,28 +414,20 @@ export function prepareReport(item: {
     },
     tile: {
       tile_width:
-        chart.tileWidth !== common.CHART_DEFAULT_TILE_WIDTH &&
-        common.isDefined(chart.tileWidth)
-          ? chart.tileWidth
-          : undefined,
+        // chart.tileWidth !== common.CHART_DEFAULT_TILE_WIDTH &&
+        common.isDefined(chart.tileWidth) ? chart.tileWidth : undefined,
 
       tile_height:
-        chart.tileHeight !== common.CHART_DEFAULT_TILE_HEIGHT &&
-        common.isDefined(chart.tileHeight)
-          ? chart.tileHeight
-          : undefined,
+        // chart.tileHeight !== common.CHART_DEFAULT_TILE_HEIGHT &&
+        common.isDefined(chart.tileHeight) ? chart.tileHeight : undefined,
 
       tile_x:
-        chart.tileX !== common.CHART_DEFAULT_TILE_X &&
-        common.isDefined(chart.tileX)
-          ? chart.tileX
-          : undefined,
+        // chart.tileX !== common.CHART_DEFAULT_TILE_X &&
+        common.isDefined(chart.tileX) ? chart.tileX : undefined,
 
       tile_y:
-        chart.tileY !== common.CHART_DEFAULT_TILE_Y &&
-        common.isDefined(chart.tileY)
-          ? chart.tileY
-          : undefined
+        // chart.tileY !== common.CHART_DEFAULT_TILE_Y &&
+        common.isDefined(chart.tileY) ? chart.tileY : undefined
     }
   };
 
