@@ -83,19 +83,7 @@ export class GetDashboardController {
           });
 
     let models = await this.modelsRepository.find({
-      select: [
-        'struct_id',
-        'model_id',
-        'connection_id',
-        'file_path',
-        'access_users',
-        'access_roles',
-        'label',
-        'gr',
-        'hidden',
-        'nodes',
-        'description'
-      ],
+      select: ['model_id', 'access_users', 'access_roles', 'hidden'],
       where: { struct_id: branch.struct_id }
     });
 
