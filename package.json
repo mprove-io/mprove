@@ -83,7 +83,7 @@
     "module-alias": "^2.2.2",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
-    "nanoid": "^3.1.22",
+    "nanoid": "^3.1.31",
     "ng-zorro-antd": "^11.4.2",
     "ngx-color": "6.2.0",
     "ngx-image-compress": "^11.0.3",
