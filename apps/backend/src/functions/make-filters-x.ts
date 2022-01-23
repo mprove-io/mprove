@@ -13,9 +13,9 @@ export function makeFiltersX(dashboard: entities.DashboardEntity) {
     ];
 
     let filterX: common.FilterX = {
-      field: field as any,
+      fieldId: field.id,
       fractions: fractions,
-      fieldId: field.id
+      field: field as any
     };
     return filterX;
   });
