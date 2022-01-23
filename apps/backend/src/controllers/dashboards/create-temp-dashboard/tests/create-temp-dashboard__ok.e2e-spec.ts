@@ -94,7 +94,8 @@ test('1', async t => {
         branchId: common.BRANCH_MASTER,
         oldDashboardId: 'ec_d1',
         newDashboardId: common.makeId(),
-        newDashboardFields: []
+        newDashboardFields: [],
+        reports: []
       }
     };
 

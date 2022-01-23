@@ -26,7 +26,7 @@ export class VizsService {
 
   checkVizPath(item: { filePath: string; userAlias: string }) {
     if (
-      item.filePath.split('/')[1] !== common.BLOCKML_USERS_FOLDER ||
+      item.filePath.split('/')[1] !== common.FILES_USERS_FOLDER ||
       item.filePath.split('/')[2] !== item.userAlias
     ) {
       throw new common.ServerError({

@@ -1,6 +1,6 @@
 import { common } from '~front-e2e/barrels/common';
 
-let testId = '_blockml-tree-revert-repo-to-last-commit__ok';
+let testId = '_files-tree-revert-repo-to-last-commit__ok';
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
@@ -66,14 +66,14 @@ describe('front-e2e', () => {
     );
     cy.loading();
 
-    cy.get('[data-cy=blockmlEditorMonacoEditor]').click();
+    cy.get('[data-cy=fileEditorMonacoEditor]').click();
 
     cy.get('.view-line').contains('T3').should('exist');
     cy.get('.view-line').contains(text).should('not.exist');
 
     cy.focused().clear({ force: true }).type(text);
 
-    cy.get('[data-cy=blockmlEditorSaveButton]').click();
+    cy.get('[data-cy=fileEditorSaveButton]').click();
     cy.loading();
 
     cy.get('.view-line').contains('T3').should('not.exist');

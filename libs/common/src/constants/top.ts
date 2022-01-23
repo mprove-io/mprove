@@ -14,7 +14,7 @@ export const UTC = 'UTC';
 
 export const DEFAULT_LIMIT = '500';
 
-export const BLOCKML_USERS_FOLDER = 'users';
+export const FILES_USERS_FOLDER = 'users';
 
 export const PATH_REGISTER = 'register';
 export const PATH_VERIFY_EMAIL = 'verify-email';

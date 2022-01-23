@@ -1,12 +1,12 @@
 import { EmailConfirmedDialogComponent } from './modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
-import { DeleteFileDialogComponent } from './modules/blockml/blockml-tree/file-options/delete-file-dialog/delete-file-dialog.component';
-import { RenameFileDialogComponent } from './modules/blockml/blockml-tree/file-options/rename-file-dialog/rename-file-dialog.component';
-import { CreateFileDialogComponent } from './modules/blockml/blockml-tree/folder-options/create-file-dialog/create-file-dialog.component';
-import { CreateFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
-import { DeleteFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
-import { RenameFolderDialogComponent } from './modules/blockml/blockml-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import { DashboardSaveAsDialogComponent } from './modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { DashboardsNewDialogComponent } from './modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
+import { DeleteFileDialogComponent } from './modules/files/files-tree/file-options/delete-file-dialog/delete-file-dialog.component';
+import { RenameFileDialogComponent } from './modules/files/files-tree/file-options/rename-file-dialog/rename-file-dialog.component';
+import { CreateFileDialogComponent } from './modules/files/files-tree/folder-options/create-file-dialog/create-file-dialog.component';
+import { CreateFolderDialogComponent } from './modules/files/files-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
+import { DeleteFolderDialogComponent } from './modules/files/files-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
+import { RenameFolderDialogComponent } from './modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import { ChartSaveAsDialogComponent } from './modules/model/chart-save-as-dialog/chart-save-as-dialog.component';
 import { ViewBlockmlDialogComponent } from './modules/model/view-blockml-dialog/view-blockml-dialog.component';
 import { CreateBranchDialogComponent } from './modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
@@ -66,15 +66,15 @@ export const appDialogs = [
   AddConnectionDialogComponent,
   DeleteConnectionDialogComponent,
   EditConnectionDialogComponent,
-  // blockml tree - folder options
+  // files tree - folder options
   CreateFolderDialogComponent,
   CreateFileDialogComponent,
   DeleteFolderDialogComponent,
   RenameFolderDialogComponent,
-  // blockml tree - file options
+  // files tree - file options
   DeleteFileDialogComponent,
   RenameFileDialogComponent,
-  // blockml
+  // files
   MergeBranchDialogComponent,
   // model
   ViewBlockmlDialogComponent,

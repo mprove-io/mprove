@@ -71,7 +71,7 @@
               >
                 <div
                   *ngIf="node.data.isSelected === true"
-                  data-cy="blockmlTreeSelectedSymbol"
+                  data-cy="filesTreeSelectedSymbol"
                   class="rounded-full focus:outline-none bg-blue3 text-white h-2 w-2"
                 ></div>
 
@@ -113,7 +113,7 @@
             <button
               *ngIf="node.data.isField === true"
               type="button"
-              data-cy="blockmlTreeFilterButton"
+              data-cy="filesTreeFilterButton"
               class="group h-10 ml-3 rounded w-28 flex items-center justify-center focus:outline-none invisible group-scope-hover:visible"
               [ngClass]="{
                 'text-blue3': node.data.isFiltered === true,

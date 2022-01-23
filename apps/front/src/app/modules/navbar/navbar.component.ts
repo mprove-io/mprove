@@ -41,7 +41,7 @@ export class NavbarComponent {
     private cd: ChangeDetectorRef
   ) {}
 
-  navigateBlockml() {
+  navigateFiles() {
     let userId;
     this.userQuery.userId$
       .pipe(

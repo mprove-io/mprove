@@ -1,6 +1,6 @@
 import { common } from '~front-e2e/barrels/common';
 
-let testId = '_blockml-tree-revert-repo-to-production__ok';
+let testId = '_files-tree-actions__ok';
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
@@ -66,29 +66,46 @@ describe('front-e2e', () => {
     );
     cy.loading();
 
-    cy.get('[data-cy=blockmlEditorMonacoEditor]').click();
+    cy.get('[data-cy=fileEditorSaveButton]').should('be.disabled');
+    cy.get('[data-cy=fileEditorCancelButton]').should('be.disabled');
+    cy.get('[data-cy=filesCommitButton]').should('be.disabled');
+    cy.get('[data-cy=filesPushButton]').should('be.disabled');
 
-    cy.get('.view-line').contains('T3').should('exist');
+    cy.get('[data-cy=fileEditorMonacoEditor]').click();
+
     cy.get('.view-line').contains(text).should('not.exist');
 
     cy.focused().clear({ force: true }).type(text);
 
-    cy.get('[data-cy=blockmlEditorSaveButton]').click();
+    cy.get('[data-cy=fileEditorSaveButton]').should('be.enabled');
+    cy.get('[data-cy=fileEditorCancelButton]').should('be.enabled');
+    cy.get('[data-cy=filesCommitButton]').should('be.disabled');
+    cy.get('[data-cy=filesPushButton]').should('be.disabled');
+
+    cy.get('[data-cy=fileEditorSaveButton]').click();
     cy.loading();
 
-    cy.get('.view-line').contains('T3').should('not.exist');
+    cy.get('[data-cy=fileEditorSaveButton]').should('be.disabled');
+    cy.get('[data-cy=fileEditorCancelButton]').should('be.disabled');
+    cy.get('[data-cy=filesCommitButton]').should('be.enabled');
+    cy.get('[data-cy=filesPushButton]').should('be.disabled');
+
+    cy.get('[data-cy=filesCommitButton]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fileEditorSaveButton]').should('be.disabled');
+    cy.get('[data-cy=fileEditorCancelButton]').should('be.disabled');
+    cy.get('[data-cy=filesCommitButton]').should('be.disabled');
+    cy.get('[data-cy=filesPushButton]').should('be.enabled');
+
+    cy.get('[data-cy=filesPushButton]').click();
+    cy.loading();
+
+    cy.get('[data-cy=fileEditorSaveButton]').should('be.disabled');
+    cy.get('[data-cy=fileEditorCancelButton]').should('be.disabled');
+    cy.get('[data-cy=filesCommitButton]').should('be.disabled');
+    cy.get('[data-cy=filesPushButton]').should('be.disabled');
+
     cy.get('.view-line').contains(text).should('exist');
-
-    cy.get('[data-cy=repoOptionsMenuButton]').click();
-    cy.get('[data-cy=repoOptionsRevertRepoToProductionButton]').click();
-    cy.loading();
-
-    cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_FILES}/${common.PATH_FILE}/readme.md`
-    );
-    cy.loading();
-
-    cy.get('.view-line').contains('T3').should('exist');
-    cy.get('.view-line').contains(text).should('not.exist');
   });
 });

@@ -17,7 +17,7 @@
               <th class="text-left">Alias</th>
               <th class="text-left">Project User</th>
               <th class="text-left">Project Admin</th>
-              <th class="text-left">BlockML Editor</th>
+              <th class="text-left">Files Editor</th>
               <th class="text-left">Model Explorer</th>
             </tr>
           </thead>
@@ -96,12 +96,10 @@
               <td class="w-48">
                 <div class="flex flex-col my-3">
                   <div
-                    *ngFor="
-                      let blockmlEditorProject of user.blockmlEditorProjects
-                    "
+                    *ngFor="let filesEditorProject of user.filesEditorProjects"
                   >
                     <div class="flex flex-row items-center text-base">
-                      <div>{{ blockmlEditorProject | capitalize }} </div>
+                      <div>{{ filesEditorProject | capitalize }} </div>
                     </div>
                   </div>
                 </div></td

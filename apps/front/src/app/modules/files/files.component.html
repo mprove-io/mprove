@@ -3,7 +3,7 @@
     <div class="flex flex-col flex-grow min-w-[2px]">
       <div class="flex flex-row justify-between items-center h-11">
         <div
-          data-cy="blockmlTitle"
+          data-cy="filesTitle"
           class="flex font-semibold text-2xl text-gray1 items-center self-center"
           >{{ pageTitle }}
         </div>
@@ -14,7 +14,7 @@
         >
           <button
             type="button"
-            data-cy="blockmlCommitButton"
+            data-cy="filesCommitButton"
             class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
@@ -31,7 +31,7 @@
 
           <button
             type="button"
-            data-cy="blockmlCommitButton"
+            data-cy="filesCommitButton"
             class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
             *ngIf="repo.repoStatus === repoStatusNeedPull"
             [ngClass]="{
@@ -49,7 +49,7 @@
 
           <button
             type="button"
-            data-cy="blockmlPushButton"
+            data-cy="filesPushButton"
             class="py-2 px-5 ml-3 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-gray-400 cursor-default':
@@ -71,23 +71,23 @@
       </div>
 
       <div class="flex flex-row flex-grow mt-6">
-        <m-blockml-tree class="flex w-1/3 flex-shrink-0"></m-blockml-tree>
+        <m-files-tree class="flex w-1/3 flex-shrink-0"></m-files-tree>
 
         <div class="flex flex-grow ml-6 min-w-[2px]">
           <div class="bg-white rounded shadow-lg w-full">
             <div
-              *ngIf="lastUrl === pathBlockml"
+              *ngIf="lastUrl === pathFiles"
               class="flex justify-center items-center h-full text-xl"
               >Select file...</div
             >
 
-            <router-outlet *ngIf="lastUrl !== pathBlockml"></router-outlet>
+            <router-outlet *ngIf="lastUrl !== pathFiles"></router-outlet>
           </div>
         </div>
       </div>
     </div>
 
-    <m-blockml-right class="flex w-3/12 flex-shrink-0"></m-blockml-right>
+    <m-files-right class="flex w-3/12 flex-shrink-0"></m-files-right>
   </div>
 </div>
 

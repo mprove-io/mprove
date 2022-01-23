@@ -46,7 +46,7 @@ export class OrgUsersItem {
   projectAdminProjects: string[];
 
   @IsString({ each: true })
-  blockmlEditorProjects: string[];
+  filesEditorProjects: string[];
 
   @IsString({ each: true })
   modelExplorerProjects: string[];

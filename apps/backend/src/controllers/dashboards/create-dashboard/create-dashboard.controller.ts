@@ -84,7 +84,7 @@ export class CreateDashboardController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        parentNodeId: `${projectId}/${common.BLOCKML_USERS_FOLDER}/${user.alias}`,
+        parentNodeId: `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`,
         fileName: `${dashboardId}.dashboard`,
         userAlias: user.alias,
         fileText: dashboardFileText

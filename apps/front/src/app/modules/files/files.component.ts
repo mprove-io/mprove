@@ -18,11 +18,11 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'm-blockml',
-  templateUrl: './blockml.component.html'
+  selector: 'm-files',
+  templateUrl: './files.component.html'
 })
-export class BlockmlComponent implements OnInit {
-  pageTitle = constants.BLOCKML_PAGE_TITLE;
+export class FilesComponent implements OnInit {
+  pageTitle = constants.FILES_PAGE_TITLE;
 
   repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
   repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
@@ -52,7 +52,7 @@ export class BlockmlComponent implements OnInit {
     })
   );
 
-  pathBlockml = common.PATH_FILES;
+  pathFiles = common.PATH_FILES;
 
   lastUrl: string;
 

@@ -109,8 +109,8 @@ test('1', async t => {
         idempotencyKey: testId + '2'
       },
       payload: {
-        mconfigId: resp1.payload.dashboardMconfigs[0].mconfigId,
-        queryId: resp1.payload.dashboardMconfigs[0].queryId
+        mconfigId: resp1.payload.dashboard.reports[0].mconfigId,
+        queryId: resp1.payload.dashboard.reports[0].queryId
       }
     };
 

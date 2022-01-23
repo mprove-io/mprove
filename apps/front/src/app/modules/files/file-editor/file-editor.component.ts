@@ -19,11 +19,11 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-blockml-editor',
-  templateUrl: './blockml-editor.component.html',
-  styleUrls: ['blockml-editor.component.scss']
+  selector: 'm-file-editor',
+  templateUrl: './file-editor.component.html',
+  styleUrls: ['file-editor.component.scss']
 })
-export class BlockmlEditorComponent implements OnDestroy {
+export class FileEditorComponent implements OnDestroy {
   editorTheme = 'vs-dark';
 
   line = 1;
@@ -284,7 +284,7 @@ export class BlockmlEditorComponent implements OnDestroy {
   }
 
   canDeactivate(): Promise<boolean> | boolean {
-    // console.log('canDeactivateBlockmlEditor');
+    // console.log('canDeactivateFileEditor');
     if (this.needSave === false) {
       return true;
     }
@@ -303,7 +303,7 @@ export class BlockmlEditorComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyBlockmlEditor');
+    // console.log('ngOnDestroyFileEditor');
     this.fileStore.reset();
   }
 }

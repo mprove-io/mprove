@@ -299,7 +299,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     // this.author =
     //   vizFilePathArray.length > 1 &&
-    //   vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
+    //   vizFilePathArray[1] === common.FILES_USERS_FOLDER
     //     ? vizFilePathArray[2]
     //     : undefined;
 

@@ -1,6 +1,6 @@
 import { common } from '~front-e2e/barrels/common';
 
-let testId = '_blockml-tree-delete-file__ok';
+let testId = '_files-tree-create-folder__ok';
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
@@ -13,7 +13,8 @@ let orgName = testId;
 
 let projectId = common.makeId();
 let projectName = testId;
-let testProjectId = 't3';
+
+let folderName = 'f1';
 
 describe('front-e2e', () => {
   it(testId, () => {
@@ -43,7 +44,6 @@ describe('front-e2e', () => {
         {
           orgId,
           projectId,
-          testProjectId,
           name: projectName
         }
       ],
@@ -63,11 +63,12 @@ describe('front-e2e', () => {
       `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_FILES}`
     );
     cy.loading();
-    cy.get('[data-cy=blockmlTreeItem]').should('have.length', 3);
-    cy.get('[data-cy=fileOptionsMenuButton]').eq(0).click({ force: true });
-    cy.get('[data-cy=fileOptionsDeleteFileButton]').click({ force: true });
-    cy.get('[data-cy=deleteFileDialogDeleteButton]').click();
+    cy.get('[data-cy=filesTreeItem]').should('have.length', 2);
+    cy.get('[data-cy=folderOptionsMenuButton]').click({ force: true });
+    cy.get('[data-cy=folderOptionsNewFolderButton]').click({ force: true });
+    cy.get('[data-cy=createFolderDialogFolderNameInput]').type(folderName);
+    cy.get('[data-cy=createFolderDialogCreateButton]').click();
     cy.loading();
-    cy.get('[data-cy=blockmlTreeItem]').should('have.length', 2);
+    cy.get('[data-cy=filesTreeItem]').should('have.length', 3);
   });
 });

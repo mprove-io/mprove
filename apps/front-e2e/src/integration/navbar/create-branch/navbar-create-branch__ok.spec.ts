@@ -65,6 +65,6 @@ describe('front-e2e', () => {
     cy.get('[data-cy=createBranchDialogBranchIdInput]').type(newBranchName);
     cy.get('[data-cy=createBranchDialogCreateButton]').click();
     cy.loading();
-    cy.get('[data-cy=blockmlTitle]').should('exist');
+    cy.get('[data-cy=filesTitle]').should('exist');
   });
 });

@@ -11,7 +11,7 @@
     <ng-template #treeNodeTemplate let-node="node" let-index="index">
       <div class="flex flex-row h-11 w-[95%]">
         <div
-          data-cy="blockmlTreeItem"
+          data-cy="filesTreeItem"
           class="group flex flex-row cursor-pointer px-5 py-1 w-full select-none"
           [ngClass]="{
             'bg-blue-100': !!fileNodeId && node.data.id === fileNodeId,

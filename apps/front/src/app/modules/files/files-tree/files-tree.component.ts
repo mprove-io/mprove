@@ -26,11 +26,11 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
-  selector: 'm-blockml-tree',
-  templateUrl: './blockml-tree.component.html',
-  styleUrls: ['blockml-tree.component.scss']
+  selector: 'm-files-tree',
+  templateUrl: './files-tree.component.html',
+  styleUrls: ['files-tree.component.scss']
 })
-export class BlockmlTreeComponent implements OnDestroy {
+export class FilesTreeComponent implements OnDestroy {
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
@@ -226,7 +226,7 @@ export class BlockmlTreeComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyBlockmlTree');
+    // console.log('ngOnDestroyFilesTree');
     this.expandLevel$.unsubscribe();
   }
 }

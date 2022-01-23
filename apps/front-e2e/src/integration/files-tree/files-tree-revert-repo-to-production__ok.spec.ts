@@ -1,6 +1,6 @@
 import { common } from '~front-e2e/barrels/common';
 
-let testId = '_blockml-tree-actions__ok';
+let testId = '_files-tree-revert-repo-to-production__ok';
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
@@ -66,46 +66,29 @@ describe('front-e2e', () => {
     );
     cy.loading();
 
-    cy.get('[data-cy=blockmlEditorSaveButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlEditorCancelButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlCommitButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlPushButton]').should('be.disabled');
+    cy.get('[data-cy=fileEditorMonacoEditor]').click();
 
-    cy.get('[data-cy=blockmlEditorMonacoEditor]').click();
-
+    cy.get('.view-line').contains('T3').should('exist');
     cy.get('.view-line').contains(text).should('not.exist');
 
     cy.focused().clear({ force: true }).type(text);
 
-    cy.get('[data-cy=blockmlEditorSaveButton]').should('be.enabled');
-    cy.get('[data-cy=blockmlEditorCancelButton]').should('be.enabled');
-    cy.get('[data-cy=blockmlCommitButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlPushButton]').should('be.disabled');
-
-    cy.get('[data-cy=blockmlEditorSaveButton]').click();
+    cy.get('[data-cy=fileEditorSaveButton]').click();
     cy.loading();
 
-    cy.get('[data-cy=blockmlEditorSaveButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlEditorCancelButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlCommitButton]').should('be.enabled');
-    cy.get('[data-cy=blockmlPushButton]').should('be.disabled');
-
-    cy.get('[data-cy=blockmlCommitButton]').click();
-    cy.loading();
-
-    cy.get('[data-cy=blockmlEditorSaveButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlEditorCancelButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlCommitButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlPushButton]').should('be.enabled');
-
-    cy.get('[data-cy=blockmlPushButton]').click();
-    cy.loading();
-
-    cy.get('[data-cy=blockmlEditorSaveButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlEditorCancelButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlCommitButton]').should('be.disabled');
-    cy.get('[data-cy=blockmlPushButton]').should('be.disabled');
-
+    cy.get('.view-line').contains('T3').should('not.exist');
     cy.get('.view-line').contains(text).should('exist');
+
+    cy.get('[data-cy=repoOptionsMenuButton]').click();
+    cy.get('[data-cy=repoOptionsRevertRepoToProductionButton]').click();
+    cy.loading();
+
+    cy.visit(
+      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_FILES}/${common.PATH_FILE}/readme.md`
+    );
+    cy.loading();
+
+    cy.get('.view-line').contains('T3').should('exist');
+    cy.get('.view-line').contains(text).should('not.exist');
   });
 });

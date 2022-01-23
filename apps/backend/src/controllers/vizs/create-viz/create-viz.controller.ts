@@ -87,7 +87,7 @@ export class CreateVizController {
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,
-        parentNodeId: `${projectId}/${common.BLOCKML_USERS_FOLDER}/${user.alias}`,
+        parentNodeId: `${projectId}/${common.FILES_USERS_FOLDER}/${user.alias}`,
         fileName: `${vizId}.viz`,
         fileText: vizFileText
       }

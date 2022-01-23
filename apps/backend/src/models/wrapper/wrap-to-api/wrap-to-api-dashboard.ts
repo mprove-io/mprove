@@ -23,7 +23,7 @@ export function wrapToApiDashboard(item: {
   let filePathArray = dashboard.file_path.split('/');
 
   let author =
-    filePathArray.length > 1 && filePathArray[1] === common.BLOCKML_USERS_FOLDER
+    filePathArray.length > 1 && filePathArray[1] === common.FILES_USERS_FOLDER
       ? filePathArray[2]
       : undefined;
 

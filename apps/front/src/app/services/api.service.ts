@@ -56,20 +56,20 @@ export class ApiService {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
     // special
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
-    // blockml tree
+    // files tree
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
-    // blockml editor
+    // files editor
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-    // blockml
+    // files
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
-    // blockml repo options
+    // files repo options
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToProduction,
     // model

@@ -1,6 +1,6 @@
 import { common } from '~front-e2e/barrels/common';
 
-let testId = '_blockml-tree-rename-folder__ok';
+let testId = '_files-tree-delete-folder__ok';
 
 let userId = common.makeId();
 let email = `${testId}@example.com`;
@@ -65,13 +65,11 @@ describe('front-e2e', () => {
       `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_FILES}`
     );
     cy.loading();
+    cy.get('[data-cy=filesTreeItem]').should('have.length', 3);
     cy.get('[data-cy=folderOptionsMenuButton]').eq(1).click({ force: true });
-    cy.get('[data-cy=folderOptionsRenameFolderButton]').click({ force: true });
-    cy.get('[data-cy=renameFolderDialogFolderNameInput]')
-      .clear({ force: true })
-      .type(newFolderName);
-    cy.get('[data-cy=renameFolderDialogSaveButton]').click();
+    cy.get('[data-cy=folderOptionsDeleteFolderButton]').click({ force: true });
+    cy.get('[data-cy=deleteFolderDialogDeleteButton]').click();
     cy.loading();
-    cy.get('[data-cy=blockmlTreeItem]').eq(1).should('contain', newFolderName);
+    cy.get('[data-cy=filesTreeItem]').should('have.length', 2);
   });
 });

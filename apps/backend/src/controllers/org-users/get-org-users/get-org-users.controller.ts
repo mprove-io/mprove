@@ -106,7 +106,7 @@ export class GetOrgUsersController {
             let project = projects.find(p => p.project_id === z);
             return project.name;
           }),
-        blockmlEditorProjects: userMembers
+        filesEditorProjects: userMembers
           .filter(m => m.is_editor === common.BoolEnum.TRUE)
           .map(m => m.project_id)
           .map(z => {

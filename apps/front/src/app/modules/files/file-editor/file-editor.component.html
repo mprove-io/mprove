@@ -25,7 +25,7 @@
     <div *ngIf="nav?.isRepoProd === false" class="space-x-3 flex-shrink-0">
       <button
         type="button"
-        data-cy="blockmlEditorSaveButton"
+        data-cy="fileEditorSaveButton"
         class="py-2 w-28 text-white text-base rounded font-medium focus:outline-none"
         [ngClass]="{
           'bg-gray-400 cursor-default': !needSave,
@@ -38,7 +38,7 @@
 
       <button
         type="button"
-        data-cy="blockmlEditorCancelButton"
+        data-cy="fileEditorCancelButton"
         class="py-2 w-28 text-base rounded border font-medium focus:outline-none"
         [ngClass]="{
           ' text-gray-400 border-gray-400 cursor-default': !needSave,
@@ -57,7 +57,7 @@
     <ngx-monaco-editor
       style="height: 100%"
       class="my-code-editor"
-      data-cy="blockmlEditorMonacoEditor"
+      data-cy="fileEditorMonacoEditor"
       [options]="editorOptions"
       [(ngModel)]="content"
       (ngModelChange)="onTextChanged()"

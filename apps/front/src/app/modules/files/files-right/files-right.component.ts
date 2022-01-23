@@ -11,10 +11,10 @@ import { StructState } from '~front/app/stores/struct.store';
 import { UiStore } from '~front/app/stores/ui.store';
 
 @Component({
-  selector: 'm-blockml-right',
-  templateUrl: './blockml-right.component.html'
+  selector: 'm-files-right',
+  templateUrl: './files-right.component.html'
 })
-export class BlockmlRightComponent {
+export class FilesRightComponent {
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {

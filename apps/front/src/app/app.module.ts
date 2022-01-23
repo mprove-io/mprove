@@ -16,9 +16,9 @@ import { appDialogs } from './app-dialogs';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './modules/auth/auth.module';
-import { BlockmlModule } from './modules/blockml/blockml.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
+import { FilesModule } from './modules/files/files.module';
 import { ModelModule } from './modules/model/model.module';
 import { ModelsModule } from './modules/models/models.module';
 import { NavModule } from './modules/nav/nav.module';
@@ -46,7 +46,7 @@ registerLocaleData(en);
     ProfileModule,
     OrgModule,
     ProjectModule,
-    BlockmlModule,
+    FilesModule,
     ModelModule,
     DashboardModule,
     NgxSpinnerModule,

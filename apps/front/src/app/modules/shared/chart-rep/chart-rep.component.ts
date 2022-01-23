@@ -131,7 +131,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
     this.author =
       dashboardFilePathArray.length > 1 &&
-      dashboardFilePathArray[1] === common.BLOCKML_USERS_FOLDER
+      dashboardFilePathArray[1] === common.FILES_USERS_FOLDER
         ? dashboardFilePathArray[2]
         : undefined;
 
