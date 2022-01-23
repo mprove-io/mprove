@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import { RData } from './query.service';
 
 @Injectable({ providedIn: 'root' })
@@ -9,19 +8,19 @@ export class DataService {
   constructor() {}
 
   getValueData(item: {
-    columnFields: interfaces.ColumnField[];
+    mconfigFields: common.MconfigField[];
     data: RData[];
     currentValueFieldId: string;
     previousValueFieldId: string;
   }) {
     let {
-      columnFields,
+      mconfigFields,
       data,
       currentValueFieldId,
       previousValueFieldId
     } = item;
 
-    let currentValueField = columnFields.find(
+    let currentValueField = mconfigFields.find(
       f => f.id === currentValueFieldId
     );
 
@@ -31,7 +30,7 @@ export class DataService {
 
     let previousValueField;
 
-    previousValueField = columnFields.find(f => f.id === previousValueFieldId);
+    previousValueField = mconfigFields.find(f => f.id === previousValueFieldId);
 
     if (!previousValueField) {
       return [currentValue, 0];
@@ -45,7 +44,7 @@ export class DataService {
   }
 
   getSingleData(item: {
-    selectFields: interfaces.ColumnField[];
+    selectFields: common.MconfigField[];
     data: RData[];
     xFieldId: string;
     yFieldId: string;
@@ -69,7 +68,7 @@ export class DataService {
   }
 
   getSingleDataForNumberCard(item: {
-    selectFields: interfaces.ColumnField[];
+    selectFields: common.MconfigField[];
     data: any[];
     xFieldId: string;
     yFieldId: string;
@@ -98,7 +97,7 @@ export class DataService {
   }
 
   getMultiData(item: {
-    selectFields: interfaces.ColumnField[];
+    selectFields: common.MconfigField[];
     data: any[];
     multiFieldId: string;
     xFieldId: string;
@@ -122,7 +121,7 @@ export class DataService {
       return [];
     }
 
-    let yFields: interfaces.ColumnField[] = [];
+    let yFields: common.MconfigField[] = [];
 
     yFieldsIds.forEach(yFieldId => {
       let yField = selectFields.find(f => f.id === yFieldId);

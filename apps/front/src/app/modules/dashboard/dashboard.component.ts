@@ -29,12 +29,8 @@ class LayoutItem {
   h: number;
   x: number;
   y: number;
-  report: common.ReportX; // ExtendedReportExtra;
+  report: common.ReportX;
 }
-
-// export class ExtendedReportExtra extends ReportWithMconfigAndQuery {
-//   hasAccessToModel?: boolean;
-// }
 
 @Component({
   selector: 'm-dashboard',

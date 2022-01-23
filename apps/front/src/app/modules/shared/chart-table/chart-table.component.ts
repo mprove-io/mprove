@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-table',
@@ -18,7 +17,7 @@ export class ChartTableComponent {
   isFormat: boolean;
 
   @Input()
-  sortedColumns: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
 
   @Input()
   hideColumns: string[];

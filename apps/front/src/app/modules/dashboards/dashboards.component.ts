@@ -6,7 +6,6 @@ import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
-import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -324,7 +323,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       mconfigId: item.mconfigId
     };
 
-    let mconfig: common.Mconfig = await this.apiService
+    let mconfig: common.MconfigX = await this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
         payloadGetMconfig
@@ -355,16 +354,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    let sortedColumns = getColumnFields({
-      mconfig: mconfig,
-      fields: model.fields
-    });
-
     let qData =
       mconfig.queryId === query.queryId
         ? this.queryService.makeQData({
             data: query.data,
-            columns: sortedColumns
+            columns: mconfig.fields
           })
         : [];
 
@@ -375,7 +369,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
-      sortedColumns: sortedColumns
+      mconfigFields: mconfig.fields
     });
 
     let isSelectValid = checkSelectResult.isSelectValid;
@@ -386,7 +380,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      sortedColumns: sortedColumns,
       model: model,
       canAccessModel: canAccessModel,
       showNav: true,

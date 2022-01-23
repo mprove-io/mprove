@@ -149,7 +149,7 @@ export class MyDialogService {
     });
   }
 
-  showViewBlockml(item: { apiService: any; mconfig: common.Mconfig }): void {
+  showViewBlockml(item: { apiService: any; mconfig: common.MconfigX }): void {
     this.dialogService.open(ViewBlockmlDialogComponent, {
       enableClose: true,
       closeButton: false,
@@ -160,10 +160,9 @@ export class MyDialogService {
 
   showChart(item: {
     apiService: any;
-    mconfig: common.Mconfig;
+    mconfig: common.MconfigX;
     query: common.Query;
     qData: RData[];
-    sortedColumns: interfaces.ColumnField[];
     model: common.Model;
     canAccessModel: boolean;
     showNav: boolean;
@@ -186,7 +185,7 @@ export class MyDialogService {
     projectId: string;
     isRepoProd: boolean;
     branchId: string;
-    mconfig: common.Mconfig;
+    mconfig: common.MconfigX;
     query: common.Query;
     model: common.Model;
   }): void {
@@ -232,7 +231,7 @@ export class MyDialogService {
     projectId: string;
     isRepoProd: boolean;
     branchId: string;
-    mconfig: common.Mconfig;
+    mconfig: common.MconfigX;
     viz: common.Viz;
   }): void {
     this.dialogService.open(EditVizInfoDialogComponent, {

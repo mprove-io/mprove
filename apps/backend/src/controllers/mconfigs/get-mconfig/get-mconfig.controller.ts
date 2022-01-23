@@ -4,10 +4,14 @@ import { entities } from '~backend/barrels/entities';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { MconfigsService } from '~backend/services/mconfigs.service';
+import { ModelsService } from '~backend/services/models.service';
 
 @Controller()
 export class GetMconfigController {
-  constructor(private mconfigsService: MconfigsService) {}
+  constructor(
+    private mconfigsService: MconfigsService,
+    private modelsService: ModelsService
+  ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig)
   async getMconfig(
@@ -21,8 +25,16 @@ export class GetMconfigController {
       mconfigId: mconfigId
     });
 
+    let model = await this.modelsService.getModelCheckExists({
+      structId: mconfig.struct_id,
+      modelId: mconfig.model_id
+    });
+
     let payload: apiToBackend.ToBackendGetMconfigResponsePayload = {
-      mconfig: wrapper.wrapToApiMconfig(mconfig)
+      mconfig: wrapper.wrapToApiMconfig({
+        mconfig: mconfig,
+        modelFields: model.fields
+      })
     };
 
     return payload;

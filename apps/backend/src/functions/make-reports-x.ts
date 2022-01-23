@@ -2,7 +2,7 @@ import { common } from '~backend/barrels/common';
 
 export function makeReportsX(item: {
   reports: common.Report[];
-  mconfigs: common.Mconfig[];
+  mconfigs: common.MconfigX[];
   queries: common.Query[];
   isAddMconfigAndQuery: boolean;
   models: common.ModelX[];
@@ -11,8 +11,7 @@ export function makeReportsX(item: {
 
   let reportsX: common.ReportX[] = reports.map(x => {
     let reportX: common.ReportX = Object.assign({}, x, <common.ReportX>{
-      hasAccessToModel: models.find(m => m.modelId === reportX.modelId)
-        .hasAccess
+      hasAccessToModel: models.find(m => m.modelId === x.modelId).hasAccess
     });
 
     if (isAddMconfigAndQuery === true) {

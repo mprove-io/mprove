@@ -5,7 +5,7 @@ import { makeReportsX } from '~backend/functions/make-reports-x';
 
 export function wrapToApiDashboard(item: {
   dashboard: entities.DashboardEntity;
-  mconfigs: common.Mconfig[];
+  mconfigs: common.MconfigX[];
   queries: common.Query[];
   member: common.Member;
   isAddMconfigAndQuery: boolean;

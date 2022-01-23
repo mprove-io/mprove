@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { interfaces } from '~front/barrels/interfaces';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-field-label',
@@ -7,7 +7,7 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 export class FieldLabelComponent {
   @Input()
-  column: interfaces.ColumnField;
+  column: common.MconfigField;
 
   constructor() {}
 }

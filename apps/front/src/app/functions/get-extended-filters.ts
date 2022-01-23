@@ -2,7 +2,7 @@ import { common } from '~front/barrels/common';
 
 export function getExtendedFilters(item: {
   fields: common.ModelField[];
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
 }) {
   let { fields, mconfig } = item;
 

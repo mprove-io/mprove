@@ -16,7 +16,7 @@ export class ChartOptionsComponent implements OnDestroy {
   isDisabled: boolean;
 
   @Input()
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
 
   menuId = 'chartOptions';
 

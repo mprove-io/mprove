@@ -10,7 +10,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { MqQuery } from '../queries/mq.query';
 import { ApiService } from '../services/api.service';
-import { emptyMconfig, emptyQuery, MqStore } from '../stores/mq.store';
+import { emptyMconfig, emptyQuery, MqState, MqStore } from '../stores/mq.store';
 
 @Injectable({ providedIn: 'root' })
 export class MconfigResolver implements Resolve<Observable<boolean>> {
@@ -26,7 +26,7 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     let parametersMconfigId = route.params[common.PARAMETER_MCONFIG_ID];
 
-    let mconfig: common.Mconfig;
+    let mconfig: common.MconfigX;
     let query: common.Query;
     this.mqQuery
       .select()
@@ -68,7 +68,9 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
         .pipe(
           map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
             this.mqStore.update(state =>
-              Object.assign({}, state, { mconfig: resp.payload.mconfig })
+              Object.assign({}, state, <MqState>{
+                mconfig: resp.payload.mconfig
+              })
             );
             return true;
           })

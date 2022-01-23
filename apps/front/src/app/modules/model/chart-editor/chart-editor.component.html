@@ -1,4 +1,4 @@
-<div class="mx-5 mt-2" *ngIf="sortedColumns?.length > 0">
+<div class="mx-5 mt-2" *ngIf="mconfigFields?.length > 0">
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
@@ -55,7 +55,7 @@
 
     <div class="flex flex-col ml-5 mt-2 items-start space-y-4">
       <div
-        *ngFor="let column of sortedColumns"
+        *ngFor="let column of mconfigFields"
         class="flex flex-row items-center"
       >
         <button

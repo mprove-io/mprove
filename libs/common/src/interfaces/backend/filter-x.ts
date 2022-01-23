@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { Filter } from '../blockml/filter';
 import { Fraction } from '../blockml/fraction';
-import { ModelFieldX } from './model-field-x';
+import { MconfigField } from './mconfig-field';
 
 export class FilterX extends Filter {
   @ValidateNested()
@@ -10,6 +10,6 @@ export class FilterX extends Filter {
   fractions: Fraction[];
 
   @ValidateNested()
-  @Type(() => ModelFieldX)
-  field: ModelFieldX;
+  @Type(() => MconfigField)
+  field: MconfigField;
 }

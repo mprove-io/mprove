@@ -9,7 +9,6 @@ import { ModelStore } from '~front/app/stores/model.store';
 import { MqStore } from '~front/app/stores/mq.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-dialog',
@@ -25,11 +24,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
   checkRunning$: Subscription;
 
-  sortedColumns: interfaces.ColumnField[];
   canAccessModel: boolean;
   qData: RData[];
   query: common.Query;
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
   model: common.Model;
   extendedFilters: common.FilterX[];
   isSelectValid = false;
@@ -44,7 +42,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.sortedColumns = this.ref.data.sortedColumns;
     this.qData = this.ref.data.qData;
     this.mconfig = this.ref.data.mconfig;
     this.query = this.ref.data.query;
@@ -86,7 +83,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                     this.mconfig.queryId === this.query.queryId
                       ? this.queryService.makeQData({
                           data: this.query.data,
-                          columns: this.sortedColumns
+                          columns: this.mconfig.fields
                         })
                       : [];
 

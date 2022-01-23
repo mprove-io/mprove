@@ -9,7 +9,7 @@
           'bg-purple-300': column.fieldClass === fieldClassMeasure,
           'bg-green1': column.fieldClass === fieldClassCalculation
         }"
-        *ngFor="let column of sortedColumns; let columnIndex = index"
+        *ngFor="let column of mconfigFields; let columnIndex = index"
       >
         <div
           *ngIf="isEdit === true"
@@ -54,14 +54,14 @@
             [ngClass]="{
               'cursor-default text-gray-400':
                 columnIndex === 0 ||
-                column.fieldClass !== sortedColumns[columnIndex - 1].fieldClass,
+                column.fieldClass !== mconfigFields[columnIndex - 1].fieldClass,
               'hover:bg-blue2':
                 columnIndex !== 0 &&
-                column.fieldClass === sortedColumns[columnIndex - 1].fieldClass
+                column.fieldClass === mconfigFields[columnIndex - 1].fieldClass
             }"
             [disabled]="
               columnIndex === 0 ||
-              column.fieldClass !== sortedColumns[columnIndex - 1].fieldClass
+              column.fieldClass !== mconfigFields[columnIndex - 1].fieldClass
             "
             (click)="moveLeft(column.id)"
           >
@@ -72,16 +72,16 @@
             class="h-8 w-8 flex items-center justify-center rounded focus:outline-none invisible group-hover:visible"
             [ngClass]="{
               'cursor-default text-gray-400':
-                columnIndex + 1 === sortedColumns.length ||
-                column.fieldClass !== sortedColumns[columnIndex + 1].fieldClass,
+                columnIndex + 1 === mconfigFields.length ||
+                column.fieldClass !== mconfigFields[columnIndex + 1].fieldClass,
               'hover:bg-blue2':
-                columnIndex + 1 !== sortedColumns.length &&
-                column.fieldClass === sortedColumns[columnIndex + 1].fieldClass
+                columnIndex + 1 !== mconfigFields.length &&
+                column.fieldClass === mconfigFields[columnIndex + 1].fieldClass
             }"
             (click)="moveRight(column.id)"
             [disabled]="
-              columnIndex + 1 === sortedColumns.length ||
-              column.fieldClass !== sortedColumns[columnIndex + 1].fieldClass
+              columnIndex + 1 === mconfigFields.length ||
+              column.fieldClass !== mconfigFields[columnIndex + 1].fieldClass
             "
           >
             <m-arrow-right-icon></m-arrow-right-icon>
@@ -124,7 +124,7 @@
       <td
         style="min-width: 200px; max-width: 350px"
         data-cy="mainTableCell"
-        *ngFor="let column of sortedColumns"
+        *ngFor="let column of mconfigFields"
         class="px-5 truncate"
         [ngClass]="{
           'bg-gray-100': (i + 1) % 2 === 0,
@@ -141,7 +141,7 @@
       <!-- <td
         style="min-width: 200px; max-width: 350px"
         data-cy="mainTableCell"
-        *ngFor="let column of sortedColumns"
+        *ngFor="let column of mconfigFields"
         class="px-5 truncate"
         [ngClass]="{
           'bg-blue6':

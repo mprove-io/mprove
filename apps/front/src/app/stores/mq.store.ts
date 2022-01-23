@@ -4,10 +4,10 @@ import { common } from '~front/barrels/common';
 
 export class MqState {
   query: common.Query;
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
 }
 
-export const emptyMconfig: common.Mconfig = {
+export const emptyMconfig: common.MconfigX = {
   structId: undefined,
   mconfigId: common.EMPTY,
   queryId: undefined,
@@ -19,6 +19,7 @@ export const emptyMconfig: common.Mconfig = {
   limit: undefined,
   listen: undefined,
   filters: [],
+  fields: [],
   chart: undefined,
   temp: true,
   serverTs: 1

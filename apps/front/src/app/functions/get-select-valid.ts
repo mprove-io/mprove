@@ -1,20 +1,19 @@
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 export function getSelectValid(item: {
   chart: common.Chart;
-  sortedColumns: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
 }) {
-  let { chart, sortedColumns } = item;
+  let { chart, mconfigFields } = item;
 
-  let xField = sortedColumns.find(f => f.id === chart.xField);
+  let xField = mconfigFields.find(f => f.id === chart.xField);
 
-  let yField = sortedColumns.find(f => f.id === chart.yField);
+  let yField = mconfigFields.find(f => f.id === chart.yField);
 
   let yFieldsIsOk = true;
 
   if (common.isDefined(chart.yFields)) {
-    let yFields = sortedColumns.filter(f => chart.yFields.indexOf(f.id) > -1);
+    let yFields = mconfigFields.filter(f => chart.yFields.indexOf(f.id) > -1);
     let yFieldsResultIsNumber = yFields.filter(
       f => f.result === common.FieldResultEnum.Number
     );
@@ -23,27 +22,27 @@ export function getSelectValid(item: {
     }
   }
 
-  let valueField = sortedColumns.find(f => f.id === chart.valueField);
+  let valueField = mconfigFields.find(f => f.id === chart.valueField);
 
-  let previousValueField = sortedColumns.find(
+  let previousValueField = mconfigFields.find(
     f => f.id === chart.previousValueField
   );
 
   let isSelectValid = true;
   let errorMessage;
 
-  let selectedDimensions = sortedColumns.filter(
+  let selectedDimensions = mconfigFields.filter(
     x => x.fieldClass === common.FieldClassEnum.Dimension
   );
 
-  let selectedDimensionsIsResultNumberOrTs = sortedColumns.filter(
+  let selectedDimensionsIsResultNumberOrTs = mconfigFields.filter(
     x =>
       x.fieldClass === common.FieldClassEnum.Dimension &&
       (x.result === common.FieldResultEnum.Number ||
         x.result === common.FieldResultEnum.Ts)
   );
 
-  let selectedMeasuresAndCalculations = sortedColumns.filter(
+  let selectedMeasuresAndCalculations = mconfigFields.filter(
     x =>
       x.fieldClass === common.FieldClassEnum.Measure ||
       x.fieldClass === common.FieldClassEnum.Calculation

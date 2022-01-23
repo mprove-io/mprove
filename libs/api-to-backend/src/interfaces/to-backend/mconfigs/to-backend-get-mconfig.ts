@@ -16,8 +16,8 @@ export class ToBackendGetMconfigRequest extends ToBackendRequest {
 
 export class ToBackendGetMconfigResponsePayload {
   @ValidateNested()
-  @Type(() => common.Mconfig)
-  mconfig: common.Mconfig;
+  @Type(() => common.MconfigX)
+  mconfig: common.MconfigX;
 }
 
 export class ToBackendGetMconfigResponse extends common.MyResponse {

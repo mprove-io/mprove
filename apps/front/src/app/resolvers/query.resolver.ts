@@ -26,7 +26,7 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     let parametersQueryId = route.params[common.PARAMETER_QUERY_ID];
 
-    let mconfig: common.Mconfig;
+    let mconfig: common.MconfigX;
     let query: common.Query;
     this.mqQuery
       .select()

@@ -9,7 +9,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
-import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -25,7 +24,6 @@ import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-viz',
@@ -57,10 +55,10 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
   author: string;
 
-  sortedColumns: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
   qData: RData[];
   query: common.Query;
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
   model: common.Model;
 
   menuId = common.makeId();
@@ -147,7 +145,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       mconfigId: this.report.mconfigId
     };
 
-    let mconfig: common.Mconfig = await this.apiService
+    let mconfig: common.MconfigX = await this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
         payloadGetMconfig
@@ -183,16 +181,13 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    this.sortedColumns = getColumnFields({
-      mconfig: mconfig,
-      fields: model.fields
-    });
+    this.mconfigFields = mconfig.fields;
 
     this.qData =
       mconfig.queryId === query.queryId
         ? this.queryService.makeQData({
             data: query.data,
-            columns: this.sortedColumns
+            columns: mconfig.fields
           })
         : [];
 
@@ -235,7 +230,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
-      sortedColumns: this.sortedColumns
+      mconfigFields: this.mconfigFields
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;
@@ -334,7 +329,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      sortedColumns: this.sortedColumns,
       model: this.model,
       canAccessModel: this.canAccessModel,
       showNav: true,
@@ -382,7 +376,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
             data: this.query.data,
-            columns: this.sortedColumns
+            columns: this.mconfigFields
           })
         : [];
 

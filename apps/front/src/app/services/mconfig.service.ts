@@ -18,7 +18,7 @@ export class MconfigService {
     private navigateService: NavigateService
   ) {}
 
-  removeField(item: { newMconfig: common.Mconfig; fieldId: string }) {
+  removeField(item: { newMconfig: common.MconfigX; fieldId: string }) {
     let { newMconfig, fieldId } = item;
 
     newMconfig = this.removeFieldFromSelect({ newMconfig, fieldId });
@@ -29,7 +29,7 @@ export class MconfigService {
   }
 
   private removeFieldFromSelect(item: {
-    newMconfig: common.Mconfig;
+    newMconfig: common.MconfigX;
     fieldId: string;
   }) {
     let { newMconfig, fieldId } = item;
@@ -45,7 +45,7 @@ export class MconfigService {
   }
 
   private removeFieldFromSortings(item: {
-    newMconfig: common.Mconfig;
+    newMconfig: common.MconfigX;
     fieldId: string;
   }) {
     let { newMconfig, fieldId } = item;
@@ -73,7 +73,7 @@ export class MconfigService {
     return newMconfig;
   }
 
-  removeFieldFromChart(item: { newMconfig: common.Mconfig; fieldId: string }) {
+  removeFieldFromChart(item: { newMconfig: common.MconfigX; fieldId: string }) {
     let { newMconfig, fieldId } = item;
 
     if (newMconfig.chart.xField === fieldId) {
@@ -123,7 +123,7 @@ export class MconfigService {
     return newMconfig;
   }
 
-  navCreateMconfigAndQuery(newMconfig: common.Mconfig) {
+  navCreateMconfigAndQuery(newMconfig: common.MconfigX) {
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
       mconfig: newMconfig
     };
@@ -151,7 +151,7 @@ export class MconfigService {
   }
 
   optimisticNavCreateMconfigAndQuery(item: {
-    newMconfig: common.Mconfig;
+    newMconfig: common.MconfigX;
     queryId: string;
   }) {
     let { newMconfig, queryId } = item;

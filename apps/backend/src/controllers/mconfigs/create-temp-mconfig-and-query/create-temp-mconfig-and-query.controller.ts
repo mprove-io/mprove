@@ -109,7 +109,10 @@ export class CreateTempMconfigAndQueryController {
     });
 
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryResponsePayload = {
-      mconfig: wrapper.wrapToApiMconfig(records.mconfigs[0]),
+      mconfig: wrapper.wrapToApiMconfig({
+        mconfig: records.mconfigs[0],
+        modelFields: model.fields
+      }),
       query: common.isDefined(query)
         ? wrapper.wrapToApiQuery(query)
         : wrapper.wrapToApiQuery(records.queries[0])

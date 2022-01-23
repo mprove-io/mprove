@@ -2,7 +2,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 export function prepareReport(item: {
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
   isForDashboard: boolean;
 }) {
   let { mconfig, isForDashboard } = item;

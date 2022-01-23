@@ -68,7 +68,7 @@
   ></m-bricks>
 
   <div
-    *ngIf="isShow === true && sortedColumns?.length > 0"
+    *ngIf="isShow === true && mconfig?.fields?.length > 0"
     class="flex overflow-auto"
     [ngClass]="{
       'flex-grow': mconfig?.chart.type !== chartTypeEnumTable,
@@ -83,7 +83,7 @@
   >
     <m-chart-view
       class="w-full h-full overflow-auto"
-      [sortedColumns]="sortedColumns"
+      [mconfigFields]="mconfig?.fields"
       [qData]="qData"
       [chart]="mconfig?.chart"
       [queryStatus]="query?.status"
@@ -91,7 +91,7 @@
   </div>
 
   <div
-    *ngIf="isShow === true && isData === true && sortedColumns?.length > 0"
+    *ngIf="isShow === true && isData === true && mconfig?.fields?.length > 0"
     class="flex flex-row mb-3 mt-10"
   >
     <ui-switch
@@ -106,7 +106,7 @@
   </div>
 
   <div
-    *ngIf="isShow === true && isData === true && sortedColumns?.length > 0"
+    *ngIf="isShow === true && isData === true && mconfig?.fields?.length > 0"
     class="flex h-1/3 overflow-auto max-w-max w-full"
   >
     <m-main-table
@@ -114,7 +114,7 @@
       [isFormat]="isFormat"
       [mconfig]="mconfig"
       [qData]="qData"
-      [sortedColumns]="sortedColumns"
+      [mconfigFields]="mconfig?.fields"
     ></m-main-table>
   </div>
 

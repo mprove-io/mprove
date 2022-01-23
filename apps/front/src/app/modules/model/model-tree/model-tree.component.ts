@@ -54,7 +54,7 @@ export class ModelTreeComponent implements AfterViewInit {
     })
   );
 
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
   mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {
       this.mconfig = x;

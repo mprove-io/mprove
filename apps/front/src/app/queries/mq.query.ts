@@ -18,7 +18,7 @@ export class MqQuery extends Query<MqState> {
     this.modelQuery.fields$,
     this.mconfig$
   ]).pipe(
-    map(([fields, mconfig]: [common.ModelField[], common.Mconfig]) =>
+    map(([fields, mconfig]: [common.ModelField[], common.MconfigX]) =>
       getExtendedFilters({
         fields: fields,
         mconfig: mconfig

@@ -9,7 +9,6 @@ import { MconfigService } from '~front/app/services/mconfig.service';
 import { RData } from '~front/app/services/query.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-main-table',
@@ -26,13 +25,13 @@ export class MainTableComponent {
   isFormat = true;
 
   @Input()
-  sortedColumns: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
 
   @Input()
   qData: RData[];
 
   @Input()
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
 
   @Input()
   isEdit: boolean;
@@ -151,7 +150,7 @@ export class MainTableComponent {
   }
 
   moveLeft(columnId: string) {
-    let sortedSelect = this.sortedColumns.map(x => x.id);
+    let sortedSelect = this.mconfigFields.map(x => x.id);
     let index = sortedSelect.indexOf(columnId);
 
     let newMconfig = this.structService.makeMconfig();
@@ -169,7 +168,7 @@ export class MainTableComponent {
   }
 
   moveRight(columnId: string) {
-    let sortedSelect = this.sortedColumns.map(x => x.id);
+    let sortedSelect = this.mconfigFields.map(x => x.id);
     let index = sortedSelect.indexOf(columnId);
 
     let newMconfig = this.structService.makeMconfig();

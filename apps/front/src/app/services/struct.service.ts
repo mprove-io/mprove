@@ -32,7 +32,7 @@ export class StructService {
     })
   );
 
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
   mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {
       this.mconfig = x;
@@ -51,17 +51,18 @@ export class StructService {
     this.mconfig$.subscribe();
   }
 
-  makeMconfig(): common.Mconfig {
+  makeMconfig(): common.MconfigX {
     let newMconfigId = common.makeId();
     let newQueryId = common.makeId();
 
-    let emptyMconfig: common.Mconfig = {
+    let emptyMconfig: common.MconfigX = {
       structId: this.struct.structId,
       mconfigId: newMconfigId,
       queryId: newQueryId,
       modelId: this.model.modelId,
       select: [],
       sortings: [],
+      fields: [],
       sorts: null,
       timezone:
         this.struct.allowTimezones === false
@@ -154,7 +155,7 @@ export class StructService {
     let mconfigCopy = common.makeCopy(this.mconfig);
 
     return common.isDefined(this.mconfig.structId)
-      ? Object.assign(mconfigCopy, <common.Mconfig>{
+      ? Object.assign(mconfigCopy, <common.MconfigX>{
           mconfigId: newMconfigId,
           queryId: newQueryId,
           temp: true,

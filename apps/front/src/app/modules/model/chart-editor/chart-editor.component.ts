@@ -7,7 +7,6 @@ import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
 
 export class ColorSchemeItem {
   label: string;
@@ -99,14 +98,14 @@ export class ChartEditorComponent implements OnChanges {
   queryId: string;
 
   @Input()
-  sortedColumns: interfaces.ColumnField[];
-  sortedColumnsPlusEmpty: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
+  mconfigFieldsPlusEmpty: common.MconfigField[];
 
-  sortedDimensions: interfaces.ColumnField[];
-  sortedDimensionsPlusEmpty: interfaces.ColumnField[];
+  sortedDimensions: common.MconfigField[];
+  sortedDimensionsPlusEmpty: common.MconfigField[];
 
-  sortedMeasuresAndCalculations: interfaces.ColumnField[];
-  sortedMeasuresAndCalculationsPlusEmpty: interfaces.ColumnField[];
+  sortedMeasuresAndCalculations: common.MconfigField[];
+  sortedMeasuresAndCalculationsPlusEmpty: common.MconfigField[];
 
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
@@ -468,11 +467,11 @@ export class ChartEditorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes);
 
-    if (common.isUndefined(this.sortedColumns)) {
+    if (common.isUndefined(this.mconfigFields)) {
       return;
     }
 
-    let emptyColumn: interfaces.ColumnField = {
+    let emptyColumn: common.MconfigField = {
       id: undefined,
       hidden: undefined,
       label: undefined,
@@ -494,15 +493,15 @@ export class ChartEditorComponent implements OnChanges {
       isHideColumn: undefined
     };
 
-    this.sortedColumnsPlusEmpty = [...this.sortedColumns, emptyColumn];
+    this.mconfigFieldsPlusEmpty = [...this.mconfigFields, emptyColumn];
 
-    this.sortedDimensions = this.sortedColumns.filter(
+    this.sortedDimensions = this.mconfigFields.filter(
       x => x.fieldClass === common.FieldClassEnum.Dimension
     );
 
     this.sortedDimensionsPlusEmpty = [...this.sortedDimensions, emptyColumn];
 
-    this.sortedMeasuresAndCalculations = this.sortedColumns.filter(
+    this.sortedMeasuresAndCalculations = this.mconfigFields.filter(
       x =>
         x.fieldClass === common.FieldClassEnum.Measure ||
         x.fieldClass === common.FieldClassEnum.Calculation
@@ -567,7 +566,7 @@ export class ChartEditorComponent implements OnChanges {
       control: this.formatNumberDataLabelForm.controls['formatNumberDataLabel'],
       value: this.formatNumberService.getFormatNumberDataLabel({
         chart: this.chart,
-        sortedColumns: this.sortedColumns
+        mconfigFields: this.mconfigFields
       }).formatNumber
     });
 
@@ -575,7 +574,7 @@ export class ChartEditorComponent implements OnChanges {
       control: this.formatNumberValueForm.controls['formatNumberValue'],
       value: this.formatNumberService.getFormatNumberValue({
         chart: this.chart,
-        sortedColumns: this.sortedColumns
+        mconfigFields: this.mconfigFields
       }).formatNumber
     });
 
@@ -583,7 +582,7 @@ export class ChartEditorComponent implements OnChanges {
       control: this.formatNumberAxisTickForm.controls['formatNumberAxisTick'],
       value: this.formatNumberService.getFormatNumberAxisTick({
         chart: this.chart,
-        sortedColumns: this.sortedColumns
+        mconfigFields: this.mconfigFields
       }).formatNumber
     });
 
@@ -591,7 +590,7 @@ export class ChartEditorComponent implements OnChanges {
       control: this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'],
       value: this.formatNumberService.getFormatNumberYAxisTick({
         chart: this.chart,
-        sortedColumns: this.sortedColumns
+        mconfigFields: this.mconfigFields
       }).formatNumber
     });
 
@@ -599,7 +598,7 @@ export class ChartEditorComponent implements OnChanges {
       control: this.formatNumberXAxisTickForm.controls['formatNumberXAxisTick'],
       value: this.formatNumberService.getFormatNumberXAxisTick({
         chart: this.chart,
-        sortedColumns: this.sortedColumns
+        mconfigFields: this.mconfigFields
       }).formatNumber
     });
 
@@ -910,7 +909,7 @@ export class ChartEditorComponent implements OnChanges {
     return isChartValid;
   }
 
-  updateMconfig(newMconfig: common.Mconfig) {
+  updateMconfig(newMconfig: common.MconfigX) {
     let isValid = this.getIsValid();
     if (isValid === true) {
       newMconfig.chart.isValid = true;

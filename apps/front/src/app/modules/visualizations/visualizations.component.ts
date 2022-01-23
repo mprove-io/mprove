@@ -12,7 +12,6 @@ import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
-import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -336,7 +335,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       mconfigId: item.reports[0].mconfigId
     };
 
-    let mconfig: common.Mconfig = await this.apiService
+    let mconfig: common.MconfigX = await this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
         payloadGetMconfig
@@ -408,7 +407,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       mconfigId: item.reports[0].mconfigId
     };
 
-    let mconfig: common.Mconfig = await this.apiService
+    let mconfig: common.MconfigX = await this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
         payloadGetMconfig
@@ -439,16 +438,11 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    let sortedColumns = getColumnFields({
-      mconfig: mconfig,
-      fields: model.fields
-    });
-
     let qData =
       mconfig.queryId === query.queryId
         ? this.queryService.makeQData({
             data: query.data,
-            columns: sortedColumns
+            columns: mconfig.fields
           })
         : [];
 
@@ -459,7 +453,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
-      sortedColumns: sortedColumns
+      mconfigFields: mconfig.fields
     });
 
     let isSelectValid = checkSelectResult.isSelectValid;
@@ -470,7 +464,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      sortedColumns: sortedColumns,
       model: model,
       canAccessModel: canAccessModel,
       showNav: true,
@@ -522,7 +515,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       mconfigId: item.reports[0].mconfigId
     };
 
-    let mconfig: common.Mconfig = await this.apiService
+    let mconfig: common.MconfigX = await this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
         payloadGetMconfig

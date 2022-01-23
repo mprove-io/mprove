@@ -17,8 +17,8 @@ export class ToBackendCreateTempMconfigAndQueryRequest extends ToBackendRequest 
 
 export class ToBackendCreateTempMconfigAndQueryResponsePayload {
   @ValidateNested()
-  @Type(() => common.Mconfig)
-  mconfig: common.Mconfig;
+  @Type(() => common.MconfigX)
+  mconfig: common.MconfigX;
 
   @ValidateNested()
   @Type(() => common.Query)

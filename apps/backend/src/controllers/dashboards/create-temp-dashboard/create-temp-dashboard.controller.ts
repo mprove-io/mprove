@@ -161,23 +161,30 @@ export class CreateTempDashboardController {
       }
     });
 
+    let apiModels = models.map(model =>
+      wrapper.wrapToApiModel({
+        model: model,
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: model,
+          checkExplorer: true
+        })
+      })
+    );
+
     let payload: apiToBackend.ToBackendCreateTempDashboardResponsePayload = {
       dashboard: wrapper.wrapToApiDashboard({
         dashboard: records.dashboards[0],
-        mconfigs: records.mconfigs.map(x => wrapper.wrapToApiMconfig(x)),
-        queries: records.queries.map(x => wrapper.wrapToApiQuery(x)),
-        member: wrapper.wrapToApiMember(member),
-        models: models.map(model =>
-          wrapper.wrapToApiModel({
-            model: model,
-            hasAccess: helper.checkAccess({
-              userAlias: user.alias,
-              member: member,
-              vmd: model,
-              checkExplorer: true
-            })
+        mconfigs: records.mconfigs.map(x =>
+          wrapper.wrapToApiMconfig({
+            mconfig: x,
+            modelFields: apiModels.find(m => m.modelId === x.model_id).fields
           })
         ),
+        queries: records.queries.map(x => wrapper.wrapToApiQuery(x)),
+        member: wrapper.wrapToApiMember(member),
+        models: apiModels,
         isAddMconfigAndQuery: true
       })
     };

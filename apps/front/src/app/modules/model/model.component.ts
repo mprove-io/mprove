@@ -5,7 +5,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { combineLatest, interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
-import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { setChartFields } from '~front/app/functions/set-chart-fields';
 import { ModelQuery } from '~front/app/queries/model.query';
@@ -31,7 +30,6 @@ import { StructStore } from '~front/app/stores/struct.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
 
 export class ChartTypeItem {
   label: string;
@@ -78,7 +76,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
   query: common.Query;
 
   mq$ = this.mqQuery.select().pipe(
@@ -181,7 +179,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   dryQueryEstimate: common.QueryEstimate;
   dryDataSize: string;
 
-  sortedColumns: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
   qData: RData[];
   queryStatus: common.QueryStatusEnum;
   mconfigChart: common.Chart;
@@ -197,7 +195,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     tap(
       ([fields, mconfig, query]: [
         common.ModelField[],
-        common.Mconfig,
+        common.MconfigX,
         common.Query
       ]) => {
         if (mconfig.mconfigId === common.EMPTY) {
@@ -207,16 +205,13 @@ export class ModelComponent implements OnInit, OnDestroy {
         let { select, chart } = mconfig;
 
         if (select && fields) {
-          this.sortedColumns = getColumnFields({
-            mconfig: mconfig,
-            fields: fields
-          });
+          this.mconfigFields = mconfig.fields;
 
           this.qData =
             mconfig.queryId === query.queryId
               ? this.queryService.makeQData({
                   data: query.data,
-                  columns: this.sortedColumns
+                  columns: mconfig.fields
                 })
               : [];
 
@@ -225,7 +220,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
           let checkSelectResult = getSelectValid({
             chart: chart,
-            sortedColumns: this.sortedColumns
+            mconfigFields: mconfig.fields
           });
 
           this.isSelectValid = checkSelectResult.isSelectValid;
@@ -641,7 +636,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      sortedColumns: this.sortedColumns,
       model: this.model,
       canAccessModel: true,
       showNav: false,

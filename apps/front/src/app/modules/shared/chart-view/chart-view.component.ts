@@ -8,7 +8,6 @@ import { FormatNumberService } from '~front/app/services/format-number.service';
 import { RData } from '~front/app/services/query.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-view',
@@ -20,7 +19,7 @@ export class ChartViewComponent implements OnChanges {
   queryStatusEnum = common.QueryStatusEnum;
 
   @Input()
-  sortedColumns: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
 
   @Input()
   qData: RData[];
@@ -71,7 +70,7 @@ export class ChartViewComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     let checkSelectResult = getSelectValid({
       chart: this.chart,
-      sortedColumns: this.sortedColumns
+      mconfigFields: this.mconfigFields
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;
@@ -94,7 +93,7 @@ export class ChartViewComponent implements OnChanges {
         common.isDefined(this.chart.xField) &&
         common.isDefined(this.chart.yField)
           ? this.dataService.getSingleData({
-              selectFields: this.sortedColumns,
+              selectFields: this.mconfigFields,
               xFieldId: this.chart.xField,
               yFieldId: this.chart.yField,
               data: this.qData
@@ -104,7 +103,7 @@ export class ChartViewComponent implements OnChanges {
       this.singleForNumberCard =
         this.qData.length > 0 && common.isDefined(this.chart.yField)
           ? this.dataService.getSingleDataForNumberCard({
-              selectFields: this.sortedColumns,
+              selectFields: this.mconfigFields,
               xFieldId: this.chart.xField,
               yFieldId: this.chart.yField,
               data: this.qData
@@ -114,7 +113,7 @@ export class ChartViewComponent implements OnChanges {
       [this.value, this.previousValue] =
         this.qData.length > 0 && common.isDefined(this.chart.valueField)
           ? this.dataService.getValueData({
-              columnFields: this.sortedColumns,
+              mconfigFields: this.mconfigFields,
               data: this.qData,
               currentValueFieldId: this.chart.valueField,
               previousValueFieldId: this.chart.previousValueField
@@ -140,7 +139,7 @@ export class ChartViewComponent implements OnChanges {
         common.isDefined(this.chart.yFields) &&
         this.chart.yFields.length > 0
           ? this.dataService.getMultiData({
-              selectFields: this.sortedColumns,
+              selectFields: this.mconfigFields,
               xFieldId: this.chart.xField,
               yFieldsIds: this.chart.yFields,
               multiFieldId: this.chart.multiField,
@@ -160,7 +159,7 @@ export class ChartViewComponent implements OnChanges {
       formatNumber
     } = this.formatNumberService.getFormatNumberDataLabel({
       chart: this.chart,
-      sortedColumns: this.sortedColumns
+      mconfigFields: this.mconfigFields
     });
 
     let locale = formatLocale({
@@ -192,7 +191,7 @@ export class ChartViewComponent implements OnChanges {
     //   formatNumber
     // } = this.formatNumberService.getFormatNumberDataLabel({
     //   chart: this.chart,
-    //   sortedColumns: this.sortedColumns
+    //   mconfigFields: this.mconfigFields
     // });
 
     // let locale = formatLocale({
@@ -227,7 +226,7 @@ export class ChartViewComponent implements OnChanges {
     let { field, formatNumber } = this.formatNumberService.getFormatNumberValue(
       {
         chart: this.chart,
-        sortedColumns: this.sortedColumns
+        mconfigFields: this.mconfigFields
       }
     );
 
@@ -260,7 +259,7 @@ export class ChartViewComponent implements OnChanges {
       formatNumber
     } = this.formatNumberService.getFormatNumberAxisTick({
       chart: this.chart,
-      sortedColumns: this.sortedColumns
+      mconfigFields: this.mconfigFields
     });
 
     let locale = formatLocale({
@@ -288,7 +287,7 @@ export class ChartViewComponent implements OnChanges {
       formatNumber
     } = this.formatNumberService.getFormatNumberYAxisTick({
       chart: this.chart,
-      sortedColumns: this.sortedColumns
+      mconfigFields: this.mconfigFields
     });
 
     let locale = formatLocale({
@@ -316,7 +315,7 @@ export class ChartViewComponent implements OnChanges {
       formatNumber
     } = this.formatNumberService.getFormatNumberXAxisTick({
       chart: this.chart,
-      sortedColumns: this.sortedColumns
+      mconfigFields: this.mconfigFields
     });
 
     let locale = formatLocale({

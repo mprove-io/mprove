@@ -11,7 +11,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
-import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -28,7 +27,6 @@ import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-chart-rep',
@@ -52,7 +50,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   randomId: string;
 
   @Input()
-  mconfig: common.Mconfig;
+  mconfig: common.MconfigX;
 
   @Input()
   showBricks: boolean;
@@ -65,7 +63,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   @Output() repDeleted = new EventEmitter<string>();
 
-  sortedColumns: interfaces.ColumnField[];
+  mconfigFields: common.MconfigField[];
   qData: RData[];
   query: common.Query;
 
@@ -198,16 +196,13 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    this.sortedColumns = getColumnFields({
-      mconfig: this.mconfig,
-      fields: model.fields
-    });
+    this.mconfigFields = this.mconfig.fields;
 
     this.qData =
       this.mconfig.queryId === query.queryId
         ? this.queryService.makeQData({
             data: query.data,
-            columns: this.sortedColumns
+            columns: this.mconfig.fields
           })
         : [];
 
@@ -252,7 +247,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
-      sortedColumns: this.sortedColumns
+      mconfigFields: this.mconfigFields
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;
@@ -357,7 +352,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      sortedColumns: this.sortedColumns,
       model: this.model,
       canAccessModel: this.canAccessModel,
       showNav: true,
@@ -405,7 +399,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
             data: this.query.data,
-            columns: this.sortedColumns
+            columns: this.mconfigFields
           })
         : [];
 

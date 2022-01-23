@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { formatLocale } from 'd3-format';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
 
 export class RData {
   [k: string]: Cell;
@@ -18,7 +17,7 @@ export class Cell {
 export class QueryService {
   constructor() {}
 
-  makeQData(item: { data: any; columns: interfaces.ColumnField[] }) {
+  makeQData(item: { data: any; columns: common.MconfigField[] }) {
     let { data, columns } = item;
 
     if (common.isUndefined(data)) {

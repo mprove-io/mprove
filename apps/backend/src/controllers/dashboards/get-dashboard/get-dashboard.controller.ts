@@ -83,27 +83,33 @@ export class GetDashboardController {
           });
 
     let models = await this.modelsRepository.find({
-      select: ['model_id', 'access_users', 'access_roles', 'hidden'],
-      where: { struct_id: branch.struct_id }
+      struct_id: branch.struct_id
     });
+
+    let apiModels = models.map(model =>
+      wrapper.wrapToApiModel({
+        model: model,
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: model,
+          checkExplorer: true
+        })
+      })
+    );
 
     let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
       dashboard: wrapper.wrapToApiDashboard({
         dashboard: dashboard,
-        mconfigs: mconfigs.map(x => wrapper.wrapToApiMconfig(x)),
-        queries: queries.map(x => wrapper.wrapToApiQuery(x)),
-        member: wrapper.wrapToApiMember(member),
-        models: models.map(model =>
-          wrapper.wrapToApiModel({
-            model: model,
-            hasAccess: helper.checkAccess({
-              userAlias: user.alias,
-              member: member,
-              vmd: model,
-              checkExplorer: true
-            })
+        mconfigs: mconfigs.map(x =>
+          wrapper.wrapToApiMconfig({
+            mconfig: x,
+            modelFields: apiModels.find(m => m.modelId === x.model_id).fields
           })
         ),
+        queries: queries.map(x => wrapper.wrapToApiQuery(x)),
+        member: wrapper.wrapToApiMember(member),
+        models: apiModels,
         isAddMconfigAndQuery: true
       })
     };

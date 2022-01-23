@@ -1,7 +1,7 @@
 import { common } from '~front/barrels/common';
 
 export function setChartFields(item: {
-  newMconfig: common.Mconfig;
+  newMconfig: common.MconfigX;
   fields: common.ModelField[];
 }) {
   let { newMconfig, fields } = item;
