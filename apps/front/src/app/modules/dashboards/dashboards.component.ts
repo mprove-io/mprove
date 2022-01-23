@@ -88,14 +88,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.dashboards = x.dashboards;
 
-      let member: common.Member;
-      this.memberQuery
-        .select()
-        .pipe()
-        .subscribe(y => {
-          member = y;
-        });
-
       this.modelsListQuery
         .select()
         .pipe(take(1))

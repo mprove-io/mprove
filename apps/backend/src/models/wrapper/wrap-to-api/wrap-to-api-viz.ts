@@ -1,19 +1,54 @@
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { makeReportsX } from '~backend/functions/make-reports-x';
 
-export function wrapToApiViz(x: entities.VizEntity): common.Viz {
+export function wrapToApiViz(item: {
+  viz: entities.VizEntity;
+  mconfigs: common.Mconfig[];
+  queries: common.Query[];
+  member: common.Member;
+  isAddMconfigAndQuery: boolean;
+  modelsList: common.ModelsItem[];
+}): common.VizX {
+  let {
+    viz,
+    mconfigs,
+    queries,
+    member,
+    isAddMconfigAndQuery,
+    modelsList
+  } = item;
+
+  let filePathArray = viz.file_path.split('/');
+
+  let author =
+    filePathArray.length > 1 && filePathArray[1] === common.BLOCKML_USERS_FOLDER
+      ? filePathArray[2]
+      : undefined;
+
+  let canEditOrDeleteViz =
+    member.isEditor || member.isAdmin || author === member.alias;
+
   return {
-    structId: x.struct_id,
-    vizId: x.viz_id,
-    title: x.title,
-    modelId: x.model_id,
-    modelLabel: x.model_label,
-    filePath: x.file_path,
-    accessUsers: x.access_users,
-    accessRoles: x.access_roles,
-    gr: x.gr,
-    hidden: common.enumToBoolean(x.hidden),
-    reports: x.reports,
-    serverTs: Number(x.server_ts)
+    structId: viz.struct_id,
+    vizId: viz.viz_id,
+    author: author,
+    canEditOrDeleteViz: canEditOrDeleteViz,
+    title: viz.title,
+    modelId: viz.model_id,
+    modelLabel: viz.model_label,
+    filePath: viz.file_path,
+    accessUsers: viz.access_users,
+    accessRoles: viz.access_roles,
+    gr: viz.gr,
+    hidden: common.enumToBoolean(viz.hidden),
+    reports: makeReportsX({
+      reports: viz.reports,
+      mconfigs: mconfigs,
+      queries: queries,
+      isAddMconfigAndQuery: isAddMconfigAndQuery,
+      modelsList: modelsList
+    }),
+    serverTs: Number(viz.server_ts)
   };
 }

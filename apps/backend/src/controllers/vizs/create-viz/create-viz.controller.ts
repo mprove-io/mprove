@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -22,6 +23,7 @@ export class CreateVizController {
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private modelsRepository: repositories.ModelsRepository,
     private blockmlService: BlockmlService,
     private dbService: DbService,
     private cs: ConfigService<interfaces.Config>
@@ -138,8 +140,32 @@ export class CreateVizController {
       }
     });
 
+    let modelsEntities = await this.modelsRepository.find({
+      select: ['model_id', 'access_users', 'access_roles', 'hidden'],
+      where: { struct_id: branch.struct_id }
+    });
+
+    let modelsList: common.ModelsItem[] = modelsEntities.map(x =>
+      wrapper.wrapToApiModelsItem({
+        model: wrapper.wrapToApiModel(x),
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: x,
+          checkExplorer: true
+        })
+      })
+    );
+
     let payload: apiToBackend.ToBackendCreateVizResponsePayload = {
-      viz: wrapper.wrapToApiViz(records.vizs[0])
+      viz: wrapper.wrapToApiViz({
+        viz: records.vizs[0],
+        mconfigs: [],
+        queries: [],
+        member: wrapper.wrapToApiMember(member),
+        modelsList: modelsList,
+        isAddMconfigAndQuery: false
+      })
     };
 
     return payload;

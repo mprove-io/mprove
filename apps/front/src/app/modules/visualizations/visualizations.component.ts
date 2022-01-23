@@ -35,16 +35,6 @@ class ModelsItemExtendedForVizs extends common.ModelsItem {
   totalVizs: number;
 }
 
-class ExtendedReport extends common.Report {
-  hasAccessToModel?: boolean;
-}
-
-export class VizExtended extends common.Viz {
-  author?: string;
-  canEditOrDeleteViz?: boolean;
-  reports: ExtendedReport[];
-}
-
 @Component({
   selector: 'm-visualizations',
   templateUrl: './visualizations.component.html'
@@ -74,9 +64,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   vizsModelsList: ModelsItemExtendedForVizs[];
   hasAccessModelsList: common.ModelsItem[] = [];
 
-  vizs: VizExtended[];
-  vizsFilteredByWord: VizExtended[];
-  filteredVizs: VizExtended[];
+  vizs: common.VizX[];
+  vizsFilteredByWord: common.VizX[];
+  filteredVizs: common.VizX[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -106,16 +96,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.vizs = x.vizs;
 
-      let member: common.Member;
-      this.memberQuery
-        .select()
-        .pipe(
-          tap(z => {
-            member = z;
-          })
-        )
-        .subscribe();
-
       this.modelsListQuery
         .select()
         .pipe(take(1))
@@ -129,37 +109,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
               totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length
             })
           );
-
-          this.vizs = x.vizs.map(v => {
-            let vizFilePathArray = v.filePath.split('/');
-
-            let author =
-              vizFilePathArray.length > 1 &&
-              vizFilePathArray[1] === common.BLOCKML_USERS_FOLDER
-                ? vizFilePathArray[2]
-                : undefined;
-
-            let vizExtended: VizExtended = Object.assign({}, v, <VizExtended>{
-              author: author,
-              canEditOrDeleteViz:
-                member.isEditor || member.isAdmin || author === member.alias,
-              reports: v.reports.map(report => {
-                let extendedReport: ExtendedReport = Object.assign({}, report, <
-                  ExtendedReport
-                >{
-                  hasAccessToModel: checkAccessModel({
-                    member: member,
-                    model: this.vizsModelsList.find(
-                      m => m.modelId === report.modelId
-                    )
-                  })
-                });
-                return extendedReport;
-              })
-            });
-
-            return vizExtended;
-          });
 
           // let allGroups = this.vizs.map(z => z.gr);
           // let definedGroups = allGroups.filter(y => common.isDefined(y));
@@ -301,7 +250,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  trackByFn(index: number, item: VizExtended) {
+  trackByFn(index: number, item: common.VizX) {
     return item.vizId;
   }
 
@@ -360,7 +309,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   navigateToViz(vizId: string) {}
 
-  async explore(event: any, item: VizExtended) {
+  async explore(event: any, item: common.VizX) {
     event.stopPropagation();
     this.closeMenu();
 
@@ -435,7 +384,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.vizId);
   }
 
-  async showChart(item: VizExtended) {
+  async showChart(item: common.VizX) {
     this.spinner.show(item.vizId);
 
     let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
@@ -533,7 +482,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.spinner.hide(item.vizId);
   }
 
-  openMenu(item: VizExtended) {
+  openMenu(item: common.VizX) {
     this.isVizOptionsMenuOpen = true;
     this.uiStore.update({ openedMenuId: item.vizId });
   }
@@ -546,7 +495,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.uiStore.update({ openedMenuId: undefined });
   }
 
-  toggleMenu(event: MouseEvent, item: VizExtended) {
+  toggleMenu(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
     if (this.isVizOptionsMenuOpen === true) {
       this.closeMenu();
@@ -555,7 +504,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToVizFile(event: MouseEvent, item: VizExtended) {
+  goToVizFile(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
     this.closeMenu();
 
@@ -567,7 +516,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  async editVizInfo(event: MouseEvent, item: VizExtended) {
+  async editVizInfo(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
     this.closeMenu();
 
@@ -598,7 +547,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteViz(event: MouseEvent, item: VizExtended) {
+  deleteViz(event: MouseEvent, item: common.VizX) {
     event.stopPropagation();
     this.closeMenu();
 

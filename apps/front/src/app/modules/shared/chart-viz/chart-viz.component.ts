@@ -26,7 +26,6 @@ import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
-import { VizExtended } from '../../visualizations/visualizations.component';
 
 @Component({
   selector: 'm-chart-viz',
@@ -44,7 +43,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   title: string;
 
   @Input()
-  viz: VizExtended;
+  viz: common.VizX;
 
   @Input()
   showBricks: boolean;

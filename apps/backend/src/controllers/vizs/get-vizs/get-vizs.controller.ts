@@ -15,6 +15,7 @@ export class GetVizsController {
   constructor(
     private branchesService: BranchesService,
     private membersService: MembersService,
+    private modelsRepository: repositories.ModelsRepository,
     private projectsService: ProjectsService,
     private vizsRepository: repositories.VizsRepository
   ) {}
@@ -56,8 +57,34 @@ export class GetVizsController {
       })
     );
 
+    let models = await this.modelsRepository.find({
+      select: ['model_id', 'access_users', 'access_roles', 'hidden'],
+      where: { struct_id: branch.struct_id }
+    });
+
+    let modelsList: common.ModelsItem[] = models.map(x =>
+      wrapper.wrapToApiModelsItem({
+        model: wrapper.wrapToApiModel(x),
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: x,
+          checkExplorer: true
+        })
+      })
+    );
+
     let payload: apiToBackend.ToBackendGetVizsResponsePayload = {
-      vizs: vizsGrantedAccess.map(x => wrapper.wrapToApiViz(x))
+      vizs: vizsGrantedAccess.map(x =>
+        wrapper.wrapToApiViz({
+          viz: x,
+          mconfigs: [],
+          queries: [],
+          member: wrapper.wrapToApiMember(member),
+          modelsList: modelsList,
+          isAddMconfigAndQuery: false
+        })
+      )
     };
 
     return payload;

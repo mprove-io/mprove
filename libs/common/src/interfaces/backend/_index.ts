@@ -12,3 +12,4 @@ export * from './query-estimate';
 export * from './report-x';
 export * from './struct';
 export * from './user';
+export * from './viz-x';

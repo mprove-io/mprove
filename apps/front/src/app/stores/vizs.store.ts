@@ -3,7 +3,7 @@ import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
 
 export class VizsState {
-  vizs: common.Viz[];
+  vizs: common.VizX[];
 }
 
 function createInitialState(): VizsState {

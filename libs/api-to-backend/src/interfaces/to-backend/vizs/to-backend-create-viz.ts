@@ -28,8 +28,8 @@ export class ToBackendCreateVizRequest extends ToBackendRequest {
 
 export class ToBackendCreateVizResponsePayload {
   @ValidateNested()
-  @Type(() => common.Viz)
-  viz: common.Viz;
+  @Type(() => common.VizX)
+  viz: common.VizX;
 }
 
 export class ToBackendCreateVizResponse extends common.MyResponse {

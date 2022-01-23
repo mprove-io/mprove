@@ -22,8 +22,8 @@ export class ToBackendGetVizsRequest extends ToBackendRequest {
 
 export class ToBackendGetVizsResponsePayload {
   @ValidateNested()
-  @Type(() => common.Viz)
-  vizs: common.Viz[];
+  @Type(() => common.VizX)
+  vizs: common.VizX[];
 }
 
 export class ToBackendGetVizsResponse extends common.MyResponse {
