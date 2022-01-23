@@ -97,6 +97,8 @@ export class DashboardsNewDialogComponent {
       title: undefined,
       hidden: false,
       reports: [],
+      author: undefined,
+      canEditOrDeleteDashboard: true,
       serverTs: undefined,
       extendedFilters: [],
       fields: [],

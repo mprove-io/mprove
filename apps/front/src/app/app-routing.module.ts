@@ -43,7 +43,7 @@ import { FileResolver } from './resolvers/file.resolver';
 import { MconfigResolver } from './resolvers/mconfig.resolver';
 import { MemberResolver } from './resolvers/member.resolver';
 import { ModelResolver } from './resolvers/model.resolver';
-import { ModelsListResolver } from './resolvers/models-list.resolver';
+import { ModelsResolver } from './resolvers/models.resolver';
 import { NavBarResolver } from './resolvers/navbar.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
@@ -207,31 +207,24 @@ const routes: Routes = [
                       {
                         component: VisualizationsComponent,
                         path: common.PATH_VISUALIZATIONS,
-                        resolve: [ModelsListResolver, VizsResolver]
-                        // children: []
+                        resolve: [ModelsResolver, VizsResolver]
                       },
                       {
                         component: DashboardsComponent,
                         path: common.PATH_DASHBOARDS,
-                        resolve: [ModelsListResolver, DashboardsResolver]
-                        // children: []
+                        resolve: [ModelsResolver, DashboardsResolver]
                       },
                       {
                         component: ModelsComponent,
                         path: common.PATH_MODELS,
-                        resolve: [ModelsListResolver]
-                        // children: []
+                        resolve: [ModelsResolver]
                       },
                       {
                         component: ModelComponent,
                         canDeactivate: [DeactivateGuard],
                         path:
                           common.PATH_MODEL + `/:${common.PARAMETER_MODEL_ID}`,
-                        resolve: [
-                          ModelsListResolver,
-                          DashboardsResolver,
-                          ModelResolver
-                        ],
+                        resolve: [DashboardsResolver, ModelResolver],
                         children: [
                           {
                             component: MconfigComponent,
@@ -258,7 +251,7 @@ const routes: Routes = [
                           common.PATH_DASHBOARD +
                           `/:${common.PARAMETER_DASHBOARD_ID}`,
                         resolve: [
-                          ModelsListResolver,
+                          ModelsResolver,
                           DashboardsResolver,
                           DashboardResolver
                         ],

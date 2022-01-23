@@ -9,7 +9,7 @@ export function wrapToApiDashboard(item: {
   queries: common.Query[];
   member: common.Member;
   isAddMconfigAndQuery: boolean;
-  modelsList: common.ModelsItem[];
+  models: common.ModelX[];
 }): common.DashboardX {
   let {
     dashboard,
@@ -17,7 +17,7 @@ export function wrapToApiDashboard(item: {
     queries,
     isAddMconfigAndQuery,
     member,
-    modelsList
+    models
   } = item;
 
   let filePathArray = dashboard.file_path.split('/');
@@ -50,7 +50,7 @@ export function wrapToApiDashboard(item: {
       mconfigs: mconfigs,
       queries: queries,
       isAddMconfigAndQuery: isAddMconfigAndQuery,
-      modelsList: modelsList
+      models: models
     }),
     temp: common.enumToBoolean(dashboard.temp),
     serverTs: Number(dashboard.server_ts)

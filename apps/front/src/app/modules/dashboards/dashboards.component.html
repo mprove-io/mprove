@@ -65,20 +65,20 @@
             class="w-24 py-2 ml-5 mr-9 text-white text-base rounded font-medium focus:outline-none"
             [ngClass]="{
               'bg-blue3 cursor-pointer':
-                isExplorer === true && hasAccessModelsList?.length > 0,
+                isExplorer === true && hasAccessModels?.length > 0,
               'bg-gray-400 cursor-default':
                 isExplorer === false ||
-                !hasAccessModelsList ||
-                hasAccessModelsList.length === 0
+                !hasAccessModels ||
+                hasAccessModels.length === 0
             }"
             (click)="newDashboard()"
             [disabled]="
               isExplorer === false ||
-              !hasAccessModelsList ||
-              hasAccessModelsList.length === 0
+              !hasAccessModels ||
+              hasAccessModels.length === 0
             "
           >
-            <div *ngIf="isExplorer === true && hasAccessModelsList?.length > 0"
+            <div *ngIf="isExplorer === true && hasAccessModels?.length > 0"
               >New</div
             >
 
@@ -93,7 +93,7 @@
             <div
               *ngIf="
                 isExplorer === true &&
-                (!hasAccessModelsList || hasAccessModelsList.length === 0)
+                (!hasAccessModels || hasAccessModels.length === 0)
               "
               nz-tooltip
               [nzTooltipTitle]="'No models available'"
@@ -125,22 +125,22 @@
               </div>
 
               <div
-                *ngFor="let modelsItem of dashboardsModelsList"
+                *ngFor="let model of dashboardsModels"
                 class="flex flex-row hover:cursor-pointer py-2 px-4 rounded"
                 [ngClass]="{
-                  'bg-blue-100': modelId === modelsItem.modelId,
-                  'hover:bg-blue2': modelId !== modelsItem.modelId
+                  'bg-blue-100': modelId === model.modelId,
+                  'hover:bg-blue2': modelId !== model.modelId
                 }"
-                (click)="modelOnClick(modelsItem.modelId)"
+                (click)="modelOnClick(model.modelId)"
               >
                 <div class="text-gray1 truncate">
-                  {{ modelsItem.label | capitalize }}
+                  {{ model.label | capitalize }}
                 </div>
 
                 <div class="flex flex-grow"></div>
 
                 <div class="flex justify-end ml-3 w-12">
-                  {{ modelsItem.totalDashboards }}
+                  {{ model.totalDashboards }}
                 </div>
               </div>
             </div>

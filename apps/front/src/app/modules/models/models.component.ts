@@ -6,7 +6,7 @@ import FuzzySearch from 'fuzzy-search';
 import { tap } from 'rxjs/operators';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsListQuery } from '~front/app/queries/models-list.query';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
@@ -28,11 +28,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
 
-  allModelsList: common.ModelsItem[] = [];
-
-  models: common.ModelsItem[];
-  modelsFilteredByWord: common.ModelsItem[];
-  filteredModels: common.ModelsItem[];
+  models: common.ModelX[];
+  modelsFilteredByWord: common.ModelX[];
+  filteredModels: common.ModelX[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -42,10 +40,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  modelsList$ = this.modelsListQuery.select().pipe(
+  models$ = this.modelsQuery.select().pipe(
     tap(ml => {
-      this.models = ml.allModelsList;
-      this.allModelsList = ml.allModelsList;
+      this.models = ml.models;
 
       // let allGroups = this.vizs.map(z => z.gr);
       // let definedGroups = allGroups.filter(y => common.isDefined(y));
@@ -66,7 +63,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private dashboardsQuery: DashboardsQuery,
-    private modelsListQuery: ModelsListQuery,
+    private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
@@ -105,7 +102,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackByFn(index: number, item: common.ModelsItem) {
+  trackByFn(index: number, item: common.ModelX) {
     return item.modelId;
   }
 
@@ -126,10 +123,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  goToModelFile(event: any, modelsItem: common.ModelsItem) {
+  goToModelFile(event: any, model: common.ModelX) {
     event.stopPropagation();
 
-    let fileIdAr = modelsItem.filePath.split('/');
+    let fileIdAr = model.filePath.split('/');
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({
@@ -137,12 +134,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToFile(event: any, node: common.ModelNode, modelsItem: common.ModelsItem) {
+  goToFile(event: any, node: common.ModelNode, model: common.ModelX) {
     event.stopPropagation();
 
     let fileIdAr = common.isDefined(node.viewFilePath)
       ? node.viewFilePath.split('/')
-      : modelsItem.filePath.split('/');
+      : model.filePath.split('/');
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({
@@ -162,7 +159,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
-  navigateToModel(item: common.ModelsItem) {
+  navigateToModel(item: common.ModelX) {
     if (item.hasAccess === false) {
       return;
     }

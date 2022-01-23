@@ -2,6 +2,7 @@ import { Controller, Post } from '@nestjs/common';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
+import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
 import { BranchesService } from '~backend/services/branches.service';
@@ -49,7 +50,15 @@ export class GetModelController {
     });
 
     let payload: apiToBackend.ToBackendGetModelResponsePayload = {
-      model: wrapper.wrapToApiModel(model)
+      model: wrapper.wrapToApiModel({
+        model: model,
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: member,
+          vmd: model,
+          checkExplorer: true
+        })
+      })
     };
 
     return payload;

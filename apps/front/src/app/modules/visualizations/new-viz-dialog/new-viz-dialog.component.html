@@ -10,10 +10,10 @@
   <div class="overflow-y-auto">
     <div
       class="text-gray1 pl-5 py-3 text-base rounded hover:bg-blue2 hover:cursor-pointer"
-      *ngFor="let modelItem of ref.data.modelsList"
-      (click)="navToModel(modelItem.modelId)"
+      *ngFor="let model of ref.data.models"
+      (click)="navToModel(model.modelId)"
     >
-      {{ modelItem.label }}
+      {{ model.label }}
     </div>
   </div>
 </div>

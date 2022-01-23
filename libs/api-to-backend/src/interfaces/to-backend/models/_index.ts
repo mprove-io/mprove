@@ -1,2 +1,2 @@
 export * from './to-backend-get-model';
-export * from './to-backend-get-models-list';
+export * from './to-backend-get-models';

@@ -73,7 +73,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendDeleteFile = 'api/ToBackendDeleteFile',
   ToBackendSaveFile = 'api/ToBackendSaveFile',
   //
-  ToBackendGetModelsList = 'api/ToBackendGetModelsList',
+  ToBackendGetModels = 'api/ToBackendGetModels',
   ToBackendGetModel = 'api/ToBackendGetModel',
   //
   ToBackendGetViews = 'api/ToBackendGetViews',

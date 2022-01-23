@@ -46,7 +46,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   title: string;
 
   @Input()
-  dashboard: common.Dashboard;
+  dashboard: common.DashboardX;
 
   @Input()
   randomId: string;

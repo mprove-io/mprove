@@ -243,7 +243,7 @@ export class MyDialogService {
     });
   }
 
-  showNewViz(item: { modelsList: common.ModelsItem[] }): void {
+  showNewViz(item: { models: common.ModelX[] }): void {
     this.dialogService.open(NewVizDialogComponent, {
       enableClose: true,
       closeButton: false,

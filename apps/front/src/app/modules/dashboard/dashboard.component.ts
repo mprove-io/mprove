@@ -13,8 +13,6 @@ import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsListQuery } from '~front/app/queries/models-list.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -114,8 +112,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private title: Title,
     public navigateService: NavigateService,
     public myDialogService: MyDialogService,
-    private modelsListQuery: ModelsListQuery,
-    private memberQuery: MemberQuery,
     private apiService: ApiService,
     private navQuery: NavQuery,
     private dashboardStore: DashboardStore,

@@ -145,25 +145,23 @@ export class CreateVizController {
       where: { struct_id: branch.struct_id }
     });
 
-    let modelsList: common.ModelsItem[] = modelsEntities.map(x =>
-      wrapper.wrapToApiModelsItem({
-        model: wrapper.wrapToApiModel(x),
-        hasAccess: helper.checkAccess({
-          userAlias: user.alias,
-          member: member,
-          vmd: x,
-          checkExplorer: true
-        })
-      })
-    );
-
     let payload: apiToBackend.ToBackendCreateVizResponsePayload = {
       viz: wrapper.wrapToApiViz({
         viz: records.vizs[0],
         mconfigs: [],
         queries: [],
         member: wrapper.wrapToApiMember(member),
-        modelsList: modelsList,
+        models: modelsEntities.map(model =>
+          wrapper.wrapToApiModel({
+            model: model,
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: member,
+              vmd: model,
+              checkExplorer: true
+            })
+          })
+        ),
         isAddMconfigAndQuery: false
       })
     };

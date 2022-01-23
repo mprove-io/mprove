@@ -87,25 +87,23 @@ export class GetDashboardController {
       where: { struct_id: branch.struct_id }
     });
 
-    let modelsList: common.ModelsItem[] = models.map(x =>
-      wrapper.wrapToApiModelsItem({
-        model: wrapper.wrapToApiModel(x),
-        hasAccess: helper.checkAccess({
-          userAlias: user.alias,
-          member: member,
-          vmd: x,
-          checkExplorer: true
-        })
-      })
-    );
-
     let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
       dashboard: wrapper.wrapToApiDashboard({
         dashboard: dashboard,
         mconfigs: mconfigs.map(x => wrapper.wrapToApiMconfig(x)),
         queries: queries.map(x => wrapper.wrapToApiQuery(x)),
         member: wrapper.wrapToApiMember(member),
-        modelsList: modelsList,
+        models: models.map(model =>
+          wrapper.wrapToApiModel({
+            model: model,
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: member,
+              vmd: model,
+              checkExplorer: true
+            })
+          })
+        ),
         isAddMconfigAndQuery: true
       })
     };

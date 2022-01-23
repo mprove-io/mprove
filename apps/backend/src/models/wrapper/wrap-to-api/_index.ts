@@ -3,7 +3,6 @@ export * from './wrap-to-api-dashboard';
 export * from './wrap-to-api-mconfig';
 export * from './wrap-to-api-member';
 export * from './wrap-to-api-model';
-export * from './wrap-to-api-models-item';
 export * from './wrap-to-api-org';
 export * from './wrap-to-api-orgs-item';
 export * from './wrap-to-api-project';

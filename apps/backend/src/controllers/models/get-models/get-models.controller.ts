@@ -11,7 +11,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
-export class GetModelsListController {
+export class GetModelsController {
   constructor(
     private branchesService: BranchesService,
     private membersService: MembersService,
@@ -19,11 +19,11 @@ export class GetModelsListController {
     private modelsRepository: repositories.ModelsRepository
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModelsList)
-  async getModelsList(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels)
+  async getModels(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendGetModelsListRequest)
-    reqValid: apiToBackend.ToBackendGetModelsListRequest
+    @ValidateRequest(apiToBackend.ToBackendGetModelsRequest)
+    reqValid: apiToBackend.ToBackendGetModelsRequest
   ) {
     let { projectId, isRepoProd, branchId } = reqValid.payload;
 
@@ -61,21 +61,20 @@ export class GetModelsListController {
       where: { struct_id: branch.struct_id }
     });
 
-    let payload: apiToBackend.ToBackendGetModelsListResponsePayload = {
-      allModelsList: models
-        .map(x =>
-          wrapper.wrapToApiModelsItem({
-            model: wrapper.wrapToApiModel(x),
+    let payload: apiToBackend.ToBackendGetModelsResponsePayload = {
+      models: models
+        .map(model =>
+          wrapper.wrapToApiModel({
+            model: model,
             hasAccess: helper.checkAccess({
               userAlias: user.alias,
               member: member,
-              vmd: x,
+              vmd: model,
               checkExplorer: true
             })
           })
         )
-        .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0)),
-      memberIsExplorer: common.enumToBoolean(member.is_explorer)
+        .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0))
     };
 
     return payload;

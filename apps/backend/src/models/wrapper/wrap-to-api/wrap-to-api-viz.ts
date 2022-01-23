@@ -8,16 +8,9 @@ export function wrapToApiViz(item: {
   queries: common.Query[];
   member: common.Member;
   isAddMconfigAndQuery: boolean;
-  modelsList: common.ModelsItem[];
+  models: common.ModelX[];
 }): common.VizX {
-  let {
-    viz,
-    mconfigs,
-    queries,
-    member,
-    isAddMconfigAndQuery,
-    modelsList
-  } = item;
+  let { viz, mconfigs, queries, member, isAddMconfigAndQuery, models } = item;
 
   let filePathArray = viz.file_path.split('/');
 
@@ -47,7 +40,7 @@ export function wrapToApiViz(item: {
       mconfigs: mconfigs,
       queries: queries,
       isAddMconfigAndQuery: isAddMconfigAndQuery,
-      modelsList: modelsList
+      models: models
     }),
     serverTs: Number(viz.server_ts)
   };

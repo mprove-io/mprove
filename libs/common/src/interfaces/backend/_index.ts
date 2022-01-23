@@ -3,7 +3,7 @@ export * from './dashboard-x';
 export * from './filter-x';
 export * from './member';
 export * from './model-field-x';
-export * from './models-item';
+export * from './model-x';
 export * from './org';
 export * from './orgs-item';
 export * from './project';

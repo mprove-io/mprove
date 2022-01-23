@@ -2,22 +2,22 @@ import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
 import { common } from '~front/barrels/common';
 
-export class ModelsListState {
-  allModelsList: common.ModelsItem[];
+export class ModelsState {
+  models: common.ModelX[];
 }
 
-function createInitialState(): ModelsListState {
+function createInitialState(): ModelsState {
   return {
-    allModelsList: []
+    models: []
   };
 }
 
 @Injectable({ providedIn: 'root' })
 @StoreConfig({
-  name: 'modelsList',
+  name: 'models',
   resettable: true
 })
-export class ModelsListStore extends Store<ModelsListState> {
+export class ModelsStore extends Store<ModelsState> {
   constructor() {
     super(createInitialState());
   }

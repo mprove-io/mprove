@@ -9,17 +9,15 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
-import { ModelsListStore } from '../stores/models-list.store';
+import { ModelsStore } from '../stores/models.store';
 import { NavState } from '../stores/nav.store';
-import { VizsStore } from '../stores/vizs.store';
 
 @Injectable({ providedIn: 'root' })
-export class ModelsListResolver implements Resolve<Observable<boolean>> {
+export class ModelsResolver implements Resolve<Observable<boolean>> {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private vizsStore: VizsStore,
-    private modelsListStore: ModelsListStore
+    private modelsStore: ModelsStore
   ) {}
 
   resolve(
@@ -37,7 +35,7 @@ export class ModelsListResolver implements Resolve<Observable<boolean>> {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetModelsListRequestPayload = {
+    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId
@@ -45,13 +43,13 @@ export class ModelsListResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModelsList,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
         payload
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendGetModelsListResponse) => {
-          this.modelsListStore.update({
-            allModelsList: resp.payload.allModelsList
+        map((resp: apiToBackend.ToBackendGetModelsResponse) => {
+          this.modelsStore.update({
+            models: resp.payload.models
           });
 
           return true;

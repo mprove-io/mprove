@@ -10,7 +10,7 @@ import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsListQuery } from '~front/app/queries/models-list.query';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -23,7 +23,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-export class ModelsItemExtendedForDashboards extends common.ModelsItem {
+export class ModelXWithTotalDashboards extends common.ModelX {
   totalDashboards: number;
 }
 
@@ -53,8 +53,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
 
-  dashboardsModelsList: ModelsItemExtendedForDashboards[];
-  hasAccessModelsList: common.ModelsItem[];
+  dashboardsModels: ModelXWithTotalDashboards[];
+  hasAccessModels: common.ModelX[];
 
   dashboards: common.DashboardX[];
   dashboardsFilteredByWord: common.DashboardX[];
@@ -88,16 +88,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.dashboards = x.dashboards;
 
-      this.modelsListQuery
+      this.modelsQuery
         .select()
         .pipe(take(1))
         .subscribe(ml => {
-          this.hasAccessModelsList = ml.allModelsList.filter(
-            m => m.hasAccess === true
-          );
+          this.hasAccessModels = ml.models.filter(m => m.hasAccess === true);
 
-          this.dashboardsModelsList = ml.allModelsList.map(z =>
-            Object.assign({}, z, <ModelsItemExtendedForDashboards>{
+          this.dashboardsModels = ml.models.map(z =>
+            Object.assign({}, z, <ModelXWithTotalDashboards>{
               totalDashboards: this.dashboards.filter(
                 v => v.reports.map(rp => rp.modelId).indexOf(z.modelId) > -1
               ).length
@@ -131,7 +129,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private queryService: QueryService,
     private dashboardsQuery: DashboardsQuery,
     private spinner: NgxSpinnerService,
-    private modelsListQuery: ModelsListQuery,
+    private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
     public uiStore: UiStore,
     public uiQuery: UiQuery,
@@ -210,7 +208,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
     });
 
-    this.dashboardsModelsList = this.dashboardsModelsList
+    this.dashboardsModels = this.dashboardsModels
       .map(z =>
         Object.assign({}, z, {
           totalDashboards: this.dashboardsFilteredByWord.filter(

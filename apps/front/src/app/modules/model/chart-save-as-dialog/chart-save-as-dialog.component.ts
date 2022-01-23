@@ -357,6 +357,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       modelLabel: this.ref.data.model.label,
       mconfigId: this.ref.data.mconfig.mconfigId,
       queryId: this.ref.data.mconfig.queryId,
+      hasAccessToModel: this.ref.data.model.hasAccess,
       title: newTitle.trim(),
       tileWidth: common.CHART_DEFAULT_TILE_WIDTH,
       tileHeight: common.CHART_DEFAULT_TILE_HEIGHT,

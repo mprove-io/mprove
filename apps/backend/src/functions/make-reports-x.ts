@@ -5,21 +5,20 @@ export function makeReportsX(item: {
   mconfigs: common.Mconfig[];
   queries: common.Query[];
   isAddMconfigAndQuery: boolean;
-  modelsList: common.ModelsItem[];
+  models: common.ModelX[];
 }): common.ReportX[] {
-  let { reports, mconfigs, queries, isAddMconfigAndQuery, modelsList } = item;
+  let { reports, mconfigs, queries, isAddMconfigAndQuery, models } = item;
 
   let reportsX: common.ReportX[] = reports.map(x => {
-    let reportX: common.ReportX = x;
+    let reportX: common.ReportX = Object.assign({}, x, <common.ReportX>{
+      hasAccessToModel: models.find(m => m.modelId === reportX.modelId)
+        .hasAccess
+    });
 
     if (isAddMconfigAndQuery === true) {
       reportX.mconfig = mconfigs.find(m => m.mconfigId === x.mconfigId);
       reportX.query = queries.find(q => q.queryId === x.queryId);
     }
-
-    reportX.hasAccessToModel = modelsList.find(
-      m => m.modelId === reportX.modelId
-    ).hasAccess;
 
     return reportX;
   });

@@ -15,7 +15,7 @@ import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getColumnFields } from '~front/app/functions/get-column-fields';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsListQuery } from '~front/app/queries/models-list.query';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { VizsQuery } from '~front/app/queries/vizs.query';
@@ -31,7 +31,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-class ModelsItemExtendedForVizs extends common.ModelsItem {
+class ModelXWithTotalVizs extends common.ModelX {
   totalVizs: number;
 }
 
@@ -61,8 +61,8 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
   bufferAmount = 10;
   enableUnequalChildrenSizes = true;
 
-  vizsModelsList: ModelsItemExtendedForVizs[];
-  hasAccessModelsList: common.ModelsItem[] = [];
+  vizsModels: ModelXWithTotalVizs[];
+  hasAccessModels: common.ModelX[] = [];
 
   vizs: common.VizX[];
   vizsFilteredByWord: common.VizX[];
@@ -96,16 +96,14 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.vizs = x.vizs;
 
-      this.modelsListQuery
+      this.modelsQuery
         .select()
         .pipe(take(1))
         .subscribe(y => {
-          this.hasAccessModelsList = y.allModelsList.filter(
-            m => m.hasAccess === true
-          );
+          this.hasAccessModels = y.models.filter(m => m.hasAccess === true);
 
-          this.vizsModelsList = y.allModelsList.map(z =>
-            Object.assign({}, z, <ModelsItemExtendedForVizs>{
+          this.vizsModels = y.models.map(z =>
+            Object.assign({}, z, <ModelXWithTotalVizs>{
               totalVizs: this.vizs.filter(v => v.modelId === z.modelId).length
             })
           );
@@ -134,7 +132,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
-    private modelsListQuery: ModelsListQuery,
+    private modelsQuery: ModelsQuery,
     private vizsQuery: VizsQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
@@ -232,7 +230,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
     });
 
-    this.vizsModelsList = this.vizsModelsList
+    this.vizsModels = this.vizsModels
       .map(z =>
         Object.assign({}, z, {
           totalVizs: this.vizsFilteredByWord.filter(
@@ -273,7 +271,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
 
   newViz() {
     this.myDialogService.showNewViz({
-      modelsList: this.hasAccessModelsList
+      models: this.hasAccessModels
     });
   }
 
