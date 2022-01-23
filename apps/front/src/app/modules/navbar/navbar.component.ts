@@ -61,7 +61,7 @@ export class NavbarComponent {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
-      common.PATH_BLOCKML
+      common.PATH_FILES
     ]);
   }
 

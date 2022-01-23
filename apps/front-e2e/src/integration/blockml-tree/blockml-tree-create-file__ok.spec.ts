@@ -60,7 +60,7 @@ describe('front-e2e', () => {
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_BLOCKML}`
+      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_FILES}`
     );
     cy.loading();
     cy.get('[data-cy=folderOptionsMenuButton]').click({ force: true });

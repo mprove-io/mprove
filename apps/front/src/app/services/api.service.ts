@@ -234,7 +234,7 @@ export class ApiService {
           errorData.response.body.info.error.originalError.data.currentBranch;
 
         setTimeout(() => {
-          this.navigateService.navigateToBlockml(currentBranchId);
+          this.navigateService.navigateToFiles(currentBranchId);
 
           this.myDialogService.showError({
             errorData: {

@@ -107,7 +107,7 @@ export class RepoOptionsComponent implements OnDestroy {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToBlockml();
+          this.navigateService.navigateToFiles();
         }),
         // switchMap(x =>
         //   common.isDefined(this.file.fileId)
@@ -139,7 +139,7 @@ export class RepoOptionsComponent implements OnDestroy {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToBlockml();
+          this.navigateService.navigateToFiles();
         }),
         // switchMap(x =>
         //   common.isDefined(this.file.fileId)
@@ -167,7 +167,7 @@ export class RepoOptionsComponent implements OnDestroy {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToBlockml();
+          this.navigateService.navigateToFiles();
         }),
         // switchMap(x =>
         //   common.isDefined(this.file.fileId)

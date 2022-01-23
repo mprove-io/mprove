@@ -191,7 +191,7 @@ const routes: Routes = [
                     children: [
                       {
                         component: BlockmlComponent,
-                        path: common.PATH_BLOCKML,
+                        path: common.PATH_FILES,
                         resolve: [RepoStructResolver],
                         children: [
                           {

@@ -288,7 +288,7 @@ export class BranchSelectComponent {
       repoId,
       common.PATH_BRANCH,
       newSelectedBranchItem.branchId,
-      common.PATH_BLOCKML
+      common.PATH_FILES
     ]);
 
     this.navStore.update(state =>

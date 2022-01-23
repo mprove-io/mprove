@@ -52,7 +52,7 @@ export class BlockmlComponent implements OnInit {
     })
   );
 
-  pathBlockml = common.PATH_BLOCKML;
+  pathBlockml = common.PATH_FILES;
 
   lastUrl: string;
 

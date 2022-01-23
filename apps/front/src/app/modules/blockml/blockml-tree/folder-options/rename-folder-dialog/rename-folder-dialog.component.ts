@@ -62,7 +62,7 @@ export class RenameFolderDialogComponent implements OnInit {
           this.repoStore.update(resp.payload.repo);
           this.structStore.update(resp.payload.struct);
 
-          this.navigateService.navigateToBlockml();
+          this.navigateService.navigateToFiles();
         }),
         take(1)
       )

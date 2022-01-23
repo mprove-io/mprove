@@ -252,7 +252,7 @@ export class NavigateService {
     ]);
   }
 
-  navigateToBlockml(branchId?: string) {
+  navigateToFiles(branchId?: string) {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -265,7 +265,7 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       common.isDefined(branchId) ? branchId : this.nav.branchId,
-      common.PATH_BLOCKML
+      common.PATH_FILES
     ]);
   }
 
@@ -392,7 +392,7 @@ export class NavigateService {
       repoId,
       common.PATH_BRANCH,
       this.nav.branchId,
-      common.PATH_BLOCKML,
+      common.PATH_FILES,
       common.PATH_FILE,
       underscoreFileId
     ];
