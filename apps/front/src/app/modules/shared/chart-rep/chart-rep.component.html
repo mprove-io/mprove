@@ -74,24 +74,6 @@
               >Explore</button
             >
 
-            <!-- <button
-              data-cy="repOptionsEditInfo"
-              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-              [ngClass]="{
-                'cursor-default text-gray-400': canEditOrDeleteRep === false
-              }"
-              (click)="editVizInfo($event)"
-              [disabled]="canEditOrDeleteRep === false"
-              >Edit Info</button
-            > -->
-
-            <!-- <button
-              data-cy="repOptionsGoToFile"
-              class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
-              (click)="goToFile($event)"
-              >Go to file</button
-            > -->
-
             <button
               data-cy="repOptionsDelete"
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
@@ -113,7 +95,7 @@
         (click)="stopClick($event)"
       >
         <m-chart-view
-          *ngIf="!!query"
+          *ngIf="!!qData && isShow === true"
           [ngClass]="{
             'max-w-max':
               mconfig?.chart.type === chartTypeEnumTable &&

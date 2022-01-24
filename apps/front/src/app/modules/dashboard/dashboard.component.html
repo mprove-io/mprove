@@ -15,21 +15,6 @@
               (dashboard?.title ? dashboard?.title : dashboard?.dashboardId)
                 | capitalize
             }}</div>
-
-            <!-- <div class="text-xl text-gray1" *ngIf="dashboard?.temp === true"
-              >(modified)</div
-            > -->
-
-            <!-- <button
-              class="flex flex-row items-center text-blue-500 focus:outline-none"
-              *ngIf="dashboard?.dashboardId && dashboard.temp === false"
-              (click)="goToFile()"
-            >
-              <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
-              <div class="ml-2 text-xl"
-                >{{ dashboard.dashboardId }}.dashboard</div
-              >
-            </button> -->
           </div>
 
           <div class="flex flex-row items-center space-x-5">
@@ -47,35 +32,6 @@
           <div class="flex-grow"></div>
 
           <div class="flex flex-row items-center text-base text-gray1">
-            <!-- <div *ngIf="!!dryQueryEstimate"
-              >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
-            </div> -->
-
-            <!-- <m-query-status
-              *ngIf="!dryQueryEstimate"
-              [query]="query"
-            ></m-query-status> -->
-
-            <!-- <ui-switch
-              class="ml-5"
-              [checked]="isAutoRun"
-              (change)="toggleAutoRun()"
-            ></ui-switch> -->
-
-            <!-- <div
-              class="flex ml-5 h-9 text-gray1 text-base items-center select-none"
-              >Auto Run</div
-            > -->
-
-            <!-- <button
-              type="button"
-              *ngIf="query?.status === queryStatusEnum.Running"
-              data-cy="modelCancelButton"
-              class="w-24 py-2 ml-5 text-white bg-blue3 text-base rounded font-medium focus:outline-none"
-              (click)="cancel()"
-              >Cancel</button
-            > -->
-
             <button
               type="button"
               data-cy="dashboardSaveAsButton"
@@ -159,7 +115,7 @@
 
         <div #scrollable class="flex flex-row flex-grow mt-6 overflow-auto h-2">
           <ktd-grid
-            *ngIf="isShowGrid === true && dashboard?.reports"
+            *ngIf="dashboard?.reports"
             [compactType]="compactType"
             [preventCollision]="preventCollision"
             [cols]="cols"
@@ -185,12 +141,13 @@
               <div class="pb-6 pr-5 w-full h-full">
                 <m-chart-rep
                   #chartRep
-                  *ngIf="isShow === true"
+                  [isShow]="isShow"
                   [title]="item.report.title"
                   [report]="item.report"
                   [dashboard]="dashboard"
                   [randomId]="randomId"
                   [mconfig]="item.report.mconfig"
+                  [query]="item.report.query"
                   [showBricks]="showBricks"
                 ></m-chart-rep>
               </div>

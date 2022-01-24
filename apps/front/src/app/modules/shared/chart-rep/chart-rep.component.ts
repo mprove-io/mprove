@@ -48,12 +48,17 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   mconfig: common.MconfigX;
 
   @Input()
+  query: common.Query;
+
+  @Input()
   showBricks: boolean;
+
+  @Input()
+  isShow: boolean;
 
   @Output() repDeleted = new EventEmitter<string>();
 
   qData: RData[];
-  query: common.Query;
 
   menuId = common.makeId();
 
@@ -89,33 +94,13 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
-      mconfigId: this.report.mconfigId,
-      queryId: this.report.queryId,
-      dashboardId: this.dashboard.dashboardId
-    };
-
-    let query: common.Query = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payloadGetQuery
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetQueryResponse) => resp.payload.query
-        )
-      )
-      .toPromise();
-
     this.qData =
-      this.mconfig.queryId === query.queryId
+      this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
-            data: query.data,
+            data: this.query.data,
             columns: this.mconfig.fields
           })
         : [];
-
-    this.query = query;
 
     this.checkRunning$ = interval(3000)
       .pipe(
@@ -255,31 +240,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   stopClick(event?: MouseEvent) {
     event.stopPropagation();
   }
-
-  // editVizInfo(event?: MouseEvent) {
-  //   event.stopPropagation();
-  //   this.closeMenu();
-
-  //   this.myDialogService.showEditVizInfo({
-  //     apiService: this.apiService,
-  //     projectId: this.nav.projectId,
-  //     branchId: this.nav.branchId,
-  //     isRepoProd: this.nav.isRepoProd,
-  //     viz: this.viz,
-  //     mconfig: this.mconfig
-  //   });
-  // }
-
-  // goToFile(event?: MouseEvent) {
-  //   event.stopPropagation();
-
-  //   let fileIdAr = this.dashboard.filePath.split('/');
-  //   fileIdAr.shift();
-
-  //   this.navigateService.navigateToFileLine({
-  //     underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
-  //   });
-  // }
 
   updateQuery(query: common.Query) {
     this.query = query;

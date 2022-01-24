@@ -63,7 +63,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showBricks = false;
 
-  isShowGrid = true;
   isShow = true;
 
   dashboard: common.DashboardX;
@@ -120,11 +119,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       fromEvent(window, 'orientationchange')
     )
       .pipe(debounceTime(500))
-      .subscribe(() => {
-        this.refreshShowGrid();
-      });
+      .subscribe(() => this.preventHorizontalScrollWorkaround());
 
-    // prevent horizontal scroll
+    this.preventHorizontalScrollWorkaround();
+  }
+
+  preventHorizontalScrollWorkaround() {
     setTimeout(() => {
       this.layout = [...this.layout];
     });
@@ -132,7 +132,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.refreshShow();
     });
-    //
   }
 
   ngAfterViewInit() {
@@ -163,18 +162,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  refreshShowGrid() {
-    this.isShowGrid = false;
-    setTimeout(() => {
-      this.isShowGrid = true;
-    });
-  }
-
   refreshShow() {
     this.isShow = false;
+    this.cd.detectChanges();
     setTimeout(() => {
       this.isShow = true;
-    });
+      this.cd.detectChanges();
+    }, 500);
   }
 
   toggleShowReportFilters() {
@@ -182,9 +176,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshShow();
   }
 
-  onResizeEnded(event: any) {
-    // this.refreshShow();
-  }
+  onResizeEnded(event: any) {}
 
   onDragStarted(event: any) {
     // this.preventCollision = true;
@@ -192,7 +184,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onDragEnded(event: any) {
     // this.preventCollision = false;
-    // this.refreshShow();
   }
 
   onLayoutUpdated(layout: KtdGridLayout) {
