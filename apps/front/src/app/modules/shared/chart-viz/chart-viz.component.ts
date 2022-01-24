@@ -321,7 +321,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      model: this.model,
       canAccessModel: this.canAccessModel,
       showNav: true,
       isSelectValid: this.isSelectValid

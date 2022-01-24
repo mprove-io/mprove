@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
-import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -268,7 +267,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToMconfig(report: common.Report) {
+  goToMconfig(report: common.ReportX) {
     this.navigateService.navigateMconfigQuery({
       modelId: report.modelId,
       mconfigId: report.mconfigId,
@@ -276,7 +275,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  async showChart(item: common.Report, dashboardId: string) {
+  async showChart(item: common.ReportX, dashboardId: string) {
     this.spinner.show(item.mconfigId);
 
     // this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
@@ -300,24 +299,24 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     //     ? vizFilePathArray[2]
     //     : undefined;
 
-    let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd,
-      modelId: item.modelId
-    };
+    // let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
+    //   projectId: this.nav.projectId,
+    //   branchId: this.nav.branchId,
+    //   isRepoProd: this.nav.isRepoProd,
+    //   modelId: item.modelId
+    // };
 
-    let model: common.Model = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
-        payloadGetModel
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
-        )
-      )
-      .toPromise();
+    // let model: common.Model = await this.apiService
+    //   .req(
+    //     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+    //     payloadGetModel
+    //   )
+    //   .pipe(
+    //     map(
+    //       (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
+    //     )
+    //   )
+    //   .toPromise();
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       mconfigId: item.mconfigId
@@ -362,10 +361,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           })
         : [];
 
-    let canAccessModel = checkAccessModel({
-      model: model,
-      member: this.member
-    });
+    // let canAccessModel = checkAccessModel({
+    //   model: model,
+    //   member: this.member
+    // });
 
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
@@ -380,8 +379,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      model: model,
-      canAccessModel: canAccessModel,
+      canAccessModel: item.hasAccessToModel,
       showNav: true,
       isSelectValid: isSelectValid
     });

@@ -283,6 +283,7 @@ export function wrapReports(item: {
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: report.model,
+      modelLabel: model.label,
       select: report.select,
       sortings: report.sortingsAry.map(s => ({
         fieldId: s.fieldId,

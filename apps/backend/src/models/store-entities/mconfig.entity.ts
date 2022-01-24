@@ -13,6 +13,9 @@ export class MconfigEntity {
   @PrimaryColumn({ type: constants.MCONFIG_ID_VARCHAR })
   mconfig_id: string;
 
+  @Column({ type: constants.VARCHAR, nullable: true })
+  model_label: string;
+
   @Column({ type: constants.MODEL_ID_VARCHAR })
   model_id: string;
 

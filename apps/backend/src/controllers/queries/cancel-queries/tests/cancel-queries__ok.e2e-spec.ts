@@ -38,6 +38,7 @@ test('1', async t => {
     mconfigId: mconfigId,
     queryId: queryId,
     modelId: 'abc',
+    modelLabel: 'abc',
     select: [],
     sortings: [],
     sorts: undefined,

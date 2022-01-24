@@ -610,7 +610,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      model: this.model,
       canAccessModel: true,
       showNav: false,
       isSelectValid: this.isSelectValid

@@ -14,6 +14,7 @@ export function wrapToApiMconfig(item: {
     mconfigId: mconfig.mconfig_id,
     queryId: mconfig.query_id,
     modelId: mconfig.model_id,
+    modelLabel: mconfig.model_label,
     select: mconfig.select,
     fields: makeMconfigFields({
       modelFields: modelFields,

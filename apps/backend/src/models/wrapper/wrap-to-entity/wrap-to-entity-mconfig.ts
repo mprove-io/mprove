@@ -7,6 +7,7 @@ export function wrapToEntityMconfig(x: common.Mconfig): entities.MconfigEntity {
     query_id: x.queryId,
     mconfig_id: x.mconfigId,
     model_id: x.modelId,
+    model_label: x.modelLabel,
     select: x.select,
     sortings: x.sortings,
     sorts: x.sorts,

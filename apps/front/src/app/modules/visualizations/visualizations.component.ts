@@ -464,7 +464,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      model: model,
       canAccessModel: canAccessModel,
       showNav: true,
       isSelectValid: isSelectValid

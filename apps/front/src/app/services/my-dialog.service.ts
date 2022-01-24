@@ -163,7 +163,6 @@ export class MyDialogService {
     mconfig: common.MconfigX;
     query: common.Query;
     qData: RData[];
-    model: common.Model;
     canAccessModel: boolean;
     showNav: boolean;
     isSelectValid: boolean;

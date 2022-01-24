@@ -4,8 +4,6 @@ import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
-import { ModelStore } from '~front/app/stores/model.store';
-import { MqStore } from '~front/app/stores/mq.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -27,23 +25,19 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   qData: RData[];
   query: common.Query;
   mconfig: common.MconfigX;
-  model: common.Model;
   isSelectValid = false;
 
   constructor(
     public ref: DialogRef,
     private cd: ChangeDetectorRef,
     private queryService: QueryService,
-    private navigateService: NavigateService,
-    private mqStore: MqStore,
-    private modelStore: ModelStore
+    private navigateService: NavigateService
   ) {}
 
   ngOnInit() {
     this.qData = this.ref.data.qData;
     this.mconfig = this.ref.data.mconfig;
     this.query = this.ref.data.query;
-    this.model = this.ref.data.model;
     this.canAccessModel = this.ref.data.canAccessModel;
     this.showNav = this.ref.data.showNav;
     this.isSelectValid = this.ref.data.isSelectValid;
@@ -121,14 +115,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     this.ref.close();
 
-    this.modelStore.update(this.model);
-
-    this.mqStore.update(state =>
-      Object.assign({}, state, { mconfig: this.mconfig, query: this.query })
-    );
-
     this.navigateService.navigateMconfigQuery({
-      modelId: this.model.modelId,
+      modelId: this.mconfig.modelId,
       mconfigId: this.mconfig.mconfigId,
       queryId: this.query.queryId
     });

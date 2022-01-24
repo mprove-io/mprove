@@ -24,6 +24,9 @@ export class Mconfig {
   @IsString()
   modelId: string;
 
+  @IsString()
+  modelLabel: string;
+
   @IsString({ each: true })
   select: string[];
 

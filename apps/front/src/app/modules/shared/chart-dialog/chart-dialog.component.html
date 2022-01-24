@@ -125,13 +125,13 @@
     <div class="text-base font-semibold text-gray-400">Model:</div>
 
     <div
-      (click)="goToModel(model.modelId, canAccessModel)"
+      (click)="goToModel(mconfig.modelId, canAccessModel)"
       class="ml-2 text-base font-semibold focus:outline-none"
       [ngClass]="{
         'cursor-pointer hover:text-blue-500': canAccessModel === true,
         'cursor-default': canAccessModel === false
       }"
-      >{{ model?.label | capitalize }}</div
+      >{{ mconfig?.modelLabel | capitalize }}</div
     >
 
     <m-lock-closed-icon
