@@ -65,10 +65,7 @@ export class DashboardService {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
-          this.dashboardStore.update(resp.payload.dashboard);
-          this.navigateService.navigateToDashboard(
-            resp.payload.dashboard.dashboardId
-          );
+          this.navigateService.navigateToDashboard(newDashboardId);
         }),
         take(1)
       )

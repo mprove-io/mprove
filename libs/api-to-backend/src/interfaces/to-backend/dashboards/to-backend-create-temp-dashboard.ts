@@ -34,14 +34,6 @@ export class ToBackendCreateTempDashboardRequest extends ToBackendRequest {
   payload: ToBackendCreateTempDashboardRequestPayload;
 }
 
-export class ToBackendCreateTempDashboardResponsePayload {
-  @ValidateNested()
-  @Type(() => common.DashboardX)
-  dashboard: common.DashboardX;
-}
-
 export class ToBackendCreateTempDashboardResponse extends common.MyResponse {
-  @ValidateNested()
-  @Type(() => ToBackendCreateTempDashboardResponsePayload)
-  payload: ToBackendCreateTempDashboardResponsePayload;
+  payload: { [k in any]: never };
 }

@@ -94,6 +94,8 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    // console.log(this.mconfig.queryId === this.query.queryId);
+
     this.qData =
       this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
