@@ -66,10 +66,11 @@
               data-cy="repOptionsExplore"
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
               [ngClass]="{
-                'cursor-default text-gray-400': canAccessModel === false
+                'cursor-default text-gray-400':
+                  report.hasAccessToModel === false
               }"
               (click)="explore($event)"
-              [disabled]="canAccessModel === false"
+              [disabled]="report.hasAccessToModel === false"
               >Explore</button
             >
 
@@ -112,7 +113,7 @@
         (click)="stopClick($event)"
       >
         <m-chart-view
-          *ngIf="!!model"
+          *ngIf="!!query"
           [ngClass]="{
             'max-w-max':
               mconfig?.chart.type === chartTypeEnumTable &&

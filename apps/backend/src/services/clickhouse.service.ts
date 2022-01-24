@@ -72,7 +72,7 @@ export class ClickHouseService {
       postgresQueryJobId: postgresQueryJobId
     });
 
-    // '@apla/clickhouse' (quering issue)
+    // '@apla/clickhouse'
 
     // let options: any = {
     //   host: connection.postgres_host,
@@ -157,7 +157,7 @@ export class ClickHouseService {
     //   format: 'json', // "json" || "csv" || "tsv"
     //   raw: false,
     //   config: {
-    //     // session_id: 'session_id if neeed',
+    //     // session_id: 'session_id if need',
     //     // session_timeout: 60,
     //     output_format_json_quote_64bit_integers: 0,
     //     // enable_http_compression: 0,

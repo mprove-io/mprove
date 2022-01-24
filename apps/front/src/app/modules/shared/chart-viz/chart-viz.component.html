@@ -68,10 +68,11 @@
               data-cy="vizOptionsExplore"
               class="px-4 py-2 text-gray1 hover:bg-blue2 text-base w-full text-left focus:outline-none"
               [ngClass]="{
-                'cursor-default text-gray-400': canAccessModel === false
+                'cursor-default text-gray-400':
+                  viz.reports[0].hasAccessToModel === false
               }"
               (click)="explore($event)"
-              [disabled]="canAccessModel === false"
+              [disabled]="viz.reports[0].hasAccessToModel === false"
               >Explore</button
             >
 

@@ -11,7 +11,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
-import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -310,98 +309,15 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     this.closeMenu();
 
-    this.spinner.show(item.vizId);
-
-    let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd,
-      modelId: item.modelId
-    };
-
-    let model: common.Model = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
-        payloadGetModel
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
-        )
-      )
-      .toPromise();
-
-    let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
-      mconfigId: item.reports[0].mconfigId
-    };
-
-    let mconfig: common.MconfigX = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-        payloadGetMconfig
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetMconfigResponse) =>
-            resp.payload.mconfig
-        )
-      )
-      .toPromise();
-
-    let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
-      mconfigId: item.reports[0].mconfigId,
-      queryId: item.reports[0].queryId,
-      vizId: item.vizId
-    };
-
-    let query: common.Query = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-        payloadGetQuery
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetQueryResponse) => resp.payload.query
-        )
-      )
-      .toPromise();
-
-    this.modelStore.update(model);
-
-    this.mqStore.update(state =>
-      Object.assign({}, state, { mconfig: mconfig, query: query })
-    );
-
     this.navigateService.navigateMconfigQuery({
-      modelId: model.modelId,
-      mconfigId: mconfig.mconfigId,
-      queryId: query.queryId
+      modelId: item.reports[0].modelId,
+      mconfigId: item.reports[0].mconfigId,
+      queryId: item.reports[0].queryId
     });
-
-    this.spinner.hide(item.vizId);
   }
 
   async showChart(item: common.VizX) {
     this.spinner.show(item.vizId);
-
-    let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd,
-      modelId: item.modelId
-    };
-
-    let model: common.Model = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
-        payloadGetModel
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
-        )
-      )
-      .toPromise();
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       mconfigId: item.reports[0].mconfigId
@@ -446,11 +362,6 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
           })
         : [];
 
-    let canAccessModel = checkAccessModel({
-      model: model,
-      member: this.member
-    });
-
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
       mconfigFields: mconfig.fields
@@ -464,7 +375,7 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       mconfig: mconfig,
       query: query,
       qData: qData,
-      canAccessModel: canAccessModel,
+      canAccessModel: item.reports[0].hasAccessToModel,
       showNav: true,
       isSelectValid: isSelectValid
     });

@@ -8,17 +8,13 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
-import { checkAccessModel } from '~front/app/functions/check-access-model';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
-import { ModelStore } from '~front/app/stores/model.store';
-import { MqStore } from '~front/app/stores/mq.store';
 import { NavState } from '~front/app/stores/nav.store';
 import { UiStore } from '~front/app/stores/ui.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -48,17 +44,10 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   @Input()
   vizDeletedFnBindThis: any;
 
-  accessRolesString: string;
-  accessUsersString: string;
-  accessString: string;
-
-  author: string;
-
   mconfigFields: common.MconfigField[];
   qData: RData[];
   query: common.Query;
   mconfig: common.MconfigX;
-  model: common.Model;
 
   menuId = common.makeId();
 
@@ -78,66 +67,21 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     })
   );
 
-  canAccessModel = false;
-
   isSelectValid = false;
 
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
-    private memberQuery: MemberQuery,
     private queryService: QueryService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
     private spinner: NgxSpinnerService,
     public uiQuery: UiQuery,
-    public uiStore: UiStore,
-    private mqStore: MqStore,
-    private modelStore: ModelStore
+    public uiStore: UiStore
   ) {}
 
   async ngOnInit() {
-    let member: common.Member;
-    this.memberQuery
-      .select()
-      .pipe(
-        tap(x => {
-          member = x;
-        })
-      )
-      .subscribe();
-
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
-    let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
-      projectId: nav.projectId,
-      branchId: nav.branchId,
-      isRepoProd: nav.isRepoProd,
-      modelId: this.report.modelId
-    };
-
-    let model: common.Model = await this.apiService
-      .req(
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
-        payloadGetModel
-      )
-      .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
-        )
-      )
-      .toPromise();
-
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       mconfigId: this.report.mconfigId
     };
@@ -185,7 +129,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
     this.query = query;
     this.mconfig = mconfig;
-    this.model = model;
 
     this.checkRunning$ = interval(3000)
       .pipe(
@@ -215,11 +158,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.canAccessModel = checkAccessModel({
-      model: model,
-      member: member
-    });
-
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
       mconfigFields: this.mconfigFields
@@ -235,13 +173,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     // this.closeMenu();
 
-    this.modelStore.update(this.model);
-
-    this.mqStore.update(state =>
-      Object.assign({}, state, { mconfig: this.mconfig, query: this.query })
-    );
-
-    if (this.canAccessModel === true) {
+    if (this.viz.reports[0].hasAccessToModel === true) {
       this.navigateService.navigateMconfigQuery({
         modelId: this.report.modelId,
         mconfigId: this.report.mconfigId,
@@ -321,7 +253,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       mconfig: this.mconfig,
       query: this.query,
       qData: this.qData,
-      canAccessModel: this.canAccessModel,
+      canAccessModel: this.viz.reports[0].hasAccessToModel,
       showNav: true,
       isSelectValid: this.isSelectValid
     });

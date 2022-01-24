@@ -278,46 +278,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   async showChart(item: common.ReportX, dashboardId: string) {
     this.spinner.show(item.mconfigId);
 
-    // this.accessRolesString = 'Roles - ' + this.viz.accessRoles.join(', ');
-
-    // this.accessUsersString = 'Users - ' + this.viz.accessUsers.join(', ');
-
-    // this.accessString =
-    //   this.viz.accessRoles.length > 0 && this.viz.accessUsers.length > 0
-    //     ? this.accessRolesString + '; ' + this.accessUsersString
-    //     : this.viz.accessRoles.length > 0
-    //     ? this.accessRolesString
-    //     : this.viz.accessUsers.length > 0
-    //     ? this.accessUsersString
-    //     : '';
-
-    // let vizFilePathArray = this.viz.filePath.split('/');
-
-    // this.author =
-    //   vizFilePathArray.length > 1 &&
-    //   vizFilePathArray[1] === common.FILES_USERS_FOLDER
-    //     ? vizFilePathArray[2]
-    //     : undefined;
-
-    // let payloadGetModel: apiToBackend.ToBackendGetModelRequestPayload = {
-    //   projectId: this.nav.projectId,
-    //   branchId: this.nav.branchId,
-    //   isRepoProd: this.nav.isRepoProd,
-    //   modelId: item.modelId
-    // };
-
-    // let model: common.Model = await this.apiService
-    //   .req(
-    //     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
-    //     payloadGetModel
-    //   )
-    //   .pipe(
-    //     map(
-    //       (resp: apiToBackend.ToBackendGetModelResponse) => resp.payload.model
-    //     )
-    //   )
-    //   .toPromise();
-
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
       mconfigId: item.mconfigId
     };
