@@ -86,6 +86,11 @@ export class ModelComponent implements OnInit, OnDestroy {
       this.mconfig = x.mconfig;
       this.query = x.query;
 
+      this.filtersIsExpanded =
+        this.filtersIsExpanded === false
+          ? false
+          : this.mconfig.extendedFilters.length > 0;
+
       if (this.mconfig.timezone) {
         this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
       }
@@ -143,7 +148,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   isShow = true;
 
-  filtersIsExpanded = false;
+  filtersIsExpanded = true;
   chartIsExpanded = true;
   dataIsExpanded = true;
 
@@ -425,7 +430,9 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
-    this.refreshShow();
+    if (this.mconfig.extendedFilters.length !== 0) {
+      this.refreshShow();
+    }
   }
 
   toggleChartPanel() {

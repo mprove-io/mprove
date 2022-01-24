@@ -71,6 +71,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     tap(x => {
       this.dashboard = x;
 
+      this.filtersIsExpanded =
+        this.filtersIsExpanded === false
+          ? false
+          : this.dashboard.extendedFilters.length > 0;
+
       this.title.setTitle(
         `${this.pageTitle} - ${
           this.dashboard?.title || this.dashboard?.dashboardId
