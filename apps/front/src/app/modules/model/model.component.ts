@@ -81,7 +81,6 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   mq$ = this.mqQuery.select().pipe(
     tap(x => {
-      // console.log('this.mqQuery.select().pipe(');
       this.dryQueryEstimate = undefined;
 
       this.mconfig = x.mconfig;
@@ -109,8 +108,6 @@ export class ModelComponent implements OnInit, OnDestroy {
         common.isDefined(this.mconfig.fields) &&
         this.mconfig.mconfigId !== common.EMPTY
       ) {
-        this.mconfigFields = this.mconfig.fields;
-
         this.qData =
           this.mconfig.queryId === this.query.queryId
             ? this.queryService.makeQData({
@@ -118,9 +115,6 @@ export class ModelComponent implements OnInit, OnDestroy {
                 columns: this.mconfig.fields
               })
             : [];
-
-        this.queryStatus = this.query.status;
-        this.mconfigChart = this.mconfig.chart;
 
         let checkSelectResult = getSelectValid({
           chart: this.mconfig.chart,
@@ -198,10 +192,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   dryQueryEstimate: common.QueryEstimate;
   dryDataSize: string;
 
-  mconfigFields: common.MconfigField[];
   qData: RData[];
-  queryStatus: common.QueryStatusEnum;
-  mconfigChart: common.Chart;
 
   isSelectValid = false;
   errorMessage = '';

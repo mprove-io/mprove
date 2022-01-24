@@ -52,7 +52,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
   @Output() repDeleted = new EventEmitter<string>();
 
-  mconfigFields: common.MconfigField[];
   qData: RData[];
   query: common.Query;
 
@@ -108,8 +107,6 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    this.mconfigFields = this.mconfig.fields;
-
     this.qData =
       this.mconfig.queryId === query.queryId
         ? this.queryService.makeQData({
@@ -150,7 +147,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
-      mconfigFields: this.mconfigFields
+      mconfigFields: this.mconfig.fields
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;
@@ -295,7 +292,7 @@ export class ChartRepComponent implements OnInit, OnDestroy {
       this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
             data: this.query.data,
-            columns: this.mconfigFields
+            columns: this.mconfig.fields
           })
         : [];
 

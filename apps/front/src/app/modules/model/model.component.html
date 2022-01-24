@@ -296,12 +296,12 @@
                   class="flex flex-1 flex-row items-start justify-center space-x-5 w-2 h-full"
                 >
                   <m-chart-view
-                    *ngIf="mconfigChart"
+                    *ngIf="mconfig?.chart"
                     class="w-2/3 h-full overflow-auto"
-                    [mconfigFields]="mconfigFields"
+                    [mconfigFields]="mconfig.fields"
                     [qData]="qData"
-                    [chart]="mconfigChart"
-                    [queryStatus]="queryStatus"
+                    [chart]="mconfig.chart"
+                    [queryStatus]="query.status"
                   ></m-chart-view>
 
                   <div
@@ -313,7 +313,7 @@
                   >
                     <m-chart-editor
                       [chart]="mconfig.chart"
-                      [mconfigFields]="mconfigFields"
+                      [mconfigFields]="mconfig.fields"
                       [queryId]="mconfig?.queryId"
                     ></m-chart-editor>
                   </div>
@@ -462,7 +462,7 @@
                       [isFormat]="isFormat"
                       [mconfig]="mconfig"
                       [qData]="qData"
-                      [mconfigFields]="mconfigFields"
+                      [mconfigFields]="mconfig.fields"
                     ></m-main-table>
                   </div>
 

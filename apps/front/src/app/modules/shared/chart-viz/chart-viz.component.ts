@@ -44,7 +44,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   @Input()
   vizDeletedFnBindThis: any;
 
-  mconfigFields: common.MconfigField[];
   qData: RData[];
   query: common.Query;
   mconfig: common.MconfigX;
@@ -117,8 +116,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       )
       .toPromise();
 
-    this.mconfigFields = mconfig.fields;
-
     this.qData =
       mconfig.queryId === query.queryId
         ? this.queryService.makeQData({
@@ -160,7 +157,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
-      mconfigFields: this.mconfigFields
+      mconfigFields: this.mconfig.fields
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;
@@ -299,7 +296,7 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
             data: this.query.data,
-            columns: this.mconfigFields
+            columns: this.mconfig.fields
           })
         : [];
 
