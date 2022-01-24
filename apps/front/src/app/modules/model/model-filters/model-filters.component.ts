@@ -11,10 +11,10 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './model-filters.component.html'
 })
 export class ModelFiltersComponent {
-  extendedFilters: common.FilterX[];
-  extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
+  mconfig: common.MconfigX;
+  mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {
-      this.extendedFilters = x;
+      this.mconfig = x;
       this.cd.detectChanges();
     })
   );

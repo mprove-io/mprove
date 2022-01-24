@@ -1,6 +1,6 @@
 <div class="flex flex-col divide-y divide-gray-300">
   <div
-    *ngFor="let filter of extendedFilters; let filterIndex = index"
+    *ngFor="let filter of mconfig.extendedFilters; let filterIndex = index"
     class="flex flex-row items-start justify-start pt-6"
   >
     <div class="flex flex-row items-start justify-center">
@@ -58,4 +58,4 @@
   </div>
 </div>
 
-<div *ngIf="extendedFilters$ | async"></div>
+<div *ngIf="mconfig$ | async"></div>

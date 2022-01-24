@@ -9,7 +9,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { checkAccessModel } from '~front/app/functions/check-access-model';
-import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -78,8 +77,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       this.nav = x;
     })
   );
-
-  extendedFilters: common.FilterX[];
 
   canAccessModel = false;
 
@@ -157,11 +154,6 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         )
       )
       .toPromise();
-
-    this.extendedFilters = getExtendedFilters({
-      fields: model.fields,
-      mconfig: mconfig
-    });
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
       mconfigId: this.report.mconfigId,

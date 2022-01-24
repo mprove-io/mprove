@@ -1,6 +1,6 @@
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
-import { makeFiltersX } from '~backend/functions/make-filters-x';
+import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
 import { makeReportsX } from '~backend/functions/make-reports-x';
 
 export function wrapToApiDashboard(item: {
@@ -43,7 +43,7 @@ export function wrapToApiDashboard(item: {
     gr: dashboard.gr,
     hidden: common.enumToBoolean(dashboard.hidden),
     fields: dashboard.fields,
-    extendedFilters: makeFiltersX(dashboard),
+    extendedFilters: makeDashboardFiltersX(dashboard),
     description: dashboard.description,
     reports: makeReportsX({
       reports: dashboard.reports,

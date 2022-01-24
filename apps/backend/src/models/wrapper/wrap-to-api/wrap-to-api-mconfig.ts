@@ -1,6 +1,7 @@
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
+import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
 
 export function wrapToApiMconfig(item: {
   mconfig: entities.MconfigEntity;
@@ -19,6 +20,10 @@ export function wrapToApiMconfig(item: {
       select: mconfig.select,
       sortings: mconfig.sortings,
       chart: mconfig.chart
+    }),
+    extendedFilters: makeMconfigFiltersX({
+      modelFields: modelFields,
+      mconfigFilters: mconfig.filters
     }),
     sortings: mconfig.sortings,
     sorts: mconfig.sorts,

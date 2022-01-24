@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { combineLatest, interval, of, Subscription } from 'rxjs';
+import { interval, of, Subscription } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
@@ -105,6 +105,33 @@ export class ModelComponent implements OnInit, OnDestroy {
       }
 
       if (
+        common.isDefined(this.mconfig) &&
+        common.isDefined(this.mconfig.fields) &&
+        this.mconfig.mconfigId !== common.EMPTY
+      ) {
+        this.mconfigFields = this.mconfig.fields;
+
+        this.qData =
+          this.mconfig.queryId === this.query.queryId
+            ? this.queryService.makeQData({
+                data: this.query.data,
+                columns: this.mconfig.fields
+              })
+            : [];
+
+        this.queryStatus = this.query.status;
+        this.mconfigChart = this.mconfig.chart;
+
+        let checkSelectResult = getSelectValid({
+          chart: this.mconfig.chart,
+          mconfigFields: this.mconfig.fields
+        });
+
+        this.isSelectValid = checkSelectResult.isSelectValid;
+        this.errorMessage = checkSelectResult.errorMessage;
+      }
+
+      if (
         common.isDefined(this.query.queryId) &&
         this.query.queryId !== common.EMPTY &&
         this.query.status === common.QueryStatusEnum.New &&
@@ -116,14 +143,6 @@ export class ModelComponent implements OnInit, OnDestroy {
         }, 0);
       }
 
-      this.cd.detectChanges();
-    })
-  );
-
-  extendedFilters: common.FilterX[];
-  extendedFilters$ = this.mqQuery.extendedFilters$.pipe(
-    tap(x => {
-      this.extendedFilters = x;
       this.cd.detectChanges();
     })
   );
@@ -186,51 +205,6 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   isSelectValid = false;
   errorMessage = '';
-
-  modelMconfigQueryLatest$ = combineLatest([
-    this.modelQuery.fields$,
-    this.mqQuery.mconfig$,
-    this.mqQuery.query$
-  ]).pipe(
-    tap(
-      ([fields, mconfig, query]: [
-        common.ModelField[],
-        common.MconfigX,
-        common.Query
-      ]) => {
-        if (mconfig.mconfigId === common.EMPTY) {
-          return;
-        }
-
-        let { select, chart } = mconfig;
-
-        if (select && fields) {
-          this.mconfigFields = mconfig.fields;
-
-          this.qData =
-            mconfig.queryId === query.queryId
-              ? this.queryService.makeQData({
-                  data: query.data,
-                  columns: mconfig.fields
-                })
-              : [];
-
-          this.queryStatus = query.status;
-          this.mconfigChart = mconfig.chart;
-
-          let checkSelectResult = getSelectValid({
-            chart: chart,
-            mconfigFields: mconfig.fields
-          });
-
-          this.isSelectValid = checkSelectResult.isSelectValid;
-          this.errorMessage = checkSelectResult.errorMessage;
-
-          this.cd.detectChanges();
-        }
-      }
-    )
-  );
 
   limitForm: FormGroup = this.fb.group({
     limit: [

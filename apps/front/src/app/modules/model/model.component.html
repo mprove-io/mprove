@@ -116,13 +116,13 @@
 
                 <div
                   [ngClass]="{
-                    'mt-4': extendedFilters.length === 1
+                    'mt-4': mconfig?.extendedFilters.length === 1
                   }"
                 >
                   <m-bricks
                     class="mr-5 my-3 flex flex-row items-start justify-start overflow-auto max-h-[150px] max-w-max"
                     *ngIf="!filtersIsExpanded && mconfig?.filters.length > 0"
-                    [extendedFilters]="extendedFilters"
+                    [extendedFilters]="mconfig.extendedFilters"
                   ></m-bricks>
                 </div>
 
@@ -479,10 +479,8 @@
   </div>
 </div>
 
-<div *ngIf="extendedFilters$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mq$ | async"></div>
 <div *ngIf="struct$ | async"></div>
-<div *ngIf="modelMconfigQueryLatest$ | async"></div>

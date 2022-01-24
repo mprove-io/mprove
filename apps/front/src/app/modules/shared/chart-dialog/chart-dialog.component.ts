@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
-import { getExtendedFilters } from '~front/app/functions/get-extended-filters';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
 import { ModelStore } from '~front/app/stores/model.store';
@@ -29,7 +28,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   query: common.Query;
   mconfig: common.MconfigX;
   model: common.Model;
-  extendedFilters: common.FilterX[];
   isSelectValid = false;
 
   constructor(
@@ -49,11 +47,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.canAccessModel = this.ref.data.canAccessModel;
     this.showNav = this.ref.data.showNav;
     this.isSelectValid = this.ref.data.isSelectValid;
-
-    this.extendedFilters = getExtendedFilters({
-      fields: this.model.fields,
-      mconfig: this.mconfig
-    });
 
     // removes scroll for gauge chart
     this.refreshShow();

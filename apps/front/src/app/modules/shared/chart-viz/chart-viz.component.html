@@ -110,7 +110,7 @@
       <m-bricks
         class="flex flex-row mx-7 mb-5 max-h-[120px] items-start justify-start overflow-auto max-w-max flex-shrink-0"
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
-        [extendedFilters]="extendedFilters"
+        [extendedFilters]="mconfig.extendedFilters"
       ></m-bricks>
 
       <div

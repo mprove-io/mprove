@@ -73,6 +73,7 @@ export class StructService {
       limit: 500,
       listen: undefined,
       filters: [],
+      extendedFilters: [],
       chart: {
         isValid: true,
         type: common.CHART_DEFAULT_TYPE,
