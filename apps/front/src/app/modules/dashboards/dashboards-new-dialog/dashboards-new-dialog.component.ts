@@ -126,9 +126,9 @@ export class DashboardsNewDialogComponent {
     });
 
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
-      projectId: this.ref.data.projectId,
-      isRepoProd: this.ref.data.isRepoProd,
-      branchId: this.ref.data.branchId,
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
       dashboardId: this.newDashboardId,
       dashboardFileText: dashboardFileText
     };
