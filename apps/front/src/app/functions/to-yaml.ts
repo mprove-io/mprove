@@ -6,6 +6,8 @@ export function toYaml(x: any) {
     .map(s =>
       s
         .replace(/^\s\s/g, '')
+        .replace(/^[-]/g, '\n-')
+        .replace(/^reports:/g, '\nreports:')
         .replace(/^\s\s\s\s[-]/g, '  -')
         .replace(/^\s\s\s\s\s\s[-]/g, '    -')
         .replace(/'''/g, `'`)
