@@ -2,6 +2,8 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
+  Output,
   ViewChild
 } from '@angular/core';
 import {
@@ -43,6 +45,12 @@ export class ModelTreeComponent implements AfterViewInit {
   fieldResultTs = common.FieldResultEnum.Ts;
 
   nodesExtra: ModelNodeExtra[] = [];
+
+  @Output()
+  expandFilters = new EventEmitter();
+
+  @Output()
+  expandData = new EventEmitter();
 
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
@@ -182,6 +190,8 @@ export class ModelTreeComponent implements AfterViewInit {
       newMconfig.select = [...newMconfig.select, node.data.id];
     }
 
+    this.expandData.emit();
+
     let fields: common.ModelField[];
     this.modelQuery.fields$
       .pipe(
@@ -235,6 +245,8 @@ export class ModelTreeComponent implements AfterViewInit {
       };
 
       newMconfig.filters = [...newMconfig.filters, newFilter];
+
+      this.expandFilters.emit();
     }
 
     this.mconfigService.navCreateMconfigAndQuery(newMconfig);

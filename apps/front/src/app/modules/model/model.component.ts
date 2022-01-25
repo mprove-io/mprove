@@ -83,6 +83,8 @@ export class ModelComponent implements OnInit, OnDestroy {
     tap(x => {
       this.dryQueryEstimate = undefined;
 
+      let oldMconfig = this.mconfig;
+
       this.mconfig = x.mconfig;
       this.query = x.query;
 
@@ -143,6 +145,42 @@ export class ModelComponent implements OnInit, OnDestroy {
       }
 
       this.cd.detectChanges();
+
+      // workaround to remove scrolls on filters list change
+      let shouldRefresh = false;
+
+      if (
+        common.isDefined(oldMconfig) &&
+        oldMconfig.mconfigId !== common.EMPTY
+      ) {
+        if (
+          oldMconfig.extendedFilters.length !==
+          this.mconfig.extendedFilters.length
+        ) {
+          shouldRefresh = true;
+        } else {
+          oldMconfig.extendedFilters.forEach(oldExtendedFilter => {
+            let newExtendedFilter = this.mconfig.extendedFilters.find(
+              z => z.fieldId === oldExtendedFilter.fieldId
+            );
+
+            if (common.isUndefined(newExtendedFilter)) {
+              shouldRefresh = true;
+            } else if (
+              oldExtendedFilter.fractions.length !==
+              newExtendedFilter.fractions.length
+            ) {
+              shouldRefresh = true;
+            }
+          });
+        }
+      }
+      if (shouldRefresh === true) {
+        setTimeout(() => {
+          this.refreshShow();
+        });
+      }
+      //
     })
   );
 
@@ -426,6 +464,18 @@ export class ModelComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.isShow = true;
     });
+  }
+
+  expandFiltersPanel() {
+    if (this.filtersIsExpanded === false) {
+      this.toggleFiltersPanel();
+    }
+  }
+
+  expandDataPanel() {
+    if (this.dataIsExpanded === false) {
+      this.toggleDataPanel();
+    }
   }
 
   toggleFiltersPanel() {
