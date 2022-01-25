@@ -1,13 +1,10 @@
-import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import FuzzySearch from 'fuzzy-search';
 import { tap } from 'rxjs/operators';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -62,12 +59,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
-    private dashboardsQuery: DashboardsQuery,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
-    private myDialogService: MyDialogService,
     private navigateService: NavigateService,
-    private location: Location,
     private title: Title
   ) {}
 

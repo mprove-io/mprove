@@ -13,7 +13,6 @@ import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-
 import { prepareReport } from '~front/app/functions/prepare-report';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { toYaml } from '~front/app/functions/to-yaml';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -89,7 +88,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
-    private dashboardsQuery: DashboardsQuery,
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef

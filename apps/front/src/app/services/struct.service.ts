@@ -60,7 +60,7 @@ export class StructService {
       mconfigId: newMconfigId,
       queryId: newQueryId,
       modelId: this.model.modelId,
-      modelLabel: undefined,
+      modelLabel: this.model.label,
       select: [],
       sortings: [],
       fields: [],
