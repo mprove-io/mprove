@@ -34,8 +34,16 @@
           <div class="flex flex-row items-center text-base text-gray1">
             <button
               type="button"
+              data-cy="dashboardAddReportButton"
+              class="px-6 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
+              (click)="addReport()"
+              >Add Report</button
+            >
+
+            <button
+              type="button"
               data-cy="dashboardSaveAsButton"
-              class="w-28 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
+              class="px-6 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
               (click)="saveAs()"
               >Save As</button
             >
@@ -43,7 +51,7 @@
             <button
               type="button"
               data-cy="dashboardRunButton"
-              class="w-24 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
+              class="px-8 py-2 ml-5 text-white text-base rounded font-medium focus:outline-none"
               [ngClass]="{
                 'bg-blue3': dashboard?.reports.length > 0,
                 'bg-gray-400 cursor-default': dashboard?.reports.length === 0

@@ -71,18 +71,15 @@ export class DashboardOptionsComponent implements OnDestroy {
     }
   }
 
-  saveAs(event: MouseEvent) {
-    event.stopPropagation();
-    this.closeMenu();
+  // saveAs(event: MouseEvent) {
+  //   event.stopPropagation();
+  //   this.closeMenu();
 
-    this.myDialogService.showDashboardSaveAs({
-      apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd,
-      dashboard: this.dashboard
-    });
-  }
+  //   this.myDialogService.showDashboardSaveAs({
+  //     apiService: this.apiService,
+  //     dashboard: this.dashboard
+  //   });
+  // }
 
   goToFile(event?: MouseEvent) {
     event.stopPropagation();

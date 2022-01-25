@@ -3,9 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -42,11 +44,20 @@ export class DashboardsNewDialogComponent {
     })
   );
 
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
+    private navQuery: NavQuery,
     private cd: ChangeDetectorRef
   ) {}
 

@@ -62,6 +62,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   dashboards: common.DashboardX[];
 
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
@@ -193,9 +201,9 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     });
 
     let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
-      projectId: this.ref.data.projectId,
-      isRepoProd: this.ref.data.isRepoProd,
-      branchId: this.ref.data.branchId,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
       dashboardId: this.newDashboardId,
       dashboardFileText: dashboardFileText
     };
@@ -238,9 +246,9 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     });
 
     let payload: apiToBackend.ToBackendModifyDashboardRequestPayload = {
-      projectId: this.ref.data.projectId,
-      isRepoProd: this.ref.data.isRepoProd,
-      branchId: this.ref.data.branchId,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
       dashboardId: this.selectedDashboardId,
       dashboardFileText: dashboardFileText
     };

@@ -249,10 +249,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   newDashboard() {
     this.myDialogService.showDashboardsNew({
-      apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      isRepoProd: this.nav.isRepoProd
+      apiService: this.apiService
     });
   }
 
