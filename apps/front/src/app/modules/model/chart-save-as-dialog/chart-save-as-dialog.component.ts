@@ -7,6 +7,7 @@ import {
   Validators
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
 import { prepareReport } from '~front/app/functions/prepare-report';
@@ -38,6 +39,8 @@ enum ReportSaveAsEnum {
 export class ChartSaveAsDialogComponent implements OnInit {
   chartSaveAsEnum = ChartSaveAsEnum;
   reportSaveAsEnum = ReportSaveAsEnum;
+
+  spinnerName = 'chartSaveAs';
 
   titleForm: FormGroup = this.fb.group(
     {
@@ -80,21 +83,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
   selectedReportTitle: string;
 
   dashboards: common.DashboardX[];
-  dashboards$ = this.dashboardsQuery.select().pipe(
-    tap(x => {
-      this.dashboards = x.dashboards.filter(
-        z => z.canEditOrDeleteDashboard === true
-      );
-
-      this.makePath();
-
-      // let allGroups = this.vizs.map(z => z.gr);
-      // let definedGroups = allGroups.filter(y => common.isDefined(y));
-      // this.groups = [...new Set(definedGroups)];
-
-      this.cd.detectChanges();
-    })
-  );
 
   constructor(
     public ref: DialogRef,
@@ -103,6 +91,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private dashboardsQuery: DashboardsQuery,
     private navQuery: NavQuery,
+    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -119,6 +108,47 @@ export class ChartSaveAsDialogComponent implements OnInit {
       control: this.usersForm.controls['users'],
       value: this.ref.data.model.accessUsers?.join(', ')
     });
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.spinnerName);
+
+    apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
+          this.dashboards = resp.payload.dashboards.filter(
+            z => z.canEditOrDeleteDashboard === true
+          );
+
+          this.makePath();
+
+          this.spinner.hide(this.spinnerName);
+
+          this.cd.detectChanges();
+        })
+      )
+      .toPromise();
   }
 
   titleValidator(group: AbstractControl): ValidationErrors | null {

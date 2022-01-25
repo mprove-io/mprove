@@ -1,13 +1,15 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { makeDashboardFileText } from '~front/app/functions/make-dashboard-file-text';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -22,6 +24,8 @@ enum DashboardSaveAsEnum {
 })
 export class DashboardSaveAsDialogComponent implements OnInit {
   dashboardSaveAsEnum = DashboardSaveAsEnum;
+
+  spinnerName = 'dashboardSaveAs';
 
   dashboard: common.DashboardX;
 
@@ -57,26 +61,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   selectedDashboardPath: string;
 
   dashboards: common.DashboardX[];
-  dashboards$ = this.dashboardsQuery.select().pipe(
-    tap(x => {
-      this.dashboards = x.dashboards.filter(
-        z => z.canEditOrDeleteDashboard === true
-      );
-
-      this.makePath();
-
-      // let allGroups = this.vizs.map(z => z.gr);
-      // let definedGroups = allGroups.filter(y => common.isDefined(y));
-      // this.groups = [...new Set(definedGroups)];
-    })
-  );
 
   constructor(
     public ref: DialogRef,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private navQuery: NavQuery,
     private navigateService: NavigateService,
-    private dashboardsQuery: DashboardsQuery,
+    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -85,8 +77,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     this.selectedDashboardId =
       this.dashboard.temp === false ? this.dashboard.dashboardId : undefined;
-
-    this.makePath();
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
@@ -100,6 +90,47 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       control: this.usersForm.controls['users'],
       value: this.dashboard.accessUsers?.join(', ')
     });
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.spinnerName);
+
+    apiService
+      .req(
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        payload
+      )
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
+          this.dashboards = resp.payload.dashboards.filter(
+            z => z.canEditOrDeleteDashboard === true
+          );
+
+          this.makePath();
+
+          this.spinner.hide(this.spinnerName);
+
+          this.cd.detectChanges();
+        })
+      )
+      .toPromise();
   }
 
   save() {

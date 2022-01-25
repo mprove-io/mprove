@@ -44,9 +44,37 @@
       <div class="flex ml-5 mr-5 text-base flex-shrink-0"
         >Replace Existing Dashboard</div
       >
+
+      <div
+        class="flex w-9 h-2 mx-5 relative flex-shrink-0"
+        *ngIf="
+          !dashboards &&
+          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+        "
+      >
+        <ngx-spinner
+          [ngClass]="{
+            invisible: saveAs !== dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+          }"
+          class="invisible"
+          [name]="spinnerName"
+          color="rgba(54, 94, 224, 100)"
+          bdColor="rgba(0, 0, 0, 0)"
+          size="default"
+          type="ball-clip-rotate"
+          [fullScreen]="false"
+          [disableAnimation]="true"
+          [zIndex]="99998"
+        >
+        </ngx-spinner>
+      </div>
+
       <ng-select
         data-cy="dashboardSaveAsDialogExistingDashboardSelect"
-        *ngIf="saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD"
+        *ngIf="
+          !!dashboards &&
+          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+        "
         class="custom w-[500px] text-base focus:outline-none flex-shrink-0"
         [items]="dashboards"
         [searchable]="false"
@@ -213,4 +241,3 @@
 </div>
 
 <div *ngIf="alias$ | async"></div>
-<div *ngIf="dashboards$ | async"></div>

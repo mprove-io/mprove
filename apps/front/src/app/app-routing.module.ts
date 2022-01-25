@@ -250,11 +250,7 @@ const routes: Routes = [
                         path:
                           common.PATH_DASHBOARD +
                           `/:${common.PARAMETER_DASHBOARD_ID}`,
-                        resolve: [
-                          ModelsResolver,
-                          DashboardsResolver,
-                          DashboardResolver
-                        ],
+                        resolve: [DashboardResolver],
                         children: []
                       }
                     ]
