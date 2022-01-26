@@ -2,29 +2,23 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { tap } from 'rxjs/operators';
-import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { NavState } from '~front/app/stores/nav.store';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-dashboard-add-filter-dialog',
   templateUrl: './dashboard-add-filter-dialog.component.html'
 })
 export class DashboardAddFilterDialogComponent implements OnInit {
-  labelForm: FormGroup = this.fb.group({
-    label: [undefined, [Validators.required, Validators.maxLength(255)]]
-  });
+  filterForm: FormGroup;
 
-  alias: string;
-  alias$ = this.userQuery.alias$.pipe(
-    tap(x => {
-      this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
+  resultList = constants.RESULT_LIST;
+
+  fieldResult = common.FieldResultEnum.Number;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -47,44 +41,62 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   ngOnInit() {
     this.dashboard = this.ref.data.dashboard;
 
-    setValueAndMark({
-      control: this.labelForm.controls['label'],
-      value: ''
+    // setValueAndMark({
+    //   control: this.labelForm.controls['label'],
+    //   value: ''
+    // });
+
+    this.filterForm = this.fb.group({
+      label: [undefined, [Validators.required, Validators.maxLength(255)]],
+      fieldResult: [this.fieldResult]
     });
   }
 
+  resultChange(fieldResult: common.FieldResultEnum) {
+    this.fieldResult = fieldResult;
+    this.cd.detectChanges();
+  }
+
   save() {
-    if (this.labelForm.controls['label'].valid) {
-      this.ref.close();
+    this.filterForm.markAllAsTouched();
 
-      let newLabel: string = this.labelForm.controls['label'].value;
-
-      let newResult = common.FieldResultEnum.String;
-
-      let newFraction: common.Fraction = {
-        brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(newResult)
-      };
-
-      let newField: common.DashboardField = {
-        id: 'abc',
-        hidden: false,
-        label: newLabel,
-        result: newResult,
-        fractions: [newFraction],
-        description: ''
-      };
-
-      let dashboardService: DashboardService = this.ref.data.dashboardService;
-
-      dashboardService.navCreateTempDashboard({
-        dashboard: this.dashboard,
-        oldDashboardId: this.dashboard.dashboardId,
-        newDashboardId: common.makeId(),
-        newDashboardFields: [...this.dashboard.fields, newField]
-      });
+    if (!this.filterForm.valid) {
+      return;
     }
+
+    this.ref.close();
+
+    let label: string = this.filterForm.controls['label'].value;
+
+    let id = common.MyRegex.replaceSpacesWithUnderscores(
+      label.toLocaleUpperCase()
+    ).toLowerCase();
+
+    let result = this.filterForm.controls['fieldResult'].value;
+
+    let fraction: common.Fraction = {
+      brick: 'any',
+      operator: common.FractionOperatorEnum.Or,
+      type: common.getFractionTypeForAny(result)
+    };
+
+    let field: common.DashboardField = {
+      id: id,
+      hidden: false,
+      label: label,
+      result: result,
+      fractions: [fraction],
+      description: ''
+    };
+
+    let dashboardService: DashboardService = this.ref.data.dashboardService;
+
+    dashboardService.navCreateTempDashboard({
+      dashboard: this.dashboard,
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: [...this.dashboard.fields, field]
+    });
   }
 
   cancel() {

@@ -56,6 +56,7 @@ import { ViewGridIconComponent } from './icons/view-grid-icon/view-grid-icon.com
 import { ViewListIconComponent } from './icons/view-list-icon/view-list-icon.component';
 import { LogoComponent } from './logo/logo.component';
 import { MainTableComponent } from './main-table/main-table.component';
+import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
@@ -66,7 +67,13 @@ import { DocumentRingComponent } from './rings/document-ring/document-ring.compo
 import { EmailRingComponent } from './rings/email-ring/email-ring.component';
 import { ValidationComponent } from './validation/validation.component';
 
-let pipesArray = [ExtensionPipe, CapitalizePipe, HideColumnsPipe, ResultPipe];
+let pipesArray = [
+  ExtensionPipe,
+  CapitalizePipe,
+  CapitalizeWordsPipe,
+  HideColumnsPipe,
+  ResultPipe
+];
 
 let sharedComponents = [
   LogoComponent,

@@ -4,6 +4,10 @@ const cloneRegexp = require('clone-regexp');
 export class MyRegex {
   // COMMON
 
+  static replaceSpacesWithUnderscores(input: string): string {
+    return input.split(' ').join('_');
+  }
+
   static SLASH_G(): RegExp {
     return cloneRegexp(/[/]/g);
   }

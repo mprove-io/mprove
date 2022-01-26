@@ -5,121 +5,75 @@
     >Add Filter</div
   >
 
-  <!-- <div class="text-gray-400 text-base"
-    >Users / {{ alias }} / {{ ref.data.viz.vizId }}.viz</div
-  > -->
+  <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
+    <div class="mt-9 flex flex-row items-start">
+      <div class="flex flex-col">
+        <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+          >Label</div
+        >
+      </div>
 
-  <div class="mt-9 flex flex-row items-start">
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Label</div
+      <div [formGroup]="filterForm" class="flex flex-col items-start">
+        <input
+          spellcheck="false"
+          data-cy="dashboardAddFilterDialogLabelInput"
+          class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
+          [ngClass]="{
+            'border-red-600':
+              filterForm.controls['label'].invalid &&
+              filterForm.controls['label'].touched
+          }"
+          formControlName="label"
+        />
+        <m-validation [control]="filterForm.controls['label']"></m-validation>
+      </div>
+    </div>
+
+    <div class="flex mt-2 flex-row items-start">
+      <div class="flex flex-col">
+        <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
+          >Result</div
+        >
+      </div>
+
+      <ng-select
+        #typeSelect
+        data-cy="resultSelect"
+        class="custom w-72 text-base focus:outline-none"
+        [items]="resultList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="resultChange($event)"
+        appendTo="body"
+        formControlName="fieldResult"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div class="flex mt-14">
+      <button
+        data-cy="dashboardAddFilterDialogSaveButton"
+        class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="dashboardAddFilterDialogCancelButton"
+        class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
       >
     </div>
-
-    <div [formGroup]="labelForm" class="flex flex-col ml-5 items-start">
-      <input
-        spellcheck="false"
-        data-cy="dashboardAddFilterDialogLabelInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            labelForm.controls['label'].invalid &&
-            labelForm.controls['label'].touched
-        }"
-        formControlName="label"
-      />
-      <m-validation [control]="labelForm.controls['label']"></m-validation>
-    </div>
-  </div>
-
-  <!-- <div class="text-base font-semibold mt-5 mb-5">Visualization Info</div> -->
-
-  <!-- <div class="flex flex-row items-start">
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Group</div
-      >
-    </div>
-
-    <div [formGroup]="groupForm" class="flex flex-col ml-5 items-start">
-      <input spellcheck="false" 
-        data-cy="editVizInfoDialogGroupInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            groupForm.controls['group'].invalid &&
-            groupForm.controls['group'].touched
-        }"
-        formControlName="group"
-      />
-      <m-validation [control]="groupForm.controls['group']"></m-validation>
-    </div>
-  </div> -->
-
-  <!-- <div class="flex flex-row items-start">
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Access Roles</div
-      >
-    </div>
-
-    <div [formGroup]="rolesForm" class="flex flex-col ml-5 items-start">
-      <input
-        spellcheck="false"
-        data-cy="editVizInfoDialogRolesInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            rolesForm.controls['roles'].invalid &&
-            rolesForm.controls['roles'].touched
-        }"
-        formControlName="roles"
-      />
-      <m-validation [control]="rolesForm.controls['roles']"></m-validation>
-    </div>
-  </div> -->
-
-  <!-- <div class="flex flex-row items-start">
-    <div class="flex flex-col">
-      <div class="flex h-9 w-32 text-gray1 text-base items-center select-none"
-        >Access Users</div
-      >
-    </div>
-
-    <div [formGroup]="usersForm" class="flex flex-col ml-5 items-start">
-      <input
-        spellcheck="false"
-        data-cy="editVizInfoDialogUsersInput"
-        class="w-96 h-9 form-input rounded border-gray3 focus:border-blue3"
-        [ngClass]="{
-          'border-red-600':
-            usersForm.controls['users'].invalid &&
-            usersForm.controls['users'].touched
-        }"
-        formControlName="users"
-      />
-      <m-validation [control]="usersForm.controls['users']"></m-validation>
-    </div>
-  </div> -->
-
-  <div class="mt-9">
-    <button
-      data-cy="dashboardAddFilterDialogSaveButton"
-      class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
-      type="button"
-      (click)="save()"
-      >Save</button
-    >
-
-    <button
-      data-cy="dashboardAddFilterDialogCancelButton"
-      class="ml-3 py-3 w-28 text-base rounded border text-blue3 border-blue3 font-medium focus:outline-none"
-      type="button"
-      (click)="cancel()"
-      >Cancel</button
-    >
-  </div>
+  </form>
 </div>
 
-<div *ngIf="alias$ | async"></div>
 <div *ngIf="nav$ | async"></div>
