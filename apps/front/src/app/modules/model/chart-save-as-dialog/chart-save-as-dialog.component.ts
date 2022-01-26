@@ -169,18 +169,18 @@ export class ChartSaveAsDialogComponent implements OnInit {
         titles.indexOf(title) > -1
       ) {
         this.titleForm.controls['title'].setErrors({ titleIsNotUnique: true });
-      }
-
-      if (
+      } else if (
         this.reportSaveAs === this.reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
         titles.indexOf(title) > -1 &&
         title !== this.selectedReportTitle?.toUpperCase()
       ) {
         this.titleForm.controls['title'].setErrors({ titleIsNotUnique: true });
+      } else {
+        return null;
       }
+    } else {
+      return null;
     }
-
-    return null;
   }
 
   save() {

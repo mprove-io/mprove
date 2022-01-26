@@ -30,7 +30,11 @@ export class ValidationService {
       ['projectNameIsNotUnique', 'Project name already exists'],
       ['projectNameIsNotValid', 'Project name is not valid'],
       ['wrongFormatNumber', 'Wrong format number'],
-      ['titleIsNotUnique', 'Report title must be unique for dashboard']
+      ['titleIsNotUnique', 'Report title must be unique for dashboard'],
+      [
+        'labelIsNotUnique',
+        'Filter label must be unique for filter labels and Ids'
+      ]
     ]);
 
     return config.get(validatorName);

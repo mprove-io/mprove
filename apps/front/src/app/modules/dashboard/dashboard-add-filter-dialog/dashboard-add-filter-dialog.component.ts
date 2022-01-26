@@ -1,5 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -46,10 +52,41 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     //   value: ''
     // });
 
-    this.filterForm = this.fb.group({
-      label: [undefined, [Validators.required, Validators.maxLength(255)]],
-      fieldResult: [this.fieldResult]
-    });
+    this.filterForm = this.fb.group(
+      {
+        label: [undefined, [Validators.required, Validators.maxLength(255)]],
+        fieldResult: [this.fieldResult]
+      },
+
+      {
+        validator: this.labelValidator.bind(this)
+      }
+    );
+  }
+
+  labelValidator(group: AbstractControl): ValidationErrors | null {
+    if (
+      common.isUndefined(this.filterForm) ||
+      common.isUndefined(this.filterForm.controls['label'].value)
+    ) {
+      return null;
+    }
+
+    let label: string = this.filterForm.controls['label'].value.toLowerCase();
+
+    let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
+
+    let labels = this.dashboard.extendedFilters
+      .filter(z => !!z.field.label)
+      .map(x => x.field.label.toLowerCase());
+
+    let ids = this.dashboard.extendedFilters.map(x => x.fieldId.toLowerCase());
+
+    if (labels.indexOf(label) > -1 || ids.indexOf(id) > -1) {
+      this.filterForm.controls['label'].setErrors({ labelIsNotUnique: true });
+    } else {
+      return null;
+    }
   }
 
   resultChange(fieldResult: common.FieldResultEnum) {
@@ -68,9 +105,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     let label: string = this.filterForm.controls['label'].value;
 
-    let id = common.MyRegex.replaceSpacesWithUnderscores(
-      label.toLocaleUpperCase()
-    ).toLowerCase();
+    let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
     let result = this.filterForm.controls['fieldResult'].value;
 
