@@ -5,6 +5,7 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { BranchItem } from '../interfaces/_index';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
+import { DashboardAddFilterDialogComponent } from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
 import { DashboardAddReportDialogComponent } from '../modules/dashboard/dashboard-add-report-dialog/dashboard-add-report-dialog.component';
 import { DashboardSaveAsDialogComponent } from '../modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { DashboardsNewDialogComponent } from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
@@ -214,6 +215,18 @@ export class MyDialogService {
     dashboard: common.Dashboard;
   }): void {
     this.dialogService.open(DashboardAddReportDialogComponent, {
+      enableClose: true,
+      closeButton: false,
+      data: item,
+      width: 640
+    });
+  }
+
+  showDashboardAddFilter(item: {
+    dashboardService: any;
+    dashboard: common.Dashboard;
+  }): void {
+    this.dialogService.open(DashboardAddFilterDialogComponent, {
       enableClose: true,
       closeButton: false,
       data: item,

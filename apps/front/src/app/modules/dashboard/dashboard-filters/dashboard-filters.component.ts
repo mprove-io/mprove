@@ -50,24 +50,7 @@ export class DashboardFiltersComponent {
     let fraction: common.Fraction = {
       brick: 'any',
       operator: common.FractionOperatorEnum.Or,
-      type:
-        dashboardField.result === common.FieldResultEnum.DayOfWeek
-          ? common.FractionTypeEnum.DayOfWeekIsAnyValue
-          : dashboardField.result === common.FieldResultEnum.DayOfWeekIndex
-          ? common.FractionTypeEnum.DayOfWeekIndexIsAnyValue
-          : dashboardField.result === common.FieldResultEnum.MonthName
-          ? common.FractionTypeEnum.MonthNameIsAnyValue
-          : dashboardField.result === common.FieldResultEnum.Number
-          ? common.FractionTypeEnum.NumberIsAnyValue
-          : dashboardField.result === common.FieldResultEnum.QuarterOfYear
-          ? common.FractionTypeEnum.QuarterOfYearIsAnyValue
-          : dashboardField.result === common.FieldResultEnum.String
-          ? common.FractionTypeEnum.StringIsAnyValue
-          : dashboardField.result === common.FieldResultEnum.Ts
-          ? common.FractionTypeEnum.TsIsAnyValue
-          : dashboardField.result === common.FieldResultEnum.Yesno
-          ? common.FractionTypeEnum.YesnoIsAnyValue
-          : undefined
+      type: common.getFractionTypeForAny(dashboardField.result)
     };
 
     let newFractions = [...fractions, fraction];

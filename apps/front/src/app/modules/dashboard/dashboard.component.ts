@@ -15,6 +15,7 @@ import { debounceTime, filter, tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
+import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { DashboardStore } from '~front/app/stores/dashboard.store';
@@ -112,6 +113,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private title: Title,
     public navigateService: NavigateService,
     public myDialogService: MyDialogService,
+    private dashboardService: DashboardService,
     private apiService: ApiService,
     private navQuery: NavQuery,
     private dashboardStore: DashboardStore,
@@ -226,6 +228,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   addReport() {
     this.myDialogService.showDashboardAddReport({
       apiService: this.apiService,
+      dashboard: this.dashboard
+    });
+  }
+
+  addFilter() {
+    this.myDialogService.showDashboardAddFilter({
+      dashboardService: this.dashboardService,
       dashboard: this.dashboard
     });
   }

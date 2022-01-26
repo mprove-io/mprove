@@ -14,9 +14,21 @@ export function makeDashboardFileText(item: {
 
   let fields = dashboard.fields.map(field => ({
     filter: field.id,
-    hidden: field.hidden,
-    label: field.label,
-    description: field.description,
+    hidden:
+      common.isDefined(field.hidden) &&
+      field.hidden !== common.DASHBOARD_FIELD_DEFAULT_HIDDEN
+        ? field.hidden
+        : undefined,
+    label:
+      common.isDefined(field.label) &&
+      field.label.toUpperCase() !==
+        common.MyRegex.replaceUnderscoresWithSpaces(field.id).toUpperCase()
+        ? field.label
+        : undefined,
+    description:
+      common.isDefined(field.description) && field.description !== ''
+        ? field.description
+        : undefined,
     result: field.result,
     default:
       common.isDefined(field.fractions) && field.fractions.length > 0

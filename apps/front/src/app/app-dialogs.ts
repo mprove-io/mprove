@@ -1,4 +1,5 @@
 import { EmailConfirmedDialogComponent } from './modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
+import { DashboardAddFilterDialogComponent } from './modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
 import { DashboardAddReportDialogComponent } from './modules/dashboard/dashboard-add-report-dialog/dashboard-add-report-dialog.component';
 import { DashboardSaveAsDialogComponent } from './modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { DashboardsNewDialogComponent } from './modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
@@ -87,6 +88,7 @@ export const appDialogs = [
   // dashboard
   DashboardSaveAsDialogComponent,
   DashboardAddReportDialogComponent,
+  DashboardAddFilterDialogComponent,
   // dashboards
   DashboardsNewDialogComponent,
   // shared

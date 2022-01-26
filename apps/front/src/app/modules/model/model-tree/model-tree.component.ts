@@ -236,7 +236,7 @@ export class ModelTreeComponent implements AfterViewInit {
       let newFraction: common.Fraction = {
         brick: 'any',
         operator: common.FractionOperatorEnum.Or,
-        type: common.FractionTypeEnum.StringIsAnyValue // 'any'
+        type: common.getFractionTypeForAny(node.data.fieldResult)
       };
 
       let newFilter: common.Filter = {

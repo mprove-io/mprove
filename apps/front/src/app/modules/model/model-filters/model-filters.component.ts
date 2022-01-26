@@ -62,7 +62,7 @@ export class ModelFiltersComponent {
     let fraction: common.Fraction = {
       brick: 'any',
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.StringIsAnyValue
+      type: common.getFractionTypeForAny(filterExtended.field.result)
     };
 
     let newFractions = [...fractions, fraction];
