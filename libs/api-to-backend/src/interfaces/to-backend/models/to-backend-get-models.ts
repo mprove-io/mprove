@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -12,6 +17,14 @@ export class ToBackendGetModelsRequestPayload {
 
   @IsString()
   branchId: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  filterByModelIds?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  addFields?: boolean;
 }
 
 export class ToBackendGetModelsRequest extends ToBackendRequest {

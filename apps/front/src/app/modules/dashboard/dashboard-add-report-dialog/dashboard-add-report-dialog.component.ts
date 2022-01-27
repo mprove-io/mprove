@@ -26,7 +26,7 @@ export class DashboardAddReportDialogComponent implements OnInit {
     private spinner: NgxSpinnerService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     let nav: NavState;
     this.navQuery
       .select()
@@ -38,9 +38,11 @@ export class DashboardAddReportDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let apiService: ApiService = this.ref.data.apiService;
-
     this.spinner.show(this.spinnerName);
+
+    // await common.sleep(5000);
+
+    let apiService: ApiService = this.ref.data.apiService;
 
     let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,

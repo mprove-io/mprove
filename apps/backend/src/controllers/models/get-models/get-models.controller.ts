@@ -1,4 +1,5 @@
 import { Controller, Post } from '@nestjs/common';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
@@ -25,7 +26,13 @@ export class GetModelsController {
     @ValidateRequest(apiToBackend.ToBackendGetModelsRequest)
     reqValid: apiToBackend.ToBackendGetModelsRequest
   ) {
-    let { projectId, isRepoProd, branchId } = reqValid.payload;
+    let {
+      projectId,
+      isRepoProd,
+      branchId,
+      filterByModelIds,
+      addFields
+    } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
@@ -44,21 +51,50 @@ export class GetModelsController {
       branchId: branchId
     });
 
+    let selectAr: (
+      | 'struct_id'
+      | 'model_id'
+      | 'connection_id'
+      | 'file_path'
+      | 'content'
+      | 'access_users'
+      | 'access_roles'
+      | 'label'
+      | 'gr'
+      | 'hidden'
+      | 'fields'
+      | 'nodes'
+      | 'description'
+      | 'server_ts'
+    )[] = [
+      'struct_id',
+      'model_id',
+      'connection_id',
+      'file_path',
+      'access_users',
+      'access_roles',
+      'label',
+      'gr',
+      'hidden',
+      'nodes',
+      'description'
+    ];
+
+    let where = { struct_id: branch.struct_id };
+
+    if (common.isDefined(filterByModelIds) && filterByModelIds.length > 0) {
+      where = Object.assign(where, {
+        model_id: In(filterByModelIds)
+      });
+    }
+
+    if (addFields === true) {
+      selectAr.push('fields');
+    }
+
     let models = await this.modelsRepository.find({
-      select: [
-        'struct_id',
-        'model_id',
-        'connection_id',
-        'file_path',
-        'access_users',
-        'access_roles',
-        'label',
-        'gr',
-        'hidden',
-        'nodes',
-        'description'
-      ],
-      where: { struct_id: branch.struct_id }
+      select: selectAr,
+      where: where
     });
 
     let payload: apiToBackend.ToBackendGetModelsResponsePayload = {

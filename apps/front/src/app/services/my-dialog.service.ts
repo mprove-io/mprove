@@ -7,6 +7,7 @@ import { BranchItem } from '../interfaces/_index';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import { DashboardAddFilterDialogComponent } from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
 import { DashboardAddReportDialogComponent } from '../modules/dashboard/dashboard-add-report-dialog/dashboard-add-report-dialog.component';
+import { DashboardEditListenDialogComponent } from '../modules/dashboard/dashboard-edit-listen-dialog/dashboard-edit-listen-dialog.component';
 import { DashboardSaveAsDialogComponent } from '../modules/dashboard/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { DashboardsNewDialogComponent } from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
 import { DeleteFileDialogComponent } from '../modules/files/files-tree/file-options/delete-file-dialog/delete-file-dialog.component';
@@ -231,6 +232,20 @@ export class MyDialogService {
       closeButton: false,
       data: item,
       width: 640
+    });
+  }
+
+  showDashboardEditListen(item: {
+    dashboardService: any;
+    apiService: any;
+    dashboard: common.Dashboard;
+  }): void {
+    this.dialogService.open(DashboardEditListenDialogComponent, {
+      enableClose: true,
+      closeButton: false,
+      data: item,
+      width: '90vw',
+      height: '80vh'
     });
   }
 
