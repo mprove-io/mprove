@@ -142,12 +142,7 @@ export class StructService {
         formatNumberValue: common.CHART_DEFAULT_FORMAT_NUMBER_VALUE,
         formatNumberAxisTick: common.CHART_DEFAULT_FORMAT_AXIS_TICK,
         formatNumberYAxisTick: common.CHART_DEFAULT_FORMAT_Y_AXIS_TICK,
-        formatNumberXAxisTick: common.CHART_DEFAULT_FORMAT_X_AXIS_TICK,
-
-        tileWidth: common.CHART_DEFAULT_TILE_WIDTH,
-        tileHeight: common.CHART_DEFAULT_TILE_HEIGHT,
-        tileX: common.CHART_DEFAULT_TILE_X,
-        tileY: common.CHART_DEFAULT_TILE_Y
+        formatNumberXAxisTick: common.CHART_DEFAULT_FORMAT_X_AXIS_TICK
       },
       temp: true,
       serverTs: 1

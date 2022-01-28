@@ -250,20 +250,4 @@ export class Chart {
   @IsOptional()
   @IsString()
   formatNumberXAxisTick?: string;
-
-  @IsOptional()
-  @IsInt()
-  tileWidth?: number;
-
-  @IsOptional()
-  @IsInt()
-  tileHeight?: number;
-
-  @IsOptional()
-  @IsInt()
-  tileX?: number;
-
-  @IsOptional()
-  @IsInt()
-  tileY?: number;
 }

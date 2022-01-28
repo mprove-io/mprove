@@ -45,7 +45,7 @@ export function prepareReport(item: {
     });
   }
 
-  let rep = {
+  let rep: any = {
     title: chart.title,
     description: common.isDefined(chart.description)
       ? chart.description
@@ -414,24 +414,28 @@ export function prepareReport(item: {
       //     ? chart.rangeFillOpacity
       //     : undefined,
     },
-    tile: {
+    tile: {}
+  };
+
+  if (isForDashboard === true) {
+    rep.tile = {
       tile_width:
-        // chart.tileWidth !== common.CHART_DEFAULT_TILE_WIDTH &&
-        common.isDefined(chart.tileWidth) ? chart.tileWidth : undefined,
+        // report.tileWidth !== common.REPORT_DEFAULT_TILE_WIDTH &&
+        common.isDefined(report.tileWidth) ? report.tileWidth : undefined,
 
       tile_height:
-        // chart.tileHeight !== common.CHART_DEFAULT_TILE_HEIGHT &&
-        common.isDefined(chart.tileHeight) ? chart.tileHeight : undefined,
+        // report.tileHeight !== common.REPORT_DEFAULT_TILE_HEIGHT &&
+        common.isDefined(report.tileHeight) ? report.tileHeight : undefined,
 
       tile_x:
-        // chart.tileX !== common.CHART_DEFAULT_TILE_X &&
-        common.isDefined(chart.tileX) ? chart.tileX : undefined,
+        // report.tileX !== common.REPORT_DEFAULT_TILE_X &&
+        common.isDefined(report.tileX) ? report.tileX : undefined,
 
       tile_y:
-        // chart.tileY !== common.CHART_DEFAULT_TILE_Y &&
-        common.isDefined(chart.tileY) ? chart.tileY : undefined
-    }
-  };
+        // report.tileY !== common.REPORT_DEFAULT_TILE_Y &&
+        common.isDefined(report.tileY) ? report.tileY : undefined
+    };
+  }
 
   let keepData = false;
   Object.keys(rep.data).forEach((x: any) => {

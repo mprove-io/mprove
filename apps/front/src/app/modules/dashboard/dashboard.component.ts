@@ -87,10 +87,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         report =>
           <LayoutItem>{
             id: report.title,
-            x: report.tileX || common.CHART_DEFAULT_TILE_X,
-            y: report.tileY || common.CHART_DEFAULT_TILE_Y,
-            w: report.tileWidth || common.CHART_DEFAULT_TILE_WIDTH,
-            h: report.tileHeight || common.CHART_DEFAULT_TILE_HEIGHT,
+            x: report.tileX || common.REPORT_DEFAULT_TILE_X,
+            y: report.tileY || common.REPORT_DEFAULT_TILE_Y,
+            w: report.tileWidth || common.REPORT_DEFAULT_TILE_WIDTH,
+            h: report.tileHeight || common.REPORT_DEFAULT_TILE_HEIGHT,
             report: report
           }
       );

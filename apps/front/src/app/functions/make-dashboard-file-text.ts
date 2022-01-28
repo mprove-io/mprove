@@ -39,11 +39,6 @@ export function makeDashboardFileText(item: {
   let reps = dashboard.reports.map(x => {
     let newMconfig = common.makeCopy(x.mconfig);
 
-    newMconfig.chart.tileX = x.tileX;
-    newMconfig.chart.tileY = x.tileY;
-    newMconfig.chart.tileHeight = x.tileHeight;
-    newMconfig.chart.tileWidth = x.tileWidth;
-
     // if (common.isDefined(x.listen)) {
     //   Object.keys(x.listen).forEach(z => {
     //     let dashboardFieldName = x.listen[z];

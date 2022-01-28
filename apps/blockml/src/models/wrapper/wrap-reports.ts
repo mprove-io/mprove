@@ -225,24 +225,7 @@ export function wrapReports(item: {
 
       formatNumberXAxisTick:
         report.options?.format_number_x_axis_tick ||
-        common.CHART_DEFAULT_FORMAT_X_AXIS_TICK,
-
-      // tile
-      tileWidth: common.isDefined(report.tile?.tile_width)
-        ? Number(report.tile.tile_width)
-        : common.CHART_DEFAULT_TILE_WIDTH,
-
-      tileHeight: common.isDefined(report.tile?.tile_height)
-        ? Number(report.tile.tile_height)
-        : common.CHART_DEFAULT_TILE_HEIGHT,
-
-      tileX: common.isDefined(report.tile?.tile_x)
-        ? Number(report.tile.tile_x)
-        : common.CHART_DEFAULT_TILE_X,
-
-      tileY: common.isDefined(report.tile?.tile_y)
-        ? Number(report.tile.tile_y)
-        : common.CHART_DEFAULT_TILE_Y
+        common.CHART_DEFAULT_FORMAT_X_AXIS_TICK
     };
 
     let model = models.find(m => m.name === report.model);
@@ -307,10 +290,18 @@ export function wrapReports(item: {
       queryId: queryId,
       listen: report.listen,
       title: chart.title,
-      tileWidth: chart.tileWidth,
-      tileHeight: chart.tileHeight,
-      tileX: chart.tileX,
-      tileY: chart.tileY
+      tileWidth: common.isDefined(report.tile?.tile_width)
+        ? Number(report.tile.tile_width)
+        : common.REPORT_DEFAULT_TILE_WIDTH,
+      tileHeight: common.isDefined(report.tile?.tile_height)
+        ? Number(report.tile.tile_height)
+        : common.REPORT_DEFAULT_TILE_HEIGHT,
+      tileX: common.isDefined(report.tile?.tile_x)
+        ? Number(report.tile.tile_x)
+        : common.REPORT_DEFAULT_TILE_X,
+      tileY: common.isDefined(report.tile?.tile_y)
+        ? Number(report.tile.tile_y)
+        : common.REPORT_DEFAULT_TILE_Y
     });
   });
 

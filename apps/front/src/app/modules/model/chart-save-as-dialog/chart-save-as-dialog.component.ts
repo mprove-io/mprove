@@ -388,9 +388,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
       queryId: this.ref.data.mconfig.queryId,
       hasAccessToModel: this.ref.data.model.hasAccess,
       title: newTitle.trim(),
-      tileWidth: common.CHART_DEFAULT_TILE_WIDTH,
-      tileHeight: common.CHART_DEFAULT_TILE_HEIGHT,
-      tileX: common.CHART_DEFAULT_TILE_X,
+      tileWidth: common.REPORT_DEFAULT_TILE_WIDTH,
+      tileHeight: common.REPORT_DEFAULT_TILE_HEIGHT,
+      tileX: common.REPORT_DEFAULT_TILE_X,
       tileY: tileY
     };
 

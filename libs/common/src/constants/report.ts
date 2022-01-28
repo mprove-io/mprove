@@ -1,0 +1,4 @@
+export const REPORT_DEFAULT_TILE_WIDTH = 8;
+export const REPORT_DEFAULT_TILE_HEIGHT = 12;
+export const REPORT_DEFAULT_TILE_X = 0;
+export const REPORT_DEFAULT_TILE_Y = 0;
