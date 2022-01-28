@@ -219,7 +219,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   editListen() {
-    this.myDialogService.showDashboardEditListen({
+    this.myDialogService.showDashboardEditListeners({
       dashboardService: this.dashboardService,
       apiService: this.apiService,
       dashboard: this.dashboard

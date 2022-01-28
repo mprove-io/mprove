@@ -1,8 +1,14 @@
 <div class="flex flex-col w-[90vw] h-[80vh] p-9 bg-white">
   <div
     data-cy="editListenDialogTitle"
-    class="mt-5 mb-9 text-2xl text-gray2 font-semibold text-left cursor-default"
-    >Edit Listen</div
+    class="mt-5 text-2xl text-gray2 font-semibold text-left cursor-default"
+    >Edit Listeners</div
+  >
+
+  <div
+    data-cy="editListenDialogTitle"
+    class="mt-2 mb-6 text-xl text-gray1 text-left cursor-default"
+    >Map dashboard filters to report's model fields</div
   >
 
   <div class="flex flex-grow flex-col overflow-auto" *ngIf="!models">
@@ -49,14 +55,18 @@
         "
         *ngFor="let report of dashboard.reports"
       >
-        <div class="flex w-[500px] flex-shrink-0 truncate items-start">
-          <div class="truncate mt-1 cursor-default">
-            {{ report.title }}
+        <div
+          class="flex flex-row w-[500px] flex-shrink-0 items-start justify-start"
+        >
+          <div class="truncate items-start">
+            <div class="truncate mt-2 cursor-default">
+              {{ report.title }}
+            </div>
           </div>
         </div>
 
         <div
-          class="flex flex-col w-[510px] space-y-4 flex-shrink-0"
+          class="group flex flex-col w-[510px] space-y-4 flex-shrink-0"
           *ngFor="let dashboardField of dashboard.fields"
         >
           <div
@@ -66,7 +76,6 @@
               let i = index
             "
           >
-            <div></div>
             <ng-select
               #fieldSelect
               data-cy="fieldSelect"
@@ -98,7 +107,22 @@
                 ></m-field-label>
               </ng-template>
             </ng-select>
-            <div></div>
+
+            <button
+              *ngIf="i === 0"
+              class="flex h-9 w-9 ml-5 items-center justify-center flex-shrink-0 rounded invisible group-hover:visible hover:bg-blue2 focus:outline-none"
+              (click)="addListener(report, dashboardField.id)"
+            >
+              <m-add-icon></m-add-icon>
+            </button>
+
+            <button
+              *ngIf="i > 0"
+              class="flex h-9 w-9 ml-5 items-center justify-center flex-shrink-0 rounded invisible group-hover:visible hover:bg-blue2 focus:outline-none"
+              (click)="removeListener($event, report, dashboardField.id, i)"
+            >
+              <m-delete-icon></m-delete-icon>
+            </button>
           </div>
         </div>
       </div>

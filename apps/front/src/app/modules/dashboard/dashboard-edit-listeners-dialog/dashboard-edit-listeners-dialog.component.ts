@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { ModelField } from '~common/_index';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
@@ -20,10 +21,10 @@ export class DashboardX2 extends common.DashboardX {
 }
 
 @Component({
-  selector: 'm-dashboard-edit-listen-dialog',
-  templateUrl: './dashboard-edit-listen-dialog.component.html'
+  selector: 'm-dashboard-edit-listeners-dialog',
+  templateUrl: './dashboard-edit-listeners-dialog.component.html'
 })
-export class DashboardEditListenDialogComponent implements OnInit {
+export class DashboardEditListenersDialogComponent implements OnInit {
   spinnerName = 'dashboardEditListen';
 
   models: common.Model[];
@@ -105,9 +106,10 @@ export class DashboardEditListenDialogComponent implements OnInit {
             let modelFields: { [a: string]: common.ModelField[] } = {};
 
             this.dashboard.fields.forEach(f => {
-              modelFields[f.id] = model.fields.filter(
-                y => y.result === f.result
-              );
+              modelFields[f.id] = [
+                <ModelField>{ id: undefined },
+                ...model.fields.filter(y => y.result === f.result)
+              ];
 
               if (common.isUndefined(swap[f.id])) {
                 swap[f.id] = [undefined];
@@ -127,6 +129,30 @@ export class DashboardEditListenDialogComponent implements OnInit {
       .toPromise();
   }
 
+  fieldChange() {}
+
+  addListener(report: ReportX2, dashboardFieldId: string) {
+    report.mconfigListenSwap[dashboardFieldId].push(undefined);
+  }
+
+  removeListener(
+    event: MouseEvent,
+    report: ReportX2,
+    dashboardFieldId: string,
+    index: number
+  ) {
+    event.stopPropagation();
+
+    let mappings = report.mconfigListenSwap[dashboardFieldId];
+
+    let newMappings = [
+      ...mappings.slice(0, index),
+      ...mappings.slice(index + 1)
+    ];
+
+    report.mconfigListenSwap[dashboardFieldId] = newMappings;
+  }
+
   save() {
     this.ref.close();
 
@@ -139,8 +165,6 @@ export class DashboardEditListenDialogComponent implements OnInit {
       newDashboardFields: this.dashboard.fields
     });
   }
-
-  fieldChange() {}
 
   cancel() {
     this.ref.close();

@@ -17,18 +17,6 @@
             }}</div>
           </div>
 
-          <div class="flex flex-row items-center space-x-5">
-            <ui-switch
-              class="ml-5"
-              [checked]="showBricks"
-              (change)="toggleShowReportFilters()"
-            ></ui-switch>
-
-            <div class="flex h-9 text-gray1 text-base items-center select-none"
-              >Show Report Filters</div
-            >
-          </div>
-
           <button
             type="button"
             data-cy="dashboardAddReportButton"
@@ -50,8 +38,20 @@
             data-cy="dashboardEditListenButton"
             class="px-6 h-12 ml-5 text-blue3 border-2 text-base rounded font-medium focus:outline-none"
             (click)="editListen()"
-            >Edit Listen</button
+            >Edit Listeners</button
           >
+
+          <div class="flex flex-row items-center space-x-5">
+            <ui-switch
+              class="ml-5"
+              [checked]="showBricks"
+              (change)="toggleShowReportFilters()"
+            ></ui-switch>
+
+            <div class="flex h-9 text-gray1 text-base items-center select-none"
+              >Show Report Filters</div
+            >
+          </div>
 
           <div class="flex-grow"></div>
 
