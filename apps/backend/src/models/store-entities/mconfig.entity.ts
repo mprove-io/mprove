@@ -34,9 +34,6 @@ export class MconfigEntity {
   @Column({ type: constants.INT })
   limit: number;
 
-  @Column({ type: constants.JSON, nullable: true })
-  listen: { [a: string]: string };
-
   @Column({ type: constants.JSON })
   filters: common.Filter[];
 

@@ -93,8 +93,8 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
             let swap: { [a: string]: string[] } = {};
 
-            Object.keys(x.mconfig.listen).forEach(modelFieldId => {
-              let dashboardFieldId = x.mconfig.listen[modelFieldId];
+            Object.keys(x.listen).forEach(modelFieldId => {
+              let dashboardFieldId = x.listen[modelFieldId];
 
               if (common.isUndefined(swap[dashboardFieldId])) {
                 swap[dashboardFieldId] = [modelFieldId];
@@ -153,8 +153,25 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     report.mconfigListenSwap[dashboardFieldId] = newMappings;
   }
 
-  save() {
+  apply() {
     this.ref.close();
+
+    this.dashboard.reports.forEach(x => {
+      let newListen: { [a: string]: string } = {};
+
+      Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {
+        x.mconfigListenSwap[dashboardFieldId]
+          .filter(z => common.isDefined(z))
+          .forEach(modelFieldId => {
+            newListen[modelFieldId] = dashboardFieldId;
+          });
+      });
+
+      x.listen = newListen;
+
+      delete x.mconfigListenSwap;
+      delete x.modelFields;
+    });
 
     let dashboardService: DashboardService = this.ref.data.dashboardService;
 

@@ -44,8 +44,6 @@ export class Mconfig {
   @IsNumber()
   limit: number;
 
-  listen: { [a: string]: string };
-
   @ValidateNested()
   @Type(() => Filter)
   filters: Filter[];

@@ -44,17 +44,18 @@ export function makeDashboardFileText(item: {
     newMconfig.chart.tileHeight = x.tileHeight;
     newMconfig.chart.tileWidth = x.tileWidth;
 
-    if (common.isDefined(newMconfig.listen)) {
-      Object.keys(newMconfig.listen).forEach(z => {
-        let dashboardFieldName = newMconfig.listen[z];
+    // if (common.isDefined(x.listen)) {
+    //   Object.keys(x.listen).forEach(z => {
+    //     let dashboardFieldName = x.listen[z];
 
-        if (fields.findIndex(f => f.filter === dashboardFieldName) < 0) {
-          delete newMconfig.listen[z];
-        }
-      });
-    }
+    //     if (fields.findIndex(f => f.filter === dashboardFieldName) < 0) {
+    //       delete x.listen[z];
+    //     }
+    //   });
+    // }
 
     return prepareReport({
+      report: x,
       isForDashboard: true,
       mconfig: newMconfig
     });

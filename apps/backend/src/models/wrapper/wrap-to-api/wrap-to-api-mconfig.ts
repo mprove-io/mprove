@@ -30,7 +30,6 @@ export function wrapToApiMconfig(item: {
     sorts: mconfig.sorts,
     timezone: mconfig.timezone,
     limit: mconfig.limit,
-    listen: mconfig.listen,
     filters: mconfig.filters,
     chart: mconfig.chart,
     temp: common.enumToBoolean(mconfig.temp),

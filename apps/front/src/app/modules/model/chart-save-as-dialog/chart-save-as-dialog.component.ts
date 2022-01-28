@@ -384,6 +384,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       modelId: this.ref.data.mconfig.modelId,
       modelLabel: this.ref.data.model.label,
       mconfigId: this.ref.data.mconfig.mconfigId,
+      listen: undefined,
       queryId: this.ref.data.mconfig.queryId,
       hasAccessToModel: this.ref.data.model.hasAccess,
       title: newTitle.trim(),
@@ -394,7 +395,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
     };
 
     newReport.mconfig.chart.title = newReport.title;
-    delete newReport.mconfig.listen;
 
     if (this.reportSaveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT) {
       let oldReportIndex = dashboard.reports.findIndex(

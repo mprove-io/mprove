@@ -32,16 +32,22 @@
     *ngIf="!!models"
   >
     <div
-      class="flex flex-row space-x-5 mb-3 text-base font-semibold text-gray1 cursor-default"
+      class="flex flex-row space-x-5 mb-3 text-base text-gray1 cursor-default"
     >
-      <div class="flex w-[500px] flex-shrink-0"> Report</div>
+      <div class="flex w-[500px] flex-shrink-0 font-semibold"> Report</div>
 
       <div
-        class="flex w-[510px] flex-shrink-0"
+        class="flex flex-row w-[480px] flex-shrink-0"
         *ngFor="let dashboardField of dashboard.fields"
       >
-        {{ dashboardField.label }}</div
-      >
+        <div class="flex font-semibold truncate">
+          <div class="truncate"> {{ dashboardField.label }}</div>
+        </div>
+
+        <div class="flex ml-2 flex-shrink-0">
+          <div> ({{ dashboardField.result }})</div>
+        </div>
+      </div>
     </div>
 
     <div>
@@ -66,7 +72,7 @@
         </div>
 
         <div
-          class="group flex flex-col w-[510px] space-y-4 flex-shrink-0"
+          class="group flex flex-col w-[480px] space-y-4 flex-shrink-0"
           *ngFor="let dashboardField of dashboard.fields"
         >
           <div
@@ -131,11 +137,11 @@
 
   <div class="mt-9">
     <button
-      data-cy="editListenDialogSaveButton"
+      data-cy="editListenDialogApplyButton"
       class="py-3 w-28 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
       type="button"
-      (click)="save()"
-      >Save</button
+      (click)="apply()"
+      >Apply</button
     >
 
     <button

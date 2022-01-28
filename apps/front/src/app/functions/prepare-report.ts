@@ -2,10 +2,11 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 export function prepareReport(item: {
+  report?: common.ReportX;
   mconfig: common.MconfigX;
   isForDashboard: boolean;
 }) {
-  let { mconfig, isForDashboard } = item;
+  let { report, mconfig, isForDashboard } = item;
 
   let chart = mconfig.chart;
 
@@ -23,11 +24,12 @@ export function prepareReport(item: {
 
   if (
     isForDashboard === true &&
-    common.isDefined(mconfig.listen) &&
-    Object.keys(mconfig.listen).length > 0
+    common.isDefined(report) &&
+    common.isDefined(report.listen) &&
+    Object.keys(report.listen).length > 0
   ) {
-    Object.keys(mconfig.listen).forEach(x => {
-      let dashboardFieldName = mconfig.listen[x];
+    Object.keys(report.listen).forEach(x => {
+      let dashboardFieldName = report.listen[x];
 
       if (common.isDefined(listenFilters[dashboardFieldName])) {
         listenFilters[dashboardFieldName].concat(`, ${x}`);
@@ -37,7 +39,7 @@ export function prepareReport(item: {
     });
 
     Object.keys(defaultFilters).forEach(z => {
-      if (common.isDefined(mconfig.listen[z])) {
+      if (common.isDefined(report.listen[z])) {
         delete defaultFilters[z];
       }
     });

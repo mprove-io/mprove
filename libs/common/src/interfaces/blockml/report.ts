@@ -13,6 +13,8 @@ export class Report {
   @IsString()
   queryId: string;
 
+  listen: { [a: string]: string };
+
   @IsString()
   title: string;
 
