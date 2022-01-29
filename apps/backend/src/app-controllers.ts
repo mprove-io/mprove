@@ -80,6 +80,7 @@ export const appControllers = [
   controllers.RevertRepoToProductionController,
 
   controllers.RebuildStructSpecialController,
+  controllers.RebuildStructAllSpecialController,
 
   controllers.ConfirmUserEmailController,
   controllers.CompleteUserRegistrationController,

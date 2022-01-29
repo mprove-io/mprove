@@ -13,6 +13,9 @@ test('1', async t => {
   try {
     prep = await prepareTest({
       traceId: traceId,
+      deleteRecordsPayload: {
+        idempotencyKeys: [testId]
+      },
       overrideConfigOptions: {
         isScheduler: common.BoolEnum.TRUE
       }
