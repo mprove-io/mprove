@@ -15,6 +15,9 @@ export class Config extends common.Config {
   @IsString()
   jwtSecret?: string;
 
+  @IsString()
+  specialKey?: string;
+
   @IsEnum(common.BoolEnum)
   allowTestRoutes?: common.BoolEnum;
 

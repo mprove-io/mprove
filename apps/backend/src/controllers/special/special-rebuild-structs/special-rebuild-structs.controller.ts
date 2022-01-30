@@ -1,4 +1,5 @@
 import { Controller, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
@@ -6,6 +7,7 @@ import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
 import { repositories } from '~backend/barrels/repositories';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -21,7 +23,8 @@ export class SpecialRebuildStructsController {
     private branchesRepository: repositories.BranchesRepository,
     private membersRepository: repositories.MembersRepository,
     private blockmlService: BlockmlService,
-    private dbService: DbService
+    private dbService: DbService,
+    private cs: ConfigService<interfaces.Config>
   ) {}
 
   @Post(
@@ -33,6 +36,16 @@ export class SpecialRebuildStructsController {
   ) {
     let { traceId } = reqValid.info;
     let { specialKey, userIds } = reqValid.payload;
+
+    let envSpecialKey = this.cs.get<interfaces.Config['specialKey']>(
+      'specialKey'
+    );
+
+    if (specialKey !== envSpecialKey) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_WRONG_SPECIAL_KEY
+      });
+    }
 
     let projectIds: string[] = [];
     let members: entities.MemberEntity[];
