@@ -1,2 +1,2 @@
-export * from './rebuild-struct-all-special/rebuild-struct-all-special.controller';
-export * from './rebuild-struct-special/rebuild-struct-special.controller';
+export * from './special-rebuild-struct/special-rebuild-struct.controller';
+export * from './special-rebuild-structs/special-rebuild-structs.controller';

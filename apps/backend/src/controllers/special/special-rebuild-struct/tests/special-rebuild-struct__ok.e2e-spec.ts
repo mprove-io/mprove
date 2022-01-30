@@ -7,7 +7,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-rebuild-struct-special__ok';
+let testId = 'special-rebuild-struct__ok';
 
 let traceId = testId;
 
@@ -104,11 +104,11 @@ test('1', async t => {
 
     // to backend
 
-    let rebuildStructSpecialReq: apiToBackend.ToBackendRebuildStructSpecialRequest = {
+    let specialRebuildStructReq: apiToBackend.ToBackendSpecialRebuildStructRequest = {
       info: {
         name:
           apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendRebuildStructSpecial,
+            .ToBackendSpecialRebuildStruct,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -131,7 +131,7 @@ test('1', async t => {
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: rebuildStructSpecialReq
+        req: specialRebuildStructReq
       }
     );
 

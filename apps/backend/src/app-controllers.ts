@@ -79,8 +79,8 @@ export const appControllers = [
   controllers.RevertRepoToLastCommitController,
   controllers.RevertRepoToProductionController,
 
-  controllers.RebuildStructSpecialController,
-  controllers.RebuildStructAllSpecialController,
+  controllers.SpecialRebuildStructController,
+  controllers.SpecialRebuildStructsController,
 
   controllers.ConfirmUserEmailController,
   controllers.CompleteUserRegistrationController,

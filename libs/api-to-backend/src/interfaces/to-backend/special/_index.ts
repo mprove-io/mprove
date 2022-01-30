@@ -1,2 +1,2 @@
-export * from './to-backend-rebuild-struct-all-special';
-export * from './to-backend-rebuild-struct-special';
+export * from './to-backend-special-rebuild-struct';
+export * from './to-backend-special-rebuild-structs';

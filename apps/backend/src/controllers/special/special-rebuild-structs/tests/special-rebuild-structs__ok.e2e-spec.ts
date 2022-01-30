@@ -5,14 +5,14 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-rebuild-struct-all-special__ok';
+let testId = 'special-rebuild-structs__ok';
 
 let traceId = testId;
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendRebuildStructAllSpecialResponse;
+  let resp: apiToBackend.ToBackendSpecialRebuildStructsResponse;
 
   try {
     prep = await prepareTest({
@@ -24,11 +24,11 @@ test('1', async t => {
 
     // to backend
 
-    let rebuildStructAllSpecialReq: apiToBackend.ToBackendRebuildStructAllSpecialRequest = {
+    let specialRebuildStructsReq: apiToBackend.ToBackendSpecialRebuildStructsRequest = {
       info: {
         name:
           apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendRebuildStructAllSpecial,
+            .ToBackendSpecialRebuildStructs,
         traceId: traceId,
         idempotencyKey: testId
       },
@@ -37,10 +37,10 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendRebuildStructAllSpecialResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendSpecialRebuildStructsResponse>(
       {
         httpServer: prep.httpServer,
-        req: rebuildStructAllSpecialReq
+        req: specialRebuildStructsReq
       }
     );
 

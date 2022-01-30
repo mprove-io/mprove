@@ -1,7 +1,7 @@
 export enum ToBackendRequestInfoNameEnum {
   //
-  ToBackendRebuildStructSpecial = 'api/ToBackendRebuildStructSpecial',
-  ToBackendRebuildStructAllSpecial = 'api/ToBackendRebuildStructAllSpecial',
+  ToBackendSpecialRebuildStruct = 'api/ToBackendSpecialRebuildStruct',
+  ToBackendSpecialRebuildStructs = 'api/ToBackendSpecialRebuildStructs',
   //
   ToBackendSeedRecords = 'api/ToBackendSeedRecords',
   ToBackendDeleteRecords = 'api/ToBackendDeleteRecords',

@@ -3,7 +3,7 @@ import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendRebuildStructSpecialRequestPayload {
+export class ToBackendSpecialRebuildStructRequestPayload {
   @IsString()
   orgId: string;
 
@@ -24,8 +24,8 @@ export class ToBackendRebuildStructSpecialRequestPayload {
   connections: common.ProjectConnection[];
 }
 
-export class ToBackendRebuildStructSpecialRequest extends ToBackendRequest {
+export class ToBackendSpecialRebuildStructRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendRebuildStructSpecialRequestPayload)
-  payload: ToBackendRebuildStructSpecialRequestPayload;
+  @Type(() => ToBackendSpecialRebuildStructRequestPayload)
+  payload: ToBackendSpecialRebuildStructRequestPayload;
 }

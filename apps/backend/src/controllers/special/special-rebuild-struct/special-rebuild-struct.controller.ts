@@ -11,14 +11,14 @@ import { RabbitService } from '~backend/services/rabbit.service';
 
 @UseGuards(TestRoutesGuard)
 @Controller()
-export class RebuildStructSpecialController {
+export class SpecialRebuildStructController {
   constructor(private rabbitService: RabbitService) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRebuildStructSpecial)
-  async rebuildStructSpecial(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStruct)
+  async specialRebuildStruct(
     @AttachUser() user: entities.UserEntity,
-    @ValidateRequest(apiToBackend.ToBackendRebuildStructSpecialRequest)
-    reqValid: apiToBackend.ToBackendRebuildStructSpecialRequest
+    @ValidateRequest(apiToBackend.ToBackendSpecialRebuildStructRequest)
+    reqValid: apiToBackend.ToBackendSpecialRebuildStructRequest
   ) {
     let {
       orgId,

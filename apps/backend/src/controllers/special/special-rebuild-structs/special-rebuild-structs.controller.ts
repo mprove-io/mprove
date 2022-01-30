@@ -12,7 +12,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 
 @SkipJwtCheck()
 @Controller()
-export class RebuildStructAllSpecialController {
+export class SpecialRebuildStructsController {
   constructor(
     private rabbitService: RabbitService,
     private projectsRepository: repositories.ProjectsRepository,
@@ -22,11 +22,11 @@ export class RebuildStructAllSpecialController {
   ) {}
 
   @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRebuildStructAllSpecial
+    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs
   )
-  async rebuildStructAllSpecial(
-    @ValidateRequest(apiToBackend.ToBackendRebuildStructAllSpecialRequest)
-    reqValid: apiToBackend.ToBackendRebuildStructAllSpecialRequest
+  async specialRebuildStructs(
+    @ValidateRequest(apiToBackend.ToBackendSpecialRebuildStructsRequest)
+    reqValid: apiToBackend.ToBackendSpecialRebuildStructsRequest
   ) {
     let { traceId } = reqValid.info;
     let { specialKey } = reqValid.payload;
@@ -106,7 +106,7 @@ export class RebuildStructAllSpecialController {
       successProjectIds.push(branch.project_id);
     });
 
-    let payload: apiToBackend.ToBackendRebuildStructAllSpecialResponsePayload = {
+    let payload: apiToBackend.ToBackendSpecialRebuildStructsResponsePayload = {
       successProjectIds: successProjectIds,
       notFoundProjectIds: notFoundProjectIds,
       getCatalogErrorProjectIds: getCatalogErrorProjectIds
