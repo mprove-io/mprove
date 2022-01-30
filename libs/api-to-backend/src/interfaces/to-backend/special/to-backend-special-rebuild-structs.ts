@@ -1,11 +1,37 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
+
+export class BranchItem {
+  @IsString()
+  orgId: string;
+
+  @IsString()
+  projectId: string;
+
+  @IsString()
+  repoId: string;
+
+  @IsString()
+  branchId: string;
+
+  @IsOptional()
+  @IsString()
+  errorMessage?: string;
+}
 
 export class ToBackendSpecialRebuildStructsRequestPayload {
   @IsString()
   specialKey: string;
+
+  @IsString({ each: true })
+  userIds: string[];
 }
 
 export class ToBackendSpecialRebuildStructsRequest extends ToBackendRequest {
@@ -18,11 +44,19 @@ export class ToBackendSpecialRebuildStructsResponsePayload {
   @IsString({ each: true })
   notFoundProjectIds: string[];
 
-  @IsString({ each: true })
-  successProjectIds: string[];
+  @ValidateNested()
+  @Type(() => BranchItem)
+  successBranchItems: BranchItem[];
 
-  @IsString({ each: true })
-  getCatalogErrorProjectIds: string[];
+  @IsNumber()
+  successTotal: number;
+
+  @ValidateNested()
+  @Type(() => BranchItem)
+  errorGetCatalogBranchItems: BranchItem[];
+
+  @IsNumber()
+  errorTotal: number;
 }
 
 export class ToBackendSpecialRebuildStructsResponse extends common.MyResponse {

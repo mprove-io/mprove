@@ -1,8 +1,10 @@
 import { Controller, Post } from '@nestjs/common';
 import asyncPool from 'tiny-async-pool';
+import { In } from 'typeorm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
+import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { SkipJwtCheck, ValidateRequest } from '~backend/decorators/_index';
@@ -17,6 +19,7 @@ export class SpecialRebuildStructsController {
     private rabbitService: RabbitService,
     private projectsRepository: repositories.ProjectsRepository,
     private branchesRepository: repositories.BranchesRepository,
+    private membersRepository: repositories.MembersRepository,
     private blockmlService: BlockmlService,
     private dbService: DbService
   ) {}
@@ -29,17 +32,42 @@ export class SpecialRebuildStructsController {
     reqValid: apiToBackend.ToBackendSpecialRebuildStructsRequest
   ) {
     let { traceId } = reqValid.info;
-    let { specialKey } = reqValid.payload;
+    let { specialKey, userIds } = reqValid.payload;
 
-    let projects = await this.projectsRepository.find();
+    let projectIds: string[] = [];
+    let members: entities.MemberEntity[];
 
-    let branches = await this.branchesRepository.find({
-      where: { repo_id: common.PROD_REPO_ID, branch_id: common.BRANCH_MASTER }
-    });
+    if (userIds.length > 0) {
+      members = await this.membersRepository.find({
+        where: { member_id: In(userIds) }
+      });
+
+      projectIds = members.map(x => x.project_id);
+    }
+
+    let projects: entities.ProjectEntity[];
+
+    if (projectIds.length > 0) {
+      projects = await this.projectsRepository.find({
+        where: { project_id: In(projectIds) }
+      });
+    } else {
+      projects = await this.projectsRepository.find();
+    }
+
+    let branches: entities.BranchEntity[];
+
+    if (userIds.length > 0) {
+      branches = await this.branchesRepository.find({
+        where: { repo_id: In(userIds) }
+      });
+    } else {
+      branches = await this.branchesRepository.find();
+    }
 
     let notFoundProjectIds: string[] = [];
-    let getCatalogErrorProjectIds: string[] = [];
-    let successProjectIds: string[] = [];
+    let errorGetCatalogBranchItems: apiToBackend.BranchItem[] = [];
+    let successBranchItems: apiToBackend.BranchItem[] = [];
 
     await asyncPool(1, branches, async branch => {
       let project = projects.find(x => x.project_id === branch.project_id);
@@ -48,6 +76,13 @@ export class SpecialRebuildStructsController {
         notFoundProjectIds.push(branch.project_id);
         return;
       }
+
+      let branchItem: apiToBackend.BranchItem = {
+        orgId: project.org_id,
+        projectId: project.project_id,
+        repoId: branch.repo_id,
+        branchId: branch.branch_id
+      };
 
       // to disk
 
@@ -78,7 +113,8 @@ export class SpecialRebuildStructsController {
       if (
         getCatalogFilesResponse.info.status !== common.ResponseInfoStatusEnum.Ok
       ) {
-        getCatalogErrorProjectIds.push(branch.project_id);
+        branchItem.errorMessage = getCatalogFilesResponse.info.error.message;
+        errorGetCatalogBranchItems.push(branchItem);
         return;
       }
 
@@ -103,13 +139,15 @@ export class SpecialRebuildStructsController {
         }
       });
 
-      successProjectIds.push(branch.project_id);
+      successBranchItems.push(branchItem);
     });
 
     let payload: apiToBackend.ToBackendSpecialRebuildStructsResponsePayload = {
-      successProjectIds: successProjectIds,
       notFoundProjectIds: notFoundProjectIds,
-      getCatalogErrorProjectIds: getCatalogErrorProjectIds
+      successTotal: successBranchItems.length,
+      errorTotal: errorGetCatalogBranchItems.length,
+      successBranchItems: successBranchItems,
+      errorGetCatalogBranchItems: errorGetCatalogBranchItems
     };
 
     return payload;
