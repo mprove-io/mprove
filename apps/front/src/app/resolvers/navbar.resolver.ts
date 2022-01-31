@@ -80,38 +80,42 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetNavResponse) => {
-          let {
-            avatarSmall,
-            avatarBig,
-            orgId,
-            orgName,
-            projectId,
-            projectName,
-            isRepoProd,
-            branchId,
-            user,
-            serverNowTs
-          } = resp.payload;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let {
+              avatarSmall,
+              avatarBig,
+              orgId,
+              orgName,
+              projectId,
+              projectName,
+              isRepoProd,
+              branchId,
+              user,
+              serverNowTs
+            } = resp.payload;
 
-          let nav: NavState = {
-            avatarSmall,
-            avatarBig,
-            orgId,
-            orgName,
-            projectId,
-            projectName,
-            isRepoProd,
-            branchId,
-            serverTimeDiff: Date.now() - serverNowTs
-          };
+            let nav: NavState = {
+              avatarSmall,
+              avatarBig,
+              orgId,
+              orgName,
+              projectId,
+              projectName,
+              isRepoProd,
+              branchId,
+              serverTimeDiff: Date.now() - serverNowTs
+            };
 
-          this.navStore.update(nav);
-          this.userStore.update(user);
+            this.navStore.update(nav);
+            this.userStore.update(user);
 
-          if (user.isEmailVerified === true) {
-            return true;
+            if (user.isEmailVerified === true) {
+              return true;
+            } else {
+              this.router.navigate([common.PATH_VERIFY_EMAIL]);
+              return false;
+            }
           } else {
-            this.router.navigate([common.PATH_VERIFY_EMAIL]);
             return false;
           }
         })

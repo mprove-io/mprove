@@ -7,6 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { NavState } from '../stores/nav.store';
@@ -45,10 +46,14 @@ export class VizsResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetVizs, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetVizsResponse) => {
-          this.vizsStore.update({
-            vizs: resp.payload.vizs
-          });
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.vizsStore.update({
+              vizs: resp.payload.vizs
+            });
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

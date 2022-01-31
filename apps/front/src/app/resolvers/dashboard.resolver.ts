@@ -68,8 +68,12 @@ export class DashboardResolver implements Resolve<Observable<boolean>> {
         )
         .pipe(
           map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
-            this.dashboardStore.update(resp.payload.dashboard);
-            return true;
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.dashboardStore.update(resp.payload.dashboard);
+              return true;
+            } else {
+              return false;
+            }
           })
         );
     }

@@ -51,26 +51,30 @@ export class BranchResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendIsBranchExistResponse) => {
-          let isExist = resp.payload.isExist;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let isExist = resp.payload.isExist;
 
-          if (isExist !== true) {
-            this.myDialogService.showError({
-              errorData: {
-                message: enums.ErEnum.BRANCH_DOES_NOT_EXIST
-              },
-              isThrow: false
-            });
+            if (isExist !== true) {
+              this.myDialogService.showError({
+                errorData: {
+                  message: enums.ErEnum.BRANCH_DOES_NOT_EXIST
+                },
+                isThrow: false
+              });
 
-            this.router.navigate([
-              common.PATH_ORG,
-              nav.orgId,
-              common.PATH_PROJECT,
-              nav.projectId,
-              common.PATH_SETTINGS
-            ]);
+              this.router.navigate([
+                common.PATH_ORG,
+                nav.orgId,
+                common.PATH_PROJECT,
+                nav.projectId,
+                common.PATH_SETTINGS
+              ]);
+            }
+
+            return isExist;
+          } else {
+            return false;
           }
-
-          return isExist;
         })
       );
   }

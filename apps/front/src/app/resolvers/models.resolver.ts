@@ -7,6 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ModelsStore } from '../stores/models.store';
@@ -48,11 +49,15 @@ export class ModelsResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          this.modelsStore.update({
-            models: resp.payload.models
-          });
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.modelsStore.update({
+              models: resp.payload.models
+            });
 
-          return true;
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

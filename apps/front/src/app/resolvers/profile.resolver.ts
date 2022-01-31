@@ -7,6 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { ApiService } from '../services/api.service';
 import { UserStore } from '../stores/user.store';
 
@@ -25,9 +26,13 @@ export class ProfileResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetUserProfileResponse) => {
-          let user = resp.payload.user;
-          this.userStore.update(user);
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let user = resp.payload.user;
+            this.userStore.update(user);
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

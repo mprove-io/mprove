@@ -68,8 +68,12 @@ export class ModelResolver implements Resolve<Observable<boolean>> {
         )
         .pipe(
           map((resp: apiToBackend.ToBackendGetModelResponse) => {
-            this.modelStore.update(resp.payload.model);
-            return true;
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.modelStore.update(resp.payload.model);
+              return true;
+            } else {
+              return false;
+            }
           })
         );
     }

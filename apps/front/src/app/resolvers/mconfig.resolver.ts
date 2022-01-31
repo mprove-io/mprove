@@ -84,12 +84,16 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
         )
         .pipe(
           map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
-            this.mqStore.update(state =>
-              Object.assign({}, state, <MqState>{
-                mconfig: resp.payload.mconfig
-              })
-            );
-            return true;
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.mqStore.update(state =>
+                Object.assign({}, state, <MqState>{
+                  mconfig: resp.payload.mconfig
+                })
+              );
+              return true;
+            } else {
+              return false;
+            }
           })
         );
     }

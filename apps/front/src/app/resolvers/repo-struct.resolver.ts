@@ -48,23 +48,27 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetRepoResponse) => {
-          if (
-            common.isUndefined(resp?.payload?.repo) ||
-            common.isUndefined(resp?.payload?.struct)
-          ) {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            if (
+              common.isUndefined(resp?.payload?.repo) ||
+              common.isUndefined(resp?.payload?.struct)
+            ) {
+              return false;
+            }
+
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                branchId: branchId
+              })
+            );
+
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
+
+            return true;
+          } else {
             return false;
           }
-
-          this.navStore.update(state =>
-            Object.assign({}, state, <NavState>{
-              branchId: branchId
-            })
-          );
-
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
-
-          return true;
         })
       );
   }

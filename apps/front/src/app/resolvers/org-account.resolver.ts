@@ -27,9 +27,13 @@ export class OrgAccountResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetOrgResponse) => {
-          let org = resp.payload.org;
-          this.orgStore.update(org);
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let org = resp.payload.org;
+            this.orgStore.update(org);
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

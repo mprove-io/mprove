@@ -28,18 +28,22 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
       .req(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg, payload)
       .pipe(
         map((resp: apiToBackend.ToBackendGetOrgResponse) => {
-          let org = resp.payload.org;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let org = resp.payload.org;
 
-          this.navStore.update(state =>
-            Object.assign({}, state, <NavState>{
-              orgId: org.orgId,
-              orgName: org.name
-            })
-          );
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                orgId: org.orgId,
+                orgName: org.name
+              })
+            );
 
-          localStorage.setItem(constants.LOCAL_STORAGE_ORG_ID, org.orgId);
+            localStorage.setItem(constants.LOCAL_STORAGE_ORG_ID, org.orgId);
 
-          return true;
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

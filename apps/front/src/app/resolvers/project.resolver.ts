@@ -36,26 +36,30 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetProjectResponse) => {
-          let project = resp.payload.project;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let project = resp.payload.project;
 
-          this.navStore.update(state =>
-            Object.assign({}, state, <NavState>{
-              projectId: project.projectId,
-              projectName: project.name,
-              branchId: state.branchId || common.BRANCH_MASTER,
-              isRepoProd: common.isDefined(state.branchId)
-                ? state.isRepoProd
-                : true
-            })
-          );
+            this.navStore.update(state =>
+              Object.assign({}, state, <NavState>{
+                projectId: project.projectId,
+                projectName: project.name,
+                branchId: state.branchId || common.BRANCH_MASTER,
+                isRepoProd: common.isDefined(state.branchId)
+                  ? state.isRepoProd
+                  : true
+              })
+            );
 
-          localStorage.setItem(
-            constants.LOCAL_STORAGE_PROJECT_ID,
-            project.projectId
-          );
+            localStorage.setItem(
+              constants.LOCAL_STORAGE_PROJECT_ID,
+              project.projectId
+            );
 
-          this.projectStore.update(project);
-          return true;
+            this.projectStore.update(project);
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

@@ -7,6 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
@@ -43,8 +44,12 @@ export class TeamResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetMembersResponse) => {
-          this.teamStore.update(resp.payload);
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.teamStore.update(resp.payload);
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

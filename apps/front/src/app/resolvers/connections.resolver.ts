@@ -7,6 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
@@ -43,11 +44,15 @@ export class ConnectionsResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
-          this.connectionsStore.update({
-            connections: resp.payload.connections,
-            total: resp.payload.total
-          });
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.connectionsStore.update({
+              connections: resp.payload.connections,
+              total: resp.payload.total
+            });
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

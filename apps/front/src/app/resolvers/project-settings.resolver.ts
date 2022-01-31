@@ -7,6 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { ProjectStore } from '../stores/project.store';
@@ -40,8 +41,12 @@ export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetProjectResponse) => {
-          this.projectStore.update(resp.payload.project);
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.projectStore.update(resp.payload.project);
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

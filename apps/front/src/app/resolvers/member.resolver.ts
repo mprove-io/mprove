@@ -7,6 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
 import { ProjectQuery } from '../queries/project.query';
 import { ApiService } from '../services/api.service';
 import { MemberStore } from '../stores/member.store';
@@ -40,8 +41,12 @@ export class MemberResolver implements Resolve<Observable<boolean>> {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetProjectResponse) => {
-          this.memberStore.update(resp.payload.userMember);
-          return true;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.memberStore.update(resp.payload.userMember);
+            return true;
+          } else {
+            return false;
+          }
         })
       );
   }

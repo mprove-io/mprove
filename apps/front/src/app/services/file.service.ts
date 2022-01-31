@@ -66,14 +66,16 @@ export class FileService {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendGetFileResponse) => {
-          this.repoStore.update(resp.payload.repo);
-          this.structStore.update(resp.payload.struct);
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.repoStore.update(resp.payload.repo);
+            this.structStore.update(resp.payload.struct);
 
-          this.fileStore.update({
-            content: resp.payload.content,
-            name: fileName,
-            fileId: fileIdx
-          });
+            this.fileStore.update({
+              content: resp.payload.content,
+              name: fileName,
+              fileId: fileIdx
+            });
+          }
         })
       );
   }
