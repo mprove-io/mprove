@@ -5,11 +5,12 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
-import { StructsService } from '~backend/services/structs.service';
+import { ProjectsService } from '~backend/services/projects.service';
 
 @Controller()
 export class CreateTempMconfigController {
@@ -18,7 +19,8 @@ export class CreateTempMconfigController {
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
     private membersService: MembersService,
-    private structsService: StructsService
+    private branchesService: BranchesService,
+    private projectsService: ProjectsService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig)
@@ -27,9 +29,33 @@ export class CreateTempMconfigController {
     @ValidateRequest(apiToBackend.ToBackendCreateTempMconfigRequest)
     reqValid: apiToBackend.ToBackendCreateTempMconfigRequest
   ) {
-    let { oldMconfigId, mconfig } = reqValid.payload;
+    let {
+      oldMconfigId,
+      mconfig,
+      projectId,
+      isRepoProd,
+      branchId
+    } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
+    let member = await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.user_id
+    });
+
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
 
     let oldMconfig = await this.mconfigsService.getMconfigCheckExists({
+      structId: branch.struct_id,
       mconfigId: oldMconfigId
     });
 
@@ -43,18 +69,9 @@ export class CreateTempMconfigController {
       });
     }
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: mconfig.structId
-    });
-
-    let member = await this.membersService.getMemberCheckExists({
-      projectId: struct.project_id,
-      memberId: user.user_id
-    });
-
     let model = await this.modelsService.getModelCheckExists({
-      modelId: mconfig.modelId,
-      structId: mconfig.structId
+      structId: branch.struct_id,
+      modelId: mconfig.modelId
     });
 
     let isAccessGranted = helper.checkAccess({

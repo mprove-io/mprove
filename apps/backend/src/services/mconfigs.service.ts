@@ -7,11 +7,12 @@ import { repositories } from '~backend/barrels/repositories';
 export class MconfigsService {
   constructor(private mconfigsRepository: repositories.MconfigsRepository) {}
 
-  async getMconfigCheckExists(item: { mconfigId: string }) {
-    let { mconfigId } = item;
+  async getMconfigCheckExists(item: { mconfigId: string; structId: string }) {
+    let { mconfigId, structId } = item;
 
     let mconfig = await this.mconfigsRepository.findOne({
-      mconfig_id: mconfigId
+      mconfig_id: mconfigId,
+      struct_id: structId
     });
 
     if (common.isUndefined(mconfig)) {

@@ -5,12 +5,13 @@ import { entities } from '~backend/barrels/entities';
 import { helper } from '~backend/barrels/helper';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BranchesService } from '~backend/services/branches.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
+import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
-import { StructsService } from '~backend/services/structs.service';
 import { VizsService } from '~backend/services/vizs.service';
 
 @Controller()
@@ -21,7 +22,8 @@ export class GetQueryController {
     private vizsService: VizsService,
     private dashboardsService: DashboardsService,
     private membersService: MembersService,
-    private structsService: StructsService,
+    private branchesService: BranchesService,
+    private projectsService: ProjectsService,
     private mconfigsService: MconfigsService
   ) {}
 
@@ -31,10 +33,36 @@ export class GetQueryController {
     @ValidateRequest(apiToBackend.ToBackendGetQueryRequest)
     reqValid: apiToBackend.ToBackendGetQueryRequest
   ) {
-    let { queryId, mconfigId, vizId, dashboardId } = reqValid.payload;
+    let {
+      queryId,
+      mconfigId,
+      vizId,
+      dashboardId,
+      projectId,
+      isRepoProd,
+      branchId
+    } = reqValid.payload;
+
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
+    let member = await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.user_id
+    });
+
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
-      mconfigId: mconfigId
+      mconfigId: mconfigId,
+      structId: branch.struct_id
     });
 
     if (mconfig.query_id !== queryId) {
@@ -43,24 +71,15 @@ export class GetQueryController {
       });
     }
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: mconfig.struct_id
-    });
-
-    let member = await this.membersService.getMemberCheckExists({
-      projectId: struct.project_id,
-      memberId: user.user_id
-    });
-
     let model = await this.modelsService.getModelCheckExists({
-      structId: mconfig.struct_id,
+      structId: branch.struct_id,
       modelId: mconfig.model_id
     });
 
     let viz;
     if (common.isDefined(vizId)) {
       viz = await this.vizsService.getVizCheckExists({
-        structId: mconfig.struct_id,
+        structId: branch.struct_id,
         vizId: vizId
       });
     }
@@ -68,7 +87,7 @@ export class GetQueryController {
     let dashboard;
     if (common.isDefined(dashboardId)) {
       viz = await this.dashboardsService.getDashboardCheckExists({
-        structId: mconfig.struct_id,
+        structId: branch.struct_id,
         dashboardId: dashboardId
       });
     }

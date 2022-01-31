@@ -7,6 +7,7 @@ import { helper } from '~backend/barrels/helper';
 import { repositories } from '~backend/barrels/repositories';
 import { wrapper } from '~backend/barrels/wrapper';
 import { AttachUser, ValidateRequest } from '~backend/decorators/_index';
+import { BranchesService } from '~backend/services/branches.service';
 import { DbService } from '~backend/services/db.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -22,6 +23,7 @@ export class CreateTempMconfigAndQueryController {
     private modelsService: ModelsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
+    private branchesService: BranchesService,
     private structsService: StructsService,
     private queriesRepository: repositories.QueriesRepository
   ) {}
@@ -35,24 +37,32 @@ export class CreateTempMconfigAndQueryController {
     reqValid: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest
   ) {
     let { traceId } = reqValid.info;
-    let { mconfig } = reqValid.payload;
+    let { mconfig, projectId, isRepoProd, branchId } = reqValid.payload;
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: mconfig.structId
-    });
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.user_id;
 
     let project = await this.projectsService.getProjectCheckExists({
-      projectId: struct.project_id
+      projectId: projectId
     });
 
     let member = await this.membersService.getMemberCheckExists({
-      projectId: struct.project_id,
+      projectId: projectId,
       memberId: user.user_id
     });
 
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: branch.struct_id
+    });
+
     let model = await this.modelsService.getModelCheckExists({
-      modelId: mconfig.modelId,
-      structId: mconfig.structId
+      structId: branch.struct_id,
+      modelId: mconfig.modelId
     });
 
     let isAccessGranted = helper.checkAccess({

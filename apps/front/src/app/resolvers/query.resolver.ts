@@ -9,13 +9,16 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { MqQuery } from '../queries/mq.query';
+import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { emptyQuery, MqStore } from '../stores/mq.store';
+import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class QueryResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
+    private navQuery: NavQuery,
     private mqQuery: MqQuery,
     private mqStore: MqStore
   ) {}
@@ -25,6 +28,17 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
     let parametersQueryId = route.params[common.PARAMETER_QUERY_ID];
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
 
     let mconfig: common.MconfigX;
     let query: common.Query;
@@ -54,6 +68,9 @@ export class QueryResolver implements Resolve<Observable<boolean>> {
     }
 
     let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd,
       mconfigId: mconfig.mconfigId,
       queryId: parametersQueryId
     };

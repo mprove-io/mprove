@@ -81,7 +81,21 @@ export class ChartVizComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd,
       mconfigId: this.report.mconfigId
     };
 
@@ -99,6 +113,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
       .toPromise();
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd,
       mconfigId: this.report.mconfigId,
       queryId: this.report.queryId,
       vizId: this.viz.vizId
@@ -133,6 +150,9 @@ export class ChartVizComponent implements OnInit, OnDestroy {
         switchMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+              projectId: nav.projectId,
+              branchId: nav.branchId,
+              isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,
               vizId: this.viz.vizId

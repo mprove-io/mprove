@@ -2,8 +2,10 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { interval, of, Subscription } from 'rxjs';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { QueryService, RData } from '~front/app/services/query.service';
+import { NavState } from '~front/app/stores/nav.store';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -31,6 +33,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     public ref: DialogRef,
     private cd: ChangeDetectorRef,
     private queryService: QueryService,
+    private navQuery: NavQuery,
     private navigateService: NavigateService
   ) {}
 
@@ -42,6 +45,17 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.showNav = this.ref.data.showNav;
     this.isSelectValid = this.ref.data.isSelectValid;
 
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     // removes scroll for gauge chart
     this.refreshShow();
 
@@ -51,6 +65,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         switchMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+              projectId: nav.projectId,
+              branchId: nav.branchId,
+              isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,
               vizId: this.ref.data.vizId,

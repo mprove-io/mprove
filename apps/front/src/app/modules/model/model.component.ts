@@ -396,6 +396,17 @@ export class ModelComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     this.checkRunning$ = interval(3000)
       .pipe(
         startWith(0),
@@ -403,6 +414,9 @@ export class ModelComponent implements OnInit, OnDestroy {
         switchMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+              projectId: nav.projectId,
+              isRepoProd: nav.isRepoProd,
+              branchId: nav.branchId,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId
             };

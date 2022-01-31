@@ -1,19 +1,29 @@
 import { Injectable } from '@angular/core';
-import { map, take } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { ModelQuery } from '../queries/model.query';
+import { NavQuery } from '../queries/nav.query';
 import { MqState, MqStore } from '../stores/mq.store';
+import { NavState } from '../stores/nav.store';
 import { StructStore } from '../stores/struct.store';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
 export class MconfigService {
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+    })
+  );
+
   constructor(
     public modelQuery: ModelQuery,
     private apiService: ApiService,
     private mqStore: MqStore,
+    public navQuery: NavQuery,
     public structStore: StructStore,
     private navigateService: NavigateService
   ) {}
@@ -125,6 +135,9 @@ export class MconfigService {
 
   navCreateMconfigAndQuery(newMconfig: common.MconfigX) {
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
       mconfig: newMconfig
     };
 
@@ -157,6 +170,9 @@ export class MconfigService {
     let { newMconfig, queryId } = item;
 
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
       mconfig: newMconfig
     };
 

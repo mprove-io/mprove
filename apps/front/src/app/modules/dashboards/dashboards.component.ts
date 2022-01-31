@@ -276,6 +276,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.spinner.show(item.mconfigId);
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
       mconfigId: item.mconfigId
     };
 
@@ -293,6 +296,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       .toPromise();
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
       mconfigId: item.mconfigId,
       queryId: item.queryId,
       dashboardId: dashboardId

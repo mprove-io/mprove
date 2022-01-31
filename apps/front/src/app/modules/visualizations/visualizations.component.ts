@@ -320,6 +320,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.spinner.show(item.vizId);
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
       mconfigId: item.reports[0].mconfigId
     };
 
@@ -337,6 +340,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
       .toPromise();
 
     let payloadGetQuery: apiToBackend.ToBackendGetQueryRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
       mconfigId: item.reports[0].mconfigId,
       queryId: item.reports[0].queryId,
       vizId: item.vizId
@@ -422,6 +428,9 @@ export class VisualizationsComponent implements OnInit, OnDestroy {
     this.closeMenu();
 
     let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      isRepoProd: this.nav.isRepoProd,
       mconfigId: item.reports[0].mconfigId
     };
 

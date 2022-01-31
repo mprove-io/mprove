@@ -96,6 +96,17 @@ export class ChartRepComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     // console.log(this.mconfig.queryId === this.query.queryId);
 
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
     this.qData =
       this.mconfig.queryId === this.query.queryId
         ? this.queryService.makeQData({
@@ -110,6 +121,9 @@ export class ChartRepComponent implements OnInit, OnDestroy {
         switchMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+              projectId: nav.projectId,
+              branchId: nav.branchId,
+              isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId,
               dashboardId: this.dashboard.dashboardId

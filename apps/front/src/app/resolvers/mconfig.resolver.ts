@@ -9,14 +9,17 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { MqQuery } from '../queries/mq.query';
+import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 import { emptyMconfig, emptyQuery, MqState, MqStore } from '../stores/mq.store';
+import { NavState } from '../stores/nav.store';
 
 @Injectable({ providedIn: 'root' })
 export class MconfigResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
     private mqQuery: MqQuery,
+    private navQuery: NavQuery,
     private mqStore: MqStore
   ) {}
 
@@ -25,6 +28,17 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
     let parametersMconfigId = route.params[common.PARAMETER_MCONFIG_ID];
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
 
     let mconfig: common.MconfigX;
     let query: common.Query;
@@ -54,6 +68,9 @@ export class MconfigResolver implements Resolve<Observable<boolean>> {
     }
 
     let payload: apiToBackend.ToBackendGetMconfigRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd,
       mconfigId: parametersMconfigId
     };
 
