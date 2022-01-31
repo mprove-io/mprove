@@ -115,6 +115,9 @@ test('1', async t => {
         idempotencyKey: testId + '2'
       },
       payload: {
+        projectId: projectId,
+        isRepoProd: false,
+        branchId: common.BRANCH_MASTER,
         mconfig: mconfig
       }
     };
