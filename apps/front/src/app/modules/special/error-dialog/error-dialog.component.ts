@@ -10,6 +10,8 @@ import { interfaces } from '~front/barrels/interfaces';
 export class ErrorDialogComponent implements OnInit {
   originalErrorMessage: string;
   message: string;
+  description: string;
+  buttonText: string;
   path: string;
   traceId: string;
 
@@ -24,6 +26,9 @@ export class ErrorDialogComponent implements OnInit {
         console.log(stack);
       }
     }
+
+    this.description = this.ref.data.description;
+    this.buttonText = this.ref.data.buttonText;
 
     this.message = common.transformErrorMessage(
       this.ref.data?.response?.body?.info?.error?.message ||
@@ -40,6 +45,9 @@ export class ErrorDialogComponent implements OnInit {
   }
 
   onOk() {
+    if (common.isDefined(this.ref.data.onClickFnBindThis)) {
+      this.ref.data.onClickFnBindThis();
+    }
     this.ref.close();
   }
 }

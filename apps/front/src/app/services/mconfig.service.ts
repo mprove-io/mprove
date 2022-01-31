@@ -26,7 +26,9 @@ export class MconfigService {
     public navQuery: NavQuery,
     public structStore: StructStore,
     private navigateService: NavigateService
-  ) {}
+  ) {
+    this.nav$.subscribe();
+  }
 
   removeField(item: { newMconfig: common.MconfigX; fieldId: string }) {
     let { newMconfig, fieldId } = item;
@@ -149,14 +151,16 @@ export class MconfigService {
       )
       .pipe(
         map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
-          let { mconfig, query } = resp.payload;
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { mconfig, query } = resp.payload;
 
-          this.mqStore.update({ mconfig: mconfig, query: query });
+            this.mqStore.update({ mconfig: mconfig, query: query });
 
-          this.navigateService.navigateMconfigQuery({
-            mconfigId: mconfig.mconfigId,
-            queryId: mconfig.queryId
-          });
+            this.navigateService.navigateMconfigQuery({
+              mconfigId: mconfig.mconfigId,
+              queryId: mconfig.queryId
+            });
+          }
         }),
         take(1)
       )
@@ -192,6 +196,7 @@ export class MconfigService {
       queryId: queryId
     });
 
+    // is required to check that structId is still valid
     this.apiService
       .req(
         apiToBackend.ToBackendRequestInfoNameEnum
@@ -200,14 +205,9 @@ export class MconfigService {
         true
       )
       .pipe(
-        map((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
-          // let { mconfig, query } = resp.payload;
-          // this.mqStore.update({ mconfig: mconfig, query: query });
-          // this.navigateService.navigateMconfigQuery({
-          //   mconfigId: mconfig.mconfigId,
-          //   queryId: mconfig.queryId
-          // });
-        }),
+        map(
+          (resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {}
+        ),
         take(1)
       )
       .subscribe();

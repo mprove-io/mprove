@@ -136,7 +136,9 @@ export class ChartRepComponent implements OnInit, OnDestroy {
               )
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  this.updateQuery(resp.payload.query);
+                  if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                    this.updateQuery(resp.payload.query);
+                  }
                 })
               );
           } else {

@@ -65,6 +65,12 @@ export class CreateTempMconfigAndQueryController {
       modelId: mconfig.modelId
     });
 
+    if (mconfig.structId !== branch.struct_id) {
+      throw new common.ServerError({
+        message: apiToBackend.ErEnum.BACKEND_STRUCT_ID_CHANGED
+      });
+    }
+
     let isAccessGranted = helper.checkAccess({
       userAlias: user.alias,
       member: member,

@@ -245,6 +245,26 @@ export class ApiService {
             isThrow: false
           });
         }, 0);
+      } else if (
+        errorData.message ===
+          enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK &&
+        [
+          apiToBackend.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
+          apiToBackend.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
+          apiToBackend.ErEnum.BACKEND_VIZ_DOES_NOT_EXIST,
+          apiToBackend.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST,
+          apiToBackend.ErEnum.BACKEND_STRUCT_ID_CHANGED,
+          apiToBackend.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
+          apiToBackend.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+        ].indexOf(errorData.response.body.info.error.message) > -1
+      ) {
+        errorData.description = `Don't worry, most likely the project editor has pushed new changes to the current branch files recently`;
+        errorData.buttonText = 'Ok, reload and fetch changes';
+        errorData.onClickFnBindThis = (() => {
+          this.navigateService.windowOpenModels();
+        }).bind(this);
+
+        this.myDialogService.showError({ errorData, isThrow: false });
       } else {
         this.myDialogService.showError({ errorData, isThrow: true });
       }

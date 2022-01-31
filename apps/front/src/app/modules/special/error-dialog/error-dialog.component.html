@@ -5,6 +5,14 @@
       <div>Message</div>
       <div data-cy="errorDialogMessage" class="col-span-3">{{ message }}</div>
 
+      <div *ngIf="description">Description</div>
+      <div
+        *ngIf="description"
+        data-cy="errorDialogDescription"
+        class="col-span-3 font-semibold"
+        >{{ description }}</div
+      >
+
       <div *ngIf="originalErrorMessage">Info</div>
       <div class="col-span-3" *ngIf="originalErrorMessage">
         {{ originalErrorMessage }}
@@ -20,9 +28,9 @@
 
   <div class="mt-8">
     <button
-      class="w-28 py-3 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
+      class="px-5 py-3 text-base bg-blue3 text-white rounded font-medium focus:outline-none"
       (click)="onOk()"
-      >Ok</button
+      >{{ buttonText || 'Ok' }}</button
     >
   </div>
 </div>

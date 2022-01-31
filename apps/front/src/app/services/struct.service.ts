@@ -56,7 +56,7 @@ export class StructService {
     let newQueryId = common.makeId();
 
     let emptyMconfig: common.MconfigX = {
-      structId: this.struct.structId,
+      structId: this.model.structId,
       mconfigId: newMconfigId,
       queryId: newQueryId,
       modelId: this.model.modelId,

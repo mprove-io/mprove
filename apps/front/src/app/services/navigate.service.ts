@@ -46,36 +46,6 @@ export class NavigateService {
     this.router.navigate([common.PATH_PROFILE]);
   }
 
-  // navigateSwitch(newMconfigId: string, newQueryId: string) {
-  //   let pathArray: string[] = this.router.url.split('/');
-
-  //   switch (pathArray[11]) {
-  //     case 'filters': {
-  //       this.navigateMconfigQueryFilters(newMconfigId, newQueryId);
-  //       break;
-  //     }
-
-  //     case 'sql': {
-  //       this.navigateMconfigQuerySql(newMconfigId, newQueryId);
-  //       break;
-  //     }
-
-  //     case 'data': {
-  //       this.navigateMconfigQuery(newMconfigId, newQueryId);
-  //       break;
-  //     }
-
-  //     case 'chart': {
-  //       this.navigateMconfigQueryChart(newMconfigId, newQueryId);
-  //       break;
-  //     }
-
-  //     default: {
-  //       this.navigateMconfigQuery(newMconfigId, newQueryId);
-  //     }
-  //   }
-  // }
-
   navigateMconfigQuery(item: {
     mconfigId: string;
     queryId: string;
@@ -103,114 +73,6 @@ export class NavigateService {
       queryId
     ]);
   }
-
-  // navigateMconfigQueryFilters(mconfigId?: string, queryId?: string) {
-  //   this.getStoreValues();
-  //   this.router.navigate([
-  //     '/project',
-  //     this.projectId,
-  //     'mode',
-  //     this.mode,
-  //     'model',
-  //     this.modelId,
-  //     'mconfig',
-  //     mconfigId ? mconfigId : this.mconfigId,
-  //     'query',
-  //     queryId ? queryId : this.queryId,
-  //     'filters'
-  //   ]);
-  // }
-
-  // navigateMconfigQuerySql(mconfigId?: string, queryId?: string) {
-  //   this.getStoreValues();
-  //   this.router.navigate([
-  //     '/project',
-  //     this.projectId,
-  //     'mode',
-  //     this.mode,
-  //     'model',
-  //     this.modelId,
-  //     'mconfig',
-  //     mconfigId ? mconfigId : this.mconfigId,
-  //     'query',
-  //     queryId ? queryId : this.queryId,
-  //     'sql'
-  //   ]);
-  // }
-
-  // navigateMconfigQueryChart(
-  //   mconfigId?: string,
-  //   queryId?: string,
-  //   chartId?: string
-  // ) {
-  //   this.getStoreValues();
-  //   this.router.navigate([
-  //     '/project',
-  //     this.projectId,
-  //     'mode',
-  //     this.mode,
-  //     'model',
-  //     this.modelId,
-  //     'mconfig',
-  //     mconfigId ? mconfigId : this.mconfigId,
-  //     'query',
-  //     queryId ? queryId : this.queryId,
-  //     'chart',
-  //     chartId ? chartId : this.chartId
-  //   ]);
-  // }
-
-  // navigateModelMconfigQueryChart(
-  //   modelId?: string,
-  //   mconfigId?: string,
-  //   queryId?: string,
-  //   chartId?: string
-  // ) {
-  //   this.getStoreValues();
-  //   this.router.navigate([
-  //     '/project',
-  //     this.projectId,
-  //     'mode',
-  //     this.mode,
-  //     'model',
-  //     modelId ? modelId : this.modelId,
-  //     'mconfig',
-  //     mconfigId ? mconfigId : this.mconfigId,
-  //     'query',
-  //     queryId ? queryId : this.queryId,
-  //     'chart',
-  //     chartId ? chartId : this.chartId
-  //   ]);
-  // }
-
-  // navigateDashboard(dashboardId: string) {
-  //   this.getStoreValues();
-  //   this.router.navigate([
-  //     '/project',
-  //     this.projectId,
-  //     'mode',
-  //     this.mode,
-  //     'dashboard',
-  //     dashboardId
-  //   ]);
-  // }
-
-  // navigateModel(modelId?: string, joinAs?: string) {
-  //   this.getStoreValues();
-  //   this.router.navigate(
-  //     [
-  //       '/project',
-  //       this.projectId,
-  //       'mode',
-  //       this.mode,
-  //       'model',
-  //       modelId ? modelId : this.modelId
-  //     ],
-  //     {
-  //       queryParams: { joinAs: joinAs }
-  //     }
-  //   );
-  // }
 
   navigateToModel(modelId: string) {
     let repoId =
@@ -315,6 +177,44 @@ export class NavigateService {
     } else {
       this.router.navigate(navTo);
     }
+  }
+
+  windowOpenModels() {
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_MODELS
+    ];
+
+    window.open(navTo.join('/'), '_self');
+  }
+
+  navigateToModels() {
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_MODELS
+    ];
+
+    this.router.navigate(navTo);
   }
 
   navigateToDashboards(item?: { extra?: any }) {

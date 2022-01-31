@@ -429,6 +429,7 @@ export class ModelComponent implements OnInit, OnDestroy {
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   if (
+                    resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
                     this.isQueryIdTheSameAndServerTsChanged(resp.payload.query)
                   ) {
                     this.mqStore.update((state: MqState) =>
